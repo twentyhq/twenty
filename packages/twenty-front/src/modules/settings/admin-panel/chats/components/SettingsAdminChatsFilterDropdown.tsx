@@ -29,7 +29,7 @@ export const SettingsAdminChatsFilterDropdown = ({
       <DropdownContent side="bottom" align="end" sideOffset={8} alignOffset={0}>
         <Dropdown.Section>
           <SettingsRow
-            startIcon={<IconSparkles />}
+            startElement={<IconSparkles />}
             onCheckedChange={() =>
               onFiltersChange({
                 ...filters,
@@ -39,7 +39,7 @@ export const SettingsAdminChatsFilterDropdown = ({
             checked={filters.onboardingOnly}
           >{t`Onboarding only`}</SettingsRow>
           <SettingsRow
-            startIcon={<IconAlertTriangle />}
+            startElement={<IconAlertTriangle />}
             onCheckedChange={() =>
               onFiltersChange({
                 ...filters,
@@ -49,7 +49,7 @@ export const SettingsAdminChatsFilterDropdown = ({
             checked={filters.hasErrorOnly}
           >{t`Has error`}</SettingsRow>
           <SettingsRow
-            startIcon={<IconMessage />}
+            startElement={<IconMessage />}
             onCheckedChange={() =>
               onFiltersChange({
                 ...filters,

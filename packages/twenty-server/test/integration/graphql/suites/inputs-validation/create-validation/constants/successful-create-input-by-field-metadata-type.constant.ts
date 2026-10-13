@@ -6,10 +6,12 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const successfulCreateInputByFieldMetadataType: {
-  [K in Exclude<
-    FieldMetadataTypesToTestForCreateInputValidation,
-    FieldMetadataType.FILES // Done in files-field-sync.integration-spec.ts
-  >]: {
+  [
+    K in Exclude<
+      FieldMetadataTypesToTestForCreateInputValidation,
+      FieldMetadataType.FILES // Done in files-field-sync.integration-spec.ts
+    >
+  ]: {
     input: any;
     validateInput: (record: Record<string, any>) => boolean;
   }[];

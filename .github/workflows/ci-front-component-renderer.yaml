@@ -98,17 +98,13 @@ jobs:
           npx http-server packages/twenty-front-component-renderer/storybook-static --port 6008 --silent &
           timeout 30 bash -c 'until curl -sf http://localhost:6008 > /dev/null 2>&1; do sleep 1; done'
           npx nx storybook:test:no-coverage twenty-front-component-renderer
+          npx nx run twenty-front-component-renderer:storybook:test:file-selection
   ci-front-component-renderer-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
     needs:
-      [
-        changed-files-check,
-        renderer-task,
-        renderer-sb-build,
-        renderer-sb-test,
-      ]
+      [changed-files-check, renderer-task, renderer-sb-build, renderer-sb-test]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')

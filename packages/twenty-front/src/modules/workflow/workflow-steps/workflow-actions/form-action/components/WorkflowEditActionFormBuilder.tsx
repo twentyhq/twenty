@@ -177,8 +177,8 @@ export const WorkflowEditActionFormBuilder = ({
   const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(true);
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
-  const isSendChatMessageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
   const isFieldSelected = (fieldName: string) => selectedField === fieldName;
@@ -280,7 +280,7 @@ export const WorkflowEditActionFormBuilder = ({
               }
               title={t`Forms are meant for manual triggers`}
               description={
-                isSendChatMessageEnabled
+                isAiChatInboxEnabled
                   ? t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead.`
                   : t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run.`
               }

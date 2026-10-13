@@ -1,0 +1,129 @@
+---
+title: Badge
+description: Display compact inline information with caller-provided content.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BadgeReference from '/snippets/ui/generated/data-display/badge.mdx';
+
+`Badge` displays compact inline information, including short labels and counts. Use [Tag](/ui/primitives/data-display/tag) for categories, [Chip](/ui/primitives/data-display/chip) for compact controls, or [Status](/ui/primitives/data-display/status) for a named state with an indicator.
+
+<StoryEmbed
+  storyId="ui-data-display-badge--documentation"
+  title="Badge example"
+/>
+
+## Usage
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const PreviewLabel = () => <Badge>Preview</Badge>;
+```
+
+Pass text, numbers, or nodes as children. Badge displays the content you supply and adds no count formatting or visibility rules. The default element is a non-interactive `span`.
+
+## With an icon
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { IconPaperclip } from 'twenty-ui/icon';
+
+export const AttachmentLabel = () => (
+  <Badge>
+    <IconPaperclip size={12} aria-hidden />
+    Attachment
+  </Badge>
+);
+```
+
+Icons are ordinary child nodes. Give decorative icons `aria-hidden` and keep a visible label to explain the content.
+
+## Appearance
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BadgeAppearances = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <Badge size="sm" color="tertiary" shape="pill">
+      Preview
+    </Badge>
+    <Badge size="md" color="inherit">
+      In review
+    </Badge>
+    <Badge size="xs" color="primary" shape="circle">
+      3
+    </Badge>
+    <Badge size="xs" color="secondary" shape="circle">
+      12
+    </Badge>
+  </Text>
+);
+```
+
+`size` accepts `xs`, `sm`, or `md`. `color` accepts `tertiary`, `inherit`, `primary`, or `secondary`. `shape` accepts `pill` or `circle`. The defaults are `sm`, `tertiary`, and `pill`. The circular treatment has a fixed width equal to its height. Use `pill` for longer content, including abbreviated counts.
+
+## Counts and visibility
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type InboxButtonProps = {
+  count: number;
+};
+
+export const InboxButton = ({ count }: InboxButtonProps) => (
+  <Button aria-label={`Inbox, ${count} unread messages`}>
+    Inbox
+    {count > 0 && (
+      <Badge size="xs" color="primary" shape="pill" aria-hidden>
+        {count > 99 ? '99+' : count}
+      </Badge>
+    )}
+  </Button>
+);
+```
+
+Your application owns number formatting, abbreviations, clamping, zero visibility, and translated labels. Include the full meaning in the surrounding control's accessible name when its compact count is decorative. A standalone badge can use native accessible attributes, including `aria-label` or `aria-labelledby`.
+
+## Native composition
+
+```tsx
+import { useRef } from 'react';
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const BuildStatus = () => {
+  const badgeRef = useRef<HTMLSpanElement>(null);
+
+  return (
+    <Badge ref={badgeRef} title="Current build status" data-build="preview">
+      Preview
+    </Badge>
+  );
+};
+```
+
+Native attributes, event handlers, `className`, `style`, and `ref` target the actual root element. `render` accepts an element or callback through Base UI composition. Choose an appropriate native owner for interactive content:
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ReleaseLink = () => (
+  <Badge render={<Button href="#release-notes" size="sm" />}>
+    Release notes
+  </Badge>
+);
+```
+
+The rendered Button owns navigation behavior and link semantics. Badge keeps its presentational default and does not infer interaction from its content.
+
+## Props
+
+Types and defaults are generated from the public `BadgeProps` type. Native attributes and event handlers are also accepted.
+
+<BadgeReference />

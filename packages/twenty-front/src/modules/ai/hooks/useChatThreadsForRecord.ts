@@ -2,13 +2,13 @@ import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
+  type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
-import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -36,7 +36,7 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
     workspaceMemberId: true,
     pendingQuestionMessageId: true,
   },
-};
+} satisfies RecordGqlFields;
 
 // Link events carry no conversation, so new links are read back.
 const LINK_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
@@ -92,10 +92,7 @@ export const useChatThreadsForRecord = ({
     filter,
     orderBy: [
       {
-        thread: {
-          [getAgentChatThreadLastActivityFieldName(chatObjectMetadataItem)]:
-            'DescNullsLast',
-        },
+        thread: { lastActivityAt: 'DescNullsLast' },
       },
     ] satisfies RecordGqlOperationOrderBy,
     recordGqlFields: CHAT_THREADS_FOR_RECORD_GQL_FIELDS,

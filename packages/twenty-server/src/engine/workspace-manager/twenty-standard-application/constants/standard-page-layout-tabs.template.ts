@@ -196,8 +196,7 @@ export const WIDGET_PROPS = {
     ),
     type: WidgetType.CHAT_THREADS,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-    conditionalAvailabilityExpression:
-      'featureFlags.IS_CONVERSATIONS_TAB_ENABLED',
+    conditionalAvailabilityExpression: 'featureFlags.IS_AI_CHAT_INBOX_ENABLED',
   },
   calendar: {
     title: 'Calendar',

@@ -413,6 +413,20 @@ const SettingsAccounts = lazy(() =>
   })),
 );
 
+const SettingsAccountDetail = lazy(() =>
+  import('~/pages/settings/accounts/SettingsAccountDetail').then((module) => ({
+    default: module.SettingsAccountDetail,
+  })),
+);
+
+const SettingsNativeAccountApp = lazy(() =>
+  import('~/pages/settings/accounts/SettingsNativeAccountApp').then(
+    (module) => ({
+      default: module.SettingsNativeAccountApp,
+    }),
+  ),
+);
+
 const SettingsAccountsEmails = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
     default: module.SettingsAccountsEmails,
@@ -513,14 +527,6 @@ const SettingsObjectNewIndex = lazy(() =>
   import('~/pages/settings/data-model/new-index/SettingsObjectNewIndex').then(
     (module) => ({
       default: module.SettingsObjectNewIndex,
-    }),
-  ),
-);
-
-const SettingsObjectNewValidationRule = lazy(() =>
-  import('~/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule').then(
-    (module) => ({
-      default: module.SettingsObjectNewValidationRule,
     }),
   ),
 );
@@ -755,6 +761,14 @@ const createSettingsRouteElements = ({
     >
       <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
       <Route
+        path={SettingsPath.AccountDetail}
+        element={<SettingsAccountDetail />}
+      />
+      <Route
+        path={SettingsPath.NativeAccountApp}
+        element={<SettingsNativeAccountApp />}
+      />
+      <Route
         path={SettingsPath.AccountsEmails}
         element={<SettingsAccountsEmails />}
       />
@@ -948,11 +962,6 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectNewIndex}
         element={<SettingsObjectNewIndex />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
-      />
-      <Route
-        path={SettingsPath.ObjectNewValidationRule}
-        element={<SettingsObjectNewValidationRule />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
       <Route

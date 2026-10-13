@@ -18,20 +18,19 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const THREAD_ID = 'thread';
-const ME = 'my-user-workspace-id';
-const TEAMMATE = 'teammate-user-workspace-id';
-const MY_WORKSPACE_MEMBER_ID = 'my-workspace-member-id';
+const ME = 'my-workspace-member-id';
+const TEAMMATE = 'teammate-workspace-member-id';
 
 const buildMessage = (
   id: string,
   role: 'user' | 'assistant',
   createdAt: string,
-  senderUserWorkspaceId?: string,
+  senderWorkspaceMemberId?: string,
 ) => ({
   id,
   role,
   parts: [],
-  metadata: { createdAt, senderUserWorkspaceId },
+  metadata: { createdAt, senderWorkspaceMemberId },
 });
 
 const MESSAGES = [
@@ -69,8 +68,7 @@ describe('agentChatFirstUnreadMessageIdSelector', () => {
     resetJotaiStore();
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
-      id: MY_WORKSPACE_MEMBER_ID,
-      userWorkspaceId: ME,
+      id: ME,
     } as never);
   });
 

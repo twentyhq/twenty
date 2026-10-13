@@ -151,6 +151,30 @@
   The value of the Tab.
 </ParamField>
 
+### Tabs.Indicator
+
+<ParamField body="Indicator.className" type="string | ((state: TabsIndicatorState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Indicator.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TabsIndicatorState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Indicator.renderBeforeHydration" type="boolean" default="false">
+  Whether to render itself before React hydrates.
+  This minimizes the time that the indicator isn't visible after server-side rendering.
+</ParamField>
+
+<ParamField body="Indicator.style" type="CSSProperties | ((state: TabsIndicatorState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
 ### Tabs.Panel
 
 <ParamField body="Panel.className" type="string | ((state: TabsPanelState) =&gt; string | undefined)">

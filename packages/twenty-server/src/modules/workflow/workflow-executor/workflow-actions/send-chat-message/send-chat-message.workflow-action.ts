@@ -19,12 +19,14 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
 import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
 import { type WorkflowSendChatMessageActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/workflow-send-chat-message-action-input.type';
+import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 @Injectable()
 export class SendChatMessageWorkflowAction implements WorkflowAction {
   constructor(
     private readonly agentCallerConversationService: AgentCallerConversationService,
     private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
+    private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
   ) {}
 
   async execute({
@@ -98,6 +100,13 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
               workflowRunId: runInfo.workflowRunId,
               stepId: currentStepId,
             }),
+            waitOnAnswer: (postedCall) =>
+              this.workflowStepWaitWorkspaceService.arm({
+                workspaceId: runInfo.workspaceId,
+                workflowRunId: runInfo.workflowRunId,
+                stepId: currentStepId,
+                wait: { type: 'ANSWER', ...postedCall },
+              }),
           }
         : undefined,
     });

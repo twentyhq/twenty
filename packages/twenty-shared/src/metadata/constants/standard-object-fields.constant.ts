@@ -13,9 +13,6 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
     ),
     archivedAt: { universalIdentifier: 'b42eaf6f-240f-41ef-af61-51d5ac9cde7d' },
-    userWorkspaceId: {
-      universalIdentifier: 'bf830886-b6dc-46e9-a229-eecbb0e66032',
-    },
     workspaceMember: {
       universalIdentifier: '6f3ed3b5-0642-4a2a-9558-98376adb60f4',
     },
@@ -49,9 +46,6 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     pendingQuestionMessageId: {
       universalIdentifier: '51a9b421-7d90-4a59-9712-036ea9721e65',
-    },
-    lastStreamError: {
-      universalIdentifier: '2e389238-ba5c-4951-83d4-b14f94592c5c',
     },
     turns: { universalIdentifier: 'd5c88fbc-d318-4ee1-b70a-751a925bef5b' },
     messages: { universalIdentifier: '5c851a60-e5d9-4b1e-9926-c2eab6fc9e62' },
@@ -183,15 +177,11 @@ export const STANDARD_OBJECT_FIELDS = {
     senderWorkspaceMember: {
       universalIdentifier: '69bea8e1-451d-4c3c-9d34-505b5a67e06e',
     },
-    senderUserWorkspaceId: {
-      universalIdentifier: 'f4184c3a-b85c-4cef-8181-b2fefdf98fda',
-    },
     senderApplicationId: {
       universalIdentifier: 'd204d45a-6ccc-40cb-8281-b6ed635c247b',
     },
     role: { universalIdentifier: '5dc985f3-edad-4ebf-9844-b34ca686855b' },
     status: { universalIdentifier: '3845ccfa-9394-4cb9-a75c-4ca704414b83' },
-    isHidden: { universalIdentifier: 'be06f3d5-edb4-4243-89ad-71810b79b319' },
     processedAt: {
       universalIdentifier: 'b1a72274-095e-41f6-95d3-e5b407ff3f0b',
     },
@@ -883,6 +873,18 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     skippedCount: {
       universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
+    },
+    uniqueClickCount: {
+      universalIdentifier: 'd9a4e1c6-5b3f-4e0a-9c8d-4f7b9a3e6c12',
+    },
+    clickRate: {
+      universalIdentifier: '7999aebc-51f4-4b93-9925-717db707c703',
+    },
+    uniqueOpenCount: {
+      universalIdentifier: '865d188f-3178-4173-a986-80d01a8c7147',
+    },
+    openRate: {
+      universalIdentifier: '77529a55-d723-4c91-9df7-0190fd760e93',
     },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',

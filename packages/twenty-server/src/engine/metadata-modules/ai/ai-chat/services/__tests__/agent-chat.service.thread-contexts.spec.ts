@@ -35,14 +35,13 @@ const buildService = () => {
     {} as never,
     {} as never,
     {} as never,
-    { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
   );
 
   return { service, threadRepository, messageRepository };
 };
 
 describe('AgentChatService getThreadContexts', () => {
-  it('gives the thread owner the text of its system and not yet upgraded hidden messages', async () => {
+  it('gives the thread owner the text of its system messages', async () => {
     const { service, threadRepository, messageRepository } = buildService();
 
     await expect(
@@ -57,10 +56,7 @@ describe('AgentChatService getThreadContexts', () => {
       select: ['id', 'workspaceMemberId'],
     });
     expect(messageRepository.find).toHaveBeenCalledWith(WORKSPACE_ID, {
-      where: [
-        { threadId: THREAD_ID, role: AgentMessageRole.SYSTEM },
-        { threadId: THREAD_ID, isHidden: true },
-      ],
+      where: { threadId: THREAD_ID, role: AgentMessageRole.SYSTEM },
       order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['parts'],
     });

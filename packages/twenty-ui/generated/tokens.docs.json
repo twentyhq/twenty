@@ -5831,6 +5831,13 @@
     "isNumber": false
   },
   {
+    "path": "font.color.onAccent",
+    "cssVariable": "--t-font-color-on-accent",
+    "light": "color(display-p3 1 1 1)",
+    "dark": "color(display-p3 1 1 1)",
+    "isNumber": false
+  },
+  {
     "path": "font.color.primary",
     "cssVariable": "--t-font-color-primary",
     "light": "color(display-p3 0.2 0.2 0.2)",
