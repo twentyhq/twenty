@@ -43,7 +43,7 @@ export const getFrontComponentWidgetAvailabilityWarnings = ({
   return manifest.frontComponents
     .filter(
       (frontComponent) =>
-        frontComponent.isHeadless !== true &&
+        !frontComponent.isHeadless &&
         !isDefined(frontComponent.widgetAvailability) &&
         !frontComponentUniversalIdentifiersRenderedElsewhere.has(
           frontComponent.universalIdentifier,
