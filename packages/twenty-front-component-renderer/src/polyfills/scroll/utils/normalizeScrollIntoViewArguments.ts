@@ -1,12 +1,10 @@
 import { isNull, isObject, isUndefined } from '@sniptt/guards';
 
-import { SCROLL_INTO_VIEW_ALIGNMENTS } from '@/constants/ScrollIntoViewAlignments';
 import { type ScrollIntoViewAlignment } from '@/types/ScrollIntoViewAlignment';
+import { type ScrollIntoViewRequest } from '@/types/ScrollIntoViewRequest';
+import { isScrollIntoViewAlignment } from '@/utils/isScrollIntoViewAlignment';
 
-type ScrollIntoViewAlignments = {
-  block: ScrollIntoViewAlignment;
-  inline: ScrollIntoViewAlignment;
-};
+type ScrollIntoViewAlignments = Omit<ScrollIntoViewRequest, 'method'>;
 
 const START_ALIGNMENTS: ScrollIntoViewAlignments = {
   block: 'start',
@@ -29,17 +27,13 @@ const normalizeScrollIntoViewAlignment = ({
     return defaultAlignment;
   }
 
-  const matchingAlignment = SCROLL_INTO_VIEW_ALIGNMENTS.find(
-    (scrollIntoViewAlignment) => scrollIntoViewAlignment === alignment,
-  );
-
-  if (isUndefined(matchingAlignment)) {
+  if (!isScrollIntoViewAlignment(alignment)) {
     throw new TypeError(
       `Failed to execute 'scrollIntoView' on 'Element': The provided value '${String(alignment)}' is not a valid enum value of type ScrollLogicalPosition.`,
     );
   }
 
-  return matchingAlignment;
+  return alignment;
 };
 
 export const normalizeScrollIntoViewArguments = (

@@ -25,6 +25,8 @@ export const scrollOwnedAncestorsIntoView = ({
     return scrollContainers;
   }
 
+  const targetStyle = getComputedStyle(target);
+
   for (
     let scrollContainer = target.parentElement;
     isDefined(scrollContainer) && isOwnedNode(scrollContainer);
@@ -56,7 +58,7 @@ export const scrollOwnedAncestorsIntoView = ({
     });
     const targetBox = expandRectByScrollMargin({
       rect: target.getBoundingClientRect(),
-      style: getComputedStyle(target),
+      style: targetStyle,
       scale,
     });
     const blockDelta = canScrollBlock

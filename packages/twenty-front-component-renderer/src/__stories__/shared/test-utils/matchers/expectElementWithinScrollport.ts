@@ -1,5 +1,7 @@
 import { expect } from 'storybook/test';
 
+import { readScrollportRectangle } from '@/__stories__/shared/test-utils/readScrollportRectangle';
+
 const SCROLLPORT_TOLERANCE = 1;
 
 export const expectElementWithinScrollport = ({
@@ -10,22 +12,18 @@ export const expectElementWithinScrollport = ({
   scrollContainer: Element;
 }): void => {
   const elementRectangle = element.getBoundingClientRect();
-  const scrollContainerRectangle = scrollContainer.getBoundingClientRect();
-  const scrollportTop =
-    scrollContainerRectangle.top + scrollContainer.clientTop;
-  const scrollportLeft =
-    scrollContainerRectangle.left + scrollContainer.clientLeft;
+  const scrollport = readScrollportRectangle(scrollContainer);
 
   expect(elementRectangle.top).toBeGreaterThanOrEqual(
-    scrollportTop - SCROLLPORT_TOLERANCE,
+    scrollport.top - SCROLLPORT_TOLERANCE,
   );
   expect(elementRectangle.bottom).toBeLessThanOrEqual(
-    scrollportTop + scrollContainer.clientHeight + SCROLLPORT_TOLERANCE,
+    scrollport.bottom + SCROLLPORT_TOLERANCE,
   );
   expect(elementRectangle.left).toBeGreaterThanOrEqual(
-    scrollportLeft - SCROLLPORT_TOLERANCE,
+    scrollport.left - SCROLLPORT_TOLERANCE,
   );
   expect(elementRectangle.right).toBeLessThanOrEqual(
-    scrollportLeft + scrollContainer.clientWidth + SCROLLPORT_TOLERANCE,
+    scrollport.right + SCROLLPORT_TOLERANCE,
   );
 };

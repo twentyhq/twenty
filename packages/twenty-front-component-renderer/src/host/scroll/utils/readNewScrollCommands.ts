@@ -1,4 +1,4 @@
-import { isArray, isNumber } from '@sniptt/guards';
+import { isNumber } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { MAX_PENDING_SCROLL_COMMANDS } from '@/constants/MaxPendingScrollCommands';
@@ -8,13 +8,9 @@ export const readNewScrollCommands = ({
   scrollCommands,
   appliedSequence,
 }: {
-  scrollCommands: unknown;
+  scrollCommands: unknown[];
   appliedSequence: number;
 }): ReceivedScrollCommand[] => {
-  if (!isArray(scrollCommands)) {
-    return [];
-  }
-
   const newScrollCommands: ReceivedScrollCommand[] = [];
 
   for (const scrollCommand of scrollCommands.slice(

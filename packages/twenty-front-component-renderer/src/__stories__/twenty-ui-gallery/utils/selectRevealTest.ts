@@ -6,6 +6,7 @@ import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/mat
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { findScrollContainer } from '@/__stories__/twenty-ui-gallery/utils/findScrollContainer';
+import { openSelectListbox } from '@/__stories__/twenty-ui-gallery/utils/openSelectListbox';
 
 const KEYBOARD_STEPS = [
   { key: '{End}', optionName: 'Option 40' },
@@ -48,19 +49,7 @@ export const selectRevealTest: TwentyUiGalleryPlayFunction = async ({
   const body = within(canvasElement.ownerDocument.body);
   await expectFrontComponentMounted(canvas);
 
-  await userEvent.click(
-    canvas.getByRole('combobox', { name: 'Unaligned option' }),
-  );
-
-  const list = await body.findByRole(
-    'listbox',
-    { name: 'Unaligned option options' },
-    { timeout: INTERACTION_TIMEOUT },
-  );
-
-  await waitFor(() => expect(list).toBeVisible(), {
-    timeout: INTERACTION_TIMEOUT,
-  });
+  await openSelectListbox({ canvas, body, selectName: 'Unaligned option' });
   await expectOptionWithinScrollport({
     body,
     optionName: 'Option 30',

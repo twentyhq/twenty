@@ -289,23 +289,6 @@ describe('createHostScrollController', () => {
     });
   });
 
-  it('should ignore scroll commands that are not an array', async () => {
-    const { controller, registerScrollableElement } =
-      createScrollControllerFixture();
-    const { scrollTo } = registerScrollableElement('list');
-    const onScrollUpdate = jest.fn();
-
-    controller.enqueueScrollCommands({
-      remoteElementId: 'list',
-      scrollCommands: createScrollToCommand({ sequence: 1, top: 10 }),
-      onScrollUpdate,
-    });
-    await flushScrollCommands();
-
-    expect(scrollTo).not.toHaveBeenCalled();
-    expect(onScrollUpdate).not.toHaveBeenCalled();
-  });
-
   it('should skip but acknowledge the commands older than the latest native edit of their element', async () => {
     const { controller, registerScrollableElement } =
       createScrollControllerFixture();

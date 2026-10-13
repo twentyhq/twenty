@@ -1,6 +1,6 @@
-export type EventScrollState = {
-  scrollTop?: number;
-  scrollLeft?: number;
-  scrollWidth?: number;
-  clientWidth?: number;
-};
+import { type SerializedEventData } from '@/types/SerializedEventData';
+
+export type EventScrollState = Pick<
+  SerializedEventData,
+  'scrollTop' | 'scrollLeft' | 'scrollWidth' | 'clientWidth'
+>;
