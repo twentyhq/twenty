@@ -236,6 +236,7 @@ export const StrictModeMirrorsExpireAndTeardownOnce: Story = {
 };
 
 export const HoverAndFocusPauseAcrossMirrors: Story = {
+  args: { hasUnrelatedNotificationActions: true },
   play: async ({ canvasElement, args }) => {
     const { canvas, user, first, second } = getLifecycle(canvasElement);
     await user.click(
@@ -251,6 +252,32 @@ export const HoverAndFocusPauseAcrossMirrors: Story = {
     await user.unhover(firstToast);
     await user.hover(secondToast);
     expect(action).toHaveFocus();
+    const getCountdown = (toast: HTMLElement) =>
+      toast.querySelector<HTMLElement>(
+        '[style*="--toast-countdown-duration"]',
+      )!;
+    const firstCountdown = getCountdown(firstToast);
+    const secondCountdown = getCountdown(secondToast);
+    expect(firstCountdown).toHaveAttribute('data-paused');
+    expect(secondCountdown).toHaveAttribute('data-paused');
+    await user.click(
+      within(firstToast).getByRole('button', {
+        name: 'Add unrelated notification',
+      }),
+    );
+    expect(getCountdown(firstToast)).toBe(firstCountdown);
+    expect(getCountdown(secondToast)).toBe(secondCountdown);
+    await user.click(
+      within(firstToast).getByRole('button', {
+        name: 'Update unrelated notification',
+      }),
+    );
+    expect(first.getByText('Updated unrelated notification')).toBeVisible();
+    expect(second.getByText('Updated unrelated notification')).toBeVisible();
+    expect(getCountdown(firstToast)).toBe(firstCountdown);
+    expect(getCountdown(secondToast)).toBe(secondCountdown);
+    await user.unhover(firstToast);
+    await user.hover(secondToast);
     await wait(2000);
     expect(firstToast).toBeVisible();
     expect(secondToast).toBeVisible();

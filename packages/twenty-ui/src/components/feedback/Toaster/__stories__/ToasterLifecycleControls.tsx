@@ -5,12 +5,13 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
 import { type ToasterLifecycleExampleProps } from './ToasterLifecycleExampleProps';
+import { ToasterLifecycleUnrelatedNotificationActions } from './ToasterLifecycleUnrelatedNotificationActions';
 
 const DEFAULT_LIFECYCLE_DURATION = 1800;
 
 type ToasterLifecycleControlsProps = Pick<
   ToasterLifecycleExampleProps,
-  'duration' | 'onClose'
+  'duration' | 'hasUnrelatedNotificationActions' | 'onClose'
 > & {
   onDetachRenderers: () => void;
   onRememberProviderOperations?: (operations: () => void) => void;
@@ -18,6 +19,7 @@ type ToasterLifecycleControlsProps = Pick<
 
 export const ToasterLifecycleControls = ({
   duration = DEFAULT_LIFECYCLE_DURATION,
+  hasUnrelatedNotificationActions = false,
   onClose,
   onDetachRenderers,
   onRememberProviderOperations,
@@ -32,7 +34,11 @@ export const ToasterLifecycleControls = ({
       children: notification,
       duration: notificationDuration,
       onClose: () => onClose?.(notification),
-      action: <Button size="sm">Notification action</Button>,
+      action: hasUnrelatedNotificationActions ? (
+        <ToasterLifecycleUnrelatedNotificationActions onClose={onClose} />
+      ) : (
+        <Button size="sm">Notification action</Button>
+      ),
     });
 
     onRememberProviderOperations?.(() => {

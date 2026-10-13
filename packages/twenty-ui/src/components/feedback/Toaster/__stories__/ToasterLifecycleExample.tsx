@@ -13,6 +13,7 @@ export const ToasterLifecycleExample = ({
   duration,
   hasIndependentProvider = false,
   hasSlowMirrorExit = false,
+  hasUnrelatedNotificationActions = false,
   onClose,
 }: ToasterLifecycleExampleProps) => {
   const [limit, setLimit] = useState(3);
@@ -73,6 +74,7 @@ export const ToasterLifecycleExample = ({
           <ToastProvider limit={limit}>
             <ToasterLifecycleControls
               duration={duration}
+              hasUnrelatedNotificationActions={hasUnrelatedNotificationActions}
               onClose={onClose}
               onDetachRenderers={detachRenderers}
               onRememberProviderOperations={(operations) =>
