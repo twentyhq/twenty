@@ -1,6 +1,6 @@
 import { canApplicationStartCoreWorkflow } from 'src/engine/core-modules/workflow/utils/can-application-start-core-workflow.util';
 
-const WORKSPACE_OWNED_APPLICATION_IDS = ['custom-app-id', 'standard-app-id'];
+const WORKSPACE_CUSTOM_APPLICATION_ID = 'custom-app-id';
 
 describe('canApplicationStartCoreWorkflow', () => {
   it('lets a request without an application start any workflow it can reach', () => {
@@ -8,7 +8,7 @@ describe('canApplicationStartCoreWorkflow', () => {
       canApplicationStartCoreWorkflow({
         callerApplicationId: undefined,
         workflowApplicationId: 'installed-app-id',
-        workspaceOwnedApplicationIds: WORKSPACE_OWNED_APPLICATION_IDS,
+        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     ).toBe(true);
   });
@@ -18,7 +18,7 @@ describe('canApplicationStartCoreWorkflow', () => {
       canApplicationStartCoreWorkflow({
         callerApplicationId: 'installed-app-id',
         workflowApplicationId: 'custom-app-id',
-        workspaceOwnedApplicationIds: WORKSPACE_OWNED_APPLICATION_IDS,
+        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     ).toBe(true);
   });
@@ -28,9 +28,19 @@ describe('canApplicationStartCoreWorkflow', () => {
       canApplicationStartCoreWorkflow({
         callerApplicationId: 'installed-app-id',
         workflowApplicationId: 'installed-app-id',
-        workspaceOwnedApplicationIds: WORKSPACE_OWNED_APPLICATION_IDS,
+        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     ).toBe(true);
+  });
+
+  it('refuses an application starting a workflow of the standard application', () => {
+    expect(
+      canApplicationStartCoreWorkflow({
+        callerApplicationId: 'installed-app-id',
+        workflowApplicationId: 'standard-app-id',
+        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+      }),
+    ).toBe(false);
   });
 
   it('refuses an application starting the workflow of another application', () => {
@@ -38,7 +48,7 @@ describe('canApplicationStartCoreWorkflow', () => {
       canApplicationStartCoreWorkflow({
         callerApplicationId: 'other-app-id',
         workflowApplicationId: 'installed-app-id',
-        workspaceOwnedApplicationIds: WORKSPACE_OWNED_APPLICATION_IDS,
+        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     ).toBe(false);
   });

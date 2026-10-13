@@ -23,10 +23,7 @@ const build = ({
   buildWorkflowRunCreatedBy({
     source: buildSource(startingApplicationId),
     workflowApplicationId,
-    workspaceOwnedApplicationIds: [
-      CUSTOM_APPLICATION_ID,
-      STANDARD_APPLICATION_ID,
-    ],
+    workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,
   });
 
 describe('buildWorkflowRunCreatedBy', () => {
@@ -57,17 +54,32 @@ describe('buildWorkflowRunCreatedBy', () => {
 
   it('leaves a workspace workflow started without an application unbound', () => {
     expect(
-      build({ workflowApplicationId: STANDARD_APPLICATION_ID }).context
+      build({ workflowApplicationId: CUSTOM_APPLICATION_ID }).context
         .applicationId,
     ).toBeUndefined();
   });
 
-  it('never binds a run to a workspace-owned application', () => {
+  it('never binds a run to the workspace custom application', () => {
+    expect(
+      build({
+        workflowApplicationId: INSTALLED_APPLICATION_ID,
+        startingApplicationId: CUSTOM_APPLICATION_ID,
+      }).context.applicationId,
+    ).toBe(INSTALLED_APPLICATION_ID);
+    expect(
+      build({
+        workflowApplicationId: CUSTOM_APPLICATION_ID,
+        startingApplicationId: CUSTOM_APPLICATION_ID,
+      }).context.applicationId,
+    ).toBeUndefined();
+  });
+
+  it('binds a run started through the standard application like any installed one', () => {
     expect(
       build({
         workflowApplicationId: CUSTOM_APPLICATION_ID,
         startingApplicationId: STANDARD_APPLICATION_ID,
       }).context.applicationId,
-    ).toBeUndefined();
+    ).toBe(STANDARD_APPLICATION_ID);
   });
 });

@@ -3,12 +3,12 @@ import { isDefined } from 'twenty-shared/utils';
 export const canApplicationStartCoreWorkflow = ({
   callerApplicationId,
   workflowApplicationId,
-  workspaceOwnedApplicationIds,
+  workspaceCustomApplicationId,
 }: {
   callerApplicationId: string | undefined;
   workflowApplicationId: string;
-  workspaceOwnedApplicationIds: string[];
+  workspaceCustomApplicationId: string;
 }): boolean =>
   !isDefined(callerApplicationId) ||
-  workspaceOwnedApplicationIds.includes(workflowApplicationId) ||
+  workflowApplicationId === workspaceCustomApplicationId ||
   workflowApplicationId === callerApplicationId;
