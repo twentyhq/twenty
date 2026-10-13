@@ -178,6 +178,7 @@ export type { FrontComponentSharedDependenciesManifest } from './frontComponentS
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
 export type {
   IdentifyAccountPayload,
+  IdentifiedAccount,
   IdentifyAccountResult,
 } from './identifyAccountType';
 export type { IndexFieldManifest } from './indexFieldManifestType';

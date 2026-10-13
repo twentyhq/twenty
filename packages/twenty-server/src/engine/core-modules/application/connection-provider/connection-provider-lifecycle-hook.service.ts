@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  type IdentifiedAccount,
   type IdentifyAccountPayload,
-  type IdentifyAccountResult,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,6 +24,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { CustomException } from 'src/utils/custom-exception';
+import { withDeadline } from 'src/utils/with-deadline';
 
 type ConnectionLifecycleHook = 'identifyAccount' | 'onConnect' | 'onDisconnect';
 
@@ -95,10 +97,7 @@ export class ConnectionProviderLifecycleHookService {
     });
   }
 
-  // Runs inline in the OAuth callback, before anything is persisted, so a
-  // reconnect that resolves to another upstream account can be refused before
-  // the existing tokens are overwritten. Unlike the other hooks, failures
-  // propagate: saving an account we could not identify would defeat the check.
+  // Unlike the other hooks, failures propagate: an account core could not identify must not be saved.
   async runIdentifyAccount({
     provider,
     workspaceId,
@@ -110,7 +109,7 @@ export class ConnectionProviderLifecycleHookService {
     >;
     workspaceId: string;
     accessToken: string;
-  }): Promise<IdentifyAccountResult | null> {
+  }): Promise<IdentifiedAccount | null> {
     const logicFunctionId = await this.resolveLogicFunctionId({
       hook: 'identifyAccount',
       logicFunctionUniversalIdentifier:
@@ -129,14 +128,11 @@ export class ConnectionProviderLifecycleHookService {
       accessToken,
     };
 
-    const executionResult = await this.executeIdentifyAccountWithTimeout({
+    const executionResult = await this.executeIdentifyAccount({
       provider,
-      execution: this.logicFunctionExecutorService.execute({
-        logicFunctionId,
-        workspaceId,
-        payload,
-        shouldEnforceUsageLimits: true,
-      }),
+      logicFunctionId,
+      workspaceId,
+      payload,
     });
 
     if (isDefined(executionResult.error)) {
@@ -202,34 +198,35 @@ export class ConnectionProviderLifecycleHookService {
     });
   }
 
-  // The executor has no per-call timeout override, so the core-side cap is
-  // enforced by racing it; the execution itself is left to finish on its own.
-  private async executeIdentifyAccountWithTimeout({
+  private async executeIdentifyAccount({
     provider,
-    execution,
+    logicFunctionId,
+    workspaceId,
+    payload,
   }: {
     provider: ConnectionLifecycleHookProvider;
-    execution: Promise<LogicFunctionExecuteResult>;
+    logicFunctionId: string;
+    workspaceId: string;
+    payload: IdentifyAccountPayload;
   }): Promise<LogicFunctionExecuteResult> {
-    let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
-
-    const timeout = new Promise<never>((_resolve, reject) => {
-      timeoutHandle = setTimeout(
-        () =>
-          reject(
-            new ConnectionProviderException(
-              `identifyAccount logic function of connection provider ${provider.id} did not complete within ${IDENTIFY_ACCOUNT_TIMEOUT_MS}ms`,
-              ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
-            ),
-          ),
-        IDENTIFY_ACCOUNT_TIMEOUT_MS,
-      );
-    });
-
     try {
-      return await Promise.race([execution, timeout]);
+      // The executor has no per-call timeout override, so the cap is applied here.
+      return await withDeadline({
+        promise: this.logicFunctionExecutorService.execute({
+          logicFunctionId,
+          workspaceId,
+          payload,
+          shouldEnforceUsageLimits: true,
+        }),
+        timeoutMs: IDENTIFY_ACCOUNT_TIMEOUT_MS,
+        createTimeoutError: () =>
+          new ConnectionProviderException(
+            `identifyAccount logic function of connection provider ${provider.id} did not complete within ${IDENTIFY_ACCOUNT_TIMEOUT_MS}ms`,
+            ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
+          ),
+      });
     } catch (error) {
-      if (error instanceof ConnectionProviderException) {
+      if (error instanceof CustomException) {
         throw error;
       }
 
@@ -237,8 +234,6 @@ export class ConnectionProviderLifecycleHookService {
         `identifyAccount logic function of connection provider ${provider.id} could not be executed: ${error instanceof Error ? error.message : String(error)}`,
         ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
       );
-    } finally {
-      clearTimeout(timeoutHandle);
     }
   }
 

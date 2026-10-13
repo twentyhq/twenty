@@ -18,10 +18,7 @@ export type AppConnection = {
   // OAuth-derived identifier (typically email or login). Stays stable across
   // reconnects of the same upstream account.
   handle: string;
-  // Stable id of the upstream account (e.g. a Slack team id), as returned by
-  // the provider's identifyAccountLogicFunction. null when the provider
-  // declares none, or for connections made before it was declared. Core never
-  // enforces uniqueness on it: apps that care about duplicates dedupe on it.
+  // Upstream account id from identifyAccountLogicFunction; not unique, apps dedupe on it themselves.
   externalAccountId: string | null;
   // Connection-row visibility:
   //   'user'      = visible only to the user who created it.

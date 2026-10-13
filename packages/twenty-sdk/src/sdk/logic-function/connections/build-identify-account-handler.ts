@@ -3,7 +3,7 @@ import {
   type IdentifyAccountPayload,
   type IdentifyAccountResult,
 } from 'twenty-shared/application';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 export type IdentifyAccountRequest = {
   endpoint: string;
@@ -67,13 +67,13 @@ export const buildIdentifyAccountHandler =
       resolveDotPath(responseBody, externalAccountIdPath),
     );
 
-    if (externalAccountId === undefined) {
+    if (!isDefined(externalAccountId)) {
       throw new Error(
         `identifyAccount: ${method} ${endpoint} returned no value at "${externalAccountIdPath}"`,
       );
     }
 
-    if (handlePath === undefined) {
+    if (!isDefined(handlePath)) {
       return { externalAccountId };
     }
 

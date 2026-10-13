@@ -115,7 +115,7 @@
   "engines": {
     "node": "^24.5.0",
     "yarn": "^4.0.2",
-    "twenty": ">=2.40.0"
+    "twenty": ">=2.47.0"
   },
   "typesVersions": {
     "*": {

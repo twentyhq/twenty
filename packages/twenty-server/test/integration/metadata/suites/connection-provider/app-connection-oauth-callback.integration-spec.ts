@@ -35,7 +35,8 @@ const TOKEN_ENDPOINT = 'https://connection-provider.example.com/token';
 // the identify function reads the account from its "<account>:<suffix>" shape.
 const IDENTIFY_ACCOUNT_SOURCE = `export const handler = ({ accessToken }) => {
   const [account] = accessToken.split(':');
-  if (account === 'unidentifiable') return null;
+  if (account === 'unidentifiable') return { externalAccountId: null };
+  if (account === 'silent') return;
   if (account === 'broken') throw new Error('upstream identity endpoint failed');
   return { externalAccountId: account, handle: 'Handle ' + account };
 };`;
@@ -342,13 +343,23 @@ export const handler = ({ connectedAccountId }) => {
     });
   });
 
-  it('keeps the previous behaviour when the identify function returns null', async () => {
+  it('keeps the previous behaviour when the identify function opts out', async () => {
     const redirect = await callback(await authorize(), 'unidentifiable:first');
     const [connection] = await readAccounts();
 
     expect(redirect.searchParams.has('errorMessage')).toBe(false);
     expect(connection.externalAccountId).toBeNull();
     expect(readExecutions(onConnectExecutionsPath)).toEqual([connection.id]);
+  });
+
+  it('saves nothing and skips onConnect when the identify function returns nothing', async () => {
+    const redirect = await callback(await authorize(), 'silent:first');
+
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'invalid result',
+    );
+    expect(await readAccounts()).toEqual([]);
+    expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
   });
 
   it('saves nothing and skips onConnect when the identify function fails', async () => {

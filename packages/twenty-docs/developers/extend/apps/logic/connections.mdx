@@ -138,14 +138,14 @@ type IdentifyAccountPayload = {
 
 ```ts
 type IdentifyAccountResult = {
-  externalAccountId: string; // non-empty, at most 512 characters
+  externalAccountId: string | null; // non-empty, at most 512 characters; null opts out
   handle?: string; // non-empty when present
-} | null;
+};
 ```
 
 - `externalAccountId` must be stable for the life of the upstream account (a team id, an organization id, a user id), never a name the user can change. Twenty trims it and stores it on the connection on first connect.
 - `handle`, when returned, replaces the handle Twenty would otherwise derive (the OIDC `id_token` email, or the connecting user's email). Return something a user recognizes, such as the Slack workspace name.
-- Return `null` when the provider has no stable id to offer. Twenty then behaves as if no identify function were declared: no id is stored and reconnects are not checked.
+- Return `{ externalAccountId: null }` when the provider has no stable id to offer. Twenty then behaves as if no identify function were declared: no id is stored and reconnects are not checked. A bare `null` or a missing return is treated as an error, so a handler that forgets to return cannot silently disable the check.
 - If the function throws, times out, or returns anything else, the connection is **not** saved and the user lands back on the settings page with an error. Throw only when you genuinely cannot identify the account.
 
 **Reconnect refusal.** On a reconnect, Twenty compares the returned `externalAccountId` with the one stored on the connection. If they differ, the callback is refused before anything is written: the existing tokens, handle and visibility stay as they were, the on-connect hook does not run, and the user sees which account they authorized and which one the connection belongs to. Connections created before your app declared the function have no stored id yet; their next reconnect stores it.

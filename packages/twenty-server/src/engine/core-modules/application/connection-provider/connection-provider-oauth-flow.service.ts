@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
-import { type IdentifyAccountResult } from 'twenty-shared/application';
+import { type IdentifiedAccount } from 'twenty-shared/application';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -204,14 +204,6 @@ export class ConnectionProviderOAuthFlowService {
         accessToken: tokenResponse.accessToken,
       });
 
-    if (isDefined(statePayload.reconnectingConnectedAccountId)) {
-      await this.assertReconnectTargetsSameAccount({
-        connectedAccountId: statePayload.reconnectingConnectedAccountId,
-        workspaceId: statePayload.workspaceId,
-        identifiedAccount,
-      });
-    }
-
     const connectedAccount = await this.persistConnectedAccount({
       provider,
       tokenResponse,
@@ -298,44 +290,6 @@ export class ConnectionProviderOAuthFlowService {
     return user.email;
   }
 
-  // A reconnect must keep pointing at the upstream account the row was created
-  // for: tokens for another account would silently re-target everything the
-  // app built on this connection. Rows created before the provider could
-  // identify accounts have nothing to compare against and get pinned instead.
-  private async assertReconnectTargetsSameAccount({
-    connectedAccountId,
-    workspaceId,
-    identifiedAccount,
-  }: {
-    connectedAccountId: string;
-    workspaceId: string;
-    identifiedAccount: IdentifyAccountResult | null;
-  }): Promise<void> {
-    if (!isDefined(identifiedAccount)) {
-      return;
-    }
-
-    const reconnectTarget = await this.connectedAccountRepository.findOne({
-      where: { id: connectedAccountId, workspaceId },
-    });
-
-    if (
-      !isDefined(reconnectTarget) ||
-      !isDefined(reconnectTarget.externalAccountId) ||
-      reconnectTarget.externalAccountId === identifiedAccount.externalAccountId
-    ) {
-      return;
-    }
-
-    const authorizedAccountHandle =
-      identifiedAccount.handle ?? identifiedAccount.externalAccountId;
-
-    throw new ConnectionProviderException(
-      `You authorized ${authorizedAccountHandle}, but this connection belongs to ${reconnectTarget.handle}. Reconnect with ${reconnectTarget.handle}, or add a new connection for ${authorizedAccountHandle}.`,
-      ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH,
-    );
-  }
-
   private async persistConnectedAccount({
     provider,
     tokenResponse,
@@ -348,7 +302,7 @@ export class ConnectionProviderOAuthFlowService {
   }: {
     provider: OAuthConnectionProvider;
     tokenResponse: TokenExchangeResponse;
-    identifiedAccount: IdentifyAccountResult | null;
+    identifiedAccount: IdentifiedAccount | null;
     workspaceId: string;
     userId: string;
     userWorkspaceId: string;
@@ -386,15 +340,39 @@ export class ConnectionProviderOAuthFlowService {
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {
-      await this.connectedAccountRepository.update(
-        { id: reconnectingConnectedAccountId, workspaceId },
+      const reconnectTarget = {
+        id: reconnectingConnectedAccountId,
+        workspaceId,
+      };
+
+      // Compared and written in one statement so overlapping reconnects cannot pin different accounts.
+      const updateResult = await this.connectedAccountRepository.update(
+        isDefined(identifiedAccount)
+          ? [
+              { ...reconnectTarget, externalAccountId: IsNull() },
+              {
+                ...reconnectTarget,
+                externalAccountId: identifiedAccount.externalAccountId,
+              },
+            ]
+          : reconnectTarget,
         { ...sharedFields, userWorkspaceId },
       );
 
-      return this.connectedAccountRepository.findOneByOrFail({
-        id: reconnectingConnectedAccountId,
-        workspaceId,
-      });
+      const connectedAccount =
+        await this.connectedAccountRepository.findOneByOrFail(reconnectTarget);
+
+      if (updateResult.affected === 0 && isDefined(identifiedAccount)) {
+        const authorizedAccountHandle =
+          identifiedAccount.handle ?? identifiedAccount.externalAccountId;
+
+        throw new ConnectionProviderException(
+          `You authorized ${authorizedAccountHandle}, but this connection belongs to ${connectedAccount.handle}. Reconnect with ${connectedAccount.handle}, or add a new connection for ${authorizedAccountHandle}.`,
+          ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH,
+        );
+      }
+
+      return connectedAccount;
     }
 
     const existingCount = await this.connectedAccountRepository.count({
