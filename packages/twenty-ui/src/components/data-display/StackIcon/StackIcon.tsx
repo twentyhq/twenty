@@ -20,8 +20,10 @@ export const StackIcon = ({
       className: clsx(styles.root, className),
       children: (
         <>
-          {icon}
-          <span className={styles.stackedIcon}>{stackedIcon}</span>
+          <span aria-hidden="true">{icon}</span>
+          <span aria-hidden="true" className={styles.stackedIcon}>
+            {stackedIcon}
+          </span>
         </>
       ),
     },

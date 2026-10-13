@@ -1,7 +1,9 @@
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { TintedIconTile } from '@ui/components/data-display/TintedIconTile/TintedIconTile';
 import { type MenuItemAccent } from '@ui/components/navigation/MenuItem/types/MenuItemAccent';
 import { MenuItemDraggable } from '@ui/components/navigation/MenuItemDraggable/MenuItemDraggable';
 import { IconBell, IconMinus } from '@ui/icon';
@@ -141,6 +143,38 @@ export const GripOnHoverWithIconContainer: Story = {
     gripMode: 'onHover',
     withIconContainer: true,
     isDragDisabled: false,
+  },
+};
+
+export const GripOnHoverWithLeftComponent: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    ...Default.args,
+    LeftIcon: undefined,
+    LeftComponent: (
+      <TintedIconTile
+        icon={<IconBell size={16} />}
+        color="blue"
+        role="img"
+        aria-label="Custom leading content"
+      />
+    ),
+    gripMode: 'onHover',
+    withIconContainer: true,
+    isDragDisabled: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const label = canvas.getByText('Menu item draggable');
+    const grip = canvasElement.querySelector('.grip-swap-hover-icon')!;
+
+    await userEvent.unhover(label);
+    await waitFor(() => expect(grip).toHaveStyle({ opacity: '0' }));
+    await expect(
+      canvas.getByRole('img', { name: 'Custom leading content' }),
+    ).toBeVisible();
+    await userEvent.hover(label);
+    await waitFor(() => expect(grip).toHaveStyle({ opacity: '1' }));
   },
 };
 

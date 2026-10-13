@@ -16,7 +16,7 @@ export const MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS = {
   className: 'Class applied to the row.',
   isIconDisplayedOnHoverOnly: 'Reveals trailing action elements only on hover.',
   gripMode:
-    'Grip visibility: never, always, or onHover. onHover swaps LeftIcon for the grip on hover and shows no grip without LeftIcon. Does not implement dragging.',
+    'Grip visibility: never, always, or onHover. always and onHover render a single leading content (LeftComponent when set, otherwise LeftIcon); onHover swaps it for the grip on hover and shows no grip without leading content. Does not implement dragging.',
   isDragDisabled:
     'Disables drag appearance without installing or removing drag handlers.',
   isHoverDisabled: 'Accepted for compatibility; currently has no effect.',

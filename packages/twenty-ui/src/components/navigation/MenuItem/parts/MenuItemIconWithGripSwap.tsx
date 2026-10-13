@@ -1,7 +1,6 @@
 import { MenuItemIconBoxContainer } from '@ui/components/navigation/MenuItem/parts/MenuItemIconBoxContainer';
-import { TintedIconTile } from '@ui/components/data-display/TintedIconTile/TintedIconTile';
-import { IconGripVertical, type IconComponent } from '@ui/icon';
-import { type ThemeColor, useTheme } from '@ui/theme';
+import { IconGripVertical } from '@ui/icon';
+import { useTheme } from '@ui/theme';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
@@ -10,52 +9,28 @@ import { type ReactNode } from 'react';
 import styles from './MenuItemIconWithGripSwap.module.scss';
 
 export type MenuItemIconWithGripSwapProps = {
-  LeftComponent?: ReactNode;
-  LeftIcon: IconComponent | null | undefined;
-  iconThemeColor?: ThemeColor | null;
+  leadingContent?: ReactNode;
   withIconContainer?: boolean;
+  withIconContainerBackground?: boolean;
   gripIconColor: string;
 };
 
 export const MenuItemIconWithGripSwap = ({
-  LeftComponent,
-  LeftIcon,
-  iconThemeColor,
+  leadingContent,
   withIconContainer = false,
+  withIconContainerBackground = true,
   gripIconColor,
 }: MenuItemIconWithGripSwapProps) => {
   const theme = useTheme();
 
-  if (!isDefined(LeftIcon) && !isDefined(LeftComponent)) {
+  if (!isDefined(leadingContent)) {
     return null;
   }
 
   const iconContent = (
     <div className={styles.iconSwapContainer}>
       <div className={clsx(styles.defaultIcon, 'grip-swap-default-icon')}>
-        {isDefined(LeftComponent)
-          ? LeftComponent
-          : isDefined(LeftIcon) &&
-            (isDefined(iconThemeColor) ? (
-              <TintedIconTile
-                icon={
-                  <LeftIcon
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                }
-                color={iconThemeColor}
-                style={{
-                  width: theme.icon.size.md,
-                  height: theme.icon.size.md,
-                }}
-              />
-            ) : (
-              <LeftIcon
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            ))}
+        {leadingContent}
       </div>
       <div className={clsx(styles.hoverIcon, 'grip-swap-hover-icon')}>
         <IconGripVertical
@@ -67,8 +42,12 @@ export const MenuItemIconWithGripSwap = ({
     </div>
   );
 
-  if (withIconContainer && !isDefined(iconThemeColor)) {
-    return <MenuItemIconBoxContainer>{iconContent}</MenuItemIconBoxContainer>;
+  if (withIconContainer) {
+    return (
+      <MenuItemIconBoxContainer hasBackground={withIconContainerBackground}>
+        {iconContent}
+      </MenuItemIconBoxContainer>
+    );
   }
 
   return iconContent;

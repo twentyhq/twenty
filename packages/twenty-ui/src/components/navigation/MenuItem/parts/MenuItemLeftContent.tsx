@@ -15,6 +15,7 @@ import { type MenuItemDraggableGripMode } from '@ui/components/navigation/MenuIt
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { IconGripVertical, type IconComponent } from '@ui/icon';
 import { type ThemeColor, themeCssVariables, useTheme } from '@ui/theme';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './MenuItemLeftContent.module.scss';
 
@@ -53,6 +54,15 @@ export const MenuItemLeftContent = ({
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.light;
 
+  const leadingContent = isDefined(LeftComponent) ? (
+    LeftComponent
+  ) : isDefined(LeftIcon) ? (
+    <MenuItemIcon Icon={LeftIcon} iconThemeColor={iconThemeColor} />
+  ) : undefined;
+
+  const withLeadingContentContainer =
+    withIconContainer && !isDefined(iconThemeColor);
+
   return (
     <StyledMenuItemLeftContent className={className}>
       {gripMode === 'always' &&
@@ -75,15 +85,23 @@ export const MenuItemLeftContent = ({
             />
           </StyledDraggableItem>
         ))}
-      {gripMode === 'onHover' ? (
+      {gripMode === 'always' &&
+        (withLeadingContentContainer && isDefined(leadingContent) ? (
+          <MenuItemIconBoxContainer hasBackground={withIconContainerBackground}>
+            {leadingContent}
+          </MenuItemIconBoxContainer>
+        ) : (
+          leadingContent
+        ))}
+      {gripMode === 'onHover' && (
         <MenuItemIconWithGripSwap
-          LeftComponent={LeftComponent}
-          LeftIcon={LeftIcon}
-          iconThemeColor={iconThemeColor}
-          withIconContainer={withIconContainer}
+          leadingContent={leadingContent}
+          withIconContainer={withLeadingContentContainer}
+          withIconContainerBackground={withIconContainerBackground}
           gripIconColor={gripIconColor}
         />
-      ) : (
+      )}
+      {gripMode === 'never' && (
         <>
           <MenuItemIcon
             Icon={LeftIcon}

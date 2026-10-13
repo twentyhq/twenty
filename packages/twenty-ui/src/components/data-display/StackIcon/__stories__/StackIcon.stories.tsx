@@ -35,7 +35,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const icon = canvasElement.querySelector('svg')!;
-    const root = icon.parentElement!;
+    const root = icon.parentElement!.parentElement!;
 
     await expect(canvas.getByText('Companies')).toBeVisible();
     await expect(root.getBoundingClientRect().width).toBe(16);
