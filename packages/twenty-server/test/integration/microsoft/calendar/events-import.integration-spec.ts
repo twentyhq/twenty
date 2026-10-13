@@ -9,11 +9,13 @@ import { microsoftCalendarEvent } from 'test/integration/microsoft/mocks/microso
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
+import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { queryCalendarChannel } from 'test/integration/utils/query-messaging.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 
 const HANDLE = 'microsoft-calendar-events-import@apple.dev';
+const OTHER_HANDLE = 'microsoft-calendar-events-import-other@apple.dev';
 
 describe('Microsoft calendar events import (integration)', () => {
   const microsoft = setupMicrosoftMock({ handle: HANDLE });
@@ -75,4 +77,53 @@ describe('Microsoft calendar events import (integration)', () => {
       newEventTitle,
     ]);
   }, 60000);
+
+  it('stores a meeting synced by two mailboxes once, matched on its iCalUid', async () => {
+    const iCalUId = `meeting-${randomUUID()}`;
+    const eventId = `microsoft-calendar-event-${randomUUID()}`;
+    const otherEventId = `microsoft-calendar-event-${randomUUID()}`;
+
+    microsoft.serveCalendarEvents(
+      [microsoftCalendarEvent({ id: eventId, iCalUId })],
+      { deltaToken: `mock-calendar-delta-token-${randomUUID()}` },
+    );
+
+    await runCalendarChannelListFetch(channel.calendarChannelId);
+    await runCalendarChannelEventsImport(channel.calendarChannelId);
+
+    microsoft.actAsAccount(OTHER_HANDLE);
+
+    const otherChannel = await connectMessagingAccount({
+      provider: ConnectedAccountProvider.MICROSOFT,
+      handle: OTHER_HANDLE,
+    });
+
+    try {
+      microsoft.serveCalendarEvents(
+        [microsoftCalendarEvent({ id: otherEventId, iCalUId })],
+        { deltaToken: `mock-calendar-delta-token-${randomUUID()}` },
+      );
+
+      await runCalendarChannelListFetch(otherChannel.calendarChannelId);
+      await runCalendarChannelEventsImport(otherChannel.calendarChannelId);
+
+      const associations = await findRecordNodesByFilter<{
+        calendarEventId: string;
+      }>(
+        'calendarChannelEventAssociation',
+        'calendarChannelEventAssociations',
+        'calendarEventId',
+        { eventExternalId: { in: [eventId, otherEventId] } },
+      );
+
+      expect(associations).toHaveLength(2);
+      expect(
+        new Set(associations.map(({ calendarEventId }) => calendarEventId))
+          .size,
+      ).toBe(1);
+    } finally {
+      microsoft.actAsAccount(HANDLE);
+      await otherChannel.cleanup().catch(() => undefined);
+    }
+  }, 120000);
 });

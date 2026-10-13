@@ -16,7 +16,6 @@ export type ComparableCalendarEvent = Pick<
   | 'isCanceled'
   | 'conferenceSolution'
   | 'conferenceLink'
-  | 'externalUpdatedAt'
 >;
 
 const TEXT_FIELD_NAMES = [

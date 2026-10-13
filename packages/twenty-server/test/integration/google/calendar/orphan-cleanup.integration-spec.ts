@@ -7,6 +7,7 @@ import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findCalendarEventAssociationChannelIds } from 'test/integration/utils/find-calendar-event-association-channel-ids.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
+import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 
@@ -19,6 +20,38 @@ const runCalendarSync = async (calendarChannelId: string): Promise<void> => {
   await runCalendarChannelListFetch(calendarChannelId);
   await runCalendarChannelEventsImport(calendarChannelId);
 };
+
+const findCalendarEventIdsByExternalId = async (
+  eventExternalId: string,
+): Promise<string[]> => {
+  const associations = await findRecordNodesByFilter<{
+    calendarEventId: string;
+  }>(
+    'calendarChannelEventAssociation',
+    'calendarChannelEventAssociations',
+    'calendarEventId',
+    { eventExternalId: { eq: eventExternalId } },
+  );
+
+  return [
+    ...new Set(associations.map(({ calendarEventId }) => calendarEventId)),
+  ];
+};
+
+const findParticipantHandles = async (
+  calendarEventId: string,
+): Promise<string[]> => {
+  const participants = await findRecordNodesByFilter<{ handle: string }>(
+    'calendarEventParticipant',
+    'calendarEventParticipants',
+    'handle',
+    { calendarEventId: { eq: calendarEventId } },
+  );
+
+  return participants.map(({ handle }) => handle).sort();
+};
+
+const attendee = (email: string) => ({ email, responseStatus: 'accepted' });
 
 describe('Google calendar orphan cleanup (integration)', () => {
   const google = setupGoogleMock({ handle: HANDLE });
@@ -142,6 +175,9 @@ describe('Google calendar orphan cleanup (integration)', () => {
     ).toEqual(
       [channel.calendarChannelId, otherChannel.calendarChannelId].sort(),
     );
+    expect(
+      await findCalendarEventIdsByExternalId(sharedExternalId),
+    ).toHaveLength(1);
 
     google.serveCalendarEvents(
       [
@@ -185,4 +221,79 @@ describe('Google calendar orphan cleanup (integration)', () => {
       await findImportedCalendarEventTitles([existingTitle, addedTitle]),
     ).toEqual([existingTitle, addedTitle].sort());
   }, 60000);
+
+  it('keeps the attendees that another channel copy does not list', async () => {
+    const sharedExternalId = `google-calendar-event-${randomUUID()}`;
+    const guestHandle = `guest-${randomUUID()}@example.com`;
+
+    google.serveCalendarEvents(
+      [
+        googleCalendarEvent({
+          id: sharedExternalId,
+          attendees: [attendee(HANDLE), attendee(guestHandle)],
+        }),
+      ],
+      { nextSyncToken: syncToken() },
+    );
+
+    await runCalendarSync(channel.calendarChannelId);
+
+    google.serveCalendarEvents(
+      [
+        googleCalendarEvent({
+          id: sharedExternalId,
+          attendees: [attendee(OTHER_HANDLE)],
+        }),
+      ],
+      { nextSyncToken: syncToken() },
+    );
+
+    await runCalendarSync(otherChannel.calendarChannelId);
+
+    const [calendarEventId] =
+      await findCalendarEventIdsByExternalId(sharedExternalId);
+
+    expect(await findParticipantHandles(calendarEventId)).toEqual(
+      [HANDLE, OTHER_HANDLE, guestHandle].sort(),
+    );
+  }, 120000);
+
+  it('keeps occurrences of the same series apart', async () => {
+    const seriesId = `google-calendar-series-${randomUUID()}`;
+    const firstOccurrenceId = `${seriesId}_20261012T090000Z`;
+    const secondOccurrenceId = `${seriesId}_20261019T090000Z`;
+
+    google.serveCalendarEvents(
+      [
+        googleCalendarEvent({
+          id: firstOccurrenceId,
+          iCalUID: `${seriesId}@google.com`,
+          recurringEventId: seriesId,
+        }),
+      ],
+      { nextSyncToken: syncToken() },
+    );
+
+    await runCalendarSync(channel.calendarChannelId);
+
+    google.serveCalendarEvents(
+      [
+        googleCalendarEvent({
+          id: secondOccurrenceId,
+          iCalUID: `${seriesId}@google.com`,
+          recurringEventId: seriesId,
+        }),
+      ],
+      { nextSyncToken: syncToken() },
+    );
+
+    await runCalendarSync(otherChannel.calendarChannelId);
+
+    const [firstCalendarEventId] =
+      await findCalendarEventIdsByExternalId(firstOccurrenceId);
+    const [secondCalendarEventId] =
+      await findCalendarEventIdsByExternalId(secondOccurrenceId);
+
+    expect(firstCalendarEventId).not.toBe(secondCalendarEventId);
+  }, 120000);
 });

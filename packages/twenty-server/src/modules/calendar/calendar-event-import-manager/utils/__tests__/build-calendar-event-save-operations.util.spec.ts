@@ -40,7 +40,6 @@ const buildExistingCalendarEvent = (
   overrides: Partial<ComparableCalendarEvent> = {},
 ): ComparableCalendarEvent => ({
   id: CALENDAR_EVENT_ID,
-  externalUpdatedAt: null,
   title: 'Weekly sync',
   iCalUid: 'ical-uid',
   description: 'Agenda',
@@ -290,51 +289,6 @@ describe('buildCalendarEventSaveOperations', () => {
         handle: 'john@example.com',
         calendarEventId: CALENDAR_EVENT_ID,
       }),
-    ]);
-  });
-
-  it('does not overwrite a stored event with an older copy', () => {
-    const plan = buildCalendarEventSaveOperations({
-      fetchedCalendarEvents: [
-        buildFetchedCalendarEvent({
-          title: 'Renamed in an older copy',
-          externalUpdatedAt: '2026-09-15T08:00:00.000Z',
-        }),
-      ],
-      existingAssociations: [buildExistingAssociation()],
-      existingCalendarEvents: [
-        buildExistingCalendarEvent({
-          externalUpdatedAt: '2026-09-20T08:00:00.000Z',
-        }),
-      ],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
-    });
-
-    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
-  });
-
-  it('updates a stored event from a newer copy', () => {
-    const plan = buildCalendarEventSaveOperations({
-      fetchedCalendarEvents: [
-        buildFetchedCalendarEvent({
-          title: 'Renamed',
-          externalUpdatedAt: '2026-09-25T08:00:00.000Z',
-        }),
-      ],
-      existingAssociations: [buildExistingAssociation()],
-      existingCalendarEvents: [
-        buildExistingCalendarEvent({
-          externalUpdatedAt: '2026-09-20T08:00:00.000Z',
-        }),
-      ],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
-    });
-
-    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([
-      {
-        criteria: CALENDAR_EVENT_ID,
-        partialEntity: expect.objectContaining({ title: 'Renamed' }),
-      },
     ]);
   });
 });

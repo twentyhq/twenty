@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -7,6 +8,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -35,10 +37,11 @@ export class AddCalendarEventSharingIndexesCommand extends ProvisionedWorkspaceC
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace({
-    workspaceId,
-    options,
-  }: RunOnWorkspaceArgs): Promise<void> {
+  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.up(args);
+  }
+
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
     const { flatIndexMaps } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['flatIndexMaps'],
@@ -75,17 +78,80 @@ export class AddCalendarEventSharingIndexesCommand extends ProvisionedWorkspaceC
       return;
     }
 
+    await this.runIndexMigration({
+      workspaceId,
+      applicationUniversalIdentifier:
+        twentyStandardFlatApplication.universalIdentifier,
+      flatEntityToCreate: indexesToCreate,
+      flatEntityToDelete: [],
+    });
+
+    this.logger.log(
+      `Created ${indexesToCreate.length} calendar event sharing index(es) for workspace ${workspaceId}`,
+    );
+  }
+
+  async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    const { flatIndexMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatIndexMaps'],
+    );
+
+    const indexesToDelete = CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS.map(
+      (universalIdentifier) =>
+        findFlatEntityByUniversalIdentifier<FlatIndexMetadata>({
+          flatEntityMaps: flatIndexMaps,
+          universalIdentifier,
+        }),
+    ).filter(isDefined);
+
+    if (indexesToDelete.length === 0) {
+      return;
+    }
+
+    if (options.dryRun) {
+      this.logger.log(
+        `[DRY RUN] Would drop ${indexesToDelete.length} calendar event sharing index(es) for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    await this.runIndexMigration({
+      workspaceId,
+      applicationUniversalIdentifier:
+        twentyStandardFlatApplication.universalIdentifier,
+      flatEntityToCreate: [],
+      flatEntityToDelete: indexesToDelete,
+    });
+  }
+
+  private async runIndexMigration({
+    workspaceId,
+    applicationUniversalIdentifier,
+    flatEntityToCreate,
+    flatEntityToDelete,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    flatEntityToCreate: FlatIndexMetadata[];
+    flatEntityToDelete: FlatIndexMetadata[];
+  }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
+          applicationUniversalIdentifier,
           workspaceId,
           allFlatEntityOperationByMetadataName: {
             index: {
-              flatEntityToCreate: indexesToCreate,
-              flatEntityToDelete: [],
+              flatEntityToCreate,
+              flatEntityToDelete,
               flatEntityToUpdate: [],
             },
           },
@@ -95,9 +161,5 @@ export class AddCalendarEventSharingIndexesCommand extends ProvisionedWorkspaceC
     if (result.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(result);
     }
-
-    this.logger.log(
-      `Created ${indexesToCreate.length} calendar event sharing index(es) for workspace ${workspaceId}`,
-    );
   }
 }

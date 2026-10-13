@@ -7,7 +7,6 @@ import {
   type ComparableCalendarEvent,
   hasCalendarEventChanged,
 } from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
-import { isFetchedCalendarEventOlderThanStored } from 'src/modules/calendar/calendar-event-import-manager/utils/is-fetched-calendar-event-older-than-stored.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 import { type FetchedParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/fetched-participant-with-calendar-event-id.type';
@@ -88,11 +87,7 @@ export const buildCalendarEventSaveOperations = ({
 
       if (
         !isDefined(existingCalendarEvent) ||
-        (hasCalendarEventChanged({ existingCalendarEvent, calendarEvent }) &&
-          !isFetchedCalendarEventOlderThanStored({
-            fetchedExternalUpdatedAt: calendarEvent.externalUpdatedAt,
-            storedExternalUpdatedAt: existingCalendarEvent.externalUpdatedAt,
-          }))
+        hasCalendarEventChanged({ existingCalendarEvent, calendarEvent })
       ) {
         saveOperations.calendarEventsToUpdate.push({
           criteria: storedCalendarEventId,
