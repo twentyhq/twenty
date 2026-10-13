@@ -110,9 +110,15 @@ published. CI runs the same target for CLI and dependency changes.
 
 ## Releases
 
-The CLI version follows the Twenty server, SDK and UI version. It is published
-separately through the `cli/` tag family: `cli/v2.46.0` publishes only
-`twenty@2.46.0`. The tag version must match `packages/twenty-cli/package.json`.
+Publish the CLI when its changes warrant a release. A server release does not
+require a CLI release; skip versions when the CLI has no changes worth shipping.
+When publishing, aim to align the CLI version with the corresponding Twenty
+server, SDK and UI version.
+
+Publishing is independent through the `cli/` tag family: `cli/v2.46.0` publishes
+only `twenty@2.46.0`. The tag version must match
+`packages/twenty-cli/package.json`. Bumping the package version alone does not
+publish the CLI.
 
 `app init` pins `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` to the
 `twenty-sdk` version of the commit the CLI was built from. `main` moves
