@@ -1,6 +1,5 @@
-import { isPositiveInteger } from '@sniptt/guards';
-
 import { type createToastStore } from '../stores/createToastStore';
+import { assertValidToastLimit } from './assertValidToastLimit';
 import { dismissToasts } from './dismissToasts';
 import { isToastVisible } from './isToastVisible';
 
@@ -11,9 +10,7 @@ export const updateToastLimit = ({
   store: ReturnType<typeof createToastStore>;
   limit: number;
 }) => {
-  if (!isPositiveInteger(limit)) {
-    throw new Error('Toast limit must be a positive integer.');
-  }
+  assertValidToastLimit(limit);
 
   if (store.state.limit === limit) {
     return;
