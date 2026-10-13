@@ -1,9 +1,7 @@
 import { useContext } from 'react';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { RecordFieldDisplayOverridesContext } from '@/object-record/record-field/ui/contexts/RecordFieldDisplayOverridesContext';
-import { getActiveRecordFieldDisplayOverrides } from '@/object-record/record-field/ui/utils/getActiveRecordFieldDisplayOverrides';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getMatchingRecordFieldDisplayOverrides } from '@/object-record/record-field/ui/utils/getMatchingRecordFieldDisplayOverrides';
 
 export const useRecordFieldDisplayOverride = ({
   objectNameSingular,
@@ -16,12 +14,9 @@ export const useRecordFieldDisplayOverride = ({
     RecordFieldDisplayOverridesContext,
   );
 
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  return getActiveRecordFieldDisplayOverrides({
+  return getMatchingRecordFieldDisplayOverrides({
     recordFieldDisplayOverrides,
     objectNameSingular,
     fieldNames: [fieldName],
-    currentWorkspace,
   }).at(0);
 };

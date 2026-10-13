@@ -1,5 +1,4 @@
 import { type RecordGqlFields } from 'twenty-shared/types';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
@@ -14,7 +13,6 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
 import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
 
@@ -43,8 +41,6 @@ export const useRelevantRecordsGqlFields = ({
   const recordFieldDisplayOverrides = useContext(
     RecordFieldDisplayOverridesContext,
   );
-
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const visibleRecordFieldMetadataItems = visibleRecordFields
     .map(
@@ -87,7 +83,6 @@ export const useRelevantRecordsGqlFields = ({
       recordFieldDisplayOverrides,
       objectNameSingular: objectMetadataItem.nameSingular,
       fieldNames: fieldMetadataItemsToUse.map((field) => field.name),
-      currentWorkspace,
     });
 
   const labelIdentifierFieldMetadataItem =
