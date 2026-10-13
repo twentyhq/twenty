@@ -527,6 +527,66 @@ describe('createWorkerScrollStore', () => {
     ]);
   });
 
+  it('should send a restore of the last read offset while a descendant reveal is pending', () => {
+    const { scrollStore, scrollContainer, scrolledItem } =
+      createScrollStoreEnvironment();
+
+    const savedScrollTop = scrollStore.readScrollOffset({
+      element: scrollContainer,
+      axis: 'top',
+    });
+    scrollStore.requestScroll({
+      element: scrolledItem,
+      request: {
+        method: 'scrollIntoView',
+        block: 'nearest',
+        inline: 'nearest',
+      },
+    });
+    scrollStore.requestScroll({
+      element: scrollContainer,
+      request: { method: 'scrollTo', top: savedScrollTop },
+    });
+
+    expect(readSentScrollQueues(scrollContainer)).toEqual([
+      [
+        {
+          sequence: 2,
+          request: { method: 'scrollTo', top: savedScrollTop },
+        },
+      ],
+    ]);
+  });
+
+  it('should elide echoed writes again once the descendant reveal is acknowledged', () => {
+    const { scrollStore, scrollContainer, scrolledItem } =
+      createScrollStoreEnvironment();
+
+    scrollStore.requestScroll({
+      element: scrolledItem,
+      request: {
+        method: 'scrollIntoView',
+        block: 'nearest',
+        inline: 'nearest',
+      },
+    });
+    readLatestScrollUpdateHandler(scrolledItem)({
+      scrollCommandSequence: 1,
+      scrollPositions: [],
+    });
+
+    const readScrollTop = scrollStore.readScrollOffset({
+      element: scrollContainer,
+      axis: 'top',
+    });
+    scrollStore.requestScroll({
+      element: scrollContainer,
+      request: { method: 'scrollTo', top: readScrollTop },
+    });
+
+    expect(readSentScrollQueues(scrollContainer)).toEqual([]);
+  });
+
   it('should never elide scrollIntoView requests', () => {
     const { scrollStore, scrollContainer } = createScrollStoreEnvironment();
 
