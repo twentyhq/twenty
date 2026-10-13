@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectFieldDisplay';
 import { OverflowingList } from 'twenty-ui/components/layout';
@@ -12,32 +13,35 @@ export const MultiSelectFieldDisplay = () => {
 
   const { isFocused } = useFieldFocus();
 
-  const selectedOptions = fieldValue
-    ? fieldDefinition.metadata.options?.filter((option) =>
-        fieldValue.includes(option.value),
-      )
-    : [];
+  const options = fieldDefinition.metadata.options;
+  const overflowLabel = t`Show hidden items`;
 
-  if (!isDefined(selectedOptions)) return null;
+  return useMemo(() => {
+    const selectedOptions = isDefined(fieldValue)
+      ? options?.filter((option) => fieldValue.includes(option.value))
+      : [];
 
-  return (
-    <OverflowingList
-      triggerProps={{
-        onClick: (event) => event.stopPropagation(),
-        onKeyDown: (event) => event.stopPropagation(),
-      }}
-      popupProps={{
-        onClick: (event) => event.stopPropagation(),
-        onKeyDown: (event) => event.stopPropagation(),
-      }}
-      overflowLabel={t`Show hidden items`}
-      showOverflowCount={isFocused}
-    >
-      {selectedOptions.map((selectedOption, index) => (
-        <Tag key={index} color={selectedOption.color}>
-          {selectedOption.label}
-        </Tag>
-      ))}
-    </OverflowingList>
-  );
+    if (!isDefined(selectedOptions)) return null;
+
+    return (
+      <OverflowingList
+        triggerProps={{
+          onClick: (event) => event.stopPropagation(),
+          onKeyDown: (event) => event.stopPropagation(),
+        }}
+        popupProps={{
+          onClick: (event) => event.stopPropagation(),
+          onKeyDown: (event) => event.stopPropagation(),
+        }}
+        overflowLabel={overflowLabel}
+        showOverflowCount={isFocused}
+      >
+        {selectedOptions.map((selectedOption, index) => (
+          <Tag key={index} color={selectedOption.color}>
+            {selectedOption.label}
+          </Tag>
+        ))}
+      </OverflowingList>
+    );
+  }, [fieldValue, options, isFocused, overflowLabel]);
 };
