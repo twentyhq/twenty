@@ -173,7 +173,7 @@ export const SettingsObjectSearchSection = ({
 
     if (result.status === 'successful') {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: value
           ? t`Field added to search`
           : t`Field removed from search`,

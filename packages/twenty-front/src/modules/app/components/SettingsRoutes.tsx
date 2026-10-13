@@ -531,14 +531,6 @@ const SettingsObjectNewIndex = lazy(() =>
   ),
 );
 
-const SettingsObjectNewValidationRule = lazy(() =>
-  import('~/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule').then(
-    (module) => ({
-      default: module.SettingsObjectNewValidationRule,
-    }),
-  ),
-);
-
 const SettingsObjectValidationRuleEdit = lazy(() =>
   import('~/pages/settings/data-model/validation-rules/SettingsObjectValidationRuleEdit').then(
     (module) => ({
@@ -679,12 +671,6 @@ const SettingsAdminWorkspaceChatThread = lazy(() =>
       default: module.SettingsAdminWorkspaceChatThread,
     }),
   ),
-);
-
-const SettingsAdminChats = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminChats').then((module) => ({
-    default: module.SettingsAdminChats,
-  })),
 );
 
 const SettingsCommunity = lazy(() =>
@@ -973,11 +959,6 @@ const createSettingsRouteElements = ({
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
       <Route
-        path={SettingsPath.ObjectNewValidationRule}
-        element={<SettingsObjectNewValidationRule />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
-      />
-      <Route
         path={SettingsPath.ObjectValidationRuleEdit}
         element={<SettingsObjectValidationRuleEdit />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
@@ -1232,10 +1213,6 @@ const createSettingsRouteElements = ({
         <Route
           path={SettingsPath.AdminPanelWorkspaceChatThread}
           element={<SettingsAdminWorkspaceChatThread />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelChats}
-          element={<SettingsAdminChats />}
         />
       </>
     )}

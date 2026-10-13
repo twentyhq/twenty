@@ -178,7 +178,7 @@ export const SettingsObjectNewFieldConfigure = () => {
       }
       default: {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Please select at least one destination object for this relation.`,
         });
         return setIsSaving(false);

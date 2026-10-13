@@ -589,10 +589,11 @@ export const DisabledLinkOption: Story = {
     await expect(link).toHaveAttribute('tabindex', '-1');
     await expect(onItemRef).toHaveBeenCalledWith(link);
     await waitFor(() => expect(currentWorkspace).toHaveFocus());
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
     await userEvent.click(link);
     await expect(onSelectDisabledOption).not.toHaveBeenCalled();
     await expect(document.URL).toBe(initialLocation);
-    await expect(body.getByRole('dialog')).toBeVisible();
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),

@@ -1,6 +1,6 @@
 {
   "name": "twenty",
-  "version": "0.4.0",
+  "version": "2.47.0",
   "description": "The Twenty command line.",
   "homepage": "https://twenty.com",
   "repository": {
@@ -21,10 +21,7 @@
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build",
-    "prepublish": "node scripts/check-publish.mjs && node scripts/generate-template-lock.mjs"
-  },
-  "engines": {
-    "node": "^24.5.0"
+    "prepublish": "node scripts/prepublish.mjs"
   },
   "devDependencies": {
     "@sniptt/guards": "^0.2.0",
@@ -34,6 +31,7 @@
     "cjs-module-lexer": "^2.2.0",
     "commander": "^14.0.3",
     "lodash.startcase": "^4.4.0",
+    "npm-pick-manifest": "^11.0.1",
     "semver": "7.6.3",
     "twenty-client-sdk": "workspace:*",
     "twenty-shared": "workspace:*",

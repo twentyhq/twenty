@@ -25,3 +25,4 @@ export type { Nullable } from './types/Nullable';
 export { getSafeUrl } from './utils/getSafeUrl';
 export { isDefined } from './utils/isDefined';
 export { normalizeSearchText } from './utils/normalizeSearchText';
+export { preventDismissingClickActivation } from './utils/preventDismissingClickActivation';

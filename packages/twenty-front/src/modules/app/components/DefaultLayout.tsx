@@ -1,14 +1,13 @@
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
+import { DefaultLayoutNavigationDrawer } from '@/app/components/DefaultLayoutNavigationDrawer';
 import { FileUploadProvider } from '@/file-upload/components/FileUploadProvider';
 import { InformationBannerIsImpersonating } from '@/information-banner/components/impersonate/InformationBannerIsImpersonating';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { LayoutCustomizationBar } from '@/layout-customization/components/LayoutCustomizationBar';
-import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { PageDragDropProvider } from '@/navigation-menu-item/display/dnd/providers/PageDragDropProvider';
-import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
@@ -51,14 +50,6 @@ const StyledPageContainer = styled.div`
   }
 `;
 
-const StyledNavigationDrawerWrapper = styled.div`
-  flex-shrink: 0;
-
-  @media print {
-    display: none;
-  }
-`;
-
 const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
@@ -73,7 +64,6 @@ const StyledMainContainer = styled.div`
 
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
-  const useShowFullScreen = useShowFullscreen();
 
   return (
     <>
@@ -85,11 +75,7 @@ export const DefaultLayout = () => {
             <StyledPageContainer>
               <PageDragDropProvider>
                 <KeyboardShortcutMenu />
-                {useShowFullScreen ? null : (
-                  <StyledNavigationDrawerWrapper>
-                    <AppNavigationDrawer />
-                  </StyledNavigationDrawerWrapper>
-                )}
+                <DefaultLayoutNavigationDrawer />
                 <StyledMainContainer>
                   <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
                     <Outlet />

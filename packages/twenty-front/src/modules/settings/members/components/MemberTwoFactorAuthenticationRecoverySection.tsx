@@ -103,7 +103,7 @@ export const MemberTwoFactorAuthenticationRecoverySection = ({
       clearGeneratedRecoveryCode();
       await refetch();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Recovery code revoked.`,
       });
     } catch (error) {

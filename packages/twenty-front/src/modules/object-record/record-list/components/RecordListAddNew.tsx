@@ -92,7 +92,7 @@ export const RecordListAddNew = () => {
       });
     } catch (error) {
       logError(error);
-      enqueueToast({ variant: 'error', children: t`Failed to create record` });
+      enqueueToast({ status: 'error', children: t`Failed to create record` });
     }
   };
 

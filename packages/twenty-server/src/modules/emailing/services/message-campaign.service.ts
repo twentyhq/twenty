@@ -39,6 +39,7 @@ import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/
 import { renderCampaignEmail } from 'src/modules/emailing/utils/render-campaign-email.util';
 import { sendableCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-campaign.zod-schema';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 type SendableCampaign = z.infer<typeof sendableCampaignSchema>;
 
@@ -337,7 +338,7 @@ export class MessageCampaignService {
   }): Promise<SendableCampaign> {
     const campaignRepository = this.workspaceOrmManager.getRepository(
       MessageCampaignWorkspaceEntity,
-      { unionOf: [roleId] },
+      buildEmailingRolePermissionConfig(roleId),
     );
 
     const campaign = await campaignRepository.findOne({

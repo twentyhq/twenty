@@ -26,7 +26,7 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
 
       if (isNonEmptyString(notAddedLabels)) {
         enqueueToast({
-          variant: 'warning',
+          status: 'warning',
           children: t`${notAddedLabels} could not be added to this chat because they can't reply in it.`,
         });
       }

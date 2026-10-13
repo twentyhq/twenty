@@ -90,7 +90,7 @@ export const useAgentChat = () => {
 
     if (aiModels.length === 0) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`No AI provider is configured on this instance.`,
       });
 
@@ -141,8 +141,8 @@ export const useAgentChat = () => {
       ],
       metadata: {
         createdAt: optimisticMessageCreatedAt,
-        senderUserWorkspaceId: store.get(currentWorkspaceMemberState.atom)
-          ?.userWorkspaceId,
+        senderWorkspaceMemberId: store.get(currentWorkspaceMemberState.atom)
+          ?.id,
       },
       status: 'sent',
     };
