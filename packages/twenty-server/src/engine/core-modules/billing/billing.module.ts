@@ -30,7 +30,7 @@ import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/s
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
-import { BillingCreditAllowanceProvider } from 'src/engine/core-modules/billing/services/billing-credit-allowance-provider.service';
+import { BillingSubscriptionPlanProvider } from 'src/engine/core-modules/billing/services/billing-subscription-plan-provider.service';
 import { BillingUsageLimitEntitlementProvider } from 'src/engine/core-modules/billing/services/billing-usage-limit-entitlement-provider.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -93,7 +93,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
     BillingUsageService,
-    BillingCreditAllowanceProvider,
+    BillingSubscriptionPlanProvider,
     BillingUsageLimitEntitlementProvider,
     BillingPriceService,
     BillingCreditRolloverService,
