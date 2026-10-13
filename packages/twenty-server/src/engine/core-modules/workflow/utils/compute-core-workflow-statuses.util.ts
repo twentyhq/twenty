@@ -1,7 +1,5 @@
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 
-// Shared with WorkflowStatusesUpdateJob so the core page and the workspace
-// statuses field cannot drift
 export const computeCoreWorkflowStatuses = ({
   hasDraftVersion,
   hasActiveVersion,

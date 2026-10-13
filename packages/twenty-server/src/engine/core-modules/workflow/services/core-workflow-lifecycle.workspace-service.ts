@@ -41,7 +41,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -52,8 +51,6 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
-import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
-import { type WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
@@ -106,7 +103,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
@@ -416,11 +412,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
         workspaceId,
         resolved: previousResolved,
       });
-      this.emitStatusUpdateEvent({
-        workspaceId,
-        resolved: previousResolved,
-        newStatus: WorkflowVersionStatus.ARCHIVED,
-      });
     }
 
     await this.writeCronTriggerCacheEntryAfterCommit({ resolved });
@@ -433,12 +424,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
     );
-
-    this.emitStatusUpdateEvent({
-      workspaceId,
-      resolved,
-      newStatus: WorkflowVersionStatus.ACTIVE,
-    });
 
     return true;
   }
@@ -510,12 +495,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
     );
-
-    this.emitStatusUpdateEvent({
-      workspaceId,
-      resolved,
-      newStatus: WorkflowVersionStatus.DEACTIVATED,
-    });
 
     return true;
   }
@@ -1119,30 +1098,5 @@ export class CoreWorkflowLifecycleWorkspaceService {
     status: CoreWorkflowVersionStatus,
   ): WorkflowVersionStatus {
     return WorkflowVersionStatus[status];
-  }
-
-  private emitStatusUpdateEvent({
-    workspaceId,
-    resolved,
-    newStatus,
-  }: {
-    workspaceId: string;
-    resolved: ResolvedCoreVersion;
-    newStatus: WorkflowVersionStatus;
-  }): void {
-    this.workspaceEventEmitter.emitCustomBatchEvent<WorkflowVersionStatusUpdate>(
-      WORKFLOW_VERSION_STATUS_UPDATED,
-      [
-        {
-          workflowId: resolved.workspaceWorkflowId,
-          workflowVersionId: resolved.workspaceWorkflowVersionId,
-          previousStatus: this.toWorkspaceVersionStatus(
-            resolved.coreWorkflowVersion.status,
-          ),
-          newStatus,
-        },
-      ],
-      workspaceId,
-    );
   }
 }
