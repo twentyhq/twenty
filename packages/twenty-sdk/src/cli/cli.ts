@@ -45,7 +45,6 @@ console.warn(
     [
       'Warning: The CLI bundled with twenty-sdk is deprecated. Use the standalone twenty package instead.',
       'Install: npm install -g twenty',
-      'Migration: https://github.com/twentyhq/twenty/blob/main/packages/twenty-sdk/README.md#migrate-from-the-sdk-cli',
     ].join('\n'),
   ),
 );

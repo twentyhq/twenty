@@ -37,7 +37,6 @@ describe.each(['cjs', 'mjs'])('SDK CLI %s bundle startup', (extension) => {
       'CLI bundled with twenty-sdk is deprecated',
     );
     expect(result.stderr).toContain('npm install -g twenty');
-    expect(result.stderr).toContain('README.md#migrate-from-the-sdk-cli');
     expect(result.stdout).not.toContain('Warning:');
   });
 
