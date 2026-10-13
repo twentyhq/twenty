@@ -16,7 +16,7 @@ export const StyledBoardCardHeaderContainer = styled.div<{
     `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} ${isCompact ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}`};
   transition: padding ease-in-out 160ms;
 
-  img { 
+  img {
     object-fit: cover;
   }
 `;
