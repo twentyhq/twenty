@@ -5,9 +5,7 @@ import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatTab } from '@/ai/components/AiChatTab';
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -32,15 +30,11 @@ const WorkspaceSetupChatStory = () => {
   }, [store]);
 
   return isReady ? (
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: AGENT_CHAT_INSTANCE_ID }}
-    >
-      <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
-        <Suspense fallback={null}>
-          <AiChatTab />
-        </Suspense>
-      </AiChatSurfaceContext.Provider>
-    </AgentChatComponentInstanceContext.Provider>
+    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
+      <Suspense fallback={null}>
+        <AiChatTab />
+      </Suspense>
+    </AiChatSurfaceContext.Provider>
   ) : null;
 };
 

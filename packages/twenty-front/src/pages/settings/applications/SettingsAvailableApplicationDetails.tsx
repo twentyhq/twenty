@@ -241,9 +241,8 @@ export const SettingsAvailableApplicationDetails = () => {
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (
             <InlineBanner
-              LeftIcon={IconEyeOff}
-              message={t`Application not listed on the marketplace. It was shared via a direct link`}
-            />
+              icon={<IconEyeOff aria-hidden="true" />}
+            >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
           )}
           {renderActiveTabContent()}
         </SettingsPageContainer>

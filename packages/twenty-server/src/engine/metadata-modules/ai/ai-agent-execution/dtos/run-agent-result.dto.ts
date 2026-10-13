@@ -7,6 +7,12 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 @ObjectType('RunAgentResult')
 export class RunAgentResultDTO implements RunAgentResult {
+  @Field(() => UUIDScalarType)
+  threadId: string;
+
+  @Field(() => String)
+  status: RunAgentResult['status'];
+
   @Field(() => GraphQLJSON, { nullable: true })
   result: object | null;
 
@@ -15,10 +21,4 @@ export class RunAgentResultDTO implements RunAgentResult {
 
   @Field()
   success: boolean;
-
-  @Field()
-  isWaiting: boolean;
-
-  @Field(() => UUIDScalarType, { nullable: true })
-  threadId: string | null;
 }

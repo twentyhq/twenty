@@ -1,7 +1,7 @@
 import { type MetadataTranslationRow } from '@/settings/translations/hooks/useMetadataTranslations';
 import { buildMetadataTranslationsTable } from '@/settings/translations/utils/buildMetadataTranslationsTable';
 import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
-import { type LocaleOption } from '~/localization/hooks/useLocaleOptions';
+import { type LocaleOption } from '@/localization/hooks/useLocaleOptions';
 
 const buildTranslation = ({
   property,

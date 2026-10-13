@@ -1,7 +1,8 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
-import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
+import { useNavigationDrawerTogglePresentation } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTogglePresentation';
+import { useToggleNavigationDrawer } from '@/ui/navigation/navigation-drawer/hooks/useToggleNavigationDrawer';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { useNavigationDrawerExpandButtonFocusHandOff } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerExpandButtonFocusHandOff';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -33,6 +34,8 @@ export const NavigationDrawerCollapseButton = ({
   const { label, Icon } = useNavigationDrawerTogglePresentation(
     direction === 'left',
   );
+  const expandButtonFocusHandOffRef =
+    useNavigationDrawerExpandButtonFocusHandOff();
 
   // The main navigation is a page on mobile, so there is no drawer to toggle.
   if (isMobile && !isSettingsDrawer) {
@@ -48,6 +51,7 @@ export const NavigationDrawerCollapseButton = ({
     >
       <StyledCollapseButton className={className}>
         <LightIconButton
+          ref={direction === 'right' ? expandButtonFocusHandOffRef : undefined}
           emphasis="standard"
           size="sm"
           onClick={toggleNavigationDrawer}

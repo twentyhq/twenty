@@ -32,7 +32,7 @@ export const InformationBannerReconnectAccountInsufficientPermissions = () => {
   return (
     <InformationBanner
       componentInstanceId={COMPONENT_INSTANCE_ID}
-      variant="secondary"
+      variant="soft"
       message={t`Sync lost with mailbox ${mailboxHandle}. Please reconnect for updates:`}
       buttonTitle={t`Reconnect`}
       buttonIcon={IconRefresh}

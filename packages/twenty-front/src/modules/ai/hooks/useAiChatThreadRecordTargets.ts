@@ -1,6 +1,9 @@
 import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
@@ -41,7 +44,7 @@ export const useAiChatThreadRecordTargets = ({
     ? objectMorphJunctionConfig
     : null;
 
-  const recordGqlFields = useMemo(
+  const recordGqlFields = useMemo<RecordGqlFields>(
     () => ({
       id: true,
       ...(isDefined(junctionConfig)

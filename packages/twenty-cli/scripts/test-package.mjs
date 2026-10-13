@@ -98,7 +98,7 @@ await test('the packed CLI works outside the monorepo', async (context) => {
     });
 
     await context.test(
-      'app init renders the template and its CLI overlay',
+      'app init renders the template and its CLI test harness',
       async () => {
         const result = JSON.parse(
           cli('app', 'init', 'smoke-app', '--json', '--no-input'),

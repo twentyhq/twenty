@@ -1,10 +1,10 @@
 import { basename, isAbsolute, relative, resolve } from 'node:path';
 
-import { TEMPLATE_PACKAGE_VERSION } from '@create-twenty-app/constants/template-package-version';
-import { TEMPLATE_FIRST_PARTY_PACKAGES } from '@create-twenty-app/constants/template-packages';
-import { convertToLabel } from '@create-twenty-app/utils/convert-to-label';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { APP_TEMPLATE_PACKAGE_VERSION } from '@/app/constants/app-template-package-version.constant';
+import { APP_TEMPLATE_FIRST_PARTY_PACKAGES } from '@/app/constants/app-template-packages.constant';
+import { convertToLabel } from '@/app/convert-to-label';
 import { createAppProject } from '@/app/create-app-project';
 import { formatAppInitSummary } from '@/app/format-app-init-summary';
 import { getAppInitNextSteps } from '@/app/get-app-init-next-steps';
@@ -85,7 +85,7 @@ export const runAppInitCommand: CommandRun = async ({
     }),
     remoteName,
   });
-  const packageNames = [...TEMPLATE_FIRST_PARTY_PACKAGES];
+  const packageNames = [...APP_TEMPLATE_FIRST_PARTY_PACKAGES];
 
   return {
     data: {
@@ -97,7 +97,7 @@ export const runAppInitCommand: CommandRun = async ({
       },
       packages: packageNames.map((name) => ({
         name,
-        version: TEMPLATE_PACKAGE_VERSION,
+        version: APP_TEMPLATE_PACKAGE_VERSION,
       })),
       nextSteps,
     },
@@ -105,7 +105,7 @@ export const runAppInitCommand: CommandRun = async ({
       appName,
       location,
       packageNames,
-      packageVersion: TEMPLATE_PACKAGE_VERSION,
+      packageVersion: APP_TEMPLATE_PACKAGE_VERSION,
       nextSteps,
     }),
   };

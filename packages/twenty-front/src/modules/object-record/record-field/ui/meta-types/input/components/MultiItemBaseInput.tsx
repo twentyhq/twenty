@@ -7,7 +7,7 @@ import { Key } from 'ts-key-enum';
 import { isNonEmptyString } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
-import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { combineRefs } from '~/utils/combineRefs';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
@@ -95,7 +95,7 @@ export const MultiItemBaseInput = ({
   ref,
 }: MultiItemBaseInputProps & { ref?: Ref<HTMLInputElement> }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const combinedRef = useCombinedRefs(ref, inputRef);
+  const combinedRef = combineRefs(ref, inputRef);
 
   useListenClickOutside({
     refs: [inputRef],

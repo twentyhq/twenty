@@ -33,11 +33,7 @@ vi.mock('@/app/get-app-worker-launch', () => ({
 }));
 vi.mock('@/app/get-app-template-directory', () => ({
   getAppTemplateDirectory: () =>
-    join(REPOSITORY_ROOT, 'packages/create-twenty-app/src/constants/template'),
-}));
-vi.mock('@/app/get-app-template-overlay-directory', () => ({
-  getAppTemplateOverlayDirectory: () =>
-    join(REPOSITORY_ROOT, 'packages/twenty-cli/app-template-overlay'),
+    join(REPOSITORY_ROOT, 'packages/twenty-cli/app-template'),
 }));
 
 const REPOSITORY_ROOT = fileURLToPath(
@@ -381,7 +377,33 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
       platform: 'node',
       format: 'cjs',
       target: 'node24',
-      plugins: [SORTED_GLOB_PLUGIN],
+      plugins: [
+        SORTED_GLOB_PLUGIN,
+        {
+          name: 'sdk-bundled-source',
+          setup(build) {
+            build.onLoad(
+              { filter: /\.ts$/, namespace: 'file' },
+              async ({ path, suffix }) => {
+                if (suffix !== '?source') return undefined;
+
+                const { outputFiles } = await bundle({
+                  entryPoints: [path],
+                  absWorkingDir: dirname(path),
+                  bundle: true,
+                  format: 'esm',
+                  platform: 'neutral',
+                  legalComments: 'none',
+                  external: ['__*__'],
+                  write: false,
+                });
+
+                return { contents: outputFiles[0].text, loader: 'text' };
+              },
+            );
+          },
+        },
+      ],
     });
 
     await mkdir(join(root, 'assets'));
@@ -428,6 +450,7 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
       signal: new AbortController().signal,
     });
     await symlink(join(root, 'node_modules'), join(appPath, 'node_modules'));
+    await rm(join(appPath, 'yarn.lock'));
     const configPath = join(appPath, 'tsconfig.json');
     const config = JSON.parse(await readFile(configPath, 'utf8'));
     config.exclude.push('vitest*.config.ts');

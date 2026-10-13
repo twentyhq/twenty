@@ -15,6 +15,7 @@ import { type CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/
 
 type TestSetup = {
   createdViewId: string;
+  alreadySortedFieldMetadataId: string;
 };
 
 type TestContext = {
@@ -42,10 +43,21 @@ const failingViewSortCreationTestCases: EachTestingContext<TestContext>[] = [
       }),
     },
   },
+  {
+    title: 'when the view already has a sort on the same field',
+    context: {
+      input: (testSetup) => ({
+        viewId: testSetup.createdViewId,
+        fieldMetadataId: testSetup.alreadySortedFieldMetadataId,
+        direction: ViewSortDirection.DESC,
+      }),
+    },
+  },
 ];
 
 describe('View Sort creation should fail', () => {
   let createdViewId: string;
+  let alreadySortedFieldMetadataId: string;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -57,6 +69,10 @@ describe('View Sort creation should fail', () => {
       gqlFields: `
         id
         nameSingular
+        fieldsList {
+          id
+          name
+        }
       `,
     });
 
@@ -80,6 +96,22 @@ describe('View Sort creation should fail', () => {
 
     createdViewId = viewData?.createView?.id;
     jestExpectToBeDefined(createdViewId);
+
+    const nameFieldMetadata = companyObjectMetadata.fieldsList?.find(
+      (fieldMetadata) => fieldMetadata.name === 'name',
+    );
+
+    jestExpectToBeDefined(nameFieldMetadata);
+    alreadySortedFieldMetadataId = nameFieldMetadata.id;
+
+    await createOneViewSort({
+      expectToFail: false,
+      input: {
+        viewId: createdViewId,
+        fieldMetadataId: alreadySortedFieldMetadataId,
+        direction: ViewSortDirection.ASC,
+      },
+    });
   });
 
   afterAll(async () => {
@@ -96,7 +128,10 @@ describe('View Sort creation should fail', () => {
     async ({ context }) => {
       const { errors } = await createOneViewSort({
         expectToFail: true,
-        input: context.input({ createdViewId }),
+        input: context.input({
+          createdViewId,
+          alreadySortedFieldMetadataId,
+        }),
       });
 
       expectOneNotInternalServerErrorSnapshot({

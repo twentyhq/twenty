@@ -1,4 +1,4 @@
-import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -249,10 +249,9 @@ const UpgradeFreeTrialContent = ({
                 />
               ) : (
                 <InlineBanner
-                  variant="compact"
-                  color="danger"
-                  message={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
-                />
+                  layout="compact"
+                  status="error"
+                >{t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}</InlineBanner>
               ))}
           </OnboardingPlanCard>
 

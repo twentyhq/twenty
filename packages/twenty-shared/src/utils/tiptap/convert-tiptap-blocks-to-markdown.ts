@@ -1,35 +1,24 @@
-import { isDefined } from '@/utils/validation';
+import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
 import { isTipTapNode } from './parse-tiptap-json-document';
 import { type TipTapDocument } from './tiptap-document';
 import { tipTapDocumentToMarkdown } from './tiptap-document-to-markdown';
-import { type TipTapNode } from './tiptap-node';
 import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 
-const TIPTAP_ONLY_NODE_TYPES: string[] = [
-  TIPTAP_NODE_TYPES.DOCUMENT,
-  TIPTAP_NODE_TYPES.BULLET_LIST,
-  TIPTAP_NODE_TYPES.ORDERED_LIST,
-  TIPTAP_NODE_TYPES.LIST_ITEM,
-  TIPTAP_NODE_TYPES.TASK_LIST,
-  TIPTAP_NODE_TYPES.TASK_ITEM,
-  TIPTAP_NODE_TYPES.SECTION,
-  TIPTAP_NODE_TYPES.COLUMNS,
-  TIPTAP_NODE_TYPES.COLUMN,
-  TIPTAP_NODE_TYPES.BUTTON,
-  TIPTAP_NODE_TYPES.DIVIDER,
-  TIPTAP_NODE_TYPES.HTML,
-  TIPTAP_NODE_TYPES.HARD_BREAK,
-  TIPTAP_NODE_TYPES.VARIABLE_TAG,
-  TIPTAP_NODE_TYPES.MENTION_TAG,
-  TIPTAP_NODE_TYPES.SKILL_TAG,
-];
+// Workflow steps created through the API can still hold BlockNote, which also parses as TipTap
+const BLOCKNOTE_ONLY_KEYS = ['id', 'props', 'children', 'styles'];
 
-const containsTipTapOnlyContent = (node: TipTapNode): boolean =>
-  TIPTAP_ONLY_NODE_TYPES.includes(node.type) ||
-  isDefined(node.attrs) ||
-  isDefined(node.marks) ||
-  (node.content ?? []).some(containsTipTapOnlyContent);
+const isBlockNoteContent = (value: unknown): boolean => {
+  if (!isPlainObject(value)) {
+    return false;
+  }
+
+  if (BLOCKNOTE_ONLY_KEYS.some((key) => key in value)) {
+    return true;
+  }
+
+  return Array.isArray(value.content) && value.content.some(isBlockNoteContent);
+};
 
 export const convertTipTapBlocksToMarkdown = (
   serializedBlocks: string,
@@ -44,7 +33,11 @@ export const convertTipTapBlocksToMarkdown = (
 
   const nodes = Array.isArray(parsedBlocks) ? parsedBlocks : [parsedBlocks];
 
-  if (!nodes.every(isTipTapNode) || !nodes.some(containsTipTapOnlyContent)) {
+  if (
+    nodes.length === 0 ||
+    nodes.some(isBlockNoteContent) ||
+    !nodes.every(isTipTapNode)
+  ) {
     return undefined;
   }
 

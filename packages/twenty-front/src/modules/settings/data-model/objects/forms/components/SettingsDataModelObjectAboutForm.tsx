@@ -21,7 +21,7 @@ import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';
+import { computeMetadataNamesFromLabels } from '@/object-metadata/utils/computeMetadataNamesFromLabels';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
@@ -264,17 +264,18 @@ export const SettingsDataModelObjectAboutForm = ({
           <StyledAdvancedSettingsSectionInputWrapper>
             {isDefined(conflictingObjectMetadataItem) && (
               <InlineBanner
-                color={'blue'}
-                message={t`An object with this name already exists`}
-                button={{
-                  title: t`Open`,
-                  onClick: () =>
-                    navigateSettings(SettingsPath.ObjectDetail, {
-                      objectNamePlural:
-                        conflictingObjectMetadataItem.namePlural,
-                    }),
-                }}
-              />
+                status="info"
+                action={
+                  <InlineBanner.Action
+                    onClick={() =>
+                      navigateSettings(SettingsPath.ObjectDetail, {
+                        objectNamePlural:
+                          conflictingObjectMetadataItem.namePlural,
+                      })
+                    }
+                  >{t`Open`}</InlineBanner.Action>
+                }
+              >{t`An object with this name already exists`}</InlineBanner>
             )}
             {[
               {

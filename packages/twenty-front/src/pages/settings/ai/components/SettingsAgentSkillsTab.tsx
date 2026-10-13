@@ -24,8 +24,8 @@ import {
 } from '~/generated-metadata/graphql';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
 import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -142,13 +142,13 @@ export const SettingsAgentSkillsTab = () => {
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconArchive />}
+                    startElement={<IconArchive />}
                     onCheckedChange={setShowDeactivated}
                     checked={showDeactivated}
                   >{t`Deactivated`}</SettingsRow>
                   {isAdvancedModeEnabled && (
                     <SettingsRow
-                      startIcon={<IconSettings />}
+                      startElement={<IconSettings />}
                       onCheckedChange={setShowSystemSkills}
                       checked={showSystemSkills}
                     >{t`System skills`}</SettingsRow>

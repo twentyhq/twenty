@@ -171,10 +171,9 @@ export const AddPaymentMethodForm = ({
     return (
       <StyledFormContainer>
         <InlineBanner
-          variant="compact"
-          color="danger"
-          message={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
-        />
+          layout="compact"
+          status="error"
+        >{t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}</InlineBanner>
       </StyledFormContainer>
     );
   }

@@ -148,7 +148,7 @@ describe('resolveSlackRunAsForRequest', () => {
     expect(await resolve()).toBeUndefined();
   });
 
-  it('should fall back to the agent role when the Slack user is unknown', async () => {
+  it('should refuse when the Slack user is unknown', async () => {
     expect(await resolve({ identity: undefined })).toBeUndefined();
     expect(findSlackAssistantRequestCreatedByMock).not.toHaveBeenCalled();
   });

@@ -218,7 +218,7 @@ exports[`Application token access to another application should fail with a user
 }
 `;
 
-exports[`Application token access to another application should fail with a user-bound application token should refuse triggerInstallApplicationJob on another application 1`] = `
+exports[`Application token access to another application should fail with a user-bound application token should refuse triggerInstallApplication on another application 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -228,7 +228,17 @@ exports[`Application token access to another application should fail with a user
 }
 `;
 
-exports[`Application token access to another application should fail with a user-bound application token should refuse triggerUninstallApplicationJob on another application 1`] = `
+exports[`Application token access to another application should fail with a user-bound application token should refuse triggerUninstallApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse triggerUpgradeApplication on another application 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -520,7 +530,7 @@ exports[`Application token access to another application should fail with an app
 }
 `;
 
-exports[`Application token access to another application should fail with an application token without user binding should refuse triggerInstallApplicationJob on another application 1`] = `
+exports[`Application token access to another application should fail with an application token without user binding should refuse triggerInstallApplication on another application 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -530,7 +540,17 @@ exports[`Application token access to another application should fail with an app
 }
 `;
 
-exports[`Application token access to another application should fail with an application token without user binding should refuse triggerUninstallApplicationJob on another application 1`] = `
+exports[`Application token access to another application should fail with an application token without user binding should refuse triggerUninstallApplication on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse triggerUpgradeApplication on another application 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

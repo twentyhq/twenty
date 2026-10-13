@@ -1,7 +1,7 @@
 import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FormatNumberOptions } from '~/utils/format/formatNumber';
+import { type FormatNumberOptions } from '@/localization/utils/formatNumber';
 import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const EM_DASH = '—';

@@ -19,6 +19,7 @@ export const getObjectRecordOperationUpdateInputs = (
         updatedFields: updatedFieldNames.map((fieldName) => ({
           [fieldName]: updatedRecord[fieldName],
         })),
+        updatedRecord,
       };
     })
     .filter(isDefined)

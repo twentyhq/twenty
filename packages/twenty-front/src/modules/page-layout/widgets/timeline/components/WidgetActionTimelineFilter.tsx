@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const WidgetActionTimelineFilter = () => {
   const { t } = useLingui();

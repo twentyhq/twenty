@@ -13,7 +13,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
+import { getModelIcon } from '@/ai/utils/getModelIcon';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -235,16 +235,19 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
 
       {anchorPrefix && hoveredModel && (
         <Tooltip.Root key={hoveredModel.modelId} open>
-          <Tooltip.Popup
-            anchor={hoveredRowRef}
-            side="top"
-            align="end"
-            sideOffset={8}
-            className={hoverCardTooltipClass}
-            maxWidth="320px"
-          >
-            <SettingsAiModelHoverCard model={hoveredModel} />
-          </Tooltip.Popup>
+          <Tooltip.Portal>
+            <Tooltip.Positioner
+              anchor={hoveredRowRef}
+              side="top"
+              align="end"
+              sideOffset={8}
+              style={{ maxWidth: '320px' }}
+            >
+              <Tooltip.Popup className={hoverCardTooltipClass}>
+                <SettingsAiModelHoverCard model={hoveredModel} />
+              </Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
         </Tooltip.Root>
       )}
     </>

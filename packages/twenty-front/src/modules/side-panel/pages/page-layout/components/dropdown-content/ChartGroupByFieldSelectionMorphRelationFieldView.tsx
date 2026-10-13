@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -146,7 +147,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
                   setSelectedTarget(target);
                 }}
               >
-                <ListItem
+                <ListItemButton
                   focused={selectedItemId === target.perTargetFieldId}
                   startIcon={
                     <SelectOptionIcon
@@ -163,7 +164,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
                   }}
                 >
                   {target.label}
-                </ListItem>
+                </ListItemButton>
               </SelectableListItem>
             ))}
           </SelectableList>

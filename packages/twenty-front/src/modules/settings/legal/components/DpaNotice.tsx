@@ -13,6 +13,8 @@ type DpaNoticeProps = {
 
 export const DpaNotice = ({ text }: DpaNoticeProps) => (
   <StyledFullWidthBanner>
-    <InlineBanner variant="compact" color="danger" message={text} />
+    <InlineBanner layout="compact" status="warning">
+      {text}
+    </InlineBanner>
   </StyledFullWidthBanner>
 );

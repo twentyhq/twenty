@@ -1,4 +1,4 @@
-import { hasAgentChatBeenOpenedState } from '@/ai/states/hasAgentChatBeenOpenedState';
+import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -6,6 +6,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { Temporal } from 'temporal-polyfill';
 import { SidePanelPages } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconSparkles } from 'twenty-ui/icon';
@@ -15,8 +16,8 @@ import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 export const useOpenAskAiPageInSidePanel = () => {
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const setHasAgentChatBeenOpened = useSetAtomState(
-    hasAgentChatBeenOpenedState,
+  const setAgentChatUISessionStartTime = useSetAtomState(
+    agentChatUISessionStartTimeState,
   );
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -37,7 +38,10 @@ export const useOpenAskAiPageInSidePanel = () => {
           ? resetNavigationStack
           : isSidePanelOpened;
 
-      setHasAgentChatBeenOpened(true);
+      setAgentChatUISessionStartTime(
+        (agentChatUISessionStartTime) =>
+          agentChatUISessionStartTime ?? Temporal.Now.instant(),
+      );
 
       navigateSidePanelMenu({
         page: SidePanelPages.AskAI,
@@ -50,7 +54,7 @@ export const useOpenAskAiPageInSidePanel = () => {
     [
       navigateSidePanelMenu,
       isSidePanelOpened,
-      setHasAgentChatBeenOpened,
+      setAgentChatUISessionStartTime,
       isWorkspaceSuspended,
     ],
   );

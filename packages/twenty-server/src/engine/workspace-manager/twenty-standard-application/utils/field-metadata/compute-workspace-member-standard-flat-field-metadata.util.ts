@@ -944,6 +944,39 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  assignedAgentChatThreads: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'assignedAgentChatThreads',
+      label: i18nLabel(
+        msg({
+          message: `Assigned chat threads`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `AI chat threads assigned to the workspace member`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMessage',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'agentChatThread',
+      targetFieldName: 'assignee',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   ownedOpportunities: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

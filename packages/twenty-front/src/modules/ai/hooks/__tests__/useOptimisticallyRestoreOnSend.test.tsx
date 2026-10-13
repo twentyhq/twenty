@@ -72,33 +72,4 @@ describe('useOptimisticallyRestoreOnSend', () => {
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
     ).toEqual(ARCHIVED_PARTICIPANT);
   });
-
-  it('moves the thread up by its last change before the workspace tracks last activity', () => {
-    const store = createStore();
-
-    store.set(recordStoreFamilyState.atomFamily(THREAD_ID), {
-      __typename: 'AgentChatThread',
-      id: THREAD_ID,
-      updatedAt: LAST_ACTIVITY_AT,
-    } as never);
-
-    const { result } = renderHook(() => useOptimisticallyRestoreOnSend(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <Provider store={store}>{children}</Provider>
-      ),
-    });
-    const sentAt = '2026-10-01T12:00:00.000Z';
-
-    act(() => {
-      result.current.applyOptimisticRestore({
-        threadId: THREAD_ID,
-        optimisticUpdatedAt: sentAt,
-      });
-    });
-
-    const thread = store.get(recordStoreFamilyState.atomFamily(THREAD_ID));
-
-    expect(thread).toMatchObject({ updatedAt: sentAt });
-    expect(thread).not.toHaveProperty('lastActivityAt');
-  });
 });

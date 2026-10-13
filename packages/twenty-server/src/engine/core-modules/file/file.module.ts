@@ -8,10 +8,8 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { FileEntity } from './entities/file.entity';
 import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
-import { FileEmailAttachmentModule } from './file-email-attachment/file-email-attachment.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { FileUrlModule } from './file-url/file-url.module';
-import { FilesFieldModule } from './files-field/files-field.module';
 import { FileService } from './services/file.service';
 
 @Module({
@@ -19,9 +17,7 @@ import { FileService } from './services/file.service';
     JwtModule,
     TypeOrmModule.forFeature([FileEntity, ApplicationEntity]),
     FileUrlModule,
-    FilesFieldModule,
     FileCorePictureModule,
-    FileEmailAttachmentModule,
     FileUploadModule,
   ],
   providers: [

@@ -11,10 +11,6 @@ import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import {
-  type ColorScheme,
-  type UiScale,
-} from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
@@ -26,8 +22,10 @@ import {
   type WorkspaceMember,
   GetCurrentUserDocument,
 } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { type UiScale } from '@/ui/theme/types/UiScale';
 
 export const UserMetadataProviderInitialEffect = () => {
   const isLogged = useIsLogged();

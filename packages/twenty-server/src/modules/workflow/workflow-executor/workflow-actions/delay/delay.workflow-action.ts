@@ -10,6 +10,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { computeWorkflowDurationInMs } from 'src/modules/workflow/workflow-executor/utils/compute-workflow-duration-in-ms.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowDelayAction } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/guards/is-workflow-delay-action.guard';
 import { WorkflowDelayActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-input.type';
@@ -67,18 +68,7 @@ export class DelayWorkflowAction implements WorkflowAction {
         );
       }
 
-      const {
-        days = 0,
-        hours = 0,
-        minutes = 0,
-        seconds = 0,
-      } = workflowActionInput.duration;
-
-      delayInMs =
-        days * 24 * 60 * 60 * 1000 +
-        hours * 60 * 60 * 1000 +
-        minutes * 60 * 1000 +
-        seconds * 1000;
+      delayInMs = computeWorkflowDurationInMs(workflowActionInput.duration);
     } else {
       throw new WorkflowStepExecutorException(
         'Invalid delay type',

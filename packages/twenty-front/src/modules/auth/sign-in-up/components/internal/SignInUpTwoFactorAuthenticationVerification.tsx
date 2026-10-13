@@ -218,6 +218,10 @@ export const SignInUpTOTPVerification = () => {
     setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
   };
 
+  const handleUseRecoveryCode = () => {
+    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationRecovery);
+  };
+
   return (
     <StyledForm onSubmit={form.handleSubmit(submitOTP)}>
       <StyledTwoFactorInstructions>
@@ -269,6 +273,11 @@ export const SignInUpTOTPVerification = () => {
         fullWidth
         disabled={isLoading}
       >{t`Submit`}</MainButton>
+      <StyledActionBackLinkContainer>
+        <Button variant="link" onClick={handleUseRecoveryCode}>
+          <Trans>Lost your authenticator? Use a recovery code</Trans>
+        </Button>
+      </StyledActionBackLinkContainer>
       <StyledActionBackLinkContainer>
         <Button variant="link" onClick={handleBack}>
           <Trans>Back</Trans>

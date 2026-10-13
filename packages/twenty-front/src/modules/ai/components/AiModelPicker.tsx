@@ -15,7 +15,7 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierForAgentModelId } from '@/ai/utils/getAiModelTierForAgentModelId';
 import { getNearestAiModelTier } from '@/ai/utils/getNearestAiModelTier';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
+import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

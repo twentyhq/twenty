@@ -3,8 +3,8 @@ import { EllipsisDisplay } from '@/ui/field/display/components/internal/Ellipsis
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateString } from '~/utils/string/formatDateString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
 
 type DateDisplayProps = {
   value: string | null | undefined;

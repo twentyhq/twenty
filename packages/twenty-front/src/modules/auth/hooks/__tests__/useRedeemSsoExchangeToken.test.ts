@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedirectEnabledState';
 import { useRedeemSsoExchangeToken } from '@/auth/hooks/useRedeemSsoExchangeToken';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';

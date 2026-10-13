@@ -1,4 +1,4 @@
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -13,6 +13,8 @@ import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatR
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -43,10 +45,15 @@ export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick({
-    shouldOpenInFullPage: true,
-  });
+  const { handleThreadClick } = useAiChatThreadClick(
+    isAiChatInboxEnabled
+      ? { shouldOpenInFullPage: true }
+      : { resetNavigationStack: true },
+  );
 
   const { threads, loading } = useChatThreads(agentChatRecentThreadsSelector);
   const agentChatFavoriteThreads = useAtomStateValue(
@@ -72,7 +79,7 @@ export const NavigationDrawerAiChatContent = () => {
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
-          <NavigationDrawerAiChatTriageSection />
+          {isAiChatInboxEnabled && <NavigationDrawerAiChatTriageSection />}
           {agentChatFavoriteThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}

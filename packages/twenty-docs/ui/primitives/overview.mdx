@@ -36,16 +36,17 @@ Slots such as `InputGroup.startElement` and `ListItem.actions` accept React node
 
 ### Popup composition
 
-Twenty UI packages the supporting overlay elements inside each public `Popup` part:
+Some primitives package supporting overlay elements inside their `Popup` part:
 
-| Component     | Included in `Popup`                    | Configure on `Popup`                                     |
-| ------------- | -------------------------------------- | -------------------------------------------------------- |
-| `Select`      | Portal and positioner                  | Placement, anchor, and portal container                  |
-| `Menu`        | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
-| `Popover`     | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
-| `AlertDialog` | Portal, backdrop, and viewport         | Size, portal container, mounting, and focus              |
+| Component | Included in `Popup`                    | Configure on `Popup`                                     |
+| --------- | -------------------------------------- | -------------------------------------------------------- |
+| `Select`  | Portal and positioner                  | Placement, anchor, and portal container                  |
+| `Menu`    | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
+| `Popover` | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
 
 Place content directly inside these popup parts. Their portal may move the rendered DOM to another container while preserving the component hierarchy and context. See [theming](/ui/theming#scope-an-override) for scoped portal containers.
+
+[Dialog](/ui/primitives/surfaces/dialog) and [AlertDialog](/ui/primitives/surfaces/alert-dialog) expose separate `Portal`, `Backdrop`, `Viewport` and `Popup` parts. Configure mounting and the destination on Portal, overlay appearance on Backdrop and Viewport, and content size and focus on Popup. Each part preserves its own native attributes, ref target and render composition. These dialog APIs are for standalone UI and the Twenty host. Front components use the [SDK host dialog API](/developers/extend/apps/layout/front-components#host-communication-api).
 
 ### Custom components
 
@@ -67,13 +68,17 @@ const HelpButton = ({ ref, ...props }: HelpButtonProps) => (
 export const ImportHelp = () => (
   <Popover.Root>
     <Popover.Trigger render={<HelpButton>Import help</HelpButton>} />
-    <Popover.Popup>
-      <Popover.Title>Import a CSV file</Popover.Title>
-      <Popover.Description>
-        Use a header row to identify your columns.
-      </Popover.Description>
-      <Popover.Close render={<Button>Got it</Button>} />
-    </Popover.Popup>
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close render={<Button>Got it</Button>} />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
   </Popover.Root>
 );
 ```

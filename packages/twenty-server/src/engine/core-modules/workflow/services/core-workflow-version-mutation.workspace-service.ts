@@ -798,6 +798,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
           type: newStep.type,
           workspaceId,
           position: newStep.position,
+          id: existingStep.id,
           defaultSettings: newStep.settings,
         },
       );
@@ -806,7 +807,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.workflowSchemaWorkspaceService.enrichOutputSchema({
         step: {
           ...builtStep,
-          id: existingStep.id,
           nextStepIds: getNextStepIdsForStepTypeChange({
             existingStep,
             builtStep,

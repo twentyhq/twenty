@@ -1,5 +1,5 @@
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const filterSelectOptionsBySearch = ({
   options,

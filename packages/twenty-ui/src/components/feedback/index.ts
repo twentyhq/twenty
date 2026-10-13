@@ -8,10 +8,14 @@
  */
 
 export { Callout } from './Callout/Callout';
+export type { CalloutActionProps } from './Callout/types/CalloutActionProps';
+export type { CalloutColor } from './Callout/types/CalloutColor';
 export type { CalloutProps } from './Callout/types/CalloutProps';
+export type { CalloutState } from './Callout/types/CalloutState';
+export type { CalloutStatus } from './Callout/types/CalloutStatus';
 export type { CalloutVariant } from './Callout/types/CalloutVariant';
 export { InlineBanner } from './InlineBanner/InlineBanner';
-export type { InlineBannerButtonProps } from './InlineBanner/types/InlineBannerButtonProps';
+export type { InlineBannerLayout } from './InlineBanner/types/InlineBannerLayout';
 export type { InlineBannerProps } from './InlineBanner/types/InlineBannerProps';
 export { useToast } from './Toast/hooks/useToast';
 export { Toast } from './Toast/Toast';

@@ -12,7 +12,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { DefaultLayout } from '@/app/components/DefaultLayout';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { type JSX, useState } from 'react';

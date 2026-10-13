@@ -14,7 +14,7 @@ import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/Settings
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
 import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -98,17 +98,17 @@ export const SettingsAgentToolsTab = () => {
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconTool />}
+                    startElement={<IconTool />}
                     onCheckedChange={setShowCustomTools}
                     checked={showCustomTools}
                   >{t`Custom`}</SettingsRow>
                   <SettingsRow
-                    startIcon={<IconLock />}
+                    startElement={<IconLock />}
                     onCheckedChange={setShowManagedTools}
                     checked={showManagedTools}
                   >{t`Managed`}</SettingsRow>
                   <SettingsRow
-                    startIcon={<IconPuzzle />}
+                    startElement={<IconPuzzle />}
                     onCheckedChange={setShowStandardTools}
                     checked={showStandardTools}
                   >{t`Standard`}</SettingsRow>

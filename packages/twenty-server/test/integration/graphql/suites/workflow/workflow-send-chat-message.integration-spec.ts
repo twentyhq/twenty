@@ -62,7 +62,7 @@ describe('Send chat message workflow step', () => {
         [threadId],
       );
       const messages = await global.testDataSource.query(
-        `SELECT m.role, m."isHidden", p."textContent"
+        `SELECT m.role, p."textContent"
          FROM "${SCHEMA}"."agentMessage" m
          JOIN "${SCHEMA}"."agentMessagePart" p ON p."messageId" = m.id
          WHERE m."threadId" = $1
@@ -77,13 +77,11 @@ describe('Send chat message workflow step', () => {
       expect(messages).toEqual([
         {
           role: 'system',
-          isHidden: false,
           textContent:
             'The "Welcome new deal owners" workflow started this conversation. Its messages follow.',
         },
         {
           role: 'assistant',
-          isHidden: false,
           textContent: 'You now own the **Acme renewal**.',
         },
       ]);
@@ -122,7 +120,7 @@ describe('Send chat message workflow step', () => {
       await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
       const [{ threadId }] = await global.testDataSource.query(
-        `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
+        `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
         [workflowRunId, stepId],
       );
 
@@ -250,7 +248,7 @@ describe('Send chat message workflow step', () => {
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
-            `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
+            `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
             [workflowRunId, stepId],
           );
 
@@ -273,24 +271,28 @@ describe('Send chat message workflow step', () => {
               workspaceId: SEED_APPLE_WORKSPACE_ID,
               sender,
               message: {
-                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+                workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
                 threadKey: workflowRunId,
                 idempotencyKey: stepId,
                 title: 'Headcount check',
                 text: 'Raise the headcount to 25?',
               },
+              fallbackThreadKey: `${workflowRunId}:${workflowRunId}:${stepId}`,
               awaitedToolCall: {
                 ...toolCall,
                 caller: {
                   type: 'WORKFLOW_STEP',
                   ref: { workflowRunId, stepId },
                 },
+                // the message was already written, so the call is not built again
+                waitOnAnswer: async () => {},
               },
             });
 
           expect(await postAgain()).toEqual({
             status: 'AWAITING',
             threadId,
+            toolCallId: expect.any(String),
           });
 
           await answerPostedCall({
@@ -412,7 +414,7 @@ describe('Send chat message workflow step', () => {
             );
 
             const [{ threadId }] = await global.testDataSource.query(
-              `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
+              `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
               [workflowRunId, stepId],
             );
 
@@ -473,7 +475,7 @@ describe('Send chat message workflow step', () => {
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
-            `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
+            `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
             [workflowRunId, stepId],
           );
 
@@ -536,7 +538,7 @@ describe('Send chat message workflow step', () => {
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
-            `SELECT "threadId" FROM core."agentRunSuspension" WHERE caller @> jsonb_build_object('ref', jsonb_build_object('workflowRunId', $1::text, 'stepId', $2::text))`,
+            `SELECT condition->>'threadId' AS "threadId" FROM core."pendingWakeUp" WHERE "ownerType" = 'WORKFLOW_STEP' AND "ownerId" = $1 AND "ownerKey" = $2 AND condition->>'type' = 'ANSWER'`,
             [workflowRunId, stepId],
           );
 

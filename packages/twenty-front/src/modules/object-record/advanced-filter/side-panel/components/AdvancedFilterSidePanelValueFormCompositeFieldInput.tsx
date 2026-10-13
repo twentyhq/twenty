@@ -8,7 +8,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { FormWorkspaceMemberFilterValueInput } from '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput';
 
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { type SelectOption } from 'twenty-ui/primitives/input';
