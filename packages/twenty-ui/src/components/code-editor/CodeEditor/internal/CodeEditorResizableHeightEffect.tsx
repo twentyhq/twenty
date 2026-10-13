@@ -1,11 +1,10 @@
-import { clamp } from '@base-ui/utils/clamp';
 import { type editor } from 'monaco-editor';
 import { type Dispatch, type SetStateAction, useEffect } from 'react';
 
-import { RESIZE_HANDLE_DEFAULTS } from '@ui/primitives/layout/ResizeHandle/internal/ResizeHandleDefaults.constant';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ResizedCodeEditorHeight } from './types/ResizedCodeEditorHeight';
+import { getBoundedCodeEditorHeight } from './utils/getBoundedCodeEditorHeight';
 
 type CodeEditorResizableHeightEffectProps = {
   height: number | string;
@@ -37,11 +36,7 @@ export const CodeEditorResizableHeightEffect = ({
 
     setResizedHeight({
       sourceHeight: height,
-      value: clamp(
-        measuredHeight,
-        RESIZE_HANDLE_DEFAULTS.min,
-        RESIZE_HANDLE_DEFAULTS.max,
-      ),
+      value: getBoundedCodeEditorHeight(measuredHeight),
     });
   }, [editor, height, resizable, setResizedHeight]);
 
