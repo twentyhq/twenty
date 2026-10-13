@@ -221,6 +221,12 @@ export class LogicFunctionExecutorService {
       );
       this.applicationRegistrationMetricService.recordForApplication({
         application: flatApplication,
+        metric: 'function.execution',
+        dimension: flatLogicFunction.name,
+        workspaceId,
+      });
+      this.applicationRegistrationMetricService.recordForApplication({
+        application: flatApplication,
         metric: 'function.error',
         dimension: 'EXECUTION_FAILED',
         context: flatLogicFunction.name,
