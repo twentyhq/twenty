@@ -49,7 +49,9 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   rowLevelPermissionPredicateGroup: {},
   viewFilterGroup: {},
   viewSort: {},
-  frontComponent: {},
+  frontComponent: {
+    objectMetadata: true,
+  },
   webhook: {},
   applicationVariable: {},
   connectionProvider: {},

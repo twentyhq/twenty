@@ -22,6 +22,19 @@ export default defineConfig({
     projects: [
       {
         extends: './vite.config.ts',
+        test: {
+          name: 'css',
+          include: ['src/**/*.browser.test.ts'],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+      {
+        extends: './vite.config.ts',
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),

@@ -1534,6 +1534,7 @@ export interface FrontComponent {
     universalIdentifier?: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     usesSdkClient: Scalars['Boolean']
+    widgetAvailability: FrontComponentWidgetAvailability[]
     __typename: 'FrontComponent'
 }
 
@@ -1542,6 +1543,12 @@ export interface FrontComponentConfiguration {
     frontComponentId: Scalars['UUID']
     headerCommandMenuItemUniversalIdentifiers?: Scalars['UUID'][]
     __typename: 'FrontComponentConfiguration'
+}
+
+export interface FrontComponentWidgetAvailability {
+    objectMetadataId?: Scalars['UUID']
+    pageLayoutType: PageLayoutType
+    __typename: 'FrontComponentWidgetAvailability'
 }
 
 export interface FullName {
@@ -5767,6 +5774,7 @@ export interface FrontComponentGenqlSelection{
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
     usesSdkClient?: boolean | number
+    widgetAvailability?: FrontComponentWidgetAvailabilityGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5775,6 +5783,13 @@ export interface FrontComponentConfigurationGenqlSelection{
     configurationType?: boolean | number
     frontComponentId?: boolean | number
     headerCommandMenuItemUniversalIdentifiers?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FrontComponentWidgetAvailabilityGenqlSelection{
+    objectMetadataId?: boolean | number
+    pageLayoutType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9778,6 +9793,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isFrontComponentConfiguration = (obj?: { __typename?: any } | null): obj is FrontComponentConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentConfiguration"')
       return FrontComponentConfiguration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FrontComponentWidgetAvailability_possibleTypes: string[] = ['FrontComponentWidgetAvailability']
+    export const isFrontComponentWidgetAvailability = (obj?: { __typename?: any } | null): obj is FrontComponentWidgetAvailability => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentWidgetAvailability"')
+      return FrontComponentWidgetAvailability_possibleTypes.includes(obj.__typename)
     }
     
 

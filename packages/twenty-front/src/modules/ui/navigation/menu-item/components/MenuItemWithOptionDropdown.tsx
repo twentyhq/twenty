@@ -51,12 +51,10 @@ const StyledMenuItemContainer = styled.div<{
 `;
 
 const StyledPrimaryListItem = styled(ListItem)`
-  && {
-    background: transparent;
-    flex: 1;
-    min-width: 0;
-    padding-inline: 0;
-  }
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+  padding-inline: 0;
 `;
 
 export const MenuItemWithOptionDropdown = ({

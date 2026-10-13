@@ -240,8 +240,9 @@ import { AddPurchaseToBillingCreditGrantTypeFastInstanceCommand } from 'src/data
 import { RestoreUsageLimitMeterCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791538680877-restore-usage-limit-meter-compatibility';
 import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791720497488-drop-usage-limit-meter';
 import { SetWorkspaceEventLogRetentionDefaultFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791790299002-set-workspace-event-log-retention-default';
-import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791823184520-add-agent-chat-channel';
-import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-slow-1791824217391-backfill-role-agent-chat-channel-access';
+import { AddWidgetAvailabilityToFrontComponentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791898075681-add-widget-availability-to-front-component';
+import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791928347532-add-agent-chat-channel';
+import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-slow-1791928475904-backfill-role-agent-chat-channel-access';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -484,6 +485,7 @@ export const INSTANCE_COMMANDS = [
   RestoreUsageLimitMeterCompatibilityFastInstanceCommand,
   DropUsageLimitMeterFastInstanceCommand,
   SetWorkspaceEventLogRetentionDefaultFastInstanceCommand,
+  AddWidgetAvailabilityToFrontComponentFastInstanceCommand,
   AddAgentChatChannelFastInstanceCommand,
   BackfillRoleAgentChatChannelAccessSlowInstanceCommand,
 ];
