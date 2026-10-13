@@ -1,5 +1,7 @@
+import { TWENTY_UI_CASCADE_LAYER_NAME } from '../../build-tools/twentyUiCascadeLayerName';
 import { type CollectedTokenLeaf } from '../types/CollectedTokenLeaf';
 import { GENERATED_CSS_HEADER } from './generatedCssHeader';
+import { indentNonEmptyLines } from './indentNonEmptyLines';
 import { selectSquircleDoubledRadiusLeaves } from './selectSquircleDoubledRadiusLeaves';
 
 const SQUIRCLE_COMMENT = `/* Squircle corners: progressive enhancement for browsers supporting
@@ -50,9 +52,7 @@ export const buildThemeCss = ({
     .map((leaf) => `    ${leaf.varName}: ${extractSquircleBasePx(leaf) * 2}px;`)
     .join('\n');
 
-  return `${GENERATED_CSS_HEADER}
-
-.${scheme} {
+  const themeRules = `.${scheme} {
 ${declarations}
 }
 
@@ -68,6 +68,12 @@ ${ZERO_SPECIFICITY_COMMENT}
   *::after {
     corner-shape: var(--t-corner-shape, superellipse(2.2));
   }
+}`;
+
+  return `${GENERATED_CSS_HEADER}
+
+@layer ${TWENTY_UI_CASCADE_LAYER_NAME} {
+${indentNonEmptyLines(themeRules)}
 }
 `;
 };

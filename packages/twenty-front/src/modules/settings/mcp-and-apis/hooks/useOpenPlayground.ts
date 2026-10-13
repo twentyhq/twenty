@@ -29,7 +29,7 @@ export const useOpenPlayground = () => {
     {
       onError: () => {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not open the API playground`,
         });
       },

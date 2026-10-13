@@ -1,4 +1,4 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -340,12 +340,13 @@ export const FieldWidgetFieldDropdownContent = () => {
                   indicator="check"
                   hasSubmenu={hasNestedFieldCandidates}
                   startIcon={
-                    <SelectOptionIcon
+                    <ApplicationStackIcon
                       Icon={getIcon(
                         currentFieldMetadataId === fieldMetadataItem.id
                           ? currentFieldMetadataItem?.icon
                           : fieldMetadataItem.icon,
                       )}
+                      applicationId={fieldMetadataItem.applicationId}
                     />
                   }
                 >

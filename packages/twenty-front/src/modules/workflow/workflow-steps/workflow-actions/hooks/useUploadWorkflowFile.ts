@@ -20,7 +20,7 @@ export const useUploadWorkflowFile = () => {
         const fileName = file.name;
         const maxUploadSize = formatFileSize(MAX_ATTACHMENT_SIZE);
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`File "${fileName}" exceeds ${maxUploadSize}`,
         });
         return null;
@@ -39,7 +39,7 @@ export const useUploadWorkflowFile = () => {
 
       const fileName = file.name;
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`File "${fileName}" uploaded successfully`,
       });
 
@@ -49,7 +49,7 @@ export const useUploadWorkflowFile = () => {
 
       const fileNameForError = file.name;
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to upload "${fileNameForError}"`,
       });
 

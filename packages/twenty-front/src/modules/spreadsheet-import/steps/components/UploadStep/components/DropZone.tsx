@@ -137,7 +137,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       fileRejections.forEach((fileRejection) => {
         const fileName = fileRejection.file.name;
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`${fileName} upload rejected`,
           description: fileRejection.errors[0].message,
         });

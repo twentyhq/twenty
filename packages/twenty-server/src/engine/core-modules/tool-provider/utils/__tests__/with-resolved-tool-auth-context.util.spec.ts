@@ -17,7 +17,7 @@ describe('withResolvedToolAuthContext', () => {
   ): ToolProviderContext => ({
     workspaceId,
     roleId: 'role-1',
-    rolePermissionConfig: { unionOf: ['role-1'] },
+    rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: 'role-1' } },
     ...overrides,
   });
 

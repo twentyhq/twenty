@@ -77,7 +77,7 @@ describe('useHandleResetPassword', () => {
     await act(() => result.current.handleResetPassword('')());
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'Invalid email',
     });
   });
@@ -98,7 +98,7 @@ describe('useHandleResetPassword', () => {
       },
     });
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'success',
+      status: 'success',
       children:
         'If this email is registered, a password reset link has been sent',
     });
@@ -119,7 +119,7 @@ describe('useHandleResetPassword', () => {
       },
     });
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'success',
+      status: 'success',
       children:
         'If this email is registered, a password reset link has been sent',
     });
@@ -132,7 +132,7 @@ describe('useHandleResetPassword', () => {
     await act(() => result.current.handleResetPassword('test@example.com')());
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'Captcha (anti-bot check) is still loading, try again',
     });
     expect(emailPasswordResetLinkMock).not.toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe('useHandleResetPassword', () => {
     await act(() => result.current.handleResetPassword('test@example.com')());
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'An error occurred.',
     });
   });
@@ -160,7 +160,7 @@ describe('useHandleResetPassword', () => {
     await act(() => result.current.handleResetPassword('test@example.com')());
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: errorMessage,
     });
   });

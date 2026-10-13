@@ -29,7 +29,7 @@ export const useRenameCoreWorkflow = ({
       return true;
     } catch (mutationError) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           mutationError instanceof Error
             ? mutationError.message

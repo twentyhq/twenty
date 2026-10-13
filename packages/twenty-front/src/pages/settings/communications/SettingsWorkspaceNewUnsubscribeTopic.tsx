@@ -65,7 +65,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
       }
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to create unsubscribe topic.`,
       });
     }

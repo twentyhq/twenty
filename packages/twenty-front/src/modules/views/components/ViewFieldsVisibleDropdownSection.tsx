@@ -1,3 +1,4 @@
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -89,7 +90,12 @@ export const ViewFieldsVisibleDropdownSection = () => {
       <DropdownMenuItemsContainer>
         {fieldMetadataItemLabelIdentifier && (
           <MenuItemDraggable
-            LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+            LeftComponent={
+              <ApplicationStackIcon
+                Icon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+                applicationId={fieldMetadataItemLabelIdentifier.applicationId}
+              />
+            }
             text={fieldMetadataItemLabelIdentifier.label}
             accent="placeholder"
             gripMode="always"
@@ -114,7 +120,12 @@ export const ViewFieldsVisibleDropdownSection = () => {
                       itemComponent={
                         <MenuItemDraggable
                           key={recordField.fieldMetadataItemId}
-                          LeftIcon={getIcon(fieldMetadataItem.icon)}
+                          LeftComponent={
+                            <ApplicationStackIcon
+                              Icon={getIcon(fieldMetadataItem.icon)}
+                              applicationId={fieldMetadataItem.applicationId}
+                            />
+                          }
                           iconButtons={
                             <LightIconButton
                               aria-label={t`Hide field`}

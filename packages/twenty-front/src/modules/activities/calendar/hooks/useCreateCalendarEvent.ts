@@ -28,7 +28,7 @@ export const useCreateCalendarEvent = () => {
 
         if (!result.data?.createCalendarEvent.success) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children:
               result.data?.createCalendarEvent.error ??
               t`Failed to create calendar event`,
@@ -38,7 +38,7 @@ export const useCreateCalendarEvent = () => {
         }
 
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Calendar event created successfully`,
         });
 
@@ -51,7 +51,7 @@ export const useCreateCalendarEvent = () => {
         };
       } catch {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to create calendar event`,
         });
 

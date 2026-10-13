@@ -9,12 +9,7 @@ import {
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
 const client = request(`http://localhost:${APP_PORT}`);
-
-const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const graphql = (query: string, variables?: object) =>
   client
@@ -63,7 +58,7 @@ describe('duplicateCoreWorkflow (e2e)', () => {
     }
   });
 
-  it('duplicates the workflow and mirrors the new draft version to the workspace', async () => {
+  it('duplicates the workflow into a new core draft version', async () => {
     const response = await graphql(
       `
         mutation DuplicateCoreWorkflow($input: DuplicateCoreWorkflowInput!) {
@@ -104,18 +99,5 @@ describe('duplicateCoreWorkflow (e2e)', () => {
     expect(duplicatedVersion.trigger?.type).toBe('MANUAL');
     expect(Array.isArray(duplicatedVersion.steps)).toBe(true);
     expect(duplicatedVersion.steps?.length).toBeGreaterThan(0);
-
-    const mirrorRows = await global.testDataSource.query(
-      `SELECT "id", "steps", "trigger", "status" FROM "${WORKSPACE_SCHEMA}"."workflowVersion"
-       WHERE "workflowId" = $1 AND "deletedAt" IS NULL`,
-      [duplicated.workspaceWorkflowId],
-    );
-
-    expect(mirrorRows).toHaveLength(1);
-    expect(mirrorRows[0].id).toBe(duplicatedVersion.workspaceWorkflowVersionId);
-    expect(mirrorRows[0].status).toBe('DRAFT');
-    expect(Array.isArray(mirrorRows[0].steps)).toBe(true);
-    expect(mirrorRows[0].steps.length).toBe(duplicatedVersion.steps?.length);
-    expect(mirrorRows[0].trigger.type).toBe('MANUAL');
   });
 });

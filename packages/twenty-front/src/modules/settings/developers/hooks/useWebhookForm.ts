@@ -101,7 +101,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         : '';
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Webhook ${targetUrl} created successfully`,
       });
 
@@ -122,7 +122,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const handleUpdate = async (formValues: WebhookFormValues) => {
     if (!webhookId) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Webhook ID is required for updates`,
       });
       return;
@@ -142,7 +142,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         : '';
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Webhook ${targetUrl} updated successfully`,
       });
     } catch (error) {
@@ -186,7 +186,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const handleDelete = async () => {
     if (!webhookId) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Webhook ID is required for deletion`,
       });
       return;
@@ -197,7 +197,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         variables: { id: webhookId },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Webhook deleted successfully`,
       });
 

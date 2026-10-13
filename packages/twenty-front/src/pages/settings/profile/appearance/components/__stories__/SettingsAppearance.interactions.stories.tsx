@@ -159,7 +159,7 @@ export const HorizontalLayout: Story = {
       canvasElement.ownerDocument.createElement('style');
 
     lateRadioGroupStyles.textContent =
-      '[role="radiogroup"] { flex-direction: column; }';
+      '@layer twenty-ui { [role="radiogroup"] { flex-direction: column; } }';
     canvasElement.ownerDocument.head.append(lateRadioGroupStyles);
 
     try {

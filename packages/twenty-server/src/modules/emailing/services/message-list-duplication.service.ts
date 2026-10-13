@@ -22,6 +22,7 @@ import {
 } from 'src/modules/emailing/exceptions/message-list.exception';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageList.universalIdentifier,
@@ -126,12 +127,12 @@ export class MessageListDuplicationService {
     const messageListRepository =
       transactionScope.getRepository<MessageListWorkspaceEntity>(
         'messageList',
-        { unionOf: [roleId] },
+        buildEmailingRolePermissionConfig(roleId),
       );
     const messageListMemberRepository =
       transactionScope.getRepository<MessageListMemberWorkspaceEntity>(
         'messageListMember',
-        { unionOf: [roleId] },
+        buildEmailingRolePermissionConfig(roleId),
       );
 
     const originalMessageList = await messageListRepository.findOne({
