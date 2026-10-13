@@ -1,50 +1,22 @@
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type CodeEditorProps } from '../types/CodeEditorProps';
 
-export const useCodeEditorSubscriptions = ({
-  editor,
-  monaco,
-  setMarkers,
-  setEditor,
-  setMonaco,
-}: {
+type CodeEditorMarkersEffectProps = {
   editor: editor.IStandaloneCodeEditor | undefined;
   monaco: Monaco | undefined;
   setMarkers: CodeEditorProps['setMarkers'];
-  setEditor: Dispatch<SetStateAction<editor.IStandaloneCodeEditor | undefined>>;
-  setMonaco: Dispatch<SetStateAction<Monaco | undefined>>;
-}) => {
-  const [isEditorFocused, setIsEditorFocused] = useState(false);
+};
 
-  useEffect(() => {
-    if (!isDefined(editor)) {
-      setIsEditorFocused(false);
-      return;
-    }
-
-    setIsEditorFocused(editor.hasWidgetFocus());
-
-    const subscriptions = [
-      editor.onDidFocusEditorWidget(() => setIsEditorFocused(true)),
-      editor.onDidBlurEditorWidget(() => setIsEditorFocused(false)),
-      editor.onDidDispose(() => {
-        setEditor(undefined);
-        setMonaco(undefined);
-      }),
-    ];
-
-    return () => {
-      for (const subscription of subscriptions) {
-        subscription.dispose();
-      }
-    };
-  }, [editor, setEditor, setMonaco]);
-
+export const CodeEditorMarkersEffect = ({
+  editor,
+  monaco,
+  setMarkers,
+}: CodeEditorMarkersEffectProps) => {
   useEffect(() => {
     if (!isDefined(editor) || !isDefined(monaco) || !isDefined(setMarkers)) {
       return;
@@ -78,5 +50,5 @@ export const useCodeEditorSubscriptions = ({
     };
   }, [editor, monaco, setMarkers]);
 
-  return isEditorFocused;
+  return null;
 };

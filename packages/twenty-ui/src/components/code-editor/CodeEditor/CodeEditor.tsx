@@ -11,10 +11,14 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { BASE_CODE_EDITOR_THEME_ID } from './internal/constants/BaseCodeEditorThemeId';
 import { CODE_EDITOR_DEFAULT_HEIGHT } from './internal/constants/CodeEditorDefaultHeight';
+import { CodeEditorAutoHeightEffect } from './internal/CodeEditorAutoHeightEffect';
+import { CodeEditorLifecycleEffect } from './internal/CodeEditorLifecycleEffect';
+import { CodeEditorLoaderConfigurationEffect } from './internal/CodeEditorLoaderConfigurationEffect';
+import { CodeEditorMarkersEffect } from './internal/CodeEditorMarkersEffect';
+import { CodeEditorResizableHeightEffect } from './internal/CodeEditorResizableHeightEffect';
+import { CodeEditorThemeEffect } from './internal/CodeEditorThemeEffect';
 import { useCodeEditorHeight } from './internal/useCodeEditorHeight';
-import { useCodeEditorLoaderConfiguration } from './internal/useCodeEditorLoaderConfiguration';
-import { useCodeEditorSubscriptions } from './internal/useCodeEditorSubscriptions';
-import { useCodeEditorTheme } from './internal/useCodeEditorTheme';
+import { defineCodeEditorDefaultTheme } from './internal/utils/defineCodeEditorDefaultTheme';
 import styles from './CodeEditor.module.scss';
 import { type CodeEditorProps } from './types/CodeEditorProps';
 
@@ -70,31 +74,23 @@ export const CodeEditor = ({
   const colorScheme = useThemeColorScheme();
   const [monaco, setMonaco] = useState<Monaco>();
   const [editor, setEditor] = useState<editor.IStandaloneCodeEditor>();
-  const isMonacoLoaderConfigured = useCodeEditorLoaderConfiguration(
-    configureMonacoLoader,
-  );
+  const [isMonacoLoaderConfigured, setIsMonacoLoaderConfigured] =
+    useState(false);
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
   const editorContainerId = useId();
   const editorTheme =
     requestedTheme ?? options?.theme ?? BASE_CODE_EDITOR_THEME_ID;
-  const { currentHeight, resizableHeight, setResizableHeight } =
-    useCodeEditorHeight({ height, resizable, autoHeight, editor });
-  const isEditorFocused = useCodeEditorSubscriptions({
-    editor,
-    monaco,
-    setMarkers,
-    setEditor,
-    setMonaco,
-  });
+  const {
+    currentHeight,
+    resizableHeight,
+    setResizableHeight,
+    setResizedHeight,
+    setContentHeight,
+    shouldAutoHeight,
+  } = useCodeEditorHeight({ height, resizable, autoHeight });
   const codeEditorPadding = isNumber(theme.spacingMultiplicator)
     ? theme.spacingMultiplicator * 4
     : undefined;
-
-  const defineDefaultTheme = useCodeEditorTheme({
-    monaco,
-    theme,
-    colorScheme,
-    editorTheme,
-  });
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     containerProps?.onKeyDown?.(event);
@@ -107,11 +103,44 @@ export const CodeEditor = ({
   return (
     <div
       role="group"
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...containerProps}
       ref={ref}
       className={clsx(styles.container, containerProps?.className)}
       onKeyDown={handleKeyDown}
     >
+      <CodeEditorLoaderConfigurationEffect
+        configureMonacoLoader={configureMonacoLoader}
+        setIsMonacoLoaderConfigured={setIsMonacoLoaderConfigured}
+      />
+      <CodeEditorResizableHeightEffect
+        height={height}
+        resizable={resizable}
+        editor={editor}
+        setResizedHeight={setResizedHeight}
+      />
+      <CodeEditorAutoHeightEffect
+        shouldAutoHeight={shouldAutoHeight}
+        editor={editor}
+        setContentHeight={setContentHeight}
+      />
+      <CodeEditorLifecycleEffect
+        editor={editor}
+        setEditor={setEditor}
+        setMonaco={setMonaco}
+        setIsEditorFocused={setIsEditorFocused}
+      />
+      <CodeEditorMarkersEffect
+        editor={editor}
+        monaco={monaco}
+        setMarkers={setMarkers}
+      />
+      <CodeEditorThemeEffect
+        monaco={monaco}
+        theme={theme}
+        colorScheme={colorScheme}
+        editorTheme={editorTheme}
+      />
       {isLoading || !isMonacoLoaderConfigured ? (
         <div
           className={styles.editorLoader}
@@ -135,13 +164,14 @@ export const CodeEditor = ({
           data-transparent-background={transparentBackground || undefined}
         >
           <Editor
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...editorProps}
             height={currentHeight}
             width={width}
             theme={editorTheme}
             loading={loading}
             beforeMount={(monaco) => {
-              defineDefaultTheme(monaco);
+              defineCodeEditorDefaultTheme({ monaco, theme, colorScheme });
               beforeMount?.(monaco);
             }}
             onMount={(editor, monaco) => {
