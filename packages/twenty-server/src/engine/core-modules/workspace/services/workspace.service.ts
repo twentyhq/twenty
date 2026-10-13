@@ -151,6 +151,7 @@ export class WorkspaceService {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
+    isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
@@ -1199,7 +1200,6 @@ export class WorkspaceService {
       await prefillWorkflows(
         queryRunner.manager,
         workspaceId,
-        schemaName,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );

@@ -45,7 +45,9 @@ import {
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
+import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
+import { sortApplicationRegistrationsForAdmin } from 'src/engine/core-modules/application/application-registration/utils/sort-application-registrations-for-admin.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -96,6 +98,7 @@ export type ApplicationRegistrationCatalogCard = {
   author: string | null;
   category: string | null;
   logoUrl: string | null;
+  requiredServerVersionRange: string | null;
 };
 
 @Injectable()
@@ -300,9 +303,7 @@ export class ApplicationRegistrationService {
         APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT.map(
           (column) => `registration.${column}`,
         ),
-      )
-      .orderBy('registration.createdAt', 'DESC')
-      .addOrderBy('registration.id', 'ASC');
+      );
 
     if (isPreInstalledOnly === true) {
       queryBuilder.andWhere('registration."isPreInstalled" = true');
@@ -329,40 +330,87 @@ export class ApplicationRegistrationService {
       );
     }
 
-    // Configuration status is computed, not stored, so this filter paginates in memory
-    if (isDefined(isConfigured)) {
-      const allRegistrations = await queryBuilder.getMany();
+    const matchingRegistrations = await queryBuilder.getMany();
 
-      const configuredStatuses =
-        await this.applicationRegistrationVariableService.isConfiguredBatch(
-          allRegistrations.map((registration) => registration.id),
-        );
-
-      const filteredRegistrations = allRegistrations.filter(
-        (registration) =>
-          (configuredStatuses.get(registration.id) ?? false) === isConfigured,
-      );
-
-      return {
-        registrations: filteredRegistrations.slice(
-          safeOffset,
-          safeOffset + safeLimit,
-        ),
-        totalCount: filteredRegistrations.length,
-        hasMore: safeOffset + safeLimit < filteredRegistrations.length,
-      };
+    if (matchingRegistrations.length === 0) {
+      return { registrations: [], totalCount: 0, hasMore: false };
     }
 
-    const [registrations, totalCount] = await queryBuilder
-      .skip(safeOffset)
-      .take(safeLimit)
-      .getManyAndCount();
+    const matchingRegistrationIds = matchingRegistrations.map(
+      (registration) => registration.id,
+    );
+
+    const [isConfiguredByRegistrationId, installCountByRegistrationId] =
+      await Promise.all([
+        this.applicationRegistrationVariableService.isConfiguredBatch(
+          matchingRegistrationIds,
+        ),
+        this.countInstalledWorkspacesByApplicationRegistrationIds(
+          matchingRegistrationIds,
+        ),
+      ]);
+
+    const filteredRegistrations = isDefined(isConfigured)
+      ? matchingRegistrations.filter(
+          (registration) =>
+            (isConfiguredByRegistrationId.get(registration.id) ?? false) ===
+            isConfigured,
+        )
+      : matchingRegistrations;
+
+    const sortedRegistrations = sortApplicationRegistrationsForAdmin({
+      registrations: filteredRegistrations,
+      isConfiguredByRegistrationId,
+      installCountByRegistrationId,
+    });
 
     return {
-      registrations,
-      totalCount,
-      hasMore: safeOffset + registrations.length < totalCount,
+      registrations: sortedRegistrations
+        .slice(safeOffset, safeOffset + safeLimit)
+        .map((registration) => ({
+          ...registration,
+          isConfigured:
+            isConfiguredByRegistrationId.get(registration.id) ?? false,
+          installCount: installCountByRegistrationId.get(registration.id) ?? 0,
+        })),
+      totalCount: sortedRegistrations.length,
+      hasMore: safeOffset + safeLimit < sortedRegistrations.length,
     };
+  }
+
+  async countInstalledWorkspacesByApplicationRegistrationIds(
+    applicationRegistrationIds: string[],
+  ): Promise<Map<string, number>> {
+    if (!isNonEmptyArray(applicationRegistrationIds)) {
+      return new Map();
+    }
+
+    const installCounts: {
+      applicationRegistrationId: string;
+      installCount: number;
+    }[] = await this.applicationRepository
+      .createQueryBuilder('application')
+      .select(
+        'application."applicationRegistrationId"',
+        'applicationRegistrationId',
+      )
+      .addSelect('COUNT(*)::int', 'installCount')
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application."applicationRegistrationId" IN (:...applicationRegistrationIds)',
+        { applicationRegistrationIds },
+      )
+      .andWhere('application."deletedAt" IS NULL')
+      .andWhere('workspace."deletedAt" IS NULL')
+      .groupBy('application."applicationRegistrationId"')
+      .getRawMany();
+
+    return new Map(
+      installCounts.map(({ applicationRegistrationId, installCount }) => [
+        applicationRegistrationId,
+        installCount,
+      ]),
+    );
   }
 
   async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
@@ -996,6 +1044,7 @@ export class ApplicationRegistrationService {
         'description',
         'author',
         'category',
+        'manifest',
       ],
       where: {
         isListed: true,
@@ -1010,10 +1059,12 @@ export class ApplicationRegistrationService {
       sourcePackage: registration.sourcePackage,
       isVetted: registration.isVetted,
       description: registration.description,
-      author: registration.author,
+      author: getApplicationAuthorDisplayName(registration.author),
       category: registration.category,
       logoUrl:
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
+      requiredServerVersionRange:
+        registration.manifest?.application?.requiredServerVersionRange ?? null,
     }));
   }
 
@@ -1192,7 +1243,7 @@ export class ApplicationRegistrationService {
       logoUrl:
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       description: registration.description,
-      author: registration.author,
+      author: getApplicationAuthorDisplayName(registration.author),
       isOwned: isDefined(registration.ownerWorkspaceId),
     };
   }

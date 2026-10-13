@@ -24,7 +24,7 @@ import {
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined, sortKeysDeeply } from 'twenty-shared/utils';
 
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -284,7 +284,7 @@ export class ChatExecutionService {
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace.id,
       ));
 
@@ -571,7 +571,10 @@ export class ChatExecutionService {
         stepStartedAt = performance.now();
 
         return {
-          messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
+          messages: injectCacheBreakpoint(
+            messages.map(sortKeysDeeply),
+            registeredModel.sdkPackage,
+          ),
         };
       },
       onChunk: ({ chunk }) => {

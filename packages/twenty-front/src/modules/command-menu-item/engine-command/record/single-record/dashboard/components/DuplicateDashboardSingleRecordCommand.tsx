@@ -26,7 +26,7 @@ export const DuplicateDashboardSingleRecordCommand = () => {
 
     if (isDefined(result) && isNonEmptyString(result.id)) {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Dashboard duplicated successfully`,
       });
 

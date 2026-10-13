@@ -1,60 +1,36 @@
 import request from 'supertest';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import {
+  activateCoreWorkflowVersion,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  runCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import {
   destroyWorkflowRun,
-  runWorkflowVersion,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('Pick Record Workflow - round robin (e2e)', () => {
-  let createdWorkflowId: string | null = null;
-  let createdWorkflowVersionId: string | null = null;
+  let coreWorkflowId: string | null = null;
+  let coreWorkflowVersionId: string | null = null;
   let pickRecordStepId: string | null = null;
   let orderedCandidateRecordIds: string[] = [];
 
   beforeAll(async () => {
-    const createWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflow {
-            createWorkflow(data: { name: "Pick Record Round Robin Test" }) {
-              id
-            }
-          }
-        `,
-      });
+    const createdCoreWorkflow = await createCoreWorkflow({
+      name: 'Pick Record Round Robin Test',
+    });
 
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+    coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
+    coreWorkflowVersionId = createdCoreWorkflow.coreWorkflowVersionId;
 
-    const getWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query GetWorkflow($id: UUID!) {
-            workflow(filter: { id: { eq: $id } }) {
-              versions {
-                edges {
-                  node {
-                    id
-                  }
-                }
-              }
-            }
-          }
-        `,
-        variables: { id: createdWorkflowId },
-      });
-
-    createdWorkflowVersionId =
-      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
-
-    await updateWorkflowVersionTrigger({
-      workflowVersionId: createdWorkflowVersionId!,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -64,45 +40,10 @@ describe('Pick Record Workflow - round robin (e2e)', () => {
       },
     });
 
-    await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            stepType: 'PICK_RECORD',
-            parentStepId: 'trigger',
-            position: { x: 200, y: 0 },
-          },
-        },
-      });
-
-    const getStepsResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query GetWorkflowVersion($id: UUID!) {
-            workflowVersion(filter: { id: { eq: $id } }) {
-              steps
-            }
-          }
-        `,
-        variables: { id: createdWorkflowVersionId },
-      });
-
-    const pickRecordStep =
-      getStepsResponse.body.data.workflowVersion.steps.find(
-        (step: { type: string }) => step.type === 'PICK_RECORD',
-      );
+    const pickRecordStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'PICK_RECORD',
+    });
 
     pickRecordStepId = pickRecordStep.id;
 
@@ -136,65 +77,27 @@ describe('Pick Record Workflow - round robin (e2e)', () => {
       (idA: string, idB: string) => idA.localeCompare(idB),
     );
 
-    await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
-            updateWorkflowVersionStep(input: $input) {
-              id
-            }
-          }
-        `,
-        variables: {
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...pickRecordStep,
+        settings: {
+          ...pickRecordStep.settings,
           input: {
-            workflowVersionId: createdWorkflowVersionId,
-            step: {
-              ...pickRecordStep,
-              settings: {
-                ...pickRecordStep.settings,
-                input: {
-                  objectName: 'company',
-                  strategy: 'ROUND_ROBIN',
-                  recordIds: candidateRecordIds,
-                },
-              },
-            },
+            objectName: 'company',
+            strategy: 'ROUND_ROBIN',
+            recordIds: candidateRecordIds,
           },
         },
-      });
+      },
+    });
 
-    const activateResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-            activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-          }
-        `,
-        variables: { workflowVersionId: createdWorkflowVersionId },
-      });
-
-    expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
+    await activateCoreWorkflowVersion({ coreWorkflowVersionId });
   });
 
   afterAll(async () => {
-    if (createdWorkflowId) {
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation DestroyWorkflow($id: ID!) {
-              destroyWorkflow(id: $id) {
-                id
-              }
-            }
-          `,
-          variables: { id: createdWorkflowId },
-        });
+    if (coreWorkflowId) {
+      await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
   });
 
@@ -202,8 +105,8 @@ describe('Pick Record Workflow - round robin (e2e)', () => {
     const pickedRecordIds: string[] = [];
 
     for (let runIndex = 0; runIndex < 4; runIndex++) {
-      const workflowRunId = await runWorkflowVersion({
-        workflowVersionId: createdWorkflowVersionId!,
+      const workflowRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: coreWorkflowVersionId!,
         payload: {},
       });
 

@@ -55,7 +55,7 @@ export const EmailRecipientChipMenuContent = ({
     });
 
     if (isDefined(createdPerson)) {
-      enqueueToast({ variant: 'success', children: t`Person created` });
+      enqueueToast({ status: 'success', children: t`Person created` });
     }
   };
 

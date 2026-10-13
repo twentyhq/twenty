@@ -96,7 +96,7 @@ describe('useInstallMarketplaceApp', () => {
 
     await waitFor(() => expect(result.current.isInstalling).toBe(false));
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'Manifest validation failed',
     });
   });

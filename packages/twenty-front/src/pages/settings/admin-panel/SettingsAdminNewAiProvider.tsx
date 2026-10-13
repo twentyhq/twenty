@@ -177,8 +177,21 @@ export const SettingsAdminNewAiProvider = () => {
       }
       config.region = values.region.trim();
 
+      const apiKey = values.apiKey.trim();
       const accessKeyId = values.accessKeyId.trim();
       const secretAccessKey = values.secretAccessKey.trim();
+
+      if (
+        isNonEmptyString(apiKey) &&
+        (isNonEmptyString(accessKeyId) || isNonEmptyString(secretAccessKey))
+      ) {
+        form.setError('apiKey', {
+          type: 'manual',
+          message: t`Use either an API key or an access key pair, not both`,
+        });
+
+        return;
+      }
 
       // Role auth ignores both fields, so half a key pair would run under an identity nobody chose
       if (isNonEmptyString(accessKeyId) !== isNonEmptyString(secretAccessKey)) {
@@ -193,7 +206,9 @@ export const SettingsAdminNewAiProvider = () => {
         return;
       }
 
-      if (isNonEmptyString(accessKeyId)) {
+      if (isNonEmptyString(apiKey)) {
+        config.apiKey = apiKey;
+      } else if (isNonEmptyString(accessKeyId)) {
         config.accessKeyId = accessKeyId;
         config.secretAccessKey = secretAccessKey;
       } else {
@@ -234,12 +249,12 @@ export const SettingsAdminNewAiProvider = () => {
       });
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Provider "${values.label.trim()}" added`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to add provider` });
+      enqueueToast({ status: 'error', children: t`Failed to add provider` });
     } finally {
       setIsSubmitting(false);
     }
@@ -442,6 +457,29 @@ export const SettingsAdminNewAiProvider = () => {
                           onChange={onChange}
                           placeholder={t`us-east-1`}
                           fullWidth
+                          error={error?.message}
+                        />
+                      )}
+                    />
+                  </Section.Root>
+
+                  <Section.Root>
+                    <Section.Header
+                      title={t`API Key`}
+                      description={t`Optional — a Bedrock API key, used instead of an access key pair or the IAM role`}
+                    />
+                    <Controller
+                      name="apiKey"
+                      control={form.control}
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
+                        <TextInput
+                          value={value}
+                          onChange={onChange}
+                          fullWidth
+                          type="password"
                           error={error?.message}
                         />
                       )}

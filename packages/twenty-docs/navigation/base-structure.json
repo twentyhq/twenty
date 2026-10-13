@@ -569,6 +569,7 @@
                   "pages": [
                     "ui/primitives/feedback/banner",
                     "ui/primitives/feedback/loader",
+                    "ui/primitives/feedback/progress",
                     "ui/primitives/feedback/progress-bar",
                     "ui/primitives/feedback/progress-ring",
                     "ui/primitives/feedback/skeleton"
@@ -590,8 +591,7 @@
                     "ui/primitives/input/radio-group",
                     "ui/primitives/input/select",
                     "ui/primitives/input/slider",
-                    "ui/primitives/input/switch",
-                    "ui/primitives/input/segmented-control"
+                    "ui/primitives/input/switch"
                   ]
                 },
                 {
@@ -649,6 +649,7 @@
                     "ui/components/data-display/command-block",
                     "ui/components/data-display/json-tree",
                     "ui/components/data-display/metric-row",
+                    "ui/components/data-display/stack-icon",
                     "ui/components/data-display/tinted-icon-tile"
                   ]
                 },
@@ -674,7 +675,8 @@
                     "ui/components/input/phone-country-picker",
                     "ui/components/input/image-input",
                     "ui/components/input/search-input",
-                    "ui/components/input/number-stepper"
+                    "ui/components/input/number-stepper",
+                    "ui/components/input/segmented-control"
                   ]
                 },
                 {

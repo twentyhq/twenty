@@ -42,6 +42,7 @@ type SettingsApplicationAboutSidebarProps = {
   installCount?: number;
   category?: string;
   pricingDescription?: string;
+  billsCredits?: boolean;
   developerLinks?: DeveloperLinks;
 };
 
@@ -151,6 +152,7 @@ export const SettingsApplicationAboutSidebar = ({
   installCount,
   category,
   pricingDescription,
+  billsCredits = false,
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
   const theme = useTheme();
@@ -191,8 +193,16 @@ export const SettingsApplicationAboutSidebar = ({
       : []),
     ...getInstallCountRows(),
     ...(isNonEmptyString(category) ? [{ Icon: IconTag, label: category }] : []),
-    ...(isNonEmptyString(pricingDescription)
-      ? [{ Icon: IconCurrencyDollar, label: pricingDescription }]
+    ...(billsCredits
+      ? [
+          {
+            Icon: IconCurrencyDollar,
+            label: t`Bills credits`,
+            tooltip: isNonEmptyString(pricingDescription)
+              ? pricingDescription
+              : undefined,
+          },
+        ]
       : []),
   ];
 

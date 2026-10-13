@@ -1336,7 +1336,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_VALIDATION_RULES_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1779,6 +1779,7 @@ export interface MarketplaceApp {
 export interface MarketplaceAppDetail {
     aboutDescription?: Scalars['String']
     author?: Scalars['String']
+    billsCredits: Scalars['Boolean']
     category?: Scalars['String']
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
@@ -5990,6 +5991,7 @@ export interface MarketplaceAppGenqlSelection{
 export interface MarketplaceAppDetailGenqlSelection{
     aboutDescription?: boolean | number
     author?: boolean | number
+    billsCredits?: boolean | number
     category?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number
@@ -7433,7 +7435,7 @@ export interface SignUpGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface SignUpInNewWorkspaceInput {displayName?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null)}
+export interface SignUpInNewWorkspaceInput {displayName?: (Scalars['String'] | null),partner?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null)}
 
 export interface SkillGenqlSelection{
     applicationId?: boolean | number
@@ -7818,7 +7820,7 @@ export interface UpdateWebhookInputUpdates {description?: (Scalars['String'] | n
 
 export interface UpdateWorkspaceAllowedIframeOriginsInput {operation: Scalars['String'],origin: Scalars['String']}
 
-export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatModelTier?: (AiModelTier | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
+export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatModelTier?: (AiModelTier | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
 
 export interface UpdateWorkspaceMemberSettingsInput {update: Scalars['JSON'],workspaceMemberId: Scalars['UUID']}
 
@@ -11479,13 +11481,11 @@ export const enumEventLogTable = {
 
 export const enumFeatureFlagKey = {
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
-   IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' as const,
    IS_APPLICATION_WORKFLOWS_ENABLED: 'IS_APPLICATION_WORKFLOWS_ENABLED' as const,
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
    IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED: 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
-   IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
    IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
@@ -11495,9 +11495,7 @@ export const enumFeatureFlagKey = {
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED: 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
-   IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const,
-   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
-   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED: 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' as const
+   IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const
 }
 
 export const enumFieldDisplayMode = {

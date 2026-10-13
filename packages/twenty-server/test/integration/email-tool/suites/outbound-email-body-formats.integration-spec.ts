@@ -20,6 +20,10 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 import {
+  deleteLegacyWorkspaceWorkflowRecords,
+  linkCoreWorkflowToLegacyWorkspaceIds,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import {
   runWorkflowActionStep,
   type WorkflowActionStepRun,
 } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
@@ -64,21 +68,21 @@ const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const EMAIL_STEP_BODY_PATH = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL" || @.type == "DRAFT_EMAIL").settings.input.body') #>> '{}'`;
 
-const readStoredBodies = async (workflowVersionId: string) => {
+const readStoredBodies = async (coreWorkflowVersionId: string) => {
   const [workspaceRow] = await global.testDataSource.query(
-    `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "id" = $1`,
-    [workflowVersionId],
+    `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $1`,
+    [coreWorkflowVersionId],
   );
   const [coreRow] = await global.testDataSource.query(
-    `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM core."workflowVersion" WHERE "workspaceWorkflowVersionId" = $1`,
-    [workflowVersionId],
+    `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM core."workflowVersion" WHERE "id" = $1`,
+    [coreWorkflowVersionId],
   );
 
   return { workspaceBody: workspaceRow.body, coreBody: coreRow.body };
 };
 
 const storeBodyAsBeforeTheUpgrade = async (
-  workflowVersionId: string,
+  coreWorkflowVersionId: string,
   legacyBody: string,
 ) => {
   const replaceEmailStepBody = `steps = (
@@ -89,12 +93,8 @@ const storeBodyAsBeforeTheUpgrade = async (
     FROM jsonb_array_elements(steps) step)`;
 
   await global.testDataSource.query(
-    `UPDATE "${WORKSPACE_SCHEMA}"."workflowVersion" SET ${replaceEmailStepBody} WHERE "id" = $2`,
-    [legacyBody, workflowVersionId],
-  );
-  await global.testDataSource.query(
-    `UPDATE core."workflowVersion" SET ${replaceEmailStepBody} WHERE "workspaceWorkflowVersionId" = $2`,
-    [legacyBody, workflowVersionId],
+    `UPDATE core."workflowVersion" SET ${replaceEmailStepBody} WHERE "id" = $2`,
+    [legacyBody, coreWorkflowVersionId],
   );
 };
 
@@ -111,7 +111,7 @@ describe('Outbound email body formats (integration)', () => {
     body: EmailDocument | string;
     payload?: Record<string, unknown>;
     stepType?: 'SEND_EMAIL' | 'DRAFT_EMAIL';
-    beforeRun?: (workflowVersionId: string) => Promise<void>;
+    beforeRun?: (coreWorkflowVersionId: string) => Promise<void>;
   }): Promise<ComposedBody & { run: WorkflowActionStepRun }> => {
     const run = await runWorkflowActionStep({
       name: `Email body format ${randomUUID()}`,
@@ -123,12 +123,12 @@ describe('Outbound email body formats (integration)', () => {
         body: typeof body === 'string' ? '' : JSON.stringify(body),
       },
       payload,
-      beforeRun: async (workflowVersionId) => {
+      beforeRun: async (coreWorkflowVersionId) => {
         if (typeof body === 'string') {
-          await storeBodyAsBeforeTheUpgrade(workflowVersionId, body);
+          await storeBodyAsBeforeTheUpgrade(coreWorkflowVersionId, body);
         }
 
-        await beforeRun?.(workflowVersionId);
+        await beforeRun?.(coreWorkflowVersionId);
       },
     });
 
@@ -394,6 +394,28 @@ describe('Outbound email body formats (integration)', () => {
   });
 
   describe('upgrade command', () => {
+    const legacyWorkspaceWorkflowIds: string[] = [];
+
+    const linkLegacyWorkspaceCopy = async (coreWorkflowVersionId: string) => {
+      const [{ coreWorkflowId }] = await global.testDataSource.query(
+        `SELECT "coreWorkflowId" FROM core."workflowVersion" WHERE id = $1`,
+        [coreWorkflowVersionId],
+      );
+      const { workspaceWorkflowId } =
+        await linkCoreWorkflowToLegacyWorkspaceIds({
+          coreWorkflowId,
+          withWorkspaceRecords: true,
+        });
+
+      legacyWorkspaceWorkflowIds.push(workspaceWorkflowId);
+    };
+
+    afterAll(async () => {
+      for (const workspaceWorkflowId of legacyWorkspaceWorkflowIds) {
+        await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
+      }
+    });
+
     const runUpgradeCommand = (dryRun: boolean) =>
       getAppProviderByClassName<WorkspaceOrmManager>(
         'WorkspaceOrmManager',
@@ -412,22 +434,24 @@ describe('Outbound email body formats (integration)', () => {
       );
 
     const convertStoredBodyBeforeRun =
-      (legacyBody: string) => async (workflowVersionId: string) => {
-        expect(await readStoredBodies(workflowVersionId)).toEqual({
+      (legacyBody: string) => async (coreWorkflowVersionId: string) => {
+        await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
+
+        expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
           workspaceBody: legacyBody,
           coreBody: legacyBody,
         });
 
         await runUpgradeCommand(true);
 
-        expect(await readStoredBodies(workflowVersionId)).toEqual({
+        expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
           workspaceBody: legacyBody,
           coreBody: legacyBody,
         });
 
         await runUpgradeCommand(false);
 
-        const convertedBodies = await readStoredBodies(workflowVersionId);
+        const convertedBodies = await readStoredBodies(coreWorkflowVersionId);
 
         expect(convertedBodies.coreBody).toBe(convertedBodies.workspaceBody);
         expect(
@@ -438,21 +462,21 @@ describe('Outbound email body formats (integration)', () => {
 
         await runUpgradeCommand(false);
 
-        expect(await readStoredBodies(workflowVersionId)).toEqual(
+        expect(await readStoredBodies(coreWorkflowVersionId)).toEqual(
           convertedBodies,
         );
       };
 
     it('converts the core and workspace copies each from its own steps', async () => {
-      const readEmailStepNames = async (workflowVersionId: string) => {
+      const readEmailStepNames = async (coreWorkflowVersionId: string) => {
         const selectEmailStepName = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL").name') #>> '{}'`;
         const [workspaceRow] = await global.testDataSource.query(
-          `SELECT ${selectEmailStepName} AS name FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "id" = $1`,
-          [workflowVersionId],
+          `SELECT ${selectEmailStepName} AS name FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $1`,
+          [coreWorkflowVersionId],
         );
         const [coreRow] = await global.testDataSource.query(
-          `SELECT ${selectEmailStepName} AS name FROM core."workflowVersion" WHERE "workspaceWorkflowVersionId" = $1`,
-          [workflowVersionId],
+          `SELECT ${selectEmailStepName} AS name FROM core."workflowVersion" WHERE "id" = $1`,
+          [coreWorkflowVersionId],
         );
 
         return { workspaceName: workspaceRow.name, coreName: coreRow.name };
@@ -460,25 +484,28 @@ describe('Outbound email body formats (integration)', () => {
 
       await runSendEmailWorkflow({
         body: '<p>Hello</p>',
-        beforeRun: async (workflowVersionId) => {
+        beforeRun: async (coreWorkflowVersionId) => {
+          await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
           await global.testDataSource.query(
             `UPDATE core."workflowVersion"
              SET steps = jsonb_set(steps, '{0,name}', '"Renamed in core only"')
-             WHERE "workspaceWorkflowVersionId" = $1`,
-            [workflowVersionId],
+             WHERE "id" = $1`,
+            [coreWorkflowVersionId],
           );
-          const namesBeforeUpgrade =
-            await readEmailStepNames(workflowVersionId);
+          const namesBeforeUpgrade = await readEmailStepNames(
+            coreWorkflowVersionId,
+          );
 
           await runUpgradeCommand(false);
 
-          expect(await readEmailStepNames(workflowVersionId)).toEqual(
+          expect(await readEmailStepNames(coreWorkflowVersionId)).toEqual(
             namesBeforeUpgrade,
           );
           expect(namesBeforeUpgrade.coreName).toBe('Renamed in core only');
 
-          const { workspaceBody, coreBody } =
-            await readStoredBodies(workflowVersionId);
+          const { workspaceBody, coreBody } = await readStoredBodies(
+            coreWorkflowVersionId,
+          );
 
           for (const body of [workspaceBody, coreBody]) {
             expect(

@@ -10,7 +10,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WARM_AND_CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-quota-counters-script.constant';
+import { WARM_AND_CONSUME_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-counters-script.constant';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
@@ -814,7 +814,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     }
 
     const results = await this.cacheStorage.runScript<unknown[]>({
-      script: WARM_AND_CONSUME_QUOTA_COUNTERS_SCRIPT,
+      script: WARM_AND_CONSUME_COUNTERS_SCRIPT,
       keys: counters.map((counter) => counter.key),
       args: buildConsumeScriptArguments(entries),
     });

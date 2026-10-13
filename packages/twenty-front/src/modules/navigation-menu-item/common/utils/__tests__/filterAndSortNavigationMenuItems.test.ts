@@ -40,26 +40,14 @@ describe('filterAndSortNavigationMenuItems', () => {
     targetRecordIdentifier: { id: 'workflow-record-id', name: 'My workflow' },
   } as unknown as NavigationMenuItem;
 
-  it('hides workflow record items when the workflow core index page is enabled', () => {
+  it('hides workflow record items', () => {
     expect(
       filterAndSortNavigationMenuItems(
         [workflowRecordItem],
         [],
         [mockWorkflowObjectMetadataItem],
-        true,
       ),
     ).toEqual([]);
-  });
-
-  it('keeps workflow record items when the workflow core index page is disabled', () => {
-    expect(
-      filterAndSortNavigationMenuItems(
-        [workflowRecordItem],
-        [],
-        [mockWorkflowObjectMetadataItem],
-        false,
-      ),
-    ).toEqual([workflowRecordItem]);
   });
 
   it('hides chat record items, which the chat menu lists', () => {
@@ -81,12 +69,11 @@ describe('filterAndSortNavigationMenuItems', () => {
         [chatRecordItem],
         [],
         [chatObjectMetadataItem],
-        false,
       ),
     ).toEqual([]);
   });
 
-  it('keeps other objects record items when the workflow core index page is enabled', () => {
+  it('keeps other objects record items', () => {
     const personRecordItem = {
       id: 'person-favorite-id',
       type: NavigationMenuItemType.RECORD,
@@ -101,13 +88,12 @@ describe('filterAndSortNavigationMenuItems', () => {
         [personRecordItem],
         [],
         [mockObjectMetadataItem],
-        true,
       ),
     ).toEqual([personRecordItem]);
   });
 
   it('should return empty array when navigationMenuItems is empty', () => {
-    const result = filterAndSortNavigationMenuItems([], [], [], false);
+    const result = filterAndSortNavigationMenuItems([], [], []);
     expect(result).toEqual([]);
   });
 
@@ -123,7 +109,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       [navigationMenuItem],
       [mockView],
       [mockObjectMetadataItem],
-      false,
     );
 
     expect(result).toHaveLength(1);
@@ -142,7 +127,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       [navigationMenuItem],
       [],
       [mockObjectMetadataItem],
-      false,
     );
 
     expect(result).toEqual([]);
@@ -165,7 +149,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       [navigationMenuItem],
       [],
       [mockObjectMetadataItem],
-      false,
     );
 
     expect(result).toHaveLength(1);
@@ -184,7 +167,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       [navigationMenuItem],
       [],
       [mockObjectMetadataItem],
-      false,
     );
 
     expect(result).toEqual([]);
@@ -207,7 +189,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       [navigationMenuItem],
       [],
       [mockObjectMetadataItem],
-      false,
     );
 
     expect(result).toEqual([]);
@@ -254,7 +235,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       navigationMenuItems,
       [],
       [mockObjectMetadataItem],
-      false,
     );
 
     expect(result).toHaveLength(3);
@@ -276,7 +256,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       ],
       [],
       [],
-      false,
     );
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('link-1');
@@ -294,7 +273,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       ],
       [],
       [mockObjectMetadataItem],
-      false,
     );
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('obj-1');
@@ -312,7 +290,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       ],
       [],
       [mockObjectMetadataItem],
-      false,
     );
     expect(result).toEqual([]);
   });
@@ -335,7 +312,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       ],
       [],
       [inactiveObjectMetadataItem],
-      false,
     );
     expect(result).toEqual([]);
   });
@@ -365,7 +341,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       ],
       [viewForInactiveObject],
       [inactiveObjectMetadataItem],
-      false,
     );
     expect(result).toEqual([]);
   });
@@ -382,7 +357,6 @@ describe('filterAndSortNavigationMenuItems', () => {
       ],
       [],
       [],
-      false,
     );
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('folder-1');

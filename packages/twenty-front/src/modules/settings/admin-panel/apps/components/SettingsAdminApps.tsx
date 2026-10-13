@@ -14,11 +14,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  assertUnreachable,
-  getSettingsPath,
-  isDefined,
-} from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -35,11 +31,14 @@ import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import {
-  type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
   FindAllApplicationRegistrationsDocument,
+  type FindAllApplicationRegistrationsQuery,
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
+
+type AdminApplicationRegistration =
+  FindAllApplicationRegistrationsQuery['findAllApplicationRegistrations']['registrations'][number];
 
 const StyledTableContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -52,8 +51,8 @@ const StyledShowMoreContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-const TABLE_GRID = '1fr 100px 100px 100px 40px';
-const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
+const TABLE_GRID = '1fr 120px 100px 120px 100px 40px';
+const TABLE_GRID_MOBILE = '3fr 2fr 2fr 2fr 2fr 40px';
 const PAGE_SIZE = 25;
 
 const SOURCE_TYPE_FILTER_OPTIONS: {
@@ -121,12 +120,12 @@ export const SettingsAdminApps = () => {
     try {
       await syncMarketplaceCatalog();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Marketplace catalog synchronization started.`,
       });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to synchronize the marketplace catalog.`,
       });
     }
@@ -161,27 +160,6 @@ export const SettingsAdminApps = () => {
         };
       },
     });
-  };
-
-  const getFormattedSource = (
-    registration: ApplicationRegistrationFragmentFragment,
-  ) => {
-    switch (registration.sourceType) {
-      case ApplicationRegistrationSourceType.TARBALL: {
-        return 'Tarball';
-      }
-      case ApplicationRegistrationSourceType.NPM: {
-        return 'NPM';
-      }
-      case ApplicationRegistrationSourceType.OAUTH_ONLY: {
-        return 'OAuth';
-      }
-      case ApplicationRegistrationSourceType.LOCAL: {
-        return 'Local';
-      }
-      default:
-        return assertUnreachable(registration.sourceType);
-    }
   };
 
   return (
@@ -288,8 +266,9 @@ export const SettingsAdminApps = () => {
                 mobileGridAutoColumns={TABLE_GRID_MOBILE}
               >
                 <TableHeader>{t`Name`}</TableHeader>
-                <TableHeader align="right">{t`Source`}</TableHeader>
-                <TableHeader align="right">{t`Listed`}</TableHeader>
+                <TableHeader>{t`Author`}</TableHeader>
+                <TableHeader align="right">{t`Vetted`}</TableHeader>
+                <TableHeader align="right">{t`Installs`}</TableHeader>
                 <TableHeader align="right">{t`Configured`}</TableHeader>
                 <TableHeader></TableHeader>
               </TableRow>
@@ -298,7 +277,6 @@ export const SettingsAdminApps = () => {
                   <SettingsAdminAppsTableRow
                     key={registration.id}
                     registration={registration}
-                    getFormattedSource={getFormattedSource}
                   />
                 ))}
               </TableBody>
@@ -322,15 +300,11 @@ export const SettingsAdminApps = () => {
 };
 
 type SettingsAdminAppsTableRowProps = {
-  registration: ApplicationRegistrationFragmentFragment;
-  getFormattedSource: (
-    registration: ApplicationRegistrationFragmentFragment,
-  ) => string;
+  registration: AdminApplicationRegistration;
 };
 
 const SettingsAdminAppsTableRow = ({
   registration,
-  getFormattedSource,
 }: SettingsAdminAppsTableRowProps) => {
   const theme = useTheme();
 
@@ -352,12 +326,11 @@ const SettingsAdminAppsTableRow = ({
           }}
         />
       </StyledNameTableCell>
-      <TableCell overflow="hidden" align="right">
-        {getFormattedSource(registration)}
-      </TableCell>
+      <TableCell overflow="hidden">{registration.author ?? '—'}</TableCell>
       <TableCell align="right">
-        {registration.isListed ? t`Yes` : t`No`}
+        {registration.isVetted ? t`Yes` : t`No`}
       </TableCell>
+      <TableCell align="right">{registration.installCount}</TableCell>
       <TableCell align="right">
         <Tag color={registration.isConfigured ? 'green' : 'red'}>
           {registration.isConfigured ? t`Yes` : t`No`}
