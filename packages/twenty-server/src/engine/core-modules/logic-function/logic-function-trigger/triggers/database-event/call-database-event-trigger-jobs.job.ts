@@ -9,6 +9,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
@@ -37,7 +38,10 @@ export class CallDatabaseEventTriggerJobsJob {
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
-  async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
+  async handle(
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    { jobId }: MessageQueueJobContext,
+  ) {
     const {
       flatLogicFunctionMaps,
       flatApplicationMaps,
@@ -146,12 +150,14 @@ export class CallDatabaseEventTriggerJobsJob {
 
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        logicFunctionPayloads.map((logicFunctionPayload) => ({
+        logicFunctionPayloads.map((logicFunctionPayload, index) => ({
           data: logicFunctionPayload,
+          jobId: `${jobId}.${applicationId}.${index}`,
         })),
         {
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          allowDuplicatedPrefixes: true,
         },
       );
     }
