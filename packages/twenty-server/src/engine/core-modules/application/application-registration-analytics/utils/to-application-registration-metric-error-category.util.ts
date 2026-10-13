@@ -4,8 +4,7 @@ import { type ApplicationRegistrationMetricErrorCategory } from 'src/engine/core
 
 const LAMBDA_RUNTIME_ERROR_TYPE_PREFIX = 'Runtime.';
 
-// An error name is set by the function's own code, so only server-produced names map to a specific category
-// and everything else collapses to THROWN: the name itself must never reach the owner
+// Error names are chosen by app code and must never reach the owner, so only runner-produced names get a specific category
 export const toApplicationRegistrationMetricErrorCategory = (
   errorType: string | null | undefined,
 ): ApplicationRegistrationMetricErrorCategory => {

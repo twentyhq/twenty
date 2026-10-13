@@ -50,8 +50,7 @@ const DAY_EXPRESSION = `formatDateTime(timestamp, '%Y-%m-%d')`;
 // Rows without a workspace (version publishes) do not count toward the suppression threshold
 const WORKSPACE_COUNT_EXPRESSION = `uniqExactIf(workspaceHash, workspaceHash != '')`;
 
-// Every figure is derived from (day, metric) cells that already passed the workspace-count threshold,
-// so totals, series and breakdowns can never be differenced into one workspace's activity
+// Every figure comes from daily cells that passed the workspace-count threshold, so nothing can be differenced into one workspace's activity
 @Injectable()
 export class ApplicationRegistrationAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
