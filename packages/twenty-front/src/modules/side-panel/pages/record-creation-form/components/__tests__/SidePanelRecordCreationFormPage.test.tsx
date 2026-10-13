@@ -470,7 +470,7 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error', children: 'Network error' }),
+      expect.objectContaining({ status: 'error', children: 'Network error' }),
     );
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });

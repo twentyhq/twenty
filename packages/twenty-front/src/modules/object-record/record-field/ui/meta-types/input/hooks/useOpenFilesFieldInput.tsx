@@ -89,7 +89,7 @@ export const useOpenFilesFieldInput = () => {
         onUpload: async (selectedFiles: File[]) => {
           if (selectedFiles.length + currentFileCount > maxNumberOfValues) {
             enqueueToast({
-              variant: 'error',
+              status: 'error',
               children: t`Cannot upload more than ${maxNumberOfValues} files`,
             });
 

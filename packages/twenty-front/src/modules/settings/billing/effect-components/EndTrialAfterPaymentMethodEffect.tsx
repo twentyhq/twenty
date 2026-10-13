@@ -60,7 +60,7 @@ export const EndTrialAfterPaymentMethodEffect = () => {
         }
       } else if (hasPaymentMethod === false) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`No payment method found. Please update your billing details.`,
         });
       }

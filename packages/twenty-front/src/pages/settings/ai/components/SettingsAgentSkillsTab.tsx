@@ -99,20 +99,20 @@ export const SettingsAgentSkillsTab = () => {
   const handleActivate = async (skillId: string) => {
     try {
       await activateSkill({ variables: { id: skillId } });
-      enqueueToast({ variant: 'success', children: t`Skill activated` });
+      enqueueToast({ status: 'success', children: t`Skill activated` });
       refetch();
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to activate skill` });
+      enqueueToast({ status: 'error', children: t`Failed to activate skill` });
     }
   };
 
   const handleDelete = async (skillId: string) => {
     try {
       await deleteSkill({ variables: { id: skillId } });
-      enqueueToast({ variant: 'success', children: t`Skill deleted` });
+      enqueueToast({ status: 'success', children: t`Skill deleted` });
       refetch();
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to delete skill` });
+      enqueueToast({ status: 'error', children: t`Failed to delete skill` });
     }
   };
 

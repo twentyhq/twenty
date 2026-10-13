@@ -1,3 +1,5 @@
+import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
 import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
@@ -223,7 +225,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
                       >
                         <MenuItemDraggable
                           withIconContainer
-                          LeftIcon={ItemIcon}
+                          LeftComponent={
+                            <ApplicationStackIcon
+                              Icon={ItemIcon}
+                              applicationId={item.applicationId}
+                            />
+                          }
                           text={getDisplayLabel(item)}
                           gripMode="onHover"
                           isIconDisplayedOnHoverOnly={false}
@@ -278,8 +285,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
                   onEnter={() => handleTogglePin(item.id, false)}
                 >
                   <MenuItem
-                    withIconContainer
-                    LeftIcon={ItemIcon}
+                    LeftComponent={
+                      <AppMenuItemIcon
+                        Icon={ItemIcon}
+                        applicationId={item.applicationId}
+                      />
+                    }
                     text={getDisplayLabel(item)}
                     isIconDisplayedOnHoverOnly={false}
                     iconButtons={

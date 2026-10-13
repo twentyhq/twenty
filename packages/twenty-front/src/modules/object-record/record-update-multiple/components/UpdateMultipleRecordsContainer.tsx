@@ -74,7 +74,7 @@ export const UpdateMultipleRecordsContainer = ({
       closeSidePanelMenu();
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message

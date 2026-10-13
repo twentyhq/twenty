@@ -295,7 +295,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     if (isDefined(permissionLabel)) {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`${permissionLabel} Permission removed`,
       });
     }
@@ -355,7 +355,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     if (isDefined(permissionLabel)) {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`${permissionLabel} permission removed`,
       });
     }

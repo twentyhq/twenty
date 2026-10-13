@@ -53,6 +53,8 @@ const meta: Meta<typeof SettingsAdminApps> = {
                     isPreInstalled: false,
                     isConfigured: true,
                     ownerWorkspaceId: null,
+                    author: 'Acme Corp',
+                    installCount: 3,
                     createdAt: '2026-01-01T00:00:00.000Z',
                     updatedAt: '2026-01-01T00:00:00.000Z',
                   },
@@ -131,5 +133,15 @@ export const FilterPanelTogglesStayOpen: Story = {
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+export const DisplaysAuthorAndInstallCount: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Acme app')).toBeVisible();
+    expect(canvas.getByText('Acme Corp')).toBeVisible();
+    expect(canvas.getByText('3')).toBeVisible();
   },
 };

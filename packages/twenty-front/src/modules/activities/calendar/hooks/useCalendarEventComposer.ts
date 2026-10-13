@@ -274,7 +274,7 @@ export const useCalendarEventComposer = ({
           await refetchTimelineCalendarEvents();
         } else {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Failed to link the related records to this event`,
           });
         }

@@ -27,7 +27,7 @@ export const useNavigateToNotFoundOnLoadFailure = ({
     enqueueToast(
       isDefined(error)
         ? getToastOptionsFromError({ error })
-        : { variant: 'error', children: notFoundMessage },
+        : { status: 'error', children: notFoundMessage },
     );
     navigateApp(AppPath.NotFound);
   }, [hasFailedToLoad, error, notFoundMessage, enqueueToast, navigateApp]);

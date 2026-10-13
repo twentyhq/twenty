@@ -5,6 +5,7 @@ import { type IndexMetadataConnectionLoaderPayload } from 'src/engine/dataloader
 import {
   type AgentsByRoleIdLoaderPayload,
   type ApiKeysByRoleIdLoaderPayload,
+  type ApplicationRegistrationInstallCountLoaderPayload,
   type ApplicationTranslationCatalogLoaderPayload,
   type FieldMetadataLoaderPayload,
   type IndexFieldMetadataLoaderPayload,
@@ -125,6 +126,11 @@ export interface IDataloaders {
   >;
 
   isConfiguredLoader: DataLoader<IsConfiguredLoaderPayload, boolean>;
+
+  applicationRegistrationInstallCountLoader: DataLoader<
+    ApplicationRegistrationInstallCountLoaderPayload,
+    number
+  >;
 
   applicationAuthorIdentifiersLoader: DataLoader<
     ApplicationAuthorIdentifiersLoaderPayload,
