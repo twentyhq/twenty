@@ -6,6 +6,7 @@ import { type ApplicationDisplayData } from '@/applications/types/ApplicationDis
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -33,6 +34,12 @@ const SOURCE_TYPE_LABELS: Record<ApplicationRegistrationSourceType, string> = {
   [ApplicationRegistrationSourceType.TARBALL]: 'Tarball',
 };
 
+const StyledUpdateTag = styled(Tag)`
+  && {
+    min-width: fit-content;
+  }
+`;
+
 export const SettingsApplicationTableRow = ({
   action,
   application,
@@ -59,7 +66,9 @@ export const SettingsApplicationTableRow = ({
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />
         {hasUpdate === true && (
-          <Tag color="blue" weight="medium">{t`Update`}</Tag>
+          <StyledUpdateTag color="blue" weight="medium">
+            {t`Update`}
+          </StyledUpdateTag>
         )}
       </TableCell>
       <TableCell

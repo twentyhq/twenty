@@ -9,7 +9,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -201,7 +201,7 @@ export const useUpdateOneRecord = () => {
           optimisticRecordInput,
         ).filter((diffKey) => !cachedRecordKeys.has(diffKey));
 
-        const recordGqlFields = {
+        const recordGqlFields: RecordGqlFields = {
           ...generateDepthRecordGqlFieldsFromRecord({
             objectMetadataItem,
             objectMetadataItems,

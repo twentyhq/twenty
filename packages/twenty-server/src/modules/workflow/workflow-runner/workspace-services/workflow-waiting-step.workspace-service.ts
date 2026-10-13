@@ -27,7 +27,6 @@ import { buildWorkflowAgentRunExecutionContext } from 'src/modules/workflow/work
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
-import { isWorkflowRunNotFoundError } from 'src/modules/workflow/workflow-runner/utils/is-workflow-run-not-found-error.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
@@ -198,6 +197,8 @@ export class WorkflowWaitingStepWorkspaceService
   }): Promise<void> {
     const { workspaceId, ownerId: workflowRunId, ownerKey: stepId } = wakeUp;
 
+    // claiming is what resumes each wait once: the run job knows only the step, so a second delivery
+    // could otherwise resume the step's next wait, in a loop, with this one's outcome
     if (
       !isDefined(
         await this.pendingWakeUpService.claim({
@@ -212,45 +213,24 @@ export class WorkflowWaitingStepWorkspaceService
 
     // the claimed wait is gone, so a step that cannot resume would wait forever
     try {
-      // an answered call ends the step through the executor's usual path, so a failure is retried
-      // or continues on failure like any failed step
-      if (outcome.type === 'ANSWERED') {
-        await this.messageQueueService.add<RunWorkflowJobData>(
-          RUN_WORKFLOW_JOB_NAME,
-          {
-            workspaceId,
-            workflowRunId,
-            awaitedStepOutput: { stepId, actionOutput: outcome.answer },
-          },
-          buildRunWorkflowJobOptions(workflowRunId),
-        );
-
-        return;
-      }
-
-      const hasCompletedStep =
-        await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-          stepId,
-          stepInfo: {
-            status: StepStatus.SUCCESS,
-            result: buildDefaultWaitResult(outcome),
-          },
-          workflowRunId,
+      // the step ends through the executor's usual path, so a failure is retried or continues on
+      // failure like any failed step
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        {
           workspaceId,
-        });
-
-      if (hasCompletedStep) {
-        await this.messageQueueService.add<RunWorkflowJobData>(
-          RUN_WORKFLOW_JOB_NAME,
-          { workspaceId, workflowRunId, lastExecutedStepId: stepId },
-          buildRunWorkflowJobOptions(workflowRunId),
-        );
-      }
+          workflowRunId,
+          awaitedStepOutput: {
+            stepId,
+            actionOutput:
+              outcome.type === 'ANSWERED'
+                ? outcome.answer
+                : { result: buildDefaultWaitResult(outcome) },
+          },
+        },
+        buildRunWorkflowJobOptions(workflowRunId),
+      );
     } catch (error) {
-      if (isWorkflowRunNotFoundError(error)) {
-        return;
-      }
-
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,

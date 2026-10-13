@@ -17,6 +17,7 @@ export enum WorkspaceExceptionCode {
   CUSTOM_DOMAIN_NOT_FOUND = 'CUSTOM_DOMAIN_NOT_FOUND',
   APPLICATION_UNINSTALL_IN_PROGRESS = 'APPLICATION_UNINSTALL_IN_PROGRESS',
   AI_MODEL_PIN_NOT_VALID = 'AI_MODEL_PIN_NOT_VALID',
+  EVENT_LOG_RETENTION_DISABLED = 'EVENT_LOG_RETENTION_DISABLED',
 }
 
 const getWorkspaceExceptionUserFriendlyMessage = (
@@ -45,6 +46,8 @@ const getWorkspaceExceptionUserFriendlyMessage = (
       return msg`Application cleanup is still in progress. Please try again.`;
     case WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID:
       return msg`This model cannot be used for this tier.`;
+    case WorkspaceExceptionCode.EVENT_LOG_RETENTION_DISABLED:
+      return msg`Changing log retention requires an Organization subscription.`;
     default:
       assertUnreachable(code);
   }

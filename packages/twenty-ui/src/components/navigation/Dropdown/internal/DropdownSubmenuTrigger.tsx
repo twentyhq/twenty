@@ -7,6 +7,8 @@ import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTriggerProps';
+import { DropdownItemOwner } from './DropdownItemOwner';
+import { getNativeDisabled } from './getNativeDisabled';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
@@ -97,23 +99,32 @@ export const DropdownSubmenuTrigger = ({
           setOpen(true);
         }
       }}
-      render={(renderProps) => (
-        <ListItem
-          {...renderProps}
-          render={render ?? <button type="button" />}
-          disabled={disabled}
-          color={color}
-          startIcon={startIcon}
-          endIcon={endIcon}
-          description={description}
-          descriptionPlacement={descriptionPlacement}
-          shortcut={shortcut}
-          shortcutJoinLabel={shortcutJoinLabel}
-          hasSubmenu={hasSubmenu}
-        >
-          {children}
-        </ListItem>
-      )}
+      render={(renderProps) => {
+        const nativeDisabled = getNativeDisabled({
+          nativeButton,
+          renderProps,
+        });
+
+        return (
+          <ListItem
+            {...renderProps}
+            render={
+              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+            }
+            disabled={disabled}
+            color={color}
+            startIcon={startIcon}
+            endIcon={endIcon}
+            description={description}
+            descriptionPlacement={descriptionPlacement}
+            shortcut={shortcut}
+            shortcutJoinLabel={shortcutJoinLabel}
+            hasSubmenu={hasSubmenu}
+          >
+            {children}
+          </ListItem>
+        );
+      }}
     />
   );
 };

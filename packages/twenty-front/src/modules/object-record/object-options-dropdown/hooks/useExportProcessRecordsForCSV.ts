@@ -25,9 +25,11 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
               return {
                 ...processedRecord,
                 [field.name]: {
-                  amountMicros: convertCurrencyMicrosToCurrencyAmount(
-                    record[field.name].amountMicros,
-                  ),
+                  amountMicros: isDefined(record[field.name].amountMicros)
+                    ? convertCurrencyMicrosToCurrencyAmount(
+                        record[field.name].amountMicros,
+                      )
+                    : null,
                   currencyCode: record[field.name].currencyCode,
                 } satisfies FieldCurrencyValue,
               };

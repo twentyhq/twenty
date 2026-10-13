@@ -24,7 +24,7 @@ import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleTimeRange } from '@/log-console/types/LogConsoleTimeRange';
 import { getLogConsoleFieldFilters } from '@/log-console/utils/getLogConsoleFieldFilters';
 import { getLogConsoleTimeRangeBounds } from '@/log-console/utils/getLogConsoleTimeRangeBounds';
-import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogConsoleTimeRangeWithinRetention';
+import { getLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/getLogConsoleTimeRangeWithinRetention';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogsLiveStream';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
@@ -52,7 +52,7 @@ type LogConsoleResultsProps = {
 export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const { t } = useLingui();
   const timeZone = useLogConsoleTimeZone();
-  const { retentionInDays } = useLogConsoleRetention(source);
+  const { retentionInHours } = useLogConsoleRetention();
 
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
@@ -71,12 +71,10 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const [clearedLiveRecordCount, setClearedLiveRecordCount] =
     useState<number>();
 
-  const timeRange = isLogConsoleTimeRangeWithinRetention({
+  const timeRange = getLogConsoleTimeRangeWithinRetention({
     timeRange: logConsoleTimeRange,
-    retentionInDays,
-  })
-    ? logConsoleTimeRange
-    : '24h';
+    retentionInHours,
+  });
 
   const fieldFilters = getLogConsoleFieldFilters({
     source,
@@ -223,7 +221,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
           </IconButton>
         )}
         <LogConsoleTimeRangeDropdown
-          source={source}
           timeRange={timeRange}
           onTimeRangeChange={changeTimeRange}
         />

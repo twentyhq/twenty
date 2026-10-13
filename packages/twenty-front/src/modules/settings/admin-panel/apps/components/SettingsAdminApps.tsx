@@ -218,7 +218,7 @@ export const SettingsAdminApps = () => {
               <DropdownContent align="end" sideOffset={8}>
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconPinned />}
+                    startElement={<IconPinned />}
                     onCheckedChange={() =>
                       setShowPreInstalledOnly(!showPreInstalledOnly)
                     }

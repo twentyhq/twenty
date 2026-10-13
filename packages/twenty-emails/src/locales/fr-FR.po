@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} a généré un code de récupération qui vous permet de vous connecter à {workspaceDisplayName} sans votre application d'authentification."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Un petit rappel avant la fin de votre essai"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "Un code de récupération a été utilisé pour vous connecter à {workspaceDisplayName}. Votre authentificateur pour cet espace de travail a été supprimé et vos autres sessions y ont été déconnectées."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Bonjour {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Si vous n'êtes pas à l'origine de cette action, contactez l'administrateur de votre espace de travail et changez votre mot de passe."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Si Twenty vous convient, tout est en ordre — vous n’avez rien à fai
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Si vous n'avez pas demandé cela, contactez l'administrateur de votre espace de travail et changez votre mot de passe."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -256,7 +256,7 @@ msgstr "Définir"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Configurez à nouveau l'authentification à deux facteurs dans Paramètres, Profil."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "E-mail de test"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "Le code ne peut être utilisé qu'une seule fois et expire le {formattedExpiresAt}. Son utilisation supprime votre authentificateur actuel pour cet espace de travail et vous déconnecte de vos autres sessions qui s'y trouvent."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, Société d'intérêt public"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Code de récupération pour l'authentification à deux facteurs émis"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Réinitialisation de l'authentification à deux facteurs"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

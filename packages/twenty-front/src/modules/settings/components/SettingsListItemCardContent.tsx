@@ -1,5 +1,8 @@
+import { CARD_ACTION_CLASS_NAME } from '@/ui/layout/card/styles/CardActionClassName';
+import { css, cx } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ReactNode, useId } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
@@ -17,6 +20,7 @@ const StyledRowContainer = styled.div`
     height: ${themeCssVariables.spacing[10]};
     padding: ${themeCssVariables.spacing[2]};
     padding-left: ${themeCssVariables.spacing[3]};
+    position: relative;
 
     > svg {
       flex-shrink: 0;
@@ -29,6 +33,23 @@ const StyledRightContainer = styled.div`
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+
+  :is(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    [role='button'],
+    [role='checkbox'],
+    [role='link'],
+    [role='switch']
+  ) {
+    pointer-events: auto;
+  }
 `;
 
 const StyledContent = styled.div`
@@ -60,10 +81,9 @@ const StyledDescription = styled.span`
   white-space: nowrap;
 `;
 
-const StyledLinkContainer = styled.div`
-  > a {
-    color: ${themeCssVariables.font.color.secondary};
-    text-decoration: none;
+const rowActionClassName = css`
+  &:hover {
+    background: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
@@ -89,31 +109,49 @@ export const SettingsListItemCardContent = ({
   to,
 }: SettingsListItemCardContentProps) => {
   const theme = useTheme();
-  const isInteractive = isDefined(onClick) || isDefined(to);
+  const labelId = useId();
+  const descriptionId = useId();
+  const hasDescription = isNonEmptyString(description);
 
-  const content = (
+  return (
     <StyledRowContainer>
-      <Card.Content
-        onClick={onClick}
-        divider={divider}
-        isClickable={isInteractive}
-        hasHoverHighlight={isInteractive}
-      >
-        {!!LeftIcon && (
+      <Card.Content divider={divider}>
+        {isDefined(to) ? (
+          <Link
+            className={cx(CARD_ACTION_CLASS_NAME, rowActionClassName)}
+            aria-labelledby={labelId}
+            aria-describedby={hasDescription ? descriptionId : undefined}
+            onClick={onClick}
+            to={to}
+          />
+        ) : (
+          isDefined(onClick) && (
+            <button
+              className={cx(CARD_ACTION_CLASS_NAME, rowActionClassName)}
+              aria-labelledby={labelId}
+              aria-describedby={hasDescription ? descriptionId : undefined}
+              onClick={onClick}
+              type="button"
+            />
+          )
+        )}
+        {isDefined(LeftIcon) && (
           <LeftIcon
             size={theme.icon.size.md}
             color={LeftIconColor ?? 'currentColor'}
           />
         )}
         <StyledContent>
-          <StyledLabel>{label}</StyledLabel>
-          {!!description && (
-            <StyledDescription>{description}</StyledDescription>
+          <StyledLabel id={labelId}>{label}</StyledLabel>
+          {hasDescription && (
+            <StyledDescription id={descriptionId}>
+              {description}
+            </StyledDescription>
           )}
         </StyledContent>
         <StyledRightContainer>
           {rightComponent}
-          {!!to && (
+          {isDefined(to) && (
             <IconChevronRight
               size={theme.icon.size.md}
               color={theme.font.color.tertiary}
@@ -123,14 +161,4 @@ export const SettingsListItemCardContent = ({
       </Card.Content>
     </StyledRowContainer>
   );
-
-  if (isDefined(to)) {
-    return (
-      <StyledLinkContainer>
-        <Link to={to}>{content}</Link>
-      </StyledLinkContainer>
-    );
-  }
-
-  return content;
 };

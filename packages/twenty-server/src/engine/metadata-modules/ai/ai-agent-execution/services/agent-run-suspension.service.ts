@@ -115,10 +115,12 @@ export class AgentRunSuspensionService {
     }
   }
 
+  // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it
   async scheduleContinuation(jobData: ContinueAgentRunJobData): Promise<void> {
     await this.messageQueueService.add<ContinueAgentRunJobData>(
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
+      { deduplication: { id: `continue-agent-run-${jobData.wakeUpId}` } },
     );
   }
 

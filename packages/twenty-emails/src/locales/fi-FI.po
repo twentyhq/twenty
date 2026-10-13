@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
-msgstr ""
+msgstr "{actorName} loi palautuskoodin, jonka avulla voit kirjautua työtilaan {workspaceDisplayName} ilman todennussovellustasi."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -46,7 +46,7 @@ msgstr "Pieni muistutus ennen kuin kokeilusi päättyy"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
-msgstr ""
+msgstr "Palautuskoodia käytettiin työtilaan {workspaceDisplayName} kirjautumiseen. Tämän työtilan todentajasi poistettiin ja muut istuntosi siellä kirjattiin ulos."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -140,7 +140,7 @@ msgstr "Hei {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Jos et ollut tämä sinä, ota yhteyttä työtilasi ylläpitäjään ja vaihda salasanasi."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -150,7 +150,7 @@ msgstr "Jos Twenty toimii sinulle, kaikki on kunnossa — mitään ei tarvitse t
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "If you did not ask for this, contact your workspace administrator and change your password."
-msgstr ""
+msgstr "Jos et pyytänyt tätä, ota yhteyttä työtilasi ylläpitäjään ja vaihda salasanasi."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -256,7 +256,7 @@ msgstr "Aseta"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
-msgstr ""
+msgstr "Ota kaksivaiheinen todennus uudelleen käyttöön kohdassa Asetukset, Profiili."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -276,7 +276,7 @@ msgstr "Testisähköposti"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
-msgstr ""
+msgstr "Koodia voi käyttää kerran, ja se vanhenee {formattedExpiresAt}. Sen käyttäminen poistaa nykyisen todentajasi tästä työtilasta ja kirjaa sinut ulos muista siellä olevista istunnoistasi."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -301,12 +301,12 @@ msgstr "Twenty.com, yleishyödyllinen yhtiö"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
-msgstr ""
+msgstr "Kaksivaiheisen todennuksen palautuskoodi myönnetty"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Two-factor authentication reset"
-msgstr ""
+msgstr "Kaksivaiheisen todennuksen nollaus"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

@@ -40,6 +40,8 @@ const StyledRightContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing['0.5']};
+  position: relative;
+  z-index: 1;
 `;
 
 const StyledCalendarIconContainer = styled.div`
@@ -59,9 +61,11 @@ const StyledLink = styled.a`
   font-family: inherit;
   font-size: inherit;
   padding: 0;
+  position: relative;
   text-align: left;
   text-decoration: none;
   width: 100%;
+  z-index: 1;
 
   :hover {
     color: ${themeCssVariables.font.color.secondary};
@@ -74,7 +78,9 @@ const StyledLinkContainer = styled.div`
 `;
 
 const StyledTextInputContainer = styled.div`
+  position: relative;
   width: 100%;
+  z-index: 1;
 `;
 
 type AttachmentRowProps = {
@@ -194,7 +200,11 @@ export const AttachmentRow = ({
         } as GenericFieldContextType
       }
     >
-      <ActivityRow onClick={handleRowClick} disabled={isEditing}>
+      <ActivityRow
+        onClick={handleRowClick}
+        disabled={isEditing}
+        label={`${attachmentFileName}${attachmentFileExtension}`}
+      >
         <StyledLeftContent>
           <FileIcon fileCategory={fileCategory} thumbnailUrl={fileUrl} />
           {isEditing ? (

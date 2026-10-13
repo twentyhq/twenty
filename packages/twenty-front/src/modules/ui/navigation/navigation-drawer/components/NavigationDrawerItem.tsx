@@ -17,8 +17,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   Shortcut,
@@ -248,8 +248,7 @@ export const NavigationDrawerItem = ({
     }
   };
 
-  const isExternalLink =
-    isDefined(to) && (to.startsWith('http://') || to.startsWith('https://'));
+  const isExternalLink = isDefined(to) && isAbsoluteUrl(to);
   const isInternalLink = isDefined(to) && !isExternalLink;
 
   const handleExternalLinkClick = () => {
@@ -391,13 +390,13 @@ export const NavigationDrawerItem = ({
 
             {isSoon && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <Pill label={t`Soon`} />
+                <Badge>{t`Soon`}</Badge>
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 
             {isNew && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <Pill label={t`New`} />
+                <Badge>{t`New`}</Badge>
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 

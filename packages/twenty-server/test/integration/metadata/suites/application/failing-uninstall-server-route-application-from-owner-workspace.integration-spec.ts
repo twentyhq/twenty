@@ -4,7 +4,7 @@ import { findOneApplication } from 'test/integration/metadata/suites/application
 import { findOneApplicationQueryFactory } from 'test/integration/metadata/suites/application/utils/find-one-application-query-factory.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { triggerUninstallApplicationJob } from 'test/integration/metadata/suites/application/utils/trigger-uninstall-application-job.util';
+import { triggerUninstallApplication } from 'test/integration/metadata/suites/application/utils/trigger-uninstall-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
@@ -102,7 +102,7 @@ describe('Uninstalling a server route application from its owner workspace (inte
     });
 
     it('refuses to queue the uninstall job', async () => {
-      const { errors } = await triggerUninstallApplicationJob({
+      const { errors } = await triggerUninstallApplication({
         input: { universalIdentifier: APP_UNIVERSAL_IDENTIFIER },
         expectToFail: true,
       });

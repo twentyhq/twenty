@@ -4,10 +4,9 @@ description: Switch between related panels with accessible tab navigation.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
 
-`Tabs` connects each tab to a panel using a shared `value`. Keep the values unique within a root.
+`Tabs` connects each tab to a related content panel using a shared `value`. Keep values unique within a root. Use [TabButton](/ui/components/navigation/tab-button) for route links and adjacent actions.
 
 <StoryEmbed
   storyId="ui-navigation-tabs--documentation"
@@ -17,29 +16,35 @@ import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
 
 ## Anatomy
 
-Place tabs inside `Tabs.List` and their panels alongside the list, all within the same `Tabs.Root`.
+Place tabs and an optional indicator inside `Tabs.List`. Place their panels alongside the list, all within the same `Tabs.Root`.
 
 ```text
 Tabs.Root
 ├── Tabs.List
 │   ├── Tabs.Tab
-│   └── Tabs.Tab
+│   ├── Tabs.Tab
+│   └── Tabs.Indicator
 ├── Tabs.Panel
 └── Tabs.Panel
 ```
 
-| Part    | Requirement          | Purpose                                                                    |
-| ------- | -------------------- | -------------------------------------------------------------------------- |
-| `Root`  | Required             | Owns the active value and orientation.                                     |
-| `List`  | Required             | Groups the tabs and supplies keyboard navigation and the active indicator. |
-| `Tab`   | One per panel        | Activates the panel with the same `value`.                                 |
-| `Panel` | One per content view | Displays its content when its `value` is active.                           |
+| Part        | Requirement          | Purpose                                                   |
+| ----------- | -------------------- | --------------------------------------------------------- |
+| `Root`      | Required             | Owns the selected value and orientation.                  |
+| `List`      | Required             | Groups tabs and supplies keyboard focus navigation.       |
+| `Tab`       | One per panel        | Activates the panel with the same `value`.                |
+| `Panel`     | One per content view | Displays its content when its `value` is active.          |
+| `Indicator` | Optional             | Shows the position of the active tab with themed styling. |
 
-Give the list an accessible name and match each selectable tab's `value` to its panel's `value`. Twenty UI includes the active indicator in `List`. Use `Tab.startIcon` and `Tab.badge` for optional supporting content while keeping the tab label in its children.
+Give the list an accessible name and match each tab's `value` to its panel's `value`. Base UI supplies the tab and panel IDs, `aria-controls`, and `aria-labelledby` relationships.
+
+When you provide a custom `id` on `Tabs.Panel`, set `aria-controls` on the matching `Tabs.Tab` to that same ID. The installed Base UI 1.8.0 implementation requires this explicit relationship. Custom tab IDs are registered correctly for the panel's `aria-labelledby`.
+
+Add one `Tabs.Indicator` when you want the active underline. `List` does not insert an indicator.
 
 ## Uncontrolled state
 
-Use `defaultValue` to set the initial active tab. The tabs own subsequent selection changes.
+Use `defaultValue` to set the initial selection. The root owns subsequent changes.
 
 ```tsx
 import { Tabs } from 'twenty-ui/primitives/navigation';
@@ -51,6 +56,7 @@ export const RecordTabs = () => (
       <Tabs.Tab value="activity" badge={3}>
         Activity
       </Tabs.Tab>
+      <Tabs.Indicator />
     </Tabs.List>
     <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
     <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
@@ -58,18 +64,18 @@ export const RecordTabs = () => (
 );
 ```
 
-`Tabs.Tab` accepts `startIcon`, `badge`, and a `size` of `sm` or `md` (default `sm`). The active indicator is included in `Tabs.List`.
+`Tabs.Tab` accepts `startIcon`, `endIcon`, `badge`, and a `size` of `sm` or `md` (default `sm`). The remaining props retain the installed Base UI contract. Values are not restricted to strings or numbers. Reference values must use the same identity on their tab, panel, and root. A root value of `null` selects no panel.
 
-## Controlled state
+## Controlled state and event details
 
-Pass `value` and update it with `onValueChange` to own the same active tab in React state. The callback receives the next value and event details.
+Pass `value` and update it with `onValueChange` to own selection. The callback receives the next value and Base UI event details, including the originating `event`, `reason`, `activationDirection`, and `cancel()`.
 
 ```tsx
 import { useState } from 'react';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 
 export const RecordTabs = () => {
-  const [tab, setTab] = useState<string | number | null>('overview');
+  const [tab, setTab] = useState('overview');
 
   return (
     <Tabs.Root value={tab} onValueChange={setTab}>
@@ -78,6 +84,7 @@ export const RecordTabs = () => {
         <Tabs.Tab value="activity" badge={3}>
           Activity
         </Tabs.Tab>
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
       <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
@@ -86,38 +93,99 @@ export const RecordTabs = () => {
 };
 ```
 
-## Manual activation
+User activation has reason `none`. In uncontrolled roots, automatic fallback can have reason `initial`, `disabled`, or `missing`. Automatic fallback may select `null` when no enabled tab remains. These automatic changes cannot be canceled. Controlled roots keep selection under the application's ownership.
 
-Keyboard activation is independent of state ownership. Use `activateOnFocus={false}` with either controlled or uncontrolled tabs.
+Cancel a user change before updating controlled state, or use the same callback with an uncontrolled root:
 
 ```tsx
-import { useState } from 'react';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 
-export const SettingsTabs = () => {
-  const [tab, setTab] = useState<string | number | null>('profile');
+export const ProtectedTabs = () => (
+  <Tabs.Root
+    defaultValue="overview"
+    onValueChange={(value, details) => {
+      if (value === 'restricted') {
+        details.cancel();
+      }
+    }}
+  >
+    <Tabs.List aria-label="Account sections">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="restricted">Restricted</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Account details.</Tabs.Panel>
+    <Tabs.Panel value="restricted">Restricted content.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+## Keyboard activation, orientation, and direction
+
+`Tabs.List` uses manual activation by default (`activateOnFocus={false}`). Arrow keys move focus; Enter or Space activates the focused tab. Set `activateOnFocus` to select a tab when keyboard focus reaches it. Both policies work with controlled and uncontrolled state.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const SettingsTabs = () => (
+  <Tabs.Root defaultValue="profile" orientation="vertical">
+    <Tabs.List aria-label="Settings" activateOnFocus loopFocus={false}>
+      <Tabs.Tab value="profile">Profile</Tabs.Tab>
+      <Tabs.Tab value="billing" disabled>
+        Billing
+      </Tabs.Tab>
+      <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
+    <Tabs.Panel value="billing">Billing settings.</Tabs.Panel>
+    <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+Horizontal lists use Left and Right; vertical lists use Up and Down. Home and End focus the first and last enabled tabs. Disabled tabs are skipped. `loopFocus` defaults to `true`; set it to `false` to stop at either boundary.
+
+Use [DirectionProvider](/ui/primitives/layout/direction-provider) for RTL keyboard direction and `dir="rtl"` on the root for layout. Set `orientation="vertical"` on `Root` for a vertical list and indicator.
+
+## Panel lifetime
+
+Use `keepMounted` when panel contents must retain their state while inactive. Inactive mounted panels remain hidden and do not occupy layout space.
+
+## Native props, render composition, and refs
+
+All five parts preserve native props, event handlers, refs, and Base UI `render` composition. Their `className` and `style` can also be functions of the part's state. The default elements are a `div` for Root, List, and Panel, a `button` for Tab, and a `span` for Indicator. Refs point to the actual rendered elements.
+
+```tsx
+import { useRef } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ComposedTabs = () => {
+  const panelRef = useRef<HTMLElement>(null);
 
   return (
-    <Tabs.Root value={tab} onValueChange={setTab}>
-      <Tabs.List aria-label="Settings" activateOnFocus={false}>
-        <Tabs.Tab value="profile">Profile</Tabs.Tab>
-        <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
-        <Tabs.Tab value="billing" disabled>
-          Billing
+    <Tabs.Root defaultValue="overview" render={<section />}>
+      <Tabs.List aria-label="Account details">
+        <Tabs.Tab value="overview" nativeButton render={<button />}>
+          Overview
         </Tabs.Tab>
+        <Tabs.Indicator render={<span data-testid="active-indicator" />} />
       </Tabs.List>
-      <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
-      <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+      <Tabs.Panel
+        value="overview"
+        render={<article />}
+        ref={(element) => {
+          panelRef.current = element;
+        }}
+      >
+        Account details.
+      </Tabs.Panel>
     </Tabs.Root>
   );
 };
 ```
 
-With `activateOnFocus={false}`, arrow keys move focus and Enter or Space activates the focused tab. `loopFocus` defaults to `true`. Disabled tabs are skipped. Use `orientation="vertical"` on `Root` for vertical navigation.
-
-## Panel lifetime
-
-Use `keepMounted` on a panel when its contents must remain mounted while inactive.
+Keep `nativeButton` consistent with the element composed for a tab. Use `nativeButton={false}` for a custom interactive element that is not a native button and forwards the supplied props and ref. A route anchor belongs in `TabButton`, where the route owns navigation and `aria-current`.
 
 ## Visual emphasis
 
@@ -125,10 +193,10 @@ Use `highlighted` on `Tabs.Tab` to outline its content independently of selectio
 
 ## Props
 
-The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+The generated reference includes the public props for every part. Public part state types and Root change detail/reason types are available from `twenty-ui/primitives/navigation`.
 
 <TabsReference />
 
-## Route links and adjacent actions
+## Migration
 
-Use [TabButton](/ui/components/navigation/tab-button) for route navigation and actions such as adding a tab or opening a menu. Keep those controls outside `Tabs.List`, whose children represent content selection. `Tabs.Tab` supports `startIcon`, `endIcon`, and `badge` slots for icons, decorative avatars, and counts.
+Add an explicit `Tabs.Indicator` to lists that should retain the active underline. Remove duplicate indicators from compositions that previously relied on `List` inserting one. Keep route links, create controls, and overflow controls outside `Tabs.List`, whose children select related panels.

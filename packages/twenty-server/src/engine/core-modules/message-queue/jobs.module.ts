@@ -18,6 +18,7 @@ import { TriggerUninstallApplicationJob } from 'src/engine/core-modules/applicat
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
+import { TriggerUpgradeApplicationJob } from 'src/engine/core-modules/application/application-upgrade/jobs/trigger-upgrade-application.job';
 import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
 import { UpgradeWorkspaceApplicationJob } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job';
 import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job';
@@ -27,6 +28,7 @@ import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
+import { AddPeopleToMessageListJob } from 'src/modules/emailing/jobs/add-people-to-message-list.job';
 import { MaterializeCampaignChunkJob } from 'src/modules/emailing/jobs/materialize-campaign-chunk.job';
 import { MaterializeCampaignJob } from 'src/modules/emailing/jobs/materialize-campaign.job';
 import { ReconcileWorkspaceCampaignStatsJob } from 'src/modules/emailing/jobs/reconcile-workspace-campaign-stats.job';
@@ -123,6 +125,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
     SendCampaignEmailJob,
+    AddPeopleToMessageListJob,
     SendCampaignEmailBatchJob,
     MaterializeCampaignJob,
     MaterializeCampaignChunkJob,
@@ -140,6 +143,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     InstallPreInstalledAppsJob,
     TriggerInstallApplicationJob,
     TriggerUninstallApplicationJob,
+    TriggerUpgradeApplicationJob,
     WarmUpApplicationLogicFunctionsJob,
     RunDeferredWorkspaceMigrationActionsJob,
     DeferredWorkspaceMigrationActionRecoveryCronJob,
