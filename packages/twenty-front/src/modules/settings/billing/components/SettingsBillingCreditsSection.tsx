@@ -39,8 +39,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
-const MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE = 4;
-
 const StyledSettingsBillingCardBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -183,10 +181,6 @@ export const SettingsBillingCreditsSection = ({
     100,
     Math.max(0, remainingCreditsPercentage),
   );
-  const isCreditsEmpty = clampedRemainingCreditsPercentage === 0;
-  const displayedProgressBarValue = isCreditsEmpty
-    ? MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE
-    : clampedRemainingCreditsPercentage;
 
   // rolloverCredits sums every active grant, not just the rolled-over ones
   const extraCredits = rolloverCredits;
@@ -259,13 +253,10 @@ export const SettingsBillingCreditsSection = ({
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>
           <ProgressBar
-            value={displayedProgressBarValue}
+            value={clampedRemainingCreditsPercentage}
+            aria-label={t`Remaining credits`}
             backgroundColor={themeCssVariables.background.tertiary}
-            barColor={
-              isCreditsEmpty
-                ? themeCssVariables.color.red9
-                : themeCssVariables.color.green9
-            }
+            barColor={themeCssVariables.color.green9}
             withBorderRadius
           />
           <StyledCreditsFooter>

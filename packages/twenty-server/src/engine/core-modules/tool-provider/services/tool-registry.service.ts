@@ -180,11 +180,11 @@ export class ToolRegistryService {
   async buildToolIndex(
     workspaceId: string,
     roleId: string,
-    options?: {
+    options: {
       userId?: string;
       userWorkspaceId?: string;
       locale?: keyof typeof APP_LOCALES;
-      rolePermissionConfig?: RolePermissionConfig;
+      rolePermissionConfig: RolePermissionConfig;
       categories?: ToolCategory[];
       excludeTools?: Set<string>;
       application?: FlatApplication;
@@ -193,16 +193,16 @@ export class ToolRegistryService {
     const context = this.buildContextFromToolContext({
       workspaceId,
       roleId,
-      rolePermissionConfig: options?.rolePermissionConfig,
-      userId: options?.userId,
-      userWorkspaceId: options?.userWorkspaceId,
-      locale: options?.locale,
-      application: options?.application,
+      rolePermissionConfig: options.rolePermissionConfig,
+      userId: options.userId,
+      userWorkspaceId: options.userWorkspaceId,
+      locale: options.locale,
+      application: options.application,
     });
 
     return this.getCatalog(context, {
-      categories: options?.categories,
-      excludeTools: options?.excludeTools,
+      categories: options.categories,
+      excludeTools: options.excludeTools,
     });
   }
 
@@ -498,11 +498,6 @@ export class ToolRegistryService {
   private buildContextFromToolContext(
     context: ToolContext,
   ): ToolProviderContext {
-    const rolePermissionConfig: RolePermissionConfig =
-      context.rolePermissionConfig ?? {
-        unionOf: [context.roleId],
-      };
-
     return {
       resolveExecutionContext: context.resolveExecutionContext
         ? async () =>
@@ -512,7 +507,7 @@ export class ToolRegistryService {
         : undefined,
       workspaceId: context.workspaceId,
       roleId: context.roleId,
-      rolePermissionConfig,
+      rolePermissionConfig: context.rolePermissionConfig,
       authContext: context.authContext,
       application: context.application,
       actorContext: context.actorContext,
