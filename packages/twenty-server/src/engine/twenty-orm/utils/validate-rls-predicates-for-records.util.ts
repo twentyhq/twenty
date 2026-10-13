@@ -22,7 +22,7 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
-  rolePermissionConfig: RolePermissionConfig | undefined;
+  rolePermissionConfig: RolePermissionConfig;
   shouldBypassPermissionChecks: boolean;
 };
 

@@ -203,9 +203,13 @@ export class WorkspaceDataSource {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
+    // A repository without a config allows nothing
+    const repositoryRolePermissionConfig: RolePermissionConfig =
+      rolePermissionConfig ?? { intersectionOf: {} };
+
     const { objectRecordsPermissions, shouldBypassPermissionChecks } =
       resolveObjectRecordsPermissions({
-        rolePermissionConfig,
+        rolePermissionConfig: repositoryRolePermissionConfig,
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
       });
 
@@ -216,7 +220,7 @@ export class WorkspaceDataSource {
       authContext: this.authContext,
       executor,
       objectRecordsPermissions,
-      rolePermissionConfig,
+      rolePermissionConfig: repositoryRolePermissionConfig,
       shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>

@@ -19,7 +19,7 @@ export const resolveRowLevelPermissionRecordFilter = ({
 }: {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
-  rolePermissionConfig: RolePermissionConfig | undefined;
+  rolePermissionConfig: RolePermissionConfig;
   objectMetadata: FlatObjectMetadata;
 }): RecordGqlOperationFilter | null => {
   const recordFilter = buildRowLevelPermissionRecordFilter({
