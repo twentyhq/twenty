@@ -39,9 +39,7 @@ export const resolveMorphRelationsFromFlatFieldMetadata = ({
   ];
 
   return allMorphFlatFieldMetadatas.flatMap((sourceFlatFieldMetadata) => {
-    if (
-      !isMorphOrRelationFlatFieldMetadata(sourceFlatFieldMetadata)
-    ) {
+    if (!isMorphOrRelationFlatFieldMetadata(sourceFlatFieldMetadata)) {
       return [];
     }
 
