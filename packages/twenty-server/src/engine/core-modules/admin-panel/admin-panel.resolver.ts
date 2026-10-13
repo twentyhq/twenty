@@ -739,9 +739,13 @@ export class AdminPanelResolver {
   @UseGuards(ServerLevelImpersonateGuard)
   @Query(() => AdminChatThreadMessagesDTO)
   async getAdminChatThreadMessages(
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
   ): Promise<AdminChatThreadMessagesDTO> {
-    return this.adminChatService.getChatThreadMessages(threadId);
+    return this.adminChatService.getChatThreadMessages({
+      workspaceId,
+      threadId,
+    });
   }
 
   @UseGuards(ServerLevelImpersonateGuard)

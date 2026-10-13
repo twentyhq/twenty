@@ -1,7 +1,6 @@
-import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -18,11 +17,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 @Injectable()
 export class AdminPanelChatService {
   constructor(
-    @Inject(AgentHistoryWorkspaceStorageService)
-    private readonly historyStorage: Pick<
-      AgentHistoryWorkspaceStorageService,
-      'runReadOnlyReport'
-    >,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectAgentHistoryRepository('agentChatThread')
@@ -100,51 +94,25 @@ export class AdminPanelChatService {
     return new Map(rows.map((row) => [row.threadId, row.messageCount]));
   }
 
-  async getChatThreadMessages(threadId: string): Promise<{
+  async getChatThreadMessages({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<{
     thread: AdminWorkspaceChatThreadDTO;
     messages: AdminChatMessageDTO[];
   }> {
-    const workspaces = await this.workspaceRepository.find({
-      where: { allowImpersonation: true },
-      select: { id: true },
-    });
-    const workspaceId = await this.historyStorage.runReadOnlyReport(
-      workspaces.map((workspace) => workspace.id),
-      async ({ manager, partitions }) => {
-        for (let offset = 0; offset < partitions.length; offset += 25) {
-          const parameters: unknown[] = [threadId];
-          const queries = partitions
-            .slice(offset, offset + 25)
-            .map(({ workspaceIds, table }) => {
-              parameters.push(workspaceIds);
-              return `(SELECT workspace.id AS "workspaceId"
-                FROM ${table('agentChatThread')} thread
-                JOIN core.workspace workspace ON workspace.id = ANY($${parameters.length}::uuid[])
-                  AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
-                WHERE thread.id = $1 LIMIT 1)`;
-            });
-          const matches = await manager.query<{ workspaceId: string }[]>(
-            `SELECT * FROM (${queries.join(' UNION ALL ')}) matches LIMIT 1`,
-            parameters,
-          );
-          if (isNonEmptyArray(matches)) {
-            return matches[0].workspaceId;
-          }
-        }
-        return null;
-      },
-    );
-    const thread = isDefined(workspaceId)
-      ? await this.agentChatThreadRepository.findOne(workspaceId, {
-          where: { id: threadId },
-        })
-      : null;
+    await this.assertWorkspaceAllowsImpersonation(workspaceId);
 
-    if (!isDefined(thread) || !isDefined(workspaceId)) {
+    const thread = await this.agentChatThreadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+
+    if (!isDefined(thread)) {
       throw new UserInputError('Thread not found');
     }
-
-    await this.assertWorkspaceAllowsImpersonation(workspaceId);
 
     const messages = await this.agentMessageRepository.find(workspaceId, {
       where: { threadId },
