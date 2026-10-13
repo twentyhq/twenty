@@ -1,6 +1,7 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
+import { isUndefined } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -40,7 +41,8 @@ export class UsageLimitDefaultValueService implements OnModuleInit {
 
     const isSetByAPlan = Object.values(usageLimitDefaultsByPlan).some(
       ({ values, trialValues }) =>
-        limitValueConfigVariable in { ...values, ...trialValues },
+        !isUndefined(values?.[limitValueConfigVariable]) ||
+        !isUndefined(trialValues?.[limitValueConfigVariable]),
     );
 
     if (!isSetByAPlan) {
@@ -54,12 +56,11 @@ export class UsageLimitDefaultValueService implements OnModuleInit {
       return instanceValue;
     }
 
-    const planValue = getPlanLimitDefaultValue({
+    return getPlanLimitDefaultValue({
       usageLimitDefaultsByPlan,
       subscriptionPlan,
       limitValueConfigVariable,
+      instanceValue,
     });
-
-    return planValue === undefined ? instanceValue : planValue;
   }
 }
