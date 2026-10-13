@@ -180,6 +180,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
         importedSince: RUN_STARTED_AT,
+        isRunActive: async () => true,
       }),
     ).resolves.toEqual(toPageCounts({ importedCount: 2, skippedCount: 2 }));
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
@@ -212,6 +213,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
         importedSince: RUN_STARTED_AT,
+        isRunActive: async () => true,
       }),
     ).resolves.toEqual(toPageCounts({ importedCount: 1, skippedCount: 1 }));
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
@@ -233,6 +235,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
         importedSince: RUN_STARTED_AT,
+        isRunActive: async () => true,
       }),
     ).resolves.toEqual(toPageCounts({ importedCount: 2 }));
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
@@ -260,6 +263,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
         importedSince: RUN_STARTED_AT,
+        isRunActive: async () => true,
       }),
     ).resolves.toEqual(toPageCounts({ importedCount: 1, unavailableCount: 2 }));
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
@@ -282,6 +286,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         coreApiClient: buildCoreApiClient([]),
         transcripts: [buildTranscript('new')],
         importedSince: RUN_STARTED_AT,
+        isRunActive: async () => true,
       }),
     ).rejects.toThrow('503');
   });
@@ -299,9 +304,31 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
         importedSince: RUN_STARTED_AT,
+        isRunActive: async () => true,
       }),
     ).resolves.toEqual(toPageCounts({ importedCount: 11 }));
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(2);
     expect(coreApiClient.rowsById.size).toBe(11);
+  });
+
+  it('should stop writing once the run is removed', async () => {
+    const coreApiClient = buildCoreApiClient([]);
+    const isRunActive = vi
+      .fn()
+      .mockResolvedValueOnce(true)
+      .mockResolvedValue(false);
+
+    await expect(
+      importTeamsTranscriptHistoryPageOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        transcripts: Array.from({ length: 11 }, (_, index) =>
+          buildTranscript(`new-${index}`),
+        ),
+        importedSince: RUN_STARTED_AT,
+        isRunActive,
+      }),
+    ).resolves.toEqual(toPageCounts({ importedCount: 10 }));
+    expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
   });
 });
