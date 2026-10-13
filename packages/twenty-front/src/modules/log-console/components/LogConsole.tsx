@@ -171,21 +171,17 @@ const StyledPanel = styled.div<{
 `;
 
 const StyledTabList = styled(TabList)`
-  && {
-    background-color: ${themeCssVariables.background.secondary};
-    flex-shrink: 0;
-    height: var(${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE});
-    padding-left: ${themeCssVariables.spacing[2]};
-    transition: height ${LOG_CONSOLE_TRANSITION_TIMING};
-  }
+  background-color: ${themeCssVariables.background.secondary};
+  flex-shrink: 0;
+  height: var(${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE});
+  padding-left: ${themeCssVariables.spacing[2]};
+  transition: height ${LOG_CONSOLE_TRANSITION_TIMING};
 
   @media (prefers-reduced-motion: reduce) {
-    && {
-      transition: none;
-    }
+    transition: none;
   }
 
-  &&::after {
+  &::after {
     background-color: ${themeCssVariables.border.color.medium};
   }
 `;

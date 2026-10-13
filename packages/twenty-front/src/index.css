@@ -40,12 +40,16 @@ html.light {
   }
 }
 
-button {
-  font-size: 13px;
-}
+/* Element defaults rank with twenty-ui's reset, so component styles,
+   front-component CSS included, still override them. */
+@layer twenty-ui {
+  button {
+    font-size: 13px;
+  }
 
-form {
-  display: contents;
+  form {
+    display: contents;
+  }
 }
 
 :root {

@@ -24,6 +24,7 @@ export default defineConfig({
           include: [
             'src/**/*.{test,spec}.{ts,tsx}',
             'design-tokens/**/*.{test,spec}.{ts,tsx}',
+            'build-tools/**/*.{test,spec}.{ts,tsx}',
           ],
           exclude: ['src/**/*.reduced-motion.test.tsx'],
           setupFiles: ['./setupTests.ts'],

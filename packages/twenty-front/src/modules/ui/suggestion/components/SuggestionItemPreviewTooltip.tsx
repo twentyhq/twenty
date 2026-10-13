@@ -7,10 +7,10 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const previewTooltipClass = css`
-  background: transparent !important;
-  border-radius: ${themeCssVariables.border.radius.md} !important;
-  box-shadow: ${themeCssVariables.boxShadow.strong} !important;
-  padding: 0 !important;
+  background: transparent;
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  padding: 0;
 
   [data-anchor-hidden] & {
     visibility: hidden;
