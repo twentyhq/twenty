@@ -22,6 +22,7 @@ import {
 import {
   isDefined,
   isNonEmptyArray,
+  sortKeysDeeply,
   tipTapDocumentToMarkdown,
 } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
@@ -513,6 +514,9 @@ export class AgentAsyncExecutorService {
         tools: { ...tools, ...offeredPausingTools },
         model: registeredModel.model,
         messages: [...priorModelMessages, ...modelMessages],
+        prepareStep: ({ messages }) => ({
+          messages: messages.map(sortKeysDeeply),
+        }),
         stopWhen: (step) =>
           isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
           endsOnPausingToolCall({ steps: step.steps, offeredToolNames }) ||
