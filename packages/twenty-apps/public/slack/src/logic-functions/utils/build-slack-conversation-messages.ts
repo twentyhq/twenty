@@ -7,7 +7,6 @@ import { type SlackAssistantRequestOutcome } from 'src/logic-functions/types/sla
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { buildSlackSharedFilesDescription } from 'src/logic-functions/utils/build-slack-shared-files-description';
 import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
-import { isSlackAssistantRequestAnswered } from 'src/logic-functions/utils/is-slack-assistant-request-answered';
 
 const joinSlackMessageContent = ({
   text,
@@ -26,6 +25,14 @@ const joinSlackMessageContent = ({
     ? `${text}\n${bracketedDescription}`
     : bracketedDescription;
 };
+
+const isAnsweredRequest = ({
+  status,
+  responseText,
+}: SlackAssistantRequestOutcome): boolean =>
+  status === SLACK_ASSISTANT_REQUEST_STATUS.DONE ||
+  (status === SLACK_ASSISTANT_REQUEST_STATUS.FAILED &&
+    isNonEmptyString(responseText));
 
 const isOwnBotMessage = ({
   message,
@@ -61,10 +68,7 @@ export const buildSlackConversationMessages = ({
     .map((message) => {
       const requestOutcome = getRequestOutcome(message);
 
-      return (
-        isDefined(requestOutcome) &&
-        isSlackAssistantRequestAnswered(requestOutcome)
-      );
+      return isDefined(requestOutcome) && isAnsweredRequest(requestOutcome);
     })
     .lastIndexOf(true);
 

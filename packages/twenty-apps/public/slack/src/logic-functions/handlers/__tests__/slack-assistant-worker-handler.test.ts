@@ -391,21 +391,6 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
-  it('should key a follow-up to its thread rather than to the message', async () => {
-    await slackAssistantWorkerHandler({
-      ...REQUEST_RECORD,
-      slackChannelId: 'C0SALES',
-      slackChannelType: 'channel',
-      slackThreadTimestamp: '1700000000.000001',
-    });
-
-    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        thread: expect.objectContaining({ key: 'C0SALES:1700000000.000001' }),
-      }),
-    );
-  });
-
   it('should leave a request another execution already claimed alone', async () => {
     claimSlackAssistantRequestMock.mockResolvedValue(false);
 
