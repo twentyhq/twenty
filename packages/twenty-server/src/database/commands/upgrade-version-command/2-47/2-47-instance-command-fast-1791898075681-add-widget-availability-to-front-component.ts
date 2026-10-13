@@ -7,7 +7,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class AddWidgetAvailabilityToFrontComponentFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."frontComponent" ADD "widgetAvailability" jsonb NOT NULL DEFAULT \'[{"pageLayoutType":"RECORD_PAGE"},{"pageLayoutType":"DASHBOARD"}]\'',
+      'ALTER TABLE "core"."frontComponent" ADD "widgetAvailability" jsonb NOT NULL DEFAULT \'[]\'',
     );
   }
 

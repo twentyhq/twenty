@@ -1,7 +1,6 @@
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { fromFrontComponentEntityToFlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/utils/from-front-component-entity-to-flat-front-component.util';
-import { DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY } from 'src/engine/metadata-modules/front-component/constants/default-front-component-widget-availability.constant';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 
 const APPLICATION_ID = '00000000-0000-4000-8000-000000000001';
@@ -67,8 +66,6 @@ describe('fromFrontComponentEntityToFlatFrontComponent', () => {
   it('falls back to the column default before its upgrade step has run', () => {
     const flatFrontComponent = convert(buildFrontComponentEntity());
 
-    expect(flatFrontComponent.universalWidgetAvailability).toEqual(
-      DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY,
-    );
+    expect(flatFrontComponent.universalWidgetAvailability).toEqual([]);
   });
 });

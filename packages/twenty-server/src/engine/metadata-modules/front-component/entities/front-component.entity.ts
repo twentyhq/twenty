@@ -11,7 +11,6 @@ import { type SerializedRelation } from 'twenty-shared/types';
 
 import { ADD_WIDGET_AVAILABILITY_TO_FRONT_COMPONENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/add-widget-availability-to-front-component-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY } from 'src/engine/metadata-modules/front-component/constants/default-front-component-widget-availability.constant';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
@@ -56,7 +55,7 @@ export class FrontComponentEntity
   @Column({
     type: 'jsonb',
     nullable: false,
-    default: DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY,
+    default: [],
   })
   widgetAvailability: JsonbProperty<FrontComponentWidgetAvailability[]>;
 

@@ -5,42 +5,28 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/types/universal-front-component-widget-availability.type';
-import { DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY } from 'src/engine/metadata-modules/front-component/constants/default-front-component-widget-availability.constant';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
 
 const fromWidgetAvailabilityManifestToUniversalWidgetAvailability = (
-  widgetAvailabilityManifest: FrontComponentWidgetAvailabilityManifest[],
-): UniversalFrontComponentWidgetAvailability[] =>
-  widgetAvailabilityManifest.flatMap(
-    ({ pageLayoutType, objectUniversalIdentifiers }) =>
-      isDefined(objectUniversalIdentifiers)
-        ? objectUniversalIdentifiers.map(
-            (objectMetadataUniversalIdentifier) => ({
-              pageLayoutType,
-              objectMetadataUniversalIdentifier,
-            }),
-          )
-        : [{ pageLayoutType }],
-  );
+  widgetAvailabilityManifest?: FrontComponentWidgetAvailabilityManifest,
+): UniversalFrontComponentWidgetAvailability[] => {
+  if (!isDefined(widgetAvailabilityManifest)) {
+    return [];
+  }
 
-const getUniversalWidgetAvailability = ({
-  widgetAvailabilityManifest,
-  isOfferedInWidgetPickersByDefault,
-}: {
-  widgetAvailabilityManifest?: FrontComponentWidgetAvailabilityManifest[];
-  isOfferedInWidgetPickersByDefault: boolean;
-}): UniversalFrontComponentWidgetAvailability[] => {
-  if (isDefined(widgetAvailabilityManifest)) {
-    return fromWidgetAvailabilityManifestToUniversalWidgetAvailability(
-      widgetAvailabilityManifest,
+  if (
+    'objectUniversalIdentifiers' in widgetAvailabilityManifest &&
+    isDefined(widgetAvailabilityManifest.objectUniversalIdentifiers)
+  ) {
+    return widgetAvailabilityManifest.objectUniversalIdentifiers.map(
+      (objectMetadataUniversalIdentifier) => ({
+        pageLayoutType: widgetAvailabilityManifest.pageLayoutType,
+        objectMetadataUniversalIdentifier,
+      }),
     );
   }
 
-  if (isOfferedInWidgetPickersByDefault) {
-    return DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY;
-  }
-
-  return [];
+  return [{ pageLayoutType: widgetAvailabilityManifest.pageLayoutType }];
 };
 
 export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
@@ -54,12 +40,6 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   isSettingsFrontComponent: boolean;
   now: string;
 }): UniversalFlatFrontComponent => {
-  const universalWidgetAvailability = getUniversalWidgetAvailability({
-    widgetAvailabilityManifest: frontComponentManifest.widgetAvailability,
-    isOfferedInWidgetPickersByDefault:
-      !frontComponentManifest.isHeadless && !isSettingsFrontComponent,
-  });
-
   return {
     universalIdentifier: frontComponentManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -73,7 +53,10 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     isHeadless: isSettingsFrontComponent
       ? false
       : (frontComponentManifest.isHeadless ?? false),
-    universalWidgetAvailability,
+    universalWidgetAvailability:
+      fromWidgetAvailabilityManifestToUniversalWidgetAvailability(
+        frontComponentManifest.widgetAvailability,
+      ),
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
     createdAt: now,
     updatedAt: now,
