@@ -19,10 +19,13 @@ const STATEMENT_TOKEN_PATTERN =
 const IMPORT_LAYER_PATTERN =
   /@import\s*(url\([^)]*\)|"[^"]*"|'[^']*')(\s*\blayer\b(?:\(([^)]*)\))?)?/g;
 
-const findStatementEndIndex = (
-  cssText: string,
-  startIndex: number,
-): number | undefined => {
+const findStatementEndIndex = ({
+  cssText,
+  startIndex,
+}: {
+  cssText: string;
+  startIndex: number;
+}): number | undefined => {
   let parenthesisDepth = 0;
 
   for (const token of cssText
@@ -48,28 +51,34 @@ const findStatementEndIndex = (
   return undefined;
 };
 
-const getLeadingStatementsEndIndex = (
-  cssText: string,
-  startIndex = 0,
-): number => {
+const getLeadingStatementsEndIndex = ({
+  cssText,
+  startIndex,
+}: {
+  cssText: string;
+  startIndex: number;
+}): number => {
   const remainingCss = cssText.slice(startIndex);
   const leadingComment = remainingCss.match(LEADING_COMMENT_PATTERN)?.[0];
 
   if (isDefined(leadingComment)) {
-    return getLeadingStatementsEndIndex(
+    return getLeadingStatementsEndIndex({
       cssText,
-      startIndex + leadingComment.length,
-    );
+      startIndex: startIndex + leadingComment.length,
+    });
   }
 
   if (!LEADING_TOP_LEVEL_AT_RULE_PATTERN.test(remainingCss)) {
     return startIndex;
   }
 
-  const statementEndIndex = findStatementEndIndex(cssText, startIndex);
+  const statementEndIndex = findStatementEndIndex({ cssText, startIndex });
 
   return isDefined(statementEndIndex)
-    ? getLeadingStatementsEndIndex(cssText, statementEndIndex + 1)
+    ? getLeadingStatementsEndIndex({
+        cssText,
+        startIndex: statementEndIndex + 1,
+      })
     : startIndex;
 };
 
@@ -104,7 +113,10 @@ export const wrapCssInTwentyUiCascadeLayer = (cssText: string): string => {
     return cssText;
   }
 
-  const leadingStatementsEndIndex = getLeadingStatementsEndIndex(cssText);
+  const leadingStatementsEndIndex = getLeadingStatementsEndIndex({
+    cssText,
+    startIndex: 0,
+  });
 
   const layeredLeadingStatements = cssText
     .slice(0, leadingStatementsEndIndex)
