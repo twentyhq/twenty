@@ -17,9 +17,7 @@ export const StyledBoardCardHeaderContainer = styled.div<{
   transition: padding ease-in-out 160ms;
 
   img {
-    height: ${themeCssVariables.icon.size.md}px;
     object-fit: cover;
-    width: ${themeCssVariables.icon.size.md}px;
   }
 `;
 
