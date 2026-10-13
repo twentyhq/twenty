@@ -21,6 +21,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isApplicationInstallPending } from 'src/engine/core-modules/application/utils/is-application-install-pending.util';
 import { isCachedCronTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -282,7 +283,6 @@ export class WorkflowCronTriggerCronJob {
       await this.workspaceCacheService.getOrRecompute(trigger.workspaceId, [
         'flatApplicationMaps',
       ]);
-    const application = flatApplicationMaps.byId[workflow.applicationId];
 
     const version =
       await this.workflowVersionCoreSyncService.findCoreVersionById(
@@ -311,8 +311,10 @@ export class WorkflowCronTriggerCronJob {
         }),
         pattern: computeCronPatternFromSchedule(definition),
       },
-      isApplicationInstalled:
-        !isDefined(application) || isDefined(application.version),
+      isApplicationInstalled: !isApplicationInstallPending(
+        flatApplicationMaps,
+        workflow.applicationId,
+      ),
     };
   }
 

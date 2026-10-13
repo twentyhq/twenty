@@ -72,11 +72,11 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           },
         },
       });
-      enqueueToast({ variant: 'success', children: t`Redirect URIs updated` });
+      enqueueToast({ status: 'success', children: t`Redirect URIs updated` });
       setFormRedirectUris(newFormRedirectUris);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error updating redirect URIs`,
       });
     } finally {
@@ -96,13 +96,13 @@ export const SettingsApplicationRegistrationOAuthTab = ({
       if (isNonEmptyString(secret)) {
         setRotatedSecret(secret);
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Client secret rotated. Copy it now — it won't be shown again.`,
         });
       }
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error rotating client secret`,
       });
     } finally {

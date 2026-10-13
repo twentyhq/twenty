@@ -53,10 +53,10 @@ const StyledKindBadge = styled.span`
 `;
 
 const hoverCardTooltipClass = css`
-  border-radius: ${themeCssVariables.border.radius.rounded} !important;
+  border-radius: ${themeCssVariables.border.radius.rounded};
   corner-shape: round;
 
-  padding: 0 !important;
+  padding: 0;
 `;
 
 const sanitizeIdForSelector = (id: string): string =>

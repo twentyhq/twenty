@@ -96,13 +96,13 @@ export const SettingsLegalDpaNew = () => {
       );
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Signed DPA generated and downloaded`,
       });
       navigateSettings(SettingsPath.LegalDpa);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Could not generate the signed DPA. Please try again.`,
       });
     } finally {

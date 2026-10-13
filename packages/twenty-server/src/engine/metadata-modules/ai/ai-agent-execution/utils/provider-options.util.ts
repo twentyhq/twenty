@@ -6,22 +6,22 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   AI_SDK_ANTHROPIC,
   AI_SDK_AZURE,
-  AI_SDK_BEDROCK,
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { supportsBedrockCachePoint } from 'src/engine/metadata-modules/ai/ai-models/utils/supports-bedrock-cache-point.util';
+
+type CacheModel = Pick<AiModelConfig, 'sdkPackage' | 'modelFamily'>;
 
 const BEDROCK_CACHE_POINT = { cachePoint: { type: 'default' } };
 
 export const getCacheProviderOptions = (
-  sdkPackage: AiSdkPackage,
-): ProviderOptions | undefined => {
-  switch (sdkPackage) {
-    case AI_SDK_BEDROCK:
-      return { bedrock: { ...BEDROCK_CACHE_POINT } };
-    default:
-      return undefined;
-  }
-};
+  model: CacheModel,
+): ProviderOptions | undefined =>
+  supportsBedrockCachePoint(model)
+    ? { bedrock: { ...BEDROCK_CACHE_POINT } }
+    : undefined;
+
 export const getCallLevelProviderOptions = ({
   sdkPackage,
   providerOptions,
@@ -84,9 +84,11 @@ const omitBedrockCachePoint = (
 
 export const injectCacheBreakpoint = (
   messages: ModelMessage[],
-  sdkPackage: AiSdkPackage,
+  model: CacheModel,
 ): ModelMessage[] => {
-  if (messages.length === 0 || sdkPackage !== AI_SDK_BEDROCK) return messages;
+  if (messages.length === 0 || !supportsBedrockCachePoint(model)) {
+    return messages;
+  }
 
   const lastIdx = messages.length - 1;
 

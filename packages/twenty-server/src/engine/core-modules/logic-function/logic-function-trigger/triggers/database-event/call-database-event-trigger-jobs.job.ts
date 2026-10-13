@@ -20,9 +20,7 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
-import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
+import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -105,45 +103,17 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      const applicationRoleId = application.defaultRoleId;
-      const applicationObjectsPermissions = isDefined(applicationRoleId)
-        ? rolesPermissions[applicationRoleId]
-        : undefined;
-
-      // An application receives what its role lets it read, as through the
-      // API: without a role it reads nothing.
-      if (
-        !isDefined(applicationRoleId) ||
-        !isDefined(applicationObjectsPermissions)
-      ) {
-        continue;
-      }
-
-      const admittedRecordIds =
-        await eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildRoleRowAccessPolicySubject({
-            roleId: applicationRoleId,
-            owningApplicationId: application.id,
-            rolesPermissions,
-            roleIdsWithAllRecordsAccess,
-            flatRowLevelPermissionPredicateMaps,
-            flatRowLevelPermissionPredicateGroupMaps,
-            flatFieldMetadataMaps,
-          }),
-        );
-      const restrictedFields =
-        applicationObjectsPermissions[workspaceEventBatch.objectMetadata.id]
-          ?.restrictedFields;
-      const admittedEvents = workspaceEventBatch.events
-        .filter((event) => admittedRecordIds.has(event.recordId))
-        .map((event) =>
-          omitRestrictedFieldsFromEvent({
-            event,
-            restrictedFields,
-            flatFieldMetadataMaps,
-          }),
-        )
-        .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
+      const admittedEvents = await resolveEventsReadableByRole({
+        roleId: application.defaultRoleId,
+        owningApplicationId: application.id,
+        workspaceEventBatch,
+        eventRecordAccessGate,
+        rolesPermissions,
+        roleIdsWithAllRecordsAccess,
+        flatRowLevelPermissionPredicateMaps,
+        flatRowLevelPermissionPredicateGroupMaps,
+        flatFieldMetadataMaps,
+      });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
         workspaceEventBatch: {

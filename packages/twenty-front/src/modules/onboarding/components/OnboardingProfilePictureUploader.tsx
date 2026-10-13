@@ -79,7 +79,7 @@ export const OnboardingProfilePictureUploader = ({
       );
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error ? error.message : t`Failed to upload picture`,
       });

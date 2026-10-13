@@ -44,7 +44,7 @@ export const useSubmitSubscriptionPayment = ({
       const { error: submitError } = await elements.submit();
       if (isDefined(submitError)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             submitError.message ??
             t`Your payment details are incomplete. Please review and retry.`,
@@ -61,7 +61,7 @@ export const useSubmitSubscriptionPayment = ({
       const paymentIntent = data?.createSubscriptionPaymentIntent;
       if (!isDefined(paymentIntent?.clientSecret)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Subscription error. Please retry or contact Twenty team`,
         });
         setIsSubmitting(false);
@@ -88,7 +88,7 @@ export const useSubmitSubscriptionPayment = ({
 
       if (isDefined(error)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             error.message ??
             t`We couldn't confirm your payment method. Please retry.`,
@@ -100,7 +100,7 @@ export const useSubmitSubscriptionPayment = ({
         enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Subscription error. Please retry or contact Twenty team`,
         });
       }

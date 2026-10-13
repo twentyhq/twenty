@@ -2106,7 +2106,6 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
-  IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
   IS_APPLICATION_WORKFLOWS_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
@@ -2346,12 +2345,18 @@ type FrontComponent {
   universalIdentifier: UUID
   updatedAt: DateTime!
   usesSdkClient: Boolean!
+  widgetAvailability: [FrontComponentWidgetAvailability!]!
 }
 
 type FrontComponentConfiguration {
   configurationType: WidgetConfigurationType!
   frontComponentId: UUID!
   headerCommandMenuItemUniversalIdentifiers: [UUID!]
+}
+
+type FrontComponentWidgetAvailability {
+  objectMetadataId: UUID
+  pageLayoutType: PageLayoutType!
 }
 
 type FullName {
@@ -4380,6 +4385,7 @@ type SignUp {
 
 input SignUpInNewWorkspaceInput {
   displayName: String
+  partner: String
   subdomain: String
 }
 

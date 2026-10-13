@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { msg } from '@lingui/core/macro';
@@ -35,8 +34,6 @@ import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
@@ -46,45 +43,8 @@ export class WorkflowRunnerWorkspaceService {
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
-    private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
-
-  async run({
-    workspaceId,
-    workflowVersionId,
-    payload,
-    source,
-    workflowRunId: initialWorkflowRunId,
-  }: {
-    workspaceId: string;
-    workflowVersionId: string;
-    payload: object;
-    source: ActorMetadata;
-    workflowRunId?: string;
-  }) {
-    const coreWorkflowVersion =
-      await this.workflowVersionCoreSyncService.findCoreVersionByWorkspaceVersionId(
-        workspaceId,
-        workflowVersionId,
-      );
-
-    if (!isDefined(coreWorkflowVersion)) {
-      throw new WorkflowRunException(
-        'Workspace workflow version has no core execution mapping',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
-      );
-    }
-
-    return this.coreWorkflowRunnerService.run({
-      workspaceId,
-      coreWorkflowVersionId: coreWorkflowVersion.id,
-      workflowRunId: initialWorkflowRunId,
-      payload,
-      source,
-    });
-  }
 
   async resume({
     workspaceId,

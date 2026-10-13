@@ -9,6 +9,7 @@ import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysE
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
+import { MyConnectedAccountsLoadEffect } from '@/accounts/components/MyConnectedAccountsLoadEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOutOnOtherTabSignOutEffect';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -22,7 +23,9 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
+import { WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS } from '@/object-core/workflows/constants/WorkflowRunCoreRecordReferenceFields';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
+import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
@@ -54,6 +57,7 @@ export const WorkspaceAppProviders = () => {
               <ApolloAdminProvider>
                 <SSEProvider>
                   <ApplicationsLoadEffect />
+                  <MyConnectedAccountsLoadEffect />
                   <UserThemeProviderEffect />
                   <UserUiScaleProviderEffect />
                   <ContextStoreComponentInstanceContext.Provider
@@ -72,12 +76,16 @@ export const WorkspaceAppProviders = () => {
                             <GotoHotkeysEffectsProvider />
                             <WorkspaceAppPageTitle />
                             <PageFavicon />
-                            <RecordCreationFormProvider>
-                              <Outlet />
-                              <GlobalFilePreviewModal />
-                              <CommandMenuConfirmationModalManager />
-                              <CommandRunner />
-                            </RecordCreationFormProvider>
+                            <CoreRecordReferenceFieldsContext.Provider
+                              value={WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS}
+                            >
+                              <RecordCreationFormProvider>
+                                <Outlet />
+                                <GlobalFilePreviewModal />
+                                <CommandMenuConfirmationModalManager />
+                                <CommandRunner />
+                              </RecordCreationFormProvider>
+                            </CoreRecordReferenceFieldsContext.Provider>
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>

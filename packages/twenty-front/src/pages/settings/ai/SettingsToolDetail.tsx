@@ -158,10 +158,10 @@ export const SettingsToolDetail = () => {
     });
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Tool deleted` });
+      enqueueToast({ status: 'success', children: t`Tool deleted` });
       navigate(getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'));
     } else {
-      enqueueToast({ variant: 'error', children: t`Failed to delete tool` });
+      enqueueToast({ status: 'error', children: t`Failed to delete tool` });
     }
 
     setIsDeleting(false);

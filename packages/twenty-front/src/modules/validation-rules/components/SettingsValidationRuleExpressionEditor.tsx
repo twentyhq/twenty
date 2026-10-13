@@ -13,6 +13,7 @@ import {
   compileValidationRuleExpression,
   isDefined,
 } from 'twenty-shared/utils';
+import { Field } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -43,10 +44,9 @@ const StyledAskAiButtonContainer = styled.div`
   top: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledEditorContent = styled.div`
+const StyledEditorContent = styled(Field.Root)`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledEditor = styled.div<{ hasError: boolean }>`
@@ -107,11 +107,6 @@ const StyledEditor = styled.div<{ hasError: boolean }>`
   .validation-rule-token-operator {
     color: ${VALIDATION_RULE_HIGHLIGHT_COLORS.operator};
   }
-`;
-
-const StyledError = styled.div`
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type SettingsValidationRuleExpressionEditorProps = {
@@ -287,7 +282,9 @@ export const SettingsValidationRuleExpressionEditor = ({
             </StyledAskAiButtonContainer>
           </StyledEditor>
           {isDefined(errorMessage) && (
-            <StyledError role="alert">{errorMessage}</StyledError>
+            <Field.Error match role="alert">
+              {errorMessage}
+            </Field.Error>
           )}
         </StyledEditorContent>
       </Card.Content>

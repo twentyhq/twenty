@@ -1,4 +1,3 @@
-import request from 'supertest';
 import {
   activateCoreWorkflowVersion,
   createCoreWorkflow,
@@ -7,33 +6,14 @@ import {
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 
-const client = request(`http://localhost:${APP_PORT}`);
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const STEP_FILTER_GROUP_ID = 'a1b2c3d4-1111-4a2b-8c3d-000000000001';
 const STEP_FILTER_ID = 'a1b2c3d4-2222-4a2b-8c3d-000000000002';
 const FILTER_VALUE = 'trigger-me-co';
 
-type AutomatedTriggerNode = {
-  type: string;
-  workflowId: string;
-  settings: {
-    eventName?: string;
-    filter?: {
-      stepFilters: Array<Record<string, unknown>>;
-      stepFilterGroups: Array<Record<string, unknown>>;
-    };
-  };
-};
-
-const graphql = (query: string, variables?: object) =>
-  client
-    .post('/graphql')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-    .send({ query, variables });
-
 describe('Database event trigger filter (e2e)', () => {
-  let coreWorkflowId: string | null = null;
-  let workspaceWorkflowId: string | null = null;
+  let coreWorkflowId: string;
 
   beforeAll(async () => {
     const createdCoreWorkflow = await createCoreWorkflow({
@@ -41,7 +21,6 @@ describe('Database event trigger filter (e2e)', () => {
     });
 
     coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
-    workspaceWorkflowId = createdCoreWorkflow.workspaceWorkflowId;
 
     const coreWorkflowVersionId = createdCoreWorkflow.coreWorkflowVersionId;
 
@@ -90,49 +69,29 @@ describe('Database event trigger filter (e2e)', () => {
     }
   });
 
-  it('syncs the trigger filter onto the workflowAutomatedTrigger row read by the listener', async () => {
-    const response = await graphql(
-      `
-        query WorkflowAutomatedTriggers($workflowId: UUID!) {
-          workflowAutomatedTriggers(
-            filter: { workflowId: { eq: $workflowId } }
-          ) {
-            edges {
-              node {
-                type
-                settings
-                workflowId
-              }
-            }
-          }
-        }
-      `,
-      { workflowId: workspaceWorkflowId },
-    );
-
-    expect(response.body.errors).toBeUndefined();
-
-    const automatedTriggers: AutomatedTriggerNode[] =
-      response.body.data.workflowAutomatedTriggers.edges.map(
-        (edge: { node: AutomatedTriggerNode }) => edge.node,
+  it('builds the trigger filter into the automated trigger read by the listener', async () => {
+    const { workflowAutomatedTriggerMaps } =
+      await global.workflowTestServices.workspaceCache.getOrRecompute(
+        SEED_APPLE_WORKSPACE_ID,
+        ['workflowAutomatedTriggerMaps'],
       );
 
-    expect(automatedTriggers).toHaveLength(1);
+    const automatedTrigger =
+      workflowAutomatedTriggerMaps.byWorkflowId[coreWorkflowId];
 
-    const automatedTrigger = automatedTriggers[0];
-
-    expect(automatedTrigger.type).toBe('DATABASE_EVENT');
-    expect(automatedTrigger.settings.eventName).toBe('company.created');
-
-    const filter = automatedTrigger.settings.filter;
-
-    expect(filter).toBeDefined();
-    expect(filter?.stepFilterGroups).toHaveLength(1);
-    expect(filter?.stepFilters).toHaveLength(1);
-    expect(filter?.stepFilters[0]).toMatchObject({
-      operand: 'CONTAINS',
-      value: FILTER_VALUE,
-      stepOutputKey: '{{trigger.properties.after.name}}',
+    expect(automatedTrigger?.type).toBe('DATABASE_EVENT');
+    expect(automatedTrigger?.settings).toMatchObject({
+      eventName: 'company.created',
+      filter: {
+        stepFilterGroups: [{ id: STEP_FILTER_GROUP_ID }],
+        stepFilters: [
+          {
+            operand: 'CONTAINS',
+            value: FILTER_VALUE,
+            stepOutputKey: '{{trigger.properties.after.name}}',
+          },
+        ],
+      },
     });
   });
 });

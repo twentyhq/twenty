@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.module';
@@ -19,6 +20,7 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
 @Module({
   imports: [
     ApplicationModule,
+    ApplicationPackageModule,
     ApplicationRegistrationLookupModule,
     ApplicationRegistrationModule,
     ApplicationRegistrationVersionModule,

@@ -23,7 +23,7 @@ import {
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
+import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -142,9 +142,9 @@ export class PermissionsService {
       return true;
     }
 
-    const roleIds = getRoleIdsFromRolePermissionConfig(rolePermissionConfig);
+    const roleIds = getRoleIdsToIntersect(rolePermissionConfig.intersectionOf);
 
-    if (roleIds.length === 0) {
+    if (!isDefined(roleIds)) {
       return false;
     }
 
@@ -171,9 +171,7 @@ export class PermissionsService {
       );
     };
 
-    return 'intersectionOf' in rolePermissionConfig
-      ? roleIds.every(isGrantedByRoleId)
-      : roleIds.some(isGrantedByRoleId);
+    return roleIds.every(isGrantedByRoleId);
   }
 
   // Every returned role must grant the flag; none means an application without a role

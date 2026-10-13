@@ -38,6 +38,15 @@ describe('buildThemeCss', () => {
     expect(css).toContain('  --t-border-radius-md: 8px;');
   });
 
+  it('wraps every rule in the twenty-ui cascade layer', () => {
+    const css = buildThemeCss({ leaves: radiusLeaves, scheme: 'light' });
+    const layerStart = css.indexOf('@layer twenty-ui {');
+
+    expect(layerStart).toBeGreaterThan(-1);
+    expect(css.indexOf('.light {')).toBeGreaterThan(layerStart);
+    expect(css.trimEnd().endsWith('}\n}')).toBe(true);
+  });
+
   it('doubles every radius that is not round inside the @supports block', () => {
     const squircleBlock = extractSquircleBlock(
       buildThemeCss({
