@@ -119,7 +119,7 @@ describe('useColorScheme', () => {
       );
       expect(store.get(persistedColorSchemeState.atom)).toBe('Light');
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'You do not have permission to update this workspace member.',
       });
     },
@@ -190,7 +190,7 @@ describe('useColorScheme', () => {
 
     expect(result.current.colorScheme).toBe('System');
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'An error occurred.',
     });
   });

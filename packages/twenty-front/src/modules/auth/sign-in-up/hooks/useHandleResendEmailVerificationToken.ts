@@ -18,7 +18,7 @@ export const useHandleResendEmailVerificationToken = () => {
     (email: string | null) => {
       return async () => {
         if (!email) {
-          enqueueToast({ variant: 'error', children: t`Invalid email` });
+          enqueueToast({ status: 'error', children: t`Invalid email` });
           return;
         }
 
@@ -32,11 +32,11 @@ export const useHandleResendEmailVerificationToken = () => {
 
           if (data?.resendEmailVerificationToken?.success === true) {
             enqueueToast({
-              variant: 'success',
+              status: 'success',
               children: t`Email verification link resent!`,
             });
           } else {
-            enqueueToast({ variant: 'error', children: t`An error occurred.` });
+            enqueueToast({ status: 'error', children: t`An error occurred.` });
           }
         } catch (error) {
           enqueueToast(getToastOptionsFromError({ error }));

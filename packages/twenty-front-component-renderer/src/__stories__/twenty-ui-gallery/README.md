@@ -31,6 +31,8 @@ AvatarGroup checks derived counts, partially loaded totals, custom overflow and 
 
 Badge checks ordinary node content, compact sizes, colors and circle shape. Its React and Preact fixtures keep count clamping and zero visibility in the caller, and verify native span attributes, refs and pointer handlers plus explicit button and link render composition with keyboard activation.
 
+Progress composes Root, Track, Indicator, Label and Value alongside the ProgressBar and ProgressRing presets. The shared React and Preact fixture covers native names, attributes, refs, render composition and pointer handlers, nonzero minima, changing ranges and values, clamped boundaries, indeterminate progress and agreement between bar fill and ring geometry. The fixture also checks zero and complete fill and a minimum fill that stays below the full width of a narrow track. SVG bindings currently omit the `focusable` attribute; these cases verify `aria-hidden` and that keyboard Tab skips the decorative SVG.
+
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
@@ -66,6 +68,7 @@ effect within the interaction timeout.
 | `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                         |
 | `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                      |
 | `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                          |
+| `twenty-ui-progress`           | Progress parts, ProgressBar, ProgressRing and MetricRow (native composition, range normalization, indeterminate values and geometry)      |
 | `twenty-ui-popover`              | Popover                                                                                                                                 |
 | `twenty-ui-card-composition`     | Card (native parts and refs, render composition, display semantics, button/link ownership and nested controls)                          |
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |

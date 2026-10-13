@@ -52,8 +52,6 @@ export type ComputeStepOutputSchemaInput = {
   coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
   /** Step JSON format */
   step: Scalars['JSON']['input'];
-  /** Workflow version ID */
-  workflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type ConnectedAccountHandleDto = {
@@ -227,43 +225,6 @@ export type CreateDraftFromCoreWorkflowVersionInput = {
   coreWorkflowVersionIdToCopy: Scalars['UUID']['input'];
 };
 
-export type CreateDraftFromWorkflowVersionInput = {
-  /** Workflow ID */
-  workflowId: Scalars['UUID']['input'];
-  /** Workflow version ID */
-  workflowVersionIdToCopy: Scalars['UUID']['input'];
-};
-
-export type CreateWorkflowVersionEdgeInput = {
-  /** Workflow version source step ID */
-  source: Scalars['String']['input'];
-  /** Workflow version source step connection options */
-  sourceConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
-  /** Workflow version target step ID */
-  target: Scalars['String']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['String']['input'];
-};
-
-export type CreateWorkflowVersionStepInput = {
-  /** Default settings for the step */
-  defaultSettings?: InputMaybe<Scalars['JSON']['input']>;
-  /** Step ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Parent step connection options */
-  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
-  /** Parent step ID */
-  parentStepId?: InputMaybe<Scalars['String']['input']>;
-  /** Step position */
-  position?: InputMaybe<WorkflowStepPositionInput>;
-  /** New step type */
-  stepType: Scalars['String']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type DateTimeFilter = {
   eq?: InputMaybe<Scalars['DateTime']['input']>;
   gt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -297,13 +258,6 @@ export type DeleteCoreWorkflowsInput = {
   coreWorkflowIds: Array<Scalars['UUID']['input']>;
 };
 
-export type DeleteWorkflowVersionStepInput = {
-  /** Step to delete ID */
-  stepId: Scalars['String']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type DeletedCoreWorkflowDto = {
   __typename?: 'DeletedCoreWorkflowDTO';
   id: Scalars['UUID']['output'];
@@ -311,8 +265,7 @@ export type DeletedCoreWorkflowDto = {
 };
 
 export type DiscardCoreWorkflowDraftInput = {
-  coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
-  workspaceWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
+  coreWorkflowVersionId: Scalars['UUID']['input'];
 };
 
 export type DpaAgreement = {
@@ -382,18 +335,6 @@ export type DuplicateCoreWorkflowVersionStepInput = {
   stepId: Scalars['String']['input'];
 };
 
-export type DuplicateWorkflowInput = {
-  /** Workflow ID to duplicate */
-  workflowIdToDuplicate: Scalars['UUID']['input'];
-  /** Workflow version ID to copy */
-  workflowVersionIdToCopy: Scalars['UUID']['input'];
-};
-
-export type DuplicateWorkflowVersionStepInput = {
-  stepId: Scalars['String']['input'];
-  workflowVersionId: Scalars['String']['input'];
-};
-
 export enum FilterIs {
   NotNull = 'NotNull',
   Null = 'Null'
@@ -433,34 +374,24 @@ export enum MessageChannelVisibility {
 export type Mutation = {
   __typename?: 'Mutation';
   activateCoreWorkflowVersion: Scalars['Boolean']['output'];
-  activateWorkflowVersion: Scalars['Boolean']['output'];
   answerToolCall: AnswerToolCallResult;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createCoreWorkflow: CoreWorkflowDto;
   createCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
   createCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   createDraftFromCoreWorkflowVersion: CoreWorkflowVersionDto;
-  createDraftFromWorkflowVersion: WorkflowVersionDto;
-  createWorkflowVersionEdge: WorkflowVersionStepChanges;
-  createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateCoreWorkflowVersion: Scalars['Boolean']['output'];
-  deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteCoreWorkflows: Array<DeletedCoreWorkflowDto>;
-  deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
-  deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   discardCoreWorkflowDraft?: Maybe<CoreWorkflowDto>;
   dismissMaintenanceModeBanner: Scalars['Boolean']['output'];
   dismissReconnectAccountBanner: Scalars['Boolean']['output'];
   duplicateCoreWorkflow: CoreWorkflowDto;
   duplicateCoreWorkflowVersionStep: WorkflowVersionStepChanges;
-  duplicateWorkflow: WorkflowVersionDto;
-  duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   generateSignedDpa: GenerateSignedDpaResult;
   retryWorkflowRun: WorkflowRun;
   runCoreWorkflowVersion: RunWorkflowVersion;
-  runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
@@ -470,20 +401,11 @@ export type Mutation = {
   updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
   updateCoreWorkflowVisibility?: Maybe<CoreWorkflowDto>;
   updateWorkflowRunStep: WorkflowAction;
-  updateWorkflowVersionPositions: Scalars['Boolean']['output'];
-  updateWorkflowVersionStep: WorkflowAction;
-  updateWorkflowVersionTrigger: WorkflowVersionTrigger;
-  validateWorkflowVersion: Scalars['Boolean']['output'];
 };
 
 
 export type MutationActivateCoreWorkflowVersionArgs = {
   coreWorkflowVersionId: Scalars['UUID']['input'];
-};
-
-
-export type MutationActivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
 };
 
 
@@ -517,28 +439,8 @@ export type MutationCreateDraftFromCoreWorkflowVersionArgs = {
 };
 
 
-export type MutationCreateDraftFromWorkflowVersionArgs = {
-  input: CreateDraftFromWorkflowVersionInput;
-};
-
-
-export type MutationCreateWorkflowVersionEdgeArgs = {
-  input: CreateWorkflowVersionEdgeInput;
-};
-
-
-export type MutationCreateWorkflowVersionStepArgs = {
-  input: CreateWorkflowVersionStepInput;
-};
-
-
 export type MutationDeactivateCoreWorkflowVersionArgs = {
   coreWorkflowVersionId: Scalars['UUID']['input'];
-};
-
-
-export type MutationDeactivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
 };
 
 
@@ -554,16 +456,6 @@ export type MutationDeleteCoreWorkflowVersionStepArgs = {
 
 export type MutationDeleteCoreWorkflowsArgs = {
   input: DeleteCoreWorkflowsInput;
-};
-
-
-export type MutationDeleteWorkflowVersionEdgeArgs = {
-  input: CreateWorkflowVersionEdgeInput;
-};
-
-
-export type MutationDeleteWorkflowVersionStepArgs = {
-  input: DeleteWorkflowVersionStepInput;
 };
 
 
@@ -587,16 +479,6 @@ export type MutationDuplicateCoreWorkflowVersionStepArgs = {
 };
 
 
-export type MutationDuplicateWorkflowArgs = {
-  input: DuplicateWorkflowInput;
-};
-
-
-export type MutationDuplicateWorkflowVersionStepArgs = {
-  input: DuplicateWorkflowVersionStepInput;
-};
-
-
 export type MutationGenerateSignedDpaArgs = {
   input: GenerateSignedDpaInput;
 };
@@ -609,11 +491,6 @@ export type MutationRetryWorkflowRunArgs = {
 
 export type MutationRunCoreWorkflowVersionArgs = {
   input: RunCoreWorkflowVersionInput;
-};
-
-
-export type MutationRunWorkflowVersionArgs = {
-  input: RunWorkflowVersionInput;
 };
 
 
@@ -661,26 +538,6 @@ export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
 };
 
-
-export type MutationUpdateWorkflowVersionPositionsArgs = {
-  input: UpdateWorkflowVersionPositionsInput;
-};
-
-
-export type MutationUpdateWorkflowVersionStepArgs = {
-  input: UpdateWorkflowVersionStepInput;
-};
-
-
-export type MutationUpdateWorkflowVersionTriggerArgs = {
-  input: UpdateWorkflowVersionTriggerInput;
-};
-
-
-export type MutationValidateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
   createdAt?: InputMaybe<DateTimeFilter>;
@@ -720,7 +577,6 @@ export type Query = {
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
-  workflowVersionContent: WorkflowVersionContent;
 };
 
 
@@ -841,11 +697,6 @@ export type QueryWorkflowStepConnectedAccountHandleArgs = {
   connectedAccountId: Scalars['UUID']['input'];
 };
 
-
-export type QueryWorkflowVersionContentArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type RunCoreWorkflowVersionInput = {
   /** Core workflow version ID */
   coreWorkflowVersionId: Scalars['UUID']['input'];
@@ -858,15 +709,6 @@ export type RunCoreWorkflowVersionInput = {
 export type RunWorkflowVersion = {
   __typename?: 'RunWorkflowVersion';
   workflowRunId: Scalars['UUID']['output'];
-};
-
-export type RunWorkflowVersionInput = {
-  /** Execution result in JSON format */
-  payload?: InputMaybe<Scalars['JSON']['input']>;
-  /** Workflow run ID */
-  workflowRunId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type SearchRecord = {
@@ -1060,27 +902,6 @@ export type UpdateWorkflowRunStepInput = {
   workflowRunId: Scalars['UUID']['input'];
 };
 
-export type UpdateWorkflowVersionPositionsInput = {
-  /** Workflow version updated positions */
-  positions: Array<WorkflowStepPositionUpdateInput>;
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
-export type UpdateWorkflowVersionStepInput = {
-  /** Step to update in JSON format */
-  step: Scalars['JSON']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
-export type UpdateWorkflowVersionTriggerInput = {
-  /** Trigger to update in JSON format */
-  trigger: Scalars['JSON']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID']['output'];
@@ -1150,25 +971,6 @@ export type WorkflowStepPositionUpdateInput = {
   id: Scalars['String']['input'];
   /** Position of the step or trigger */
   position: WorkflowStepPositionInput;
-};
-
-export type WorkflowVersionContent = {
-  __typename?: 'WorkflowVersionContent';
-  steps?: Maybe<Scalars['JSON']['output']>;
-  trigger?: Maybe<Scalars['JSON']['output']>;
-  workflowVersionId: Scalars['UUID']['output'];
-};
-
-export type WorkflowVersionDto = {
-  __typename?: 'WorkflowVersionDTO';
-  createdAt: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-  steps?: Maybe<Scalars['JSON']['output']>;
-  trigger?: Maybe<Scalars['JSON']['output']>;
-  updatedAt: Scalars['String']['output'];
-  workflowId: Scalars['UUID']['output'];
 };
 
 export type WorkflowVersionStepChanges = {
@@ -1471,20 +1273,6 @@ export type TestHttpRequestMutationVariables = Exact<{
 
 export type TestHttpRequestMutation = { __typename?: 'Mutation', testHttpRequest: { __typename?: 'TestHttpRequest', success: boolean, message: string, result?: any | null, error?: any | null, status?: number | null, statusText?: string | null, headers?: any | null } };
 
-export type UpdateWorkflowVersionPositionsMutationVariables = Exact<{
-  input: UpdateWorkflowVersionPositionsInput;
-}>;
-
-
-export type UpdateWorkflowVersionPositionsMutation = { __typename?: 'Mutation', updateWorkflowVersionPositions: boolean };
-
-export type GetWorkflowVersionContentQueryVariables = Exact<{
-  workflowVersionId: Scalars['UUID']['input'];
-}>;
-
-
-export type GetWorkflowVersionContentQuery = { __typename?: 'Query', workflowVersionContent: { __typename?: 'WorkflowVersionContent', workflowVersionId: any, trigger?: any | null, steps?: any | null } };
-
 export const TimelineCalendarEventParticipantFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventParticipantFragmentFragment, unknown>;
 export const TimelineCalendarEventCallRecordingFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventCallRecording"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventCallRecordingFragmentFragment, unknown>;
 export const TimelineCalendarEventFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEvent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"location"}},{"kind":"Field","name":{"kind":"Name","value":"startsAt"}},{"kind":"Field","name":{"kind":"Name","value":"endsAt"}},{"kind":"Field","name":{"kind":"Name","value":"isFullDay"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"participants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"callRecordings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventCallRecording"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventFragmentFragment, unknown>;
@@ -1529,5 +1317,3 @@ export const SubmitFormStepDocument = {"kind":"Document","definitions":[{"kind":
 export const UpdateWorkflowRunStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowRunStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowRunStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowRunStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"nextStepIds"}},{"kind":"Field","name":{"kind":"Name","value":"position"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
 export const WorkflowStepConnectedAccountHandleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"WorkflowStepConnectedAccountHandle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowStepConnectedAccountHandle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"connectedAccountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"handleAliases"}}]}}]}}]} as unknown as DocumentNode<WorkflowStepConnectedAccountHandleQuery, WorkflowStepConnectedAccountHandleQueryVariables>;
 export const TestHttpRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestHttpRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TestHttpRequestInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testHttpRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"result"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusText"}},{"kind":"Field","name":{"kind":"Name","value":"headers"}}]}}]}}]} as unknown as DocumentNode<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
-export const UpdateWorkflowVersionPositionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowVersionPositions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowVersionPositionsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowVersionPositions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;
-export const GetWorkflowVersionContentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWorkflowVersionContent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowVersionContent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowVersionId"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}}]}}]}}]} as unknown as DocumentNode<GetWorkflowVersionContentQuery, GetWorkflowVersionContentQueryVariables>;

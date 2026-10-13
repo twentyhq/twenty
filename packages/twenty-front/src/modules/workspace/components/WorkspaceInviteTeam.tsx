@@ -148,7 +148,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
     if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`${invitationCount} invitations sent`,
         duration: 2000,
       });
@@ -158,7 +158,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
     if (!data.sendInvitations.success) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: data.sendInvitations.errors.join(', '),
         duration: 5000,
       });

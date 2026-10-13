@@ -1,7 +1,6 @@
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
-import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
 import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -30,7 +29,6 @@ import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleBu
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVersion';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
@@ -193,7 +191,6 @@ const CoreWorkflowShowContent = ({
 
 export const WorkflowCoreShowPage = () => {
   const { coreWorkflowId } = useParams<{ coreWorkflowId: string }>();
-  const isCore = useIsWorkflowCoreEnabled();
   const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
   if (!canManageWorkflows) {
     return (
@@ -203,12 +200,10 @@ export const WorkflowCoreShowPage = () => {
   if (!isDefined(coreWorkflowId)) {
     return <WorkspaceRouteUnavailable />;
   }
-  return isCore ? (
+  return (
     <CoreWorkflowShowContent
       key={coreWorkflowId}
       coreWorkflowId={coreWorkflowId}
     />
-  ) : (
-    <CoreWorkflowToWorkspaceRedirect coreWorkflowId={coreWorkflowId} />
   );
 };

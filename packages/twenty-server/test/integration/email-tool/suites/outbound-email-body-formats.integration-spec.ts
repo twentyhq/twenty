@@ -20,6 +20,10 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 import {
+  deleteLegacyWorkspaceWorkflowRecords,
+  linkCoreWorkflowToLegacyWorkspaceIds,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import {
   runWorkflowActionStep,
   type WorkflowActionStepRun,
 } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
@@ -88,10 +92,6 @@ const storeBodyAsBeforeTheUpgrade = async (
         ELSE step END)
     FROM jsonb_array_elements(steps) step)`;
 
-  await global.testDataSource.query(
-    `UPDATE "${WORKSPACE_SCHEMA}"."workflowVersion" SET ${replaceEmailStepBody} WHERE "coreWorkflowVersionId" = $2`,
-    [legacyBody, coreWorkflowVersionId],
-  );
   await global.testDataSource.query(
     `UPDATE core."workflowVersion" SET ${replaceEmailStepBody} WHERE "id" = $2`,
     [legacyBody, coreWorkflowVersionId],
@@ -394,6 +394,28 @@ describe('Outbound email body formats (integration)', () => {
   });
 
   describe('upgrade command', () => {
+    const legacyWorkspaceWorkflowIds: string[] = [];
+
+    const linkLegacyWorkspaceCopy = async (coreWorkflowVersionId: string) => {
+      const [{ coreWorkflowId }] = await global.testDataSource.query(
+        `SELECT "coreWorkflowId" FROM core."workflowVersion" WHERE id = $1`,
+        [coreWorkflowVersionId],
+      );
+      const { workspaceWorkflowId } =
+        await linkCoreWorkflowToLegacyWorkspaceIds({
+          coreWorkflowId,
+          withWorkspaceRecords: true,
+        });
+
+      legacyWorkspaceWorkflowIds.push(workspaceWorkflowId);
+    };
+
+    afterAll(async () => {
+      for (const workspaceWorkflowId of legacyWorkspaceWorkflowIds) {
+        await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
+      }
+    });
+
     const runUpgradeCommand = (dryRun: boolean) =>
       getAppProviderByClassName<WorkspaceOrmManager>(
         'WorkspaceOrmManager',
@@ -413,6 +435,8 @@ describe('Outbound email body formats (integration)', () => {
 
     const convertStoredBodyBeforeRun =
       (legacyBody: string) => async (coreWorkflowVersionId: string) => {
+        await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
+
         expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
           workspaceBody: legacyBody,
           coreBody: legacyBody,
@@ -461,6 +485,7 @@ describe('Outbound email body formats (integration)', () => {
       await runSendEmailWorkflow({
         body: '<p>Hello</p>',
         beforeRun: async (coreWorkflowVersionId) => {
+          await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
           await global.testDataSource.query(
             `UPDATE core."workflowVersion"
              SET steps = jsonb_set(steps, '{0,name}', '"Renamed in core only"')

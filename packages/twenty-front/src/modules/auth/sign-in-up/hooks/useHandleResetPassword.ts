@@ -25,13 +25,13 @@ export const useHandleResetPassword = () => {
     (email = currentUser?.email) => {
       return async () => {
         if (!email) {
-          enqueueToast({ variant: 'error', children: t`Invalid email` });
+          enqueueToast({ status: 'error', children: t`Invalid email` });
           return;
         }
 
         if (!isCaptchaReady) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Captcha (anti-bot check) is still loading, try again`,
           });
           return;
@@ -48,11 +48,11 @@ export const useHandleResetPassword = () => {
 
           if (data?.emailPasswordResetLink?.success === true) {
             enqueueToast({
-              variant: 'success',
+              status: 'success',
               children: t`If this email is registered, a password reset link has been sent`,
             });
           } else {
-            enqueueToast({ variant: 'error', children: t`An error occurred.` });
+            enqueueToast({ status: 'error', children: t`An error occurred.` });
           }
         } catch (error) {
           enqueueToast(getToastOptionsFromError({ error }));

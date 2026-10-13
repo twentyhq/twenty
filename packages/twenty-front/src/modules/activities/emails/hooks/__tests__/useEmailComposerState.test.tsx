@@ -117,7 +117,7 @@ describe('useEmailComposerState', () => {
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
     expect(mockEnqueueToast).not.toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error' }),
+      expect.objectContaining({ status: 'error' }),
     );
   });
 

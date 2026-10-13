@@ -51,7 +51,7 @@ export const usePerformViewEntityApiPersistOperation = (
           operationType,
         });
       } else {
-        enqueueToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ status: 'error', children: t`An error occurred.` });
       }
     },
     [handleMetadataError, enqueueToast, metadataName],
