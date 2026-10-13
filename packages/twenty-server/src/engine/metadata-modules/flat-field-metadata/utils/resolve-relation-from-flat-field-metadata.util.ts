@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { pickMorphGroupSurvivorOrThrow } from 'twenty-shared/utils';
+import { isMorphRelationGroup } from 'twenty-shared/utils';
 
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -10,18 +10,21 @@ import { fromMorphOrRelationFlatFieldMetadataToRelationDto } from 'src/engine/me
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { pickMorphRelationRepresentative } from 'src/engine/metadata-modules/flat-field-metadata/utils/pick-morph-relation-representative.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
 type ResolveRelationFromFlatFieldMetadataArgs = {
   sourceFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  isMorphFieldGroupEnabled: boolean;
 };
 
 export const resolveRelationFromFlatFieldMetadata = ({
   sourceFlatFieldMetadata,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
+  isMorphFieldGroupEnabled,
 }: ResolveRelationFromFlatFieldMetadataArgs): RelationDTO | null => {
   const sourceFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityId: sourceFlatFieldMetadata.objectMetadataId,
@@ -64,17 +67,21 @@ export const resolveRelationFromFlatFieldMetadata = ({
       }),
     ];
 
-    const survivorMorphField = pickMorphGroupSurvivorOrThrow(
-      allMorphFlatFieldMetadatas,
-    );
+    const representativeMorphField =
+      pickMorphRelationRepresentative({
+        morphFlatFieldMetadatas: allMorphFlatFieldMetadatas,
+        isMorphFieldGroupEnabled,
+      }) ?? targetFlatFieldMetadata;
 
     return fromMorphOrRelationFlatFieldMetadataToRelationDto({
       sourceFlatFieldMetadata,
       sourceFlatObjectMetadata,
-      targetFlatFieldMetadata: {
-        ...survivorMorphField,
-        name: morphNameFromMorphFieldMetadataName,
-      },
+      targetFlatFieldMetadata: isMorphRelationGroup(representativeMorphField)
+        ? representativeMorphField
+        : {
+            ...representativeMorphField,
+            name: morphNameFromMorphFieldMetadataName,
+          },
       targetFlatObjectMetadata,
     });
   }

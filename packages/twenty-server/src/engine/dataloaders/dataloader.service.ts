@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
@@ -26,6 +26,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isRelationFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-field-metadata-with-target.util';
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
@@ -249,6 +250,19 @@ export class DataloaderService {
     };
   }
 
+  private async isMorphFieldGroupEnabled(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    return (
+      featureFlagsMap[FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED] ?? false
+    );
+  }
+
   private createRelationLoader() {
     return new DataLoader<RelationLoaderPayload, RelationDTO | null>(
       async (dataLoaderParams: RelationLoaderPayload[]) => {
@@ -260,6 +274,8 @@ export class DataloaderService {
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
+        const isMorphFieldGroupEnabled =
+          await this.isMorphFieldGroupEnabled(workspaceId);
 
         return dataLoaderParams.map(({ fieldMetadataId }) => {
           const sourceFlatFieldMetadata =
@@ -281,6 +297,7 @@ export class DataloaderService {
             sourceFlatFieldMetadata,
             flatFieldMetadataMaps,
             flatObjectMetadataMaps,
+            isMorphFieldGroupEnabled,
           });
         });
       },
@@ -429,6 +446,8 @@ export class DataloaderService {
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
+        const isMorphFieldGroupEnabled =
+          await this.isMorphFieldGroupEnabled(workspaceId);
 
         const objectFlatFieldMetadatasList = objectMetadataIds.map(
           (objectMetadataId) => {
@@ -468,9 +487,10 @@ export class DataloaderService {
               );
 
             const filteredFieldMetadataEntities =
-              filterMorphRelationDuplicateFields(
-                overriddenFieldMetadataEntities,
-              );
+              filterMorphRelationDuplicateFields({
+                flatFieldMetadatas: overriddenFieldMetadataEntities,
+                isMorphFieldGroupEnabled,
+              });
 
             const filteredFieldMetadataEntitiesWithMorphRenamed =
               filteredFieldMetadataEntities.map((flatFieldMetadata) => {
@@ -478,7 +498,8 @@ export class DataloaderService {
                   isFlatFieldMetadataOfType(
                     flatFieldMetadata,
                     FieldMetadataType.MORPH_RELATION,
-                  )
+                  ) &&
+                  isRelationFieldMetadataWithTarget(flatFieldMetadata)
                 ) {
                   const relationTargetObjectMetadata =
                     findFlatEntityByIdInFlatEntityMapsOrThrow({

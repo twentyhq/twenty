@@ -8,7 +8,11 @@ import {
   FieldMetadataType,
   PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  capitalize,
+  isDefined,
+  isMorphRelationGroup,
+} from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -265,7 +269,7 @@ export const computeSchemaComponents = (
         findManyFlatEntityByIdInFlatEntityMapsOrThrow<FlatFieldMetadata>({
           flatEntityMaps: flatFieldMetadataMaps,
           flatEntityIds: item.fieldIds,
-        });
+        }).filter((fieldMetadata) => !isMorphRelationGroup(fieldMetadata));
 
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
         item,

@@ -135,7 +135,8 @@ export class GraphqlQuerySelectedFieldsParser {
         isFlatFieldMetadataOfType(
           fieldMetadata,
           FieldMetadataType.MORPH_RELATION,
-        )
+        ) &&
+        isDefined(fieldMetadata.relationTargetObjectMetadataId)
       ) {
         const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: fieldMetadata.relationTargetObjectMetadataId,

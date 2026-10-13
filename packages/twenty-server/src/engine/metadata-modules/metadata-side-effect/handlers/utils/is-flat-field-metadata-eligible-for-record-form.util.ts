@@ -1,6 +1,7 @@
 import {
   isDefined,
   isFieldMetadataEligibleForRecordForm,
+  isMorphRelationGroup,
 } from 'twenty-shared/utils';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -18,12 +19,16 @@ export type RecordFormCandidateFlatFieldMetadata = Pick<
   | 'universalSettings'
   | 'applicationUniversalIdentifier'
   | 'overrides'
+  | 'morphId'
 >;
 
 export const isFlatFieldMetadataEligibleForRecordForm = (
   flatFieldMetadata: RecordFormCandidateFlatFieldMetadata,
 ): boolean => {
-  if (flatFieldMetadata.isSystemSideEffect) {
+  if (
+    flatFieldMetadata.isSystemSideEffect ||
+    isMorphRelationGroup(flatFieldMetadata)
+  ) {
     return false;
   }
 

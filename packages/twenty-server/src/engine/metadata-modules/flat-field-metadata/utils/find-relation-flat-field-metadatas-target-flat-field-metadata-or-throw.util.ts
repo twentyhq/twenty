@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import {
   FieldMetadataException,
@@ -20,6 +20,7 @@ export const findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow = ({
   flatFieldMetadata,
 }: GetRelationFlatFieldMetadatasUtilArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType> => {
   const { relationTargetFieldMetadataId } = flatFieldMetadata;
+  assertIsDefinedOrThrow(relationTargetFieldMetadataId);
 
   const relatedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: relationTargetFieldMetadataId,

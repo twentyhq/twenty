@@ -4,6 +4,9 @@ import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modul
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 export const isManyToOneFlatFieldMetadata = (
-  flatFieldMetadata: OrmFlatFieldMetadata<MorphOrRelationFieldMetadataType>,
+  flatFieldMetadata: Pick<
+    OrmFlatFieldMetadata<MorphOrRelationFieldMetadataType>,
+    'settings'
+  >,
 ): boolean =>
   flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { RelationType, compositeTypeDefinitions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
 
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -143,6 +143,15 @@ export class FlatIndexValidatorService {
                 code: IndexExceptionCode.INDEX_FIELD_WRONG_OBJECT,
                 message: t`Field does not belong to the indexed object`,
                 userFriendlyMessage: msg`Field cannot be indexed as it belongs to a different object`,
+              });
+            }
+
+            if (isMorphRelationGroup(relatedFlatField)) {
+              validationResult.errors.push({
+                code: IndexExceptionCode.INDEX_FIELD_INVALID_REFERENCE,
+                message:
+                  'Cannot index a logical morph field without a physical column',
+                userFriendlyMessage: msg`This field has no database column to index.`,
               });
             }
 

@@ -267,6 +267,29 @@ export const buildStandardTargetFlatFieldMetadatas = <
       defaultValue: true,
     },
   }),
+  target: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      objectName,
+      context: {
+        fieldName: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        label: i18nLabel(
+          msg({ message: 'Related to', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Related record',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconRelationManyToOne',
+        isUIEditable: false,
+        settings: { relationType: RelationType.MANY_TO_ONE },
+      },
+    }),
+    morphId,
+  },
   targetPerson: createStandardRelationFieldFlatMetadata({
     ...args,
     objectName,

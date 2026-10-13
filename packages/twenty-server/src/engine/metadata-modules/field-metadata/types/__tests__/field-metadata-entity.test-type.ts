@@ -96,7 +96,16 @@ type RelationAssertions = [
   Expect<HasAllProperties<LinksFieldMetadata, NotDefinedRelationRecord>>,
 
   Expect<HasAllProperties<RelationFieldMetadata, DefinedRelationRecord>>,
-  Expect<HasAllProperties<MorphRelationFieldMetadata, DefinedRelationRecord>>,
+  Expect<
+    HasAllProperties<
+      MorphRelationFieldMetadata,
+      {
+        [TKey in keyof DefinedRelationRecord]:
+          | DefinedRelationRecord[TKey]
+          | null;
+      }
+    >
+  >,
 
   Expect<
     HasAllProperties<

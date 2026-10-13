@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
 import {
   type Manifest,
   type PageLayoutManifest,
@@ -11,6 +10,7 @@ import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { addMorphFieldsForLegacyManifest } from 'src/engine/core-modules/application/application-manifest/utils/add-morph-fields-for-legacy-manifest.util';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
@@ -65,12 +65,17 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    existingAllFlatEntityMaps = fromAllFlatEntityMaps,
     now,
     workspaceId,
   }: {
     manifest: Manifest;
-    ownerFlatApplication: FlatApplication;
+    ownerFlatApplication: Pick<
+      FlatApplication,
+      'universalIdentifier' | 'sourceType'
+    >;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    existingAllFlatEntityMaps?: AllFlatEntityMaps;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
@@ -141,6 +146,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           allUniversalFlatEntityMaps.flatFieldMetadataMaps,
       });
     }
+
+    addMorphFieldsForLegacyManifest({
+      manifestMaps: allUniversalFlatEntityMaps,
+      existingMaps: existingAllFlatEntityMaps,
+    });
 
     const indexCountByObjectUniversalIdentifier = new Map<string, number>();
     const fieldsByObjectUniversalIdentifier = new Map<

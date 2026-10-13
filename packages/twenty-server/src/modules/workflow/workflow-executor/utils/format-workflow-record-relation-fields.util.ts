@@ -78,7 +78,8 @@ const formatWorkflowRecordMorphRelationFields = (
   for (const field of objectFields) {
     if (
       !isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION) ||
-      field.settings.relationType !== RelationType.MANY_TO_ONE
+      field.settings.relationType !== RelationType.MANY_TO_ONE ||
+      !isDefined(field.relationTargetObjectMetadataId)
     ) {
       continue;
     }

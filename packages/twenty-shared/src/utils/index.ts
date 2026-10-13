@@ -212,6 +212,7 @@ export {
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { isAutoSelectModelId } from './isAutoSelectModelId';
 export { isFieldValueRestricted } from './isFieldValueRestricted';
+export { isMorphRelationGroup } from './isMorphRelationGroup';
 export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';

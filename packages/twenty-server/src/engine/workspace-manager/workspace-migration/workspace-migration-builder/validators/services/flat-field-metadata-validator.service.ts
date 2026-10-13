@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isFieldMetadataTypeWithDefaultValue } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -267,6 +266,7 @@ export class FlatFieldMetadataValidatorService {
   }
 
   validateFlatFieldMetadataDeletion({
+    remainingFlatEntityMapsToValidate,
     flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
@@ -315,6 +315,32 @@ export class FlatFieldMetadataValidatorService {
     const parentObjectMetadataHasBeenDeleted = !isDefined(
       relatedFlatObjectMetadata,
     );
+
+    if (
+      !buildOptions.isSystemBuild &&
+      isMorphRelationGroup(flatFieldMetadataToDelete)
+    ) {
+      const hasRemainingTargets = Object.values(
+        optimisticFlatFieldMetadataMaps.byUniversalIdentifier,
+      ).some(
+        (field) =>
+          isDefined(field) &&
+          field.morphId === flatFieldMetadataToDelete.morphId &&
+          field.universalIdentifier !== universalIdentifier &&
+          !isDefined(
+            remainingFlatEntityMapsToValidate.byUniversalIdentifier[
+              field.universalIdentifier
+            ],
+          ),
+      );
+      if (hasRemainingTargets) {
+        validationResult.errors.push({
+          code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+          message: 'Delete the morph field together with its targets',
+          userFriendlyMessage: msg`Delete the relation field together with its targets`,
+        });
+      }
+    }
 
     if (
       !buildOptions.isSystemBuild &&

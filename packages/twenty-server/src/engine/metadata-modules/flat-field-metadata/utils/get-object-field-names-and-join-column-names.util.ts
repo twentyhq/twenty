@@ -1,3 +1,4 @@
+import { isMorphRelationGroup } from 'twenty-shared/utils';
 import { RelationType } from 'twenty-shared/types';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -35,6 +36,7 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
     objectUniversalFlatFieldMetadatas.reduce(
       (acc, universalFlatFieldMetadata) => {
         if (
+          !isMorphRelationGroup(universalFlatFieldMetadata) &&
           isMorphOrRelationUniversalFlatFieldMetadata(
             universalFlatFieldMetadata,
           ) &&

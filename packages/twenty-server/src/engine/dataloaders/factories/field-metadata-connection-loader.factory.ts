@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import {
@@ -15,6 +15,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isRelationFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-field-metadata-with-target.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
@@ -23,6 +24,7 @@ import { applyMetadataFilterToItems } from 'src/engine/metadata-modules/paginati
 import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type FieldMetadataConnectionLoaderPayload = {
   workspaceId: string;
@@ -37,6 +39,7 @@ export class FieldMetadataConnectionLoaderFactory {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   create(): DataLoader<
@@ -56,6 +59,12 @@ export class FieldMetadataConnectionLoaderFactory {
             flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
           },
         );
+      const { featureFlagsMap } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'featureFlagsMap',
+        ]);
+      const isMorphFieldGroupEnabled =
+        featureFlagsMap[FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED] ?? false;
 
       const connections = dataLoaderParams.map(
         ({ objectMetadata, paging, filter }) => {
@@ -69,7 +78,10 @@ export class FieldMetadataConnectionLoaderFactory {
               flatEntityMaps: flatFieldMetadataMaps,
             });
           const filteredFlatFieldMetadatas = applyMetadataFilterToItems({
-            items: filterMorphRelationDuplicateFields(flatFieldMetadatas),
+            items: filterMorphRelationDuplicateFields({
+              flatFieldMetadatas,
+              isMorphFieldGroupEnabled,
+            }),
             filter,
             columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
           });
@@ -110,7 +122,8 @@ export class FieldMetadataConnectionLoaderFactory {
             isFlatFieldMetadataOfType(
               overriddenFlatFieldMetadata,
               FieldMetadataType.MORPH_RELATION,
-            )
+            ) &&
+            isRelationFieldMetadataWithTarget(overriddenFlatFieldMetadata)
           ) {
             const relationTargetObjectMetadata =
               findFlatEntityByIdInFlatEntityMapsOrThrow({

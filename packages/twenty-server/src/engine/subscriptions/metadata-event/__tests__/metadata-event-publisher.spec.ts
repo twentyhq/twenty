@@ -6,6 +6,7 @@ import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-m
 import { MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/metadata-event-publisher';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const OWNER_USER_WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
@@ -26,6 +27,7 @@ describe('MetadataEventPublisher', () => {
         },
         { provide: NavigationMenuItemRecordIdentifierService, useValue: {} },
         { provide: I18nService, useValue: {} },
+        { provide: WorkspaceCacheService, useValue: {} },
       ],
     }).compile();
 

@@ -1,5 +1,9 @@
 import { type FieldManifest } from 'twenty-shared/application';
-import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataSelectKind,
+  isMorphRelationGroup,
+} from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   MetadataWritability,
@@ -30,7 +34,10 @@ const getRelationTargetUniversalIdentifiers = (
   relationTargetFieldMetadataUniversalIdentifier: string | null;
   relationTargetObjectMetadataUniversalIdentifier: string | null;
 } => {
-  if (!isRelationFieldManifest(fieldManifest)) {
+  if (
+    !isRelationFieldManifest(fieldManifest) ||
+    isMorphRelationGroup(fieldManifest)
+  ) {
     return {
       relationTargetFieldMetadataUniversalIdentifier: null,
       relationTargetObjectMetadataUniversalIdentifier: null,

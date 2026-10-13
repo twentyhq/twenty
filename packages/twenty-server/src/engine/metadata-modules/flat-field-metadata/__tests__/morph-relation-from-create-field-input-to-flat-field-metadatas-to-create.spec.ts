@@ -131,7 +131,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           input.createFieldInput.morphRelationsCreationPayload,
         );
         expect(result.result.flatFieldMetadatas.length).toBe(
-          input.createFieldInput.morphRelationsCreationPayload.length * 2,
+          input.createFieldInput.morphRelationsCreationPayload.length * 2 + 1,
         );
         expect(result).toMatchSnapshot(
           extractRecordIdsAndDatesAsExpectAny(result),

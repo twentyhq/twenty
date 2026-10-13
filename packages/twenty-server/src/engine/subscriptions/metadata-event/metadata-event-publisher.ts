@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { WorkflowVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -9,9 +9,14 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
+import {
+  type FieldMetadataEventRecord,
+  isFieldMetadataEventRecordVisible,
+} from 'src/engine/subscriptions/metadata-event/utils/is-field-metadata-event-record-visible.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type BroadcastEventRecord = {
   userWorkspaceId?: string | null;
@@ -36,6 +41,7 @@ export class MetadataEventPublisher {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async publish(metadataEventBatch: MetadataEventBatch): Promise<void> {
@@ -157,7 +163,7 @@ export class MetadataEventPublisher {
   ): Promise<MetadataEventBatch> {
     switch (metadataEventBatch.metadataName) {
       case 'fieldMetadata':
-        return this.enrichFieldMetadataEventsWithRelations(
+        return this.prepareFieldMetadataEvents(
           metadataEventBatch as MetadataEventBatch<'fieldMetadata'>,
         );
       case 'navigationMenuItem':
@@ -169,7 +175,7 @@ export class MetadataEventPublisher {
     }
   }
 
-  private async enrichFieldMetadataEventsWithRelations(
+  private async prepareFieldMetadataEvents(
     metadataEventBatch: MetadataEventBatch<'fieldMetadata'>,
   ): Promise<MetadataEventBatch<'fieldMetadata'>> {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -179,8 +185,24 @@ export class MetadataEventPublisher {
           flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
         },
       );
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      metadataEventBatch.workspaceId,
+      ['featureFlagsMap'],
+    );
+    const isMorphFieldGroupEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED] ?? false;
 
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
+    const visibleEvents = metadataEventBatch.events.filter((event) =>
+      isFieldMetadataEventRecordVisible({
+        record: getBroadcastEventRecord(event) as
+          | FieldMetadataEventRecord
+          | undefined,
+        isMorphFieldGroupEnabled,
+        flatFieldMetadataMaps,
+      }),
+    );
+
+    const enrichedEvents = visibleEvents.map((event) => {
       const enrichedProperties = { ...event.properties };
 
       if (
@@ -191,6 +213,7 @@ export class MetadataEventPublisher {
           record: enrichedProperties.after as Record<string, unknown>,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          isMorphFieldGroupEnabled,
         }) as typeof enrichedProperties.after;
       }
 

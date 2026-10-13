@@ -6,8 +6,10 @@ import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modul
 export type AssignTypeIfIsMorphOrRelationFieldMetadataType<
   TTypeToAssign,
   TFieldMetadataType extends FieldMetadataType,
-> = AssignIfIsGivenFieldMetadataType<
-  TTypeToAssign,
-  TFieldMetadataType,
-  MorphOrRelationFieldMetadataType
->;
+> = TFieldMetadataType extends FieldMetadataType.MORPH_RELATION
+  ? TTypeToAssign | null
+  : AssignIfIsGivenFieldMetadataType<
+      TTypeToAssign,
+      TFieldMetadataType,
+      MorphOrRelationFieldMetadataType
+    >;
