@@ -21,11 +21,8 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-// The upload flow runs cache-lock retries with real delays, so fake timers
-// would hang it.
 jest.setTimeout(120000);
 
-// Build metadata is valid semver and must not break artifact storage
 const PUBLISHED_VERSIONS = ['1.0.0', '1.1.0+build.7'] as const;
 const LATEST_PUBLISHED_VERSION =
   PUBLISHED_VERSIONS[PUBLISHED_VERSIONS.length - 1];
@@ -84,8 +81,6 @@ describe('Application registration versions', () => {
   });
 
   afterAll(async () => {
-    // Tarballs belong to the publishing workspace, not to the installed
-    // application, so the shared cleanup does not reach their file rows.
     await ds.query(
       `DELETE FROM core."file" WHERE id IN (
         SELECT "tarballFileId" FROM core."applicationRegistrationVersion"

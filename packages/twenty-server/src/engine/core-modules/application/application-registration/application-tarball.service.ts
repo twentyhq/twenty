@@ -294,8 +294,6 @@ export class ApplicationTarballService {
     });
   }
 
-  // Publications of one app run one at a time: two overlapping uploads of the
-  // same version would otherwise both pass the progression check.
   private async registerExtractedTarball(params: {
     extractedTarball: ExtractedTarball;
     ownerWorkspaceId: string;
@@ -407,8 +405,6 @@ export class ApplicationTarballService {
       }
     }
 
-    // The previous tarball is the artifact of an earlier version record, so it
-    // is only dropped when no version was recorded for it (pre-version uploads)
     if (
       isDefined(previousTarballFileId) &&
       previousTarballFileId !== savedFile.id &&
@@ -584,8 +580,6 @@ export class ApplicationTarballService {
       }
     }
 
-    // The progression check only sees the registration's latest version, which
-    // an unversioned upload clears; a recorded version stays immutable either way
     if (
       isDefined(incomingVersion) &&
       isDefined(
@@ -646,9 +640,6 @@ export class ApplicationTarballService {
     return workspaceCustomFlatApplication.universalIdentifier;
   }
 
-  // Every upload gets its own file, keyed by a fresh id rather than the raw
-  // version: an earlier version's artifact is never overwritten by a later
-  // upload, and semver build metadata cannot break the storage path.
   private async storeTarballFile({
     appRegistration,
     tarballBuffer,
@@ -690,8 +681,6 @@ export class ApplicationTarballService {
       ownerWorkspaceId,
     });
 
-    // A replayed completion of an already published upload fails the version
-    // progression check; the file it carries is that version's artifact
     if (
       isDefined(attachedRegistration) ||
       (await this.applicationRegistrationVersionService.isTarballFileReferenced(

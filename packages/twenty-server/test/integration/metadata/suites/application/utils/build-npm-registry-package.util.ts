@@ -1,8 +1,11 @@
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
+import { isDefined } from 'twenty-shared/utils';
+
+import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 
 type RegistryVersionMetadata = {
   name: string | null;
-  dist: { tarball: string };
+  dist: { tarball: string; integrity?: string };
 };
 
 export type StubbedRegistryPackage = {
@@ -22,6 +25,7 @@ export const buildNpmRegistryPackage = async ({
   manifestJson,
   packageJsonName = packageName,
   metadataName = packageName,
+  integrity,
 }: {
   registryBaseUrl: string;
   packageName: string;
@@ -29,6 +33,7 @@ export const buildNpmRegistryPackage = async ({
   manifestJson: string;
   packageJsonName?: string;
   metadataName?: string | null;
+  integrity?: string | null;
 }): Promise<StubbedRegistryPackage> => {
   const tarballBuffer = await createAppTarball({
     'manifest.json': manifestJson,
@@ -38,12 +43,20 @@ export const buildNpmRegistryPackage = async ({
   const unscopedName = packageName.split('/').pop() ?? packageName;
   const tarballUrl = `${registryBaseUrl}/${packageName}/-/${unscopedName}-${version}.tgz`;
 
+  const attestedIntegrity =
+    integrity === undefined ? computeSriIntegrity(tarballBuffer) : integrity;
+
   return {
     tarballUrl,
     tarballBuffer,
     metadata: {
       name: metadataName,
-      dist: { tarball: tarballUrl },
+      dist: {
+        tarball: tarballUrl,
+        ...(isDefined(attestedIntegrity)
+          ? { integrity: attestedIntegrity }
+          : {}),
+      },
     },
   };
 };

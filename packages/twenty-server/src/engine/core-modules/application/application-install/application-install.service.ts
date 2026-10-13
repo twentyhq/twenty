@@ -25,7 +25,9 @@ import {
   VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE,
   VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE,
 } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import { type ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
+import { compareSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compare-sri-integrity.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
@@ -360,13 +362,6 @@ export class ApplicationInstallService {
 
     const incomingVersion = resolvedPackage.packageJson.version;
 
-    const applicationRegistrationVersionId =
-      await this.resolveApplicationRegistrationVersionId({
-        appRegistration,
-        resolvedPackage,
-        version: newVersion,
-      });
-
     // Rollback is scoped to the work after the application row exists: reaching
     // this catch means creation succeeded, so only an application that never
     // finished installing needs uninstalling.
@@ -393,6 +388,13 @@ export class ApplicationInstallService {
           );
         }
       }
+
+      const applicationRegistrationVersionId =
+        await this.resolveApplicationRegistrationVersionId({
+          appRegistration,
+          resolvedPackage,
+          version: newVersion,
+        });
 
       if (isVersionUpgrade && shouldApplyApprovedCapabilities) {
         await this.applicationService.update(application.id, {
@@ -632,10 +634,6 @@ export class ApplicationInstallService {
     }
   }
 
-  // Tarball versions are recorded at publish time. An npm version may reach
-  // an install before the catalog sync records it (auto-upgrade workers, or an
-  // explicit version the catalog never served), so the install records it
-  // from the registry response it was resolved from.
   private async resolveApplicationRegistrationVersionId({
     appRegistration,
     resolvedPackage,
@@ -651,12 +649,30 @@ export class ApplicationInstallService {
       );
 
     if (isDefined(recordedVersion)) {
+      this.assertResolvedPackageMatchesRecordedVersion({
+        universalIdentifier: appRegistration.universalIdentifier,
+        recordedVersion,
+        resolvedPackage,
+      });
+
+      const isArtifactUrlMissing =
+        !isDefined(recordedVersion.artifactUrl) &&
+        isDefined(resolvedPackage.registryTarballUrl);
+
+      if (isArtifactUrlMissing || !isDefined(recordedVersion.checksum)) {
+        await this.applicationRegistrationVersionService.fillMissingArtifact({
+          id: recordedVersion.id,
+          artifactUrl: resolvedPackage.registryTarballUrl ?? null,
+          checksum: resolvedPackage.integrity,
+        });
+      }
+
       return recordedVersion.id;
     }
 
     if (
       appRegistration.sourceType !== ApplicationRegistrationSourceType.NPM ||
-      !isDefined(resolvedPackage.registryArtifact)
+      !isDefined(resolvedPackage.registryTarballUrl)
     ) {
       return null;
     }
@@ -667,11 +683,46 @@ export class ApplicationInstallService {
         version,
         sourceType: ApplicationRegistrationSourceType.NPM,
         sourcePackage: appRegistration.sourcePackage,
-        artifactUrl: resolvedPackage.registryArtifact.tarballUrl,
-        checksum: resolvedPackage.registryArtifact.integrity,
+        artifactUrl: resolvedPackage.registryTarballUrl,
+        checksum: resolvedPackage.integrity,
       });
 
     return installedVersion.id;
+  }
+
+  private assertResolvedPackageMatchesRecordedVersion({
+    universalIdentifier,
+    recordedVersion,
+    resolvedPackage,
+  }: {
+    universalIdentifier: string;
+    recordedVersion: Pick<
+      ApplicationRegistrationVersionEntity,
+      'version' | 'checksum'
+    >;
+    resolvedPackage: Pick<ResolvedPackage, 'integrity'>;
+  }): void {
+    if (!isDefined(recordedVersion.checksum)) {
+      return;
+    }
+
+    const comparison = compareSriIntegrity(
+      recordedVersion.checksum,
+      resolvedPackage.integrity,
+    );
+
+    if (comparison === 'mismatch') {
+      throw new ApplicationException(
+        `Package resolved for ${universalIdentifier}@${recordedVersion.version} does not match the fingerprint recorded for that version`,
+        ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH,
+      );
+    }
+
+    if (comparison === 'incomparable') {
+      this.logger.warn(
+        `Fingerprint recorded for ${universalIdentifier}@${recordedVersion.version} uses an algorithm this server cannot verify`,
+      );
+    }
   }
 
   private async markInstallCompleted({

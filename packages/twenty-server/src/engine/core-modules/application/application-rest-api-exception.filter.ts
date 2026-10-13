@@ -50,6 +50,8 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED:
     case ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED:
       return 500;
+    case ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH:
+      return 502;
     default:
       return assertUnreachable(code);
   }

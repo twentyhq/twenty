@@ -180,6 +180,16 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       filename: 'test.tsx',
     },
+    {
+      code: `
+        class TestController {
+          @Get()
+          @UseGuards(ApplicationRegistrationVersionArtifactGuard, NoPermissionGuard)
+          testMethod() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
     ...AUTHENTICATING_GUARD_NAMES.map((authenticatingGuardName) => ({
       code: `
         @UseGuards(

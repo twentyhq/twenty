@@ -214,8 +214,6 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'applicationRegistrationId' })
   applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
 
-  // The published version this installation was resolved from; null until the
-  // first install or upgrade that runs with version records
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:

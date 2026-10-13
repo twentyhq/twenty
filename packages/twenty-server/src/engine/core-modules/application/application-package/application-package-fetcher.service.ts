@@ -16,10 +16,13 @@ import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
+import { buildRegistryRequestHeaders } from 'src/engine/core-modules/application/application-package/utils/build-registry-request-headers.util';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { assertValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
+import { compareSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compare-sri-integrity.util';
+import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -40,7 +43,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 const APP_FETCHER_TMPDIR = join(tmpdir(), 'twenty-app-fetcher');
 const RESOLUTION_TIMEOUT_MS = 30_000;
 
-export type ResolvedRegistryArtifact = {
+type RegistryArtifact = {
   tarballUrl: string;
   integrity: string | null;
 };
@@ -50,8 +53,8 @@ export type ResolvedPackage = {
   cleanupDir: string;
   manifest: Manifest;
   packageJson: PackageJson;
-  // Where the registry served the package from, for npm resolutions only
-  registryArtifact?: ResolvedRegistryArtifact;
+  integrity: string;
+  registryTarballUrl?: string;
 };
 
 const registryVersionMetadataSchema = z.object({
@@ -180,6 +183,15 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         authToken,
       );
 
+      const integrity = computeSriIntegrity(tarballBuffer);
+
+      this.assertRegistryIntegrity({
+        sourcePackage,
+        versionSpec,
+        registryIntegrity: registryArtifact.integrity,
+        integrity,
+      });
+
       const tarballPath = join(workDir, 'package.tgz');
 
       await fs.writeFile(tarballPath, tarballBuffer);
@@ -208,7 +220,8 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
-        registryArtifact,
+        integrity,
+        registryTarballUrl: registryArtifact.tarballUrl,
       };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
@@ -266,6 +279,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       });
 
       const tarballBuffer = await streamToBuffer(tarballStream);
+      const integrity = computeSriIntegrity(tarballBuffer);
       const tarballPath = join(workDir, 'app.tar.gz');
 
       await fs.writeFile(tarballPath, tarballBuffer);
@@ -287,6 +301,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
+        integrity,
       };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
@@ -307,7 +322,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     sourcePackage: string,
     versionSpec: string,
     authToken?: string,
-  ): Promise<ResolvedRegistryArtifact> {
+  ): Promise<RegistryArtifact> {
     const encodedName = encodeURIComponent(sourcePackage);
     const encodedVersionSpec = encodeURIComponent(versionSpec);
     const baseUrl = registryUrl.replace(/\/$/, '');
@@ -371,18 +386,47 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     return { tarballUrl, integrity: metadata.dist?.integrity ?? null };
   }
 
+  private assertRegistryIntegrity({
+    sourcePackage,
+    versionSpec,
+    registryIntegrity,
+    integrity,
+  }: {
+    sourcePackage: string;
+    versionSpec: string;
+    registryIntegrity: string | null;
+    integrity: string;
+  }): void {
+    if (!isDefined(registryIntegrity)) {
+      return;
+    }
+
+    const comparison = compareSriIntegrity(registryIntegrity, integrity);
+
+    if (comparison === 'mismatch') {
+      throw new ApplicationException(
+        `Tarball downloaded for ${sourcePackage}@${versionSpec} does not match the integrity the registry attests`,
+        ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH,
+      );
+    }
+
+    if (comparison === 'incomparable') {
+      this.logger.warn(
+        `Registry integrity for ${sourcePackage}@${versionSpec} uses an algorithm this server cannot verify`,
+      );
+    }
+  }
+
   private async downloadTarball(
     tarballUrl: string,
     registryUrl: string,
     authToken?: string,
   ): Promise<Buffer> {
-    const headers: Record<string, string> = {};
-
-    const isSameHost = new URL(tarballUrl).host === new URL(registryUrl).host;
-
-    if (authToken && isSameHost) {
-      headers['Authorization'] = `Bearer ${authToken}`;
-    }
+    const headers = buildRegistryRequestHeaders({
+      url: tarballUrl,
+      registryUrl,
+      authToken,
+    });
 
     const httpClient = this.secureHttpClientService.getHttpClient({
       timeout: RESOLUTION_TIMEOUT_MS,

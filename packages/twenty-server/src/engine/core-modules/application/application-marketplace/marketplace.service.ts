@@ -98,8 +98,6 @@ export class MarketplaceService {
     }
   }
 
-  // Reads where the registry serves one package version and the integrity it
-  // records for it, which is the provenance kept on the version record.
   async fetchPackageVersionDistFromRegistry(
     packageName: string,
     version: string,

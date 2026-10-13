@@ -4,6 +4,7 @@ const AUTH_GUARD_NAMES = [
   'FilePathGuard',
   'FileByIdGuard',
   'FileUploadTokenGuard',
+  'ApplicationRegistrationVersionArtifactGuard',
 ];
 
 const AUTH_PRINCIPAL_GUARD_NAME = 'AuthPrincipalGuard';

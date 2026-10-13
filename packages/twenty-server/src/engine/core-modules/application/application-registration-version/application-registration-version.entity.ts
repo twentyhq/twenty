@@ -22,10 +22,6 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-// One row per published version of a registration. Rows are written once by
-// the publish paths and only their review state changes afterwards, so a
-// reviewer or an installation can refer to a version id and always find the
-// same artifact, fingerprint and provenance.
 @Entity({ name: 'applicationRegistrationVersion', schema: 'core' })
 @ObjectType('ApplicationRegistrationVersion')
 @WasIntroducedInUpgrade({
@@ -74,13 +70,10 @@ export class ApplicationRegistrationVersionEntity {
   @JoinColumn({ name: 'tarballFileId' })
   tarballFile: Relation<FileEntity> | null;
 
-  // Where the registry serves the package tarball; null for uploaded tarballs,
-  // which are addressed through tarballFileId instead
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })
   artifactUrl: string | null;
 
-  // Subresource Integrity string (sha512-<base64>), the format npm records
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;

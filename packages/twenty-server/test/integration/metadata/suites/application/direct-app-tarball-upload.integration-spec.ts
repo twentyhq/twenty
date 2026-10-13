@@ -536,8 +536,6 @@ describe('Direct app tarball upload', () => {
 
       const registrationId = first.completion.data!.completeAppTarballUpload.id;
 
-      // The registration already points to the new tarball, so the retry
-      // resumes from there instead of re-running the progression check
       expect((await findRegistrationRow(registrationId)).tarballFileId).toBe(
         second.uploadTarget.fileId,
       );

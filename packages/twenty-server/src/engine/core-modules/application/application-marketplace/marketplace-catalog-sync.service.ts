@@ -118,10 +118,6 @@ export class MarketplaceCatalogSyncService {
     }
   }
 
-  // The registry already holds the artifact, so the version record only has
-  // to remember where it is and the integrity the registry attests for it. A
-  // version is left unrecorded while the registry does not answer: the row
-  // is immutable, so writing it without the artifact would never be repaired.
   private async recordCatalogVersion({
     registration,
     registryPackage,
@@ -141,7 +137,12 @@ export class MarketplaceCatalogSyncService {
         },
       );
 
-    if (isDefined(recordedVersion?.artifactUrl)) {
+    const isFullyRecorded =
+      isDefined(recordedVersion) &&
+      isDefined(recordedVersion.artifactUrl) &&
+      isDefined(recordedVersion.checksum);
+
+    if (isFullyRecorded) {
       return;
     }
 
@@ -153,7 +154,7 @@ export class MarketplaceCatalogSyncService {
 
     if (!isDefined(dist?.tarballUrl)) {
       this.logger.warn(
-        `Version ${registryPackage.version} of ${registryPackage.name} not recorded: registry gave no artifact location, retrying on the next sync`,
+        `Version ${registryPackage.version} of ${registryPackage.name} left incomplete: registry gave no artifact details, retrying on the next sync`,
       );
 
       return;

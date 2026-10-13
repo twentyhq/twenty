@@ -693,7 +693,6 @@ describe('Marketplace Catalog Sync (integration)', () => {
         latestAvailableVersion: '1.0.0',
       });
 
-      // A row the upgrade backfill wrote from the registration snapshot
       await ds.query(
         `INSERT INTO core."applicationRegistrationVersion"
           ("applicationRegistrationId", version, "sourceType", "sourcePackage")
@@ -730,6 +729,53 @@ describe('Marketplace Catalog Sync (integration)', () => {
           checksum: dist.integrity,
         },
       ]);
+    });
+
+    it('fills a missing fingerprint on a later sync without replacing the recorded artifact', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+      const recordedTarballUrl = `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`;
+      const syncVersionTwo = (dist: RegistryPackageVersionDist) =>
+        syncMarketplaceCatalogFromRegistryPackage({
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+          dist,
+        });
+      const findVersionRow = async () => {
+        const [row] = await ds.query(
+          `SELECT "artifactUrl", checksum FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1 AND version = '2.0.0'`,
+          [registrationId],
+        );
+
+        return row;
+      };
+
+      await syncVersionTwo({ tarballUrl: recordedTarballUrl, integrity: null });
+
+      expect(await findVersionRow()).toEqual({
+        artifactUrl: recordedTarballUrl,
+        checksum: null,
+      });
+
+      await syncVersionTwo({
+        tarballUrl: `https://mirror.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`,
+        integrity: 'sha512-bGF0ZXItYXR0ZXN0ZWQ=',
+      });
+
+      expect(await findVersionRow()).toEqual({
+        artifactUrl: recordedTarballUrl,
+        checksum: 'sha512-bGF0ZXItYXR0ZXN0ZWQ=',
+      });
     });
 
     it('leaves a version unrecorded until the registry provides its artifact', async () => {

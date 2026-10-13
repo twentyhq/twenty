@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
+import { ApplicationRegistrationVersionArtifactService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version-artifact.service';
 import { ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -32,17 +33,14 @@ export class ApplicationRegistrationVersionService {
   constructor(
     @InjectRepository(ApplicationRegistrationVersionEntity)
     private readonly applicationRegistrationVersionRepository: Repository<ApplicationRegistrationVersionEntity>,
-    // Tarballs are stored under their publishing workspace, which the signed
-    // download url has to name; the version row only knows the file id.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
     private readonly fileStorageService: FileStorageService,
+    private readonly applicationRegistrationVersionArtifactService: ApplicationRegistrationVersionArtifactService,
   ) {}
 
-  // A version is published once: a retried publish of the same version keeps
-  // the row written by the first attempt and never rewrites its provenance.
   async recordPublishedVersion(
     params: RecordPublishedVersionParams,
   ): Promise<ApplicationRegistrationVersionEntity> {
@@ -78,22 +76,27 @@ export class ApplicationRegistrationVersionService {
     });
   }
 
-  // Rows backfilled from a registration snapshot know their version but not
-  // where the registry serves it; filling that in completes the record, it
-  // never replaces an artifact already recorded.
   async fillMissingArtifact({
     id,
     artifactUrl,
     checksum,
   }: {
     id: string;
-    artifactUrl: string;
+    artifactUrl: string | null;
     checksum: string | null;
   }): Promise<void> {
-    await this.applicationRegistrationVersionRepository.update(
-      { id, artifactUrl: IsNull() },
-      { artifactUrl, checksum },
-    );
+    await this.applicationRegistrationVersionRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        artifactUrl: () => 'COALESCE("artifactUrl", :artifactUrl)',
+        checksum: () => 'COALESCE("checksum", :checksum)',
+      })
+      .where('id = :id AND ("artifactUrl" IS NULL OR "checksum" IS NULL)', {
+        id,
+      })
+      .setParameters({ artifactUrl, checksum })
+      .execute();
   }
 
   async findManyByApplicationRegistrationId(
@@ -123,8 +126,6 @@ export class ApplicationRegistrationVersionService {
     });
   }
 
-  // Retained tarballs live in the publishing workspace's storage, so the FK
-  // cascade that removes the version rows leaves their bytes behind.
   async deleteTarballFilesOfRegistration({
     applicationRegistrationId,
     currentTarballFileId,
@@ -174,17 +175,18 @@ export class ApplicationRegistrationVersionService {
     }
   }
 
-  // Resolves to the registry url for catalog versions and to a signed url on
-  // the stored tarball for uploaded ones, so a reviewer fetches the exact
-  // bytes the version was published with.
   async buildArtifactDownloadUrl(
     version: Pick<
       ApplicationRegistrationVersionEntity,
-      'sourceType' | 'artifactUrl' | 'tarballFileId'
+      'id' | 'sourceType' | 'artifactUrl' | 'tarballFileId'
     >,
   ): Promise<string | null> {
     if (version.sourceType === ApplicationRegistrationSourceType.NPM) {
-      return version.artifactUrl;
+      return isDefined(version.artifactUrl)
+        ? this.applicationRegistrationVersionArtifactService.signRegistryArtifactDownloadUrl(
+            version.id,
+          )
+        : null;
     }
 
     if (!isDefined(version.tarballFileId)) {
