@@ -72,6 +72,59 @@ const SearchablePicker = ({
   );
 };
 
+const OwnerPicker = () => {
+  const [search, setSearch] = useState('');
+  const results = PEOPLE.filter((person) =>
+    person.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Owner</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Choose owner">
+        <Dropdown.Search
+          aria-label="Search people"
+          value={search}
+          onValueChange={setSearch}
+        />
+        <Dropdown.Section label="Actions">
+          <Dropdown.ActionItem onClick={onCreatePerson}>
+            Create person
+          </Dropdown.ActionItem>
+        </Dropdown.Section>
+        <Dropdown.Section label="People">
+          {results.map((person) => (
+            <Dropdown.OptionItem
+              key={person}
+              selected={false}
+              onSelect={() => onSelectPerson(person)}
+            >
+              {person}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.Section>
+        <Button>Manage people</Button>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+
+const openOwner = async (canvasElement: HTMLElement) => {
+  const body = within(canvasElement.ownerDocument.body);
+
+  await userEvent.click(
+    within(canvasElement).getByRole('button', { name: 'Owner' }),
+  );
+  const search = await body.findByRole('searchbox', { name: 'Search people' });
+
+  await waitFor(() => expect(search).toHaveFocus());
+  await waitFor(() =>
+    expect(body.getByRole('dialog', { name: 'Choose owner' })).toBeVisible(),
+  );
+
+  return search;
+};
+
 const openAssignees = async (canvasElement: HTMLElement) => {
   await userEvent.click(
     within(canvasElement).getByRole('button', { name: 'Assignees' }),
@@ -748,8 +801,12 @@ export const DisabledOptionsLeaveTabOrder: Story = {
       'tabindex',
       '-1',
     );
-    await userEvent.tab();
-    expect(body.getByRole('button', { name: 'Notes' })).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    const notes = body.getByRole('button', { name: 'Notes' });
+
+    expect(notes).toHaveFocus();
+    expect(notes).toHaveAttribute('tabindex', '0');
+    expect(overview).toHaveAttribute('tabindex', '-1');
   },
 };
 
@@ -803,5 +860,100 @@ export const CommandWithTrailingAction: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const RowsShareOneTabStop: Story = {
+  render: () => <OwnerPicker />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const search = await openOwner(canvasElement);
+    const create = body.getByRole('button', { name: 'Create person' });
+    const ada = body.getByRole('button', { name: 'Ada Lovelace' });
+    const grace = body.getByRole('button', { name: 'Grace Hopper' });
+    const manage = body.getByRole('button', { name: 'Manage people' });
+
+    await waitFor(() => expect(create).toHaveAttribute('tabindex', '0'));
+    expect(ada).toHaveAttribute('tabindex', '-1');
+    expect(grace).toHaveAttribute('tabindex', '-1');
+
+    await userEvent.tab();
+    expect(create).toHaveFocus();
+    await userEvent.tab();
+    expect(manage).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    expect(create).toHaveFocus();
+
+    await userEvent.keyboard('{ArrowDown}{ArrowDown}');
+    expect(grace).toHaveFocus();
+    expect(onSelectPerson).not.toHaveBeenCalled();
+    expect(onCreatePerson).not.toHaveBeenCalled();
+
+    await userEvent.tab({ shift: true });
+    expect(search).toHaveFocus();
+    await waitFor(() => expect(grace).toHaveAttribute('tabindex', '0'));
+    expect(create).toHaveAttribute('tabindex', '-1');
+    await userEvent.tab();
+    expect(grace).toHaveFocus();
+    expect(body.getByRole('dialog', { name: 'Choose owner' })).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const TabStopReturnsToFirstRow: Story = {
+  render: () => <OwnerPicker />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const search = await openOwner(canvasElement);
+
+    await userEvent.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}');
+    expect(
+      body.getByRole('button', { name: 'Margaret Hamilton' }),
+    ).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    expect(search).toHaveFocus();
+    await userEvent.type(search, 'gr');
+    const grace = body.getByRole('button', { name: 'Grace Hopper' });
+
+    await waitFor(() => expect(grace).toHaveAttribute('data-highlighted'));
+    await userEvent.tab();
+    expect(body.getByRole('button', { name: 'Create person' })).toHaveFocus();
+    expect(onSelectPerson).not.toHaveBeenCalled();
+    expect(onCreatePerson).not.toHaveBeenCalled();
+    expect(body.getByRole('dialog', { name: 'Choose owner' })).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const TabLeavesPicker: Story = {
+  render: () => (
+    <>
+      <SearchablePicker />
+      <Button>Next control</Button>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await openAssignees(canvasElement);
+    await userEvent.tab();
+    expect(body.getByRole('button', { name: 'Create person' })).toHaveFocus();
+    await userEvent.tab();
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(
+        within(canvasElement).getByRole('button', { name: 'Next control' }),
+      ).toHaveFocus(),
+    );
+    expect(onSelectPerson).not.toHaveBeenCalled();
+    expect(onCreatePerson).not.toHaveBeenCalled();
   },
 };

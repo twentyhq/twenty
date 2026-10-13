@@ -173,3 +173,55 @@ export const DisabledSubmenuOwners: Story = {
     );
   },
 };
+
+const playTabClosesMenuChain =
+  ({ shift }: { shift: boolean }) =>
+  async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Record actions' });
+
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    const exportTrigger = await body.findByRole('menuitem', {
+      name: 'Export',
+    });
+
+    await waitFor(() => expect(exportTrigger).toHaveFocus());
+    await userEvent.keyboard('{ArrowRight}');
+    const formats = await body.findByRole('menu', { name: 'Export formats' });
+
+    await waitFor(() => expect(formats).toBeVisible());
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'CSV' })).toHaveFocus(),
+    );
+    await userEvent.tab({ shift });
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(
+        shift ? trigger : canvas.getByRole('button', { name: 'Next control' }),
+      ).toHaveFocus(),
+    );
+  };
+
+export const TabClosesMenuChain: Story = {
+  render: () => (
+    <>
+      <ExportSubmenu direction="ltr" />
+      <Button>Next control</Button>
+    </>
+  ),
+  play: playTabClosesMenuChain({ shift: false }),
+};
+
+export const ShiftTabClosesMenuChain: Story = {
+  render: () => (
+    <>
+      <ExportSubmenu direction="ltr" />
+      <Button>Next control</Button>
+    </>
+  ),
+  play: playTabClosesMenuChain({ shift: true }),
+};

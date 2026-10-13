@@ -1,6 +1,9 @@
+import { type Dispatch, type SetStateAction } from 'react';
+
 import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
+import { type DropdownRowFocus } from './DropdownRowFocus';
 
 export type DropdownContextValue = {
   type: DropdownType;
@@ -9,10 +12,9 @@ export type DropdownContextValue = {
   multiple: boolean;
   isSubmenu: boolean;
   parentType?: DropdownType;
-  activeItemId?: string;
-  parentActiveItemId?: string;
-  setActiveItemId: (id: string) => void;
-  setParentActiveItemId?: (id: string) => void;
+  rowFocus: DropdownRowFocus;
+  parentRowFocus?: DropdownRowFocus;
+  setRowIds: Dispatch<SetStateAction<string[]>>;
   pageId?: string;
   pageFocusRequest?: DropdownPageFocusRequest;
   setPageFocusRequest: (request: DropdownPageFocusRequest | undefined) => void;
@@ -23,6 +25,7 @@ export type DropdownContextValue = {
   setFocusOnOpen: (focusOnOpen: boolean) => void;
   setOpen: (open: boolean) => void;
   closeTree: () => void;
+  dismissTreeOnTabOut: (event: Event) => void;
   goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;

@@ -43,6 +43,26 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.click(
     await page.findByRole('menuitem', { name: /^Assign person/ }),
   );
+  const search = await page.findByRole('searchbox', { name: 'Search people' });
+  await waitFor(() => expect(search).toHaveFocus());
+  const ada = page.getByRole('button', { name: /^Ada Lovelace/ });
+  const grace = page.getByRole('button', { name: /^Grace Hopper/ });
+  const createPerson = page.getByRole('button', { name: 'Create person' });
+  await waitFor(() => expect(ada).toHaveAttribute('tabindex', '0'));
+  expect(grace).toHaveAttribute('tabindex', '-1');
+  expect(createPerson).toHaveAttribute('tabindex', '-1');
+  await userEvent.tab();
+  await waitFor(() => expect(ada).toHaveFocus());
+  await userEvent.keyboard('{ArrowDown}');
+  await waitFor(() => expect(grace).toHaveFocus());
+  await userEvent.tab({ shift: true });
+  await waitFor(() => expect(search).toHaveFocus());
+  await waitFor(() => expect(grace).toHaveAttribute('tabindex', '0'));
+  await userEvent.tab();
+  await waitFor(() => expect(grace).toHaveFocus());
+  expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
+    'Assignee: Unassigned',
+  );
   const option = await page.findByText('Ada Lovelace');
   await waitFor(() => expect(option).toBeVisible());
   await userEvent.click(option);

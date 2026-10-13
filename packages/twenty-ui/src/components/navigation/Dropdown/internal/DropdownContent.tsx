@@ -9,7 +9,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../Dropdown.module.scss';
 import { type DropdownContentProps } from '../types/DropdownContentProps';
 import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
-import { DropdownSearchTargetEffect } from './DropdownSearchTargetEffect';
+import { DropdownRowsEffect } from './DropdownRowsEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { isUnhandledModifierShortcut } from './isUnhandledModifierShortcut';
@@ -44,6 +44,7 @@ export const DropdownContent = ({
     type,
     isSubmenu,
     setOpen,
+    dismissTreeOnTabOut,
     initialFocusEdge,
     focusOnOpen,
     triggerId,
@@ -57,6 +58,7 @@ export const DropdownContent = ({
     type,
     isSubmenu,
     setOpen,
+    dismissTreeOnTabOut,
   });
   const defaultAriaLabelledBy = isDefined(ariaLabel)
     ? undefined
@@ -136,7 +138,7 @@ export const DropdownContent = ({
         </Popover.Positioner>
       </Popover.Portal>
       <DropdownPageFocusEffect contentRef={contentRef} />
-      <DropdownSearchTargetEffect content={content} />
+      <DropdownRowsEffect content={content} />
     </>
   );
 };

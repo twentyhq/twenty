@@ -244,6 +244,31 @@ export const SelectionReturnsToPreviousPage: Story = {
   },
 };
 
+export const BackKeepsItsTabStopBesideSearch: Story = {
+  render: () => <FilterPages />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await openFilters(canvasElement);
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'People' }),
+    );
+    const search = await body.findByRole('searchbox', {
+      name: 'Search people',
+    });
+
+    await waitFor(() => expect(search).toHaveFocus());
+    await userEvent.tab({ shift: true });
+    expect(body.getByRole('button', { name: 'Back to filters' })).toHaveFocus();
+    await userEvent.tab();
+    expect(search).toHaveFocus();
+    await userEvent.tab();
+    expect(body.getByRole('button', { name: 'Ada Lovelace' })).toHaveFocus();
+    await userEvent.keyboard('{ArrowUp}');
+    expect(search).toHaveFocus();
+  },
+};
+
 export const PageWithoutSearchFocusesFirstOption: Story = {
   render: () => (
     <Dropdown.Root type="picker">

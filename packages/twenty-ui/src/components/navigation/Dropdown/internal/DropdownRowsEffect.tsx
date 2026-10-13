@@ -2,29 +2,35 @@ import { useLayoutEffect } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { areDropdownRowIdsEqual } from './areDropdownRowIdsEqual';
+import { getDropdownRows } from './getDropdownRows';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { useDropdownContext } from './useDropdownContext';
 
-type DropdownSearchTargetEffectProps = {
+type DropdownRowsEffectProps = {
   content: HTMLDivElement | null;
 };
 
-export const DropdownSearchTargetEffect = ({
-  content,
-}: DropdownSearchTargetEffectProps) => {
-  const { setSearchTargetId } = useDropdownContext();
+export const DropdownRowsEffect = ({ content }: DropdownRowsEffectProps) => {
+  const { setRowIds, setSearchTargetId } = useDropdownContext();
 
   useLayoutEffect(() => {
     if (!isDefined(content)) {
       return;
     }
 
-    const updateSearchTarget = () =>
+    const updateRows = () => {
+      const rowIds = getDropdownRows(content).map((row) => row.id);
+
+      setRowIds((currentRowIds) =>
+        areDropdownRowIdsEqual(currentRowIds, rowIds) ? currentRowIds : rowIds,
+      );
       setSearchTargetId(getDropdownSearchTarget(content)?.id);
+    };
 
-    updateSearchTarget();
+    updateRows();
 
-    const observer = new MutationObserver(updateSearchTarget);
+    const observer = new MutationObserver(updateRows);
 
     observer.observe(content, {
       childList: true,
@@ -35,9 +41,10 @@ export const DropdownSearchTargetEffect = ({
 
     return () => {
       observer.disconnect();
+      setRowIds([]);
       setSearchTargetId(undefined);
     };
-  }, [content, setSearchTargetId]);
+  }, [content, setRowIds, setSearchTargetId]);
 
   return null;
 };
