@@ -175,6 +175,34 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       ).toEqual(['Read People and 2 other objects']);
     });
 
+    it('does not resolve object labels from Object prototype properties', () => {
+      expect(
+        getLabels(
+          {
+            ...baseRole,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-2',
+                objectUniversalIdentifier: 'constructor',
+                canReadObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-3',
+                objectUniversalIdentifier: 'hasOwnProperty',
+                canReadObjectRecords: true,
+              },
+            ],
+          },
+          { objectLabelsByUniversalIdentifier },
+        ),
+      ).toEqual(['Read People and 2 other objects']);
+    });
+
     it('falls back to a count when no labels are provided at all', () => {
       expect(
         getLabels({
@@ -249,6 +277,20 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
             SystemPermissionFlag.WORKFLOWS,
             SystemPermissionFlag.WORKFLOWS,
             'unknown-flag-00000000-0000-0000-0000-000000000000',
+          ],
+        }),
+      ).toEqual(['Manage workflows']);
+    });
+
+    it('ignores identifiers that name Object prototype properties', () => {
+      expect(
+        getLabels({
+          ...baseRole,
+          permissionFlagUniversalIdentifiers: [
+            'constructor',
+            'toString',
+            '__proto__',
+            SystemPermissionFlag.WORKFLOWS,
           ],
         }),
       ).toEqual(['Manage workflows']);

@@ -82,11 +82,16 @@ export const buildObjectRecordsPermissionSummary = ({
   groupObjectPermissionsByAccess({ defaultRole, roleAccess }).flatMap(
     ({ access, objectUniversalIdentifiers }) => {
       const resolvedLabels = objectUniversalIdentifiers
+        .filter((objectUniversalIdentifier) =>
+          Object.hasOwn(
+            objectLabelsByUniversalIdentifier,
+            objectUniversalIdentifier,
+          ),
+        )
         .map(
           (objectUniversalIdentifier) =>
             objectLabelsByUniversalIdentifier[objectUniversalIdentifier],
-        )
-        .filter(isDefined);
+        );
 
       const unresolvedCount =
         objectUniversalIdentifiers.length - resolvedLabels.length;

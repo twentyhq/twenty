@@ -9,7 +9,7 @@ export const buildPermissionFlagSummary = (
   Array.from(new Set(permissionFlagUniversalIdentifiers)).flatMap(
     (universalIdentifier) => {
       const flagType =
-        PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER[universalIdentifier];
+        PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER.get(universalIdentifier);
 
       if (!isDefined(flagType)) {
         return [];
