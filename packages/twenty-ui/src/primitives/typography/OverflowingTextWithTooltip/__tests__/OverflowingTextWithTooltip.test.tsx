@@ -7,6 +7,7 @@ import styles from '../OverflowingTextWithTooltip.module.scss';
 
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 
+import { OverflowingTextTooltipModeProvider } from '../OverflowingTextTooltipModeProvider';
 import { OverflowingTextWithTooltip } from '../OverflowingTextWithTooltip';
 
 const setTextDimensions = ({
@@ -286,5 +287,58 @@ describe('OverflowingTextWithTooltip', () => {
       'auto',
     );
     expect(screen.getByText('הטמעת CRM לאקמה')).toHaveAttribute('dir', 'auto');
+  });
+
+  it('renders only the text when the tooltip mode is disabled', async () => {
+    const user = userEvent.setup();
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <OverflowingTextTooltipModeProvider mode="disabled">
+        <OverflowingTextWithTooltip
+          text="Truncated label"
+          ref={ref}
+          alwaysShowTooltip
+          isFocusable
+          tooltipDelay={0}
+        />
+      </OverflowingTextTooltipModeProvider>,
+    );
+
+    const text = screen.getByText('Truncated label');
+    expect(ref.current).toBe(text);
+
+    await user.hover(text);
+    await user.tab();
+
+    expect(text).toHaveFocus();
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('measures truncation on mount so a later hover opens the tooltip', async () => {
+    const user = userEvent.setup();
+    const scrollWidth = vi
+      .spyOn(HTMLElement.prototype, 'scrollWidth', 'get')
+      .mockReturnValue(160);
+    const clientWidth = vi
+      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
+      .mockReturnValue(80);
+
+    render(
+      <OverflowingTextTooltipModeProvider mode="measure-on-mount">
+        <OverflowingTextWithTooltip text="Truncated label" tooltipDelay={0} />
+      </OverflowingTextTooltipModeProvider>,
+    );
+
+    const text = screen.getByText('Truncated label');
+    expect(text).toHaveAttribute('data-content-overflowing');
+
+    await user.hover(text);
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Truncated label',
+    );
+
+    scrollWidth.mockRestore();
+    clientWidth.mockRestore();
   });
 });
