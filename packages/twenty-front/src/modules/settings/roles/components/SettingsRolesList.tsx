@@ -1,3 +1,4 @@
+import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -10,6 +11,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
@@ -58,6 +60,13 @@ export const SettingsRolesList = () => {
   const [showApiKeyRoles, setShowApiKeyRoles] = useState(false);
 
   const settingsAllRoles = useSettingsAllRoles();
+  const installedApplications = useInstalledApplications();
+
+  const installedApplicationByDefaultRoleId = new Map(
+    installedApplications
+      .filter((application) => isDefined(application.defaultRoleId))
+      .map((application) => [application.defaultRoleId, application]),
+  );
 
   const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) =>
     sortByAscString(a.label, b.label),
@@ -67,7 +76,8 @@ export const SettingsRolesList = () => {
     const matchesType =
       role.canBeAssignedToUsers ||
       (showAgentRoles && role.canBeAssignedToAgents) ||
-      (showApiKeyRoles && role.canBeAssignedToApiKeys);
+      (showApiKeyRoles && role.canBeAssignedToApiKeys) ||
+      installedApplicationByDefaultRoleId.has(role.id);
 
     const matchesSearch = role.label
       ?.toLowerCase()
@@ -130,7 +140,11 @@ export const SettingsRolesList = () => {
             </TableCell>
           ) : (
             filteredRoles.map((role) => (
-              <SettingsRolesTableRow key={role.id} role={role} />
+              <SettingsRolesTableRow
+                key={role.id}
+                role={role}
+                application={installedApplicationByDefaultRoleId.get(role.id)}
+              />
             ))
           )}
         </StyledTableRows>
