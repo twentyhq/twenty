@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { APPLICATION_REGISTRATION_ANALYTICS_MIN_WORKSPACE_COUNT } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-analytics-min-workspace-count.constant';
 import {
   type ApplicationRegistrationAnalyticsBreakdownItemDTO,
   type ApplicationRegistrationAnalyticsDTO,
@@ -148,16 +149,29 @@ export class ApplicationRegistrationAnalyticsService {
     );
   }
 
+  // Only workspaces behind a published cell are counted, so widening the period by a day cannot reveal activity on a withheld day
   private async queryActiveWorkspaces(
     params: AnalyticsPeriodParams,
   ): Promise<number> {
     const rows = await this.clickHouseService.selectOrThrow<{
       activeWorkspaces: string | number;
     }>(
-      `SELECT ${WORKSPACE_COUNT_EXPRESSION} AS activeWorkspaces
+      `SELECT uniqExact(workspaceHash) AS activeWorkspaces
        FROM applicationRegistrationMetric
-       WHERE ${PERIOD_WHERE_CLAUSE}`,
-      this.buildPeriodParams(params),
+       WHERE ${PERIOD_WHERE_CLAUSE}
+         AND workspaceHash != ''
+         AND (${DAY_EXPRESSION}, metric) IN (
+           SELECT ${DAY_EXPRESSION} AS date, metric
+           FROM applicationRegistrationMetric
+           WHERE ${PERIOD_WHERE_CLAUSE}
+           GROUP BY date, metric
+           HAVING ${WORKSPACE_COUNT_EXPRESSION} >= {minimumWorkspaceCount:UInt32}
+         )`,
+      {
+        ...this.buildPeriodParams(params),
+        minimumWorkspaceCount:
+          APPLICATION_REGISTRATION_ANALYTICS_MIN_WORKSPACE_COUNT,
+      },
     );
 
     return Number(rows[0]?.activeWorkspaces ?? 0);
