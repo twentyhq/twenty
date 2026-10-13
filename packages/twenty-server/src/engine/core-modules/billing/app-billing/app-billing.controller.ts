@@ -25,7 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AppBillingService } from 'src/engine/core-modules/billing/app-billing/app-billing.service';
 import { ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageRefusalService } from 'src/engine/core-modules/usage-limit/services/usage-refusal.service';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -60,7 +60,7 @@ const CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON: Record<
 export class AppBillingController {
   constructor(
     private readonly appBillingService: AppBillingService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageRefusalService: UsageRefusalService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -82,7 +82,7 @@ export class AppBillingController {
     );
 
     const creditAvailability =
-      await this.billingUsageService.getCreditAvailability(
+      await this.usageRefusalService.getCreditAvailability(
         request.workspace.id,
       );
 

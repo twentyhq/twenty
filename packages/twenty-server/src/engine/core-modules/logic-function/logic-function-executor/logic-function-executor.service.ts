@@ -33,7 +33,7 @@ import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/fl
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageRefusalService } from 'src/engine/core-modules/usage-limit/services/usage-refusal.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
@@ -111,7 +111,7 @@ export class LogicFunctionExecutorService {
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageRefusalService: UsageRefusalService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
@@ -264,7 +264,7 @@ export class LogicFunctionExecutorService {
       return;
     }
 
-    await this.billingUsageService.assertUsageAllowed({
+    await this.usageRefusalService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.LOGIC_FUNCTION,
       operationType: UsageOperationType.CODE_EXECUTION,

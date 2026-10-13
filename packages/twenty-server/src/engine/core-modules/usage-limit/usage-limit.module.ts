@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { BillingSubscriptionItemCapResolver } from 'src/engine/core-modules/usage-limit/billing-subscription-item-cap.resolver';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
@@ -17,6 +19,7 @@ import { UsageQuotaConsumptionService } from 'src/engine/core-modules/usage-limi
 import { UsageQuotaDefinitionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-definition.service';
 import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
+import { UsageRefusalService } from 'src/engine/core-modules/usage-limit/services/usage-refusal.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
@@ -37,10 +40,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       UserWorkspaceEntity,
       AgentEntity,
       LogicFunctionEntity,
+      BillingSubscriptionEntity,
     ]),
     WorkspaceCacheModule,
     PermissionsModule,
-    DiscoveryModule,
+    BillingModule,
     MetricsModule,
     ThrottlerModule,
     UsageAnalyticsModule,
@@ -59,6 +63,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageQuotaConsumptionService,
     UsageQuotaDefinitionService,
     UsageLimitResolver,
+    UsageRefusalService,
+    BillingSubscriptionItemCapResolver,
     provideWorkspaceScopedRepository(UsageLimitEntity),
     provideWorkspaceScopedRepository(ApiKeyEntity),
     provideWorkspaceScopedRepository(ApplicationEntity),
@@ -70,6 +76,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitEntitlementService,
     UsageLimitService,
     UsageLimitQuotaService,
+    UsageRefusalService,
     UsageLimitSpeedService,
     UsageLimitStockService,
     WorkspaceRecordStockService,

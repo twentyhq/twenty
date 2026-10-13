@@ -14,7 +14,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageRefusalService } from 'src/engine/core-modules/usage-limit/services/usage-refusal.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -71,7 +71,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageRefusalService: UsageRefusalService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -414,7 +414,7 @@ export class WorkflowExecutorWorkspaceService {
     billingSpenders: WorkflowBillingSpenders;
   }): Promise<WorkflowActionOutput | undefined> {
     try {
-      await this.billingUsageService.assertUsageAllowed({
+      await this.usageRefusalService.assertUsageAllowed({
         workspaceId,
         resourceType: UsageResourceType.WORKFLOW,
         operationType: UsageOperationType.WORKFLOW_EXECUTION,
