@@ -35,6 +35,9 @@ export const STANDARD_SKILL = {
   roles: {
     universalIdentifier: '20202020-3f7c-4d21-9e58-a4b6c8d05e17',
   },
+  'agent-building': {
+    universalIdentifier: '20202020-17de-403d-a29d-6994eb10d677',
+  },
   'meeting-prep': {
     universalIdentifier: '20202020-5e21-4b07-9c3a-1d4f6e8a0b52',
   },
