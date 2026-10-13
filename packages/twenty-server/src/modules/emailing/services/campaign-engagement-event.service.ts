@@ -10,14 +10,17 @@ import { SHORT_LINK_CLICK_TABLE } from 'src/modules/emailing/constants/short-lin
 import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
 import { type CampaignEngagementCounts } from 'src/modules/emailing/types/campaign-engagement-counts.type';
 
-type ShortLinkClickEvent = {
+type MessageViewEvent = {
   workspaceId: string;
   messageCampaignId: string;
-  shortLinkId: string;
   deliveryId: string;
   eventId: string;
   occurredAt: string;
   activityClass: CampaignEngagementActivityClass;
+};
+
+type ShortLinkClickEvent = MessageViewEvent & {
+  shortLinkId: string;
 };
 
 @Injectable()
@@ -29,8 +32,19 @@ export class CampaignEngagementEventService {
   }
 
   async insertClickOrThrow(event: ShortLinkClickEvent): Promise<void> {
+    await this.insertOrThrow(SHORT_LINK_CLICK_TABLE, event);
+  }
+
+  async insertOpenOrThrow(event: MessageViewEvent): Promise<void> {
+    await this.insertOrThrow(MESSAGE_VIEW_TABLE, event);
+  }
+
+  private async insertOrThrow(
+    table: string,
+    event: MessageViewEvent | ShortLinkClickEvent,
+  ): Promise<void> {
     const result = await this.clickHouseService.insert(
-      SHORT_LINK_CLICK_TABLE,
+      table,
       [{ ...event, occurredAt: formatDateTimeForClickHouse(event.occurredAt) }],
       {
         asyncInsertBusyTimeoutMaxMs: CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS,

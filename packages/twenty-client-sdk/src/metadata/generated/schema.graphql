@@ -340,6 +340,7 @@ type Application {
   availablePackages: JSON!
   canBeUninstalled: Boolean!
   commandMenuItems: [CommandMenuItem!]!
+  createdAt: DateTime!
   defaultLogicFunctionRole: Role
   defaultRoleId: String
   description: String
@@ -2086,7 +2087,6 @@ enum FeatureFlagKey {
   IS_ASYNC_CSV_EXPORT_ENABLED
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_CONVERSATIONS_TAB_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -2097,8 +2097,6 @@ enum FeatureFlagKey {
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_VALIDATION_RULES_ENABLED
-  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
 type Field {
@@ -2671,6 +2669,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billsCredits: Boolean!
   category: String
   defaultRoleUniversalIdentifier: String
   description: String
@@ -5087,6 +5086,7 @@ input UpdateWorkspaceInput {
   inviteHash: String
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
+  isCampaignOpenTrackingEnabled: Boolean
   isGoogleAuthBypassEnabled: Boolean
   isGoogleAuthEnabled: Boolean
   isInternalMessagesImportEnabled: Boolean
