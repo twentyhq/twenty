@@ -21,14 +21,42 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 });
 
 describe('buildIntraWorkspaceStockCounterKeys', () => {
-  it('keys an application stock the entitlement turns enforced', () => {
+  it('keys every intra-workspace stock limit the entitlement turns enforced', () => {
     expect(
       buildIntraWorkspaceStockCounterKeys({
         workspaceId: 'workspace-1',
-        limits: [buildLimit({})],
+        limits: [
+          buildLimit({}),
+          buildLimit({
+            id: 'limit-2',
+            spenderId: 'application-2',
+            unit: UsageUnit.FILE,
+          }),
+        ],
       }),
     ).toEqual([
       '{workspace-1}:stock-held:STORAGE:STORAGE_FILE:application:application-1:BYTE',
+      '{workspace-1}:stock-held:STORAGE:STORAGE_FILE:application:application-2:FILE',
     ]);
+  });
+
+  it('leaves workspace-scoped stock limits, operator overrides and quotas alone', () => {
+    expect(
+      buildIntraWorkspaceStockCounterKeys({
+        workspaceId: 'workspace-1',
+        limits: [
+          buildLimit({ spenderType: 'workspace', spenderId: '' }),
+          buildLimit({ id: 'limit-2', isInstanceOverride: true }),
+          buildLimit({
+            id: 'limit-3',
+            resourceType: UsageResourceType.AI,
+            operationType: UsageOperationType.ALL,
+            limitKind: 'quota',
+            periodUnit: 'month',
+            unit: UsageUnit.CREDIT,
+          }),
+        ],
+      }),
+    ).toEqual([]);
   });
 });

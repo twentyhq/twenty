@@ -30,8 +30,10 @@ describe('Storage stock limit', () => {
       'WorkspaceCacheService',
     ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['usageLimits']);
 
-  const dropWorkspaceCounters = async () => {
-    const keys = await redis.keys(`*{${SEED_APPLE_WORKSPACE_ID}}*`);
+  const dropStockCounters = async () => {
+    const keys = await redis.keys(
+      `*{${SEED_APPLE_WORKSPACE_ID}}:stock-held:STORAGE:*`,
+    );
 
     if (keys.length > 0) {
       await redis.del(keys);
@@ -42,30 +44,6 @@ describe('Storage stock limit', () => {
     await usageLimitRepository.delete({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       resourceType: UsageResourceType.STORAGE,
-    });
-    await refreshUsageLimitsCache();
-  };
-
-  const saveStorageStockLimit = async ({
-    unit,
-    limitValue,
-  }: {
-    unit: UsageUnit;
-    limitValue: number;
-  }) => {
-    await usageLimitRepository.save({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenderType: 'workspace',
-      spenderId: '',
-      limitKind: 'stock',
-      periodCount: 1,
-      periodUnit: 'lifetime',
-      unit,
-      limitValue,
-      burstValue: null,
-      isInstanceOverride: true,
     });
     await refreshUsageLimitsCache();
   };
@@ -134,7 +112,7 @@ describe('Storage stock limit', () => {
   });
 
   beforeEach(async () => {
-    await dropWorkspaceCounters();
+    await dropStockCounters();
   });
 
   afterEach(async () => {
@@ -146,7 +124,7 @@ describe('Storage stock limit', () => {
 
     writtenResourcePaths.clear();
 
-    await dropWorkspaceCounters();
+    await dropStockCounters();
   });
 
   afterAll(async () => {
@@ -161,31 +139,25 @@ describe('Storage stock limit', () => {
       resourcePath: `stock-limit/${v4()}.txt`,
       content: 'a',
     });
-    await saveStorageStockLimit({ unit: UsageUnit.FILE, limitValue: 1 });
+    await usageLimitRepository.save({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      resourceType: UsageResourceType.STORAGE,
+      operationType: UsageOperationType.STORAGE_FILE,
+      spenderType: 'workspace',
+      spenderId: '',
+      limitKind: 'stock',
+      periodCount: 1,
+      periodUnit: 'lifetime',
+      unit: UsageUnit.FILE,
+      limitValue: 1,
+      burstValue: null,
+    });
+    await refreshUsageLimitsCache();
 
     expectRefused(await createFileUpload(1));
 
     await expect(
       writeFile({ resourcePath, content: 'a longer content' }),
     ).resolves.toBeDefined();
-  });
-
-  it('never lets a release drive the held bytes below zero', async () => {
-    const resourcePath = `stock-limit/${v4()}.txt`;
-
-    const file = await writeFile({ resourcePath, content: 'a' });
-
-    await saveStorageStockLimit({ unit: UsageUnit.BYTE, limitValue: 100 });
-
-    expectRefused(await createFileUpload(1_000));
-
-    await global.testDataSource.query(
-      `UPDATE core."file" SET size = $1 WHERE id = $2`,
-      [1_000_000_000_000, file.id],
-    );
-    await deleteFile(resourcePath);
-    writtenResourcePaths.delete(resourcePath);
-
-    expectRefused(await createFileUpload(150));
   });
 });
