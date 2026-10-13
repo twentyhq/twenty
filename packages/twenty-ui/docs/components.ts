@@ -17,6 +17,7 @@ import { STACK_ICON_PROP_DESCRIPTIONS } from './stackIconPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
+import { TOAST_PROP_DESCRIPTIONS } from './toastPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
@@ -673,6 +674,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/feedback/Toast/Toast.tsx',
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/toast',
+    propDescriptions: TOAST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Text',

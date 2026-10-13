@@ -29,7 +29,7 @@ export const useUpdateEmail = () => {
       });
 
       enqueueToast({
-        variant: 'info',
+        status: 'info',
         children: t`Check your inbox to verify your new email address.`,
       });
     } catch (error) {

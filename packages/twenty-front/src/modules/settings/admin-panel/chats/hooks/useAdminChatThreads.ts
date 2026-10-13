@@ -104,7 +104,7 @@ export const useAdminChatThreads = () => {
       });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to load more chats.`,
       });
     }

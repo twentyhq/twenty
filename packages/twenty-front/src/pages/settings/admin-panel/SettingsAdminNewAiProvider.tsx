@@ -249,12 +249,12 @@ export const SettingsAdminNewAiProvider = () => {
       });
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Provider "${values.label.trim()}" added`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to add provider` });
+      enqueueToast({ status: 'error', children: t`Failed to add provider` });
     } finally {
       setIsSubmitting(false);
     }

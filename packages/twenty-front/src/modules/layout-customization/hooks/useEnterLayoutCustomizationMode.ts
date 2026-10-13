@@ -54,7 +54,7 @@ export const useEnterLayoutCustomizationMode = () => {
 
       if (isDashboardInEditMode) {
         enqueueToast({
-          variant: 'warning',
+          status: 'warning',
           children: t`Save or cancel dashboard changes before editing the layout.`,
         });
 

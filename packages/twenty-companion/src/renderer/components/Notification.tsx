@@ -15,7 +15,7 @@ export const Notification = ({
   return (
     <Toast
       className={styles.container}
-      variant="info"
+      status="info"
       duration={6000}
       closeLabel={closeLabel}
       onClose={onClose}

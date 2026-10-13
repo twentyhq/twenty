@@ -122,12 +122,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
         },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Role updated successfully`,
       });
       setSelectedRoleId(roleId);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error updating role` });
+      enqueueToast({ status: 'error', children: t`Error updating role` });
     } finally {
       setIsLoading(false);
     }
@@ -154,7 +154,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         );
       }
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error deleting api key.` });
+      enqueueToast({ status: 'error', children: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
     }
@@ -168,7 +168,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
     if (!roleIdToUse) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`A role must be selected for the API key`,
       });
       return;
@@ -212,7 +212,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       if (isDefined(apiKey)) {
         if (!isNonEmptyString(apiKeyName)) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`API key name cannot be empty`,
           });
           return;
@@ -233,7 +233,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       }
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error regenerating api key.`,
       });
     } finally {
