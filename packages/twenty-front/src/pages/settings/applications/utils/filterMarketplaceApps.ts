@@ -7,10 +7,13 @@ type SearchableMarketplaceApp = {
 
 export const filterMarketplaceApps = <
   TMarketplaceApp extends SearchableMarketplaceApp,
->(
-  marketplaceApps: TMarketplaceApp[],
-  searchTerm: string,
-): TMarketplaceApp[] => {
+>({
+  marketplaceApps,
+  searchTerm,
+}: {
+  marketplaceApps: TMarketplaceApp[];
+  searchTerm: string;
+}): TMarketplaceApp[] => {
   const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
   if (normalizedSearchTerm.length === 0) {

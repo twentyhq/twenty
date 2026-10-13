@@ -1,11 +1,14 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { Link } from 'react-router-dom';
+import { type IconComponent } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationNotFoundProps = {
   message: string;
-  action?: ReactNode;
+  linkTo: string;
+  linkLabel: string;
+  LinkIcon: IconComponent;
 };
 
 const StyledContainer = styled.div`
@@ -20,12 +23,23 @@ const StyledContainer = styled.div`
 
 export const SettingsApplicationNotFound = ({
   message,
-  action,
+  linkTo,
+  linkLabel,
+  LinkIcon,
 }: SettingsApplicationNotFoundProps) => {
   return (
     <StyledContainer role="status">
       <div>{message}</div>
-      {isDefined(action) && action}
+      <Button
+        startIcon={<LinkIcon />}
+        variant="outline"
+        size="sm"
+        nativeButton={false}
+        role="link"
+        render={<Link to={linkTo} />}
+      >
+        {linkLabel}
+      </Button>
     </StyledContainer>
   );
 };

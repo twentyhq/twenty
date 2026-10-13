@@ -32,9 +32,6 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   isInstalling?: boolean;
 };
 
-// Vertical centering comes from the content's auto margins rather than
-// justify-content so a long permission list scrolls instead of being clipped
-// at the top.
 const StyledFullscreenContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};

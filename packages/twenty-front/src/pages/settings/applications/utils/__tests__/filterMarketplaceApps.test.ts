@@ -23,36 +23,61 @@ const apps = [
 
 describe('filterMarketplaceApps', () => {
   it('returns every app for an empty or whitespace-only search', () => {
-    expect(filterMarketplaceApps(apps, '')).toEqual(apps);
-    expect(filterMarketplaceApps(apps, '   \t')).toEqual(apps);
+    expect(
+      filterMarketplaceApps({ marketplaceApps: apps, searchTerm: '' }),
+    ).toEqual(apps);
+    expect(
+      filterMarketplaceApps({ marketplaceApps: apps, searchTerm: '   \t' }),
+    ).toEqual(apps);
   });
 
   it('matches case-insensitively on name, description, author and category', () => {
     expect(
-      filterMarketplaceApps(apps, 'SLACK').map(({ name }) => name),
+      filterMarketplaceApps({ marketplaceApps: apps, searchTerm: 'SLACK' }).map(
+        ({ name }) => name,
+      ),
     ).toEqual(['Slack']);
     expect(
-      filterMarketplaceApps(apps, 'enrich').map(({ name }) => name),
+      filterMarketplaceApps({
+        marketplaceApps: apps,
+        searchTerm: 'enrich',
+      }).map(({ name }) => name),
     ).toEqual(['People Data Labs']);
-    expect(filterMarketplaceApps(apps, 'twenty')).toHaveLength(2);
     expect(
-      filterMarketplaceApps(apps, 'communication').map(({ name }) => name),
+      filterMarketplaceApps({ marketplaceApps: apps, searchTerm: 'twenty' }),
+    ).toHaveLength(2);
+    expect(
+      filterMarketplaceApps({
+        marketplaceApps: apps,
+        searchTerm: 'communication',
+      }).map(({ name }) => name),
     ).toEqual(['Slack']);
   });
 
   it('ignores surrounding whitespace in the search term', () => {
     expect(
-      filterMarketplaceApps(apps, '  people data  ').map(({ name }) => name),
+      filterMarketplaceApps({
+        marketplaceApps: apps,
+        searchTerm: '  people data  ',
+      }).map(({ name }) => name),
     ).toEqual(['People Data Labs']);
   });
 
   it('matches non-latin text and emoji', () => {
-    expect(filterMarketplaceApps(apps, '🚀')).toHaveLength(1);
-    expect(filterMarketplaceApps(apps, 'وصف')).toHaveLength(1);
-    expect(filterMarketplaceApps(apps, 'zoë')).toHaveLength(1);
+    expect(
+      filterMarketplaceApps({ marketplaceApps: apps, searchTerm: '🚀' }),
+    ).toHaveLength(1);
+    expect(
+      filterMarketplaceApps({ marketplaceApps: apps, searchTerm: 'وصف' }),
+    ).toHaveLength(1);
+    expect(
+      filterMarketplaceApps({ marketplaceApps: apps, searchTerm: 'zoë' }),
+    ).toHaveLength(1);
   });
 
   it('returns nothing when nothing matches', () => {
-    expect(filterMarketplaceApps(apps, '<script>')).toEqual([]);
+    expect(
+      filterMarketplaceApps({ marketplaceApps: apps, searchTerm: '<script>' }),
+    ).toEqual([]);
   });
 });

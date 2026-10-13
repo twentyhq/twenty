@@ -76,8 +76,6 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
         ),
       );
 
-    // Record insertion order is what consumers iterate, so the catalog is
-    // sorted here: curated vetted apps by position, then everything by name.
     return configuredRegistrations
       .filter((_registration, index) => serverCompatibilities[index].compatible)
       .sort(compareCatalogCards)

@@ -14,35 +14,60 @@ const parseSemver = (version: string): ParsedSemver => {
   };
 };
 
-const comparePreReleases = (
-  preReleaseA: string | undefined,
-  preReleaseB: string | undefined,
-): number => {
-  // A release always comes after its own pre-releases
-  if (preReleaseA === preReleaseB) return 0;
-  if (preReleaseA === undefined) return 1;
-  if (preReleaseB === undefined) return -1;
+const comparePreReleaseParts = ({
+  partA,
+  partB,
+}: {
+  partA: string | undefined;
+  partB: string | undefined;
+}): number => {
+  if (partA === undefined) {
+    return -1;
+  }
+
+  if (partB === undefined) {
+    return 1;
+  }
+
+  const numberA = Number(partA);
+  const numberB = Number(partB);
+  const areBothNumeric = !Number.isNaN(numberA) && !Number.isNaN(numberB);
+
+  return areBothNumeric ? numberA - numberB : partA.localeCompare(partB);
+};
+
+const comparePreReleases = ({
+  preReleaseA,
+  preReleaseB,
+}: {
+  preReleaseA: string | undefined;
+  preReleaseB: string | undefined;
+}): number => {
+  if (preReleaseA === preReleaseB) {
+    return 0;
+  }
+
+  if (preReleaseA === undefined) {
+    return 1;
+  }
+
+  if (preReleaseB === undefined) {
+    return -1;
+  }
 
   const partsA = preReleaseA.split('.');
   const partsB = preReleaseB.split('.');
   const length = Math.max(partsA.length, partsB.length);
 
   for (let index = 0; index < length; index++) {
-    const partA = partsA[index];
-    const partB = partsB[index];
+    const comparison = comparePreReleaseParts({
+      partA: partsA[index],
+      partB: partsB[index],
+    });
 
-    if (partA === undefined) return -1;
-    if (partB === undefined) return 1;
-
-    const numberA = Number(partA);
-    const numberB = Number(partB);
-    const areBothNumeric = !Number.isNaN(numberA) && !Number.isNaN(numberB);
-
-    const comparison = areBothNumeric
-      ? numberA - numberB
-      : partA.localeCompare(partB);
-
-    if (comparison !== 0) return comparison;
+    if (comparison !== 0) {
+      return comparison;
+    }
   }
 
   return 0;
@@ -56,10 +81,19 @@ export const isNewerSemver = (versionA: string, versionB: string): boolean => {
     const partA = parsedA.numericParts[index] ?? 0;
     const partB = parsedB.numericParts[index] ?? 0;
 
-    if (Number.isNaN(partA) || Number.isNaN(partB)) return false;
-    if (partA > partB) return true;
-    if (partA < partB) return false;
+    if (Number.isNaN(partA) || Number.isNaN(partB)) {
+      return false;
+    }
+
+    if (partA !== partB) {
+      return partA > partB;
+    }
   }
 
-  return comparePreReleases(parsedA.preRelease, parsedB.preRelease) > 0;
+  return (
+    comparePreReleases({
+      preReleaseA: parsedA.preRelease,
+      preReleaseB: parsedB.preRelease,
+    }) > 0
+  );
 };

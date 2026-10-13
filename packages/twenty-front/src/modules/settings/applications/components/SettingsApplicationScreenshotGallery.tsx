@@ -80,7 +80,6 @@ export const SettingsApplicationScreenshotGallery = ({
   const { openDialog, closeDialog } = useDialog();
   const lightboxModalId = useId();
 
-  // A screenshot the browser cannot load is dropped rather than shown as a broken image
   const screenshots = allScreenshots.filter(
     (screenshot) => !failedScreenshots.includes(screenshot),
   );

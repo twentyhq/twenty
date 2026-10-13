@@ -68,7 +68,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       ]);
     });
 
-    it('ignores object-level grants once all-record access is granted', () => {
+    it('lists object-level grants that go beyond the all-record access', () => {
       expect(
         getLabels(
           {
@@ -78,13 +78,41 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
               {
                 universalIdentifier: 'perm-1',
                 objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canUpdateObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-2',
+                objectUniversalIdentifier: TASK_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canDestroyObjectRecords: true,
+              },
+            ],
+          },
+          { objectLabelsByUniversalIdentifier },
+        ),
+      ).toEqual(['Read all records', 'Write People', 'Delete Tasks']);
+    });
+
+    it('does not repeat object-level grants already covered by the all-record access', () => {
+      expect(
+        getLabels(
+          {
+            ...baseRole,
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: true,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
                 canUpdateObjectRecords: true,
               },
             ],
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Read all records']);
+      ).toEqual(['Read and write all records']);
     });
   });
 

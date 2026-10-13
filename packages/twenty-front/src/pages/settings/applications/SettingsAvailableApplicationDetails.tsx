@@ -13,12 +13,11 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle, IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
@@ -27,7 +26,9 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/components/SettingsApplicationDetailAbout';
+import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
+import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
@@ -71,6 +72,7 @@ export const SettingsAvailableApplicationDetails = () => {
     data: detailData,
     error: detailError,
     loading: isDetailLoading,
+    refetch: refetchDetail,
   } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: availableApplicationId },
     skip: !availableApplicationId,
@@ -80,16 +82,17 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const detail = detailData?.findMarketplaceAppDetail;
 
-  // Unknown identifiers come back as an error or as an empty result, and
-  // both mean there is nothing to show for this link.
-  const isNotFound =
-    !availableApplicationId ||
-    isDefined(detailError) ||
-    (!isDetailLoading && !isDefined(detail));
+  const detailLookupStatus = getApplicationLookupStatus({
+    identifier: availableApplicationId,
+    isLoading: isDetailLoading,
+    error: detailError,
+    result: detail,
+  });
+  const isNotFound = detailLookupStatus === 'not-found';
+  const isUnavailable = detailLookupStatus === 'unavailable';
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Workspace labels win over manifest ones so renamed objects read as the user knows them
   const objectLabelsByUniversalIdentifier = useMemo(
     () =>
       Object.fromEntries([
@@ -175,21 +178,17 @@ export const SettingsAvailableApplicationDetails = () => {
               icon={<IconAlertTriangle aria-hidden="true" />}
             >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
           )}
-          {isNotFound ? (
+          {isUnavailable ? (
+            <SettingsApplicationLoadErrorBanner
+              message={t`This application could not be loaded. Check your connection and try again.`}
+              onRetry={() => refetchDetail().catch(() => undefined)}
+            />
+          ) : isNotFound ? (
             <SettingsApplicationNotFound
               message={t`This application is not available on the marketplace. It may have been removed or the link is incorrect.`}
-              action={
-                <Button
-                  startIcon={<IconShoppingBag />}
-                  variant="outline"
-                  size="sm"
-                  nativeButton={false}
-                  role="link"
-                  render={
-                    <Link to={getSettingsPath(SettingsPath.Applications)} />
-                  }
-                >{t`Browse the marketplace`}</Button>
-              }
+              linkTo={getSettingsPath(SettingsPath.Applications)}
+              linkLabel={t`Browse the marketplace`}
+              LinkIcon={IconShoppingBag}
             />
           ) : isDefined(detail) ? (
             <SettingsApplicationDetailAbout

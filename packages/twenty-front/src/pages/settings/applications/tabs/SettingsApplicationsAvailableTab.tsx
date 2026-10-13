@@ -73,10 +73,10 @@ export const SettingsApplicationsAvailableTab = () => {
 
   const hasSearchTerm = searchTerm.trim().length > 0;
 
-  const textFilteredApplications = filterMarketplaceApps(
+  const textFilteredApplications = filterMarketplaceApps({
     marketplaceApps,
     searchTerm,
-  );
+  });
 
   const vettedApplications = textFilteredApplications.filter(
     (application) => application.isVetted,
@@ -102,7 +102,7 @@ export const SettingsApplicationsAvailableTab = () => {
           icon={<IconAlertTriangle aria-hidden="true" />}
           action={
             <InlineBanner.Action
-              onClick={() => void refetch()}
+              onClick={() => refetch().catch(() => undefined)}
             >{t`Retry`}</InlineBanner.Action>
           }
         >{t`The marketplace could not be loaded. Check your connection and try again.`}</InlineBanner>

@@ -17,7 +17,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -43,6 +43,7 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
 import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
+import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
@@ -53,6 +54,7 @@ import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applicatio
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
+import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { getWorkspaceSettingsMenuItems } from '~/pages/settings/applications/utils/getWorkspaceSettingsMenuItems';
@@ -82,12 +84,14 @@ export const SettingsApplicationDetails = () => {
 
   const application = data?.findOneApplication;
 
-  // Unknown ids come back as an error or as an empty result depending on
-  // whether they parse as a uuid; both mean nothing is installed behind this link.
-  const isNotFound =
-    !applicationId ||
-    isDefined(applicationError) ||
-    (!isApplicationLoading && !isDefined(application));
+  const applicationLookupStatus = getApplicationLookupStatus({
+    identifier: applicationId,
+    isLoading: isApplicationLoading,
+    error: applicationError,
+    result: application,
+  });
+  const isNotFound = applicationLookupStatus === 'not-found';
+  const isUnavailable = applicationLookupStatus === 'unavailable';
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
@@ -111,8 +115,6 @@ export const SettingsApplicationDetails = () => {
 
   const detail = detailData?.findMarketplaceAppDetail;
 
-  // Local and tarball registrations have a detail page too, but only
-  // registry apps are actually browsable on the marketplace
   const marketplaceUniversalIdentifier =
     detail?.sourceType === ApplicationRegistrationSourceType.NPM
       ? detail.universalIdentifier
@@ -226,8 +228,6 @@ export const SettingsApplicationDetails = () => {
     })),
   ];
 
-  // Resolved against this application's own tabs so a tab selected on another
-  // application never leaves this page blank
   const activeTabId = useSettingsActiveTabId(
     APPLICATION_DETAIL_ID,
     tabs.map((tab) => tab.id),
@@ -266,29 +266,27 @@ export const SettingsApplicationDetails = () => {
     : undefined;
 
   const renderActiveTabContent = () => {
+    if (isUnavailable) {
+      return (
+        <SettingsApplicationLoadErrorBanner
+          message={t`This application could not be loaded. Check your connection and try again.`}
+          onRetry={() => refetch().catch(() => undefined)}
+        />
+      );
+    }
+
     if (isNotFound) {
       return (
         <SettingsApplicationNotFound
           message={t`This application is not installed on this workspace. It may have been uninstalled or the link is incorrect.`}
-          action={
-            <Button
-              startIcon={<IconApps />}
-              variant="outline"
-              size="sm"
-              nativeButton={false}
-              role="link"
-              render={
-                <Link
-                  to={getSettingsPath(
-                    SettingsPath.Applications,
-                    undefined,
-                    undefined,
-                    'installed',
-                  )}
-                />
-              }
-            >{t`See installed applications`}</Button>
-          }
+          linkTo={getSettingsPath(
+            SettingsPath.Applications,
+            undefined,
+            undefined,
+            'installed',
+          )}
+          linkLabel={t`See installed applications`}
+          LinkIcon={IconApps}
         />
       );
     }
@@ -385,7 +383,7 @@ export const SettingsApplicationDetails = () => {
           ) : undefined
         }
         secondaryBar={
-          isNotFound ? undefined : (
+          isNotFound || isUnavailable ? undefined : (
             <SettingsTabBar
               aria-label={t`Application details`}
               tabs={tabs}

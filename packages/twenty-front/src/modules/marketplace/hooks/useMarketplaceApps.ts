@@ -4,6 +4,7 @@ import { FindManyMarketplaceAppsDocument } from '~/generated-metadata/graphql';
 export const useMarketplaceApps = () => {
   const { data, loading, error, refetch } = useQuery(
     FindManyMarketplaceAppsDocument,
+    { notifyOnNetworkStatusChange: true },
   );
 
   return {
