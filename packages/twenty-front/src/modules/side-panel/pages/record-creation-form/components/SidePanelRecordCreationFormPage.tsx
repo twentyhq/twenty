@@ -228,7 +228,11 @@ const SidePanelRecordCreationForm = ({
     }
   };
 
-  const submitDraftRecord = async ({ keepOpen }: { keepOpen: boolean }) => {
+  const submitDraftRecord = async ({
+    shouldKeepOpen,
+  }: {
+    shouldKeepOpen: boolean;
+  }) => {
     if (isSubmitting) {
       return;
     }
@@ -258,11 +262,11 @@ const SidePanelRecordCreationForm = ({
           fieldMetadataItems: objectMetadataItem.fields,
           objectMetadataItems,
         }),
-        keepOpen,
+        shouldKeepOpen,
       });
 
       if (!isDefined(error)) {
-        if (keepOpen) {
+        if (shouldKeepOpen) {
           setRecordCreationFormDraft(null);
           setDraftValidationRuleViolations([]);
           setFormResetCount(
@@ -294,9 +298,10 @@ const SidePanelRecordCreationForm = ({
     }
   };
 
-  const handleCreateClick = () => submitDraftRecord({ keepOpen: false });
+  const handleCreateClick = () => submitDraftRecord({ shouldKeepOpen: false });
 
-  const handleCreateAnotherClick = () => submitDraftRecord({ keepOpen: true });
+  const handleCreateAnotherClick = () =>
+    submitDraftRecord({ shouldKeepOpen: true });
 
   const containerRef = useHotkeysOnFocusedElement({
     keys: [

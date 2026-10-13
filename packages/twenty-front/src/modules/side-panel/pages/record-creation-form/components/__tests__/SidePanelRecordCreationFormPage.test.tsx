@@ -354,7 +354,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: { nickname: 'Apple' },
-      keepOpen: false,
+      shouldKeepOpen: false,
     });
   });
 
@@ -425,7 +425,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: {},
-      keepOpen: false,
+      shouldKeepOpen: false,
     });
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(
@@ -492,7 +492,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: {},
-      keepOpen: false,
+      shouldKeepOpen: false,
     });
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
@@ -543,7 +543,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: { name: 'Apple' },
-      keepOpen: true,
+      shouldKeepOpen: true,
     });
     expect(await screen.findByLabelText('Name')).toHaveValue('');
     expect(mockEnqueueToast).toHaveBeenCalledWith(

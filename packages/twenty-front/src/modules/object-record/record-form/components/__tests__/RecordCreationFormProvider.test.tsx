@@ -150,7 +150,7 @@ it('creates the record and keeps the request open when asked to keep the form op
     await result.current.settleRecordCreationDraft({
       requestId: formPage.pageId,
       draftRecord: { name: 'First' },
-      keepOpen: true,
+      shouldKeepOpen: true,
     });
   });
 
@@ -158,7 +158,7 @@ it('creates the record and keeps the request open when asked to keep the form op
     await result.current.settleRecordCreationDraft({
       requestId: formPage.pageId,
       draftRecord: { name: 'Second' },
-      keepOpen: true,
+      shouldKeepOpen: true,
     });
   });
 

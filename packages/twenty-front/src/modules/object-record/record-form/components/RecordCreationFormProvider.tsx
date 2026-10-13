@@ -44,11 +44,11 @@ export const RecordCreationFormProvider = ({
     async ({
       requestId,
       draftRecord,
-      keepOpen = false,
+      shouldKeepOpen = false,
     }: {
       requestId: string;
       draftRecord: Partial<ObjectRecord> | null;
-      keepOpen?: boolean;
+      shouldKeepOpen?: boolean;
     }) => {
       const pendingRecordCreation = pendingRecordCreations.find(
         (candidate) => candidate.requestId === requestId,
@@ -100,7 +100,7 @@ export const RecordCreationFormProvider = ({
         return { error };
       }
 
-      if (keepOpen) {
+      if (shouldKeepOpen) {
         clearIsSettling();
 
         return {};

@@ -11,7 +11,7 @@ export type RecordCreationFormContextValue = {
   settleRecordCreationDraft: (params: {
     requestId: string;
     draftRecord: Partial<ObjectRecord> | null;
-    keepOpen?: boolean;
+    shouldKeepOpen?: boolean;
   }) => Promise<{ error?: unknown }>;
 };
 
