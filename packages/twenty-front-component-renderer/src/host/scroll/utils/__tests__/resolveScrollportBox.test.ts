@@ -20,27 +20,22 @@ type ScrollPaddingStyle = Pick<
 
 const UNSCALED: ElementScale = { x: 1, y: 1 };
 
-const createScrollContainer = (geometry: ScrollContainerGeometry) =>
-  geometry as Element;
+const createUniformScrollPaddingStyle = (
+  scrollPadding: string,
+): ScrollPaddingStyle => ({
+  scrollPaddingTop: scrollPadding,
+  scrollPaddingRight: scrollPadding,
+  scrollPaddingBottom: scrollPadding,
+  scrollPaddingLeft: scrollPadding,
+});
 
-const createScrollPaddingStyle = (scrollPaddingStyle: ScrollPaddingStyle) =>
-  scrollPaddingStyle as CSSStyleDeclaration;
-
-const createUniformScrollPaddingStyle = (scrollPadding: string) =>
-  createScrollPaddingStyle({
-    scrollPaddingTop: scrollPadding,
-    scrollPaddingRight: scrollPadding,
-    scrollPaddingBottom: scrollPadding,
-    scrollPaddingLeft: scrollPadding,
-  });
-
-const SCROLL_CONTAINER = createScrollContainer({
+const SCROLL_CONTAINER: ScrollContainerGeometry = {
   getBoundingClientRect: () => new DOMRect(10, 20, 104, 56),
   clientLeft: 2,
   clientTop: 3,
   clientWidth: 100,
   clientHeight: 50,
-});
+};
 
 describe('resolveScrollportBox', () => {
   it('should offset the scrollport by the client offsets and size it by the client size', () => {
@@ -67,12 +62,12 @@ describe('resolveScrollportBox', () => {
     expect(
       resolveScrollportBox({
         scrollContainer: SCROLL_CONTAINER,
-        scrollContainerStyle: createScrollPaddingStyle({
+        scrollContainerStyle: {
           scrollPaddingTop: '5px',
           scrollPaddingRight: '6px',
           scrollPaddingBottom: '7px',
           scrollPaddingLeft: '8px',
-        }),
+        },
         scale: UNSCALED,
       }),
     ).toEqual({ top: 28, right: 106, bottom: 66, left: 20 });
@@ -82,12 +77,12 @@ describe('resolveScrollportBox', () => {
     expect(
       resolveScrollportBox({
         scrollContainer: SCROLL_CONTAINER,
-        scrollContainerStyle: createScrollPaddingStyle({
+        scrollContainerStyle: {
           scrollPaddingTop: '10%',
           scrollPaddingRight: '20%',
           scrollPaddingBottom: '20%',
           scrollPaddingLeft: '10%',
-        }),
+        },
         scale: UNSCALED,
       }),
     ).toEqual({ top: 28, right: 92, bottom: 63, left: 22 });

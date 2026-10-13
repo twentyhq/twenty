@@ -7,8 +7,21 @@ export const resolveScrollportBox = ({
   scrollContainerStyle,
   scale,
 }: {
-  scrollContainer: Element;
-  scrollContainerStyle: CSSStyleDeclaration;
+  scrollContainer: Pick<
+    Element,
+    | 'getBoundingClientRect'
+    | 'clientLeft'
+    | 'clientTop'
+    | 'clientWidth'
+    | 'clientHeight'
+  >;
+  scrollContainerStyle: Pick<
+    CSSStyleDeclaration,
+    | 'scrollPaddingTop'
+    | 'scrollPaddingRight'
+    | 'scrollPaddingBottom'
+    | 'scrollPaddingLeft'
+  >;
   scale: ElementScale;
 }): ScrollBox => {
   const rect = scrollContainer.getBoundingClientRect();
