@@ -89,6 +89,30 @@ describe('createUpdateWorkflowAgentTool', () => {
     });
   });
 
+  it('should set the response format on every step using the agent in a draft', async () => {
+    const firstStep = buildAiAgentStep(AGENT_ID, 'step-1');
+    const secondStep = buildAiAgentStep(AGENT_ID, 'step-2');
+    const { tool, coreWorkflowVersionMutationService } = buildTool({
+      draftCoreVersions: [
+        { id: 'core-version-1', steps: [firstStep, secondStep] },
+      ],
+    });
+
+    await tool.execute({
+      agentId: AGENT_ID,
+      responseFormat: { type: 'text' },
+    } as never);
+
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledTimes(
+      2,
+    );
+    expect(
+      coreWorkflowVersionMutationService.updateStep.mock.calls.map(
+        ([{ step }]) => step.id,
+      ),
+    ).toEqual(['step-1', 'step-2']);
+  });
+
   it('should only update the agent when responseFormat is not provided', async () => {
     const step = buildAiAgentStep(AGENT_ID);
     const {

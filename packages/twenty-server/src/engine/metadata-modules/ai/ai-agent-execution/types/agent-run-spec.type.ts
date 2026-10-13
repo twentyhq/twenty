@@ -11,7 +11,6 @@ export type AgentRunSpec = {
   baseSystemPrompt: string;
   // the caller's own instructions, after what the engine says about its pausing tools
   instructions: string | null;
-  // what the caller wants back, over the agent's own default
   responseFormat?: AgentResponseFormat;
   capabilities: {
     // ask_question, request_form and propose_tool_call, answered from the conversation

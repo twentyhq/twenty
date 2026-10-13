@@ -64,7 +64,6 @@ export class RunAgentInputDTO {
   @Field({ nullable: true })
   additionalInstructions?: string;
 
-  // what this call wants back, over the agent's own default
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   responseFormat?: AgentResponseFormat;

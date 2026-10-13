@@ -18,7 +18,6 @@ export type RunAgentThread = {
 export type RunAgentInput = {
   agentUniversalIdentifier: string;
   additionalInstructions?: string;
-  // what this call wants back, over the agent's own default
   responseFormat?: AgentResponseFormat;
   thread?: RunAgentThread;
   runAsWorkspaceMemberId?: string;

@@ -63,28 +63,26 @@ const setAiAgentStepsResponseFormat = async (
     });
 
   for (const draftCoreVersion of draftCoreVersions) {
-    const matchingStep = draftCoreVersion.steps?.find(
+    const matchingSteps = (draftCoreVersion.steps ?? []).filter(
       (step): step is WorkflowAiAgentAction =>
         step.type === WorkflowActionType.AI_AGENT &&
         step.settings?.input?.agentId === agentId,
     );
 
-    if (!isDefined(matchingStep)) {
-      continue;
-    }
-
-    await deps.coreWorkflowVersionMutationService.updateStep({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowVersionId: draftCoreVersion.id,
-      step: {
-        ...matchingStep,
-        settings: {
-          ...matchingStep.settings,
-          input: { ...matchingStep.settings.input, responseFormat },
+    for (const matchingStep of matchingSteps) {
+      await deps.coreWorkflowVersionMutationService.updateStep({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionId: draftCoreVersion.id,
+        step: {
+          ...matchingStep,
+          settings: {
+            ...matchingStep.settings,
+            input: { ...matchingStep.settings.input, responseFormat },
+          },
         },
-      },
-    });
+      });
+    }
   }
 };
 

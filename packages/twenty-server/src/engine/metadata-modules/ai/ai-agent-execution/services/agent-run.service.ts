@@ -300,29 +300,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
   }
 
   // The member a run acts as is looked up again, so a waiting run goes on with their current role
-  // the resolver runs no validation pipe, so the format is checked here before it reaches the model
-  private parseResponseFormatOrThrow(
-    responseFormat: unknown,
-  ): AgentResponseFormat | undefined {
-    if (!isDefined(responseFormat)) {
-      return undefined;
-    }
-
-    const parsedResponseFormat =
-      agentResponseFormatSchema.safeParse(responseFormat);
-
-    if (!parsedResponseFormat.success) {
-      throw new AiException(
-        `Invalid response format: ${parsedResponseFormat.error.issues
-          .map((issue) => issue.message)
-          .join(', ')}`,
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
-
-    return parsedResponseFormat.data;
-  }
-
   async buildExecutionContext({
     workspaceId,
     caller,
@@ -605,5 +582,28 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       workspaceId,
       viaApplication: application,
     });
+  }
+
+  // the resolver runs no validation pipe, so the format is checked here before it reaches the model
+  private parseResponseFormatOrThrow(
+    responseFormat: unknown,
+  ): AgentResponseFormat | undefined {
+    if (!isDefined(responseFormat)) {
+      return undefined;
+    }
+
+    const parsedResponseFormat =
+      agentResponseFormatSchema.safeParse(responseFormat);
+
+    if (!parsedResponseFormat.success) {
+      throw new AiException(
+        `Invalid response format: ${parsedResponseFormat.error.issues
+          .map((issue) => issue.message)
+          .join(', ')}`,
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    return parsedResponseFormat.data;
   }
 }
