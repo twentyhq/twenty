@@ -5,11 +5,9 @@ import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCellSkeleton = styled(Skeleton)`
-  && {
-    display: block;
-    margin: ${themeCssVariables.spacing[2]};
-    width: auto;
-  }
+  display: block;
+  margin: ${themeCssVariables.spacing[2]};
+  width: auto;
 `;
 
 export const RecordTableCellLoading = ({
