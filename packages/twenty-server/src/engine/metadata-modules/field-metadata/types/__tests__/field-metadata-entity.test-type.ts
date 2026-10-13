@@ -23,6 +23,13 @@ type DefinedRelationRecord = {
   relationTargetObjectMetadata: TypeOrmRelation<ObjectMetadataEntity>;
 };
 
+type NullableRelationRecord = {
+  relationTargetFieldMetadataId: string | null;
+  relationTargetFieldMetadata: TypeOrmRelation<FieldMetadataEntity> | null;
+  relationTargetObjectMetadataId: string | null;
+  relationTargetObjectMetadata: TypeOrmRelation<ObjectMetadataEntity> | null;
+};
+
 type NotDefinedRelationRecord = {
   relationTargetFieldMetadataId: never | null;
   relationTargetFieldMetadata: never | null;
@@ -96,16 +103,7 @@ type RelationAssertions = [
   Expect<HasAllProperties<LinksFieldMetadata, NotDefinedRelationRecord>>,
 
   Expect<HasAllProperties<RelationFieldMetadata, DefinedRelationRecord>>,
-  Expect<
-    HasAllProperties<
-      MorphRelationFieldMetadata,
-      {
-        [TKey in keyof DefinedRelationRecord]:
-          | DefinedRelationRecord[TKey]
-          | null;
-      }
-    >
-  >,
+  Expect<HasAllProperties<MorphRelationFieldMetadata, NullableRelationRecord>>,
 
   Expect<
     HasAllProperties<
