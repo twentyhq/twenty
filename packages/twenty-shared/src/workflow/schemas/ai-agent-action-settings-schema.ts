@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { agentResponseFormatSchema } from '@/ai/schemas/agent-response-format-schema';
+import { agentResponseFormatSchema } from './agent-response-format-schema';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 import { workflowConversationSchema } from './workflow-conversation-schema';
 

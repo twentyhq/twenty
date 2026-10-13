@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
-import { agentResponseFormatSchema } from '@/ai/schemas/agent-response-format-schema';
+import { agentResponseFormatSchema } from '@/workflow/schemas/agent-response-format-schema';
 
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
 import { workflowClassifyActionSettingsSchema } from '@/workflow/schemas/classify-action-settings-schema';

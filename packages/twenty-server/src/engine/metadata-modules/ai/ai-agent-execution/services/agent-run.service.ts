@@ -13,12 +13,10 @@ import {
   type RunAgentResult,
   type RunAgentThread,
 } from 'twenty-shared/application';
-import {
-  type AgentResponseFormat,
-  agentResponseFormatSchema,
-} from 'twenty-shared/ai';
+import { type AgentResponseFormat } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { agentResponseFormatSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';

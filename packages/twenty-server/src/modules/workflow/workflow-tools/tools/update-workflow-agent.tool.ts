@@ -1,6 +1,8 @@
-import { agentResponseFormatSchema } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  agentResponseFormatSchema,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
