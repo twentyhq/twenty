@@ -27,7 +27,6 @@ export const RecordSelectionDragSelect = ({
     recordSelectionRangeComponentState,
   );
 
-  // A drag replaces the selection a shift+click or shift+arrow would extend
   const handleDragSelectionStart = () => {
     store.set(recordSelectionRange, null);
     onDragSelectionStart?.();

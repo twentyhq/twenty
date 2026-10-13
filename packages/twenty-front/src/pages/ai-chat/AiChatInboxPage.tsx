@@ -129,8 +129,6 @@ const AiChatInboxPageContent = () => {
     selectableItemsContainerRef: threadListContainerRef,
     activeRecordId: selectedThreadId,
     onActiveRecordChange: selectThread,
-    // The list is not on screen beside a full page chat to load more as it
-    // scrolls, so going past its last chat loads more, as the next button does
     onEndReached: fetchMoreAgentChatThreads,
   });
 
@@ -163,7 +161,6 @@ const AiChatInboxPageContent = () => {
     keys: [
       Key.ArrowUp,
       Key.ArrowDown,
-      // A selection is only seen in the list, so a full page chat ignores it
       ...(isListShown
         ? [`${Key.Shift}+${Key.ArrowUp}`, `${Key.Shift}+${Key.ArrowDown}`]
         : []),

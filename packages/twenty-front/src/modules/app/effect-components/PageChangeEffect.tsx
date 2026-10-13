@@ -258,8 +258,6 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.AiChatInbox): {
-        // Moving between chats keeps the stack, so a panel or menu opened
-        // over the inbox keeps its hotkeys
         const isEnteringAiChatInbox = !matchPath(
           AppPath.AiChatInbox,
           previousLocation,
@@ -269,8 +267,6 @@ export const PageChangeEffect = () => {
           break;
         }
 
-        // A side panel left open keeps its focus over the new page, so only
-        // the previous page's item underneath is replaced
         const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
         const focusStackItemsKeptAbovePage = isSidePanelOpen
           ? store
