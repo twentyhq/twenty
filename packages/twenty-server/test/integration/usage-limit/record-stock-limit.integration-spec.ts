@@ -12,6 +12,8 @@ import { createClient } from 'redis';
 import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { type BillingCreditAllowanceProvider } from 'src/engine/core-modules/billing/services/billing-credit-allowance-provider.service';
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { RECORD_STOCK_TRACKED_SYSTEM_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/usage-limit/constants/record-stock-tracked-system-object-universal-identifiers.constant';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
@@ -225,12 +227,39 @@ describe('Record stock limit', () => {
       variables: { workspaceId: SEED_APPLE_WORKSPACE_ID, usageLimitId },
     });
 
-  const setRecordLimitDefault = (limitValue: number | undefined) =>
+  const setConfig = (overrides: Partial<ConfigVariables>) =>
     jest
       .spyOn(twentyConfigService, 'get')
       .mockImplementation((key) =>
-        key === 'WORKSPACE_RECORD_LIMIT' ? limitValue : readConfig(key),
+        key in overrides ? overrides[key] : readConfig(key),
       );
+
+  const setRecordLimitDefault = (limitValue: number | undefined) =>
+    setConfig({ WORKSPACE_RECORD_LIMIT: limitValue });
+
+  const setPlanRecordLimit = ({
+    instanceValue,
+    planValue,
+  }: {
+    instanceValue: number | undefined;
+    planValue: number | null;
+  }) => {
+    setConfig({
+      WORKSPACE_RECORD_LIMIT: instanceValue,
+      USAGE_LIMIT_DEFAULTS_BY_PLAN: {
+        PRO: { values: { WORKSPACE_RECORD_LIMIT: planValue } },
+      },
+    });
+
+    jest
+      .spyOn(
+        getAppProviderByClassName<BillingCreditAllowanceProvider>(
+          'BillingCreditAllowanceProvider',
+        ),
+        'getSubscriptionPlan',
+      )
+      .mockResolvedValue({ planKey: 'PRO', isTrialing: false });
+  };
 
   const expectRefused = (response: { body: { errors?: unknown[] } }) => {
     expect(
@@ -332,6 +361,27 @@ describe('Record stock limit', () => {
     },
     STATS_FLUSH_TIMEOUT_MS + 5_000,
   );
+
+  it('caps at the plan value when the instance sets none', async () => {
+    setPlanRecordLimit({
+      instanceValue: undefined,
+      planValue: baselineRecordCount + 1,
+    });
+
+    expectAdmitted(await deleteRecordStockLimit());
+    expectAdmitted(await createRockets(1));
+    expectRefused(await createRockets(1));
+  });
+
+  it('admits past the instance value when the plan sets no limit', async () => {
+    setPlanRecordLimit({
+      instanceValue: baselineRecordCount + 1,
+      planValue: null,
+    });
+
+    expectAdmitted(await deleteRecordStockLimit());
+    expectAdmitted(await createRockets(HEADROOM));
+  });
 
   it(
     'keeps the held count when the default takes over from a deleted row',

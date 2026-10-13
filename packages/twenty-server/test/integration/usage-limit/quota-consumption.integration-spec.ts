@@ -19,6 +19,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { type BillingCreditAllowanceProvider } from 'src/engine/core-modules/billing/services/billing-credit-allowance-provider.service';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -868,6 +869,60 @@ describe('Usage quota consumption', () => {
         isDefault: true,
       });
     });
+
+    it(
+      'compares against the plan value',
+      async () => {
+        await waitForChargedEmailRows();
+        await deleteEmailRows();
+        chargedEmailRowCount = 0;
+        await flushQuotaCounters();
+
+        const twentyConfigService =
+          getAppProviderByClassName<TwentyConfigService>('TwentyConfigService');
+        const readConfig = twentyConfigService.get.bind(twentyConfigService);
+        const configSpy = jest.spyOn(twentyConfigService, 'get');
+        const subscriptionPlanSpy = jest
+          .spyOn(
+            getAppProviderByClassName<BillingCreditAllowanceProvider>(
+              'BillingCreditAllowanceProvider',
+            ),
+            'getSubscriptionPlan',
+          )
+          .mockResolvedValue({ planKey: 'PRO', isTrialing: false });
+
+        const setPlanEmailDailyLimit = (planValue: number | null) =>
+          configSpy.mockImplementation((key) =>
+            key === 'USAGE_LIMIT_DEFAULTS_BY_PLAN'
+              ? {
+                  PRO: {
+                    values: { EMAIL_SEND_WORKSPACE_DAILY_LIMIT: planValue },
+                  },
+                }
+              : readConfig(key),
+          );
+
+        try {
+          setPlanEmailDailyLimit(2);
+          await debitEmailAheadOfRecord(1);
+
+          expect(await findEmailRefusal(1)).toBeNull();
+          expect(await findEmailRefusal(2)).toMatchObject({
+            exhaustedKind: 'limit',
+            isDefault: true,
+            limitValue: 2,
+          });
+
+          setPlanEmailDailyLimit(null);
+
+          expect(await findEmailRefusal(emailDailyLimit + 1)).toBeNull();
+        } finally {
+          configSpy.mockRestore();
+          subscriptionPlanSpy.mockRestore();
+        }
+      },
+      EXECUTION_TIMEOUT_MS,
+    );
   });
 
   it(
