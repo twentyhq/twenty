@@ -3,7 +3,7 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle } from 'twenty-ui/icon';
 
 type SettingsApplicationLoadErrorBannerProps = {
-  message: string;
+  message?: string;
   onRetry: () => void;
 };
 
@@ -19,7 +19,8 @@ export const SettingsApplicationLoadErrorBanner = ({
         <InlineBanner.Action onClick={onRetry}>{t`Retry`}</InlineBanner.Action>
       }
     >
-      {message}
+      {message ??
+        t`This application could not be loaded. Check your connection and try again.`}
     </InlineBanner>
   );
 };

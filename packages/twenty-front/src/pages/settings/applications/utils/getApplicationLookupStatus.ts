@@ -1,4 +1,5 @@
-import { CombinedGraphQLErrors, ServerError } from '@apollo/client/errors';
+import { type ErrorLike } from '@apollo/client';
+import { ServerError } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
@@ -12,19 +13,15 @@ export type ApplicationLookupStatus =
 const NOT_FOUND_ERROR_CODE = 'NOT_FOUND';
 const BAD_REQUEST_STATUS_CODE = 400;
 
-const isNotFoundError = (error: unknown): boolean => {
-  if (isGraphqlErrorOfType(error, NOT_FOUND_ERROR_CODE)) {
-    return true;
+const isNotFoundError = (error: ErrorLike): boolean => {
+  if (ServerError.is(error)) {
+    return error.statusCode === BAD_REQUEST_STATUS_CODE;
   }
 
-  if (CombinedGraphQLErrors.is(error)) {
-    return error.errors.length > 0;
-  }
-
-  return ServerError.is(error) && error.statusCode === BAD_REQUEST_STATUS_CODE;
+  return isGraphqlErrorOfType(error, NOT_FOUND_ERROR_CODE);
 };
 
-export const getApplicationLookupStatus = ({
+export const getApplicationLookupStatus = <TResult extends object>({
   identifier,
   isLoading,
   error,
@@ -32,8 +29,8 @@ export const getApplicationLookupStatus = ({
 }: {
   identifier: string | undefined;
   isLoading: boolean;
-  error: unknown;
-  result: unknown;
+  error: ErrorLike | undefined;
+  result: TResult | null | undefined;
 }): ApplicationLookupStatus => {
   if (!isNonEmptyString(identifier)) {
     return 'not-found';

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 type ParsedSemver = {
   numericParts: number[];
   preRelease: string | undefined;
@@ -23,11 +25,11 @@ const comparePreReleaseParts = ({
   partA: string | undefined;
   partB: string | undefined;
 }): number => {
-  if (partA === undefined) {
+  if (!isDefined(partA)) {
     return -1;
   }
 
-  if (partB === undefined) {
+  if (!isDefined(partB)) {
     return 1;
   }
 
@@ -60,11 +62,11 @@ const comparePreReleases = ({
     return 0;
   }
 
-  if (preReleaseA === undefined) {
+  if (!isDefined(preReleaseA)) {
     return 1;
   }
 
-  if (preReleaseB === undefined) {
+  if (!isDefined(preReleaseB)) {
     return -1;
   }
 

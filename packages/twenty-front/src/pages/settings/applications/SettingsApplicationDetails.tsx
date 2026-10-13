@@ -269,7 +269,6 @@ export const SettingsApplicationDetails = () => {
     if (isUnavailable) {
       return (
         <SettingsApplicationLoadErrorBanner
-          message={t`This application could not be loaded. Check your connection and try again.`}
           onRetry={() => refetch().catch(() => undefined)}
         />
       );

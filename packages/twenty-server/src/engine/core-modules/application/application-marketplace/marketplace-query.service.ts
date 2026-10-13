@@ -5,7 +5,7 @@ import {
   getObjectPermissionUniversalIdentifier,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
@@ -74,10 +74,11 @@ export class MarketplaceQueryService {
   async findRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
-    const registration =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        universalIdentifier,
-      );
+    const registration = isValidUuid(universalIdentifier)
+      ? await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+          universalIdentifier,
+        )
+      : null;
 
     if (!isDefined(registration)) {
       throw new ApplicationRegistrationException(

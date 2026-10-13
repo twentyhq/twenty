@@ -44,6 +44,21 @@ describe('getApplicationLookupStatus', () => {
     expect(getApplicationLookupStatus(baseArgs)).toBe('not-found');
   });
 
+  it('is unavailable on a GraphQL error that is not a not-found', () => {
+    expect(
+      getApplicationLookupStatus({
+        ...baseArgs,
+        error: buildGraphqlError('INTERNAL_SERVER_ERROR'),
+      }),
+    ).toBe('unavailable');
+    expect(
+      getApplicationLookupStatus({
+        ...baseArgs,
+        error: buildGraphqlError('FORBIDDEN'),
+      }),
+    ).toBe('unavailable');
+  });
+
   it('is not found on a GraphQL not-found error', () => {
     expect(
       getApplicationLookupStatus({

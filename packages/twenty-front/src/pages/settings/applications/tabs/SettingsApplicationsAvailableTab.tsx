@@ -13,8 +13,9 @@ import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconAlertTriangle, IconSparkles } from 'twenty-ui/icon';
+import { IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { filterMarketplaceApps } from '~/pages/settings/applications/utils/filterMarketplaceApps';
 
@@ -97,15 +98,10 @@ export const SettingsApplicationsAvailableTab = () => {
   if (isDefined(error)) {
     return (
       <Section.Root>
-        <InlineBanner
-          status="error"
-          icon={<IconAlertTriangle aria-hidden="true" />}
-          action={
-            <InlineBanner.Action
-              onClick={() => refetch().catch(() => undefined)}
-            >{t`Retry`}</InlineBanner.Action>
-          }
-        >{t`The marketplace could not be loaded. Check your connection and try again.`}</InlineBanner>
+        <SettingsApplicationLoadErrorBanner
+          message={t`The marketplace could not be loaded. Check your connection and try again.`}
+          onRetry={() => refetch().catch(() => undefined)}
+        />
       </Section.Root>
     );
   }

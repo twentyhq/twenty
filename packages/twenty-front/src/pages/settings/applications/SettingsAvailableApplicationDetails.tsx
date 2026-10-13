@@ -126,6 +126,56 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
+  const renderContent = () => {
+    if (isUnavailable) {
+      return (
+        <SettingsApplicationLoadErrorBanner
+          onRetry={() => refetchDetail().catch(() => undefined)}
+        />
+      );
+    }
+
+    if (isNotFound) {
+      return (
+        <SettingsApplicationNotFound
+          message={t`This application is not available on the marketplace. It may have been removed or the link is incorrect.`}
+          linkTo={getSettingsPath(SettingsPath.Applications)}
+          linkLabel={t`Browse the marketplace`}
+          LinkIcon={IconShoppingBag}
+        />
+      );
+    }
+
+    if (!isDefined(detail)) {
+      return <SettingsSectionSkeletonLoader />;
+    }
+
+    return (
+      <SettingsApplicationDetailAbout
+        applicationId={application?.id}
+        logoUrl={detail.logoUrl}
+        displayName={displayName}
+        description={detail.description ?? undefined}
+        aboutDescription={detail.aboutDescription ?? undefined}
+        pricingDescription={detail.pricingDescription ?? undefined}
+        billsCredits={detail.billsCredits}
+        screenshots={detail.galleryImages}
+        author={detail.author ?? undefined}
+        version={currentVersion ?? latestAvailableVersion ?? undefined}
+        installCount={detail.installCount}
+        category={detail.category ?? undefined}
+        developerLinks={{
+          websiteUrl: detail.websiteUrl ?? undefined,
+          termsUrl: detail.termsUrl ?? undefined,
+          emailSupport: detail.emailSupport ?? undefined,
+          issueReportUrl: detail.issueReportUrl ?? undefined,
+          sourcePackageUrl,
+        }}
+        onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
+      />
+    );
+  };
+
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
       <SettingsPageLayout
@@ -178,44 +228,7 @@ export const SettingsAvailableApplicationDetails = () => {
               icon={<IconAlertTriangle aria-hidden="true" />}
             >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
           )}
-          {isUnavailable ? (
-            <SettingsApplicationLoadErrorBanner
-              message={t`This application could not be loaded. Check your connection and try again.`}
-              onRetry={() => refetchDetail().catch(() => undefined)}
-            />
-          ) : isNotFound ? (
-            <SettingsApplicationNotFound
-              message={t`This application is not available on the marketplace. It may have been removed or the link is incorrect.`}
-              linkTo={getSettingsPath(SettingsPath.Applications)}
-              linkLabel={t`Browse the marketplace`}
-              LinkIcon={IconShoppingBag}
-            />
-          ) : isDefined(detail) ? (
-            <SettingsApplicationDetailAbout
-              applicationId={application?.id}
-              logoUrl={detail.logoUrl}
-              displayName={displayName}
-              description={detail.description ?? undefined}
-              aboutDescription={detail.aboutDescription ?? undefined}
-              pricingDescription={detail.pricingDescription ?? undefined}
-              billsCredits={detail.billsCredits}
-              screenshots={detail.galleryImages}
-              author={detail.author ?? undefined}
-              version={currentVersion ?? latestAvailableVersion ?? undefined}
-              installCount={detail.installCount}
-              category={detail.category ?? undefined}
-              developerLinks={{
-                websiteUrl: detail.websiteUrl ?? undefined,
-                termsUrl: detail.termsUrl ?? undefined,
-                emailSupport: detail.emailSupport ?? undefined,
-                issueReportUrl: detail.issueReportUrl ?? undefined,
-                sourcePackageUrl,
-              }}
-              onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
-            />
-          ) : (
-            <SettingsSectionSkeletonLoader />
-          )}
+          {renderContent()}
         </SettingsPageContainer>
       </SettingsPageLayout>
       <SettingsApplicationInstallPermissionValidationModal
