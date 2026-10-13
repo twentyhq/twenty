@@ -1,8 +1,15 @@
 import { STEP_RETRY_DELAYS_MS } from 'twenty-shared/workflow';
 import request from 'supertest';
 import {
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  runCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import {
   destroyWorkflowRun,
-  runWorkflowVersion,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 
@@ -10,7 +17,6 @@ import {
   type WorkflowAction,
   type WorkflowHttpRequestAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -24,8 +30,8 @@ const TOTAL_RETRY_DELAY_MS = STEP_RETRY_DELAYS_MS.reduce(
 const RETRY_TEST_TIMEOUT_MS = TOTAL_RETRY_DELAY_MS + 60_000;
 
 describe('Step error handling workflow (e2e)', () => {
-  let createdWorkflowId: string | null = null;
-  let createdWorkflowVersionId: string | null = null;
+  let coreWorkflowId: string | null = null;
+  let coreWorkflowVersionId: string | null = null;
   let httpRequestStepId: string | null = null;
   let filterStepId: string | null = null;
 
@@ -35,50 +41,20 @@ describe('Step error handling workflow (e2e)', () => {
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send({
         query: `
-          query GetWorkflowVersion($id: UUID!) {
-            workflowVersion(filter: { id: { eq: $id } }) {
-              id
+          query CoreWorkflowVersionById($coreWorkflowVersionId: UUID!) {
+            coreWorkflowVersionById(
+              coreWorkflowVersionId: $coreWorkflowVersionId
+            ) {
               steps
             }
           }
         `,
-        variables: { id: createdWorkflowVersionId },
+        variables: { coreWorkflowVersionId },
       });
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.workflowVersion.steps;
-  };
-
-  const createStep = async ({
-    stepType,
-    parentStepId,
-  }: {
-    stepType: string;
-    parentStepId: string;
-  }) => {
-    const response = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            stepType,
-            parentStepId,
-            position: { x: 200, y: 0 },
-          },
-        },
-      });
-
-    expect(response.body.errors).toBeUndefined();
+    return response.body.data.coreWorkflowVersionById.steps;
   };
 
   const setUpFailingHttpRequestStep = async ({
@@ -94,88 +70,36 @@ describe('Step error handling workflow (e2e)', () => {
       (step) => step.id === httpRequestStepId,
     ) as WorkflowHttpRequestAction;
 
-    const response = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
-            updateWorkflowVersionStep(input: $input) {
-              id
-            }
-          }
-        `,
-        variables: {
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId: coreWorkflowVersionId!,
+      step: {
+        ...httpRequestStep,
+        settings: {
+          ...httpRequestStep.settings,
           input: {
-            workflowVersionId: createdWorkflowVersionId,
-            step: {
-              ...httpRequestStep,
-              settings: {
-                ...httpRequestStep.settings,
-                input: {
-                  ...httpRequestStep.settings.input,
-                  url: BLOCKED_REQUEST_URL,
-                },
-                errorHandlingOptions: {
-                  ...httpRequestStep.settings.errorHandlingOptions,
-                  continueOnFailure: { value: continueOnFailure },
-                  retryOnFailure: { value: retryOnFailure },
-                },
-              },
-            },
+            ...httpRequestStep.settings.input,
+            url: BLOCKED_REQUEST_URL,
+          },
+          errorHandlingOptions: {
+            ...httpRequestStep.settings.errorHandlingOptions,
+            continueOnFailure: { value: continueOnFailure },
+            retryOnFailure: { value: retryOnFailure },
           },
         },
-      });
-
-    expect(response.body.errors).toBeUndefined();
+      },
+    });
   };
 
   beforeAll(async () => {
-    const createWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflow {
-            createWorkflow(data: {
-              name: "Continue On Failure Test Workflow"
-            }) {
-              id
-            }
-          }
-        `,
-      });
+    const coreWorkflow = await createCoreWorkflow({
+      name: 'Continue On Failure Test Workflow',
+    });
 
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+    coreWorkflowId = coreWorkflow.coreWorkflowId;
+    coreWorkflowVersionId = coreWorkflow.coreWorkflowVersionId;
 
-    const getWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query GetWorkflow($id: UUID!) {
-            workflow(filter: { id: { eq: $id } }) {
-              id
-              versions {
-                edges {
-                  node {
-                    id
-                  }
-                }
-              }
-            }
-          }
-        `,
-        variables: { id: createdWorkflowId },
-      });
-
-    expect(getWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowVersionId =
-      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
-
-    const updateTriggerResponse = await updateWorkflowVersionTrigger({
-      workflowVersionId: createdWorkflowVersionId!,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -185,52 +109,33 @@ describe('Step error handling workflow (e2e)', () => {
       },
     });
 
-    expect(updateTriggerResponse.body.errors).toBeUndefined();
+    httpRequestStepId = (
+      await createCoreWorkflowVersionStep({
+        coreWorkflowVersionId,
+        stepType: 'HTTP_REQUEST',
+      })
+    ).id;
 
-    await createStep({ stepType: 'HTTP_REQUEST', parentStepId: 'trigger' });
-
-    const stepsAfterHttpRequestCreation = await getSteps();
-
-    httpRequestStepId =
-      stepsAfterHttpRequestCreation.find((step) => step.type === 'HTTP_REQUEST')
-        ?.id ?? null;
-
-    expect(httpRequestStepId).not.toBeNull();
-
-    await createStep({ stepType: 'FILTER', parentStepId: httpRequestStepId! });
-
-    const stepsAfterFilterCreation = await getSteps();
-
-    filterStepId =
-      stepsAfterFilterCreation.find((step) => step.type === 'FILTER')?.id ??
-      null;
-
-    expect(filterStepId).not.toBeNull();
+    filterStepId = (
+      await createCoreWorkflowVersionStep({
+        coreWorkflowVersionId,
+        stepType: 'FILTER',
+        parentStepId: httpRequestStepId,
+      })
+    ).id;
   });
 
   afterAll(async () => {
-    if (createdWorkflowId) {
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation DestroyWorkflow($id: ID!) {
-              destroyWorkflow(id: $id) {
-                id
-              }
-            }
-          `,
-          variables: { id: createdWorkflowId },
-        });
+    if (coreWorkflowId) {
+      await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
   });
 
   it('should run the next step and complete the run when the failing step continues on failure', async () => {
     await setUpFailingHttpRequestStep({ continueOnFailure: true });
 
-    const workflowRunId = await runWorkflowVersion({
-      workflowVersionId: createdWorkflowVersionId!,
+    const workflowRunId = await runCoreWorkflowVersion({
+      coreWorkflowVersionId: coreWorkflowVersionId!,
     });
 
     try {
@@ -254,8 +159,8 @@ describe('Step error handling workflow (e2e)', () => {
   it('should fail the run and leave the next step not started when the failing step does not continue on failure', async () => {
     await setUpFailingHttpRequestStep({ continueOnFailure: false });
 
-    const workflowRunId = await runWorkflowVersion({
-      workflowVersionId: createdWorkflowVersionId!,
+    const workflowRunId = await runCoreWorkflowVersion({
+      coreWorkflowVersionId: coreWorkflowVersionId!,
     });
 
     try {
@@ -280,8 +185,8 @@ describe('Step error handling workflow (e2e)', () => {
         retryOnFailure: STEP_RETRY_DELAYS_MS.length,
       });
 
-      const workflowRunId = await runWorkflowVersion({
-        workflowVersionId: createdWorkflowVersionId!,
+      const workflowRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: coreWorkflowVersionId!,
       });
 
       try {
