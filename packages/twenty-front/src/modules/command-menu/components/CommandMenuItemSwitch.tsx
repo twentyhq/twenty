@@ -26,9 +26,9 @@ const StyledIconContainer = styled.span`
   padding: ${themeCssVariables.spacing[1]};
 
   svg {
-    height: ${themeCssVariables.icon.size.md}px;
+    height: calc(${themeCssVariables.icon.size.md} * 1px);
     stroke-width: ${themeCssVariables.icon.stroke.sm};
-    width: ${themeCssVariables.icon.size.md}px;
+    width: calc(${themeCssVariables.icon.size.md} * 1px);
   }
 `;
 
