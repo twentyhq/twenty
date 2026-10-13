@@ -8,6 +8,7 @@ import { type SelectQueryBuilder } from 'typeorm';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
+import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -51,11 +52,14 @@ const isTwentyIssuedToken = (authorization: string | undefined): boolean => {
     return false;
   }
 
-  const payload = decodeJwtPayload<{ type?: unknown }>(
-    authorization.replace(/^Bearer\s+/i, ''),
-  );
+  const token = authorization.replace(/^Bearer\s+/i, '');
 
-  return TWENTY_TOKEN_TYPES.includes(payload?.type);
+  return (
+    isUserSessionToken(token) ||
+    TWENTY_TOKEN_TYPES.includes(
+      decodeJwtPayload<{ type?: unknown }>(token)?.type,
+    )
+  );
 };
 
 export type ServerRouteTriggerResult = {
