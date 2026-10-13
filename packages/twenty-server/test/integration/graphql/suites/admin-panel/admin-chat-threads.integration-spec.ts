@@ -58,8 +58,8 @@ const GET_ADMIN_CHAT_THREADS = gql`
 `;
 
 const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
-  query GetAdminChatThreadMessages($threadId: UUID!) {
-    getAdminChatThreadMessages(threadId: $threadId) {
+      variables: { workspaceId, threadId },
+      skip: !workspaceId || !threadId,
       thread {
         id
         messageCount
@@ -704,7 +704,10 @@ describe('Admin panel global chat threads (integration)', () => {
     it('returns the kickoff context first with enriched ordered parts', async () => {
       const response = await makeAdminPanelApiRequest({
         query: GET_ADMIN_CHAT_THREAD_MESSAGES,
-        variables: { threadId: kickoffThreadId },
+        variables: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          threadId: kickoffThreadId,
+        },
       });
 
       expect(response.body.errors).toBeUndefined();
