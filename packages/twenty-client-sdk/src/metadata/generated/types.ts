@@ -765,6 +765,9 @@ export default {
             "commandMenuItems": [
                 136
             ],
+            "createdAt": [
+                187
+            ],
             "defaultLogicFunctionRole": [
                 418
             ],
@@ -5454,6 +5457,9 @@ export default {
             ],
             "author": [
                 1
+            ],
+            "billsCredits": [
+                4
             ],
             "category": [
                 1
@@ -13294,6 +13300,9 @@ export default {
                 4
             ],
             "isCampaignClickTrackingEnabled": [
+                4
+            ],
+            "isCampaignOpenTrackingEnabled": [
                 4
             ],
             "isGoogleAuthBypassEnabled": [

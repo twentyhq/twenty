@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
 import {
-  CoreWorkflowVersionStatus,
   GetCoreWorkflowDocument,
   GetCoreWorkflowVersionsDocument,
 } from '~/generated/graphql';
@@ -21,18 +20,15 @@ type CoreWorkflowShowPageWorkflow = Pick<
 
 export const useCoreWorkflowForShowPage = ({
   coreWorkflowId,
-  skip,
 }: {
   coreWorkflowId: string | undefined;
-  skip: boolean;
 }): {
   coreWorkflow: CoreWorkflowShowPageWorkflow | undefined;
   versions: CoreWorkflowShowPageVersion[];
-  draftVersionIdFromServer: string | undefined;
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const shouldSkip = skip || !isDefined(coreWorkflowId);
+  const shouldSkip = !isDefined(coreWorkflowId);
 
   const { data: coreWorkflowData } = useQuery(GetCoreWorkflowDocument, {
     client: apolloCoreClient,
@@ -62,10 +58,6 @@ export const useCoreWorkflowForShowPage = ({
     }),
   );
 
-  const draftVersionIdFromServer = versions.find(
-    (version) => version.status === CoreWorkflowVersionStatus.DRAFT,
-  )?.id;
-
   return {
     coreWorkflow: isDefined(coreWorkflow)
       ? {
@@ -77,6 +69,5 @@ export const useCoreWorkflowForShowPage = ({
         }
       : undefined,
     versions,
-    draftVersionIdFromServer,
   };
 };

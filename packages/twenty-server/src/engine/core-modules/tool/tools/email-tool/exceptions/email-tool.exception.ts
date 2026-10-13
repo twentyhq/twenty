@@ -8,6 +8,7 @@ export enum EmailToolExceptionCode {
   INVALID_CONNECTED_ACCOUNT_ID = 'INVALID_CONNECTED_ACCOUNT_ID',
   CONNECTED_ACCOUNT_NOT_FOUND = 'CONNECTED_ACCOUNT_NOT_FOUND',
   INVALID_EMAIL = 'INVALID_EMAIL',
+  INVALID_EMAIL_BODY = 'INVALID_EMAIL_BODY',
   WORKSPACE_ID_NOT_FOUND = 'WORKSPACE_ID_NOT_FOUND',
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
   INVALID_FILE_ID = 'INVALID_FILE_ID',
@@ -26,6 +27,8 @@ const getEmailToolExceptionUserFriendlyMessage = (
       return msg`Connected account not found.`;
     case EmailToolExceptionCode.INVALID_EMAIL:
       return msg`Invalid email address.`;
+    case EmailToolExceptionCode.INVALID_EMAIL_BODY:
+      return msg`The email content is invalid.`;
     case EmailToolExceptionCode.WORKSPACE_ID_NOT_FOUND:
       return msg`Workspace not found.`;
     case EmailToolExceptionCode.FILE_NOT_FOUND:

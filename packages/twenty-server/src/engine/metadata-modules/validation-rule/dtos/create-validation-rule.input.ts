@@ -40,12 +40,10 @@ export class CreateValidationRuleInput {
   icon?: string | null;
 
   @IsString()
-  @IsNotEmpty()
   @Field()
   expression: string;
 
   @IsString()
-  @IsNotEmpty()
   @Field()
   message: string;
 
