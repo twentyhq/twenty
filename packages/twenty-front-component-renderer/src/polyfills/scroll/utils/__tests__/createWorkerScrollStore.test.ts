@@ -4,6 +4,7 @@ import { isFunction } from '@sniptt/guards';
 import { MAX_PENDING_SCROLL_COMMANDS } from '@/constants/MaxPendingScrollCommands';
 import { REMOTE_RENDER_CONTAINER_TAG } from '@/constants/RemoteRenderContainerTag';
 import { SCROLL_BRIDGE_PROPERTIES } from '@/constants/ScrollBridgeProperties';
+import { NODE_TYPE_BY_NAME } from '@/polyfills/dom/constants/NodeTypeByName';
 import { createWorkerScrollStore } from '@/polyfills/scroll/utils/createWorkerScrollStore';
 import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
 import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
@@ -13,6 +14,7 @@ import { type ScrollCommandAcknowledgement } from '@/types/ScrollCommandAcknowle
 type FakeRemoteNode = {
   parentNode: object | null;
   localName: string;
+  nodeType: number;
 };
 
 type ScrollUpdateHandler = (
@@ -40,7 +42,11 @@ const createFakeRemoteNode = ({
   remoteElementId: string;
   localName?: string;
 }): FakeRemoteNode => {
-  const fakeRemoteNode = { parentNode, localName };
+  const fakeRemoteNode = {
+    parentNode,
+    localName,
+    nodeType: NODE_TYPE_BY_NAME.ELEMENT,
+  };
 
   remoteElementIdByNode.set(fakeRemoteNode, remoteElementId);
 
