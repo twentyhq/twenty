@@ -46,6 +46,8 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
 
+const MAX_AUTHORIZATION_TOKEN_CANDIDATES = 3;
+
 export type ServerRouteTriggerResult = {
   response: RouteTriggerResponse;
   isResolvedThroughLegacyIdentifier: boolean;
@@ -387,13 +389,17 @@ export class ServerRouteTriggerService {
       .split(/[\s,]+/)
       .filter(isNonEmptyString);
 
-    const twentyCredentialChecks = await Promise.all(
-      tokenCandidates.map((tokenCandidate) =>
-        this.isTwentyCredential(tokenCandidate),
-      ),
-    );
+    if (tokenCandidates.length > MAX_AUTHORIZATION_TOKEN_CANDIDATES) {
+      return true;
+    }
 
-    return twentyCredentialChecks.some(Boolean);
+    for (const tokenCandidate of tokenCandidates) {
+      if (await this.isTwentyCredential(tokenCandidate)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private async isTwentyCredential(token: string): Promise<boolean> {
