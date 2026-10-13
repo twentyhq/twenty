@@ -163,7 +163,7 @@ export class CallDatabaseEventTriggerJobsJob {
         {
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-          allowDuplicatedPrefixes: true,
+          doNotCheckDuplicatesBasedOnPrefix: true,
         },
       );
     }

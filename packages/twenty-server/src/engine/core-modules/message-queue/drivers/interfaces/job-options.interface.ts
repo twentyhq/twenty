@@ -16,7 +16,7 @@ export type QueueJobRecipient = {
 
 export interface QueueJobOptions {
   id?: string;
-  allowDuplicatedPrefixes?: boolean;
+  doNotCheckDuplicatesBasedOnPrefix?: boolean;
   priority?: number;
   retryLimit?: number;
   backoff?: QueueJobBackoffOptions;

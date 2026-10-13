@@ -266,7 +266,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     expect(firstAttemptJobIds).toEqual([expect.any(String)]);
     expect(retryJobIds).toEqual(firstAttemptJobIds);
     expect(messageQueueService.bulkAdd.mock.calls[1][2]).toMatchObject({
-      allowDuplicatedPrefixes: true,
+      doNotCheckDuplicatesBasedOnPrefix: true,
     });
   });
 
