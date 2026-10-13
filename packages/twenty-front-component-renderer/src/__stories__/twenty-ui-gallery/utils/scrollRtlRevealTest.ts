@@ -3,6 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectElementWithinScrollport } from '@/__stories__/shared/test-utils/matchers/expectElementWithinScrollport';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { readScrollportRectangle } from '@/__stories__/shared/test-utils/readScrollportRectangle';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
@@ -31,10 +32,7 @@ export const scrollRtlRevealTest: TwentyUiGalleryPlayFunction = async ({
 
   await waitFor(
     () => {
-      const scrollportRight =
-        chips.getBoundingClientRect().left +
-        chips.clientLeft +
-        chips.clientWidth;
+      const scrollportRight = readScrollportRectangle(chips).right;
 
       expect(
         Math.abs(chip.getBoundingClientRect().right - scrollportRight),

@@ -1,5 +1,6 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
 
+import { SCROLL_OFFSET_PROPERTY_BY_AXIS } from '@/polyfills/scroll/constants/ScrollOffsetPropertyByAxis';
 import { type EventScrollExtent } from '@/polyfills/scroll/types/EventScrollExtent';
 import { type WorkerScrollStore } from '@/polyfills/scroll/types/WorkerScrollStore';
 import { createScrollPositionRequest } from '@/polyfills/scroll/utils/createScrollPositionRequest';
@@ -8,12 +9,6 @@ import { normalizeScrollOffset } from '@/polyfills/scroll/utils/normalizeScrollO
 import { normalizeScrollToArguments } from '@/polyfills/scroll/utils/normalizeScrollToArguments';
 import { readPrototypeNumberGetter } from '@/polyfills/scroll/utils/readPrototypeNumberGetter';
 import { definePolyfillMethod } from '@/polyfills/utils/definePolyfillMethod';
-import { type ScrollAxis } from '@/types/ScrollAxis';
-
-const SCROLL_OFFSET_PROPERTIES: { propertyName: string; axis: ScrollAxis }[] = [
-  { propertyName: 'scrollTop', axis: 'top' },
-  { propertyName: 'scrollLeft', axis: 'left' },
-];
 
 const EVENT_SCROLL_EXTENTS: EventScrollExtent[] = [
   'scrollWidth',
@@ -29,7 +24,9 @@ export const installElementScrollPolyfill = ({
   elementPrototype: object;
   scrollStore: WorkerScrollStore;
 }): void => {
-  for (const { propertyName, axis } of SCROLL_OFFSET_PROPERTIES) {
+  for (const [axis, propertyName] of typedObjectEntries(
+    SCROLL_OFFSET_PROPERTY_BY_AXIS,
+  )) {
     const readBaseScrollOffset = readPrototypeNumberGetter({
       prototype: elementPrototype,
       propertyName,

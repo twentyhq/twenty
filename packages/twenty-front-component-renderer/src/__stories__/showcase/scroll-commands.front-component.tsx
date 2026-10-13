@@ -1,6 +1,7 @@
 import { type CSSProperties, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-shared/utils';
 
 const ROW_STYLE: CSSProperties = { blockSize: 24, lineHeight: '24px' };
 
@@ -34,6 +35,40 @@ const ScrollRows = ({ prefix, count }: { prefix: string; count: number }) => (
   </>
 );
 
+const findChildByText = ({
+  container,
+  text,
+}: {
+  container: HTMLElement | null;
+  text: string;
+}): Element | undefined =>
+  Array.from(container?.children ?? []).find(
+    (child) => child.textContent === text,
+  );
+
+const writeScrollOffsetAndRecordReads = ({
+  element,
+  property,
+  offset,
+  setReads,
+}: {
+  element: HTMLElement | null;
+  property: 'scrollTop' | 'scrollLeft';
+  offset: number;
+  setReads: (reads: string) => void;
+}) => {
+  if (!isDefined(element)) {
+    return;
+  }
+
+  element[property] = offset;
+  const synchronousRead = element[property];
+
+  requestAnimationFrame(() =>
+    setReads(`sync:${synchronousRead};next:${element[property]}`),
+  );
+};
+
 const ScrollCommandsComponent = () => {
   const innerScrollerRef = useRef<HTMLDivElement>(null);
   const rtlChipsRef = useRef<HTMLDivElement>(null);
@@ -47,46 +82,6 @@ const ScrollCommandsComponent = () => {
   const [portalRead, setPortalRead] = useState('none');
   const [pageScrollStatus, setPageScrollStatus] = useState('none');
   const [keyboardScrollKeys, setKeyboardScrollKeys] = useState(0);
-
-  const findRow = (rowName: string): Element | undefined =>
-    Array.from(innerScrollerRef.current?.children ?? []).find(
-      (row) => row.textContent === rowName,
-    );
-
-  const findChip = (chipName: string): Element | undefined =>
-    Array.from(rtlChipsRef.current?.children ?? []).find(
-      (chip) => chip.textContent === chipName,
-    );
-
-  const writeLog = () => {
-    const log = logRef.current;
-
-    if (log === null) {
-      return;
-    }
-
-    log.scrollTop = 120;
-    const synchronousRead = log.scrollTop;
-
-    requestAnimationFrame(() =>
-      setLogReads(`sync:${synchronousRead};next:${log.scrollTop}`),
-    );
-  };
-
-  const writeChips = () => {
-    const rtlChips = rtlChipsRef.current;
-
-    if (rtlChips === null) {
-      return;
-    }
-
-    rtlChips.scrollLeft = -120;
-    const synchronousRead = rtlChips.scrollLeft;
-
-    requestAnimationFrame(() =>
-      setChipReads(`sync:${synchronousRead};next:${rtlChips.scrollLeft}`),
-    );
-  };
 
   const tryPageScroll = () => {
     try {
@@ -110,21 +105,32 @@ const ScrollCommandsComponent = () => {
         <button
           type="button"
           onClick={() =>
-            findRow('Row 25')?.scrollIntoView({ block: 'nearest' })
+            findChildByText({
+              container: innerScrollerRef.current,
+              text: 'Row 25',
+            })?.scrollIntoView({ block: 'nearest' })
           }
         >
           Reveal row 25
         </button>
         <button
           type="button"
-          onClick={() => findRow('Row 25')?.scrollIntoView({ block: 'center' })}
+          onClick={() =>
+            findChildByText({
+              container: innerScrollerRef.current,
+              text: 'Row 25',
+            })?.scrollIntoView({ block: 'center' })
+          }
         >
           Center row 25
         </button>
         <button
           type="button"
           onClick={() =>
-            findChip('Chip 18')?.scrollIntoView({
+            findChildByText({
+              container: rtlChipsRef.current,
+              text: 'Chip 18',
+            })?.scrollIntoView({
               block: 'nearest',
               inline: 'nearest',
             })
@@ -135,7 +141,10 @@ const ScrollCommandsComponent = () => {
         <button
           type="button"
           onClick={() =>
-            findChip('Chip 18')?.scrollIntoView({
+            findChildByText({
+              container: rtlChipsRef.current,
+              text: 'Chip 18',
+            })?.scrollIntoView({
               block: 'nearest',
               inline: 'start',
             })
@@ -143,10 +152,30 @@ const ScrollCommandsComponent = () => {
         >
           Start chip 18
         </button>
-        <button type="button" onClick={writeLog}>
+        <button
+          type="button"
+          onClick={() =>
+            writeScrollOffsetAndRecordReads({
+              element: logRef.current,
+              property: 'scrollTop',
+              offset: 120,
+              setReads: setLogReads,
+            })
+          }
+        >
           Write log 120
         </button>
-        <button type="button" onClick={writeChips}>
+        <button
+          type="button"
+          onClick={() =>
+            writeScrollOffsetAndRecordReads({
+              element: rtlChipsRef.current,
+              property: 'scrollLeft',
+              offset: -120,
+              setReads: setChipReads,
+            })
+          }
+        >
           Write chips -120
         </button>
         <button
@@ -154,7 +183,7 @@ const ScrollCommandsComponent = () => {
           onClick={() => {
             const echoTarget = echoTargetRef.current;
 
-            if (echoTarget !== null) {
+            if (isDefined(echoTarget)) {
               echoTarget.scrollTop = echoTarget.scrollTop;
             }
           }}
@@ -166,7 +195,7 @@ const ScrollCommandsComponent = () => {
           onClick={() => {
             const detachableScroller = detachableScrollerRef.current;
 
-            if (detachableScroller === null) {
+            if (!isDefined(detachableScroller)) {
               return;
             }
 
@@ -181,7 +210,7 @@ const ScrollCommandsComponent = () => {
           onClick={() => {
             const detachableScroller = detachableScrollerRef.current;
 
-            if (detachableScroller === null) {
+            if (!isDefined(detachableScroller)) {
               return;
             }
 

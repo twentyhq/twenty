@@ -3,6 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectElementWithinScrollport } from '@/__stories__/shared/test-utils/matchers/expectElementWithinScrollport';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { readScrollportRectangle } from '@/__stories__/shared/test-utils/readScrollportRectangle';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { readHostScrollBoundary } from '@/__stories__/twenty-ui-gallery/utils/readHostScrollBoundary';
@@ -42,15 +43,11 @@ export const scrollNestedRevealTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(
     () => {
       const rowRectangle = row.getBoundingClientRect();
-      const innerScrollerRectangle = innerScroller.getBoundingClientRect();
+      const { top, bottom } = readScrollportRectangle(innerScroller);
 
       expect(
         Math.abs(
-          rowRectangle.top +
-            rowRectangle.height / 2 -
-            (innerScrollerRectangle.top +
-              innerScroller.clientTop +
-              innerScroller.clientHeight / 2),
+          rowRectangle.top + rowRectangle.height / 2 - (top + bottom) / 2,
         ),
       ).toBeLessThanOrEqual(CENTER_TOLERANCE);
     },

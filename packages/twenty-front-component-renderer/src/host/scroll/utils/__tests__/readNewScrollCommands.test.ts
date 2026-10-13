@@ -3,21 +3,6 @@ import { readNewScrollCommands } from '@/host/scroll/utils/readNewScrollCommands
 const SCROLL_TO_TOP_REQUEST = { method: 'scrollTo', top: 10 };
 
 describe('readNewScrollCommands', () => {
-  it.each([
-    { scrollCommands: undefined },
-    { scrollCommands: null },
-    { scrollCommands: 'scrollTo' },
-    { scrollCommands: 3 },
-    { scrollCommands: { sequence: 1, request: SCROLL_TO_TOP_REQUEST } },
-  ])(
-    'should return no command when the scroll commands $scrollCommands are not an array',
-    ({ scrollCommands }) => {
-      expect(
-        readNewScrollCommands({ scrollCommands, appliedSequence: 0 }),
-      ).toEqual([]);
-    },
-  );
-
   it('should skip the entries that are not plain objects', () => {
     expect(
       readNewScrollCommands({

@@ -42,7 +42,6 @@ export const createGeometryWakeSources = (
   let documentStyleObserver: MutationObserver | null = null;
   let areViewportSourcesAttached = false;
   let areElementSourcesAttached = false;
-  let arePortalLayerSourcesAttached = false;
 
   const isEventTargetRelevantToRoot = (target: EventTarget | null): boolean => {
     if (!isDefined(rootContainer)) {
@@ -80,7 +79,7 @@ export const createGeometryWakeSources = (
   };
 
   const syncScrollListener = (): void => {
-    if (areElementSourcesAttached || arePortalLayerSourcesAttached) {
+    if (areElementSourcesAttached || isDefined(portalLayer)) {
       document.addEventListener('scroll', handleScroll, true);
       return;
     }
@@ -226,13 +225,14 @@ export const createGeometryWakeSources = (
   };
 
   const attachPortalLayerSources = (nextPortalLayer: Element): void => {
+    const wasPortalLayerAttached = isDefined(portalLayer);
+
     portalLayer = nextPortalLayer;
 
-    if (arePortalLayerSourcesAttached) {
+    if (wasPortalLayerAttached) {
       return;
     }
 
-    arePortalLayerSourcesAttached = true;
     syncScrollListener();
 
     if (isDefined(rootContainer)) {
@@ -241,12 +241,11 @@ export const createGeometryWakeSources = (
   };
 
   const detachPortalLayerSources = (): void => {
-    if (!arePortalLayerSourcesAttached) {
+    if (!isDefined(portalLayer)) {
       return;
     }
 
     portalLayer = null;
-    arePortalLayerSourcesAttached = false;
     syncScrollListener();
     disconnectRootAncestorMutations();
   };
@@ -290,7 +289,7 @@ export const createGeometryWakeSources = (
       observeRootMutations(node);
     }
 
-    if (arePortalLayerSourcesAttached) {
+    if (isDefined(portalLayer)) {
       observeRootAncestorMutations(node);
     }
   };

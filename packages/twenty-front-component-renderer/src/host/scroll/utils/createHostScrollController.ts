@@ -1,4 +1,4 @@
-import { isArray, isFunction } from '@sniptt/guards';
+import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isOlderThanLatestNativeEdit } from '@/host/caret/utils/isOlderThanLatestNativeEdit';
@@ -13,7 +13,7 @@ import { type ScrollCommandAcknowledgement } from '@/types/ScrollCommandAcknowle
 import { type ScrolledElementPosition } from '@/types/ScrolledElementPosition';
 
 type PendingScrollCommands = {
-  scrollCommands: unknown;
+  scrollCommands: unknown[];
   onScrollUpdate: unknown;
 };
 
@@ -26,6 +26,7 @@ type PendingScrollAcknowledgement = {
 type ScrollCommandCandidate = {
   remoteElementId: string;
   scrollCommand: ReceivedScrollCommand;
+  scrolledNodes: Set<Element>;
 };
 
 export const createHostScrollController = ({
@@ -38,7 +39,6 @@ export const createHostScrollController = ({
     PendingScrollCommands
   >();
   const appliedSequenceByRemoteElementId = new Map<string, number>();
-  let generation = 0;
   let isFlushScheduled = false;
 
   const isOwnedNode = (node: Element): boolean => {
@@ -115,21 +115,17 @@ export const createHostScrollController = ({
     onScrollUpdate(acknowledgement);
   };
 
-  const flush = (scheduledGeneration: number): void => {
-    if (scheduledGeneration !== generation) {
-      return;
-    }
-
+  const flush = (): void => {
     isFlushScheduled = false;
 
-    const acknowledgements = new Map<string, PendingScrollAcknowledgement>();
+    const acknowledgements: PendingScrollAcknowledgement[] = [];
     const candidates: ScrollCommandCandidate[] = [];
 
     for (const [
       remoteElementId,
       { scrollCommands, onScrollUpdate },
     ] of pendingScrollCommandsByRemoteElementId) {
-      if (isArray(scrollCommands) && scrollCommands.length === 0) {
+      if (scrollCommands.length === 0) {
         appliedSequenceByRemoteElementId.delete(remoteElementId);
         continue;
       }
@@ -145,40 +141,38 @@ export const createHostScrollController = ({
         continue;
       }
 
+      const scrolledNodes = new Set<Element>();
+
       appliedSequenceByRemoteElementId.set(
         remoteElementId,
         lastScrollCommand.sequence,
       );
-      acknowledgements.set(remoteElementId, {
+      acknowledgements.push({
         onScrollUpdate,
         scrollCommandSequence: lastScrollCommand.sequence,
-        scrolledNodes: new Set(),
+        scrolledNodes,
       });
 
       for (const scrollCommand of newScrollCommands) {
-        candidates.push({ remoteElementId, scrollCommand });
+        candidates.push({ remoteElementId, scrollCommand, scrolledNodes });
       }
     }
 
     pendingScrollCommandsByRemoteElementId.clear();
 
-    const orderedCandidates = candidates.sort(
+    candidates.sort(
       (firstCandidate, secondCandidate) =>
         firstCandidate.scrollCommand.sequence -
         secondCandidate.scrollCommand.sequence,
     );
 
-    for (const candidate of orderedCandidates) {
-      const scrolledNodes = acknowledgements.get(
-        candidate.remoteElementId,
-      )?.scrolledNodes;
-
+    for (const candidate of candidates) {
       for (const scrolledNode of applyScrollCommand(candidate)) {
-        scrolledNodes?.add(scrolledNode);
+        candidate.scrolledNodes.add(scrolledNode);
       }
     }
 
-    for (const acknowledgement of acknowledgements.values()) {
+    for (const acknowledgement of acknowledgements) {
       notifyScrollUpdate(acknowledgement);
     }
   };
@@ -199,13 +193,9 @@ export const createHostScrollController = ({
       }
 
       isFlushScheduled = true;
-      const scheduledGeneration = generation;
-
-      queueMicrotask(() => flush(scheduledGeneration));
+      queueMicrotask(flush);
     },
     reset: () => {
-      generation += 1;
-      isFlushScheduled = false;
       pendingScrollCommandsByRemoteElementId.clear();
       appliedSequenceByRemoteElementId.clear();
     },

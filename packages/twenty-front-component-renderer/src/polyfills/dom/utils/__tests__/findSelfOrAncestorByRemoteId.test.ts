@@ -1,7 +1,7 @@
 import { remoteId } from '@remote-dom/core/elements';
 import { Window } from '@remote-dom/polyfill';
 
-import { findSelfOrAncestorByRemoteId } from '@/polyfills/scroll/utils/findSelfOrAncestorByRemoteId';
+import { findSelfOrAncestorByRemoteId } from '@/polyfills/dom/utils/findSelfOrAncestorByRemoteId';
 
 const createRemoteTree = () => {
   const document = new Window().document as unknown as Document;

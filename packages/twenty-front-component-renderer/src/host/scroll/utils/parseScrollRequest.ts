@@ -1,19 +1,12 @@
-import { isNumber, isString } from '@sniptt/guards';
+import { isNumber } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { SCROLL_INTO_VIEW_ALIGNMENTS } from '@/constants/ScrollIntoViewAlignments';
 import { type ScrollAxisOffsets } from '@/types/ScrollAxisOffsets';
-import { type ScrollIntoViewAlignment } from '@/types/ScrollIntoViewAlignment';
 import { type ScrollRequest } from '@/types/ScrollRequest';
+import { isScrollIntoViewAlignment } from '@/utils/isScrollIntoViewAlignment';
 
 const readFiniteNumber = (value: unknown): number | undefined =>
   isNumber(value) && Number.isFinite(value) ? value : undefined;
-
-const isScrollIntoViewAlignment = (
-  value: unknown,
-): value is ScrollIntoViewAlignment =>
-  isString(value) &&
-  SCROLL_INTO_VIEW_ALIGNMENTS.some((alignment) => alignment === value);
 
 const parseScrollAxisOffsets = (
   request: Record<string, unknown>,

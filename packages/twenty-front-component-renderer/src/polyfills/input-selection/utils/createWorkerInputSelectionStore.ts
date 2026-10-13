@@ -1,10 +1,9 @@
-import { updateRemoteElementProperty } from '@remote-dom/core/elements';
-
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 import { type WorkerInputSelectionStore } from '@/polyfills/input-selection/types/WorkerInputSelectionStore';
 import { resolveOptimisticInputSelectionState } from '@/polyfills/input-selection/utils/resolveOptimisticInputSelectionState';
 import { createRemoteElementCommandQueue } from '@/polyfills/utils/createRemoteElementCommandQueue';
+import { createRemoteElementHostSubscriptions } from '@/polyfills/utils/createRemoteElementHostSubscriptions';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
 import { type InputSelectionSnapshot } from '@/types/InputSelectionSnapshot';
 import { type InputSelectionState } from '@/types/InputSelectionState';
@@ -15,86 +14,34 @@ export const createWorkerInputSelectionStore =
       { bridgeProperty: INPUT_SELECTION_BRIDGE_PROPERTIES.request },
     );
     const hostSelectionStates = new WeakMap<object, InputSelectionState>();
-    const hostSelectionSubscriptions = new WeakMap<
-      object,
-      (snapshot: InputSelectionSnapshot) => void
-    >();
-    const trackedElements = new Set<object>();
-
     let rootElement: object | null = null;
-    let hasScheduledDetachedElementSweep = false;
 
-    const renewHostSelectionSubscription = (element: object): void => {
-      const handleSelectionUpdate = (snapshot: InputSelectionSnapshot) => {
-        const isLatestSubscription =
-          hostSelectionSubscriptions.get(element) === handleSelectionUpdate;
-
-        if (
-          !isLatestSubscription ||
-          !isElementUnderRemoteRoot(element, rootElement)
-        ) {
-          return;
-        }
-
-        hostSelectionStates.set(element, snapshot);
-        trackedElements.add(element);
-        commandQueue.acknowledgeCommands({
-          element,
-          acknowledgedCommandSequence: snapshot.selectionCommandSequence ?? 0,
-        });
-      };
-
-      hostSelectionSubscriptions.set(element, handleSelectionUpdate);
-      updateRemoteElementProperty(
-        element as Element,
-        INPUT_SELECTION_BRIDGE_PROPERTIES.update,
-        handleSelectionUpdate,
-      );
-    };
+    const hostSelectionSubscriptions =
+      createRemoteElementHostSubscriptions<InputSelectionSnapshot>({
+        updateBridgeProperty: INPUT_SELECTION_BRIDGE_PROPERTIES.update,
+        readRootElement: () => rootElement,
+        onHostUpdate: ({ element, hostUpdate: snapshot }) => {
+          hostSelectionStates.set(element, snapshot);
+          hostSelectionSubscriptions.trackElement(element);
+          commandQueue.acknowledgeCommands({
+            element,
+            acknowledgedCommandSequence: snapshot.selectionCommandSequence ?? 0,
+          });
+        },
+        onForgetElement: (element) => {
+          hostSelectionStates.delete(element);
+          commandQueue.discardPendingCommands(element);
+        },
+      });
 
     const subscribeToHostSelection = (element: object): boolean => {
       if (!isElementUnderRemoteRoot(element, rootElement)) {
         return false;
       }
 
-      trackedElements.add(element);
-
-      if (!hostSelectionSubscriptions.has(element)) {
-        renewHostSelectionSubscription(element);
-      }
+      hostSelectionSubscriptions.subscribe(element);
 
       return true;
-    };
-
-    const forgetDetachedElement = (element: object): void => {
-      trackedElements.delete(element);
-      hostSelectionStates.delete(element);
-      commandQueue.discardPendingCommands(element);
-
-      if (hostSelectionSubscriptions.has(element)) {
-        renewHostSelectionSubscription(element);
-      }
-    };
-
-    const sweepDetachedElements = (): void => {
-      hasScheduledDetachedElementSweep = false;
-
-      for (const element of trackedElements) {
-        if (isElementUnderRemoteRoot(element, rootElement)) {
-          continue;
-        }
-
-        forgetDetachedElement(element);
-      }
-    };
-
-    const scheduleDetachedElementSweep = (): void => {
-      if (hasScheduledDetachedElementSweep || trackedElements.size === 0) {
-        return;
-      }
-
-      hasScheduledDetachedElementSweep = true;
-      queueMicrotask(sweepDetachedElements);
     };
 
     const applySnapshot = ({
@@ -107,7 +54,7 @@ export const createWorkerInputSelectionStore =
       hostSelectionStates.set(element, state);
 
       if (isElementUnderRemoteRoot(element, rootElement)) {
-        trackedElements.add(element);
+        hostSelectionSubscriptions.trackElement(element);
       }
     };
 
@@ -140,7 +87,8 @@ export const createWorkerInputSelectionStore =
         rootElement = nextRootElement;
       },
       applySnapshot,
-      scheduleDetachedElementSweep,
+      scheduleDetachedElementSweep:
+        hostSelectionSubscriptions.scheduleDetachedElementSweep,
       read: readSelection,
       request: requestSelection,
     };
