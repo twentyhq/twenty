@@ -14,7 +14,6 @@ import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/app
 import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
-import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -31,7 +30,6 @@ export class MarketplaceQueryService {
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
   ) {}
 
   async findManyMarketplaceApps({
@@ -56,20 +54,11 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
-    const appsMatchingVetting = isDefined(isVetted)
-      ? apps.filter((app) => app.isVetted === isVetted)
-      : apps;
+    if (!isDefined(isVetted)) {
+      return apps;
+    }
 
-    const serverCompatibilities =
-      await this.applicationVersionValidationService.validateManyServerCompatibilities(
-        appsMatchingVetting.map(
-          (app) => app.requiredServerVersionRange ?? undefined,
-        ),
-      );
-
-    return appsMatchingVetting.filter(
-      (_app, index) => serverCompatibilities[index].compatible,
-    );
+    return apps.filter((app) => app.isVetted === isVetted);
   }
 
   async findMarketplaceAppDetail(
