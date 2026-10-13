@@ -14,6 +14,8 @@ const parseSemver = (version: string): ParsedSemver => {
   };
 };
 
+const NUMERIC_IDENTIFIER_REGEX = /^\d+$/;
+
 const comparePreReleaseParts = ({
   partA,
   partB,
@@ -29,11 +31,22 @@ const comparePreReleaseParts = ({
     return 1;
   }
 
-  const numberA = Number(partA);
-  const numberB = Number(partB);
-  const areBothNumeric = !Number.isNaN(numberA) && !Number.isNaN(numberB);
+  const isNumericA = NUMERIC_IDENTIFIER_REGEX.test(partA);
+  const isNumericB = NUMERIC_IDENTIFIER_REGEX.test(partB);
 
-  return areBothNumeric ? numberA - numberB : partA.localeCompare(partB);
+  if (isNumericA && isNumericB) {
+    return Number(partA) - Number(partB);
+  }
+
+  if (isNumericA !== isNumericB) {
+    return isNumericA ? -1 : 1;
+  }
+
+  if (partA === partB) {
+    return 0;
+  }
+
+  return partA < partB ? -1 : 1;
 };
 
 const comparePreReleases = ({

@@ -1,5 +1,8 @@
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
+const isNumberedBetaNewer = () =>
+  isNewerSemver('1.0.0-beta.11', '1.0.0-beta.2');
+
 describe('isNewerSemver', () => {
   it.each([
     ['1.0.1', '1.0.0', true],
@@ -25,6 +28,14 @@ describe('isNewerSemver', () => {
     expect(isNewerSemver('2.0.0-beta.10', '2.0.0-beta.9')).toBe(true);
     expect(isNewerSemver('2.0.0-rc.1', '2.0.0-beta.9')).toBe(true);
     expect(isNewerSemver('2.0.0-beta.1', '1.9.0')).toBe(true);
+  });
+
+  it('orders pre-release identifiers like SemVer', () => {
+    expect(isNewerSemver('1.0.0-beta.1a', '1.0.0-beta.2')).toBe(true);
+    expect(isNewerSemver('1.0.0-beta.2', '1.0.0-beta.1a')).toBe(false);
+    expect(isNewerSemver('1.0.0-beta', '1.0.0-alpha')).toBe(true);
+    expect(isNewerSemver('1.0.0-Beta', '1.0.0-alpha')).toBe(false);
+    expect(isNumberedBetaNewer()).toBe(true);
   });
 
   it('ignores build metadata and a leading v', () => {
