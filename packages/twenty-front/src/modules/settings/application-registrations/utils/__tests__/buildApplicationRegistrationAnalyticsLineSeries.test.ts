@@ -1,13 +1,14 @@
 import { buildApplicationRegistrationAnalyticsLineSeries } from '@/settings/application-registrations/utils/buildApplicationRegistrationAnalyticsLineSeries';
 
-const buildPoint = (
-  date: string,
-  values: Partial<{
-    functionExecutions: number;
-    functionErrors: number;
-    creditsCharged: number;
-  }> = {},
-) => ({
+const buildPoint = ({
+  date,
+  ...values
+}: {
+  date: string;
+  functionExecutions?: number;
+  functionErrors?: number;
+  creditsCharged?: number;
+}) => ({
   date,
   installSucceeded: 0,
   installFailed: 0,
@@ -27,8 +28,12 @@ describe('buildApplicationRegistrationAnalyticsLineSeries', () => {
   it('should build one series per definition with short date labels', () => {
     const series = buildApplicationRegistrationAnalyticsLineSeries({
       timeSeries: [
-        buildPoint('2026-10-01', { functionExecutions: 12, functionErrors: 1 }),
-        buildPoint('2026-10-02', { functionExecutions: 30 }),
+        buildPoint({
+          date: '2026-10-01',
+          functionExecutions: 12,
+          functionErrors: 1,
+        }),
+        buildPoint({ date: '2026-10-02', functionExecutions: 30 }),
       ],
       seriesDefinitions: [
         { key: 'executions', label: 'Executions', field: 'functionExecutions' },

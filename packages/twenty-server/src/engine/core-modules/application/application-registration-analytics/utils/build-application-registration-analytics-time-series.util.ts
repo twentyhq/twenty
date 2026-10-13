@@ -7,16 +7,9 @@ import {
 
 import { type ApplicationRegistrationAnalyticsTimeSeriesPointDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
 import { type ApplicationRegistrationAnalyticsCounts } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-analytics-counts.type';
-import {
-  addMetricRowToApplicationRegistrationAnalyticsCounts,
-  type ApplicationRegistrationMetricSumRow,
-} from 'src/engine/core-modules/application/application-registration-analytics/utils/add-metric-row-to-application-registration-analytics-counts.util';
+import { type ApplicationRegistrationMetricDailySumRow } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-metric-daily-sum-row.type';
+import { addMetricRowToApplicationRegistrationAnalyticsCounts } from 'src/engine/core-modules/application/application-registration-analytics/utils/add-metric-row-to-application-registration-analytics-counts.util';
 import { createEmptyApplicationRegistrationAnalyticsCounts } from 'src/engine/core-modules/application/application-registration-analytics/utils/create-empty-application-registration-analytics-counts.util';
-
-export type ApplicationRegistrationMetricDailySumRow =
-  ApplicationRegistrationMetricSumRow & {
-    date: string;
-  };
 
 // One point per calendar day of the period, so charts never skip quiet days
 export const buildApplicationRegistrationAnalyticsTimeSeries = ({

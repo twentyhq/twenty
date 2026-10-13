@@ -2,9 +2,9 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { resolveApplicationRegistrationAnalyticsPeriod } from 'src/engine/core-modules/application/application-registration-analytics/utils/resolve-application-registration-analytics-period.util';
+import { resolveApplicationRegistrationAnalyticsPeriodOrThrow } from 'src/engine/core-modules/application/application-registration-analytics/utils/resolve-application-registration-analytics-period-or-throw.util';
 
-describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
+describe('resolveApplicationRegistrationAnalyticsPeriodOrThrow', () => {
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2026-10-12T12:00:00.000Z'));
   });
@@ -14,7 +14,7 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
   });
 
   it('should default to the last 30 complete UTC days', () => {
-    expect(resolveApplicationRegistrationAnalyticsPeriod({})).toEqual({
+    expect(resolveApplicationRegistrationAnalyticsPeriodOrThrow({})).toEqual({
       periodStart: new Date('2026-09-12T00:00:00.000Z'),
       periodEnd: new Date('2026-10-12T00:00:00.000Z'),
     });
@@ -22,7 +22,7 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
 
   it('should snap an explicit unaligned period to whole UTC days', () => {
     expect(
-      resolveApplicationRegistrationAnalyticsPeriod({
+      resolveApplicationRegistrationAnalyticsPeriodOrThrow({
         periodStart: new Date('2026-10-01T13:45:12.345Z'),
         periodEnd: new Date('2026-10-05T08:00:00.000Z'),
       }),
@@ -34,7 +34,7 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
 
   it('should exclude the current, still accumulating day', () => {
     expect(
-      resolveApplicationRegistrationAnalyticsPeriod({
+      resolveApplicationRegistrationAnalyticsPeriodOrThrow({
         periodStart: new Date('2026-10-10T00:00:00.000Z'),
         periodEnd: new Date('2026-10-12T11:59:00.000Z'),
       }),
@@ -46,7 +46,7 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
 
   it('should resolve to an empty period when only the current day is requested', () => {
     expect(
-      resolveApplicationRegistrationAnalyticsPeriod({
+      resolveApplicationRegistrationAnalyticsPeriodOrThrow({
         periodStart: new Date('2026-10-12T08:00:00.000Z'),
         periodEnd: new Date('2026-10-12T10:00:00.000Z'),
       }),
@@ -61,7 +61,10 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
     const periodEnd = new Date('2026-02-01T00:00:00.000Z');
 
     expect(
-      resolveApplicationRegistrationAnalyticsPeriod({ periodStart, periodEnd }),
+      resolveApplicationRegistrationAnalyticsPeriodOrThrow({
+        periodStart,
+        periodEnd,
+      }),
     ).toEqual({ periodStart, periodEnd });
   });
 
@@ -69,7 +72,7 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
     const periodEnd = new Date('2026-03-31T00:00:00.000Z');
 
     expect(
-      resolveApplicationRegistrationAnalyticsPeriod({ periodEnd }),
+      resolveApplicationRegistrationAnalyticsPeriodOrThrow({ periodEnd }),
     ).toEqual({
       periodStart: new Date('2026-03-01T00:00:00.000Z'),
       periodEnd,
@@ -78,7 +81,7 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
 
   it('should reject a period whose start is after its end', () => {
     expect(() =>
-      resolveApplicationRegistrationAnalyticsPeriod({
+      resolveApplicationRegistrationAnalyticsPeriodOrThrow({
         periodStart: new Date('2026-02-01T00:00:00.000Z'),
         periodEnd: new Date('2026-01-01T00:00:00.000Z'),
       }),
@@ -92,7 +95,7 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
 
   it('should reject a period longer than a year', () => {
     expect(() =>
-      resolveApplicationRegistrationAnalyticsPeriod({
+      resolveApplicationRegistrationAnalyticsPeriodOrThrow({
         periodStart: new Date('0001-01-01T00:00:00.000Z'),
         periodEnd: new Date('9999-12-31T00:00:00.000Z'),
       }),
@@ -104,7 +107,10 @@ describe('resolveApplicationRegistrationAnalyticsPeriod', () => {
     const periodEnd = new Date('2026-10-12T00:00:00.000Z');
 
     expect(
-      resolveApplicationRegistrationAnalyticsPeriod({ periodStart, periodEnd }),
+      resolveApplicationRegistrationAnalyticsPeriodOrThrow({
+        periodStart,
+        periodEnd,
+      }),
     ).toEqual({ periodStart, periodEnd });
   });
 });

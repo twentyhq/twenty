@@ -118,7 +118,7 @@ export class AppBillingService {
     application,
     charge,
   }: {
-    application: FlatApplication | undefined;
+    application: Pick<FlatApplication, 'billing'> | undefined;
     charge: ChargeDto;
   }): AppChargeableOperationType {
     if (!isDefined(charge.operation)) {

@@ -34,7 +34,7 @@ import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/applica
 import { ApplicationRegistrationAnalyticsService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.service';
 import { ApplicationRegistrationAnalyticsDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
 import { ApplicationRegistrationAnalyticsInput } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.input';
-import { resolveApplicationRegistrationAnalyticsPeriod } from 'src/engine/core-modules/application/application-registration-analytics/utils/resolve-application-registration-analytics-period.util';
+import { resolveApplicationRegistrationAnalyticsPeriodOrThrow } from 'src/engine/core-modules/application/application-registration-analytics/utils/resolve-application-registration-analytics-period-or-throw.util';
 import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
@@ -255,7 +255,7 @@ export class ApplicationRegistrationResolver {
   ): Promise<ApplicationRegistrationAnalyticsDTO> {
     return this.applicationRegistrationAnalyticsService.getAnalytics({
       applicationRegistrationId: input.id,
-      ...resolveApplicationRegistrationAnalyticsPeriod(input),
+      ...resolveApplicationRegistrationAnalyticsPeriodOrThrow(input),
     });
   }
 

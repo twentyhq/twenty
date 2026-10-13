@@ -1,11 +1,8 @@
 import { APPLICATION_REGISTRATION_ANALYTICS_BREAKDOWN_LIMIT } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-analytics-breakdown-limit.constant';
 import { type ApplicationRegistrationAnalyticsBreakdownItemDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
+import { type ApplicationRegistrationAnalyticsBreakdownGroupBy } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-analytics-breakdown-group-by.type';
 import { type ApplicationRegistrationMetricCellRow } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-metric-cell-row.type';
 import { type ApplicationRegistrationMetricName } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-metric-name.type';
-
-export type ApplicationRegistrationAnalyticsBreakdownGroupBy =
-  | 'dimension'
-  | 'context';
 
 export const buildApplicationRegistrationAnalyticsBreakdown = ({
   rows,

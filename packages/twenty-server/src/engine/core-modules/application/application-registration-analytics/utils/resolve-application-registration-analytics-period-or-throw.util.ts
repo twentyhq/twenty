@@ -9,7 +9,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 
 // Bounded because the time series allocates one point per day of the period
-export const resolveApplicationRegistrationAnalyticsPeriod = ({
+export const resolveApplicationRegistrationAnalyticsPeriodOrThrow = ({
   periodStart,
   periodEnd,
 }: {
