@@ -1,3 +1,4 @@
+import { type ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
@@ -97,7 +98,9 @@ describe('record export lifecycle (integration)', () => {
       SEED_APPLE_WORKSPACE_ID,
       apiKey.id,
     );
-    if (!isDefined(credentials)) throw new Error('API key token missing');
+    if (!isDefined(credentials)) {
+      throw new Error('API key token missing');
+    }
     return { id: apiKey.id, token: credentials.token };
   };
   const authenticationHeaders = (token: string): Record<string, string> =>
@@ -467,6 +470,32 @@ describe('record export lifecycle (integration)', () => {
     const requester = await createApiKey();
     const ready = await exportToCompletion(input, requester.token);
     await changeRole({ canAccessAllTools: false });
+    await download(ready).expect(403);
+  });
+
+  it('invalidates an API key export when reassigned to a role that can still export', async () => {
+    const requester = await createApiKey();
+    const adminRole = await findOneRoleByLabel({ label: 'Admin' });
+    const ready = await exportToCompletion(input, requester.token);
+    const payload = await authorization(ready);
+    await expect(
+      exports.assertPermissionsUnchanged(payload),
+    ).resolves.toBeUndefined();
+
+    await getAppProviderByClassName<ApiKeyRoleService>(
+      'ApiKeyRoleService',
+    ).assignRoleToApiKey({
+      apiKeyId: requester.id,
+      roleId: adminRole.id,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+
+    await expect(exports.resolveRequester(payload)).resolves.toMatchObject({
+      apiKey: { id: requester.id },
+    });
+    await expect(exports.assertPermissionsUnchanged(payload)).rejects.toThrow(
+      'Access permissions have changed.',
+    );
     await download(ready).expect(403);
   });
 
@@ -1004,8 +1033,9 @@ describe('record export lifecycle (integration)', () => {
     const requester = await query.resolveRequester(
       await authorization(recordExport),
     );
-    if (!isUserAuthContext(requester))
+    if (!isUserAuthContext(requester)) {
       throw new Error('Expected user requester');
+    }
     const tokens =
       getAppProviderByClassName<AccessTokenService>('AccessTokenService');
     const otherToken = await tokens.generateAccessToken({
@@ -1029,8 +1059,9 @@ describe('record export lifecycle (integration)', () => {
       const requester = await query.resolveRequester(
         await authorization(ready),
       );
-      if (!isUserAuthContext(requester))
+      if (!isUserAuthContext(requester)) {
         throw new Error('Expected user requester');
+      }
       const sessions =
         getAppProviderByClassName<UserSessionService>('UserSessionService');
       const createSession = async () => {
