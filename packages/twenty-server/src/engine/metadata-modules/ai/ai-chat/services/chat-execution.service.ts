@@ -24,7 +24,7 @@ import {
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined, sortKeysDeeply } from 'twenty-shared/utils';
 
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -284,7 +284,7 @@ export class ChatExecutionService {
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace.id,
       ));
 
@@ -400,7 +400,7 @@ export class ChatExecutionService {
 
     processedMessages = injectChatMessageSenders({
       messages: processedMessages,
-      currentUserWorkspaceId: userWorkspaceId,
+      currentWorkspaceMemberId: authorization.authContext.workspaceMemberId,
     });
     processedMessages = injectMessageTimestamps(
       processedMessages,
@@ -428,7 +428,7 @@ export class ChatExecutionService {
     const systemMessage: SystemModelMessage = {
       role: 'system',
       content: systemPrompt,
-      providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
+      providerOptions: getCacheProviderOptions(modelConfig),
     };
 
     const sanitizedMessages = this.sanitizeMessagePartsForModel(
@@ -571,7 +571,10 @@ export class ChatExecutionService {
         stepStartedAt = performance.now();
 
         return {
-          messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
+          messages: injectCacheBreakpoint(
+            messages.map(sortKeysDeeply),
+            modelConfig,
+          ),
         };
       },
       onChunk: ({ chunk }) => {
@@ -794,6 +797,8 @@ export class ChatExecutionService {
         );
       case 'listView':
         return this.buildListViewContext(browsingContext);
+      case 'settingsPage':
+        return this.buildSettingsPageContext(workspace, browsingContext.path);
       default:
         // browsing context comes from unvalidated client JSON
         return '';
@@ -847,5 +852,17 @@ export class ChatExecutionService {
     context += `\nUse get_view_query_parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
 
     return context;
+  }
+
+  private buildSettingsPageContext(
+    workspace: WorkspaceEntity,
+    path: string,
+  ): string {
+    const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+      pathname: path,
+    });
+
+    return `The user is on the settings page ${resourceUrl}. When they talk about what this page shows (for example "this rule" or "my rule"), they mean the item at this path.`;
   }
 }

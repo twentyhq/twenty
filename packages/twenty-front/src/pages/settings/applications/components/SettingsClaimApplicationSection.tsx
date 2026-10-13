@@ -150,7 +150,7 @@ export const SettingsClaimApplicationSection = () => {
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error ? error.message : t`Could not run the lookup`,
       });
@@ -176,7 +176,7 @@ export const SettingsClaimApplicationSection = () => {
       window.location.href = authorizationUrl;
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -189,12 +189,12 @@ export const SettingsClaimApplicationSection = () => {
     try {
       await syncCatalog();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Catalog sync started. Try your lookup again in a moment.`,
       });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message

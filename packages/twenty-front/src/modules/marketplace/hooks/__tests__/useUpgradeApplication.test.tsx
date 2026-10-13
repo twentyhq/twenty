@@ -102,7 +102,7 @@ describe('useUpgradeApplication', () => {
 
     await waitFor(() => expect(result.current.isUpgrading).toBe(false));
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'success',
+      status: 'success',
       children: 'Application upgraded successfully.',
     });
     expect(onCompleted).toHaveBeenCalledTimes(1);
@@ -137,7 +137,7 @@ describe('useUpgradeApplication', () => {
 
     await waitFor(() => expect(result.current.isUpgrading).toBe(false));
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'Upgrade failed for this application.',
     });
     expect(onCompleted).not.toHaveBeenCalled();

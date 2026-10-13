@@ -26,6 +26,7 @@ import { type ValidationRuleViolation } from '@/validation-rules/types/Validatio
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { getValidationRuleViolationsFromError } from '@/validation-rules/utils/getValidationRuleViolationsFromError';
+import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/groupValidationRuleViolationsByField';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
@@ -35,7 +36,7 @@ import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
+import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -45,14 +46,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-`;
-
-const StyledValidationRuleError = styled.div`
-  background: ${themeCssVariables.background.danger};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledValidationRuleErrors = styled.div`
@@ -165,10 +158,19 @@ const SidePanelRecordCreationForm = ({
 
   const hiddenFieldsCount = hiddenFieldMetadataItems.length;
 
-  const validationRuleViolations = [
-    ...draftValidationRuleViolations,
-    ...serverValidationRuleViolations,
-  ];
+  const { violationsByFieldMetadataId, recordViolations } =
+    groupValidationRuleViolationsByField({
+      violations: [
+        ...draftValidationRuleViolations,
+        ...serverValidationRuleViolations,
+      ],
+      displayedFieldMetadataIds: [
+        ...visibleFieldMetadataItems,
+        ...(recordCreationFormAreHiddenFieldsShown
+          ? hiddenFieldMetadataItems
+          : []),
+      ].map((fieldMetadataItem) => fieldMetadataItem.id),
+    });
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
     computeDraftValidationRuleViolations({
@@ -297,6 +299,9 @@ const SidePanelRecordCreationForm = ({
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={visibleFieldMetadataItems}
           draftRecord={draftRecord}
+          validationRuleViolationsByFieldMetadataId={
+            violationsByFieldMetadataId
+          }
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
         />
@@ -327,17 +332,20 @@ const SidePanelRecordCreationForm = ({
             objectMetadataItem={objectMetadataItem}
             fieldMetadataItems={hiddenFieldMetadataItems}
             draftRecord={draftRecord}
+            validationRuleViolationsByFieldMetadataId={
+              violationsByFieldMetadataId
+            }
             onFieldValueChange={handleFieldValueChange}
             onFieldValueClear={handleFieldValueClear}
           />
         )}
       </StyledContent>
-      {validationRuleViolations.length > 0 && (
+      {recordViolations.length > 0 && (
         <StyledValidationRuleErrors>
-          {validationRuleViolations.map((violation) => (
-            <StyledValidationRuleError key={violation.ruleId} role="alert">
+          {recordViolations.map((violation) => (
+            <InlineBanner key={violation.ruleId} status="error" role="alert">
               {violation.message}
-            </StyledValidationRuleError>
+            </InlineBanner>
           ))}
         </StyledValidationRuleErrors>
       )}

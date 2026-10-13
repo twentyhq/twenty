@@ -43,7 +43,7 @@ const fieldReferenceSchema = z.looseObject({
   fieldMetadataId: z.never().optional(),
 });
 
-const stepFilterManifestSchema = stepFilterSchema
+export const workflowStepFilterManifestSchema = stepFilterSchema
   .omit({ fieldMetadataId: true })
   .extend({ fieldMetadataUniversalIdentifier: z.uuid().optional() })
   .strict();
@@ -159,13 +159,13 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
   stepSchema(
     'FILTER',
     workflowFilterActionSettingsSchema.shape.input.extend({
-      stepFilters: z.array(stepFilterManifestSchema),
+      stepFilters: z.array(workflowStepFilterManifestSchema),
     }),
   ),
   stepSchema(
     'IF_ELSE',
     workflowIfElseActionSettingsSchema.shape.input.extend({
-      stepFilters: z.array(stepFilterManifestSchema),
+      stepFilters: z.array(workflowStepFilterManifestSchema),
     }),
   ),
   stepSchema(

@@ -537,7 +537,7 @@ export const LogConsole = () => {
     setLogConsoleDisplayMode('closed');
     setIsLogConsoleFullScreen(false);
     enqueueToast({
-      variant: 'info',
+      status: 'info',
       children: t`Logs console hidden. Press ${toggleHotkeyLabel} to open it again.`,
     });
   };

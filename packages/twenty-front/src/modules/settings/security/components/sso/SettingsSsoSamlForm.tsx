@@ -64,7 +64,7 @@ export const SettingsSsoSamlForm = () => {
       e.target.value = '';
       if (!samlMetadataParsed.success) {
         return enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Invalid file: ${samlMetadataParsed.reason}`,
           duration: 5000,
         });
@@ -101,7 +101,7 @@ export const SettingsSsoSamlForm = () => {
     );
     if (!response.ok) {
       return enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Metadata file generation failed`,
         duration: 2000,
       });

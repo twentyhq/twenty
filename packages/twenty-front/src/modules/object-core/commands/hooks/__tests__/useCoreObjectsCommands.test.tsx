@@ -18,12 +18,8 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const mockIsCoreEnabled = jest.fn();
 const mockHasPermission = jest.fn();
 
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsCoreEnabled(),
-}));
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
   useHasPermissionFlag: () => mockHasPermission(),
 }));
@@ -66,7 +62,6 @@ const renderCommands = () => {
 
 describe('useCoreObjectsCommands', () => {
   beforeEach(() => {
-    mockIsCoreEnabled.mockReturnValue(true);
     mockHasPermission.mockReturnValue(true);
     jotaiStore.set(coreWorkflowsFilterSettingsState.atom, {});
   });
@@ -88,13 +83,5 @@ describe('useCoreObjectsCommands', () => {
     mockHasPermission.mockReturnValue(false);
     const { result } = renderCommands();
     expect(result.current.shouldDisplayCoreWorkflowsDeleteCommand).toBe(false);
-  });
-
-  it('keeps core commands hidden with the flag off', () => {
-    mockIsCoreEnabled.mockReturnValue(false);
-    const { result } = renderCommands();
-    expect(result.current.coreObjectCommandIds).toEqual([]);
-    expect(result.current.coreSelectionCommandIds).toEqual([]);
-    expect(result.current.coreSelectionSectionContext).toBeUndefined();
   });
 });

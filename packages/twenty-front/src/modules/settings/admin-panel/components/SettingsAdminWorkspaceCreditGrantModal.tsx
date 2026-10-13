@@ -122,7 +122,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       });
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Granted ${parsedAmount} credits to this workspace.`,
       });
       handleClose();

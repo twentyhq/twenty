@@ -33,8 +33,8 @@ export const createGetToolCatalogTool = (
   toolRegistry: ToolRegistryService,
   workspaceId: string,
   roleId: string,
-  options?: {
-    rolePermissionConfig?: RolePermissionConfig;
+  options: {
+    rolePermissionConfig: RolePermissionConfig;
     userId?: string;
     userWorkspaceId?: string;
     excludeTools?: Set<string>;
@@ -57,7 +57,7 @@ export const createGetToolCatalogTool = (
       ? new Set(parameters.categories)
       : undefined;
 
-    const excludeSet = options?.excludeTools;
+    const excludeSet = options.excludeTools;
 
     const catalog: Record<
       string,

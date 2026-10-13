@@ -51,7 +51,7 @@ export const useUpgradeApplication = ({
     (jobStatus: TrackedJobStatus) => {
       if (jobStatus.state === JobState.FAILED) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: isNonEmptyString(jobStatus.failedReason)
             ? jobStatus.failedReason
             : t`Failed to upgrade the application.`,
@@ -60,7 +60,7 @@ export const useUpgradeApplication = ({
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Application upgraded successfully.`,
       });
       onCompleted?.();
@@ -92,7 +92,7 @@ export const useUpgradeApplication = ({
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: graphqlMessage ?? t`Failed to upgrade the application.`,
       });
     }

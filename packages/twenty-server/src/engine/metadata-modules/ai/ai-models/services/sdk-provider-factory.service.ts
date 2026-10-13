@@ -10,6 +10,7 @@ import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { createTypeSafeAi } from '@ai-sdk/typesafe-ai';
 import { createXai, type XaiProvider } from '@ai-sdk/xai';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   wrapLanguageModel,
   type LanguageModel,
@@ -178,13 +179,15 @@ export class SdkProviderFactoryService {
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
     const region = config.region ?? 'us-east-1';
-    const useRoleCredentials = config.authType === 'role';
+    const useApiKey = isNonEmptyString(config.apiKey);
+    const useRoleCredentials = !useApiKey && config.authType === 'role';
     const awsCredentialProvider = useRoleCredentials
       ? fromNodeProviderChain({ clientConfig: { region } })
       : undefined;
 
     const provider = createAmazonBedrock({
       region,
+      ...(useApiKey && { apiKey: config.apiKey }),
       ...(awsCredentialProvider && {
         credentialProvider: async () => {
           const credentials = await awsCredentialProvider();
@@ -196,7 +199,8 @@ export class SdkProviderFactoryService {
           };
         },
       }),
-      ...(!useRoleCredentials &&
+      ...(!useApiKey &&
+        !useRoleCredentials &&
         config.accessKeyId &&
         config.secretAccessKey && {
           accessKeyId: config.accessKeyId,

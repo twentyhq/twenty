@@ -51,10 +51,12 @@ const StyledMenuItemContainer = styled.div<{
 `;
 
 const StyledPrimaryListItem = styled(ListItem)`
-  background: transparent;
-  flex: 1;
-  min-width: 0;
-  padding-inline: 0;
+  && {
+    background: transparent;
+    flex: 1;
+    min-width: 0;
+    padding-inline: 0;
+  }
 `;
 
 export const MenuItemWithOptionDropdown = ({
@@ -64,6 +66,7 @@ export const MenuItemWithOptionDropdown = ({
   dropdownContent,
   dropdownId,
   LeftIcon,
+  LeftComponent,
   RightIcon,
   onClick,
   onMouseEnter,
@@ -104,7 +107,8 @@ export const MenuItemWithOptionDropdown = ({
         color={accent === 'danger' ? 'danger' : 'neutral'}
         focused={selected}
         startIcon={
-          isDefined(LeftIcon) && <LeftIcon size={theme.icon.size.md} />
+          LeftComponent ??
+          (isDefined(LeftIcon) && <LeftIcon size={theme.icon.size.md} />)
         }
         hasSubmenu={hasSubMenu}
       >

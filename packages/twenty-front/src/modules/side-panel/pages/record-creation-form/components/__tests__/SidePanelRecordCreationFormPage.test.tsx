@@ -1,7 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type createElement, type Fragment, type ReactNode } from 'react';
@@ -164,23 +164,49 @@ jest.mock(
       RecordFormFieldInputs: ({
         fieldMetadataItems,
         draftRecord,
+        validationRuleViolationsByFieldMetadataId = {},
         onFieldValueChange,
       }: {
         fieldMetadataItems: { id: string; name: string; label: string }[];
         draftRecord: Record<string, unknown>;
+        validationRuleViolationsByFieldMetadataId?: Record<
+          string,
+          { ruleId: string; message: string }[]
+        >;
         onFieldValueChange: (gqlFieldName: string, value: string) => void;
       }) =>
         ReactForMock.createElement(
           ReactForMock.Fragment,
           null,
           fieldMetadataItems.map((fieldMetadataItem) =>
-            ReactForMock.createElement('input', {
-              key: fieldMetadataItem.id,
-              'aria-label': fieldMetadataItem.label,
-              value: (draftRecord[fieldMetadataItem.name] as string) ?? '',
-              onChange: (event: { target: { value: string } }) =>
-                onFieldValueChange(fieldMetadataItem.name, event.target.value),
-            }),
+            ReactForMock.createElement(
+              'div',
+              {
+                key: fieldMetadataItem.id,
+                role: 'group',
+                'aria-label': `${fieldMetadataItem.label} field`,
+              },
+              ReactForMock.createElement('input', {
+                'aria-label': fieldMetadataItem.label,
+                value: (draftRecord[fieldMetadataItem.name] as string) ?? '',
+                onChange: (event: { target: { value: string } }) =>
+                  onFieldValueChange(
+                    fieldMetadataItem.name,
+                    event.target.value,
+                  ),
+              }),
+              (
+                validationRuleViolationsByFieldMetadataId[
+                  fieldMetadataItem.id
+                ] ?? []
+              ).map((violation) =>
+                ReactForMock.createElement(
+                  'div',
+                  { key: violation.ruleId, role: 'alert' },
+                  violation.message,
+                ),
+              ),
+            ),
           ),
         ),
     };
@@ -349,7 +375,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(screen.getByLabelText('Nickname')).toHaveValue('Big Apple');
   });
 
-  it('reveals a hidden field targeted by a validation error and keeps the message', async () => {
+  it('reveals a hidden field targeted by a validation error and shows the message under it', async () => {
     const user = userEvent.setup();
 
     mockValidationRules = [NICKNAME_RULE];
@@ -358,14 +384,16 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'A company needs a nickname',
-    );
+    expect(
+      within(screen.getByRole('group', { name: 'Nickname field' })).getByRole(
+        'alert',
+      ),
+    ).toHaveTextContent('A company needs a nickname');
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(settleRecordCreationDraft).not.toHaveBeenCalled();
   });
 
-  it('keeps hidden fields collapsed for a validation error on the whole record', async () => {
+  it('keeps hidden fields collapsed and shows a validation error on the whole record below the fields', async () => {
     const user = userEvent.setup();
 
     mockValidationRules = [{ ...NICKNAME_RULE, errorFieldMetadataId: null }];
@@ -377,10 +405,11 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(screen.getByRole('alert')).toHaveTextContent(
       'A company needs a nickname',
     );
+    expect(screen.getByRole('alert').closest('[role="group"]')).toBeNull();
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
 
-  it('reveals a hidden field the server rejected through a validation rule and shows the message in the form', async () => {
+  it('reveals a hidden field the server rejected through a validation rule and shows the message under it', async () => {
     const user = userEvent.setup();
 
     settleRecordCreationDraft.mockResolvedValue({
@@ -397,13 +426,15 @@ describe('SidePanelRecordCreationFormPage', () => {
       draftRecord: {},
     });
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'A company needs a nickname',
-    );
+    expect(
+      within(screen.getByRole('group', { name: 'Nickname field' })).getByRole(
+        'alert',
+      ),
+    ).toHaveTextContent('A company needs a nickname');
     expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
-  it('keeps a message from the server while the user edits, until the next create', async () => {
+  it('keeps a message from the server under its field while the user edits, until the next create', async () => {
     const user = userEvent.setup();
 
     settleRecordCreationDraft.mockResolvedValueOnce({
@@ -415,9 +446,11 @@ describe('SidePanelRecordCreationFormPage', () => {
     await user.click(screen.getByTestId('record-creation-form-create-button'));
     await user.type(screen.getByLabelText('Domain'), 'apple.com');
 
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'A company needs a nickname',
-    );
+    expect(
+      within(screen.getByRole('group', { name: 'Name field' })).getByRole(
+        'alert',
+      ),
+    ).toHaveTextContent('A company needs a nickname');
 
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
@@ -437,7 +470,7 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error', children: 'Network error' }),
+      expect.objectContaining({ status: 'error', children: 'Network error' }),
     );
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });

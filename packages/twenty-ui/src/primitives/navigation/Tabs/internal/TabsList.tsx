@@ -9,7 +9,6 @@ import { focusNextEnabledTab } from './focusNextEnabledTab';
 
 export const TabsList = ({
   className,
-  children,
   onKeyDown,
   loopFocus = true,
   ...props
@@ -37,9 +36,6 @@ export const TabsList = ({
       loopFocus={loopFocus}
       onKeyDown={handleKeyDown}
       className={mergeClassNames(styles.list, className)}
-    >
-      {children}
-      <TabsPrimitive.Indicator className={styles.indicator} />
-    </TabsPrimitive.List>
+    />
   );
 };

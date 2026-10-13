@@ -16,7 +16,7 @@ const RadioExample = ({
   selected = false,
   ...props
 }: RadioProps & { selected?: boolean }) => (
-  <RadioGroup defaultValue={selected ? props.value : ''}>
+  <RadioGroup aria-label="Choice" defaultValue={selected ? props.value : ''}>
     <Radio {...props} />
   </RadioGroup>
 );
@@ -115,4 +115,20 @@ export const CardsCatalogDark: typeof Catalog = {
   ...CardsCatalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+export const PartsDocumentation: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <RadioGroup aria-label="Storage" defaultValue="ssd">
+      <Radio.Root value="ssd">
+        <Radio.Indicator keepMounted>✓</Radio.Indicator>
+        SSD
+      </Radio.Root>
+      <Radio.Root value="hdd">
+        <Radio.Indicator keepMounted>✓</Radio.Indicator>
+        HDD
+      </Radio.Root>
+    </RadioGroup>
+  ),
 };

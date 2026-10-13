@@ -163,6 +163,7 @@
   --t-font-color-light: color(display-p3 0.4 0.4 0.4);
   --t-font-color-extra-light: color(display-p3 0.298 0.298 0.298);
   --t-font-color-inverted: color(display-p3 0.09 0.09 0.09);
+  --t-font-color-on-accent: color(display-p3 1 1 1);
   --t-font-color-danger: color(display-p3 0.83 0.329 0.324);
   --t-font-size-xxs: 0.625rem;
   --t-font-size-xs: 0.85rem;
