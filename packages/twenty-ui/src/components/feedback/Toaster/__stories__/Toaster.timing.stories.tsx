@@ -7,6 +7,7 @@ import { ComponentDecorator } from '@ui/testing';
 import { ToasterRootReplacementExample } from './ToasterRootReplacementExample';
 import { ToasterSelfRemovingActionExample } from './ToasterSelfRemovingActionExample';
 import { ToasterTimingExample } from './ToasterTimingExample';
+import { DEFAULT_TIMING_DURATION } from './DefaultTimingDuration';
 import { type ToasterTimingExampleProps } from './ToasterTimingExampleProps';
 
 const meta: Meta<typeof ToasterTimingExample> = {
@@ -14,7 +15,7 @@ const meta: Meta<typeof ToasterTimingExample> = {
   title: 'UI/Components/Feedback/Toaster/Timing',
   component: ToasterTimingExample,
   decorators: [ComponentDecorator],
-  args: { duration: 1400, onCancel: fn(), onClose: fn() },
+  args: { duration: DEFAULT_TIMING_DURATION, onCancel: fn(), onClose: fn() },
   parameters: { container: { width: 600, height: 400 } },
 };
 
