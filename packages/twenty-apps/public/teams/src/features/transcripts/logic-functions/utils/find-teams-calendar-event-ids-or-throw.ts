@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { TEAMS_CALENDAR_EVENT_LOOKUP_CONCURRENCY } from 'src/features/transcripts/logic-functions/constants/teams-calendar-event-lookup-concurrency';
 import { TWENTY_QUERY_MAX_RECORDS } from 'src/features/transcripts/logic-functions/constants/twenty-query-max-records';
 import { type CalendarChannelEventAssociation } from 'src/features/transcripts/logic-functions/types/calendar-channel-event-association.type';
 import { type CalendarEvent } from 'src/features/transcripts/logic-functions/types/calendar-event.type';
@@ -130,21 +131,28 @@ const addMissingICalUIdsOrThrow = async ({
   accessToken: string;
   references: TeamsCalendarReference[];
 }): Promise<TeamsCalendarReference[]> => {
+  const missingEventExternalIds = [
+    ...new Set(
+      references
+        .filter(({ iCalUId }) => !isDefined(iCalUId))
+        .map(({ eventExternalId }) => eventExternalId),
+    ),
+  ];
   const iCalUIdsByEventExternalId = new Map<string, string | undefined>();
 
-  for (const { eventExternalId, iCalUId } of references) {
-    if (
-      !isDefined(iCalUId) &&
-      !iCalUIdsByEventExternalId.has(eventExternalId)
-    ) {
-      iCalUIdsByEventExternalId.set(
-        eventExternalId,
-        await getTeamsCalendarEventICalUIdOrThrow({
-          accessToken,
-          eventId: eventExternalId,
-        }),
-      );
-    }
+  for (const eventExternalIdBatch of chunkIntoBatches(
+    missingEventExternalIds,
+    TEAMS_CALENDAR_EVENT_LOOKUP_CONCURRENCY,
+  )) {
+    const iCalUIds = await Promise.all(
+      eventExternalIdBatch.map((eventId) =>
+        getTeamsCalendarEventICalUIdOrThrow({ accessToken, eventId }),
+      ),
+    );
+
+    eventExternalIdBatch.forEach((eventExternalId, index) =>
+      iCalUIdsByEventExternalId.set(eventExternalId, iCalUIds[index]),
+    );
   }
 
   return references.map((reference) =>
@@ -157,20 +165,26 @@ const addMissingICalUIdsOrThrow = async ({
   );
 };
 
-const isUniquelyAssociated = ({
-  reference,
-  calendarChannelEventAssociations,
-}: {
-  reference: TeamsCalendarReference;
-  calendarChannelEventAssociations: CalendarChannelEventAssociation[];
-}): boolean =>
-  new Set(
-    calendarChannelEventAssociations
-      .filter(
-        ({ eventExternalId }) => eventExternalId === reference.eventExternalId,
-      )
-      .map(({ calendarEventId }) => calendarEventId),
-  ).size === 1;
+const groupCalendarEventIdsByEventExternalId = (
+  calendarChannelEventAssociations: CalendarChannelEventAssociation[],
+): Map<string, Set<string>> => {
+  const calendarEventIdsByEventExternalId = new Map<string, Set<string>>();
+
+  for (const {
+    eventExternalId,
+    calendarEventId,
+  } of calendarChannelEventAssociations) {
+    calendarEventIdsByEventExternalId.set(
+      eventExternalId,
+      (
+        calendarEventIdsByEventExternalId.get(eventExternalId) ??
+        new Set<string>()
+      ).add(calendarEventId),
+    );
+  }
+
+  return calendarEventIdsByEventExternalId;
+};
 
 export const findTeamsCalendarEventIdsOrThrow = async ({
   accessToken,
@@ -188,14 +202,15 @@ export const findTeamsCalendarEventIdsOrThrow = async ({
         ...new Set(references.map(({ eventExternalId }) => eventExternalId)),
       ],
     });
-  const uniquelyAssociatedReferences = references.filter((reference) =>
-    isUniquelyAssociated({ reference, calendarChannelEventAssociations }),
-  );
+  const calendarEventIdsByEventExternalId =
+    groupCalendarEventIdsByEventExternalId(calendarChannelEventAssociations);
+  const isUniquelyAssociated = ({ eventExternalId }: TeamsCalendarReference) =>
+    calendarEventIdsByEventExternalId.get(eventExternalId)?.size === 1;
+  const uniquelyAssociatedReferences = references.filter(isUniquelyAssociated);
   const iCalUIdFallbackReferences = await addMissingICalUIdsOrThrow({
     accessToken,
     references: references.filter(
-      (reference) =>
-        !isUniquelyAssociated({ reference, calendarChannelEventAssociations }),
+      (reference) => !isUniquelyAssociated(reference),
     ),
   });
   const fallbackICalUIds = [
