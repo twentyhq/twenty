@@ -60,6 +60,12 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
     };
   }
 
+  async getPlanKey(workspaceId: string): Promise<string | null> {
+    const subscription = await this.findCurrentBillingSubscription(workspaceId);
+
+    return subscription?.planKey ?? null;
+  }
+
   private async findCurrentBillingSubscription(
     workspaceId: string,
   ): Promise<FlatBillingSubscription | null> {

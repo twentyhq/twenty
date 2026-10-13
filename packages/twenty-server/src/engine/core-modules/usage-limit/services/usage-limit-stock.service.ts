@@ -14,6 +14,7 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { type ComputeUsedStock } from 'src/engine/core-modules/usage-limit/types/compute-used-stock.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
@@ -57,6 +58,7 @@ export class UsageLimitStockService {
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
+    private readonly usageLimitDefaultValueService: UsageLimitDefaultValueService,
     private readonly metricsService: MetricsService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -248,46 +250,56 @@ export class UsageLimitStockService {
       operationType,
       spenders,
       limits: enforceableLimits,
-      stockLimitDefaults: this.buildStockLimitDefaults({
+      stockLimitDefaults: await this.buildStockLimitDefaults({
+        workspaceId,
         resourceType,
         operationType,
       }),
     });
   }
 
-  private buildStockLimitDefaults({
+  private async buildStockLimitDefaults({
+    workspaceId,
     resourceType,
     operationType,
   }: {
+    workspaceId: string;
     resourceType: StockResourceType;
     operationType: UsageOperationType;
-  }): StockLimitDefault[] {
+  }): Promise<StockLimitDefault[]> {
     const definition = findUsageLimitDefinition({
       resourceType,
       limitKind: 'stock',
     });
 
-    return (definition?.defaults ?? [])
-      .filter(
-        (stockLimitDefaultDefinition) =>
-          stockLimitDefaultDefinition.operationType === operationType,
-      )
-      .flatMap((stockLimitDefaultDefinition) => {
-        const limitValue = this.twentyConfigService.get(
-          stockLimitDefaultDefinition.limitValueConfigVariable,
-        );
+    const stockLimitDefaults = await Promise.all(
+      (definition?.defaults ?? [])
+        .filter(
+          (stockLimitDefaultDefinition) =>
+            stockLimitDefaultDefinition.operationType === operationType,
+        )
+        .map(async (stockLimitDefaultDefinition) => {
+          const limitValue =
+            await this.usageLimitDefaultValueService.findDefaultLimitValue({
+              workspaceId,
+              limitValueConfigVariable:
+                stockLimitDefaultDefinition.limitValueConfigVariable,
+            });
 
-        return isDefined(limitValue)
-          ? [
-              {
-                spenderType: stockLimitDefaultDefinition.spenderType,
-                unit: stockLimitDefaultDefinition.unit,
-                isOverridable: stockLimitDefaultDefinition.isOverridable,
-                limitValue,
-              },
-            ]
-          : [];
-      });
+          return isDefined(limitValue)
+            ? [
+                {
+                  spenderType: stockLimitDefaultDefinition.spenderType,
+                  unit: stockLimitDefaultDefinition.unit,
+                  isOverridable: stockLimitDefaultDefinition.isOverridable,
+                  limitValue,
+                },
+              ]
+            : [];
+        }),
+    );
+
+    return stockLimitDefaults.flat();
   }
 
   private async warmHeldValues({
