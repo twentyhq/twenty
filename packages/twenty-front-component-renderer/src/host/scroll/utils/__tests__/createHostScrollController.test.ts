@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { latestNativeEditSequenceByHostElement } from '@/host/caret/states/latestNativeEditSequenceByHostElement';
-import { MAX_SCROLL_COMMANDS_PER_FLUSH } from '@/host/scroll/constants/MaxScrollCommandsPerFlush';
+import { MAX_PENDING_SCROLL_COMMANDS } from '@/constants/MaxPendingScrollCommands';
 import { createHostScrollController } from '@/host/scroll/utils/createHostScrollController';
 import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
 
@@ -368,73 +368,121 @@ describe('createHostScrollController', () => {
     });
   });
 
-  it('should apply at most the maximum number of commands per flush across elements and acknowledge the dropped ones', async () => {
+  it('should apply every command of a large batch across elements in sequence order', async () => {
+    const { controller, registerScrollableElement, appliedScrollTos } =
+      createScrollControllerFixture();
+    const remoteElementIds = ['first', 'second', 'third'];
+    const onScrollUpdates = remoteElementIds.map(() => jest.fn());
+
+    for (const remoteElementId of remoteElementIds) {
+      registerScrollableElement(remoteElementId);
+    }
+
+    for (const [elementIndex, remoteElementId] of remoteElementIds.entries()) {
+      controller.enqueueScrollCommands({
+        remoteElementId,
+        scrollCommands: Array.from(
+          { length: MAX_PENDING_SCROLL_COMMANDS },
+          (_, commandIndex) =>
+            createScrollToCommand({
+              sequence:
+                commandIndex * remoteElementIds.length + elementIndex + 1,
+              top: commandIndex + 1,
+            }),
+        ),
+        onScrollUpdate: onScrollUpdates[elementIndex],
+      });
+    }
+    await flushScrollCommands();
+
+    expect(appliedScrollTos).toHaveLength(
+      MAX_PENDING_SCROLL_COMMANDS * remoteElementIds.length,
+    );
+    expect(
+      appliedScrollTos
+        .slice(0, remoteElementIds.length)
+        .map(({ remoteElementId }) => remoteElementId),
+    ).toEqual(remoteElementIds);
+
+    for (const [elementIndex, remoteElementId] of remoteElementIds.entries()) {
+      expect(onScrollUpdates[elementIndex]).toHaveBeenCalledWith({
+        scrollCommandSequence:
+          (MAX_PENDING_SCROLL_COMMANDS - 1) * remoteElementIds.length +
+          elementIndex +
+          1,
+        scrollPositions: [
+          {
+            remoteElementId,
+            scrollTop: MAX_PENDING_SCROLL_COMMANDS,
+            scrollLeft: 0,
+          },
+        ],
+      });
+    }
+  });
+
+  it('should only consider the latest pending commands of an element', async () => {
     const { controller, registerScrollableElement } =
       createScrollControllerFixture();
-    const { scrollTo: firstScrollTo } = registerScrollableElement('first');
-    const { scrollTo: secondScrollTo } = registerScrollableElement('second');
-    const onFirstScrollUpdate = jest.fn();
-    const onSecondScrollUpdate = jest.fn();
-    const droppedCommandCount = 6;
-    const lastSequence = MAX_SCROLL_COMMANDS_PER_FLUSH + droppedCommandCount;
-    const firstScrollCommands = Array.from(
-      { length: MAX_SCROLL_COMMANDS_PER_FLUSH },
-      (_, commandIndex) =>
-        createScrollToCommand({
-          sequence: commandIndex + 1,
-          top: commandIndex + 1,
-        }),
-    );
-    const secondScrollCommands = Array.from(
-      { length: droppedCommandCount },
-      (_, commandIndex) =>
-        createScrollToCommand({
-          sequence: MAX_SCROLL_COMMANDS_PER_FLUSH + commandIndex + 1,
-          top: 1,
-        }),
-    );
+    const { scrollTo } = registerScrollableElement('element');
+    const extraCommandCount = 8;
 
     controller.enqueueScrollCommands({
-      remoteElementId: 'second',
-      scrollCommands: secondScrollCommands,
-      onScrollUpdate: onSecondScrollUpdate,
-    });
-    controller.enqueueScrollCommands({
-      remoteElementId: 'first',
-      scrollCommands: firstScrollCommands,
-      onScrollUpdate: onFirstScrollUpdate,
+      remoteElementId: 'element',
+      scrollCommands: Array.from(
+        { length: MAX_PENDING_SCROLL_COMMANDS + extraCommandCount },
+        (_, commandIndex) =>
+          createScrollToCommand({
+            sequence: commandIndex + 1,
+            top: commandIndex + 1,
+          }),
+      ),
+      onScrollUpdate: jest.fn(),
     });
     await flushScrollCommands();
 
-    expect(firstScrollTo).toHaveBeenCalledTimes(MAX_SCROLL_COMMANDS_PER_FLUSH);
-    expect(firstScrollTo).toHaveBeenLastCalledWith({
-      top: MAX_SCROLL_COMMANDS_PER_FLUSH,
+    expect(scrollTo).toHaveBeenCalledTimes(MAX_PENDING_SCROLL_COMMANDS);
+    expect(scrollTo).toHaveBeenNthCalledWith(1, {
+      top: extraCommandCount + 1,
       behavior: 'instant',
     });
-    expect(secondScrollTo).not.toHaveBeenCalled();
-    expect(onFirstScrollUpdate).toHaveBeenCalledWith({
-      scrollCommandSequence: MAX_SCROLL_COMMANDS_PER_FLUSH,
-      scrollPositions: [
-        {
-          remoteElementId: 'first',
-          scrollTop: MAX_SCROLL_COMMANDS_PER_FLUSH,
-          scrollLeft: 0,
-        },
-      ],
-    });
-    expect(onSecondScrollUpdate).toHaveBeenCalledWith({
-      scrollCommandSequence: lastSequence,
-      scrollPositions: [],
-    });
+  });
+
+  it('should forget the applied sequence of an element once its pending commands are cleared', async () => {
+    const { controller, registerScrollableElement } =
+      createScrollControllerFixture();
+    const { scrollTo } = registerScrollableElement('element');
+    const scrollCommands = [createScrollToCommand({ sequence: 5, top: 50 })];
 
     controller.enqueueScrollCommands({
-      remoteElementId: 'second',
-      scrollCommands: secondScrollCommands,
-      onScrollUpdate: onSecondScrollUpdate,
+      remoteElementId: 'element',
+      scrollCommands,
+      onScrollUpdate: jest.fn(),
+    });
+    await flushScrollCommands();
+    controller.enqueueScrollCommands({
+      remoteElementId: 'element',
+      scrollCommands,
+      onScrollUpdate: jest.fn(),
     });
     await flushScrollCommands();
 
-    expect(secondScrollTo).not.toHaveBeenCalled();
+    expect(scrollTo).toHaveBeenCalledTimes(1);
+
+    controller.enqueueScrollCommands({
+      remoteElementId: 'element',
+      scrollCommands: [],
+      onScrollUpdate: jest.fn(),
+    });
+    await flushScrollCommands();
+    controller.enqueueScrollCommands({
+      remoteElementId: 'element',
+      scrollCommands,
+      onScrollUpdate: jest.fn(),
+    });
+    await flushScrollCommands();
+
+    expect(scrollTo).toHaveBeenCalledTimes(2);
   });
 
   it('should not apply the commands enqueued before a reset', async () => {
