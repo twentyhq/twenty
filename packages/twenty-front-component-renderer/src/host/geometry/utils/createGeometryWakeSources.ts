@@ -56,7 +56,7 @@ export const createGeometryWakeSources = (
     return (
       rootContainer.contains(target) ||
       target.contains(rootContainer) ||
-      portalLayer?.contains(target) === true
+      (isDefined(portalLayer) && portalLayer.contains(target))
     );
   };
 
