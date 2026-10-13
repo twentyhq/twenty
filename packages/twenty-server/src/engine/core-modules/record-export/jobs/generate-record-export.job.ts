@@ -9,6 +9,7 @@ import {
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
@@ -72,7 +73,9 @@ export class GenerateRecordExportJob {
       );
       const requester =
         await this.recordExportWorkspaceService.resolveRequester(recordExport);
-      locale = requester.workspaceMember.locale;
+      locale = isUserAuthContext(requester)
+        ? requester.workspaceMember.locale
+        : SOURCE_LOCALE;
       const context = await this.recordExportWorkspaceService.buildContext({
         parameters: recordExport.parameters,
         authContext: requester,

@@ -1,3 +1,5 @@
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type PendingFileCleanupCronJob } from 'src/engine/core-modules/file/file-upload/crons/jobs/pending-file-cleanup.cron.job';
@@ -79,6 +81,25 @@ describe('record export lifecycle (integration)', () => {
   const exportIds = new Set<string>();
   const downloadTokens = new Map<string, string>();
   const sessionTokens = new Set<string>();
+  const apiKeyIds = new Set<string>();
+  const apiKeys = () =>
+    getAppProviderByClassName<ApiKeyService>('ApiKeyService');
+  const createApiKey = async () => {
+    const apiKey = await apiKeys().create({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      name: `Record export ${v4()}`,
+      expiresAt: new Date(Date.now() + 60_000),
+      revokedAt: null,
+      roleId,
+    });
+    apiKeyIds.add(apiKey.id);
+    const credentials = await apiKeys().generateApiKeyToken(
+      SEED_APPLE_WORKSPACE_ID,
+      apiKey.id,
+    );
+    if (!isDefined(credentials)) throw new Error('API key token missing');
+    return { id: apiKey.id, token: credentials.token };
+  };
   const authenticationHeaders = (token: string): Record<string, string> =>
     isUserSessionToken(token)
       ? {
@@ -250,6 +271,7 @@ describe('record export lifecycle (integration)', () => {
         canAccessAllTools: true,
         canReadAllObjectRecords: true,
         canBeAssignedToUsers: true,
+        canBeAssignedToApiKeys: true,
       },
       expectToFail: false,
     });
@@ -276,6 +298,10 @@ describe('record export lifecycle (integration)', () => {
       );
     }
     sessionTokens.clear();
+    for (const id of apiKeyIds) {
+      await apiKeys().revoke(id, SEED_APPLE_WORKSPACE_ID);
+    }
+    apiKeyIds.clear();
     if (isDefined(roleId)) {
       await upsertRowLevelPermissionPredicates({
         input: {
@@ -387,6 +413,61 @@ describe('record export lifecycle (integration)', () => {
       'Export not found',
     );
     await download(recordExport).expect(404);
+  });
+
+  it('exports with API key row permissions and only allows the requesting key to download', async () => {
+    const requester = await createApiKey();
+    const otherKey = await createApiKey();
+    await upsertContainsRlsPredicate({
+      roleId,
+      objectNameSingular: 'company',
+      fieldName: 'name',
+      value: companies[0].name,
+    });
+    const ready = await exportToCompletion(input, requester.token);
+    expect(await authorization(ready)).toMatchObject({
+      apiKeyId: requester.id,
+    });
+    await download(ready, otherKey.token).expect(403);
+    await download(ready, APPLE_JANE_ADMIN_ACCESS_TOKEN).expect(403);
+    const response = await download(ready).expect(200);
+    expect(response.text.replace(/^\uFEFF/, '')).toBe(
+      `Id,Name\n${companies[0].id},${companies[0].name}\n`,
+    );
+  });
+
+  it('rejects an API key without export permission', async () => {
+    const requester = await createApiKey();
+    await changeRole({ canAccessAllTools: false });
+    const { events } = subscribe(input, requester.token);
+    await expect(nextExport(events)).rejects.toThrow(/permission/i);
+  });
+
+  it.each(['revoked', 'expired'])(
+    'rejects a completed export when its API key is %s',
+    async (state) => {
+      const requester = await createApiKey();
+      const ready = await exportToCompletion(input, requester.token);
+      const payload = await authorization(ready);
+      await apiKeys().update(
+        requester.id,
+        SEED_APPLE_WORKSPACE_ID,
+        state === 'revoked'
+          ? { revokedAt: new Date() }
+          : { expiresAt: new Date(Date.now() - 1000) },
+      );
+      await expect(exports.resolveRequester(payload)).rejects.toThrow(
+        /permission/i,
+      );
+      await download(ready).expect(403);
+    },
+  );
+
+  it('invalidates an API key export when its role permissions change', async () => {
+    const requester = await createApiKey();
+    const ready = await exportToCompletion(input, requester.token);
+    await changeRole({ canAccessAllTools: false });
+    await download(ready).expect(403);
   });
 
   it('exports headers when the selection is empty', async () => {
@@ -923,6 +1004,8 @@ describe('record export lifecycle (integration)', () => {
     const requester = await query.resolveRequester(
       await authorization(recordExport),
     );
+    if (!isUserAuthContext(requester))
+      throw new Error('Expected user requester');
     const tokens =
       getAppProviderByClassName<AccessTokenService>('AccessTokenService');
     const otherToken = await tokens.generateAccessToken({
@@ -946,6 +1029,8 @@ describe('record export lifecycle (integration)', () => {
       const requester = await query.resolveRequester(
         await authorization(ready),
       );
+      if (!isUserAuthContext(requester))
+        throw new Error('Expected user requester');
       const sessions =
         getAppProviderByClassName<UserSessionService>('UserSessionService');
       const createSession = async () => {
