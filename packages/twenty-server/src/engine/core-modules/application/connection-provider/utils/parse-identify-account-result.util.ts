@@ -34,7 +34,7 @@ export const parseIdentifyAccountResult = (
 
   const { externalAccountId, handle } = parsed.data;
 
-  if (externalAccountId === null) {
+  if (!isDefined(externalAccountId)) {
     return { isValid: true, identifiedAccount: null };
   }
 

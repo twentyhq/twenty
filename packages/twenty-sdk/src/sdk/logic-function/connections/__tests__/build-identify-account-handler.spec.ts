@@ -48,6 +48,8 @@ describe('buildIdentifyAccountHandler', () => {
 
     await identifyAccount(PAYLOAD);
 
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
     expect(url).toBe('https://slack.com/api/auth.test');
@@ -71,6 +73,8 @@ describe('buildIdentifyAccountHandler', () => {
       externalAccountIdPath: 'id',
     })(PAYLOAD);
 
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+
     const [, requestInit] = fetchSpy.mock.calls[0];
 
     expect(requestInit?.method).toBe('GET');
@@ -85,6 +89,8 @@ describe('buildIdentifyAccountHandler', () => {
       headers: { Authorization: 'Bearer something-else' },
       externalAccountIdPath: 'id',
     })(PAYLOAD);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
 
     const [, requestInit] = fetchSpy.mock.calls[0];
 
