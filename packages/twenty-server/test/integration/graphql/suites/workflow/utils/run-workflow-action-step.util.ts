@@ -1,13 +1,17 @@
-import gql from 'graphql-tag';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  runCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import {
   destroyWorkflowRun,
-  runWorkflowVersion,
   waitForWorkflowCompletion,
   type WorkflowRunStatusType,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
-import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 type WorkflowActionStepType =
   | 'SEND_EMAIL'
@@ -18,168 +22,11 @@ type WorkflowActionStepType =
   | 'UPDATE_RECORD'
   | 'CODE';
 
-type WorkflowVersionStep = {
-  id: string;
-  type: string;
-  settings: { input: Record<string, unknown> };
-};
-
 export type WorkflowActionStepRun = {
   status?: WorkflowRunStatusType;
   stepStatus?: string;
   stepResult?: Record<string, unknown>;
   stepError?: string;
-};
-
-const createWorkflow = async (name: string): Promise<string> => {
-  const response = await makeGraphqlApiRequest({
-    query: gql`
-      mutation CreateWorkflow($name: String!) {
-        createWorkflow(data: { name: $name }) {
-          id
-        }
-      }
-    `,
-    variables: { name },
-  });
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.createWorkflow.id;
-};
-
-const destroyWorkflow = async (workflowId: string): Promise<void> => {
-  await makeGraphqlApiRequest({
-    query: gql`
-      mutation DestroyWorkflow($id: ID!) {
-        destroyWorkflow(id: $id) {
-          id
-        }
-      }
-    `,
-    variables: { id: workflowId },
-  });
-};
-
-const findDraftWorkflowVersionId = async (
-  workflowId: string,
-): Promise<string> => {
-  const response = await makeGraphqlApiRequest({
-    query: gql`
-      query FindDraftWorkflowVersion($workflowId: UUID!) {
-        workflowVersions(
-          filter: { workflowId: { eq: $workflowId }, status: { in: ["DRAFT"] } }
-        ) {
-          edges {
-            node {
-              id
-            }
-          }
-        }
-      }
-    `,
-    variables: { workflowId },
-  });
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.workflowVersions.edges[0].node.id;
-};
-
-const createWorkflowVersionStep = async ({
-  workflowVersionId,
-  stepType,
-}: {
-  workflowVersionId: string;
-  stepType: WorkflowActionStepType;
-}): Promise<void> => {
-  const response = await makeGraphqlApiRequest({
-    query: gql`
-      mutation CreateWorkflowVersionStep(
-        $input: CreateWorkflowVersionStepInput!
-      ) {
-        createWorkflowVersionStep(input: $input) {
-          stepsDiff
-        }
-      }
-    `,
-    variables: {
-      input: {
-        workflowVersionId,
-        stepType,
-        parentStepId: 'trigger',
-        position: { x: 200, y: 0 },
-      },
-    },
-  });
-
-  expect(response.body.errors).toBeUndefined();
-};
-
-const findWorkflowVersionStep = async ({
-  workflowVersionId,
-  stepType,
-}: {
-  workflowVersionId: string;
-  stepType: WorkflowActionStepType;
-}): Promise<WorkflowVersionStep> => {
-  const response = await makeGraphqlApiRequest({
-    query: gql`
-      query FindWorkflowVersionSteps($workflowVersionId: UUID!) {
-        workflowVersion(filter: { id: { eq: $workflowVersionId } }) {
-          steps
-        }
-      }
-    `,
-    variables: { workflowVersionId },
-  });
-
-  expect(response.body.errors).toBeUndefined();
-
-  const step = response.body.data.workflowVersion.steps.find(
-    (workflowVersionStep: WorkflowVersionStep) =>
-      workflowVersionStep.type === stepType,
-  );
-
-  expect(step).toBeDefined();
-
-  return step;
-};
-
-const updateWorkflowVersionStepInput = async ({
-  workflowVersionId,
-  step,
-  input,
-}: {
-  workflowVersionId: string;
-  step: WorkflowVersionStep;
-  input: Record<string, unknown>;
-}): Promise<void> => {
-  const response = await makeGraphqlApiRequest({
-    query: gql`
-      mutation UpdateWorkflowVersionStep(
-        $input: UpdateWorkflowVersionStepInput!
-      ) {
-        updateWorkflowVersionStep(input: $input) {
-          id
-        }
-      }
-    `,
-    variables: {
-      input: {
-        workflowVersionId,
-        step: {
-          ...step,
-          settings: {
-            ...step.settings,
-            input: { ...step.settings.input, ...input },
-          },
-        },
-      },
-    },
-  });
-
-  expect(response.body.errors).toBeUndefined();
 };
 
 export const runWorkflowActionStep = async ({
@@ -196,22 +43,22 @@ export const runWorkflowActionStep = async ({
   input: Record<string, unknown>;
   payload?: object;
   runToken?: string;
-  beforeRun?: () => Promise<unknown>;
+  beforeRun?: (coreWorkflowVersionId: string) => Promise<unknown>;
   // for a step that waits on a person, who answers here before the run is awaited
   whileRunning?: (run: {
     workflowRunId: string;
     stepId: string;
   }) => Promise<unknown>;
 }): Promise<WorkflowActionStepRun> => {
-  const workflowId = await createWorkflow(name);
+  const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
+    name,
+  });
 
   let workflowRunId: string | undefined;
 
   try {
-    const workflowVersionId = await findDraftWorkflowVersionId(workflowId);
-
-    await updateWorkflowVersionTrigger({
-      workflowVersionId,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -221,16 +68,26 @@ export const runWorkflowActionStep = async ({
       },
     });
 
-    await createWorkflowVersionStep({ workflowVersionId, stepType });
+    const step = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType,
+    });
 
-    const step = await findWorkflowVersionStep({ workflowVersionId, stepType });
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...step,
+        settings: {
+          ...step.settings,
+          input: { ...step.settings.input, ...input },
+        },
+      },
+    });
 
-    await updateWorkflowVersionStepInput({ workflowVersionId, step, input });
+    await beforeRun?.(coreWorkflowVersionId);
 
-    await beforeRun?.();
-
-    workflowRunId = await runWorkflowVersion({
-      workflowVersionId,
+    workflowRunId = await runCoreWorkflowVersion({
+      coreWorkflowVersionId,
       payload,
       token: runToken,
     });
@@ -251,6 +108,6 @@ export const runWorkflowActionStep = async ({
       await destroyWorkflowRun(workflowRunId);
     }
 
-    await destroyWorkflow(workflowId);
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   }
 };

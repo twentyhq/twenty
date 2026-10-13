@@ -13,7 +13,7 @@ import { findTeamsCalendarEventIdsOrThrow } from 'src/features/transcripts/logic
 import { findTeamsTranscriptCalendarReference } from 'src/features/transcripts/logic-functions/utils/find-teams-transcript-calendar-reference';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 const listOccurrencePagesOrThrow = async ({
   accessToken,

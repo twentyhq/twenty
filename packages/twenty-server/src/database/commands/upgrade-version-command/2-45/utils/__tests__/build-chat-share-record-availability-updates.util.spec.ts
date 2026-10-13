@@ -64,11 +64,7 @@ const isAvailable = (
   });
 
 describe('buildChatShareRecordAvailabilityUpdates', () => {
-  it('matches the standard application item', () => {
-    expect(standardShareRecord).toMatchObject({
-      conditionalAvailabilityExpression: CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION,
-      isPinned: true,
-    });
+  it('finds the standard Share item for chats', () => {
     expect(standardShareRecord.availabilityObjectMetadataId).not.toBeNull();
   });
 

@@ -25,17 +25,13 @@ export const SidePanelFrontComponentPage = () => {
     return null;
   }
 
-  const selectedRecordIds = isDefined(
-    viewableFrontComponentRecordContext?.recordId,
-  )
-    ? [viewableFrontComponentRecordContext.recordId]
-    : undefined;
-
   return (
     <Suspense fallback={<FrontComponentSkeletonLoader />}>
       <FrontComponentRenderer
         frontComponentId={viewableFrontComponentId}
-        selectedRecordIds={selectedRecordIds}
+        selectedRecordIds={
+          viewableFrontComponentRecordContext?.selectedRecordIds
+        }
         objectNameSingular={
           viewableFrontComponentRecordContext?.objectNameSingular
         }

@@ -146,7 +146,7 @@ export const WorkspaceMemberPictureUploader = ({
   return (
     <SettingsImageInput
       picture={displayAvatarUrl}
-      onUpload={handleUpload}
+      onFileSelect={handleUpload}
       onRemove={handleRemove}
       onAbort={isUploading ? handleAbort : undefined}
       isUploading={isUploading || isRemoving}

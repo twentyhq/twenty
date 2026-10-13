@@ -1048,6 +1048,12 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` elem
 - Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
 - `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
 
+### File selection
+
+File inputs deliver native `File` objects with metadata and readable contents. Use `text()` or `arrayBuffer()` to read a selected file, or pass it to the `uploadFile` host function. Opening the native chooser requires calling `input.click()` within one second of a trusted click inside your component. The SDK-built React and Preact flows are verified in Chromium.
+
+Worker-created object URLs assigned to `img.src` support previews. Revoke your URLs when replacing the image or unmounting your component. Your application owns file validation, upload progress and cancellation.
+
 ### Media capture
 
 Declare `microphone`, `camera`, or both in the `requestedCapabilities` array passed to `defineApplication()` so these capabilities appear during installation. Approval is workspace-wide and requires a member who can manage apps.
@@ -1062,7 +1068,6 @@ An orange dot in the workspace header indicates active capture. Hover over or se
 
 ### Other gaps
 
-- **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` is not available. To upload a `Blob` your code already holds — e.g. one produced by `MediaRecorder` — use the `uploadFile` host function.
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
 - **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto replaces `node:crypto`, and `fetch`, `TextEncoder` and `URL` are available too, see [global scope](#global-scope) — but nothing replaces `fs`: the sandbox has no filesystem.
 - **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

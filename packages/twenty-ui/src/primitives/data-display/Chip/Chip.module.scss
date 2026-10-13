@@ -8,7 +8,6 @@
   gap: var(--t-spacing-1);
   block-size: var(--t-spacing-3);
   max-inline-size: var(--tw-chip-max-width, 100%);
-  overflow: hidden;
   padding: var(--t-spacing-1) var(--tw-chip-padding);
   user-select: none;
   font: inherit;
@@ -21,6 +20,9 @@
 
   & > svg {
     flex-shrink: 0;
+  }
+  &[data-truncate] {
+    overflow: hidden;
   }
   &[data-size='md'] {
     block-size: var(--t-spacing-4);
@@ -40,11 +42,15 @@
   &[data-variant='solid'] {
     background: var(--t-background-transparent-medium);
   }
+  &:disabled,
+  &[aria-disabled='true'],
   &[data-disabled] {
     color: var(--t-font-color-light);
     cursor: not-allowed;
   }
-  &[data-clickable]:not([data-disabled]) {
+  &[data-clickable]:not(:disabled):not([aria-disabled='true']):not(
+      [data-disabled]
+    ) {
     cursor: pointer;
     @include hover-capable {
       &:hover {
@@ -69,14 +75,6 @@
   }
 }
 
-.content {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.emptyLabel {
-  color: var(--t-font-color-tertiary);
-}
 .endElementDivider {
   align-self: stretch;
   border-inline-start: 1px solid var(--t-border-color-light);

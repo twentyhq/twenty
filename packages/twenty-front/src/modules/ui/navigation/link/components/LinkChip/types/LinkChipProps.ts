@@ -5,7 +5,7 @@ import { type ChipProps } from 'twenty-ui/primitives/data-display';
 
 export type LinkChipProps = Omit<
   ChipProps,
-  'render' | 'ref' | 'onClick' | 'onMouseDown' | 'disabled' | 'nativeButton'
+  'render' | 'ref' | 'onClick' | 'onMouseDown'
 > &
   Pick<ComponentPropsWithRef<typeof Link>, 'target' | 'ref'> & {
     to: string;

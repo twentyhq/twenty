@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconCoins } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 
 type OnboardingCreditsRewardChipProps = {
   formattedCreditsReward: string;
@@ -14,15 +14,11 @@ export const OnboardingCreditsRewardChip = ({
   const { t } = useLingui();
 
   return (
-    <Pill
-      Icon={IconCoins}
-      label={
-        isRewardPerItem
-          ? t`+${formattedCreditsReward} each`
-          : `+${formattedCreditsReward}`
-      }
-      size="md"
-      color="inherit"
-    />
+    <Badge size="md" color="inherit">
+      <IconCoins size={12} aria-hidden />
+      {isRewardPerItem
+        ? t`+${formattedCreditsReward} each`
+        : `+${formattedCreditsReward}`}
+    </Badge>
   );
 };

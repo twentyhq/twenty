@@ -420,6 +420,10 @@ export const STANDARD_OBJECTS = {
           'complainedCount',
           'recipients',
           'createdAt',
+          'uniqueClickCount',
+          'clickRate',
+          'uniqueOpenCount',
+          'openRate',
         ],
       }),
       messageCampaignRecordPageFields: buildStandardObjectRecordPageFieldsView({
@@ -436,6 +440,10 @@ export const STANDARD_OBJECTS = {
           'skippedCount',
           'bouncedCount',
           'complainedCount',
+          'uniqueClickCount',
+          'clickRate',
+          'uniqueOpenCount',
+          'openRate',
         ],
         viewFieldGroupNames: {
           stats: 'Stats',
@@ -1408,9 +1416,6 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
     fields: STANDARD_OBJECT_FIELDS.agentChatThread,
     indexes: {
-      ownerIndex: {
-        universalIdentifier: 'c97a4c97-266b-490a-a4d6-76274f5de429',
-      },
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
@@ -1491,9 +1496,6 @@ export const STANDARD_OBJECTS = {
       },
       senderWorkspaceMemberIndex: {
         universalIdentifier: '8ecdac01-7bbe-411e-8461-6ff265c90759',
-      },
-      hiddenKickoffIndex: {
-        universalIdentifier: '1d423c31-007a-4fcd-8514-dcb1f7a8fa78',
       },
     },
   },

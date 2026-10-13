@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { deleteCoreWorkflows } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { isDefined } from 'twenty-shared/utils';
 
 const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
@@ -53,20 +54,11 @@ describe('coreWorkflow mutations (e2e)', () => {
   };
 
   afterAll(async () => {
-    if (!isDefined(workspaceWorkflowId)) {
+    if (!isDefined(coreWorkflowId)) {
       return;
     }
 
-    await graphql(
-      `
-        mutation DestroyWorkflow($id: UUID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: workspaceWorkflowId },
-    );
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 
   it('should create a workflow listed synchronously with a draft version', async () => {
@@ -217,16 +209,7 @@ describe('coreWorkflow mutations (e2e)', () => {
       await findListedCoreWorkflowById(createdCoreWorkflow.id),
     ).toBeDefined();
 
-    await graphql(
-      `
-        mutation DestroyWorkflow($id: UUID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: createdCoreWorkflow.workspaceWorkflowId },
-    );
+    await deleteCoreWorkflows({ coreWorkflowIds: [createdCoreWorkflow.id] });
   });
 
   it('should finish the cleanup on a retry after the core row is gone', async () => {
@@ -286,17 +269,6 @@ describe('coreWorkflow mutations (e2e)', () => {
 
     expect(workflowVersionRows).toHaveLength(1);
     expect(workflowVersionRows[0].deletedAt).not.toBeNull();
-
-    await graphql(
-      `
-        mutation DestroyWorkflow($id: UUID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: retryWorkspaceWorkflowId },
-    );
   });
 
   it('should delete nothing for unknown core workflow ids', async () => {

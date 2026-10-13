@@ -1,20 +1,21 @@
 import { isNonEmptyArray } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { kv } from 'twenty-sdk/logic-function';
 import { z } from 'zod';
 import { isDefined } from 'src/utils/is-defined';
 
 import {
+  FATHOM_DISCONNECTED_MEDIA_CLEANUP_STALLED_PASS_DELAY_MILLISECONDS,
   FATHOM_HEALING_WINDOW_DAYS,
-  FATHOM_MEDIA_RECONCILIATION_CRON_PATTERN,
   FATHOM_MEDIA_RECONCILIATION_GRACE_PERIOD_MILLISECONDS,
+  MAX_FATHOM_DISCONNECTED_MEDIA_CLEANUP_STALLED_PASSES,
   MILLISECONDS_PER_DAY,
 } from 'src/constants/fathom.constant';
 import { FATHOM_RECONCILE_MEDIA_IMPORTS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomMediaReconciliationRun } from 'src/logic-functions/types/fathom-media-reconciliation-plan.type';
 import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { cleanupDisconnectedFathomMediaImports } from 'src/logic-functions/utils/cleanup-disconnected-fathom-media-imports.util';
+import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
 import { reconcileFathomMediaImports } from 'src/logic-functions/utils/reconcile-fathom-media-imports.util';
 
@@ -29,6 +30,11 @@ const fathomMediaReconciliationRunSchema = z.object({
 
 const fathomMediaReconciliationPayloadSchema = z.object({
   disconnectedAccountId: z.string().uuid().optional(),
+  disconnectedCleanupStalledPassCount: z
+    .number()
+    .int()
+    .nonnegative()
+    .optional(),
   recoveryRun: fathomMediaReconciliationRunSchema.optional(),
 });
 
@@ -60,7 +66,7 @@ export const fathomReconcileMediaImportsHandler = async (payload: unknown) => {
   }
 
   try {
-    const coreApiClient = new CoreApiClient({ runAs: 'application' });
+    const coreApiClient = createFathomCoreApiClient();
     const { disconnectedAccountId } = payloadParseResult.data;
 
     if (isDefined(disconnectedAccountId)) {
@@ -68,12 +74,36 @@ export const fathomReconcileMediaImportsHandler = async (payload: unknown) => {
         coreApiClient,
         connectedAccountId: disconnectedAccountId,
       });
+      const isStalled = result.updatedRecordingCount === 0;
+      const stalledPassCount = isStalled
+        ? (payloadParseResult.data.disconnectedCleanupStalledPassCount ?? 0) + 1
+        : 0;
+      const isStalledPassBoundReached =
+        stalledPassCount >=
+        MAX_FATHOM_DISCONNECTED_MEDIA_CLEANUP_STALLED_PASSES;
 
-      if (result.shouldContinue) {
+      if (result.shouldContinue && isStalledPassBoundReached) {
+        console.error(
+          `[fathom] media cleanup for disconnected account ${disconnectedAccountId} stopped after ${MAX_FATHOM_DISCONNECTED_MEDIA_CLEANUP_STALLED_PASSES} stalled passes with imports still unsettled`,
+        );
+      }
+
+      if (result.shouldContinue && !isStalledPassBoundReached) {
         await enqueueFathomJobsOrThrow({
           logicFunctionUniversalIdentifier:
             FATHOM_RECONCILE_MEDIA_IMPORTS_UNIVERSAL_IDENTIFIER,
-          payloads: [{ disconnectedAccountId }],
+          payloads: [
+            {
+              disconnectedAccountId,
+              disconnectedCleanupStalledPassCount: stalledPassCount,
+            },
+          ],
+          ...(isStalled
+            ? {
+                delayMs:
+                  FATHOM_DISCONNECTED_MEDIA_CLEANUP_STALLED_PASS_DELAY_MILLISECONDS,
+              }
+            : {}),
         });
       }
 
@@ -132,7 +162,4 @@ export default defineLogicFunction({
     'Recovers unfinished local Fathom media imports and settles imports for disconnected accounts.',
   timeoutSeconds: 300,
   handler: fathomReconcileMediaImportsHandler,
-  cronTriggerSettings: {
-    pattern: FATHOM_MEDIA_RECONCILIATION_CRON_PATTERN,
-  },
 });

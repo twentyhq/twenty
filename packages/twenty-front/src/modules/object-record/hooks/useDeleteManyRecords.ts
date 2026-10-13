@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
@@ -92,7 +93,7 @@ export const useDeleteManyRecords = ({
         const cachedRecordsNode: RecordGqlNode[] = [];
         const computedOptimisticRecordsNode: RecordGqlNode[] = [];
 
-        const recordGqlFields = {
+        const recordGqlFields: RecordGqlFields = {
           deletedAt: true,
         };
         cachedRecords.forEach((cachedRecord) => {
@@ -156,7 +157,7 @@ export const useDeleteManyRecords = ({
           const cachedRecordsNode: RecordGqlNode[] = [];
           const computedOptimisticRecordsNode: RecordGqlNode[] = [];
 
-          const recordGqlFields = {
+          const recordGqlFields: RecordGqlFields = {
             deletedAt: true,
           };
           cachedRecords.forEach((cachedRecord) => {

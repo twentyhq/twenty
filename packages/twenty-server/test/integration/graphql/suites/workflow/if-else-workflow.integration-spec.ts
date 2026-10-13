@@ -1,7 +1,16 @@
 import request from 'supertest';
 import {
+  activateCoreWorkflowVersion,
+  coreWorkflowGraphqlRequest,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  runCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import {
   destroyWorkflowRun,
-  runWorkflowVersion,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
@@ -10,11 +19,12 @@ import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 import { type WorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('If/Else Workflow (e2e)', () => {
+  let coreWorkflowId: string | null = null;
+  let coreWorkflowVersionId: string | null = null;
   let createdWorkflowId: string | null = null;
   let createdWorkflowVersionId: string | null = null;
   let ifElseStepId: string | null = null;
@@ -24,23 +34,13 @@ describe('If/Else Workflow (e2e)', () => {
   let elseIfBranchId: string | null = null;
 
   beforeAll(async () => {
-    const createWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflow {
-            createWorkflow(data: {
-              name: "If/Else Test Workflow"
-            }) {
-              id
-            }
-          }
-        `,
-      });
+    const coreWorkflow = await createCoreWorkflow({
+      name: 'If/Else Test Workflow',
+    });
 
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+    coreWorkflowId = coreWorkflow.coreWorkflowId;
+    coreWorkflowVersionId = coreWorkflow.coreWorkflowVersionId;
+    createdWorkflowId = coreWorkflow.workspaceWorkflowId;
 
     const getWorkflowResponse = await client
       .post('/graphql')
@@ -87,35 +87,15 @@ describe('If/Else Workflow (e2e)', () => {
       position: { x: 0, y: 0 },
     };
 
-    const updateWorkflowVersionResponse = await updateWorkflowVersionTrigger({
-      workflowVersionId: createdWorkflowVersionId!,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
       trigger: manualTrigger,
     });
 
-    expect(updateWorkflowVersionResponse.body.errors).toBeUndefined();
-
-    const createIfElseStepResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
-          }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            stepType: 'IF_ELSE',
-            parentStepId: 'trigger',
-            position: { x: 200, y: 0 },
-          },
-        },
-      });
-
-    expect(createIfElseStepResponse.body.errors).toBeUndefined();
+    await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'IF_ELSE',
+    });
 
     const getWorkflowVersionResponse = await client
       .post('/graphql')
@@ -173,70 +153,48 @@ describe('If/Else Workflow (e2e)', () => {
 
     expect(filterGroup).toBeDefined();
 
-    const updateIfElseStepResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
-            updateWorkflowVersionStep(input: $input) {
-              id
-              type
-              name
-            }
-          }
-        `,
-        variables: {
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...ifElseStep,
+        settings: {
+          ...ifElseStep.settings,
           input: {
-            workflowVersionId: createdWorkflowVersionId,
-            step: {
-              ...ifElseStep,
-              settings: {
-                ...ifElseStep.settings,
-                input: {
-                  ...ifElseStep.settings.input,
-                  stepFilters: [
-                    {
-                      id: ifElseStep.settings.input.stepFilters[0].id,
-                      type: 'NUMBER',
-                      stepOutputKey: '{{trigger.number}}',
-                      operand: ViewFilterOperand.IS,
-                      value: '10',
-                      stepFilterGroupId: ifFilterGroupId,
-                      positionInStepFilterGroup: 0,
-                    },
-                  ],
-                },
+            ...ifElseStep.settings.input,
+            stepFilters: [
+              {
+                id: ifElseStep.settings.input.stepFilters[0].id,
+                type: 'NUMBER',
+                stepOutputKey: '{{trigger.number}}',
+                operand: ViewFilterOperand.IS,
+                value: '10',
+                stepFilterGroupId: ifFilterGroupId,
+                positionInStepFilterGroup: 0,
               },
-            },
+            ],
           },
         },
-      });
+      },
+    });
 
-    expect(updateIfElseStepResponse.body.errors).toBeUndefined();
-
-    const createEmptyNodeResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) {
-              stepsDiff
-            }
+    await coreWorkflowGraphqlRequest({
+      query: `
+        mutation CreateCoreWorkflowVersionStep(
+          $input: CreateCoreWorkflowVersionStepInput!
+        ) {
+          createCoreWorkflowVersionStep(input: $input) {
+            stepsDiff
           }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            stepType: 'EMPTY',
-            parentStepId: undefined,
-            position: { x: 300, y: 100 },
-          },
+        }
+      `,
+      variables: {
+        input: {
+          coreWorkflowVersionId,
+          stepType: 'EMPTY',
+          position: { x: 300, y: 100 },
         },
-      });
-
-    expect(createEmptyNodeResponse.body.errors).toBeUndefined();
+      },
+    });
 
     const getUpdatedWorkflowVersionResponse = await client
       .post('/graphql')
@@ -326,71 +284,28 @@ describe('If/Else Workflow (e2e)', () => {
       },
     ];
 
-    const updateIfElseStepWithElseIfResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
-            updateWorkflowVersionStep(input: $input) {
-              id
-              type
-              name
-            }
-          }
-        `,
-        variables: {
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...currentIfElseStep,
+        settings: {
+          ...currentIfElseStep.settings,
           input: {
-            workflowVersionId: createdWorkflowVersionId,
-            step: {
-              ...currentIfElseStep,
-              settings: {
-                ...currentIfElseStep.settings,
-                input: {
-                  ...currentIfElseStep.settings.input,
-                  branches: updatedBranches,
-                  stepFilterGroups: updatedStepFilterGroups,
-                  stepFilters: updatedStepFilters,
-                },
-              },
-            },
+            ...currentIfElseStep.settings.input,
+            branches: updatedBranches,
+            stepFilterGroups: updatedStepFilterGroups,
+            stepFilters: updatedStepFilters,
           },
         },
-      });
+      },
+    });
 
-    expect(updateIfElseStepWithElseIfResponse.body.errors).toBeUndefined();
-
-    const activateResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-            activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-          }
-        `,
-        variables: { workflowVersionId: createdWorkflowVersionId },
-      });
-
-    expect(activateResponse.body.errors).toBeUndefined();
-    expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
+    await activateCoreWorkflowVersion({ coreWorkflowVersionId });
   });
 
   afterAll(async () => {
-    if (createdWorkflowId) {
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation DestroyWorkflow($id: ID!) {
-              destroyWorkflow(id: $id) {
-                id
-              }
-            }
-          `,
-          variables: { id: createdWorkflowId },
-        });
+    if (coreWorkflowId) {
+      await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
   });
 
@@ -542,8 +457,8 @@ describe('If/Else Workflow (e2e)', () => {
       payload: { number: number };
       expectedBranchType: 'if' | 'else' | 'else-if';
     }) => {
-      const workflowRunId = await runWorkflowVersion({
-        workflowVersionId: createdWorkflowVersionId!,
+      const workflowRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: coreWorkflowVersionId!,
         payload,
       });
 

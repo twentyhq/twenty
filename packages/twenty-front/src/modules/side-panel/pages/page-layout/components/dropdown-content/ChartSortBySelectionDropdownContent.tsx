@@ -23,7 +23,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   type BarChartConfiguration,
   GraphOrderBy,
@@ -184,7 +184,7 @@ export const ChartSortBySelectionDropdownContent = () => {
                 handleSelect(sortOption.value);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === sortOption.value}
                 onClick={() => {
                   handleSelect(sortOption.value);
@@ -219,7 +219,7 @@ export const ChartSortBySelectionDropdownContent = () => {
                       configuration.aggregateOperation ?? undefined,
                   })}
                 />
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           );
         })}
