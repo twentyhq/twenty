@@ -17,7 +17,6 @@ export const resolveRowLevelPermissionRecordFilter = ({
 }: {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
-  // the roles the object permissions intersect, which may include an agent's or an application's
   roleIds: string[];
   objectMetadata: FlatObjectMetadata;
 }): RecordGqlOperationFilter | null => {

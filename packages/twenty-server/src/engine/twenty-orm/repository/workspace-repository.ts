@@ -141,7 +141,6 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   authContext: WorkspaceAuthContext;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
-  // The roles objectRecordsPermissions intersect, so row-level rules and all-records access follow the same roles
   roleIds: string[];
   shouldBypassPermissionChecks: boolean;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
