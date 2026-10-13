@@ -1,0 +1,1 @@
+export const TRACKED_JOB_CONNECTION_TTL_MS = 30_000;
