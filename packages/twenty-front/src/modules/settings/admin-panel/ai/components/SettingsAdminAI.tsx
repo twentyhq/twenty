@@ -151,7 +151,7 @@ export const SettingsAdminAI = () => {
       await refetchClientConfig();
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update default model`,
       });
     }

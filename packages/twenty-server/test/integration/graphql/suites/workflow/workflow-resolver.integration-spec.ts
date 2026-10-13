@@ -6,7 +6,8 @@ import {
   createCoreWorkflowVersionStep,
   deactivateCoreWorkflowVersion,
   deleteCoreWorkflows,
-  findCoreWorkflowVersion,
+  deleteLegacyWorkspaceWorkflowRecords,
+  linkCoreWorkflowToLegacyWorkspaceIds,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
@@ -24,25 +25,21 @@ describe('workflowResolver', () => {
     const createdWorkflow = await createCoreWorkflow({
       name: 'Records API write rejection',
     });
-    const { workspaceWorkflowVersionId: draftWorkspaceWorkflowVersionId } =
-      await findCoreWorkflowVersion({
-        coreWorkflowVersionId: createdWorkflow.coreWorkflowVersionId,
-      });
-
-    if (
-      createdWorkflow.workspaceWorkflowId === null ||
-      draftWorkspaceWorkflowVersionId === null
-    ) {
-      throw new Error('Expected the core workflow to have a workspace mirror');
-    }
 
     coreWorkflowId = createdWorkflow.coreWorkflowId;
-    workspaceWorkflowId = createdWorkflow.workspaceWorkflowId;
-    workspaceWorkflowVersionId = draftWorkspaceWorkflowVersionId;
+
+    const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
+      coreWorkflowId,
+      withWorkspaceRecords: true,
+    });
+
+    workspaceWorkflowId = legacyIds.workspaceWorkflowId;
+    workspaceWorkflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
   });
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
+    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
   });
 
   it.each([

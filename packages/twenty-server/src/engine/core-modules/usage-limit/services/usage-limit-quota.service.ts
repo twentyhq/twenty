@@ -13,6 +13,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WARM_AND_CONSUME_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-counters-script.constant';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
+import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
@@ -87,6 +88,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly discoveryService: DiscoveryService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
+    private readonly usageLimitDefaultValueService: UsageLimitDefaultValueService,
     private readonly metricsService: MetricsService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -563,7 +565,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return [];
     }
 
-    const quotaLimitDefaults = this.buildQuotaLimitDefaults(resourceType);
+    const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
+      workspaceId,
+      resourceType,
+    });
 
     const quotaLimits = await this.findQuotaLimits({
       workspaceId,
@@ -592,9 +597,13 @@ export class UsageLimitQuotaService implements OnModuleInit {
     });
   }
 
-  private buildQuotaLimitDefaults(
-    resourceType: UsageResourceType,
-  ): QuotaLimitDefault[] {
+  private async buildQuotaLimitDefaults({
+    workspaceId,
+    resourceType,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+  }): Promise<QuotaLimitDefault[]> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return [];
     }
@@ -604,12 +613,26 @@ export class UsageLimitQuotaService implements OnModuleInit {
       limitKind: 'quota',
     });
 
-    return (definition?.defaults ?? []).map(
-      ({ limitValueConfigVariable, ...quotaLimitDefaultDefinition }) => ({
-        ...quotaLimitDefaultDefinition,
-        limitValue: this.twentyConfigService.get(limitValueConfigVariable),
-      }),
+    const quotaLimitDefaults = await Promise.all(
+      (definition?.defaults ?? []).map(
+        async ({
+          limitValueConfigVariable,
+          ...quotaLimitDefaultDefinition
+        }) => {
+          const limitValue =
+            await this.usageLimitDefaultValueService.findDefaultLimitValue({
+              workspaceId,
+              limitValueConfigVariable,
+            });
+
+          return isDefined(limitValue)
+            ? [{ ...quotaLimitDefaultDefinition, limitValue }]
+            : [];
+        },
+      ),
     );
+
+    return quotaLimitDefaults.flat();
   }
 
   private async buildAllowanceCounterAdmittingOnFailure(

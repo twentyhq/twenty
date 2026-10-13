@@ -135,13 +135,13 @@ export const useApplyBillingSubscriptionChange = () => {
       );
 
       if (!isBillingUpdateApplied) {
-        enqueueToast({ variant: 'error', children: getErrorMessage(change) });
+        enqueueToast({ status: 'error', children: getErrorMessage(change) });
         return;
       }
 
-      enqueueToast({ variant: 'success', children: getSuccessMessage(change) });
+      enqueueToast({ status: 'success', children: getSuccessMessage(change) });
     } catch (error) {
-      enqueueToast({ variant: 'error', children: getErrorMessage(change) });
+      enqueueToast({ status: 'error', children: getErrorMessage(change) });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;

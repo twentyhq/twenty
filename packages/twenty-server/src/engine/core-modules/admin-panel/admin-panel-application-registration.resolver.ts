@@ -4,6 +4,7 @@ import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type AdminApplicationRegistrationListItem } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
+import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 
 @AdminResolver(() => ApplicationRegistrationEntity)
@@ -48,7 +49,7 @@ export class AdminPanelApplicationRegistrationResolver {
 
   @ResolveField(() => String, { nullable: true })
   author(@Parent() registration: ApplicationRegistrationEntity): string | null {
-    return registration.author;
+    return getApplicationAuthorDisplayName(registration.author);
   }
 
   @ResolveField(() => String, { nullable: true })

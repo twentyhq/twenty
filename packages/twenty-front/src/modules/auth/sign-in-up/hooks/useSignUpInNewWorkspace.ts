@@ -59,7 +59,7 @@ export const useSignUpInNewWorkspace = () => {
             enqueueToast(getToastOptionsFromError({ error: logoUploadError }));
           } else {
             enqueueToast({
-              variant: 'error',
+              status: 'error',
               children:
                 logoUploadError instanceof Error
                   ? logoUploadError.message
@@ -89,7 +89,7 @@ export const useSignUpInNewWorkspace = () => {
         enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             error instanceof Error
               ? error.message

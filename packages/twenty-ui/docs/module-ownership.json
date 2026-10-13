@@ -75,6 +75,7 @@
     "Section",
     "SegmentedControl",
     "SettingsRow",
+    "StackIcon",
     "TabButton",
     "TintedIconTile",
     "Toast",

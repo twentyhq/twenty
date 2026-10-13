@@ -130,11 +130,11 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`App deleted successfully`,
       });
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error deleting app` });
+      enqueueToast({ status: 'error', children: t`Error deleting app` });
     } finally {
       setIsLoading(false);
     }
@@ -156,14 +156,14 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Ownership transferred successfully`,
       });
       setTransferSubdomain('');
       navigate(SettingsPath.Applications);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to transfer ownership. Check that the subdomain is correct.`,
       });
     } finally {
@@ -178,13 +178,13 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         variables: { applicationRegistrationId },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Ownership claimed successfully`,
       });
       closeDialog(CLAIM_OWNERSHIP_MODAL_ID);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to claim ownership.`,
       });
     } finally {

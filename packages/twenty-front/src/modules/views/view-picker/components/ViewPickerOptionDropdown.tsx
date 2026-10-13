@@ -1,4 +1,5 @@
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -30,7 +31,12 @@ type ViewPickerOptionDropdownProps = {
   isLastView: boolean;
   view: Pick<
     View,
-    'id' | 'name' | 'icon' | 'visibility' | 'createdByUserWorkspaceId'
+    | 'id'
+    | 'name'
+    | 'icon'
+    | 'visibility'
+    | 'createdByUserWorkspaceId'
+    | 'applicationId'
   >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
@@ -117,7 +123,12 @@ export const ViewPickerOptionDropdown = ({
     <>
       <MenuItemWithOptionDropdown
         text={view.name}
-        LeftIcon={getIcon(view.icon)}
+        LeftComponent={
+          <ApplicationStackIcon
+            Icon={getIcon(view.icon)}
+            applicationId={view.applicationId}
+          />
+        }
         onClick={() => handleViewSelect(view.id)}
         isIconDisplayedOnHoverOnly={!shouldShowIconAlways}
         RightIcon={getVisibilityIcon()}

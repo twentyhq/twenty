@@ -170,7 +170,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: `Failed to update feature flag. ${error.message}`,
         });
       },
