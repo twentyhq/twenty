@@ -80,6 +80,18 @@ export const useCreateNewRecord = ({
     [buildRecordInputFromRLSPredicates, buildRecordInput, createOneRecord],
   );
 
+  const createAndRegisterRecord = useCallback(
+    async (recordInput?: Partial<ObjectRecord>) => {
+      const createdRecord = await createRecord(recordInput);
+
+      onRecordCreated?.({ record: createdRecord, recordInput });
+      upsertRecordsInStore({ partialRecords: [createdRecord] });
+
+      return createdRecord;
+    },
+    [createRecord, onRecordCreated, upsertRecordsInStore],
+  );
+
   const createNewRecord = useCallback(
     async (recordInput?: Partial<ObjectRecord>) => {
       let submittedRecordInput = recordInput;
@@ -93,10 +105,10 @@ export const useCreateNewRecord = ({
             },
             createRecord: (draftRecord) => {
               submittedRecordInput = { ...recordInput, ...draftRecord };
-              return createRecord(submittedRecordInput);
+              return createAndRegisterRecord(submittedRecordInput);
             },
           })
-        : await createRecord(recordInput);
+        : await createAndRegisterRecord(recordInput);
 
       if (!isDefined(createdRecord)) {
         return;
@@ -146,18 +158,12 @@ export const useCreateNewRecord = ({
         });
       }
 
-      onRecordCreated?.({
-        record: createdRecord,
-        recordInput: submittedRecordInput,
-      });
-      upsertRecordsInStore({ partialRecords: [createdRecord] });
-
       return createdRecord;
     },
     [
       buildRecordInputFromRLSPredicates,
       buildRecordInput,
-      createRecord,
+      createAndRegisterRecord,
       store,
       navigate,
       objectMetadataItem,
@@ -167,8 +173,6 @@ export const useCreateNewRecord = ({
       workspaceSurface.type,
       isRecordCreationFormEnabled,
       requestRecordCreation,
-      onRecordCreated,
-      upsertRecordsInStore,
     ],
   );
 

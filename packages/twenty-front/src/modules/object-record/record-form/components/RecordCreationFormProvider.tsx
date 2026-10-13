@@ -44,9 +44,11 @@ export const RecordCreationFormProvider = ({
     async ({
       requestId,
       draftRecord,
+      keepOpen = false,
     }: {
       requestId: string;
       draftRecord: Partial<ObjectRecord> | null;
+      keepOpen?: boolean;
     }) => {
       const pendingRecordCreation = pendingRecordCreations.find(
         (candidate) => candidate.requestId === requestId,
@@ -79,11 +81,7 @@ export const RecordCreationFormProvider = ({
         ),
       );
 
-      let createdRecord: ObjectRecord;
-
-      try {
-        createdRecord = await pendingRecordCreation.createRecord(draftRecord);
-      } catch (error) {
+      const stopSettling = () =>
         setPendingRecordCreations((previousPendingRecordCreations) =>
           previousPendingRecordCreations.map((candidate) =>
             candidate.requestId === requestId
@@ -92,7 +90,20 @@ export const RecordCreationFormProvider = ({
           ),
         );
 
+      let createdRecord: ObjectRecord;
+
+      try {
+        createdRecord = await pendingRecordCreation.createRecord(draftRecord);
+      } catch (error) {
+        stopSettling();
+
         return { error };
+      }
+
+      if (keepOpen) {
+        stopSettling();
+
+        return {};
       }
 
       removePageFromSidePanelHistory(requestId);
