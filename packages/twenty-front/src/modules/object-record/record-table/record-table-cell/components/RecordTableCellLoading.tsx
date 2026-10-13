@@ -5,12 +5,10 @@ import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const cellSkeletonClassName = css`
-  && {
-    border-radius: ${themeCssVariables.border.radius.sm};
-    height: ${SKELETON_HEIGHT_SIZES.s}px;
-    margin: ${themeCssVariables.spacing[2]};
-    width: auto;
-  }
+  border-radius: ${themeCssVariables.border.radius.sm};
+  height: ${SKELETON_HEIGHT_SIZES.s}px;
+  margin: ${themeCssVariables.spacing[2]};
+  width: auto;
 `;
 
 export const RecordTableCellLoading = ({
