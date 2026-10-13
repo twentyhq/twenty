@@ -118,10 +118,7 @@ export const ToasterTimingExample = ({
       </Button>
       {isMounted && (
         <ToastProvider>
-          <TimingControls
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...props}
-          />
+          <TimingControls {...props} />
           {disableAnimations && (
             <style>
               {`[data-toast-timing] * { animation: none !important; transition: none !important; }`}

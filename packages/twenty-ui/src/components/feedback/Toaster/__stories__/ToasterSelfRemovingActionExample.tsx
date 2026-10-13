@@ -49,10 +49,7 @@ export const ToasterSelfRemovingActionExample = (
   props: ToasterTimingExampleProps,
 ) => (
   <ToastProvider>
-    <SelfRemovingActionControls
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-    />
+    <SelfRemovingActionControls {...props} />
     <Toaster />
   </ToastProvider>
 );

@@ -36,9 +36,7 @@ export const ToasterItem = ({
             value={{ durationRevision, isActive: status === 'visible' }}
           >
             <Toast
-              // oxlint-disable-next-line react/jsx-props-no-spreading
               {...toastProps}
-              // oxlint-disable-next-line react/jsx-props-no-spreading
               {...getToastProps?.(notification)}
               id={id}
               onClose={() => onClose(id)}

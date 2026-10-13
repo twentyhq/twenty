@@ -41,10 +41,7 @@ export const ToasterRootReplacementExample = (
   props: ToasterTimingExampleProps,
 ) => (
   <ToastProvider>
-    <RootReplacementControls
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-    />
+    <RootReplacementControls {...props} />
     <Toaster />
   </ToastProvider>
 );

@@ -81,10 +81,7 @@ export const Documentation: Story = {};
 export const StrictModeCountdown: Story = {
   render: (args) => (
     <StrictMode>
-      <ToasterTimingExample
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...args}
-      />
+      <ToasterTimingExample {...args} />
     </StrictMode>
   ),
   play: async ({ canvasElement, args }) => {
@@ -293,12 +290,7 @@ export const RemovingFocusedActionsResumesCountdown: Story = {
 };
 
 export const NestedFocusedActionRemovalResumesCountdown: Story = {
-  render: (args) => (
-    <ToasterSelfRemovingActionExample
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...args}
-    />
-  ),
+  render: (args) => <ToasterSelfRemovingActionExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const { toast, user } = await addNotification({ canvasElement });
     await wait(800);
@@ -319,12 +311,7 @@ export const NestedFocusedActionRemovalResumesCountdown: Story = {
 };
 
 export const FocusedRootReplacementResumesCountdown: Story = {
-  render: (args) => (
-    <ToasterRootReplacementExample
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...args}
-    />
-  ),
+  render: (args) => <ToasterRootReplacementExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const { body, toast, user } = await addNotification({ canvasElement });
     await wait(800);
