@@ -186,6 +186,12 @@ export default defineField({
 | `universalSettings.joinColumnName` | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`) |
 | `universalSettings.junctionTargetFieldUniversalIdentifier` | Junction ONE_TO_MANY only | Relation field on the junction object that points to the fan-out target |
 
+### Morph relation fields
+
+A morph relation (`FieldType.MORPH_RELATION`) points to several objects. Declare one field per target object, each with its own `universalIdentifier`, target identifiers and `joinColumnName`, and give them all the same `morphId`.
+
+Twenty also keeps a head field for each morph relation: its `universalIdentifier` is the `morphId`, and it has no `relationTarget*UniversalIdentifier` and no `joinColumnName`. You don't need to declare it. When a manifest only describes the targets, Twenty adds the head on sync and keeps it on later syncs.
+
 ## Inline relation fields
 
 You can also declare a relation directly inside [`defineObject`](/developers/extend/apps/data/objects). When inline, omit `objectUniversalIdentifier` — it's inherited from the parent object:
