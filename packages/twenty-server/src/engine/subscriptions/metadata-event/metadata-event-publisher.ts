@@ -10,7 +10,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
-import { selectFieldMetadataEventsForClients } from 'src/engine/subscriptions/metadata-event/utils/select-field-metadata-events-for-clients.util';
+import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -188,13 +188,14 @@ export class MetadataEventPublisher {
         metadataEventBatch.workspaceId,
       );
 
-    const visibleEvents = selectFieldMetadataEventsForClients({
-      events: metadataEventBatch.events,
-      isMorphRelationHeadEnabled,
-      flatFieldMetadataMaps,
-    });
+    const eventsWithoutMorphRelationDuplicates =
+      filterMorphRelationDuplicateFieldMetadataEvents({
+        events: metadataEventBatch.events,
+        isMorphRelationHeadEnabled,
+        flatFieldMetadataMaps,
+      });
 
-    const enrichedEvents = visibleEvents.map((event) => {
+    const enrichedEvents = eventsWithoutMorphRelationDuplicates.map((event) => {
       const enrichedProperties = { ...event.properties };
 
       if (
