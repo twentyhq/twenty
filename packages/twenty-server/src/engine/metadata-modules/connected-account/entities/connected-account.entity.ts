@@ -30,24 +30,11 @@ export type ConnectedAccountVisibility = 'user' | 'workspace';
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
 @Index('IDX_CONNECTED_ACCOUNT_HANDLE_PROVIDER', ['handle', 'provider'])
 @Index(
-  'IDX_CONNECTED_ACCOUNT_APP_SHARED_EXTERNAL_ACCOUNT_UNIQUE',
+  'IDX_CONNECTED_ACCOUNT_APP_EXTERNAL_ACCOUNT_UNIQUE',
   ['workspaceId', 'connectionProviderId', 'externalAccountId'],
   {
     unique: true,
-    where: `"provider" = 'app' AND "visibility" = 'workspace' AND "externalAccountId" IS NOT NULL AND "archivedAt" IS NULL`,
-  },
-)
-@Index(
-  'IDX_CONNECTED_ACCOUNT_APP_USER_EXTERNAL_ACCOUNT_UNIQUE',
-  [
-    'workspaceId',
-    'connectionProviderId',
-    'userWorkspaceId',
-    'externalAccountId',
-  ],
-  {
-    unique: true,
-    where: `"provider" = 'app' AND "visibility" = 'user' AND "externalAccountId" IS NOT NULL AND "archivedAt" IS NULL`,
+    where: `"provider" = 'app' AND "externalAccountId" IS NOT NULL AND "archivedAt" IS NULL`,
   },
 )
 @Check(

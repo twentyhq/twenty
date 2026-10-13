@@ -12,10 +12,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { type AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-import { type ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -25,7 +23,7 @@ const DEDUPLICATE_CONNECTED_ACCOUNT_MUTATION = gql`
   mutation DeduplicateConnectedAccount($input: DeduplicateAppConnectionInput!) {
     deduplicateConnectedAccount(input: $input) {
       connectedAccountId
-      wasMerged
+      outcome
     }
   }
 `;
@@ -58,7 +56,7 @@ type ConnectionRow = {
 
 type DeduplicateResponse = {
   connectedAccountId: string;
-  wasMerged: boolean;
+  outcome: 'IDENTIFIED' | 'MERGED' | 'REJECTED';
 };
 
 const buildManifestWithProvider = ({
@@ -92,7 +90,6 @@ const buildManifestWithProvider = ({
           oauth: {
             authorizationEndpoint: 'https://slack.com/oauth/v2/authorize',
             tokenEndpoint: 'https://slack.com/api/oauth.v2.access',
-            revokeEndpoint: 'https://slack.com/api/auth.revoke',
             scopes: ['chat:write'],
             clientIdVariable: 'SLACK_CLIENT_ID',
             clientSecretVariable: 'SLACK_CLIENT_SECRET',
@@ -308,7 +305,6 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
   }, 180000);
 
   afterEach(async () => {
-    jest.restoreAllMocks();
     await globalThis.testDataSource.query(
       `DELETE FROM core."connectedAccount" WHERE "workspaceId" = $1
          AND "applicationId" IN ($2, $3)`,
@@ -332,77 +328,161 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
         connectedAccountId: connectionId,
         handle: 'jane@slack.example',
       }),
-    ).toEqual({ connectedAccountId: connectionId, wasMerged: false });
+    ).toEqual({ connectedAccountId: connectionId, outcome: 'IDENTIFIED' });
     expect(await readConnection(connectionId)).toMatchObject({
       externalAccountId: ACCOUNT,
       handle: 'jane@slack.example',
     });
     expect(
       await deduplicateOrThrow({ connectedAccountId: connectionId }),
-    ).toEqual({ connectedAccountId: connectionId, wasMerged: false });
+    ).toEqual({ connectedAccountId: connectionId, outcome: 'IDENTIFIED' });
     expect(
       await deduplicateOrThrow({
         connectedAccountId: connectionId,
         handle: 'jane.doe@slack.example',
       }),
-    ).toEqual({ connectedAccountId: connectionId, wasMerged: false });
+    ).toEqual({ connectedAccountId: connectionId, outcome: 'IDENTIFIED' });
     expect(await readConnection(connectionId)).toMatchObject({
       handle: 'jane.doe@slack.example',
     });
   });
 
-  it('merges a second connection to the same account into the existing one', async () => {
-    const existingId = await insertConnection({
-      externalAccountId: ACCOUNT,
-      name: 'Important workspace',
-      accessToken: 'stale-access',
-      refreshToken: 'existing-refresh',
-      authFailedAt: new Date(),
-    });
-    const duplicateId = await insertConnection({
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      accessToken: 'fresh-access',
-      refreshToken: null,
-      scopes: ['chat:write', 'channels:read'],
-    });
-
-    expect(
-      await deduplicateOrThrow({ connectedAccountId: duplicateId }),
-    ).toEqual({ connectedAccountId: existingId, wasMerged: true });
-
-    const survivor = await readConnection(existingId);
-
-    assertIsDefinedOrThrow(survivor);
-    expect(survivor).toMatchObject({
-      name: 'Important workspace',
+  it.each([
+    {
       visibility: 'workspace',
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      externalAccountId: ACCOUNT,
-      scopes: ['chat:write', 'channels:read'],
-      authFailedAt: null,
-      authFailedReason: null,
-    });
-    expect(decrypt(survivor.accessToken)).toBe('fresh-access');
-    expect(decrypt(survivor.refreshToken)).toBe('existing-refresh');
-    expect(await readConnection(duplicateId)).toBeUndefined();
-  });
-
-  it('keeps personal and shared connections to the same account separate', async () => {
-    const sharedId = await insertConnection({ externalAccountId: ACCOUNT });
-    const janePersonalId = await insertConnection({ visibility: 'user' });
-    const jonyPersonalId = await insertConnection({
+      duplicateUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    },
+    {
       visibility: 'user',
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      externalAccountId: ACCOUNT,
-    });
+      duplicateUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    },
+  ] as const)(
+    'merges a second $visibility connection to the same account into the existing one',
+    async ({ visibility, duplicateUserWorkspaceId }) => {
+      const existingId = await insertConnection({
+        visibility,
+        externalAccountId: ACCOUNT,
+        name: 'Important workspace',
+        accessToken: 'stale-access',
+        refreshToken: 'existing-refresh',
+        authFailedAt: new Date(),
+      });
+      const duplicateId = await insertConnection({
+        visibility,
+        userWorkspaceId: duplicateUserWorkspaceId,
+        accessToken: 'fresh-access',
+        refreshToken: null,
+        scopes: ['chat:write', 'channels:read'],
+      });
 
-    expect(
-      await deduplicateOrThrow({ connectedAccountId: janePersonalId }),
-    ).toEqual({ connectedAccountId: janePersonalId, wasMerged: false });
-    expect((await readOwnedConnections()).map(({ id }) => id).sort()).toEqual(
-      [sharedId, janePersonalId, jonyPersonalId].sort(),
-    );
-  });
+      expect(
+        await deduplicateOrThrow({ connectedAccountId: duplicateId }),
+      ).toEqual({ connectedAccountId: existingId, outcome: 'MERGED' });
+
+      const survivor = await readConnection(existingId);
+
+      assertIsDefinedOrThrow(survivor);
+      expect(survivor).toMatchObject({
+        name: 'Important workspace',
+        visibility,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        externalAccountId: ACCOUNT,
+        scopes: ['chat:write', 'channels:read'],
+        authFailedAt: null,
+        authFailedReason: null,
+      });
+      expect(decrypt(survivor.accessToken)).toBe('fresh-access');
+      expect(decrypt(survivor.refreshToken)).toBe('existing-refresh');
+      expect(await readConnection(duplicateId)).toBeUndefined();
+    },
+  );
+
+  it.each([
+    {
+      holderLabel: 'a shared connection',
+      holder: { visibility: 'workspace' },
+      target: { visibility: 'user' },
+    },
+    {
+      holderLabel: 'a personal connection',
+      holder: { visibility: 'user' },
+      target: { visibility: 'workspace' },
+    },
+    {
+      holderLabel: "another member's personal connection",
+      holder: {
+        visibility: 'user',
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      },
+      target: { visibility: 'user' },
+    },
+  ] as const)(
+    'rejects a new connection to an account $holderLabel already holds',
+    async ({ holder, target }) => {
+      const holderId = await insertConnection({
+        ...holder,
+        externalAccountId: ACCOUNT,
+      });
+      const holderBefore = await readConnection(holderId);
+      const targetId = await insertConnection(target);
+
+      expect(
+        await deduplicateOrThrow({ connectedAccountId: targetId }),
+      ).toEqual({ connectedAccountId: targetId, outcome: 'REJECTED' });
+
+      const rejected = await readConnection(targetId);
+
+      assertIsDefinedOrThrow(rejected);
+      expect(rejected).toMatchObject({
+        externalAccountId: null,
+        accessToken: null,
+        refreshToken: null,
+        authFailedReason: 'This account is already connected in this workspace',
+      });
+      expect(rejected.authFailedAt).not.toBeNull();
+      expect(await readConnection(holderId)).toEqual(holderBefore);
+    },
+  );
+
+  it.each([
+    {
+      historyLabel: 'was written to after its insert',
+      agingQuery: `UPDATE core."connectedAccount"
+          SET "updatedAt" = "createdAt" + INTERVAL '1 minute' WHERE id = $1`,
+    },
+    {
+      historyLabel: 'was never written to',
+      agingQuery: `UPDATE core."connectedAccount"
+          SET "createdAt" = NOW() - INTERVAL '2 days',
+              "updatedAt" = NOW() - INTERVAL '2 days' WHERE id = $1`,
+    },
+  ])(
+    'flags an older connection that $historyLabel when another connection holds its account',
+    async ({ agingQuery }) => {
+      const holderId = await insertConnection({ externalAccountId: ACCOUNT });
+      const holderBefore = await readConnection(holderId);
+      const olderId = await insertConnection();
+
+      await globalThis.testDataSource.query(agingQuery, [olderId]);
+
+      expect(await deduplicateOrThrow({ connectedAccountId: olderId })).toEqual(
+        { connectedAccountId: olderId, outcome: 'REJECTED' },
+      );
+
+      const older = await readConnection(olderId);
+
+      assertIsDefinedOrThrow(older);
+      expect(older).toMatchObject({
+        externalAccountId: null,
+        accessToken: null,
+        refreshToken: null,
+        authFailedReason: 'This account is already connected in this workspace',
+        archivedAt: null,
+      });
+      expect(older.authFailedAt).not.toBeNull();
+      expect(await readConnection(holderId)).toEqual(holderBefore);
+    },
+  );
 
   it('refuses a connection owned by another application', async () => {
     const connectionId = await insertConnection({
@@ -482,50 +562,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
     },
   );
 
-  it('moves the credentials of a reconnect as a different account to a new connection', async () => {
-    const originalId = await insertConnection({
-      visibility: 'user',
-      externalAccountId: ACCOUNT,
-      name: 'Slack #1',
-      accessToken: 'other-account-access',
-      refreshToken: 'other-account-refresh',
-    });
-
-    const result = await deduplicateOrThrow({
-      connectedAccountId: originalId,
-      externalAccountId: OTHER_ACCOUNT,
-      handle: 'other@slack.example',
-    });
-
-    expect(result.wasMerged).toBe(false);
-    expect(result.connectedAccountId).not.toBe(originalId);
-
-    const created = await readConnection(result.connectedAccountId);
-
-    assertIsDefinedOrThrow(created);
-    expect(created).toMatchObject({
-      visibility: 'user',
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      externalAccountId: OTHER_ACCOUNT,
-      handle: 'other@slack.example',
-      authFailedAt: null,
-    });
-    expect(created.name).toMatch(/^Slack #\d+$/);
-    expect(decrypt(created.accessToken)).toBe('other-account-access');
-    expect(decrypt(created.refreshToken)).toBe('other-account-refresh');
-    const original = await readConnection(originalId);
-
-    expect(original).toMatchObject({
-      externalAccountId: ACCOUNT,
-      accessToken: null,
-      refreshToken: null,
-      authFailedReason: 'Reconnected with a different account',
-      archivedAt: null,
-    });
-    expect(original?.authFailedAt).not.toBeNull();
-  });
-
-  it('merges a reconnect as a different account into that account’s existing connection', async () => {
+  it('flags a reconnect as a different account without creating or merging a connection', async () => {
     const originalId = await insertConnection({
       externalAccountId: ACCOUNT,
       accessToken: 'other-account-access',
@@ -535,24 +572,30 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       accessToken: 'stale-access',
       authFailedAt: new Date(),
     });
+    const otherAccountBefore = await readConnection(otherAccountId);
 
     expect(
       await deduplicateOrThrow({
         connectedAccountId: originalId,
         externalAccountId: OTHER_ACCOUNT,
+        handle: 'other@slack.example',
       }),
-    ).toEqual({ connectedAccountId: otherAccountId, wasMerged: true });
+    ).toEqual({ connectedAccountId: originalId, outcome: 'REJECTED' });
 
-    const otherAccount = await readConnection(otherAccountId);
+    const original = await readConnection(originalId);
 
-    assertIsDefinedOrThrow(otherAccount);
-    expect(decrypt(otherAccount.accessToken)).toBe('other-account-access');
-    expect(otherAccount.authFailedAt).toBeNull();
-    expect(await readConnection(originalId)).toMatchObject({
+    assertIsDefinedOrThrow(original);
+    expect(original).toMatchObject({
       externalAccountId: ACCOUNT,
+      handle: 'slack@apple.dev',
       accessToken: null,
+      refreshToken: null,
       authFailedReason: 'Reconnected with a different account',
+      archivedAt: null,
     });
+    expect(original.authFailedAt).not.toBeNull();
+    expect(await readConnection(otherAccountId)).toEqual(otherAccountBefore);
+    expect(await readOwnedConnections()).toHaveLength(2);
   });
 
   it('leaves exactly one connection when concurrent calls race on two new connections', async () => {
@@ -626,7 +669,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.deduplicateConnectedAccount).toEqual({
         connectedAccountId: winnerId,
-        wasMerged: true,
+        outcome: 'MERGED',
       });
 
       const winner = await readConnection(winnerId);
@@ -644,106 +687,28 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
     }
   });
 
-  it.each(['user', 'workspace'] as const)(
-    'enforces %s external account uniqueness in PostgreSQL independently of the service',
-    async (visibility) => {
-      const connectionId = await insertConnection({
-        visibility,
-        externalAccountId: ACCOUNT,
-      });
+  it.each([
+    {
+      pairLabel: 'a personal and a shared connection',
+      first: { visibility: 'workspace' },
+      second: { visibility: 'user' },
+    },
+    {
+      pairLabel: "two members' personal connections",
+      first: { visibility: 'user' },
+      second: {
+        visibility: 'user',
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      },
+    },
+  ] as const)(
+    'rejects $pairLabel to the same account in PostgreSQL independently of the service',
+    async ({ first, second }) => {
+      await insertConnection({ ...first, externalAccountId: ACCOUNT });
 
       await expect(
-        globalThis.testDataSource.query(
-          `INSERT INTO core."connectedAccount"
-             (id, handle, provider, visibility, "workspaceId", "userWorkspaceId",
-              "applicationId", "connectionProviderId", "externalAccountId")
-           SELECT $1, handle, provider, visibility, "workspaceId",
-                  "userWorkspaceId", "applicationId", "connectionProviderId",
-                  "externalAccountId"
-             FROM core."connectedAccount" WHERE id = $2`,
-          [uuidv4(), connectionId],
-        ),
+        insertConnection({ ...second, externalAccountId: ACCOUNT }),
       ).rejects.toMatchObject({ code: '23505' });
     },
   );
-
-  describe('provider revoke on disconnect', () => {
-    let revokeIfApp: jest.SpyInstance;
-    let connectedAccountMetadataService: ConnectedAccountMetadataService;
-
-    beforeEach(() => {
-      revokeIfApp = jest
-        .spyOn(
-          getAppProviderByClassName<AppOAuthRevokeService>(
-            'AppOAuthRevokeService',
-          ),
-          'revokeIfApp',
-        )
-        .mockResolvedValue(undefined);
-      connectedAccountMetadataService = getAppProviderByClassName(
-        'ConnectedAccountMetadataService',
-      );
-    });
-
-    it.each(['disconnect', 'delete'] as const)(
-      'skips the revoke on %s while another connection uses the same account',
-      async (operation) => {
-        const sharedId = await insertConnection({ externalAccountId: ACCOUNT });
-
-        await insertConnection({
-          visibility: 'user',
-          externalAccountId: ACCOUNT,
-        });
-
-        await connectedAccountMetadataService[operation]({
-          id: sharedId,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-        });
-
-        expect(revokeIfApp).not.toHaveBeenCalled();
-      },
-    );
-
-    it.each(['disconnect', 'delete'] as const)(
-      'revokes on %s when the other connection to the account has no token',
-      async (operation) => {
-        const sharedId = await insertConnection({ externalAccountId: ACCOUNT });
-
-        await insertConnection({
-          visibility: 'user',
-          externalAccountId: ACCOUNT,
-          accessToken: null,
-          refreshToken: null,
-        });
-
-        await connectedAccountMetadataService[operation]({
-          id: sharedId,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-        });
-
-        expect(revokeIfApp).toHaveBeenCalledTimes(1);
-      },
-    );
-
-    it.each(['disconnect', 'delete'] as const)(
-      'revokes on %s when no other connection uses the account',
-      async (operation) => {
-        const sharedId = await insertConnection({ externalAccountId: ACCOUNT });
-
-        await insertConnection({
-          visibility: 'user',
-          externalAccountId: OTHER_ACCOUNT,
-        });
-
-        await connectedAccountMetadataService[operation]({
-          id: sharedId,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-        });
-
-        expect(revokeIfApp).toHaveBeenCalledWith(
-          expect.objectContaining({ id: sharedId }),
-        );
-      },
-    );
-  });
 });

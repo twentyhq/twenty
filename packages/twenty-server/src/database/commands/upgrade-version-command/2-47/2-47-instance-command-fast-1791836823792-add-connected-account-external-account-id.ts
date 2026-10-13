@@ -10,19 +10,13 @@ export class AddConnectedAccountExternalAccountIdFastInstanceCommand implements 
       'ALTER TABLE "core"."connectedAccount" ADD "externalAccountId" character varying(512)',
     );
     await queryRunner.query(
-      'CREATE UNIQUE INDEX "IDX_CONNECTED_ACCOUNT_APP_USER_EXTERNAL_ACCOUNT_UNIQUE" ON "core"."connectedAccount" ("workspaceId", "connectionProviderId", "userWorkspaceId", "externalAccountId") WHERE "provider" = \'app\' AND "visibility" = \'user\' AND "externalAccountId" IS NOT NULL AND "archivedAt" IS NULL',
-    );
-    await queryRunner.query(
-      'CREATE UNIQUE INDEX "IDX_CONNECTED_ACCOUNT_APP_SHARED_EXTERNAL_ACCOUNT_UNIQUE" ON "core"."connectedAccount" ("workspaceId", "connectionProviderId", "externalAccountId") WHERE "provider" = \'app\' AND "visibility" = \'workspace\' AND "externalAccountId" IS NOT NULL AND "archivedAt" IS NULL',
+      'CREATE UNIQUE INDEX "IDX_CONNECTED_ACCOUNT_APP_EXTERNAL_ACCOUNT_UNIQUE" ON "core"."connectedAccount" ("workspaceId", "connectionProviderId", "externalAccountId") WHERE "provider" = \'app\' AND "externalAccountId" IS NOT NULL AND "archivedAt" IS NULL',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'DROP INDEX "core"."IDX_CONNECTED_ACCOUNT_APP_SHARED_EXTERNAL_ACCOUNT_UNIQUE"',
-    );
-    await queryRunner.query(
-      'DROP INDEX "core"."IDX_CONNECTED_ACCOUNT_APP_USER_EXTERNAL_ACCOUNT_UNIQUE"',
+      'DROP INDEX "core"."IDX_CONNECTED_ACCOUNT_APP_EXTERNAL_ACCOUNT_UNIQUE"',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."connectedAccount" DROP COLUMN "externalAccountId"',

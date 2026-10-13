@@ -296,34 +296,27 @@ export const handler = ({ connectedAccountId }) => {
     ]);
   });
 
-  it('drops the external account id when a reconnect changes the visibility', async () => {
-    await callback(await authorize(), 'account-a');
+  it('keeps the external account id when a reconnect shares a personal connection', async () => {
     await callback(await authorize(), 'account-a-personal');
-    const [shared, personal] = await readAccounts();
+    const [personal] = await readAccounts();
 
     await globalThis.testDataSource.query(
-      `UPDATE core."connectedAccount" SET visibility = 'user' WHERE id = $1`,
-      [personal.id],
-    );
-    await globalThis.testDataSource.query(
-      'UPDATE core."connectedAccount" SET "externalAccountId" = $1 WHERE id = ANY($2::uuid[])',
-      ['T1:U1', [shared.id, personal.id]],
+      `UPDATE core."connectedAccount" SET visibility = 'user', "externalAccountId" = $1 WHERE id = $2`,
+      ['T1:U1', personal.id],
     );
 
     const redirect = await callback(
       await authorize({ reconnectingConnectedAccountId: personal.id }),
       'account-a-shared',
     );
-    const accounts = await readAccounts();
-    const reconnected = accounts.find(({ id }) => id === personal.id);
-    const untouched = accounts.find(({ id }) => id === shared.id);
+    const [reconnected] = await readAccounts();
 
     expect(redirect.searchParams.has('errorMessage')).toBe(false);
     expect(reconnected).toMatchObject({
+      id: personal.id,
       visibility: 'workspace',
-      externalAccountId: null,
+      externalAccountId: 'T1:U1',
     });
-    expect(untouched).toMatchObject({ externalAccountId: 'T1:U1' });
   });
 
   it('rejects tampered state before exchanging a code or executing the app', async () => {

@@ -1,0 +1,1 @@
+export const JUST_ADDED_CONNECTION_MAX_AGE_MS = 60 * 60 * 1000;

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -8,14 +9,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager, IsNull, Not, Repository } from 'typeorm';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
-import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
+import { JUST_ADDED_CONNECTION_MAX_AGE_MS } from 'src/engine/core-modules/application/connection-provider/connections/constants/just-added-connection-max-age-ms.constant';
+import { AppConnectionDeduplicationOutcome } from 'src/engine/core-modules/application/connection-provider/connections/enums/app-connection-deduplication-outcome.enum';
 import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 type DeduplicateConnectionArgs = {
   applicationId: string;
@@ -28,11 +28,7 @@ type DeduplicateConnectionArgs = {
 
 type DeduplicateConnectionResult = {
   connectedAccountId: string;
-  wasMerged: boolean;
-};
-
-type IdentifiableConnectedAccount = ConnectedAccountEntity & {
-  connectionProviderId: string;
+  outcome: AppConnectionDeduplicationOutcome;
 };
 
 @Injectable()
@@ -40,8 +36,6 @@ export class ApplicationConnectionDeduplicationService {
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectWorkspaceScopedRepository(ConnectionProviderEntity)
-    private readonly connectionProviderRepository: WorkspaceScopedRepository<ConnectionProviderEntity>,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -94,11 +88,6 @@ export class ApplicationConnectionDeduplicationService {
           );
         }
 
-        const identifiableTarget: IdentifiableConnectedAccount = {
-          ...target,
-          connectionProviderId: target.connectionProviderId,
-        };
-
         if (target.externalAccountId === externalAccountId) {
           if (isDefined(handle) && handle !== target.handle) {
             await entityManager.update(
@@ -108,24 +97,36 @@ export class ApplicationConnectionDeduplicationService {
             );
           }
 
-          return { connectedAccountId: target.id, wasMerged: false };
+          return {
+            connectedAccountId: target.id,
+            outcome: AppConnectionDeduplicationOutcome.IDENTIFIED,
+          };
         }
-
-        const existing = await this.findActiveConnectionForAccount({
-          entityManager,
-          target: identifiableTarget,
-          externalAccountId,
-        });
 
         if (isDefined(target.externalAccountId)) {
-          return this.moveCredentialsToReconnectedAccount({
+          await this.flagConnection({
             entityManager,
-            target: identifiableTarget,
-            existing,
-            externalAccountId,
-            handle,
+            connection: target,
+            reason: msg`Reconnected with a different account`,
           });
+
+          return {
+            connectedAccountId: target.id,
+            outcome: AppConnectionDeduplicationOutcome.REJECTED,
+          };
         }
+
+        const existing = await entityManager.findOne(ConnectedAccountEntity, {
+          where: {
+            id: Not(target.id),
+            workspaceId,
+            connectionProviderId: target.connectionProviderId,
+            provider: ConnectedAccountProvider.APP,
+            externalAccountId,
+            archivedAt: IsNull(),
+          },
+          lock: { mode: 'pessimistic_write' },
+        });
 
         if (!isDefined(existing)) {
           await entityManager.update(
@@ -134,64 +135,74 @@ export class ApplicationConnectionDeduplicationService {
             { externalAccountId, ...(isDefined(handle) ? { handle } : {}) },
           );
 
-          return { connectedAccountId: target.id, wasMerged: false };
+          return {
+            connectedAccountId: target.id,
+            outcome: AppConnectionDeduplicationOutcome.IDENTIFIED,
+          };
         }
 
-        await this.copyCredentials({
+        const isSameLevelAndOwner =
+          existing.visibility === target.visibility &&
+          (target.visibility === 'workspace' ||
+            existing.userWorkspaceId === target.userWorkspaceId);
+
+        if (isSameLevelAndOwner && this.isJustAdded(target)) {
+          await this.copyCredentials({
+            entityManager,
+            source: target,
+            destination: existing,
+            handle,
+          });
+          await entityManager.delete(ConnectedAccountEntity, {
+            id: target.id,
+            workspaceId,
+          });
+
+          return {
+            connectedAccountId: existing.id,
+            outcome: AppConnectionDeduplicationOutcome.MERGED,
+          };
+        }
+
+        await this.flagConnection({
           entityManager,
-          source: target,
-          destination: existing,
-          handle,
-        });
-        await entityManager.delete(ConnectedAccountEntity, {
-          id: target.id,
-          workspaceId,
+          connection: target,
+          reason: msg`This account is already connected in this workspace`,
         });
 
-        return { connectedAccountId: existing.id, wasMerged: true };
+        return {
+          connectedAccountId: target.id,
+          outcome: AppConnectionDeduplicationOutcome.REJECTED,
+        };
       },
     );
   }
 
-  private async moveCredentialsToReconnectedAccount({
+  // Any write after the OAuth callback's insert moves updatedAt; the age bound
+  // keeps an old connection that was never written to from passing as new.
+  private isJustAdded(connection: ConnectedAccountEntity): boolean {
+    const createdAt = connection.createdAt.getTime();
+
+    return (
+      connection.updatedAt.getTime() === createdAt &&
+      Date.now() - createdAt < JUST_ADDED_CONNECTION_MAX_AGE_MS
+    );
+  }
+
+  private async flagConnection({
     entityManager,
-    target,
-    existing,
-    externalAccountId,
-    handle,
+    connection,
+    reason,
   }: {
     entityManager: EntityManager;
-    target: IdentifiableConnectedAccount;
-    existing: ConnectedAccountEntity | null;
-    externalAccountId: string;
-    handle: string | null;
-  }): Promise<DeduplicateConnectionResult> {
-    let survivorId: string;
-
-    if (isDefined(existing)) {
-      await this.copyCredentials({
-        entityManager,
-        source: target,
-        destination: existing,
-        handle,
-      });
-      survivorId = existing.id;
-    } else {
-      const created = await this.createConnectionForAccount({
-        entityManager,
-        target,
-        externalAccountId,
-        handle,
-      });
-
-      survivorId = created.id;
-    }
-
+    connection: ConnectedAccountEntity;
+    reason: MessageDescriptor;
+  }): Promise<void> {
     const now = new Date();
 
     await entityManager.update(
       ConnectedAccountEntity,
-      { id: target.id, workspaceId: target.workspaceId },
+      { id: connection.id, workspaceId: connection.workspaceId },
       {
         accessToken: null,
         refreshToken: null,
@@ -199,37 +210,9 @@ export class ApplicationConnectionDeduplicationService {
         authFailedAt: now,
         authFailedReason: this.i18nService
           .getI18nInstance(SOURCE_LOCALE)
-          ._(msg`Reconnected with a different account`),
+          ._(reason),
       },
     );
-
-    return { connectedAccountId: survivorId, wasMerged: isDefined(existing) };
-  }
-
-  private async findActiveConnectionForAccount({
-    entityManager,
-    target,
-    externalAccountId,
-  }: {
-    entityManager: EntityManager;
-    target: IdentifiableConnectedAccount;
-    externalAccountId: string;
-  }): Promise<ConnectedAccountEntity | null> {
-    return entityManager.findOne(ConnectedAccountEntity, {
-      where: {
-        id: Not(target.id),
-        workspaceId: target.workspaceId,
-        connectionProviderId: target.connectionProviderId,
-        provider: ConnectedAccountProvider.APP,
-        externalAccountId,
-        visibility: target.visibility,
-        ...(target.visibility === 'user'
-          ? { userWorkspaceId: target.userWorkspaceId }
-          : {}),
-        archivedAt: IsNull(),
-      },
-      lock: { mode: 'pessimistic_write' },
-    });
   }
 
   private async copyCredentials({
@@ -255,57 +238,6 @@ export class ApplicationConnectionDeduplicationService {
         authFailedReason: null,
         ...(isDefined(handle) ? { handle } : {}),
       },
-    );
-  }
-
-  private async createConnectionForAccount({
-    entityManager,
-    target,
-    externalAccountId,
-    handle,
-  }: {
-    entityManager: EntityManager;
-    target: IdentifiableConnectedAccount;
-    externalAccountId: string;
-    handle: string | null;
-  }): Promise<ConnectedAccountEntity> {
-    const provider = await this.connectionProviderRepository
-      .withManager(entityManager)
-      .findOne(target.workspaceId, {
-        where: { id: target.connectionProviderId },
-      });
-
-    if (!isDefined(provider)) {
-      throw new ConnectionProviderException(
-        `Connection provider ${target.connectionProviderId} not found`,
-        ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NOT_FOUND,
-      );
-    }
-
-    const repository = entityManager.getRepository(ConnectedAccountEntity);
-    const existingCount = await repository.count({
-      where: {
-        connectionProviderId: target.connectionProviderId,
-        workspaceId: target.workspaceId,
-      },
-    });
-
-    return repository.save(
-      repository.create({
-        name: `${provider.displayName} #${existingCount + 1}`,
-        handle: handle ?? target.handle,
-        provider: ConnectedAccountProvider.APP,
-        workspaceId: target.workspaceId,
-        applicationId: target.applicationId,
-        connectionProviderId: target.connectionProviderId,
-        userWorkspaceId: target.userWorkspaceId,
-        visibility: target.visibility,
-        externalAccountId,
-        accessToken: target.accessToken,
-        refreshToken: target.refreshToken,
-        scopes: target.scopes,
-        lastCredentialsRefreshedAt: new Date(),
-      }),
     );
   }
 }

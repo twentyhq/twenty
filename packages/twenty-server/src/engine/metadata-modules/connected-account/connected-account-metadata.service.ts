@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import {
   ConnectedAccountProvider,
@@ -409,12 +409,6 @@ export class ConnectedAccountMetadataService {
     await this.repository.manager.transaction(async (entityManager) => {
       await entityManager.update(
         ConnectedAccountEntity,
-        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
-        { archivedAt: new Date() },
-      );
-
-      await entityManager.update(
-        ConnectedAccountEntity,
         { id: In(connectedAccountIds), workspaceId },
         {
           userWorkspaceId: toUserWorkspaceId,
@@ -422,6 +416,12 @@ export class ConnectedAccountMetadataService {
           refreshToken: null,
           connectionParameters: null,
         },
+      );
+
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
+        { archivedAt: new Date() },
       );
 
       await entityManager.update(
@@ -458,7 +458,7 @@ export class ConnectedAccountMetadataService {
     });
 
     for (const connectedAccount of connectedAccounts) {
-      await this.revokeUnlessGrantIsStillUsed(connectedAccount);
+      await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
     }
   }
 
@@ -481,7 +481,7 @@ export class ConnectedAccountMetadataService {
       });
     }
 
-    await this.revokeUnlessGrantIsStillUsed(connectedAccount);
+    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
 
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({
@@ -607,7 +607,7 @@ export class ConnectedAccountMetadataService {
     });
 
     if (isDefined(latestConnectedAccount)) {
-      await this.revokeUnlessGrantIsStillUsed(latestConnectedAccount);
+      await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
     }
 
     await this.repository.delete({ id, workspaceId });
@@ -640,30 +640,6 @@ export class ConnectedAccountMetadataService {
     );
 
     return connectedAccount;
-  }
-
-  private async revokeUnlessGrantIsStillUsed(
-    connectedAccount: ConnectedAccountEntity,
-  ): Promise<void> {
-    if (
-      isDefined(connectedAccount.connectionProviderId) &&
-      isDefined(connectedAccount.externalAccountId)
-    ) {
-      const isGrantStillUsed = await this.repository.existsBy({
-        id: Not(connectedAccount.id),
-        workspaceId: connectedAccount.workspaceId,
-        connectionProviderId: connectedAccount.connectionProviderId,
-        externalAccountId: connectedAccount.externalAccountId,
-        accessToken: Not(IsNull()),
-        archivedAt: IsNull(),
-      });
-
-      if (isGrantStillUsed) {
-        return;
-      }
-    }
-
-    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
   }
 
   private async stopWebhookSubscriptions({
