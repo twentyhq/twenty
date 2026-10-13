@@ -21,7 +21,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useId, useRef } from 'react';
+import { useCallback, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -126,16 +126,15 @@ export const FormSingleRecordPicker = ({
 
   const componentId = useId();
   const dropdownId = `form-record-picker-${componentId}`;
+  const dropdownTriggerId = `${dropdownId}-trigger`;
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
 
-  const triggerRef = useRef<HTMLDivElement>(null);
-
   const closeDropdownAndFocusTrigger = () => {
     closeDropdown(dropdownId);
-    triggerRef.current?.focus();
+    document.getElementById(dropdownTriggerId)?.focus();
   };
 
   const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
@@ -191,7 +190,11 @@ export const FormSingleRecordPicker = ({
   );
 
   const handleTriggerKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key !== 'Enter' && event.key !== ' ') {
+    const isOpenKey = event.key === 'Enter' || event.key === ' ';
+    const hasModifier =
+      event.metaKey || event.ctrlKey || event.altKey || event.shiftKey;
+
+    if (event.target !== event.currentTarget || !isOpenKey || hasModifier) {
       return;
     }
 
@@ -245,7 +248,7 @@ export const FormSingleRecordPicker = ({
               }}
               clickableComponent={
                 <StyledFormSelectContainerWrapper
-                  ref={triggerRef}
+                  id={dropdownTriggerId}
                   tabIndex={0}
                   onKeyDown={handleTriggerKeyDown}
                 >

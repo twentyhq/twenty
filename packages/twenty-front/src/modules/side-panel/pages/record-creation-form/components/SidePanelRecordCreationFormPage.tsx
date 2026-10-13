@@ -269,7 +269,7 @@ const SidePanelRecordCreationForm = ({
             (previousFormResetCount) => previousFormResetCount + 1,
           );
           enqueueToast({
-            variant: 'success',
+            status: 'success',
             children: t`${objectMetadataItem.labelSingular} created`,
           });
         }

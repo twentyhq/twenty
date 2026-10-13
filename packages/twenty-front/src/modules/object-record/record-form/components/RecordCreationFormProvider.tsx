@@ -81,7 +81,7 @@ export const RecordCreationFormProvider = ({
         ),
       );
 
-      const stopSettling = () =>
+      const clearIsSettling = () =>
         setPendingRecordCreations((previousPendingRecordCreations) =>
           previousPendingRecordCreations.map((candidate) =>
             candidate.requestId === requestId
@@ -95,13 +95,13 @@ export const RecordCreationFormProvider = ({
       try {
         createdRecord = await pendingRecordCreation.createRecord(draftRecord);
       } catch (error) {
-        stopSettling();
+        clearIsSettling();
 
         return { error };
       }
 
       if (keepOpen) {
-        stopSettling();
+        clearIsSettling();
 
         return {};
       }

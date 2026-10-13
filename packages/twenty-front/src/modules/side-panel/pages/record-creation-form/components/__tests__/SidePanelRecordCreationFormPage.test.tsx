@@ -547,7 +547,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     });
     expect(await screen.findByLabelText('Name')).toHaveValue('');
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'success' }),
+      expect.objectContaining({ status: 'success' }),
     );
   });
 });
