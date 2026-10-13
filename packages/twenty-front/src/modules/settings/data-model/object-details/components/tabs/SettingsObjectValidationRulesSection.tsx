@@ -109,7 +109,7 @@ export const SettingsObjectValidationRulesSection = ({
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           getValidationRuleSaveErrorMessage(error) ??
           t`Failed to create the rule.`,

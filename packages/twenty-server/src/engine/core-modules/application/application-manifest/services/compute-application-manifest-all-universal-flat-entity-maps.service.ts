@@ -228,8 +228,15 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    const settingsFrontComponentUniversalIdentifier =
-      manifest.application.settingsFrontComponent?.universalIdentifier;
+    const settingsFrontComponentUniversalIdentifiers = new Set(
+      [
+        manifest.application.settingsFrontComponent?.universalIdentifier,
+        ...(manifest.settingsMenuItems ?? []).map(
+          (settingsMenuItemManifest) =>
+            settingsMenuItemManifest.frontComponentUniversalIdentifier,
+        ),
+      ].filter(isDefined),
+    );
 
     for (const frontComponentManifest of manifest.frontComponents) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
@@ -238,8 +245,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             frontComponentManifest,
             applicationUniversalIdentifier,
             isSettingsFrontComponent:
-              frontComponentManifest.universalIdentifier ===
-              settingsFrontComponentUniversalIdentifier,
+              settingsFrontComponentUniversalIdentifiers.has(
+                frontComponentManifest.universalIdentifier,
+              ),
             now,
           }),
         universalFlatEntityMapsToMutate:

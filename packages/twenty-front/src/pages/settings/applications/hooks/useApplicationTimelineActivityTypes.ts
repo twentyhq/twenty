@@ -42,7 +42,7 @@ export const useApplicationTimelineActivityTypes = ({
     try {
       await mutation();
     } catch {
-      enqueueToast({ variant: 'error', children: errorMessage });
+      enqueueToast({ status: 'error', children: errorMessage });
     } finally {
       setMutatingTimelineActivityTypeIds((currentIds) => {
         const nextIds = new Set(currentIds);

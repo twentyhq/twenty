@@ -47,12 +47,14 @@ export const OverflowingList = ({
     isDefined(maxInlineCount) && Number.isFinite(maxInlineCount)
       ? Math.min(children.length, Math.max(0, Math.floor(maxInlineCount)))
       : children.length;
+  const isMeasurementEnabled =
+    showOverflowCount ?? (isHovered || hasFocus || isOpen);
   const { containerRef, itemsRef, triggerRef, visibleItemCount, hasOverflow } =
     useOverflowingListLayout({
       itemCount: children.length,
       inlineItemCount,
       reserveCountSpace: isCountVisible,
-      isMeasurementEnabled: showOverflowCount !== false || isOpen,
+      isMeasurementEnabled,
     });
   const resetFocusState = useCallback(() => {
     setHasFocus(false);
@@ -65,8 +67,9 @@ export const OverflowingList = ({
     triggerRef,
     resetFocusWhenFocusedTriggerUnmounts,
   );
-  const displayedItemCount =
-    showOverflowCount === false ? inlineItemCount : visibleItemCount;
+  const displayedItemCount = isMeasurementEnabled
+    ? visibleItemCount
+    : inlineItemCount;
   const hiddenItemCount = children.length - visibleItemCount;
   const canExpand = hasOverflow && (isOpen || showOverflowCount !== false);
 

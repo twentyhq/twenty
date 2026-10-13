@@ -39,7 +39,8 @@ export type WorkflowRunResponse = {
   id: string;
   status: WorkflowRunStatusType;
   state: WorkflowRunState;
-  workflowVersionId: string;
+  workflowVersionId: string | null;
+  coreWorkflowVersionId: string | null;
 };
 
 export const getWorkflowRun = async (

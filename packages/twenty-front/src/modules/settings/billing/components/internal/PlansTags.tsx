@@ -16,9 +16,7 @@ const StyledTagsWrapper = styled.div`
 `;
 
 const StyledTrialTag = styled(Tag)`
-  && {
-    min-width: fit-content;
-  }
+  min-width: fit-content;
 `;
 
 export const PlansTags = ({ plan, isTrialPeriod = false }: PlansTagsProps) => {

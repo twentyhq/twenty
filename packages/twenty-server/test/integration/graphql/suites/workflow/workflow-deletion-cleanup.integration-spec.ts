@@ -19,7 +19,6 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
-  findCoreWorkflowVersion,
   updateCoreWorkflowVersionStep,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -103,7 +102,6 @@ describe('workflow deletion cleanup', () => {
 
   describe('deleting a workspace workflow', () => {
     type WorkspaceWorkflow = {
-      workflowVersionId: string;
       coreWorkflowId: string;
       coreWorkflowVersionId: string;
     };
@@ -135,12 +133,7 @@ describe('workflow deletion cleanup', () => {
         },
       });
 
-      const { workspaceWorkflowVersionId } = await findCoreWorkflowVersion({
-        coreWorkflowVersionId,
-      });
-
       return {
-        workflowVersionId: workspaceWorkflowVersionId!,
         coreWorkflowId,
         coreWorkflowVersionId,
       };
@@ -332,11 +325,8 @@ describe('workflow deletion cleanup', () => {
     it('deletes the definition, triggers, CODE functions and runs of the deleted workflow only, before the deletion returns', async () => {
       expect(
         await countRows(
-          `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1 OR "workflowVersionId" = $2`,
-          [
-            deletedWorkflow.coreWorkflowVersionId,
-            deletedWorkflow.workflowVersionId,
-          ],
+          `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1`,
+          [deletedWorkflow.coreWorkflowVersionId],
         ),
       ).toBe(1);
 
@@ -366,11 +356,8 @@ describe('workflow deletion cleanup', () => {
       ).toBe(0);
       expect(
         await countRows(
-          `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1 OR "workflowVersionId" = $2`,
-          [
-            deletedWorkflow.coreWorkflowVersionId,
-            deletedWorkflow.workflowVersionId,
-          ],
+          `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1`,
+          [deletedWorkflow.coreWorkflowVersionId],
         ),
       ).toBe(0);
       expect(

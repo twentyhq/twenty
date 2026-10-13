@@ -129,6 +129,7 @@ const buildRepository = ({
         restrictedFields: {},
       },
     },
+    roleIds: [ROLE_ID],
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
     tableShapeByObjectMetadataId: () => tableShape,

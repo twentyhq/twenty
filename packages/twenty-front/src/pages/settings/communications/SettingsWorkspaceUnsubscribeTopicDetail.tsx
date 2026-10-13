@@ -74,7 +74,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
       await updateUnsubscribeTopic(input);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update unsubscribe topic.`,
       });
     }
@@ -113,7 +113,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
       );
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to delete unsubscribe topic.`,
       });
     }
