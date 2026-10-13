@@ -92,7 +92,7 @@ export const createExportFile = async ({
     },
     cleanup: async () => {
       await file.close().catch(() => undefined);
-      await runFileOperation(() => rm(temporaryPath, { force: true }));
+      await rm(temporaryPath, { force: true }).catch(() => undefined);
     },
   };
 };

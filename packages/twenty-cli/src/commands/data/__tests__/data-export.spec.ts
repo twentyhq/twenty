@@ -23,7 +23,7 @@ import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 
 vi.mock('node:fs/promises', async (importOriginal) => {
   const original = await importOriginal<typeof fileSystem>();
-  return { ...original, link: vi.fn(original.link) };
+  return { ...original, link: vi.fn(original.link), rm: vi.fn(original.rm) };
 });
 
 const EXPORT_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
@@ -376,6 +376,36 @@ describe('twenty data export', () => {
         error: { code: 'FILE_WRITE_FAILED' },
       });
       expect(await readdir(directory)).toEqual([]);
+    },
+  );
+
+  it('keeps a successful export successful when temporary-file cleanup fails', async () => {
+    vi.mocked(fileSystem.rm).mockRejectedValueOnce(
+      Object.assign(new Error('file is busy'), { code: 'EBUSY' }),
+    );
+    const result = await run('--format', 'json');
+    expect(result.exitCode).toBe(0);
+    expect(parseSingleJsonLine(result.stdout)).toMatchObject({ ok: true });
+    expect(await readFile(outputPath, 'utf8')).toBe(CSV);
+  });
+
+  it.each(['NETWORK_ERROR', 'EXPORT_FAILED', 'CANCELLED'] as const)(
+    'preserves %s when temporary-file cleanup fails',
+    async (code) => {
+      interruptDownload = code === 'NETWORK_ERROR';
+      exportError = code === 'EXPORT_FAILED' ? 'Export failed' : undefined;
+      cancellation = code === 'CANCELLED' ? 'download' : undefined;
+      await writeFile(outputPath, 'keep me');
+      vi.mocked(fileSystem.rm).mockRejectedValueOnce(
+        Object.assign(new Error('file is busy'), { code: 'EBUSY' }),
+      );
+      const result = await run('--force', '--format', 'json');
+      expect(result.exitCode).toBe(code === 'CANCELLED' ? 130 : 1);
+      expect(parseSingleJsonLine(result.stdout)).toMatchObject({
+        ok: false,
+        error: { code },
+      });
+      expect(await readFile(outputPath, 'utf8')).toBe('keep me');
     },
   );
 

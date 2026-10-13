@@ -191,7 +191,7 @@ twenty data export people --order-by 'name.lastName[AscNullsLast]' --output peop
 
 `--fields` selects active field API names in CSV order. By default, all active non-system fields are selected. The server always includes `Id` first, expands composite fields into columns and exports many-to-one relations as IDs. Filters and ordering use the REST expression syntax from `data list`, converted to the export subscription's input. Row and field permissions still apply on the server.
 
-`--output` is required and names a file, not stdout. Existing files are preserved unless `--force` is passed. CSV bytes stream to a private temporary file in the destination directory, with a 1 GiB limit and a 15-minute download timeout. The destination appears, or is replaced with `--force`, only after the download finishes. On failure or cancellation, the temporary file is removed and an existing destination is preserved.
+`--output` is required and names a file, not stdout. Existing files are preserved unless `--force` is passed. CSV bytes stream to a private temporary file in the destination directory, with a 1 GiB limit and a 15-minute download timeout. The destination appears, or is replaced with `--force`, only after the download finishes. On failure or cancellation, the CLI attempts to remove the temporary file and preserves an existing destination.
 
 Human output shows percentage progress and the saved file's size. JSON returns one result containing the export ID, object, output path, byte count and elapsed time. NDJSON emits `start`, percentage `progress`, and terminal `result` or `error` events. CSV contents are written only to the output file.
 
