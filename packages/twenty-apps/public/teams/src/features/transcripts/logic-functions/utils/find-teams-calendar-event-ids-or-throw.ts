@@ -9,6 +9,7 @@ import { type CalendarEvent } from 'src/features/transcripts/logic-functions/typ
 import { type TeamsCalendarReference } from 'src/features/transcripts/logic-functions/types/teams-calendar-reference.type';
 import { chunkIntoBatches } from 'src/features/transcripts/logic-functions/utils/chunk-into-batches';
 import { getTeamsCalendarEventICalUIdOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-calendar-event-ical-uid-or-throw';
+import { groupCalendarEventIdsByKey } from 'src/features/transcripts/logic-functions/utils/group-calendar-event-ids-by-key';
 import { matchTeamsCalendarEventIds } from 'src/features/transcripts/logic-functions/utils/match-teams-calendar-event-ids';
 
 type RecordConnection<TNode> = {
@@ -165,27 +166,6 @@ const addMissingICalUIdsOrThrow = async ({
   );
 };
 
-const groupCalendarEventIdsByEventExternalId = (
-  calendarChannelEventAssociations: CalendarChannelEventAssociation[],
-): Map<string, Set<string>> => {
-  const calendarEventIdsByEventExternalId = new Map<string, Set<string>>();
-
-  for (const {
-    eventExternalId,
-    calendarEventId,
-  } of calendarChannelEventAssociations) {
-    calendarEventIdsByEventExternalId.set(
-      eventExternalId,
-      (
-        calendarEventIdsByEventExternalId.get(eventExternalId) ??
-        new Set<string>()
-      ).add(calendarEventId),
-    );
-  }
-
-  return calendarEventIdsByEventExternalId;
-};
-
 export const findTeamsCalendarEventIdsOrThrow = async ({
   accessToken,
   coreApiClient,
@@ -202,8 +182,14 @@ export const findTeamsCalendarEventIdsOrThrow = async ({
         ...new Set(references.map(({ eventExternalId }) => eventExternalId)),
       ],
     });
-  const calendarEventIdsByEventExternalId =
-    groupCalendarEventIdsByEventExternalId(calendarChannelEventAssociations);
+  const calendarEventIdsByEventExternalId = groupCalendarEventIdsByKey(
+    calendarChannelEventAssociations.map(
+      ({ eventExternalId, calendarEventId }): [string, string] => [
+        eventExternalId,
+        calendarEventId,
+      ],
+    ),
+  );
   const isUniquelyAssociated = ({ eventExternalId }: TeamsCalendarReference) =>
     calendarEventIdsByEventExternalId.get(eventExternalId)?.size === 1;
   const uniquelyAssociatedReferences = references.filter(isUniquelyAssociated);
