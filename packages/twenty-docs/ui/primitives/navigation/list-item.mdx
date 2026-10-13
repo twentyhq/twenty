@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
 
-`ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default for passive content. Use [ListItemButton](/ui/components/navigation/list-item-button) for ordinary action rows. Compose `ListItem` with an anchor for navigation or with a custom semantic owner when needed. Use [Menu](/ui/primitives/surfaces/menu), [Dropdown](/ui/components/navigation/dropdown), or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
+`ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default for passive content. Use [ListItemButton](/ui/components/navigation/list-item-button) for ordinary action rows. Compose `ListItem` with an anchor for navigation or with a custom semantic owner when needed. Use [Dropdown](/ui/components/navigation/dropdown) or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
 
 <StoryEmbed
   storyId="ui-navigation-listitem--default"
@@ -100,28 +100,30 @@ Links do not have a native `disabled` attribute. If a destination is unavailable
 
 ## Popup item owner
 
-Use `Menu.Item`, `Dropdown.ActionItem`, or `Dropdown.OptionItem` inside their respective popup owner. These parts already compose the ListItem layout and expose its visual slots. The popup owner supplies roles, focus, keyboard navigation, activation, and disabled behavior.
+Use `Dropdown.ActionItem` or `Dropdown.OptionItem` inside their popup owner. These parts already compose the ListItem layout and expose its visual slots. The popup owner supplies roles, focus, keyboard navigation, activation, and disabled behavior.
 
 ```tsx
 import { Button } from 'twenty-ui/primitives/input';
-import { Menu } from 'twenty-ui/primitives/surfaces';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type RecordActionsProps = { onDuplicate: () => void };
 
 export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
-  <Menu.Root>
-    <Menu.Trigger render={<Button>Record actions</Button>} />
-    <Menu.Popup>
-      <Menu.Item onClick={onDuplicate}>Duplicate record</Menu.Item>
-      <Menu.Item disabled>Unavailable action</Menu.Item>
-    </Menu.Popup>
-  </Menu.Root>
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem onClick={onDuplicate}>
+        Duplicate record
+      </Dropdown.ActionItem>
+      <Dropdown.ActionItem disabled>Unavailable action</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
 );
 ```
 
 <StoryEmbed
-  storyId="ui-navigation-listitem--menu-owner"
-  title="Menu item owner"
+  storyId="ui-components-dropdown--documentation"
+  title="Dropdown item owner"
   height={260}
 />
 
@@ -300,7 +302,7 @@ export const ContactRow = ({ onOpen }: ContactRowProps) => (
 
 ## Labels
 
-Use `shortcutJoinLabel` to customize the text between sequential shortcut steps. It defaults to `then`; an empty string removes the join text. The same prop is available on `Menu` and `Dropdown` item parts. The legacy `MenuItem` composition uses `shortcutJoinLabel` alongside `shortcut`.
+Use `shortcutJoinLabel` to customize the text between sequential shortcut steps. It defaults to `then`; an empty string removes the join text. The same prop is available on `Dropdown` item parts. The legacy `MenuItem` composition uses `shortcutJoinLabel` alongside `shortcut`.
 
 ## Props
 

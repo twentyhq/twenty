@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
@@ -35,6 +36,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CoreWorkflowAccessModule,
     WorkflowRunRecordShareModule,
     TypeOrmModule.forFeature([WorkflowVersionEntity]),
+    TypeORMModule,
     AutomatedTriggerModule,
     CacheLockModule,
     CodeStepBuildModule,

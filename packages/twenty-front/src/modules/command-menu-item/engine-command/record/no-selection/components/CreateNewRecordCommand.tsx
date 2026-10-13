@@ -6,8 +6,6 @@ import { getRecordCreationCommandType } from '@/command-menu-item/engine-command
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CreateNewRecordCommand = () => {
@@ -23,9 +21,6 @@ export const CreateNewRecordCommand = () => {
         (item) => item.id === creationTargetObjectMetadataId,
       )
     : contextObjectMetadataItem;
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
   const { createCoreWorkflow } = useCreateCoreWorkflow();
 
   if (!isDefined(objectMetadataItem)) {
@@ -38,7 +33,6 @@ export const CreateNewRecordCommand = () => {
     recordIndexId,
     hasAnySoftDeleteFilterOnView,
     creationTargetObjectMetadataId,
-    isWorkflowCoreIndexPageEnabled,
   });
 
   if (commandType === 'workflow') {

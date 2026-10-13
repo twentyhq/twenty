@@ -21,10 +21,12 @@ type HasObjectInUnion<T> = T extends unknown
 type MetadataEntityPropertyConfiguration<
   TMetadataName extends AllMetadataName,
 > = {
-  [K in keyof Omit<
-    ScalarFlatEntity<MetadataEntity<TMetadataName>>,
-    'id' | 'workspaceId' | 'applicationId' | 'universalIdentifier'
-  >]: {
+  [
+    K in keyof Omit<
+      ScalarFlatEntity<MetadataEntity<TMetadataName>>,
+      'id' | 'workspaceId' | 'applicationId' | 'universalIdentifier'
+    >
+  ]: {
     universalProperty: K extends AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
       string
       ? `universal${Capitalize<K>}`
@@ -1775,6 +1777,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+    },
+    widgetAvailability: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalWidgetAvailability',
     },
     usesSdkClient: {
       toCompare: true,

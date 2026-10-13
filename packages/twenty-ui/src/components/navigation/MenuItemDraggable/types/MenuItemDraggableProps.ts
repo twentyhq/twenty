@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 
 export type MenuItemDraggableProps = {
   LeftIcon?: IconComponent | undefined;
+  LeftComponent?: ReactNode;
   withIconContainer?: boolean;
   accent?: MenuItemAccent;
   iconButtons?: ReactNode;

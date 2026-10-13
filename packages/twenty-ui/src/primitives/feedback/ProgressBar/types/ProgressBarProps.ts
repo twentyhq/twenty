@@ -1,14 +1,9 @@
-export type ProgressBarProps = {
-  value: number;
+import { type ProgressRootProps } from '../../Progress/types/ProgressRootProps';
+
+export type ProgressBarProps = ProgressRootProps & {
   size?: 'sm' | 'md';
-  className?: string;
   barColor?: string;
   backgroundColor?: string;
   withBorderRadius?: boolean;
-  withGrowIn?: boolean;
-  withGlint?: boolean;
-  withSpringFill?: boolean;
   withMinimumFillWidth?: boolean;
-  ariaLabel?: string;
-  onGrowInComplete?: () => void;
 };

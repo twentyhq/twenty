@@ -38,7 +38,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
       });
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Custom domain successfully deleted`,
       });
 

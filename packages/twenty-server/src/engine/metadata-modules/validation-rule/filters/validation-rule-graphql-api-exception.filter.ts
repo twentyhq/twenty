@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import { validationRuleGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/validation-rule/utils/validation-rule-graphql-api-exception-handler.util';

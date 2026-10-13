@@ -560,7 +560,7 @@
                     "ui/primitives/data-display/tag",
                     "ui/primitives/data-display/status",
                     "ui/primitives/data-display/color-sample",
-                    "ui/primitives/data-display/pill"
+                    "ui/primitives/data-display/badge"
                   ]
                 },
                 {
@@ -569,6 +569,7 @@
                   "pages": [
                     "ui/primitives/feedback/banner",
                     "ui/primitives/feedback/loader",
+                    "ui/primitives/feedback/progress",
                     "ui/primitives/feedback/progress-bar",
                     "ui/primitives/feedback/progress-ring",
                     "ui/primitives/feedback/skeleton"
@@ -583,15 +584,14 @@
                     "ui/primitives/input/field",
                     "ui/primitives/input/input",
                     "ui/primitives/input/input-group",
-                    "ui/primitives/input/number-stepper",
+                    "ui/primitives/input/number-field",
                     "ui/primitives/input/textarea",
                     "ui/primitives/input/checkbox",
                     "ui/primitives/input/radio",
                     "ui/primitives/input/radio-group",
                     "ui/primitives/input/select",
                     "ui/primitives/input/slider",
-                    "ui/primitives/input/switch",
-                    "ui/primitives/input/segmented-control"
+                    "ui/primitives/input/switch"
                   ]
                 },
                 {
@@ -620,7 +620,6 @@
                     "ui/primitives/surfaces/alert-dialog",
                     "ui/primitives/surfaces/card",
                     "ui/primitives/surfaces/dialog",
-                    "ui/primitives/surfaces/menu",
                     "ui/primitives/surfaces/popover",
                     "ui/primitives/surfaces/tooltip"
                   ]
@@ -650,7 +649,7 @@
                     "ui/components/data-display/command-block",
                     "ui/components/data-display/json-tree",
                     "ui/components/data-display/metric-row",
-                    "ui/components/data-display/notification-counter",
+                    "ui/components/data-display/stack-icon",
                     "ui/components/data-display/tinted-icon-tile"
                   ]
                 },
@@ -675,7 +674,9 @@
                     "ui/components/input/currency-picker",
                     "ui/components/input/phone-country-picker",
                     "ui/components/input/image-input",
-                    "ui/components/input/search-input"
+                    "ui/components/input/search-input",
+                    "ui/components/input/number-stepper",
+                    "ui/components/input/segmented-control"
                   ]
                 },
                 {

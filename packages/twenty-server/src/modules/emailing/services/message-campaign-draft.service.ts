@@ -21,6 +21,7 @@ import { CampaignVariableService } from 'src/modules/emailing/services/campaign-
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { collectCampaignVariableNames } from 'src/modules/emailing/utils/collect-campaign-variable-names.util';
 import { collectCampaignVariableNamesFromString } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string.util';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 export type SaveDraftCampaignArgs = {
   workspaceId: string;
@@ -53,9 +54,10 @@ export class MessageCampaignDraftService {
     entity: Type<T>,
     roleId: string,
   ) {
-    return this.workspaceOrmManager.getRepository(entity, {
-      unionOf: [roleId],
-    });
+    return this.workspaceOrmManager.getRepository(
+      entity,
+      buildEmailingRolePermissionConfig(roleId),
+    );
   }
 
   async saveDraft({

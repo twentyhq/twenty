@@ -139,8 +139,8 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_DATA_DISPLAY_JSON_TREE: '/ui/components/data-display/json-tree',
   UI_COMPONENTS_DATA_DISPLAY_METRIC_ROW:
     '/ui/components/data-display/metric-row',
-  UI_COMPONENTS_DATA_DISPLAY_NOTIFICATION_COUNTER:
-    '/ui/components/data-display/notification-counter',
+  UI_COMPONENTS_DATA_DISPLAY_STACK_ICON:
+    '/ui/components/data-display/stack-icon',
   UI_COMPONENTS_DATA_DISPLAY_TINTED_ICON_TILE:
     '/ui/components/data-display/tinted-icon-tile',
   UI_COMPONENTS_FEEDBACK_CALLOUT: '/ui/components/feedback/callout',
@@ -154,9 +154,12 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_LIGHT_ICON_BUTTON:
     '/ui/components/input/light-icon-button',
   UI_COMPONENTS_INPUT_MAIN_BUTTON: '/ui/components/input/main-button',
+  UI_COMPONENTS_INPUT_NUMBER_STEPPER: '/ui/components/input/number-stepper',
   UI_COMPONENTS_INPUT_PHONE_COUNTRY_PICKER:
     '/ui/components/input/phone-country-picker',
   UI_COMPONENTS_INPUT_SEARCH_INPUT: '/ui/components/input/search-input',
+  UI_COMPONENTS_INPUT_SEGMENTED_CONTROL:
+    '/ui/components/input/segmented-control',
   UI_COMPONENTS_LAYOUT_ANIMATED_ICON_CROSSFADE:
     '/ui/components/layout/animated-icon-crossfade',
   UI_COMPONENTS_LAYOUT_OVERFLOWING_LIST:
@@ -176,14 +179,15 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_ACCESSIBILITY_VISUALLY_HIDDEN:
     '/ui/primitives/accessibility/visually-hidden',
   UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
+  UI_PRIMITIVES_DATA_DISPLAY_BADGE: '/ui/primitives/data-display/badge',
   UI_PRIMITIVES_DATA_DISPLAY_CHIP: '/ui/primitives/data-display/chip',
   UI_PRIMITIVES_DATA_DISPLAY_COLOR_SAMPLE:
     '/ui/primitives/data-display/color-sample',
-  UI_PRIMITIVES_DATA_DISPLAY_PILL: '/ui/primitives/data-display/pill',
   UI_PRIMITIVES_DATA_DISPLAY_STATUS: '/ui/primitives/data-display/status',
   UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
   UI_PRIMITIVES_FEEDBACK_BANNER: '/ui/primitives/feedback/banner',
   UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
+  UI_PRIMITIVES_FEEDBACK_PROGRESS: '/ui/primitives/feedback/progress',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_RING: '/ui/primitives/feedback/progress-ring',
   UI_PRIMITIVES_FEEDBACK_SKELETON: '/ui/primitives/feedback/skeleton',
@@ -193,11 +197,9 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_FIELD: '/ui/primitives/input/field',
   UI_PRIMITIVES_INPUT_INPUT: '/ui/primitives/input/input',
   UI_PRIMITIVES_INPUT_INPUT_GROUP: '/ui/primitives/input/input-group',
-  UI_PRIMITIVES_INPUT_NUMBER_STEPPER: '/ui/primitives/input/number-stepper',
+  UI_PRIMITIVES_INPUT_NUMBER_FIELD: '/ui/primitives/input/number-field',
   UI_PRIMITIVES_INPUT_RADIO: '/ui/primitives/input/radio',
   UI_PRIMITIVES_INPUT_RADIO_GROUP: '/ui/primitives/input/radio-group',
-  UI_PRIMITIVES_INPUT_SEGMENTED_CONTROL:
-    '/ui/primitives/input/segmented-control',
   UI_PRIMITIVES_INPUT_SELECT: '/ui/primitives/input/select',
   UI_PRIMITIVES_INPUT_SLIDER: '/ui/primitives/input/slider',
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
@@ -214,7 +216,6 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_SURFACES_ALERT_DIALOG: '/ui/primitives/surfaces/alert-dialog',
   UI_PRIMITIVES_SURFACES_CARD: '/ui/primitives/surfaces/card',
   UI_PRIMITIVES_SURFACES_DIALOG: '/ui/primitives/surfaces/dialog',
-  UI_PRIMITIVES_SURFACES_MENU: '/ui/primitives/surfaces/menu',
   UI_PRIMITIVES_SURFACES_POPOVER: '/ui/primitives/surfaces/popover',
   UI_PRIMITIVES_SURFACES_TOOLTIP: '/ui/primitives/surfaces/tooltip',
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',

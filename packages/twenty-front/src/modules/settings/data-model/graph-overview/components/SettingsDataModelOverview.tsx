@@ -215,7 +215,7 @@ export const SettingsDataModelOverview = () => {
         <ButtonGroup
           framed
           attached={false}
-          className="react-flow__panel react-flow__controls bottom left horizontal"
+          className="react-flow__panel bottom left"
           aria-label={t`Diagram controls`}
         >
           <LightIconButton

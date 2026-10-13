@@ -9,7 +9,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
-import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -93,10 +92,7 @@ export const useChatThreadsForRecord = ({
     filter,
     orderBy: [
       {
-        thread: {
-          [getAgentChatThreadLastActivityFieldName(chatObjectMetadataItem)]:
-            'DescNullsLast',
-        },
+        thread: { lastActivityAt: 'DescNullsLast' },
       },
     ] satisfies RecordGqlOperationOrderBy,
     recordGqlFields: CHAT_THREADS_FOR_RECORD_GQL_FIELDS,

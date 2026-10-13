@@ -46,31 +46,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  userWorkspaceId: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'userWorkspaceId',
-        type: FieldMetadataType.UUID,
-        label: i18nLabel(
-          msg({ message: 'User Workspace ID', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'User Workspace ID',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconId',
-        isSystem: true,
-        isUIEditable: false,
-        // Null for workflow run conversations, read through the run; the column goes away with the owner contract step (twentyhq/core-team-issues#2925)
-        isNullable: true,
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
   title: {
     ...createStandardFieldFlatMetadata({
       ...args,
@@ -355,31 +330,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
           }),
         ),
         icon: 'IconId',
-        isSystem: true,
-        isUIEditable: false,
-        isNullable: true,
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
-  // Failed turns hold their error now; the 2.42 history move and the 2.46 backfill still read it
-  lastStreamError: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'lastStreamError',
-        type: FieldMetadataType.RAW_JSON,
-        label: i18nLabel(
-          msg({ message: 'Last Stream Error', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Last Stream Error',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconCode',
         isSystem: true,
         isUIEditable: false,
         isNullable: true,

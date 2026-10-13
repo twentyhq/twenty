@@ -26,6 +26,7 @@ import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/u
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm/utils/resolve-object-records-permissions.util';
 
 const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
@@ -216,6 +217,9 @@ export class WorkspaceDataSource {
       authContext: this.authContext,
       executor,
       objectRecordsPermissions,
+      roleIds: isDefined(rolePermissionConfig)
+        ? getRoleIdsFromRolePermissionConfig(rolePermissionConfig)
+        : [],
       shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>

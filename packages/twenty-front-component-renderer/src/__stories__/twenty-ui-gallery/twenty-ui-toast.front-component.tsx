@@ -12,7 +12,7 @@ const ToastExample = () => {
     <TwentyUiGalleryCard title="Toast">
       {!closed && (
         <Toast
-          variant="success"
+          status="success"
           progress={100}
           description="Your changes are available to the team"
           onClose={() => setClosed(true)}

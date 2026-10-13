@@ -60,7 +60,7 @@ export const PaymentSuccess = () => {
       if (attempts >= SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS) {
         setHasTimedOut(true);
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`We're still waiting for a confirmation from our payment provider (Stripe). Please refresh in a few seconds.`,
         });
         return;
