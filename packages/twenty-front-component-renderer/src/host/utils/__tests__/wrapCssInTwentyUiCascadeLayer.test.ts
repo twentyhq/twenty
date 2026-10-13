@@ -82,6 +82,16 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
     );
   });
 
+  it('should layer minified imports', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@import"reset.css"layer(base);@import"theme.css";.title{color:red}',
+      ),
+    ).toBe(
+      '@import "reset.css" layer(twenty-ui.base);@import "theme.css" layer(twenty-ui);@layer twenty-ui {\n.title{color:red}\n}',
+    );
+  });
+
   it('should give each anonymous import layer its own layer inside the twenty-ui layer', () => {
     expect(
       wrapCssInTwentyUiCascadeLayer(

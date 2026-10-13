@@ -17,7 +17,7 @@ const STATEMENT_TOKEN_PATTERN =
   /\/\*[\s\S]*?(?:\*\/|$)|"[^"]*"|'[^']*'|[();{]/g;
 
 const IMPORT_LAYER_PATTERN =
-  /@import\s+(url\([^)]*\)|"[^"]*"|'[^']*')(\s*\blayer\b(?:\(([^)]*)\))?)?/g;
+  /@import\s*(url\([^)]*\)|"[^"]*"|'[^']*')(\s*\blayer\b(?:\(([^)]*)\))?)?/g;
 
 const findStatementEndIndex = (
   cssText: string,
