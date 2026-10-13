@@ -290,7 +290,7 @@ describe('application workflow definitions', () => {
     });
   });
 
-  it('starts a GET webhook without authentication or body', () => {
+  it('converts a GET webhook without authentication or body', () => {
     const { version } = convert({
       ...options,
       manifest: {

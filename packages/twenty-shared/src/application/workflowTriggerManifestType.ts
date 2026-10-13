@@ -45,16 +45,16 @@ const cronTriggerSettingsManifestSchema = z.discriminatedUnion('type', [
   customCronSettingsSchema.omit({ outputSchema: true }).strict(),
 ]);
 
-const [getWebhookSettingsSchema, postWebhookSettingsSchema] =
+const [getRequestWebhookSettingsSchema, postRequestWebhookSettingsSchema] =
   workflowWebhookTriggerSchema.shape.settings.options;
 
 const webhookTriggerSettingsManifestSchema = z.discriminatedUnion(
   'httpMethod',
   [
-    getWebhookSettingsSchema
+    getRequestWebhookSettingsSchema
       .omit({ outputSchema: true, authentication: true })
       .strict(),
-    postWebhookSettingsSchema
+    postRequestWebhookSettingsSchema
       .omit({
         outputSchema: true,
         expectedOutputSchema: true,
