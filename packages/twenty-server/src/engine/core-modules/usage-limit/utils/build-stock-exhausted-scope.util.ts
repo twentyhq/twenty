@@ -1,6 +1,5 @@
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
-import { findStockOperationType } from 'src/engine/core-modules/usage-limit/utils/find-stock-operation-type.util';
 
 export const buildStockExhaustedScope = ({
   counter,
@@ -14,7 +13,7 @@ export const buildStockExhaustedScope = ({
   exhaustedKind: 'limit',
   spenderType: counter.spenderType,
   spenderId: counter.spenderId,
-  operationType: findStockOperationType(counter.resourceType),
+  operationType: counter.operationType,
   unit: counter.unit,
   limitValue: counter.limitValue,
   remaining: counter.limitValue - held,

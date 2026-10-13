@@ -17,6 +17,7 @@ export const buildStockDefaultCounter = ({
     limitValue: stockLimitDefault.limitValue,
     unit: stockLimitDefault.unit,
     resourceType,
+    operationType: stockLimitDefault.operationType,
     spenderType: stockLimitDefault.spenderType,
     spenderId: null,
   };

@@ -11,7 +11,7 @@ export const buildStockCounterKey = ({
   workspaceId: string;
   counter: Pick<
     StockCounter,
-    'resourceType' | 'spenderType' | 'spenderId' | 'unit'
+    'resourceType' | 'operationType' | 'spenderType' | 'spenderId' | 'unit'
   >;
 }): string =>
-  `{${workspaceId}}:stock-held:${counter.resourceType}:${counter.spenderType}:${isNonEmptyString(counter.spenderId) ? counter.spenderId : ABSENT}:${counter.unit}`;
+  `{${workspaceId}}:stock-held:${counter.resourceType}:${counter.operationType}:${counter.spenderType}:${isNonEmptyString(counter.spenderId) ? counter.spenderId : ABSENT}:${counter.unit}`;

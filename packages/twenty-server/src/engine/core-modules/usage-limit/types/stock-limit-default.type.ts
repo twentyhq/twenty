@@ -2,7 +2,7 @@ import { type StockLimitDefaultDefinition } from 'src/engine/core-modules/usage-
 
 export type StockLimitDefault = Pick<
   StockLimitDefaultDefinition,
-  'spenderType' | 'unit' | 'isOverridable'
+  'operationType' | 'spenderType' | 'unit' | 'isOverridable'
 > & {
   limitValue: number;
 };

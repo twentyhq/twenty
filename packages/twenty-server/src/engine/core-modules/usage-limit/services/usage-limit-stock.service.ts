@@ -265,6 +265,7 @@ export class UsageLimitStockService {
         return isDefined(limitValue)
           ? [
               {
+                operationType: stockLimitDefaultDefinition.operationType,
                 spenderType: stockLimitDefaultDefinition.spenderType,
                 unit: stockLimitDefaultDefinition.unit,
                 isOverridable: stockLimitDefaultDefinition.isOverridable,

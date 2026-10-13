@@ -28,7 +28,7 @@ describe('buildIntraWorkspaceStockCounterKeys', () => {
         limits: [buildLimit({})],
       }),
     ).toEqual([
-      '{workspace-1}:stock-held:STORAGE:application:application-1:BYTE',
+      '{workspace-1}:stock-held:STORAGE:STORAGE_FILE:application:application-1:BYTE',
     ]);
   });
 });

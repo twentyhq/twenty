@@ -28,6 +28,7 @@ const buildLimit = (
 const buildDefault = (
   overrides: Partial<StockLimitDefault> = {},
 ): StockLimitDefault => ({
+  operationType: UsageOperationType.STORAGE_FILE,
   spenderType: 'workspace',
   unit: UsageUnit.BYTE,
   limitValue: 1_000,
