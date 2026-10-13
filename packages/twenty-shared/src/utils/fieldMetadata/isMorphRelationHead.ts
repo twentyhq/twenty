@@ -1,26 +1,9 @@
 import { FieldMetadataType } from '@/types';
 
-export const isMorphRelationHead = <
-  TFieldMetadata extends {
-    type: FieldMetadataType;
-    universalIdentifier: string;
-    morphId?: string | null;
-  },
->(
-  fieldMetadata: TFieldMetadata,
-): fieldMetadata is TFieldMetadata & {
-  type: FieldMetadataType.MORPH_RELATION;
-  morphId: string;
-} & {
-  [
-    TKey in Extract<
-      keyof TFieldMetadata,
-      | 'relationTargetFieldMetadataId'
-      | 'relationTargetObjectMetadataId'
-      | 'relationTargetFieldMetadataUniversalIdentifier'
-      | 'relationTargetObjectMetadataUniversalIdentifier'
-    >
-  ]: null;
-} =>
+export const isMorphRelationHead = (fieldMetadata: {
+  type: FieldMetadataType;
+  universalIdentifier: string;
+  morphId?: string | null;
+}): boolean =>
   fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
   fieldMetadata.universalIdentifier === fieldMetadata.morphId;
