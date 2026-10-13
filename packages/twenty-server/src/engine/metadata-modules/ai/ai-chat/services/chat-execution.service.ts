@@ -110,6 +110,7 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
+import { createTurnUsageRecorder } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-usage-recorder.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -467,7 +468,11 @@ export class ChatExecutionService {
     let stepIndex = 0;
     let lastUnderlyingStreamError: unknown;
 
-    const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
+    const emitTurnUsageEvent = async ({
+      steps,
+    }: {
+      steps: StepResult<ToolSet>[];
+    }) => {
       const usage = steps.reduce(
         (totals, step) => ({
           inputTokens: totals.inputTokens + (step.usage.inputTokens ?? 0),
@@ -534,6 +539,10 @@ export class ChatExecutionService {
         bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
       });
     };
+
+    const turnUsageRecorder = createTurnUsageRecorder({
+      recordTurn: emitTurnUsageEvent,
+    });
 
     const stream = streamText({
       model: registeredModel.model,
@@ -620,18 +629,21 @@ export class ChatExecutionService {
         });
 
         const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await this.aiBillingService.decrementAndCheckAvailableCredits({
-            modelId: registeredModel.modelId,
-            billingInput: {
-              usage: step.usage,
-              cacheCreationTokens: extractCacheCreationTokens(
-                step.providerMetadata,
-              ),
-            },
-            workspaceId: workspace.id,
-            operationType: UsageOperationType.AI_CHAT_TOKEN,
-            spenders: { userWorkspaceId },
-          });
+          await turnUsageRecorder.trackStepDebit(
+            step,
+            this.aiBillingService.decrementAndCheckAvailableCredits({
+              modelId: registeredModel.modelId,
+              billingInput: {
+                usage: step.usage,
+                cacheCreationTokens: extractCacheCreationTokens(
+                  step.providerMetadata,
+                ),
+              },
+              workspaceId: workspace.id,
+              operationType: UsageOperationType.AI_CHAT_TOKEN,
+              spenders: { userWorkspaceId },
+            }),
+          );
 
         if (stepHasNoMoreAvailableCredits) {
           hasNoMoreAvailableCredits = true;
@@ -683,8 +695,8 @@ export class ChatExecutionService {
           });
         }
       },
-      onAbort: async ({ steps }) => {
-        await emitTurnUsageEvent(steps);
+      onAbort: async () => {
+        await turnUsageRecorder.recordOnce();
       },
       repairToolCall: async ({
         toolCall,
@@ -711,10 +723,16 @@ export class ChatExecutionService {
     });
 
     Promise.all([stream.usage, stream.steps])
-      .then(async ([, steps]) => {
-        await emitTurnUsageEvent(steps);
+      .then(async () => {
+        await turnUsageRecorder.recordOnce();
       })
-      .catch((error) => {
+      .catch(async (error) => {
+        await turnUsageRecorder
+          .recordOnce()
+          .catch((recordError) =>
+            this.exceptionHandlerService.captureExceptions([recordError]),
+          );
+
         if (error?.name === 'AbortError') {
           return;
         }
