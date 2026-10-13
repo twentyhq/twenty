@@ -1,7 +1,7 @@
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { buildFieldSelection } from 'src/engine/api/common/common-select-fields/utils/build-field-selection.util';
 import { getIsFlatFieldAJoinColumn } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-join-column.util';
 import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
@@ -115,10 +115,10 @@ export const buildRelationSelectionFromDepth = ({
       continue;
     }
 
-    const relationFlatFields = getFlatFieldsFromFlatObjectMetadata(
-      relationTargetObjectMetadata,
-      flatFieldMetadataMaps,
-    );
+    const relationFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityIds: relationTargetObjectMetadata.fieldIds,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     const relationFieldSelectFields = buildFieldSelection({
       restrictedFields:

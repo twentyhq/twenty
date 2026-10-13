@@ -7,21 +7,13 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const getFlatFieldsFromFlatObjectMetadata = <
-  TFieldMetadata extends Pick<
-    OrmFlatFieldMetadata,
-    | 'id'
-    | 'universalIdentifier'
-    | 'applicationId'
-    | 'workspaceId'
-    | 'type'
-    | 'morphId'
-  > = FlatFieldMetadata,
+  T extends OrmFlatFieldMetadata = FlatFieldMetadata,
 >(
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds'>,
-  flatFieldMetadataMaps: FlatEntityMaps<TFieldMetadata>,
-): TFieldMetadata[] => {
+  flatObjectMetadata: FlatObjectMetadata,
+  flatFieldMetadataMaps: FlatEntityMaps<T>,
+): T[] => {
   return findManyFlatEntityByIdInFlatEntityMaps({
     flatEntityIds: flatObjectMetadata.fieldIds,
     flatEntityMaps: flatFieldMetadataMaps,
-  }).filter((fieldMetadata) => !isMorphRelationHead(fieldMetadata));
+  }).filter((flatFieldMetadata) => !isMorphRelationHead(flatFieldMetadata));
 };

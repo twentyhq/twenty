@@ -18,7 +18,13 @@ const getMorphRelationMorphId = (event: MetadataEvent): string | undefined => {
     : undefined;
 };
 
-const isMorphRelationHeadEvent = (event: MetadataEvent, morphId: string) => {
+const isMorphRelationHeadEvent = ({
+  event,
+  morphId,
+}: {
+  event: MetadataEvent;
+  morphId: string;
+}) => {
   const record =
     event.type === 'deleted' ? event.properties.before : event.properties.after;
 
@@ -45,7 +51,7 @@ export const selectFieldMetadataEventsForClients = ({
       continue;
     }
 
-    if (isMorphRelationHeadEvent(event, morphId)) {
+    if (isMorphRelationHeadEvent({ event, morphId })) {
       if (isMorphRelationHeadEnabled) {
         selectedEvents.push(event);
       }

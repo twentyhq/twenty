@@ -52,7 +52,13 @@ const findMorphFieldsOfObject = async (
   ).filter((field) => field.type === FieldMetadataType.MORPH_RELATION);
 };
 
-const createObject = async (nameSingular: string, namePlural: string) => {
+const createObject = async ({
+  nameSingular,
+  namePlural,
+}: {
+  nameSingular: string;
+  namePlural: string;
+}) => {
   const {
     data: {
       createOneObject: { id },
@@ -91,19 +97,22 @@ describe('morph relation head', () => {
   let targetFieldIds: string[] = [];
 
   beforeEach(async () => {
-    sourceObjectMetadataId = await createObject('headSource', 'headSources');
-    firstTargetObjectMetadataId = await createObject(
-      'headTargetOne',
-      'headTargetOnes',
-    );
-    secondTargetObjectMetadataId = await createObject(
-      'headTargetTwo',
-      'headTargetTwos',
-    );
-    thirdTargetObjectMetadataId = await createObject(
-      'headTargetThree',
-      'headTargetThrees',
-    );
+    sourceObjectMetadataId = await createObject({
+      nameSingular: 'headSource',
+      namePlural: 'headSources',
+    });
+    firstTargetObjectMetadataId = await createObject({
+      nameSingular: 'headTargetOne',
+      namePlural: 'headTargetOnes',
+    });
+    secondTargetObjectMetadataId = await createObject({
+      nameSingular: 'headTargetTwo',
+      namePlural: 'headTargetTwos',
+    });
+    thirdTargetObjectMetadataId = await createObject({
+      nameSingular: 'headTargetThree',
+      namePlural: 'headTargetThrees',
+    });
 
     const createdField = await createMorphRelationBetweenObjects({
       objectMetadataId: sourceObjectMetadataId,
