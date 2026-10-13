@@ -1,9 +1,8 @@
-import { isFunction } from '@sniptt/guards';
+import { isArray, isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isOlderThanLatestNativeEdit } from '@/host/caret/utils/isOlderThanLatestNativeEdit';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
-import { MAX_SCROLL_COMMANDS_PER_FLUSH } from '@/host/scroll/constants/MaxScrollCommandsPerFlush';
 import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { type ReceivedScrollCommand } from '@/host/scroll/types/ReceivedScrollCommand';
 import { applyScrollRequest } from '@/host/scroll/utils/applyScrollRequest';
@@ -130,6 +129,11 @@ export const createHostScrollController = ({
       remoteElementId,
       { scrollCommands, onScrollUpdate },
     ] of pendingScrollCommandsByRemoteElementId) {
+      if (isArray(scrollCommands) && scrollCommands.length === 0) {
+        appliedSequenceByRemoteElementId.delete(remoteElementId);
+        continue;
+      }
+
       const newScrollCommands = readNewScrollCommands({
         scrollCommands,
         appliedSequence:
@@ -158,13 +162,11 @@ export const createHostScrollController = ({
 
     pendingScrollCommandsByRemoteElementId.clear();
 
-    const orderedCandidates = candidates
-      .sort(
-        (firstCandidate, secondCandidate) =>
-          firstCandidate.scrollCommand.sequence -
-          secondCandidate.scrollCommand.sequence,
-      )
-      .slice(0, MAX_SCROLL_COMMANDS_PER_FLUSH);
+    const orderedCandidates = candidates.sort(
+      (firstCandidate, secondCandidate) =>
+        firstCandidate.scrollCommand.sequence -
+        secondCandidate.scrollCommand.sequence,
+    );
 
     for (const candidate of orderedCandidates) {
       const scrolledNodes = acknowledgements.get(
