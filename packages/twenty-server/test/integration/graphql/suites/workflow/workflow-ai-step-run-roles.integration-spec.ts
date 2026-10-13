@@ -19,10 +19,13 @@ import { upsertObjectPermissions } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import {
   type AiModelRegistryService,
@@ -30,6 +33,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -74,7 +78,7 @@ const mockModelCallingFindTool = (): ModelCall[] => {
                 type: 'tool-call',
                 toolCallId: 'find-1',
                 toolName: FIND_TOOL_NAME,
-                input: '{}',
+                input: JSON.stringify({ select: ['id', 'name'] }),
               },
             ],
             finishReason: { unified: 'tool-calls', raw: undefined },
@@ -104,6 +108,7 @@ const mockModelCallingFindTool = (): ModelCall[] => {
 describe('workflow AI step run without an application (integration)', () => {
   let objectMetadataId: string;
   let nameFieldMetadataId: string;
+  let originalMemberRoleId: string;
   let memberRoleId: string;
   let agentRoleId: string;
   let agentId: string;
@@ -223,7 +228,41 @@ describe('workflow AI step run without an application (integration)', () => {
   };
 
   beforeAll(async () => {
-    memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+    originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+
+    const { data: memberRoleData } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'AI step run roles member',
+        description: 'Member role that can run workflows',
+        canUpdateAllSettings: false,
+        canAccessAllTools: true,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+        canBeAssignedToUsers: true,
+        canBeAssignedToAgents: false,
+        canBeAssignedToApiKeys: false,
+      },
+    });
+
+    memberRoleId = memberRoleData.createOneRole.id;
+
+    await upsertPermissionFlags({
+      expectToFail: false,
+      input: {
+        roleId: memberRoleId,
+        permissionFlagKeys: [PermissionFlagType.WORKFLOWS],
+      },
+    });
+    await updateWorkspaceMemberRole({
+      expectToFail: false,
+      input: {
+        roleId: memberRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
+    });
 
     const { data: objectData } = await createOneObjectMetadata({
       input: {
@@ -314,10 +353,19 @@ describe('workflow AI step run without an application (integration)', () => {
     }
     await deleteCoreWorkflows({ coreWorkflowIds });
     await deleteOneAgent({ expectToFail: false, input: { id: agentId } });
-    await deleteOneRole({
+    await updateWorkspaceMemberRole({
       expectToFail: false,
-      input: { idToDelete: agentRoleId },
+      input: {
+        roleId: originalMemberRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
     });
+    for (const roleId of [agentRoleId, memberRoleId]) {
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: roleId },
+      });
+    }
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {
