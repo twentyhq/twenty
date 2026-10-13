@@ -614,8 +614,7 @@
                           "ui/primitives/typography/heading",
                           "ui/primitives/typography/text",
                           "ui/primitives/typography/shortcut",
-                          "ui/primitives/typography/overflowing-text-with-tooltip",
-                          "ui/primitives/typography/overflowing-text-tooltip-mode-provider"
+                          "ui/primitives/typography/overflowing-text-with-tooltip"
                         ]
                       }
                     ]
