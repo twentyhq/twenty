@@ -1,14 +1,14 @@
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type LogConsoleFilter } from '@/log-console/types/LogConsoleFilter';
-import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { type LogConsoleEventLogSource } from '@/log-console/types/LogConsoleSource';
 import { type EventLogFieldFilterInput } from '~/generated-metadata/graphql';
 
 export const getLogConsoleFieldFilters = ({
   source,
   filters,
 }: {
-  source: Pick<LogConsoleSource, 'fieldFilters' | 'filterFields'>;
+  source: Pick<LogConsoleEventLogSource, 'fieldFilters' | 'filterFields'>;
   filters: LogConsoleFilter[];
 }): EventLogFieldFilterInput[] => [
   ...(source.fieldFilters ?? []),

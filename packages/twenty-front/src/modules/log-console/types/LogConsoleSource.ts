@@ -13,17 +13,22 @@ import {
   type EventLogFieldFilterInput,
   type EventLogRecord,
   type EventLogTable,
+  type PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-export type LogConsoleSource = {
+type LogConsoleSourceBase = {
   id: LogConsoleSourceId;
   label: MessageDescriptor;
   Icon: IconComponent;
+  requiresAuditLogs: boolean;
+  requiredPermissionFlag?: PermissionFlagType;
+  filterFields?: LogConsoleFilterField[];
+};
+
+export type LogConsoleEventLogSource = LogConsoleSourceBase & {
   DetailIcon?: IconComponent;
   table: EventLogTable;
   fieldFilters?: EventLogFieldFilterInput[];
-  filterFields?: LogConsoleFilterField[];
-  requiresAuditLogs: boolean;
   columns: LogConsoleColumn[];
   detailFields: LogConsoleDetailField[];
   idFields: LogConsoleIdField[];
@@ -35,3 +40,9 @@ export type LogConsoleSource = {
   ) => string;
   renderDetailContent?: (entry: EventLogRecord) => ReactNode;
 };
+
+export type LogConsolePanelSource = LogConsoleSourceBase & {
+  renderContent: () => ReactNode;
+};
+
+export type LogConsoleSource = LogConsoleEventLogSource | LogConsolePanelSource;

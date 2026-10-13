@@ -20,6 +20,8 @@ import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightStat
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { FIND_APPLICATION_REGISTRATION_ANALYTICS } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationAnalytics';
+import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 import { EVENT_LOGS_LIVE_SUBSCRIPTION } from '@/settings/event-logs/graphql/subscriptions/EventLogsLiveSubscription';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
@@ -784,5 +786,142 @@ export const ClickHouseMissing: Story = {
   },
   parameters: {
     msw: graphqlMocks,
+  },
+};
+
+const APP_ANALYTICS_REGISTRATION = {
+  __typename: 'ApplicationRegistration',
+  id: '20202020-7c1e-4a0b-9f3d-5b2a8c4d6e01',
+  universalIdentifier: '20202020-7c1e-4a0b-9f3d-5b2a8c4d6e02',
+  name: 'Lead scoring',
+  sourceType: 'LOCAL',
+  logoUrl: null,
+};
+
+const buildAppAnalyticsPoint = (
+  date: string,
+  functionExecutions: number,
+  functionErrors: number,
+) => ({
+  __typename: 'ApplicationRegistrationAnalyticsTimeSeriesPoint',
+  date,
+  installSucceeded: 1,
+  installFailed: 0,
+  upgradeSucceeded: 0,
+  upgradeFailed: 0,
+  uninstallSucceeded: 0,
+  uninstallFailed: 0,
+  functionExecutions,
+  functionErrors,
+  apiRateLimited: 0,
+  jobRateLimited: 0,
+  creditsCharged: 12.5,
+});
+
+const APP_ANALYTICS = {
+  __typename: 'ApplicationRegistrationAnalytics',
+  periodStart: '2026-08-25T00:00:00.000Z',
+  periodEnd: '2026-09-24T00:00:00.000Z',
+  totals: {
+    __typename: 'ApplicationRegistrationAnalyticsTotals',
+    installSucceeded: 12,
+    installFailed: 1,
+    upgradeSucceeded: 4,
+    upgradeFailed: 0,
+    uninstallSucceeded: 2,
+    uninstallFailed: 0,
+    functionExecutions: 1840,
+    functionErrors: 23,
+    apiRateLimited: 6,
+    jobRateLimited: 0,
+    creditsCharged: 37.5,
+    activeWorkspaces: 9,
+  },
+  timeSeries: [
+    buildAppAnalyticsPoint('2026-09-21', 610, 8),
+    buildAppAnalyticsPoint('2026-09-22', 590, 6),
+    buildAppAnalyticsPoint('2026-09-23', 640, 9),
+  ],
+  functionErrorsByType: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'TIMEOUT',
+      value: 15,
+    },
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'THROWN',
+      value: 8,
+    },
+  ],
+  functionErrorsByFunction: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'scoreLead',
+      value: 23,
+    },
+  ],
+  functionExecutionsByFunction: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'scoreLead',
+      value: 1840,
+    },
+  ],
+  lifecycleFailuresByErrorCode: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'APPLICATION_NOT_FOUND',
+      value: 1,
+    },
+  ],
+  creditsChargedByOperation: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'enrich',
+      value: 37.5,
+    },
+  ],
+};
+
+export const AppAnalyticsOpen: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-analytics',
+    );
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query(
+          getOperationName(FIND_MANY_APPLICATION_REGISTRATIONS) ?? '',
+          () =>
+            HttpResponse.json({
+              data: {
+                findManyApplicationRegistrations: [APP_ANALYTICS_REGISTRATION],
+              },
+            }),
+        ),
+        metadataGraphql.query(
+          getOperationName(FIND_APPLICATION_REGISTRATION_ANALYTICS) ?? '',
+          () =>
+            HttpResponse.json({
+              data: { findApplicationRegistrationAnalytics: APP_ANALYTICS },
+            }),
+        ),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Active workspaces', {}, { timeout: 5000 });
+    await canvas.findByText('Lead scoring');
+    await canvas.findByText('TIMEOUT');
   },
 };

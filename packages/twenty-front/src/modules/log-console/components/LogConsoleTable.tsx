@@ -9,7 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
-import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { type LogConsoleEventLogSource } from '@/log-console/types/LogConsoleSource';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -83,7 +83,7 @@ const StyledLoadMoreTrigger = styled.div`
 `;
 
 type LogConsoleTableProps = {
-  source: LogConsoleSource;
+  source: LogConsoleEventLogSource;
   entries: EventLogRecord[];
   liveEntryCount: number;
   loading: boolean;

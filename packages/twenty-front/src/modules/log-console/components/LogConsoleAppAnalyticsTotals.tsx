@@ -15,13 +15,13 @@ import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { type ApplicationRegistrationAnalyticsTotals } from '~/generated-metadata/graphql';
 
-type SettingsApplicationRegistrationAnalyticsTotalsProps = {
+type LogConsoleAppAnalyticsTotalsProps = {
   totals: Omit<ApplicationRegistrationAnalyticsTotals, '__typename'>;
 };
 
-export const SettingsApplicationRegistrationAnalyticsTotals = ({
+export const LogConsoleAppAnalyticsTotals = ({
   totals,
-}: SettingsApplicationRegistrationAnalyticsTotalsProps) => {
+}: LogConsoleAppAnalyticsTotalsProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
   const { formatUsageValue } = useUsageValueFormatter();

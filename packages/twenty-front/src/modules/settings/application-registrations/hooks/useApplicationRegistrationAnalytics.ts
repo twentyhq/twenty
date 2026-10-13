@@ -1,28 +1,23 @@
 import { useQuery } from '@apollo/client/react';
-import { useState } from 'react';
 
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
-import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
 import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 import { FindApplicationRegistrationAnalyticsDocument } from '~/generated-metadata/graphql';
 
 export const useApplicationRegistrationAnalytics = ({
   applicationRegistrationId,
+  period,
   skip,
 }: {
   applicationRegistrationId: string;
+  period: PeriodPreset;
   skip?: boolean;
 }) => {
-  const [period, setPeriod] = useState<PeriodPreset>('30d');
-
-  const periodDates = getPeriodDates(period);
-  const periodOptions = getPeriodOptions();
-
   const { data, loading, previousData, error } = useQuery(
     FindApplicationRegistrationAnalyticsDocument,
     {
       variables: {
-        input: { id: applicationRegistrationId, ...periodDates },
+        input: { id: applicationRegistrationId, ...getPeriodDates(period) },
       },
       skip,
     },
@@ -34,8 +29,5 @@ export const useApplicationRegistrationAnalytics = ({
     analytics: effectiveData?.findApplicationRegistrationAnalytics,
     isInitialLoading: loading && !effectiveData,
     error,
-    period,
-    setPeriod,
-    periodOptions,
   };
 };

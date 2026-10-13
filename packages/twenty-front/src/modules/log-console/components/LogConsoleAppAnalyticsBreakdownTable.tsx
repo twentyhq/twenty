@@ -9,7 +9,7 @@ import { type ApplicationRegistrationAnalyticsBreakdownItem } from '~/generated-
 
 const GRID_TEMPLATE_COLUMNS = '1fr 160px';
 
-type SettingsApplicationRegistrationAnalyticsBreakdownTableProps = {
+type LogConsoleAppAnalyticsBreakdownTableProps = {
   title: string;
   description: string;
   keyHeader: string;
@@ -18,14 +18,14 @@ type SettingsApplicationRegistrationAnalyticsBreakdownTableProps = {
   formatValue: (value: number) => string;
 };
 
-export const SettingsApplicationRegistrationAnalyticsBreakdownTable = ({
+export const LogConsoleAppAnalyticsBreakdownTable = ({
   title,
   description,
   keyHeader,
   valueHeader,
   items,
   formatValue,
-}: SettingsApplicationRegistrationAnalyticsBreakdownTableProps) => {
+}: LogConsoleAppAnalyticsBreakdownTableProps) => {
   if (items.length === 0) {
     return null;
   }

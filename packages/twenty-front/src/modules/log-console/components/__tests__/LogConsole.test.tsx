@@ -47,6 +47,10 @@ jest.mock('@/log-console/components/LogConsoleResults', () => ({
   LogConsoleResults: () => <div>Log results</div>,
 }));
 
+jest.mock('@/log-console/components/LogConsoleAppAnalytics', () => ({
+  LogConsoleAppAnalytics: () => <div>App analytics</div>,
+}));
+
 jest.mock('@/log-console/components/LogConsoleDetailPanel', () => ({
   LogConsoleDetailPanel: () => null,
 }));

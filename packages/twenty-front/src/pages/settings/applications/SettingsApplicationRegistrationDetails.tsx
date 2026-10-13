@@ -12,11 +12,9 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import {
   IconInfoCircle,
   IconKey,
-  IconLayoutDashboard,
   IconSettings,
   IconWorld,
 } from 'twenty-ui/icon';
-import { SettingsApplicationRegistrationAnalyticsTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationAnalyticsTab';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
@@ -61,7 +59,6 @@ export const SettingsApplicationRegistrationDetails = () => {
 
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconInfoCircle },
-    { id: 'analytics', title: t`Analytics`, Icon: IconLayoutDashboard },
     { id: 'oauth', title: t`OAuth`, Icon: IconKey },
     { id: 'distribution', title: t`Distribution`, Icon: IconWorld },
     { id: 'config', title: t`Config`, Icon: IconSettings },
@@ -69,12 +66,6 @@ export const SettingsApplicationRegistrationDetails = () => {
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
-      case 'analytics':
-        return (
-          <SettingsApplicationRegistrationAnalyticsTab
-            registration={registration}
-          />
-        );
       case 'config':
         return (
           <SettingsApplicationRegistrationConfigTab

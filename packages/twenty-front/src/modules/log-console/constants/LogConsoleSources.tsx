@@ -19,6 +19,7 @@ import {
   IconGauge,
   IconHistory,
   IconKey,
+  IconLayoutDashboard,
   IconLink,
   IconStatusChange,
   IconSum,
@@ -28,6 +29,7 @@ import {
 } from 'twenty-ui/icon';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
+import { LogConsoleAppAnalytics } from '@/log-console/components/LogConsoleAppAnalytics';
 import { LogConsoleCredits } from '@/log-console/components/LogConsoleCredits';
 import { LogConsoleMemberChip } from '@/log-console/components/LogConsoleMemberChip';
 import { LogConsoleRecordChangeDetail } from '@/log-console/components/LogConsoleRecordChangeDetail';
@@ -54,6 +56,7 @@ import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import {
   EventLogFilterOperand,
   EventLogTable,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { formatNumber } from '@/localization/utils/formatNumber';
 
@@ -200,6 +203,14 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     getSeverity: (entry) =>
       LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
     getDetailTitle: (entry) => entry.event,
+  },
+  {
+    id: 'app-analytics',
+    label: msg`App analytics`,
+    Icon: IconLayoutDashboard,
+    requiresAuditLogs: false,
+    requiredPermissionFlag: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+    renderContent: () => <LogConsoleAppAnalytics />,
   },
   {
     id: 'webhooks',

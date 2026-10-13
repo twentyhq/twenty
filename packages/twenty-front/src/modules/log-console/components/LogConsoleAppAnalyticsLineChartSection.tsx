@@ -11,7 +11,7 @@ const StyledLineChartContainer = styled.div`
   width: 100%;
 `;
 
-type SettingsApplicationRegistrationAnalyticsLineChartSectionProps = {
+type LogConsoleAppAnalyticsLineChartSectionProps = {
   title: string;
   description: string;
   chartId: string;
@@ -19,13 +19,13 @@ type SettingsApplicationRegistrationAnalyticsLineChartSectionProps = {
   formatValue: (value: number) => string;
 };
 
-export const SettingsApplicationRegistrationAnalyticsLineChartSection = ({
+export const LogConsoleAppAnalyticsLineChartSection = ({
   title,
   description,
   chartId,
   series,
   formatValue,
-}: SettingsApplicationRegistrationAnalyticsLineChartSectionProps) => {
+}: LogConsoleAppAnalyticsLineChartSectionProps) => {
   if (series.every((singleSeries) => singleSeries.data.length === 0)) {
     return null;
   }
