@@ -62,7 +62,9 @@ export function processFieldMetadataForColumnNameMapping(
       flatEntityId: fieldMetadataId,
     });
 
-    if (isMorphRelationHead(fieldMetadata)) continue;
+    if (isMorphRelationHead(fieldMetadata)) {
+      continue;
+    }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
       const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);

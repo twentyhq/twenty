@@ -206,6 +206,42 @@ describe('morph relation head', () => {
     ).toEqual([firstTargetObjectMetadataId]);
   });
 
+  it('should add destinations back to a head without targets', async () => {
+    await setMorphRelationHeadEnabled(true);
+
+    const [head] = await findMorphFieldsOfObject({
+      id: { eq: sourceObjectMetadataId },
+    });
+
+    await deleteObject(firstTargetObjectMetadataId);
+    firstTargetObjectMetadataId = '';
+    await deleteObject(secondTargetObjectMetadataId);
+    secondTargetObjectMetadataId = '';
+
+    await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: head.id,
+        updatePayload: {
+          morphRelationsUpdatePayload: [
+            { targetObjectMetadataId: thirdTargetObjectMetadataId },
+          ],
+        },
+      },
+    });
+
+    const [updatedHead] = await findMorphFieldsOfObject({
+      id: { eq: sourceObjectMetadataId },
+    });
+
+    expect(updatedHead.id).toBe(head.id);
+    expect(
+      updatedHead.morphRelations.map(
+        (morphRelation) => morphRelation.targetObjectMetadata.id,
+      ),
+    ).toEqual([thirdTargetObjectMetadataId]);
+  });
+
   it('should delete the head with its morph field', async () => {
     await updateOneFieldMetadata({
       expectToFail: false,

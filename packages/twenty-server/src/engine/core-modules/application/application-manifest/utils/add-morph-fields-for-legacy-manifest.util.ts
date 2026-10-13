@@ -5,20 +5,92 @@ import {
   isMorphRelationHead,
 } from 'twenty-shared/utils';
 
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildMorphRelationHeadFromTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-morph-relation-head-from-target.util';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
+
+type MapsArgs = {
+  manifestMaps: AllFlatEntityMaps;
+  existingMaps: AllFlatEntityMaps;
+};
+
+const resolveExistingHead = ({
+  existingHead,
+  target,
+}: {
+  existingHead: FlatFieldMetadata;
+  target: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+}): FlatFieldMetadata => {
+  if (
+    !isMorphRelationHead(existingHead) ||
+    existingHead.objectMetadataUniversalIdentifier !==
+      target.objectMetadataUniversalIdentifier ||
+    existingHead.applicationUniversalIdentifier !==
+      target.applicationUniversalIdentifier
+  ) {
+    throw new ApplicationException(
+      `Invalid morph relation head ${target.morphId}`,
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
+  }
+
+  return {
+    ...existingHead,
+    label: target.label,
+    description: target.description,
+    icon: target.icon,
+  };
+};
+
+const buildHeadFromManifestTarget = ({
+  target,
+  manifestMaps,
+  existingMaps,
+}: MapsArgs & {
+  target: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+}): FlatFieldMetadata => {
+  assertIsDefinedOrThrow(
+    target.relationTargetObjectMetadataUniversalIdentifier,
+  );
+
+  const targetObject =
+    manifestMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+      target.relationTargetObjectMetadataUniversalIdentifier
+    ] ??
+    existingMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+      target.relationTargetObjectMetadataUniversalIdentifier
+    ];
+
+  assertIsDefinedOrThrow(targetObject);
+
+  const inverseUniversalIdentifier =
+    target.relationTargetFieldMetadataUniversalIdentifier;
+
+  return buildMorphRelationHeadFromTarget({
+    target,
+    targetObject,
+    inverse: isDefined(inverseUniversalIdentifier)
+      ? (manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          inverseUniversalIdentifier
+        ] ??
+        existingMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          inverseUniversalIdentifier
+        ])
+      : undefined,
+  });
+};
 
 export const addMorphFieldsForLegacyManifest = ({
   manifestMaps,
   existingMaps,
-}: {
-  manifestMaps: AllFlatEntityMaps;
-  existingMaps: AllFlatEntityMaps;
-}): void => {
-  const legacyFields = Object.values(
+}: MapsArgs): void => {
+  const legacyTargets = Object.values(
     manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
@@ -33,54 +105,25 @@ export const addMorphFieldsForLegacyManifest = ({
           ],
         ),
     );
-  for (const field of legacyFields) {
+
+  for (const target of legacyTargets) {
     if (
       isDefined(
-        manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[field.morphId],
+        manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          target.morphId
+        ],
       )
     ) {
       continue;
     }
 
     const existingHead =
-      existingMaps.flatFieldMetadataMaps.byUniversalIdentifier[field.morphId];
-    let head: UniversalFlatFieldMetadata;
-    if (isDefined(existingHead)) {
-      if (
-        !isMorphRelationHead(existingHead) ||
-        existingHead.objectMetadataUniversalIdentifier !==
-          field.objectMetadataUniversalIdentifier ||
-        existingHead.applicationUniversalIdentifier !==
-          field.applicationUniversalIdentifier
-      ) {
-        throw new Error(`Invalid morph field identity ${field.morphId}`);
-      }
-      head = existingHead;
-    } else {
-      assertIsDefinedOrThrow(
-        field.relationTargetObjectMetadataUniversalIdentifier,
-      );
-      const targetObject =
-        manifestMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          field.relationTargetObjectMetadataUniversalIdentifier
-        ] ??
-        existingMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          field.relationTargetObjectMetadataUniversalIdentifier
-        ];
-      assertIsDefinedOrThrow(targetObject);
-      head = buildMorphRelationHeadFromTarget({
-        target: field,
-        targetObject,
-        inverse: isDefined(field.relationTargetFieldMetadataUniversalIdentifier)
-          ? (manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-              field.relationTargetFieldMetadataUniversalIdentifier
-            ] ??
-            existingMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-              field.relationTargetFieldMetadataUniversalIdentifier
-            ])
-          : undefined,
-      });
-    }
+      existingMaps.flatFieldMetadataMaps.byUniversalIdentifier[target.morphId];
+
+    const head = isDefined(existingHead)
+      ? resolveExistingHead({ existingHead, target })
+      : buildHeadFromManifestTarget({ target, manifestMaps, existingMaps });
+
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
       universalFlatEntity: head,
       universalFlatEntityMapsToMutate: manifestMaps.flatFieldMetadataMaps,

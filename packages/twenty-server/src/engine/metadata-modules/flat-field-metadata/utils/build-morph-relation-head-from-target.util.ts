@@ -1,17 +1,9 @@
+import omit from 'lodash.omit';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
-
-const omitJoinColumnName = <TSettings extends { joinColumnName?: unknown }>(
-  settings: TSettings,
-): Omit<TSettings, 'joinColumnName'> => {
-  const { joinColumnName: _joinColumnName, ...rest } =
-    settings ?? ({} as TSettings);
-
-  return rest;
-};
 
 export const buildMorphRelationHeadFromTarget = ({
   target,
@@ -37,9 +29,12 @@ export const buildMorphRelationHeadFromTarget = ({
       namePlural: targetObject.namePlural,
     }),
     isSystemSideEffect: false,
-    settings: { ...omitJoinColumnName(target.settings), ...inverseSettings },
+    settings: {
+      ...omit(target.settings, 'joinColumnName'),
+      ...inverseSettings,
+    },
     universalSettings: {
-      ...omitJoinColumnName(target.universalSettings),
+      ...omit(target.universalSettings, 'joinColumnName'),
       ...inverseSettings,
     },
     relationTargetFieldMetadataId: null,

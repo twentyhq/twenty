@@ -10,7 +10,9 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
     fields: STANDARD_OBJECT_FIELDS.attachment,
     morphIds: {
-      targetMorphId: { morphId: '20202020-f634-435d-ab8d-e1168b375c69' },
+      targetMorphId: {
+        morphId: STANDARD_OBJECT_FIELDS.attachment.target.universalIdentifier,
+      },
     },
     indexes: {
       taskIdIndex: {
@@ -241,7 +243,10 @@ export const STANDARD_OBJECTS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
     fields: STANDARD_OBJECT_FIELDS.calendarEventTarget,
     morphIds: {
-      targetMorphId: { morphId: '676e9f68-7b5c-41e6-b46d-2fb9527b7051' },
+      targetMorphId: {
+        morphId:
+          STANDARD_OBJECT_FIELDS.calendarEventTarget.target.universalIdentifier,
+      },
     },
     indexes: {
       calendarEventIdIndex: {
@@ -663,7 +668,10 @@ export const STANDARD_OBJECTS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
     fields: STANDARD_OBJECT_FIELDS.messageThreadTarget,
     morphIds: {
-      targetMorphId: { morphId: 'e85e853d-c26e-41b3-bec0-7afc4bdbc2f7' },
+      targetMorphId: {
+        morphId:
+          STANDARD_OBJECT_FIELDS.messageThreadTarget.target.universalIdentifier,
+      },
     },
     indexes: {
       messageThreadIdIndex: {
@@ -773,7 +781,9 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
     fields: STANDARD_OBJECT_FIELDS.noteTarget,
     morphIds: {
-      targetMorphId: { morphId: '20202020-f635-435d-ab8d-e1168b375c70' },
+      targetMorphId: {
+        morphId: STANDARD_OBJECT_FIELDS.noteTarget.target.universalIdentifier,
+      },
     },
     indexes: {
       noteIdIndex: {
@@ -1141,7 +1151,9 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
     fields: STANDARD_OBJECT_FIELDS.taskTarget,
     morphIds: {
-      targetMorphId: { morphId: '20202020-f636-435d-ab8d-e1168b375c71' },
+      targetMorphId: {
+        morphId: STANDARD_OBJECT_FIELDS.taskTarget.target.universalIdentifier,
+      },
     },
     indexes: {
       taskIdIndex: {
@@ -1185,7 +1197,10 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
     fields: STANDARD_OBJECT_FIELDS.timelineActivity,
     morphIds: {
-      targetMorphId: { morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1' },
+      targetMorphId: {
+        morphId:
+          STANDARD_OBJECT_FIELDS.timelineActivity.target.universalIdentifier,
+      },
     },
     indexes: {
       workspaceMemberIdIndex: {
@@ -1442,7 +1457,11 @@ export const STANDARD_OBJECTS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
     fields: STANDARD_OBJECT_FIELDS.agentChatThreadTarget,
     morphIds: {
-      targetMorphId: { morphId: '2c4cc537-39a2-4df9-81a1-dda26eb19658' },
+      targetMorphId: {
+        morphId:
+          STANDARD_OBJECT_FIELDS.agentChatThreadTarget.target
+            .universalIdentifier,
+      },
     },
     indexes: {
       threadIdIndex: {

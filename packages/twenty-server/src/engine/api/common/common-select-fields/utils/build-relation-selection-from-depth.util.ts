@@ -95,7 +95,9 @@ export const buildRelationSelectionFromDepth = ({
       }
     }
 
-    if (!isDefined(flatField.relationTargetObjectMetadataId)) continue;
+    if (!isDefined(flatField.relationTargetObjectMetadataId)) {
+      continue;
+    }
 
     const relationTargetObjectMetadata =
       findFlatEntityByIdInFlatEntityMapsOrThrow({

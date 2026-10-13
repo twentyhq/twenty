@@ -319,21 +319,23 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
+      isDefined(relatedFlatObjectMetadata) &&
       isMorphRelationHead(flatFieldMetadataToDelete)
     ) {
-      const hasRemainingTargets = Object.values(
-        optimisticFlatFieldMetadataMaps.byUniversalIdentifier,
-      ).some(
-        (field) =>
-          isDefined(field) &&
-          field.morphId === flatFieldMetadataToDelete.morphId &&
-          field.universalIdentifier !== universalIdentifier &&
-          !isDefined(
-            remainingFlatEntityMapsToValidate.byUniversalIdentifier[
-              field.universalIdentifier
-            ],
-          ),
-      );
+      const hasRemainingTargets =
+        relatedFlatObjectMetadata.fieldUniversalIdentifiers.some(
+          (fieldUniversalIdentifier) =>
+            fieldUniversalIdentifier !== universalIdentifier &&
+            optimisticFlatFieldMetadataMaps.byUniversalIdentifier[
+              fieldUniversalIdentifier
+            ]?.morphId === flatFieldMetadataToDelete.morphId &&
+            !isDefined(
+              remainingFlatEntityMapsToValidate.byUniversalIdentifier[
+                fieldUniversalIdentifier
+              ],
+            ),
+        );
+
       if (hasRemainingTargets) {
         validationResult.errors.push({
           code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
