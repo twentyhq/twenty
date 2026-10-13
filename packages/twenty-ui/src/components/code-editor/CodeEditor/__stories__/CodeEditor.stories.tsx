@@ -409,7 +409,10 @@ export const ControlledValue: Story = {
   ...Default,
   args: {
     onChange: handleChange,
-    options: { padding: { top: 3, bottom: 19 } },
+    options: {
+      occurrencesHighlight: 'off',
+      padding: { top: 3, bottom: 19 },
+    },
     setMarkers: (value) => [
       {
         severity: 4,
@@ -575,6 +578,7 @@ export const AutoHeight: Story = {
     defaultValue: 'Workspace notes\nPlan: Pro',
     height: 300,
     autoHeight: true,
+    options: { occurrencesHighlight: 'off' },
   },
   play: async ({ canvasElement }) => {
     await waitForCodeEditorContent({
