@@ -203,6 +203,22 @@ const fromDatabaseEventTriggerManifestOrThrow = ({
   } satisfies WorkflowDatabaseEventTrigger;
 };
 
+const fromWebhookTriggerManifestSettings = (
+  settings: WebhookTriggerManifest['settings'],
+): WorkflowWebhookTrigger['settings'] => {
+  if (settings.httpMethod === 'GET') {
+    return { httpMethod: 'GET', authentication: null, outputSchema: {} };
+  }
+
+  return {
+    httpMethod: 'POST',
+    authentication: null,
+    expectedBody: settings.expectedBody,
+    expectedOutputSchema: settings.expectedBody,
+    outputSchema: getOutputSchemaFromValue(settings.expectedBody),
+  };
+};
+
 const fromWebhookTriggerManifest = (
   trigger: WebhookTriggerManifest,
 ): WorkflowWebhookTrigger => {
@@ -213,16 +229,7 @@ const fromWebhookTriggerManifest = (
     name: 'Webhook',
     type: WorkflowTriggerType.WEBHOOK,
     position: { x: 0, y: 0 },
-    settings:
-      settings.httpMethod === 'GET'
-        ? { httpMethod: 'GET', authentication: null, outputSchema: {} }
-        : {
-            httpMethod: 'POST',
-            authentication: null,
-            expectedBody: settings.expectedBody,
-            expectedOutputSchema: settings.expectedBody,
-            outputSchema: getOutputSchemaFromValue(settings.expectedBody),
-          },
+    settings: fromWebhookTriggerManifestSettings(settings),
   } satisfies WorkflowWebhookTrigger;
 };
 
