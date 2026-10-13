@@ -1,13 +1,14 @@
 import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
-import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
+import { createSubscriptionStub } from '@/testing/createSubscriptionStub';
 import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
+import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { installElementGeometryPolyfill } from '../installElementGeometryPolyfill';
 
 class FakeElement {}
 
 class FakeTextarea extends FakeElement {
-  tagName = 'HTML-TEXTAREA';
+  localName = 'html-textarea';
   isConnected = true;
   style = { blockSize: '' };
 }
@@ -43,6 +44,40 @@ const installOn = (geometryStore: WorkerGeometryStore) => {
   });
 
   return { documentBody, documentElement };
+};
+
+const installTextareaResizeFixture = () => {
+  let snapshot = createElementGeometrySnapshotFixture({
+    offsetHeight: 50,
+    clientHeight: 48,
+    scrollHeight: 48,
+    textareaIntrinsicScrollHeight: 48,
+  });
+  const geometryUpdates = createSubscriptionStub();
+
+  installOn(
+    createWorkerGeometryStoreStub({
+      resolveElementSnapshot: () => snapshot,
+      subscribeToGeometryUpdates: geometryUpdates.subscribe,
+    }),
+  );
+
+  const textarea = asPolyfilled(
+    new FakeTextarea(),
+  ) as GeometryPolyfilledElement & FakeTextarea;
+  textarea.style.blockSize = 'auto';
+
+  const resizeToContent = () => {
+    const borderBlockSize = textarea.offsetHeight - textarea.clientHeight;
+    textarea.style.blockSize = `${textarea.scrollHeight + borderBlockSize}px`;
+  };
+
+  const pushSnapshot = (overrides: Partial<ElementGeometrySnapshot>) => {
+    snapshot = { ...snapshot, ...overrides };
+    geometryUpdates.notify();
+  };
+
+  return { textarea, resizeToContent, pushSnapshot };
 };
 
 describe('installElementGeometryPolyfill', () => {
@@ -81,6 +116,7 @@ describe('installElementGeometryPolyfill', () => {
     expect(element.offsetWidth).toBe(5);
     expect(element.clientHeight).toBe(10);
     expect(element.scrollWidth).toBe(13);
+    expect(element.scrollHeight).toBe(14);
     expect(element.scrollTop).toBe(15);
   });
 
@@ -106,103 +142,37 @@ describe('installElementGeometryPolyfill', () => {
   });
 
   it('should resize a textarea after its controlled content reaches the host', () => {
-    let snapshot = createElementGeometrySnapshotFixture({
-      offsetHeight: 50,
-      clientHeight: 48,
-      scrollHeight: 48,
-      textareaIntrinsicScrollHeight: 48,
-    });
-    let notifyGeometryUpdate = () => {};
+    const { textarea, resizeToContent, pushSnapshot } =
+      installTextareaResizeFixture();
 
-    installOn(
-      createWorkerGeometryStoreStub({
-        resolveElementSnapshot: () => snapshot,
-        subscribeToGeometryUpdates: (listener) => {
-          notifyGeometryUpdate = listener;
-          return () => {};
-        },
-      }),
-    );
-
-    const textarea = asPolyfilled(
-      new FakeTextarea(),
-    ) as GeometryPolyfilledElement & FakeTextarea;
-    textarea.style.blockSize = 'auto';
-    const borderBlockSize = textarea.offsetHeight - textarea.clientHeight;
-    textarea.style.blockSize = `${textarea.scrollHeight + borderBlockSize}px`;
-    snapshot = { ...snapshot, textareaIntrinsicScrollHeight: 80 };
-    notifyGeometryUpdate();
+    resizeToContent();
+    pushSnapshot({ textareaIntrinsicScrollHeight: 80 });
 
     expect(textarea.style.blockSize).toBe('82px');
 
-    snapshot = { ...snapshot, textareaIntrinsicScrollHeight: 32 };
-    notifyGeometryUpdate();
+    pushSnapshot({ textareaIntrinsicScrollHeight: 32 });
 
     expect(textarea.style.blockSize).toBe('34px');
   });
 
   it('should stop resizing a detached textarea', () => {
-    let snapshot = createElementGeometrySnapshotFixture({
-      offsetHeight: 50,
-      clientHeight: 48,
-      scrollHeight: 48,
-      textareaIntrinsicScrollHeight: 48,
-    });
-    let notifyGeometryUpdate = () => {};
+    const { textarea, resizeToContent, pushSnapshot } =
+      installTextareaResizeFixture();
 
-    installOn(
-      createWorkerGeometryStoreStub({
-        resolveElementSnapshot: () => snapshot,
-        subscribeToGeometryUpdates: (listener) => {
-          notifyGeometryUpdate = listener;
-          return () => {};
-        },
-      }),
-    );
-
-    const textarea = asPolyfilled(
-      new FakeTextarea(),
-    ) as GeometryPolyfilledElement & FakeTextarea;
-    textarea.style.blockSize = 'auto';
-    const borderBlockSize = textarea.offsetHeight - textarea.clientHeight;
-    textarea.style.blockSize = `${textarea.scrollHeight + borderBlockSize}px`;
+    resizeToContent();
     textarea.isConnected = false;
-    notifyGeometryUpdate();
-    snapshot = createElementGeometrySnapshotFixture({
-      textareaIntrinsicScrollHeight: 80,
-    });
-    notifyGeometryUpdate();
+    pushSnapshot({});
+    pushSnapshot({ textareaIntrinsicScrollHeight: 80 });
 
     expect(textarea.style.blockSize).toBe('50px');
   });
 
   it('should preserve caller sizing after a pending textarea content measurement', () => {
-    let snapshot = createElementGeometrySnapshotFixture({
-      offsetHeight: 50,
-      clientHeight: 48,
-      scrollHeight: 48,
-      textareaIntrinsicScrollHeight: 48,
-    });
-    let notifyGeometryUpdate = () => {};
+    const { textarea, pushSnapshot } = installTextareaResizeFixture();
 
-    installOn(
-      createWorkerGeometryStoreStub({
-        resolveElementSnapshot: () => snapshot,
-        subscribeToGeometryUpdates: (listener) => {
-          notifyGeometryUpdate = listener;
-          return () => {};
-        },
-      }),
-    );
-
-    const textarea = asPolyfilled(
-      new FakeTextarea(),
-    ) as GeometryPolyfilledElement & FakeTextarea;
-    textarea.style.blockSize = 'auto';
     expect(textarea.scrollHeight).toBe(48);
     textarea.style.blockSize = '140px';
-    snapshot = { ...snapshot, textareaIntrinsicScrollHeight: 80 };
-    notifyGeometryUpdate();
+    pushSnapshot({ textareaIntrinsicScrollHeight: 80 });
 
     expect(textarea.style.blockSize).toBe('140px');
   });
@@ -214,74 +184,8 @@ describe('installElementGeometryPolyfill', () => {
 
     expect(element.offsetWidth).toBe(0);
     expect(element.clientHeight).toBe(0);
+    expect(element.scrollHeight).toBe(0);
     expect(element.scrollLeft).toBe(0);
-  });
-
-  it('should synthesize body geometry from the viewport root container', () => {
-    const { documentBody } = installOn(
-      createWorkerGeometryStoreStub({
-        getViewportSnapshot: () =>
-          createViewportGeometrySnapshotFixture({
-            rootContainerWidth: 640,
-            rootContainerHeight: 480,
-            rootContainerClientWidth: 630,
-            rootContainerClientHeight: 470,
-          }),
-      }),
-    );
-
-    const rect = asPolyfilled(documentBody).getBoundingClientRect();
-
-    expect(rect.width).toBe(640);
-    expect(rect.height).toBe(480);
-    expect(asPolyfilled(documentBody).clientWidth).toBe(630);
-  });
-
-  it('should place document-scoped rects at the root container host-viewport position', () => {
-    const { documentBody, documentElement } = installOn(
-      createWorkerGeometryStoreStub({
-        getViewportSnapshot: () =>
-          createViewportGeometrySnapshotFixture({
-            rootContainerX: 120,
-            rootContainerY: 45,
-            rootContainerWidth: 640,
-            rootContainerHeight: 480,
-          }),
-      }),
-    );
-
-    const bodyRect = asPolyfilled(documentBody).getBoundingClientRect();
-    const documentElementRect =
-      asPolyfilled(documentElement).getBoundingClientRect();
-
-    expect(bodyRect.x).toBe(120);
-    expect(bodyRect.y).toBe(45);
-    expect(documentElementRect.x).toBe(120);
-    expect(documentElementRect.y).toBe(45);
-  });
-
-  it('should mirror host scroll offsets on documentElement only', () => {
-    const { documentBody, documentElement } = installOn(
-      createWorkerGeometryStoreStub({
-        getViewportSnapshot: () =>
-          createViewportGeometrySnapshotFixture({
-            scrollX: 30,
-            scrollY: 700,
-          }),
-      }),
-    );
-
-    expect(asPolyfilled(documentElement).scrollTop).toBe(700);
-    expect(asPolyfilled(documentElement).scrollLeft).toBe(30);
-    expect(asPolyfilled(documentBody).scrollTop).toBe(0);
-    expect(asPolyfilled(documentBody).scrollLeft).toBe(0);
-  });
-
-  it('should return zero document-scoped geometry when no viewport snapshot exists', () => {
-    const { documentBody } = installOn(createWorkerGeometryStoreStub());
-
-    expect(asPolyfilled(documentBody).getBoundingClientRect().width).toBe(0);
-    expect(asPolyfilled(documentBody).clientWidth).toBe(0);
   });
 
   it('should not throw when scrollTop is assigned and should keep reading the mirrored value', () => {

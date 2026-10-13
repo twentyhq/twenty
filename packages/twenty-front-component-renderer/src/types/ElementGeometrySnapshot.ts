@@ -1,7 +1,5 @@
 export type ElementGeometrySnapshot = {
   computedStyle?: Record<string, string>;
-  contentWidth?: number;
-  contentHeight?: number;
   offsetParentRemoteElementId?: string | null;
   x: number;
   y: number;

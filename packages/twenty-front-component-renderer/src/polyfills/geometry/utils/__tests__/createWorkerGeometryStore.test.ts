@@ -36,10 +36,11 @@ const flushMicrotasks = async () => {
 
 const createRootedStore = () => {
   const store = createWorkerGeometryStore();
-  const rootElement = { localName: 'body', parentNode: null };
+  const documentElement = { localName: 'html', parentNode: null };
+  const rootElement = { localName: 'body', parentNode: documentElement };
   store.setRootElement(rootElement);
 
-  return { store, rootElement };
+  return { store, rootElement, documentElement };
 };
 
 const createHostElement = (parentNode: object) => ({
@@ -130,6 +131,54 @@ describe('createWorkerGeometryStore', () => {
     store.applyGeometryBatch({ elements: { '0': createSnapshot(42) } });
 
     expect(store.readObservedElementSnapshot(element)?.width).toBe(42);
+  });
+
+  it('should resolve the remote root and its document element from the renderer root container without enrolling them', async () => {
+    const { store, rootElement, documentElement } = createRootedStore();
+    const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
+    store.connectTransport({
+      observeElementGeometry,
+      unobserveElementGeometry: jest.fn().mockResolvedValue(undefined),
+    });
+
+    expect(store.resolveElementSnapshot(rootElement)).toBeNull();
+
+    store.applyGeometryBatch({
+      viewport: createViewportGeometrySnapshotFixture({
+        computedStyle: { direction: 'rtl' },
+        scrollX: 30,
+        scrollY: 700,
+        rootContainerX: 120,
+        rootContainerY: 45,
+        rootContainerWidth: 640,
+        rootContainerHeight: 480,
+        rootContainerClientWidth: 630,
+        rootContainerClientHeight: 470,
+      }),
+    });
+
+    expect(store.resolveElementSnapshot(rootElement)).toMatchObject({
+      computedStyle: { direction: 'rtl' },
+      x: 120,
+      y: 45,
+      width: 640,
+      height: 480,
+      clientWidth: 630,
+      clientHeight: 470,
+      scrollTop: 0,
+      scrollLeft: 0,
+    });
+    expect(store.readObservedElementSnapshot(documentElement)).toMatchObject({
+      x: 120,
+      y: 45,
+      scrollTop: 700,
+      scrollLeft: 30,
+    });
+    expect(store.createElementGeometryReader(rootElement).read()).toMatchObject(
+      { clientWidth: 630, clientHeight: 470 },
+    );
+    await flushMicrotasks();
+    expect(observeElementGeometry).not.toHaveBeenCalled();
   });
 
   it('should coalesce a synchronous burst of enrollments into one call', async () => {

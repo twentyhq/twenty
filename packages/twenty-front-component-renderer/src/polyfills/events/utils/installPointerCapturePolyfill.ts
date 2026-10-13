@@ -2,6 +2,8 @@ import { callRemoteElementMethod, remoteId } from '@remote-dom/core/elements';
 import { isInteger } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CAPTURED_POINTER_EVENT_TYPES } from '@/constants/CapturedPointerEventTypes';
+import { POINTER_GESTURE_END_EVENT_TYPES } from '@/constants/PointerGestureEndEventTypes';
 import { findElementByRemoteId } from '@/polyfills/dom/utils/findElementByRemoteId';
 import { isElementNode } from '@/polyfills/dom/utils/isElementNode';
 import { type WorkerPointerCapture } from '@/polyfills/events/types/WorkerPointerCapture';
@@ -11,12 +13,8 @@ import { createWorkerEventFromSerializedEvent } from '@/remote/elements/utils/cr
 import { type CapturedPointerEventUpdate } from '@/types/CapturedPointerEventUpdate';
 import { type PointerCaptureRequest } from '@/types/PointerCaptureRequest';
 
-const POINTER_GESTURE_END_EVENT_TYPES = ['pointerup', 'pointercancel'] as const;
-
-const CAPTURED_POINTER_EVENT_TYPES: ReadonlySet<string> = new Set([
-  'pointermove',
-  'pointerup',
-  'pointercancel',
+const DISPATCHABLE_POINTER_EVENT_TYPES: ReadonlySet<string> = new Set([
+  ...CAPTURED_POINTER_EVENT_TYPES,
   'lostpointercapture',
 ]);
 
@@ -44,6 +42,7 @@ export const installPointerCapturePolyfill = ({
   const capturedPointers = new Map<Element, CapturedPointer>();
   let lastCaptureToken = 0;
   let hasScheduledDetachedCaptureSweep = false;
+  let gesturePointerTarget: Element | null = null;
 
   const clearCapture = (element: Element) => {
     const capture = capturedPointers.get(element);
@@ -165,12 +164,20 @@ export const installPointerCapturePolyfill = ({
       }
     }
 
+    if (
+      gesturePointerTarget?.isConnected === true &&
+      remoteId(gesturePointerTarget) === remoteElementId
+    ) {
+      return gesturePointerTarget;
+    }
+
     const element = findElementByRemoteId({
       rootNode: documentTarget.body,
       remoteElementId,
     });
+    gesturePointerTarget = isElementNode(element) ? element : null;
 
-    return isElementNode(element) ? element : null;
+    return gesturePointerTarget;
   };
 
   const sweepDetachedCaptures = () => {
@@ -188,11 +195,15 @@ export const installPointerCapturePolyfill = ({
       remoteElementId,
       eventData,
     }: CapturedPointerEventUpdate) => {
-      if (!CAPTURED_POINTER_EVENT_TYPES.has(eventData.type)) {
+      if (!DISPATCHABLE_POINTER_EVENT_TYPES.has(eventData.type)) {
         return;
       }
 
       const element = findCapturedPointerTarget(remoteElementId);
+
+      if (POINTER_GESTURE_END_EVENT_TYPES.has(eventData.type)) {
+        gesturePointerTarget = null;
+      }
 
       if (!isDefined(element) || !element.isConnected) {
         return;

@@ -1,9 +1,12 @@
 import { expect, test, type Locator } from 'playwright/test';
 import { isDefined } from 'twenty-shared/utils';
+import { waitForAnimationFrames } from '../../../src/__stories__/shared/test-utils/waitForAnimationFrames';
+import { MAXIMUM_DROPDOWN_TRIGGER_GAP } from '../../../src/__stories__/twenty-ui-gallery/constants/MaximumDropdownTriggerGap';
+import { computePopupAnchorGapAndOverlap } from '../../../src/__stories__/twenty-ui-gallery/utils/computePopupAnchorGapAndOverlap';
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '../../../src/host/geometry/constants/GeometryIdleFrameThreshold';
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '../../../src/constants/FrontComponentPortalMargin';
+import { readBounds } from './readBounds';
 
-const MAXIMUM_DROPDOWN_TRIGGER_GAP = 16;
 const POPUP_POSITION_ROUNDING_TOLERANCE = 1;
 
 type ElementBounds = NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>;
@@ -24,23 +27,13 @@ const isPopupAttachedToAnchor = ({
     return false;
   }
 
-  const popupAnchorGap = isHorizontallyPositioned
-    ? Math.max(
-        popup.x - anchor.x - anchor.width,
-        anchor.x - popup.x - popup.width,
-      )
-    : Math.max(
-        popup.y - anchor.y - anchor.height,
-        anchor.y - popup.y - popup.height,
-      );
-  const popupOverlapStart = isHorizontallyPositioned ? popup.y : popup.x;
-  const popupOverlapEnd = isHorizontallyPositioned
-    ? popup.y + popup.height
-    : popup.x + popup.width;
-  const anchorOverlapStart = isHorizontallyPositioned ? anchor.y : anchor.x;
-  const anchorOverlapEnd = isHorizontallyPositioned
-    ? anchor.y + anchor.height
-    : anchor.x + anchor.width;
+  const {
+    popupAnchorGap,
+    popupOverlapStart,
+    popupOverlapEnd,
+    anchorOverlapStart,
+    anchorOverlapEnd,
+  } = computePopupAnchorGapAndOverlap({ anchor, popup, side });
 
   return (
     popupAnchorGap >= -POPUP_POSITION_ROUNDING_TOLERANCE &&
@@ -164,19 +157,12 @@ for (const runtime of ['react', 'preact']) {
     await trigger.click();
     const menu = page.getByRole('menu');
     await expect(menu).toBeVisible();
-    await page.evaluate(async (frameCount) => {
-      for (let frame = 0; frame < frameCount; frame += 1) {
-        await new Promise<void>((resolve) =>
-          requestAnimationFrame(() => resolve()),
-        );
-      }
-    }, GEOMETRY_IDLE_FRAME_THRESHOLD * 3);
-    const anchorBeforeMove = await trigger.boundingBox();
-    const popupBeforeMove = await menu.boundingBox();
-
-    if (!isDefined(anchorBeforeMove) || !isDefined(popupBeforeMove)) {
-      throw new Error('Popup or anchor bounds are unavailable before movement');
-    }
+    await page.evaluate(
+      waitForAnimationFrames,
+      GEOMETRY_IDLE_FRAME_THRESHOLD * 3,
+    );
+    const anchorBeforeMove = await readBounds(trigger);
+    const popupBeforeMove = await readBounds(menu);
 
     await trigger.evaluate((node) => {
       node.style.transform = 'translateX(65px)';
@@ -195,8 +181,8 @@ for (const runtime of ['react', 'preact']) {
         );
       })
       .toBe(true);
-    const anchor = await trigger.boundingBox();
-    expect(anchor!.width).toBeCloseTo(anchorBeforeMove.width);
+    const anchor = await readBounds(trigger);
+    expect(anchor.width).toBeCloseTo(anchorBeforeMove.width);
     await expect
       .poll(async () => {
         const popup = await menu.boundingBox();

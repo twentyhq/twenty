@@ -8,6 +8,26 @@ import { tabButtonTest } from '@/__stories__/twenty-ui-gallery/utils/tabButtonTe
 
 const INDICATOR_GEOMETRY_TOLERANCE = 2;
 
+const expectIndicatorAlignedWithTab = ({
+  indicator,
+  tab,
+}: {
+  indicator: Element;
+  tab: Element;
+}) => {
+  const indicatorRectangle = indicator.getBoundingClientRect();
+  const tabRectangle = tab.getBoundingClientRect();
+
+  expect(indicator).toBeVisible();
+  expect(indicatorRectangle.width).toBeGreaterThan(0);
+  expect(
+    Math.abs(indicatorRectangle.width - tabRectangle.width),
+  ).toBeLessThanOrEqual(INDICATOR_GEOMETRY_TOLERANCE);
+  expect(
+    Math.abs(indicatorRectangle.left - tabRectangle.left),
+  ).toBeLessThanOrEqual(INDICATOR_GEOMETRY_TOLERANCE);
+};
+
 export const tabsTest: TwentyUiGalleryPlayFunction = async (context) => {
   const canvas = within(context.canvasElement);
   await expectFrontComponentMounted(canvas);
@@ -52,19 +72,9 @@ export const tabsTest: TwentyUiGalleryPlayFunction = async (context) => {
       activity.getBoundingClientRect().left,
     );
   });
-  await waitFor(() => {
-    const indicatorRectangle = indicator.getBoundingClientRect();
-    const overviewRectangle = overview.getBoundingClientRect();
-
-    expect(indicator).toBeVisible();
-    expect(indicatorRectangle.width).toBeGreaterThan(0);
-    expect(
-      Math.abs(indicatorRectangle.width - overviewRectangle.width),
-    ).toBeLessThanOrEqual(INDICATOR_GEOMETRY_TOLERANCE);
-    expect(
-      Math.abs(indicatorRectangle.left - overviewRectangle.left),
-    ).toBeLessThanOrEqual(INDICATOR_GEOMETRY_TOLERANCE);
-  });
+  await waitFor(() =>
+    expectIndicatorAlignedWithTab({ indicator, tab: overview }),
+  );
   await userEvent.click(overview);
   await userEvent.keyboard('{ArrowRight}');
   await waitFor(() => expect(activity).toHaveFocus());
@@ -97,19 +107,9 @@ export const tabsTest: TwentyUiGalleryPlayFunction = async (context) => {
     expect(activityPanel).toHaveAttribute('data-render-hidden', 'false');
     expect(overviewPanel).not.toBeVisible();
   });
-  await waitFor(() => {
-    const indicatorRectangle = indicator.getBoundingClientRect();
-    const activityRectangle = activity.getBoundingClientRect();
-
-    expect(indicator).toBeVisible();
-    expect(indicatorRectangle.width).toBeGreaterThan(0);
-    expect(
-      Math.abs(indicatorRectangle.width - activityRectangle.width),
-    ).toBeLessThanOrEqual(INDICATOR_GEOMETRY_TOLERANCE);
-    expect(
-      Math.abs(indicatorRectangle.left - activityRectangle.left),
-    ).toBeLessThanOrEqual(INDICATOR_GEOMETRY_TOLERANCE);
-  });
+  await waitFor(() =>
+    expectIndicatorAlignedWithTab({ indicator, tab: activity }),
+  );
   await userEvent.click(activity);
   expect(canvas.getByLabelText('Controlled change count')).toHaveTextContent(
     '1',

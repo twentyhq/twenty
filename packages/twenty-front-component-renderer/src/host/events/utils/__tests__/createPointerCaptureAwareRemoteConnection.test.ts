@@ -1,16 +1,10 @@
-import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
+import { createHostPointerCaptureControllerStub } from '@/testing/createHostPointerCaptureControllerStub';
 
 import { createPointerCaptureAwareRemoteConnection } from '../createPointerCaptureAwareRemoteConnection';
 
 const createConnectionFixture = () => {
   const connection = { mutate: jest.fn(), call: jest.fn() };
-  const pointerCaptureController: HostPointerCaptureController = {
-    startPointerCapture: jest.fn(),
-    acceptWorkerPointerCapture: jest.fn(),
-    releaseWorkerPointerCapture: jest.fn(),
-    setTransport: jest.fn(),
-    reset: jest.fn(),
-  };
+  const pointerCaptureController = createHostPointerCaptureControllerStub();
 
   return {
     connection,

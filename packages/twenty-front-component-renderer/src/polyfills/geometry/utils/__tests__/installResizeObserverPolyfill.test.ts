@@ -39,7 +39,7 @@ const createSandbox = () => {
   document.body.appendChild(root);
   root.appendChild(target);
   const geometryStore = createWorkerGeometryStore();
-  geometryStore.setRootElement(root);
+  geometryStore.setRootElement(document.body);
   const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
   const unobserveElementGeometry = jest.fn().mockResolvedValue(undefined);
   geometryStore.connectTransport({
@@ -62,7 +62,6 @@ const createSandbox = () => {
   installResizeObserverPolyfill({
     globalScope,
     geometryStore,
-    documentTarget: document,
   });
 
   const applySnapshot = (overrides: Partial<ElementGeometrySnapshot> = {}) => {
@@ -79,10 +78,8 @@ const createSandbox = () => {
           height: 50,
           offsetWidth: 100,
           offsetHeight: 50,
-          clientWidth: 90,
-          clientHeight: 40,
-          contentWidth: 80,
-          contentHeight: 30,
+          clientWidth: 80,
+          clientHeight: 30,
           ...overrides,
         }),
       },
@@ -129,6 +126,8 @@ describe('installResizeObserverPolyfill', () => {
     expect(callback).not.toHaveBeenCalled();
 
     applySnapshot({
+      clientWidth: 85,
+      clientHeight: 37,
       computedStyle: { 'padding-left': '5px', 'padding-top': '7px' },
     });
     await flushMicrotasks();
@@ -187,15 +186,15 @@ describe('installResizeObserverPolyfill', () => {
     observer.observe(target);
     observer.observe(target);
     applySnapshot();
-    applySnapshot({ contentWidth: 110 });
-    applySnapshot({ contentWidth: 120 });
+    applySnapshot({ clientWidth: 110 });
+    applySnapshot({ clientWidth: 120 });
     await flushMicrotasks();
 
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback.mock.calls[0][0]).toHaveLength(1);
     expect(callback.mock.calls[0][0][0].contentRect.width).toBe(120);
 
-    applySnapshot({ contentWidth: 120, contentHeight: 60 });
+    applySnapshot({ clientWidth: 120, clientHeight: 60 });
     await flushMicrotasks();
     expect(callback).toHaveBeenCalledTimes(2);
   });
@@ -214,7 +213,7 @@ describe('installResizeObserverPolyfill', () => {
     expect(contentCallback).toHaveBeenCalledTimes(1);
     expect(borderCallback).toHaveBeenCalledTimes(2);
 
-    applySnapshot({ offsetWidth: 130, contentWidth: 60 });
+    applySnapshot({ offsetWidth: 130, clientWidth: 60 });
     await flushMicrotasks();
     expect(contentCallback).toHaveBeenCalledTimes(2);
     expect(borderCallback).toHaveBeenCalledTimes(2);
@@ -247,8 +246,8 @@ describe('installResizeObserverPolyfill', () => {
     geometryStore.applyGeometryBatch({
       elements: {
         [secondRemoteElementId]: createElementGeometrySnapshotFixture({
-          contentWidth: 70,
-          contentHeight: 20,
+          clientWidth: 70,
+          clientHeight: 20,
         }),
       },
     });
@@ -260,12 +259,12 @@ describe('installResizeObserverPolyfill', () => {
     ).toEqual([target, secondTarget]);
 
     observer.unobserve(target);
-    applySnapshot({ contentWidth: 200 });
+    applySnapshot({ clientWidth: 200 });
     geometryStore.applyGeometryBatch({
       elements: {
         [secondRemoteElementId]: createElementGeometrySnapshotFixture({
-          contentWidth: 90,
-          contentHeight: 20,
+          clientWidth: 90,
+          clientHeight: 20,
         }),
       },
     });
@@ -489,7 +488,7 @@ describe('installResizeObserverPolyfill', () => {
     const { ResizeObserver, target, applySnapshot } = createSandbox();
     const callback = jest.fn();
     new ResizeObserver(callback).observe(target);
-    applySnapshot({ contentWidth: 0, contentHeight: 0 });
+    applySnapshot({ clientWidth: 0, clientHeight: 0 });
     await flushMicrotasks();
 
     expect(callback).toHaveBeenCalledTimes(1);
@@ -555,7 +554,7 @@ describe('installResizeObserverPolyfill', () => {
     await flushMicrotasks();
     callback.mockClear();
 
-    applySnapshot({ contentWidth: 120 });
+    applySnapshot({ clientWidth: 120 });
     document.body.removeChild(root);
     await flushMicrotasks();
 
@@ -572,7 +571,7 @@ describe('installResizeObserverPolyfill', () => {
     await flushMicrotasks();
     expect(observeElementGeometry).toHaveBeenCalledTimes(2);
 
-    applySnapshot({ contentWidth: 140 });
+    applySnapshot({ clientWidth: 140 });
     await flushMicrotasks();
 
     expect(callback).toHaveBeenCalledTimes(2);

@@ -27,19 +27,8 @@ export const measureNodeGeometry = ({
       ? (resolveRemoteElementId?.(offsetParent) ?? null)
       : null;
   const hasOwnedOffsetParent = isDefined(offsetParentRemoteElementId);
-  const computedStyle = measureComputedLayoutStyle(node);
-  const horizontalPadding =
-    (parseFloat(computedStyle['padding-left']) || 0) +
-    (parseFloat(computedStyle['padding-right']) || 0);
-  const verticalPadding =
-    (parseFloat(computedStyle['padding-top']) || 0) +
-    (parseFloat(computedStyle['padding-bottom']) || 0);
 
   return {
-    computedStyle,
-    textareaIntrinsicScrollHeight: measureTextareaIntrinsicScrollHeight(node),
-    contentWidth: Math.max(0, node.clientWidth - horizontalPadding),
-    contentHeight: Math.max(0, node.clientHeight - verticalPadding),
     offsetParentRemoteElementId,
     x,
     y,
@@ -61,5 +50,7 @@ export const measureNodeGeometry = ({
     scrollHeight: node.scrollHeight,
     scrollTop: node.scrollTop,
     scrollLeft: node.scrollLeft,
+    computedStyle: measureComputedLayoutStyle(node),
+    textareaIntrinsicScrollHeight: measureTextareaIntrinsicScrollHeight(node),
   };
 };

@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { CAPTURED_POINTER_EVENT_TYPES } from '@/constants/CapturedPointerEventTypes';
 import { FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS } from '@/host/events/constants/FormControlStateSerializedEventKeys';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
@@ -7,12 +8,6 @@ import { forwardCapturedPointerEventOnce } from '@/host/events/utils/forwardCapt
 import { resolveNativeHostEvent } from '@/host/events/utils/resolveNativeHostEvent';
 import { serializeEvent } from '@/host/events/utils/serializeEvent';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
-
-const CAPTURED_POINTER_EVENT_TYPES = new Set([
-  'pointermove',
-  'pointerup',
-  'pointercancel',
-]);
 
 const forwardedBubblingHostEvents = new WeakSet<object>();
 
@@ -63,7 +58,9 @@ export const wrapEventHandler =
 
     if (
       serializedEvent.bubbles === true &&
-      CAPTURED_POINTER_EVENT_TYPES.has(serializedEvent.type) &&
+      CAPTURED_POINTER_EVENT_TYPES.some(
+        (capturedEventType) => capturedEventType === serializedEvent.type,
+      ) &&
       isDefined(findRemoteElementIdContainingNode)
     ) {
       forwardCapturedPointerEventOnce({

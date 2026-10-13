@@ -1,7 +1,7 @@
-import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { createDomRectFromSnapshot } from '@/polyfills/geometry/utils/createDomRectFromSnapshot';
-
-const DEFAULT_WRITING_MODE = 'horizontal-tb';
+import { resolveResizeObserverBoxSize } from '@/polyfills/geometry/utils/resolveResizeObserverBoxSize';
+import { resolveSnapshotContentBox } from '@/polyfills/geometry/utils/resolveSnapshotContentBox';
+import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 type CreateResizeObserverEntryInput = {
   target: Element;
@@ -14,44 +14,16 @@ export const createResizeObserverEntry = ({
   snapshot,
   devicePixelRatio,
 }: CreateResizeObserverEntryInput): ResizeObserverEntry => {
-  const width = snapshot.contentWidth ?? snapshot.clientWidth;
-  const height = snapshot.contentHeight ?? snapshot.clientHeight;
-  const writingMode =
-    snapshot.computedStyle?.['writing-mode'] ?? DEFAULT_WRITING_MODE;
-  const isVerticalWritingMode =
-    writingMode.startsWith('vertical') || writingMode.startsWith('sideways');
-  const createBoxSize = ({
-    width,
-    height,
-  }: {
-    width: number;
-    height: number;
-  }): ResizeObserverSize =>
-    Object.freeze({
-      inlineSize: isVerticalWritingMode ? height : width,
-      blockSize: isVerticalWritingMode ? width : height,
-    });
+  const createBoxSizes = (box: ResizeObserverBoxOptions) =>
+    Object.freeze([
+      resolveResizeObserverBoxSize({ snapshot, box, devicePixelRatio }),
+    ]);
 
   return {
     target,
-    contentRect: createDomRectFromSnapshot({
-      x: parseFloat(snapshot.computedStyle?.['padding-left'] ?? '0') || 0,
-      y: parseFloat(snapshot.computedStyle?.['padding-top'] ?? '0') || 0,
-      width,
-      height,
-    }),
-    contentBoxSize: Object.freeze([createBoxSize({ width, height })]),
-    borderBoxSize: Object.freeze([
-      createBoxSize({
-        width: snapshot.offsetWidth,
-        height: snapshot.offsetHeight,
-      }),
-    ]),
-    devicePixelContentBoxSize: Object.freeze([
-      createBoxSize({
-        width: Math.round(width * devicePixelRatio),
-        height: Math.round(height * devicePixelRatio),
-      }),
-    ]),
+    contentRect: createDomRectFromSnapshot(resolveSnapshotContentBox(snapshot)),
+    contentBoxSize: createBoxSizes('content-box'),
+    borderBoxSize: createBoxSizes('border-box'),
+    devicePixelContentBoxSize: createBoxSizes('device-pixel-content-box'),
   };
 };

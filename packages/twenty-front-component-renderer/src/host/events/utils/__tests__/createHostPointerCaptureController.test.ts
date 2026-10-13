@@ -317,13 +317,14 @@ describe('createHostPointerCaptureController', () => {
     });
   });
 
-  it('should end capture sessions on node detachment and controller reset', async () => {
-    const { controller, element } = createCaptureFixture();
+  it('should end capture sessions when the captured node is detached and on controller reset', () => {
+    const { controller, element, transport } = createCaptureFixture();
     const removeDocumentListener = jest.spyOn(document, 'removeEventListener');
 
-    startCapturedGesture({ controller, element });
+    const { handlePointerMove } = startCapturedGesture({ controller, element });
     element.remove();
-    await Promise.resolve();
+    handlePointerMove(createNativePointerEvent({ clientX: 30 }));
+    expect(transport.pushCapturedPointerEvent).not.toHaveBeenCalled();
     expect(removeDocumentListener).toHaveBeenCalledTimes(3);
 
     document.body.append(element);

@@ -8,8 +8,7 @@ export default defineConfig({
   timeout: 60000,
   reporter: 'list',
   use: {
-    baseURL:
-      process.env.FRONT_COMPONENT_STORYBOOK_URL ?? 'http://localhost:6008',
+    baseURL: process.env.STORYBOOK_URL ?? 'http://localhost:6008',
     headless: true,
     viewport: { width: 1280, height: 960 },
   },

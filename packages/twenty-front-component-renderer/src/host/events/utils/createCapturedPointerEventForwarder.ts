@@ -1,15 +1,11 @@
+import { CAPTURED_POINTER_EVENT_TYPES } from '@/constants/CapturedPointerEventTypes';
+import { POINTER_GESTURE_END_EVENT_TYPES } from '@/constants/PointerGestureEndEventTypes';
 import { applyEventModifierKeys } from '@/host/events/utils/applyEventModifierKeys';
 import { applyMouseEventProperties } from '@/host/events/utils/applyMouseEventProperties';
 import { applyPointerEventProperties } from '@/host/events/utils/applyPointerEventProperties';
 import { forwardCapturedPointerEventOnce } from '@/host/events/utils/forwardCapturedPointerEventOnce';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 import { type SerializedEventData } from '@/types/SerializedEventData';
-
-const CAPTURED_POINTER_EVENT_TYPES = [
-  'pointermove',
-  'pointerup',
-  'pointercancel',
-] as const;
 
 const serializeCapturedPointerEvent = (
   event: PointerEvent,
@@ -52,7 +48,6 @@ export const createCapturedPointerEventForwarder = ({
       documentTarget.removeEventListener(eventType, handlePointerEvent);
     }
     element.removeEventListener('lostpointercapture', handleCaptureLoss);
-    detachmentObserver.disconnect();
     onEnd();
   };
 
@@ -72,7 +67,7 @@ export const createCapturedPointerEventForwarder = ({
       forwardEvent: () => forwardEvent(serializeCapturedPointerEvent(event)),
     });
 
-    if (event.type === 'pointerup' || event.type === 'pointercancel') {
+    if (POINTER_GESTURE_END_EVENT_TYPES.has(event.type)) {
       end();
     }
   };
@@ -85,20 +80,10 @@ export const createCapturedPointerEventForwarder = ({
     forwardEvent(serializeCapturedPointerEvent(event));
   };
 
-  const detachmentObserver = new MutationObserver(() => {
-    if (!element.isConnected) {
-      end();
-    }
-  });
-
   for (const eventType of CAPTURED_POINTER_EVENT_TYPES) {
     documentTarget.addEventListener(eventType, handlePointerEvent);
   }
   element.addEventListener('lostpointercapture', handleCaptureLoss);
-  detachmentObserver.observe(documentTarget, {
-    childList: true,
-    subtree: true,
-  });
 
   return end;
 };

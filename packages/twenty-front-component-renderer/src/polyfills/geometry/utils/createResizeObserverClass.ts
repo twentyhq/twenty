@@ -2,11 +2,12 @@ import { type Hooks } from '@remote-dom/polyfill';
 import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isElementNode } from '@/polyfills/dom/utils/isElementNode';
 import { EMPTY_ELEMENT_GEOMETRY_SNAPSHOT } from '@/polyfills/geometry/constants/EmptyElementGeometrySnapshot';
 import { type ElementGeometryReader } from '@/polyfills/geometry/types/ElementGeometryReader';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
-import { createDocumentScopedElementGeometrySnapshot } from '@/polyfills/geometry/utils/createDocumentScopedElementGeometrySnapshot';
 import { createResizeObserverEntry } from '@/polyfills/geometry/utils/createResizeObserverEntry';
+import { resolveResizeObserverBoxSize } from '@/polyfills/geometry/utils/resolveResizeObserverBoxSize';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 const DEFAULT_DEVICE_PIXEL_RATIO = 1;
@@ -20,7 +21,6 @@ type Observation = {
 
 type CreateResizeObserverClassInput = {
   geometryStore: WorkerGeometryStore;
-  documentTarget: { body?: unknown; documentElement?: unknown };
   hooks: Partial<Hooks> | null;
   reportCallbackError: (error: unknown) => void;
 };
@@ -30,7 +30,6 @@ const isVisibleSize = (size: ResizeObserverSize | null): boolean =>
 
 export const createResizeObserverClass = ({
   geometryStore,
-  documentTarget,
   hooks,
   reportCallbackError,
 }: CreateResizeObserverClassInput) => {
@@ -57,37 +56,6 @@ export const createResizeObserverClass = ({
     };
   }
 
-  const createDocumentScopedGeometryReader = (
-    isDocumentElement: boolean,
-  ): ElementGeometryReader => ({
-    read: () => {
-      const viewport = geometryStore.getViewportSnapshot();
-
-      return isDefined(viewport)
-        ? createDocumentScopedElementGeometrySnapshot({
-            viewport,
-            isDocumentElement,
-          })
-        : null;
-    },
-    release: () => {},
-  });
-
-  const createObservationGeometryReader = (
-    target: Element,
-  ): ElementGeometryReader => {
-    if (
-      target === documentTarget.body ||
-      target === documentTarget.documentElement
-    ) {
-      return createDocumentScopedGeometryReader(
-        target === documentTarget.documentElement,
-      );
-    }
-
-    return geometryStore.createElementGeometryReader(target);
-  };
-
   const readObservationSnapshot = ({
     target,
     observation,
@@ -104,7 +72,8 @@ export const createResizeObserverClass = ({
         : null;
     }
 
-    observation.geometryReader ??= createObservationGeometryReader(target);
+    observation.geometryReader ??=
+      geometryStore.createElementGeometryReader(target);
 
     return observation.geometryReader.read();
   };
@@ -157,17 +126,11 @@ export const createResizeObserverClass = ({
           continue;
         }
 
-        const entry = createResizeObserverEntry({
-          target,
+        const size = resolveResizeObserverBoxSize({
           snapshot,
+          box: observation.box,
           devicePixelRatio,
         });
-        const boxSizes = {
-          'border-box': entry.borderBoxSize,
-          'device-pixel-content-box': entry.devicePixelContentBoxSize,
-          'content-box': entry.contentBoxSize,
-        }[observation.box];
-        const size = boxSizes[0];
         const hasSizeChanged =
           size.inlineSize !== observation.lastSize?.inlineSize ||
           size.blockSize !== observation.lastSize?.blockSize;
@@ -177,7 +140,9 @@ export const createResizeObserverClass = ({
         }
 
         observation.lastSize = size;
-        entries.push(entry);
+        entries.push(
+          createResizeObserverEntry({ target, snapshot, devicePixelRatio }),
+        );
       }
 
       this.#stopWhenEmpty();
@@ -203,7 +168,7 @@ export const createResizeObserverClass = ({
     };
 
     observe(target: Element, options: ResizeObserverOptions = {}): void {
-      if (target?.nodeType !== 1) {
+      if (!isElementNode(target)) {
         throw new TypeError('ResizeObserver requires an Element target.');
       }
 
@@ -229,7 +194,9 @@ export const createResizeObserverClass = ({
 
       const geometryReader =
         existingObservation?.geometryReader ??
-        (target.isConnected ? createObservationGeometryReader(target) : null);
+        (target.isConnected
+          ? geometryStore.createElementGeometryReader(target)
+          : null);
 
       this.#targetRefs.set(target, targetRef);
       this.#observations.set(targetRef, {

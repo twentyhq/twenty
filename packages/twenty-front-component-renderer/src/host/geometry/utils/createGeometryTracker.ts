@@ -47,6 +47,9 @@ export const createGeometryTracker = (): GeometryTracker => {
 
   const wakeSources = createGeometryWakeSources(wake);
 
+  const resolveRegisteredRemoteElementId = (element: Element): string | null =>
+    remoteElementIdByRegisteredNode.get(element) ?? null;
+
   const readViewportGeometry = (): ViewportGeometrySnapshot =>
     measureViewportGeometry(rootContainer);
 
@@ -102,8 +105,7 @@ export const createGeometryTracker = (): GeometryTracker => {
       const snapshot = measureNodeGeometry({
         node,
         rootContainerOrigin,
-        resolveRemoteElementId: (element) =>
-          remoteElementIdByRegisteredNode.get(element) ?? null,
+        resolveRemoteElementId: resolveRegisteredRemoteElementId,
       });
 
       if (

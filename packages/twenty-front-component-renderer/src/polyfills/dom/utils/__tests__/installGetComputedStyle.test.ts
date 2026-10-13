@@ -2,7 +2,6 @@ import { isFunction } from '@sniptt/guards';
 
 import { createStyleProxy } from '@/polyfills/dom/utils/createStyleProxy';
 import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
-import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
 import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 import { installGetComputedStyle } from '../installGetComputedStyle';
 
@@ -24,7 +23,6 @@ describe('installGetComputedStyle', () => {
     installGetComputedStyle({
       globalScope,
       geometryStore: createWorkerGeometryStoreStub(),
-      documentTarget: {},
     });
 
     expect(typeof globalScope.getComputedStyle).toBe('function');
@@ -36,7 +34,6 @@ describe('installGetComputedStyle', () => {
     installGetComputedStyle({
       globalScope,
       geometryStore: createWorkerGeometryStoreStub(),
-      documentTarget: {},
     });
 
     const style = { getPropertyValue: () => '14px', fontSize: '14px' };
@@ -52,7 +49,6 @@ describe('installGetComputedStyle', () => {
     installGetComputedStyle({
       globalScope,
       geometryStore: createWorkerGeometryStoreStub(),
-      documentTarget: {},
     });
     const declaredStyle = createStyleProxy(() => {});
     declaredStyle.setProperty('font-size', '14px');
@@ -71,7 +67,6 @@ describe('installGetComputedStyle', () => {
     installGetComputedStyle({
       globalScope,
       geometryStore: createWorkerGeometryStoreStub(),
-      documentTarget: {},
     });
 
     const declaration = (globalScope.getComputedStyle as GetComputedStyleLike)(
@@ -87,7 +82,6 @@ describe('installGetComputedStyle', () => {
     installGetComputedStyle({
       globalScope,
       geometryStore: createWorkerGeometryStoreStub(),
-      documentTarget: {},
     });
 
     const style = { getPropertyValue: () => '14px', fontSize: '14px' };
@@ -109,7 +103,7 @@ describe('installGetComputedStyle', () => {
           computedStyle: { 'column-gap': columnGap, display: 'flex' },
         }),
     });
-    installGetComputedStyle({ globalScope, geometryStore, documentTarget: {} });
+    installGetComputedStyle({ globalScope, geometryStore });
     const style = (globalScope.getComputedStyle as GetComputedStyleLike)({
       style: { getPropertyValue: () => '99px' },
     });
@@ -124,7 +118,7 @@ describe('installGetComputedStyle', () => {
   it('should fall back to the declared style for an element that is not measured', () => {
     const globalScope: Record<string, unknown> = {};
     const geometryStore = createWorkerGeometryStoreStub();
-    installGetComputedStyle({ globalScope, geometryStore, documentTarget: {} });
+    installGetComputedStyle({ globalScope, geometryStore });
     const declaredStyle = createStyleProxy(() => {});
     declaredStyle.setProperty('display', 'grid');
 
@@ -141,7 +135,6 @@ describe('installGetComputedStyle', () => {
     installGetComputedStyle({
       globalScope,
       geometryStore: createWorkerGeometryStoreStub(),
-      documentTarget: {},
     });
 
     const style = (globalScope.getComputedStyle as GetComputedStyleLike)({
@@ -151,26 +144,5 @@ describe('installGetComputedStyle', () => {
     expect(() => `${style}`).not.toThrow();
     expect(style.hasOwnProperty('display')).toBe(false);
     expect(style.getPropertyValue('constructor')).toBe('');
-  });
-
-  it('should read the renderer root layout for its virtual document', () => {
-    const globalScope: Record<string, unknown> = {};
-    const documentElement = {};
-    const geometryStore = createWorkerGeometryStoreStub({
-      getViewportSnapshot: () =>
-        createViewportGeometrySnapshotFixture({
-          computedStyle: { direction: 'rtl' },
-        }),
-    });
-    installGetComputedStyle({
-      globalScope,
-      geometryStore,
-      documentTarget: { documentElement },
-    });
-    const style = (globalScope.getComputedStyle as GetComputedStyleLike)(
-      documentElement,
-    );
-
-    expect(style.getPropertyValue('direction')).toBe('rtl');
   });
 });

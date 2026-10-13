@@ -15,23 +15,16 @@ import { normalizeCssPropertyName } from '@/utils/css/normalizeCssPropertyName';
 export const installGetComputedStyle = ({
   globalScope,
   geometryStore,
-  documentTarget,
 }: {
   globalScope: Record<string, unknown>;
   geometryStore: WorkerGeometryStore;
-  documentTarget: { body?: unknown; documentElement?: unknown };
 }): void => {
-  const createEmptyStyleDeclaration = () => createStyleProxy(() => {});
-
   const getComputedStyle = (element: unknown, pseudoElement?: unknown) => {
     if (isNonEmptyString(pseudoElement) || !isObject(element)) {
-      return createEmptyStyleDeclaration();
+      return createStyleProxy(() => {});
     }
 
     const declaredStyle = 'style' in element ? element.style : undefined;
-    const isDocumentScopedElement =
-      element === documentTarget.body ||
-      element === documentTarget.documentElement;
 
     const readDeclaredProperty = (cssPropertyName: string): string => {
       if (!isObject(declaredStyle)) {
@@ -53,33 +46,36 @@ export const installGetComputedStyle = ({
 
     const readProperty = (propertyName: string): string => {
       const cssPropertyName = normalizeCssPropertyName(propertyName);
-      const snapshot = isDocumentScopedElement
-        ? geometryStore.getViewportSnapshot()
-        : geometryStore.readObservedElementSnapshot(element);
-      const measuredValue: unknown = snapshot?.computedStyle?.[cssPropertyName];
+      const measuredValue: unknown =
+        geometryStore.readObservedElementSnapshot(element)?.computedStyle?.[
+          cssPropertyName
+        ];
 
       return isString(measuredValue)
         ? measuredValue
         : readDeclaredProperty(cssPropertyName);
     };
 
-    return new Proxy(createEmptyStyleDeclaration(), {
-      get(target, property) {
-        if (property === 'getPropertyValue') {
-          return readProperty;
-        }
-        if (isObjectPrototypeMember(property)) {
-          return Reflect.get(Object.prototype, property);
-        }
-        if (isString(property)) {
-          return readProperty(
-            resolveCssPropertyNameFromJsPropertyName(property),
-          );
-        }
-        return Reflect.get(target, property);
+    return new Proxy(
+      {},
+      {
+        get(target, property) {
+          if (property === 'getPropertyValue') {
+            return readProperty;
+          }
+          if (isObjectPrototypeMember(property)) {
+            return Reflect.get(Object.prototype, property);
+          }
+          if (isString(property)) {
+            return readProperty(
+              resolveCssPropertyNameFromJsPropertyName(property),
+            );
+          }
+          return Reflect.get(target, property);
+        },
+        set: () => false,
       },
-      set: () => false,
-    });
+    );
   };
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {

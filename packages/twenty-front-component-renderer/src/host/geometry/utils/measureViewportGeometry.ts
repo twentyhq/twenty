@@ -12,9 +12,6 @@ export const measureViewportGeometry = (
     : null;
 
   return {
-    computedStyle: isDefined(rootContainer)
-      ? measureComputedLayoutStyle(rootContainer)
-      : {},
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
     devicePixelRatio: window.devicePixelRatio,
@@ -27,5 +24,8 @@ export const measureViewportGeometry = (
     rootContainerClientWidth: rootContainer?.clientWidth ?? 0,
     rootContainerClientHeight: rootContainer?.clientHeight ?? 0,
     ...readInputMediaFeatures(),
+    computedStyle: isDefined(rootContainer)
+      ? measureComputedLayoutStyle(rootContainer)
+      : {},
   };
 };

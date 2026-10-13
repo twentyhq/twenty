@@ -1,17 +1,8 @@
 import { type PointerEvent } from 'react';
 
-import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
+import { createHostPointerCaptureControllerStub } from '@/testing/createHostPointerCaptureControllerStub';
 
 import { createSliderPointerCaptureProps } from '../createSliderPointerCaptureProps';
-
-const createPointerCaptureControllerStub =
-  (): HostPointerCaptureController => ({
-    startPointerCapture: jest.fn(),
-    acceptWorkerPointerCapture: jest.fn(),
-    releaseWorkerPointerCapture: jest.fn(),
-    setTransport: jest.fn(),
-    reset: jest.fn(),
-  });
 
 const createPointerPress = ({
   isTrusted,
@@ -46,7 +37,7 @@ const createPointerPress = ({
 describe('createSliderPointerCaptureProps', () => {
   it('should capture and start a host capture session only for trusted presses on an enabled slider control', () => {
     const remotePointerDown = jest.fn();
-    const pointerCaptureController = createPointerCaptureControllerStub();
+    const pointerCaptureController = createHostPointerCaptureControllerStub();
     const handler = createSliderPointerCaptureProps({
       reactBindableProps: {
         'data-twenty-ui-slider-control': '',
@@ -79,7 +70,7 @@ describe('createSliderPointerCaptureProps', () => {
 
   it('should leave caller ancestors, slider thumbs and renderers without a capture controller on their ordinary pointer path', () => {
     const remotePointerDown = jest.fn();
-    const pointerCaptureController = createPointerCaptureControllerStub();
+    const pointerCaptureController = createHostPointerCaptureControllerStub();
 
     expect(
       createSliderPointerCaptureProps({
@@ -115,7 +106,7 @@ describe('createSliderPointerCaptureProps', () => {
           role: 'separator',
           onPointerDown: jest.fn(),
         },
-        pointerCaptureController: createPointerCaptureControllerStub(),
+        pointerCaptureController: createHostPointerCaptureControllerStub(),
       }),
     ).toBeUndefined();
   });

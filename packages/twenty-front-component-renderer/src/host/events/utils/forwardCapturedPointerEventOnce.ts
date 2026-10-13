@@ -1,6 +1,9 @@
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
-const forwardedOwnersByNativeEvent = new WeakMap<object, WeakSet<object>>();
+const forwardedNativeEventsByOwner = new WeakMap<
+  FindRemoteElementIdContainingNode,
+  WeakSet<object>
+>();
 
 export const forwardCapturedPointerEventOnce = ({
   nativeHostEvent,
@@ -11,14 +14,14 @@ export const forwardCapturedPointerEventOnce = ({
   eventOwner: FindRemoteElementIdContainingNode;
   forwardEvent: () => void;
 }): void => {
-  const forwardedOwners =
-    forwardedOwnersByNativeEvent.get(nativeHostEvent) ?? new WeakSet<object>();
+  const forwardedNativeEvents =
+    forwardedNativeEventsByOwner.get(eventOwner) ?? new WeakSet<object>();
 
-  if (forwardedOwners.has(eventOwner)) {
+  if (forwardedNativeEvents.has(nativeHostEvent)) {
     return;
   }
 
   forwardEvent();
-  forwardedOwners.add(eventOwner);
-  forwardedOwnersByNativeEvent.set(nativeHostEvent, forwardedOwners);
+  forwardedNativeEvents.add(nativeHostEvent);
+  forwardedNativeEventsByOwner.set(eventOwner, forwardedNativeEvents);
 };

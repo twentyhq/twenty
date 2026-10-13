@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { readComputedStyleProperties } from '@/host/geometry/utils/readComputedStyleProperties';
 
 const COMPUTED_LAYOUT_PROPERTIES = [
   'display',
@@ -61,16 +61,8 @@ const COMPUTED_LAYOUT_PROPERTIES = [
 
 export const measureComputedLayoutStyle = (
   node: Element,
-): Record<string, string> => {
-  const computedStyle = node.ownerDocument.defaultView?.getComputedStyle(node);
-
-  if (!isDefined(computedStyle)) {
-    return {};
-  }
-
-  const values: Record<string, string> = {};
-  for (const propertyName of COMPUTED_LAYOUT_PROPERTIES) {
-    values[propertyName] = computedStyle.getPropertyValue(propertyName);
-  }
-  return values;
-};
+): Record<string, string> =>
+  readComputedStyleProperties({
+    node,
+    propertyNames: COMPUTED_LAYOUT_PROPERTIES,
+  });

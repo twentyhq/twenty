@@ -147,7 +147,6 @@ installInputClickActivationPolyfill(HtmlInputElement.prototype);
 installGetComputedStyle({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
-  documentTarget: document,
 });
 
 installMutationObserver({
@@ -173,7 +172,6 @@ installVisualViewportPolyfill({
 installResizeObserverPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
-  documentTarget: document,
 });
 
 installWindowAliasesPolyfill({

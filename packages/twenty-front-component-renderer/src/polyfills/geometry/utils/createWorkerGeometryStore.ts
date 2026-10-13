@@ -2,11 +2,13 @@ import { remoteId } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MAX_OBSERVED_GEOMETRY_ELEMENTS } from '@/constants/MaxObservedGeometryElements';
+import { type NodeLike } from '@/polyfills/dom/types/NodeLike';
 import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
 import { GEOMETRY_TRANSPORT_FAILURE_WARNING } from '@/polyfills/geometry/constants/GeometryTransportFailureWarning';
 import { type ElementGeometryReader } from '@/polyfills/geometry/types/ElementGeometryReader';
 import { type GeometryObservationTransport } from '@/polyfills/geometry/types/GeometryObservationTransport';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
+import { createDocumentScopedElementGeometrySnapshot } from '@/polyfills/geometry/utils/createDocumentScopedElementGeometrySnapshot';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 import { isHostRenderedElement } from '@/polyfills/geometry/utils/isHostRenderedElement';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
@@ -125,6 +127,29 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     return ownership;
   };
 
+  const isObservedRemoteElementId = (
+    remoteElementId: string | null | undefined,
+  ): remoteElementId is string =>
+    isDefined(remoteElementId) && observedRemoteElementIds.has(remoteElementId);
+
+  const hasRemainingReader = (ownership: ElementGeometryOwnership): boolean =>
+    ownership.hasDirectReader || ownership.readerCount > 0;
+
+  const isDocumentScopedElement = (element: object): boolean =>
+    isDefined(rootElement) &&
+    (element === rootElement ||
+      element === (rootElement as NodeLike).parentNode);
+
+  const readDocumentScopedSnapshot = (
+    element: object,
+  ): ElementGeometrySnapshot | null =>
+    isDefined(viewportSnapshot)
+      ? createDocumentScopedElementGeometrySnapshot({
+          viewport: viewportSnapshot,
+          isDocumentElement: element !== rootElement,
+        })
+      : null;
+
   const resolveSnapshot = ({
     element,
     ownership,
@@ -132,12 +157,13 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     element: object;
     ownership: ElementGeometryOwnership;
   }): ElementGeometrySnapshot | null => {
+    if (isDocumentScopedElement(element)) {
+      return readDocumentScopedSnapshot(element);
+    }
+
     const enrolledRemoteElementId = ownership.remoteElementId;
 
-    if (
-      isDefined(enrolledRemoteElementId) &&
-      observedRemoteElementIds.has(enrolledRemoteElementId)
-    ) {
+    if (isObservedRemoteElementId(enrolledRemoteElementId)) {
       return elementSnapshots.get(enrolledRemoteElementId) ?? null;
     }
 
@@ -174,16 +200,15 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   const readObservedElementSnapshot = (
     element: object,
   ): ElementGeometrySnapshot | null => {
-    const remoteElementId = elementOwnerships.get(element)?.remoteElementId;
-
-    if (
-      !isDefined(remoteElementId) ||
-      !observedRemoteElementIds.has(remoteElementId)
-    ) {
-      return null;
+    if (isDocumentScopedElement(element)) {
+      return readDocumentScopedSnapshot(element);
     }
 
-    return elementSnapshots.get(remoteElementId) ?? null;
+    const remoteElementId = elementOwnerships.get(element)?.remoteElementId;
+
+    return isObservedRemoteElementId(remoteElementId)
+      ? (elementSnapshots.get(remoteElementId) ?? null)
+      : null;
   };
 
   const releaseElementGeometryWhenUnused = (
@@ -191,10 +216,8 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   ): void => {
     ownership.hasScheduledRelease = false;
     const remoteElementId = ownership.remoteElementId;
-    const hasRemainingReader =
-      ownership.hasDirectReader || ownership.readerCount > 0;
 
-    if (hasRemainingReader || !isDefined(remoteElementId)) {
+    if (hasRemainingReader(ownership) || !isDefined(remoteElementId)) {
       return;
     }
 
@@ -244,10 +267,8 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
         isReleased = true;
         ownership.readerCount -= 1;
         const remoteElementId = ownership.remoteElementId;
-        const hasRemainingReader =
-          ownership.hasDirectReader || ownership.readerCount > 0;
 
-        if (hasRemainingReader || !isDefined(remoteElementId)) {
+        if (hasRemainingReader(ownership) || !isDefined(remoteElementId)) {
           return;
         }
 

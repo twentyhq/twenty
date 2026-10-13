@@ -1,3 +1,5 @@
+import { readComputedStyleProperties } from '@/host/geometry/utils/readComputedStyleProperties';
+
 const TEXTAREA_MEASUREMENT_STYLE_PROPERTIES = [
   'box-sizing',
   'font-family',
@@ -58,18 +60,17 @@ export const measureTextareaIntrinsicScrollHeight = (
     return undefined;
   }
 
-  const computedStyle = getComputedStyle(node);
-  const measurementStyles = TEXTAREA_MEASUREMENT_STYLE_PROPERTIES.map(
-    (propertyName) =>
-      [propertyName, computedStyle.getPropertyValue(propertyName)] as const,
-  );
+  const measurementStyles = readComputedStyleProperties({
+    node,
+    propertyNames: TEXTAREA_MEASUREMENT_STYLE_PROPERTIES,
+  });
   const measurement = node.ownerDocument.createElement('textarea');
   measurement.value = node.value;
   measurement.rows = node.rows;
   measurement.wrap = node.wrap;
   measurement.placeholder = node.placeholder;
 
-  for (const [propertyName, value] of measurementStyles) {
+  for (const [propertyName, value] of Object.entries(measurementStyles)) {
     measurement.style.setProperty(propertyName, value);
   }
 

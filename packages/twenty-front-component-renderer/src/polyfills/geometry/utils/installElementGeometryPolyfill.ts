@@ -1,10 +1,7 @@
-import { remoteId } from '@remote-dom/core/elements';
-import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_ELEMENT_GEOMETRY_SNAPSHOT } from '@/polyfills/geometry/constants/EmptyElementGeometrySnapshot';
+import { findAncestorByRemoteId } from '@/polyfills/dom/utils/findAncestorByRemoteId';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
-import { createDocumentScopedElementGeometrySnapshot } from '@/polyfills/geometry/utils/createDocumentScopedElementGeometrySnapshot';
 import { createDomRectFromSnapshot } from '@/polyfills/geometry/utils/createDomRectFromSnapshot';
 import { createTextareaIntrinsicSizeReader } from '@/polyfills/geometry/utils/createTextareaIntrinsicSizeReader';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
@@ -22,31 +19,9 @@ export const installElementGeometryPolyfill = ({
 }: InstallElementGeometryPolyfillInput): void => {
   const readTextareaIntrinsicSize =
     createTextareaIntrinsicSizeReader(geometryStore);
-  const isDocumentScopedElement = (element: object): boolean =>
-    element === documentTarget.body ||
-    element === documentTarget.documentElement;
-
-  const resolveDocumentScopedSnapshotInHostViewportFrame = (
-    element: object,
-  ): ElementGeometrySnapshot => {
-    const viewport = geometryStore.getViewportSnapshot();
-
-    if (!isDefined(viewport)) {
-      return EMPTY_ELEMENT_GEOMETRY_SNAPSHOT;
-    }
-
-    return createDocumentScopedElementGeometrySnapshot({
-      viewport,
-      isDocumentElement: element === documentTarget.documentElement,
-    });
-  };
 
   const resolveSnapshot = (element: object): ElementGeometrySnapshot | null => {
     try {
-      if (isDocumentScopedElement(element)) {
-        return resolveDocumentScopedSnapshotInHostViewportFrame(element);
-      }
-
       return geometryStore.resolveElementSnapshot(element);
     } catch {
       return null;
@@ -70,13 +45,7 @@ export const installElementGeometryPolyfill = ({
   }): void => {
     Object.defineProperty(elementPrototype, propertyName, {
       get(this: object) {
-        const snapshot = resolveSnapshot(this);
-
-        if (propertyName === 'scrollHeight') {
-          return readTextareaIntrinsicSize({ element: this, snapshot });
-        }
-
-        return snapshot?.[propertyName] ?? 0;
+        return resolveSnapshot(this)?.[propertyName] ?? 0;
       },
       ...(hasNoOpSetter && { set() {} }),
       configurable: true,
@@ -93,7 +62,6 @@ export const installElementGeometryPolyfill = ({
     'clientTop',
     'clientLeft',
     'scrollWidth',
-    'scrollHeight',
   ] as const) {
     defineGeometryGetter({ propertyName });
   }
@@ -102,9 +70,22 @@ export const installElementGeometryPolyfill = ({
     defineGeometryGetter({ propertyName, hasNoOpSetter: true });
   }
 
+  Object.defineProperty(elementPrototype, 'scrollHeight', {
+    get(this: object) {
+      return readTextareaIntrinsicSize({
+        element: this,
+        snapshot: resolveSnapshot(this),
+      });
+    },
+    configurable: true,
+  });
+
   Object.defineProperty(elementPrototype, 'offsetParent', {
     get(this: object) {
-      if (isDocumentScopedElement(this)) {
+      if (
+        this === documentTarget.body ||
+        this === documentTarget.documentElement
+      ) {
         return null;
       }
 
@@ -112,17 +93,15 @@ export const installElementGeometryPolyfill = ({
         geometryStore.readObservedElementSnapshot(
           this,
         )?.offsetParentRemoteElementId;
+
       if (!isDefined(offsetParentRemoteElementId)) {
         return documentTarget.body ?? null;
       }
-      let ancestor = (this as { parentNode?: unknown }).parentNode;
-      while (isObject(ancestor)) {
-        if (remoteId(ancestor as Node) === offsetParentRemoteElementId) {
-          return ancestor;
-        }
-        ancestor = (ancestor as { parentNode?: unknown }).parentNode;
-      }
-      return null;
+
+      return findAncestorByRemoteId({
+        node: this,
+        remoteElementId: offsetParentRemoteElementId,
+      });
     },
     configurable: true,
   });

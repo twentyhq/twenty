@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page, test } from 'playwright/test';
+import { readBounds } from './readBounds';
 
 const openFixture = async ({ page, story }: { page: Page; story: string }) => {
   await page.goto(
@@ -10,15 +11,28 @@ const openFixture = async ({ page, story }: { page: Page; story: string }) => {
   });
 };
 
+const openVolumeSlider = async ({
+  page,
+  runtime,
+}: {
+  page: Page;
+  runtime: string;
+}) => {
+  await openFixture({ page, story: `slider-gestures-${runtime}` });
+  const slider = page.getByRole('slider', { name: 'Volume', exact: true });
+  const control = page.getByTestId('volume-control');
+
+  await expect(slider).toBeVisible();
+
+  return { slider, control };
+};
+
 const startDrag = async ({ page, handle }: { page: Page; handle: Locator }) => {
   await handle.scrollIntoViewIfNeeded();
-  const bounds = await handle.boundingBox();
-
-  expect(bounds).not.toBeNull();
-
+  const bounds = await readBounds(handle);
   const origin = {
-    x: bounds!.x + bounds!.width / 2,
-    y: bounds!.y + bounds!.height / 2,
+    x: bounds.x + bounds.width / 2,
+    y: bounds.y + bounds.height / 2,
   };
 
   await page.mouse.move(origin.x, origin.y);
@@ -136,10 +150,8 @@ for (const runtime of ['react', 'preact']) {
     test('Slider displays its thumb and supports keyboard commits and disabled controls', async ({
       page,
     }) => {
-      await openFixture({ page, story: `slider-gestures-${runtime}` });
-      const slider = page.getByRole('slider', { name: 'Volume', exact: true });
+      const { slider } = await openVolumeSlider({ page, runtime });
 
-      await expect(slider).toBeVisible();
       await expect(slider).toHaveAttribute('min', '10');
       await expect(slider).toHaveAttribute('max', '90');
       await expect(slider).toHaveAttribute('step', '5');
@@ -160,17 +172,12 @@ for (const runtime of ['react', 'preact']) {
     test('Slider commits a quick track press released before the worker answers', async ({
       page,
     }) => {
-      await openFixture({ page, story: `slider-gestures-${runtime}` });
-      const slider = page.getByRole('slider', { name: 'Volume', exact: true });
-      const control = page.getByTestId('volume-control');
+      const { control } = await openVolumeSlider({ page, runtime });
+      const bounds = await readBounds(control);
 
-      await expect(slider).toBeVisible();
-      const bounds = await control.boundingBox();
-
-      expect(bounds).not.toBeNull();
       await page.mouse.move(
-        bounds!.x + bounds!.width * 0.8,
-        bounds!.y + bounds!.height / 2,
+        bounds.x + bounds.width * 0.8,
+        bounds.y + bounds.height / 2,
       );
       await page.mouse.down();
       await page.mouse.up();
@@ -184,11 +191,8 @@ for (const runtime of ['react', 'preact']) {
     test('Slider follows native pointer moves beyond the widget and commits the bounded final value', async ({
       page,
     }) => {
-      await openFixture({ page, story: `slider-gestures-${runtime}` });
-      const slider = page.getByRole('slider', { name: 'Volume', exact: true });
-      const control = page.getByTestId('volume-control');
+      const { slider, control } = await openVolumeSlider({ page, runtime });
 
-      await expect(slider).toBeVisible();
       await page
         .getByRole('button', { name: 'Parent action', exact: true })
         .click();
@@ -200,10 +204,9 @@ for (const runtime of ['react', 'preact']) {
         .poll(() => control.evaluate((element) => element.hasPointerCapture(1)))
         .toBe(true);
       await expect(page.getByText('Parent presses: 2')).toBeVisible();
-      const bounds = await control.boundingBox();
+      const bounds = await readBounds(control);
 
-      expect(bounds).not.toBeNull();
-      await page.mouse.move(bounds!.x + bounds!.width + 80, origin.y - 150);
+      await page.mouse.move(bounds.x + bounds.width + 80, origin.y - 150);
       await expect(slider).toHaveValue('90');
       await expect(page.getByText('Volume: 90; Committed: 40')).toBeVisible();
       await page.mouse.up();
@@ -213,18 +216,14 @@ for (const runtime of ['react', 'preact']) {
       await expect
         .poll(() => control.evaluate((element) => element.hasPointerCapture(1)))
         .toBe(false);
-      await page.mouse.move(bounds!.x - 80, origin.y);
+      await page.mouse.move(bounds.x - 80, origin.y);
       await expect(slider).toHaveValue('90');
     });
 
     test('Slider continues its native document drag and commits after unexpected capture loss', async ({
       page,
     }) => {
-      await openFixture({ page, story: `slider-gestures-${runtime}` });
-      const slider = page.getByRole('slider', { name: 'Volume', exact: true });
-      const control = page.getByTestId('volume-control');
-
-      await expect(slider).toBeVisible();
+      const { slider, control } = await openVolumeSlider({ page, runtime });
       const worker = page.workers()[0];
 
       await worker.evaluate(() => {
@@ -245,25 +244,22 @@ for (const runtime of ['react', 'preact']) {
       });
       const origin = await startDrag({ page, handle: slider });
       await expect(control).toHaveAttribute('data-dragging', '');
-      const bounds = await control.boundingBox();
+      const bounds = await readBounds(control);
 
-      expect(bounds).not.toBeNull();
-      await page.mouse.move(bounds!.x + bounds!.width * 0.7, origin.y);
+      await page.mouse.move(bounds.x + bounds.width * 0.7, origin.y);
       await expect(slider).toHaveValue('70');
       await control.evaluate((element) => element.releasePointerCapture(1));
-      const ownedButtonBounds = await page
-        .getByRole('button', { name: 'Disable volume' })
-        .boundingBox();
-
-      expect(ownedButtonBounds).not.toBeNull();
+      const ownedButtonBounds = await readBounds(
+        page.getByRole('button', { name: 'Disable volume' }),
+      );
       const crossingPosition = {
-        clientX: ownedButtonBounds!.x + ownedButtonBounds!.width / 2,
-        clientY: ownedButtonBounds!.y + ownedButtonBounds!.height / 2,
+        clientX: ownedButtonBounds.x + ownedButtonBounds.width / 2,
+        clientY: ownedButtonBounds.y + ownedButtonBounds.height / 2,
       };
 
       await page.mouse.move(crossingPosition.clientX, crossingPosition.clientY);
       await expect(slider).toHaveValue('50');
-      await page.mouse.move(bounds!.x + bounds!.width + 80, origin.y);
+      await page.mouse.move(bounds.x + bounds.width + 80, origin.y);
       await expect(slider).toHaveValue('90');
       await expect(page.getByText('Volume: 90; Committed: 40')).toBeVisible();
       await page.mouse.up();
@@ -295,10 +291,9 @@ for (const runtime of ['react', 'preact']) {
       await expect(slider).toBeVisible();
       const origin = await startDrag({ page, handle: slider });
       await expect(control).toHaveAttribute('data-dragging', '');
-      const bounds = await control.boundingBox();
+      const bounds = await readBounds(control);
 
-      expect(bounds).not.toBeNull();
-      await page.mouse.move(bounds!.x + bounds!.width / 2, origin.y);
+      await page.mouse.move(bounds.x + bounds.width / 2, origin.y);
       await expect(slider).toHaveValue('50');
       await page.keyboard.press('Escape');
       await expect(slider).toHaveValue('50');
@@ -311,24 +306,16 @@ for (const runtime of ['react', 'preact']) {
       test(`Slider stops an active drag when ${action.toLowerCase()}`, async ({
         page,
       }) => {
-        await openFixture({ page, story: `slider-gestures-${runtime}` });
-        const slider = page.getByRole('slider', {
-          name: 'Volume',
-          exact: true,
-        });
-        const control = page.getByTestId('volume-control');
-
-        await expect(slider).toBeVisible();
+        const { slider, control } = await openVolumeSlider({ page, runtime });
         const origin = await startDrag({ page, handle: slider });
         await expect(control).toHaveAttribute('data-dragging', '');
-        const bounds = await control.boundingBox();
+        const bounds = await readBounds(control);
 
-        expect(bounds).not.toBeNull();
-        await page.mouse.move(bounds!.x + bounds!.width + 60, origin.y);
+        await page.mouse.move(bounds.x + bounds.width + 60, origin.y);
         await expect(page.getByText('Volume: 90; Committed: 40')).toBeVisible();
         await page.getByRole('button', { name: action }).focus();
         await page.keyboard.press('Enter');
-        await page.mouse.move(bounds!.x - 60, origin.y);
+        await page.mouse.move(bounds.x - 60, origin.y);
         await page.mouse.up();
         await expect(page.getByText('Volume: 90; Committed: 40')).toBeVisible();
         await expect(page.getByText(/FrontComponent error/)).toHaveCount(0);
@@ -356,10 +343,9 @@ for (const runtime of ['react', 'preact']) {
         'data-dragging',
         '',
       );
-      const bounds = await page.getByTestId('range-control').boundingBox();
+      const bounds = await readBounds(page.getByTestId('range-control'));
 
-      expect(bounds).not.toBeNull();
-      await page.mouse.move(bounds!.x + bounds!.width + 80, origin.y);
+      await page.mouse.move(bounds.x + bounds.width + 80, origin.y);
       await expect(maximum).toHaveValue('100');
       await expect(minimum).toHaveValue('21');
       await expect(
