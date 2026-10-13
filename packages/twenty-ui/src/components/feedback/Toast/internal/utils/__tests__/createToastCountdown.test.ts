@@ -222,6 +222,38 @@ it('keeps restarted duration and progress-exit countdowns suspended while paused
   expect(onClose).toHaveBeenCalledOnce();
 });
 
+it.each([
+  { mode: 'paused', isPaused: true, isProgress: false },
+  { mode: 'progress', isPaused: false, isProgress: true },
+])(
+  'updates the callback without republishing an unchanged $mode snapshot',
+  ({ isPaused, isProgress }) => {
+    const onChange = vi.fn();
+    const onClose = vi.fn();
+    const updatedClose = vi.fn();
+    const countdown = createToastCountdown({ onChange });
+    countdown.update({
+      ...DEFAULT_CONFIGURATION,
+      isPaused,
+      isProgress,
+      onClose,
+    });
+    onChange.mockClear();
+
+    countdown.update({
+      ...DEFAULT_CONFIGURATION,
+      isPaused,
+      isProgress,
+      onClose: updatedClose,
+    });
+
+    expect(onChange).not.toHaveBeenCalled();
+    countdown.close();
+    expect(updatedClose).toHaveBeenCalledOnce();
+    expect(onClose).not.toHaveBeenCalled();
+  },
+);
+
 it('dismisses manually once and prevents later updates from reviving expiry', () => {
   const onClose = vi.fn();
   const countdown = createToastCountdown({ onChange: vi.fn() });

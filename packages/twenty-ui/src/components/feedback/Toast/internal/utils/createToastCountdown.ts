@@ -71,18 +71,16 @@ export const createToastCountdown = ({
     configuration?.onClose?.();
   };
 
+  const isCountdownEnabled = () =>
+    isDefined(configuration) &&
+    configuration.isActive &&
+    !configuration.isPaused &&
+    !configuration.isProgress &&
+    isCountdownDuration(configuration.duration) &&
+    !isClosed;
+
   const start = () => {
-    if (!isDefined(configuration)) {
-      return;
-    }
-
-    const isCountdownEnabled =
-      configuration.isActive &&
-      !configuration.isPaused &&
-      !configuration.isProgress &&
-      isCountdownDuration(configuration.duration);
-
-    if (!isCountdownEnabled || isClosed) {
+    if (!isCountdownEnabled()) {
       return;
     }
 
@@ -114,7 +112,9 @@ export const createToastCountdown = ({
       nextConfiguration.isPaused !== configuration?.isPaused ||
       nextConfiguration.isActive !== configuration?.isActive;
 
-    if (!hasTimingChanged && isDefined(startedAt)) {
+    const shouldResume = !isDefined(startedAt) && isCountdownEnabled();
+
+    if (!hasTimingChanged && !shouldResume) {
       configuration = nextConfiguration;
       return;
     }
