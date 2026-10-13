@@ -228,6 +228,7 @@ export { getOrderByForFieldMetadataType } from './sort/getOrderByForFieldMetadat
 export { getOrderByForRelationField } from './sort/getOrderByForRelationField';
 export { resolveAddressSortSubField } from './sort/resolveAddressSortSubField';
 export { resolvePrimaryFullNameSortSubField } from './sort/resolvePrimaryFullNameSortSubField';
+export { sortKeysDeeply } from './sortKeysDeeply';
 export { appendCopySuffix } from './strings/appendCopySuffix';
 export { camelToKebab } from './strings/camelToKebab';
 export { camelToSnakeCase } from './strings/camelToSnakeCase';
