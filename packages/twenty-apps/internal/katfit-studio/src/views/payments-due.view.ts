@@ -10,7 +10,7 @@ export default defineView({
   type: ViewType.TABLE,
   icon: 'IconCash',
   position: 1,
-  filters: [{ universalIdentifier: 'efc9b98d-4434-4a0a-ac43-0d7cc20c76ee', fieldMetadataUniversalIdentifier: 'e019e1bc-c0ea-4224-8d71-977052d2ac43', operand: ViewFilterOperand.IS, value: 'EXPECTED' }],
+  filters: [{ universalIdentifier: 'efc9b98d-4434-4a0a-ac43-0d7cc20c76ee', fieldMetadataUniversalIdentifier: 'e019e1bc-c0ea-4224-8d71-977052d2ac43', operand: ViewFilterOperand.IS, value: ['EXPECTED'] }],
   fields: [
     { universalIdentifier: 'b11be975-7a11-4e8c-b48a-f983b36e7193', fieldMetadataUniversalIdentifier: PAYMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER, position: 0, isVisible: true, size: 300 },
     { universalIdentifier: 'c43134ae-4f63-4b5c-8f05-afc8138d87a9', fieldMetadataUniversalIdentifier: PERSON_ON_PAYMENT_FIELD_UNIVERSAL_IDENTIFIER, position: 1, isVisible: true, size: 190 },
