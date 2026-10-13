@@ -123,7 +123,7 @@ describe('AgentToolProvider', () => {
   });
 
   describe('list_agents', () => {
-    it('leaves out the agents backing workflow steps', async () => {
+    it('leaves out system agents', async () => {
       const { provider, agentService } = buildProvider();
 
       agentService.findManyAgents.mockResolvedValue([

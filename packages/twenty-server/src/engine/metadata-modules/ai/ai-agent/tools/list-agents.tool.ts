@@ -13,7 +13,7 @@ export const createListAgentsTool = (
   context: AgentToolContext,
 ) => ({
   name: 'list_agents' as const,
-  description: `List the AI agents of the workspace with their prompt, model, role and triggers. Agents backing workflow AI steps are not included.`,
+  description: `List the AI agents of the workspace with their prompt, model, role and triggers. System agents (those backing workflow AI steps or installed by an application) are not included.`,
   inputSchema: listAgentsSchema,
   execute: async () => {
     try {

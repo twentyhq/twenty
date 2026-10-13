@@ -30,10 +30,10 @@ export const findManageableAgentOrThrow = async ({
     throw new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND);
   }
 
-  // System agents back workflow AI steps and live and die with their step
+  // System agents are owned by a workflow AI step or an installed application, which manage their lifecycle
   if (agent.isSystem) {
     throw new AiException(
-      'This agent belongs to a workflow AI step: use update_workflow_agent to configure it, and remove the step to delete it',
+      'This agent is managed by a workflow AI step or an installed application: configure a workflow step agent with update_workflow_agent, and remove the step to delete it',
       AiExceptionCode.INVALID_AGENT_INPUT,
     );
   }
