@@ -26,6 +26,7 @@ export type FlatBillingSubscription = {
   collectionMethod: BillingSubscriptionCollectionMethod;
   planAllowanceMicro: number | null;
   planKey: BillingPlanKey | null;
+  memberCreditsAmountMicro: number | null;
   creditGrants: CreditAllowanceGrant[];
 };
 

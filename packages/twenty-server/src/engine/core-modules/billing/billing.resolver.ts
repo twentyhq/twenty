@@ -7,6 +7,7 @@ import {
   INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
   PermissionFlagType,
 } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -499,6 +500,13 @@ export class BillingResolver {
     return usageData.map((item) => ({
       ...item,
       usedCredits: toDisplayCredits(item.usedCredits),
+      memberCreditsUsed: toDisplayCredits(item.memberCreditsUsed),
+      memberCreditsAmount: isDefined(item.memberCreditsAmount)
+        ? toDisplayCredits(item.memberCreditsAmount)
+        : null,
+      memberCreditsUsedInSlice: isDefined(item.memberCreditsUsedInSlice)
+        ? toDisplayCredits(item.memberCreditsUsedInSlice)
+        : null,
       grantedCredits: toDisplayCredits(item.grantedCredits),
       rolloverCredits: toDisplayCredits(item.rolloverCredits),
       totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),

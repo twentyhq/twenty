@@ -29,6 +29,10 @@ export const buildUsageEventEnvelopes = (
       quantity: usageEvent.quantity,
       unit: usageEvent.unit,
       creditsUsedMicro: usageEvent.creditsUsedMicro,
+      memberCreditsUsedMicro:
+        (usageEvent.memberCreditsUsedMicro ?? 0) > 0
+          ? usageEvent.memberCreditsUsedMicro
+          : undefined,
       resourceId: usageEvent.resourceId ?? '',
       resourceContext: usageEvent.resourceContext ?? '',
       metadata: usageEvent.metadata ?? {},

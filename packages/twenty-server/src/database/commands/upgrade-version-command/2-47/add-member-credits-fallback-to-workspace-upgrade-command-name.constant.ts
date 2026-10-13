@@ -1,0 +1,2 @@
+export const ADD_MEMBER_CREDITS_FALLBACK_TO_WORKSPACE_UPGRADE_COMMAND_NAME =
+  '2.47.0_AddMemberCreditsFallbackToWorkspaceFastInstanceCommand_1791878866613';

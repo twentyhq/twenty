@@ -936,6 +936,10 @@ export type BillingProductMetadata = {
 export type BillingResourceCreditUsage = {
   __typename?: 'BillingResourceCreditUsage';
   grantedCredits: Scalars['Float']['output'];
+  memberCreditsAmount?: Maybe<Scalars['Float']['output']>;
+  memberCreditsSliceEnd?: Maybe<Scalars['DateTime']['output']>;
+  memberCreditsUsed: Scalars['Float']['output'];
+  memberCreditsUsedInSlice?: Maybe<Scalars['Float']['output']>;
   periodEnd: Scalars['DateTime']['output'];
   periodStart: Scalars['DateTime']['output'];
   productKey: BillingProductKey;
@@ -2208,6 +2212,7 @@ export enum FeatureFlagKey {
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_LOGS_SETTINGS_SECTION_ENABLED = 'IS_LOGS_SETTINGS_SECTION_ENABLED',
+  IS_MEMBER_CREDITS_ENABLED = 'IS_MEMBER_CREDITS_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
@@ -2877,6 +2882,11 @@ export type MarketplaceAppRoleObjectPermission = {
   objectUniversalIdentifier: Scalars['String']['output'];
   universalIdentifier: Scalars['String']['output'];
 };
+
+export enum MemberCreditsFallback {
+  STOP = 'STOP',
+  WORKSPACE_CREDITS = 'WORKSPACE_CREDITS'
+}
 
 export type MessageCampaignBodyConfiguration = {
   __typename?: 'MessageCampaignBodyConfiguration';
@@ -7221,6 +7231,7 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']['input']>;
   logo?: InputMaybe<Scalars['String']['input']>;
+  memberCreditsFallback?: InputMaybe<MemberCreditsFallback>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']['input']>;
   workspaceDiscoverability?: InputMaybe<WorkspaceDiscoverability>;
@@ -7374,6 +7385,7 @@ export type UsageBreakdownItem = {
   creditsUsed: Scalars['Float']['output'];
   key: Scalars['String']['output'];
   label?: Maybe<Scalars['String']['output']>;
+  memberCreditsUsed?: Maybe<Scalars['Float']['output']>;
 };
 
 export type UsageLimit = {
@@ -7973,6 +7985,7 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   logoFileId?: Maybe<Scalars['UUID']['output']>;
+  memberCreditsFallback: MemberCreditsFallback;
   /** @deprecated No longer used for metadata cache invalidation, will be removed */
   metadataVersion: Scalars['Float']['output'];
   subdomain: Scalars['String']['output'];

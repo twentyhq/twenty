@@ -72,4 +72,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
+  [FeatureFlagKey.IS_MEMBER_CREDITS_ENABLED]: {
+    label: msg`Member AI credits`,
+    description: msg`Pay members' own AI chats from their per-seat credits first.`,
+  },
 };

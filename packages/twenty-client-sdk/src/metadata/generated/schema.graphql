@@ -858,6 +858,10 @@ type BillingProductMetadata {
 
 type BillingResourceCreditUsage {
   grantedCredits: Float!
+  memberCreditsAmount: Float
+  memberCreditsSliceEnd: DateTime
+  memberCreditsUsed: Float!
+  memberCreditsUsedInSlice: Float
   periodEnd: DateTime!
   periodStart: DateTime!
   productKey: BillingProductKey!
@@ -2090,6 +2094,7 @@ enum FeatureFlagKey {
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
+  IS_MEMBER_CREDITS_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -2725,6 +2730,11 @@ type MarketplaceAppRoleObjectPermission {
   canUpdateObjectRecords: Boolean
   objectUniversalIdentifier: String!
   universalIdentifier: String!
+}
+
+enum MemberCreditsFallback {
+  STOP
+  WORKSPACE_CREDITS
 }
 
 type MessageCampaignBodyConfiguration {
@@ -5097,6 +5107,7 @@ input UpdateWorkspaceInput {
   isPublicInviteLinkEnabled: Boolean
   isTwoFactorAuthenticationEnforced: Boolean
   logo: String
+  memberCreditsFallback: MemberCreditsFallback
   subdomain: String
   trashRetentionDays: Float
   workspaceDiscoverability: WorkspaceDiscoverability
@@ -5276,6 +5287,7 @@ type UsageBreakdownItem {
   creditsUsed: Float!
   key: String!
   label: String
+  memberCreditsUsed: Float
 }
 
 type UsageLimit {
@@ -5840,6 +5852,7 @@ type Workspace {
   isTwoFactorAuthenticationEnforced: Boolean!
   logo: String
   logoFileId: UUID
+  memberCreditsFallback: MemberCreditsFallback!
   metadataVersion: Float! @deprecated(reason: "No longer used for metadata cache invalidation, will be removed")
   subdomain: String!
   trashRetentionDays: Float!

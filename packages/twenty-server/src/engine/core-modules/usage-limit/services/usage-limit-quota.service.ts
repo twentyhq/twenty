@@ -207,9 +207,9 @@ export class UsageLimitQuotaService {
 
       consumedValue =
         storedValue ??
-        (await this.usageAnalyticsService.getCreditsUsedMicroForBillingPeriod({
+        (await this.getWorkspaceFundedCreditsUsedMicro({
           workspaceId,
-          periodStart: counter.periodStart,
+          counter,
         }));
     } catch (error) {
       this.admitOnFailure({ error, workspaceId, admitted: null });
@@ -854,9 +854,10 @@ export class UsageLimitQuotaService {
     return Promise.all(
       counters.map(async (counter) => {
         if (counter.kind === 'allowance') {
-          return this.usageAnalyticsService.getCreditsUsedMicroForBillingPeriod(
-            { workspaceId, periodStart: counter.periodStart },
-          );
+          return this.getWorkspaceFundedCreditsUsedMicro({
+            workspaceId,
+            counter,
+          });
         }
 
         const periodGroupKey = buildPeriodGroupKey(counter);
@@ -870,6 +871,25 @@ export class UsageLimitQuotaService {
         return computeQuotaConsumed({ rows: await rowsRead, scope: counter });
       }),
     );
+  }
+
+  private async getWorkspaceFundedCreditsUsedMicro({
+    workspaceId,
+    counter,
+  }: {
+    workspaceId: string;
+    counter: AllowanceQuotaCounter;
+  }): Promise<number> {
+    const { workspaceFundedCreditsUsedMicro } =
+      await this.usageAnalyticsService.getWorkspaceFundedCreditsUsedMicroForBillingPeriod(
+        {
+          workspaceId,
+          periodStart: counter.periodStart,
+          periodEnd: counter.periodEnd,
+        },
+      );
+
+    return workspaceFundedCreditsUsedMicro;
   }
 
   private fetchConsumptionRows({

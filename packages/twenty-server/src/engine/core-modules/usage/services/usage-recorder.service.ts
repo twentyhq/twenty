@@ -9,11 +9,13 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { clampMemberCreditsUsedMicro } from 'src/engine/core-modules/usage/utils/clamp-member-credits-used-micro.util';
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { type FundedRecordUsageInput } from 'src/engine/core-modules/usage/types/funded-record-usage-input.type';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { buildUsageEventEnvelopes } from 'src/engine/core-modules/usage/utils/build-usage-event-envelopes';
@@ -62,7 +64,10 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     return this.eventLogEmitterService.isEnabled();
   }
 
-  async record(workspaceId: string, inputs: RecordUsageInput[]): Promise<void> {
+  async record(
+    workspaceId: string,
+    inputs: (RecordUsageInput | FundedRecordUsageInput)[],
+  ): Promise<void> {
     if (!this.isEnabled() || inputs.length === 0) {
       return;
     }
@@ -151,7 +156,9 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Every row funnels through here so the credit invariant holds for all callers; the event still records at zero credits.
-  private withDefaults(input: RecordUsageInput): UsageEvent {
+  private withDefaults(
+    input: RecordUsageInput | FundedRecordUsageInput,
+  ): UsageEvent {
     const creditsUsedMicro = input.creditsUsedMicro ?? 0;
 
     if (!isValidCreditAmountMicro(creditsUsedMicro)) {
@@ -159,10 +166,38 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
         `Refusing to record ${creditsUsedMicro} creditsUsedMicro on a ${input.operationType} usage event; recording 0 instead`,
       );
 
-      return { ...input, creditsUsedMicro: 0 };
+      return this.withClampedMemberCreditsUsedMicro({
+        ...input,
+        creditsUsedMicro: 0,
+      });
     }
 
-    return { ...input, creditsUsedMicro };
+    return this.withClampedMemberCreditsUsedMicro({
+      ...input,
+      creditsUsedMicro,
+    });
+  }
+
+  // Bounded by the recorded total, not the requested one, so workspace-funded credits (total - member) never go negative
+  private withClampedMemberCreditsUsedMicro(
+    usageEvent: UsageEvent,
+  ): UsageEvent {
+    if (!isDefined(usageEvent.memberCreditsUsedMicro)) {
+      return usageEvent;
+    }
+
+    const memberCreditsUsedMicro = clampMemberCreditsUsedMicro({
+      memberCreditsUsedMicro: usageEvent.memberCreditsUsedMicro,
+      creditsUsedMicro: usageEvent.creditsUsedMicro,
+    });
+
+    if (memberCreditsUsedMicro !== usageEvent.memberCreditsUsedMicro) {
+      this.logger.error(
+        `Clamping ${usageEvent.memberCreditsUsedMicro} memberCreditsUsedMicro to ${memberCreditsUsedMicro} on a ${usageEvent.operationType} usage event of ${usageEvent.creditsUsedMicro} creditsUsedMicro`,
+      );
+    }
+
+    return { ...usageEvent, memberCreditsUsedMicro };
   }
 
   private async getBillingPeriodStart(

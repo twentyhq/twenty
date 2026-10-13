@@ -17,13 +17,17 @@ import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/bill
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
+import { isBaseProductSubscriptionItem } from 'src/engine/core-modules/billing/utils/is-base-product-subscription-item.util';
+import { parseMemberCreditsAmount } from 'src/engine/core-modules/billing/utils/parse-member-credits-amount.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type MemberCreditsAllowance } from 'src/engine/core-modules/usage-limit/types/member-credits-allowance.type';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -44,6 +48,7 @@ export class BillingUsageService {
     private readonly clickHouseService: ClickHouseService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
+    private readonly billingCreditAllowanceService: BillingCreditAllowanceService,
   ) {}
 
   async getSubscriptionInactiveReason(
@@ -122,20 +127,26 @@ export class BillingUsageService {
     periodStart: Date,
     periodEnd: Date,
   ): Promise<BillingResourceCreditUsageDTO> {
-    const [usedCredits, rolloverCredits] = await Promise.all([
-      // Fails open: an unreadable usage total must never block a paying workspace
-      this.usageAnalyticsService
-        .getCreditsUsedMicroForBillingPeriod({ workspaceId, periodStart })
-        .catch((error) => {
-          this.logger.error(
-            `Could not read credits used for workspace ${workspaceId}`,
-            error,
-          );
+    const [billingPeriodCreditsUsed, rolloverCredits, memberCreditsAllowance] =
+      await Promise.all([
+        // Fails open: an unreadable usage total must never block a paying workspace
+        this.usageAnalyticsService
+          .getWorkspaceFundedCreditsUsedMicroForBillingPeriod({
+            workspaceId,
+            periodStart,
+            periodEnd,
+          })
+          .catch((error) => {
+            this.logger.error(
+              `Could not read credits used for workspace ${workspaceId}`,
+              error,
+            );
 
-          return 0;
-        }),
-      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
-    ]);
+            return null;
+          }),
+        this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
+        this.findMemberCreditsAllowance(workspaceId),
+      ]);
 
     const grantedCredits =
       subscription.status === SubscriptionStatus.Trialing
@@ -146,12 +157,88 @@ export class BillingUsageService {
       productKey: item.productKey,
       periodStart,
       periodEnd,
-      usedCredits,
+      usedCredits:
+        billingPeriodCreditsUsed?.workspaceFundedCreditsUsedMicro ?? 0,
+      memberCreditsUsed: billingPeriodCreditsUsed?.memberCreditsUsedMicro ?? 0,
+      memberCreditsAmount: memberCreditsAllowance?.amountMicro ?? null,
+      memberCreditsSliceEnd: memberCreditsAllowance?.periodEnd ?? null,
+      memberCreditsUsedInSlice: await this.findMemberCreditsUsedMicroInSlice({
+        workspaceId,
+        memberCreditsAllowance,
+        periodStart,
+        periodEnd,
+        billingPeriodMemberCreditsUsedMicro:
+          billingPeriodCreditsUsed?.memberCreditsUsedMicro ?? null,
+      }),
       grantedCredits,
       rolloverCredits,
       totalGrantedCredits: grantedCredits + rolloverCredits,
       unitPriceCents: item.unitPriceCents,
     };
+  }
+
+  private async findMemberCreditsAllowance(
+    workspaceId: string,
+  ): Promise<MemberCreditsAllowance | null> {
+    try {
+      const creditAllowance =
+        await this.billingCreditAllowanceService.getCreditAllowance(
+          workspaceId,
+        );
+
+      return creditAllowance?.memberCredits ?? null;
+    } catch (error) {
+      this.logger.error(
+        `Could not read member credits for workspace ${workspaceId}`,
+        error,
+      );
+
+      return null;
+    }
+  }
+
+  // Never 0 on a failed read: the billing page shows an unknown figure instead
+  private async findMemberCreditsUsedMicroInSlice({
+    workspaceId,
+    memberCreditsAllowance,
+    periodStart,
+    periodEnd,
+    billingPeriodMemberCreditsUsedMicro,
+  }: {
+    workspaceId: string;
+    memberCreditsAllowance: MemberCreditsAllowance | null;
+    periodStart: Date;
+    periodEnd: Date;
+    billingPeriodMemberCreditsUsedMicro: number | null;
+  }): Promise<number | null> {
+    if (!isDefined(memberCreditsAllowance)) {
+      return null;
+    }
+
+    const isSliceTheBillingPeriod =
+      memberCreditsAllowance.periodStart.getTime() === periodStart.getTime() &&
+      memberCreditsAllowance.periodEnd.getTime() === periodEnd.getTime();
+
+    if (isSliceTheBillingPeriod) {
+      return billingPeriodMemberCreditsUsedMicro;
+    }
+
+    try {
+      return await this.usageAnalyticsService.getMemberCreditsUsedMicroForWorkspaceSlice(
+        {
+          workspaceId,
+          sliceStart: memberCreditsAllowance.periodStart,
+          sliceEnd: memberCreditsAllowance.periodEnd,
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not read member credits used in the current slice for workspace ${workspaceId}`,
+        error,
+      );
+
+      return null;
+    }
   }
 
   getTrialResourceUsageCap(subscription: BillingSubscriptionEntity): number {
@@ -185,6 +272,21 @@ export class BillingUsageService {
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
+  // No getBaseProductSubscriptionItemOrThrow: a throw here would fail every reader of the subscription cache entry
+  findMemberCreditsAmountMicro(
+    subscription: BillingSubscriptionEntity,
+  ): number | null {
+    const baseProductItem = subscription.billingSubscriptionItems.find(
+      isBaseProductSubscriptionItem,
+    );
+
+    const seatPrice = baseProductItem?.billingProduct.billingPrices.find(
+      (price) => price.stripePriceId === baseProductItem.stripePriceId,
+    );
+
+    return parseMemberCreditsAmount(seatPrice?.metadata?.member_credit_amount);
+  }
+
   // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period
   // Null on a failed read: select swallows errors into [], while sum() always yields one row
   async getCreditsUsedBetweenOrNull({
@@ -197,7 +299,7 @@ export class BillingUsageService {
     to: Date;
   }): Promise<number | null> {
     const rows = await this.clickHouseService.select<UsageSumRow>(
-      `SELECT sum(creditsUsedMicro) AS total
+      `SELECT sum(creditsUsedMicro) - sum(memberCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND timestamp >= {from:DateTime64(3)} AND timestamp < {to:DateTime64(3)}`,

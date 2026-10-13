@@ -152,6 +152,7 @@ export class WorkspaceService {
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
+    memberCreditsFallback: PermissionFlagType.BILLING,
   };
 
   constructor(

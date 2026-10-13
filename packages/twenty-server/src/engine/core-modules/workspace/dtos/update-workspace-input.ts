@@ -19,6 +19,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { MemberCreditsFallback } from 'src/engine/core-modules/workspace/types/member-credits-fallback.type';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 
@@ -170,4 +171,9 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   isInternalMessagesImportEnabled?: boolean;
+
+  @Field(() => MemberCreditsFallback, { nullable: true })
+  @IsEnum(MemberCreditsFallback)
+  @IsOptional()
+  memberCreditsFallback?: MemberCreditsFallback;
 }

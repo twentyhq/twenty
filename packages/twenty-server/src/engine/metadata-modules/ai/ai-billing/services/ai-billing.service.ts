@@ -212,15 +212,19 @@ export class AiBillingService {
     operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
+    memberCreditsUsedMicro = 0,
   ): Promise<void> {
     await this.usageRecorderService.record(workspaceId, [
-      this.buildAiTokenUsageEvent({
-        creditsUsedMicro,
-        totalTokens,
-        modelId,
-        operationType,
-        spenders: { userWorkspaceId, agentId },
-      }),
+      {
+        ...this.buildAiTokenUsageEvent({
+          creditsUsedMicro,
+          totalTokens,
+          modelId,
+          operationType,
+          spenders: { userWorkspaceId, agentId },
+        }),
+        memberCreditsUsedMicro,
+      },
     ]);
   }
 
