@@ -496,13 +496,13 @@ export const CreateAnotherWithCommandShiftEnter: Story = {
     await expect(createCompanyRequest).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'Acme', position: 'first' }),
     );
+    await waitFor(() =>
+      expect(canvas.getByRole('textbox')).not.toHaveTextContent('Acme'),
+    );
     await expect(onRecordCreated).toHaveBeenCalledWith({
       record: expect.objectContaining({ name: 'Acme' }),
       recordInput: expect.objectContaining({ name: 'Acme', position: 'first' }),
     });
-    await waitFor(() =>
-      expect(canvas.getByRole('textbox')).not.toHaveTextContent('Acme'),
-    );
     await expect(
       canvas.getByTestId('record-creation-form-create-button'),
     ).toBeVisible();
