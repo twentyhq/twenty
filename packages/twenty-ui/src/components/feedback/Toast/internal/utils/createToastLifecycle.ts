@@ -4,6 +4,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { DEFAULT_TOAST_DURATION } from '../constants/DefaultToastDuration';
 import { type ToastStoreState } from '../types/ToastStoreState';
+import { completeToastExit } from './completeToastExit';
 import { createToastCountdownStore } from './createToastCountdownStore';
 import { dismissToasts } from './dismissToasts';
 import { isToastVisible } from './isToastVisible';
@@ -51,23 +52,23 @@ export const createToastLifecycle = (store: Store<ToastStoreState>) => {
     }
 
     const lifecycle = notifications.get(id);
-    const toast = store.state.toasts.find(
-      (entry) => entry.notification.id === id,
-    );
 
     if (
-      !isDefined(toast) ||
-      toast.status !== 'closing' ||
       !isDefined(lifecycle?.pendingExits) ||
       lifecycle.pendingExits.size > 0
     ) {
       return;
     }
 
-    store.set(
-      'toasts',
-      store.state.toasts.filter((entry) => entry !== toast),
+    const toast = store.state.toasts.find(
+      (entry) => entry.notification.id === id,
     );
+
+    if (!isDefined(toast)) {
+      return;
+    }
+
+    completeToastExit({ store, toast });
   };
 
   const synchronize = () => {
