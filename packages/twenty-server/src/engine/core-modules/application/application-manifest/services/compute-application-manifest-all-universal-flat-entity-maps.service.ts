@@ -228,16 +228,20 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    const settingsFrontComponentUniversalIdentifier =
-      manifest.application.settingsFrontComponent?.universalIdentifier;
-
-    const menuItemFrontComponentUniversalIdentifiers = new Set(
+    const settingsFrontComponentUniversalIdentifiers = new Set(
       [
-        ...(manifest.settingsMenuItems ?? []),
-        ...(manifest.commandMenuItems ?? []),
-      ].map(
-        (menuItemManifest) =>
-          menuItemManifest.frontComponentUniversalIdentifier,
+        manifest.application.settingsFrontComponent?.universalIdentifier,
+        ...(manifest.settingsMenuItems ?? []).map(
+          (settingsMenuItemManifest) =>
+            settingsMenuItemManifest.frontComponentUniversalIdentifier,
+        ),
+      ].filter(isDefined),
+    );
+
+    const commandMenuItemFrontComponentUniversalIdentifiers = new Set(
+      (manifest.commandMenuItems ?? []).map(
+        (commandMenuItemManifest) =>
+          commandMenuItemManifest.frontComponentUniversalIdentifier,
       ),
     );
 
@@ -248,10 +252,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             frontComponentManifest,
             applicationUniversalIdentifier,
             isSettingsFrontComponent:
-              frontComponentManifest.universalIdentifier ===
-              settingsFrontComponentUniversalIdentifier,
-            isReferencedByMenuItem:
-              menuItemFrontComponentUniversalIdentifiers.has(
+              settingsFrontComponentUniversalIdentifiers.has(
+                frontComponentManifest.universalIdentifier,
+              ),
+            isReferencedByCommandMenuItem:
+              commandMenuItemFrontComponentUniversalIdentifiers.has(
                 frontComponentManifest.universalIdentifier,
               ),
             now,

@@ -24,7 +24,7 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
       isSettingsFrontComponent: false,
-      isReferencedByMenuItem: false,
+      isReferencedByCommandMenuItem: false,
       now: NOW,
     });
 
@@ -36,19 +36,19 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
       isSettingsFrontComponent: true,
-      isReferencedByMenuItem: false,
+      isReferencedByCommandMenuItem: false,
       now: NOW,
     });
 
     expect(result.availableOn).toEqual([]);
   });
 
-  it('should keep a front component opened from a menu item out of the widget pickers by default', () => {
+  it('should keep a front component opened from a command menu item out of the widget pickers by default', () => {
     const result = fromFrontComponentManifestToUniversalFlatFrontComponent({
       frontComponentManifest: buildManifest(),
       applicationUniversalIdentifier: APP_UID,
       isSettingsFrontComponent: false,
-      isReferencedByMenuItem: true,
+      isReferencedByCommandMenuItem: true,
       now: NOW,
     });
 
@@ -60,7 +60,7 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
       frontComponentManifest: buildManifest({ isHeadless: true }),
       applicationUniversalIdentifier: APP_UID,
       isSettingsFrontComponent: false,
-      isReferencedByMenuItem: false,
+      isReferencedByCommandMenuItem: false,
       now: NOW,
     });
 
@@ -75,7 +75,7 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
         }),
         applicationUniversalIdentifier: APP_UID,
         isSettingsFrontComponent: false,
-        isReferencedByMenuItem: false,
+        isReferencedByCommandMenuItem: false,
         now: NOW,
       });
 
@@ -86,7 +86,7 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
         }),
         applicationUniversalIdentifier: APP_UID,
         isSettingsFrontComponent: true,
-        isReferencedByMenuItem: true,
+        isReferencedByCommandMenuItem: true,
         now: NOW,
       });
 

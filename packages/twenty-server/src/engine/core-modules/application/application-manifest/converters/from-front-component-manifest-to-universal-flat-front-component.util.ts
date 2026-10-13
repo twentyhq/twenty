@@ -9,19 +9,19 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   frontComponentManifest,
   applicationUniversalIdentifier,
   isSettingsFrontComponent,
-  isReferencedByMenuItem,
+  isReferencedByCommandMenuItem,
   now,
 }: {
   frontComponentManifest: FrontComponentManifest;
   applicationUniversalIdentifier: string;
   isSettingsFrontComponent: boolean;
-  isReferencedByMenuItem: boolean;
+  isReferencedByCommandMenuItem: boolean;
   now: string;
 }): UniversalFlatFrontComponent => {
   const isOfferedInWidgetPickersByDefault =
     !frontComponentManifest.isHeadless &&
     !isSettingsFrontComponent &&
-    !isReferencedByMenuItem;
+    !isReferencedByCommandMenuItem;
 
   return {
     universalIdentifier: frontComponentManifest.universalIdentifier,

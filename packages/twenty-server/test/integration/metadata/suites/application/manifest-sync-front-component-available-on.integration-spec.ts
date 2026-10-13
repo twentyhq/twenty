@@ -61,12 +61,14 @@ const buildManifest = ({
   settingsMenuItems = [],
   commandMenuItems = [],
   isWidgetHeadless,
+  isMenuHeadless,
   widgetAvailableOn,
   menuAvailableOn,
 }: {
   settingsMenuItems?: SettingsMenuItemManifest[];
   commandMenuItems?: CommandMenuItemManifest[];
   isWidgetHeadless?: boolean;
+  isMenuHeadless?: boolean;
   widgetAvailableOn?: FrontComponentSurface[];
   menuAvailableOn?: FrontComponentSurface[];
 } = {}): Manifest =>
@@ -84,6 +86,7 @@ const buildManifest = ({
         buildFrontComponent({
           universalIdentifier: MENU_FRONT_COMPONENT_ID,
           componentName: MENU_COMPONENT_NAME,
+          isHeadless: isMenuHeadless,
           availableOn: menuAvailableOn,
         }),
       ],
@@ -174,6 +177,32 @@ describe('Manifest sync - front component availableOn', () => {
       [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
       [MENU_FRONT_COMPONENT_ID]: [],
     });
+  }, 60000);
+
+  it('renders a front component behind a settings menu item even when declared headless', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        settingsMenuItems: [SETTINGS_MENU_ITEM],
+        isMenuHeadless: true,
+      }),
+      expectToFail: false,
+    });
+
+    const { data } = await findFrontComponents({
+      gqlFields: `
+        universalIdentifier
+        isHeadless
+        availableOn
+      `,
+      expectToFail: false,
+    });
+
+    expect(
+      data.frontComponents.find(
+        (frontComponent) =>
+          frontComponent.universalIdentifier === MENU_FRONT_COMPONENT_ID,
+      ),
+    ).toMatchObject({ isHeadless: false, availableOn: [] });
   }, 60000);
 
   it('keeps a front component opened by a command menu item out of the widget pickers by default', async () => {
