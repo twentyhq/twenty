@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ServerVariables } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Not, type EntityManager, type Repository } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
@@ -174,69 +174,89 @@ export class ApplicationRegistrationVariableService {
   async isConfiguredBatch(
     applicationRegistrationIds: string[],
   ): Promise<Map<string, boolean>> {
-    const [variables, registrations, installedApps] = await Promise.all([
+    if (!isNonEmptyArray(applicationRegistrationIds)) {
+      return new Map();
+    }
+
+    const [
+      requiredVariables,
+      registrationIdsExposingServerRoute,
+      registrationIdsInstalledOnOwnerWorkspace,
+    ] = await Promise.all([
       this.variableRepository.find({
-        where: { applicationRegistrationId: In(applicationRegistrationIds) },
+        where: {
+          applicationRegistrationId: In(applicationRegistrationIds),
+          isRequired: true,
+        },
       }),
-      this.applicationRegistrationRepository.find({
-        where: { id: In(applicationRegistrationIds) },
-        select: { id: true, manifest: true, ownerWorkspaceId: true },
-      }),
-      this.applicationRepository.find({
-        where: { applicationRegistrationId: In(applicationRegistrationIds) },
-        select: { applicationRegistrationId: true, workspaceId: true },
-      }),
+      this.findRegistrationIdsExposingServerRoute(applicationRegistrationIds),
+      this.findRegistrationIdsInstalledOnOwnerWorkspace(
+        applicationRegistrationIds,
+      ),
     ]);
 
-    const result = new Map<string, boolean>();
+    const registrationIdsWithUnfilledRequiredVariable = new Set(
+      requiredVariables
+        .filter((variable) => !this.isVariableFilled(variable))
+        .map((variable) => variable.applicationRegistrationId),
+    );
 
-    for (const id of applicationRegistrationIds) {
-      const registration = registrations.find(
-        (registration) => registration.id === id,
-      );
-
-      const areVariablesConfigured = variables
-        .filter(
-          (variable) =>
-            variable.applicationRegistrationId === id && variable.isRequired,
-        )
-        .every((variable) => this.isVariableFilled(variable));
-
-      const isInstalledOnOwnerWorkspace = installedApps.some(
-        (app) =>
-          app.applicationRegistrationId === id &&
-          app.workspaceId === registration?.ownerWorkspaceId,
-      );
-
-      result.set(
-        id,
-        areVariablesConfigured &&
-          this.isServerRouteConfigured(
-            registration,
-            isInstalledOnOwnerWorkspace,
-          ),
-      );
-    }
-
-    return result;
+    return new Map(
+      applicationRegistrationIds.map((applicationRegistrationId) => [
+        applicationRegistrationId,
+        !registrationIdsWithUnfilledRequiredVariable.has(
+          applicationRegistrationId,
+        ) &&
+          (!registrationIdsExposingServerRoute.has(applicationRegistrationId) ||
+            registrationIdsInstalledOnOwnerWorkspace.has(
+              applicationRegistrationId,
+            )),
+      ]),
+    );
   }
 
-  private isServerRouteConfigured(
-    registration: ApplicationRegistrationEntity | undefined,
-    isInstalledOnOwnerWorkspace: boolean,
-  ): boolean {
-    const hasServerRouteFunction =
-      registration?.manifest?.logicFunctions?.some((logicFunction) =>
-        isDefined(logicFunction.serverRouteTriggerSettings),
-      ) ?? false;
+  private async findRegistrationIdsExposingServerRoute(
+    applicationRegistrationIds: string[],
+  ): Promise<Set<string>> {
+    const rows: { id: string }[] = await this.applicationRegistrationRepository
+      .createQueryBuilder('registration')
+      .select('registration.id', 'id')
+      .where('registration.id IN (:...applicationRegistrationIds)', {
+        applicationRegistrationIds,
+      })
+      .andWhere(
+        `EXISTS (
+          SELECT 1
+          FROM jsonb_array_elements(
+            COALESCE(registration."manifest" -> 'logicFunctions', '[]'::jsonb)
+          ) AS logic_function
+          WHERE logic_function -> 'serverRouteTriggerSettings' IS NOT NULL
+            AND jsonb_typeof(logic_function -> 'serverRouteTriggerSettings') <> 'null'
+        )`,
+      )
+      .getRawMany();
 
-    if (!hasServerRouteFunction) {
-      return true;
-    }
+    return new Set(rows.map((row) => row.id));
+  }
 
-    return (
-      isDefined(registration?.ownerWorkspaceId) && isInstalledOnOwnerWorkspace
-    );
+  private async findRegistrationIdsInstalledOnOwnerWorkspace(
+    applicationRegistrationIds: string[],
+  ): Promise<Set<string>> {
+    const rows: { id: string }[] = await this.applicationRepository
+      .createQueryBuilder('application')
+      .select('application."applicationRegistrationId"', 'id')
+      .innerJoin(
+        'application.applicationRegistration',
+        'registration',
+        'registration."workspaceId" = application."workspaceId"',
+      )
+      .where(
+        'application."applicationRegistrationId" IN (:...applicationRegistrationIds)',
+        { applicationRegistrationIds },
+      )
+      .getRawMany();
+
+    return new Set(rows.map((row) => row.id));
   }
 
   private async findVariableOrThrow(

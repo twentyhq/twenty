@@ -69,7 +69,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
   executionContext: {
     authContext: {} as never,
     userWorkspaceId: 'user-workspace-id',
-    rolePermissionConfig: { intersectionOf: [] },
+    rolePermissionConfig: { intersectionOf: {} },
     conversationActor: { type: 'application', applicationId: 'app-id' },
     turnCreatedBy: CREATED_BY,
     usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,

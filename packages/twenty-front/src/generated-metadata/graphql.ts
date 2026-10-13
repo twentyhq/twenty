@@ -2199,7 +2199,6 @@ export type FeatureFlag = {
 
 export enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
-  IS_AI_CHAT_SHARING_DROPDOWN_ENABLED = 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED',
   IS_APPLICATION_WORKFLOWS_ENABLED = 'IS_APPLICATION_WORKFLOWS_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
@@ -6442,6 +6441,7 @@ export type SignUp = {
 
 export type SignUpInNewWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
+  partner?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 

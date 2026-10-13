@@ -32,10 +32,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Application workflows`,
     description: msg`Allow applications to install workflows and start new workflow runs.`,
   },
-  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
-    label: msg`AI chat sharing dropdown`,
-    description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
-  },
   [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: {
     label: msg`Initial object views`,
     description: msg`Use a dedicated initial view for each object in navigation and the view picker.`,
