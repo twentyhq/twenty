@@ -15025,9 +15025,6 @@ export default {
             "applicationUniversalIdentifier": [
                 1
             ],
-            "serverVersion": [
-                1
-            ],
             "__typename": [
                 1
             ]

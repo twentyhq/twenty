@@ -9,7 +9,6 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 type WorkspaceMigration = {
   applicationUniversalIdentifier: string;
   actions: SyncAction[];
-  serverVersion?: string | null;
 };
 
 export const syncApplication = async ({
@@ -18,14 +17,12 @@ export const syncApplication = async ({
   token,
   dryRun,
   inferDeletionFromMissingEntities,
-  gqlFields,
 }: {
   manifest: Manifest;
   expectToFail?: boolean;
   token?: string;
   dryRun?: boolean;
   inferDeletionFromMissingEntities?: boolean;
-  gqlFields?: string;
 }): CommonResponseBody<{
   syncApplication: WorkspaceMigration;
 }> => {
@@ -33,7 +30,6 @@ export const syncApplication = async ({
     manifest,
     dryRun,
     inferDeletionFromMissingEntities,
-    gqlFields,
   });
 
   const response = await makeMetadataApiRequest(graphqlOperation, token);

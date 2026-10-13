@@ -10,7 +10,4 @@ export class WorkspaceMigrationDTO {
 
   @Field(() => GraphQLJSON)
   actions: SyncAction[];
-
-  @Field(() => String, { nullable: true })
-  serverVersion: string | null;
 }

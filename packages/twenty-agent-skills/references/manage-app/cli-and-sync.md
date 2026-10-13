@@ -120,7 +120,6 @@ For sync issues:
 - Prefer `yarn twenty apply --verbose` to get a bounded failure.
 - Check generated type or schema errors before editing app entities.
 - If the app depends on a changed data model, use `develop-app` to fix the entity definitions.
-- If the error names a Twenty server version outside the range `twenty-sdk` supports, upgrade the server to satisfy the `engines.twenty` of `twenty-sdk` itself, or install a `twenty-sdk` version that supports the running server.
 
 ## Build, Deploy, Logs, And Exec
 
