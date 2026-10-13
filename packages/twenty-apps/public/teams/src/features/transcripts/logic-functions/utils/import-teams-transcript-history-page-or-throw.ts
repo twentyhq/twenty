@@ -39,33 +39,6 @@ const downloadAvailableTranscriptContentOrThrow = async ({
   }
 };
 
-const findSoftDeletedCallRecordingIdsOrThrow = async ({
-  coreApiClient,
-  callRecordingIds,
-}: {
-  coreApiClient: Pick<CoreApiClient, 'query'>;
-  callRecordingIds: string[];
-}): Promise<Set<string>> => {
-  const result: {
-    callRecordings?: { edges?: { node: { id: string } }[] };
-  } = await coreApiClient.query({
-    callRecordings: {
-      __args: {
-        filter: {
-          id: { in: callRecordingIds },
-          deletedAt: { is: 'NOT_NULL' },
-        },
-        first: callRecordingIds.length,
-      },
-      edges: { node: { id: true } },
-    },
-  });
-
-  return new Set(
-    result.callRecordings?.edges?.map((edge) => edge.node.id) ?? [],
-  );
-};
-
 export const importTeamsTranscriptHistoryPageOrThrow = async ({
   accessToken,
   coreApiClient,
@@ -112,8 +85,10 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       .map(({ calendarReference }) => calendarReference)
       .filter(isDefined),
   });
-  const unavailableCallRecordingIds: string[] = [];
-  const deletedDuringImportCallRecordingIds: string[] = [];
+  let importedCount = importedCallRecordingIds.size;
+  let skippedCount =
+    deletedCallRecordingIds.size + completedCallRecordingIds.size;
+  let unavailableCount = 0;
 
   for (const transcriptBatch of chunkIntoBatches(
     importableTranscripts,
@@ -136,69 +111,63 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
           transcriptId: transcript.id,
         },
       );
-
       const transcriptEntries = isDefined(transcriptContent)
         ? mapTeamsTranscriptToEntries(transcriptContent)
         : [];
 
       if (!isNonEmptyArray(transcriptEntries)) {
-        unavailableCallRecordingIds.push(callRecordingId);
+        unavailableCount += 1;
         continue;
       }
 
-      const fields = buildTeamsCallRecordingSyncFields({
-        meeting,
-        transcript,
-        transcriptEntries,
-        calendarEventId: isDefined(calendarReference)
-          ? calendarEventIds.get(calendarReference.eventExternalId)
-          : undefined,
-      });
-
       callRecordings.push({
         id: callRecordingId,
-        ...toCallRecordingData(fields),
+        ...toCallRecordingData(
+          buildTeamsCallRecordingSyncFields({
+            meeting,
+            transcript,
+            transcriptEntries,
+            calendarEventId: isDefined(calendarReference)
+              ? calendarEventIds.get(calendarReference.eventExternalId)
+              : undefined,
+          }),
+        ),
       });
     }
 
-    if (callRecordings.length === 0) {
-      continue;
-    }
-
-    const softDeletedCallRecordingIds =
-      await findSoftDeletedCallRecordingIdsOrThrow({
+    // The batch upsert would bring back a recording deleted while it downloaded.
+    const callRecordingIdsBeforeWrite =
+      await findDeletedAndCompletedCallRecordingIdsOrThrow({
         coreApiClient,
         callRecordingIds: callRecordings.map(({ id }) => id),
       });
     const upsertableCallRecordings = callRecordings.filter(
-      ({ id }) => !softDeletedCallRecordingIds.has(id),
+      ({ id }) =>
+        !callRecordingIdsBeforeWrite.deletedCallRecordingIds.has(id) &&
+        !callRecordingIdsBeforeWrite.completedCallRecordingIds.has(id),
     );
 
-    deletedDuringImportCallRecordingIds.push(...softDeletedCallRecordingIds);
+    skippedCount += callRecordings.length - upsertableCallRecordings.length;
 
-    if (upsertableCallRecordings.length > 0) {
-      await coreApiClient.mutation({
-        createCallRecordings: {
-          __args: { data: upsertableCallRecordings, upsert: true },
-          id: true,
-        },
-      });
+    if (upsertableCallRecordings.length === 0) {
+      continue;
     }
+
+    await coreApiClient.mutation({
+      createCallRecordings: {
+        __args: { data: upsertableCallRecordings, upsert: true },
+        id: true,
+      },
+    });
+    importedCount += upsertableCallRecordings.length;
   }
 
   return {
     transcriptCount: 0,
     alreadyImportedCount: 0,
     deletedCount: 0,
-    importedCount:
-      importedCallRecordingIds.size +
-      importableTranscripts.length -
-      unavailableCallRecordingIds.length -
-      deletedDuringImportCallRecordingIds.length,
-    skippedCount:
-      deletedCallRecordingIds.size +
-      completedCallRecordingIds.size +
-      deletedDuringImportCallRecordingIds.length,
-    unavailableCount: unavailableCallRecordingIds.length,
+    importedCount,
+    skippedCount,
+    unavailableCount,
   };
 };
