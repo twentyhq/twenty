@@ -20,6 +20,7 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
+  roleIds: string[];
   shouldBypassPermissionChecks: boolean;
 };
 
@@ -28,6 +29,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   objectMetadata,
   internalContext,
   authContext,
+  roleIds,
   shouldBypassPermissionChecks,
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
   if (shouldBypassPermissionChecks) {
@@ -37,6 +39,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   const recordFilter = resolveRowLevelPermissionRecordFilter({
     internalContext,
     authContext,
+    roleIds,
     objectMetadata,
   });
 

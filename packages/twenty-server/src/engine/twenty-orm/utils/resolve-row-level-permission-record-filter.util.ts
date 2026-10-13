@@ -8,23 +8,19 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
-import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 
 export const resolveRowLevelPermissionRecordFilter = ({
   internalContext,
   authContext,
+  roleIds,
   objectMetadata,
 }: {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
+  // the roles the object permissions intersect, which may include an agent's or an application's
+  roleIds: string[];
   objectMetadata: FlatObjectMetadata;
 }): RecordGqlOperationFilter | null => {
-  const roleIds = resolveRoleIdsFromAuthContext({
-    authContext,
-    userWorkspaceRoleMap: internalContext.userWorkspaceRoleMap,
-    apiKeyRoleMap: internalContext.apiKeyRoleMap,
-  });
-
   const recordFilter = buildRowLevelPermissionRecordFilter({
     flatRowLevelPermissionPredicateMaps:
       internalContext.flatRowLevelPermissionPredicateMaps,
