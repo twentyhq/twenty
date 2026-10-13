@@ -78,6 +78,10 @@ export const EMAIL_DOCUMENT_NODE_CATALOG = {
     renderMode: 'node',
     stringAttributes: { html: 'html' },
   },
+  [TIPTAP_NODE_TYPES.HTML_DOCUMENT]: {
+    renderMode: 'node',
+    stringAttributes: { html: 'rawHtml' },
+  },
 } as const satisfies Partial<
   Record<TipTapNodeType, EmailDocumentNodeDefinition>
 >;

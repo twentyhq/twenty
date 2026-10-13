@@ -711,7 +711,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
     description:
-      'Maximum bytes of file storage a single workspace may hold, all its files counted. An upload that would cross it is refused. No limit when unset',
+      'Maximum bytes of file storage a single workspace may hold, all its files counted. No limit when unset',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
@@ -721,7 +721,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
     description:
-      'Maximum number of records a single workspace may hold across its objects, system objects other than messages and calendar events left out, soft-deleted records included. A write that would cross it is refused. No limit when unset',
+      'Maximum number of records a single workspace may hold across its objects, system objects other than messages and calendar events left out, soft-deleted records included. No limit when unset',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()

@@ -4,6 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
@@ -50,7 +51,7 @@ describe('SEND_EMAIL workflow action on Microsoft (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: '<p>Microsoft workflow body</p>',
+        body: JSON.stringify(buildEmailDocument('Microsoft workflow body')),
       },
       payload: { ...RECIPIENTS, subject },
     });
@@ -133,7 +134,9 @@ describe('SEND_EMAIL workflow action on Microsoft (integration)', () => {
         fromHandle: ALIAS,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Microsoft workflow alias body</p>',
+        body: JSON.stringify(
+          buildEmailDocument('Microsoft workflow alias body'),
+        ),
       },
     });
 
@@ -160,7 +163,9 @@ describe('SEND_EMAIL workflow action on Microsoft (integration)', () => {
         fromHandle: 'not-my-alias@apple.dev',
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject: `Microsoft workflow rejected sender ${randomUUID()}`,
-        body: '<p>Microsoft workflow rejected body</p>',
+        body: JSON.stringify(
+          buildEmailDocument('Microsoft workflow rejected body'),
+        ),
       },
     });
 
