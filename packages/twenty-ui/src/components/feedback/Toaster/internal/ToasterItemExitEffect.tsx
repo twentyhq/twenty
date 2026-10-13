@@ -48,5 +48,5 @@ export const ToasterItemExitEffect = ({
     };
   }, [elementRef, toastEntry, store, rendererKey]);
 
-  return <></>;
+  return null;
 };
