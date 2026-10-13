@@ -58,8 +58,8 @@ const GET_ADMIN_CHAT_THREADS = gql`
 `;
 
 const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
-      variables: { workspaceId, threadId },
-      skip: !workspaceId || !threadId,
+  query GetAdminChatThreadMessages($workspaceId: UUID!, $threadId: UUID!) {
+    getAdminChatThreadMessages(workspaceId: $workspaceId, threadId: $threadId) {
       thread {
         id
         messageCount
