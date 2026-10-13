@@ -93,6 +93,7 @@ export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName'
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
+export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
@@ -172,6 +173,8 @@ export type {
 } from './fieldManifestType';
 export type {
   CommandMenuItemManifest,
+  FrontComponentWidgetPageLayoutType,
+  FrontComponentWidgetAvailabilityManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
@@ -267,6 +270,7 @@ export {
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
+export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
@@ -287,7 +291,10 @@ export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSetti
 export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';
 export type { WorkflowStepManifest } from './workflowStepManifestType';
-export { workflowStepManifestSchema } from './workflowStepManifestType';
+export {
+  workflowStepFilterManifestSchema,
+  workflowStepManifestSchema,
+} from './workflowStepManifestType';
 export type { WorkflowTriggerManifest } from './workflowTriggerManifestType';
 export {
   APPLICATION_WORKFLOW_TRIGGER_TYPES,

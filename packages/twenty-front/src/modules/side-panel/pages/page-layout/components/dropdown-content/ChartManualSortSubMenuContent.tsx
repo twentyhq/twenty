@@ -23,9 +23,7 @@ import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 const StyledOptionTag = styled(Tag)`
-  && {
-    min-width: fit-content;
-  }
+  min-width: fit-content;
 `;
 
 type ChartManualSortSubMenuContentProps = {

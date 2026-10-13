@@ -20,12 +20,10 @@ const StyledCenteredButton = styled(Button)`
 `;
 
 const StyledDescription = styled(Dialog.Description)`
-  && {
-    color: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    margin-bottom: ${themeCssVariables.spacing[6]};
-  }
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 const defaultConfirmButtonText = msg`Confirm`;
