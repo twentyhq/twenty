@@ -27,6 +27,7 @@ import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -263,23 +264,37 @@ export const PageChangeEffect = () => {
           AppPath.AiChatInbox,
           previousLocation,
         );
-        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
 
-        if (isEnteringAiChatInbox && !isSidePanelOpen) {
-          resetFocusStackToFocusItem({
-            focusStackItem: {
-              focusId: PageFocusId.AiChatInbox,
-              componentInstance: {
-                componentType: FocusComponentType.PAGE,
-                componentInstanceId: PageFocusId.AiChatInbox,
-              },
-              globalHotkeysConfig: {
-                enableGlobalHotkeysWithModifiers: true,
-                enableGlobalHotkeysConflictingWithKeyboard: true,
-              },
-            },
-          });
+        if (!isEnteringAiChatInbox) {
+          break;
         }
+
+        // A side panel left open keeps its focus over the new page, so only
+        // the previous page's item underneath is replaced
+        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
+        const focusStackItemsKeptAbovePage = isSidePanelOpen
+          ? store
+              .get(focusStackState.atom)
+              .filter(
+                ({ componentInstance }) =>
+                  componentInstance.componentType !== FocusComponentType.PAGE,
+              )
+          : [];
+
+        store.set(focusStackState.atom, [
+          {
+            focusId: PageFocusId.AiChatInbox,
+            componentInstance: {
+              componentType: FocusComponentType.PAGE,
+              componentInstanceId: PageFocusId.AiChatInbox,
+            },
+            globalHotkeysConfig: {
+              enableGlobalHotkeysWithModifiers: true,
+              enableGlobalHotkeysConflictingWithKeyboard: true,
+            },
+          },
+          ...focusStackItemsKeptAbovePage,
+        ]);
         break;
       }
       case isMatchingLocation(location, AppPath.PageLayoutPage): {

@@ -181,4 +181,56 @@ describe('PageChangeEffect', () => {
       );
     });
   });
+
+  it('should give the inbox global hotkeys back once a panel kept open from settings closes', async () => {
+    renderPageChangeEffect();
+
+    act(() => navigateMainPage?.('/settings/profile'));
+    await waitFor(() => {
+      expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+        PageFocusId.Settings,
+      );
+    });
+
+    const sidePanelFocusStackItem = {
+      focusId: 'side-panel',
+      componentInstance: {
+        componentType: FocusComponentType.SIDE_PANEL,
+        componentInstanceId: 'side-panel',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    };
+
+    openSidePanelWith([RECORD_PAGE]);
+    act(() => {
+      jotaiStore.set(focusStackState.atom, [
+        ...jotaiStore.get(focusStackState.atom),
+        sidePanelFocusStackItem,
+      ]);
+    });
+    act(() => navigateMainPage?.('/inbox'));
+
+    await waitFor(() => {
+      expect(
+        jotaiStore.get(focusStackState.atom).map(({ focusId }) => focusId),
+      ).toEqual([PageFocusId.AiChatInbox, 'side-panel']);
+    });
+
+    act(() => {
+      jotaiStore.set(
+        focusStackState.atom,
+        jotaiStore
+          .get(focusStackState.atom)
+          .filter(({ focusId }) => focusId !== 'side-panel'),
+      );
+    });
+
+    expect(
+      jotaiStore.get(currentGlobalHotkeysConfigSelector.atom)
+        .enableGlobalHotkeysConflictingWithKeyboard,
+    ).toBe(true);
+  });
 });

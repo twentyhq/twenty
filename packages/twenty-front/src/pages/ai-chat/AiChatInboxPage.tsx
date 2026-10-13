@@ -134,19 +134,6 @@ const AiChatInboxPageContent = () => {
     onEndReached: fetchMoreAgentChatThreads,
   });
 
-  useGlobalHotkeys({
-    keys: [
-      Key.ArrowUp,
-      Key.ArrowDown,
-      `${Key.Shift}+${Key.ArrowUp}`,
-      `${Key.Shift}+${Key.ArrowDown}`,
-    ],
-    callback: navigateWithArrowKey,
-    containsModifier: false,
-    dependencies: [navigateWithArrowKey],
-    options: { enableOnContentEditable: false, enableOnFormTags: false },
-  });
-
   const handleThreadCheckboxClick = (
     { id }: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
@@ -171,6 +158,21 @@ const AiChatInboxPageContent = () => {
 
   const openThreadIds =
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
+
+  useGlobalHotkeys({
+    keys: [
+      Key.ArrowUp,
+      Key.ArrowDown,
+      // A selection is only seen in the list, so a full page chat ignores it
+      ...(isListShown
+        ? [`${Key.Shift}+${Key.ArrowUp}`, `${Key.Shift}+${Key.ArrowDown}`]
+        : []),
+    ],
+    callback: navigateWithArrowKey,
+    containsModifier: false,
+    dependencies: [navigateWithArrowKey],
+    options: { enableOnContentEditable: false, enableOnFormTags: false },
+  });
 
   return (
     <StyledInbox>

@@ -559,6 +559,23 @@ describe('AiChatInboxPage', () => {
       ).toBeInTheDocument();
     });
 
+    it('moves between chats with the arrow keys without selecting any from the chat', async () => {
+      renderInbox(`/inbox/${firstThread.id}`);
+
+      await userEvent.keyboard('{Shift>}{ArrowDown}{/Shift}');
+
+      expect(
+        screen.getByText(`Chat page ${firstThread.id}`),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/selected/)).not.toBeInTheDocument();
+
+      await userEvent.keyboard('{ArrowDown}');
+
+      expect(
+        screen.getByText(`Chat page ${secondThread.id}`),
+      ).toBeInTheDocument();
+    });
+
     it('selects chats in the list, with the command menu acting on them', () => {
       renderInbox('/inbox');
 
