@@ -1,5 +1,5 @@
 import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -7,12 +7,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
 import { CancelMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign.input';
 import { CancelMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign-output.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
 import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
-import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
+import { PreviewMessageCampaignSendInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-send.input';
+import { PreviewMessageCampaignSendOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-send-output.dto';
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
 import { SendMessageCampaignTestInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-test.input';
@@ -23,6 +23,7 @@ import {
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain/services/email-group-access.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -33,7 +34,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
-import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
@@ -70,7 +70,6 @@ export class EmailingSendResolver {
   constructor(
     private readonly messageCampaignService: MessageCampaignService,
     private readonly messageCampaignScheduleService: MessageCampaignScheduleService,
-    private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
     private readonly emailBillingService: EmailBillingService,
@@ -166,20 +165,22 @@ export class EmailingSendResolver {
     return { messageId: result.messageId };
   }
 
-  @Query(() => CampaignAudiencePreviewDTO)
+  @Query(() => PreviewMessageCampaignSendOutputDTO)
   @UseGuards(FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED))
-  async previewMessageCampaignAudience(
-    @Args('input') input: PreviewMessageCampaignAudienceInput,
+  async previewMessageCampaignSend(
+    @Args('input') input: PreviewMessageCampaignSendInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<CampaignAudiencePreviewDTO> {
+    @Context() context: I18nContext,
+  ): Promise<PreviewMessageCampaignSendOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
 
-    return this.messageCampaignAudienceService.previewAudience({
+    return this.messageCampaignService.previewSend({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
-      listId: input.listId,
-      unsubscribeTopicId: input.unsubscribeTopicId,
+      campaignId: input.campaignId,
+      scheduledAt: input.scheduledAt,
+      locale: context.req.locale,
     });
   }
 
