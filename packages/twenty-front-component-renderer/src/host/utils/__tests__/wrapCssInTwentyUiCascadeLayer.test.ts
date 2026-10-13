@@ -15,4 +15,24 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
       twentyUiStylesheet,
     );
   });
+
+  it('should keep leading @charset and @import statements outside the layer block', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@charset "UTF-8";@import url(https://fonts.example.com/inter.css?weights=400;600);.title{font-family:Inter}',
+      ),
+    ).toBe(
+      '@charset "UTF-8";@import url(https://fonts.example.com/inter.css?weights=400;600) layer(twenty-ui);@layer twenty-ui {\n.title{font-family:Inter}\n}',
+    );
+  });
+
+  it('should keep the layer of an import that already declares one', () => {
+    expect(
+      wrapCssInTwentyUiCascadeLayer(
+        '@import "theme.css" layer(theme);.title{color:red}',
+      ),
+    ).toBe(
+      '@import "theme.css" layer(theme);@layer twenty-ui {\n.title{color:red}\n}',
+    );
+  });
 });
