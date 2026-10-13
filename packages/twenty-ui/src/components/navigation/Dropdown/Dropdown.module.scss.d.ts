@@ -2,6 +2,8 @@ declare const classNames: {
   readonly header: 'header';
   readonly content: 'content';
   readonly page: 'page';
+  readonly group: 'group';
+  readonly groupLabel: 'groupLabel';
   readonly section: 'section';
   readonly separator: 'separator';
   readonly back: 'back';

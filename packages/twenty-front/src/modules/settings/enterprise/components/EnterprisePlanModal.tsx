@@ -79,18 +79,18 @@ const StyledIntervalContainer = styled.div`
   width: 100%;
 `;
 
-const StyledIntervalCardContent = styled.div`
+const StyledIntervalCardContent = styled.span`
   display: flex;
   flex-direction: column;
 `;
 
-const StyledIntervalTitle = styled.div`
+const StyledIntervalTitle = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledIntervalSubtitle = styled.div`
+const StyledIntervalSubtitle = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
 `;

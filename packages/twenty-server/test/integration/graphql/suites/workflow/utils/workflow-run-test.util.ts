@@ -66,43 +66,6 @@ export const getWorkflowRun = async (
   return response.body.data.workflowRun;
 };
 
-export const runWorkflowVersion = async ({
-  workflowVersionId,
-  payload,
-  token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-}: {
-  workflowVersionId: string;
-  payload?: object;
-  token?: string;
-}): Promise<string> => {
-  const response = await client
-    .post('/graphql')
-    .set('Authorization', `Bearer ${token}`)
-    .send({
-      query: `
-        mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-          runWorkflowVersion(input: $input) {
-            workflowRunId
-          }
-        }
-      `,
-      variables: {
-        input: {
-          workflowVersionId,
-          payload,
-        },
-      },
-    });
-
-  if (response.body.errors || !response.body.data?.runWorkflowVersion) {
-    throw new Error(
-      `Failed to run workflow version: ${JSON.stringify(response.body.errors)}`,
-    );
-  }
-
-  return response.body.data.runWorkflowVersion.workflowRunId;
-};
-
 export const destroyWorkflowRun = async (
   workflowRunId: string,
 ): Promise<void> => {

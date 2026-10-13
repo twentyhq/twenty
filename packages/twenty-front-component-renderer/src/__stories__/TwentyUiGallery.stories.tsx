@@ -49,7 +49,6 @@ import {
   displayHelpersTest,
   galleryRenderTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import { menuTest } from '@/__stories__/twenty-ui-gallery/utils/menuTest';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
 import { switchTest } from '@/__stories__/twenty-ui-gallery/utils/switchTest';
@@ -60,6 +59,7 @@ import { radioCardTest } from '@/__stories__/twenty-ui-gallery/utils/radioCardTe
 import { checkboxTest } from '@/__stories__/twenty-ui-gallery/utils/checkboxTest';
 import { fieldControlsTest } from '@/__stories__/twenty-ui-gallery/utils/fieldControlsTest';
 import { radioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/radioGroupTest';
+import { segmentedControlTest } from '@/__stories__/twenty-ui-gallery/utils/segmentedControlTest';
 import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRangeTest';
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
@@ -400,17 +400,6 @@ export const TooltipPreact: Story = createGalleryStory({
   play: tooltipEscapeDismissalTest,
 });
 
-export const MenuReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
-  runtime: 'react',
-  play: menuTest,
-});
-export const MenuPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
-  runtime: 'preact',
-  play: menuTest,
-});
-
 export const PortalBoundsReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-portals',
   runtime: 'react',
@@ -559,6 +548,17 @@ export const RadioCardPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'preact',
   play: radioCardTest,
+});
+
+export const SegmentedControlReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'react',
+  play: segmentedControlTest,
+});
+export const SegmentedControlPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'preact',
+  play: segmentedControlTest,
 });
 
 export const StatusControlsReact: Story = createGalleryStory({
