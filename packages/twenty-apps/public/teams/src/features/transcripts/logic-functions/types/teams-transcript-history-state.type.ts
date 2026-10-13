@@ -1,4 +1,3 @@
-import { type TeamsTranscriptHistoryErrorCode } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-error-code.type';
 import { type TeamsTranscriptHistoryJobPayload } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-job-payload.type';
 
 export type TeamsTranscriptHistoryState = {
@@ -7,10 +6,6 @@ export type TeamsTranscriptHistoryState = {
   windowEnd: string;
   phase: 'importing' | 'imported' | 'failed';
   pageCount: number;
-  importedCount: number;
-  skippedCount: number;
-  unavailableCount: number;
   updatedAt: string;
-  errorCode?: TeamsTranscriptHistoryErrorCode;
   nextJob?: TeamsTranscriptHistoryJobPayload;
 };

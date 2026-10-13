@@ -1,20 +1,27 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
-import { type DeletedAndCompletedCallRecordingIds } from 'src/features/transcripts/logic-functions/types/deleted-and-completed-call-recording-ids.type';
-import { type ExistingCallRecording } from 'src/features/transcripts/logic-functions/types/existing-call-recording.type';
-import { getDeletedAndCompletedCallRecordingIds } from 'src/features/transcripts/logic-functions/utils/get-deleted-and-completed-call-recording-ids';
+type ExistingCallRecording = {
+  id: string;
+  status: string | null;
+  deletedAt: string | null;
+};
 
 export const findDeletedAndCompletedCallRecordingIdsOrThrow = async ({
   coreApiClient,
   callRecordingIds,
-  importedSince,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   callRecordingIds: string[];
-  importedSince?: string;
-}): Promise<DeletedAndCompletedCallRecordingIds> => {
+}): Promise<{
+  deletedCallRecordingIds: Set<string>;
+  completedCallRecordingIds: Set<string>;
+}> => {
   if (callRecordingIds.length === 0) {
-    return getDeletedAndCompletedCallRecordingIds({ callRecordings: [] });
+    return {
+      deletedCallRecordingIds: new Set(),
+      completedCallRecordingIds: new Set(),
+    };
   }
 
   const result: {
@@ -31,15 +38,26 @@ export const findDeletedAndCompletedCallRecordingIdsOrThrow = async ({
         },
         first: callRecordingIds.length,
       },
-      edges: {
-        node: { id: true, status: true, createdAt: true, deletedAt: true },
-      },
+      edges: { node: { id: true, status: true, deletedAt: true } },
     },
   });
+  const callRecordings =
+    result.callRecordings?.edges?.map((edge) => edge.node) ?? [];
 
-  return getDeletedAndCompletedCallRecordingIds({
-    callRecordings:
-      result.callRecordings?.edges?.map((edge) => edge.node) ?? [],
-    importedSince,
-  });
+  return {
+    deletedCallRecordingIds: new Set(
+      callRecordings
+        .filter((callRecording) => isDefined(callRecording.deletedAt))
+        .map((callRecording) => callRecording.id),
+    ),
+    completedCallRecordingIds: new Set(
+      callRecordings
+        .filter(
+          (callRecording) =>
+            !isDefined(callRecording.deletedAt) &&
+            callRecording.status === 'COMPLETED',
+        )
+        .map((callRecording) => callRecording.id),
+    ),
+  };
 };

@@ -1,6 +1,7 @@
 import { isNonEmptyString, isNonNegativeInteger } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
+  AppConnectionAuthFailedError,
   getConnection,
   kv,
   RetryableLogicFunctionError,
@@ -10,30 +11,53 @@ import { isDefined } from 'twenty-sdk/utils';
 import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TEAMS_TRANSCRIPT_HISTORY_IMPORT_PAGE_DELAY_MILLISECONDS } from 'src/features/transcripts/constants/teams-transcript-history-import-page-delay-milliseconds';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
+import { GRAPH_ACCESS_TO_TRANSCRIPTS_DISABLED_ERROR_CODE } from 'src/features/transcripts/logic-functions/constants/graph-access-to-transcripts-disabled-error-code';
+import { TEAMS_TRANSCRIPT_HISTORY_RETRY_DELAYS_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-transcript-history-retry-delays-milliseconds';
+import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 import { type TeamsTranscriptHistoryJobPayload } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-job-payload.type';
 import { type TeamsTranscriptHistoryPageResult } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-page-result.type';
 import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
 import { buildTeamsCalendarViewUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-calendar-view-url';
 import { buildTeamsTranscriptHistoryKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-history-kv-key';
 import { enqueueTeamsTranscriptHistoryJobOrThrow } from 'src/features/transcripts/logic-functions/utils/enqueue-teams-transcript-history-job-or-throw';
-import { findTeamsTranscriptHistoryStateForJob } from 'src/features/transcripts/logic-functions/utils/find-teams-transcript-history-state-for-job';
-import { getTeamsTranscriptHistoryChunkWindow } from 'src/features/transcripts/logic-functions/utils/get-teams-transcript-history-chunk-window';
-import { getTeamsTranscriptHistoryPageTransition } from 'src/features/transcripts/logic-functions/utils/get-teams-transcript-history-page-transition';
 import { importTeamsTranscriptHistoryPageOrThrow } from 'src/features/transcripts/logic-functions/utils/import-teams-transcript-history-page-or-throw';
-import { isTeamsMeetingOccurrenceStartingInWindow } from 'src/features/transcripts/logic-functions/utils/is-teams-meeting-occurrence-starting-in-window';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page';
 import { listTeamsOccurrenceTranscripts } from 'src/features/transcripts/logic-functions/utils/list-teams-occurrence-transcripts';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
-import { retryOrFailTeamsTranscriptHistoryPageOrThrow } from 'src/features/transcripts/logic-functions/utils/retry-or-fail-teams-transcript-history-page-or-throw';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
-const processValidTeamsTranscriptHistoryPageOrThrow = async ({
-  job,
+const findStateForJob = async (
+  job: TeamsTranscriptHistoryJobPayload,
+): Promise<TeamsTranscriptHistoryState | undefined> => {
+  const state = await kv.get<TeamsTranscriptHistoryState>(
+    buildTeamsTranscriptHistoryKvKey(job.connectedAccountId),
+  );
+
+  return state?.runId === job.runId && state.phase === 'importing'
+    ? state
+    : undefined;
+};
+
+// A page can outlive its access token, so a first 401 retries with a fresh token.
+const isFatalError = ({
+  error,
+  attempt,
 }: {
-  job: TeamsTranscriptHistoryJobPayload;
-}): Promise<TeamsTranscriptHistoryPageResult> => {
-  const state = await findTeamsTranscriptHistoryStateForJob({ job });
+  error: unknown;
+  attempt: number;
+}): boolean =>
+  error instanceof AppConnectionAuthFailedError ||
+  (error instanceof GraphRequestError &&
+    ((error.status === 401 && attempt > 0) ||
+      (error.status === 403 &&
+        error.innerErrorCode ===
+          GRAPH_ACCESS_TO_TRANSCRIPTS_DISABLED_ERROR_CODE)));
+
+const importPageOrThrow = async (
+  job: TeamsTranscriptHistoryJobPayload,
+): Promise<TeamsTranscriptHistoryPageResult> => {
+  const state = await findStateForJob(job);
 
   if (
     !isDefined(state) ||
@@ -62,46 +86,77 @@ const processValidTeamsTranscriptHistoryPageOrThrow = async ({
     };
   }
 
-  const chunkWindow = getTeamsTranscriptHistoryChunkWindow({
-    windowStart: state.windowStart,
-    windowEnd: state.windowEnd,
-    chunkIndex: job.chunkIndex,
-  });
-
-  if (!isDefined(chunkWindow)) {
-    return { success: false, error: 'Invalid Teams transcript history job' };
-  }
-
   const { accessToken } = await getConnection(job.connectedAccountId);
   const page = await listTeamsCalendarPage({
     accessToken,
     url: isDefined(job.nextPageUrl)
       ? resolveTeamsCalendarNextPageUrlOrThrow(job.nextPageUrl)
-      : buildTeamsCalendarViewUrl(chunkWindow),
-  });
-  const { transcripts, unavailableMeetingCount } =
-    await listTeamsOccurrenceTranscripts({
-      accessToken,
-      occurrences: page.occurrences.filter((occurrence) =>
-        isTeamsMeetingOccurrenceStartingInWindow({
-          occurrence,
-          window: chunkWindow,
+      : buildTeamsCalendarViewUrl({
+          startDateTime: state.windowStart,
+          endDateTime: state.windowEnd,
         }),
-      ),
-    });
-  const importCounts = await importTeamsTranscriptHistoryPageOrThrow({
+  });
+  const importedCount = await importTeamsTranscriptHistoryPageOrThrow({
     accessToken,
     coreApiClient: new CoreApiClient({ runAs: 'application' }),
-    transcripts,
-    importedSince: state.windowEnd,
+    transcripts: await listTeamsOccurrenceTranscripts({
+      accessToken,
+      occurrences: page.occurrences,
+    }),
   });
-  const pageCounts = {
-    ...importCounts,
-    unavailableCount: importCounts.unavailableCount + unavailableMeetingCount,
-  };
-  const currentState = await findTeamsTranscriptHistoryStateForJob({ job });
+  const currentState = await findStateForJob(job);
 
-  if (!isDefined(currentState)) {
+  if (!isDefined(currentState) || currentState.pageCount !== job.pageIndex) {
+    return {
+      success: true,
+      skipped: true,
+      reason: 'Teams transcript history run moved on during this page',
+    };
+  }
+
+  const nextJob = isNonEmptyString(page.nextPageUrl)
+    ? {
+        ...job,
+        pageIndex: job.pageIndex + 1,
+        attempt: 0,
+        nextPageUrl: page.nextPageUrl,
+      }
+    : undefined;
+
+  await kv.set<TeamsTranscriptHistoryState>(
+    buildTeamsTranscriptHistoryKvKey(job.connectedAccountId),
+    {
+      ...currentState,
+      phase: isDefined(nextJob) ? 'importing' : 'imported',
+      pageCount: job.pageIndex + 1,
+      updatedAt: new Date().toISOString(),
+      nextJob,
+    },
+  );
+
+  if (isDefined(nextJob)) {
+    await enqueueTeamsTranscriptHistoryJobOrThrow({
+      job: nextJob,
+      delayMilliseconds:
+        importedCount > 0
+          ? TEAMS_TRANSCRIPT_HISTORY_IMPORT_PAGE_DELAY_MILLISECONDS
+          : 0,
+    });
+  }
+
+  return { success: true };
+};
+
+const retryOrFailPageOrThrow = async ({
+  job,
+  error,
+}: {
+  job: TeamsTranscriptHistoryJobPayload;
+  error: unknown;
+}): Promise<TeamsTranscriptHistoryPageResult> => {
+  const state = await findStateForJob(job);
+
+  if (!isDefined(state)) {
     return {
       success: true,
       skipped: true,
@@ -109,54 +164,44 @@ const processValidTeamsTranscriptHistoryPageOrThrow = async ({
     };
   }
 
-  const transition = getTeamsTranscriptHistoryPageTransition({
-    state: currentState,
-    job,
-    pageCounts,
-    nextPageUrl: page.nextPageUrl,
-    now: Date.now(),
+  const stateKvKey = buildTeamsTranscriptHistoryKvKey(job.connectedAccountId);
+  const retryDelayMilliseconds =
+    TEAMS_TRANSCRIPT_HISTORY_RETRY_DELAYS_MILLISECONDS[job.attempt];
+
+  if (
+    isFatalError({ error, attempt: job.attempt }) ||
+    !isDefined(retryDelayMilliseconds)
+  ) {
+    await kv.set<TeamsTranscriptHistoryState>(stateKvKey, {
+      ...state,
+      phase: 'failed',
+      updatedAt: new Date().toISOString(),
+    });
+
+    return { success: false, error: toErrorMessage(error) };
+  }
+
+  await kv.set<TeamsTranscriptHistoryState>(stateKvKey, {
+    ...state,
+    updatedAt: new Date().toISOString(),
+  });
+  await enqueueTeamsTranscriptHistoryJobOrThrow({
+    job: { ...job, attempt: job.attempt + 1 },
+    delayMilliseconds: retryDelayMilliseconds,
   });
 
-  if (isDefined(transition.state)) {
-    await kv.set<TeamsTranscriptHistoryState>(
-      buildTeamsTranscriptHistoryKvKey(job.connectedAccountId),
-      { ...transition.state, nextJob: transition.nextJob },
-    );
-  }
-
-  if (isDefined(transition.nextJob)) {
-    await enqueueTeamsTranscriptHistoryJobOrThrow({
-      job: transition.nextJob,
-      delayMilliseconds:
-        pageCounts.importedCount > 0
-          ? TEAMS_TRANSCRIPT_HISTORY_IMPORT_PAGE_DELAY_MILLISECONDS
-          : 0,
-    });
-  }
-
-  return {
-    success: true,
-    transcriptCount: transcripts.length,
-    isRunComplete: !isDefined(transition.nextJob),
-  };
+  return { success: true, retryScheduled: true };
 };
 
 export const processTeamsTranscriptHistoryPageOrThrow = async (
   payload: Partial<Record<keyof TeamsTranscriptHistoryJobPayload, unknown>>,
 ): Promise<TeamsTranscriptHistoryPageResult> => {
-  const {
-    connectedAccountId,
-    runId,
-    chunkIndex,
-    pageIndex,
-    attempt,
-    nextPageUrl,
-  } = payload;
+  const { connectedAccountId, runId, pageIndex, attempt, nextPageUrl } =
+    payload;
 
   if (
     !isNonEmptyString(connectedAccountId) ||
     !isNonEmptyString(runId) ||
-    !isNonNegativeInteger(chunkIndex) ||
     !isNonNegativeInteger(pageIndex) ||
     !isNonNegativeInteger(attempt) ||
     (isDefined(nextPageUrl) && !isNonEmptyString(nextPageUrl))
@@ -180,14 +225,13 @@ export const processTeamsTranscriptHistoryPageOrThrow = async (
   const job: TeamsTranscriptHistoryJobPayload = {
     connectedAccountId,
     runId,
-    chunkIndex,
     pageIndex,
     attempt,
     ...(isNonEmptyString(nextPageUrl) ? { nextPageUrl } : {}),
   };
 
   try {
-    return await processValidTeamsTranscriptHistoryPageOrThrow({ job });
+    return await importPageOrThrow(job);
   } catch (error) {
     if (error instanceof RetryableLogicFunctionError) {
       throw error;
@@ -198,7 +242,7 @@ export const processTeamsTranscriptHistoryPageOrThrow = async (
     );
 
     try {
-      return await retryOrFailTeamsTranscriptHistoryPageOrThrow({ job, error });
+      return await retryOrFailPageOrThrow({ job, error });
     } catch (recoveryError) {
       if (recoveryError instanceof RetryableLogicFunctionError) {
         throw recoveryError;

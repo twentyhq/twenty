@@ -7,7 +7,7 @@ import { getMeetingByJoinUrl } from 'src/features/transcripts/logic-functions/ut
 import { isTranscriptDuringOccurrence } from 'src/features/transcripts/logic-functions/utils/is-transcript-during-occurrence';
 import { isUnavailableTeamsTranscriptError } from 'src/features/transcripts/logic-functions/utils/is-unavailable-teams-transcript-error';
 import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 const listMeetingOccurrenceTranscriptsOrThrow = async ({
   accessToken,
@@ -17,7 +17,7 @@ const listMeetingOccurrenceTranscriptsOrThrow = async ({
   accessToken: string;
   joinWebUrl: string;
   occurrences: TeamsMeetingOccurrence[];
-}): Promise<TeamsOccurrenceTranscript[] | undefined> => {
+}): Promise<TeamsOccurrenceTranscript[]> => {
   try {
     const meeting = await getMeetingByJoinUrl({ accessToken, joinWebUrl });
 
@@ -53,7 +53,7 @@ const listMeetingOccurrenceTranscriptsOrThrow = async ({
       `[teams] skipped a meeting whose transcripts Microsoft Graph could not list: ${toErrorMessage(error)}`,
     );
 
-    return undefined;
+    return [];
   }
 };
 
@@ -63,31 +63,23 @@ export const listTeamsOccurrenceTranscripts = async ({
 }: {
   accessToken: string;
   occurrences: TeamsMeetingOccurrence[];
-}): Promise<{
-  transcripts: TeamsOccurrenceTranscript[];
-  unavailableMeetingCount: number;
-}> => {
+}): Promise<TeamsOccurrenceTranscript[]> => {
   const joinWebUrls = [
     ...new Set(occurrences.map((occurrence) => occurrence.joinWebUrl)),
   ];
   const transcripts: TeamsOccurrenceTranscript[] = [];
-  let unavailableMeetingCount = 0;
 
   for (const joinWebUrl of joinWebUrls) {
-    const meetingTranscripts = await listMeetingOccurrenceTranscriptsOrThrow({
-      accessToken,
-      joinWebUrl,
-      occurrences: occurrences.filter(
-        (occurrence) => occurrence.joinWebUrl === joinWebUrl,
-      ),
-    });
-
-    if (isDefined(meetingTranscripts)) {
-      transcripts.push(...meetingTranscripts);
-    } else {
-      unavailableMeetingCount += 1;
-    }
+    transcripts.push(
+      ...(await listMeetingOccurrenceTranscriptsOrThrow({
+        accessToken,
+        joinWebUrl,
+        occurrences: occurrences.filter(
+          (occurrence) => occurrence.joinWebUrl === joinWebUrl,
+        ),
+      })),
+    );
   }
 
-  return { transcripts, unavailableMeetingCount };
+  return transcripts;
 };
