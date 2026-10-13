@@ -10,8 +10,8 @@ import {
 
 import { TRIMMED_TEXT_WITHOUT_NUL_PATTERN } from 'src/engine/core-modules/application/connection-provider/connections/constants/trimmed-text-without-nul-pattern.constant';
 
-@InputType('DeduplicateAppConnectionInput')
-export class DeduplicateAppConnectionInput {
+@InputType('IdentifyAppConnectionInput')
+export class IdentifyAppConnectionInput {
   @IsUUID()
   @Field(() => ID)
   connectedAccountId: string;

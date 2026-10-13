@@ -50,14 +50,12 @@ export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
       input: { id: connectedAccountId, reason: 'application-only-probe' },
     },
   }),
-  deduplicateConnectedAccount: ({
+  identifyAppConnection: ({
     connectedAccountId,
   }: Pick<ApplicationOnlyEndpointTarget, 'connectedAccountId'>) => ({
     query: gql`
-      mutation DeduplicateConnectedAccount(
-        $input: DeduplicateAppConnectionInput!
-      ) {
-        deduplicateConnectedAccount(input: $input) {
+      mutation IdentifyAppConnection($input: IdentifyAppConnectionInput!) {
+        identifyAppConnection(input: $input) {
           connectedAccountId
         }
       }

@@ -94,16 +94,6 @@ exports[`Application-only endpoints with a non-application caller should fail wi
 }
 `;
 
-exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse deduplicateConnectedAccount and leave state unchanged 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse deleteAppKeyValue and leave state unchanged 1`] = `
 {
   "extensions": {
@@ -145,6 +135,16 @@ exports[`Application-only endpoints with a non-application caller should fail wi
 `;
 
 exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse getJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with a member session should refuse identifyAppConnection and leave state unchanged 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -288,16 +288,6 @@ exports[`Application-only endpoints with a non-application caller should fail wi
 }
 `;
 
-exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse deduplicateConnectedAccount and leave state unchanged 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse deleteAppKeyValue and leave state unchanged 1`] = `
 {
   "extensions": {
@@ -339,6 +329,16 @@ exports[`Application-only endpoints with a non-application caller should fail wi
 `;
 
 exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse getJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an API key should refuse identifyAppConnection and leave state unchanged 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -482,16 +482,6 @@ exports[`Application-only endpoints with a non-application caller should fail wi
 }
 `;
 
-exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse deduplicateConnectedAccount and leave state unchanged 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse deleteAppKeyValue and leave state unchanged 1`] = `
 {
   "extensions": {
@@ -533,6 +523,16 @@ exports[`Application-only endpoints with a non-application caller should fail wi
 `;
 
 exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse getJobs and leave state unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application-only endpoints with a non-application caller should fail with an OAuth-only client token should refuse identifyAppConnection and leave state unchanged 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

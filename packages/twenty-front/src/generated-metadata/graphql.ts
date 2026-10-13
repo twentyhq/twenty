@@ -340,11 +340,12 @@ export type AppConnection = {
   workspaceMemberId?: Maybe<Scalars['String']['output']>;
 };
 
-/** IDENTIFIED: the connection now carries the external account id; continue. MERGED: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. REJECTED: the connection is flagged as needing reconnect with its tokens cleared. */
-export enum AppConnectionDeduplicationOutcome {
+/** IDENTIFIED: the connection now carries the external account id; continue. MERGED_INTO_EXISTING: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. ALREADY_CONNECTED: another connection already holds the account; the connection is flagged as needing reconnect with its tokens cleared. ACCOUNT_CHANGED: a reconnect signed in with a different account; the connection is flagged as needing reconnect with its tokens cleared. */
+export enum AppConnectionIdentificationStatus {
+  ACCOUNT_CHANGED = 'ACCOUNT_CHANGED',
+  ALREADY_CONNECTED = 'ALREADY_CONNECTED',
   IDENTIFIED = 'IDENTIFIED',
-  MERGED = 'MERGED',
-  REJECTED = 'REJECTED'
+  MERGED_INTO_EXISTING = 'MERGED_INTO_EXISTING'
 }
 
 export type AppKeyValue = {
@@ -1770,18 +1771,6 @@ export enum DatabaseEventAction {
   UPSERTED = 'UPSERTED'
 }
 
-export type DeduplicateAppConnectionInput = {
-  connectedAccountId: Scalars['ID']['input'];
-  externalAccountId: Scalars['String']['input'];
-  handle?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type DeduplicateAppConnectionResult = {
-  __typename?: 'DeduplicateAppConnectionResult';
-  connectedAccountId: Scalars['ID']['output'];
-  outcome: AppConnectionDeduplicationOutcome;
-};
-
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID']['input'];
 };
@@ -2528,6 +2517,18 @@ export type GridPosition = {
   rowSpan: Scalars['Float']['output'];
 };
 
+export type IdentifyAppConnectionInput = {
+  connectedAccountId: Scalars['ID']['input'];
+  externalAccountId: Scalars['String']['input'];
+  handle?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type IdentifyAppConnectionResult = {
+  __typename?: 'IdentifyAppConnectionResult';
+  connectedAccountId: Scalars['ID']['output'];
+  status: AppConnectionIdentificationStatus;
+};
+
 export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
@@ -3211,7 +3212,6 @@ export type Mutation = {
   createViewSort: ViewSort;
   createWebhook: Webhook;
   deactivateSkill: Skill;
-  deduplicateConnectedAccount: DeduplicateAppConnectionResult;
   deleteAppKeyValue: Scalars['Boolean']['output'];
   deleteAppMessageChannel: MessageChannel;
   deleteApplicationRegistration: Scalars['Boolean']['output'];
@@ -3284,6 +3284,7 @@ export type Mutation = {
   getLoginTokenFromCredentials: LoginToken;
   goBackToPreviousOnboardingStep: OnboardingStepNavigation;
   grantApplicationCapabilities: ApplicationCapabilityGrant;
+  identifyAppConnection: IdentifyAppConnectionResult;
   impersonate: Impersonate;
   ingestAppMessages: IngestAppMessagesOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning;
@@ -3777,11 +3778,6 @@ export type MutationDeactivateSkillArgs = {
 };
 
 
-export type MutationDeduplicateConnectedAccountArgs = {
-  input: DeduplicateAppConnectionInput;
-};
-
-
 export type MutationDeleteAppKeyValueArgs = {
   key: Scalars['String']['input'];
   scope?: InputMaybe<AppKeyValueScope>;
@@ -4116,6 +4112,11 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
 
 export type MutationGrantApplicationCapabilitiesArgs = {
   input: GrantApplicationCapabilitiesInput;
+};
+
+
+export type MutationIdentifyAppConnectionArgs = {
+  input: IdentifyAppConnectionInput;
 };
 
 

@@ -11,7 +11,7 @@ import { type EntityManager, IsNull, Not, Repository } from 'typeorm';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { JUST_ADDED_CONNECTION_MAX_AGE_MS } from 'src/engine/core-modules/application/connection-provider/connections/constants/just-added-connection-max-age-ms.constant';
-import { AppConnectionDeduplicationOutcome } from 'src/engine/core-modules/application/connection-provider/connections/enums/app-connection-deduplication-outcome.enum';
+import { AppConnectionIdentificationStatus } from 'src/engine/core-modules/application/connection-provider/connections/enums/app-connection-identification-status.enum';
 import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -28,7 +28,7 @@ type DeduplicateConnectionArgs = {
 
 type DeduplicateConnectionResult = {
   connectedAccountId: string;
-  outcome: AppConnectionDeduplicationOutcome;
+  status: AppConnectionIdentificationStatus;
 };
 
 @Injectable()
@@ -99,7 +99,7 @@ export class ApplicationConnectionDeduplicationService {
 
           return {
             connectedAccountId: target.id,
-            outcome: AppConnectionDeduplicationOutcome.IDENTIFIED,
+            status: AppConnectionIdentificationStatus.IDENTIFIED,
           };
         }
 
@@ -112,7 +112,7 @@ export class ApplicationConnectionDeduplicationService {
 
           return {
             connectedAccountId: target.id,
-            outcome: AppConnectionDeduplicationOutcome.REJECTED,
+            status: AppConnectionIdentificationStatus.ACCOUNT_CHANGED,
           };
         }
 
@@ -137,7 +137,7 @@ export class ApplicationConnectionDeduplicationService {
 
           return {
             connectedAccountId: target.id,
-            outcome: AppConnectionDeduplicationOutcome.IDENTIFIED,
+            status: AppConnectionIdentificationStatus.IDENTIFIED,
           };
         }
 
@@ -160,7 +160,7 @@ export class ApplicationConnectionDeduplicationService {
 
           return {
             connectedAccountId: existing.id,
-            outcome: AppConnectionDeduplicationOutcome.MERGED,
+            status: AppConnectionIdentificationStatus.MERGED_INTO_EXISTING,
           };
         }
 
@@ -172,7 +172,7 @@ export class ApplicationConnectionDeduplicationService {
 
         return {
           connectedAccountId: target.id,
-          outcome: AppConnectionDeduplicationOutcome.REJECTED,
+          status: AppConnectionIdentificationStatus.ALREADY_CONNECTED,
         };
       },
     );

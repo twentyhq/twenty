@@ -19,11 +19,11 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-const DEDUPLICATE_CONNECTED_ACCOUNT_MUTATION = gql`
-  mutation DeduplicateConnectedAccount($input: DeduplicateAppConnectionInput!) {
-    deduplicateConnectedAccount(input: $input) {
+const IDENTIFY_APP_CONNECTION_MUTATION = gql`
+  mutation IdentifyAppConnection($input: IdentifyAppConnectionInput!) {
+    identifyAppConnection(input: $input) {
       connectedAccountId
-      outcome
+      status
     }
   }
 `;
@@ -54,9 +54,13 @@ type ConnectionRow = {
   archivedAt: Date | null;
 };
 
-type DeduplicateResponse = {
+type IdentifyAppConnectionResponse = {
   connectedAccountId: string;
-  outcome: 'IDENTIFIED' | 'MERGED' | 'REJECTED';
+  status:
+    | 'IDENTIFIED'
+    | 'MERGED_INTO_EXISTING'
+    | 'ALREADY_CONNECTED'
+    | 'ACCOUNT_CHANGED';
 };
 
 const buildManifestWithProvider = ({
@@ -99,7 +103,7 @@ const buildManifestWithProvider = ({
     },
   });
 
-describe('deduplicateConnectedAccount resolver (e2e)', () => {
+describe('identifyAppConnection resolver (e2e)', () => {
   let backgroundToken: string;
   let janeToken: string;
   let otherApplicationToken: string;
@@ -202,7 +206,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       [owningApplicationDbId],
     );
 
-  const deduplicate = ({
+  const identify = ({
     connectedAccountId,
     externalAccountId = ACCOUNT,
     handle,
@@ -215,7 +219,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
   }) =>
     makeMetadataApiRequest(
       {
-        query: DEDUPLICATE_CONNECTED_ACCOUNT_MUTATION,
+        query: IDENTIFY_APP_CONNECTION_MUTATION,
         variables: {
           input: { connectedAccountId, externalAccountId, handle },
         },
@@ -223,14 +227,14 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       token,
     );
 
-  const deduplicateOrThrow = async (
-    args: Parameters<typeof deduplicate>[0],
-  ): Promise<DeduplicateResponse> => {
-    const response = await deduplicate(args);
+  const identifyOrThrow = async (
+    args: Parameters<typeof identify>[0],
+  ): Promise<IdentifyAppConnectionResponse> => {
+    const response = await identify(args);
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.deduplicateConnectedAccount;
+    return response.body.data.identifyAppConnection;
   };
 
   beforeAll(async () => {
@@ -324,24 +328,24 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
     const connectionId = await insertConnection();
 
     expect(
-      await deduplicateOrThrow({
+      await identifyOrThrow({
         connectedAccountId: connectionId,
         handle: 'jane@slack.example',
       }),
-    ).toEqual({ connectedAccountId: connectionId, outcome: 'IDENTIFIED' });
+    ).toEqual({ connectedAccountId: connectionId, status: 'IDENTIFIED' });
     expect(await readConnection(connectionId)).toMatchObject({
       externalAccountId: ACCOUNT,
       handle: 'jane@slack.example',
     });
+    expect(await identifyOrThrow({ connectedAccountId: connectionId })).toEqual(
+      { connectedAccountId: connectionId, status: 'IDENTIFIED' },
+    );
     expect(
-      await deduplicateOrThrow({ connectedAccountId: connectionId }),
-    ).toEqual({ connectedAccountId: connectionId, outcome: 'IDENTIFIED' });
-    expect(
-      await deduplicateOrThrow({
+      await identifyOrThrow({
         connectedAccountId: connectionId,
         handle: 'jane.doe@slack.example',
       }),
-    ).toEqual({ connectedAccountId: connectionId, outcome: 'IDENTIFIED' });
+    ).toEqual({ connectedAccountId: connectionId, status: 'IDENTIFIED' });
     expect(await readConnection(connectionId)).toMatchObject({
       handle: 'jane.doe@slack.example',
     });
@@ -376,8 +380,11 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       });
 
       expect(
-        await deduplicateOrThrow({ connectedAccountId: duplicateId }),
-      ).toEqual({ connectedAccountId: existingId, outcome: 'MERGED' });
+        await identifyOrThrow({ connectedAccountId: duplicateId }),
+      ).toEqual({
+        connectedAccountId: existingId,
+        status: 'MERGED_INTO_EXISTING',
+      });
 
       const survivor = await readConnection(existingId);
 
@@ -417,7 +424,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       target: { visibility: 'user' },
     },
   ] as const)(
-    'rejects a new connection to an account $holderLabel already holds',
+    'flags a new connection to an account $holderLabel already holds',
     async ({ holder, target }) => {
       const holderId = await insertConnection({
         ...holder,
@@ -426,20 +433,21 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       const holderBefore = await readConnection(holderId);
       const targetId = await insertConnection(target);
 
-      expect(
-        await deduplicateOrThrow({ connectedAccountId: targetId }),
-      ).toEqual({ connectedAccountId: targetId, outcome: 'REJECTED' });
+      expect(await identifyOrThrow({ connectedAccountId: targetId })).toEqual({
+        connectedAccountId: targetId,
+        status: 'ALREADY_CONNECTED',
+      });
 
-      const rejected = await readConnection(targetId);
+      const flagged = await readConnection(targetId);
 
-      assertIsDefinedOrThrow(rejected);
-      expect(rejected).toMatchObject({
+      assertIsDefinedOrThrow(flagged);
+      expect(flagged).toMatchObject({
         externalAccountId: null,
         accessToken: null,
         refreshToken: null,
         authFailedReason: 'This account is already connected in this workspace',
       });
-      expect(rejected.authFailedAt).not.toBeNull();
+      expect(flagged.authFailedAt).not.toBeNull();
       expect(await readConnection(holderId)).toEqual(holderBefore);
     },
   );
@@ -465,9 +473,10 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
 
       await globalThis.testDataSource.query(agingQuery, [olderId]);
 
-      expect(await deduplicateOrThrow({ connectedAccountId: olderId })).toEqual(
-        { connectedAccountId: olderId, outcome: 'REJECTED' },
-      );
+      expect(await identifyOrThrow({ connectedAccountId: olderId })).toEqual({
+        connectedAccountId: olderId,
+        status: 'ALREADY_CONNECTED',
+      });
 
       const older = await readConnection(olderId);
 
@@ -490,7 +499,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       connectionProviderId: otherProviderDbId,
     });
 
-    const response = await deduplicate({ connectedAccountId: connectionId });
+    const response = await identify({ connectedAccountId: connectionId });
 
     expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
     expect(await readConnection(connectionId)).toMatchObject({
@@ -501,7 +510,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
   it('refuses a connection of this application when called by another application', async () => {
     const connectionId = await insertConnection();
 
-    const response = await deduplicate({
+    const response = await identify({
       connectedAccountId: connectionId,
       token: otherApplicationToken,
     });
@@ -518,7 +527,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
     });
 
-    const response = await deduplicate({
+    const response = await identify({
       connectedAccountId: connectionId,
       token: janeToken,
     });
@@ -537,7 +546,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       [connectionId],
     );
 
-    const response = await deduplicate({ connectedAccountId: connectionId });
+    const response = await identify({ connectedAccountId: connectionId });
 
     expect(response.body.errors).toBeDefined();
     expect(await readConnection(connectionId)).toMatchObject({
@@ -550,7 +559,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
     async (externalAccountId) => {
       const connectionId = await insertConnection();
 
-      const response = await deduplicate({
+      const response = await identify({
         connectedAccountId: connectionId,
         externalAccountId,
       });
@@ -575,12 +584,12 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
     const otherAccountBefore = await readConnection(otherAccountId);
 
     expect(
-      await deduplicateOrThrow({
+      await identifyOrThrow({
         connectedAccountId: originalId,
         externalAccountId: OTHER_ACCOUNT,
         handle: 'other@slack.example',
       }),
-    ).toEqual({ connectedAccountId: originalId, outcome: 'REJECTED' });
+    ).toEqual({ connectedAccountId: originalId, status: 'ACCOUNT_CHANGED' });
 
     const original = await readConnection(originalId);
 
@@ -604,7 +613,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
 
     const responses = await Promise.all(
       [firstId, secondId, firstId, secondId, firstId].map(
-        (connectedAccountId) => deduplicate({ connectedAccountId }),
+        (connectedAccountId) => identify({ connectedAccountId }),
       ),
     );
 
@@ -616,7 +625,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
     expect(await readOwnedConnections()).toHaveLength(1);
 
     for (const response of responses) {
-      const data = response.body.data?.deduplicateConnectedAccount;
+      const data = response.body.data?.identifyAppConnection;
 
       if (isDefined(data)) {
         expect(data.connectedAccountId).toBe(survivors[0].id);
@@ -640,7 +649,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
     );
     const [{ pid }] = await transaction.query('SELECT pg_backend_pid() AS pid');
     // supertest only sends the request once it is awaited or then'd.
-    const deduplicating = deduplicate({ connectedAccountId: loserId }).then(
+    const identifying = identify({ connectedAccountId: loserId }).then(
       (response) => response,
     );
 
@@ -664,12 +673,12 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       expect(isBlocked).toBe(true);
       await transaction.commitTransaction();
 
-      const response = await deduplicating;
+      const response = await identifying;
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.deduplicateConnectedAccount).toEqual({
+      expect(response.body.data.identifyAppConnection).toEqual({
         connectedAccountId: winnerId,
-        outcome: 'MERGED',
+        status: 'MERGED_INTO_EXISTING',
       });
 
       const winner = await readConnection(winnerId);
@@ -683,7 +692,7 @@ describe('deduplicateConnectedAccount resolver (e2e)', () => {
       }
 
       await transaction.release();
-      await deduplicating.catch(() => undefined);
+      await identifying.catch(() => undefined);
     }
   });
 

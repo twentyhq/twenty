@@ -9,8 +9,8 @@ import { Args, ID, Mutation, Query } from '@nestjs/graphql';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ConnectionProviderGraphqlApiExceptionInterceptor } from 'src/engine/core-modules/application/connection-provider/interceptors/connection-provider-graphql-api-exception.interceptor';
 import { AppConnectionObjectDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.object';
-import { DeduplicateAppConnectionInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/deduplicate-app-connection.input';
-import { DeduplicateAppConnectionResult } from 'src/engine/core-modules/application/connection-provider/connections/dtos/deduplicate-app-connection.result';
+import { IdentifyAppConnectionInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/identify-app-connection.input';
+import { IdentifyAppConnectionResult } from 'src/engine/core-modules/application/connection-provider/connections/dtos/identify-app-connection.result';
 import { ListAppConnectionsInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/list-app-connections.input';
 import { ReportAppConnectionAuthFailureInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/report-app-connection-auth-failure.input';
 import { ApplicationConnectionAuthFailureService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connection-auth-failure.service';
@@ -97,14 +97,14 @@ export class ApplicationConnectionsResolver {
     return true;
   }
 
-  @Mutation(() => DeduplicateAppConnectionResult)
-  async deduplicateConnectedAccount(
+  @Mutation(() => IdentifyAppConnectionResult)
+  async identifyAppConnection(
     @AuthApplication() application: FlatApplication,
     @AuthWorkspace() workspace: FlatWorkspace,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-    @Args('input') input: DeduplicateAppConnectionInput,
-  ): Promise<DeduplicateAppConnectionResult> {
+    @Args('input') input: IdentifyAppConnectionInput,
+  ): Promise<IdentifyAppConnectionResult> {
     return this.deduplicationService.deduplicateOrThrow({
       applicationId: application.id,
       workspaceId: workspace.id,

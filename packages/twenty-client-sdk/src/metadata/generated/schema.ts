@@ -244,8 +244,8 @@ export interface AppConnection {
 }
 
 
-/** IDENTIFIED: the connection now carries the external account id; continue. MERGED: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. REJECTED: the connection is flagged as needing reconnect with its tokens cleared. */
-export type AppConnectionDeduplicationOutcome = 'IDENTIFIED' | 'MERGED' | 'REJECTED'
+/** IDENTIFIED: the connection now carries the external account id; continue. MERGED_INTO_EXISTING: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. ALREADY_CONNECTED: another connection already holds the account; the connection is flagged as needing reconnect with its tokens cleared. ACCOUNT_CHANGED: a reconnect signed in with a different account; the connection is flagged as needing reconnect with its tokens cleared. */
+export type AppConnectionIdentificationStatus = 'ACCOUNT_CHANGED' | 'ALREADY_CONNECTED' | 'IDENTIFIED' | 'MERGED_INTO_EXISTING'
 
 export interface AppKeyValue {
     key: Scalars['String']
@@ -1155,12 +1155,6 @@ export interface CreateEmailGroupChannelOutput {
 /** Database Event Action */
 export type DatabaseEventAction = 'CREATED' | 'DELETED' | 'DESTROYED' | 'RESTORED' | 'UPDATED' | 'UPSERTED'
 
-export interface DeduplicateAppConnectionResult {
-    connectedAccountId: Scalars['ID']
-    outcome: AppConnectionDeduplicationOutcome
-    __typename: 'DeduplicateAppConnectionResult'
-}
-
 export interface DeleteSso {
     identityProviderId: Scalars['UUID']
     __typename: 'DeleteSso'
@@ -1539,6 +1533,12 @@ export interface GridPosition {
     row: Scalars['Float']
     rowSpan: Scalars['Float']
     __typename: 'GridPosition'
+}
+
+export interface IdentifyAppConnectionResult {
+    connectedAccountId: Scalars['ID']
+    status: AppConnectionIdentificationStatus
+    __typename: 'IdentifyAppConnectionResult'
 }
 
 export type IdentityProviderType = 'OIDC' | 'SAML'
@@ -2078,7 +2078,6 @@ export interface Mutation {
     createViewSort: ViewSort
     createWebhook: Webhook
     deactivateSkill: Skill
-    deduplicateConnectedAccount: DeduplicateAppConnectionResult
     deleteAppKeyValue: Scalars['Boolean']
     deleteAppMessageChannel: MessageChannel
     deleteApplicationRegistration: Scalars['Boolean']
@@ -2151,6 +2150,7 @@ export interface Mutation {
     getLoginTokenFromCredentials: LoginToken
     goBackToPreviousOnboardingStep: OnboardingStepNavigation
     grantApplicationCapabilities: ApplicationCapabilityGrant
+    identifyAppConnection: IdentifyAppConnectionResult
     impersonate: Impersonate
     ingestAppMessages: IngestAppMessagesOutput
     initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning
@@ -5244,15 +5244,6 @@ first?: (Scalars['Int'] | null),
 /** Paginate last */
 last?: (Scalars['Int'] | null)}
 
-export interface DeduplicateAppConnectionInput {connectedAccountId: Scalars['ID'],externalAccountId: Scalars['String'],handle?: (Scalars['String'] | null)}
-
-export interface DeduplicateAppConnectionResultGenqlSelection{
-    connectedAccountId?: boolean | number
-    outcome?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface DeleteApprovedAccessDomainInput {id: Scalars['UUID']}
 
 export interface DeleteOneFieldInput {
@@ -5735,6 +5726,15 @@ export interface GridPositionGenqlSelection{
     columnSpan?: boolean | number
     row?: boolean | number
     rowSpan?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface IdentifyAppConnectionInput {connectedAccountId: Scalars['ID'],externalAccountId: Scalars['String'],handle?: (Scalars['String'] | null)}
+
+export interface IdentifyAppConnectionResultGenqlSelection{
+    connectedAccountId?: boolean | number
+    status?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6283,7 +6283,6 @@ export interface MutationGenqlSelection{
     createViewSort?: (ViewSortGenqlSelection & { __args: {input: CreateViewSortInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
-    deduplicateConnectedAccount?: (DeduplicateAppConnectionResultGenqlSelection & { __args: {input: DeduplicateAppConnectionInput} })
     deleteAppKeyValue?: { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} }
     deleteAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteApplicationRegistration?: { __args: {id: Scalars['String']} }
@@ -6356,6 +6355,7 @@ export interface MutationGenqlSelection{
     getLoginTokenFromCredentials?: (LoginTokenGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], locale?: (Scalars['String'] | null), origin: Scalars['String'], password: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
     grantApplicationCapabilities?: (ApplicationCapabilityGrantGenqlSelection & { __args: {input: GrantApplicationCapabilitiesInput} })
+    identifyAppConnection?: (IdentifyAppConnectionResultGenqlSelection & { __args: {input: IdentifyAppConnectionInput} })
     impersonate?: (ImpersonateGenqlSelection & { __args: {userId: Scalars['UUID'], workspaceId: Scalars['UUID']} })
     ingestAppMessages?: (IngestAppMessagesOutputGenqlSelection & { __args: {input: IngestAppMessagesInput} })
     initiateOTPProvisioning?: (InitiateTwoFactorAuthenticationProvisioningGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
@@ -9371,14 +9371,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const DeduplicateAppConnectionResult_possibleTypes: string[] = ['DeduplicateAppConnectionResult']
-    export const isDeduplicateAppConnectionResult = (obj?: { __typename?: any } | null): obj is DeduplicateAppConnectionResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDeduplicateAppConnectionResult"')
-      return DeduplicateAppConnectionResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const DeleteSso_possibleTypes: string[] = ['DeleteSso']
     export const isDeleteSso = (obj?: { __typename?: any } | null): obj is DeleteSso => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteSso"')
@@ -9695,6 +9687,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isGridPosition = (obj?: { __typename?: any } | null): obj is GridPosition => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isGridPosition"')
       return GridPosition_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IdentifyAppConnectionResult_possibleTypes: string[] = ['IdentifyAppConnectionResult']
+    export const isIdentifyAppConnectionResult = (obj?: { __typename?: any } | null): obj is IdentifyAppConnectionResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIdentifyAppConnectionResult"')
+      return IdentifyAppConnectionResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11247,10 +11247,11 @@ export const enumAnalyticsType = {
    TRACK: 'TRACK' as const
 }
 
-export const enumAppConnectionDeduplicationOutcome = {
+export const enumAppConnectionIdentificationStatus = {
+   ACCOUNT_CHANGED: 'ACCOUNT_CHANGED' as const,
+   ALREADY_CONNECTED: 'ALREADY_CONNECTED' as const,
    IDENTIFIED: 'IDENTIFIED' as const,
-   MERGED: 'MERGED' as const,
-   REJECTED: 'REJECTED' as const
+   MERGED_INTO_EXISTING: 'MERGED_INTO_EXISTING' as const
 }
 
 export const enumAppKeyValueScope = {

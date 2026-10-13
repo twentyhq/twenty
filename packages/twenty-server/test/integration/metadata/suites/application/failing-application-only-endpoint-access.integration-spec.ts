@@ -116,7 +116,7 @@ const GRAPHQL_STATE_READERS: Partial<
   Record<GraphqlOperationName, StateReader>
 > = {
   reportAppConnectionAuthFailure: readConnectionAuthFailure,
-  deduplicateConnectedAccount: readConnectionExternalAccountId,
+  identifyAppConnection: readConnectionExternalAccountId,
   setAppKeyValue: readKeyValuePairs,
   deleteAppKeyValue: readKeyValuePairs,
   enqueueJob: readJobs,

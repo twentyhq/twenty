@@ -301,12 +301,13 @@ type AppConnection {
 }
 
 """
-IDENTIFIED: the connection now carries the external account id; continue. MERGED: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. REJECTED: the connection is flagged as needing reconnect with its tokens cleared.
+IDENTIFIED: the connection now carries the external account id; continue. MERGED_INTO_EXISTING: the credentials moved to the returned connection, which already held the account, and the connection the app was called for is deleted. ALREADY_CONNECTED: another connection already holds the account; the connection is flagged as needing reconnect with its tokens cleared. ACCOUNT_CHANGED: a reconnect signed in with a different account; the connection is flagged as needing reconnect with its tokens cleared.
 """
-enum AppConnectionDeduplicationOutcome {
+enum AppConnectionIdentificationStatus {
+  ACCOUNT_CHANGED
+  ALREADY_CONNECTED
   IDENTIFIED
-  MERGED
-  REJECTED
+  MERGED_INTO_EXISTING
 }
 
 type AppKeyValue {
@@ -1674,17 +1675,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-input DeduplicateAppConnectionInput {
-  connectedAccountId: ID!
-  externalAccountId: String!
-  handle: String
-}
-
-type DeduplicateAppConnectionResult {
-  connectedAccountId: ID!
-  outcome: AppConnectionDeduplicationOutcome!
-}
-
 input DeleteApprovedAccessDomainInput {
   id: UUID!
 }
@@ -2393,6 +2383,17 @@ type GridPosition {
   rowSpan: Float!
 }
 
+input IdentifyAppConnectionInput {
+  connectedAccountId: ID!
+  externalAccountId: String!
+  handle: String
+}
+
+type IdentifyAppConnectionResult {
+  connectedAccountId: ID!
+  status: AppConnectionIdentificationStatus!
+}
+
 enum IdentityProviderType {
   OIDC
   SAML
@@ -3051,7 +3052,6 @@ type Mutation {
   createViewSort(input: CreateViewSortInput!): ViewSort!
   createWebhook(input: CreateWebhookInput!): Webhook!
   deactivateSkill(id: UUID!): Skill!
-  deduplicateConnectedAccount(input: DeduplicateAppConnectionInput!): DeduplicateAppConnectionResult!
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
   deleteAppMessageChannel(id: UUID!): MessageChannel!
   deleteApplicationRegistration(id: String!): Boolean!
@@ -3123,6 +3123,7 @@ type Mutation {
   getLoginTokenFromCredentials(captchaToken: String, email: String!, locale: String, origin: String!, password: String!, verifyEmailRedirectPath: String): LoginToken!
   goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
+  identifyAppConnection(input: IdentifyAppConnectionInput!): IdentifyAppConnectionResult!
   impersonate(userId: UUID!, workspaceId: UUID!): Impersonate!
   ingestAppMessages(input: IngestAppMessagesInput!): IngestAppMessagesOutput!
   initiateOTPProvisioning(loginToken: String!, origin: String!): InitiateTwoFactorAuthenticationProvisioning!

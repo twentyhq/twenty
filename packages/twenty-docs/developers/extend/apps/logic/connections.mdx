@@ -133,13 +133,10 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 <Accordion title="Deduplicate connections" description="Keep one connection per external account">
 
-Every **Add connection** creates a new connection, even when the member authorizes an account that is already connected. Twenty cannot tell two accounts apart on its own, so your app tells it which external account a connection belongs to. Call `deduplicateConnectedAccount` from your on-connect handler with a stable id from the provider's authenticated account lookup:
+Every **Add connection** creates a new connection, even when the member authorizes an account that is already connected. Twenty cannot tell two accounts apart on its own, so your app tells it which external account a connection belongs to. Call `identifyConnection` from your on-connect handler with a stable id from the provider's authenticated account lookup:
 
 ```ts src/logic-functions/handlers/on-slack-connect-handler.ts
-import {
-  deduplicateConnectedAccount,
-  getConnection,
-} from 'twenty-sdk/logic-function';
+import { getConnection, identifyConnection } from 'twenty-sdk/logic-function';
 
 export const onSlackConnectHandler = async ({
   connectedAccountId,
@@ -152,12 +149,12 @@ export const onSlackConnectHandler = async ({
   });
   const { team_id: teamId, user_id: userId } = await response.json();
 
-  const deduplicated = await deduplicateConnectedAccount({
+  const { status } = await identifyConnection({
     connectedAccountId,
     externalAccountId: `${teamId}:${userId}`,
   });
 
-  if (deduplicated.outcome !== 'IDENTIFIED') {
+  if (status !== 'IDENTIFIED') {
     return;
   }
 
@@ -168,9 +165,10 @@ export const onSlackConnectHandler = async ({
 The contract:
 
 - Call it as the first statement of your onConnect handler, before any side effect.
-- Continue only when `outcome` is `IDENTIFIED`: the connection you were called for now carries that `externalAccountId`.
-- `MERGED`: another connection to the same account already existed with the same visibility (both shared, or both personal to the same member). Twenty copied the new credentials onto it (clearing any **Reconnect needed** flag), kept its id, name, owner and visibility, and deleted the connection you were called for. The returned `connectedAccountId` is that other connection; return immediately.
-- `REJECTED`: the connection you were called for is flagged as needing reconnect and its tokens are cleared; return immediately. This happens when the account is already connected elsewhere in the workspace, when a reconnect signed in with a different account than the one the connection was identified with, or when an older connection is identified for an account another connection already holds. That older connection is flagged rather than merged so nothing attached to it is lost. The connection stays listed as **Reconnect needed** until the member disconnects it or reconnects it with the right account.
+- `IDENTIFIED`: the connection you were called for now carries that `externalAccountId`; continue only on this status.
+- `MERGED_INTO_EXISTING`: another connection to the same account already existed with the same visibility (both shared, or both personal to the same member). Twenty copied the new credentials onto it (clearing any **Reconnect needed** flag), kept its id, name, owner and visibility, and deleted the connection you were called for. The returned `connectedAccountId` is that other connection; return immediately.
+- `ALREADY_CONNECTED`: the account is already connected elsewhere in the workspace, or an older connection is identified for an account another connection already holds. The connection you were called for is flagged as needing reconnect and its tokens are cleared; return immediately. An older connection is flagged rather than merged so nothing attached to it is lost. The connection stays listed as **Reconnect needed** until the member disconnects it or reconnects it with the right account.
+- `ACCOUNT_CHANGED`: a reconnect signed in with a different account than the one the connection was identified with. The connection is flagged, its tokens are cleared, and it stays listed as **Reconnect needed** the same way; return immediately.
 - Reconnect also runs onConnect, so call it there too.
 - Available from Twenty 2.47.0 (`engines`).
 

@@ -100,11 +100,13 @@ For third-party connections:
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
 
-Every Add creates a new connection, even for an account that is already connected. To keep one connection per account, call `deduplicateConnectedAccount({ connectedAccountId, externalAccountId, handle? })` from `twenty-sdk/logic-function` in the provider's `onConnectLogicFunction`, with a stable id from the provider's authenticated account lookup (include the organization or team when user ids are only unique inside it; never an email):
+Every Add creates a new connection, even for an account that is already connected. To keep one connection per account, call `identifyConnection({ connectedAccountId, externalAccountId, handle? })` from `twenty-sdk/logic-function` in the provider's `onConnectLogicFunction`, with a stable id from the provider's authenticated account lookup (include the organization or team when user ids are only unique inside it; never an email):
 
-- Call it as the first statement of your onConnect handler, before any side effect, and continue only when `outcome` is `IDENTIFIED`.
-- `MERGED`: the credentials now live on the returned `connectedAccountId`, another connection to the same account with the same visibility (and the same member, if personal); the connection you were called for is deleted.
-- `REJECTED`: the connection is flagged as needing reconnect with its tokens cleared. This happens when the account is already connected elsewhere in the workspace, when a reconnect signed in with a different account, or when an older connection is identified for an account another connection holds.
+- Call it as the first statement of your onConnect handler, before any side effect.
+- `IDENTIFIED`: the connection now carries that `externalAccountId`; continue only on this status.
+- `MERGED_INTO_EXISTING`: the credentials now live on the returned `connectedAccountId`, another connection to the same account with the same visibility (and the same member, if personal); the connection you were called for is deleted.
+- `ALREADY_CONNECTED`: the account is already connected elsewhere in the workspace, or an older connection is identified for an account another connection holds; the connection is flagged as needing reconnect with its tokens cleared.
+- `ACCOUNT_CHANGED`: a reconnect signed in with a different account; the connection is flagged as needing reconnect with its tokens cleared.
 - Reconnect also runs onConnect, so call it there too.
 - Available from Twenty 2.47.0 (`engines`).
 

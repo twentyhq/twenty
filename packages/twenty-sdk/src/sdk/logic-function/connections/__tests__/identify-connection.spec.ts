@@ -8,9 +8,9 @@ import {
   type MockInstance,
 } from 'vitest';
 
-import { deduplicateConnectedAccount } from '@/sdk/logic-function/connections/deduplicate-connected-account';
+import { identifyConnection } from '@/sdk/logic-function/connections/identify-connection';
 
-describe('deduplicateConnectedAccount', () => {
+describe('identifyConnection', () => {
   let fetchSpy: MockInstance<typeof fetch>;
 
   beforeEach(() => {
@@ -25,14 +25,14 @@ describe('deduplicateConnectedAccount', () => {
     fetchSpy.mockRestore();
   });
 
-  it('sends the mutation with the connection, external account id and handle, and returns the connection and outcome', async () => {
+  it('sends the mutation with the connection, external account id and handle, and returns the connection and status', async () => {
     fetchSpy.mockResolvedValue(
       new Response(
         JSON.stringify({
           data: {
-            deduplicateConnectedAccount: {
+            identifyAppConnection: {
               connectedAccountId: 'c-0',
-              outcome: 'MERGED',
+              status: 'MERGED_INTO_EXISTING',
             },
           },
         }),
@@ -40,7 +40,7 @@ describe('deduplicateConnectedAccount', () => {
       ),
     );
 
-    const result = await deduplicateConnectedAccount({
+    const result = await identifyConnection({
       connectedAccountId: 'c-1',
       externalAccountId: 'T123:U456',
       handle: 'jane@example.com',
@@ -52,7 +52,7 @@ describe('deduplicateConnectedAccount', () => {
 
     const body = JSON.parse(String(requestInit?.body));
 
-    expect(body.query).toContain('deduplicateConnectedAccount');
+    expect(body.query).toContain('identifyAppConnection');
     expect(body.variables).toEqual({
       input: {
         connectedAccountId: 'c-1',
@@ -60,7 +60,10 @@ describe('deduplicateConnectedAccount', () => {
         handle: 'jane@example.com',
       },
     });
-    expect(result).toEqual({ connectedAccountId: 'c-0', outcome: 'MERGED' });
+    expect(result).toEqual({
+      connectedAccountId: 'c-0',
+      status: 'MERGED_INTO_EXISTING',
+    });
   });
 
   it('omits the handle when none is given', async () => {
@@ -68,9 +71,9 @@ describe('deduplicateConnectedAccount', () => {
       new Response(
         JSON.stringify({
           data: {
-            deduplicateConnectedAccount: {
+            identifyAppConnection: {
               connectedAccountId: 'c-2',
-              outcome: 'IDENTIFIED',
+              status: 'IDENTIFIED',
             },
           },
         }),
@@ -78,7 +81,7 @@ describe('deduplicateConnectedAccount', () => {
       ),
     );
 
-    const result = await deduplicateConnectedAccount({
+    const result = await identifyConnection({
       connectedAccountId: 'c-2',
       externalAccountId: 'T123:U456',
     });
@@ -90,7 +93,7 @@ describe('deduplicateConnectedAccount', () => {
     });
     expect(result).toEqual({
       connectedAccountId: 'c-2',
-      outcome: 'IDENTIFIED',
+      status: 'IDENTIFIED',
     });
   });
 
@@ -103,7 +106,7 @@ describe('deduplicateConnectedAccount', () => {
     );
 
     await expect(
-      deduplicateConnectedAccount({
+      identifyConnection({
         connectedAccountId: 'c-3',
         externalAccountId: 'T123:U456',
       }),
