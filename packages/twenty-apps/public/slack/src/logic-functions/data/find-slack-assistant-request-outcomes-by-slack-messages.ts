@@ -1,23 +1,23 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
+import { type SlackAssistantRequestOutcome } from 'src/logic-functions/types/slack-assistant-request-outcome.type';
 import { isSlackAssistantRequestStatus } from 'src/logic-functions/utils/is-slack-assistant-request-status';
 
-export const findSlackAssistantRequestStatusesBySlackMessages = async (
+export const findSlackAssistantRequestOutcomesBySlackMessages = async (
   client: CoreApiClient,
   {
     slackChannelId,
     slackMessageTimestamps,
   }: { slackChannelId: string; slackMessageTimestamps: string[] },
-): Promise<Map<string, SlackAssistantRequestStatus>> => {
-  const statusByMessageTimestamp = new Map<
+): Promise<Map<string, SlackAssistantRequestOutcome>> => {
+  const outcomeByMessageTimestamp = new Map<
     string,
-    SlackAssistantRequestStatus
+    SlackAssistantRequestOutcome
   >();
 
   if (slackMessageTimestamps.length === 0) {
-    return statusByMessageTimestamp;
+    return outcomeByMessageTimestamp;
   }
 
   const queryResult = await client.query({
@@ -32,6 +32,7 @@ export const findSlackAssistantRequestStatusesBySlackMessages = async (
       edges: {
         node: {
           status: true,
+          responseText: true,
           slackMessageTimestamp: true,
         },
       },
@@ -45,9 +46,12 @@ export const findSlackAssistantRequestStatusesBySlackMessages = async (
       isNonEmptyString(node?.slackMessageTimestamp) &&
       isSlackAssistantRequestStatus(node.status)
     ) {
-      statusByMessageTimestamp.set(node.slackMessageTimestamp, node.status);
+      outcomeByMessageTimestamp.set(node.slackMessageTimestamp, {
+        status: node.status,
+        responseText: isString(node.responseText) ? node.responseText : null,
+      });
     }
   }
 
-  return statusByMessageTimestamp;
+  return outcomeByMessageTimestamp;
 };

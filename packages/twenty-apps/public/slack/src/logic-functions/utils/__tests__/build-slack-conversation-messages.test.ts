@@ -1,9 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { type SlackAssistantRequestOutcome } from 'src/logic-functions/types/slack-assistant-request-outcome.type';
 import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-slack-conversation-messages';
 
 const ASSISTANT_BOT_USER_ID = 'U_ASSISTANT';
+
+const answered = {
+  status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+  responseText: 'Sarah owns it.',
+};
+
+const failedBeforeAnswering = {
+  status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
+  responseText: null,
+};
 
 describe('buildSlackConversationMessages', () => {
   it('should keep only the messages after the last answered request that the server has not seen', () => {
@@ -21,9 +32,18 @@ describe('buildSlackConversationMessages', () => {
         { ts: '5', user: 'U789', text: 'Thanks!' },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
-      requestStatusByMessageTimestamp: new Map([
-        ['1', SLACK_ASSISTANT_REQUEST_STATUS.DONE],
-        ['4', SLACK_ASSISTANT_REQUEST_STATUS.PENDING],
+      requestOutcomeByMessageTimestamp: new Map<
+        string,
+        SlackAssistantRequestOutcome
+      >([
+        ['1', answered],
+        [
+          '4',
+          {
+            status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
+            responseText: null,
+          },
+        ],
       ]),
     });
 
@@ -45,9 +65,10 @@ describe('buildSlackConversationMessages', () => {
         },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
-      requestStatusByMessageTimestamp: new Map([
-        ['1', SLACK_ASSISTANT_REQUEST_STATUS.FAILED],
-      ]),
+      requestOutcomeByMessageTimestamp: new Map<
+        string,
+        SlackAssistantRequestOutcome
+      >([['1', failedBeforeAnswering]]),
     });
 
     expect(messages).toEqual([
@@ -75,15 +96,57 @@ describe('buildSlackConversationMessages', () => {
         },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
-      requestStatusByMessageTimestamp: new Map([
-        ['1', SLACK_ASSISTANT_REQUEST_STATUS.DONE],
-        ['4', SLACK_ASSISTANT_REQUEST_STATUS.DECLINED],
+      requestOutcomeByMessageTimestamp: new Map<
+        string,
+        SlackAssistantRequestOutcome
+      >([
+        ['1', answered],
+        [
+          '4',
+          {
+            status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
+            responseText: 'Linked members only.',
+          },
+        ],
       ]),
     });
 
     expect(messages).toEqual([
       { role: 'user', content: '<@U456>: They moved to London' },
       { role: 'user', content: '<@U_GUEST>: Update their address' },
+    ]);
+  });
+
+  it('should treat a request whose answer Slack could not deliver as answered', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        { ts: '1', user: 'U456', text: 'ACME signed yesterday' },
+        { ts: '2', user: 'U123', text: 'Who owns ACME?' },
+        {
+          ts: '3',
+          user: ASSISTANT_BOT_USER_ID,
+          bot_id: 'B1',
+          text: 'Something went wrong while posting the answer.',
+        },
+        { ts: '4', user: 'U456', text: 'Can you retry?' },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+      requestOutcomeByMessageTimestamp: new Map<
+        string,
+        SlackAssistantRequestOutcome
+      >([
+        [
+          '2',
+          {
+            status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
+            responseText: 'Sarah owns it.',
+          },
+        ],
+      ]),
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: '<@U456>: Can you retry?' },
     ]);
   });
 
@@ -94,7 +157,7 @@ describe('buildSlackConversationMessages', () => {
         { ts: '2', user: 'U456', text: 'Nice, ping ACME about it' },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
-      requestStatusByMessageTimestamp: new Map(),
+      requestOutcomeByMessageTimestamp: new Map(),
     });
 
     expect(messages).toEqual([
@@ -116,7 +179,7 @@ describe('buildSlackConversationMessages', () => {
         { ts: '3', user: 'U456', text: 'Since when?' },
       ],
       assistantBotUserId: undefined,
-      requestStatusByMessageTimestamp: new Map(),
+      requestOutcomeByMessageTimestamp: new Map(),
     });
 
     expect(messages).toEqual([
@@ -139,7 +202,7 @@ describe('buildSlackConversationMessages', () => {
         },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
-      requestStatusByMessageTimestamp: new Map(),
+      requestOutcomeByMessageTimestamp: new Map(),
     });
 
     expect(messages).toEqual([
@@ -161,7 +224,7 @@ describe('buildSlackConversationMessages', () => {
         },
       ],
       assistantBotUserId: ASSISTANT_BOT_USER_ID,
-      requestStatusByMessageTimestamp: new Map(),
+      requestOutcomeByMessageTimestamp: new Map(),
     });
 
     expect(messages).toEqual([

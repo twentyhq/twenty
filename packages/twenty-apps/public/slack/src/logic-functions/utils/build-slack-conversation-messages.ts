@@ -3,10 +3,11 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
-import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
+import { type SlackAssistantRequestOutcome } from 'src/logic-functions/types/slack-assistant-request-outcome.type';
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { buildSlackSharedFilesDescription } from 'src/logic-functions/utils/build-slack-shared-files-description';
 import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
+import { isSlackAssistantRequestAnswered } from 'src/logic-functions/utils/is-slack-assistant-request-answered';
 
 const joinSlackMessageContent = ({
   text,
@@ -40,36 +41,43 @@ const isOwnBotMessage = ({
 export const buildSlackConversationMessages = ({
   messages,
   assistantBotUserId,
-  requestStatusByMessageTimestamp,
+  requestOutcomeByMessageTimestamp,
 }: {
   messages: ReadonlyArray<SlackThreadMessage>;
   assistantBotUserId: string | undefined;
-  requestStatusByMessageTimestamp: ReadonlyMap<
+  requestOutcomeByMessageTimestamp: ReadonlyMap<
     string,
-    SlackAssistantRequestStatus
+    SlackAssistantRequestOutcome
   >;
 }): SlackAssistantAgentMessage[] => {
-  const getRequestStatus = (
+  const getRequestOutcome = (
     message: SlackThreadMessage,
-  ): SlackAssistantRequestStatus | undefined =>
+  ): SlackAssistantRequestOutcome | undefined =>
     isNonEmptyString(message.ts)
-      ? requestStatusByMessageTimestamp.get(message.ts)
+      ? requestOutcomeByMessageTimestamp.get(message.ts)
       : undefined;
 
   const lastAnsweredRequestIndex = messages
-    .map(getRequestStatus)
-    .lastIndexOf(SLACK_ASSISTANT_REQUEST_STATUS.DONE);
+    .map((message) => {
+      const requestOutcome = getRequestOutcome(message);
+
+      return (
+        isDefined(requestOutcome) &&
+        isSlackAssistantRequestAnswered(requestOutcome)
+      );
+    })
+    .lastIndexOf(true);
 
   return messages
     .slice(lastAnsweredRequestIndex + 1)
     .filter((message) => !isOwnBotMessage({ message, assistantBotUserId }))
     .filter((message) => {
-      const requestStatus = getRequestStatus(message);
+      const requestOutcome = getRequestOutcome(message);
 
       return (
-        !isDefined(requestStatus) ||
-        requestStatus === SLACK_ASSISTANT_REQUEST_STATUS.FAILED ||
-        requestStatus === SLACK_ASSISTANT_REQUEST_STATUS.DECLINED
+        !isDefined(requestOutcome) ||
+        requestOutcome.status === SLACK_ASSISTANT_REQUEST_STATUS.FAILED ||
+        requestOutcome.status === SLACK_ASSISTANT_REQUEST_STATUS.DECLINED
       );
     })
     .map((message): SlackAssistantAgentMessage => {
