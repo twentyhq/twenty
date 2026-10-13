@@ -5,7 +5,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
-export const isRelationFieldMetadataWithTarget = <
+export const isMorphOrRelationFlatFieldMetadataWithTarget = <
   TFieldMetadata extends OrmFlatFieldMetadata,
 >(
   fieldMetadata: TFieldMetadata,

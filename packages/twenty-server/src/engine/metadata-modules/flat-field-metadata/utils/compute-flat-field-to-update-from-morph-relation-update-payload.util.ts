@@ -16,7 +16,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
-import { isRelationFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-field-metadata-with-target.util';
+import { isMorphOrRelationFlatFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata-with-target.util';
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -56,7 +56,7 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
 
   const morphRelationsCommonLabel = fieldMetadataToUpdate.label;
 
-  const morphTargetToExtend = isRelationFieldMetadataWithTarget(
+  const morphTargetToExtend = isMorphOrRelationFlatFieldMetadataWithTarget(
     fieldMetadataToUpdate,
   )
     ? fieldMetadataToUpdate
@@ -64,7 +64,7 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
         flatFieldMetadata: fieldMetadataToUpdate,
         flatFieldMetadataMaps,
         flatObjectMetadata: sourceObjectMetadata,
-      }).find(isRelationFieldMetadataWithTarget);
+      }).find(isMorphOrRelationFlatFieldMetadataWithTarget);
 
   if (!isDefined(morphTargetToExtend)) {
     throw new FieldMetadataException(
