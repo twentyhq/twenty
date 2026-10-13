@@ -40,25 +40,23 @@ export class UsageLimitDefaultValueService implements OnModuleInit {
     );
 
     const isSetByAPlan = Object.values(usageLimitDefaultsByPlan).some(
-      ({ values, trialValues }) =>
-        !isUndefined(values?.[limitValueConfigVariable]) ||
-        !isUndefined(trialValues?.[limitValueConfigVariable]),
+      (planUsageLimitDefaults) =>
+        !isUndefined(planUsageLimitDefaults[limitValueConfigVariable]),
     );
 
     if (!isSetByAPlan) {
       return instanceValue;
     }
 
-    const subscriptionPlan =
-      await this.creditAllowanceProvider.getSubscriptionPlan(workspaceId);
+    const planKey = await this.creditAllowanceProvider.getPlanKey(workspaceId);
 
-    if (!isDefined(subscriptionPlan)) {
+    if (!isDefined(planKey)) {
       return instanceValue;
     }
 
     return getPlanLimitDefaultValue({
       usageLimitDefaultsByPlan,
-      subscriptionPlan,
+      planKey,
       limitValueConfigVariable,
       instanceValue,
     });

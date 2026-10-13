@@ -6,40 +6,25 @@ const INSTANCE_VALUE = 7;
 
 const usageLimitDefaultsByPlan: Record<string, PlanUsageLimitDefaults> = {
   PRO: {
-    values: {
-      WORKSPACE_RECORD_LIMIT: 1_000,
-      WORKSPACE_STORAGE_LIMIT_BYTES: 50,
-    },
-    trialValues: {
-      WORKSPACE_RECORD_LIMIT: 100,
-      EMAIL_SEND_WORKSPACE_DAILY_LIMIT: null,
-    },
+    WORKSPACE_RECORD_LIMIT: 1_000,
+    EMAIL_SEND_WORKSPACE_DAILY_LIMIT: null,
   },
-  ENTERPRISE: { values: { WORKSPACE_RECORD_LIMIT: null } },
 };
 
 describe('getPlanLimitDefaultValue', () => {
-  it.each<[string, boolean, OptionalNumericConfigVariableKey, number | null]>([
-    ['PRO', false, 'WORKSPACE_RECORD_LIMIT', 1_000],
-    ['PRO', true, 'WORKSPACE_RECORD_LIMIT', 100],
-    ['PRO', true, 'WORKSPACE_STORAGE_LIMIT_BYTES', 50],
-    ['PRO', true, 'EMAIL_SEND_WORKSPACE_DAILY_LIMIT', null],
-    ['PRO', false, 'EMAIL_SEND_WORKSPACE_DAILY_LIMIT', INSTANCE_VALUE],
-    ['ENTERPRISE', false, 'WORKSPACE_RECORD_LIMIT', null],
-    ['ENTERPRISE', true, 'WORKSPACE_RECORD_LIMIT', null],
-    ['ENTERPRISE', false, 'WORKSPACE_STORAGE_LIMIT_BYTES', INSTANCE_VALUE],
-    ['UNKNOWN', true, 'WORKSPACE_RECORD_LIMIT', INSTANCE_VALUE],
-  ])(
-    'on %s with trialing %s, %s is %p',
-    (planKey, isTrialing, limitValueConfigVariable, expected) => {
-      expect(
-        getPlanLimitDefaultValue({
-          usageLimitDefaultsByPlan,
-          subscriptionPlan: { planKey, isTrialing },
-          limitValueConfigVariable,
-          instanceValue: INSTANCE_VALUE,
-        }),
-      ).toBe(expected);
-    },
-  );
+  it.each<[string, OptionalNumericConfigVariableKey, number | null]>([
+    ['PRO', 'WORKSPACE_RECORD_LIMIT', 1_000],
+    ['PRO', 'EMAIL_SEND_WORKSPACE_DAILY_LIMIT', null],
+    ['PRO', 'WORKSPACE_STORAGE_LIMIT_BYTES', INSTANCE_VALUE],
+    ['UNKNOWN', 'WORKSPACE_RECORD_LIMIT', INSTANCE_VALUE],
+  ])('on %s, %s is %p', (planKey, limitValueConfigVariable, expected) => {
+    expect(
+      getPlanLimitDefaultValue({
+        usageLimitDefaultsByPlan,
+        planKey,
+        limitValueConfigVariable,
+        instanceValue: INSTANCE_VALUE,
+      }),
+    ).toBe(expected);
+  });
 });

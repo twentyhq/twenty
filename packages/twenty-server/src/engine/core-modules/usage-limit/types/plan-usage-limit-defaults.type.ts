@@ -1,10 +1,5 @@
-import { type OptionalNumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/optional-numeric-config-variable-key.type';
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 
-type PlanUsageLimitDefaultValues = Partial<
-  Record<OptionalNumericConfigVariableKey, number | null>
+export type PlanUsageLimitDefaults = Partial<
+  Record<keyof ConfigVariables, number | null>
 >;
-
-export type PlanUsageLimitDefaults = {
-  values?: PlanUsageLimitDefaultValues;
-  trialValues?: PlanUsageLimitDefaultValues;
-};
