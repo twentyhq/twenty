@@ -3,6 +3,7 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 
 export const recordSelectionRangeComponentState = createAtomComponentState<{
   anchorRecordId: string;
+  headRecordId: string;
   addedRecordIds: string[];
 } | null>({
   key: 'recordSelectionRangeComponentState',
