@@ -97,6 +97,7 @@ export type ApplicationRegistrationCatalogCard = {
   author: string | null;
   category: string | null;
   logoUrl: string | null;
+  requiredServerVersionRange: string | null;
 };
 
 @Injectable()
@@ -1042,6 +1043,7 @@ export class ApplicationRegistrationService {
         'description',
         'author',
         'category',
+        'manifest',
       ],
       where: {
         isListed: true,
@@ -1060,6 +1062,8 @@ export class ApplicationRegistrationService {
       category: registration.category,
       logoUrl:
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
+      requiredServerVersionRange:
+        registration.manifest?.application?.requiredServerVersionRange ?? null,
     }));
   }
 
