@@ -2,7 +2,7 @@ import Editor, { loader, type Monaco } from '@monaco-editor/react';
 import { isNumber } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type editor } from 'monaco-editor';
-import { type KeyboardEvent, useEffect, useId, useState } from 'react';
+import { type KeyboardEvent, useId, useState } from 'react';
 
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
@@ -12,8 +12,9 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { BASE_CODE_EDITOR_THEME_ID } from './internal/constants/BaseCodeEditorThemeId';
 import { CODE_EDITOR_DEFAULT_HEIGHT } from './internal/constants/CodeEditorDefaultHeight';
 import { useCodeEditorHeight } from './internal/useCodeEditorHeight';
+import { useCodeEditorLoaderConfiguration } from './internal/useCodeEditorLoaderConfiguration';
 import { useCodeEditorSubscriptions } from './internal/useCodeEditorSubscriptions';
-import { getBaseCodeEditorTheme } from './internal/utils/getBaseCodeEditorTheme';
+import { useCodeEditorTheme } from './internal/useCodeEditorTheme';
 import styles from './CodeEditor.module.scss';
 import { type CodeEditorProps } from './types/CodeEditorProps';
 
@@ -69,8 +70,9 @@ export const CodeEditor = ({
   const colorScheme = useThemeColorScheme();
   const [monaco, setMonaco] = useState<Monaco>();
   const [editor, setEditor] = useState<editor.IStandaloneCodeEditor>();
-  const [isMonacoLoaderConfigured, setIsMonacoLoaderConfigured] =
-    useState(false);
+  const isMonacoLoaderConfigured = useCodeEditorLoaderConfiguration(
+    configureMonacoLoader,
+  );
   const editorContainerId = useId();
   const editorTheme =
     requestedTheme ?? options?.theme ?? BASE_CODE_EDITOR_THEME_ID;
@@ -87,12 +89,12 @@ export const CodeEditor = ({
     ? theme.spacingMultiplicator * 4
     : undefined;
 
-  const defineDefaultTheme = (monaco: Monaco) => {
-    monaco.editor.defineTheme(
-      BASE_CODE_EDITOR_THEME_ID,
-      getBaseCodeEditorTheme({ theme, colorScheme }),
-    );
-  };
+  const defineDefaultTheme = useCodeEditorTheme({
+    monaco,
+    theme,
+    colorScheme,
+    editorTheme,
+  });
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     containerProps?.onKeyDown?.(event);
@@ -101,32 +103,6 @@ export const CodeEditor = ({
       event.stopPropagation();
     }
   };
-
-  useEffect(() => {
-    let isStillMounted = true;
-
-    configureMonacoLoader().then(() => {
-      if (isStillMounted) {
-        setIsMonacoLoaderConfigured(true);
-      }
-    });
-
-    return () => {
-      isStillMounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isDefined(monaco)) {
-      return;
-    }
-
-    monaco.editor.defineTheme(
-      BASE_CODE_EDITOR_THEME_ID,
-      getBaseCodeEditorTheme({ theme, colorScheme }),
-    );
-    monaco.editor.setTheme(editorTheme);
-  }, [colorScheme, editorTheme, monaco, theme]);
 
   return (
     <div
