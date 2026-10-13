@@ -28,9 +28,12 @@ export const ToastCountdownEffect = ({
     timingOverrides,
   } = useContext(ToastTimingContext);
   const isProgress = isDefined(progress);
-  const overriddenFields = Object.keys(timingOverrides ?? {});
-  const isDurationOverridden = overriddenFields.includes('duration');
-  const isProgressOverridden = overriddenFields.includes('progress');
+  const isDurationOverridden =
+    isDefined(timingOverrides) &&
+    Object.prototype.propertyIsEnumerable.call(timingOverrides, 'duration');
+  const isProgressOverridden =
+    isDefined(timingOverrides) &&
+    Object.prototype.propertyIsEnumerable.call(timingOverrides, 'progress');
 
   useLayoutEffect(() => {
     if (isDefined(lifecycle) && isDefined(id) && isDefined(rendererKey)) {

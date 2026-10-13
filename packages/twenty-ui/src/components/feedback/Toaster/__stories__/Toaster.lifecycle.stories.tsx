@@ -5,6 +5,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from '@ui/testing';
 
 import { ToasterLifecycleExample } from './ToasterLifecycleExample';
+import { ToasterLifecycleTimingOverrideExample } from './ToasterLifecycleTimingOverrideExample';
 import { ToasterPortalExample } from './ToasterPortalExample';
 
 const meta: Meta<typeof ToasterLifecycleExample> = {
@@ -197,6 +198,101 @@ export const MirrorsExpireOnce: Story = {
     });
     await wait(500);
     expect(args.onClose).toHaveBeenCalledOnce();
+  },
+};
+
+export const UndefinedDurationOverrideRestoresDefaultCountdown: Story = {
+  args: { duration: 1200 },
+  render: (args) => (
+    <ToasterLifecycleTimingOverrideExample
+      duration={args.duration}
+      initialTimingOverrides={{ duration: 400 }}
+      onClose={args.onClose}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const { canvas, user, first, second } = getLifecycle(canvasElement);
+    const add = canvas.getByRole('button', {
+      name: 'Add override notification',
+    });
+    await user.click(add);
+    const initialFirst = first.getByRole('status');
+    const initialSecond = second.getByRole('status');
+    await waitFor(() => expect(args.onClose).toHaveBeenCalledOnce(), {
+      timeout: 1000,
+    });
+    await waitFor(() => {
+      expect(initialFirst).not.toBeInTheDocument();
+      expect(initialSecond).not.toBeInTheDocument();
+    });
+    await user.click(
+      canvas.getByRole('button', { name: 'Use default duration override' }),
+    );
+    await user.click(add);
+    const defaultFirst = first.getByRole('status');
+    const defaultSecond = second.getByRole('status');
+    expect(defaultFirst.id).toBe(defaultSecond.id);
+    await wait(1700);
+    expect(defaultFirst).toBeVisible();
+    expect(defaultSecond).toBeVisible();
+    expect(args.onClose).toHaveBeenCalledOnce();
+    await waitFor(() => expect(args.onClose).toHaveBeenCalledTimes(2), {
+      timeout: 5000,
+    });
+    await waitFor(() => {
+      expect(defaultFirst).not.toBeInTheDocument();
+      expect(defaultSecond).not.toBeInTheDocument();
+    });
+    expect(args.onClose).toHaveBeenCalledTimes(2);
+    expect(args.onClose).toHaveBeenNthCalledWith(1, 'Override notification 1');
+    expect(args.onClose).toHaveBeenNthCalledWith(2, 'Override notification 2');
+  },
+};
+
+export const UndefinedProgressOverrideStartsStoredCountdown: Story = {
+  args: { duration: 800 },
+  render: (args) => (
+    <ToasterLifecycleTimingOverrideExample
+      duration={args.duration}
+      progress={25}
+      initialTimingOverrides={{ progress: 75 }}
+      onClose={args.onClose}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const { canvas, user, first, second } = getLifecycle(canvasElement);
+    await user.click(
+      canvas.getByRole('button', { name: 'Add override notification' }),
+    );
+    const firstToast = first.getByRole('status');
+    const secondToast = second.getByRole('status');
+    expect(
+      within(firstToast).getByRole('progressbar', { hidden: true }),
+    ).toHaveAttribute('aria-valuenow', '75');
+    expect(
+      within(secondToast).getByRole('progressbar', { hidden: true }),
+    ).toHaveAttribute('aria-valuenow', '75');
+    await wait(1200);
+    expect(firstToast).toBeVisible();
+    expect(secondToast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    await user.click(
+      canvas.getByRole('button', { name: 'Clear progress override' }),
+    );
+    expect(
+      within(firstToast).queryByRole('progressbar', { hidden: true }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(secondToast).queryByRole('progressbar', { hidden: true }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(args.onClose).toHaveBeenCalledOnce(), {
+      timeout: 1600,
+    });
+    await waitFor(() => {
+      expect(firstToast).not.toBeInTheDocument();
+      expect(secondToast).not.toBeInTheDocument();
+    });
+    expect(args.onClose).toHaveBeenCalledWith('Override notification 1');
   },
 };
 
