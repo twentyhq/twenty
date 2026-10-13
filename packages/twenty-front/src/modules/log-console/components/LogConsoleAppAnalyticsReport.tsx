@@ -33,11 +33,17 @@ export const LogConsoleAppAnalyticsReport = ({
     return <UsageSectionSkeleton />;
   }
 
-  if (!isDefined(analytics)) {
+  if (isDefined(error)) {
     return (
       <SettingsEmptyPlaceholder>
-        {error?.message ?? t`No analytics could be loaded.`}
+        {t`Something went wrong while loading analytics. Please try again.`}
       </SettingsEmptyPlaceholder>
+    );
+  }
+
+  if (!isDefined(analytics)) {
+    return (
+      <SettingsEmptyPlaceholder>{t`No analytics could be loaded.`}</SettingsEmptyPlaceholder>
     );
   }
 
