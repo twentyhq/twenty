@@ -105,6 +105,11 @@ describe('findTeamsTranscriptCalendarEventIdOrThrow', () => {
         transcript: TRANSCRIPT,
       }),
     ).resolves.toBe('series-calendar-event');
+    expect(fetchGraphJson).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: expect.stringContaining('%24top=1000'),
+      }),
+    );
     expect(coreApiClient.query).toHaveBeenCalledTimes(1);
     expect(coreApiClient.query).toHaveBeenCalledWith({
       calendarChannelEventAssociations: expect.objectContaining({
