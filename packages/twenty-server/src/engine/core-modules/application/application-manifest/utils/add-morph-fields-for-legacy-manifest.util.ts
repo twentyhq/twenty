@@ -7,7 +7,7 @@ import {
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
+import { buildMorphRelationGroupFromTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-morph-relation-group-from-target.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -57,8 +57,6 @@ export const addMorphFieldsForLegacyManifest = ({
       }
       group = existingGroup;
     } else {
-      // Older SDKs only describe targets. Materialize their owner once at import;
-      // later imports keep the persisted field, even if the original target is gone.
       assertIsDefinedOrThrow(
         field.relationTargetObjectMetadataUniversalIdentifier,
       );
@@ -70,35 +68,18 @@ export const addMorphFieldsForLegacyManifest = ({
           field.relationTargetObjectMetadataUniversalIdentifier
         ];
       assertIsDefinedOrThrow(targetObject);
-      const inverse = isDefined(
-        field.relationTargetFieldMetadataUniversalIdentifier,
-      )
-        ? (manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-            field.relationTargetFieldMetadataUniversalIdentifier
-          ] ??
-          existingMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-            field.relationTargetFieldMetadataUniversalIdentifier
-          ])
-        : undefined;
-      const { joinColumnName: _joinColumnName, ...settings } =
-        field.universalSettings;
-      group = {
-        ...field,
-        universalIdentifier: field.morphId,
-        name: getMorphNameFromMorphFieldMetadataName({
-          morphRelationFlatFieldMetadata: field,
-          nameSingular: targetObject.nameSingular,
-          namePlural: targetObject.namePlural,
-        }),
-        relationTargetFieldMetadataUniversalIdentifier: null,
-        relationTargetObjectMetadataUniversalIdentifier: null,
-        universalSettings: {
-          ...settings,
-          targetFieldLabel: inverse?.label,
-          targetFieldName: inverse?.name,
-          targetFieldIcon: inverse?.icon ?? undefined,
-        },
-      };
+      group = buildMorphRelationGroupFromTarget({
+        target: field,
+        targetObject,
+        inverse: isDefined(field.relationTargetFieldMetadataUniversalIdentifier)
+          ? (manifestMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+              field.relationTargetFieldMetadataUniversalIdentifier
+            ] ??
+            existingMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+              field.relationTargetFieldMetadataUniversalIdentifier
+            ])
+          : undefined,
+      });
     }
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
       universalFlatEntity: group,

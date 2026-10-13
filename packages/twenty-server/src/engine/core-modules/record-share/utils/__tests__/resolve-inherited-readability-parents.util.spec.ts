@@ -44,7 +44,8 @@ const buildManyToOneField = ({
     universalIdentifier: `${id}-universal-identifier`,
     objectMetadataId,
     relationTargetObjectMetadataId,
-    relationTargetFieldMetadataId: relationTargetFieldMetadataId ?? null,
+    relationTargetFieldMetadataId:
+      relationTargetFieldMetadataId ?? `${name}-inverse-field-id`,
     morphId: morphId ?? null,
     settings: {
       relationType: RelationType.MANY_TO_ONE,

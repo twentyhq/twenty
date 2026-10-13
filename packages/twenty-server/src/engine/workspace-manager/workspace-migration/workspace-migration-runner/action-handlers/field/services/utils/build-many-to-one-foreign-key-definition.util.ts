@@ -1,5 +1,3 @@
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
@@ -14,25 +12,24 @@ export const buildManyToOneForeignKeyDefinition = ({
   flatObjectMetadataMaps,
   tableName,
 }: {
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType> & {
+    relationTargetObjectMetadataId: string;
+  };
   flatObjectMetadataMaps: MetadataFlatEntityMaps<'objectMetadata'>;
   tableName: string;
-}): WorkspaceSchemaForeignKeyDefinition => {
-  assertIsDefinedOrThrow(flatFieldMetadata.relationTargetObjectMetadataId);
-  return {
-    tableName,
-    columnName: computeMorphOrRelationFieldJoinColumnName({
-      name: flatFieldMetadata.name,
+}): WorkspaceSchemaForeignKeyDefinition => ({
+  tableName,
+  columnName: computeMorphOrRelationFieldJoinColumnName({
+    name: flatFieldMetadata.name,
+  }),
+  referencedTableName: computeObjectTargetTable(
+    findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
     }),
-    referencedTableName: computeObjectTargetTable(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
-      }),
-    ),
-    referencedColumnName: 'id',
-    onDelete:
-      convertOnDeleteActionToOnDelete(flatFieldMetadata.settings?.onDelete) ??
-      'CASCADE',
-  };
-};
+  ),
+  referencedColumnName: 'id',
+  onDelete:
+    convertOnDeleteActionToOnDelete(flatFieldMetadata.settings?.onDelete) ??
+    'CASCADE',
+});

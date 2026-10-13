@@ -1,4 +1,5 @@
 import { Command } from 'nest-commander';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined, isMorphRelationGroup } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -125,23 +126,30 @@ export class BackfillMorphFieldGroupsCommand extends ProvisionedWorkspaceCommand
         flatFieldMetadata.applicationUniversalIdentifier ===
         applicationUniversalIdentifier;
 
-      const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-          {
-            workspaceId,
-            isSystemBuild: true,
-            applicationUniversalIdentifier,
-            allFlatEntityOperationByMetadataName: {
-              fieldMetadata: {
-                flatEntityToCreate:
-                  flatFieldMetadatasToCreate.filter(belongsToApplication),
-                flatEntityToUpdate: [],
-                flatEntityToDelete:
-                  flatFieldMetadatasToDelete.filter(belongsToApplication),
-              },
-            },
+      const args = {
+        workspaceId,
+        isSystemBuild: true,
+        applicationUniversalIdentifier,
+        allFlatEntityOperationByMetadataName: {
+          fieldMetadata: {
+            flatEntityToCreate:
+              flatFieldMetadatasToCreate.filter(belongsToApplication),
+            flatEntityToUpdate: [],
+            flatEntityToDelete:
+              flatFieldMetadatasToDelete.filter(belongsToApplication),
           },
-        );
+        },
+      };
+
+      const result =
+        applicationUniversalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+          ? await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+              args,
+            )
+          : await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+              args,
+            );
 
       if (result.status === 'fail') {
         throw new WorkspaceMigrationBuilderException(

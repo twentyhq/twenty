@@ -10,8 +10,6 @@ export type FieldMetadataEventRecord = {
   morphId?: string | null;
 };
 
-// Clients hold one field per morph relation: the survivor target, or the
-// group for workspaces with morph field groups enabled.
 export const isFieldMetadataEventRecordVisible = ({
   record,
   isMorphFieldGroupEnabled,

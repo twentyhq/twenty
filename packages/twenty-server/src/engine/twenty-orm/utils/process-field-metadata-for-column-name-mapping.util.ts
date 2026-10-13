@@ -1,10 +1,11 @@
-import { isMorphRelationGroup } from 'twenty-shared/utils';
 import {
   type CompositeType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
+import { isMorphRelationGroup } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';

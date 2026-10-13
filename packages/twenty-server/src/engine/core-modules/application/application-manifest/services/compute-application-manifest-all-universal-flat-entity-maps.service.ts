@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import {
   type Manifest,
   type PageLayoutManifest,
@@ -70,10 +71,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     workspaceId,
   }: {
     manifest: Manifest;
-    ownerFlatApplication: Pick<
-      FlatApplication,
-      'universalIdentifier' | 'sourceType'
-    >;
+    ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
     existingAllFlatEntityMaps?: AllFlatEntityMaps;
     now: string;

@@ -7,8 +7,6 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-// Saved references still point at the survivor target, so the group is only
-// exposed to workspaces that opted in.
 export const pickMorphRelationRepresentative = <
   TFlatFieldMetadata extends
     FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,

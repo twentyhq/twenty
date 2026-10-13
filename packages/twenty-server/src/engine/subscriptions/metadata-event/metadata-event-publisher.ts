@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FeatureFlagKey, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
@@ -16,7 +17,6 @@ import {
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type BroadcastEventRecord = {
   userWorkspaceId?: string | null;
@@ -41,7 +41,7 @@ export class MetadataEventPublisher {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async publish(metadataEventBatch: MetadataEventBatch): Promise<void> {
@@ -185,12 +185,11 @@ export class MetadataEventPublisher {
           flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
         },
       );
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      metadataEventBatch.workspaceId,
-      ['featureFlagsMap'],
-    );
     const isMorphFieldGroupEnabled =
-      featureFlagsMap[FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED] ?? false;
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+        metadataEventBatch.workspaceId,
+      );
 
     const visibleEvents = metadataEventBatch.events.filter((event) =>
       isFieldMetadataEventRecordVisible({

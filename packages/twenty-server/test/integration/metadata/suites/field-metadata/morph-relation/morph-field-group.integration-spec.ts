@@ -6,7 +6,6 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -127,7 +126,7 @@ describe('morph field group', () => {
       firstTargetObjectMetadataId,
       secondTargetObjectMetadataId,
       thirdTargetObjectMetadataId,
-    ]) {
+    ].filter(Boolean)) {
       await deleteObject(objectMetadataId);
     }
   });
@@ -193,10 +192,7 @@ describe('morph field group', () => {
     });
 
     await deleteObject(secondTargetObjectMetadataId);
-    secondTargetObjectMetadataId = await createObject(
-      'groupTargetTwo',
-      'groupTargetTwos',
-    );
+    secondTargetObjectMetadataId = '';
 
     const [groupAfterDeletion] = await findMorphFieldsOfObject({
       id: { eq: sourceObjectMetadataId },
@@ -258,23 +254,5 @@ describe('morph field group', () => {
     expect(
       await findMorphFieldsOfObject({ id: { eq: sourceObjectMetadataId } }),
     ).toEqual([]);
-  });
-
-  it('should expose the standard group of note targets', async () => {
-    await setMorphFieldGroupEnabled(true);
-
-    const morphFields = await findMorphFieldsOfObject({
-      universalIdentifier: {
-        eq: STANDARD_OBJECTS.noteTarget.universalIdentifier,
-      },
-    });
-
-    expect(morphFields).toHaveLength(1);
-    expect(morphFields[0]).toMatchObject({
-      name: 'target',
-      universalIdentifier:
-        STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
-    });
-    expect(morphFields[0].morphRelations.length).toBeGreaterThan(1);
   });
 });

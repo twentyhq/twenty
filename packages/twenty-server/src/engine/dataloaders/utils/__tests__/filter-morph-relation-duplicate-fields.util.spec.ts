@@ -127,40 +127,21 @@ describe('filterMorphRelationDuplicateFields', () => {
       universalIdentifier: 'target',
     });
 
-    it('should keep the survivor target when morph field groups are disabled', () => {
-      expect(
-        filterMorphRelationDuplicateFields({
-          flatFieldMetadatas: [group, target],
-          isMorphFieldGroupEnabled: false,
-        }),
-      ).toEqual([target]);
-    });
-
-    it('should return the group when morph field groups are enabled', () => {
-      expect(
-        filterMorphRelationDuplicateFields({
-          flatFieldMetadatas: [target, group],
-          isMorphFieldGroupEnabled: true,
-        }),
-      ).toEqual([group]);
-    });
-
-    it('should fall back to the survivor target when the group is not backfilled yet', () => {
-      expect(
-        filterMorphRelationDuplicateFields({
-          flatFieldMetadatas: [target],
-          isMorphFieldGroupEnabled: true,
-        }),
-      ).toEqual([target]);
-    });
-
-    it('should hide a group without targets when morph field groups are disabled', () => {
-      expect(
-        filterMorphRelationDuplicateFields({
-          flatFieldMetadatas: [group],
-          isMorphFieldGroupEnabled: false,
-        }),
-      ).toEqual([]);
-    });
+    it.each([
+      ['the survivor while disabled', [group, target], false, [target]],
+      ['the group while enabled', [target, group], true, [group]],
+      ['the survivor before the backfill', [target], true, [target]],
+      ['nothing for an empty group while disabled', [group], false, []],
+    ])(
+      'should return %s',
+      (_, flatFieldMetadatas, isMorphFieldGroupEnabled, expected) => {
+        expect(
+          filterMorphRelationDuplicateFields({
+            flatFieldMetadatas,
+            isMorphFieldGroupEnabled,
+          }),
+        ).toEqual(expected);
+      },
+    );
   });
 });

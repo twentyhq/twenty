@@ -5,7 +5,6 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
-import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -35,7 +34,9 @@ const flatObjectMetadataMaps = {
 
 const buildRelationField = (
   overrides: Partial<FlatFieldMetadata> = {},
-): FlatFieldMetadata<MorphOrRelationFieldMetadataType> =>
+): Parameters<
+  typeof buildManyToOneForeignKeyDefinition
+>[0]['flatFieldMetadata'] =>
   getFlatFieldMetadataMock({
     universalIdentifier: 'company-relation-field',
     objectMetadataId: '20202020-1111-4444-8888-000000000002',
@@ -47,7 +48,9 @@ const buildRelationField = (
       onDelete: RelationOnDeleteAction.SET_NULL,
     },
     ...overrides,
-  }) as FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+  }) as Parameters<
+    typeof buildManyToOneForeignKeyDefinition
+  >[0]['flatFieldMetadata'];
 
 describe('buildManyToOneForeignKeyDefinition', () => {
   it('should point the join column at the target table primary key', () => {

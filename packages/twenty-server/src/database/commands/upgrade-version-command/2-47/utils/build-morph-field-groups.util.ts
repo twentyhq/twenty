@@ -9,10 +9,10 @@ import { v4 } from 'uuid';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildMorphRelationGroupFromTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-morph-relation-group-from-target.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isRelationFieldMetadataWithTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-field-metadata-with-target.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
 export type SkippedMorphFieldGroup = {
   morphId: string;
@@ -42,46 +42,34 @@ export const buildMorphFieldGroups = ({
 
   for (const flatFieldMetadata of allFlatFieldMetadatas) {
     if (
-      !isFlatFieldMetadataOfType(
+      isFlatFieldMetadataOfType(
         flatFieldMetadata,
         FieldMetadataType.MORPH_RELATION,
-      ) ||
-      isMorphRelationGroup(flatFieldMetadata)
+      ) &&
+      !isMorphRelationGroup(flatFieldMetadata) &&
+      !isDefined(
+        flatFieldMetadataMaps.byUniversalIdentifier[flatFieldMetadata.morphId],
+      )
     ) {
-      continue;
+      targetsByMorphId.set(flatFieldMetadata.morphId, [
+        ...(targetsByMorphId.get(flatFieldMetadata.morphId) ?? []),
+        flatFieldMetadata,
+      ]);
     }
-
-    targetsByMorphId.set(flatFieldMetadata.morphId, [
-      ...(targetsByMorphId.get(flatFieldMetadata.morphId) ?? []),
-      flatFieldMetadata,
-    ]);
   }
 
-  const fieldNamesByObjectId = new Map<string, Set<string>>();
-
-  for (const flatFieldMetadata of allFlatFieldMetadatas) {
-    const fieldNames =
-      fieldNamesByObjectId.get(flatFieldMetadata.objectMetadataId) ??
-      new Set<string>();
-
-    fieldNames.add(flatFieldMetadata.name);
-    fieldNamesByObjectId.set(flatFieldMetadata.objectMetadataId, fieldNames);
-  }
+  const usedFieldNames = new Set(
+    allFlatFieldMetadatas.map(
+      ({ objectMetadataId, name }) => `${objectMetadataId}:${name}`,
+    ),
+  );
 
   const groupsToCreate: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] =
     [];
   const skippedGroups: SkippedMorphFieldGroup[] = [];
 
   for (const [morphId, targets] of targetsByMorphId) {
-    if (isDefined(flatFieldMetadataMaps.byUniversalIdentifier[morphId])) {
-      continue;
-    }
-
-    const objectMetadataIds = new Set(
-      targets.map((target) => target.objectMetadataId),
-    );
-
-    if (objectMetadataIds.size > 1) {
+    if (new Set(targets.map((target) => target.objectMetadataId)).size > 1) {
       skippedGroups.push({
         morphId,
         reason: 'morph id is shared by fields on several objects',
@@ -90,25 +78,14 @@ export const buildMorphFieldGroups = ({
     }
 
     const survivor = pickMorphGroupSurvivorOrThrow(targets);
-    const relationTargetObjectMetadata = isRelationFieldMetadataWithTarget(
-      survivor,
-    )
+    const targetObject = isRelationFieldMetadataWithTarget(survivor)
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: survivor.relationTargetObjectMetadataId,
           flatEntityMaps: flatObjectMetadataMaps,
         })
       : undefined;
-    const inverseFlatFieldMetadata = isRelationFieldMetadataWithTarget(survivor)
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: survivor.relationTargetFieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        })
-      : undefined;
 
-    if (
-      !isDefined(relationTargetObjectMetadata) ||
-      !isDefined(inverseFlatFieldMetadata)
-    ) {
+    if (!isRelationFieldMetadataWithTarget(survivor) || !isDefined(targetObject)) {
       skippedGroups.push({
         morphId,
         reason: 'representative target has no relation target',
@@ -116,86 +93,38 @@ export const buildMorphFieldGroups = ({
       continue;
     }
 
-    const standardFlatFieldMetadata =
+    const standardGroup =
       standardFlatFieldMetadataMaps.byUniversalIdentifier[morphId];
-    const name =
-      standardFlatFieldMetadata?.name ??
-      getMorphNameFromMorphFieldMetadataName({
-        morphRelationFlatFieldMetadata: survivor,
-        nameSingular: relationTargetObjectMetadata.nameSingular,
-        namePlural: relationTargetObjectMetadata.namePlural,
-      });
-    const objectFieldNames =
-      fieldNamesByObjectId.get(survivor.objectMetadataId) ?? new Set<string>();
+    const group = {
+      ...buildMorphRelationGroupFromTarget({
+        target: survivor,
+        targetObject,
+        inverse: findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: survivor.relationTargetFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
+      }),
+      ...(isDefined(standardGroup) && {
+        name: standardGroup.name,
+        label: standardGroup.label,
+        description: standardGroup.description,
+        icon: standardGroup.icon,
+        isUIEditable: standardGroup.isUIEditable,
+      }),
+      id: v4(),
+    };
+    const fieldNameKey = `${group.objectMetadataId}:${group.name}`;
 
-    if (objectFieldNames.has(name)) {
+    if (usedFieldNames.has(fieldNameKey)) {
       skippedGroups.push({
         morphId,
-        reason: `name "${name}" is already used on the object`,
+        reason: `name "${group.name}" is already used on the object`,
       });
       continue;
     }
 
-    objectFieldNames.add(name);
-
-    const { joinColumnName: _joinColumnName, ...settings } = survivor.settings;
-    const {
-      joinColumnName: _universalJoinColumnName,
-      ...universalSettings
-    } = survivor.universalSettings;
-    const inverseSettings = {
-      targetFieldLabel: inverseFlatFieldMetadata.label,
-      targetFieldName: inverseFlatFieldMetadata.name,
-      targetFieldIcon: inverseFlatFieldMetadata.icon ?? undefined,
-    };
-    const baseFlatFieldMetadata =
-      isDefined(standardFlatFieldMetadata) &&
-      isFlatFieldMetadataOfType(
-        standardFlatFieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      )
-        ? standardFlatFieldMetadata
-        : survivor;
-
-    groupsToCreate.push({
-      ...baseFlatFieldMetadata,
-      id: v4(),
-      universalIdentifier: morphId,
-      morphId,
-      name,
-      workspaceId: survivor.workspaceId,
-      applicationId: survivor.applicationId,
-      applicationUniversalIdentifier: survivor.applicationUniversalIdentifier,
-      objectMetadataId: survivor.objectMetadataId,
-      objectMetadataUniversalIdentifier:
-        survivor.objectMetadataUniversalIdentifier,
-      overrides: survivor.overrides,
-      isSystemSideEffect: false,
-      settings: { ...settings, ...inverseSettings },
-      universalSettings: { ...universalSettings, ...inverseSettings },
-      relationTargetFieldMetadataId: null,
-      relationTargetObjectMetadataId: null,
-      relationTargetFieldMetadataUniversalIdentifier: null,
-      relationTargetObjectMetadataUniversalIdentifier: null,
-      viewFieldIds: [],
-      viewFilterIds: [],
-      viewSortIds: [],
-      fieldPermissionIds: [],
-      kanbanAggregateOperationViewIds: [],
-      calendarViewIds: [],
-      calendarEndViewIds: [],
-      mainGroupByFieldMetadataViewIds: [],
-      searchFieldMetadataIds: [],
-      viewFieldUniversalIdentifiers: [],
-      viewFilterUniversalIdentifiers: [],
-      viewSortUniversalIdentifiers: [],
-      fieldPermissionUniversalIdentifiers: [],
-      kanbanAggregateOperationViewUniversalIdentifiers: [],
-      calendarViewUniversalIdentifiers: [],
-      calendarEndViewUniversalIdentifiers: [],
-      mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-      searchFieldMetadataUniversalIdentifiers: [],
-    });
+    usedFieldNames.add(fieldNameKey);
+    groupsToCreate.push(group);
   }
 
   return { groupsToCreate, skippedGroups };

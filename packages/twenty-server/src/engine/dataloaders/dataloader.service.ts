@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -184,6 +185,7 @@ export class DataloaderService {
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -250,19 +252,6 @@ export class DataloaderService {
     };
   }
 
-  private async isMorphFieldGroupEnabled(
-    workspaceId: string,
-  ): Promise<boolean> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['featureFlagsMap'],
-    );
-
-    return (
-      featureFlagsMap[FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED] ?? false
-    );
-  }
-
   private createRelationLoader() {
     return new DataLoader<RelationLoaderPayload, RelationDTO | null>(
       async (dataLoaderParams: RelationLoaderPayload[]) => {
@@ -275,7 +264,10 @@ export class DataloaderService {
             },
           );
         const isMorphFieldGroupEnabled =
-          await this.isMorphFieldGroupEnabled(workspaceId);
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+            workspaceId,
+          );
 
         return dataLoaderParams.map(({ fieldMetadataId }) => {
           const sourceFlatFieldMetadata =
@@ -447,7 +439,10 @@ export class DataloaderService {
             },
           );
         const isMorphFieldGroupEnabled =
-          await this.isMorphFieldGroupEnabled(workspaceId);
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+            workspaceId,
+          );
 
         const objectFlatFieldMetadatasList = objectMetadataIds.map(
           (objectMetadataId) => {

@@ -6,6 +6,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { createStandardMorphRelationGroupFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-group-flat-metadata.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -267,29 +268,10 @@ export const buildStandardTargetFlatFieldMetadatas = <
       defaultValue: true,
     },
   }),
-  target: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      objectName,
-      context: {
-        fieldName: 'target',
-        type: FieldMetadataType.MORPH_RELATION,
-        label: i18nLabel(
-          msg({ message: 'Related to', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Related record',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconRelationManyToOne',
-        isUIEditable: false,
-        settings: { relationType: RelationType.MANY_TO_ONE },
-      },
-    }),
-    morphId,
-  },
+  target: createStandardMorphRelationGroupFlatMetadata({
+    ...args,
+    objectName,
+  }),
   targetPerson: createStandardRelationFieldFlatMetadata({
     ...args,
     objectName,

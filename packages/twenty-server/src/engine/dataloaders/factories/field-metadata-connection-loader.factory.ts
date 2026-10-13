@@ -10,6 +10,7 @@ import {
   type FieldFilterInput,
 } from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -24,7 +25,6 @@ import { applyMetadataFilterToItems } from 'src/engine/metadata-modules/paginati
 import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type FieldMetadataConnectionLoaderPayload = {
   workspaceId: string;
@@ -39,7 +39,7 @@ export class FieldMetadataConnectionLoaderFactory {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   create(): DataLoader<
@@ -59,12 +59,11 @@ export class FieldMetadataConnectionLoaderFactory {
             flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
           },
         );
-      const { featureFlagsMap } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'featureFlagsMap',
-        ]);
       const isMorphFieldGroupEnabled =
-        featureFlagsMap[FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED] ?? false;
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_MORPH_FIELD_GROUP_ENABLED,
+          workspaceId,
+        );
 
       const connections = dataLoaderParams.map(
         ({ objectMetadata, paging, filter }) => {

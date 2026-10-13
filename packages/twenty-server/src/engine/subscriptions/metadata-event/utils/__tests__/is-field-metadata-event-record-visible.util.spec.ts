@@ -5,83 +5,43 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isFieldMetadataEventRecordVisible } from 'src/engine/subscriptions/metadata-event/utils/is-field-metadata-event-record-visible.util';
 
 const MORPH_ID = 'morph-id';
-
 const group = {
   type: FieldMetadataType.MORPH_RELATION,
   universalIdentifier: MORPH_ID,
   morphId: MORPH_ID,
 };
-
-const target = {
-  type: FieldMetadataType.MORPH_RELATION,
-  universalIdentifier: 'target',
-  morphId: MORPH_ID,
-};
-
-const flatFieldMetadataMapsWithGroup = {
+const target = { ...group, universalIdentifier: 'target' };
+const text = { type: FieldMetadataType.TEXT, universalIdentifier: 'text' };
+const mapsWithGroup = {
   ...createEmptyFlatEntityMaps(),
-  byUniversalIdentifier: {
-    [MORPH_ID]: group as FlatFieldMetadata,
-  },
+  byUniversalIdentifier: { [MORPH_ID]: group as FlatFieldMetadata },
 };
+const mapsWithoutGroup = createEmptyFlatEntityMaps();
 
 describe('isFieldMetadataEventRecordVisible', () => {
-  it('should keep events of fields that are not morph relations', () => {
-    expect(
-      isFieldMetadataEventRecordVisible({
-        record: {
-          type: FieldMetadataType.TEXT,
-          universalIdentifier: 'text',
-        },
-        isMorphFieldGroupEnabled: true,
-        flatFieldMetadataMaps: flatFieldMetadataMapsWithGroup,
-      }),
-    ).toBe(true);
-  });
-
   it.each([
-    [false, false],
-    [true, true],
+    ['a non morph field', text, true, mapsWithGroup, true],
+    ['a group while disabled', group, false, mapsWithGroup, false],
+    ['a group while enabled', group, true, mapsWithGroup, true],
+    ['a target while disabled', target, false, mapsWithGroup, true],
+    [
+      'a target behind a group while enabled',
+      target,
+      true,
+      mapsWithGroup,
+      false,
+    ],
+    ['a target not backfilled yet', target, true, mapsWithoutGroup, true],
   ])(
-    'should show group events only when morph field groups are enabled (enabled: %s)',
-    (isMorphFieldGroupEnabled, expected) => {
+    'should return the right visibility for %s',
+    (_, record, isMorphFieldGroupEnabled, flatFieldMetadataMaps, expected) => {
       expect(
         isFieldMetadataEventRecordVisible({
-          record: group,
+          record,
           isMorphFieldGroupEnabled,
-          flatFieldMetadataMaps: flatFieldMetadataMapsWithGroup,
+          flatFieldMetadataMaps,
         }),
       ).toBe(expected);
     },
   );
-
-  it('should keep target events when morph field groups are disabled', () => {
-    expect(
-      isFieldMetadataEventRecordVisible({
-        record: target,
-        isMorphFieldGroupEnabled: false,
-        flatFieldMetadataMaps: flatFieldMetadataMapsWithGroup,
-      }),
-    ).toBe(true);
-  });
-
-  it('should hide target events behind an existing group', () => {
-    expect(
-      isFieldMetadataEventRecordVisible({
-        record: target,
-        isMorphFieldGroupEnabled: true,
-        flatFieldMetadataMaps: flatFieldMetadataMapsWithGroup,
-      }),
-    ).toBe(false);
-  });
-
-  it('should keep target events while the group is not backfilled', () => {
-    expect(
-      isFieldMetadataEventRecordVisible({
-        record: target,
-        isMorphFieldGroupEnabled: true,
-        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-      }),
-    ).toBe(true);
-  });
 });

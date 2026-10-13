@@ -1,6 +1,5 @@
 import { FieldMetadataType } from '../types/FieldMetadataType';
 
-// The logical field owns the morphId; each physical target keeps its own identifier.
 export const isMorphRelationGroup = <
   TFieldMetadata extends {
     type: FieldMetadataType;

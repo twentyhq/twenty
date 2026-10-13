@@ -142,12 +142,18 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     },
     {
       indexMetadatas: [],
-      flatFieldMetadatas: [morphFieldMetadata],
+      flatFieldMetadatas: [],
     },
   );
 
   return {
     status: 'success',
-    result: flatFieldsAndIndexes,
+    result: {
+      ...flatFieldsAndIndexes,
+      flatFieldMetadatas: [
+        ...flatFieldsAndIndexes.flatFieldMetadatas,
+        morphFieldMetadata,
+      ],
+    },
   };
 };
