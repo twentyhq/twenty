@@ -9,7 +9,6 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { StyledWidgetContentFrame } from '@/page-layout/widgets/components/WidgetContentFrame';
-import { StandaloneFrontComponentLoader } from '@/page-layout/widgets/front-component/components/StandaloneFrontComponentLoader';
 import { isSoloStandaloneFrontComponent } from '@/page-layout/widgets/utils/isSoloStandaloneFrontComponent';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -56,30 +55,25 @@ export const FrontComponentWidgetRenderer = ({
   const selectedRecordIds = isDefined(targetRecordIdentifier?.id)
     ? [targetRecordIdentifier.id]
     : undefined;
-  const isBorderless =
-    isSoloStandaloneFrontComponent({
-      pageLayoutType: layoutType,
-      presentation,
-      widgetType: widget.type,
-    }) && !isPageLayoutInEditMode;
-  const loadingFallback = isBorderless ? (
-    <StandaloneFrontComponentLoader />
-  ) : (
-    <FrontComponentSkeletonLoader />
-  );
 
   return (
     <StyledContainer
-      isBorderless={isBorderless}
+      isBorderless={
+        isSoloStandaloneFrontComponent({
+          pageLayoutType: layoutType,
+          presentation,
+          widgetType: widget.type,
+        }) && !isPageLayoutInEditMode
+      }
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}
     >
-      <Suspense fallback={loadingFallback}>
+      <Suspense fallback={<FrontComponentSkeletonLoader />}>
         <FrontComponentRenderer
           frontComponentId={frontComponentId}
           selectedRecordIds={selectedRecordIds}
           objectNameSingular={targetRecordIdentifier?.targetObjectNameSingular}
-          loadingFallback={loadingFallback}
+          loadingFallback={<FrontComponentSkeletonLoader />}
         />
       </Suspense>
     </StyledContainer>
