@@ -85,6 +85,7 @@ describe('buildStockCounters', () => {
     });
 
     expect(counters.map((counter) => counter.isDefault)).toEqual([false, true]);
+    expect(new Set(counters.map((counter) => counter.key)).size).toBe(1);
   });
 
   it.each([
