@@ -42,7 +42,7 @@ import {
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { resolveApplicationAdmittedEvents } from 'src/engine/core-modules/record-share/utils/resolve-application-admitted-events.util';
+import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
 import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
@@ -497,8 +497,9 @@ export class WorkflowDatabaseEventTriggerListener {
       'flatFieldMetadataMaps',
     ]);
 
-    return resolveApplicationAdmittedEvents({
-      application: installedApplication,
+    return resolveEventsReadableByRole({
+      roleId: installedApplication.defaultRoleId,
+      owningApplicationId: installedApplication.id,
       workspaceEventBatch: payload,
       eventRecordAccessGate:
         this.recordAccessPolicyService.buildEventRecordAccessGate(payload),

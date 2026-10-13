@@ -20,7 +20,7 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { resolveApplicationAdmittedEvents } from 'src/engine/core-modules/record-share/utils/resolve-application-admitted-events.util';
+import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -103,8 +103,9 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      const admittedEvents = await resolveApplicationAdmittedEvents({
-        application,
+      const admittedEvents = await resolveEventsReadableByRole({
+        roleId: application.defaultRoleId,
+        owningApplicationId: application.id,
         workspaceEventBatch,
         eventRecordAccessGate,
         rolesPermissions,
