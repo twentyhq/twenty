@@ -1,6 +1,6 @@
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/utils/from-front-component-widget-availability-to-universal-widget-availability.util';
+import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/types/universal-front-component-widget-availability.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FrontComponentWidgetAvailability } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 

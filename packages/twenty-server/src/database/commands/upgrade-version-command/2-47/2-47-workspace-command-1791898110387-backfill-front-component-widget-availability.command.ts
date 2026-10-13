@@ -57,24 +57,33 @@ export class BackfillFrontComponentWidgetAvailabilityCommand extends Provisioned
     await this.up(args);
   }
 
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.replaceNotOfferedFrontComponentsWidgetAvailability(args, {
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    await this.replaceNotOfferedFrontComponentsWidgetAvailability({
+      workspaceId,
+      options,
       from: DEFAULT_WIDGET_AVAILABILITY,
       to: NOT_OFFERED_WIDGET_AVAILABILITY,
     });
   }
 
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.replaceNotOfferedFrontComponentsWidgetAvailability(args, {
+  async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    await this.replaceNotOfferedFrontComponentsWidgetAvailability({
+      workspaceId,
+      options,
       from: NOT_OFFERED_WIDGET_AVAILABILITY,
       to: DEFAULT_WIDGET_AVAILABILITY,
     });
   }
 
-  private async replaceNotOfferedFrontComponentsWidgetAvailability(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    { from, to }: { from: object[]; to: object[] },
-  ): Promise<void> {
+  private async replaceNotOfferedFrontComponentsWidgetAvailability({
+    workspaceId,
+    options,
+    from,
+    to,
+  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'> & {
+    from: object[];
+    to: object[];
+  }): Promise<void> {
     if (options.dryRun) {
       const [{ count }] = await this.dataSource.query<{ count: number }[]>(
         `SELECT COUNT(*)::int AS count

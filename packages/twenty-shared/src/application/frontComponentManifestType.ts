@@ -1,6 +1,6 @@
+import { type FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from '@/application/constants/FrontComponentWidgetPageLayoutTypes';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type CommandMenuItemAvailabilityType } from '@/types';
-import { PageLayoutType } from '@/types/page-layout/PageLayoutType';
 
 export type CommandMenuItemManifest = SyncableEntityOptions & {
   label: string;
@@ -15,20 +15,8 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   conditionalPinnedExpression?: string;
 };
 
-export const FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES = [
-  PageLayoutType.RECORD_PAGE,
-  PageLayoutType.DASHBOARD,
-] as const;
-
 export type FrontComponentWidgetPageLayoutType =
   (typeof FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES)[number];
-
-export const isFrontComponentWidgetPageLayoutType = (
-  pageLayoutType: string,
-): pageLayoutType is FrontComponentWidgetPageLayoutType =>
-  (FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES as readonly string[]).includes(
-    pageLayoutType,
-  );
 
 export type FrontComponentWidgetAvailabilityManifest = {
   pageLayoutType: FrontComponentWidgetPageLayoutType;

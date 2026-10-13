@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/utils/from-front-component-widget-availability-to-universal-widget-availability.util';
+import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/types/universal-front-component-widget-availability.type';
 import { DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY } from 'src/engine/metadata-modules/front-component/constants/default-front-component-widget-availability.constant';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
 
@@ -23,6 +23,26 @@ const fromWidgetAvailabilityManifestToUniversalWidgetAvailability = (
         : [{ pageLayoutType }],
   );
 
+const getUniversalWidgetAvailability = ({
+  widgetAvailabilityManifest,
+  isOfferedInWidgetPickersByDefault,
+}: {
+  widgetAvailabilityManifest?: FrontComponentWidgetAvailabilityManifest[];
+  isOfferedInWidgetPickersByDefault: boolean;
+}): UniversalFrontComponentWidgetAvailability[] => {
+  if (isDefined(widgetAvailabilityManifest)) {
+    return fromWidgetAvailabilityManifestToUniversalWidgetAvailability(
+      widgetAvailabilityManifest,
+    );
+  }
+
+  if (isOfferedInWidgetPickersByDefault) {
+    return DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY;
+  }
+
+  return [];
+};
+
 export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   frontComponentManifest,
   applicationUniversalIdentifier,
@@ -36,10 +56,13 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   isReferencedByCommandMenuItem: boolean;
   now: string;
 }): UniversalFlatFrontComponent => {
-  const isOfferedInWidgetPickersByDefault =
-    !frontComponentManifest.isHeadless &&
-    !isSettingsFrontComponent &&
-    !isReferencedByCommandMenuItem;
+  const universalWidgetAvailability = getUniversalWidgetAvailability({
+    widgetAvailabilityManifest: frontComponentManifest.widgetAvailability,
+    isOfferedInWidgetPickersByDefault:
+      !frontComponentManifest.isHeadless &&
+      !isSettingsFrontComponent &&
+      !isReferencedByCommandMenuItem,
+  });
 
   return {
     universalIdentifier: frontComponentManifest.universalIdentifier,
@@ -54,15 +77,7 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     isHeadless: isSettingsFrontComponent
       ? false
       : (frontComponentManifest.isHeadless ?? false),
-    universalWidgetAvailability: isDefined(
-      frontComponentManifest.widgetAvailability,
-    )
-      ? fromWidgetAvailabilityManifestToUniversalWidgetAvailability(
-          frontComponentManifest.widgetAvailability,
-        )
-      : isOfferedInWidgetPickersByDefault
-        ? DEFAULT_FRONT_COMPONENT_WIDGET_AVAILABILITY
-        : [],
+    universalWidgetAvailability,
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
     createdAt: now,
     updatedAt: now,

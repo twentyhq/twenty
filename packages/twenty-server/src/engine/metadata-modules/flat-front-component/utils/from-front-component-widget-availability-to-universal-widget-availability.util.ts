@@ -1,10 +1,7 @@
-import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/types/universal-front-component-widget-availability.type';
 import { type FrontComponentWidgetAvailability } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
-
-export type UniversalFrontComponentWidgetAvailability =
-  FormatRecordSerializedRelationProperties<FrontComponentWidgetAvailability>;
 
 export const fromFrontComponentWidgetAvailabilityToUniversalWidgetAvailability =
   ({
