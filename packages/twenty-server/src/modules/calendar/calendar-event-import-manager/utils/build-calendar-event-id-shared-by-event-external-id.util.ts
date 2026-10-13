@@ -3,6 +3,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CalendarEventSharingProvider } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-provider.type';
+import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const buildCalendarEventIdSharedByEventExternalId = ({
@@ -13,11 +15,14 @@ export const buildCalendarEventIdSharedByEventExternalId = ({
 }: {
   provider: CalendarEventSharingProvider;
   fetchedCalendarEvents: Pick<FetchedCalendarEvent, 'id' | 'iCalUid'>[];
-  otherChannelAssociations: {
-    eventExternalId: string | null;
-    calendarEventId: string;
-  }[];
-  otherChannelCalendarEvents: { id: string; iCalUid: string | null }[];
+  otherChannelAssociations: Pick<
+    CalendarChannelEventAssociationWorkspaceEntity,
+    'eventExternalId' | 'calendarEventId'
+  >[];
+  otherChannelCalendarEvents: Pick<
+    CalendarEventWorkspaceEntity,
+    'id' | 'iCalUid'
+  >[];
 }): Map<string, string> => {
   const sharedCalendarEventIdByKey = new Map<string, string>();
 

@@ -1,19 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
-import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { Any, Not, Repository } from 'typeorm';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { Any } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type CalendarEventSharingProvider } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-provider.type';
-import { buildCalendarEventIdSharedByEventExternalId } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-id-shared-by-event-external-id.util';
+import { CalendarEventSharingService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-sharing.service';
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { buildCalendarEventParticipantSaveOperations } from 'src/modules/calendar/calendar-event-participant-manager/utils/build-calendar-event-participant-save-operations.util';
@@ -27,8 +22,7 @@ export class CalendarSaveEventsService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
     private readonly featureFlagService: FeatureFlagService,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    private readonly calendarEventSharingService: CalendarEventSharingService,
   ) {}
 
   public async saveCalendarEventsAndEnqueueContactCreationJob(
@@ -45,10 +39,11 @@ export class CalendarSaveEventsService {
         workspaceId,
       );
 
-    const sharingProvider = await this.findCalendarEventSharingProvider({
-      connectedAccount,
-      workspaceId,
-    });
+    const sharingProvider =
+      await this.calendarEventSharingService.findSharingProvider({
+        connectedAccount,
+        workspaceId,
+      });
 
     const { savedParticipantIds, calendarEventIds } =
       await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -81,21 +76,18 @@ export class CalendarSaveEventsService {
             ),
           );
 
-          const calendarEventIdSharedByEventExternalId = isDefined(
-            sharingProvider,
-          )
-            ? await this.findCalendarEventIdSharedByEventExternalId({
-                provider: sharingProvider,
+          const calendarEventIdSharedByEventExternalId =
+            await this.calendarEventSharingService.findCalendarEventIdSharedByEventExternalId(
+              {
+                sharingProvider,
                 calendarChannel,
                 workspaceId,
                 fetchedCalendarEvents: fetchedCalendarEvents.filter(
                   (fetchedCalendarEvent) =>
                     !existingEventExternalIds.has(fetchedCalendarEvent.id),
                 ),
-                calendarChannelEventAssociationRepository,
-                calendarEventRepository,
-              })
-            : new Map<string, string>();
+              },
+            );
 
           const storedCalendarEventIds = [
             ...existingAssociations.map(
@@ -110,20 +102,14 @@ export class CalendarSaveEventsService {
               })
             : [];
 
-          const calendarEventIdsSharedWithOtherChannels = isDefined(
-            sharingProvider,
-          )
-            ? new Set(
-                (
-                  await calendarChannelEventAssociationRepository.find({
-                    where: {
-                      calendarEventId: Any(storedCalendarEventIds),
-                      calendarChannelId: Not(calendarChannel.id),
-                    },
-                  })
-                ).map((association) => association.calendarEventId),
-              )
-            : new Set<string>();
+          const calendarEventIdsSharedWithOtherChannels =
+            await this.calendarEventSharingService.findCalendarEventIdsSharedWithOtherChannels(
+              {
+                sharingProvider,
+                calendarChannel,
+                calendarEventIds: storedCalendarEventIds,
+              },
+            );
 
           const {
             saveOperations,
@@ -232,112 +218,5 @@ export class CalendarSaveEventsService {
     );
 
     return { calendarEventIds };
-  }
-
-  private async findCalendarEventSharingProvider({
-    connectedAccount,
-    workspaceId,
-  }: {
-    connectedAccount: Pick<ConnectedAccountEntity, 'provider'>;
-    workspaceId: string;
-  }): Promise<CalendarEventSharingProvider | undefined> {
-    const { provider } = connectedAccount;
-
-    if (
-      provider !== ConnectedAccountProvider.GOOGLE &&
-      provider !== ConnectedAccountProvider.MICROSOFT
-    ) {
-      return undefined;
-    }
-
-    const isSharingEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED,
-      workspaceId,
-    );
-
-    return isSharingEnabled ? provider : undefined;
-  }
-
-  private async findCalendarEventIdSharedByEventExternalId({
-    provider,
-    calendarChannel,
-    workspaceId,
-    fetchedCalendarEvents,
-    calendarChannelEventAssociationRepository,
-    calendarEventRepository,
-  }: {
-    provider: CalendarEventSharingProvider;
-    calendarChannel: Pick<CalendarChannelEntity, 'id'>;
-    workspaceId: string;
-    fetchedCalendarEvents: FetchedCalendarEvent[];
-    calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>;
-    calendarEventRepository: WorkspaceRepository<CalendarEventWorkspaceEntity>;
-  }): Promise<Map<string, string>> {
-    if (fetchedCalendarEvents.length === 0) {
-      return new Map();
-    }
-
-    if (provider === ConnectedAccountProvider.GOOGLE) {
-      const otherChannelAssociations =
-        await calendarChannelEventAssociationRepository.find({
-          where: {
-            eventExternalId: Any(fetchedCalendarEvents.map(({ id }) => id)),
-          },
-        });
-
-      return buildCalendarEventIdSharedByEventExternalId({
-        provider,
-        fetchedCalendarEvents,
-        otherChannelAssociations,
-        otherChannelCalendarEvents: [],
-      });
-    }
-
-    const iCalUids = fetchedCalendarEvents
-      .map(({ iCalUid }) => iCalUid)
-      .filter(isNonEmptyString);
-
-    if (iCalUids.length === 0) {
-      return new Map();
-    }
-
-    const otherMicrosoftCalendarChannels =
-      await this.calendarChannelRepository.find({
-        select: { id: true },
-        where: {
-          workspaceId,
-          id: Not(calendarChannel.id),
-          connectedAccount: { provider },
-        },
-      });
-
-    if (otherMicrosoftCalendarChannels.length === 0) {
-      return new Map();
-    }
-
-    const otherChannelCalendarEvents = await calendarEventRepository.find({
-      where: { iCalUid: Any(iCalUids) },
-    });
-
-    const otherChannelAssociations =
-      otherChannelCalendarEvents.length > 0
-        ? await calendarChannelEventAssociationRepository.find({
-            where: {
-              calendarEventId: Any(
-                otherChannelCalendarEvents.map(({ id }) => id),
-              ),
-              calendarChannelId: Any(
-                otherMicrosoftCalendarChannels.map(({ id }) => id),
-              ),
-            },
-          })
-        : [];
-
-    return buildCalendarEventIdSharedByEventExternalId({
-      provider,
-      fetchedCalendarEvents,
-      otherChannelAssociations,
-      otherChannelCalendarEvents,
-    });
   }
 }
