@@ -4,10 +4,10 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ToastProps } from '../../types/ToastProps';
 import { ToastTimingContext } from '../contexts/ToastTimingContext';
-import { type createToastCountdown } from '../utils/createToastCountdown';
+import { type createToastCountdownStore } from '../utils/createToastCountdownStore';
 
 type ToastCountdownEffectProps = Pick<ToastProps, 'progress' | 'onClose'> & {
-  clock: ReturnType<typeof createToastCountdown>;
+  clock: ReturnType<typeof createToastCountdownStore>;
   duration: number;
   isPaused: boolean;
 };
@@ -19,10 +19,33 @@ export const ToastCountdownEffect = ({
   isPaused,
   onClose,
 }: ToastCountdownEffectProps) => {
-  const { durationRevision, isActive } = useContext(ToastTimingContext);
+  const {
+    durationRevision,
+    isActive,
+    lifecycle,
+    id,
+    rendererKey,
+    timingOverrides,
+  } = useContext(ToastTimingContext);
   const isProgress = isDefined(progress);
+  const overriddenFields = Object.keys(timingOverrides ?? {});
+  const isDurationOverridden = overriddenFields.includes('duration');
+  const isProgressOverridden = overriddenFields.includes('progress');
 
   useLayoutEffect(() => {
+    if (isDefined(lifecycle) && isDefined(id) && isDefined(rendererKey)) {
+      lifecycle.updateRenderer({
+        id,
+        key: rendererKey,
+        configuration: {
+          duration: isDurationOverridden ? duration : undefined,
+          isProgress: isProgressOverridden ? isProgress : undefined,
+          isPaused,
+        },
+      });
+      return;
+    }
+
     clock.update({
       duration,
       durationRevision,
@@ -39,9 +62,24 @@ export const ToastCountdownEffect = ({
     isProgress,
     isActive,
     onClose,
+    lifecycle,
+    id,
+    rendererKey,
+    isDurationOverridden,
+    isProgressOverridden,
   ]);
 
-  useLayoutEffect(() => () => clock.stop(), [clock]);
+  useLayoutEffect(
+    () => () => {
+      if (isDefined(lifecycle) && isDefined(id) && isDefined(rendererKey)) {
+        lifecycle.removeRenderer({ id, key: rendererKey });
+        return;
+      }
+
+      clock.stop();
+    },
+    [clock, lifecycle, id, rendererKey],
+  );
 
   return null;
 };

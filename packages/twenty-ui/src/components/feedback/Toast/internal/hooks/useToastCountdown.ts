@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useContext, useState, useSyncExternalStore } from 'react';
 
-import { createToastCountdown } from '../utils/createToastCountdown';
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
+import { ToastTimingContext } from '../contexts/ToastTimingContext';
+import { createToastCountdownStore } from '../utils/createToastCountdownStore';
 
 export const useToastCountdown = ({
   duration,
@@ -9,14 +12,16 @@ export const useToastCountdown = ({
   duration: number;
   isPaused: boolean;
 }) => {
-  const [countdown, setCountdown] = useState({
-    duration,
-    remainingDuration: duration,
-    revision: 0,
-    isPaused,
-  });
+  const { lifecycle, id } = useContext(ToastTimingContext);
   const [clock] = useState(() =>
-    createToastCountdown({ onChange: setCountdown }),
+    isDefined(lifecycle) && isDefined(id)
+      ? lifecycle.getCountdown(id)
+      : createToastCountdownStore({ duration, isPaused }),
+  );
+  const countdown = useSyncExternalStore(
+    clock.subscribe,
+    clock.getSnapshot,
+    clock.getSnapshot,
   );
 
   return { countdown, clock };

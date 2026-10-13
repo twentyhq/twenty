@@ -18,6 +18,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './Toast.module.scss';
 import { ToastCountdownEffect } from './internal/components/ToastCountdownEffect';
 import { ToastFocusEffect } from './internal/components/ToastFocusEffect';
+import { DEFAULT_TOAST_DURATION } from './internal/constants/DefaultToastDuration';
 import { ToastProgress } from './internal/components/ToastProgress';
 import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
@@ -38,7 +39,7 @@ export const Toast = ({
   iconLabel,
   action,
   progress,
-  duration = 6000,
+  duration = DEFAULT_TOAST_DURATION,
   onCancel,
   onClose,
   cancelLabel = 'Cancel',

@@ -9908,7 +9908,7 @@
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called once per mounted toast when the close button is clicked or the countdown completes. Providing it shows the close button."
+        "description": "For standalone Toast, called once per mount by the close button or expiry. For provider notifications, called once on close, expiry, closeToast, or limit eviction, after dismissal and before exit cleanup. Provider teardown does not call it."
       },
       {
         "name": "progress",
@@ -13092,14 +13092,14 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Application content and a Toaster sharing this notification store."
+        "description": "Application content and any Toasters sharing this provider’s independent notification store and lifecycle."
       },
       {
         "name": "limit",
         "type": "number",
         "required": false,
         "defaultValue": "3",
-        "description": "Maximum number of visible toasts, read once when the provider mounts. Must be a positive integer. Adding a toast above the limit dismisses the oldest visible notifications."
+        "description": "Reactive maximum number of visible toasts, defaulting to three. Must be a positive integer. Lowering it or adding above it dismisses the oldest visible notifications and calls their onClose once. Surviving IDs, order, and countdowns are preserved."
       }
     ]
   },
@@ -13113,14 +13113,14 @@
         "type": "HTMLElement | null",
         "required": false,
         "defaultValue": null,
-        "description": "Portal destination. Omit to use the theme container or document.body; null defers rendering."
+        "description": "Portal destination. Omit to use the theme container or document.body; null defers rendering. The provider retains visible notifications and pauses their countdowns while no Toaster is rendered."
       },
       {
         "name": "getToastProps",
         "type": "((toast: ToastNotification) => Partial<Omit<ToastProps, \"ref\" | \"id\" | \"onClose\">>)",
         "required": false,
         "defaultValue": null,
-        "description": "Customizes each notification’s Toast props. The toaster owns id, ref, and dismissal."
+        "description": "Adapts notification content and presentation. The provider owns id, dismissal, and the shared countdown. Set timing through enqueueToast or updateToast; duration and progress overrides must match across Toasters sharing a provider."
       },
       {
         "name": "render",
