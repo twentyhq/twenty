@@ -3,10 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CoreEntityCache } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
-import {
-  ApplicationVersionValidationService,
-  type VersionValidationResult,
-} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
   type ApplicationRegistrationCatalogCard,
@@ -52,10 +49,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       );
 
     return configuredRegistrations
-      .filter(
-        (_registration, index) =>
-          !this.isKnownServerIncompatibility(serverCompatibilities[index]),
-      )
+      .filter((_registration, index) => serverCompatibilities[index].compatible)
       .reduce<Record<string, MarketplaceAppDTO>>(
         (accumulator, registration) => {
           accumulator[registration.universalIdentifier] =
@@ -65,15 +59,6 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
         },
         {},
       );
-  }
-
-  private isKnownServerIncompatibility(
-    serverCompatibility: VersionValidationResult,
-  ): boolean {
-    return (
-      !serverCompatibility.compatible &&
-      serverCompatibility.reason !== 'INVALID_SERVER_VERSION'
-    );
   }
 
   private toMarketplaceAppDTO(

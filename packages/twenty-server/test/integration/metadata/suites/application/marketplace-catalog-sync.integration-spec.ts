@@ -16,8 +16,6 @@ import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/m
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
-import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -25,8 +23,6 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
-
-const INJECTED_CURSOR_MARKER = 'integration-test-marketplace-unknown-version';
 
 const MARKETPLACE_QUERY = `
   query {
@@ -77,11 +73,6 @@ describe('Marketplace Catalog Sync (integration)', () => {
       .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send({ query, variables });
-
-  const invalidateMarketplaceCatalogCache = () =>
-    getAppProviderByClassName<CoreEntityCacheService>(
-      'CoreEntityCacheService',
-    ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
 
   const insertCatalogRegistration = async (
     params: Parameters<typeof insertCatalogApplicationRegistration>[0],
@@ -226,6 +217,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
       expect(appIds).toContain(serverCompatibleUid);
       expect(appIds).not.toContain(serverIncompatibleUid);
+      expect(appIds).not.toContain(blankServerRangeUid);
       expect(appIds).not.toContain(nonStringServerRangeUid);
     });
 
@@ -235,39 +227,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         (app: { id: string }) => app.id,
       );
 
-      expect(appIds).toEqual(
-        expect.arrayContaining([npmUid, curatedUid, blankServerRangeUid]),
-      );
-    });
-
-    it('should keep listing apps that declare a required server version while the server version is unknown', async () => {
-      await ds.query(
-        `INSERT INTO core."upgradeMigration"
-           (name, status, attempt, "executedByVersion", "isInitial")
-         VALUES ($1, 'completed', 1, $2, false)`,
-        ['1.0.0_UnknownInstanceCommand_1700000000000', INJECTED_CURSOR_MARKER],
-      );
-
-      try {
-        await invalidateMarketplaceCatalogCache();
-
-        const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
-        const appIds = res.body.data.findManyMarketplaceApps.map(
-          (app: { id: string }) => app.id,
-        );
-
-        expect(appIds).toEqual(
-          expect.arrayContaining([serverCompatibleUid, serverIncompatibleUid]),
-        );
-        expect(appIds).not.toContain(nonStringServerRangeUid);
-      } finally {
-        await ds.query(
-          `DELETE FROM core."upgradeMigration" WHERE "executedByVersion" = $1`,
-          [INJECTED_CURSOR_MARKER],
-        );
-
-        await invalidateMarketplaceCatalogCache();
-      }
+      expect(appIds).toEqual(expect.arrayContaining([npmUid, curatedUid]));
     });
   });
 

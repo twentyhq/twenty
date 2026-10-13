@@ -50,23 +50,17 @@ export class ApplicationVersionValidationService {
   async validateManyServerCompatibilities(
     requiredServerVersions: (string | undefined)[],
   ): Promise<VersionValidationResult[]> {
-    const hasValidRequiredServerVersion = requiredServerVersions.some(
-      (requiredServerVersion) =>
-        this.isRequiredServerVersionDeclared(requiredServerVersion) &&
-        isDefined(semver.validRange(requiredServerVersion)),
-    );
-
-    const instanceCompletedVersion = hasValidRequiredServerVersion
+    const instanceCompletedVersion = requiredServerVersions.some(isDefined)
       ? await this.upgradeStatusService.getInstanceCompletedVersion()
       : null;
 
     return requiredServerVersions.map(
       (requiredServerVersion): VersionValidationResult => {
-        if (!this.isRequiredServerVersionDeclared(requiredServerVersion)) {
+        if (!isDefined(requiredServerVersion)) {
           return { compatible: true };
         }
 
-        if (!isDefined(semver.validRange(requiredServerVersion))) {
+        if (!this.isValidRequiredServerVersionRange(requiredServerVersion)) {
           return {
             compatible: false,
             reason: 'INVALID_REQUIRED_VERSION',
@@ -90,11 +84,11 @@ export class ApplicationVersionValidationService {
     requiredServerVersion: string | undefined;
     workspaceId: string;
   }): Promise<VersionValidationResult> {
-    if (!this.isRequiredServerVersionDeclared(requiredServerVersion)) {
+    if (!isDefined(requiredServerVersion)) {
       return { compatible: true };
     }
 
-    if (!isDefined(semver.validRange(requiredServerVersion))) {
+    if (!this.isValidRequiredServerVersionRange(requiredServerVersion)) {
       return {
         compatible: false,
         reason: 'INVALID_REQUIRED_VERSION',
@@ -174,16 +168,13 @@ export class ApplicationVersionValidationService {
     return { allowed: true };
   }
 
-  private isRequiredServerVersionDeclared(
-    requiredServerVersion: string | undefined,
-  ): requiredServerVersion is string {
-    if (!isDefined(requiredServerVersion)) {
-      return false;
-    }
-
+  private isValidRequiredServerVersionRange(
+    requiredServerVersion: string,
+  ): boolean {
     return (
-      !isString(requiredServerVersion) ||
-      isNonEmptyString(requiredServerVersion.trim())
+      isString(requiredServerVersion) &&
+      isNonEmptyString(requiredServerVersion.trim()) &&
+      isDefined(semver.validRange(requiredServerVersion))
     );
   }
 

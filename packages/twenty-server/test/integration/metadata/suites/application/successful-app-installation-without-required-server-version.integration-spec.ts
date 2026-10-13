@@ -29,10 +29,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
     title: 'when package.json declares engines without twenty',
     context: { engines: { node: '^24.5.0' } },
   },
-  {
-    title: 'when package.json declares a blank engines.twenty',
-    context: { engines: { twenty: '  ' } },
-  },
 ];
 
 describe('Install application without a required server version', () => {
