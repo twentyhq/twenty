@@ -1,4 +1,4 @@
 export type OverflowingTextTooltipMode =
   | 'measure-on-hover'
-  | 'measure-on-mount'
+  | 'measure-on-open'
   | 'disabled';

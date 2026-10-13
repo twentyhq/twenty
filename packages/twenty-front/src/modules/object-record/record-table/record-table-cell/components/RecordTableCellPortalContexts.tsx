@@ -66,7 +66,7 @@ export const RecordTableCellPortalContexts = ({
         }}
       >
         <RecordTableCellFieldContextWrapper recordField={recordField}>
-          <OverflowingTextTooltipModeProvider mode="measure-on-mount">
+          <OverflowingTextTooltipModeProvider mode="measure-on-open">
             {children}
           </OverflowingTextTooltipModeProvider>
         </RecordTableCellFieldContextWrapper>

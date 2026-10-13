@@ -1,13 +1,6 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
-import {
-  memo,
-  useContext,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type MouseEvent,
-} from 'react';
+import { memo, useContext, useRef, useState, type MouseEvent } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
@@ -40,10 +33,11 @@ export const OverflowingTextWithTooltip = memo(
     const tooltipMode = useContext(OverflowingTextTooltipModeContext);
     const areTooltipsDisabled = tooltipMode === 'disabled';
     const textRef = useRef<HTMLDivElement>(null);
-    const mergedRef = useMergedRefs(textRef, ref);
 
     const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+    const mergedRef = useMergedRefs(textRef, ref);
 
     const updateOverflowState = () => {
       const isOverflowing = isElementOverflowing(textRef.current);
@@ -52,14 +46,6 @@ export const OverflowingTextWithTooltip = memo(
 
       return isOverflowing;
     };
-
-    useLayoutEffect(() => {
-      if (tooltipMode !== 'measure-on-mount') {
-        return;
-      }
-
-      setIsTitleOverflowing(isElementOverflowing(textRef.current));
-    }, [tooltipMode]);
 
     const handleOpenChange = (open: boolean) => {
       if (!open) {
@@ -100,13 +86,15 @@ export const OverflowingTextWithTooltip = memo(
         render={render}
         ref={mergedRef}
         {...mergeProps<'div'>(
-          areTooltipsDisabled
-            ? { tabIndex: isFocusable ? 0 : undefined }
-            : {
-                tabIndex: isFocusable ? 0 : undefined,
-                onPointerEnter: updateOverflowState,
-                onFocus: () => handleOpenChange(true),
-              },
+          {
+            tabIndex: isFocusable ? 0 : undefined,
+            ...(areTooltipsDisabled
+              ? {}
+              : {
+                  onPointerEnter: updateOverflowState,
+                  onFocus: () => handleOpenChange(true),
+                }),
+          },
           props,
         )}
       >
@@ -137,7 +125,10 @@ export const OverflowingTextWithTooltip = memo(
           handleOpenChange(open);
         }}
         disabled={
-          !isDefined(tooltipText) || (!isTitleOverflowing && !alwaysShowTooltip)
+          !isDefined(tooltipText) ||
+          (tooltipMode === 'measure-on-hover' &&
+            !isTitleOverflowing &&
+            !alwaysShowTooltip)
         }
       >
         <Tooltip.Trigger
