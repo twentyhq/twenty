@@ -35,14 +35,6 @@ const StyledRowContainer = styled.div`
     background: ${themeCssVariables.background.transparent.lighter};
   }
 
-  &:focus-visible {
-    outline: none;
-  }
-
-  &:focus-visible > div {
-    background: ${themeCssVariables.background.transparent.light};
-  }
-
   &:active > div,
   &[data-selected='true'] > div {
     background: ${themeCssVariables.accent.quaternary};
@@ -185,7 +177,6 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
       tabIndex={0}
       aria-label={t`Open record`}
       data-selected={isRecordSelected}
-      data-selectable-id={recordId}
       onClickCapture={handleClickCapture}
       onMouseDown={(event) => {
         // Shift+click selects a range of records, not the text in between

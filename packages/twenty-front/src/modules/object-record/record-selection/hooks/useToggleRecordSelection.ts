@@ -39,14 +39,12 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
     ({
       recordId,
       shouldSelectRange = false,
-      selectableRecordIds,
     }: {
       recordId: string;
       shouldSelectRange?: boolean;
-      selectableRecordIds?: string[];
     }) => {
       const range = store.get(recordSelectionRange);
-      const recordIds = selectableRecordIds ?? store.get(displayedRecordIds);
+      const recordIds = store.get(displayedRecordIds);
 
       if (
         shouldSelectRange &&

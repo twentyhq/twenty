@@ -71,7 +71,6 @@ const renderSelectableItems = (recordIds: string[]) => {
   for (const recordId of recordIds) {
     const item = document.createElement('div');
 
-    item.tabIndex = 0;
     item.dataset.selectableId = recordId;
     item.scrollIntoView = jest.fn();
     container.appendChild(item);
@@ -162,31 +161,18 @@ describe('useRecordSelectionArrowKeyNavigation', () => {
     expect(onActiveRecordChange).toHaveBeenCalledWith('d');
   });
 
-  it('should move focus between the records on screen', () => {
-    const container = renderSelectableItems(['a', 'b', 'd', 'e']);
-    const { navigateWithArrowKey } = renderArrowKeyNavigation({ container });
-    const getItem = (recordId: string) =>
-      container.querySelector<HTMLElement>(
-        `[data-selectable-id="${recordId}"]`,
-      );
-
-    pressArrowKey(navigateWithArrowKey, Key.ArrowDown);
-    expect(document.activeElement).toBe(getItem('a'));
-
-    act(() => getItem('b')?.focus());
-    pressArrowKey(navigateWithArrowKey, Key.ArrowDown);
-    expect(document.activeElement).toBe(getItem('d'));
-  });
-
-  it('should not select records that are not on screen', () => {
-    const container = renderSelectableItems(['a', 'b', 'd', 'e']);
+  it('should scroll the record it moves to into view', () => {
+    const container = renderSelectableItems(['a', 'b', 'c', 'd', 'e']);
     const { navigateWithArrowKey } = renderArrowKeyNavigation({
       activeRecordId: 'b',
       container,
     });
 
-    pressArrowKey(navigateWithArrowKey, Key.ArrowDown, true);
+    pressArrowKey(navigateWithArrowKey, Key.ArrowDown);
 
-    expect(getSelectedRecordIds()).toEqual(['b', 'd']);
+    expect(
+      container.querySelector<HTMLElement>('[data-selectable-id="c"]')
+        ?.scrollIntoView,
+    ).toHaveBeenCalled();
   });
 });

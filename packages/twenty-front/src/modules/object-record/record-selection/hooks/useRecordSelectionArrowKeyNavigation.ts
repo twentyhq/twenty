@@ -16,9 +16,9 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 
 type UseRecordSelectionArrowKeyNavigationProps = {
   selectableItemsContainerRef: RefObject<HTMLElement | null>;
-  activeRecordId?: string;
-  onActiveRecordChange?: (recordId: string) => void;
-  onEndReached?: () => void;
+  activeRecordId: string | undefined;
+  onActiveRecordChange: (recordId: string) => void;
+  onEndReached: () => void;
 };
 
 export const useRecordSelectionArrowKeyNavigation = ({
@@ -53,36 +53,12 @@ export const useRecordSelectionArrowKeyNavigation = ({
 
   const navigateWithArrowKey = useCallback(
     (keyboardEvent: KeyboardEvent) => {
-      const selectableItemsContainer = selectableItemsContainerRef.current;
-      const selectableItemElements = new Map(
-        Array.from(
-          selectableItemsContainer?.querySelectorAll<HTMLElement>(
-            '[data-selectable-id]',
-          ) ?? [],
-          (element) => [element.dataset.selectableId, element],
-        ),
-      );
-
-      // Records in a collapsed group are not on screen to be reached
-      const recordIds = isDefined(selectableItemsContainer)
-        ? store
-            .get(displayedRecordIds)
-            .filter((recordId) => selectableItemElements.has(recordId))
-        : store.get(displayedRecordIds);
-
+      const recordIds = store.get(displayedRecordIds);
       const range = store.get(recordSelectionRange);
-      const focusedRecordId =
-        document.activeElement instanceof HTMLElement &&
-        selectableItemsContainer?.contains(document.activeElement)
-          ? document.activeElement.closest<HTMLElement>('[data-selectable-id]')
-              ?.dataset.selectableId
-          : undefined;
 
-      const cursorRecordId = [
-        range?.headRecordId,
-        activeRecordId,
-        focusedRecordId,
-      ].find((recordId) => isDefined(recordId) && recordIds.includes(recordId));
+      const cursorRecordId = [range?.headRecordId, activeRecordId].find(
+        (recordId) => isDefined(recordId) && recordIds.includes(recordId),
+      );
 
       const cursorIndex = isDefined(cursorRecordId)
         ? recordIds.indexOf(cursorRecordId)
@@ -97,7 +73,7 @@ export const useRecordSelectionArrowKeyNavigation = ({
 
       if (!isDefined(targetRecordId)) {
         if (keyboardEvent.key === Key.ArrowDown) {
-          onEndReached?.();
+          onEndReached();
         }
 
         return;
@@ -105,12 +81,11 @@ export const useRecordSelectionArrowKeyNavigation = ({
 
       if (!keyboardEvent.shiftKey) {
         resetRecordSelection();
-        onActiveRecordChange?.(targetRecordId);
+        onActiveRecordChange(targetRecordId);
       } else if (isDefined(range) && range.headRecordId === cursorRecordId) {
         toggleRecordSelection({
           recordId: targetRecordId,
           shouldSelectRange: true,
-          selectableRecordIds: recordIds,
         });
       } else {
         const anchorRecordId = cursorRecordId ?? targetRecordId;
@@ -126,15 +101,13 @@ export const useRecordSelectionArrowKeyNavigation = ({
           toggleRecordSelection({
             recordId: targetRecordId,
             shouldSelectRange: true,
-            selectableRecordIds: recordIds,
           });
         }
       }
 
-      const targetElement = selectableItemElements.get(targetRecordId);
-
-      targetElement?.focus({ preventScroll: true });
-      targetElement?.scrollIntoView({ block: 'nearest' });
+      selectableItemsContainerRef.current
+        ?.querySelector(`[data-selectable-id="${targetRecordId}"]`)
+        ?.scrollIntoView({ block: 'nearest' });
     },
     [
       activeRecordId,

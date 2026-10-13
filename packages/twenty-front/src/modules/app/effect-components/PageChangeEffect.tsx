@@ -256,6 +256,32 @@ export const PageChangeEffect = () => {
         }
         break;
       }
+      case isMatchingLocation(location, AppPath.AiChatInbox): {
+        // Moving between chats keeps the stack, so a panel or menu opened
+        // over the inbox keeps its hotkeys
+        const isEnteringAiChatInbox = !matchPath(
+          AppPath.AiChatInbox,
+          previousLocation,
+        );
+        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
+
+        if (isEnteringAiChatInbox && !isSidePanelOpen) {
+          resetFocusStackToFocusItem({
+            focusStackItem: {
+              focusId: PageFocusId.AiChatInbox,
+              componentInstance: {
+                componentType: FocusComponentType.PAGE,
+                componentInstanceId: PageFocusId.AiChatInbox,
+              },
+              globalHotkeysConfig: {
+                enableGlobalHotkeysWithModifiers: true,
+                enableGlobalHotkeysConflictingWithKeyboard: true,
+              },
+            },
+          });
+        }
+        break;
+      }
       case isMatchingLocation(location, AppPath.PageLayoutPage): {
         resetFocusStackToFocusItem({
           focusStackItem: {

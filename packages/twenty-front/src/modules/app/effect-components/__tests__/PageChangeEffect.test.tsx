@@ -13,6 +13,10 @@ import {
   type SidePanelNavigationStackItem,
   sidePanelNavigationStackState,
 } from '@/side-panel/states/sidePanelNavigationStackState';
+import { PageFocusId } from '@/types/PageFocusId';
+import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -115,5 +119,66 @@ describe('PageChangeEffect', () => {
       ]);
     });
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
+  });
+
+  it('should let the inbox use global hotkeys when coming from settings', async () => {
+    renderPageChangeEffect();
+
+    act(() => navigateMainPage?.('/settings/profile'));
+    await waitFor(() => {
+      expect(
+        jotaiStore.get(currentGlobalHotkeysConfigSelector.atom)
+          .enableGlobalHotkeysConflictingWithKeyboard,
+      ).toBe(false);
+    });
+
+    act(() => navigateMainPage?.('/inbox'));
+
+    await waitFor(() => {
+      expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+        PageFocusId.AiChatInbox,
+      );
+    });
+    expect(
+      jotaiStore.get(currentGlobalHotkeysConfigSelector.atom)
+        .enableGlobalHotkeysConflictingWithKeyboard,
+    ).toBe(true);
+  });
+
+  it('should keep what is focused over the inbox when moving between chats', async () => {
+    renderPageChangeEffect();
+
+    act(() => navigateMainPage?.('/inbox'));
+    await waitFor(() => {
+      expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+        PageFocusId.AiChatInbox,
+      );
+    });
+
+    act(() => {
+      jotaiStore.set(focusStackState.atom, [
+        ...jotaiStore.get(focusStackState.atom),
+        {
+          focusId: 'chat-menu',
+          componentInstance: {
+            componentType: FocusComponentType.DROPDOWN,
+            componentInstanceId: 'chat-menu',
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysWithModifiers: true,
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
+        },
+      ]);
+    });
+    act(() =>
+      navigateMainPage?.('/inbox/6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60'),
+    );
+
+    await waitFor(() => {
+      expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+        'chat-menu',
+      );
+    });
   });
 });

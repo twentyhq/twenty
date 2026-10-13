@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useId, useRef } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
@@ -26,7 +27,6 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
-import { RECORD_SELECTION_ARROW_KEY_HOTKEYS } from '@/object-record/record-selection/constants/RecordSelectionArrowKeyHotkeys';
 import { useRecordSelectionArrowKeyNavigation } from '@/object-record/record-selection/hooks/useRecordSelectionArrowKeyNavigation';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
@@ -135,7 +135,12 @@ const AiChatInboxPageContent = () => {
   });
 
   useGlobalHotkeys({
-    keys: RECORD_SELECTION_ARROW_KEY_HOTKEYS,
+    keys: [
+      Key.ArrowUp,
+      Key.ArrowDown,
+      `${Key.Shift}+${Key.ArrowUp}`,
+      `${Key.Shift}+${Key.ArrowDown}`,
+    ],
     callback: navigateWithArrowKey,
     containsModifier: false,
     dependencies: [navigateWithArrowKey],
