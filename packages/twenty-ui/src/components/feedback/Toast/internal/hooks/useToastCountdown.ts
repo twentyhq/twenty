@@ -2,6 +2,7 @@ import { useContext, useLayoutEffect, useState } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { type ToastProps } from '../../types/ToastProps';
 import { ToastTimingContext } from '../contexts/ToastTimingContext';
 import { createToastCountdown } from '../utils/createToastCountdown';
 
@@ -10,11 +11,9 @@ export const useToastCountdown = ({
   progress,
   isPaused,
   onClose,
-}: {
+}: Pick<ToastProps, 'progress' | 'onClose'> & {
   duration: number;
-  progress?: number;
   isPaused: boolean;
-  onClose?: () => void;
 }) => {
   const { durationRevision, isActive } = useContext(ToastTimingContext);
   const isProgress = isDefined(progress);
