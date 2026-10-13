@@ -106,4 +106,22 @@ describe('listTeamsOccurrenceTranscripts', () => {
       }),
     ).rejects.toThrow('503');
   });
+
+  it('should fail when Microsoft Graph refuses the meeting lookup', async () => {
+    getMeetingByJoinUrlMock.mockRejectedValue(
+      new GraphRequestError({
+        message: 'Microsoft Graph request failed (403)',
+        status: 403,
+        innerErrorCode: undefined,
+      }),
+    );
+
+    await expect(
+      listTeamsOccurrenceTranscripts({
+        accessToken: 'token',
+        occurrences: WEEKLY_SYNC_OCCURRENCES,
+      }),
+    ).rejects.toThrow('403');
+    expect(listMeetingTranscriptsMock).not.toHaveBeenCalled();
+  });
 });

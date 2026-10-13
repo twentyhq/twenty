@@ -42,10 +42,12 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
   accessToken,
   coreApiClient,
   transcripts,
+  isRunActive,
 }: {
   accessToken: string;
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   transcripts: TeamsOccurrenceTranscript[];
+  isRunActive: () => Promise<boolean>;
 }): Promise<number> => {
   const pageTranscripts = [
     ...new Map(
@@ -137,6 +139,10 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
 
     if (upsertableCallRecordings.length === 0) {
       continue;
+    }
+
+    if (!(await isRunActive())) {
+      break;
     }
 
     await coreApiClient.mutation({

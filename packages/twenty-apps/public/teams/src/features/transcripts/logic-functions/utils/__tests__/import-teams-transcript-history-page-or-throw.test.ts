@@ -151,6 +151,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
+        isRunActive: async () => true,
       }),
     ).resolves.toBe(2);
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
@@ -184,6 +185,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
+        isRunActive: async () => true,
       }),
     ).resolves.toBe(1);
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
@@ -210,6 +212,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
+        isRunActive: async () => true,
       }),
     ).resolves.toBe(1);
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
@@ -231,6 +234,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient: buildCoreApiClient([]),
         transcripts: [buildTranscript('new')],
+        isRunActive: async () => true,
       }),
     ).rejects.toThrow('503');
   });
@@ -247,9 +251,30 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
+        isRunActive: async () => true,
       }),
     ).resolves.toBe(11);
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(2);
     expect(coreApiClient.rowsById.size).toBe(11);
+  });
+
+  it('should stop writing once the run is removed', async () => {
+    const coreApiClient = buildCoreApiClient([]);
+    const isRunActive = vi
+      .fn()
+      .mockResolvedValueOnce(true)
+      .mockResolvedValue(false);
+
+    await expect(
+      importTeamsTranscriptHistoryPageOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        transcripts: Array.from({ length: 11 }, (_, index) =>
+          buildTranscript(`new-${index}`),
+        ),
+        isRunActive,
+      }),
+    ).resolves.toBe(10);
+    expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
   });
 });
