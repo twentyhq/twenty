@@ -4,7 +4,7 @@ import { type CallRecordingSyncFields } from 'src/features/transcripts/logic-fun
 import { buildTeamsCallRecordingSyncFields } from 'src/features/transcripts/logic-functions/utils/build-teams-call-recording-sync-fields';
 import { computeCallRecordingIdForTeamsTranscript } from 'src/features/transcripts/logic-functions/utils/compute-call-recording-id-for-teams-transcript';
 import { fetchTeamsTranscriptData } from 'src/features/transcripts/logic-functions/utils/fetch-teams-transcript-data';
-import { findMatchingCalendarEventOrThrow } from 'src/features/transcripts/logic-functions/utils/find-matching-calendar-event-or-throw';
+import { findTeamsTranscriptCalendarEventIdOrThrow } from 'src/features/transcripts/logic-functions/utils/find-teams-transcript-calendar-event-id-or-throw';
 import { mapTeamsTranscriptToEntries } from 'src/features/transcripts/logic-functions/utils/map-teams-transcript-to-entries';
 import { upsertCallRecordingOrThrow } from 'src/features/transcripts/logic-functions/utils/upsert-call-recording-or-throw';
 
@@ -31,7 +31,8 @@ export const syncTeamsTranscriptToCallRecordingOrThrow = async ({
   const callRecordingId = computeCallRecordingIdForTeamsTranscript(
     transcript.id,
   );
-  const calendarEventId = await findMatchingCalendarEventOrThrow({
+  const calendarEventId = await findTeamsTranscriptCalendarEventIdOrThrow({
+    accessToken,
     coreApiClient,
     meeting,
     transcript,

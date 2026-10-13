@@ -13,8 +13,8 @@ import { TEAMS_SYNC_TRANSCRIPT_UNIVERSAL_IDENTIFIER } from 'src/features/transcr
 import { type CallRecordingSyncFields } from 'src/features/transcripts/logic-functions/types/call-recording-sync-fields.type';
 import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw';
 import { syncTeamsTranscriptToCallRecordingOrThrow } from 'src/features/transcripts/logic-functions/utils/sync-teams-transcript-to-call-recording-or-throw';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 const teamsSyncTranscriptInputSchema: InputJsonSchema = {
   type: 'object',

@@ -1337,12 +1337,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         }),
       ).toMatchObject({ totalCount: 1, threads: [{ id: THREAD_ID }] });
       const chat = new AdminPanelChatService(
-        workspaceStorage,
         workspaceRepository,
         threads,
         messages,
       );
-      expect(await chat.getChatThreadMessages(THREAD_ID)).toMatchObject({
+      expect(
+        await chat.getChatThreadMessages({
+          workspaceId: WORKSPACE_ID,
+          threadId: THREAD_ID,
+        }),
+      ).toMatchObject({
         thread: { id: THREAD_ID },
         messages: [{ id: MESSAGE_ID }],
       });
@@ -1350,9 +1354,12 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         `UPDATE core.workspace SET "allowImpersonation" = false WHERE id = $1`,
         [WORKSPACE_ID],
       );
-      await expect(chat.getChatThreadMessages(THREAD_ID)).rejects.toThrow(
-        'Thread not found',
-      );
+      await expect(
+        chat.getChatThreadMessages({
+          workspaceId: WORKSPACE_ID,
+          threadId: THREAD_ID,
+        }),
+      ).rejects.toThrow('This workspace has not enabled support access');
     });
 
     it('returns domain errors for missing history and invalid workspace scope', async () => {
