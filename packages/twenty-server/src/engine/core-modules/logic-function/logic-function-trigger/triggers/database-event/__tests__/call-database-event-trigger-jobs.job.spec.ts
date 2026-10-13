@@ -243,7 +243,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
             userWorkspaceId: 'user-workspace-id',
             payload: expect.objectContaining(event),
           }),
-          jobId: `${TRIGGER_JOB_ID}.${APPLICATION_ID}.0`,
+          jobId: `${TRIGGER_JOB_ID}.${LOGIC_FUNCTION_ID}.0`,
         },
       ],
       expect.anything(),

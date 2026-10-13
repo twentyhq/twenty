@@ -14,6 +14,7 @@ import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/m
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildLogicFunctionTriggerJobIds } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/build-logic-function-trigger-job-ids';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
@@ -148,11 +149,16 @@ export class CallDatabaseEventTriggerJobsJob {
         throw error;
       }
 
+      const logicFunctionTriggerJobIds = buildLogicFunctionTriggerJobIds({
+        triggerJobId: jobId,
+        logicFunctionPayloads,
+      });
+
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         logicFunctionPayloads.map((logicFunctionPayload, index) => ({
           data: logicFunctionPayload,
-          jobId: `${jobId}.${applicationId}.${index}`,
+          jobId: logicFunctionTriggerJobIds[index],
         })),
         {
           retryLimit: 3,
