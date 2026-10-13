@@ -1,14 +1,16 @@
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { styled } from '@linaria/react';
-import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { css } from '@linaria/core';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledCellSkeleton = styled.div`
-  background-color: ${themeCssVariables.background.tertiary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  height: ${SKELETON_HEIGHT_SIZES.s}px;
-  margin: ${themeCssVariables.spacing[2]};
+const cellSkeletonClassName = css`
+  && {
+    border-radius: ${themeCssVariables.border.radius.sm};
+    height: ${SKELETON_HEIGHT_SIZES.s}px;
+    margin: ${themeCssVariables.spacing[2]};
+    width: auto;
+  }
 `;
 
 export const RecordTableCellLoading = ({
@@ -22,6 +24,10 @@ export const RecordTableCellLoading = ({
     widthClassName={getRecordTableColumnFieldWidthClassName(recordFieldIndex)}
     isSelected={isSelected}
   >
-    <StyledCellSkeleton aria-hidden />
+    <Skeleton
+      layout="block"
+      className={cellSkeletonClassName}
+      animated={false}
+    />
   </RecordTableCellStyleWrapper>
 );
