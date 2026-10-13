@@ -148,7 +148,13 @@ export const SettingsObjectNewFieldSelector = ({
                         [
                           key,
                           key === FieldMetadataType.MORPH_RELATION
-                            ? { ...config, label: msg`Relation` }
+                            ? {
+                                ...config,
+                                label: msg({
+                                  message: `Relation`,
+                                  context: 'Field type',
+                                }),
+                              }
                             : config,
                         ] as [string, SettingsFieldTypeConfig<any>],
                     )

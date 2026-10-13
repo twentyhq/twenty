@@ -51,7 +51,7 @@ type SettingsCompositeFieldTypeConfigArray = Record<
 
 export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.CURRENCY]: {
-    label: msg`Currency`,
+    label: msg({ message: `Currency`, context: 'Field type' }),
     Icon: IllustrationIconCurrency,
     subFields: [
       {
@@ -94,7 +94,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldCurrencyValue>,
   [FieldMetadataType.EMAILS]: {
-    label: msg`Emails`,
+    label: msg({ message: `Emails`, context: 'Field type' }),
     Icon: IllustrationIconMail,
     subFields: [
       {
@@ -141,7 +141,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldEmailsValue>,
   [FieldMetadataType.LINKS]: {
-    label: msg`Links`,
+    label: msg({ message: `Links`, context: 'Field type' }),
     Icon: IllustrationIconLink,
     subFields: [
       {
@@ -198,7 +198,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
   [FieldMetadataType.PHONES]: {
-    label: msg`Phones`,
+    label: msg({ message: `Phones`, context: 'Field type' }),
     Icon: IllustrationIconPhone,
     subFields: [
       {
@@ -274,7 +274,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
   [FieldMetadataType.FULL_NAME]: {
-    label: msg`Full Name`,
+    label: msg({ message: `Full Name`, context: 'Field type' }),
     Icon: IllustrationIconUser,
     subFields: [
       {
@@ -308,7 +308,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
   [FieldMetadataType.ADDRESS]: {
-    label: msg`Address`,
+    label: msg({ message: `Address`, context: 'Field type' }),
     Icon: IllustrationIconMap,
     subFields: [
       {
@@ -435,7 +435,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldAddressValue>,
   [FieldMetadataType.ACTOR]: {
-    label: msg`Actor`,
+    label: msg({ message: `Actor`, context: 'Field type' }),
     Icon: IllustrationIconSetting,
     category: 'Basic',
     subFields: [
@@ -501,7 +501,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     ],
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
   [FieldMetadataType.RICH_TEXT]: {
-    label: msg`Rich Text`,
+    label: msg({ message: `Rich Text`, context: 'Field type' }),
     Icon: IllustrationIconText,
     category: 'Basic',
     subFields: [
