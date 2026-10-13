@@ -96,7 +96,7 @@ Beyond commands, you can embed a front component directly into a record page by 
 - **`OBJECTS`** — when editing a record page layout.
 - **`DASHBOARDS`** — when editing a dashboard.
 
-It defaults to `['OBJECTS', 'DASHBOARDS']`. A component opened by a command or by a [settings menu item](#settings-menu-items) defaults to `[]` instead, since it is built to run from its menu rather than as a widget. List the editors that should offer it anyway:
+It defaults to `['OBJECTS', 'DASHBOARDS']`. A headless component, or one opened by a command or by a [settings menu item](#settings-menu-items), defaults to `[]` instead, since it is not built to run as a widget. List the editors that should offer it anyway:
 
 ```tsx
 export default defineFrontComponent({

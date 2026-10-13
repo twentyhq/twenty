@@ -14,9 +14,6 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   conditionalPinnedExpression?: string;
 };
 
-// Layout editors whose widget picker offers a front component. It never limits
-// where a component can be displayed: commands, settings menu items and page
-// layouts declared by an app render it wherever they point.
 export const FRONT_COMPONENT_SURFACES = ['OBJECTS', 'DASHBOARDS'] as const;
 
 export type FrontComponentSurface = (typeof FRONT_COMPONENT_SURFACES)[number];

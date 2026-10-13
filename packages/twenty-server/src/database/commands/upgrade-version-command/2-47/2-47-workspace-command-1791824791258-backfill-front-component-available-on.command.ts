@@ -8,17 +8,12 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Inlined rather than imported from twenty-shared so this command keeps writing
-// what it wrote the day it ran, whatever those constants become.
 const DEFAULT_AVAILABLE_ON = ['OBJECTS', 'DASHBOARDS'];
-const MENU_ITEM_AVAILABLE_ON: string[] = [];
+const NOT_OFFERED_AVAILABLE_ON: string[] = [];
 
-// Mirrors the default applied on manifest sync, so components installed before
-// the column existed leave the widget pickers without waiting for their next sync.
-// Sync only sees the owning application's manifest, so a reference from another
-// application must not count here, or that application's next sync would undo it.
-const IS_MENU_ITEM_FRONT_COMPONENT_PREDICATE = `(
-  "frontComponent".id IN (
+const IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE = `(
+  "frontComponent"."isHeadless" = true
+  OR "frontComponent".id IN (
     SELECT application."settingsCustomTabFrontComponentId"
     FROM core."application" application
     WHERE application."workspaceId" = $1
@@ -44,7 +39,7 @@ const IS_MENU_ITEM_FRONT_COMPONENT_PREDICATE = `(
 @Command({
   name: 'upgrade:2-47:backfill-front-component-available-on',
   description:
-    'Keep front components opened from a settings or command menu item out of the widget pickers',
+    'Keep headless front components and those opened from a settings or command menu item out of the widget pickers',
 })
 export class BackfillFrontComponentAvailableOnCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -60,30 +55,30 @@ export class BackfillFrontComponentAvailableOnCommand extends ProvisionedWorkspa
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.replaceMenuItemFrontComponentsAvailableOn(args, {
+    await this.replaceNotOfferedFrontComponentsAvailableOn(args, {
       from: DEFAULT_AVAILABLE_ON,
-      to: MENU_ITEM_AVAILABLE_ON,
+      to: NOT_OFFERED_AVAILABLE_ON,
     });
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.replaceMenuItemFrontComponentsAvailableOn(args, {
-      from: MENU_ITEM_AVAILABLE_ON,
+    await this.replaceNotOfferedFrontComponentsAvailableOn(args, {
+      from: NOT_OFFERED_AVAILABLE_ON,
       to: DEFAULT_AVAILABLE_ON,
     });
   }
 
-  private async replaceMenuItemFrontComponentsAvailableOn(
+  private async replaceNotOfferedFrontComponentsAvailableOn(
     { workspaceId, options }: RunOnWorkspaceArgs,
     { from, to }: { from: string[]; to: string[] },
   ): Promise<void> {
-    if (options.dryRun ?? false) {
+    if (options.dryRun) {
       const [{ count }] = await this.dataSource.query<{ count: number }[]>(
         `SELECT COUNT(*)::int AS count
          FROM core."frontComponent" "frontComponent"
          WHERE "frontComponent"."workspaceId" = $1
            AND "frontComponent"."availableOn" = $2::text[]
-           AND ${IS_MENU_ITEM_FRONT_COMPONENT_PREDICATE}`,
+           AND ${IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE}`,
         [workspaceId, from],
       );
 
@@ -99,12 +94,10 @@ export class BackfillFrontComponentAvailableOnCommand extends ProvisionedWorkspa
        SET "availableOn" = $3::text[]
        WHERE "frontComponent"."workspaceId" = $1
          AND "frontComponent"."availableOn" = $2::text[]
-         AND ${IS_MENU_ITEM_FRONT_COMPONENT_PREDICATE}`,
+         AND ${IS_NOT_OFFERED_IN_WIDGET_PICKERS_BY_DEFAULT_PREDICATE}`,
       [workspaceId, from, to],
     );
 
-    // Recomputed even when nothing changed: front components cached before the
-    // column existed lack the field, which the GraphQL type requires
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatFrontComponentMaps',
     ]);

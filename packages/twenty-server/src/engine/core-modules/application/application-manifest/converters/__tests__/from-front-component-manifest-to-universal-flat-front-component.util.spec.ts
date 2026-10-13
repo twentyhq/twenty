@@ -55,6 +55,18 @@ describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
     expect(result.availableOn).toEqual([]);
   });
 
+  it('should keep a headless front component out of the widget pickers by default', () => {
+    const result = fromFrontComponentManifestToUniversalFlatFrontComponent({
+      frontComponentManifest: buildManifest({ isHeadless: true }),
+      applicationUniversalIdentifier: APP_UID,
+      isSettingsFrontComponent: false,
+      isReferencedByMenuItem: false,
+      now: NOW,
+    });
+
+    expect(result.availableOn).toEqual([]);
+  });
+
   it('should honor an explicit availableOn over the default', () => {
     const regularResult =
       fromFrontComponentManifestToUniversalFlatFrontComponent({

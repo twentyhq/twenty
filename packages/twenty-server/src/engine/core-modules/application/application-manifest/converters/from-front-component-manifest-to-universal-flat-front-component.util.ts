@@ -18,6 +18,11 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   isReferencedByMenuItem: boolean;
   now: string;
 }): UniversalFlatFrontComponent => {
+  const isOfferedInWidgetPickersByDefault =
+    !frontComponentManifest.isHeadless &&
+    !isSettingsFrontComponent &&
+    !isReferencedByMenuItem;
+
   return {
     universalIdentifier: frontComponentManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -31,13 +36,11 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     isHeadless: isSettingsFrontComponent
       ? false
       : (frontComponentManifest.isHeadless ?? false),
-    // A settings page or a command form expects to be opened from its menu,
-    // not dropped into a layout, so it stays out of the widget pickers.
     availableOn: [
       ...(frontComponentManifest.availableOn ??
-        (isSettingsFrontComponent || isReferencedByMenuItem
-          ? []
-          : DEFAULT_FRONT_COMPONENT_AVAILABLE_ON)),
+        (isOfferedInWidgetPickersByDefault
+          ? DEFAULT_FRONT_COMPONENT_AVAILABLE_ON
+          : [])),
     ],
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
     createdAt: now,

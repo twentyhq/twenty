@@ -27,10 +27,12 @@ const MENU_COMPONENT_NAME = 'MenuComponent';
 const buildFrontComponent = ({
   universalIdentifier,
   componentName,
+  isHeadless = false,
   availableOn,
 }: {
   universalIdentifier: string;
   componentName: string;
+  isHeadless?: boolean;
   availableOn?: FrontComponentSurface[];
 }): FrontComponentManifest => ({
   universalIdentifier,
@@ -39,7 +41,7 @@ const buildFrontComponent = ({
   builtComponentPath: `src/front-components/${componentName}.mjs`,
   builtComponentChecksum: `${componentName}-checksum`,
   componentName,
-  isHeadless: false,
+  isHeadless,
   ...(isDefined(availableOn) ? { availableOn } : {}),
 });
 
@@ -58,11 +60,13 @@ const COMMAND_MENU_ITEM: CommandMenuItemManifest = {
 const buildManifest = ({
   settingsMenuItems = [],
   commandMenuItems = [],
+  isWidgetHeadless,
   widgetAvailableOn,
   menuAvailableOn,
 }: {
   settingsMenuItems?: SettingsMenuItemManifest[];
   commandMenuItems?: CommandMenuItemManifest[];
+  isWidgetHeadless?: boolean;
   widgetAvailableOn?: FrontComponentSurface[];
   menuAvailableOn?: FrontComponentSurface[];
 } = {}): Manifest =>
@@ -74,6 +78,7 @@ const buildManifest = ({
         buildFrontComponent({
           universalIdentifier: WIDGET_FRONT_COMPONENT_ID,
           componentName: WIDGET_COMPONENT_NAME,
+          isHeadless: isWidgetHeadless,
           availableOn: widgetAvailableOn,
         }),
         buildFrontComponent({
@@ -112,8 +117,6 @@ const findAvailableOnByUniversalIdentifier = async (): Promise<
   );
 };
 
-// The migration runner refuses to create a front component whose built file is
-// not in storage, so every synced component needs one uploaded first.
 const uploadBuiltComponentFile = async (componentName: string) => {
   await uploadApplicationFile({
     applicationUniversalIdentifier: TEST_APP_ID,
@@ -135,8 +138,6 @@ describe('Manifest sync - front component availableOn', () => {
       sourcePath: 'front-component-available-on-manifest-sync',
     });
 
-    // setupApplicationForSync leaves fake timers installed, under which the
-    // multipart upload never resolves.
     jest.useRealTimers();
 
     await uploadBuiltComponentFile(WIDGET_COMPONENT_NAME);
@@ -184,6 +185,18 @@ describe('Manifest sync - front component availableOn', () => {
     expect(await findAvailableOnByUniversalIdentifier()).toEqual({
       [WIDGET_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
       [MENU_FRONT_COMPONENT_ID]: [],
+    });
+  }, 60000);
+
+  it('keeps a headless front component out of the widget pickers by default', async () => {
+    await syncApplication({
+      manifest: buildManifest({ isWidgetHeadless: true }),
+      expectToFail: false,
+    });
+
+    expect(await findAvailableOnByUniversalIdentifier()).toEqual({
+      [WIDGET_FRONT_COMPONENT_ID]: [],
+      [MENU_FRONT_COMPONENT_ID]: ['OBJECTS', 'DASHBOARDS'],
     });
   }, 60000);
 
