@@ -34,7 +34,7 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useTriggerInitialRecordTableDataLoad = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
@@ -130,7 +130,13 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       store.set(isInitializingVirtualTableDataLoadingCallbackState, true);
 
       try {
-        store.set(isRecordTableInitialLoading, true);
+        const hasRecordsToKeepDisplayed = isNonEmptyArray(
+          store.get(recordIndexAllRecordIds),
+        );
+
+        if (!hasRecordsToKeepDisplayed) {
+          store.set(isRecordTableInitialLoading, true);
+        }
 
         resetTableFocuses();
 
