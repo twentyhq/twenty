@@ -1,0 +1,1 @@
+ALTER TABLE usageEvent ADD COLUMN IF NOT EXISTS memberCreditsUsedMicro Int64 DEFAULT 0;
