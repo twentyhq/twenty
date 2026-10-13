@@ -26,6 +26,14 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
     );
   });
 
+  it('should handle an unterminated import with many url tokens without backtracking', () => {
+    const unterminatedImport = `@import ${'url()'.repeat(10000)}`;
+
+    expect(wrapCssInTwentyUiCascadeLayer(unterminatedImport)).toBe(
+      `@layer twenty-ui {\n${unterminatedImport}\n}`,
+    );
+  });
+
   it('should keep the layer of an import that already declares one', () => {
     expect(
       wrapCssInTwentyUiCascadeLayer(

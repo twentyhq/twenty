@@ -3,7 +3,7 @@ import { TWENTY_UI_CASCADE_LAYER_NAME } from '@/host/constants/TwentyUiCascadeLa
 const TWENTY_UI_CASCADE_LAYER_DECLARATION = `@layer ${TWENTY_UI_CASCADE_LAYER_NAME}`;
 
 const LEADING_STATEMENTS_PATTERN =
-  /^(?:\s*(?:\/\*[\s\S]*?\*\/|@(?:charset|import|namespace)\s(?:url\([^)]*\)|"[^"]*"|'[^']*'|[^;'"])*;))*/;
+  /^(?:\s*(?:\/\*[\s\S]*?\*\/|@(?:charset|import|namespace)\s(?:\([^)]*\)|"[^"]*"|'[^']*'|[^;'"()])*;))*/;
 
 const IMPORT_WITHOUT_LAYER_PATTERN =
   /@import\s+(url\([^)]*\)|"[^"]*"|'[^']*')(?!\s*layer\b)/g;
