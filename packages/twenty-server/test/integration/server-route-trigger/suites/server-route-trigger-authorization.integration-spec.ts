@@ -270,17 +270,22 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       expect(response.body).toEqual({ challenge: 'abc123' });
     }, 60000);
 
-    it('forwards a third-party authorization header to a resolver that asked for it', async () => {
+    it('forwards a third-party JWT to a resolver that asked for it', async () => {
+      const thirdPartyToken = jwt.sign(
+        { iss: 'https://api.botframework.com', aud: 'bot-app-id' },
+        'third-party-signing-key',
+      );
+
       const response = await request(baseUrl)
         .post(
           `/webhooks/server/${AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
         )
-        .set('Authorization', 'Bearer third-party-token')
+        .set('Authorization', `Bearer ${thirdPartyToken}`)
         .send({ any: 'payload' });
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
-        authorization: 'Bearer third-party-token',
+        authorization: `Bearer ${thirdPartyToken}`,
       });
     }, 60000);
 
