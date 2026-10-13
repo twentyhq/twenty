@@ -204,7 +204,11 @@ describe('manifestValidate', () => {
       );
     });
 
-    it.each(['onConnectLogicFunction', 'onDisconnectLogicFunction'] as const)(
+    it.each([
+      'identifyAccountLogicFunction',
+      'onConnectLogicFunction',
+      'onDisconnectLogicFunction',
+    ] as const)(
       'should not flag a connection provider referencing a logic function via %s as a duplicate',
       (lifecycleHookKey) => {
         const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';

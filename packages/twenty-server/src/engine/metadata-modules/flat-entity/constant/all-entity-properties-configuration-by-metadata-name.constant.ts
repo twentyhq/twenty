@@ -1912,6 +1912,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    identifyAccountLogicFunctionUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     onConnectLogicFunctionUniversalIdentifier: {
       toCompare: true,
       toStringify: false,

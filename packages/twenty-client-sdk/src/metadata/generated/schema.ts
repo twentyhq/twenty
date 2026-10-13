@@ -232,6 +232,7 @@ export interface AppConnection {
     accessToken: Scalars['String']
     authFailedAt?: Scalars['String']
     authFailedReason?: Scalars['String']
+    externalAccountId?: Scalars['String']
     handle: Scalars['String']
     id: Scalars['ID']
     name: Scalars['String']
@@ -4167,6 +4168,7 @@ export interface AppConnectionGenqlSelection{
     accessToken?: boolean | number
     authFailedAt?: boolean | number
     authFailedReason?: boolean | number
+    externalAccountId?: boolean | number
     handle?: boolean | number
     id?: boolean | number
     name?: boolean | number

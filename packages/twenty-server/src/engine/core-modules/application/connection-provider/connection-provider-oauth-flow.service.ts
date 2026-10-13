@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { type IdentifyAccountResult } from 'twenty-shared/application';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -196,9 +197,25 @@ export class ConnectionProviderOAuthFlowService {
       );
     }
 
+    const identifiedAccount =
+      await this.connectionProviderLifecycleHookService.runIdentifyAccount({
+        provider,
+        workspaceId: statePayload.workspaceId,
+        accessToken: tokenResponse.accessToken,
+      });
+
+    if (isDefined(statePayload.reconnectingConnectedAccountId)) {
+      await this.assertReconnectTargetsSameAccount({
+        connectedAccountId: statePayload.reconnectingConnectedAccountId,
+        workspaceId: statePayload.workspaceId,
+        identifiedAccount,
+      });
+    }
+
     const connectedAccount = await this.persistConnectedAccount({
       provider,
       tokenResponse,
+      identifiedAccount,
       workspaceId: statePayload.workspaceId,
       userId: statePayload.userId,
       userWorkspaceId: statePayload.userWorkspaceId,
@@ -281,9 +298,48 @@ export class ConnectionProviderOAuthFlowService {
     return user.email;
   }
 
+  // A reconnect must keep pointing at the upstream account the row was created
+  // for: tokens for another account would silently re-target everything the
+  // app built on this connection. Rows created before the provider could
+  // identify accounts have nothing to compare against and get pinned instead.
+  private async assertReconnectTargetsSameAccount({
+    connectedAccountId,
+    workspaceId,
+    identifiedAccount,
+  }: {
+    connectedAccountId: string;
+    workspaceId: string;
+    identifiedAccount: IdentifyAccountResult | null;
+  }): Promise<void> {
+    if (!isDefined(identifiedAccount)) {
+      return;
+    }
+
+    const reconnectTarget = await this.connectedAccountRepository.findOne({
+      where: { id: connectedAccountId, workspaceId },
+    });
+
+    if (
+      !isDefined(reconnectTarget) ||
+      !isDefined(reconnectTarget.externalAccountId) ||
+      reconnectTarget.externalAccountId === identifiedAccount.externalAccountId
+    ) {
+      return;
+    }
+
+    const authorizedAccountHandle =
+      identifiedAccount.handle ?? identifiedAccount.externalAccountId;
+
+    throw new ConnectionProviderException(
+      `You authorized ${authorizedAccountHandle}, but this connection belongs to ${reconnectTarget.handle}. Reconnect with ${reconnectTarget.handle}, or add a new connection for ${authorizedAccountHandle}.`,
+      ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH,
+    );
+  }
+
   private async persistConnectedAccount({
     provider,
     tokenResponse,
+    identifiedAccount,
     workspaceId,
     userId,
     userWorkspaceId,
@@ -292,6 +348,7 @@ export class ConnectionProviderOAuthFlowService {
   }: {
     provider: OAuthConnectionProvider;
     tokenResponse: TokenExchangeResponse;
+    identifiedAccount: IdentifyAccountResult | null;
     workspaceId: string;
     userId: string;
     userWorkspaceId: string;
@@ -307,10 +364,12 @@ export class ConnectionProviderOAuthFlowService {
         workspaceId,
       });
 
-    const handle = await this.resolveConnectedAccountHandle({
-      tokenResponse,
-      userId,
-    });
+    const handle =
+      identifiedAccount?.handle ??
+      (await this.resolveConnectedAccountHandle({
+        tokenResponse,
+        userId,
+      }));
 
     const sharedFields = {
       accessToken: encryptedAccessToken,
@@ -321,6 +380,9 @@ export class ConnectionProviderOAuthFlowService {
       authFailedReason: null,
       visibility,
       handle,
+      ...(isDefined(identifiedAccount)
+        ? { externalAccountId: identifiedAccount.externalAccountId }
+        : {}),
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {

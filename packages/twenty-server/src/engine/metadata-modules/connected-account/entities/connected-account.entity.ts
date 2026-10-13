@@ -52,6 +52,13 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: false })
   handle: string;
 
+  @Column({ type: 'varchar', length: 512, nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.47.0_AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand_1791919200193',
+  })
+  externalAccountId: string | null;
+
   @Column({ type: 'varchar', nullable: false })
   provider: ConnectedAccountProvider;
 
