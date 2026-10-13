@@ -100,14 +100,15 @@ For third-party connections:
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
 
-Every Add creates a new connection, even for an account that is already connected. To merge duplicates, call `deduplicateConnectedAccount({ connectedAccountId, externalAccountId, handle? })` from `twenty-sdk/logic-function` in the provider's `onConnectLogicFunction`, with a stable id from the provider's authenticated account lookup (include the organization or team when user ids are only unique inside it; never an email):
+Every Add creates a new connection, even for an account that is already connected. To keep one connection per account, call `deduplicateConnectedAccount({ connectedAccountId, externalAccountId, handle? })` from `twenty-sdk/logic-function` in the provider's `onConnectLogicFunction`, with a stable id from the provider's authenticated account lookup (include the organization or team when user ids are only unique inside it; never an email):
 
-- Call it as the first statement of your onConnect handler, before any side effect.
-- If `wasMerged` is true, the credentials now live on the returned `connectedAccountId`, which is another connection; return immediately. Any state you keep must be keyed by that id. The connection you were called for is deleted, except after a reconnect as a different account, where it stays with its tokens cleared and flagged as needing reconnect.
-- Reconnect also runs onConnect, so call it there too. If the member reconnected a different account, the returned `connectedAccountId` is a new connection for that account and the original stays flagged as needing reconnect.
+- Call it as the first statement of your onConnect handler, before any side effect, and continue only when `outcome` is `IDENTIFIED`.
+- `MERGED`: the credentials now live on the returned `connectedAccountId`, another connection to the same account with the same visibility (and the same member, if personal); the connection you were called for is deleted.
+- `REJECTED`: the connection is flagged as needing reconnect with its tokens cleared. This happens when the account is already connected elsewhere in the workspace, when a reconnect signed in with a different account, or when an older connection is identified for an account another connection holds.
+- Reconnect also runs onConnect, so call it there too.
 - Available from Twenty 2.47.0 (`engines`).
 
-Matching is per provider and visibility, and per member for personal connections. An app that never calls it keeps one connection per Add. See the [connection provider guide](https://docs.twenty.com/developers/extend/apps/logic/connections).
+A workspace holds one connection per external account for each provider, personal or shared. An app that never calls it keeps one connection per Add. See the [connection provider guide](https://docs.twenty.com/developers/extend/apps/logic/connections).
 
 ## Post-Install Hooks
 

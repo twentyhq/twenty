@@ -131,7 +131,7 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 </Accordion>
 
-<Accordion title="Deduplicate connections" description="Merge a second connection to the same external account">
+<Accordion title="Deduplicate connections" description="Keep one connection per external account">
 
 Every **Add connection** creates a new connection, even when the member authorizes an account that is already connected. Twenty cannot tell two accounts apart on its own, so your app tells it which external account a connection belongs to. Call `deduplicateConnectedAccount` from your on-connect handler with a stable id from the provider's authenticated account lookup:
 
@@ -157,28 +157,30 @@ export const onSlackConnectHandler = async ({
     externalAccountId: `${teamId}:${userId}`,
   });
 
-  if (deduplicated.wasMerged) {
+  if (deduplicated.outcome !== 'IDENTIFIED') {
     return;
   }
 
-  // Key any state you keep by deduplicated.connectedAccountId.
+  // Key any state you keep by connectedAccountId.
 };
 ```
 
 The contract:
 
 - Call it as the first statement of your onConnect handler, before any side effect.
-- If `wasMerged` is true, the credentials now live on the returned `connectedAccountId`, which is another connection; return immediately. Any state you keep must be keyed by that id. The connection you were called for is deleted, except after a reconnect as a different account, where it stays with its tokens cleared and flagged as needing reconnect.
-- Reconnect also runs onConnect, so call it there too. If the member reconnected a different account, the returned `connectedAccountId` is a new connection for that account and the original stays flagged as needing reconnect.
+- Continue only when `outcome` is `IDENTIFIED`: the connection you were called for now carries that `externalAccountId`.
+- `MERGED`: another connection to the same account already existed with the same visibility (both shared, or both personal to the same member). Twenty copied the new credentials onto it (clearing any **Reconnect needed** flag), kept its id, name, owner and visibility, and deleted the connection you were called for. The returned `connectedAccountId` is that other connection; return immediately.
+- `REJECTED`: the connection you were called for is flagged as needing reconnect and its tokens are cleared; return immediately. This happens when the account is already connected elsewhere in the workspace, when a reconnect signed in with a different account than the one the connection was identified with, or when an older connection is identified for an account another connection already holds. That older connection is flagged rather than merged so nothing attached to it is lost. The connection stays listed as **Reconnect needed** until the member disconnects it or reconnects it with the right account.
+- Reconnect also runs onConnect, so call it there too.
 - Available from Twenty 2.47.0 (`engines`).
 
 The lookup in the example runs before the call because the id has to come from the provider; keep it read-only.
 
-When another active connection of the same provider already carries that `externalAccountId`, Twenty copies the new credentials onto it (clearing any **Reconnect needed** flag), keeps its id, name, owner and visibility, and deletes the connection that was just added. Matching is scoped to the workspace and to the visibility: a personal connection only merges into the same member's personal connection, and a personal and a shared connection to the same account stay separate. Since onConnect is queued, the duplicate connection is visible in settings for the few seconds before the handler runs.
+A workspace holds one connection per external account for each provider of your app, personal or shared: the same account cannot be both a shared connection and a personal one, and two members cannot both connect it personally. Since onConnect is queued, a duplicate that gets merged is visible in settings for the few seconds before the handler runs.
 
 Use an id that identifies the account, not a display value: include the organization or team when the provider's user ids are only unique inside it (`${teamId}:${userId}` for Slack), and never use an email address. `externalAccountId` is limited to 512 characters and the optional `handle` to 320; both must be non-empty and free of surrounding whitespace. Pass `handle` to update the label shown in settings.
 
-An app that never calls it keeps the previous behaviour: every Add is a separate connection. Connections created before your app started calling it have no id and are only identified the next time onConnect runs for them, on reconnect; if another connection already holds that account, the reconnected one is merged into it and deleted, together with any channels it owns. Fathom does not expose a stable account id, so the Fathom app does not deduplicate its connections.
+An app that never calls it keeps the previous behavior: every Add is a separate connection. Connections created before your app started calling it have no id and are only identified the next time onConnect runs for them, on reconnect. Fathom does not expose a stable account id, so the Fathom app does not deduplicate its connections.
 
 If your app uses it, declare the dependency in your `package.json`: `"engines": { "twenty": ">=2.47.0" }`.
 
@@ -215,8 +217,6 @@ type OnDisconnectPayload = {
 ```
 
 The `ConnectedAccount` and its token are still present when the hook runs, so `getConnection(connectedAccountId)` resolves with a fresh access token and the handler can delete whatever it registered remotely. State the provider cannot give back (a `team_id`, an external subscription id) still belongs in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep the handler short: it runs inside the disconnect request, so its `timeoutSeconds` is the upper bound on how long that request can take.
-
-After the hook, Twenty revokes the connection's token at the provider when the provider declares a revoke endpoint. It skips that revoke while another active connection of the same provider carries the same [`externalAccountId`](#deduplicate-connections), since a personal and a shared connection to one account can hold the same grant.
 
 The hook fires when a connection is removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
 
@@ -333,7 +333,7 @@ const conn =
 const conn = connections.find((c) => c.visibility === 'workspace');
 ```
 
-Multiple connections per (user, provider) are allowed for different external accounts, so the same user can hold "Personal Linear" and "Work Linear" side by side. Connecting the same account again is merged into the existing connection when the app [deduplicates](#deduplicate-connections).
+Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side. When the app [deduplicates](#deduplicate-connections) its connections, one external account backs a single connection in the workspace, personal or shared.
 
 </Accordion>
 
