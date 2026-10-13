@@ -154,11 +154,13 @@ export type ArrayFilter = {
 
 export type RawJsonFilter = {
   like?: string;
+  ilike?: string;
   is?: IsFilter;
 };
 
 export type FilesFilter = {
   like?: string;
+  ilike?: string;
   is?: IsFilter;
 };
 

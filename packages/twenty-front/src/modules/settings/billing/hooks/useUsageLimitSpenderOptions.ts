@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
   FindManyAgentsDocument,
   FindManyApplicationsDocument,
@@ -57,9 +58,7 @@ export const useUsageLimitSpenderOptions = (
             ? [
                 {
                   id: member.userWorkspaceId,
-                  label:
-                    `${member.name.firstName} ${member.name.lastName}`.trim() ||
-                    member.userEmail,
+                  label: getWorkspaceMemberNameOrEmail(member),
                   avatarUrl: member.avatarUrl,
                 },
               ]

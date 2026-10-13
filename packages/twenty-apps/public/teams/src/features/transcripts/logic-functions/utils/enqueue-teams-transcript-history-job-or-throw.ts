@@ -10,7 +10,7 @@ import {
 import { TEAMS_TRANSCRIPT_IMPORT_JOB_RETRY_LIMIT } from 'src/features/transcripts/logic-functions/constants/teams-transcript-import-job-retry-limit';
 import { type TeamsTranscriptHistoryJobPayload } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-job-payload.type';
 import { type TeamsTranscriptHistoryRunningPhase } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-running-phase.type';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 export const enqueueTeamsTranscriptHistoryJobOrThrow = async ({
   phase,

@@ -188,14 +188,14 @@ export const SettingsObjectFieldTable = ({
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconArchive />}
+                    startElement={<IconArchive />}
                     onCheckedChange={() => setShowInactive(!showInactive)}
                     checked={showInactive}
                   >{t`Inactive`}</SettingsRow>
                   {(mostlyEmptyFieldMetadataIds.size > 0 ||
                     showOnlyMostlyEmpty) && (
                     <SettingsRow
-                      startIcon={<IconCircleDashed />}
+                      startElement={<IconCircleDashed />}
                       onCheckedChange={() =>
                         setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
                       }
@@ -204,7 +204,7 @@ export const SettingsObjectFieldTable = ({
                   )}
                   {isAdvancedModeEnabled && (
                     <SettingsRow
-                      startIcon={<IconSettings />}
+                      startElement={<IconSettings />}
                       onCheckedChange={() =>
                         setShowSystemFields(!showSystemFields)
                       }

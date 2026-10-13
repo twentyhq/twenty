@@ -7,7 +7,7 @@ import { getMeetingByJoinUrl } from 'src/features/transcripts/logic-functions/ut
 import { isTranscriptDuringOccurrence } from 'src/features/transcripts/logic-functions/utils/is-transcript-during-occurrence';
 import { isUnavailableTeamsTranscriptError } from 'src/features/transcripts/logic-functions/utils/is-unavailable-teams-transcript-error';
 import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 const listMeetingOccurrenceTranscriptsOrThrow = async ({
   accessToken,

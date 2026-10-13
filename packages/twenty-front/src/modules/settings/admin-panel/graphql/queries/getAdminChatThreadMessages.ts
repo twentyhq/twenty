@@ -16,7 +16,6 @@ export const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
       messages {
         id
         role
-        isHidden
         parts {
           type
           orderIndex

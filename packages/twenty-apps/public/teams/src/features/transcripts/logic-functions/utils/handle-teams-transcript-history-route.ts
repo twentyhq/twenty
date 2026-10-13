@@ -5,7 +5,7 @@ import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/trans
 import { TeamsConnectionUnavailableError } from 'src/features/transcripts/logic-functions/types/teams-connection-unavailable-error';
 import { type TeamsTranscriptHistoryRouteResult } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-route-result.type';
 import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
 export const handleTeamsTranscriptHistoryRoute = async ({

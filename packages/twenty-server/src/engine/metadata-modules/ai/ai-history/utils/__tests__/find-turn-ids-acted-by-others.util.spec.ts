@@ -5,18 +5,18 @@ const APPLICATION_ID = 'application-id';
 
 const userMessage = (
   turnId: string | null,
-  senderUserWorkspaceId: string | null,
+  senderWorkspaceMemberId: string | null,
 ) => ({
   turnId,
   role: AgentMessageRole.USER,
-  senderUserWorkspaceId,
+  senderWorkspaceMemberId,
   senderApplicationId: APPLICATION_ID,
 });
 
 const assistantMessage = (turnId: string | null) => ({
   turnId,
   role: AgentMessageRole.ASSISTANT,
-  senderUserWorkspaceId: null,
+  senderWorkspaceMemberId: null,
   senderApplicationId: null,
 });
 
@@ -32,7 +32,7 @@ describe('findTurnIdsActedByOthers', () => {
           userMessage('turn-3', null),
           assistantMessage('turn-3'),
         ],
-        actor: { type: 'user', userWorkspaceId: 'member-a' },
+        actor: { type: 'user', workspaceMemberId: 'member-a' },
       }),
     ).toEqual(new Set(['turn-2', 'turn-3']));
   });
@@ -57,7 +57,7 @@ describe('findTurnIdsActedByOthers', () => {
           userMessage('turn-2', 'member-a'),
           userMessage('turn-2', 'member-b'),
         ],
-        actor: { type: 'user', userWorkspaceId: 'member-a' },
+        actor: { type: 'user', workspaceMemberId: 'member-a' },
       }),
     ).toEqual(new Set(['turn-1', 'turn-2']));
   });

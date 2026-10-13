@@ -27,7 +27,7 @@ import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/
 import { listTeamsOccurrenceTranscripts } from 'src/features/transcripts/logic-functions/utils/list-teams-occurrence-transcripts';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
 import { retryOrFailTeamsTranscriptHistoryPageOrThrow } from 'src/features/transcripts/logic-functions/utils/retry-or-fail-teams-transcript-history-page-or-throw';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
 const processValidTeamsTranscriptHistoryPageOrThrow = async ({

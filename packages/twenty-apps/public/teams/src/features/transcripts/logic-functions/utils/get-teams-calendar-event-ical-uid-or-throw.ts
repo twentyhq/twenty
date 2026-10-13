@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 import { type TeamsCalendarEvent } from 'src/features/transcripts/logic-functions/types/teams-calendar-event.type';
 import { fetchGraphJson } from 'src/features/transcripts/logic-functions/utils/fetch-graph-json';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 export const getTeamsCalendarEventICalUIdOrThrow = async ({
   accessToken,

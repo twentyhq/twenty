@@ -22,9 +22,6 @@ jest.mock('@/ai/components/AgentChatStreamSubscriptionEffect', () => ({
 jest.mock('@/ai/components/AgentChatPrepromptEffect', () => ({
   AgentChatPrepromptEffect: () => null,
 }));
-jest.mock('@/ai/components/AgentChatStreamKeepAliveEffect', () => ({
-  AgentChatStreamKeepAliveEffect: () => null,
-}));
 
 const renderRuntimeEffects = () =>
   render(
