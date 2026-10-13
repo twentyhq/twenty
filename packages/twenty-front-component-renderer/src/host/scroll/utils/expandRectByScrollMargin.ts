@@ -7,8 +7,14 @@ export const expandRectByScrollMargin = ({
   style,
   scale,
 }: {
-  rect: DOMRect;
-  style: CSSStyleDeclaration;
+  rect: Pick<DOMRect, 'top' | 'right' | 'bottom' | 'left'>;
+  style: Pick<
+    CSSStyleDeclaration,
+    | 'scrollMarginTop'
+    | 'scrollMarginRight'
+    | 'scrollMarginBottom'
+    | 'scrollMarginLeft'
+  >;
   scale: ElementScale;
 }): ScrollBox => {
   const readScrollMargin = ({

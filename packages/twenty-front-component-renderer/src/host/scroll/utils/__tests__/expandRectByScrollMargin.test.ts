@@ -13,16 +13,14 @@ const UNSCALED: ElementScale = { x: 1, y: 1 };
 
 const TARGET_RECT = new DOMRect(20, 10, 30, 30);
 
-const createScrollMarginStyle = (scrollMarginStyle: ScrollMarginStyle) =>
-  scrollMarginStyle as CSSStyleDeclaration;
-
-const createUniformScrollMarginStyle = (scrollMargin: string) =>
-  createScrollMarginStyle({
-    scrollMarginTop: scrollMargin,
-    scrollMarginRight: scrollMargin,
-    scrollMarginBottom: scrollMargin,
-    scrollMarginLeft: scrollMargin,
-  });
+const createUniformScrollMarginStyle = (
+  scrollMargin: string,
+): ScrollMarginStyle => ({
+  scrollMarginTop: scrollMargin,
+  scrollMarginRight: scrollMargin,
+  scrollMarginBottom: scrollMargin,
+  scrollMarginLeft: scrollMargin,
+});
 
 describe('expandRectByScrollMargin', () => {
   it('should keep the rect edges when the scroll margin is zero', () => {
@@ -39,12 +37,12 @@ describe('expandRectByScrollMargin', () => {
     expect(
       expandRectByScrollMargin({
         rect: TARGET_RECT,
-        style: createScrollMarginStyle({
+        style: {
           scrollMarginTop: '1px',
           scrollMarginRight: '2px',
           scrollMarginBottom: '3px',
           scrollMarginLeft: '4px',
-        }),
+        },
         scale: UNSCALED,
       }),
     ).toEqual({ top: 9, right: 52, bottom: 43, left: 16 });
@@ -64,12 +62,12 @@ describe('expandRectByScrollMargin', () => {
     expect(
       expandRectByScrollMargin({
         rect: TARGET_RECT,
-        style: createScrollMarginStyle({
+        style: {
           scrollMarginTop: '1px',
           scrollMarginRight: '2px',
           scrollMarginBottom: '3px',
           scrollMarginLeft: '4px',
-        }),
+        },
         scale: { x: 2, y: 3 },
       }),
     ).toEqual({ top: 7, right: 54, bottom: 49, left: 12 });
