@@ -99,7 +99,9 @@ export class ApplicationRegistrationAnalyticsService {
     ]);
 
     const publishedDailyRows =
-      filterApplicationRegistrationMetricRowsByWorkspaceCount(dailyRows);
+      filterApplicationRegistrationMetricRowsByWorkspaceCount({
+        rows: dailyRows,
+      });
 
     return {
       periodStart: params.periodStart,

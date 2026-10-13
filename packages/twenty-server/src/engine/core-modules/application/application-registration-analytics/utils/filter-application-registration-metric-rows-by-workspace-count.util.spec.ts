@@ -24,9 +24,9 @@ describe('filterApplicationRegistrationMetricRowsByWorkspaceCount', () => {
     ];
 
     expect(
-      filterApplicationRegistrationMetricRowsByWorkspaceCount(
-        singleInstallRows,
-      ),
+      filterApplicationRegistrationMetricRowsByWorkspaceCount({
+        rows: singleInstallRows,
+      }),
     ).toEqual([]);
   });
 
@@ -53,7 +53,7 @@ describe('filterApplicationRegistrationMetricRowsByWorkspaceCount', () => {
     ];
 
     expect(
-      filterApplicationRegistrationMetricRowsByWorkspaceCount(rows),
+      filterApplicationRegistrationMetricRowsByWorkspaceCount({ rows }),
     ).toEqual([rows[0], rows[2]]);
   });
 
@@ -61,10 +61,16 @@ describe('filterApplicationRegistrationMetricRowsByWorkspaceCount', () => {
     const rows = [{ value: 1, workspaceCount: 2 }];
 
     expect(
-      filterApplicationRegistrationMetricRowsByWorkspaceCount(rows, 2),
+      filterApplicationRegistrationMetricRowsByWorkspaceCount({
+        rows,
+        minimumWorkspaceCount: 2,
+      }),
     ).toEqual(rows);
     expect(
-      filterApplicationRegistrationMetricRowsByWorkspaceCount(rows, 5),
+      filterApplicationRegistrationMetricRowsByWorkspaceCount({
+        rows,
+        minimumWorkspaceCount: 5,
+      }),
     ).toEqual([]);
   });
 });

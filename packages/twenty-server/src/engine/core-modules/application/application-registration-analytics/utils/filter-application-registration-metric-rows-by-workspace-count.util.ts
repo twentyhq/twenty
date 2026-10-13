@@ -6,8 +6,11 @@ export type ApplicationRegistrationMetricRowWithWorkspaceCount = {
 
 export const filterApplicationRegistrationMetricRowsByWorkspaceCount = <
   TRow extends ApplicationRegistrationMetricRowWithWorkspaceCount,
->(
-  rows: TRow[],
+>({
+  rows,
   minimumWorkspaceCount = APPLICATION_REGISTRATION_ANALYTICS_MIN_WORKSPACE_COUNT,
-): TRow[] =>
+}: {
+  rows: TRow[];
+  minimumWorkspaceCount?: number;
+}): TRow[] =>
   rows.filter((row) => Number(row.workspaceCount) >= minimumWorkspaceCount);

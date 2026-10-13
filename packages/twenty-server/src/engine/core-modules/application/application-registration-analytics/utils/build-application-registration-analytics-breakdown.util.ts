@@ -22,9 +22,9 @@ export const buildApplicationRegistrationAnalyticsBreakdown = ({
 }): ApplicationRegistrationAnalyticsBreakdownItemDTO[] => {
   const valueByKey = new Map<string, number>();
 
-  for (const row of filterApplicationRegistrationMetricRowsByWorkspaceCount(
+  for (const row of filterApplicationRegistrationMetricRowsByWorkspaceCount({
     rows,
-  )) {
+  })) {
     valueByKey.set(row.key, (valueByKey.get(row.key) ?? 0) + Number(row.value));
   }
 
