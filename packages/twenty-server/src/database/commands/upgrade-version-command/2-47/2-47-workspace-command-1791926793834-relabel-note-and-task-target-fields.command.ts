@@ -19,10 +19,6 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 const NOTE_TARGET = STANDARD_OBJECTS.noteTarget;
 const TASK_TARGET = STANDARD_OBJECTS.taskTarget;
 
-// Note and task target fields are each one morph relation rendered as a
-// single column, which borrowed the label of whichever sibling survived
-// dedup, so every sibling now carries the same label. Frozen as literals so a
-// later label change is not dragged in by this command.
 const PREVIOUS_STANDARD_LABEL_BY_FIELD_UNIVERSAL_IDENTIFIER: Record<
   string,
   string
@@ -98,8 +94,6 @@ export class RelabelNoteAndTaskTargetFieldsCommand extends ProvisionedWorkspaceC
       },
     );
 
-    // A label someone already changed is theirs to keep. Siblings added for
-    // custom objects were labelled after their object's singular name.
     const fieldMetadatasToRelabel = fieldMetadatas.filter((fieldMetadata) => {
       const previousLabel = getPreviousLabel({
         fieldMetadata,
@@ -125,9 +119,6 @@ export class RelabelNoteAndTaskTargetFieldsCommand extends ProvisionedWorkspaceC
       return;
     }
 
-    // A label carries no schema consequence, so the rows are written directly
-    // rather than through a workspace migration, as the 2.43 attachment
-    // relabel command does.
     await this.fieldMetadataRepository.update(
       workspaceId,
       {

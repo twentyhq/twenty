@@ -145,7 +145,6 @@ describe('Custom object renaming', () => {
       const relationFieldMetadataId = relationFieldMetadata?.id;
 
       expect(relationFieldMetadataId).not.toBeUndefined();
-      // Attachment, note and task targets share their morph group label instead of the engine-derived one.
       expect(relationFieldMetadata?.label).toBe(
         SHARED_LABEL_BY_RELATION[relation] ??
           capitalize(CUSTOM_OBJECT.nameSingular),
