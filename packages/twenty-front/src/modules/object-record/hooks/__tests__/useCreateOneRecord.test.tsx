@@ -68,7 +68,10 @@ describe('useCreateOneRecord', () => {
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps cached counts when the server rejects the record', async () => {
+  it('keeps cached counts and the server error when the server rejects the record', async () => {
+    mockRefetchAggregateQueries.mockRejectedValueOnce(
+      new Error('Count refresh failed'),
+    );
     const rejectedInput = { name: { firstName: 'Jane', lastName: 'Doe' } };
     const cachedPeopleQuery = gql`
       query CachedPeople {
@@ -124,5 +127,8 @@ describe('useCreateOneRecord', () => {
       })?.people.totalCount,
     ).toBe(5);
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
+    expect(mockRefetchAggregateQueries).toHaveBeenCalledWith({
+      objectMetadataNamePlural: 'people',
+    });
   });
 });
