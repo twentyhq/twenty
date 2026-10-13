@@ -1712,7 +1712,7 @@ An agent without a role can neither read nor write any record, so it runs and do
 - settings.eventName is "<objectNameSingular>.<action>", where action is created, updated, deleted, destroyed, restored or upserted. Wildcards are not allowed. Resolve the object's nameSingular with get_object_metadata, never guess it.
 - For ".updated", set settings.updatedFields to the fields that matter (resolve their names with get_field_metadata). Without it, the agent runs on every edit of every record of that object.
 - Set settings.batchMode when many records can change at once (imports, bulk edits): events fired close together then share one run instead of one run each.
-- The agent's own changes never trigger it, but two agents can trigger each other. Check list_agents for agents that listen to what this one writes.
+- Records the agent creates or updates do not trigger it again, but its own deletions and restores do, and two agents can trigger each other. Check that neither this agent nor another one from list_agents listens to what this agent changes.
 
 **CRON** runs the agent on a schedule.
 
