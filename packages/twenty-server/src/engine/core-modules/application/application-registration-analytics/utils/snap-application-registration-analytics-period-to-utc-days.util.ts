@@ -1,7 +1,7 @@
 import { APPLICATION_REGISTRATION_ANALYTICS_ONE_DAY_IN_MS } from 'src/engine/core-modules/application/application-registration-analytics/constants/application-registration-analytics-one-day-in-ms.constant';
 import { getStartOfUtcDay } from 'src/engine/core-modules/application/application-registration-analytics/utils/get-start-of-utc-day.util';
 
-// Whole UTC days are the only reporting unit: a caller cannot carve a window narrower than the daily cells it is built from
+// Daily cells are the only reporting unit, so a sub-day window would report partial cells against whole-day points
 export const snapApplicationRegistrationAnalyticsPeriodToUtcDays = ({
   periodStart,
   periodEnd,

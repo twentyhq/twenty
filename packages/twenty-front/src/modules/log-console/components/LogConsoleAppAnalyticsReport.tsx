@@ -86,7 +86,7 @@ export const LogConsoleAppAnalyticsReport = ({
       <Section.Root>
         <Section.Header
           title={t`Overview`}
-          description={t`Aggregated by complete UTC day across every workspace this app is installed in. Days with too few contributing workspaces are withheld, and workspaces are never identified.`}
+          description={t`Aggregated per UTC day across every workspace this app is installed in. The current day is still accumulating, and workspaces are never identified.`}
         />
         <LogConsoleAppAnalyticsTotals totals={analytics.totals} />
       </Section.Root>

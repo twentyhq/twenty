@@ -61,19 +61,4 @@ describe('buildApplicationRegistrationAnalyticsTotals', () => {
       }).installSucceeded,
     ).toBe(0);
   });
-
-  it('should withhold the workspace count of an app installed in too few workspaces', () => {
-    expect(
-      buildApplicationRegistrationAnalyticsTotals({
-        rows: [],
-        activeWorkspaces: 1,
-      }).activeWorkspaces,
-    ).toBe(0);
-    expect(
-      buildApplicationRegistrationAnalyticsTotals({
-        rows: [],
-        activeWorkspaces: 2,
-      }).activeWorkspaces,
-    ).toBe(0);
-  });
 });
