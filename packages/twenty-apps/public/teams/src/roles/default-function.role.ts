@@ -5,7 +5,10 @@ import {
 } from 'twenty-sdk/define';
 
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { TEAMS_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
+import {
+  TEAMS_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
+  TEAMS_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/features/chat/constants/universal-identifiers';
 
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
@@ -58,6 +61,13 @@ export default defineApplicationRole({
     {
       objectUniversalIdentifier:
         TEAMS_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier: TEAMS_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
