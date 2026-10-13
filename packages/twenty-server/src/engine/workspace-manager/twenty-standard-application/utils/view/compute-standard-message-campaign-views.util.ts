@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
-import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { ViewType, ViewKey } from 'twenty-shared/types';
 
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import {
