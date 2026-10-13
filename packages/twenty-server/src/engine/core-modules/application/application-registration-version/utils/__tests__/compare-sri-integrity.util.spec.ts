@@ -6,30 +6,41 @@ describe('compareSriIntegrity', () => {
   const otherIntegrity = computeSriIntegrity(Buffer.from('tampered'));
 
   it('matches identical values', () => {
-    expect(compareSriIntegrity(integrity, integrity)).toBe('match');
+    expect(
+      compareSriIntegrity({ expected: integrity, actual: integrity }),
+    ).toBe('match');
   });
 
   it('matches when the expected value also lists weaker algorithms', () => {
-    expect(compareSriIntegrity(`sha1-AAA= ${integrity}`, integrity)).toBe(
-      'match',
-    );
+    expect(
+      compareSriIntegrity({
+        expected: `sha1-AAA= ${integrity}`,
+        actual: integrity,
+      }),
+    ).toBe('match');
   });
 
   it('reports differing digests of the same algorithm as a mismatch', () => {
-    expect(compareSriIntegrity(integrity, otherIntegrity)).toBe('mismatch');
+    expect(
+      compareSriIntegrity({ expected: integrity, actual: otherIntegrity }),
+    ).toBe('mismatch');
   });
 
   it('compares on the strongest shared algorithm', () => {
     expect(
-      compareSriIntegrity(
-        `sha256-AAA= ${integrity}`,
-        `sha256-AAA= ${otherIntegrity}`,
-      ),
+      compareSriIntegrity({
+        expected: `sha256-AAA= ${integrity}`,
+        actual: `sha256-AAA= ${otherIntegrity}`,
+      }),
     ).toBe('mismatch');
   });
 
   it('cannot compare values that share no algorithm', () => {
-    expect(compareSriIntegrity('sha1-AAA=', integrity)).toBe('incomparable');
-    expect(compareSriIntegrity('', integrity)).toBe('incomparable');
+    expect(
+      compareSriIntegrity({ expected: 'sha1-AAA=', actual: integrity }),
+    ).toBe('incomparable');
+    expect(compareSriIntegrity({ expected: '', actual: integrity })).toBe(
+      'incomparable',
+    );
   });
 });

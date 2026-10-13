@@ -7,10 +7,13 @@ import {
 
 export type SriIntegrityComparison = 'match' | 'mismatch' | 'incomparable';
 
-export const compareSriIntegrity = (
-  expected: string,
-  actual: string,
-): SriIntegrityComparison => {
+export const compareSriIntegrity = ({
+  expected,
+  actual,
+}: {
+  expected: string;
+  actual: string;
+}): SriIntegrityComparison => {
   const expectedDigests = parseSriIntegrity(expected);
   const actualDigests = parseSriIntegrity(actual);
 

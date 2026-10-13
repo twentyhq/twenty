@@ -401,7 +401,10 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       return;
     }
 
-    const comparison = compareSriIntegrity(registryIntegrity, integrity);
+    const comparison = compareSriIntegrity({
+      expected: registryIntegrity,
+      actual: integrity,
+    });
 
     if (comparison === 'mismatch') {
       throw new ApplicationException(

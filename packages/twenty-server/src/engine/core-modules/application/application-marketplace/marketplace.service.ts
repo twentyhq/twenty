@@ -98,10 +98,13 @@ export class MarketplaceService {
     }
   }
 
-  async fetchPackageVersionDistFromRegistry(
-    packageName: string,
-    version: string,
-  ): Promise<RegistryPackageVersionDist | null> {
+  async fetchPackageVersionDistFromRegistry({
+    packageName,
+    version,
+  }: {
+    packageName: string;
+    version: string;
+  }): Promise<RegistryPackageVersionDist | null> {
     const registryUrl = this.twentyConfigService
       .get('APP_REGISTRY_URL')
       .replace(/\/$/, '');

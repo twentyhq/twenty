@@ -7,7 +7,9 @@ export type SriDigest = { algorithm: SriAlgorithm; digest: string };
 const isSupportedSriAlgorithm = (
   algorithm: string,
 ): algorithm is SriAlgorithm =>
-  SUPPORTED_SRI_ALGORITHMS.includes(algorithm as SriAlgorithm);
+  SUPPORTED_SRI_ALGORITHMS.some(
+    (supportedAlgorithm) => supportedAlgorithm === algorithm,
+  );
 
 export const parseSriIntegrity = (integrity: string): SriDigest[] =>
   integrity

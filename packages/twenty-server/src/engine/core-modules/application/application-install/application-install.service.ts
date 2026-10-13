@@ -706,10 +706,10 @@ export class ApplicationInstallService {
       return;
     }
 
-    const comparison = compareSriIntegrity(
-      recordedVersion.checksum,
-      resolvedPackage.integrity,
-    );
+    const comparison = compareSriIntegrity({
+      expected: recordedVersion.checksum,
+      actual: resolvedPackage.integrity,
+    });
 
     if (comparison === 'mismatch') {
       throw new ApplicationException(

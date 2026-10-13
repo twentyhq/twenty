@@ -147,10 +147,10 @@ export class MarketplaceCatalogSyncService {
     }
 
     const dist =
-      await this.marketplaceService.fetchPackageVersionDistFromRegistry(
-        registryPackage.name,
-        registryPackage.version,
-      );
+      await this.marketplaceService.fetchPackageVersionDistFromRegistry({
+        packageName: registryPackage.name,
+        version: registryPackage.version,
+      });
 
     if (!isDefined(dist?.tarballUrl)) {
       this.logger.warn(

@@ -89,26 +89,11 @@ export class ApplicationRegistrationVersionArtifactService {
       authToken: this.twentyConfigService.get('APP_REGISTRY_TOKEN'),
     });
 
-    const httpClient = this.secureHttpClientService.getHttpClient({
-      timeout: ARTIFACT_DOWNLOAD_TIMEOUT_MS,
-      maxContentLength: bytes(MAX_REQUEST_BODY_SIZE) ?? undefined,
+    const buffer = await this.fetchArtifactBuffer({
+      artifactUrl: version.artifactUrl,
+      headers,
+      version,
     });
-
-    let buffer: Buffer;
-
-    try {
-      const response = await httpClient.get(version.artifactUrl, {
-        headers,
-        responseType: 'arraybuffer',
-      });
-
-      buffer = Buffer.from(response.data);
-    } catch (error) {
-      throw new ApplicationException(
-        `Registry returned ${isAxiosError(error) ? error.response?.status : error} for the artifact of version ${version.version} of registration ${version.applicationRegistrationId}`,
-        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
-      );
-    }
 
     this.assertArtifactMatchesRecordedChecksum({ version, buffer });
 
@@ -118,6 +103,38 @@ export class ApplicationRegistrationVersionArtifactService {
       buffer,
       fileName: `${unscopedPackageName ?? 'application'}-${version.version}.tgz`,
     };
+  }
+
+  private async fetchArtifactBuffer({
+    artifactUrl,
+    headers,
+    version,
+  }: {
+    artifactUrl: string;
+    headers: Record<string, string>;
+    version: Pick<
+      ApplicationRegistrationVersionEntity,
+      'version' | 'applicationRegistrationId'
+    >;
+  }): Promise<Buffer> {
+    const httpClient = this.secureHttpClientService.getHttpClient({
+      timeout: ARTIFACT_DOWNLOAD_TIMEOUT_MS,
+      maxContentLength: bytes(MAX_REQUEST_BODY_SIZE) ?? undefined,
+    });
+
+    try {
+      const response = await httpClient.get(artifactUrl, {
+        headers,
+        responseType: 'arraybuffer',
+      });
+
+      return Buffer.from(response.data);
+    } catch (error) {
+      throw new ApplicationException(
+        `Registry returned ${isAxiosError(error) ? error.response?.status : error} for the artifact of version ${version.version} of registration ${version.applicationRegistrationId}`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
   }
 
   private assertArtifactMatchesRecordedChecksum({
@@ -134,10 +151,10 @@ export class ApplicationRegistrationVersionArtifactService {
       return;
     }
 
-    const comparison = compareSriIntegrity(
-      version.checksum,
-      computeSriIntegrity(buffer),
-    );
+    const comparison = compareSriIntegrity({
+      expected: version.checksum,
+      actual: computeSriIntegrity(buffer),
+    });
 
     if (comparison === 'mismatch') {
       throw new ApplicationException(
