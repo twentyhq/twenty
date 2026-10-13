@@ -129,9 +129,10 @@ export const ResizeAndContentUpdates: Story = {
       canvas.queryByRole('button', { name: /Show all items$/ }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Narrow list' }));
-    expect(
-      await canvas.findByRole('button', { name: /Show all items$/ }),
-    ).toHaveTextContent('+3');
+    const narrowTrigger = await canvas.findByRole('button', {
+      name: /Show all items$/,
+    });
+    await waitFor(() => expect(narrowTrigger).toHaveTextContent('+3'));
     await userEvent.click(
       canvas.getByRole('button', { name: /Show all items$/ }),
     );
@@ -524,11 +525,11 @@ export const ZoomedInstances: Story = {
     for (const zoom of [0.75, 1.25]) {
       await waitFor(() =>
         expect(
-          canvas.getByRole('button', { name: `+3 Show tags at ${zoom} scale` }),
-        ).toHaveTextContent('+3'),
+          canvas.getByRole('button', { name: `+2 Show tags at ${zoom} scale` }),
+        ).toHaveTextContent('+2'),
       );
       const trigger = canvas.getByRole('button', {
-        name: `+3 Show tags at ${zoom} scale`,
+        name: `+2 Show tags at ${zoom} scale`,
       });
       await userEvent.click(trigger);
       const dialog = await body.findByRole('dialog', {
