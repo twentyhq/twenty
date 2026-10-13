@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MemberCreditsFallbackMode } from 'src/engine/core-modules/usage-limit/types/member-credits-fallback-mode.type';
-import { MemberCreditsFallback } from 'src/engine/core-modules/workspace/types/member-credits-fallback.type';
+import { MemberCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-member-credits-fallback.enum';
 import { type AiChatMemberCreditsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-chat-member-credits.dto';
 
 export const buildAiChatMemberCredits = (

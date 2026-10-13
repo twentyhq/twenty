@@ -1003,7 +1003,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Amount of AI credits each member gets for their own chats during the free trial, when the trial seat price carries member credits (in microCredits, 0 disables them)',
+      'Amount of AI credits each member gets for their own chats during the free trial, when the plan carries member credits (in microCredits, 0 disables them)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 
-import { MemberCreditsFallback } from 'src/engine/core-modules/workspace/types/member-credits-fallback.type';
+import { MemberCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-member-credits-fallback.enum';
 
 @ObjectType('AiChatMemberCredits')
 export class AiChatMemberCreditsDTO {

@@ -9,6 +9,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
+import { MemberCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-member-credits-fallback.enum';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { isBaseProductSubscriptionItem } from 'src/engine/core-modules/billing/utils/is-base-product-subscription-item.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -38,8 +39,10 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       return NO_BILLING_SUBSCRIPTION;
     }
 
-    const unexpiredGrants =
-      await this.billingCreditGrantService.findUnexpiredGrants(workspaceId);
+    const [unexpiredGrants, billingCustomer] = await Promise.all([
+      this.billingCreditGrantService.findUnexpiredGrants(workspaceId),
+      this.billingSubscriptionService.getBillingCustomer(workspaceId),
+    ]);
 
     return {
       id: subscription.id,
@@ -66,6 +69,9 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
         )?.billingProduct?.metadata.planKey ?? null,
       memberCreditsAmountMicro:
         this.billingUsageService.findMemberCreditsAmountMicro(subscription),
+      memberCreditsFallback:
+        billingCustomer?.memberCreditsFallback ??
+        MemberCreditsFallback.WORKSPACE_CREDITS,
       creditGrants: unexpiredGrants.map(
         ({ amountMicro, effectiveAt, expiresAt }) => ({
           amountMicro,

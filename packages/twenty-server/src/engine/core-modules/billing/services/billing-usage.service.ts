@@ -280,11 +280,9 @@ export class BillingUsageService {
       isBaseProductSubscriptionItem,
     );
 
-    const seatPrice = baseProductItem?.billingProduct.billingPrices.find(
-      (price) => price.stripePriceId === baseProductItem.stripePriceId,
+    return parseMemberCreditsAmount(
+      baseProductItem?.billingProduct?.metadata.memberCreditAmount,
     );
-
-    return parseMemberCreditsAmount(seatPrice?.metadata?.member_credit_amount);
   }
 
   // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period

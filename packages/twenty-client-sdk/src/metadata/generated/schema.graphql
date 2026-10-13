@@ -746,6 +746,7 @@ type Billing {
 type BillingCustomer {
   hasPaymentMethod: Boolean
   id: UUID!
+  memberCreditsFallback: MemberCreditsFallback!
 }
 
 type BillingEndTrialPeriod {
@@ -860,6 +861,7 @@ enum BillingProductKey {
 
 type BillingProductMetadata {
   isLegacy: String
+  memberCreditAmount: String
   planKey: BillingPlanKey!
   priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
@@ -3198,6 +3200,7 @@ type Mutation {
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
+  updateMemberCreditsFallback(memberCreditsFallback: MemberCreditsFallback!): BillingCustomer!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
@@ -5117,7 +5120,6 @@ input UpdateWorkspaceInput {
   isPublicInviteLinkEnabled: Boolean
   isTwoFactorAuthenticationEnforced: Boolean
   logo: String
-  memberCreditsFallback: MemberCreditsFallback
   subdomain: String
   trashRetentionDays: Float
   workspaceDiscoverability: WorkspaceDiscoverability
@@ -5862,7 +5864,6 @@ type Workspace {
   isTwoFactorAuthenticationEnforced: Boolean!
   logo: String
   logoFileId: UUID
-  memberCreditsFallback: MemberCreditsFallback!
   metadataVersion: Float! @deprecated(reason: "No longer used for metadata cache invalidation, will be removed")
   subdomain: String!
   trashRetentionDays: Float!

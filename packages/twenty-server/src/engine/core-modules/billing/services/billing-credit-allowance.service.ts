@@ -5,7 +5,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { type FlatBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
@@ -25,7 +24,6 @@ export class BillingCreditAllowanceService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async isCreditAllowanceEnabled(): Promise<boolean> {
@@ -49,9 +47,6 @@ export class BillingCreditAllowanceService {
 
   async getCreditAllowance(
     workspaceId: string,
-    {
-      shouldThrowOnMemberCreditsFailure = false,
-    }: { shouldThrowOnMemberCreditsFailure?: boolean } = {},
   ): Promise<CreditAllowance | null> {
     const subscription = await this.findCurrentBillingSubscription(workspaceId);
 
@@ -70,7 +65,6 @@ export class BillingCreditAllowanceService {
       memberCredits: await this.findMemberCreditsAllowance({
         workspaceId,
         subscription,
-        shouldThrowOnFailure: shouldThrowOnMemberCreditsFailure,
       }),
     };
   }
@@ -81,15 +75,13 @@ export class BillingCreditAllowanceService {
     return subscription?.planKey ?? null;
   }
 
-  // Never throws unless asked: a member credits failure must not take the workspace allowance down with it
+  // Never throws: a member credits failure must not take the workspace allowance down with it
   private async findMemberCreditsAllowance({
     workspaceId,
     subscription,
-    shouldThrowOnFailure,
   }: {
     workspaceId: string;
     subscription: FlatBillingSubscription;
-    shouldThrowOnFailure: boolean;
   }): Promise<MemberCreditsAllowance | null> {
     try {
       const amountMicro =
@@ -122,22 +114,13 @@ export class BillingCreditAllowanceService {
         return null;
       }
 
-      const workspace = await this.coreEntityCacheService.get(
-        'workspaceEntity',
-        workspaceId,
-      );
-
       return {
         ...slice,
         amountMicro,
-        // Undefined until the upgrade command has run and the cached entry is refreshed
-        fallback: workspace?.memberCreditsFallback ?? 'WORKSPACE_CREDITS',
+        // Undefined, despite the type, on entries cached by a previous release
+        fallback: subscription.memberCreditsFallback ?? 'WORKSPACE_CREDITS',
       };
     } catch (error) {
-      if (shouldThrowOnFailure) {
-        throw error;
-      }
-
       this.logger.error(
         `Member credits allowance unavailable for workspace ${workspaceId}`,
         error,

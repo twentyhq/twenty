@@ -1,0 +1,2 @@
+export const ADD_MEMBER_CREDITS_FALLBACK_TO_BILLING_CUSTOMER_UPGRADE_COMMAND_NAME =
+  '2.47.0_AddMemberCreditsFallbackToBillingCustomerFastInstanceCommand_1791909304141';

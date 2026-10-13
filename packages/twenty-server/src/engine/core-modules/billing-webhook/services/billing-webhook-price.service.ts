@@ -15,18 +15,9 @@ import {
 import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import {
-  FlushCurrentBillingSubscriptionForPriceJob,
-  type FlushCurrentBillingSubscriptionForPriceJobData,
-} from 'src/engine/core-modules/billing/jobs/flush-current-billing-subscription-for-price.job';
-import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
-import { hasPriceCreditMetadataChanged } from 'src/engine/core-modules/billing/utils/has-price-credit-metadata-changed.util';
 import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
 @Injectable()
 export class BillingWebhookPriceService {
@@ -40,9 +31,6 @@ export class BillingWebhookPriceService {
     private readonly billingMeterRepository: Repository<BillingMeterEntity>,
     @InjectRepository(BillingProductEntity)
     private readonly billingProductRepository: Repository<BillingProductEntity>,
-    @InjectMessageQueue(MessageQueue.billingQueue)
-    private readonly messageQueueService: MessageQueueService,
-    private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
   ) {}
 
   async processStripeEvent(
@@ -74,50 +62,19 @@ export class BillingWebhookPriceService {
       );
     }
 
-    const price = transformStripePriceEventToDatabasePrice(
-      await this.stripePriceService.getPriceByPriceId(data.object.id),
+    await this.billingPriceRepository.upsert(
+      transformStripePriceEventToDatabasePrice(
+        await this.stripePriceService.getPriceByPriceId(data.object.id),
+      ),
+      {
+        conflictPaths: ['stripePriceId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
     );
-
-    const storedPrice = await this.billingPriceRepository.findOne({
-      where: { stripePriceId: price.stripePriceId },
-    });
-
-    await this.billingPriceRepository.upsert(price, {
-      conflictPaths: ['stripePriceId'],
-      skipUpdateIfNoValuesChanged: true,
-    });
-
-    if (
-      hasPriceCreditMetadataChanged({
-        previousMetadata: storedPrice?.metadata,
-        nextMetadata: price.metadata,
-      })
-    ) {
-      await this.enqueueCurrentBillingSubscriptionFlush(price.stripePriceId);
-    }
 
     return {
       stripePriceId: data.object.id,
       stripeMeterId: meterId,
     };
-  }
-
-  private async enqueueCurrentBillingSubscriptionFlush(
-    stripePriceId: string,
-  ): Promise<void> {
-    try {
-      await this.messageQueueService.add<FlushCurrentBillingSubscriptionForPriceJobData>(
-        FlushCurrentBillingSubscriptionForPriceJob.name,
-        { stripePriceId },
-      );
-    } catch (error) {
-      // Failing the webhook would not help: its retry compares against the price already stored and sees no change
-      this.logger.warn(
-        `Could not enqueue the currentBillingSubscription flush for price ${stripePriceId}, flushing inline: ${error}`,
-      );
-      await this.billingSubscriptionItemService.flushCurrentBillingSubscriptionForPrice(
-        stripePriceId,
-      );
-    }
   }
 }

@@ -1,4 +1,4 @@
-import { MemberCreditsFallback } from 'src/engine/core-modules/workspace/types/member-credits-fallback.type';
+import { MemberCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-member-credits-fallback.enum';
 import { buildAiChatMemberCredits } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-ai-chat-member-credits.util';
 
 const SLICE_END = new Date('2026-11-01T00:00:00.000Z');

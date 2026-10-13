@@ -27,7 +27,6 @@ import {
 
 import { ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-workspace-discoverability-to-workspace-upgrade-command-name.constant';
 import { ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-44/add-campaign-tracking-flags-upgrade-command-name.constant';
-import { ADD_MEMBER_CREDITS_FALLBACK_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/add-member-credits-fallback-to-workspace-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -42,7 +41,6 @@ import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public
 import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { MemberCreditsFallback } from 'src/engine/core-modules/workspace/types/member-credits-fallback.type';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
@@ -66,10 +64,6 @@ registerEnumType(WorkspaceActivationStatus, {
 
 registerEnumType(WorkspaceDiscoverability, {
   name: 'WorkspaceDiscoverability',
-});
-
-registerEnumType(MemberCreditsFallback, {
-  name: 'MemberCreditsFallback',
 });
 
 @Check(
@@ -380,18 +374,6 @@ export class WorkspaceEntity {
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiAdditionalInstructions: string | null;
-
-  @Field(() => MemberCreditsFallback)
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      ADD_MEMBER_CREDITS_FALLBACK_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({
-    type: 'varchar',
-    nullable: false,
-    default: MemberCreditsFallback.WORKSPACE_CREDITS,
-  })
-  memberCreditsFallback: MemberCreditsFallback;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;

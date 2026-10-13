@@ -1671,6 +1671,9 @@ export default {
             "id": [
                 493
             ],
+            "memberCreditsFallback": [
+                314
+            ],
             "__typename": [
                 1
             ]
@@ -1873,6 +1876,9 @@ export default {
         "BillingProductKey": {},
         "BillingProductMetadata": {
             "isLegacy": [
+                1
+            ],
+            "memberCreditAmount": [
                 1
             ],
             "planKey": [
@@ -8147,6 +8153,15 @@ export default {
                     ]
                 }
             ],
+            "updateMemberCreditsFallback": [
+                83,
+                {
+                    "memberCreditsFallback": [
+                        314,
+                        "MemberCreditsFallback!"
+                    ]
+                }
+            ],
             "updateMessageChannel": [
                 317,
                 {
@@ -13378,9 +13393,6 @@ export default {
             "logo": [
                 1
             ],
-            "memberCreditsFallback": [
-                314
-            ],
             "subdomain": [
                 1
             ],
@@ -14874,9 +14886,6 @@ export default {
             ],
             "logoFileId": [
                 493
-            ],
-            "memberCreditsFallback": [
-                314
             ],
             "metadataVersion": [
                 11

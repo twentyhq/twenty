@@ -3,7 +3,6 @@ import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tes
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   AiModelTier,
-  MemberCreditsFallback,
   OnboardingStatus,
   PermissionFlagType,
   SubscriptionInterval,
@@ -94,7 +93,6 @@ export const mockCurrentWorkspace = {
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},
   isInternalMessagesImportEnabled: false,
-  memberCreditsFallback: MemberCreditsFallback.WORKSPACE_CREDITS,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',

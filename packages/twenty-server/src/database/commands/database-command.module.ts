@@ -37,8 +37,6 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UpgradeStatusCommand } from 'src/engine/core-modules/upgrade/commands/upgrade-status.command';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
-import { CheckMemberCreditsCountersCommand } from 'src/engine/core-modules/usage-limit/commands/check-member-credits-counters.command';
-import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -109,7 +107,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkspaceCacheModule,
     WorkspaceVersionModule,
     UpgradeModule,
-    UsageLimitModule,
     SecretEncryptionRotationModule,
     UserSessionModule,
     EmailingDomainModule,
@@ -125,7 +122,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     EnterpriseKeyValidationCronCommand,
     RotateSigningKeysCronCommand,
     UpgradeStatusCommand,
-    CheckMemberCreditsCountersCommand,
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
     provideWorkspaceScopedRepository(RoleEntity),

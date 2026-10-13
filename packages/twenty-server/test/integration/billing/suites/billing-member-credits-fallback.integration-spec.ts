@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
+import { MemberCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-member-credits-fallback.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { MemberCreditsFallback } from 'src/engine/core-modules/workspace/types/member-credits-fallback.type';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -10,38 +10,43 @@ const buildUpdateMemberCreditsFallbackOperation = (
   memberCreditsFallback: MemberCreditsFallback,
 ) => ({
   query: gql`
-    mutation UpdateWorkspaceMemberCreditsFallback(
-      $data: UpdateWorkspaceInput!
+    mutation UpdateMemberCreditsFallback(
+      $memberCreditsFallback: MemberCreditsFallback!
     ) {
-      updateWorkspace(data: $data) {
+      updateMemberCreditsFallback(
+        memberCreditsFallback: $memberCreditsFallback
+      ) {
         id
         memberCreditsFallback
       }
     }
   `,
-  variables: { data: { memberCreditsFallback } },
+  variables: { memberCreditsFallback },
 });
 
 const CURRENT_WORKSPACE_MEMBER_CREDITS_FALLBACK_OPERATION = {
   query: gql`
     query CurrentWorkspaceMemberCreditsFallback {
       currentWorkspace {
-        memberCreditsFallback
+        billingCustomer {
+          id
+          memberCreditsFallback
+        }
       }
     }
   `,
 };
 
 const findStoredMemberCreditsFallback = async (): Promise<string> => {
-  const [workspace] = await globalThis.testDataSource.query(
-    `SELECT "memberCreditsFallback" FROM core."workspace" WHERE id = $1`,
+  const [billingCustomer] = await globalThis.testDataSource.query(
+    `SELECT "memberCreditsFallback" FROM core."billingCustomer" WHERE "workspaceId" = $1`,
     [SEED_APPLE_WORKSPACE_ID],
   );
 
-  return workspace.memberCreditsFallback;
+  return billingCustomer.memberCreditsFallback;
 };
 
-describe('workspace member credits fallback', () => {
+describe('billing member credits fallback', () => {
   afterAll(async () => {
     await makeMetadataApiRequest(
       buildUpdateMemberCreditsFallbackOperation(
@@ -56,9 +61,9 @@ describe('workspace member credits fallback', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.currentWorkspace.memberCreditsFallback).toBe(
-      MemberCreditsFallback.WORKSPACE_CREDITS,
-    );
+    expect(
+      response.body.data.currentWorkspace.billingCustomer.memberCreditsFallback,
+    ).toBe(MemberCreditsFallback.WORKSPACE_CREDITS);
     expect(await findStoredMemberCreditsFallback()).toBe(
       MemberCreditsFallback.WORKSPACE_CREDITS,
     );
@@ -71,9 +76,9 @@ describe('workspace member credits fallback', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.updateWorkspace.memberCreditsFallback).toBe(
-      MemberCreditsFallback.STOP,
-    );
+    expect(
+      response.body.data.updateMemberCreditsFallback.memberCreditsFallback,
+    ).toBe(MemberCreditsFallback.STOP);
     expect(await findStoredMemberCreditsFallback()).toBe(
       MemberCreditsFallback.STOP,
     );
@@ -83,7 +88,8 @@ describe('workspace member credits fallback', () => {
     );
 
     expect(
-      currentWorkspaceResponse.body.data.currentWorkspace.memberCreditsFallback,
+      currentWorkspaceResponse.body.data.currentWorkspace.billingCustomer
+        .memberCreditsFallback,
     ).toBe(MemberCreditsFallback.STOP);
   });
 

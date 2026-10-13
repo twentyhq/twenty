@@ -240,7 +240,7 @@ import { AddPurchaseToBillingCreditGrantTypeFastInstanceCommand } from 'src/data
 import { RestoreUsageLimitMeterCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791538680877-restore-usage-limit-meter-compatibility';
 import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791720497488-drop-usage-limit-meter';
 import { SetWorkspaceEventLogRetentionDefaultFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791790299002-set-workspace-event-log-retention-default';
-import { AddMemberCreditsFallbackToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791878866613-add-member-credits-fallback-to-workspace';
+import { AddMemberCreditsFallbackToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791909304141-add-member-credits-fallback-to-billing-customer';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -483,5 +483,5 @@ export const INSTANCE_COMMANDS = [
   RestoreUsageLimitMeterCompatibilityFastInstanceCommand,
   DropUsageLimitMeterFastInstanceCommand,
   SetWorkspaceEventLogRetentionDefaultFastInstanceCommand,
-  AddMemberCreditsFallbackToWorkspaceFastInstanceCommand,
+  AddMemberCreditsFallbackToBillingCustomerFastInstanceCommand,
 ];

@@ -22,7 +22,9 @@ import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingUpdateMemberCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-member-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
@@ -403,6 +405,31 @@ export class BillingResolver {
           { workspaceId: workspace.id },
         ),
     };
+  }
+
+  @Mutation(() => BillingCustomerEntity)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async updateMemberCreditsFallback(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { memberCreditsFallback }: BillingUpdateMemberCreditsFallbackInput,
+  ): Promise<BillingCustomerEntity> {
+    return this.billingService.updateMemberCreditsFallbackOrThrow({
+      workspaceId: workspace.id,
+      memberCreditsFallback,
+    });
   }
 
   @Query(() => [BillingPlanDTO])
