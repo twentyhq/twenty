@@ -22,7 +22,9 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
+import { CORE_WORKFLOW_RUN_FIELD_DISPLAY_OVERRIDES } from '@/object-core/workflows/constants/CoreWorkflowRunFieldDisplayOverrides';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
+import { RecordFieldDisplayOverridesContext } from '@/object-record/record-field/ui/contexts/RecordFieldDisplayOverridesContext';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
@@ -72,12 +74,16 @@ export const WorkspaceAppProviders = () => {
                             <GotoHotkeysEffectsProvider />
                             <WorkspaceAppPageTitle />
                             <PageFavicon />
-                            <RecordCreationFormProvider>
-                              <Outlet />
-                              <GlobalFilePreviewModal />
-                              <CommandMenuConfirmationModalManager />
-                              <CommandRunner />
-                            </RecordCreationFormProvider>
+                            <RecordFieldDisplayOverridesContext.Provider
+                              value={CORE_WORKFLOW_RUN_FIELD_DISPLAY_OVERRIDES}
+                            >
+                              <RecordCreationFormProvider>
+                                <Outlet />
+                                <GlobalFilePreviewModal />
+                                <CommandMenuConfirmationModalManager />
+                                <CommandRunner />
+                              </RecordCreationFormProvider>
+                            </RecordFieldDisplayOverridesContext.Provider>
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>

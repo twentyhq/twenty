@@ -46,7 +46,7 @@ export const CoreWorkflowRunWorkflowFieldDisplay = () => {
     />
   );
 
-  if (disableChipClick === true) {
+  if (disableChipClick) {
     return (
       <Chip
         variant="ghost"

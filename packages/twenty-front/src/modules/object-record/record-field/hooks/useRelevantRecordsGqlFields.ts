@@ -7,14 +7,15 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { RECORD_FIELD_DISPLAY_OVERRIDES } from '@/object-record/record-field/ui/constants/RecordFieldDisplayOverrides';
-import { getActiveRecordFieldDisplayOverrides } from '@/object-record/record-field/ui/utils/getActiveRecordFieldDisplayOverrides';
+import { RecordFieldDisplayOverridesContext } from '@/object-record/record-field/ui/contexts/RecordFieldDisplayOverridesContext';
+import { getRecordFieldDisplayOverridesRecordGqlFields } from '@/object-record/record-field/ui/utils/getRecordFieldDisplayOverridesRecordGqlFields';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext } from 'react';
 import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
 
 type UseRecordsUsefulGqlFields = {
@@ -38,6 +39,10 @@ export const useRelevantRecordsGqlFields = ({
     useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const recordFieldDisplayOverrides = useContext(
+    RecordFieldDisplayOverridesContext,
+  );
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -78,18 +83,12 @@ export const useRelevantRecordsGqlFields = ({
   });
 
   const recordFieldDisplayOverrideGqlFields =
-    getActiveRecordFieldDisplayOverrides({
-      recordFieldDisplayOverrides: RECORD_FIELD_DISPLAY_OVERRIDES,
+    getRecordFieldDisplayOverridesRecordGqlFields({
+      recordFieldDisplayOverrides,
       objectNameSingular: objectMetadataItem.nameSingular,
       fieldNames: fieldMetadataItemsToUse.map((field) => field.name),
       currentWorkspace,
-    }).reduce<RecordGqlFields>(
-      (recordGqlFields, recordFieldDisplayOverride) => ({
-        ...recordGqlFields,
-        ...recordFieldDisplayOverride.recordGqlFields,
-      }),
-      {},
-    );
+    });
 
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
