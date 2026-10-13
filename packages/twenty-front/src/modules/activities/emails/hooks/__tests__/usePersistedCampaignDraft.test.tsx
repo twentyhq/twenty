@@ -93,6 +93,7 @@ describe('usePersistedCampaignDraft', () => {
       jest.runOnlyPendingTimers();
     });
 
+    expect(mockRefetchQueries).toHaveBeenCalledTimes(1);
     expect(mockRefetchQueries).toHaveBeenCalledWith({
       include: [PREVIEW_MESSAGE_CAMPAIGN_SEND],
     });
@@ -109,6 +110,7 @@ describe('usePersistedCampaignDraft', () => {
     });
 
     expect(mockRefetchQueries).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({ variant: 'error' }),
     );

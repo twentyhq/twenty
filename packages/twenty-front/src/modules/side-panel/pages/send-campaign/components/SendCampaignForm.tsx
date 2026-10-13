@@ -235,17 +235,15 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
         </StyledSection>
         <StyledSection>
           <StyledDisplayLabel>{t`List`}</StyledDisplayLabel>
-          {isDefined(list) ? (
+          {isDefined(list) && (
             <RecordChip
               record={list}
               objectNameSingular={CoreObjectNameSingular.MessageList}
             />
-          ) : !hasList ? (
-            <StyledValue $isEmpty>{t`No list`}</StyledValue>
-          ) : (
-            isListUnresolved && (
-              <StyledValue $isEmpty>{t`Unavailable`}</StyledValue>
-            )
+          )}
+          {!hasList && <StyledValue $isEmpty>{t`No list`}</StyledValue>}
+          {isListUnresolved && (
+            <StyledValue $isEmpty>{t`Unavailable`}</StyledValue>
           )}
         </StyledSection>
         <StyledSection>

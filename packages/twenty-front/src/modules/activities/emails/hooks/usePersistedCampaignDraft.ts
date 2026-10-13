@@ -34,9 +34,11 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
         updateOneRecordInput: toUpdateOneRecordInput(nextDraft),
       }).then(
         () =>
-          apolloClient.refetchQueries({
-            include: [PREVIEW_MESSAGE_CAMPAIGN_SEND],
-          }),
+          apolloClient
+            .refetchQueries({
+              include: [PREVIEW_MESSAGE_CAMPAIGN_SEND],
+            })
+            .catch(() => undefined),
         () =>
           enqueueToast({
             variant: 'error',
