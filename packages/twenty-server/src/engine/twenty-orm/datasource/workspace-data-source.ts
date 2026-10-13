@@ -203,7 +203,6 @@ export class WorkspaceDataSource {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
-    // A repository without a config allows nothing
     const repositoryRolePermissionConfig: RolePermissionConfig =
       rolePermissionConfig ?? { intersectionOf: {} };
 
