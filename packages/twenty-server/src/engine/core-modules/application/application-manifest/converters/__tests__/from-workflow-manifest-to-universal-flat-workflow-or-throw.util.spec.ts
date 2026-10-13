@@ -257,6 +257,62 @@ describe('application workflow definitions', () => {
     ).toThrow("Workflow trigger: Cron pattern 'every monday' is invalid");
   });
 
+  it('exposes the expected body of a POST webhook as trigger variables', () => {
+    const { version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'WEBHOOK',
+            nextStepIds: [STEP_ID],
+            settings: {
+              httpMethod: 'POST',
+              expectedBody: { email: 'jane@example.com' },
+            },
+          },
+        },
+      },
+    });
+
+    expect(version.triggers?.[0]).toMatchObject({
+      type: 'WEBHOOK',
+      name: 'Webhook',
+      settings: {
+        httpMethod: 'POST',
+        authentication: null,
+        expectedBody: { email: 'jane@example.com' },
+        outputSchema: { email: { isLeaf: true, type: 'string' } },
+      },
+    });
+  });
+
+  it('starts a GET webhook without authentication or body', () => {
+    const { version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'WEBHOOK',
+            nextStepIds: [STEP_ID],
+            settings: { httpMethod: 'GET' },
+          },
+        },
+      },
+    });
+
+    expect(version.triggers?.[0]?.settings).toEqual({
+      httpMethod: 'GET',
+      authentication: null,
+      outputSchema: {},
+    });
+  });
+
   it('listens to the database event of the referenced object and fields', () => {
     const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
     const FIELD_ID = '88888888-8888-4888-8888-888888888888';
@@ -482,7 +538,7 @@ describe('application workflow definitions', () => {
 
   it('rejects an unsupported trigger on the server too', () => {
     const invalid = structuredClone(manifest);
-    Object.assign(invalid.version.trigger, { type: 'WEBHOOK' });
+    Object.assign(invalid.version.trigger, { type: 'UNKNOWN' });
     expect(() =>
       convert({
         ...options,

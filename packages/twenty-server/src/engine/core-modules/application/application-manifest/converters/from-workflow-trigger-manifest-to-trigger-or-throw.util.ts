@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
+import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -19,6 +20,7 @@ import {
   type WorkflowManualTrigger,
   type WorkflowTrigger,
   WorkflowTriggerType,
+  type WorkflowWebhookTrigger,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -39,6 +41,11 @@ type CronTriggerManifest = Extract<WorkflowTriggerManifest, { type: 'CRON' }>;
 type DatabaseEventTriggerManifest = Extract<
   WorkflowTriggerManifest,
   { type: 'DATABASE_EVENT' }
+>;
+
+type WebhookTriggerManifest = Extract<
+  WorkflowTriggerManifest,
+  { type: 'WEBHOOK' }
 >;
 
 const DATABASE_EVENT_TRIGGER_NAME_BY_ACTION: Record<
@@ -196,6 +203,29 @@ const fromDatabaseEventTriggerManifestOrThrow = ({
   } satisfies WorkflowDatabaseEventTrigger;
 };
 
+const fromWebhookTriggerManifest = (
+  trigger: WebhookTriggerManifest,
+): WorkflowWebhookTrigger => {
+  const { settings, ...identity } = trigger;
+
+  return {
+    ...identity,
+    name: 'Webhook',
+    type: WorkflowTriggerType.WEBHOOK,
+    position: { x: 0, y: 0 },
+    settings:
+      settings.httpMethod === 'GET'
+        ? { httpMethod: 'GET', authentication: null, outputSchema: {} }
+        : {
+            httpMethod: 'POST',
+            authentication: null,
+            expectedBody: settings.expectedBody,
+            expectedOutputSchema: settings.expectedBody,
+            outputSchema: getOutputSchemaFromValue(settings.expectedBody),
+          },
+  } satisfies WorkflowWebhookTrigger;
+};
+
 export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
   trigger,
   references,
@@ -215,6 +245,8 @@ export const fromWorkflowTriggerManifestToTriggerOrThrow = ({
       return fromCronTriggerManifestOrThrow(trigger);
     case 'DATABASE_EVENT':
       return fromDatabaseEventTriggerManifestOrThrow({ trigger, resolvers });
+    case 'WEBHOOK':
+      return fromWebhookTriggerManifest(trigger);
     default:
       return assertNever(trigger);
   }
