@@ -25,7 +25,6 @@ export class BillingSubscriptionItemCapResolver {
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
   ) {}
 
-  // Derived from the live balance: a stored flag drifts as soon as one balance-mutating path misses it
   @ResolveField(() => Boolean)
   async hasReachedCurrentPeriodCap(
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
@@ -43,7 +42,6 @@ export class BillingSubscriptionItemCapResolver {
       return false;
     }
 
-    // Rides on currentWorkspace (app boot): a billing read failure must degrade to no banner, never fail the query
     try {
       const creditAvailability =
         await this.usageQuotaAdmissionService.getCreditAvailability(
