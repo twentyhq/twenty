@@ -1,3 +1,4 @@
+import * as jwt from 'jsonwebtoken';
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -289,6 +290,23 @@ describe('ServerRouteTrigger authorization (integration)', () => {
           `/webhooks/server/${AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
         )
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({ any: 'payload' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ authorization: null });
+    }, 60000);
+
+    it('never forwards a token shaped like a Twenty token, even one that does not verify', async () => {
+      const unverifiableTwentyShapedToken = jwt.sign(
+        { type: 'ACCESS', workspaceId: OWNER_WORKSPACE_ID },
+        'not-the-twenty-secret',
+      );
+
+      const response = await request(baseUrl)
+        .post(
+          `/webhooks/server/${AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+        )
+        .set('Authorization', `Bearer ${unverifiableTwentyShapedToken}`)
         .send({ any: 'payload' });
 
       expect(response.status).toBe(200);
