@@ -1,5 +1,7 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { isCountdownDuration } from './isCountdownDuration';
+
 type CountdownConfiguration = {
   duration: number;
   durationRevision: number;
@@ -80,8 +82,7 @@ export const createToastCountdown = ({
       configuration.isActive &&
       !configuration.isPaused &&
       !configuration.isProgress &&
-      configuration.duration > 0 &&
-      Number.isFinite(configuration.duration);
+      isCountdownDuration(configuration.duration);
 
     if (!isCountdownEnabled || isClosed) {
       return;

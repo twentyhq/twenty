@@ -3,6 +3,7 @@ import { type CSSProperties } from 'react';
 import { ProgressBar } from '@ui/primitives/feedback/ProgressBar/ProgressBar';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { isCountdownDuration } from '../utils/isCountdownDuration';
 import styles from './ToastProgress.module.scss';
 
 type ToastProgressProps = {
@@ -26,7 +27,7 @@ export const ToastProgress = ({
     return <ProgressBar value={progress} barColor={barColor} />;
   }
 
-  if (duration <= 0 || !Number.isFinite(duration)) {
+  if (!isCountdownDuration(duration)) {
     return null;
   }
 
