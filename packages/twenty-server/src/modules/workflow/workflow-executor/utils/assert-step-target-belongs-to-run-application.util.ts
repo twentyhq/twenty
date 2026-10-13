@@ -7,18 +7,13 @@ import {
 export const assertStepTargetBelongsToRunApplication = ({
   application,
   targetApplicationId,
-  workspaceCustomApplicationId,
   targetLabel,
 }: {
   application: Pick<FlatApplication, 'id' | 'name'>;
   targetApplicationId: string;
-  workspaceCustomApplicationId: string;
   targetLabel: string;
 }): void => {
-  if (
-    targetApplicationId === application.id ||
-    targetApplicationId === workspaceCustomApplicationId
-  ) {
+  if (targetApplicationId === application.id) {
     return;
   }
 

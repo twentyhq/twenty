@@ -32,9 +32,6 @@ describe('buildWorkflowRunCreatedBy', () => {
       build({ workflowApplicationId: INSTALLED_APPLICATION_ID }).context
         .applicationId,
     ).toBe(INSTALLED_APPLICATION_ID);
-  });
-
-  it('keeps the application that started its own workflow', () => {
     expect(
       build({
         workflowApplicationId: INSTALLED_APPLICATION_ID,
@@ -43,43 +40,23 @@ describe('buildWorkflowRunCreatedBy', () => {
     ).toBe(INSTALLED_APPLICATION_ID);
   });
 
-  it('binds a workspace workflow started by an application token to that application', () => {
+  it('binds a run of a standard application workflow like any installed one', () => {
     expect(
-      build({
-        workflowApplicationId: CUSTOM_APPLICATION_ID,
-        startingApplicationId: INSTALLED_APPLICATION_ID,
-      }).context.applicationId,
-    ).toBe(INSTALLED_APPLICATION_ID);
+      build({ workflowApplicationId: STANDARD_APPLICATION_ID }).context
+        .applicationId,
+    ).toBe(STANDARD_APPLICATION_ID);
   });
 
-  it('leaves a workspace workflow started without an application unbound', () => {
+  it('leaves a run of a workspace workflow unbound, whoever starts it', () => {
     expect(
       build({ workflowApplicationId: CUSTOM_APPLICATION_ID }).context
         .applicationId,
     ).toBeUndefined();
-  });
-
-  it('never binds a run to the workspace custom application', () => {
-    expect(
-      build({
-        workflowApplicationId: INSTALLED_APPLICATION_ID,
-        startingApplicationId: CUSTOM_APPLICATION_ID,
-      }).context.applicationId,
-    ).toBe(INSTALLED_APPLICATION_ID);
     expect(
       build({
         workflowApplicationId: CUSTOM_APPLICATION_ID,
-        startingApplicationId: CUSTOM_APPLICATION_ID,
+        startingApplicationId: INSTALLED_APPLICATION_ID,
       }).context.applicationId,
     ).toBeUndefined();
-  });
-
-  it('binds a run started through the standard application like any installed one', () => {
-    expect(
-      build({
-        workflowApplicationId: CUSTOM_APPLICATION_ID,
-        startingApplicationId: STANDARD_APPLICATION_ID,
-      }).context.applicationId,
-    ).toBe(STANDARD_APPLICATION_ID);
   });
 });

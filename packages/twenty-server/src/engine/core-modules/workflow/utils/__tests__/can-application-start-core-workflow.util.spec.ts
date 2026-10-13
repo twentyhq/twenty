@@ -1,24 +1,11 @@
 import { canApplicationStartCoreWorkflow } from 'src/engine/core-modules/workflow/utils/can-application-start-core-workflow.util';
 
-const WORKSPACE_CUSTOM_APPLICATION_ID = 'custom-app-id';
-
 describe('canApplicationStartCoreWorkflow', () => {
   it('lets a request without an application start any workflow it can reach', () => {
     expect(
       canApplicationStartCoreWorkflow({
         callerApplicationId: undefined,
         workflowApplicationId: 'installed-app-id',
-        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-      }),
-    ).toBe(true);
-  });
-
-  it('keeps letting applications start workspace workflows', () => {
-    expect(
-      canApplicationStartCoreWorkflow({
-        callerApplicationId: 'installed-app-id',
-        workflowApplicationId: 'custom-app-id',
-        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     ).toBe(true);
   });
@@ -28,17 +15,15 @@ describe('canApplicationStartCoreWorkflow', () => {
       canApplicationStartCoreWorkflow({
         callerApplicationId: 'installed-app-id',
         workflowApplicationId: 'installed-app-id',
-        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     ).toBe(true);
   });
 
-  it('refuses an application starting a workflow of the standard application', () => {
+  it('refuses an application starting a workspace workflow', () => {
     expect(
       canApplicationStartCoreWorkflow({
         callerApplicationId: 'installed-app-id',
-        workflowApplicationId: 'standard-app-id',
-        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+        workflowApplicationId: 'custom-app-id',
       }),
     ).toBe(false);
   });
@@ -48,7 +33,6 @@ describe('canApplicationStartCoreWorkflow', () => {
       canApplicationStartCoreWorkflow({
         callerApplicationId: 'other-app-id',
         workflowApplicationId: 'installed-app-id',
-        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     ).toBe(false);
   });
