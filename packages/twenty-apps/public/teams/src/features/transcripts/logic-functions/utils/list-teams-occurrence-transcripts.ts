@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type GraphCallTranscript } from 'src/features/transcripts/logic-functions/types/graph-call-transcript.type';
 import { type TeamsMeetingOccurrence } from 'src/features/transcripts/logic-functions/types/teams-meeting-occurrence.type';
 import { type TeamsOccurrenceTranscript } from 'src/features/transcripts/logic-functions/types/teams-occurrence-transcript.type';
 import { findTeamsTranscriptCalendarReference } from 'src/features/transcripts/logic-functions/utils/find-teams-transcript-calendar-reference';
@@ -9,41 +10,15 @@ import { isUnavailableTeamsTranscriptError } from 'src/features/transcripts/logi
 import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
-const listMeetingOccurrenceTranscriptsOrThrow = async ({
+const listAvailableMeetingTranscriptsOrThrow = async ({
   accessToken,
-  joinWebUrl,
-  occurrences,
+  meetingId,
 }: {
   accessToken: string;
-  joinWebUrl: string;
-  occurrences: TeamsMeetingOccurrence[];
-}): Promise<TeamsOccurrenceTranscript[] | undefined> => {
+  meetingId: string;
+}): Promise<GraphCallTranscript[] | undefined> => {
   try {
-    const meeting = await getMeetingByJoinUrl({ accessToken, joinWebUrl });
-
-    if (!isDefined(meeting)) {
-      return [];
-    }
-
-    const meetingTranscripts = await listMeetingTranscripts({
-      accessToken,
-      meetingId: meeting.id,
-    });
-
-    return meetingTranscripts
-      .filter((transcript) =>
-        occurrences.some((occurrence) =>
-          isTranscriptDuringOccurrence({ transcript, occurrence }),
-        ),
-      )
-      .map((transcript) => ({
-        meeting,
-        transcript,
-        calendarReference: findTeamsTranscriptCalendarReference({
-          transcript,
-          occurrences,
-        }),
-      }));
+    return await listMeetingTranscripts({ accessToken, meetingId });
   } catch (error) {
     if (!isUnavailableTeamsTranscriptError(error)) {
       throw error;
@@ -55,6 +30,42 @@ const listMeetingOccurrenceTranscriptsOrThrow = async ({
 
     return undefined;
   }
+};
+
+const listMeetingOccurrenceTranscriptsOrThrow = async ({
+  accessToken,
+  joinWebUrl,
+  occurrences,
+}: {
+  accessToken: string;
+  joinWebUrl: string;
+  occurrences: TeamsMeetingOccurrence[];
+}): Promise<TeamsOccurrenceTranscript[] | undefined> => {
+  const meeting = await getMeetingByJoinUrl({ accessToken, joinWebUrl });
+
+  if (!isDefined(meeting)) {
+    return [];
+  }
+
+  const meetingTranscripts = await listAvailableMeetingTranscriptsOrThrow({
+    accessToken,
+    meetingId: meeting.id,
+  });
+
+  return meetingTranscripts
+    ?.filter((transcript) =>
+      occurrences.some((occurrence) =>
+        isTranscriptDuringOccurrence({ transcript, occurrence }),
+      ),
+    )
+    .map((transcript) => ({
+      meeting,
+      transcript,
+      calendarReference: findTeamsTranscriptCalendarReference({
+        transcript,
+        occurrences,
+      }),
+    }));
 };
 
 export const listTeamsOccurrenceTranscripts = async ({

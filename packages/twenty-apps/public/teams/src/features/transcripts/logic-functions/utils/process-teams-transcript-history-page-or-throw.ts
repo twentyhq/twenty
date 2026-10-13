@@ -21,11 +21,13 @@ import { type TeamsTranscriptHistoryRunningPhase } from 'src/features/transcript
 import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
 import { buildTeamsCalendarViewUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-calendar-view-url';
 import { buildTeamsTranscriptHistoryKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-history-kv-key';
+import { deleteTeamsTranscriptHistoryKvKeys } from 'src/features/transcripts/logic-functions/utils/delete-teams-transcript-history-kv-keys';
 import { countTeamsTranscriptHistoryPageOrThrow } from 'src/features/transcripts/logic-functions/utils/count-teams-transcript-history-page-or-throw';
 import { enqueueTeamsTranscriptHistoryJobOrThrow } from 'src/features/transcripts/logic-functions/utils/enqueue-teams-transcript-history-job-or-throw';
 import { getTeamsTranscriptHistoryChunkWindow } from 'src/features/transcripts/logic-functions/utils/get-teams-transcript-history-chunk-window';
 import { getTeamsTranscriptHistoryPageTransition } from 'src/features/transcripts/logic-functions/utils/get-teams-transcript-history-page-transition';
 import { importTeamsTranscriptHistoryPageOrThrow } from 'src/features/transcripts/logic-functions/utils/import-teams-transcript-history-page-or-throw';
+import { isTeamsConnectionListed } from 'src/features/transcripts/logic-functions/utils/is-teams-connection-listed';
 import { isTeamsMeetingOccurrenceStartingInWindow } from 'src/features/transcripts/logic-functions/utils/is-teams-meeting-occurrence-starting-in-window';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page';
 import { listTeamsOccurrenceTranscripts } from 'src/features/transcripts/logic-functions/utils/list-teams-occurrence-transcripts';
@@ -145,6 +147,8 @@ const processPageOrThrow = async ({
           coreApiClient,
           transcripts,
           importedSince: state.windowEnd,
+          isRunActive: async () =>
+            isDefined(await findStateForJob({ job, phase })),
         });
   const pageCounts = {
     ...phaseCounts,
@@ -175,6 +179,19 @@ const processPageOrThrow = async ({
     buildTeamsTranscriptHistoryKvKey(job.connectedAccountId),
     { ...nextState, nextJob },
   );
+
+  // Disconnecting deletes the run state, and kv cannot make this save conditional on it.
+  if (!(await isTeamsConnectionListed(job.connectedAccountId))) {
+    await deleteTeamsTranscriptHistoryKvKeys({
+      connectedAccountId: job.connectedAccountId,
+    });
+
+    return {
+      success: true,
+      skipped: true,
+      reason: 'Teams connection was removed during this page',
+    };
+  }
 
   if (isDefined(nextJob)) {
     await enqueueTeamsTranscriptHistoryJobOrThrow({

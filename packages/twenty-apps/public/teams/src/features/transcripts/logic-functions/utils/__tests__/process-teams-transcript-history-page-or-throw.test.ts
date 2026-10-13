@@ -13,12 +13,14 @@ const {
   listTeamsCalendarPageMock,
   importTeamsTranscriptHistoryPageMock,
   countTeamsTranscriptHistoryPageMock,
+  listConnectionsMock,
 } = vi.hoisted(() => ({
   kvStore: new Map<string, unknown>(),
   enqueueJobsMock: vi.fn(),
   listTeamsCalendarPageMock: vi.fn(),
   importTeamsTranscriptHistoryPageMock: vi.fn(),
   countTeamsTranscriptHistoryPageMock: vi.fn(),
+  listConnectionsMock: vi.fn(),
 }));
 
 vi.mock('src/constants/feature-flags', () => ({
@@ -32,7 +34,11 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
     set: async (key: string, value: unknown) => {
       kvStore.set(key, value);
     },
+    delete: async (key: string) => {
+      kvStore.delete(key);
+    },
   },
+  listConnections: listConnectionsMock,
   getConnection: vi.fn().mockResolvedValue({ accessToken: 'token' }),
   enqueueJobs: enqueueJobsMock,
 }));
@@ -135,6 +141,7 @@ describe('processTeamsTranscriptHistoryPageOrThrow', () => {
     kvStore.clear();
     process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     enqueueJobsMock.mockResolvedValue(undefined);
+    listConnectionsMock.mockResolvedValue([{ id: 'connected-account-1' }]);
     listTeamsCalendarPageMock.mockResolvedValue({
       occurrences: [],
       nextPageUrl: NEXT_PAGE_URL,
@@ -263,6 +270,38 @@ describe('processTeamsTranscriptHistoryPageOrThrow', () => {
           TEAMS_COUNT_TRANSCRIPT_HISTORY_UNIVERSAL_IDENTIFIER,
       }),
     );
+  });
+
+  it('should stop a page whose run is removed while it imports', async () => {
+    let wasRunActive: boolean | undefined;
+
+    kvStore.set(STATE_KV_KEY, STATE);
+    importTeamsTranscriptHistoryPageMock.mockImplementation(
+      async ({ isRunActive }: { isRunActive: () => Promise<boolean> }) => {
+        kvStore.delete(STATE_KV_KEY);
+        wasRunActive = await isRunActive();
+
+        return PAGE_COUNTS;
+      },
+    );
+
+    await expect(processImportPage(JOB)).resolves.toEqual(
+      expect.objectContaining({ skipped: true }),
+    );
+    expect(wasRunActive).toBe(false);
+    expect(kvStore.has(STATE_KV_KEY)).toBe(false);
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
+  });
+
+  it('should not leave a run behind for a connection removed while its page was saved', async () => {
+    kvStore.set(STATE_KV_KEY, STATE);
+    listConnectionsMock.mockResolvedValue([]);
+
+    await expect(processImportPage(JOB)).resolves.toEqual(
+      expect.objectContaining({ skipped: true }),
+    );
+    expect(kvStore.has(STATE_KV_KEY)).toBe(false);
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
   it('should only schedule the saved next page when a retried page was already saved', async () => {
