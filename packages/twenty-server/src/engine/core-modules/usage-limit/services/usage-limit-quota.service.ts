@@ -12,7 +12,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WARM_AND_CONSUME_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-counters-script.constant';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { SubscriptionPlanProvider } from 'src/engine/core-modules/usage-limit/interfaces/subscription-plan-provider.service';
+import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
@@ -37,8 +37,8 @@ import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/ut
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
 import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit/utils/compute-credit-allowance-micro.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
+import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
-import { findSubscriptionPlanProvider } from 'src/engine/core-modules/usage-limit/utils/find-subscription-plan-provider.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
@@ -77,7 +77,7 @@ type QuotaConsumeResult = {
 export class UsageLimitQuotaService implements OnModuleInit {
   private readonly logger = new Logger(UsageLimitQuotaService.name);
 
-  private subscriptionPlanProvider: SubscriptionPlanProvider;
+  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
@@ -94,7 +94,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.subscriptionPlanProvider = findSubscriptionPlanProvider(
+    this.creditAllowanceProvider = findCreditAllowanceProvider(
       this.discoveryService,
     );
   }
@@ -662,12 +662,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private async buildAllowanceCounter(
     workspaceId: string,
   ): Promise<AllowanceQuotaCounter | null> {
-    if (!(await this.subscriptionPlanProvider.isCreditAllowanceEnabled())) {
+    if (!(await this.creditAllowanceProvider.isCreditAllowanceEnabled())) {
       return null;
     }
 
     const allowance =
-      await this.subscriptionPlanProvider.getCreditAllowance(workspaceId);
+      await this.creditAllowanceProvider.getCreditAllowance(workspaceId);
 
     if (!isDefined(allowance)) {
       return null;

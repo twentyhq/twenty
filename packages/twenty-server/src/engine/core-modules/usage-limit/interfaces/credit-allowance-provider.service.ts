@@ -5,7 +5,7 @@ import { type SubscriptionPlan } from 'src/engine/core-modules/usage-limit/types
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 
 @Injectable()
-export abstract class SubscriptionPlanProvider {
+export abstract class CreditAllowanceProvider {
   abstract isCreditAllowanceEnabled(): Promise<boolean>;
 
   abstract getCreditAllowancePeriod(

@@ -8,14 +8,14 @@ import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constan
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { type FlatBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { SubscriptionPlanProvider } from 'src/engine/core-modules/usage-limit/interfaces/subscription-plan-provider.service';
+import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { type CreditAllowance } from 'src/engine/core-modules/usage-limit/types/credit-allowance.type';
 import { type SubscriptionPlan } from 'src/engine/core-modules/usage-limit/types/subscription-plan.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class BillingSubscriptionPlanProvider extends SubscriptionPlanProvider {
+export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,

@@ -16,8 +16,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
-import { type SubscriptionPlanProvider } from 'src/engine/core-modules/usage-limit/interfaces/subscription-plan-provider.service';
-import { findSubscriptionPlanProvider } from 'src/engine/core-modules/usage-limit/utils/find-subscription-plan-provider.util';
+import { type CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
+import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { buildUsageEventEnvelopes } from 'src/engine/core-modules/usage/utils/build-usage-event-envelopes';
 import { UsageRollupBuffer } from 'src/engine/core-modules/usage/utils/usage-rollup-buffer';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -30,7 +30,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   private readonly buffer = new UsageRollupBuffer(MAX_BUFFERED_ROLLUPS);
   private flushTimer: NodeJS.Timeout | null = null;
   private pendingFlush: Promise<void> = Promise.resolve();
-  private subscriptionPlanProvider: SubscriptionPlanProvider;
+  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -40,7 +40,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    this.subscriptionPlanProvider = findSubscriptionPlanProvider(
+    this.creditAllowanceProvider = findCreditAllowanceProvider(
       this.discoveryService,
     );
 
@@ -176,7 +176,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
   ): Promise<Date | undefined> {
     const period =
-      await this.subscriptionPlanProvider.getCreditAllowancePeriod(workspaceId);
+      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
 
     return period?.periodStart;
   }

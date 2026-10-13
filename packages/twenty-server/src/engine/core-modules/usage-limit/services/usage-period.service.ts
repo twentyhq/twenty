@@ -5,12 +5,12 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { type SubscriptionPlanProvider } from 'src/engine/core-modules/usage-limit/interfaces/subscription-plan-provider.service';
+import { type CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
 import { type CalendarPeriodUnit } from 'src/engine/core-modules/usage-limit/types/calendar-period-unit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
-import { findSubscriptionPlanProvider } from 'src/engine/core-modules/usage-limit/utils/find-subscription-plan-provider.util';
+import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { getCalendarDayPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-day-period.util';
 import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-week-period.util';
@@ -18,19 +18,19 @@ import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/
 
 @Injectable()
 export class UsagePeriodService implements OnModuleInit {
-  private subscriptionPlanProvider: SubscriptionPlanProvider;
+  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   onModuleInit() {
-    this.subscriptionPlanProvider = findSubscriptionPlanProvider(
+    this.creditAllowanceProvider = findCreditAllowanceProvider(
       this.discoveryService,
     );
   }
 
   async hasAllowancePeriod(workspaceId: string): Promise<boolean> {
     return isDefined(
-      await this.subscriptionPlanProvider.getCreditAllowancePeriod(workspaceId),
+      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId),
     );
   }
 
@@ -45,7 +45,7 @@ export class UsagePeriodService implements OnModuleInit {
       return this.getCalendarPeriod(periodUnit);
     }
 
-    return this.subscriptionPlanProvider.getCreditAllowancePeriod(workspaceId);
+    return this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
   }
 
   async findCurrentPeriodsByUnit({
