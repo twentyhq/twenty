@@ -11,6 +11,7 @@ import { SyncCampaignEngagementFieldsCommand } from 'src/database/commands/upgra
 import { ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811310066-convert-workflow-email-bodies-to-email-documents.command';
 import { RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791823009575-remove-workflow-core-index-flag-from-command-menu-items.command';
 import { RemoveCampaignListStatColumnsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791902574822-remove-campaign-list-stat-columns.command';
+import { AddCampaignListViewCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791909534165-add-campaign-list-view.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -33,6 +34,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ConvertWorkflowEmailBodiesToEmailDocumentsCommand,
     RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand,
     RemoveCampaignListStatColumnsCommand,
+    AddCampaignListViewCommand,
   ],
 })
 export class V2_47_UpgradeVersionCommandModule {}

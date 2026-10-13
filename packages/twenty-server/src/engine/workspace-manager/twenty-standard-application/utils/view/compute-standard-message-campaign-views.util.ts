@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { ViewType, ViewKey } from 'twenty-shared/types';
 
 import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
@@ -17,10 +19,24 @@ export const computeStandardMessageCampaignViews = (
       context: {
         viewName: 'allMessageCampaigns',
         name: INDEX_VIEW_NAME,
-        type: ViewType.LIST,
+        type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
         icon: 'IconSend',
+      },
+    }),
+    messageCampaignList: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'messageCampaignList',
+        name: i18nLabel(
+          msg({ message: `All Campaigns`, context: 'view.name' }),
+        ),
+        type: ViewType.LIST,
+        key: null,
+        position: 1,
+        icon: 'IconList',
       },
     }),
     messageCampaignRecordPageFields: createStandardViewFlatMetadata({
