@@ -47,17 +47,15 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    expiresIn,
   }: {
     workspaceId: string;
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    expiresIn?: string;
   }): Promise<AuthToken> {
     await this.validateWorkspaceAndApplication(workspaceId, applicationId);
-
-    const expiresIn = this.twentyConfigService.get(
-      'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
-    );
 
     return this.signApplicationToken({
       workspaceId,
@@ -65,7 +63,9 @@ export class ApplicationTokenService {
       userWorkspaceId,
       userId,
       tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
-      expiresIn,
+      expiresIn:
+        expiresIn ??
+        this.twentyConfigService.get('APPLICATION_ACCESS_TOKEN_EXPIRES_IN'),
     });
   }
 

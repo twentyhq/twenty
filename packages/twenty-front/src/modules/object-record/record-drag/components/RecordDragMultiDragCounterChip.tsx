@@ -1,9 +1,10 @@
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { NotificationCounter } from 'twenty-ui/components/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 
-const StyledNotificationCounterContainer = styled.div`
+const StyledBadgeContainer = styled.div`
+  display: flex;
   position: absolute;
   right: -7px;
   top: -7px;
@@ -20,8 +21,10 @@ export const RecordDragMultiDragCounterChip = () => {
   }
 
   return (
-    <StyledNotificationCounterContainer>
-      <NotificationCounter count={draggedRecordIds.length} />
-    </StyledNotificationCounterContainer>
+    <StyledBadgeContainer>
+      <Badge size="xs" color="primary" shape="circle">
+        {draggedRecordIds.length}
+      </Badge>
+    </StyledBadgeContainer>
   );
 };

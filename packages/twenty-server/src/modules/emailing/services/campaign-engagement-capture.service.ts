@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 import { RECORD_CAMPAIGN_ENGAGEMENT_JOB } from 'src/engine/core-modules/emailing-domain/constants/record-campaign-engagement-job.constant';
-import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -12,6 +11,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
+import { type CampaignEngagement } from 'src/modules/emailing/types/campaign-engagement.type';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 import { getCampaignEngagementThrottleLimits } from 'src/modules/emailing/utils/get-campaign-engagement-throttle-limits.util';
 
@@ -30,11 +30,11 @@ export class CampaignEngagementCaptureService {
   ) {}
 
   async capture({
-    payload,
+    engagement,
     userAgent,
     requesterIp,
   }: {
-    payload: CampaignTrackingTokenPayload;
+    engagement: CampaignEngagement;
     userAgent: string | null;
     requesterIp: string | null;
   }): Promise<void> {
@@ -43,31 +43,27 @@ export class CampaignEngagementCaptureService {
     }
 
     const observation: CampaignEngagementObservation = {
+      ...engagement,
       eventId: v4(),
       occurredAt: new Date().toISOString(),
-      workspaceId: payload.workspaceId,
-      deliveryId: payload.deliveryId,
-      shortLinkId: payload.shortLinkId,
       userAgent,
     };
 
     await this.releaseResponseAfterBudget(
-      this.throttleAndEnqueue({ payload, observation, requesterIp }),
+      this.throttleAndEnqueue({ observation, requesterIp }),
     );
   }
 
   private async throttleAndEnqueue({
-    payload,
     observation,
     requesterIp,
   }: {
-    payload: CampaignTrackingTokenPayload;
     observation: CampaignEngagementObservation;
     requesterIp: string | null;
   }): Promise<void> {
     try {
       for (const limit of getCampaignEngagementThrottleLimits({
-        payload,
+        engagement: observation,
         requesterIp,
       })) {
         await this.throttlerService.tokenBucketThrottleOrThrow(
@@ -105,7 +101,7 @@ export class CampaignEngagementCaptureService {
       }
 
       this.logger.warn(
-        `Dropped click event for delivery ${observation.deliveryId}: ${error}`,
+        `Dropped ${observation.type.toLowerCase()} event for delivery ${observation.deliveryId}: ${error}`,
       );
     }
   }

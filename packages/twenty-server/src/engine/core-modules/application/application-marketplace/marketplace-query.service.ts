@@ -11,6 +11,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
+import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
@@ -168,6 +169,7 @@ export class MarketplaceQueryService {
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
       ),
+      billsCredits: doesApplicationBillCredits(manifest?.application?.billing),
       manifest: registration.manifest ?? undefined,
     };
   }

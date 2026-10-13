@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -154,6 +155,10 @@ export type IsConfiguredLoaderPayload = {
   applicationRegistrationId: string;
 };
 
+export type ApplicationRegistrationInstallCountLoaderPayload = {
+  applicationRegistrationId: string;
+};
+
 export type ApplicationAuthorIdentifiersLoaderPayload = {
   workspaceId: string;
 };
@@ -169,6 +174,7 @@ export class DataloaderService {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     private readonly fieldMetadataConnectionLoaderFactory: FieldMetadataConnectionLoaderFactory,
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
@@ -199,6 +205,8 @@ export class DataloaderService {
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
     const isConfiguredLoader = this.createIsConfiguredLoader();
+    const applicationRegistrationInstallCountLoader =
+      this.createApplicationRegistrationInstallCountLoader();
     const applicationAuthorIdentifiersLoader =
       this.createApplicationAuthorIdentifiersLoader();
     const applicationTranslationCatalogLoader =
@@ -228,6 +236,7 @@ export class DataloaderService {
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
       isConfiguredLoader,
+      applicationRegistrationInstallCountLoader,
       applicationAuthorIdentifiersLoader,
       applicationTranslationCatalogLoader,
       workspaceMembersByRoleIdLoader,
@@ -856,6 +865,24 @@ export class DataloaderService {
         );
       },
     );
+  }
+
+  private createApplicationRegistrationInstallCountLoader() {
+    return new DataLoader<
+      ApplicationRegistrationInstallCountLoaderPayload,
+      number
+    >(async (params: ApplicationRegistrationInstallCountLoaderPayload[]) => {
+      const installCountByRegistrationId =
+        await this.applicationRegistrationService.countInstalledWorkspacesByApplicationRegistrationIds(
+          params.map((param) => param.applicationRegistrationId),
+        );
+
+      return params.map(
+        (param) =>
+          installCountByRegistrationId.get(param.applicationRegistrationId) ??
+          0,
+      );
+    });
   }
 
   private createApplicationAuthorIdentifiersLoader() {
