@@ -50,7 +50,7 @@ export const normalizeScrollIntoViewArguments = (
   }
 
   if (!isObject(scrollIntoViewArgument)) {
-    return Boolean(scrollIntoViewArgument) ? START_ALIGNMENTS : END_ALIGNMENTS;
+    return scrollIntoViewArgument ? START_ALIGNMENTS : END_ALIGNMENTS;
   }
 
   return {
