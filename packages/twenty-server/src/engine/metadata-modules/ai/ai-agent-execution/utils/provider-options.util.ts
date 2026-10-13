@@ -6,18 +6,14 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   AI_SDK_ANTHROPIC,
   AI_SDK_AZURE,
-  AI_SDK_BEDROCK,
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
-import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
+import { supportsBedrockCachePoint } from 'src/engine/metadata-modules/ai/ai-models/utils/supports-bedrock-cache-point.util';
 
 type CacheModel = Pick<AiModelConfig, 'sdkPackage' | 'modelFamily'>;
 
 const BEDROCK_CACHE_POINT = { cachePoint: { type: 'default' } };
-
-const supportsBedrockCachePoint = ({ sdkPackage, modelFamily }: CacheModel) =>
-  sdkPackage === AI_SDK_BEDROCK && modelFamily === ModelFamily.CLAUDE;
 
 export const getCacheProviderOptions = (
   model: CacheModel,
