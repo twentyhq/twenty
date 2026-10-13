@@ -1,8 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { StrictMode } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
 
+import { ToasterRootReplacementExample } from './ToasterRootReplacementExample';
+import { ToasterSelfRemovingActionExample } from './ToasterSelfRemovingActionExample';
 import { ToasterTimingExample } from './ToasterTimingExample';
 import { type ToasterTimingExampleProps } from './ToasterTimingExampleProps';
 
@@ -74,6 +77,24 @@ const resumeCountdown = async ({
 };
 
 export const Documentation: Story = {};
+
+export const StrictModeCountdown: Story = {
+  render: (args) => (
+    <StrictMode>
+      <ToasterTimingExample
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...args}
+      />
+    </StrictMode>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const { toast } = await addNotification({ canvasElement });
+    await wait(450);
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    await expectExpiry({ toast, onClose: args.onClose });
+  },
+};
 
 export const ContentUpdatesPreserveRemainingTime: Story = {
   play: async ({ canvasElement, args }) => {
@@ -268,6 +289,66 @@ export const RemovingFocusedActionsResumesCountdown: Story = {
       within(toast).queryByRole('button', { name: 'Remove focused actions' }),
     ).not.toBeInTheDocument();
     await expectExpiry({ toast, onClose: args.onClose, timeout: 1000 });
+  },
+};
+
+export const NestedFocusedActionRemovalResumesCountdown: Story = {
+  render: (args) => (
+    <ToasterSelfRemovingActionExample
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...args}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const { toast, user } = await addNotification({ canvasElement });
+    await wait(800);
+    const action = within(toast).getByRole('button', {
+      name: 'Remove this focused action',
+    });
+    await user.tab();
+    await user.tab();
+    expect(action).toHaveFocus();
+    await wait(1600);
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    await user.keyboard('{Enter}');
+    expect(action).not.toBeInTheDocument();
+    expect(toast.contains(toast.ownerDocument.activeElement)).toBe(false);
+    await expectExpiry({ toast, onClose: args.onClose, timeout: 1000 });
+  },
+};
+
+export const FocusedRootReplacementResumesCountdown: Story = {
+  render: (args) => (
+    <ToasterRootReplacementExample
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...args}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const { body, toast, user } = await addNotification({ canvasElement });
+    await wait(800);
+    const action = within(toast).getByRole('button', {
+      name: 'Replace focused toast root',
+    });
+    await user.tab();
+    await user.tab();
+    expect(action).toHaveFocus();
+    await wait(1600);
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    await user.keyboard('{Enter}');
+    const replacement = body.getByRole('status');
+    expect(replacement.tagName).toBe('SECTION');
+    expect(toast).not.toBeInTheDocument();
+    expect(replacement.contains(replacement.ownerDocument.activeElement)).toBe(
+      false,
+    );
+    await expectExpiry({
+      toast: replacement,
+      onClose: args.onClose,
+      timeout: 1000,
+    });
   },
 };
 

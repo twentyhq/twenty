@@ -1,13 +1,7 @@
 import { useRender } from '@base-ui/react/use-render';
 import { isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import {
-  type FocusEvent,
-  type MouseEvent,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type FocusEvent, type MouseEvent, useState } from 'react';
 
 import {
   IconAlertTriangle,
@@ -22,6 +16,8 @@ import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Toast.module.scss';
+import { ToastCountdownEffect } from './internal/components/ToastCountdownEffect';
+import { ToastFocusEffect } from './internal/components/ToastFocusEffect';
 import { ToastProgress } from './internal/components/ToastProgress';
 import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
@@ -61,34 +57,13 @@ export const Toast = ({
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const elementRef = useRef<HTMLDivElement>(null);
+  const [toastElement, setToastElement] = useState<HTMLDivElement | null>(null);
 
-  useLayoutEffect(() => {
-    const element = elementRef.current;
-
-    if (
-      isFocused &&
-      isDefined(element) &&
-      !element.contains(element.ownerDocument.activeElement)
-    ) {
-      setIsFocused(false);
-    }
-  }, [
-    isFocused,
-    children,
-    description,
-    action,
-    icon,
-    onCancel,
-    cancelLabel,
-    onClose,
-    render,
-  ]);
-  const { countdown, close } = useToastCountdown({
+  const isPaused = isHovered || isFocused;
+  const { countdown, clock } = useToastCountdown({
     duration,
     progress,
-    isPaused: isHovered || isFocused,
-    onClose,
+    isPaused,
   });
   const Icon = TOAST_ICONS[status];
   const toastColors = theme.snackBar[status === 'neutral' ? 'default' : status];
@@ -103,9 +78,9 @@ export const Toast = ({
     icon
   );
 
-  return useRender({
+  const element = useRender({
     render,
-    ref: [ref ?? null, elementRef],
+    ref: [ref ?? null, setToastElement],
     props: {
       role,
       'aria-live': role === 'alert' ? 'assertive' : 'polite',
@@ -170,7 +145,7 @@ export const Toast = ({
                   className={styles.closeButton}
                   variant="ghost"
                   size="sm"
-                  onClick={close}
+                  onClick={clock.close}
                 />
               )}
             </div>
@@ -188,4 +163,22 @@ export const Toast = ({
       ),
     },
   });
+
+  return (
+    <>
+      {element}
+      <ToastFocusEffect
+        element={toastElement}
+        isFocused={isFocused}
+        onFocusChange={setIsFocused}
+      />
+      <ToastCountdownEffect
+        clock={clock}
+        duration={duration}
+        progress={progress}
+        isPaused={isPaused}
+        onClose={onClose}
+      />
+    </>
+  );
 };
