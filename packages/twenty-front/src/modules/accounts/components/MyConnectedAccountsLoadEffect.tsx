@@ -14,7 +14,7 @@ export const MyConnectedAccountsLoadEffect = () => {
   const isOnAuthOrOnboardingPage = useIsOnAuthOrOnboardingPage();
   const setMyConnectedAccounts = useSetAtomState(myConnectedAccountsState);
 
-  const { data } = useQuery<{
+  const { data, error } = useQuery<{
     myConnectedAccounts: Omit<
       ConnectedAccount,
       'messageChannels' | 'calendarChannels'
@@ -26,8 +26,14 @@ export const MyConnectedAccountsLoadEffect = () => {
   useEffect(() => {
     if (isDefined(data?.myConnectedAccounts)) {
       setMyConnectedAccounts(data.myConnectedAccounts);
+
+      return;
     }
-  }, [data, setMyConnectedAccounts]);
+
+    if (isDefined(error)) {
+      setMyConnectedAccounts([]);
+    }
+  }, [data, error, setMyConnectedAccounts]);
 
   return null;
 };
