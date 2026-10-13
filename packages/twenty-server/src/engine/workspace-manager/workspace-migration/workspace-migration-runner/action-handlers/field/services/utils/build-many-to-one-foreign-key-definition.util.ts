@@ -12,9 +12,7 @@ export const buildManyToOneForeignKeyDefinition = ({
   flatObjectMetadataMaps,
   tableName,
 }: {
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType> & {
-    relationTargetObjectMetadataId: string;
-  };
+  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
   flatObjectMetadataMaps: MetadataFlatEntityMaps<'objectMetadata'>;
   tableName: string;
 }): WorkspaceSchemaForeignKeyDefinition => ({

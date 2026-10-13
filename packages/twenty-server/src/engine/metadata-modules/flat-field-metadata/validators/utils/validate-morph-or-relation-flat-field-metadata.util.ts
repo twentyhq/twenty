@@ -114,15 +114,12 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
       : {
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message: `Invalid universal identifier ${universalIdentifier}`,
-          userFriendlyMessage: msg`Invalid universal identifier ${String(universalIdentifier)}`,
+          userFriendlyMessage: msg`Invalid universal identifier ${universalIdentifier}`,
           value: universalIdentifier,
         },
   );
 
-  if (
-    !isDefined(relationTargetFieldMetadataUniversalIdentifier) ||
-    !isDefined(relationTargetObjectMetadataUniversalIdentifier)
-  ) {
+  if (universalIdentifiersValidation.length > 0) {
     return universalIdentifiersValidation;
   }
 
