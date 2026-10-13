@@ -9,10 +9,7 @@ import {
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
-const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const DISCARD_MUTATION = `
   mutation Discard($input: DiscardCoreWorkflowDraftInput!) {
@@ -26,7 +23,6 @@ const DISCARD_MUTATION = `
 describe('discardCoreWorkflowDraft (e2e)', () => {
   let coreWorkflowId: string;
   let draftCoreVersionId: string;
-  let draftWorkspaceVersionId: string;
 
   beforeAll(async () => {
     const createdCoreWorkflow = await createCoreWorkflow({
@@ -61,7 +57,6 @@ describe('discardCoreWorkflowDraft (e2e)', () => {
       await coreWorkflowGraphqlRequest<{
         createDraftFromCoreWorkflowVersion: {
           id: string;
-          workspaceWorkflowVersionId: string;
         };
       }>({
         query: `
@@ -70,7 +65,6 @@ describe('discardCoreWorkflowDraft (e2e)', () => {
           ) {
             createDraftFromCoreWorkflowVersion(input: $input) {
               id
-              workspaceWorkflowVersionId
             }
           }
         `,
@@ -83,7 +77,6 @@ describe('discardCoreWorkflowDraft (e2e)', () => {
       });
 
     draftCoreVersionId = draftVersion.id;
-    draftWorkspaceVersionId = draftVersion.workspaceWorkflowVersionId;
   });
 
   afterAll(async () => {
@@ -92,7 +85,7 @@ describe('discardCoreWorkflowDraft (e2e)', () => {
     }
   });
 
-  it('soft-deletes the workspace draft, removes its core row and returns the refreshed workflow', async () => {
+  it('removes the core draft and returns the refreshed workflow', async () => {
     const discardResponse = await workflowGraphqlRequest(DISCARD_MUTATION, {
       input: { coreWorkflowVersionId: draftCoreVersionId },
     });
@@ -104,13 +97,6 @@ describe('discardCoreWorkflowDraft (e2e)', () => {
 
     expect(refreshedWorkflow.id).toBe(coreWorkflowId);
     expect(refreshedWorkflow.statuses).not.toContain('DRAFT');
-
-    const workspaceRows = await global.testDataSource.query(
-      `SELECT "deletedAt" FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE id = $1`,
-      [draftWorkspaceVersionId],
-    );
-
-    expect(workspaceRows[0]?.deletedAt).not.toBeNull();
 
     const coreVersionRows = await global.testDataSource.query(
       `SELECT id FROM core."workflowVersion" WHERE "workspaceId" = $1 AND id = $2`,

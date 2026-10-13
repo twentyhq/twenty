@@ -1,8 +1,10 @@
 import { useAuth } from '@/auth/hooks/useAuth';
+import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -26,6 +28,7 @@ export const useSignUpInNewWorkspace = () => {
     SignUpInNewWorkspaceDocument,
   );
   const { uploadNewWorkspaceLogo } = useUploadNewWorkspaceLogo();
+  const [partnerCookie, setPartnerCookie] = useAtomState(partnerCookieState);
 
   const createWorkspace = async ({
     displayName,
@@ -38,9 +41,13 @@ export const useSignUpInNewWorkspace = () => {
   } = {}): Promise<boolean> => {
     try {
       const { data } = await signUpInNewWorkspaceMutation({
-        variables: { input: { displayName, subdomain } },
+        variables: {
+          input: { displayName, subdomain, partner: partnerCookie?.partner },
+        },
       });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);
+
+      setPartnerCookie(null);
 
       const workspaceId = data.signUpInNewWorkspace.workspace.id;
 
@@ -52,7 +59,7 @@ export const useSignUpInNewWorkspace = () => {
             enqueueToast(getToastOptionsFromError({ error: logoUploadError }));
           } else {
             enqueueToast({
-              variant: 'error',
+              status: 'error',
               children:
                 logoUploadError instanceof Error
                   ? logoUploadError.message
@@ -82,7 +89,7 @@ export const useSignUpInNewWorkspace = () => {
         enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             error instanceof Error
               ? error.message

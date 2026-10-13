@@ -84,7 +84,7 @@ describe('useSso', () => {
     await result.current.redirectToSsoLoginPage(identityProviderId);
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'An error occurred.',
     });
   });

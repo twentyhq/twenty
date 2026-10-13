@@ -186,7 +186,7 @@ export const SignInUpTOTPVerification = () => {
     try {
       if (!isCaptchaReady) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Captcha (anti-bot check) is still loading, try again`,
         });
         setIsLoading(false);

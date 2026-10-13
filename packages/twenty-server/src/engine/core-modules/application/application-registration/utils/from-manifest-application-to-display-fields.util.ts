@@ -1,5 +1,6 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
 
+import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
 
@@ -8,7 +9,7 @@ export const fromManifestApplicationToDisplayFields = (
 ) => ({
   logo: application?.logo ?? application?.logoUrl ?? null,
   description: application?.description ?? null,
-  author: application?.author ?? null,
+  author: getApplicationAuthorDisplayName(application?.author),
   category: application?.category ?? null,
   websiteUrl: application?.websiteUrl ?? null,
   aboutDescription: application?.aboutDescription ?? null,

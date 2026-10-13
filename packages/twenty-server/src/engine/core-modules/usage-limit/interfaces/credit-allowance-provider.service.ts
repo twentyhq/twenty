@@ -14,4 +14,6 @@ export abstract class CreditAllowanceProvider {
   abstract getCreditAllowance(
     workspaceId: string,
   ): Promise<CreditAllowance | null>;
+
+  abstract getPlanKey(workspaceId: string): Promise<string | null>;
 }

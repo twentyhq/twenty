@@ -64,6 +64,7 @@ export { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from './MultiItemFieldDefaultMaxV
 export { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from './MultiItemFieldMinMaxValues';
 export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';
 export { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from './ObjectsWithChannelVisibilityConstraints';
+export { PARTNER_PATTERN } from './PartnerPattern';
 export { PermissionFlagType } from './PermissionFlagType';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { POLLED_MESSAGE_CHANNEL_TYPES } from './PolledMessageChannelTypes';

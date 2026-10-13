@@ -15,6 +15,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { UsageQuotaConsumptionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-consumption.service';
 import { UsageQuotaDefinitionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-definition.service';
+import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
@@ -51,6 +52,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitStockService,
     WorkspaceRecordStockService,
     UsageLimitEntitlementService,
+    UsageLimitDefaultValueService,
     UsageLimitsCacheService,
     UsagePeriodService,
     UsageLimitService,
