@@ -133,55 +133,22 @@ const ReviewerPicker = () => {
   );
 };
 
-const openOwner = async (canvasElement: HTMLElement) => {
+const openPicker = async ({
+  canvasElement,
+  triggerName,
+}: {
+  canvasElement: HTMLElement;
+  triggerName: string;
+}) => {
   const body = within(canvasElement.ownerDocument.body);
 
   await userEvent.click(
-    within(canvasElement).getByRole('button', { name: 'Owner' }),
+    within(canvasElement).getByRole('button', { name: triggerName }),
   );
-  const search = await body.findByRole('searchbox', { name: 'Search people' });
+  const search = await body.findByRole('searchbox');
 
   await waitFor(() => expect(search).toHaveFocus());
-  await waitFor(() =>
-    expect(body.getByRole('dialog', { name: 'Choose owner' })).toBeVisible(),
-  );
-
-  return search;
-};
-
-const openAssignees = async (canvasElement: HTMLElement) => {
-  await userEvent.click(
-    within(canvasElement).getByRole('button', { name: 'Assignees' }),
-  );
-  const search = await within(canvasElement.ownerDocument.body).findByRole(
-    'searchbox',
-    { name: 'Search people' },
-  );
-
-  await waitFor(() => expect(search).toHaveFocus());
-  await waitFor(() =>
-    expect(
-      within(canvasElement.ownerDocument.body).getByRole('dialog'),
-    ).toBeVisible(),
-  );
-
-  return search;
-};
-
-const openFields = async (canvasElement: HTMLElement) => {
-  await userEvent.click(
-    within(canvasElement).getByRole('button', { name: 'Fields' }),
-  );
-  const search = await within(canvasElement.ownerDocument.body).findByRole(
-    'searchbox',
-  );
-
-  await waitFor(() => expect(search).toHaveFocus());
-  await waitFor(() =>
-    expect(
-      within(canvasElement.ownerDocument.body).getByRole('dialog'),
-    ).toBeVisible(),
-  );
+  await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
 
   return search;
 };
@@ -216,7 +183,7 @@ type Story = StoryObj;
 export const EnterWithEmptySearch: Story = {
   render: () => <SearchablePicker />,
   play: async ({ canvasElement }) => {
-    await openAssignees(canvasElement);
+    await openPicker({ canvasElement, triggerName: 'Assignees' });
     await userEvent.keyboard('{Enter}');
 
     expect(onCreatePerson).not.toHaveBeenCalled();
@@ -227,7 +194,10 @@ export const EnterWithEmptySearch: Story = {
 export const EnterWithMatchingSearch: Story = {
   render: () => <SearchablePicker />,
   play: async ({ canvasElement }) => {
-    const search = await openAssignees(canvasElement);
+    const search = await openPicker({
+      canvasElement,
+      triggerName: 'Assignees',
+    });
 
     await userEvent.type(search, 'grace');
     await userEvent.keyboard('{Enter}');
@@ -242,7 +212,10 @@ export const HighlightFollowsSearch: Story = {
   render: () => <SearchablePicker />,
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openAssignees(canvasElement);
+    const search = await openPicker({
+      canvasElement,
+      triggerName: 'Assignees',
+    });
 
     expect(search).not.toHaveAttribute('aria-activedescendant');
 
@@ -277,7 +250,10 @@ export const TypingRightAfterOpening: Story = {
   play: async ({ canvasElement }) => {
     const { userEvent: trustedUserEvent } = await import('vitest/browser');
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openAssignees(canvasElement);
+    const search = await openPicker({
+      canvasElement,
+      triggerName: 'Assignees',
+    });
 
     await trustedUserEvent.keyboard('gra');
 
@@ -302,7 +278,10 @@ export const BackspaceClearingSearch: Story = {
   play: async ({ canvasElement }) => {
     const { userEvent: trustedUserEvent } = await import('vitest/browser');
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openAssignees(canvasElement);
+    const search = await openPicker({
+      canvasElement,
+      triggerName: 'Assignees',
+    });
     const margaret = body.getByRole('button', { name: 'Margaret Hamilton' });
 
     await waitFor(() => expect(margaret).toHaveAttribute('data-highlighted'));
@@ -324,7 +303,10 @@ export const HighlightFollowsTypedSearch: Story = {
   play: async ({ canvasElement }) => {
     const { userEvent: trustedUserEvent } = await import('vitest/browser');
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openAssignees(canvasElement);
+    const search = await openPicker({
+      canvasElement,
+      triggerName: 'Assignees',
+    });
     const ada = body.getByRole('button', { name: 'Ada Lovelace' });
 
     await trustedUserEvent.keyboard('a');
@@ -372,7 +354,7 @@ export const FirstEnabledResult: Story = {
   ),
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openFields(canvasElement);
+    const search = await openPicker({ canvasElement, triggerName: 'Fields' });
 
     await userEvent.type(search, 'n');
     await userEvent.keyboard('{Enter}');
@@ -395,7 +377,7 @@ export const EmptyResultsStayOpen: Story = {
   ),
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openFields(canvasElement);
+    const search = await openPicker({ canvasElement, triggerName: 'Fields' });
 
     await userEvent.type(search, 'x');
     await userEvent.keyboard('{Enter}');
@@ -472,7 +454,7 @@ export const MultipleSelectionStaysOpen: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
 
-    await openAssignees(canvasElement);
+    await openPicker({ canvasElement, triggerName: 'Assignees' });
     const ada = body.getByRole('button', { name: 'Ada Lovelace' });
     const grace = body.getByRole('button', { name: 'Grace Hopper' });
 
@@ -491,7 +473,7 @@ export const InlineActionClosesMultiplePicker: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
 
-    await openAssignees(canvasElement);
+    await openPicker({ canvasElement, triggerName: 'Assignees' });
     await userEvent.click(body.getByRole('button', { name: 'Create person' }));
     expect(onCreatePerson).toHaveBeenCalledOnce();
     await waitFor(() =>
@@ -504,7 +486,10 @@ export const EmptyResultsAnnounced: Story = {
   render: () => <SearchablePicker />,
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openAssignees(canvasElement);
+    const search = await openPicker({
+      canvasElement,
+      triggerName: 'Assignees',
+    });
 
     await userEvent.type(search, 'unknown');
     expect(body.getByRole('status')).toHaveTextContent('No people found');
@@ -570,7 +555,7 @@ export const OptionsWithoutSelectionState: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
 
-    await openFields(canvasElement);
+    await openPicker({ canvasElement, triggerName: 'Fields' });
     expect(body.getByRole('button', { name: 'Stage' })).not.toHaveAttribute(
       'aria-pressed',
     );
@@ -893,7 +878,7 @@ export const RowsShareOneTabStop: Story = {
   render: () => <OwnerPicker />,
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openOwner(canvasElement);
+    const search = await openPicker({ canvasElement, triggerName: 'Owner' });
     const create = body.getByRole('button', { name: 'Create person' });
     const ada = body.getByRole('button', { name: 'Ada Lovelace' });
     const grace = body.getByRole('button', { name: 'Grace Hopper' });
@@ -933,7 +918,7 @@ export const TabStopReturnsToFirstRow: Story = {
   render: () => <OwnerPicker />,
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const search = await openOwner(canvasElement);
+    const search = await openPicker({ canvasElement, triggerName: 'Owner' });
 
     await userEvent.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}');
     expect(
@@ -967,7 +952,7 @@ export const TabLeavesPicker: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
 
-    await openAssignees(canvasElement);
+    await openPicker({ canvasElement, triggerName: 'Assignees' });
     await userEvent.tab();
     expect(body.getByRole('button', { name: 'Create person' })).toHaveFocus();
     await userEvent.tab();

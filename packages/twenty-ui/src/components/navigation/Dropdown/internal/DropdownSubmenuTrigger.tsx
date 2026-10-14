@@ -29,7 +29,6 @@ export const DropdownSubmenuTrigger = ({
   nativeButton = !isDefined(render),
   openOnHover = true,
   onKeyDown,
-  onFocus,
   id,
   ref,
   ...props
@@ -67,10 +66,6 @@ export const DropdownSubmenuTrigger = ({
       role={parentType === 'menu' ? 'menuitem' : undefined}
       aria-haspopup={triggerType === 'menu' ? 'menu' : 'dialog'}
       tabIndex={itemFocus.tabIndex}
-      onFocus={(event) => {
-        itemFocus.activate(event.currentTarget);
-        onFocus?.(event);
-      }}
       data-dropdown-item=""
       onKeyDown={(event) => {
         onKeyDown?.(event);

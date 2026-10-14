@@ -1,12 +1,6 @@
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { isDropdownRow } from './isDropdownRow';
 
-import { getDropdownItems } from './getDropdownItems';
-import { getDropdownSearch } from './getDropdownSearch';
-
-export const getDropdownRows = (content: HTMLElement) => {
-  const hasSearch = isDefined(getDropdownSearch(content));
-
-  return getDropdownItems(content).filter(
-    (item) => !hasSearch || !item.hasAttribute('data-dropdown-back'),
-  );
-};
+export const getDropdownRows = (content: HTMLElement) =>
+  Array.from(
+    content.querySelectorAll<HTMLElement>('[data-dropdown-item]'),
+  ).filter((item) => isDropdownRow({ content, item }));

@@ -47,7 +47,7 @@ export const DropdownRoot = ({
     id: string;
     type: DropdownType;
   }>();
-  const [rowIds, setRowIds] = useState<string[]>([]);
+  const [rowIds, setRowIds] = useState<string[]>();
   const [focusedRowId, setFocusedRowId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
   const [pageFocusRequest, setPageFocusRequest] =
@@ -88,19 +88,12 @@ export const DropdownRoot = ({
     onOpenChange?.(nextOpen);
   };
 
-  const closeTree = () => {
-    setOpen(false);
-
-    if (isSubmenu) {
-      parent?.closeTree();
-    }
-  };
-
-  const dismissTreeOnTabOut = (event: Event) => {
+  const closeTree = (tabOutEvent?: Event) => {
     if (
+      isDefined(tabOutEvent) &&
       isDropdownDismissPrevented({
         onDismiss: onInteractOutside,
-        event,
+        event: tabOutEvent,
         target: null,
       })
     ) {
@@ -110,7 +103,7 @@ export const DropdownRoot = ({
     setOpen(false);
 
     if (isSubmenu) {
-      parent?.dismissTreeOnTabOut(event);
+      parent?.closeTree(tabOutEvent);
     }
   };
 
@@ -225,7 +218,6 @@ export const DropdownRoot = ({
           setFocusOnOpen,
           setOpen,
           closeTree,
-          dismissTreeOnTabOut,
           goToPage,
           goBack,
           registerPage,

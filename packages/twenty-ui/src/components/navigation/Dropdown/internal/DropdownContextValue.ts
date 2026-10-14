@@ -14,7 +14,7 @@ export type DropdownContextValue = {
   parentType?: DropdownType;
   rowFocus: DropdownRowFocus;
   parentRowFocus?: DropdownRowFocus;
-  setRowIds: Dispatch<SetStateAction<string[]>>;
+  setRowIds: Dispatch<SetStateAction<string[] | undefined>>;
   pageId?: string;
   pageFocusRequest?: DropdownPageFocusRequest;
   setPageFocusRequest: (request: DropdownPageFocusRequest | undefined) => void;
@@ -24,8 +24,7 @@ export type DropdownContextValue = {
   focusOnOpen: boolean;
   setFocusOnOpen: (focusOnOpen: boolean) => void;
   setOpen: (open: boolean) => void;
-  closeTree: () => void;
-  dismissTreeOnTabOut: (event: Event) => void;
+  closeTree: (tabOutEvent?: Event) => void;
   goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;

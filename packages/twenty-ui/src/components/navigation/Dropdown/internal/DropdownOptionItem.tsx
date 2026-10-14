@@ -34,7 +34,6 @@ export const DropdownOptionItem = ({
   disabled = false,
   nativeButton = !isDefined(render),
   onClick,
-  onFocus,
   id,
   ...props
 }: DropdownOptionItemProps) => {
@@ -76,10 +75,6 @@ export const DropdownOptionItem = ({
       }
       aria-current={isCurrentOption ? 'true' : undefined}
       tabIndex={itemFocus.tabIndex}
-      onFocus={(event) => {
-        itemFocus.activate(event.currentTarget);
-        onFocus?.(event);
-      }}
       data-dropdown-item=""
       data-dropdown-option-item=""
       onClick={(event) => {

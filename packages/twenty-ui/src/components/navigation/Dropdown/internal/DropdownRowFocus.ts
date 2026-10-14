@@ -1,5 +1,5 @@
 export type DropdownRowFocus = {
-  rowIds: string[];
+  rowIds?: string[];
   tabStopRowId?: string;
   focusRow: (id: string) => void;
 };

@@ -33,7 +33,6 @@ export const DropdownActionItem = ({
   nativeButton = !isDefined(render),
   closeOnClick = true,
   onClick,
-  onFocus,
   page,
   id,
   ...props
@@ -54,10 +53,6 @@ export const DropdownActionItem = ({
       nativeButton={nativeButton}
       role={props.role ?? (type === 'menu' ? 'menuitem' : undefined)}
       tabIndex={itemFocus.tabIndex}
-      onFocus={(event) => {
-        itemFocus.activate(event.currentTarget);
-        onFocus?.(event);
-      }}
       data-dropdown-item=""
       data-dropdown-page={page}
       onClick={(event) => {

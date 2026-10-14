@@ -3,7 +3,6 @@ import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type DropdownType } from '../types/DropdownType';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { getDropdownRows } from './getDropdownRows';
@@ -12,20 +11,12 @@ import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { getDropdownTrigger } from './getDropdownTrigger';
 import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 import { getNextDropdownItem } from './getNextDropdownItem';
+import { useDropdownContext } from './useDropdownContext';
 
 const TYPEAHEAD_RESET_DELAY = 500;
 
-export const useDropdownKeyboardNavigation = ({
-  type,
-  isSubmenu,
-  setOpen,
-  dismissTreeOnTabOut,
-}: {
-  type: DropdownType;
-  isSubmenu: boolean;
-  setOpen: (open: boolean) => void;
-  dismissTreeOnTabOut: (event: Event) => void;
-}) => {
+export const useDropdownKeyboardNavigation = () => {
+  const { type, isSubmenu, setOpen, closeTree } = useDropdownContext();
   const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
@@ -83,7 +74,7 @@ export const useDropdownKeyboardNavigation = ({
 
     if (type === 'menu' && event.key === 'Tab' && event.shiftKey) {
       event.preventDefault();
-      dismissTreeOnTabOut(event.nativeEvent);
+      closeTree(event.nativeEvent);
       return;
     }
 

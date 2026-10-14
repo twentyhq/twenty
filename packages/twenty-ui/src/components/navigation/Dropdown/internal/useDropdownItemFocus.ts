@@ -1,4 +1,3 @@
-import { isDropdownRow } from './isDropdownRow';
 import { useDropdownContext } from './useDropdownContext';
 
 export const useDropdownItemFocus = ({
@@ -14,16 +13,9 @@ export const useDropdownItemFocus = ({
   const type = isSubmenuTrigger ? context.parentType : context.type;
   const rowFocus = isSubmenuTrigger ? context.parentRowFocus : context.rowFocus;
   const isRovingRow =
-    type !== 'panel' && (rowFocus?.rowIds.includes(id) ?? false);
+    type !== 'panel' && (rowFocus?.rowIds?.includes(id) ?? true);
   const isOutsideTabOrder =
     disabled || (isRovingRow && rowFocus?.tabStopRowId !== id);
 
-  return {
-    tabIndex: isOutsideTabOrder ? -1 : 0,
-    activate: (item: HTMLElement) => {
-      if (isDropdownRow(item)) {
-        rowFocus?.focusRow(id);
-      }
-    },
-  };
+  return { tabIndex: isOutsideTabOrder ? -1 : 0 };
 };

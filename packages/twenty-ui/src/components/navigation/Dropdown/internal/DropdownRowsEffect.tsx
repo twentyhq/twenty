@@ -1,8 +1,8 @@
+import { areArraysEqual } from '@base-ui/utils/areArraysEqual';
 import { useLayoutEffect } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { areDropdownRowIdsEqual } from './areDropdownRowIdsEqual';
 import { getDropdownRows } from './getDropdownRows';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { useDropdownContext } from './useDropdownContext';
@@ -23,7 +23,7 @@ export const DropdownRowsEffect = ({ content }: DropdownRowsEffectProps) => {
       const rowIds = getDropdownRows(content).map((row) => row.id);
 
       setRowIds((currentRowIds) =>
-        areDropdownRowIdsEqual({ rowIds: currentRowIds, otherRowIds: rowIds })
+        isDefined(currentRowIds) && areArraysEqual(currentRowIds, rowIds)
           ? currentRowIds
           : rowIds,
       );
@@ -43,7 +43,7 @@ export const DropdownRowsEffect = ({ content }: DropdownRowsEffectProps) => {
 
     return () => {
       observer.disconnect();
-      setRowIds([]);
+      setRowIds(undefined);
       setSearchTargetId(undefined);
     };
   }, [content, setRowIds, setSearchTargetId]);

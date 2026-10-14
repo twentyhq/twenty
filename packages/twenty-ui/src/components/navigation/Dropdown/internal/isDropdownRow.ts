@@ -1,9 +1,16 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { getDropdownRows } from './getDropdownRows';
+import { getDropdownSearch } from './getDropdownSearch';
+import { isEnabledDropdownItem } from './isEnabledDropdownItem';
 
-export const isDropdownRow = (item: HTMLElement) => {
-  const content = item.closest<HTMLElement>('[data-dropdown-content]');
-
-  return isDefined(content) && getDropdownRows(content).includes(item);
-};
+export const isDropdownRow = ({
+  content,
+  item,
+}: {
+  content: HTMLElement;
+  item: HTMLElement;
+}) =>
+  item.hasAttribute('data-dropdown-item') &&
+  isEnabledDropdownItem({ content, item }) &&
+  (!item.hasAttribute('data-dropdown-back') ||
+    !isDefined(getDropdownSearch(content)));

@@ -1,10 +1,10 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 export const getDropdownTabStopRowId = ({
-  rowIds,
+  rowIds = [],
   focusedRowId,
 }: {
-  rowIds: string[];
+  rowIds?: string[];
   focusedRowId?: string;
 }) =>
   isDefined(focusedRowId) && rowIds.includes(focusedRowId)

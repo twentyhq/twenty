@@ -12,6 +12,7 @@ import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
 import { DropdownRowsEffect } from './DropdownRowsEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
+import { isDropdownRow } from './isDropdownRow';
 import { isUnhandledModifierShortcut } from './isUnhandledModifierShortcut';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownKeyboardNavigation } from './useDropdownKeyboardNavigation';
@@ -31,6 +32,7 @@ export const DropdownContent = ({
   children,
   initialFocus,
   onKeyDown,
+  onFocus,
   onInput,
   onClick,
   onMouseDown,
@@ -43,8 +45,7 @@ export const DropdownContent = ({
   const {
     type,
     isSubmenu,
-    setOpen,
-    dismissTreeOnTabOut,
+    rowFocus,
     initialFocusEdge,
     focusOnOpen,
     triggerId,
@@ -54,12 +55,7 @@ export const DropdownContent = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<HTMLDivElement | null>(null);
   const mergedRef = useMergedRefs(contentRef, ref, setContent);
-  const handleNavigation = useDropdownKeyboardNavigation({
-    type,
-    isSubmenu,
-    setOpen,
-    dismissTreeOnTabOut,
-  });
+  const handleNavigation = useDropdownKeyboardNavigation();
   const defaultAriaLabelledBy = isDefined(ariaLabel)
     ? undefined
     : (titleId ?? triggerId);
@@ -112,6 +108,18 @@ export const DropdownContent = ({
 
               if (!isUnhandledModifierShortcut(event)) {
                 event.stopPropagation();
+              }
+            }}
+            onFocus={(event) => {
+              onFocus?.(event);
+
+              const { target } = event;
+
+              if (
+                target instanceof HTMLElement &&
+                isDropdownRow({ content: event.currentTarget, item: target })
+              ) {
+                rowFocus.focusRow(target.id);
               }
             }}
             onInput={(event) => {
