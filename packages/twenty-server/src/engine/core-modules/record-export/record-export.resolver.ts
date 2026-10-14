@@ -28,7 +28,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
     },
     apiKey: true,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false, withAgent: false },
   }),
   SettingsPermissionGuard(PermissionFlagType.EXPORT_CSV),
 )

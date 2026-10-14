@@ -247,7 +247,7 @@ const CONFIG_CASES: {
     name: 'application withUser only',
     authPrincipalGuardConfig: {
       ...REFUSE_EVERY_PRINCIPAL,
-      application: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false, withAgent: false },
     },
     acceptedPrincipalVariantNames: ['application.withUser'],
   },
@@ -255,7 +255,7 @@ const CONFIG_CASES: {
     name: 'application withoutUser only',
     authPrincipalGuardConfig: {
       ...REFUSE_EVERY_PRINCIPAL,
-      application: { withUser: false, withoutUser: true },
+      application: { withUser: false, withoutUser: true, withAgent: false },
     },
     acceptedPrincipalVariantNames: ['application.withoutUser'],
   },
@@ -265,7 +265,7 @@ const CONFIG_CASES: {
       userSession: true,
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false, withAgent: false },
     },
     acceptedPrincipalVariantNames: [
       'userSession.standard',

@@ -40,7 +40,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false, withAgent: false },
   }),
 )
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)

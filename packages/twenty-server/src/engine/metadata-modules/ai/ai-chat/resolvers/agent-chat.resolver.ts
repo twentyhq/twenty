@@ -60,7 +60,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false, withAgent: false },
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )

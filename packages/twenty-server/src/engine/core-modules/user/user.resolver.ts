@@ -137,7 +137,7 @@ export class UserResolver {
       userSession: true,
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false, withAgent: false },
     }),
     NoPermissionGuard,
   )
@@ -422,7 +422,7 @@ export class UserResolver {
       userSession: true,
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false, withAgent: false },
     }),
     CustomPermissionGuard,
   )

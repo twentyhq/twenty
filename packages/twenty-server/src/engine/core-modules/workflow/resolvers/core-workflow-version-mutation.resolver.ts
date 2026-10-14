@@ -127,7 +127,7 @@ export class CoreWorkflowVersionMutationResolver {
       },
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false, withAgent: false },
     }),
   )
   async runCoreWorkflowVersion(

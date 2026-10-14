@@ -35,7 +35,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false, withAgent: false },
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )

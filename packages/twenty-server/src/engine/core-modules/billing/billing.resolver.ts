@@ -108,7 +108,7 @@ export class BillingResolver {
       },
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false, withAgent: false },
     }),
     NoPermissionGuard,
   )
@@ -184,7 +184,7 @@ export class BillingResolver {
       },
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false, withAgent: false },
     }),
     NoPermissionGuard,
   )
