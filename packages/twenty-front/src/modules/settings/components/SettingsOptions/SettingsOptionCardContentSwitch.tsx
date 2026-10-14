@@ -6,6 +6,8 @@ import {
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -69,6 +71,7 @@ export const SettingsOptionCardContentSwitch = ({
   onChange,
 }: SettingsOptionCardContentSwitchProps) => {
   const switchId = useId();
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   return (
     <>
@@ -98,7 +101,9 @@ export const SettingsOptionCardContentSwitch = ({
             onCheckedChange={onChange}
             disabled={disabled}
             size="sm"
-            data-advanced-mode={advancedMode || undefined}
+            data-advanced-mode={
+              (advancedMode && isAdvancedModeEnabled) || undefined
+            }
           />
         </StyledSettingsCardSwitchButtonContainer>
       </StyledSettingsCardSwitchContent>

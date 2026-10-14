@@ -1,4 +1,6 @@
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -66,6 +68,9 @@ export const Disabled: Story = {
 };
 
 export const AdvancedMode: Story = {
+  beforeEach: () => {
+    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+  },
   args: {
     Icon: IconRobot,
     title: 'Advanced Features',
