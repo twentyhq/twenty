@@ -96,6 +96,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/spreadsheet-import/components/StepNavigationButton.tsx',
+    reason: 'Dialog.Footer laid out as the import step navigation bar',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/ui/feedback/skeleton/components/SkeletonLine.tsx',
     reason: 'Forwards the caller className and style to Skeleton',
   },

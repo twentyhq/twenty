@@ -4,7 +4,6 @@ import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { t } from '@lingui/core/macro';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledFooter = styled(Dialog.Footer)`
@@ -35,8 +34,9 @@ export const StepNavigationButton = ({
     <StyledFooter>
       {isDefined(onBack) && (
         <MainButton
-          startIcon={isLoading ? <Loader /> : undefined}
-          onClick={!isLoading ? onBack : undefined}
+          loading={isLoading}
+          loadingPosition="start"
+          onClick={onBack}
           variant="outline"
         >
           {backTitle}
@@ -44,8 +44,9 @@ export const StepNavigationButton = ({
       )}
       {isDefined(onContinue) && (
         <MainButton
-          startIcon={isLoading ? <Loader /> : undefined}
-          onClick={!isLoading ? onContinue : undefined}
+          loading={isLoading}
+          loadingPosition="start"
+          onClick={onContinue}
           disabled={isContinueDisabled}
         >
           {continueTitle}
