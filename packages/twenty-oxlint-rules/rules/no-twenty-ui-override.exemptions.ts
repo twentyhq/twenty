@@ -106,6 +106,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/ui/input/components/AdvancedSettingsSwitch.tsx',
+    reason: 'Advanced mode color on the Switch',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/ui/input/components/FormFieldInputContainer.tsx',
     reason: 'Field.Root as a full-width column',
   },

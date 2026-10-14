@@ -14,10 +14,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 const StyledColorButton = styled.button`
   align-items: center;
-  background: transparent;
-  border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
   display: flex;
   height: 24px;
   justify-content: center;
