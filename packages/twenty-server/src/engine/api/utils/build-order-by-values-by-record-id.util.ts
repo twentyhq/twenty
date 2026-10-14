@@ -1,6 +1,7 @@
-import { type ObjectRecord } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { computeDateTimeCursorValueAlias } from 'src/engine/api/utils/compute-date-time-cursor-value-alias.util';
 import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
 import {
   checkIfLeafCanCarryCursorValue,
@@ -60,7 +61,11 @@ export const buildOrderByValuesByRecordId = ({
       }
 
       const rawValue =
-        rawRow[`${leafColumn.tableAlias}_${leafColumn.columnName}`];
+        rawRow[
+          leafColumn.columnType === FieldMetadataType.DATE_TIME
+            ? computeDateTimeCursorValueAlias(leafColumn)
+            : `${leafColumn.tableAlias}_${leafColumn.columnName}`
+        ];
 
       let container = orderByValues;
 

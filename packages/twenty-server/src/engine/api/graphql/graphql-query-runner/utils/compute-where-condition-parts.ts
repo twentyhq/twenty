@@ -1,5 +1,6 @@
 import { randomBytes } from 'crypto';
 
+import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
@@ -10,6 +11,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { MICROSECOND_DATE_TIME_CURSOR_VALUE_PATTERN } from 'src/engine/api/graphql/graphql-query-runner/constants/microsecond-date-time-cursor-value-pattern.constant';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 
 type WhereConditionParts = {
@@ -44,6 +46,13 @@ export const computeWhereConditionParts = ({
     : `"${objectNameSingular}"."${key}"`;
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
+
+  // Millisecond cursors predate full-precision values; keep comparing them on millisecond buckets
+  const isMillisecondDateTimeCursorValue =
+    isDateTimeField &&
+    !(
+      isString(value) && MICROSECOND_DATE_TIME_CURSOR_VALUE_PATTERN.test(value)
+    );
 
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(
@@ -123,6 +132,7 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'lt':
+    case 'ltStrict':
       return {
         sql: `${fieldReference} < :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
@@ -159,7 +169,7 @@ export const computeWhereConditionParts = ({
         params: {},
       };
     case 'eqStrict':
-      if (isDateTimeField) {
+      if (isMillisecondDateTimeCursorValue) {
         return {
           sql: `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')`,
           params: { [`${key}${paramSuffix}`]: value },
@@ -168,6 +178,18 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}`,
+        params: { [`${key}${paramSuffix}`]: value },
+      };
+    case 'gtStrict':
+      if (isMillisecondDateTimeCursorValue) {
+        return {
+          sql: `${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond'`,
+          params: { [`${key}${paramSuffix}`]: value },
+        };
+      }
+
+      return {
+        sql: `${fieldReference} > :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'like':

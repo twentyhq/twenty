@@ -48,7 +48,7 @@ export function buildCursorKeysetCondition({
   }
 
   const mainCondition = buildLeafCondition({
-    [isAscending ? 'gt' : 'lt']: cursorValue,
+    [isAscending ? 'gtStrict' : 'ltStrict']: cursorValue,
   });
 
   if (areNullsScannedLast && canFieldHoldNullValue) {

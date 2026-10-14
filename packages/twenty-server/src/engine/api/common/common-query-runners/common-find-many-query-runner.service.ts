@@ -34,6 +34,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
+import { buildDateTimeCursorValueSelects } from 'src/engine/api/utils/build-date-time-cursor-value-selects.util';
 import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
@@ -195,6 +196,13 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatObjectMetadata.nameSingular,
       columnsToSelect,
     );
+
+    for (const { expression, alias } of buildDateTimeCursorValueSelects({
+      orderByLeaves,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+    })) {
+      queryBuilder.addSelect(expression, alias);
+    }
 
     // Raw rows carry the ordered join columns, so cursors get relation values whatever the client selected
     const { entities: fetchedObjectRecords, raw: fetchedRawRows } =
