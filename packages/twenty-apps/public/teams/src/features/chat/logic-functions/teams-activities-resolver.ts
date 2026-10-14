@@ -31,15 +31,13 @@ export const teamsActivitiesResolverHandler = async (
     return new Response({ error: botCredentials.error }, { status: 503 });
   }
 
-  let serviceUrl: string;
+  const serviceUrl = await verifyTeamsActivityTokenOrThrow({
+    authorizationHeader: routePayload.headers.authorization,
+    activityServiceUrl: activity.serviceUrl,
+    botAppId: botCredentials.credentials.appId,
+  }).catch(() => null);
 
-  try {
-    serviceUrl = await verifyTeamsActivityTokenOrThrow({
-      authorizationHeader: routePayload.headers.authorization,
-      activityServiceUrl: activity.serviceUrl,
-      botAppId: botCredentials.credentials.appId,
-    });
-  } catch {
+  if (!isNonEmptyString(serviceUrl)) {
     return new Response({ error: 'Unauthorized' }, { status: 401 });
   }
 
