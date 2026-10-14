@@ -4,10 +4,8 @@ import { isDefined, isWidgetViewType } from 'twenty-shared/utils';
 
 export const isUsableLastVisitedView = ({
   lastVisitedView,
-  isInitialObjectViewEnabled,
 }: {
   lastVisitedView: Pick<View, 'key' | 'type'> | undefined;
-  isInitialObjectViewEnabled: boolean;
 }): boolean => {
   if (!isDefined(lastVisitedView)) {
     return false;
@@ -17,5 +15,5 @@ export const isUsableLastVisitedView = ({
     return false;
   }
 
-  return !isInitialObjectViewEnabled || lastVisitedView.key !== ViewKey.INDEX;
+  return lastVisitedView.key !== ViewKey.INDEX;
 };

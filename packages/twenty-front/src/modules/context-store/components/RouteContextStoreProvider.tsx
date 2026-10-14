@@ -12,8 +12,7 @@ import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = ({
@@ -118,13 +117,8 @@ export const RouteContextStoreProvider = () => {
     (view) => view.id === lastVisitedViewIdRaw,
   );
 
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-  );
-
   const lastVisitedViewId = isUsableLastVisitedView({
     lastVisitedView,
-    isInitialObjectViewEnabled,
   })
     ? lastVisitedViewIdRaw
     : undefined;
@@ -133,7 +127,6 @@ export const RouteContextStoreProvider = () => {
     computeObjectViewTargetIds({
       views,
       objectMetadataId: objectMetadataItem?.id,
-      isInitialObjectViewEnabled,
     });
 
   const viewId = getViewId({
