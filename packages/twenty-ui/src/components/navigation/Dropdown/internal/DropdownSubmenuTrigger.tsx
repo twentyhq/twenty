@@ -68,7 +68,7 @@ export const DropdownSubmenuTrigger = ({
       aria-haspopup={triggerType === 'menu' ? 'menu' : 'dialog'}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
-        itemFocus.activate();
+        itemFocus.activate(event.currentTarget);
         onFocus?.(event);
       }}
       data-dropdown-item=""

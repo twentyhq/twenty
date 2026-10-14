@@ -55,7 +55,7 @@ export const DropdownActionItem = ({
       role={props.role ?? (type === 'menu' ? 'menuitem' : undefined)}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
-        itemFocus.activate();
+        itemFocus.activate(event.currentTarget);
         onFocus?.(event);
       }}
       data-dropdown-item=""

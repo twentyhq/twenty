@@ -100,7 +100,7 @@ export const DropdownOptionItem = ({
       aria-current={isCurrentOption ? 'true' : undefined}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
-        itemFocus.activate();
+        itemFocus.activate(event.currentTarget);
         onFocus?.(event);
       }}
       data-dropdown-item=""
