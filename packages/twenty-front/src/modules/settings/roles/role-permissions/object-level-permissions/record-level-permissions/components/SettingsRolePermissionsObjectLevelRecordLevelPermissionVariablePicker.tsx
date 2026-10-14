@@ -26,13 +26,10 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
       : themeCssVariables.background.transparent.lighter};
   border: ${({ multiline }) =>
     multiline ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
-
-  border-bottom-right-radius: ${({ multiline }) =>
-    multiline ? '0' : themeCssVariables.border.radius.sm};
   border-radius: ${({ multiline }) =>
-    multiline ? themeCssVariables.border.radius.sm : '0'};
-  border-top-right-radius: ${({ multiline }) =>
-    multiline ? '0' : themeCssVariables.border.radius.sm};
+    multiline
+      ? `${themeCssVariables.border.radius.sm} 0 0 ${themeCssVariables.border.radius.sm}`
+      : `0 ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0`};
   color: ${({ multiline }) =>
     multiline
       ? themeCssVariables.font.color.primary

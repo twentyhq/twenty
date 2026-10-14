@@ -11213,6 +11213,9 @@ export default {
             "apiKeys": [
                 35
             ],
+            "applicationId": [
+                500
+            ],
             "canAccessAllAgentChatChannels": [
                 4
             ],

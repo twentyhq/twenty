@@ -12,7 +12,6 @@ const StyledProgressBar = styled.div`
   corner-shape: round;
   height: ${themeCssVariables.spacing['1.5']};
   overflow: hidden;
-  position: relative;
   width: 100%;
 
   &[data-grow-in] {
@@ -36,8 +35,6 @@ const StyledProgressBar = styled.div`
 
 const StyledTrack = styled.div`
   height: 100%;
-  position: relative;
-  width: 100%;
 `;
 
 const StyledIndicator = styled.div`
