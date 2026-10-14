@@ -1,6 +1,6 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
-import { isNull } from '@sniptt/guards';
+import { isNull, isString } from '@sniptt/guards';
 import {
   FieldActorSource,
   FieldMetadataType,
@@ -209,15 +209,14 @@ function formatResultRecursively<T>(
     }
 
     if (
-      typeof rawUpdatedDateTime === 'string' ||
+      isString(rawUpdatedDateTime) ||
       rawUpdatedDateTime instanceof Date ||
       isPlainObject(rawUpdatedDateTime)
     ) {
       // @ts-expect-error legacy noImplicitAny
-      newData[dateTimeField.name] =
-        typeof rawUpdatedDateTime === 'string'
-          ? new Date(rawUpdatedDateTime)
-          : rawUpdatedDateTime;
+      newData[dateTimeField.name] = isString(rawUpdatedDateTime)
+        ? new Date(rawUpdatedDateTime)
+        : rawUpdatedDateTime;
     } else {
       const stringifiedUnknownValue = stringifySafely(rawUpdatedDateTime);
 

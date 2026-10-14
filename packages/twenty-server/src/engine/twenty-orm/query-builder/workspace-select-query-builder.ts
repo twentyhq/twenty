@@ -609,13 +609,13 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   }> {
     const rows = await this.executeSelect({
       types: {
-        getTypeParser: ((oid: number, format?: unknown) =>
-          oid === types.builtins.TIMESTAMPTZ || oid === types.builtins.DATE
-            ? (value: string) => value
-            : types.getTypeParser(
-                oid,
-                format as never,
-              )) as typeof types.getTypeParser,
+        getTypeParser: (oid, format) =>
+          types.getTypeParser(
+            oid === types.builtins.TIMESTAMPTZ || oid === types.builtins.DATE
+              ? types.builtins.TEXT
+              : oid,
+            format,
+          ),
       },
     });
 
