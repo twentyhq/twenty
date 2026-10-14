@@ -118,7 +118,7 @@ describe('User application variable values should succeed', () => {
     );
   });
 
-  it('should let a member without the applications permission set their own value', async () => {
+  it('should let a member without the Workspace Apps permission set their own value', async () => {
     const { data: updateData } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier: application.universalIdentifier,

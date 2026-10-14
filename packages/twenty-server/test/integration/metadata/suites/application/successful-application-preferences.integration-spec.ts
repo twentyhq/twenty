@@ -155,7 +155,7 @@ describe('My application preferences should succeed', () => {
     });
   });
 
-  it('should give a member without the applications permission the user settings and defaults of every application that has some', async () => {
+  it('should give a member without the Workspace Apps permission the user settings and defaults of every application that has some', async () => {
     const { data } = await myApplicationPreferences({
       input: {},
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
