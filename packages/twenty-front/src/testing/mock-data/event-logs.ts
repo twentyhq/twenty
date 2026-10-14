@@ -147,6 +147,13 @@ const ZAPIER_SYNC_API_KEY_ACTOR = {
   context: {},
 };
 
+const COMPANY_ENRICHMENT_APPLICATION_ACTOR = {
+  source: 'APPLICATION',
+  workspaceMemberId: null,
+  name: 'Company Enrichment',
+  context: { applicationId: ENRICH_COMPANY_FROM_DOMAIN.applicationId },
+};
+
 const LUMEN_HEALTH_PILOT_BEFORE_UPDATE = {
   id: 'f46932b8-6725-4931-aa5b-ea0144bdb789',
   name: 'Lumen Health - Pilot',
@@ -161,6 +168,13 @@ const OAKRIDGE_FOODS_BEFORE_UPDATE = {
   name: 'Oakridge Foods',
   employees: 120,
   updatedBy: ZAPIER_SYNC_API_KEY_ACTOR,
+};
+
+const NORTHWIND_LOGISTICS_BEFORE_UPDATE = {
+  id: '2c7e9b41-6d3a-4f8e-a1b5-0e9d4c2f7a68',
+  name: 'Northwind Logistics',
+  employees: 480,
+  updatedBy: COMPANY_ENRICHMENT_APPLICATION_ACTOR,
 };
 
 const ETHAN_BROOKS_AFTER_CREATION = {
@@ -286,6 +300,20 @@ export const mockedEventLogRecordsByTable: Partial<
         after: { ...OAKRIDGE_FOODS_BEFORE_UPDATE, employees: 135 },
         updatedFields: ['employees'],
         diff: { employees: { before: 120, after: 135 } },
+      },
+    },
+    {
+      __typename: 'EventLogRecord',
+      event: 'Object Record Updated',
+      timestamp: '2026-09-24T11:38:20.715Z',
+      userId: null,
+      recordId: NORTHWIND_LOGISTICS_BEFORE_UPDATE.id,
+      objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+      properties: {
+        before: NORTHWIND_LOGISTICS_BEFORE_UPDATE,
+        after: { ...NORTHWIND_LOGISTICS_BEFORE_UPDATE, employees: 520 },
+        updatedFields: ['employees'],
+        diff: { employees: { before: 480, after: 520 } },
       },
     },
     {
