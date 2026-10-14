@@ -18,37 +18,52 @@ type TeamsUserLinksResponse = {
       } | null;
     }[];
   };
+  pageInfo?: { hasNextPage?: boolean; endCursor?: string | null };
 };
 
-const fetchTeamsUserLinks = async (): Promise<TeamsUserLinkRecord[]> => {
-  const response = await new RestApiClient().get<TeamsUserLinksResponse>(
-    '/rest/teamsUserLinks',
-    { query: { depth: '1', limit: String(TEAMS_USER_LINKS_PAGE_SIZE) } },
-  );
+const fetchTeamsUserLinksPage = (startingAfter: string | undefined) =>
+  new RestApiClient().get<TeamsUserLinksResponse>('/rest/teamsUserLinks', {
+    query: {
+      depth: '1',
+      limit: String(TEAMS_USER_LINKS_PAGE_SIZE),
+      ...(isNonEmptyString(startingAfter) && { starting_after: startingAfter }),
+    },
+  });
 
-  return (response.data?.teamsUserLinks ?? [])
-    .flatMap((record) => {
+const fetchTeamsUserLinks = async (): Promise<TeamsUserLinkRecord[]> => {
+  const records: TeamsUserLinkRecord[] = [];
+  let startingAfter: string | undefined;
+
+  do {
+    const response = await fetchTeamsUserLinksPage(startingAfter);
+
+    for (const record of response.data?.teamsUserLinks ?? []) {
       if (!isNonEmptyString(record.id)) {
-        return [];
+        continue;
       }
 
-      return [
-        {
-          id: record.id,
-          name: record.name ?? '',
-          workspaceMemberName: [
-            record.workspaceMember?.name?.firstName,
-            record.workspaceMember?.name?.lastName,
-          ]
-            .filter(isNonEmptyString)
-            .join(' '),
-          source: Object.values(TEAMS_USER_LINK_SOURCE).find(
-            (source) => source === record.source,
-          ),
-        },
-      ];
-    })
-    .sort((left, right) => left.name.localeCompare(right.name));
+      records.push({
+        id: record.id,
+        name: record.name ?? '',
+        workspaceMemberName: [
+          record.workspaceMember?.name?.firstName,
+          record.workspaceMember?.name?.lastName,
+        ]
+          .filter(isNonEmptyString)
+          .join(' '),
+        source: Object.values(TEAMS_USER_LINK_SOURCE).find(
+          (source) => source === record.source,
+        ),
+      });
+    }
+
+    startingAfter =
+      response.pageInfo?.hasNextPage === true
+        ? (response.pageInfo.endCursor ?? undefined)
+        : undefined;
+  } while (isNonEmptyString(startingAfter));
+
+  return records.sort((left, right) => left.name.localeCompare(right.name));
 };
 
 export const useTeamsUserLinks = () => {

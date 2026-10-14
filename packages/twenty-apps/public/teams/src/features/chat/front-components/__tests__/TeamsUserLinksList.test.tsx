@@ -24,26 +24,35 @@ describe('TeamsUserLinksList', () => {
 
   afterEach(cleanup);
 
-  it('lists linked Teams accounts sorted by name with their member and source', async () => {
-    restGetMock.mockResolvedValue({
-      data: {
-        teamsUserLinks: [
-          {
-            id: 'link-2',
-            name: 'Zoe Teams',
-            source: 'MANUAL',
-            workspaceMember: { name: { firstName: 'Zoe', lastName: 'Doe' } },
-          },
-          { id: null, name: 'Ignored' },
-          {
-            id: 'link-1',
-            name: 'Adam Teams',
-            source: 'AUTO',
-            workspaceMember: { name: { firstName: 'Adam', lastName: '' } },
-          },
-        ],
-      },
-    });
+  it('lists linked Teams accounts across pages sorted by name with their member and source', async () => {
+    restGetMock
+      .mockResolvedValueOnce({
+        data: {
+          teamsUserLinks: [
+            {
+              id: 'link-2',
+              name: 'Zoe Teams',
+              source: 'MANUAL',
+              workspaceMember: { name: { firstName: 'Zoe', lastName: 'Doe' } },
+            },
+            { id: null, name: 'Ignored' },
+          ],
+        },
+        pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          teamsUserLinks: [
+            {
+              id: 'link-1',
+              name: 'Adam Teams',
+              source: 'AUTO',
+              workspaceMember: { name: { firstName: 'Adam', lastName: '' } },
+            },
+          ],
+        },
+        pageInfo: { hasNextPage: false, endCursor: 'cursor-2' },
+      });
 
     render(<TeamsUserLinksList />);
 
@@ -53,9 +62,15 @@ describe('TeamsUserLinksList', () => {
       'Adam TeamsAdamMatched on email',
       'Zoe TeamsZoe DoeSet manually',
     ]);
-    expect(restGetMock).toHaveBeenCalledWith('/rest/teamsUserLinks', {
-      query: { depth: '1', limit: '200' },
-    });
+    expect(restGetMock.mock.calls).toEqual([
+      ['/rest/teamsUserLinks', { query: { depth: '1', limit: '200' } }],
+      [
+        '/rest/teamsUserLinks',
+        {
+          query: { depth: '1', limit: '200', starting_after: 'cursor-1' },
+        },
+      ],
+    ]);
   });
 
   it('shows an empty state when no account is linked', async () => {
