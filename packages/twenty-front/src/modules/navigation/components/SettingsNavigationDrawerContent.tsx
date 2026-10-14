@@ -20,13 +20,13 @@ const StyledAdvancedSwitchFixedContent = styled.div<{ isMobile: boolean }>`
   border-top: 1px solid ${themeCssVariables.border.color.light};
   flex-shrink: 0;
   margin-top: auto;
-  padding-top: ${themeCssVariables.spacing[2]};
   padding-bottom: ${({ isMobile }) =>
     isMobile ? MOBILE_NAVIGATION_BAR_CLEARANCE : '0'};
   padding-left: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};
   padding-right: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const advancedSettingsSwitchClassName = css`

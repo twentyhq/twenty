@@ -1,5 +1,6 @@
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
+import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { SettingsOpenLogConsoleCard } from '@/settings/event-logs/components/SettingsOpenLogConsoleCard';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -32,6 +33,26 @@ export const OpensLogConsole: Story = {
       expect(jotaiStore.get(isAdvancedModeEnabledState.atom)).toBe(true);
       expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
       expect(jotaiStore.get(isLogConsoleFullScreenState.atom)).toBe(false);
+    });
+  },
+};
+
+export const KeepsConsoleHeightWhenDeveloperModeIsOn: Story = {
+  beforeEach: () => {
+    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+    jotaiStore.set(logConsoleHeightState.atom, 450);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Open log console' }),
+    );
+
+    await waitFor(() => {
+      expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+      expect(jotaiStore.get(isLogConsoleFullScreenState.atom)).toBe(false);
+      expect(jotaiStore.get(logConsoleHeightState.atom)).toBe(450);
     });
   },
 };

@@ -1,7 +1,8 @@
-import { useDeveloperModeTypingLine } from '@/navigation/hooks/useDeveloperModeTypingLine';
+import { DeveloperModeSwitchLabel } from '@/navigation/components/DeveloperModeSwitchLabel';
+import { DeveloperModeTypingEffect } from '@/navigation/components/DeveloperModeTypingEffect';
+import { useDeveloperModeTypingSequence } from '@/navigation/hooks/useDeveloperModeTypingSequence';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCode } from 'twenty-ui/icon';
@@ -15,11 +16,11 @@ const StyledContainer = styled.label<{ isCompact: boolean }>`
   cursor: pointer;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: ${({ isCompact }) => (isCompact ? 'center' : 'flex-start')};
-  min-height: ${({ isCompact }) =>
+  height: ${({ isCompact }) =>
     isCompact
       ? `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`
       : themeCssVariables.spacing[7]};
+  justify-content: ${({ isCompact }) => (isCompact ? 'center' : 'flex-start')};
   padding: ${({ isCompact }) =>
     isCompact ? '0' : themeCssVariables.spacing[1]};
   width: ${({ isCompact }) =>
@@ -27,50 +28,6 @@ const StyledContainer = styled.label<{ isCompact: boolean }>`
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
-  }
-`;
-
-const StyledText = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
-const StyledTitle = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledTypedLine = styled.span`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-family: ${themeCssVariables.code.font.family};
-  font-size: ${themeCssVariables.font.size.xs};
-  gap: 1px;
-  height: ${themeCssVariables.spacing[4]};
-  white-space: pre;
-`;
-
-const StyledCaret = styled.span`
-  animation: developer-mode-caret-blink 1.06s steps(1) infinite;
-  background: ${themeCssVariables.accent.accent9};
-  border-radius: 1px;
-  flex-shrink: 0;
-  height: 10px;
-  width: 2px;
-
-  @keyframes developer-mode-caret-blink {
-    50% {
-      opacity: 0;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
   }
 `;
 
@@ -85,22 +42,27 @@ export const DeveloperModeSwitch = ({
   onEnabledChange,
   isCompact = false,
 }: DeveloperModeSwitchProps) => {
-  const { t } = useLingui();
   const theme = useTheme();
   const instanceId = useId();
-  const labelId = `${instanceId}-text`;
-  const label = t`Developer mode`;
-  const { line, startTyping, stopTyping } =
-    useDeveloperModeTypingLine(isEnabled);
+  const {
+    label,
+    sequence,
+    setSequence,
+    displayedFrame,
+    isTyping,
+    playEnterSequence,
+    playExitSequence,
+  } = useDeveloperModeTypingSequence(isEnabled);
 
   const handleCheckedChange = (checked: boolean) => {
     onEnabledChange(checked);
 
     if (checked) {
-      startTyping();
-    } else {
-      stopTyping();
+      playEnterSequence();
+      return;
     }
+
+    playExitSequence();
   };
 
   return (
@@ -109,28 +71,29 @@ export const DeveloperModeSwitch = ({
       isCompact={isCompact}
       title={isCompact ? label : undefined}
     >
+      {isDefined(sequence) && (
+        <DeveloperModeTypingEffect
+          sequence={sequence}
+          onSequenceChange={setSequence}
+        />
+      )}
       {!isCompact && (
         <>
           <IconCode
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
-            color={theme.font.color.tertiary}
+            color={isEnabled ? theme.accent.accent9 : theme.font.color.tertiary}
           />
-          <StyledText>
-            <StyledTitle id={labelId}>{label}</StyledTitle>
-            {isDefined(line) && (
-              <StyledTypedLine aria-hidden>
-                {line}
-                <StyledCaret />
-              </StyledTypedLine>
-            )}
-          </StyledText>
+          <DeveloperModeSwitchLabel
+            label={label}
+            frame={displayedFrame}
+            isTyping={isTyping}
+          />
         </>
       )}
       <Switch
         id={instanceId}
-        aria-label={isCompact ? label : undefined}
-        aria-labelledby={isCompact ? undefined : labelId}
+        aria-label={label}
         checked={isEnabled}
         onCheckedChange={handleCheckedChange}
       />

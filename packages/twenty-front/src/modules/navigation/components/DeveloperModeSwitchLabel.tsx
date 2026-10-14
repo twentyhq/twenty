@@ -1,0 +1,68 @@
+import { type DeveloperModeTypingFrame } from '@/navigation/types/DeveloperModeTypingFrame';
+import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledLabel = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  flex: 1;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+`;
+
+const StyledCodeFontText = styled.span`
+  font-family: ${themeCssVariables.code.font.family};
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
+
+const StyledCaret = styled.span`
+  animation: developer-mode-caret-blink 1.06s steps(1) infinite;
+  background: ${themeCssVariables.accent.accent9};
+  border-radius: 1px;
+  display: inline-block;
+  height: 12px;
+  margin-left: 1px;
+  vertical-align: middle;
+  width: 2px;
+
+  @keyframes developer-mode-caret-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
+type DeveloperModeSwitchLabelProps = {
+  label: string;
+  frame: DeveloperModeTypingFrame | null;
+  isTyping: boolean;
+};
+
+export const DeveloperModeSwitchLabel = ({
+  label,
+  frame,
+  isTyping,
+}: DeveloperModeSwitchLabelProps) => {
+  if (!isDefined(frame)) {
+    return <StyledLabel aria-hidden>{label}</StyledLabel>;
+  }
+
+  return (
+    <StyledLabel aria-hidden>
+      {frame.text.slice(0, frame.codeFontStart)}
+      <StyledCodeFontText>
+        {frame.text.slice(frame.codeFontStart, frame.codeFontEnd)}
+      </StyledCodeFontText>
+      {frame.text.slice(frame.codeFontEnd)}
+      {isTyping && <StyledCaret />}
+    </StyledLabel>
+  );
+};

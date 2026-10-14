@@ -1,0 +1,30 @@
+import { type DeveloperModeTypingFrame } from '@/navigation/types/DeveloperModeTypingFrame';
+import { type DeveloperModeTypingSequence } from '@/navigation/types/DeveloperModeTypingSequence';
+import { getDeveloperModeCodeFontFrame } from '@/navigation/utils/getDeveloperModeCodeFontFrame';
+import { isDefined } from 'twenty-shared/utils';
+
+export const getDeveloperModeDisplayedFrame = ({
+  isEnabled,
+  label,
+  sequence,
+}: {
+  isEnabled: boolean;
+  label: string;
+  sequence: DeveloperModeTypingSequence | null;
+}): DeveloperModeTypingFrame | null => {
+  const sequenceFrame = isDefined(sequence)
+    ? sequence.frames[sequence.index]
+    : null;
+
+  if (!isEnabled) {
+    return sequence?.direction === 'exit' && isDefined(sequenceFrame)
+      ? sequenceFrame
+      : null;
+  }
+
+  if (sequence?.direction === 'enter' && isDefined(sequenceFrame)) {
+    return sequenceFrame;
+  }
+
+  return getDeveloperModeCodeFontFrame(label, 0);
+};
