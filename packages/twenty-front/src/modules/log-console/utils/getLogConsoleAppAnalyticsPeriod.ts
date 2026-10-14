@@ -21,30 +21,32 @@ const laterOf = (
 const getPresetStart = ({
   preset,
   periodEnd,
-  registrationCreatedAt,
+  trackedSince,
 }: {
   preset: LogConsoleAppAnalyticsRangePreset;
   periodEnd: Temporal.ZonedDateTime;
-  registrationCreatedAt: string;
+  trackedSince?: string;
 }) => {
   const { lastDays } = LOG_CONSOLE_APP_ANALYTICS_RANGE_PRESETS[preset];
 
-  if (!isDefined(lastDays)) {
-    return toUtcDayStart(registrationCreatedAt);
+  if (isDefined(lastDays)) {
+    return periodEnd.subtract({ days: lastDays });
   }
 
-  return periodEnd.subtract({ days: lastDays });
+  return isDefined(trackedSince)
+    ? toUtcDayStart(trackedSince)
+    : periodEnd.subtract({ days: LOG_CONSOLE_APP_ANALYTICS_RETENTION_IN_DAYS });
 };
 
 // Analytics are aggregated per UTC day, so every range is expressed as [UTC day start, next UTC day start)
 export const getLogConsoleAppAnalyticsPeriod = ({
   range,
   now,
-  registrationCreatedAt,
+  trackedSince,
 }: {
   range: LogConsoleAppAnalyticsRange;
   now: string;
-  registrationCreatedAt: string;
+  trackedSince?: string;
 }): { periodStart: string; periodEnd: string } => {
   const periodEnd =
     range.kind === 'custom'
@@ -63,7 +65,7 @@ export const getLogConsoleAppAnalyticsPeriod = ({
       : getPresetStart({
           preset: range.preset,
           periodEnd,
-          registrationCreatedAt,
+          trackedSince,
         });
 
   return {

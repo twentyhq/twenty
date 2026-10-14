@@ -32,6 +32,7 @@ import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/appli
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { ApplicationRegistrationAnalyticsService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.service';
 import { ApplicationRegistrationAnalyticsDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
+import { ApplicationAnalyticsInput } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-analytics.input';
 import { ApplicationRegistrationAnalyticsInput } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.input';
 import { resolveApplicationRegistrationAnalyticsPeriodOrThrow } from 'src/engine/core-modules/application/application-registration-analytics/utils/resolve-application-registration-analytics-period-or-throw.util';
 import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
@@ -63,6 +64,11 @@ import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
@@ -92,6 +98,7 @@ export class ApplicationRegistrationResolver {
     private readonly applicationTarballService: ApplicationTarballService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly applicationRegistrationAnalyticsService: ApplicationRegistrationAnalyticsService,
+    private readonly applicationLookupService: ApplicationLookupService,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -254,6 +261,51 @@ export class ApplicationRegistrationResolver {
   ): Promise<ApplicationRegistrationAnalyticsDTO> {
     return this.applicationRegistrationAnalyticsService.getAnalytics({
       applicationRegistrationId: input.id,
+      ...resolveApplicationRegistrationAnalyticsPeriodOrThrow(input),
+    });
+  }
+
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
+  @Query(() => ApplicationRegistrationAnalyticsDTO)
+  async findApplicationAnalytics(
+    @ApplicationTargetArg<ApplicationAnalyticsInput>('input', {
+      kind: 'applicationId',
+      idKey: 'applicationId',
+      requireApplicationRegistrationOwnership: false,
+    })
+    input: ApplicationAnalyticsInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationAnalyticsDTO> {
+    const application = await this.applicationLookupService.findById({
+      id: input.applicationId,
+      workspaceId,
+    });
+
+    if (!isDefined(application?.applicationRegistrationId)) {
+      throw new ApplicationException(
+        `Application ${input.applicationId} not found or not linked to a registration in this workspace`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    // The installing workspace only ever sees its own activity, never the app's other installs
+    return this.applicationRegistrationAnalyticsService.getAnalytics({
+      applicationRegistrationId: application.applicationRegistrationId,
+      workspaceId,
       ...resolveApplicationRegistrationAnalyticsPeriodOrThrow(input),
     });
   }

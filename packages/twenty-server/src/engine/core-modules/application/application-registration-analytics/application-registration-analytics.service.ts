@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { type ApplicationRegistrationAnalyticsDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
@@ -10,24 +12,30 @@ import { buildApplicationRegistrationAnalyticsBreakdown } from 'src/engine/core-
 import { buildApplicationRegistrationAnalyticsTimeSeries } from 'src/engine/core-modules/application/application-registration-analytics/utils/build-application-registration-analytics-time-series.util';
 import { buildApplicationRegistrationAnalyticsTotals } from 'src/engine/core-modules/application/application-registration-analytics/utils/build-application-registration-analytics-totals.util';
 import { buildApplicationRegistrationAnalyticsVersions } from 'src/engine/core-modules/application/application-registration-analytics/utils/build-application-registration-analytics-versions.util';
+import { hashWorkspaceIdForApplicationRegistrationMetric } from 'src/engine/core-modules/application/application-registration-analytics/utils/hash-workspace-id-for-application-registration-metric.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 type AnalyticsPeriodParams = {
   applicationRegistrationId: string;
   periodStart: Date;
   periodEnd: Date;
+  workspaceId?: string;
 };
 
 type AnalyticsPeriodQueryParams = {
   applicationRegistrationId: string;
   periodStart: string;
   periodEnd: string;
+  workspaceHash: string;
 };
 
+// An empty workspace hash reports across every workspace the app is installed in
 const PERIOD_WHERE_CLAUSE = `
   applicationRegistrationId = {applicationRegistrationId:String}
   AND timestamp >= {periodStart:DateTime64(3)}
   AND timestamp < {periodEnd:DateTime64(3)}
+  AND ({workspaceHash:String} = '' OR workspaceHash = {workspaceHash:String})
 `;
 
 // Version publishes carry no workspace, and failed installs and upgrades record a target version the workspace never ran
@@ -42,7 +50,10 @@ const DAY_EXPRESSION = `formatDateTime(timestamp, '%Y-%m-%d')`;
 // Every count is derived from the same daily cells, so totals, time series, breakdowns and versions can never disagree with each other
 @Injectable()
 export class ApplicationRegistrationAnalyticsService {
-  constructor(private readonly clickHouseService: ClickHouseService) {}
+  constructor(
+    private readonly clickHouseService: ClickHouseService,
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {}
 
   async getAnalytics(
     params: AnalyticsPeriodParams,
@@ -115,11 +126,18 @@ export class ApplicationRegistrationAnalyticsService {
     applicationRegistrationId,
     periodStart,
     periodEnd,
+    workspaceId,
   }: AnalyticsPeriodParams): AnalyticsPeriodQueryParams {
     return {
       applicationRegistrationId,
       periodStart: formatDateTimeForClickHouse(periodStart),
       periodEnd: formatDateTimeForClickHouse(periodEnd),
+      workspaceHash: isDefined(workspaceId)
+        ? hashWorkspaceIdForApplicationRegistrationMetric({
+            workspaceId,
+            secret: this.twentyConfigService.get('APP_SECRET'),
+          })
+        : '',
     };
   }
 

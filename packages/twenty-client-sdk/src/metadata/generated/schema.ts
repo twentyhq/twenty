@@ -2829,6 +2829,7 @@ export interface Query {
     exportApplication: ApplicationExport
     field: Field
     fields: FieldConnection
+    findApplicationAnalytics: ApplicationRegistrationAnalytics
     findApplicationRegistrationAnalytics: ApplicationRegistrationAnalytics
     findApplicationRegistrationByClientId?: PublicApplicationRegistration
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
@@ -4318,6 +4319,8 @@ export interface ApplicationGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface ApplicationAnalyticsInput {applicationId: Scalars['UUID'],periodEnd?: (Scalars['DateTime'] | null),periodStart?: (Scalars['DateTime'] | null)}
 
 export interface ApplicationAuthorizationGenqlSelection{
     applicationId?: boolean | number
@@ -7168,6 +7171,7 @@ export interface QueryGenqlSelection{
     filter: FieldFilter, 
     /** Limit or page results. */
     paging: CursorPaging} })
+    findApplicationAnalytics?: (ApplicationRegistrationAnalyticsGenqlSelection & { __args: {input: ApplicationAnalyticsInput} })
     findApplicationRegistrationAnalytics?: (ApplicationRegistrationAnalyticsGenqlSelection & { __args: {input: ApplicationRegistrationAnalyticsInput} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })

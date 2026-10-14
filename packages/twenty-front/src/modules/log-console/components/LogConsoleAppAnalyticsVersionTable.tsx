@@ -11,6 +11,8 @@ import { type ApplicationRegistrationAnalyticsVersion } from '~/generated-metada
 
 const GRID_TEMPLATE_COLUMNS = '1fr 120px 120px 120px 140px';
 
+const GRID_TEMPLATE_COLUMNS_WITHOUT_WORKSPACES = '1fr 120px 120px 140px';
+
 type LogConsoleAppAnalyticsVersionTableProps = {
   versions: Pick<
     ApplicationRegistrationAnalyticsVersion,
@@ -23,10 +25,12 @@ type LogConsoleAppAnalyticsVersionTableProps = {
     | 'functionExecutions'
     | 'functionErrors'
   >[];
+  showActiveWorkspaces: boolean;
 };
 
 export const LogConsoleAppAnalyticsVersionTable = ({
   versions,
+  showActiveWorkspaces,
 }: LogConsoleAppAnalyticsVersionTableProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
@@ -34,6 +38,10 @@ export const LogConsoleAppAnalyticsVersionTable = ({
   if (versions.length === 0) {
     return null;
   }
+
+  const gridTemplateColumns = showActiveWorkspaces
+    ? GRID_TEMPLATE_COLUMNS
+    : GRID_TEMPLATE_COLUMNS_WITHOUT_WORKSPACES;
 
   const formatInstalls = ({
     installSucceeded,
@@ -88,9 +96,11 @@ export const LogConsoleAppAnalyticsVersionTable = ({
         description={t`Activity per version, newest first. Installs include upgrades to that version.`}
       />
       <Table>
-        <TableRow gridTemplateColumns={GRID_TEMPLATE_COLUMNS}>
+        <TableRow gridTemplateColumns={gridTemplateColumns}>
           <TableHeader>{t`Version`}</TableHeader>
-          <TableHeader align="right">{t`Workspaces`}</TableHeader>
+          {showActiveWorkspaces && (
+            <TableHeader align="right">{t`Workspaces`}</TableHeader>
+          )}
           <TableHeader align="right">{t`Installs`}</TableHeader>
           <TableHeader align="right">{t`Executions`}</TableHeader>
           <TableHeader align="right">{t`Errors`}</TableHeader>
@@ -98,14 +108,16 @@ export const LogConsoleAppAnalyticsVersionTable = ({
         {versions.map((version) => (
           <TableRow
             key={version.version}
-            gridTemplateColumns={GRID_TEMPLATE_COLUMNS}
+            gridTemplateColumns={gridTemplateColumns}
           >
             <TableCell color={themeCssVariables.font.color.primary}>
               {version.version}
             </TableCell>
-            <TableCell align="right">
-              {formatNumber(version.activeWorkspaces)}
-            </TableCell>
+            {showActiveWorkspaces && (
+              <TableCell align="right">
+                {formatNumber(version.activeWorkspaces)}
+              </TableCell>
+            )}
             <TableCell align="right">{formatInstalls(version)}</TableCell>
             <TableCell align="right">
               {formatNumber(version.functionExecutions)}
