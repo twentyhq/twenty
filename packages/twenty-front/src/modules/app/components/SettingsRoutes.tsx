@@ -14,6 +14,7 @@ import {
   type WorkspaceRouteHandle,
   type WorkspaceRouteObject,
 } from '@/app/routing/types/WorkspaceRouteObject';
+import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
@@ -84,6 +85,16 @@ const getLegacySettingsPathRedirectPathname = (
 function LegacySettingsPathRedirect({ to }: LegacySettingsPathRedirectProps) {
   const location = useLocation();
   const params = useParams();
+
+  if (to === SettingsPath.Developers && location.hash === '#mcp') {
+    return (
+      <Navigate
+        to={`${getSettingsPath(SettingsPath.AI)}${location.search}#${SETTINGS_AI_TABS.TABS_IDS.MCP}`}
+        replace
+      />
+    );
+  }
+
   const pathname = getLegacySettingsPathRedirectPathname(to, params);
 
   return (
@@ -1039,6 +1050,18 @@ const createSettingsRouteElements = ({
       )}
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
+        path={SettingsPath.ApplicationRegistrationDetail}
+        element={<SettingsApplicationRegistrationDetails />}
+      />
+      <Route
+        path={LEGACY_APPLICATION_REGISTRATION_DETAIL_PATH}
+        element={
+          <LegacySettingsPathRedirect
+            to={SettingsPath.ApplicationRegistrationDetail}
+          />
+        }
+      />
+      <Route
         path={`${SettingsPath.GraphQLPlayground}`}
         element={<SettingsGraphQLPlayground />}
       />
@@ -1086,18 +1109,6 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.AvailableApplicationDetail}
         element={<SettingsAvailableApplicationDetails />}
-      />
-      <Route
-        path={SettingsPath.ApplicationRegistrationDetail}
-        element={<SettingsApplicationRegistrationDetails />}
-      />
-      <Route
-        path={LEGACY_APPLICATION_REGISTRATION_DETAIL_PATH}
-        element={
-          <LegacySettingsPathRedirect
-            to={SettingsPath.ApplicationRegistrationDetail}
-          />
-        }
       />
       <Route
         path={SettingsPath.ApplicationLogicFunctionDetail}
