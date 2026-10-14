@@ -92,7 +92,10 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     const manifestUniversalIdentifier =
       resolvedPackage.manifest.application.universalIdentifier;
 
-    if (manifestUniversalIdentifier !== appRegistration.universalIdentifier) {
+    if (
+      manifestUniversalIdentifier.toLowerCase() !==
+      appRegistration.universalIdentifier.toLowerCase()
+    ) {
       await this.cleanupExtractedDir(resolvedPackage.cleanupDir);
 
       throw new ApplicationException(
@@ -101,7 +104,16 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       );
     }
 
-    return resolvedPackage;
+    return {
+      ...resolvedPackage,
+      manifest: {
+        ...resolvedPackage.manifest,
+        application: {
+          ...resolvedPackage.manifest.application,
+          universalIdentifier: appRegistration.universalIdentifier,
+        },
+      },
+    };
   }
 
   private async resolveFromSource(
