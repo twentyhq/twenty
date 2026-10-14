@@ -39,7 +39,7 @@ const SettingsRestPlayground = lazy(() =>
 );
 
 // TODO: remove these legacy redirects after 2027-01-14.
-const LEGACY_DEVELOPERS_SETTINGS_PATH_PREFIXES = ['api-webhooks', 'mcp-apis'];
+const LEGACY_DEVELOPERS_SETTINGS_PATH_PREFIX = 'mcp-apis';
 
 const LEGACY_DEVELOPERS_SETTINGS_PATHS = [
   { suffix: '', to: SettingsPath.Developers },
@@ -1063,15 +1063,13 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      {LEGACY_DEVELOPERS_SETTINGS_PATH_PREFIXES.flatMap((prefix) =>
-        LEGACY_DEVELOPERS_SETTINGS_PATHS.map(({ suffix, to }) => (
-          <Route
-            key={`${prefix}${suffix}`}
-            path={`${prefix}${suffix}`}
-            element={<LegacySettingsPathRedirect to={to} />}
-          />
-        )),
-      )}
+      {LEGACY_DEVELOPERS_SETTINGS_PATHS.map(({ suffix, to }) => (
+        <Route
+          key={suffix}
+          path={`${LEGACY_DEVELOPERS_SETTINGS_PATH_PREFIX}${suffix}`}
+          element={<LegacySettingsPathRedirect to={to} />}
+        />
+      ))}
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
         path={SettingsPath.ApplicationRegistrationDetail}
