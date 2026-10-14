@@ -77,7 +77,7 @@ export const SettingsValidationRuleHelperDetails = ({
   item,
   editorFields,
 }: SettingsValidationRuleHelperDetailsProps) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -100,8 +100,7 @@ export const SettingsValidationRuleHelperDetails = ({
     switch (item.kind) {
       case 'field': {
         const typeLabel = isFieldTypeSupportedInSettings(item.field.type)
-          ? (getSettingsFieldTypeConfig(item.field.type)?.label ??
-            item.field.type)
+          ? i18n._(getSettingsFieldTypeConfig(item.field.type).label)
           : item.field.type;
         const ObjectIcon = getIcon(item.field.objectIconName);
 

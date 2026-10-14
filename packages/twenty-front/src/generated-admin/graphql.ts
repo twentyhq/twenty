@@ -81,50 +81,11 @@ export type AdminChatMessagePart = {
   type: Scalars['String']['output'];
 };
 
-export type AdminChatThreadListItem = {
-  __typename?: 'AdminChatThreadListItem';
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  hasError: Scalars['Boolean']['output'];
-  id: Scalars['UUID']['output'];
-  isOnboardingThread: Scalars['Boolean']['output'];
-  messageCount: Scalars['Int']['output'];
-  title?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  userEmail?: Maybe<Scalars['String']['output']>;
-  userFirstName?: Maybe<Scalars['String']['output']>;
-  userLastName?: Maybe<Scalars['String']['output']>;
-  userReplyCount: Scalars['Int']['output'];
-  userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  workspaceDisplayName?: Maybe<Scalars['String']['output']>;
-  workspaceId: Scalars['UUID']['output'];
-};
-
 export type AdminChatThreadMessages = {
   __typename?: 'AdminChatThreadMessages';
   messages: Array<AdminChatMessage>;
   thread: AdminWorkspaceChatThread;
 };
-
-/** Scope of chat threads to list in the admin panel */
-export enum AdminChatThreadScope {
-  ALL = 'ALL',
-  ONBOARDING = 'ONBOARDING'
-}
-
-/** Direction to sort admin chat threads */
-export enum AdminChatThreadSortDirection {
-  ASC = 'ASC',
-  DESC = 'DESC'
-}
-
-/** Field to sort admin chat threads by */
-export enum AdminChatThreadSortField {
-  CREATED_AT = 'CREATED_AT',
-  MESSAGE_COUNT = 'MESSAGE_COUNT',
-  REPLY_COUNT = 'REPLY_COUNT',
-  UPDATED_AT = 'UPDATED_AT'
-}
 
 export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
@@ -776,13 +737,6 @@ export type MutationUpdateWorkspaceUsageLimitArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
 
-export type PaginatedAdminChatThreads = {
-  __typename?: 'PaginatedAdminChatThreads';
-  hasMore: Scalars['Boolean']['output'];
-  threads: Array<AdminChatThreadListItem>;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type PaginatedApplicationRegistrations = {
   __typename?: 'PaginatedApplicationRegistrations';
   hasMore: Scalars['Boolean']['output'];
@@ -803,7 +757,6 @@ export type Query = {
   getAdminAiModels: AdminAiModels;
   getAdminAiUsageByWorkspace: Array<UsageBreakdownItem>;
   getAdminChatThreadMessages: AdminChatThreadMessages;
-  getAdminChatThreads: PaginatedAdminChatThreads;
   getAdminWorkspaceChatThreads: Array<AdminWorkspaceChatThread>;
   getAiProviders: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariables;
@@ -883,18 +836,6 @@ export type QueryGetAdminAiUsageByWorkspaceArgs = {
 export type QueryGetAdminChatThreadMessagesArgs = {
   threadId: Scalars['UUID']['input'];
   workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type QueryGetAdminChatThreadsArgs = {
-  hasErrorOnly?: InputMaybe<Scalars['Boolean']['input']>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  scope?: InputMaybe<AdminChatThreadScope>;
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
-  sortBy?: InputMaybe<AdminChatThreadSortField>;
-  sortDirection?: InputMaybe<AdminChatThreadSortDirection>;
-  userNeverEngagedOnly?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -1529,20 +1470,6 @@ export type GetAdminChatThreadMessagesQueryVariables = Exact<{
 
 export type GetAdminChatThreadMessagesQuery = { __typename?: 'Query', getAdminChatThreadMessages: { __typename?: 'AdminChatThreadMessages', thread: { __typename?: 'AdminWorkspaceChatThread', id: string, title?: string | null, totalInputTokens: number, totalOutputTokens: number, conversationSize: number, messageCount: number, createdAt: string, updatedAt: string }, messages: Array<{ __typename?: 'AdminChatMessage', id: string, role: AgentMessageRole, createdAt: string, parts: Array<{ __typename?: 'AdminChatMessagePart', type: string, orderIndex: number, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null }> }> } };
 
-export type GetAdminChatThreadsQueryVariables = Exact<{
-  scope?: InputMaybe<AdminChatThreadScope>;
-  hasErrorOnly?: InputMaybe<Scalars['Boolean']['input']>;
-  userNeverEngagedOnly?: InputMaybe<Scalars['Boolean']['input']>;
-  searchTerm?: InputMaybe<Scalars['String']['input']>;
-  sortBy?: InputMaybe<AdminChatThreadSortField>;
-  sortDirection?: InputMaybe<AdminChatThreadSortDirection>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type GetAdminChatThreadsQuery = { __typename?: 'Query', getAdminChatThreads: { __typename?: 'PaginatedAdminChatThreads', totalCount: number, hasMore: boolean, threads: Array<{ __typename?: 'AdminChatThreadListItem', id: string, title?: string | null, workspaceId: string, workspaceDisplayName?: string | null, userWorkspaceId?: string | null, userEmail?: string | null, userFirstName?: string | null, userLastName?: string | null, messageCount: number, userReplyCount: number, hasError: boolean, isOnboardingThread: boolean, deletedAt?: string | null, createdAt: string, updatedAt: string }> } };
-
 export type GetAdminWorkspaceChatThreadsQueryVariables = Exact<{
   workspaceId: Scalars['UUID']['input'];
 }>;
@@ -1724,7 +1651,6 @@ export const AdminPanelRecentUsersDocument = {"kind":"Document","definitions":[{
 export const AdminPanelTopWorkspacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AdminPanelTopWorkspaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchTerm"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminPanelTopWorkspaces"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"searchTerm"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchTerm"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"totalUsers"}},{"kind":"Field","name":{"kind":"Name","value":"subdomain"}}]}}]}}]} as unknown as DocumentNode<AdminPanelTopWorkspacesQuery, AdminPanelTopWorkspacesQueryVariables>;
 export const FindOneAdminApplicationRegistrationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindOneAdminApplicationRegistration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findOneAdminApplicationRegistration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApplicationRegistrationFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"galleryImagesUrls"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isVetted"}},{"kind":"Field","name":{"kind":"Name","value":"isPreInstalled"}},{"kind":"Field","name":{"kind":"Name","value":"isConfigured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindOneAdminApplicationRegistrationQuery, FindOneAdminApplicationRegistrationQueryVariables>;
 export const GetAdminChatThreadMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminChatThreadMessages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workspaceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminChatThreadMessages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workspaceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workspaceId"}}},{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"thread"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"totalInputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"totalOutputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"conversationSize"}},{"kind":"Field","name":{"kind":"Name","value":"messageCount"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"messages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"parts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"orderIndex"}},{"kind":"Field","name":{"kind":"Name","value":"textContent"}},{"kind":"Field","name":{"kind":"Name","value":"reasoningContent"}},{"kind":"Field","name":{"kind":"Name","value":"toolName"}},{"kind":"Field","name":{"kind":"Name","value":"toolCallId"}},{"kind":"Field","name":{"kind":"Name","value":"toolInput"}},{"kind":"Field","name":{"kind":"Name","value":"toolOutput"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetAdminChatThreadMessagesQuery, GetAdminChatThreadMessagesQueryVariables>;
-export const GetAdminChatThreadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminChatThreads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"scope"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AdminChatThreadScope"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasErrorOnly"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userNeverEngagedOnly"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchTerm"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sortBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AdminChatThreadSortField"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sortDirection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AdminChatThreadSortDirection"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminChatThreads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"scope"},"value":{"kind":"Variable","name":{"kind":"Name","value":"scope"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasErrorOnly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasErrorOnly"}}},{"kind":"Argument","name":{"kind":"Name","value":"userNeverEngagedOnly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userNeverEngagedOnly"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchTerm"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchTerm"}}},{"kind":"Argument","name":{"kind":"Name","value":"sortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sortBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"sortDirection"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sortDirection"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasMore"}},{"kind":"Field","name":{"kind":"Name","value":"threads"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceDisplayName"}},{"kind":"Field","name":{"kind":"Name","value":"userWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"userEmail"}},{"kind":"Field","name":{"kind":"Name","value":"userFirstName"}},{"kind":"Field","name":{"kind":"Name","value":"userLastName"}},{"kind":"Field","name":{"kind":"Name","value":"messageCount"}},{"kind":"Field","name":{"kind":"Name","value":"userReplyCount"}},{"kind":"Field","name":{"kind":"Name","value":"hasError"}},{"kind":"Field","name":{"kind":"Name","value":"isOnboardingThread"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetAdminChatThreadsQuery, GetAdminChatThreadsQueryVariables>;
 export const GetAdminWorkspaceChatThreadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminWorkspaceChatThreads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workspaceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminWorkspaceChatThreads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workspaceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workspaceId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"totalInputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"totalOutputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"conversationSize"}},{"kind":"Field","name":{"kind":"Name","value":"messageCount"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetAdminWorkspaceChatThreadsQuery, GetAdminWorkspaceChatThreadsQueryVariables>;
 export const GetServerAdminsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetServerAdmins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getServerAdmins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"canAccessFullAdminPanel"}},{"kind":"Field","name":{"kind":"Name","value":"canImpersonate"}}]}}]}}]} as unknown as DocumentNode<GetServerAdminsQuery, GetServerAdminsQueryVariables>;
 export const GetUpgradeStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUpgradeStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workspaceIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUpgradeStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workspaceIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workspaceIds"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inferredVersion"}},{"kind":"Field","name":{"kind":"Name","value":"health"}},{"kind":"Field","name":{"kind":"Name","value":"latestCommand"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"executedByVersion"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetUpgradeStatusQuery, GetUpgradeStatusQueryVariables>;

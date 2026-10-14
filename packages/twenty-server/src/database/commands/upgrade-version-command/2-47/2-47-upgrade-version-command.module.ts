@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { UnpinNewAiChatCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791405719721-unpin-new-ai-chat.command';
@@ -10,17 +11,23 @@ import { UnpinChatShareCommand } from 'src/database/commands/upgrade-version-com
 import { SyncCampaignEngagementFieldsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811197174-sync-campaign-engagement-fields.command';
 import { ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811310066-convert-workflow-email-bodies-to-email-documents.command';
 import { RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791823009575-remove-workflow-core-index-flag-from-command-menu-items.command';
-import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791904066262-strip-derived-record-filter-properties.command';
+import { RelabelNoteAndTaskTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791926793834-relabel-note-and-task-target-fields.command';
+import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791936317298-strip-derived-record-filter-properties.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
     ApplicationModule,
+    TypeOrmModule.forFeature([FieldMetadataEntity]),
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
+    WorkspaceMigrationRunnerModule,
   ],
   providers: [
     UnpinNewAiChatCommand,
@@ -32,7 +39,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SyncCampaignEngagementFieldsCommand,
     ConvertWorkflowEmailBodiesToEmailDocumentsCommand,
     RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand,
+    RelabelNoteAndTaskTargetFieldsCommand,
     StripDerivedRecordFilterPropertiesCommand,
+    provideWorkspaceScopedRepository(FieldMetadataEntity),
   ],
 })
 export class V2_47_UpgradeVersionCommandModule {}
