@@ -322,16 +322,12 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     renderPage();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
 
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(screen.queryByLabelText('Secret')).not.toBeInTheDocument();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Collapse hidden fields' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
 
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
@@ -341,13 +337,9 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     renderPage();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
     await user.type(screen.getByLabelText('Nickname'), 'Apple');
-    await user.click(
-      screen.getByRole('button', { name: 'Collapse hidden fields' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
     expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
@@ -363,9 +355,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     const { unmount } = renderPage();
 
     await user.type(screen.getByLabelText('Name'), 'Apple');
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
     await user.type(screen.getByLabelText('Nickname'), 'Big Apple');
 
     unmount();

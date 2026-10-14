@@ -99,6 +99,7 @@ For third-party connections:
 - Keep secrets out of source and public assets.
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
+- When the provider can say which account a token belongs to (team, organization, user), declare `identifyAccountLogicFunction` so a reconnect that authorizes a different account is refused instead of overwriting the connection. Write the handler as one request to the provider's "who am I" endpoint, return the id as a string, and return `{ externalAccountId: null }` when there is no stable id.
 
 ## Post-Install Hooks
 
