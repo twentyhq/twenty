@@ -32,10 +32,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Application workflows`,
     description: msg`Allow applications to install workflows and start new workflow runs.`,
   },
-  [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: {
-    label: msg`Initial object views`,
-    description: msg`Use a dedicated initial view for each object in navigation and the view picker.`,
-  },
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
