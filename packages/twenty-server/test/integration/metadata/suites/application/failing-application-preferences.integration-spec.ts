@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { myApplicationPreferences } from 'test/integration/metadata/suites/application/utils/my-application-preferences.util';
@@ -94,7 +96,7 @@ describe('My application preferences should fail', () => {
       const { data } = await createOneRole({
         expectToFail: false,
         input: {
-          label: 'Application preferences denied role',
+          label: `Application preferences denied role ${randomUUID()}`,
           description: 'Member role without the connected accounts permission',
           icon: 'IconUser',
           canUpdateAllSettings: false,
