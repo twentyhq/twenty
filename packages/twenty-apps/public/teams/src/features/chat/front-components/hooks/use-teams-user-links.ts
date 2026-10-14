@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
+import { currentUserHasRolesPermission } from 'src/features/chat/logic-functions/utils/current-user-has-roles-permission';
 import { TEAMS_USER_LINK_SOURCE } from 'src/features/chat/logic-functions/constants/teams-user-link-source';
 import { type TeamsUserLinkRecord } from 'src/features/chat/front-components/types/teams-user-link-record.type';
 
@@ -73,14 +74,16 @@ export const useTeamsUserLinks = () => {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadError, setHasLoadError] = useState(false);
+  const [canManageTeamsUserLinks, setCanManageTeamsUserLinks] = useState(false);
 
   useEffect(() => {
     let isCancelled = false;
 
-    fetchTeamsUserLinks()
-      .then((records) => {
+    Promise.all([fetchTeamsUserLinks(), currentUserHasRolesPermission()])
+      .then(([records, hasRolesPermission]) => {
         if (!isCancelled) {
           setTeamsUserLinks(records);
+          setCanManageTeamsUserLinks(hasRolesPermission);
         }
       })
       .catch(() => {
@@ -103,5 +106,11 @@ export const useTeamsUserLinks = () => {
     setTeamsUserLinks((links) => links.filter((link) => link.id !== id));
   };
 
-  return { teamsUserLinks, isLoading, hasLoadError, dropTeamsUserLink };
+  return {
+    teamsUserLinks,
+    isLoading,
+    hasLoadError,
+    canManageTeamsUserLinks,
+    dropTeamsUserLink,
+  };
 };

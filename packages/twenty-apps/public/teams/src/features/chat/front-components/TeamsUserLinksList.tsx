@@ -7,7 +7,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useCanManageTeamsUserLinks } from 'src/features/chat/front-components/hooks/use-can-manage-teams-user-links';
 import { useRemoveTeamsUserLink } from 'src/features/chat/front-components/hooks/use-remove-teams-user-link';
 import { useTeamsUserLinks } from 'src/features/chat/front-components/hooks/use-teams-user-links';
 import { TEAMS_USER_LINK_SOURCE } from 'src/features/chat/logic-functions/constants/teams-user-link-source';
@@ -59,10 +58,14 @@ const StyledSecondaryText = styled.span`
 
 const TeamsUserLinksContent = () => {
   const { t } = useTranslate();
-  const { teamsUserLinks, isLoading, hasLoadError, dropTeamsUserLink } =
-    useTeamsUserLinks();
+  const {
+    teamsUserLinks,
+    isLoading,
+    hasLoadError,
+    canManageTeamsUserLinks,
+    dropTeamsUserLink,
+  } = useTeamsUserLinks();
   const { removeTeamsUserLink, removingLinkId } = useRemoveTeamsUserLink();
-  const { canManage } = useCanManageTeamsUserLinks();
 
   const handleRemove = async (teamsUserLink: TeamsUserLinkRecord) => {
     const isRemoved = await removeTeamsUserLink(teamsUserLink.id);
@@ -129,7 +132,7 @@ const TeamsUserLinksContent = () => {
                 </Tag>
               )}
             </span>
-            {canManage && (
+            {canManageTeamsUserLinks && (
               <Button
                 variant="ghost"
                 color="danger"
