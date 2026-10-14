@@ -4,7 +4,6 @@ import { IconLock } from 'twenty-ui/icon';
 
 import { useLogConsoleSources } from '@/log-console/hooks/useLogConsoleSources';
 import { Select } from '@/ui/input/components/Select';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 const LOG_CONSOLE_SOURCE_SELECT_DROPDOWN_ID = 'log-console-source-select';
 
@@ -22,8 +21,8 @@ export const LogConsoleSourceSelect = () => {
     <StyledContainer>
       <Select
         dropdownId={LOG_CONSOLE_SOURCE_SELECT_DROPDOWN_ID}
-        dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         fullWidth
+        needIconCheck
         value={activeSource.id}
         options={sources.map((source) => ({
           value: source.id,

@@ -3,5 +3,5 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 
 export const logConsoleSourceIdState = createAtomState<LogConsoleSourceId>({
   key: 'logConsoleSourceIdState',
-  defaultValue: 'record-changes',
+  defaultValue: 'app-logs',
 });

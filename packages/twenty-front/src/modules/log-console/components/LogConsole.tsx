@@ -17,16 +17,11 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { LogConsoleApiKeys } from '@/log-console/components/LogConsoleApiKeys';
-import { LogConsoleCli } from '@/log-console/components/LogConsoleCli';
-import { LogConsoleDetailPanel } from '@/log-console/components/LogConsoleDetailPanel';
-import { LogConsoleLogs } from '@/log-console/components/LogConsoleLogs';
+import { LogConsoleBody } from '@/log-console/components/LogConsoleBody';
 import { LogConsoleToggleHotkeyEffect } from '@/log-console/components/LogConsoleToggleHotkeyEffect';
-import { LogConsoleWebhooks } from '@/log-console/components/LogConsoleWebhooks';
-import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
-import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
+import { LOG_CONSOLE_TRANSITION_TIMING } from '@/log-console/constants/LogConsoleTransitionTiming';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
 import { useLogConsoleTabs } from '@/log-console/hooks/useLogConsoleTabs';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
@@ -34,6 +29,7 @@ import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDispl
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
+import { getLogConsoleTransition } from '@/log-console/utils/getLogConsoleTransition';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -44,11 +40,9 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
-
-const LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE =
-  '--log-console-detail-panel-width';
 
 const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
 
@@ -56,25 +50,10 @@ const LOG_CONSOLE_TOP_BORDER_WIDTH = '1px';
 
 const LOG_CONSOLE_BAR_BOTTOM_BORDER_WIDTH = '1px';
 
-const LOG_CONSOLE_TRANSITION_TIMING = `calc(${themeCssVariables.animation.duration.normal} * 1s) ${LOG_CONSOLE_ANIMATION_EASING}`;
-
-const LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS = {
-  min: 280,
-  max: 800,
-  default: 380,
-};
-
 type LogConsoleLayout = {
   isOpen: boolean;
   isFullScreen: boolean;
 };
-
-const getLogConsoleTransition = (isResizing: boolean, properties: string[]) =>
-  isResizing
-    ? 'none'
-    : properties
-        .map((property) => `${property} ${LOG_CONSOLE_TRANSITION_TIMING}`)
-        .join(', ');
 
 const StyledSpacer = styled.div<{
   isResizing: boolean;
@@ -188,27 +167,6 @@ const StyledBarActions = styled.div`
   padding-right: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledBody = styled.div`
-  container-name: log-console-body;
-  container-type: inline-size;
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  position: relative;
-`;
-
-const StyledActiveTab = styled.div<{ isDetailPanelOpen: boolean }>`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-width: 0;
-
-  @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
-    visibility: ${({ isDetailPanelOpen }) =>
-      isDetailPanelOpen ? 'hidden' : 'visible'};
-  }
-`;
-
 const subscribeToWindowResize = (onWindowResize: () => void) => {
   window.addEventListener('resize', onWindowResize);
 
@@ -216,27 +174,6 @@ const subscribeToWindowResize = (onWindowResize: () => void) => {
 };
 
 const getWindowHeight = () => window.innerHeight;
-
-const StyledDetailPanelWrapper = styled.div<{
-  detailPanelWidth: number;
-  isOpen: boolean;
-  isResizing: boolean;
-}>`
-  overflow: hidden;
-  position: relative;
-  transition: ${({ isResizing }) =>
-    getLogConsoleTransition(isResizing, ['width'])};
-  width: ${({ isOpen, isResizing, detailPanelWidth }) =>
-    !isOpen
-      ? '0px'
-      : isResizing
-        ? `var(${LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}, ${detailPanelWidth}px)`
-        : `${detailPanelWidth}px`};
-
-  @container log-console-body (max-width: ${LOG_CONSOLE_NARROW_BODY_MAX_WIDTH}px) {
-    position: static;
-  }
-`;
 
 export const LogConsole = () => {
   const { t } = useLingui();
@@ -260,18 +197,9 @@ export const LogConsole = () => {
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
-  const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
-    logConsoleSelectedLogState,
-  );
-  const [detailPanelWidth, setDetailPanelWidth] = useState(
-    LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.default,
-  );
-  const [isDetailPanelResizing, setIsDetailPanelResizing] = useState(false);
+  const setLogConsoleSelectedLog = useSetAtomState(logConsoleSelectedLogState);
   const [isResizing, setIsResizing] = useState(false);
   const [liveHeight, setLiveHeight] = useState<number | null>(null);
-  const [liveDetailPanelWidth, setLiveDetailPanelWidth] = useState<
-    number | null
-  >(null);
 
   const isOpen = logConsoleDisplayMode === 'open';
   const isFullScreen = isOpen && isLogConsoleFullScreen;
@@ -304,10 +232,6 @@ export const LogConsole = () => {
 
   if (displayedLayout?.isOpen && !isBodyMounted) {
     setIsBodyMounted(true);
-  }
-
-  if (!isDefined(logConsoleSelectedLog) && isDetailPanelResizing) {
-    setIsDetailPanelResizing(false);
   }
 
   const windowHeight = useSyncExternalStore(
@@ -368,8 +292,6 @@ export const LogConsole = () => {
 
   const currentTabId: LogConsoleTabId =
     tabs.find((tab) => tab.id === activeTabId)?.id ?? tabs[0].id;
-  const isLogsTab = currentTabId === 'logs';
-  const isDetailPanelOpen = isLogsTab && isDefined(logConsoleSelectedLog);
 
   const openLogConsole = () => {
     if (!isOpen) {
@@ -386,30 +308,11 @@ export const LogConsole = () => {
     }
   };
 
-  const handleDetailPanelWidthChange = (width: number) => {
-    setLiveDetailPanelWidth(null);
-    document.documentElement.style.removeProperty(
-      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
-    );
-    setDetailPanelWidth(
-      Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min),
-    );
-    setIsDetailPanelResizing(false);
-  };
-
   const handleHeightPreview = (height: number) => {
     setLiveHeight(height);
     document.documentElement.style.setProperty(
       LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
       `${height}px`,
-    );
-  };
-
-  const handleDetailPanelWidthPreview = (width: number) => {
-    setLiveDetailPanelWidth(width);
-    document.documentElement.style.setProperty(
-      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
-      `${width}px`,
     );
   };
 
@@ -435,14 +338,6 @@ export const LogConsole = () => {
     if (shouldRestoreCollapsedMode) {
       setLogConsoleDisplayMode('collapsed');
     }
-  };
-
-  const handleDetailPanelResizeEnd = () => {
-    setLiveDetailPanelWidth(null);
-    setIsDetailPanelResizing(false);
-    document.documentElement.style.removeProperty(
-      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
-    );
   };
 
   const handleHeightChange = (height: number) => {
@@ -471,12 +366,8 @@ export const LogConsole = () => {
     setIsLogConsoleFullScreen(!isFullScreen);
   };
 
-  const closeSelectedLog = () => {
-    setLogConsoleSelectedLog(null);
-  };
-
   const closeLogConsole = () => {
-    closeSelectedLog();
+    setLogConsoleSelectedLog(null);
     setLogConsoleDisplayMode('closed');
     setIsLogConsoleFullScreen(false);
     enqueueToast({
@@ -510,19 +401,6 @@ export const LogConsole = () => {
     : t`Full screen`;
   const closeLabel = t`Close`;
 
-  const renderActiveTab = () => {
-    switch (currentTabId) {
-      case 'logs':
-        return <LogConsoleLogs />;
-      case 'apis':
-        return <LogConsoleApiKeys />;
-      case 'webhooks':
-        return <LogConsoleWebhooks />;
-      case 'cli':
-        return <LogConsoleCli />;
-    }
-  };
-
   return (
     <>
       {toggleHotkeyEffect}
@@ -550,11 +428,15 @@ export const LogConsole = () => {
               <StyledBarActions>
                 <LightIconButton
                   emphasis="subtle"
-                  tooltip={closeLabel}
-                  aria-label={closeLabel}
-                  onClick={closeLogConsole}
+                  tooltip={`${openOrCollapseLabel} | ${toggleHotkeyLabel}`}
+                  aria-label={openOrCollapseLabel}
+                  onClick={toggleLogConsoleOpen}
                 >
-                  <IconX />
+                  {displayedLayout.isOpen ? (
+                    <IconChevronDown />
+                  ) : (
+                    <IconChevronUp />
+                  )}
                 </LightIconButton>
                 <LightIconButton
                   emphasis="subtle"
@@ -571,48 +453,16 @@ export const LogConsole = () => {
                 <IconButton
                   size="sm"
                   variant="outline"
-                  tooltip={`${openOrCollapseLabel} | ${toggleHotkeyLabel}`}
-                  aria-label={openOrCollapseLabel}
-                  onClick={toggleLogConsoleOpen}
+                  tooltip={closeLabel}
+                  aria-label={closeLabel}
+                  onClick={closeLogConsole}
                 >
-                  {displayedLayout.isOpen ? (
-                    <IconChevronDown />
-                  ) : (
-                    <IconChevronUp />
-                  )}
+                  <IconX />
                 </IconButton>
               </StyledBarActions>
             }
           />
-          {isBodyRendered && (
-            <StyledBody>
-              <StyledActiveTab isDetailPanelOpen={isDetailPanelOpen}>
-                {renderActiveTab()}
-              </StyledActiveTab>
-              <StyledDetailPanelWrapper
-                detailPanelWidth={detailPanelWidth}
-                isOpen={isDetailPanelOpen}
-                isResizing={isDetailPanelResizing}
-              >
-                {isDetailPanelOpen && (
-                  <ResizeHandle
-                    edge="left"
-                    min={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min}
-                    max={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.max}
-                    value={liveDetailPanelWidth ?? detailPanelWidth}
-                    onValueChange={handleDetailPanelWidthPreview}
-                    onValueCommitted={handleDetailPanelWidthChange}
-                    aria-label={t`Resize log details`}
-                    scale={getUiZoom}
-                    onResizeEnd={handleDetailPanelResizeEnd}
-                    children={null}
-                    onResizeStart={() => setIsDetailPanelResizing(true)}
-                  />
-                )}
-                {isLogsTab && <LogConsoleDetailPanel />}
-              </StyledDetailPanelWrapper>
-            </StyledBody>
-          )}
+          {isBodyRendered && <LogConsoleBody tabId={currentTabId} />}
         </TabListRoot>
         {!displayedLayout.isFullScreen && (
           <ResizeHandle

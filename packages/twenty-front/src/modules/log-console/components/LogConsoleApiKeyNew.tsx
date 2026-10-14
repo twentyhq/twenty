@@ -1,8 +1,7 @@
 import { addDays } from 'date-fns';
 import { useCallback, useEffect, useState } from 'react';
 
-import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
-import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
+import { LogConsoleDetailPanelLayout } from '@/log-console/components/LogConsoleDetailPanelLayout';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -24,9 +23,12 @@ import {
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { Section } from 'twenty-ui/components/layout';
+import { IconKey } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
 
 export const LogConsoleApiKeyNew = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
   const setLogConsoleApisView = useSetAtomState(logConsoleApisViewState);
   const { data: rolesData, loading: rolesLoading } = useQuery(
@@ -122,84 +124,87 @@ export const LogConsoleApiKeyNew = () => {
 
   const canSave = !!formValues.name && !!formValues.roleId;
 
-  if (rolesLoading) {
-    return <SettingsSkeletonLoader />;
-  }
+  const goBackToList = () => setLogConsoleApisView({ type: 'list' });
 
   return (
-    <>
-      <LogConsoleSubPageHeader
-        title={t`New key`}
-        onBack={() => setLogConsoleApisView({ type: 'list' })}
-        actions={
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => setLogConsoleApisView({ type: 'list' })}
-            onSave={handleSave}
-          />
-        }
-      />
-      <LogConsolePageContainer scrollWrapperInstanceId="log-console-api-key-new">
-        <Section.Root>
-          <Section.Header
-            title={t`Name`}
-            description={t`Name of your API key`}
-          />
-          <SettingsTextInput
-            instanceId="api-key-new-name"
-            placeholder={t`E.g. backoffice integration`}
-            value={formValues.name}
-            onKeyDown={(e) => {
-              if (e.nativeEvent.isComposing || e.keyCode === 229) {
-                return;
-              }
-              if (e.key === Key.Enter) {
-                handleSave();
-              }
-            }}
-            onChange={(value) => {
-              setFormValues((prevState) => ({
-                ...prevState,
-                name: value,
-              }));
-            }}
-            fullWidth
-          />
-        </Section.Root>
-        <Section.Root>
-          <Section.Header
-            title={t`Role`}
-            description={t`What this API can do: Select a user role to define its permissions.`}
-          />
-          <SettingsDevelopersRoleSelector
-            value={formValues.roleId}
-            onChange={(roleId) => {
-              setFormValues((prevState) => ({
-                ...prevState,
-                roleId,
-              }));
-            }}
-            roles={roles}
-          />
-        </Section.Root>
-        <Section.Root>
-          <Section.Header
-            title={t`Expiration Date`}
-            description={t`When the API key will expire.`}
-          />
-          <Select
-            dropdownId="object-field-type-select"
-            options={EXPIRATION_DATES}
-            value={formValues.expirationDate}
-            onChange={(value) => {
-              setFormValues((prevState) => ({
-                ...prevState,
-                expirationDate: value,
-              }));
-            }}
-          />
-        </Section.Root>
-      </LogConsolePageContainer>
-    </>
+    <LogConsoleDetailPanelLayout
+      title={t`New API key`}
+      icon={<IconKey size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
+      onClose={goBackToList}
+      actions={
+        <SaveAndCancelButtons
+          isSaveDisabled={!canSave}
+          onCancel={goBackToList}
+          onSave={handleSave}
+        />
+      }
+    >
+      {rolesLoading ? (
+        <SettingsSkeletonLoader />
+      ) : (
+        <>
+          <Section.Root>
+            <Section.Header
+              title={t`Name`}
+              description={t`Name of your API key`}
+            />
+            <SettingsTextInput
+              instanceId="api-key-new-name"
+              placeholder={t`E.g. backoffice integration`}
+              value={formValues.name}
+              onKeyDown={(e) => {
+                if (e.nativeEvent.isComposing || e.keyCode === 229) {
+                  return;
+                }
+                if (e.key === Key.Enter) {
+                  handleSave();
+                }
+              }}
+              onChange={(value) => {
+                setFormValues((prevState) => ({
+                  ...prevState,
+                  name: value,
+                }));
+              }}
+              fullWidth
+            />
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
+              title={t`Role`}
+              description={t`What this API can do: Select a user role to define its permissions.`}
+            />
+            <SettingsDevelopersRoleSelector
+              value={formValues.roleId}
+              onChange={(roleId) => {
+                setFormValues((prevState) => ({
+                  ...prevState,
+                  roleId,
+                }));
+              }}
+              roles={roles}
+            />
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
+              title={t`Expiration Date`}
+              description={t`When the API key will expire.`}
+            />
+            <Select
+              dropdownId="object-field-type-select"
+              options={EXPIRATION_DATES}
+              value={formValues.expirationDate}
+              fullWidth
+              onChange={(value) => {
+                setFormValues((prevState) => ({
+                  ...prevState,
+                  expirationDate: value,
+                }));
+              }}
+            />
+          </Section.Root>
+        </>
+      )}
+    </LogConsoleDetailPanelLayout>
   );
 };

@@ -1,8 +1,7 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { Controller, FormProvider } from 'react-hook-form';
 
-import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
-import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
+import { LogConsoleDetailPanelLayout } from '@/log-console/components/LogConsoleDetailPanelLayout';
 import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -21,7 +20,8 @@ import {
   isValidUrl,
 } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconTrash } from 'twenty-ui/icon';
+import { IconTrash, IconWebhook } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
 import { Button } from 'twenty-ui/primitives/input';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
 
@@ -37,6 +37,7 @@ export const LogConsoleWebhookForm = ({
   mode,
 }: LogConsoleWebhookFormProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const setLogConsoleWebhooksView = useSetAtomState(
     logConsoleWebhooksViewState,
   );
@@ -63,7 +64,7 @@ export const LogConsoleWebhookForm = ({
 
   const getTitle = () => {
     if (isCreationMode) {
-      return t`New Webhook`;
+      return t`New webhook`;
     }
 
     const targetUrl = formConfig.watch('targetUrl');
@@ -74,20 +75,27 @@ export const LogConsoleWebhookForm = ({
     return t`Webhook`;
   };
 
+  const webhookIcon = (
+    <IconWebhook size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+  );
+
   if ((loading && !isCreationMode) || isDefined(error)) {
     return (
-      <>
+      <LogConsoleDetailPanelLayout
+        title={getTitle()}
+        icon={webhookIcon}
+        onClose={goBackToList}
+      >
         <ToastOnQueryErrorEffect
           error={error}
           message={t`Failed to load webhook`}
         />
-        <LogConsoleSubPageHeader title={getTitle()} onBack={goBackToList} />
         {isDefined(error) ? (
           <SettingsEmptyPlaceholder>{t`Failed to load webhook`}</SettingsEmptyPlaceholder>
         ) : (
           <SettingsSkeletonLoader />
         )}
-      </>
+      </LogConsoleDetailPanelLayout>
     );
   }
 
@@ -98,9 +106,10 @@ export const LogConsoleWebhookForm = ({
   return (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
-      <LogConsoleSubPageHeader
+      <LogConsoleDetailPanelLayout
         title={getTitle()}
-        onBack={goBackToList}
+        icon={webhookIcon}
+        onClose={goBackToList}
         actions={
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
@@ -109,9 +118,6 @@ export const LogConsoleWebhookForm = ({
             onSave={formConfig.handleSubmit(handleSave)}
           />
         }
-      />
-      <LogConsolePageContainer
-        scrollWrapperInstanceId={`log-console-webhook-${webhookId ?? 'new'}`}
       >
         <Section.Root>
           <Section.Header
@@ -167,6 +173,7 @@ export const LogConsoleWebhookForm = ({
             render={({ field: { value } }) => (
               <SettingsDatabaseEventsForm
                 events={value}
+                compact
                 updateOperation={updateOperation}
                 removeOperation={removeOperation}
               />
@@ -206,7 +213,7 @@ export const LogConsoleWebhookForm = ({
             >{t`Delete`}</Button>
           </Section.Root>
         )}
-      </LogConsolePageContainer>
+      </LogConsoleDetailPanelLayout>
       {!isCreationMode && (
         <ConfirmationDialog
           confirmationPlaceholder={t`yes`}

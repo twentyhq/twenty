@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import {
   IconApi,
   type IconComponent,
-  IconHistory,
   IconTerminal,
+  IconTerminal2,
   IconWebhook,
 } from 'twenty-ui/icon';
 
@@ -30,7 +30,7 @@ export const useLogConsoleTabs = (): LogConsoleTab[] => {
     {
       id: 'logs' as const,
       title: t`Logs`,
-      Icon: IconHistory,
+      Icon: IconTerminal2,
       isAvailable: hasSecurityPermission,
     },
     {

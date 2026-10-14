@@ -14,12 +14,12 @@ const ACTION_DROPDOWN_WIDTH = 240;
 const OBJECT_MOBILE_WIDTH = 150;
 const ACTION_MOBILE_WIDTH = 140;
 
-const StyledFilterRow = styled.div<{ isMobile: boolean }>`
+const StyledFilterRow = styled.div<{ isCompact: boolean }>`
   align-items: center;
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: ${({ isMobile }) =>
-    isMobile
+  grid-template-columns: ${({ isCompact }) =>
+    isCompact
       ? `minmax(${OBJECT_MOBILE_WIDTH}px, 1fr) ${ACTION_MOBILE_WIDTH}px ${
           themeCssVariables.spacing[8]
         }`
@@ -39,6 +39,7 @@ export const SettingsDatabaseEventsForm = ({
   updateOperation,
   removeOperation,
   disabled = false,
+  compact = false,
 }: {
   events: { object: string | null; action: string; updatedFields?: string[] }[];
   updateOperation?: (
@@ -48,8 +49,10 @@ export const SettingsDatabaseEventsForm = ({
   ) => void;
   removeOperation?: (index: number) => void;
   disabled?: boolean;
+  compact?: boolean;
 }) => {
   const isMobile = useIsMobile();
+  const isCompact = isMobile || compact;
 
   const getActionOptions = (
     updatedFields?: string[],
@@ -72,7 +75,7 @@ export const SettingsDatabaseEventsForm = ({
   return (
     <>
       {events.map((operation, index) => (
-        <StyledFilterRow key={index} isMobile={isMobile}>
+        <StyledFilterRow key={index} isCompact={isCompact}>
           <WebhookEntitySelect
             dropdownId={`object-webhook-type-select-${index}`}
             value={operation.object}

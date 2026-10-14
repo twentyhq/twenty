@@ -19,6 +19,9 @@ import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDispl
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleSourceIdState } from '@/log-console/states/logConsoleSourceIdState';
+import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
+import { isLogConsoleCliGuideOpenState } from '@/log-console/states/isLogConsoleCliGuideOpenState';
+import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -182,6 +185,7 @@ const meta: Meta<PageDecoratorArgs> = {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
+    jotaiStore.set(logConsoleSourceIdState.atom, 'record-changes');
   },
   parameters: {
     layout: 'fullscreen',
@@ -290,7 +294,7 @@ export const SecurityOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await selectLogSource(canvas, 'Security');
+    await selectLogSource(canvas, 'Security events');
 
     expect(await canvas.findAllByText('Support team')).toHaveLength(3);
   },
@@ -756,7 +760,7 @@ export const LockedSource: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await selectLogSource(canvas, 'Security');
+    await selectLogSource(canvas, 'Security events');
     await canvas.findByText('Upgrade to access audit logs');
   },
 };
@@ -770,42 +774,137 @@ export const ClickHouseMissing: Story = {
   },
 };
 
+const openLogConsoleTab = (tabId: LogConsoleTabId) => {
+  jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  jotaiStore.set(
+    activeTabIdComponentState.atomFamily({
+      instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+    }),
+    tabId,
+  );
+};
+
 export const ApiKeysTab: Story = {
   beforeEach: () => {
-    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
     jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
-      }),
-      'apis',
+    openLogConsoleTab('apis');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('My api key', {}, { timeout: 5000 });
+    await canvas.findByText('Expired');
+
+    await userEvent.type(
+      canvas.getByPlaceholderText('Search API keys'),
+      'unknown',
     );
+    await canvas.findByText('No API keys found');
+  },
+};
+
+export const ApiKeyDetail: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
+    openLogConsoleTab('apis');
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Create API key' }),
+      await canvas.findByText('My api key', {}, { timeout: 5000 }),
     );
-    await canvas.findByText('New key');
-    await userEvent.click(canvas.getByRole('button', { name: 'Back' }));
-    await canvas.findByText('API Keys');
+    await canvas.findByRole('heading', { name: 'My api key' });
+    await canvas.findByText('Danger zone');
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Close details' }),
+    );
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('heading', { name: 'My api key' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const NewApiKey: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
+    openLogConsoleTab('apis');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'New API key' }),
+    );
+    await canvas.findByRole('heading', { name: 'New API key' });
+    await canvas.findByPlaceholderText('E.g. backoffice integration');
+  },
+};
+
+export const ApiDocumentationMenu: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
+    openLogConsoleTab('apis');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const documentationMenuButton = (
+      await canvas.findAllByRole('button', { name: 'Documentation' })
+    ).find((button) => button.getAttribute('aria-haspopup') === 'menu');
+
+    await userEvent.click(documentationMenuButton as HTMLElement);
+    await userEvent.hover(
+      await screen.findByRole('menuitem', { name: 'GraphQL' }),
+    );
+
+    expect(
+      await screen.findByRole('menuitem', { name: 'Metadata' }),
+    ).toBeVisible();
+  },
+};
+
+export const WebhooksTab: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleWebhooksViewState.atom, { type: 'list' });
+    openLogConsoleTab('webhooks');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByText(
+        'https://api.slackbot.io/webhooks/twenty',
+        {},
+        { timeout: 5000 },
+      ),
+    );
+
+    await canvas.findByRole('heading', { name: 'api.slackbot.io' });
+    await canvas.findByDisplayValue('Slack notifications for lead updates');
   },
 };
 
 export const CliTab: Story = {
   beforeEach: () => {
-    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
-      }),
-      'cli',
-    );
+    jotaiStore.set(isLogConsoleCliGuideOpenState.atom, true);
+    openLogConsoleTab('cli');
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('npx twenty metadata object list');
+    await canvas.findByText('twenty metadata object list');
+    await canvas.findByRole('heading', { name: 'Get started' });
+    await canvas.findByDisplayValue('npx twenty data list companies --limit 5');
+
+    await userEvent.type(
+      canvas.getByPlaceholderText('Search commands'),
+      'doctor',
+    );
+
+    expect(canvas.queryByText('twenty app dev')).not.toBeInTheDocument();
   },
 };

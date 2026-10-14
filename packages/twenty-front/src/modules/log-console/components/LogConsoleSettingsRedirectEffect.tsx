@@ -5,13 +5,13 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { useOpenLogConsoleTab } from '@/log-console/hooks/useOpenLogConsoleTab';
 
-type SettingsApiWebhooksRedirectEffectProps = {
+type LogConsoleSettingsRedirectEffectProps = {
   view?: 'new' | 'detail';
 };
 
-export const SettingsApiWebhooksRedirectEffect = ({
+export const LogConsoleSettingsRedirectEffect = ({
   view,
-}: SettingsApiWebhooksRedirectEffectProps) => {
+}: LogConsoleSettingsRedirectEffectProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { apiKeyId, webhookId } = useParams();

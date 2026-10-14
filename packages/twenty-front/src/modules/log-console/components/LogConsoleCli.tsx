@@ -1,87 +1,99 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { CommandBlock } from 'twenty-ui/components/data-display';
-import { Section } from 'twenty-ui/components/layout';
-import { IconArrowUpRight, IconCopy } from 'twenty-ui/icon';
+import { useState } from 'react';
+import {
+  IconArrowUpRight,
+  IconCopy,
+  IconLayoutSidebarRightExpand,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
-import { StyledLogConsoleButtonContainer } from '@/log-console/components/StyledLogConsoleButtonContainer';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { LogConsoleListLayout } from '@/log-console/components/LogConsoleListLayout';
+import {
+  type LogConsoleListTableColumn,
+  LogConsoleListTable,
+} from '@/log-console/components/LogConsoleListTable';
+import { LOG_CONSOLE_CLI_COMMANDS } from '@/log-console/constants/LogConsoleCliCommands';
+import { isLogConsoleCliGuideOpenState } from '@/log-console/states/isLogConsoleCliGuideOpenState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const TWENTY_CLI_DOCUMENTATION_URL = 'https://www.npmjs.com/package/twenty';
 
-const BUILD_APP_COMMANDS = [
-  'npx twenty app init my-app',
-  'cd my-app',
-  'yarn install',
-  'npx twenty app apply --create',
-  'npx twenty app dev',
-];
+type LogConsoleCliCommand = (typeof LOG_CONSOLE_CLI_COMMANDS)[number];
 
 export const LogConsoleCli = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  const workspaceUrl = (
-    isDefined(currentWorkspace?.workspaceUrls)
-      ? getWorkspaceUrl(currentWorkspace.workspaceUrls)
-      : window.location.origin
-  ).replace(/\/$/, '');
-
-  const getStartedCommands = [
-    `npx twenty auth login --url ${workspaceUrl} --use`,
-    'npx twenty metadata object list',
-    'npx twenty data list companies --limit 5',
-  ];
-
-  const renderCommandBlock = (commands: string[]) => (
-    <CommandBlock
-      commands={commands}
-      actions={
-        <Button
-          onClick={() =>
-            copyToClipboard(
-              commands.join('\n'),
-              t`Commands copied to clipboard`,
-            )
-          }
-          aria-label={t`Copy commands`}
-          startIcon={<IconCopy />}
-        />
-      }
-    />
+  const [searchValue, setSearchValue] = useState('');
+  const [isLogConsoleCliGuideOpen, setIsLogConsoleCliGuideOpen] = useAtomState(
+    isLogConsoleCliGuideOpenState,
   );
 
+  const normalizedSearchValue = searchValue.toLowerCase();
+
+  const filteredCommands = LOG_CONSOLE_CLI_COMMANDS.filter((cliCommand) =>
+    [cliCommand.command, t(cliCommand.description)].some((value) =>
+      value.toLowerCase().includes(normalizedSearchValue),
+    ),
+  );
+
+  const columns: LogConsoleListTableColumn<LogConsoleCliCommand>[] = [
+    {
+      label: t`Command`,
+      width: '2fr',
+      renderCell: (cliCommand) => (
+        <OverflowingTextWithTooltip text={`twenty ${cliCommand.command}`} />
+      ),
+    },
+    {
+      label: t`Description`,
+      width: '3fr',
+      renderCell: (cliCommand) => (
+        <OverflowingTextWithTooltip text={t(cliCommand.description)} />
+      ),
+    },
+  ];
+
   return (
-    <LogConsolePageContainer scrollWrapperInstanceId="log-console-cli">
-      <Section.Root>
-        <Section.Header
-          title={t`Get started`}
-          description={t`Sign in to this workspace from your terminal, then inspect metadata, query records and send API requests. Requires Node.js 24.5 or later.`}
-        />
-        {renderCommandBlock(getStartedCommands)}
-      </Section.Root>
-      <Section.Root>
-        <Section.Header
-          title={t`Build an app`}
-          description={t`Scaffold an app, register it in this workspace and sync your changes as you code.`}
-        />
-        {renderCommandBlock(BUILD_APP_COMMANDS)}
-        <StyledLogConsoleButtonContainer>
+    <LogConsoleListLayout
+      searchPlaceholder={t`Search commands`}
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
+      scrollWrapperInstanceId="log-console-cli"
+      actions={
+        <>
           <Button
-            startIcon={<IconArrowUpRight />}
+            endIcon={<IconArrowUpRight />}
             size="sm"
             variant="outline"
             onClick={() => openUrlInNewTab(TWENTY_CLI_DOCUMENTATION_URL)}
-          >{t`Read documentation`}</Button>
-        </StyledLogConsoleButtonContainer>
-      </Section.Root>
-    </LogConsolePageContainer>
+          >{t`Documentation`}</Button>
+          {!isLogConsoleCliGuideOpen && (
+            <Button
+              startIcon={<IconLayoutSidebarRightExpand />}
+              size="sm"
+              variant="outline"
+              onClick={() => setIsLogConsoleCliGuideOpen(true)}
+            >{t`Get started`}</Button>
+          )}
+        </>
+      }
+    >
+      <LogConsoleListTable
+        columns={columns}
+        items={filteredCommands}
+        getItemId={(cliCommand) => cliCommand.command}
+        onItemClick={(cliCommand) =>
+          copyToClipboard(
+            `npx twenty ${cliCommand.command}`,
+            t`Command copied to clipboard`,
+          )
+        }
+        RowActionIcon={IconCopy}
+        emptyLabel={t`No commands found`}
+      />
+    </LogConsoleListLayout>
   );
 };

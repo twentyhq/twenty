@@ -11,6 +11,7 @@ import {
   type WorkspaceRouteHandle,
   type WorkspaceRouteObject,
 } from '@/app/routing/types/WorkspaceRouteObject';
+import { LogConsoleSettingsRedirectEffect } from '@/log-console/components/LogConsoleSettingsRedirectEffect';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
@@ -154,14 +155,6 @@ const SettingsCustomDomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsCustomDomainPage').then(
     (module) => ({
       default: module.SettingsCustomDomainPage,
-    }),
-  ),
-);
-
-const SettingsApiWebhooksRedirectEffect = lazy(() =>
-  import('~/pages/settings/api-webhooks/SettingsApiWebhooksRedirectEffect').then(
-    (module) => ({
-      default: module.SettingsApiWebhooksRedirectEffect,
     }),
   ),
 );
@@ -933,31 +926,31 @@ const createSettingsRouteElements = ({
     >
       <Route
         path={SettingsPath.ApiWebhooks}
-        element={<SettingsApiWebhooksRedirectEffect />}
+        element={<LogConsoleSettingsRedirectEffect />}
       />
       <Route
         path={`${SettingsPath.GraphQLPlayground}`}
-        element={<SettingsApiWebhooksRedirectEffect />}
+        element={<LogConsoleSettingsRedirectEffect />}
       />
       <Route
         path={`${SettingsPath.RestPlayground}/*`}
-        element={<SettingsApiWebhooksRedirectEffect />}
+        element={<LogConsoleSettingsRedirectEffect />}
       />
       <Route
         path={SettingsPath.NewApiKey}
-        element={<SettingsApiWebhooksRedirectEffect view="new" />}
+        element={<LogConsoleSettingsRedirectEffect view="new" />}
       />
       <Route
         path={SettingsPath.ApiKeyDetail}
-        element={<SettingsApiWebhooksRedirectEffect view="detail" />}
+        element={<LogConsoleSettingsRedirectEffect view="detail" />}
       />
       <Route
         path={SettingsPath.NewWebhook}
-        element={<SettingsApiWebhooksRedirectEffect view="new" />}
+        element={<LogConsoleSettingsRedirectEffect view="new" />}
       />
       <Route
         path={SettingsPath.WebhookDetail}
-        element={<SettingsApiWebhooksRedirectEffect view="detail" />}
+        element={<LogConsoleSettingsRedirectEffect view="detail" />}
       />
     </Route>
 

@@ -62,6 +62,40 @@ const TIME_DETAIL_FIELD: LogConsoleDetailField = {
 
 export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
+    id: 'app-logs',
+    label: msg`App logs`,
+    Icon: IconTerminal,
+    DetailIcon: IconBrandTypescript,
+    table: EventLogTable.APPLICATION_LOG,
+    filterFields: LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS,
+    requiresAuditLogs: false,
+    columns: LOG_CONSOLE_APPLICATION_LOG_COLUMNS,
+    detailFields: [
+      {
+        label: msg`Level`,
+        Icon: IconAlertTriangle,
+        renderValue: (entry) => {
+          const level = LOG_CONSOLE_LEVELS[entry.properties?.level];
+
+          return isDefined(level) ? (
+            <Tag color={level.color}>{t(level.label)}</Tag>
+          ) : null;
+        },
+      },
+      TIME_DETAIL_FIELD,
+    ],
+    idFields: [
+      {
+        label: msg`Execution`,
+        Icon: IconTerminal,
+        getId: (entry) => entry.properties?.executionId,
+      },
+    ],
+    getSeverity: (entry) =>
+      LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
+    getDetailTitle: (entry) => entry.event,
+  },
+  {
     id: 'record-changes',
     label: msg`Record changes`,
     Icon: IconAddressBook,
@@ -112,7 +146,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   },
   {
     id: 'security',
-    label: msg`Security`,
+    label: msg`Security events`,
     Icon: IconKey,
     table: EventLogTable.WORKSPACE_EVENT,
     fieldFilters: [
@@ -163,40 +197,6 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
 
       return isDefined(securityEvent) ? t(securityEvent.label) : entry.event;
     },
-  },
-  {
-    id: 'app-logs',
-    label: msg`App logs`,
-    Icon: IconTerminal,
-    DetailIcon: IconBrandTypescript,
-    table: EventLogTable.APPLICATION_LOG,
-    filterFields: LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS,
-    requiresAuditLogs: false,
-    columns: LOG_CONSOLE_APPLICATION_LOG_COLUMNS,
-    detailFields: [
-      {
-        label: msg`Level`,
-        Icon: IconAlertTriangle,
-        renderValue: (entry) => {
-          const level = LOG_CONSOLE_LEVELS[entry.properties?.level];
-
-          return isDefined(level) ? (
-            <Tag color={level.color}>{t(level.label)}</Tag>
-          ) : null;
-        },
-      },
-      TIME_DETAIL_FIELD,
-    ],
-    idFields: [
-      {
-        label: msg`Execution`,
-        Icon: IconTerminal,
-        getId: (entry) => entry.properties?.executionId,
-      },
-    ],
-    getSeverity: (entry) =>
-      LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
-    getDetailTitle: (entry) => entry.event,
   },
   {
     id: 'webhooks',

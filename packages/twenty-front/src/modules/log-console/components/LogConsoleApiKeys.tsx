@@ -1,80 +1,111 @@
+import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { lazy, Suspense } from 'react';
-import { Section } from 'twenty-ui/components/layout';
-import { IconPlus } from 'twenty-ui/icon';
+import { useState } from 'react';
+import { IconKey, IconPlus } from 'twenty-ui/icon';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { useTheme } from 'twenty-ui/theme';
 
-import { LogConsoleApiKeyDetail } from '@/log-console/components/LogConsoleApiKeyDetail';
-import { LogConsoleApiKeyNew } from '@/log-console/components/LogConsoleApiKeyNew';
-import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
-import { StyledLogConsoleButtonContainer } from '@/log-console/components/StyledLogConsoleButtonContainer';
+import { LogConsoleApiDocumentationDropdown } from '@/log-console/components/LogConsoleApiDocumentationDropdown';
+import { LogConsoleListLayout } from '@/log-console/components/LogConsoleListLayout';
+import {
+  type LogConsoleListTableColumn,
+  LogConsoleListTable,
+} from '@/log-console/components/LogConsoleListTable';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
-import { PlaygroundSetupForm } from '@/settings/mcp-and-apis/components/PlaygroundSetupForm';
+import {
+  formatExpiration,
+  isExpired,
+} from '@/settings/developers/utils/formatExpiration';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import {
+  GetApiKeysDocument,
+  type GetApiKeysQuery,
+} from '~/generated-metadata/graphql';
 
-const LogConsoleApiPlayground = lazy(() =>
-  import('@/log-console/components/LogConsoleApiPlayground').then((module) => ({
-    default: module.LogConsoleApiPlayground,
-  })),
-);
+type ApiKeyListItem = GetApiKeysQuery['apiKeys'][number];
 
 export const LogConsoleApiKeys = () => {
   const { t } = useLingui();
+  const theme = useTheme();
+  const [searchValue, setSearchValue] = useState('');
   const [logConsoleApisView, setLogConsoleApisView] = useAtomState(
     logConsoleApisViewState,
   );
+  const { data: apiKeysData } = useQuery(GetApiKeysDocument);
 
-  switch (logConsoleApisView.type) {
-    case 'new':
-      return <LogConsoleApiKeyNew />;
-    case 'playground':
-      return (
-        <Suspense fallback={<SettingsSkeletonLoader />}>
-          <LogConsoleApiPlayground
-            playgroundType={logConsoleApisView.playgroundType}
-            schema={logConsoleApisView.schema}
+  const getApiKeyName = (apiKey: ApiKeyListItem) =>
+    apiKey.name || t`Unnamed API Key`;
+
+  const filteredApiKeys = (apiKeysData?.apiKeys ?? []).filter((apiKey) =>
+    getApiKeyName(apiKey).toLowerCase().includes(searchValue.toLowerCase()),
+  );
+
+  const columns: LogConsoleListTableColumn<ApiKeyListItem>[] = [
+    {
+      label: t`Name`,
+      width: '5fr',
+      renderCell: (apiKey) => (
+        <>
+          <IconKey size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <OverflowingTextWithTooltip text={getApiKeyName(apiKey)} />
+        </>
+      ),
+    },
+    {
+      label: t`Role`,
+      width: '4fr',
+      renderCell: (apiKey) => (
+        <OverflowingTextWithTooltip text={apiKey.role.label} />
+      ),
+    },
+    {
+      label: t`Expires`,
+      width: '3fr',
+      renderCell: (apiKey) =>
+        isExpired(apiKey.expiresAt) ? (
+          <Tag color="red">{t`Expired`}</Tag>
+        ) : (
+          <OverflowingTextWithTooltip
+            text={formatExpiration(apiKey.expiresAt)}
           />
-        </Suspense>
-      );
-    case 'detail':
-      return (
-        <LogConsoleApiKeyDetail
-          key={logConsoleApisView.id}
-          apiKeyId={logConsoleApisView.id}
-        />
-      );
-    case 'list':
-      return (
-        <LogConsolePageContainer scrollWrapperInstanceId="log-console-api-keys">
-          <Section.Root>
-            <Section.Header
-              title={t`Documentation`}
-              description={t`Try our REST or GraphQL API playgrounds`}
-            />
-            <PlaygroundSetupForm />
-          </Section.Root>
-          <Section.Root>
-            <Section.Header
-              title={t`API Keys`}
-              description={t`Active API keys created by you or your team.`}
-            />
-            <SettingsApiKeysTable
-              onApiKeyClick={(apiKeyId) =>
-                setLogConsoleApisView({ type: 'detail', id: apiKeyId })
-              }
-            />
-            <StyledLogConsoleButtonContainer>
-              <Button
-                startIcon={<IconPlus />}
-                size="sm"
-                variant="outline"
-                onClick={() => setLogConsoleApisView({ type: 'new' })}
-              >{t`Create API key`}</Button>
-            </StyledLogConsoleButtonContainer>
-          </Section.Root>
-        </LogConsolePageContainer>
-      );
-  }
+        ),
+    },
+  ];
+
+  return (
+    <LogConsoleListLayout
+      searchPlaceholder={t`Search API keys`}
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
+      scrollWrapperInstanceId="log-console-api-keys"
+      actions={
+        <>
+          <LogConsoleApiDocumentationDropdown />
+          <Button
+            startIcon={<IconPlus />}
+            size="sm"
+            variant="outline"
+            onClick={() => setLogConsoleApisView({ type: 'new' })}
+          >{t`New API key`}</Button>
+        </>
+      }
+    >
+      <LogConsoleListTable
+        columns={columns}
+        items={filteredApiKeys}
+        getItemId={(apiKey) => apiKey.id}
+        selectedItemId={
+          logConsoleApisView.type === 'detail'
+            ? logConsoleApisView.id
+            : undefined
+        }
+        onItemClick={(apiKey) =>
+          setLogConsoleApisView({ type: 'detail', id: apiKey.id })
+        }
+        emptyLabel={t`No API keys found`}
+      />
+    </LogConsoleListLayout>
+  );
 };

@@ -1,5 +1,4 @@
-import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
-import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
+import { LogConsoleDetailPanelLayout } from '@/log-console/components/LogConsoleDetailPanelLayout';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -23,9 +22,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconRepeat, IconTrash } from 'twenty-ui/icon';
+import { IconKey, IconRepeat, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
   AssignRoleToApiKeyDocument,
   CreateApiKeyDocument,
@@ -60,6 +59,7 @@ export const LogConsoleApiKeyDetail = ({
   apiKeyId,
 }: LogConsoleApiKeyDetailProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { enqueueToast } = useToast();
   const { openDialog } = useDialog();
   const [isLoading, setIsLoading] = useState(false);
@@ -240,27 +240,32 @@ export const LogConsoleApiKeyDetail = ({
 
   const confirmationValue = t`yes`;
 
+  const apiKeyIcon = (
+    <IconKey size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+  );
+
   if (apiKeyLoading || rolesLoading || !isDefined(apiKey)) {
     return (
-      <>
-        <LogConsoleSubPageHeader title={t`API Key`} onBack={goBackToList} />
+      <LogConsoleDetailPanelLayout
+        title={t`API Key`}
+        icon={apiKeyIcon}
+        onClose={goBackToList}
+      >
         {apiKeyLoading || rolesLoading ? (
           <SettingsSkeletonLoader />
         ) : (
           <SettingsEmptyPlaceholder>{t`This API key no longer exists.`}</SettingsEmptyPlaceholder>
         )}
-      </>
+      </LogConsoleDetailPanelLayout>
     );
   }
 
   return (
     <>
-      <LogConsoleSubPageHeader
+      <LogConsoleDetailPanelLayout
         title={apiKey.name || t`Unnamed API Key`}
-        onBack={goBackToList}
-      />
-      <LogConsolePageContainer
-        scrollWrapperInstanceId={`log-console-api-key-${apiKey.id}`}
+        icon={apiKeyIcon}
+        onClose={goBackToList}
       >
         <Section.Root>
           {apiKeyToken ? (
@@ -283,7 +288,7 @@ export const LogConsoleApiKeyDetail = ({
                   onClick={() => openDialog(REGENERATE_API_KEY_MODAL_ID)}
                 >{t`Regenerate Key`}</Button>
                 <StyledInfo>
-                  {formatExpiration(apiKey?.expiresAt || '', true, false)}
+                  {formatExpiration(apiKey.expiresAt, true, false)}
                 </StyledInfo>
               </StyledInputContainer>
             </>
@@ -296,7 +301,7 @@ export const LogConsoleApiKeyDetail = ({
           />
           <ApiKeyNameInput
             apiKeyName={apiKeyName}
-            apiKeyId={apiKey?.id}
+            apiKeyId={apiKey.id}
             disabled={isLoading}
             onNameUpdate={setApiKeyName}
           />
@@ -318,9 +323,8 @@ export const LogConsoleApiKeyDetail = ({
             description={t`When the key will be disabled`}
           />
           <SettingsTextInput
-            instanceId={`api-key-expiration-${apiKey?.id}`}
-            placeholder={t`E.g. backoffice integration`}
-            value={formatExpiration(apiKey?.expiresAt || '', true, false)}
+            instanceId={`api-key-expiration-${apiKey.id}`}
+            value={formatExpiration(apiKey.expiresAt, true, false)}
             disabled
             fullWidth
           />
@@ -337,7 +341,7 @@ export const LogConsoleApiKeyDetail = ({
             color="danger"
           >{t`Delete`}</Button>
         </Section.Root>
-      </LogConsolePageContainer>
+      </LogConsoleDetailPanelLayout>
       <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
