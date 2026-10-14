@@ -53,12 +53,12 @@ describe('defineWorkflow', () => {
         'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, AI_AGENT',
     },
     {
-      problem: 'a trigger type applications cannot use',
+      problem: 'an unknown trigger type',
       definition: {
         ...workflow,
         version: {
           ...workflow.version,
-          trigger: { ...workflow.version.trigger, type: 'WEBHOOK' },
+          trigger: { ...workflow.version.trigger, type: 'UNKNOWN' },
         },
       },
       error: expect.stringMatching(/^version\.trigger\.type: .*MANUAL/),
