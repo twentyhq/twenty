@@ -11,7 +11,7 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveSourceSdk } from '@/app/project/resolve-source-sdk';
 import { createSourceTestApp } from '@/app/source/__tests__/utils/create-source-test-app';
@@ -75,6 +75,21 @@ describe('source SDK compatibility', () => {
     await expect(resolveSourceSdk({ appPath })).rejects.toMatchObject({
       code: 'SDK_SOURCE_UNSUPPORTED',
       details: { missingEntryPoints: ['twenty-sdk/front-component'] },
+    });
+  });
+
+  it('warns and continues when this Node is newer than the SDK declares', async () => {
+    await updatePackage({ engines: { node: '^1.0.0' } });
+    const warn = vi.fn();
+
+    expect(await resolveSourceSdk({ appPath, warn })).toEqual({
+      version: '2.44.0',
+      packagePath: sdkPath,
+    });
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith({
+      code: 'NODE_VERSION_UNTESTED',
+      message: `twenty-sdk 2.44.0 declares Node ^1.0.0; continuing on Node ${process.versions.node}, which is outside that range.`,
     });
   });
 
