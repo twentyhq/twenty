@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { createHash } from 'crypto';
 import { type Request } from 'express';
 import { setTimeout } from 'node:timers/promises';
 import { type Readable } from 'stream';
@@ -55,10 +54,13 @@ import { isApiKeyRecordExportRequester } from 'src/engine/core-modules/record-ex
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { type RecordExportAuthContext } from 'src/engine/core-modules/record-export/types/record-export-auth-context.type';
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
+import { type RecordExportDownloadRequest } from 'src/engine/core-modules/record-export/types/record-export-download-request.type';
+import { type RecordExportSession } from 'src/engine/core-modules/record-export/types/record-export-session.type';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
+import { computeRecordExportPermissionsHash } from 'src/engine/core-modules/record-export/utils/compute-record-export-permissions-hash.util';
 import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
@@ -335,11 +337,8 @@ export class RecordExportWorkspaceService {
   }
 
   async getDownloadPath(
-    recordExport: RecordExportRequester &
-      Pick<
-        RecordExport,
-        'id' | 'requestTokenHash' | 'permissionsHash' | 'filename'
-      >,
+    recordExport: RecordExportSession &
+      Pick<RecordExport, 'id' | 'permissionsHash' | 'filename'>,
   ): Promise<string> {
     await this.resolveRequester(recordExport);
     await this.assertPermissionsUnchanged(recordExport);
@@ -384,9 +383,15 @@ export class RecordExportWorkspaceService {
     const payload = await this.verifyDownloadToken(id, token);
     const recordExport = { ...payload, id };
     this.assertDownloader({
-      request,
+      request: {
+        workspaceId: request.workspace?.id,
+        apiKeyId: request.apiKey?.id,
+        userWorkspaceId: request.userWorkspaceId,
+        workspaceMemberId: request.workspaceMemberId,
+        applicationId: request.application?.id,
+        requestTokenHash: this.getRequestTokenHashOrThrow(request),
+      },
       recordExport,
-      requestTokenHash: this.getRequestTokenHashOrThrow(request),
     });
     await this.findOrThrow(recordExport);
     const cleanup = () =>
@@ -756,26 +761,19 @@ export class RecordExportWorkspaceService {
   assertDownloader({
     request,
     recordExport,
-    requestTokenHash,
   }: {
-    request: Pick<Request, 'userWorkspaceId' | 'workspaceMemberId'> & {
-      workspace?: Pick<NonNullable<Request['workspace']>, 'id'>;
-      apiKey?: Pick<NonNullable<Request['apiKey']>, 'id'> | null;
-      application?: Pick<NonNullable<Request['application']>, 'id'> | null;
-    };
-    recordExport: RecordExportRequester &
-      Pick<RecordExport, 'requestTokenHash'>;
-    requestTokenHash: string;
+    request: RecordExportDownloadRequest;
+    recordExport: RecordExportSession;
   }): void {
     if (
-      request.workspace?.id !== recordExport.workspaceId ||
+      request.workspaceId !== recordExport.workspaceId ||
       (isApiKeyRecordExportRequester(recordExport)
-        ? request.apiKey?.id !== recordExport.apiKeyId
-        : isDefined(request.apiKey) ||
+        ? request.apiKeyId !== recordExport.apiKeyId
+        : isDefined(request.apiKeyId) ||
           request.userWorkspaceId !== recordExport.userWorkspaceId ||
           request.workspaceMemberId !== recordExport.workspaceMemberId ||
-          request.application?.id !== recordExport.applicationId) ||
-      requestTokenHash !== recordExport.requestTokenHash
+          request.applicationId !== recordExport.applicationId) ||
+      request.requestTokenHash !== recordExport.requestTokenHash
     ) {
       throw new ForbiddenException(
         t`This export belongs to another session. Please create a new export.`,
@@ -806,20 +804,7 @@ export class RecordExportWorkspaceService {
       ]);
     const application = flatApplicationMaps.byId[applicationId];
 
-    return createHash('sha256')
-      .update(
-        JSON.stringify({
-          permissionsHash,
-          application: isDefined(application)
-            ? {
-                id: application.id,
-                defaultRoleId: application.defaultRoleId,
-                deletedAt: application.deletedAt,
-              }
-            : null,
-        }),
-      )
-      .digest('hex');
+    return computeRecordExportPermissionsHash({ permissionsHash, application });
   }
 
   async assertPermissionsUnchanged(

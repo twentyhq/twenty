@@ -500,14 +500,12 @@ describe('record export lifecycle (integration)', () => {
         exports.assertDownloader({
           recordExport: payload,
           request: {
-            workspace: { id: payload.workspaceId },
+            workspaceId: payload.workspaceId,
             userWorkspaceId: payload.userWorkspaceId,
             workspaceMemberId: payload.workspaceMemberId,
-            application: isDefined(applicationId)
-              ? { id: applicationId }
-              : undefined,
+            applicationId,
+            requestTokenHash: payload.requestTokenHash,
           },
-          requestTokenHash: payload.requestTokenHash,
         }),
       ).toThrow('This export belongs to another session');
     }
