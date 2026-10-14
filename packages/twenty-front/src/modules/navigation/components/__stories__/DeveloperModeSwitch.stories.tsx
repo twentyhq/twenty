@@ -1,4 +1,6 @@
 import { DeveloperModeSwitch } from '@/navigation/components/DeveloperModeSwitch';
+import { DEVELOPER_MODE_PHRASES } from '@/navigation/constants/DeveloperModePhrases';
+import { i18n } from '@lingui/core';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -22,6 +24,9 @@ const DeveloperModeSwitchWithState = () => {
   );
 };
 
+const isDeveloperModePhrase = (text: string) =>
+  DEVELOPER_MODE_PHRASES.some((phrase) => i18n._(phrase) === text);
+
 const meta: Meta<typeof DeveloperModeSwitch> = {
   title: 'Modules/Navigation/DeveloperModeSwitch',
   component: DeveloperModeSwitch,
@@ -41,11 +46,9 @@ export const TypesAPhraseWhenTurnedOn: Story = {
       canvas.getByRole('switch', { name: 'Developer mode' }),
     );
 
-    await waitFor(
-      () =>
-        expect(canvas.queryByText('Developer mode')).not.toBeInTheDocument(),
-      { timeout: 2000 },
-    );
+    expect(
+      await canvas.findByText(isDeveloperModePhrase, {}, { timeout: 3000 }),
+    ).toBeVisible();
 
     await waitFor(
       () => expect(canvas.getByText('Developer mode')).toBeVisible(),
@@ -62,14 +65,11 @@ export const ShowsTheLabelWhenTurnedOffMidAnimation: Story = {
     });
 
     await userEvent.click(developerModeSwitch);
-    await waitFor(
-      () =>
-        expect(canvas.queryByText('Developer mode')).not.toBeInTheDocument(),
-      { timeout: 2000 },
-    );
+    await canvas.findByText(isDeveloperModePhrase, {}, { timeout: 3000 });
     await userEvent.click(developerModeSwitch);
 
     expect(developerModeSwitch).not.toBeChecked();
+    expect(canvas.queryByText(isDeveloperModePhrase)).not.toBeInTheDocument();
     expect(canvas.getByText('Developer mode')).toBeVisible();
   },
 };
