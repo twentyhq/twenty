@@ -19,6 +19,7 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
+import { setStandardErrorTerminalForTest } from '@/__tests__/utils/set-standard-error-terminal-for-test';
 import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 import * as configPath from '@/config/get-config-path';
 
@@ -306,6 +307,48 @@ describe('twenty data export', () => {
     expect(result.stdout).toContain(`Exported companies to ${outputPath}`);
     expect(result.stderr).toContain('Exporting companies… 20%');
     expect(await readFile(outputPath, 'utf8')).toBe(CSV);
+  });
+
+  it('renders a terminal progress bar and clears it before downloading', async () => {
+    const restoreTerminal = setStandardErrorTerminalForTest();
+
+    vi.stubEnv('CI', '');
+    vi.stubEnv('TERM', 'xterm-256color');
+
+    try {
+      const result = await run();
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stderr).toContain('████░░░░░░░░░░░░░░░░  20%');
+      expect(result.stderr).toContain('████████████████████  100%');
+      expect(result.stderr).toContain('\u001b[1G\u001b[2KDownloading CSV…\n');
+      expect(result.stdout).toContain(`Exported companies to ${outputPath}`);
+      expect(await readFile(outputPath, 'utf8')).toBe(CSV);
+    } finally {
+      restoreTerminal();
+    }
+  });
+
+  it('clears the terminal bar when Ctrl-C interrupts generation', async () => {
+    const restoreTerminal = setStandardErrorTerminalForTest();
+
+    vi.stubEnv('CI', '');
+    vi.stubEnv('TERM', 'xterm-256color');
+    cancellation = 'subscription';
+
+    try {
+      const result = await run();
+
+      expect(result.exitCode).toBe(130);
+      expect(result.stderr).toContain('░');
+      expect(result.stderr.indexOf('Cancelled.')).toBeGreaterThan(
+        result.stderr.lastIndexOf('\u001b[1G\u001b[2K'),
+      );
+      expect(result.stdout).toBe('');
+      expect(await readdir(directory)).toEqual([]);
+    } finally {
+      restoreTerminal();
+    }
   });
 
   it.each(['missing', 'inactive'])(

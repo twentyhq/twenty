@@ -103,7 +103,7 @@ export const runDataExportCommand: CommandRun<TargetCommandContext> = async ({
       output.progress(
         `Target: ${target.remoteName ?? target.source} (${target.apiUrl})`,
       );
-      output.progress(`Exporting ${object.namePlural}…`);
+      output.progress(`Exporting ${object.namePlural}…`, { percentage: 0 });
     }
     let result: { id: string; bytes: number } | undefined;
     let exportId: string | undefined;
@@ -158,9 +158,9 @@ export const runDataExportCommand: CommandRun<TargetCommandContext> = async ({
             signal,
           );
           if (outputMode === 'human') {
-            output.progress(
-              `Exporting ${object.namePlural}… ${update.progress}%`,
-            );
+            output.progress(`Exporting ${object.namePlural}…`, {
+              percentage: update.progress,
+            });
           }
           lastProgress = update.progress;
         }

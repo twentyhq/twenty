@@ -10,7 +10,7 @@ export type Output = {
     signal: AbortSignal,
   ) => Promise<void>;
   warn: (warning: CliWarning) => void;
-  progress: (message: string) => void;
+  progress: (message: string, options?: { percentage: number }) => void;
   succeed: (result: CommandResult, target?: PublicTarget) => void;
   fail: (error: CliError, target?: PublicTarget) => void;
 };

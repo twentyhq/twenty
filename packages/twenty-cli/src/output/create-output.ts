@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { createProgressOutput } from '@/output/create-progress-output';
 import { JSON_SCHEMA_VERSION } from '@/output/constants/json-schema-version.constant';
 import { formatFailureLine, formatWarningLine } from '@/output/style';
 import { type CliWarning } from '@/output/types/cli-warning.type';
@@ -34,6 +35,7 @@ export const createOutput = ({
   command: string;
 }): Output => {
   const warnings: CliWarning[] = [];
+  const progressOutput = createProgressOutput({ mode });
   let eventSequence = 0;
 
   const writeEvent = (type: string, data: unknown) => {
@@ -71,16 +73,18 @@ export const createOutput = ({
         signal,
       );
     },
-    progress: (message) => {
+    progress: (message, options) => {
       if (mode === 'ndjson') {
         writeEvent('progress', { message });
 
         return;
       }
 
-      writeLine(process.stderr, message);
+      progressOutput.write(message, options);
     },
     warn: (warning) => {
+      progressOutput.clear();
+
       if (mode === 'ndjson') {
         writeEvent('warning', warning);
 
@@ -90,6 +94,8 @@ export const createOutput = ({
       warnings.push(warning);
     },
     succeed: ({ data, human }, target) => {
+      progressOutput.clear();
+
       if (mode === 'json') {
         writeJsonLine({
           schemaVersion: JSON_SCHEMA_VERSION,
@@ -118,6 +124,8 @@ export const createOutput = ({
       writeHumanWarnings();
     },
     fail: (error, target) => {
+      progressOutput.clear();
+
       process.exitCode = error.exitCode;
 
       const errorPayload = {
