@@ -160,8 +160,6 @@ export const computeWhereConditionParts = ({
         sql: `${fieldReference} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
         params: {},
       };
-    // Only cursors use eqStrict, so equality must always match ORDER BY precision.
-    // Millisecond ranges would treat distinct timestamps as ties, skipping or duplicating records.
     case 'eqStrict':
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}`,
