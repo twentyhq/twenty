@@ -241,7 +241,7 @@ import { RestoreUsageLimitMeterCompatibilityFastInstanceCommand } from 'src/data
 import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791720497488-drop-usage-limit-meter';
 import { SetWorkspaceEventLogRetentionDefaultFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791790299002-set-workspace-event-log-retention-default';
 import { AddWidgetAvailabilityToFrontComponentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791898075681-add-widget-availability-to-front-component';
-import { AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791919200193-add-identify-account-logic-function-and-external-account-id';
+import { AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791956074766-add-identify-account-logic-function-and-external-account-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

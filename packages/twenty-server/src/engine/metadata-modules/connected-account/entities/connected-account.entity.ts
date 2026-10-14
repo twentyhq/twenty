@@ -60,7 +60,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.47.0_AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand_1791919200193',
+      '2.47.0_AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand_1791956074766',
   })
   externalAccountId: string | null;
 
