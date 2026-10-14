@@ -65,37 +65,46 @@ export class FilterArgProcessorService {
         flatObjectMetadata,
       );
 
-    return this.validateAndTransformFilter(
-      filter,
+    return this.validateAndTransformFilter({
+      filterObject: filter,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       fieldIdByName,
       fieldIdByJoinColumnName,
-      0,
-    ) as T;
+      depth: 0,
+    }) as T;
   }
 
-  private validateAndTransformFilter(
-    filterObject: ObjectRecordFilter,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    fieldIdByName: Record<string, string>,
-    fieldIdByJoinColumnName: Record<string, string>,
-    depth: number,
+  private validateAndTransformFilter({
+    filterObject,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    fieldIdByName,
+    fieldIdByJoinColumnName,
+    depth,
+    parentRelationFieldMetadata,
+  }: {
+    filterObject: ObjectRecordFilter;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    fieldIdByName: Record<string, string>;
+    fieldIdByJoinColumnName: Record<string, string>;
+    depth: number;
     parentRelationFieldMetadata?: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-    >,
-  ): ObjectRecordFilter {
+    >;
+  }): ObjectRecordFilter {
     const transformedFilter: ObjectRecordFilter = {};
 
     for (const [key, value] of Object.entries(filterObject)) {
       if (key === 'and' || key === 'or') {
         transformedFilter[key] = (value as ObjectRecordFilter[]).map(
           (nestedFilter) =>
-            this.validateAndTransformFilter(
-              nestedFilter,
+            this.validateAndTransformFilter({
+              filterObject: nestedFilter,
               flatObjectMetadata,
               flatObjectMetadataMaps,
               flatFieldMetadataMaps,
@@ -103,14 +112,14 @@ export class FilterArgProcessorService {
               fieldIdByJoinColumnName,
               depth,
               parentRelationFieldMetadata,
-            ),
+            }),
         );
         continue;
       }
 
       if (key === 'not') {
-        transformedFilter[key] = this.validateAndTransformFilter(
-          value as ObjectRecordFilter,
+        transformedFilter[key] = this.validateAndTransformFilter({
+          filterObject: value as ObjectRecordFilter,
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
@@ -118,7 +127,7 @@ export class FilterArgProcessorService {
           fieldIdByJoinColumnName,
           depth,
           parentRelationFieldMetadata,
-        );
+        });
         continue;
       }
 
@@ -141,15 +150,15 @@ export class FilterArgProcessorService {
         continue;
       }
 
-      transformedFilter[key] = this.validateAndTransformFieldFilter(
+      transformedFilter[key] = this.validateAndTransformFieldFilter({
         key,
-        value,
+        filterValue: value,
         flatObjectMetadata,
         flatFieldMetadataMaps,
         fieldIdByName,
         fieldIdByJoinColumnName,
         parentRelationFieldMetadata,
-      );
+      });
     }
 
     return transformedFilter;
@@ -262,29 +271,37 @@ export class FilterArgProcessorService {
       targetObjectMetadata,
     );
 
-    return this.validateAndTransformFilter(
-      filterValue,
-      targetObjectMetadata,
+    return this.validateAndTransformFilter({
+      filterObject: filterValue,
+      flatObjectMetadata: targetObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      targetFieldIdByName,
-      targetFieldIdByJoinColumnName,
-      depth + 1,
-      fieldMetadata,
-    );
+      fieldIdByName: targetFieldIdByName,
+      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
+      depth: depth + 1,
+      parentRelationFieldMetadata: fieldMetadata,
+    });
   }
 
-  private validateAndTransformFieldFilter(
-    key: string,
-    filterValue: Record<string, unknown>,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    fieldIdByName: Record<string, string>,
-    fieldIdByJoinColumnName: Record<string, string>,
+  private validateAndTransformFieldFilter({
+    key,
+    filterValue,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    fieldIdByName,
+    fieldIdByJoinColumnName,
+    parentRelationFieldMetadata,
+  }: {
+    key: string;
+    filterValue: Record<string, unknown>;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    fieldIdByName: Record<string, string>;
+    fieldIdByJoinColumnName: Record<string, string>;
     parentRelationFieldMetadata?: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-    >,
-  ): Record<string, unknown> {
+    >;
+  }): Record<string, unknown> {
     const fieldMetadataId = fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
 
     if (!isDefined(fieldMetadataId)) {
@@ -292,14 +309,14 @@ export class FilterArgProcessorService {
       const relationContext = isDefined(parentRelationFieldMetadata)
         ? ` (filtering through relation "${parentRelationFieldMetadata.name}")`
         : '';
-      const hint =
+      const joinColumnHint =
         parentRelationFieldMetadata?.settings?.relationType ===
         RelationType.MANY_TO_ONE
-          ? `To filter by the related record, use "${computeMorphOrRelationFieldJoinColumnName({ name: parentRelationFieldMetadata.name })}".`
-          : 'Filter keys must be field names or and/or/not, with operators nested under a field: { <fieldName>: { <operator>: <value> } }.';
+          ? ` To filter by the related record id instead, use "${computeMorphOrRelationFieldJoinColumnName({ name: parentRelationFieldMetadata.name })}".`
+          : '';
 
       throw new CommonQueryRunnerException(
-        `Object ${nameSingular} doesn't have any "${key}" field${relationContext}. ${hint}`,
+        `Object ${nameSingular} doesn't have any "${key}" field${relationContext}. Filter keys must be field names or and/or/not, with operators nested under a field: { <fieldName>: { <operator>: <value> } }.${joinColumnHint}`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
         {
           userFriendlyMessage: msg`Invalid filter : ${nameSingular} object doesn't have any "${key}" field.`,
