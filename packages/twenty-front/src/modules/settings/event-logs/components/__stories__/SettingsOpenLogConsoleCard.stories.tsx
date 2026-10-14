@@ -1,6 +1,7 @@
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { SettingsOpenLogConsoleCard } from '@/settings/event-logs/components/SettingsOpenLogConsoleCard';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
@@ -11,7 +12,8 @@ const meta: Meta<typeof SettingsOpenLogConsoleCard> = {
   component: SettingsOpenLogConsoleCard,
   decorators: [ComponentDecorator],
   beforeEach: () => {
-    jotaiStore.set(logConsoleDisplayModeState.atom, 'closed');
+    jotaiStore.set(isAdvancedModeEnabledState.atom, false);
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     jotaiStore.set(isLogConsoleFullScreenState.atom, true);
   },
 };
@@ -27,6 +29,7 @@ export const OpensLogConsole: Story = {
     );
 
     await waitFor(() => {
+      expect(jotaiStore.get(isAdvancedModeEnabledState.atom)).toBe(true);
       expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
       expect(jotaiStore.get(isLogConsoleFullScreenState.atom)).toBe(false);
     });

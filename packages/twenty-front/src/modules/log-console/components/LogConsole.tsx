@@ -5,7 +5,6 @@ import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { type TransitionEvent, useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import {
@@ -14,7 +13,6 @@ import {
   IconLock,
   IconMaximize,
   IconMinimize,
-  IconX,
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -45,6 +43,7 @@ import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -258,10 +257,10 @@ export const LogConsole = () => {
   const { t } = useLingui();
   const store = useStore();
   const theme = useTheme();
-  const { enqueueToast } = useToast();
   const shouldReduceMotion = useReducedMotion();
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
@@ -294,7 +293,7 @@ export const LogConsole = () => {
 
   const isOpen = logConsoleDisplayMode === 'open';
   const isFullScreen = isOpen && isLogConsoleFullScreen;
-  const isVisible = isLogConsoleAllowed && logConsoleDisplayMode !== 'closed';
+  const isVisible = isLogConsoleAllowed && isAdvancedModeEnabled;
 
   const [renderedLayout, setRenderedLayout] = useState<LogConsoleLayout | null>(
     isVisible ? { isOpen, isFullScreen } : null,
@@ -360,7 +359,7 @@ export const LogConsole = () => {
     shortcut: ['Mod', 'J'],
   });
 
-  const toggleHotkeyEffect = isLogConsoleAllowed ? (
+  const toggleHotkeyEffect = isVisible ? (
     <LogConsoleToggleHotkeyEffect onToggle={toggleLogConsoleOpen} />
   ) : null;
 
@@ -532,16 +531,6 @@ export const LogConsole = () => {
     );
   };
 
-  const closeLogConsole = () => {
-    closeSelectedLog();
-    setLogConsoleDisplayMode('closed');
-    setIsLogConsoleFullScreen(false);
-    enqueueToast({
-      status: 'info',
-      children: t`Logs console hidden. Press ${toggleHotkeyLabel} to open it again.`,
-    });
-  };
-
   const handlePanelTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
     if (
       event.target !== event.currentTarget ||
@@ -565,7 +554,6 @@ export const LogConsole = () => {
   const fullScreenLabel = displayedLayout.isFullScreen
     ? t`Exit full screen`
     : t`Full screen`;
-  const closeLabel = t`Close`;
 
   const renderActiveSource = () => {
     if (!isClickHouseConfigured) {
@@ -617,14 +605,6 @@ export const LogConsole = () => {
             onChangeTab={changeSource}
             rightComponent={
               <StyledBarActions>
-                <LightIconButton
-                  emphasis="subtle"
-                  tooltip={closeLabel}
-                  aria-label={closeLabel}
-                  onClick={closeLogConsole}
-                >
-                  <IconX />
-                </LightIconButton>
                 <LightIconButton
                   emphasis="subtle"
                   tooltip={fullScreenLabel}

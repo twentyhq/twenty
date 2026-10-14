@@ -1,10 +1,10 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const logConsoleDisplayModeState = createAtomState<
-  'collapsed' | 'open' | 'closed'
+  'collapsed' | 'open'
 >({
   key: 'logConsoleDisplayModeState',
-  defaultValue: 'closed',
+  defaultValue: 'collapsed',
   useLocalStorage: true,
   localStorageOptions: { getOnInit: true },
 });
