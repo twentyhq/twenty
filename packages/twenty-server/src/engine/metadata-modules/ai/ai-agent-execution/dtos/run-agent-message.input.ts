@@ -5,14 +5,11 @@ import {
   ArrayMaxSize,
   IsArray,
   IsEnum,
-  IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { type RunAgentMessage } from 'twenty-shared/application';
-import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { MAX_RUN_AGENT_MESSAGE_ATTACHMENTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/max-run-agent-message-attachments.const';
 import { RunAgentMessageAttachmentInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-message-attachment.input';
@@ -24,11 +21,8 @@ export class RunAgentMessageInputDTO implements RunAgentMessage {
   @Field(() => RunAgentMessageRole)
   role: RunAgentMessageRole;
 
+  // the service refuses blank input turns; installed apps still replay blank ones through messages
   @IsString()
-  @ValidateIf(
-    (message: RunAgentMessageInputDTO) => !isNonEmptyArray(message.attachments),
-  )
-  @IsNotEmpty()
   @Field()
   content: string;
 
