@@ -220,13 +220,6 @@ export class FilterArgProcessorService {
       throwUseJoinColumnInstead(key);
     }
 
-    if (
-      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE &&
-      Object.keys(filterValue).some(isFilterOperator)
-    ) {
-      throwUseJoinColumnInstead(key);
-    }
-
     const targetObjectMetadataId = fieldMetadata.relationTargetObjectMetadataId;
 
     if (
@@ -246,6 +239,28 @@ export class FilterArgProcessorService {
       throwUseJoinColumnInstead(key);
     }
 
+    const {
+      fieldIdByName: targetFieldIdByName,
+      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
+    } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      targetObjectMetadata,
+    );
+
+    const hasOperatorAtTargetFieldPosition = Object.keys(filterValue).some(
+      (filterKey) =>
+        isFilterOperator(filterKey) &&
+        !isDefined(targetFieldIdByName[filterKey]) &&
+        !isDefined(targetFieldIdByJoinColumnName[filterKey]),
+    );
+
+    if (
+      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE &&
+      hasOperatorAtTargetFieldPosition
+    ) {
+      throwUseJoinColumnInstead(key);
+    }
+
     if (depth >= MAX_RELATION_FILTER_DEPTH) {
       throw new CommonQueryRunnerException(
         `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
@@ -255,14 +270,6 @@ export class FilterArgProcessorService {
         },
       );
     }
-
-    const {
-      fieldIdByName: targetFieldIdByName,
-      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
-    } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      targetObjectMetadata,
-    );
 
     return this.validateAndTransformFilter(
       filterValue,

@@ -35,6 +35,13 @@ describe('FilterArgProcessorService', () => {
     objectMetadataId: 'company-object-id',
   });
 
+  const companyLikeField = createMockField({
+    id: 'company-like-id',
+    name: 'like',
+    type: FieldMetadataType.TEXT,
+    objectMetadataId: 'company-object-id',
+  });
+
   const companyField = createMockField({
     id: 'company-id',
     name: 'company',
@@ -61,7 +68,7 @@ describe('FilterArgProcessorService', () => {
     companyField,
   ];
 
-  const allFields = [...fields, companyNameField];
+  const allFields = [...fields, companyNameField, companyLikeField];
 
   const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
     byUniversalIdentifier: Object.fromEntries(
@@ -82,7 +89,7 @@ describe('FilterArgProcessorService', () => {
   const companyObjectMetadata = {
     id: 'company-object-id',
     nameSingular: 'company',
-    fieldIds: [companyNameField.id],
+    fieldIds: [companyNameField.id, companyLikeField.id],
   } as unknown as FlatObjectMetadata;
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
@@ -144,6 +151,18 @@ describe('FilterArgProcessorService', () => {
   it('should point to the join column when an operator is applied to a many-to-one relation', () => {
     expect(() => processFilter({ company: { eq: 'company-uuid' } })).toThrow(
       'Cannot filter by relation field "company": use "companyId" instead',
+    );
+  });
+
+  it('should accept a related object field whose name matches an operator', () => {
+    expect(processFilter({ company: { like: { eq: 'Acme' } } })).toEqual({
+      company: { like: { eq: 'Acme' } },
+    });
+  });
+
+  it('should not suggest nesting the search operator under a field', () => {
+    expect(() => processFilter({ search: 'ada' })).toThrow(
+      /^Object person doesn't have any "search" field\.$/,
     );
   });
 });

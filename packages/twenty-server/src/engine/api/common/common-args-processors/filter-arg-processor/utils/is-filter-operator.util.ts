@@ -1,6 +1,7 @@
 import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
 
-const FILTER_OPERATORS: Record<FilterOperator, true> = {
+// search is accepted by no field type, so it never gets a nesting hint
+const FILTER_OPERATORS: Record<Exclude<FilterOperator, 'search'>, true> = {
   eq: true,
   neq: true,
   gt: true,
@@ -16,10 +17,10 @@ const FILTER_OPERATORS: Record<FilterOperator, true> = {
   containsAny: true,
   containsIlike: true,
   isEmptyArray: true,
-  search: true,
 };
 
 const FILTER_OPERATOR_SET = new Set<string>(Object.keys(FILTER_OPERATORS));
 
-export const isFilterOperator = (key: string): key is FilterOperator =>
-  FILTER_OPERATOR_SET.has(key);
+export const isFilterOperator = (
+  key: string,
+): key is Exclude<FilterOperator, 'search'> => FILTER_OPERATOR_SET.has(key);
