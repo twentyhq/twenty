@@ -38,7 +38,7 @@ export const DropdownRowsEffect = ({ content }: DropdownRowsEffectProps) => {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['disabled', 'aria-disabled'],
+      attributeFilter: ['disabled', 'aria-disabled', 'id'],
     });
 
     return () => {

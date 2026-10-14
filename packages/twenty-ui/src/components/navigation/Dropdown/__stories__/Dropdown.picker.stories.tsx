@@ -8,6 +8,7 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
+import { createStoryState } from './createStoryState';
 import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
 const PEOPLE = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
@@ -20,6 +21,8 @@ const onSelectOption = fn();
 const onSelectDisabledOption = fn();
 const onOpenChange = fn();
 const onSearchChange = fn();
+
+const reviewerIdRevision = createStoryState(0);
 
 const SearchablePicker = ({
   multiple = false,
@@ -109,6 +112,27 @@ const OwnerPicker = () => {
   );
 };
 
+const ReviewerPicker = () => {
+  const revision = reviewerIdRevision.useValue();
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Reviewers</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Choose reviewers">
+        {PEOPLE.map((person, index) => (
+          <Dropdown.OptionItem
+            key={person}
+            id={`reviewer-${index}-${revision}`}
+            selected={false}
+          >
+            {person}
+          </Dropdown.OptionItem>
+        ))}
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+
 const openOwner = async (canvasElement: HTMLElement) => {
   const body = within(canvasElement.ownerDocument.body);
 
@@ -181,6 +205,8 @@ const meta: Meta = {
     ]) {
       spy.mockClear();
     }
+
+    reviewerIdRevision.set(0);
   },
 };
 
@@ -955,5 +981,37 @@ export const TabLeavesPicker: Story = {
     );
     expect(onSelectPerson).not.toHaveBeenCalled();
     expect(onCreatePerson).not.toHaveBeenCalled();
+  },
+};
+
+export const RowIdChangeKeepsOneTabStop: Story = {
+  render: () => <ReviewerPicker />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Reviewers' }),
+    );
+    const dialog = await body.findByRole('dialog', {
+      name: 'Choose reviewers',
+    });
+    const ada = within(dialog).getByRole('button', { name: 'Ada Lovelace' });
+    const grace = within(dialog).getByRole('button', { name: 'Grace Hopper' });
+    const getTabStops = () =>
+      within(dialog)
+        .getAllByRole('button')
+        .filter((row) => row.getAttribute('tabindex') === '0');
+
+    await waitFor(() => expect(ada).toHaveFocus());
+    await waitFor(() => expect(getTabStops()).toEqual([ada]));
+
+    reviewerIdRevision.set(1);
+
+    await waitFor(() => expect(grace).toHaveAttribute('id', 'reviewer-1-1'));
+    await waitFor(() => expect(getTabStops()).toEqual([ada]));
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
   },
 };
