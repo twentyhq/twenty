@@ -1,12 +1,13 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { UPDATE_PAGE_LAYOUT_WIDGET_IS_ACTIVE } from '@/page-layout/graphql/mutations/updatePageLayoutWidgetIsActive';
-import { useUpdatePageLayoutWidgetsIsActive } from '@/page-layout/hooks/useUpdatePageLayoutWidgetsIsActive';
+import { UPDATE_PAGE_LAYOUT_WIDGET } from '@/page-layout/graphql/mutations/updatePageLayoutWidget';
+import { useUpdatePageLayoutWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWidgets';
 import { type MockedResponse } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 const handleMetadataError = jest.fn();
 
@@ -18,13 +19,26 @@ jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast: jest.fn() }),
 }));
 
-const updatePageLayoutWidgetIsActiveResult = jest.fn(
-  (variables: { id: string; isActive: boolean }) => ({
+const updatePageLayoutWidgetResult = jest.fn(
+  (variables: {
+    id: string;
+    input: {
+      isActive?: boolean;
+      position?: { layoutMode: PageLayoutTabLayoutMode; index: number };
+    };
+  }) => ({
     data: {
       updatePageLayoutWidget: {
         __typename: 'PageLayoutWidget',
         id: variables.id,
-        isActive: variables.isActive,
+        isActive: variables.input.isActive ?? false,
+        position: variables.input.position
+          ? {
+              __typename: 'PageLayoutWidgetVerticalListPosition',
+              heightBehavior: null,
+              ...variables.input.position,
+            }
+          : null,
       },
     },
   }),
@@ -35,6 +49,7 @@ const buildWidget = (id: string, isActive: boolean) => ({
   pageLayoutTabId: 'tab-id',
   title: '',
   isActive,
+  position: null,
 });
 
 const getStoredWidgets = (store: ReturnType<typeof createStore>) =>
@@ -44,7 +59,7 @@ const renderUpdateHook = (
   store: ReturnType<typeof createStore>,
   mocks: MockedResponse[],
 ) =>
-  renderHook(() => useUpdatePageLayoutWidgetsIsActive(), {
+  renderHook(() => useUpdatePageLayoutWidgets(), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <JotaiProvider store={store}>
         <MockedProvider mocks={mocks}>{children}</MockedProvider>
@@ -52,7 +67,7 @@ const renderUpdateHook = (
     ),
   });
 
-describe('useUpdatePageLayoutWidgetsIsActive', () => {
+describe('useUpdatePageLayoutWidgets', () => {
   let store: ReturnType<typeof createStore>;
 
   beforeEach(() => {
@@ -73,18 +88,18 @@ describe('useUpdatePageLayoutWidgetsIsActive', () => {
     const { result } = renderUpdateHook(store, [
       {
         request: {
-          query: UPDATE_PAGE_LAYOUT_WIDGET_IS_ACTIVE,
+          query: UPDATE_PAGE_LAYOUT_WIDGET,
           variables: () => true,
         },
         maxUsageCount: Number.POSITIVE_INFINITY,
-        result: updatePageLayoutWidgetIsActiveResult,
+        result: updatePageLayoutWidgetResult,
       },
     ]);
 
     let outcome: { status: string } | undefined;
 
     await act(async () => {
-      outcome = await result.current.updatePageLayoutWidgetsIsActive([
+      outcome = await result.current.updatePageLayoutWidgets([
         { widgetId: 'widget-a', isActive: false },
         { widgetId: 'widget-b', isActive: true },
       ]);
@@ -92,12 +107,10 @@ describe('useUpdatePageLayoutWidgetsIsActive', () => {
 
     expect(outcome).toEqual({ status: 'successful' });
     expect(
-      updatePageLayoutWidgetIsActiveResult.mock.calls.map(
-        ([variables]) => variables,
-      ),
+      updatePageLayoutWidgetResult.mock.calls.map(([variables]) => variables),
     ).toEqual([
-      { id: 'widget-a', isActive: false },
-      { id: 'widget-b', isActive: true },
+      { id: 'widget-a', input: { isActive: false } },
+      { id: 'widget-b', input: { isActive: true } },
     ]);
     expect(getStoredWidgets(store)).toEqual([
       buildWidget('widget-a', false),
@@ -106,35 +119,88 @@ describe('useUpdatePageLayoutWidgetsIsActive', () => {
     ]);
   });
 
+  it('persists a position change and reflects it in the metadata store', async () => {
+    const { result } = renderUpdateHook(store, [
+      {
+        request: {
+          query: UPDATE_PAGE_LAYOUT_WIDGET,
+          variables: () => true,
+        },
+        result: updatePageLayoutWidgetResult,
+      },
+    ]);
+
+    await act(async () => {
+      await result.current.updatePageLayoutWidgets([
+        {
+          widgetId: 'widget-c',
+          isActive: false,
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
+        },
+      ]);
+    });
+
+    expect(
+      updatePageLayoutWidgetResult.mock.calls.map(([variables]) => variables),
+    ).toEqual([
+      {
+        id: 'widget-c',
+        input: {
+          isActive: false,
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
+        },
+      },
+    ]);
+    expect(getStoredWidgets(store)).toEqual([
+      buildWidget('widget-a', true),
+      buildWidget('widget-b', false),
+      {
+        ...buildWidget('widget-c', false),
+        position: {
+          __typename: 'PageLayoutWidgetVerticalListPosition',
+          heightBehavior: null,
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 0,
+        },
+      },
+    ]);
+  });
+
   it('keeps the changes saved before a refusal and stops there', async () => {
     const { result } = renderUpdateHook(store, [
       {
         request: {
-          query: UPDATE_PAGE_LAYOUT_WIDGET_IS_ACTIVE,
-          variables: { id: 'widget-a', isActive: false },
+          query: UPDATE_PAGE_LAYOUT_WIDGET,
+          variables: { id: 'widget-a', input: { isActive: false } },
         },
-        result: updatePageLayoutWidgetIsActiveResult,
+        result: updatePageLayoutWidgetResult,
       },
       {
         request: {
-          query: UPDATE_PAGE_LAYOUT_WIDGET_IS_ACTIVE,
-          variables: { id: 'widget-b', isActive: true },
+          query: UPDATE_PAGE_LAYOUT_WIDGET,
+          variables: { id: 'widget-b', input: { isActive: true } },
         },
         result: { errors: [new GraphQLError('Forbidden')] },
       },
       {
         request: {
-          query: UPDATE_PAGE_LAYOUT_WIDGET_IS_ACTIVE,
-          variables: { id: 'widget-c', isActive: true },
+          query: UPDATE_PAGE_LAYOUT_WIDGET,
+          variables: { id: 'widget-c', input: { isActive: true } },
         },
-        result: updatePageLayoutWidgetIsActiveResult,
+        result: updatePageLayoutWidgetResult,
       },
     ]);
 
     let outcome: { status: string } | undefined;
 
     await act(async () => {
-      outcome = await result.current.updatePageLayoutWidgetsIsActive([
+      outcome = await result.current.updatePageLayoutWidgets([
         { widgetId: 'widget-a', isActive: false },
         { widgetId: 'widget-b', isActive: true },
         { widgetId: 'widget-c', isActive: true },
@@ -144,10 +210,8 @@ describe('useUpdatePageLayoutWidgetsIsActive', () => {
     expect(outcome).toEqual({ status: 'failed' });
     expect(handleMetadataError).toHaveBeenCalledTimes(1);
     expect(
-      updatePageLayoutWidgetIsActiveResult.mock.calls.map(
-        ([variables]) => variables,
-      ),
-    ).toEqual([{ id: 'widget-a', isActive: false }]);
+      updatePageLayoutWidgetResult.mock.calls.map(([variables]) => variables),
+    ).toEqual([{ id: 'widget-a', input: { isActive: false } }]);
     expect(getStoredWidgets(store)).toEqual([
       buildWidget('widget-a', false),
       buildWidget('widget-b', false),

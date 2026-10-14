@@ -64,7 +64,7 @@ const COMPANY_OBJECT = {
   ],
 };
 
-const updatePageLayoutWidgetsIsActive = jest.fn();
+const updatePageLayoutWidgets = jest.fn();
 const goBackFromSidePanel = jest.fn(() =>
   jotaiStore.set(sidePanelNavigationStackState.atom, (navigationStack) =>
     navigationStack.slice(0, -1),
@@ -94,9 +94,9 @@ jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
   }),
 }));
 
-jest.mock('@/page-layout/hooks/useUpdatePageLayoutWidgetsIsActive', () => ({
-  useUpdatePageLayoutWidgetsIsActive: () => ({
-    updatePageLayoutWidgetsIsActive,
+jest.mock('@/page-layout/hooks/useUpdatePageLayoutWidgets', () => ({
+  useUpdatePageLayoutWidgets: () => ({
+    updatePageLayoutWidgets,
   }),
 }));
 
@@ -182,10 +182,14 @@ const renderPage = () =>
   render(<SidePanelRecordCreationFormSettingsPage />, { wrapper: Wrapper });
 
 describe('SidePanelRecordCreationFormSettingsPage', () => {
+  beforeAll(() => {
+    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    updatePageLayoutWidgetsIsActive.mockResolvedValue({
+    updatePageLayoutWidgets.mockResolvedValue({
       status: 'successful',
     });
     seedRecordFormPageLayout();
@@ -232,8 +236,8 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     await user.click(screen.getByRole('button', { name: 'Show Name' }));
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
-    expect(updatePageLayoutWidgetsIsActive).toHaveBeenCalledTimes(1);
-    expect(updatePageLayoutWidgetsIsActive).toHaveBeenCalledWith([
+    expect(updatePageLayoutWidgets).toHaveBeenCalledTimes(1);
+    expect(updatePageLayoutWidgets).toHaveBeenCalledWith([
       { widgetId: 'widget-field-domain', isActive: false },
       { widgetId: 'widget-field-nickname', isActive: true },
     ]);
@@ -248,7 +252,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     await user.click(screen.getByRole('button', { name: 'Hide Domain' }));
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    expect(updatePageLayoutWidgetsIsActive).not.toHaveBeenCalled();
+    expect(updatePageLayoutWidgets).not.toHaveBeenCalled();
     expect(goBackFromSidePanel).toHaveBeenCalled();
   });
 
@@ -256,7 +260,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     const user = userEvent.setup();
     let resolveSave: (value: { status: 'successful' }) => void = () => {};
 
-    updatePageLayoutWidgetsIsActive.mockReturnValue(
+    updatePageLayoutWidgets.mockReturnValue(
       new Promise((resolve) => {
         resolveSave = resolve;
       }),
@@ -279,7 +283,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
   it('ignores visibility toggles while a save is running', async () => {
     const user = userEvent.setup();
 
-    updatePageLayoutWidgetsIsActive.mockReturnValue(new Promise(() => {}));
+    updatePageLayoutWidgets.mockReturnValue(new Promise(() => {}));
 
     renderPage();
 
@@ -295,7 +299,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
   it('stays on the page when saving fails', async () => {
     const user = userEvent.setup();
 
-    updatePageLayoutWidgetsIsActive.mockResolvedValue({ status: 'failed' });
+    updatePageLayoutWidgets.mockResolvedValue({ status: 'failed' });
 
     renderPage();
 
