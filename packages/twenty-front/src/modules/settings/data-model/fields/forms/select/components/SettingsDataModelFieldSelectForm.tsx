@@ -104,11 +104,9 @@ const StyledLabelContainer = styled.div`
   width: 100%;
 `;
 
-const StyledFooterContainer = styled.div`
-  > div {
-    background-color: ${themeCssVariables.background.secondary};
-    padding: ${themeCssVariables.spacing[1]};
-  }
+const StyledFooter = styled(Card.Footer)`
+  background-color: ${themeCssVariables.background.secondary};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -506,16 +504,14 @@ export const SettingsDataModelFieldSelectForm = ({
               </Card.Content>
             </StyledContainerWrapper>
             {!disabled && !isBulkInputMode && (
-              <StyledFooterContainer>
-                <Card.Footer>
-                  <StyledButtonContainer>
-                    <LightButton
-                      startIcon={<IconPlus />}
-                      onClick={handleAddOption}
-                    >{t`Add option`}</LightButton>
-                  </StyledButtonContainer>
-                </Card.Footer>
-              </StyledFooterContainer>
+              <StyledFooter>
+                <StyledButtonContainer>
+                  <LightButton
+                    startIcon={<IconPlus />}
+                    onClick={handleAddOption}
+                  >{t`Add option`}</LightButton>
+                </StyledButtonContainer>
+              </StyledFooter>
             )}
           </>
         )}
