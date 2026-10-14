@@ -59,10 +59,9 @@ const fetchTeamsUserLinks = async (): Promise<TeamsUserLinkRecord[]> => {
       });
     }
 
-    startingAfter =
-      response.pageInfo?.hasNextPage === true
-        ? (response.pageInfo.endCursor ?? undefined)
-        : undefined;
+    startingAfter = response.pageInfo?.hasNextPage
+      ? (response.pageInfo.endCursor ?? undefined)
+      : undefined;
   } while (isNonEmptyString(startingAfter));
 
   return records.sort((left, right) => left.name.localeCompare(right.name));
