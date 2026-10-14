@@ -38,8 +38,9 @@ export type UsageApplicationBreakdownItem = CreditsUsedAmounts & {
   operation: string;
 };
 
-export type UsageTimeSeriesPoint = CreditsUsedAmounts & {
+export type UsageTimeSeriesPoint = {
   date: string;
+  creditsUsed: number;
 };
 
 type CreditsUsedRowMicro = {
@@ -60,8 +61,9 @@ const toCreditsUsedAmounts = (
   userCreditsUsed: Number(row.userCreditsUsedMicro),
 });
 
-type TimeSeriesRowMicro = CreditsUsedRowMicro & {
+type TimeSeriesRowMicro = {
   date: string;
+  creditsUsedMicro: number;
 };
 
 type PeriodParams = {
@@ -482,7 +484,7 @@ export class UsageAnalyticsService {
     const query = `
       SELECT
         formatDateTime(timestamp, '%Y-%m-%d') AS date,
-        ${CREDITS_USED_SELECT}
+        sum(creditsUsedMicro) AS creditsUsedMicro
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
@@ -508,7 +510,7 @@ export class UsageAnalyticsService {
 
     const points = rows.map((row) => ({
       date: row.date,
-      ...toCreditsUsedAmounts(row),
+      creditsUsed: row.creditsUsedMicro,
     }));
 
     return fillUsageTimeSeriesGaps({

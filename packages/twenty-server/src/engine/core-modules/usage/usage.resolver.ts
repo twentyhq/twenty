@@ -19,7 +19,7 @@ import {
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { consolidateUsageByApplication } from 'src/engine/core-modules/usage/utils/consolidate-usage-by-application.util';
 import { fromUsageBreakdownItemToUsageBreakdownItemDTO } from 'src/engine/core-modules/usage/utils/from-usage-breakdown-item-to-usage-breakdown-item-dto.util';
-import { fromUsageTimeSeriesPointToUsageTimeSeriesDTO } from 'src/engine/core-modules/usage/utils/from-usage-time-series-point-to-usage-time-series-dto.util';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -134,7 +134,10 @@ export class UsageResolver {
       usageByModel: usageByModel.map(
         fromUsageBreakdownItemToUsageBreakdownItemDTO,
       ),
-      timeSeries: timeSeries.map(fromUsageTimeSeriesPointToUsageTimeSeriesDTO),
+      timeSeries: timeSeries.map((point) => ({
+        ...point,
+        creditsUsed: toDisplayCredits(point.creditsUsed),
+      })),
       periodStart,
       periodEnd,
     };
@@ -154,9 +157,10 @@ export class UsageResolver {
 
         result.userDailyUsage = {
           userWorkspaceId: input.userWorkspaceId,
-          dailyUsage: dailyUsage.map(
-            fromUsageTimeSeriesPointToUsageTimeSeriesDTO,
-          ),
+          dailyUsage: dailyUsage.map((point) => ({
+            ...point,
+            creditsUsed: toDisplayCredits(point.creditsUsed),
+          })),
         };
       }
     }
