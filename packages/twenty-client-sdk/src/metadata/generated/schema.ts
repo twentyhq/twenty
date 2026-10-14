@@ -1818,6 +1818,7 @@ export interface MarketplaceAppDetail {
 
 export interface MarketplaceAppObject {
     labelPlural: Scalars['String']
+    labelSingular: Scalars['String']
     universalIdentifier: Scalars['String']
     __typename: 'MarketplaceAppObject'
 }
@@ -6046,6 +6047,7 @@ export interface MarketplaceAppDetailGenqlSelection{
 
 export interface MarketplaceAppObjectGenqlSelection{
     labelPlural?: boolean | number
+    labelSingular?: boolean | number
     universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

@@ -169,8 +169,9 @@ export class MarketplaceQueryService {
           )
         : undefined,
       objects: manifest?.objects?.map(
-        ({ universalIdentifier, labelPlural }) => ({
+        ({ universalIdentifier, labelSingular, labelPlural }) => ({
           universalIdentifier,
+          labelSingular,
           labelPlural,
         }),
       ),

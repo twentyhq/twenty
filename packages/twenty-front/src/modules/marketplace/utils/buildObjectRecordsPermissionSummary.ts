@@ -1,5 +1,6 @@
-import { type RecordAccess } from '@/marketplace/types/RecordAccess';
+import { type ObjectLabels } from '@/marketplace/types/ObjectLabels';
 import { type PermissionSummaryItem } from '@/marketplace/types/PermissionSummaryItem';
+import { type RecordAccess } from '@/marketplace/types/RecordAccess';
 import { getRecordAccessLabel } from '@/marketplace/utils/getRecordAccessLabel';
 import { plural } from '@lingui/core/macro';
 import { type RoleManifest } from 'twenty-shared/application';
@@ -77,11 +78,11 @@ export const buildObjectRecordsPermissionSummary = ({
 }: {
   defaultRole: RoleManifest;
   roleAccess: RecordAccess;
-  objectLabelsByUniversalIdentifier: Record<string, string>;
+  objectLabelsByUniversalIdentifier: Record<string, ObjectLabels>;
 }): PermissionSummaryItem[] =>
   groupObjectPermissionsByAccess({ defaultRole, roleAccess }).flatMap(
     ({ access, objectUniversalIdentifiers }) => {
-      const resolvedLabels = objectUniversalIdentifiers
+      const resolvedObjectLabels = objectUniversalIdentifiers
         .filter((objectUniversalIdentifier) =>
           Object.hasOwn(
             objectLabelsByUniversalIdentifier,
@@ -94,10 +95,10 @@ export const buildObjectRecordsPermissionSummary = ({
         );
 
       const unresolvedCount =
-        objectUniversalIdentifiers.length - resolvedLabels.length;
+        objectUniversalIdentifiers.length - resolvedObjectLabels.length;
 
       const targetParts = [
-        ...resolvedLabels,
+        ...resolvedObjectLabels.map(({ labelPlural }) => labelPlural),
         ...(unresolvedCount > 0
           ? [
               plural(unresolvedCount, {
@@ -113,6 +114,20 @@ export const buildObjectRecordsPermissionSummary = ({
         target: formatDisplayList(targetParts),
       });
 
-      return isDefined(label) ? [{ Icon: IconAddressBook, label }] : [];
+      if (!isDefined(label)) {
+        return [];
+      }
+
+      const details = resolvedObjectLabels.map(
+        ({ labelSingular }) => labelSingular,
+      );
+
+      return [
+        {
+          Icon: IconAddressBook,
+          label,
+          ...(details.length > 0 ? { details } : {}),
+        },
+      ];
     },
   );

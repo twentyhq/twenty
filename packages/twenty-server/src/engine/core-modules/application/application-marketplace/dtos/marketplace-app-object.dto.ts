@@ -12,5 +12,10 @@ export class MarketplaceAppObjectDTO {
   @IsString()
   @IsNotEmpty()
   @Field()
+  labelSingular: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
   labelPlural: string;
 }

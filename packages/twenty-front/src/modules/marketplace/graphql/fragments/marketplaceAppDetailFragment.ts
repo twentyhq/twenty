@@ -27,6 +27,7 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     billsCredits
     objects {
       universalIdentifier
+      labelSingular
       labelPlural
     }
     roles {

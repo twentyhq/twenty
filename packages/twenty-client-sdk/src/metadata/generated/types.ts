@@ -5555,6 +5555,9 @@ export default {
             "labelPlural": [
                 1
             ],
+            "labelSingular": [
+                1
+            ],
             "universalIdentifier": [
                 1
             ],

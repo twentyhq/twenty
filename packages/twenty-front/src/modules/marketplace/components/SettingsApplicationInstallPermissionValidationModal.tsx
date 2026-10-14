@@ -1,30 +1,41 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
+import { type ObjectLabels } from '@/marketplace/types/ObjectLabels';
 import {
-  type BuildPermissionSummaryOptions,
   buildPermissionSummaryFromRoleManifest,
   type PermissionSummaryItem,
 } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
-import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
+import {
+  IconAlertTriangle,
+  IconChevronLeft,
+  IconInfoCircle,
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+type MarketplaceAppObject = ObjectLabels & {
+  universalIdentifier: string;
+};
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
   modalInstanceId: string;
   appDisplayName: string;
   appLogoUrl?: string;
   defaultRole?: RoleManifest;
-  objectLabelsByUniversalIdentifier?: BuildPermissionSummaryOptions['objectLabelsByUniversalIdentifier'];
+  appObjects?: MarketplaceAppObject[];
   requestedCapabilities?: string[];
   billsCredits?: boolean;
   isVetted?: boolean;
@@ -105,6 +116,30 @@ const StyledPermissionIcon = styled.div`
   display: flex;
 `;
 
+const StyledObjectListButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: default;
+  display: flex;
+  padding: 0;
+
+  &:focus-visible {
+    outline: 1px solid ${themeCssVariables.color.blue9};
+  }
+`;
+
+const StyledObjectList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  list-style: none;
+  margin: 0;
+  padding: 0;
+`;
+
 const StyledNoPermissionText = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
@@ -115,7 +150,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   appDisplayName,
   appLogoUrl,
   defaultRole,
-  objectLabelsByUniversalIdentifier,
+  appObjects,
   requestedCapabilities = [],
   billsCredits = false,
   isVetted = true,
@@ -123,6 +158,21 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
   const { closeDialog } = useDialog();
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const objectLabelsByUniversalIdentifier = useMemo(
+    (): Record<string, ObjectLabels> =>
+      Object.fromEntries(
+        [...(appObjects ?? []), ...objectMetadataItems].map(
+          ({ universalIdentifier, labelSingular, labelPlural }) => [
+            universalIdentifier,
+            { labelSingular, labelPlural },
+          ],
+        ),
+      ),
+    [appObjects, objectMetadataItems],
+  );
 
   const permissionItems: PermissionSummaryItem[] = useMemo(() => {
     const rolePermissionItems = defaultRole
@@ -206,6 +256,28 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                           <item.Icon size={16} aria-hidden />
                         </StyledPermissionIcon>
                         {item.label}
+                        {isDefined(item.details) && (
+                          <Tooltip
+                            content={
+                              <StyledObjectList>
+                                {item.details.map((detail) => (
+                                  <li key={detail}>{detail}</li>
+                                ))}
+                              </StyledObjectList>
+                            }
+                            arrow
+                            side="top"
+                            delay={TooltipDelay.shortDelay}
+                            positionMethod="fixed"
+                          >
+                            <StyledObjectListButton
+                              type="button"
+                              aria-label={t`Objects: ${item.details.join(', ')}`}
+                            >
+                              <IconInfoCircle size={14} aria-hidden />
+                            </StyledObjectListButton>
+                          </Tooltip>
+                        )}
                       </StyledPermissionRow>
                     ))}
                   </>

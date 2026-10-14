@@ -2703,6 +2703,7 @@ type MarketplaceAppDetail {
 
 type MarketplaceAppObject {
   labelPlural: String!
+  labelSingular: String!
   universalIdentifier: String!
 }
 

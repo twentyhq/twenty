@@ -15,9 +15,18 @@ const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
 const TASK_OBJECT_UNIVERSAL_IDENTIFIER = '20202020-1ba1-48ba-bc83-ef7e5990ed10';
 
 const objectLabelsByUniversalIdentifier = {
-  [PERSON_OBJECT_UNIVERSAL_IDENTIFIER]: 'People',
-  [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER]: 'Companies',
-  [TASK_OBJECT_UNIVERSAL_IDENTIFIER]: 'Tasks',
+  [PERSON_OBJECT_UNIVERSAL_IDENTIFIER]: {
+    labelSingular: 'Person',
+    labelPlural: 'People',
+  },
+  [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER]: {
+    labelSingular: 'Company',
+    labelPlural: 'Companies',
+  },
+  [TASK_OBJECT_UNIVERSAL_IDENTIFIER]: {
+    labelSingular: 'Task',
+    labelPlural: 'Tasks',
+  },
 };
 
 const getLabels = (
@@ -201,6 +210,51 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           { objectLabelsByUniversalIdentifier },
         ),
       ).toEqual(['Read People and 2 other objects']);
+    });
+
+    it('lists the singular labels of the resolved objects as details', () => {
+      const [item] = buildPermissionSummaryFromRoleManifest(
+        {
+          ...baseRole,
+          objectPermissions: [
+            {
+              universalIdentifier: 'perm-1',
+              objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+            },
+            {
+              universalIdentifier: 'perm-2',
+              objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+            },
+            {
+              universalIdentifier: 'perm-3',
+              objectUniversalIdentifier: 'unknown-object-1',
+              canReadObjectRecords: true,
+            },
+          ],
+        },
+        { objectLabelsByUniversalIdentifier },
+      );
+
+      expect(item.label).toBe('Read People, Companies, and 1 other object');
+      expect(item.details).toEqual(['Person', 'Company']);
+    });
+
+    it('has no details when no object label is resolved', () => {
+      const [item] = buildPermissionSummaryFromRoleManifest({
+        ...baseRole,
+        objectPermissions: [
+          {
+            universalIdentifier: 'perm-1',
+            objectUniversalIdentifier: 'unknown-object-1',
+            canReadObjectRecords: true,
+          },
+        ],
+      });
+
+      expect(item.label).toBe('Read 1 other object');
+      expect(item.details).toBeUndefined();
     });
 
     it('falls back to a count when no labels are provided at all', () => {
