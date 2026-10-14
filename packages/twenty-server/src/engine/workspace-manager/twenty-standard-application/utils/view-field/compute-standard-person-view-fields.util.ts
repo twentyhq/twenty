@@ -359,6 +359,7 @@ export const computeStandardPersonViewFields = (
         position: 0,
         isVisible: true,
         size: 210,
+        aggregateOperation: AggregateOperations.COUNT,
       },
     }),
     messageListRecordPageMembersEmails: createStandardViewFieldFlatMetadata({

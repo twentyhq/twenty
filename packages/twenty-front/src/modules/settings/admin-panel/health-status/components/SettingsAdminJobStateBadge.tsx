@@ -26,9 +26,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledAttemptsTag = styled(Tag)`
-  && {
-    min-width: fit-content;
-  }
+  min-width: fit-content;
 `;
 
 export const SettingsAdminJobStateBadge = ({
