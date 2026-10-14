@@ -2,25 +2,25 @@ import { type ConnectionProviderManifest } from 'twenty-shared/application';
 
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { assertConnectionProviderLogicFunctionsAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-connection-provider-logic-functions-are-own.util';
-import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 
 const MANIFEST_LOGIC_FUNCTION_IDENTIFIER = 'manifest-logic-function';
 const EXISTING_LOGIC_FUNCTION_IDENTIFIER = 'existing-logic-function';
 const UNKNOWN_LOGIC_FUNCTION_IDENTIFIER = 'unknown-logic-function';
 
-const buildAllFlatEntityMapsWithLogicFunction = (
+const buildFlatLogicFunctionMaps = (
   universalIdentifier: string,
-): AllFlatEntityMaps => {
-  const allFlatEntityMaps = createEmptyAllFlatEntityMaps();
-
-  allFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier[
-    universalIdentifier
-  ] = { universalIdentifier } as FlatLogicFunction;
-
-  return allFlatEntityMaps;
-};
+): UniversalFlatEntityMaps<SyncableFlatEntity> => ({
+  byUniversalIdentifier: {
+    [universalIdentifier]: {
+      id: `${universalIdentifier}-id`,
+      universalIdentifier,
+      applicationId: 'application-id',
+      workspaceId: 'workspace-id',
+    },
+  },
+});
 
 const buildConnectionProvider = (
   hooks: Pick<
@@ -53,10 +53,10 @@ const assertHooks = ({
 }) =>
   assertConnectionProviderLogicFunctionsAreOwn({
     manifest: { connectionProviders: [buildConnectionProvider(hooks)] },
-    fromAllFlatEntityMaps: buildAllFlatEntityMapsWithLogicFunction(
+    fromFlatLogicFunctionMaps: buildFlatLogicFunctionMaps(
       EXISTING_LOGIC_FUNCTION_IDENTIFIER,
     ),
-    toAllUniversalFlatEntityMaps: buildAllFlatEntityMapsWithLogicFunction(
+    toFlatLogicFunctionMaps: buildFlatLogicFunctionMaps(
       MANIFEST_LOGIC_FUNCTION_IDENTIFIER,
     ),
     inferDeletionFromMissingEntities,

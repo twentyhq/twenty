@@ -5,18 +5,19 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 
 export const assertConnectionProviderLogicFunctionsAreOwn = ({
   manifest,
-  fromAllFlatEntityMaps,
-  toAllUniversalFlatEntityMaps,
+  fromFlatLogicFunctionMaps,
+  toFlatLogicFunctionMaps,
   inferDeletionFromMissingEntities,
 }: {
   manifest: Pick<Manifest, 'connectionProviders'>;
-  fromAllFlatEntityMaps: AllFlatEntityMaps;
-  toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
+  fromFlatLogicFunctionMaps: UniversalFlatEntityMaps<SyncableFlatEntity>;
+  toFlatLogicFunctionMaps: UniversalFlatEntityMaps<SyncableFlatEntity>;
   inferDeletionFromMissingEntities: boolean;
 }): void => {
   for (const connectionProvider of manifest.connectionProviders ?? []) {
@@ -31,18 +32,18 @@ export const assertConnectionProviderLogicFunctionsAreOwn = ({
 
       const { universalIdentifier } = logicFunctionReference;
 
-      // fromAllFlatEntityMaps only holds this application's entities, which a partial sync keeps.
+      // fromFlatLogicFunctionMaps only holds this application's functions, which a partial sync keeps.
       const isOwnLogicFunction =
         isDefined(
           findFlatEntityByUniversalIdentifier({
-            flatEntityMaps: toAllUniversalFlatEntityMaps.flatLogicFunctionMaps,
+            flatEntityMaps: toFlatLogicFunctionMaps,
             universalIdentifier,
           }),
         ) ||
         (!inferDeletionFromMissingEntities &&
           isDefined(
             findFlatEntityByUniversalIdentifier({
-              flatEntityMaps: fromAllFlatEntityMaps.flatLogicFunctionMaps,
+              flatEntityMaps: fromFlatLogicFunctionMaps,
               universalIdentifier,
             }),
           ));

@@ -214,8 +214,9 @@ export class ApplicationManifestMigrationService {
 
     assertConnectionProviderLogicFunctionsAreOwn({
       manifest,
-      fromAllFlatEntityMaps,
-      toAllUniversalFlatEntityMaps,
+      fromFlatLogicFunctionMaps: fromAllFlatEntityMaps.flatLogicFunctionMaps,
+      toFlatLogicFunctionMaps:
+        toAllUniversalFlatEntityMaps.flatLogicFunctionMaps,
       inferDeletionFromMissingEntities,
     });
 
