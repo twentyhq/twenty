@@ -474,6 +474,19 @@ export class ChatExecutionService {
     let stepIndex = 0;
     let lastUnderlyingStreamError: unknown;
 
+    const notifyUserCreditsCrossing = async (debit: StepDebitResult) => {
+      // only the charge that crosses a window both pays a user share and leaves it exhausted
+      if (
+        isDefined(debit.userAllowanceExhaustedUntil) &&
+        debit.userCreditsUsedMicro > 0
+      ) {
+        await onUserCreditsExhausted({
+          renewsAt: debit.userAllowanceExhaustedUntil,
+          isFallingBackToWorkspaceCredits: debit.stopReason !== 'userAllowance',
+        });
+      }
+    };
+
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce(
         (totals, step) => ({
@@ -507,11 +520,18 @@ export class ChatExecutionService {
         Math.min(turnUserCreditsUsedMicro, creditsUsedMicro),
       );
 
-      void this.aiBillingService.billNativeWebSearchUsage(
-        countNativeWebSearchCallsFromSteps(steps),
-        workspace.id,
-        userWorkspaceId,
-      );
+      void this.aiBillingService
+        .billNativeWebSearchUsage(
+          countNativeWebSearchCallsFromSteps(steps),
+          workspace.id,
+          userWorkspaceId,
+        )
+        .then(async (webSearchDebit) => {
+          // a turn stopped on user credits has already sent its notice
+          if (isDefined(webSearchDebit) && stopReason !== 'userAllowance') {
+            await notifyUserCreditsCrossing(webSearchDebit);
+          }
+        });
 
       const modelAttr = { model: registeredModel.modelId };
 
@@ -645,17 +665,7 @@ export class ChatExecutionService {
         stopReason ??= stepDebit.stopReason;
         turnUserCreditsUsedMicro += stepDebit.userCreditsUsedMicro;
 
-        // only the step that crosses a window both pays a user share and leaves it exhausted
-        if (
-          isDefined(stepDebit.userAllowanceExhaustedUntil) &&
-          stepDebit.userCreditsUsedMicro > 0
-        ) {
-          await onUserCreditsExhausted({
-            renewsAt: stepDebit.userAllowanceExhaustedUntil,
-            isFallingBackToWorkspaceCredits:
-              stepDebit.stopReason !== 'userAllowance',
-          });
-        }
+        await notifyUserCreditsCrossing(stepDebit);
 
         this.logger.log(
           `[AI_CHAT_TOKENS] step #${++stepIndex} — ` +

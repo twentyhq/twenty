@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -158,7 +159,7 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    const { exhaustedKind, ...userAllowanceDebit } =
+    return this.toStepDebitResult(
       await this.usageLimitQuotaService.debitAheadOfRecord({
         workspaceId,
         event: this.buildAiTokenUsageEvent({
@@ -168,21 +169,17 @@ export class AiBillingService {
           operationType,
           spenders,
         }),
-      });
-
-    return {
-      stopReason: exhaustedKind === 'limit' ? null : exhaustedKind,
-      ...userAllowanceDebit,
-    };
+      }),
+    );
   }
 
   async billNativeWebSearchUsage(
     nativeWebSearchCallCount: number,
     workspaceId: string,
     userWorkspaceId?: string | null,
-  ): Promise<void> {
+  ): Promise<StepDebitResult | null> {
     if (nativeWebSearchCallCount <= 0) {
-      return;
+      return null;
     }
 
     const costInDollars =
@@ -193,19 +190,27 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    await this.usageLimitQuotaService.charge({
-      workspaceId,
-      events: [
-        {
-          resourceType: UsageResourceType.AI,
-          operationType: UsageOperationType.WEB_SEARCH,
-          creditsUsedMicro,
-          quantity: nativeWebSearchCallCount,
-          unit: UsageUnit.INVOCATION,
-          spenders: { userWorkspaceId },
-        },
-      ],
-    });
+    const event: RecordUsageInput = {
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.WEB_SEARCH,
+      creditsUsedMicro,
+      quantity: nativeWebSearchCallCount,
+      unit: UsageUnit.INVOCATION,
+      spenders: { userWorkspaceId },
+    };
+
+    const webSearchDebit = await this.usageLimitQuotaService.debitAheadOfRecord(
+      {
+        workspaceId,
+        event,
+      },
+    );
+
+    await this.usageRecorderService.record(workspaceId, [
+      { ...event, userCreditsUsedMicro: webSearchDebit.userCreditsUsedMicro },
+    ]);
+
+    return this.toStepDebitResult(webSearchDebit);
   }
 
   async emitAiTokenUsageEvent(
@@ -230,6 +235,16 @@ export class AiBillingService {
         userCreditsUsedMicro,
       },
     ]);
+  }
+
+  private toStepDebitResult({
+    exhaustedKind,
+    ...userAllowanceDebit
+  }: QuotaDebitResult): StepDebitResult {
+    return {
+      stopReason: exhaustedKind === 'limit' ? null : exhaustedKind,
+      ...userAllowanceDebit,
+    };
   }
 
   private buildAiTokenUsageEvent({
