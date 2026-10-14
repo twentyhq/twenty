@@ -31,16 +31,15 @@ const PRIVATE_TWENTY_UI_ATTRIBUTE_NAMES = [
 
 const PRIVATE_TWENTY_UI_ATTRIBUTE_PREFIXES = ['data-badge-'];
 
+const DATA_ATTRIBUTE_NAME_PREFIX = 'data-';
+
 const PRIVATE_ATTRIBUTE_SELECTOR_REGEX = new RegExp(
-  `(?<=\\[\\s*)(?:${[
+  `(?<styledElementSelector>&(?:\\[[^\\]]*\\]|[:.][\\w-]+(?:\\([^()]*\\))?)*)?\\[\\s*(?<attributeName>${[
     ...PRIVATE_TWENTY_UI_ATTRIBUTE_PREFIXES.map((prefix) => `${prefix}[\\w-]+`),
     ...PRIVATE_TWENTY_UI_ATTRIBUTE_NAMES,
   ].join('|')})(?![\\w-])`,
   'g',
 );
-
-const SELECTOR_TEXT_ENDING_ON_STYLED_ELEMENT_REGEX =
-  /&(?:\[[^\]]*\]|[:.][\w-]+(?:\([^)]*\))?)*\[\s*$/;
 
 const DOUBLE_AMPERSAND_REGEX = /&&/g;
 
@@ -110,10 +109,7 @@ export const rule = defineRule({
       data?: Record<string, string>;
     }) => {
       context.report({
-        loc: {
-          start: sourceCode.getLocFromIndex(startOffset),
-          end: sourceCode.getLocFromIndex(startOffset + length),
-        },
+        node: { range: [startOffset, startOffset + length] },
         messageId,
         data,
       });
@@ -151,21 +147,23 @@ export const rule = defineRule({
       startOffset: number;
       allowOnStyledElement: boolean;
     }) => {
+      if (!text.includes(DATA_ATTRIBUTE_NAME_PREFIX)) {
+        return;
+      }
+
       for (const match of text.matchAll(PRIVATE_ATTRIBUTE_SELECTOR_REGEX)) {
-        if (
-          allowOnStyledElement &&
-          SELECTOR_TEXT_ENDING_ON_STYLED_ELEMENT_REGEX.test(
-            text.slice(0, match.index),
-          )
-        ) {
+        const { styledElementSelector, attributeName } = match.groups ?? {};
+
+        if (allowOnStyledElement && isDefined(styledElementSelector)) {
           continue;
         }
 
         reportSourceRange({
-          startOffset: startOffset + match.index,
-          length: match[0].length,
+          startOffset:
+            startOffset + match.index + match[0].length - attributeName.length,
+          length: attributeName.length,
           messageId: 'privateTwentyUiAttribute',
-          data: { attributeName: match[0] },
+          data: { attributeName },
         });
       }
     };
@@ -217,11 +215,14 @@ export const rule = defineRule({
     };
 
     const reportPrivateCssVariableSetPropertyCall = (callExpression: any) => {
+      if (getCalledMethodName(callExpression.callee) !== 'setProperty') {
+        return;
+      }
+
       const [propertyNameArgument] = callExpression.arguments;
       const propertyName = getStaticStringValue(propertyNameArgument);
 
       if (
-        getCalledMethodName(callExpression.callee) !== 'setProperty' ||
         !isDefined(propertyName) ||
         !PRIVATE_CSS_VARIABLE_NAME_REGEX.test(propertyName)
       ) {
