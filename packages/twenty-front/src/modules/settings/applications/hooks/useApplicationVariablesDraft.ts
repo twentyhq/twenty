@@ -42,8 +42,7 @@ export const useApplicationVariablesDraft = <
     (applicationVariable) => {
       const draftValue = draftValueByKey[applicationVariable.key];
 
-      // A saved secret arrives masked, so its input starts empty: editing the
-      // mask would save the mask itself as part of the new secret.
+      // A saved secret arrives masked, so editing it in place would corrupt it.
       const savedValueToEdit = applicationVariable.isSecret
         ? ''
         : applicationVariable.value;
@@ -58,7 +57,6 @@ export const useApplicationVariablesDraft = <
 
   const editedApplicationVariables = draftApplicationVariables.filter(
     ({ value, savedValue, isSecret }) =>
-      // An empty secret input keeps the saved secret instead of clearing it.
       isSecret ? isNonEmptyString(value) : value !== savedValue,
   );
 

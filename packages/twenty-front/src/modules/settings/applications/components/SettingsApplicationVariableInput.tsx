@@ -185,7 +185,7 @@ export const SettingsApplicationVariableInput = ({
           onChange={onChange}
           placeholder={placeholder ?? t`Value`}
           readOnly={disabled}
-          type={isSecret === true ? 'password' : undefined}
+          type={isSecret ? 'password' : undefined}
           ignorePasswordManagers={isSecret}
           fullWidth
         />
