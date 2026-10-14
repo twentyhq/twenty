@@ -1,11 +1,10 @@
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { useStableCallback } from '@base-ui/utils/useStableCallback';
-import { type ReactElement, useLayoutEffect, useRef } from 'react';
-
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { type ReactElement, useRef } from 'react';
 
 import styles from '../OverflowingList.module.scss';
 
+import { OverflowingListItemFocusEffect } from './OverflowingListItemFocusEffect';
 import { useFocusedElementUnmountRef } from './useFocusedElementUnmountRef';
 
 type OverflowingListItemProps = {
@@ -40,28 +39,24 @@ export const OverflowingListItem = ({
     restoreFocusWhenFocusedItemUnmounts,
   );
 
-  useLayoutEffect(() => {
-    const element = elementRef.current;
-    const hasFocus =
-      isDefined(element) &&
-      element.contains(element.ownerDocument.activeElement);
-
-    if (isHidden && hasFocus) {
-      handleFocusLost(element);
-    }
-  }, [isHidden, handleFocusLost]);
-
   return (
-    <div
-      ref={mergedRef}
-      className={isInPopup ? styles.popupItem : styles.item}
-      data-item-index={index}
-      data-hidden={isHidden || undefined}
-      data-last-visible={isLastVisible || undefined}
-      aria-hidden={isHidden || undefined}
-      inert={isHidden}
-    >
-      {children}
-    </div>
+    <>
+      <div
+        ref={mergedRef}
+        className={isInPopup ? styles.popupItem : styles.item}
+        data-item-index={index}
+        data-hidden={isHidden || undefined}
+        data-last-visible={isLastVisible || undefined}
+        aria-hidden={isHidden || undefined}
+        inert={isHidden}
+      >
+        {children}
+      </div>
+      <OverflowingListItemFocusEffect
+        elementRef={elementRef}
+        isHidden={isHidden}
+        onFocusLost={handleFocusLost}
+      />
+    </>
   );
 };

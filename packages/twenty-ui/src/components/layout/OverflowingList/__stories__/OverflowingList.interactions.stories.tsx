@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { createRef } from 'react';
+import { createRef, StrictMode } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
@@ -13,6 +13,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { OverflowingList } from '../OverflowingList';
 import { type OverflowingListProps } from '../types/OverflowingListProps';
 import { OVERFLOWING_LIST_STORY_ITEMS } from './OVERFLOWING_LIST_STORY_ITEMS';
+import { OverflowingListCanceledCloseExample } from './OverflowingListCanceledCloseExample';
 import { OverflowingListControlledExample } from './OverflowingListControlledExample';
 import { OverflowingListControlledStateExample } from './OverflowingListControlledStateExample';
 import { OverflowingListDisabledTriggerFocusExample } from './OverflowingListDisabledTriggerFocusExample';
@@ -1145,5 +1146,69 @@ export const DefaultOpenMeasuredOverflow: Story = {
     );
     expect(within(dialog).getByText('Customer')).toBeVisible();
     expect(canvas.getByText('Customer')).toBeVisible();
+  },
+};
+
+export const CanceledUnavailableClose: Story = {
+  parameters: { container: { width: 600, height: 360 } },
+  render: () => (
+    <StrictMode>
+      <OverflowingListCanceledCloseExample />
+    </StrictMode>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const list = canvas.getByLabelText('Cancelable responsive tags');
+    const status = canvas.getByRole('status');
+    const resizeList = async (width: string) => {
+      list.style.width = width;
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => resolve());
+        });
+      });
+    };
+
+    await waitFor(() =>
+      expect(status).toHaveTextContent('Open: true. Close requests: 1.'),
+    );
+    expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+
+    for (const width of ['420px', '500px']) {
+      await resizeList(width);
+      expect(status).toHaveTextContent('Open: true. Close requests: 1.');
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    }
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Close requested state' }),
+    );
+    expect(status).toHaveTextContent('Open: false. Close requests: 1.');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Open requested state' }),
+    );
+    await waitFor(() =>
+      expect(status).toHaveTextContent('Open: true. Close requests: 2.'),
+    );
+    expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+
+    await resizeList('180px');
+    const dialog = await body.findByRole('dialog', { name: 'Show all items' });
+    for (const label of ['Customer', 'Partner', 'Priority', 'Renewal']) {
+      await waitFor(() =>
+        expect(within(dialog).getByText(label)).toBeVisible(),
+      );
+    }
+    expect(canvas.getByText('Customer')).toBeVisible();
+    expect(status).toHaveTextContent('Open: true. Close requests: 2.');
+
+    await resizeList('500px');
+    await waitFor(() =>
+      expect(status).toHaveTextContent('Open: true. Close requests: 3.'),
+    );
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
   },
 };
