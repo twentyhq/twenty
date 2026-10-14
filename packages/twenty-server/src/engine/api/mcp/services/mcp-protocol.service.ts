@@ -64,7 +64,6 @@ import {
 } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { buildAgentRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-agent-role-ids-by-source.util';
 import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
-import { resolveAgentRoleId } from 'src/engine/twenty-orm/utils/resolve-agent-role-id.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -234,9 +233,7 @@ export class McpProtocolService {
         'flatRoleTargetByAgentIdMaps',
       ]);
 
-    return buildAgentRoleIdsBySource(
-      resolveAgentRoleId({ agentId, flatRoleTargetByAgentIdMaps }),
-    );
+    return buildAgentRoleIdsBySource({ agentId, flatRoleTargetByAgentIdMaps });
   }
 
   private async buildActorContext(

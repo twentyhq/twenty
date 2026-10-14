@@ -48,8 +48,9 @@ import { type RecordTargetInput } from 'src/engine/metadata-modules/record-permi
 import { RecordPermissionsService } from 'src/engine/metadata-modules/record-permissions/services/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
-import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -522,10 +523,13 @@ export class RecordSharingService {
       flatRoleTargetByAgentIdMaps,
     };
     const principalIds = resolvePrincipalIdsFromAuthContext(roleMaps) ?? [];
-    const canAccessAllRecords = canRolesAccessAllRecords({
-      roleIds: resolveRoleIdsFromAuthContext(roleMaps),
-      roleIdsWithAllRecordsAccess,
-    });
+    const rolePermissionConfig = resolveRolePermissionConfig(roleMaps);
+    const canAccessAllRecords =
+      isDefined(rolePermissionConfig) &&
+      canRolesAccessAllRecords({
+        roleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
+        roleIdsWithAllRecordsAccess,
+      });
     const shares = await this.recordShareStorageService.findByRecordIds({
       workspaceId,
       objectMetadataId,

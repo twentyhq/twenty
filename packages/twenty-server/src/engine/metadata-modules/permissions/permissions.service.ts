@@ -11,7 +11,6 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { applyAgentRoleRestriction } from 'src/engine/core-modules/auth/utils/apply-agent-role-restriction.util';
 import { findRequestAgentId } from 'src/engine/core-modules/auth/utils/find-request-agent-id.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
@@ -25,10 +24,13 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import {
+  type RoleIdsBySource,
+  type RolePermissionConfig,
+} from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { buildAgentRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-agent-role-ids-by-source.util';
+import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
-import { resolveAgentRoleId } from 'src/engine/twenty-orm/utils/resolve-agent-role-id.util';
-import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -119,46 +121,44 @@ export class PermissionsService {
       'flatRoleTargetByAgentIdMaps',
     ]);
 
-    const flatRoles = await this.resolveCallerFlatRolesOrThrow({
-      workspaceId,
+    const callerRoleIdsBySource =
+      await this.resolveCallerRoleIdsBySourceOrThrow({
+        workspaceId,
+        userWorkspaceId,
+        apiKeyId,
+        applicationId,
+        userWorkspaceRoleMap,
+        flatApplicationMaps,
+        flatRoleMaps,
+      });
+
+    const requestAgentId = findRequestAgentId({
       userWorkspaceId,
       apiKeyId,
       applicationId,
-      userWorkspaceRoleMap,
-      flatApplicationMaps,
-      flatRoleMaps,
     });
 
-    // The request's own agent still applies, so a caller passing none cannot widen the token
-    const roleIds = applyAgentRoleRestriction({
-      roleIds: applyAgentRoleRestriction({
-        roleIds: flatRoles.map((flatRole) => flatRole.id),
-        agentRoleId: resolveAgentRoleId({
-          agentId,
+    // The request's own agent applies too, so a caller passing none or another one cannot widen the token
+    if (
+      isDefined(agentId) &&
+      isDefined(requestAgentId) &&
+      agentId !== requestAgentId
+    ) {
+      return false;
+    }
+
+    return this.isPermissionFlagGrantedToRoles({
+      roleIdsBySource: {
+        ...callerRoleIdsBySource,
+        ...buildAgentRoleIdsBySource({
+          agentId: agentId ?? requestAgentId,
           flatRoleTargetByAgentIdMaps,
         }),
-      }),
-      agentRoleId: resolveAgentRoleId({
-        agentId: findRequestAgentId({
-          userWorkspaceId,
-          apiKeyId,
-          applicationId,
-        }),
-        flatRoleTargetByAgentIdMaps,
-      }),
+      },
+      setting,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
     });
-
-    return (
-      roleIds.length > 0 &&
-      roleIds.every((roleId) =>
-        this.isPermissionFlagGrantedToRoleId({
-          roleId,
-          setting,
-          flatRoleMaps,
-          flatRolePermissionFlagMaps,
-        }),
-      )
-    );
   }
 
   public async checkRolesPermissions(
@@ -170,58 +170,55 @@ export class PermissionsService {
       return true;
     }
 
-    const roleIds = getRoleIdsToIntersect(rolePermissionConfig.intersectionOf);
-
-    if (!isDefined(roleIds)) {
-      return false;
-    }
-
     const { flatRoleMaps, flatRolePermissionFlagMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatRoleMaps',
         'flatRolePermissionFlagMaps',
       ]);
 
-    const isGrantedByRoleId = (roleId: string): boolean =>
-      this.isPermissionFlagGrantedToRoleId({
-        roleId,
-        setting,
-        flatRoleMaps,
-        flatRolePermissionFlagMaps,
-      });
-
-    return roleIds.every(isGrantedByRoleId);
+    return this.isPermissionFlagGrantedToRoles({
+      roleIdsBySource: rolePermissionConfig.intersectionOf,
+      setting,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+    });
   }
 
   // Like the ORM, a role missing from the cache grants nothing
-  private isPermissionFlagGrantedToRoleId({
-    roleId,
+  private isPermissionFlagGrantedToRoles({
+    roleIdsBySource,
     setting,
     flatRoleMaps,
     flatRolePermissionFlagMaps,
   }: {
-    roleId: string;
+    roleIdsBySource: RoleIdsBySource;
     setting: PermissionFlagType;
     flatRoleMaps: FlatRoleMaps;
     flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
   }): boolean {
-    const flatRole = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: roleId,
-      flatEntityMaps: flatRoleMaps,
-    });
+    const roleIds = getRoleIdsToIntersect(roleIdsBySource);
 
     return (
-      isDefined(flatRole) &&
-      isPermissionFlagGrantedToFlatRole({
-        flatRole,
-        permissionFlag: setting,
-        flatRolePermissionFlagMaps,
+      isDefined(roleIds) &&
+      roleIds.every((roleId) => {
+        const flatRole = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: roleId,
+          flatEntityMaps: flatRoleMaps,
+        });
+
+        return (
+          isDefined(flatRole) &&
+          isPermissionFlagGrantedToFlatRole({
+            flatRole,
+            permissionFlag: setting,
+            flatRolePermissionFlagMaps,
+          })
+        );
       })
     );
   }
 
-  // Every returned role must grant the flag; none means an application without a role
-  private async resolveCallerFlatRolesOrThrow({
+  private async resolveCallerRoleIdsBySourceOrThrow({
     workspaceId,
     userWorkspaceId,
     apiKeyId,
@@ -237,7 +234,7 @@ export class PermissionsService {
     userWorkspaceRoleMap: UserWorkspaceRoleMap;
     flatApplicationMaps: FlatApplicationCacheMaps;
     flatRoleMaps: FlatRoleMaps;
-  }): Promise<FlatRole[]> {
+  }): Promise<RoleIdsBySource> {
     if (isDefined(apiKeyId)) {
       const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         apiKeyId,
@@ -259,7 +256,7 @@ export class PermissionsService {
         );
       }
 
-      return [apiKeyFlatRole];
+      return { apiKeyRoleId: apiKeyFlatRole.id };
     }
 
     if (isDefined(userWorkspaceId)) {
@@ -270,7 +267,7 @@ export class PermissionsService {
       });
 
       if (!isDefined(applicationId)) {
-        return [userFlatRole];
+        return { userWorkspaceRoleId: userFlatRole.id };
       }
 
       const application = this.findActiveApplication({
@@ -286,14 +283,15 @@ export class PermissionsService {
         );
       }
 
-      return resolveRoleIdsForUser({
+      return buildUserRoleIdsBySource({
         userRoleId: userFlatRole.id,
-        applicationRoleId: application.defaultRoleId,
-      }).map((roleId) =>
-        roleId === userFlatRole.id
-          ? userFlatRole
-          : this.findApplicationFlatRoleOrThrow({ roleId, flatRoleMaps }),
-      );
+        application: {
+          defaultRoleId: this.findApplicationRoleIdOrThrow({
+            application,
+            flatRoleMaps,
+          }),
+        },
+      });
     }
 
     if (isDefined(applicationId)) {
@@ -309,16 +307,12 @@ export class PermissionsService {
         );
       }
 
-      if (!isDefined(application.defaultRoleId)) {
-        return [];
-      }
-
-      return [
-        this.findApplicationFlatRoleOrThrow({
-          roleId: application.defaultRoleId,
+      return {
+        applicationRoleId: this.findApplicationRoleIdOrThrow({
+          application,
           flatRoleMaps,
         }),
-      ];
+      };
     }
 
     throw new PermissionsException(
@@ -361,15 +355,19 @@ export class PermissionsService {
     return flatRole;
   }
 
-  private findApplicationFlatRoleOrThrow({
-    roleId,
+  private findApplicationRoleIdOrThrow({
+    application,
     flatRoleMaps,
   }: {
-    roleId: string;
+    application: FlatApplication;
     flatRoleMaps: FlatRoleMaps;
-  }): FlatRole {
+  }): string | null {
+    if (!isDefined(application.defaultRoleId)) {
+      return null;
+    }
+
     const flatRole = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: roleId,
+      flatEntityId: application.defaultRoleId,
       flatEntityMaps: flatRoleMaps,
     });
 
@@ -383,7 +381,7 @@ export class PermissionsService {
       );
     }
 
-    return flatRole;
+    return flatRole.id;
   }
 
   // The application cache also holds soft-deleted applications

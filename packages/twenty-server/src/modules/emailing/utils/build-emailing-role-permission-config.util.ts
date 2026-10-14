@@ -3,7 +3,6 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildAgentRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-agent-role-ids-by-source.util';
 import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
-import { resolveAgentRoleId } from 'src/engine/twenty-orm/utils/resolve-agent-role-id.util';
 
 export const buildEmailingRolePermissionConfig = (
   userRoleId: string,
@@ -19,12 +18,10 @@ export const buildEmailingRolePermissionConfig = (
         userRoleId,
         application: userAuthContext?.application,
       }),
-      ...buildAgentRoleIdsBySource(
-        resolveAgentRoleId({
-          agentId: userAuthContext?.agentId,
-          flatRoleTargetByAgentIdMaps,
-        }),
-      ),
+      ...buildAgentRoleIdsBySource({
+        agentId: userAuthContext?.agentId,
+        flatRoleTargetByAgentIdMaps,
+      }),
     },
   };
 };

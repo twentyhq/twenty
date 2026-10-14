@@ -116,6 +116,7 @@ describe('SettingsPermissionGuard', () => {
         userWorkspaceRoleMap: {},
         flatRoleTargetByAgentIdMaps: {
           'agent-id': { roleId: 'agent-role-id' },
+          'other-agent-id': { roleId: 'agent-role-id' },
         },
         flatApplicationMaps: {
           byId: {
@@ -277,6 +278,19 @@ describe('SettingsPermissionGuard', () => {
       await expect(
         guard.canActivate(mockExecutionContext),
       ).rejects.toMatchObject({
+        code: PermissionsExceptionCode.PERMISSION_DENIED,
+      });
+    });
+
+    it('should deny with PERMISSION_DENIED when the guard passes another agent than the request', async () => {
+      mockCache({
+        defaultRoleId: 'role-id',
+        canUpdateAllSettings: true,
+        canAgentRoleUpdateAllSettings: true,
+      });
+      mockGqlContext.req.agentId = 'other-agent-id';
+
+      await expect(canActivateForAgent('agent-id')).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
       });
     });
