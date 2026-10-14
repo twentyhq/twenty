@@ -49,7 +49,7 @@ import {
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UsageQuotaDebitService } from 'src/engine/core-modules/usage-limit/services/usage-quota-debit.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -112,7 +112,7 @@ export class LogicFunctionExecutorService {
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
-    private readonly usageQuotaDebitService: UsageQuotaDebitService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
@@ -617,7 +617,7 @@ export class LogicFunctionExecutorService {
       });
 
     // Billing-exempt apps skip the invocation charge; their explicit chargeCredits and AI usage are still billed.
-    await this.usageQuotaDebitService.charge({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
       events: buildLogicFunctionExecutionUsage({
         durationMs: result.billedDurationMs,

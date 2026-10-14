@@ -11,7 +11,7 @@ import { collectDueRecurringCharges } from 'src/engine/core-modules/billing/app-
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { UsageQuotaDebitService } from 'src/engine/core-modules/usage-limit/services/usage-quota-debit.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -28,7 +28,7 @@ export class ApplicationRecurringChargeService {
     private readonly billingService: BillingService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
-    private readonly usageQuotaDebitService: UsageQuotaDebitService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -103,7 +103,7 @@ export class ApplicationRecurringChargeService {
       return 0;
     }
 
-    await this.usageQuotaDebitService.charge({ workspaceId, events });
+    await this.usageLimitQuotaService.charge({ workspaceId, events });
 
     this.logger.log(
       `Raised ${events.length} recurring app charge(s) for workspace ${workspaceId}`,

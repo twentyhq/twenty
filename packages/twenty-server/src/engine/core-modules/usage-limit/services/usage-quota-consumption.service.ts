@@ -7,16 +7,7 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type UsageQuotaScopeInput } from 'src/engine/core-modules/usage-limit/dtos/usage-quota-scope.input';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
-import { UsageQuotaCounterBuilderService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter-builder.service';
-import { UsageQuotaCounterStoreService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter-store.service';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
-import { type LimitConsumption } from 'src/engine/core-modules/usage-limit/types/limit-consumption.type';
-import { type UserCreditsFallbackMode } from 'src/engine/core-modules/usage-limit/types/user-credits-fallback-mode.type';
-import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
-import { findBindingUserAllowance } from 'src/engine/core-modules/usage-limit/utils/find-binding-user-allowance.util';
-import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
@@ -52,8 +43,7 @@ export class UsageQuotaConsumptionService {
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly usageLimitService: UsageLimitService,
-    private readonly usageQuotaCounterBuilderService: UsageQuotaCounterBuilderService,
-    private readonly usageQuotaCounterStoreService: UsageQuotaCounterStoreService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
     private readonly usagePeriodService: UsagePeriodService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
@@ -123,152 +113,6 @@ export class UsageQuotaConsumptionService {
     }
   }
 
-  async getWorkspaceAllowanceUsage(workspaceId: string): Promise<{
-    limitValue: number;
-    consumedValue: number | null;
-    periodEnd: Date;
-  } | null> {
-    const counter =
-      await this.usageQuotaCounterBuilderService.buildWorkspaceAllowanceCounter(
-        workspaceId,
-      );
-
-    if (!isDefined(counter)) {
-      return null;
-    }
-
-    const {
-      consumedValues: [consumedValue],
-    } = await this.usageQuotaCounterStoreService.readCountersAdmittingOnFailure(
-      {
-        workspaceId,
-        counters: [counter],
-      },
-    );
-
-    return {
-      limitValue: counter.limitValue,
-      consumedValue: consumedValue ?? null,
-      periodEnd: counter.periodEnd,
-    };
-  }
-
-  async getUserAllowanceUsage({
-    workspaceId,
-    userWorkspaceId,
-    resourceType,
-    operationType,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    resourceType: UsageResourceType;
-    operationType: UsageOperationType;
-  }): Promise<{
-    limitValue: number;
-    consumedValue: number | null;
-    periodEnd: Date;
-    fallback: UserCreditsFallbackMode;
-  } | null> {
-    const events = [
-      { resourceType, operationType, spenders: { userWorkspaceId } },
-    ];
-
-    const { userCreditCounters } =
-      await this.usageQuotaCounterBuilderService.buildQuotaCountersForEvents({
-        workspaceId,
-        events,
-      });
-
-    const userAllowance =
-      await this.usageQuotaCounterBuilderService.buildUserAllowance({
-        workspaceId,
-        userCreditCounters,
-      });
-
-    if (!isDefined(userAllowance)) {
-      return null;
-    }
-
-    const { consumedValues } =
-      await this.usageQuotaCounterStoreService.readCountersAdmittingOnFailure({
-        workspaceId,
-        counters: userAllowance.counters,
-      });
-
-    const bindingUserAllowance = findBindingUserAllowance({
-      userAllowanceCounters: userAllowance.counters,
-      userAllowanceConsumedValues: consumedValues,
-    });
-
-    if (!isDefined(bindingUserAllowance)) {
-      return null;
-    }
-
-    return {
-      limitValue: bindingUserAllowance.counter.limitValue,
-      consumedValue: bindingUserAllowance.consumedValue,
-      periodEnd: bindingUserAllowance.counter.periodEnd,
-      fallback: userAllowance.fallback,
-    };
-  }
-
-  async readLimitConsumptions({
-    workspaceId,
-    limits,
-  }: {
-    workspaceId: string;
-    limits: FlatUsageLimit[];
-  }): Promise<Map<string, LimitConsumption>> {
-    if (limits.length === 0) {
-      return new Map();
-    }
-
-    const periodByUnit = await this.usagePeriodService.findCurrentPeriodsByUnit(
-      { workspaceId, periodUnits: limits.map((limit) => limit.periodUnit) },
-    );
-
-    const entries = limits.filter(isQuotaLimit).flatMap((limit) => {
-      const period = periodByUnit[limit.periodUnit];
-
-      return isDefined(period)
-        ? [
-            {
-              limit,
-              counter: buildLimitQuotaCounter({ workspaceId, limit, period }),
-            },
-          ]
-        : [];
-    });
-
-    if (entries.length === 0) {
-      return new Map();
-    }
-
-    const { consumedValues } =
-      await this.usageQuotaCounterStoreService.readCountersAdmittingOnFailure({
-        workspaceId,
-        counters: entries.map(({ counter }) => counter),
-      });
-
-    return new Map(
-      entries.map(({ limit, counter }, index) => {
-        const consumedValue = consumedValues[index] ?? null;
-
-        return [
-          limit.id,
-          {
-            consumedValue,
-            remainingValue: isDefined(consumedValue)
-              ? limit.limitValue - consumedValue
-              : null,
-            periodStart: counter.periodStart,
-            periodEnd: counter.periodEnd,
-          },
-        ] as const;
-      }),
-    );
-  }
-
   private async buildCustomQuotas(
     workspaceId: string,
   ): Promise<UsageQuotaWithConsumption[]> {
@@ -289,7 +133,7 @@ export class UsageQuotaConsumptionService {
     const enforceableIds = new Set(enforceableLimits.map((limit) => limit.id));
 
     const [quotaConsumptionById, spenderLabelById] = await Promise.all([
-      this.readLimitConsumptions({
+      this.usageLimitQuotaService.readLimitConsumptions({
         workspaceId,
         limits: enforceableLimits,
       }),

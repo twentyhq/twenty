@@ -6,9 +6,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { BillingSubscriptionItemCapResolver } from 'src/engine/core-modules/usage-limit/billing-subscription-item-cap.resolver';
-import { UsageQuotaCounterBuilderService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter-builder.service';
-import { UsageQuotaCounterStoreService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter-store.service';
-import { UsageQuotaDebitService } from 'src/engine/core-modules/usage-limit/services/usage-quota-debit.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -51,9 +49,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageModule,
   ],
   providers: [
-    UsageQuotaCounterBuilderService,
-    UsageQuotaCounterStoreService,
-    UsageQuotaDebitService,
+    UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitStockService,
     WorkspaceRecordStockService,
@@ -77,9 +73,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     UsageLimitEntitlementService,
     UsageLimitService,
-    UsageQuotaCounterStoreService,
-    UsageQuotaDebitService,
-    UsageQuotaConsumptionService,
+    UsageLimitQuotaService,
     UsageQuotaAdmissionService,
     UsageLimitSpeedService,
     UsageLimitStockService,

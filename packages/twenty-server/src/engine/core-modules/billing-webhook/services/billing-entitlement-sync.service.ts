@@ -8,7 +8,7 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-entitlement-state-lock-options.constant';
 import { buildBillingEntitlementStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-entitlement-state-lock-key.util';
 import { buildBillingEntitlementsFromLookupKeys } from 'src/engine/core-modules/billing/utils/build-billing-entitlements-from-lookup-keys.util';
-import { UsageQuotaCounterStoreService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter-store.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -30,7 +30,7 @@ export class BillingEntitlementSyncService {
     @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
-    private readonly usageQuotaCounterStoreService: UsageQuotaCounterStoreService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly usageLimitStockService: UsageLimitStockService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -81,7 +81,7 @@ export class BillingEntitlementSyncService {
       !wasGranted(BillingEntitlementKey.USAGE_LIMIT) &&
       isGranted(BillingEntitlementKey.USAGE_LIMIT)
     ) {
-      await this.usageQuotaCounterStoreService.dropIntraWorkspaceLimitCounters(
+      await this.usageLimitQuotaService.dropIntraWorkspaceLimitCounters(
         workspaceId,
       );
       await this.usageLimitStockService.dropIntraWorkspaceLimitCounters(

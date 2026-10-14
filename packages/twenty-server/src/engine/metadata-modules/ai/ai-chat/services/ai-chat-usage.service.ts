@@ -8,7 +8,7 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { type AiChatUserCreditsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-chat-user-credits.dto';
 import { type AiChatUsageDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-chat-usage.dto';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
-import { UsageQuotaConsumptionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-consumption.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { buildAiChatUserCredits } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-ai-chat-user-credits.util';
 import { findAiChatCreditLimits } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-ai-chat-credit-limits.util';
@@ -21,7 +21,7 @@ export class AiChatUsageService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
-    private readonly usageQuotaConsumptionService: UsageQuotaConsumptionService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async findUsage({
@@ -59,7 +59,7 @@ export class AiChatUsageService {
 
     if (enforcedLimits.length === 0) {
       const workspaceAllowanceUsage =
-        await this.usageQuotaConsumptionService.getWorkspaceAllowanceUsage(
+        await this.usageLimitQuotaService.getWorkspaceAllowanceUsage(
           workspaceId,
         );
 
@@ -69,7 +69,7 @@ export class AiChatUsageService {
     }
 
     const consumptionById =
-      await this.usageQuotaConsumptionService.readLimitConsumptions({
+      await this.usageLimitQuotaService.readLimitConsumptions({
         workspaceId,
         limits: enforcedLimits,
       });
@@ -90,7 +90,7 @@ export class AiChatUsageService {
 
     try {
       return buildAiChatUserCredits(
-        await this.usageQuotaConsumptionService.getUserAllowanceUsage({
+        await this.usageLimitQuotaService.getUserAllowanceUsage({
           workspaceId,
           userWorkspaceId,
           resourceType: UsageResourceType.AI,
