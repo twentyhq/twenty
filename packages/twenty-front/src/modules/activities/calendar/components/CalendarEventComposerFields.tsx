@@ -309,7 +309,7 @@ export const CalendarEventComposerFields = ({
               description={
                 isDefined(onAddAccount)
                   ? t`Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event.`
-                  : t`Ask a workspace admin for the Sync Account permission to connect a calendar account.`
+                  : t`Ask a workspace admin for the User Apps permission to connect a calendar account.`
               }
               action={
                 isDefined(onAddAccount) ? (
@@ -328,7 +328,7 @@ export const CalendarEventComposerFields = ({
               description={
                 isDefined(onReauthorize)
                   ? t`Reconnect this account to grant permission to create calendar events.`
-                  : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
+                  : t`Ask a workspace admin for the User Apps permission to reconnect this account.`
               }
               action={
                 isDefined(onReauthorize) ? (
