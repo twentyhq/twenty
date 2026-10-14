@@ -70,6 +70,11 @@ const buildSettingsMenuItem = ({
 });
 
 const savedValueByKey = new Map<string, string>();
+let shouldFailNextApplicationPreferencesRequest = false;
+
+export const failNextApplicationPreferencesRequest = () => {
+  shouldFailNextApplicationPreferencesRequest = true;
+};
 
 export const updateMyUserApplicationVariable = fn();
 export const findOneFrontComponent = fn();
@@ -143,11 +148,24 @@ const buildApplicationPreferences = () => [
 ];
 
 export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
-  graphql.query('MyApplicationPreferences', () =>
-    HttpResponse.json({
+  graphql.query('MyApplicationPreferences', () => {
+    if (shouldFailNextApplicationPreferencesRequest) {
+      shouldFailNextApplicationPreferencesRequest = false;
+
+      return HttpResponse.json({
+        errors: [
+          {
+            message: 'Internal server error',
+            extensions: { code: 'INTERNAL_SERVER_ERROR' },
+          },
+        ],
+      });
+    }
+
+    return HttpResponse.json({
       data: { myApplicationPreferences: buildApplicationPreferences() },
-    }),
-  ),
+    });
+  }),
   graphql.mutation('UpdateMyUserApplicationVariable', ({ variables }) => {
     updateMyUserApplicationVariable(variables);
 
@@ -181,6 +199,7 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
 
 export const seedApplicationPreferencesStory = async () => {
   savedValueByKey.clear();
+  shouldFailNextApplicationPreferencesRequest = false;
   updateMyUserApplicationVariable.mockClear();
   findOneFrontComponent.mockClear();
   findApplicationsGatedQuery.mockClear();

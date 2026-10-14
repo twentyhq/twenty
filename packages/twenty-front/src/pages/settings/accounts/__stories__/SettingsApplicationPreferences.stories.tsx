@@ -17,6 +17,7 @@ import {
 import {
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
+  failNextApplicationPreferencesRequest,
   findApplicationsGatedQuery,
   findOneFrontComponent,
   seedApplicationPreferencesStory,
@@ -200,6 +201,37 @@ export const UnknownAppGoesBackToAccounts: Story = {
         timeout: 3000,
       }),
     ).toBeVisible();
+  },
+};
+
+export const LoadErrorOffersRetryInsteadOfGoingBack: Story = {
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    failNextApplicationPreferencesRequest();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'This application could not be loaded. Check your connection and try again.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+
+    expect(
+      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'This application could not be loaded. Check your connection and try again.',
+      ),
+    ).not.toBeInTheDocument();
+    expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
   },
 };
 
