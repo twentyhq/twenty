@@ -20,18 +20,21 @@ import {
 import { getTranslationCatalogKey } from '@/app/translations/message';
 import { CliError } from '@/output/cli-error';
 
-const readExistingCatalog = async (
+type TranslationCatalog = Record<string, string | Record<string, string>>;
+
+const isTranslationCatalog = (value: unknown): value is TranslationCatalog =>
+  isPlainObject(value) &&
+  Object.values(value).every(
+    (entry) => isString(entry) || isLocaleCatalog(entry),
+  );
+
+const readExistingCatalogOrThrow = async (
   filePath: string,
-): Promise<Record<string, unknown>> => {
+): Promise<TranslationCatalog> => {
   try {
     const catalog = await readJson(filePath);
 
-    if (
-      isPlainObject(catalog) &&
-      Object.values(catalog).every(
-        (value) => isString(value) || isLocaleCatalog(value),
-      )
-    ) {
+    if (isTranslationCatalog(catalog)) {
       return catalog;
     }
   } catch (error) {
@@ -107,7 +110,7 @@ export const extractApplicationTranslations = async ({
   for (const localeFile of [...localeFiles].sort()) {
     const filePath = join(localesDir, localeFile);
     const existing = (await pathExists(filePath))
-      ? await readExistingCatalog(filePath)
+      ? await readExistingCatalogOrThrow(filePath)
       : {};
     const translationByKey = new Map(
       flattenLocaleCatalog(existing).map((entry) => [
