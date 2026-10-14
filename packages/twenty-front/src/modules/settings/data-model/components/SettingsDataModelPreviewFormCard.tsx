@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsDataModelPreviewFormCardProps = {
-  className?: string;
   preview: ReactNode;
   form?: ReactNode;
   disabled?: boolean;
@@ -28,12 +27,11 @@ const StyledFormContainerWrapper = styled.div`
 `;
 
 export const SettingsDataModelPreviewFormCard = ({
-  className,
   preview,
   form,
   isPreviewTitleVisible = true,
 }: SettingsDataModelPreviewFormCardProps) => (
-  <Card.Root className={className} fullWidth rounded>
+  <Card.Root fullWidth rounded>
     <StyledPreviewContainerWrapper>
       <Card.Content divider={isDefined(form)}>
         {isPreviewTitleVisible && (

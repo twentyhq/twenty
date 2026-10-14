@@ -70,7 +70,6 @@ export const DashboardFormattingToolbarColorButton = () => {
       />
       <DropdownContent
         sideOffset={8}
-        className="bn-ui-container"
         aria-label={t`Text and background colors`}
         finalFocus={() => {
           editor.focus();
