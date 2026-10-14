@@ -12,6 +12,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
+import { isFilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/is-filter-operator.util';
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
 import {
   CommonQueryRunnerException,
@@ -219,6 +220,13 @@ export class FilterArgProcessorService {
       throwUseJoinColumnInstead(key);
     }
 
+    if (
+      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE &&
+      Object.keys(filterValue).some(isFilterOperator)
+    ) {
+      throwUseJoinColumnInstead(key);
+    }
+
     const targetObjectMetadataId = fieldMetadata.relationTargetObjectMetadataId;
 
     if (
@@ -279,9 +287,12 @@ export class FilterArgProcessorService {
 
     if (!isDefined(fieldMetadataId)) {
       const nameSingular = flatObjectMetadata.nameSingular;
+      const operatorHint = isFilterOperator(key)
+        ? ` "${key}" is a filter operator and must be nested under a field: { <fieldName>: { ${key}: <value> } }.`
+        : '';
 
       throw new CommonQueryRunnerException(
-        `Object ${flatObjectMetadata.nameSingular} doesn't have any "${key}" field.`,
+        `Object ${flatObjectMetadata.nameSingular} doesn't have any "${key}" field.${operatorHint}`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
         {
           userFriendlyMessage: msg`Invalid filter : ${nameSingular} object doesn't have any "${key}" field.`,
@@ -341,8 +352,15 @@ export class FilterArgProcessorService {
       );
 
       if (!subFieldMetadata) {
+        const subFieldNames = compositeType.properties.map(
+          (property) => property.name,
+        );
+        const operatorHint = isFilterOperator(subFieldKey)
+          ? ` Nest the operator under a sub field: { ${fieldMetadata.name}: { <subFieldName>: { ${subFieldKey}: <value> } } }.`
+          : '';
+
         throw new CommonQueryRunnerException(
-          `Sub field "${subFieldKey}" not found for composite type: ${fieldMetadata.type}`,
+          `Sub field "${subFieldKey}" not found for composite type: ${fieldMetadata.type}. Available sub fields: ${subFieldNames.join(', ')}.${operatorHint}`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
           { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
