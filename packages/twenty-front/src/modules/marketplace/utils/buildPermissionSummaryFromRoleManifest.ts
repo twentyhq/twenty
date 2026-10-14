@@ -1,4 +1,3 @@
-import { type ObjectLabels } from '@/marketplace/types/ObjectLabels';
 import { type PermissionSummaryItem } from '@/marketplace/types/PermissionSummaryItem';
 import { type RecordAccess } from '@/marketplace/types/RecordAccess';
 import { buildObjectRecordsPermissionSummary } from '@/marketplace/utils/buildObjectRecordsPermissionSummary';
@@ -13,7 +12,7 @@ import { IconAddressBook, IconSettings, IconTool } from 'twenty-ui/icon';
 export type { PermissionSummaryItem } from '@/marketplace/types/PermissionSummaryItem';
 
 export type BuildPermissionSummaryOptions = {
-  objectLabelsByUniversalIdentifier?: Record<string, ObjectLabels>;
+  objectLabelsByUniversalIdentifier?: Record<string, string>;
 };
 
 const getRoleAccess = (defaultRole: RoleManifest): RecordAccess => ({

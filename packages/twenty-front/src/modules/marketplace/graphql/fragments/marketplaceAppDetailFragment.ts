@@ -28,7 +28,6 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     objects {
       universalIdentifier
       labelSingular
-      labelPlural
     }
     roles {
       universalIdentifier

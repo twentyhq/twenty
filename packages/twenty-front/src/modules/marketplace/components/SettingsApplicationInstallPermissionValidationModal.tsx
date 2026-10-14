@@ -4,7 +4,6 @@ import { AppConnectionHeader } from '@/applications/components/AppConnectionHead
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
-import { type ObjectLabels } from '@/marketplace/types/ObjectLabels';
 import {
   buildPermissionSummaryFromRoleManifest,
   type PermissionSummaryItem,
@@ -19,15 +18,12 @@ import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
-import {
-  IconAlertTriangle,
-  IconChevronLeft,
-  IconInfoCircle,
-} from 'twenty-ui/icon';
+import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-type MarketplaceAppObject = ObjectLabels & {
+type MarketplaceAppObject = {
   universalIdentifier: string;
+  labelSingular: string;
 };
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
@@ -116,15 +112,9 @@ const StyledPermissionIcon = styled.div`
   display: flex;
 `;
 
-const StyledObjectListButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
+const StyledPermissionLabel = styled.span`
   border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.tertiary};
   cursor: default;
-  display: flex;
-  padding: 0;
 
   &:focus-visible {
     outline: 1px solid ${themeCssVariables.color.blue9};
@@ -162,12 +152,12 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const objectLabelsByUniversalIdentifier = useMemo(
-    (): Record<string, ObjectLabels> =>
+    (): Record<string, string> =>
       Object.fromEntries(
         [...(appObjects ?? []), ...objectMetadataItems].map(
-          ({ universalIdentifier, labelSingular, labelPlural }) => [
+          ({ universalIdentifier, labelSingular }) => [
             universalIdentifier,
-            { labelSingular, labelPlural },
+            labelSingular,
           ],
         ),
       ),
@@ -255,8 +245,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                         <StyledPermissionIcon>
                           <item.Icon size={16} aria-hidden />
                         </StyledPermissionIcon>
-                        {item.label}
-                        {isDefined(item.details) && (
+                        {isDefined(item.details) ? (
                           <Tooltip
                             content={
                               <StyledObjectList>
@@ -270,13 +259,12 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                             delay={TooltipDelay.shortDelay}
                             positionMethod="fixed"
                           >
-                            <StyledObjectListButton
-                              type="button"
-                              aria-label={t`Objects: ${item.details.join(', ')}`}
-                            >
-                              <IconInfoCircle size={14} aria-hidden />
-                            </StyledObjectListButton>
+                            <StyledPermissionLabel tabIndex={0}>
+                              {item.label}
+                            </StyledPermissionLabel>
                           </Tooltip>
+                        ) : (
+                          item.label
                         )}
                       </StyledPermissionRow>
                     ))}

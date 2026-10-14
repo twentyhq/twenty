@@ -15,18 +15,9 @@ const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
 const TASK_OBJECT_UNIVERSAL_IDENTIFIER = '20202020-1ba1-48ba-bc83-ef7e5990ed10';
 
 const objectLabelsByUniversalIdentifier = {
-  [PERSON_OBJECT_UNIVERSAL_IDENTIFIER]: {
-    labelSingular: 'Person',
-    labelPlural: 'People',
-  },
-  [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER]: {
-    labelSingular: 'Company',
-    labelPlural: 'Companies',
-  },
-  [TASK_OBJECT_UNIVERSAL_IDENTIFIER]: {
-    labelSingular: 'Task',
-    labelPlural: 'Tasks',
-  },
+  [PERSON_OBJECT_UNIVERSAL_IDENTIFIER]: 'Person',
+  [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER]: 'Company',
+  [TASK_OBJECT_UNIVERSAL_IDENTIFIER]: 'Task',
 };
 
 const getLabels = (
@@ -35,6 +26,14 @@ const getLabels = (
 ) =>
   buildPermissionSummaryFromRoleManifest(role, options).map(
     ({ label }) => label,
+  );
+
+const getDetails = (
+  role: RoleManifest,
+  options?: Parameters<typeof buildPermissionSummaryFromRoleManifest>[1],
+) =>
+  buildPermissionSummaryFromRoleManifest(role, options).map(
+    ({ details }) => details,
   );
 
 describe('buildPermissionSummaryFromRoleManifest', () => {
@@ -100,7 +99,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Read all records', 'Write People', 'Delete Tasks']);
+      ).toEqual(['Read all records', 'Write 1 object', 'Delete 1 object']);
     });
 
     it('does not repeat object-level grants already covered by the all-record access', () => {
@@ -126,7 +125,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
   });
 
   describe('object-level permissions', () => {
-    it('names the objects and groups them by access level', () => {
+    it('counts the objects and groups them by access level', () => {
       expect(
         getLabels(
           {
@@ -153,10 +152,10 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Read and write People and Companies', 'Read Tasks']);
+      ).toEqual(['Read and write 2 objects', 'Read 1 object']);
     });
 
-    it('counts objects whose label is unknown instead of hiding them', () => {
+    it('counts objects whose label is unknown too', () => {
       expect(
         getLabels(
           {
@@ -181,12 +180,12 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Read People and 2 other objects']);
+      ).toEqual(['Read 3 objects']);
     });
 
     it('does not resolve object labels from Object prototype properties', () => {
       expect(
-        getLabels(
+        getDetails(
           {
             ...baseRole,
             objectPermissions: [
@@ -209,7 +208,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Read People and 2 other objects']);
+      ).toEqual([['Person', '2 other objects']]);
     });
 
     it('lists the singular labels of the resolved objects as details', () => {
@@ -237,8 +236,8 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
         { objectLabelsByUniversalIdentifier },
       );
 
-      expect(item.label).toBe('Read People, Companies, and 1 other object');
-      expect(item.details).toEqual(['Person', 'Company']);
+      expect(item.label).toBe('Read 3 objects');
+      expect(item.details).toEqual(['Person', 'Company', '1 other object']);
     });
 
     it('has no details when no object label is resolved', () => {
@@ -253,7 +252,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
         ],
       });
 
-      expect(item.label).toBe('Read 1 other object');
+      expect(item.label).toBe('Read 1 object');
       expect(item.details).toBeUndefined();
     });
 
@@ -270,7 +269,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
             },
           ],
         }),
-      ).toEqual(['Read and delete 1 other object']);
+      ).toEqual(['Read and delete 1 object']);
     });
 
     it('skips object permissions that grant nothing and deduplicates objects', () => {
@@ -299,7 +298,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Delete Tasks']);
+      ).toEqual(['Delete 1 object']);
     });
   });
 

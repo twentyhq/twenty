@@ -1,4 +1,3 @@
-import { type ObjectLabels } from '@/marketplace/types/ObjectLabels';
 import { type PermissionSummaryItem } from '@/marketplace/types/PermissionSummaryItem';
 import { type RecordAccess } from '@/marketplace/types/RecordAccess';
 import { getRecordAccessLabel } from '@/marketplace/utils/getRecordAccessLabel';
@@ -6,7 +5,6 @@ import { plural } from '@lingui/core/macro';
 import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAddressBook } from 'twenty-ui/icon';
-import { formatDisplayList } from '~/utils/format/formatDisplayList';
 
 type ObjectPermissionGroup = {
   access: RecordAccess;
@@ -78,11 +76,23 @@ export const buildObjectRecordsPermissionSummary = ({
 }: {
   defaultRole: RoleManifest;
   roleAccess: RecordAccess;
-  objectLabelsByUniversalIdentifier: Record<string, ObjectLabels>;
+  objectLabelsByUniversalIdentifier: Record<string, string>;
 }): PermissionSummaryItem[] =>
   groupObjectPermissionsByAccess({ defaultRole, roleAccess }).flatMap(
     ({ access, objectUniversalIdentifiers }) => {
-      const resolvedObjectLabels = objectUniversalIdentifiers
+      const label = getRecordAccessLabel({
+        access,
+        target: plural(objectUniversalIdentifiers.length, {
+          one: '# object',
+          other: '# objects',
+        }),
+      });
+
+      if (!isDefined(label)) {
+        return [];
+      }
+
+      const resolvedLabels = objectUniversalIdentifiers
         .filter((objectUniversalIdentifier) =>
           Object.hasOwn(
             objectLabelsByUniversalIdentifier,
@@ -94,11 +104,15 @@ export const buildObjectRecordsPermissionSummary = ({
             objectLabelsByUniversalIdentifier[objectUniversalIdentifier],
         );
 
-      const unresolvedCount =
-        objectUniversalIdentifiers.length - resolvedObjectLabels.length;
+      if (resolvedLabels.length === 0) {
+        return [{ Icon: IconAddressBook, label }];
+      }
 
-      const targetParts = [
-        ...resolvedObjectLabels.map(({ labelPlural }) => labelPlural),
+      const unresolvedCount =
+        objectUniversalIdentifiers.length - resolvedLabels.length;
+
+      const details = [
+        ...resolvedLabels,
         ...(unresolvedCount > 0
           ? [
               plural(unresolvedCount, {
@@ -109,25 +123,6 @@ export const buildObjectRecordsPermissionSummary = ({
           : []),
       ];
 
-      const label = getRecordAccessLabel({
-        access,
-        target: formatDisplayList(targetParts),
-      });
-
-      if (!isDefined(label)) {
-        return [];
-      }
-
-      const details = resolvedObjectLabels.map(
-        ({ labelSingular }) => labelSingular,
-      );
-
-      return [
-        {
-          Icon: IconAddressBook,
-          label,
-          ...(details.length > 0 ? { details } : {}),
-        },
-      ];
+      return [{ Icon: IconAddressBook, label, details }];
     },
   );
