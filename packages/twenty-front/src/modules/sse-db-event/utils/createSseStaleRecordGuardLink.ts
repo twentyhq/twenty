@@ -8,8 +8,10 @@ import { patchStaleRecordNodes } from '@/sse-db-event/utils/patchStaleRecordNode
 import { isPlainObject } from 'twenty-shared/utils';
 
 export const createSseStaleRecordGuardLink = ({ store }: { store: Store }) =>
-  new ApolloLink((operation, forward) =>
-    forward(operation).pipe(
+  new ApolloLink((operation, forward) => {
+    const requestSentAtInMs = Date.now();
+
+    return forward(operation).pipe(
       map((result) => {
         const sseAppliedRecordVersionsByCacheId = store.get(
           sseAppliedRecordVersionsByCacheIdState.atom,
@@ -31,6 +33,7 @@ export const createSseStaleRecordGuardLink = ({ store }: { store: Store }) =>
               sseAppliedRecordVersionsByCacheId,
               cacheId,
               updatedAt,
+              requestSentAtInMs,
               nowInMs,
             }),
         });
@@ -39,5 +42,5 @@ export const createSseStaleRecordGuardLink = ({ store }: { store: Store }) =>
           ? result
           : { ...result, data: patchedData };
       }),
-    ),
-  );
+    );
+  });

@@ -6,11 +6,13 @@ export const findNewerSseAppliedRecord = ({
   sseAppliedRecordVersionsByCacheId,
   cacheId,
   updatedAt,
+  requestSentAtInMs,
   nowInMs,
 }: {
   sseAppliedRecordVersionsByCacheId: Record<string, SseAppliedRecordVersion>;
   cacheId: string;
-  updatedAt: string;
+  updatedAt: string | undefined;
+  requestSentAtInMs: number;
   nowInMs: number;
 }) => {
   const version = sseAppliedRecordVersionsByCacheId[cacheId];
@@ -20,6 +22,12 @@ export const findNewerSseAppliedRecord = ({
     nowInMs - version.registeredAtInMs > SSE_APPLIED_RECORD_VERSION_TTL_IN_MS
   ) {
     return undefined;
+  }
+
+  if (!isDefined(updatedAt)) {
+    return version.registeredAtInMs > requestSentAtInMs
+      ? version.record
+      : undefined;
   }
 
   const updatedAtInMs = Date.parse(updatedAt);

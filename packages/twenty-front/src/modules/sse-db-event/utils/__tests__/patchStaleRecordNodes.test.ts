@@ -1,4 +1,5 @@
 import { patchStaleRecordNodes } from '@/sse-db-event/utils/patchStaleRecordNodes';
+import { isDefined } from 'twenty-shared/utils';
 
 const STALE_UPDATED_AT = '2026-10-13T10:00:01.000Z';
 const SSE_UPDATED_AT = '2026-10-13T10:00:02.000Z';
@@ -17,9 +18,10 @@ const findNewerRecord = ({
   updatedAt,
 }: {
   cacheId: string;
-  updatedAt: string;
+  updatedAt: string | undefined;
 }) =>
   cacheId === 'WorkflowRun:run-1' &&
+  isDefined(updatedAt) &&
   Date.parse(updatedAt) < Date.parse(SSE_UPDATED_AT)
     ? SSE_WORKFLOW_RUN
     : undefined;
@@ -87,5 +89,33 @@ describe('patchStaleRecordNodes', () => {
     const data = { workflowRun: buildWorkflowRunNode(SSE_UPDATED_AT) };
 
     expect(patchStaleRecordNodes({ data, findNewerRecord })).toBe(data);
+  });
+
+  it('should look up records selected without updatedAt', () => {
+    const findNewerStepLogs = jest.fn(() => ({
+      stepLogs: { 'step-1': 'completed' },
+    }));
+    const data = {
+      workflowRun: {
+        __typename: 'WorkflowRun',
+        id: 'run-1',
+        stepLogs: { 'step-1': 'running' },
+      },
+    };
+
+    const patchedData = patchStaleRecordNodes({
+      data,
+      findNewerRecord: findNewerStepLogs,
+    });
+
+    expect(findNewerStepLogs).toHaveBeenCalledWith({
+      cacheId: 'WorkflowRun:run-1',
+      updatedAt: undefined,
+    });
+    expect(patchedData.workflowRun).toEqual({
+      __typename: 'WorkflowRun',
+      id: 'run-1',
+      stepLogs: { 'step-1': 'completed' },
+    });
   });
 });

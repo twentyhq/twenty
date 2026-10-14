@@ -3,7 +3,7 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 type FindNewerRecord = (params: {
   cacheId: string;
-  updatedAt: string;
+  updatedAt: string | undefined;
 }) => Record<string, unknown> | undefined;
 
 const isGraphqlObject = (value: unknown): value is Record<string, unknown> =>
@@ -84,13 +84,14 @@ const patchValue = ({
     return value;
   }
 
-  const newerRecord =
-    isNonEmptyString(value.id) && isNonEmptyString(value.updatedAt)
-      ? findNewerRecord({
-          cacheId: `${value.__typename}:${value.id}`,
-          updatedAt: value.updatedAt,
-        })
-      : undefined;
+  const newerRecord = isNonEmptyString(value.id)
+    ? findNewerRecord({
+        cacheId: `${value.__typename}:${value.id}`,
+        updatedAt: isNonEmptyString(value.updatedAt)
+          ? value.updatedAt
+          : undefined,
+      })
+    : undefined;
 
   return patchNestedValues({
     node: isDefined(newerRecord)
