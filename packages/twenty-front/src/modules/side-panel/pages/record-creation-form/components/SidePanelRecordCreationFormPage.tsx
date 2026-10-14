@@ -165,6 +165,7 @@ const SidePanelRecordCreationForm = ({
     .map((recordFormField) => recordFormField.fieldMetadataItem);
 
   const hiddenFieldsCount = hiddenFieldMetadataItems.length;
+  const editableFieldsCount = editableRecordFormFields.length;
 
   const { violationsByFieldMetadataId, recordViolations } =
     groupValidationRuleViolationsByField({
@@ -330,8 +331,8 @@ const SidePanelRecordCreationForm = ({
               }
             >
               {recordCreationFormAreHiddenFieldsShown
-                ? t`Collapse hidden fields`
-                : t`Show hidden fields (${hiddenFieldsCount})`}
+                ? t`Hide fields`
+                : t`All fields (${editableFieldsCount})`}
             </LightButton>
           </StyledHiddenFieldsToggle>
         )}
