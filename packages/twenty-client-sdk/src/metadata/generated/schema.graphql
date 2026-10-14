@@ -4053,6 +4053,7 @@ type RichTextBody {
 type Role {
   agents: [Agent!]!
   apiKeys: [ApiKeyForRole!]!
+  applicationId: UUID!
   canAccessAllTools: Boolean!
   canBeAssignedToAgents: Boolean!
   canBeAssignedToApiKeys: Boolean!
