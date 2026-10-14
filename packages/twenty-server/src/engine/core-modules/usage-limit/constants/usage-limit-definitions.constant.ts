@@ -81,7 +81,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
       defaults: [
         {
           resourceType: UsageResourceType.AI,
-          operationType: [
+          operationTypes: [
             UsageOperationType.AI_CHAT_TOKEN,
             UsageOperationType.WEB_SEARCH,
           ],
@@ -234,7 +234,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
       defaults: [
         {
           resourceType: UsageResourceType.EMAIL,
-          operationType: UsageOperationType.EMAIL_SEND,
+          operationTypes: [UsageOperationType.EMAIL_SEND],
           limitKind: 'quota',
           spenderType: 'workspace',
           spenderId: '',

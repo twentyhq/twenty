@@ -65,7 +65,7 @@ export const buildQuotaCounters = ({
     .filter(
       (quotaLimitDefault) =>
         isOperationInScope({
-          operationTypes: [quotaLimitDefault.operationType].flat(),
+          operationTypes: quotaLimitDefault.operationTypes,
           operationType,
         }) &&
         spenderTypes.has(quotaLimitDefault.spenderType) &&

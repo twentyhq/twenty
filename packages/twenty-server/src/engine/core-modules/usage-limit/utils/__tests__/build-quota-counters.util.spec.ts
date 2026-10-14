@@ -35,7 +35,7 @@ const buildDefault = (
   overrides: Partial<QuotaLimitDefault> = {},
 ): QuotaLimitDefault => ({
   resourceType: UsageResourceType.AI,
-  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
   limitKind: 'quota',
   spenderType: 'workspace',
   spenderId: '',
@@ -226,7 +226,7 @@ describe('buildQuotaCounters', () => {
   it('ignores a default declared on another operation', () => {
     const counters = buildCounters({
       quotaLimitDefaults: [
-        buildDefault({ operationType: UsageOperationType.WEB_SEARCH }),
+        buildDefault({ operationTypes: [UsageOperationType.WEB_SEARCH] }),
       ],
     });
 
@@ -280,7 +280,7 @@ describe('buildQuotaCounters', () => {
   it('shares one counter across the operations a default lists', () => {
     const quotaLimitDefaults = [
       buildDefault({
-        operationType: [
+        operationTypes: [
           UsageOperationType.AI_CHAT_TOKEN,
           UsageOperationType.WEB_SEARCH,
         ],
@@ -301,7 +301,7 @@ describe('buildQuotaCounters', () => {
     const counters = buildCounters({
       quotaLimitDefaults: [
         buildDefault({
-          operationType: [
+          operationTypes: [
             UsageOperationType.WEB_SEARCH,
             UsageOperationType.AI_WORKFLOW_TOKEN,
           ],
@@ -316,9 +316,9 @@ describe('buildQuotaCounters', () => {
   it('ranks a single operation before a list, and a list before every operation', () => {
     const counters = buildCounters({
       quotaLimitDefaults: [
-        buildDefault({ operationType: UsageOperationType.ALL }),
+        buildDefault({ operationTypes: [UsageOperationType.ALL] }),
         buildDefault({
-          operationType: [
+          operationTypes: [
             UsageOperationType.AI_CHAT_TOKEN,
             UsageOperationType.WEB_SEARCH,
           ],

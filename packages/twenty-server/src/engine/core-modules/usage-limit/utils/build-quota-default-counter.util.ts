@@ -26,7 +26,7 @@ export const buildQuotaDefaultCounter = ({
     periodEnd: period.periodEnd,
     spenderType: quotaLimitDefault.spenderType,
     spenderId: normalizeSpenderId(spenderId),
-    operationTypes: [quotaLimitDefault.operationType].flat(),
+    operationTypes: quotaLimitDefault.operationTypes,
   };
 
   return { ...counter, key: buildQuotaCounterKey({ workspaceId, counter }) };

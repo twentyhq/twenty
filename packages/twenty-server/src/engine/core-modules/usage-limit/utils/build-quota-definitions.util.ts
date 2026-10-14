@@ -49,7 +49,7 @@ export const buildQuotaDefinitions = (): UsageQuotaDefinitionDTO[] =>
                 quotaLimitDefault.isOverridable
                   ? [
                       {
-                        operationType: quotaLimitDefault.operationType,
+                        operationType: quotaLimitDefault.operationTypes[0],
                         spenderType: quotaLimitDefault.spenderType,
                         unit: quotaLimitDefault.unit,
                         periodUnit: quotaLimitDefault.periodUnit,
