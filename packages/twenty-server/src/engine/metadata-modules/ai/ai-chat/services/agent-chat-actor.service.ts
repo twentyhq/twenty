@@ -174,9 +174,7 @@ export class AgentChatActorService {
     workspaceId: string;
     userWorkspaceId: string;
     authContext: WorkspaceAuthContext;
-  }): Promise<
-    { rolePermissionConfig: RolePermissionConfig; roleId: string } | undefined
-  > {
+  }): Promise<{ rolePermissionConfig: RolePermissionConfig } | undefined> {
     const { userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
@@ -187,10 +185,10 @@ export class AgentChatActorService {
       apiKeyRoleMap: {},
       flatRoleTargetByAgentIdMaps: {},
     });
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
 
-    return isDefined(rolePermissionConfig) && isDefined(roleId)
-      ? { rolePermissionConfig, roleId }
+    return isDefined(rolePermissionConfig) &&
+      isDefined(userWorkspaceRoleMap[userWorkspaceId])
+      ? { rolePermissionConfig }
       : undefined;
   }
 

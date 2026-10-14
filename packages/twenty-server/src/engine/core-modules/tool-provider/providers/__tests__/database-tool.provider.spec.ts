@@ -146,7 +146,6 @@ describe('DatabaseToolProvider', () => {
     return (await provider.generateDescriptors(
       {
         workspaceId,
-        roleId,
         rolePermissionConfig: options?.rolePermissionConfig ?? {
           intersectionOf: { agentRoleId: roleId },
         },
