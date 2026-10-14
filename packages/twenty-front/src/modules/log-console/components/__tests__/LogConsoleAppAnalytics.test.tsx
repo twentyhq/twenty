@@ -1,10 +1,11 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { MockedProvider } from '@apollo/client/testing/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { LogConsoleAppAnalytics } from '@/log-console/components/LogConsoleAppAnalytics';
+import { logConsoleAppAnalyticsRegistrationIdState } from '@/log-console/states/logConsoleAppAnalyticsRegistrationIdState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -64,6 +65,10 @@ const renderWithRegistrations = (
 };
 
 describe('LogConsoleAppAnalytics', () => {
+  afterEach(() => {
+    localStorage.clear();
+  });
+
   it('should explain that analytics need a registered app when there is none', async () => {
     renderWithRegistrations([]);
 
@@ -84,5 +89,23 @@ describe('LogConsoleAppAnalytics', () => {
       await screen.findByText('Report for registration-1'),
     ).toBeInTheDocument();
     expect(screen.getByText('Lead scoring')).toBeInTheDocument();
+  });
+
+  it('should report on the previously selected app', async () => {
+    renderWithRegistrations([
+      { id: 'registration-1', name: 'Lead scoring' },
+      { id: 'registration-2', name: 'Invoice sync' },
+    ]);
+    act(() => {
+      jotaiStore.set(
+        logConsoleAppAnalyticsRegistrationIdState.atom,
+        'registration-2',
+      );
+    });
+
+    expect(
+      await screen.findByText('Report for registration-2'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Invoice sync')).toBeInTheDocument();
   });
 });

@@ -5,4 +5,6 @@ export const logConsoleAppAnalyticsRegistrationIdState = createAtomState<
 >({
   key: 'logConsoleAppAnalyticsRegistrationIdState',
   defaultValue: null,
+  useLocalStorage: true,
+  localStorageOptions: { getOnInit: true },
 });

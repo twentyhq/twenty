@@ -1,4 +1,5 @@
 import { Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
 
 import { LOG_CONSOLE_APP_ANALYTICS_RANGE_PRESETS } from '@/log-console/constants/LogConsoleAppAnalyticsRangePresets';
 import { LOG_CONSOLE_APP_ANALYTICS_RETENTION_IN_DAYS } from '@/log-console/constants/LogConsoleAppAnalyticsRetentionInDays';
@@ -28,7 +29,7 @@ const getPresetStart = ({
 }) => {
   const { lastDays } = LOG_CONSOLE_APP_ANALYTICS_RANGE_PRESETS[preset];
 
-  if (lastDays === undefined) {
+  if (!isDefined(lastDays)) {
     return toUtcDayStart(registrationCreatedAt);
   }
 
