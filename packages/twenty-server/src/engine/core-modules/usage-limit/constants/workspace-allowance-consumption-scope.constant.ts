@@ -3,7 +3,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export const WORKSPACE_ALLOWANCE_CONSUMPTION_SCOPE: QuotaConsumptionScope = {
-  operationType: UsageOperationType.ALL,
+  operationTypes: [UsageOperationType.ALL],
   spenderType: 'workspace',
   spenderId: null,
   unit: UsageUnit.CREDIT,

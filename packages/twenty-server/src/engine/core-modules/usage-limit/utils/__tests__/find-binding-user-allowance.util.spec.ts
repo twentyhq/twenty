@@ -23,7 +23,7 @@ const buildUserAllowanceCounter = ({
   periodEnd,
   spenderType: 'userWorkspace',
   spenderId: 'user-workspace-1',
-  operationType: UsageOperationType.ALL,
+  operationTypes: [UsageOperationType.ALL],
   fallback: 'WORKSPACE_CREDITS',
 });
 

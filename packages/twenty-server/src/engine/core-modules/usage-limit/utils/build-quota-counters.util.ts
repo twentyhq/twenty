@@ -16,11 +16,11 @@ import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usag
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
 const operationScopeSpecificity = (counter: LimitQuotaCounter): number => {
-  if (Array.isArray(counter.operationType)) {
-    return 1;
+  if (counter.operationTypes.includes(UsageOperationType.ALL)) {
+    return 2;
   }
 
-  return counter.operationType === UsageOperationType.ALL ? 2 : 0;
+  return counter.operationTypes.length > 1 ? 1 : 0;
 };
 
 const counterSpecificity = (counter: LimitQuotaCounter): number =>
@@ -65,7 +65,7 @@ export const buildQuotaCounters = ({
     .filter(
       (quotaLimitDefault) =>
         isOperationInScope({
-          operationScope: quotaLimitDefault.operationType,
+          operationTypes: [quotaLimitDefault.operationType].flat(),
           operationType,
         }) &&
         spenderTypes.has(quotaLimitDefault.spenderType) &&

@@ -24,9 +24,10 @@ export const buildQuotaExhaustedScope = ({
         exhaustedKind: 'limit',
         spenderType: counter.spenderType,
         spenderId: counter.spenderId,
-        operationType: Array.isArray(counter.operationType)
-          ? operationType
-          : counter.operationType,
+        operationType:
+          counter.operationTypes.length === 1
+            ? counter.operationTypes[0]
+            : operationType,
         unit: counter.unit,
         limitValue: counter.limitValue,
         remaining: 0,
@@ -57,9 +58,10 @@ export const buildQuotaExhaustedScope = ({
         exhaustedKind: 'userAllowance',
         spenderType: counter.spenderType,
         spenderId: counter.spenderId,
-        operationType: Array.isArray(counter.operationType)
-          ? operationType
-          : counter.operationType,
+        operationType:
+          counter.operationTypes.length === 1
+            ? counter.operationTypes[0]
+            : operationType,
         unit: counter.unit,
         limitValue: counter.limitValue,
         remaining: 0,

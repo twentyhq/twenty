@@ -16,7 +16,7 @@ const spenderColumnMatches = (
 
 export type QuotaConsumptionScope = Pick<
   LimitQuotaCounter,
-  'operationType' | 'spenderType' | 'spenderId' | 'unit'
+  'operationTypes' | 'spenderType' | 'spenderId' | 'unit'
 >;
 
 const rowMatchesScope = (
@@ -25,7 +25,7 @@ const rowMatchesScope = (
 ): boolean => {
   if (
     !isOperationInScope({
-      operationScope: scope.operationType,
+      operationTypes: scope.operationTypes,
       operationType: row.operationType,
     })
   ) {

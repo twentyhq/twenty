@@ -5,7 +5,7 @@ describe('isOperationInScope', () => {
   it('covers every operation for ALL', () => {
     expect(
       isOperationInScope({
-        operationScope: UsageOperationType.ALL,
+        operationTypes: [UsageOperationType.ALL],
         operationType: UsageOperationType.WEB_SEARCH,
       }),
     ).toBe(true);
@@ -14,33 +14,33 @@ describe('isOperationInScope', () => {
   it('covers only the named operation', () => {
     expect(
       isOperationInScope({
-        operationScope: UsageOperationType.AI_CHAT_TOKEN,
+        operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
         operationType: UsageOperationType.AI_CHAT_TOKEN,
       }),
     ).toBe(true);
     expect(
       isOperationInScope({
-        operationScope: UsageOperationType.AI_CHAT_TOKEN,
+        operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
         operationType: UsageOperationType.WEB_SEARCH,
       }),
     ).toBe(false);
   });
 
   it('covers the listed operations only', () => {
-    const operationScope = [
+    const operationTypes = [
       UsageOperationType.AI_CHAT_TOKEN,
       UsageOperationType.WEB_SEARCH,
     ];
 
     expect(
       isOperationInScope({
-        operationScope,
+        operationTypes,
         operationType: UsageOperationType.WEB_SEARCH,
       }),
     ).toBe(true);
     expect(
       isOperationInScope({
-        operationScope,
+        operationTypes,
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       }),
     ).toBe(false);

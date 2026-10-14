@@ -13,7 +13,7 @@ const buildKey = (overrides: Partial<CounterIdentity> = {}) =>
     workspaceId: WORKSPACE_ID,
     counter: {
       resourceType: UsageResourceType.AI,
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
       spenderType: 'workspace',
       spenderId: null,
       unit: UsageUnit.CREDIT,
@@ -31,7 +31,7 @@ describe('buildQuotaCounterKey', () => {
   });
 
   it.each([
-    ['operationType', { operationType: UsageOperationType.WEB_SEARCH }],
+    ['operationTypes', { operationTypes: [UsageOperationType.WEB_SEARCH] }],
     ['unit', { unit: UsageUnit.TOKEN }],
     ['spenderId', { spenderId: 'user-1' }],
     ['periodUnit', { periodUnit: 'week' as const }],
@@ -43,7 +43,7 @@ describe('buildQuotaCounterKey', () => {
   it('keys a counter over several operations by their sorted list', () => {
     expect(
       buildKey({
-        operationType: [
+        operationTypes: [
           UsageOperationType.WEB_SEARCH,
           UsageOperationType.AI_CHAT_TOKEN,
         ],

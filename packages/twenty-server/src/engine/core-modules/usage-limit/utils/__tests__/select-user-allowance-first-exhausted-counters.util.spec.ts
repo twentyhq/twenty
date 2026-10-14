@@ -29,7 +29,7 @@ const limitCounter: LimitQuotaCounter = {
   periodEnd: PERIOD_END,
   spenderType: 'userWorkspace',
   spenderId: 'user-workspace-1',
-  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
 };
 
 const workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter = {
@@ -49,7 +49,7 @@ const buildUserAllowanceCounter = (
   limitValue: USER_ALLOWANCE_LIMIT,
   unit: UsageUnit.USER_CREDIT,
   resourceType: UsageResourceType.AI,
-  operationType: UsageOperationType.ALL,
+  operationTypes: [UsageOperationType.ALL],
   periodUnit: 'week',
   isDefault: true,
   spenderType: 'userWorkspace',

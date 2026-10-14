@@ -5,7 +5,7 @@ import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build
 describe('buildUsageScopeFilter', () => {
   it('narrows nothing for a workspace scope over every operation', () => {
     const filter = buildUsageScopeFilter({
-      operationType: UsageOperationType.ALL,
+      operationTypes: [UsageOperationType.ALL],
       unit: null,
       spenderType: 'workspace',
       spenderId: null,
@@ -16,7 +16,7 @@ describe('buildUsageScopeFilter', () => {
 
   it('pins the operation when the scope names one', () => {
     const filter = buildUsageScopeFilter({
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
       unit: null,
       spenderType: 'workspace',
       spenderId: null,
@@ -32,7 +32,7 @@ describe('buildUsageScopeFilter', () => {
 
   it('pins the unit when the scope names one', () => {
     const filter = buildUsageScopeFilter({
-      operationType: UsageOperationType.CODE_EXECUTION,
+      operationTypes: [UsageOperationType.CODE_EXECUTION],
       unit: UsageUnit.MILLISECOND,
       spenderType: 'workspace',
       spenderId: null,
@@ -47,7 +47,7 @@ describe('buildUsageScopeFilter', () => {
 
   it('pins the spender id on the column of its type', () => {
     const filter = buildUsageScopeFilter({
-      operationType: UsageOperationType.ALL,
+      operationTypes: [UsageOperationType.ALL],
       unit: null,
       spenderType: 'apiKey',
       spenderId: 'api-key-1',
@@ -59,7 +59,7 @@ describe('buildUsageScopeFilter', () => {
 
   it('sums every spender of the type when the scope carries no id', () => {
     const filter = buildUsageScopeFilter({
-      operationType: UsageOperationType.ALL,
+      operationTypes: [UsageOperationType.ALL],
       unit: null,
       spenderType: 'userWorkspace',
       spenderId: null,
@@ -78,7 +78,7 @@ describe('buildUsageScopeFilter', () => {
     ['logicFunction', 'logicFunctionId'],
   ] as const)('scopes a %s on %s', (spenderType, column) => {
     const filter = buildUsageScopeFilter({
-      operationType: UsageOperationType.ALL,
+      operationTypes: [UsageOperationType.ALL],
       unit: null,
       spenderType,
       spenderId: 'spender-1',
@@ -89,7 +89,7 @@ describe('buildUsageScopeFilter', () => {
 
   it('lists the operations when the scope covers several', () => {
     const filter = buildUsageScopeFilter({
-      operationType: [
+      operationTypes: [
         UsageOperationType.AI_CHAT_TOKEN,
         UsageOperationType.WEB_SEARCH,
       ],

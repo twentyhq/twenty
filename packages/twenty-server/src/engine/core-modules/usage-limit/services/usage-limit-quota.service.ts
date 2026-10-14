@@ -1648,7 +1648,7 @@ export class UsageLimitQuotaService {
             return this.usageAnalyticsService.getUserCreditsUsedMicroForScope({
               workspaceId,
               resourceType: counter.resourceType,
-              operationType: counter.operationType,
+              operationTypes: counter.operationTypes,
               spenderType: counter.spenderType,
               spenderId: counter.spenderId,
               periodStart: counter.periodStart,
@@ -1675,7 +1675,7 @@ export class UsageLimitQuotaService {
                     {
                       workspaceId,
                       resourceType: counter.resourceType,
-                      operationType: counter.operationType,
+                      operationTypes: counter.operationTypes,
                       spenderType: counter.spenderType,
                       spenderId: counter.spenderId,
                       periodStart: counter.periodStart,

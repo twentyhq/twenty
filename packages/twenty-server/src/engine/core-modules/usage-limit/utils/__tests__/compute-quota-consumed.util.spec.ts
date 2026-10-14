@@ -35,7 +35,7 @@ const buildCounter = (
   periodEnd: new Date('2026-09-01T00:00:00.000Z'),
   spenderType: 'workspace',
   spenderId: null,
-  operationType: UsageOperationType.ALL,
+  operationTypes: [UsageOperationType.ALL],
   ...overrides,
 });
 
@@ -65,7 +65,7 @@ describe('computeQuotaConsumed', () => {
       computeQuotaConsumed({
         rows,
         scope: buildCounter({
-          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
         }),
       }),
     ).toBe(140);
@@ -172,7 +172,7 @@ describe('computeQuotaConsumed', () => {
     ];
 
     const logicFunctionScope = buildCounter({
-      operationType: UsageOperationType.CODE_EXECUTION,
+      operationTypes: [UsageOperationType.CODE_EXECUTION],
       spenderType: 'logicFunction',
       spenderId: 'logic-function-1',
     });
@@ -219,7 +219,7 @@ describe('computeQuotaConsumed', () => {
       computeQuotaConsumed({
         rows,
         scope: buildCounter({
-          operationType: [
+          operationTypes: [
             UsageOperationType.AI_CHAT_TOKEN,
             UsageOperationType.WEB_SEARCH,
           ],

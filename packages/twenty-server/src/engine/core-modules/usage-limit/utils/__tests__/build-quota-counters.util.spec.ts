@@ -85,7 +85,7 @@ describe('buildQuotaCounters', () => {
         periodEnd: MONTH_PERIOD.periodEnd,
         spenderType: 'workspace',
         spenderId: null,
-        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
       },
     ]);
   });
@@ -120,9 +120,9 @@ describe('buildQuotaCounters', () => {
       ],
     });
 
-    expect(counters.map((counter) => counter.operationType)).toEqual([
-      UsageOperationType.AI_CHAT_TOKEN,
-      UsageOperationType.ALL,
+    expect(counters.map((counter) => counter.operationTypes)).toEqual([
+      [UsageOperationType.AI_CHAT_TOKEN],
+      [UsageOperationType.ALL],
     ]);
   });
 
@@ -180,7 +180,7 @@ describe('buildQuotaCounters', () => {
         periodEnd: MONTH_PERIOD.periodEnd,
         spenderType: 'workspace',
         spenderId: null,
-        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
       },
     ]);
   });
@@ -328,10 +328,10 @@ describe('buildQuotaCounters', () => {
       ],
     });
 
-    expect(counters.map((counter) => counter.operationType)).toEqual([
-      UsageOperationType.AI_CHAT_TOKEN,
+    expect(counters.map((counter) => counter.operationTypes)).toEqual([
+      [UsageOperationType.AI_CHAT_TOKEN],
       [UsageOperationType.AI_CHAT_TOKEN, UsageOperationType.WEB_SEARCH],
-      UsageOperationType.ALL,
+      [UsageOperationType.ALL],
     ]);
   });
 });

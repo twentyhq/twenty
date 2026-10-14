@@ -24,7 +24,7 @@ const buildLimitCounter = (
   periodEnd: PERIOD_END,
   spenderType: 'userWorkspace',
   spenderId: 'user-1',
-  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
   ...overrides,
 });
 
@@ -45,7 +45,7 @@ const userAllowanceCounter: UserAllowanceQuotaCounter = {
   limitValue: 3_000_000,
   unit: UsageUnit.USER_CREDIT,
   resourceType: UsageResourceType.AI,
-  operationType: UsageOperationType.ALL,
+  operationTypes: [UsageOperationType.ALL],
   periodUnit: 'week',
   isDefault: true,
   spenderType: 'userWorkspace',
@@ -162,7 +162,7 @@ describe('buildQuotaExhaustedScope', () => {
         resourceType: UsageResourceType.AI,
         operationType: UsageOperationType.WEB_SEARCH,
         counter: buildLimitCounter({
-          operationType: [
+          operationTypes: [
             UsageOperationType.AI_CHAT_TOKEN,
             UsageOperationType.WEB_SEARCH,
           ],

@@ -29,7 +29,7 @@ const buildLimitCounter = (
   limitValue: 1_000,
   unit: UsageUnit.CREDIT,
   resourceType: UsageResourceType.AI,
-  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
   periodUnit: 'month',
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
