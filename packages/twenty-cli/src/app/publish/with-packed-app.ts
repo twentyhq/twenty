@@ -1,10 +1,9 @@
-import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { mkdtemp, rm } from 'node:fs/promises';
-import { basename, dirname, join } from 'node:path';
-import { isPlainObject } from 'twenty-shared/utils';
+import { dirname, join } from 'node:path';
 
 import { readSnapshotFile } from '@/app/deployment/read-snapshot-file';
 import { resolveSnapshotDirectory } from '@/app/deployment/resolve-snapshot-directory';
+import { parseNpmPackOutputOrThrow } from '@/app/publish/parse-npm-pack-output-or-throw';
 import { runNpmCommand } from '@/app/publish/run-npm-command';
 import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
@@ -55,39 +54,8 @@ export const withPackedApp = async <TResult>({
       appPath,
       signal,
     });
-    let result: unknown;
-
-    try {
-      result = JSON.parse(stdout);
-    } catch {
-      throw new CliError({
-        code: 'PUBLISH_FAILED',
-        message: 'npm pack did not return a package description.',
-      });
-    }
-
-    const packed =
-      isArray(result) && result.length === 1 ? result[0] : undefined;
-
-    if (
-      !isPlainObject(packed) ||
-      !isNonEmptyString(packed.name) ||
-      !isNonEmptyString(packed.version) ||
-      !isNonEmptyString(packed.filename) ||
-      basename(packed.filename) !== packed.filename ||
-      packed.filename.includes('\\') ||
-      !packed.filename.endsWith('.tgz') ||
-      !isArray(packed.files)
-    ) {
-      throw new CliError({
-        code: 'PUBLISH_FAILED',
-        message: 'npm pack returned an invalid package description.',
-      });
-    }
-
-    const includedPaths = new Set(
-      packed.files.filter(isPlainObject).map((file) => file.path),
-    );
+    const packed = parseNpmPackOutputOrThrow(stdout);
+    const includedPaths = new Set(packed.files.map((file) => file.path));
     const requiredPaths = [
       'manifest.json',
       'package.json',

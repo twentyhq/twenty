@@ -78,6 +78,8 @@ if (process.env.PUBLISH_TEST_TTY === 'true' && (!process.stdin.isTTY || !process
 if (process.env.PUBLISH_TEST_HANG === args[0]) {
   process.on('SIGTERM', () => {});
   setInterval(() => {}, 1000);
+} else if (args[0] === 'pack' && process.env.PUBLISH_TEST_PACK_OUTPUT) {
+  console.log(process.env.PUBLISH_TEST_PACK_OUTPUT);
 } else if (args[0] === 'pack') {
   const destination = args[args.indexOf('--pack-destination') + 1];
   const filename = 'test-billing-1.2.3.tgz';
@@ -104,6 +106,7 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
     vi.stubEnv('PUBLISH_TEST_HANG', '');
     vi.stubEnv('PUBLISH_TEST_TTY', '');
     vi.stubEnv('PUBLISH_TEST_OMIT', '');
+    vi.stubEnv('PUBLISH_TEST_PACK_OUTPUT', '');
     vi.stubEnv('ACTIONS_ID_TOKEN_REQUEST_URL', undefined);
     vi.stubEnv('TWENTY_APP_PUBLISH_DISABLE_PROVENANCE', undefined);
     vi.stubEnv('CI', 'true');
@@ -163,6 +166,17 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
   it('publishes the held build with the tag, project npm configuration and clean JSON', async () => {
     const result = await runPublish(['--tag', 'beta']);
     expect(result.exitCode).toBe(0);
+    expect(runAppBuild).toHaveBeenCalledExactlyOnceWith({
+      context: expect.objectContaining({
+        command: 'app publish',
+        arguments: [],
+        options: expect.objectContaining({ path: appPath, tag: 'beta' }),
+        outputMode: 'json',
+        output: expect.any(Object),
+        signal: expect.any(AbortSignal),
+      }),
+      useHeldBuild: expect.any(Function),
+    });
     expect(result.envelope.data).toMatchObject({
       target: 'npm',
       name: '@test/billing',
@@ -205,7 +219,9 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
     'keeps the SDK provenance opt-out, disabled=%s',
     async (disabled) => {
       vi.stubEnv('ACTIONS_ID_TOKEN_REQUEST_URL', 'https://oidc.example.test');
-      if (disabled) vi.stubEnv('TWENTY_APP_PUBLISH_DISABLE_PROVENANCE', 'true');
+      if (disabled) {
+        vi.stubEnv('TWENTY_APP_PUBLISH_DISABLE_PROVENANCE', 'true');
+      }
       expect((await runPublish()).exitCode).toBe(0);
       expect((await readInvocations())[1].args.includes('--provenance')).toBe(
         !disabled,
@@ -229,6 +245,38 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
     expect((await runPublish()).exitCode).toBe(1);
     expect(await readInvocations()).toEqual([]);
   });
+
+  it.each([
+    '{invalid',
+    '[]',
+    JSON.stringify([
+      {
+        name: '@test/billing',
+        version: '1.2.3',
+        filename: '../outside.tgz',
+        files: [],
+      },
+    ]),
+    JSON.stringify([
+      {
+        name: '@test/billing',
+        version: '1.2.3',
+        filename: 'billing.tgz',
+        files: [{ path: 1 }],
+      },
+    ]),
+  ])(
+    'rejects invalid npm pack output before publishing: %s',
+    async (stdout) => {
+      vi.stubEnv('PUBLISH_TEST_PACK_OUTPUT', stdout);
+      const result = await runPublish();
+      expect(result.exitCode).toBe(1);
+      expect(result.envelope.error.code).toBe('PUBLISH_FAILED');
+      const invocations = await readInvocations();
+      expect(invocations).toHaveLength(1);
+      await expect(access(invocations[0].args.at(-1))).rejects.toThrow();
+    },
+  );
 
   it.each(['manifest.json', 'src/main.mjs'])(
     'refuses a package that excludes %s',
