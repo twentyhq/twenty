@@ -1,19 +1,19 @@
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { t } from '@lingui/core/macro';
 import { Chip } from 'twenty-ui/primitives/data-display';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
+import { useContext } from 'react';
 
-type ArrayDisplayProps = FieldDisplayTooltipProps & {
+type ArrayDisplayProps = {
   value: FieldArrayValue;
 };
 
-export const ArrayDisplay = ({
-  value,
-  withTooltip,
-  measureOverflowOnOpen,
-}: ArrayDisplayProps) => {
+export const ArrayDisplay = ({ value }: ArrayDisplayProps) => {
+  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
+    useContext(FieldDisplayTooltipContext);
+
   return (
     <OverflowingList overflowLabel={t`Show all items`}>
       {value?.map((item, index) => (
@@ -22,6 +22,9 @@ export const ArrayDisplay = ({
           variant="soft"
           withTooltip={withTooltip}
           measureOverflowOnOpen={measureOverflowOnOpen}
+          initialPointerPosition={
+            withTooltip ? getInitialPointerPosition?.() : undefined
+          }
         >
           {getChipLabel(item).content}
         </Chip>

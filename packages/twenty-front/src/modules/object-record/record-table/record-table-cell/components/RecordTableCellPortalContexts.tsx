@@ -8,6 +8,9 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+import { type FieldDisplayTooltipContextValue } from '@/ui/field/display/types/FieldDisplayTooltipContextValue';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellPortalContexts = ({
@@ -17,6 +20,16 @@ export const RecordTableCellPortalContexts = ({
   position: TableCellPosition;
   children: React.ReactNode;
 }) => {
+  const { getInitialPointerPosition } = useContext(FieldDisplayTooltipContext);
+  const fieldDisplayTooltipContextValue =
+    useMemo<FieldDisplayTooltipContextValue>(
+      () => ({
+        withTooltip: true,
+        measureOverflowOnOpen: true,
+        getInitialPointerPosition,
+      }),
+      [getInitialPointerPosition],
+    );
   const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
   );
@@ -45,29 +58,33 @@ export const RecordTableCellPortalContexts = ({
   }
 
   return (
-    <RecordTableRowContextProvider
-      value={{
-        recordId,
-        rowIndex: position.row,
-        isSelected: false,
-        pathToShowPage:
-          getBasePathToShowPage({
-            objectNameSingular: objectMetadataItem.nameSingular,
-          }) + recordId,
-        objectNameSingular: objectMetadataItem.nameSingular,
-        isRecordReadOnly,
-      }}
+    <FieldDisplayTooltipContext.Provider
+      value={fieldDisplayTooltipContextValue}
     >
-      <RecordTableCellContext.Provider
+      <RecordTableRowContextProvider
         value={{
-          recordField,
-          cellPosition: position,
+          recordId,
+          rowIndex: position.row,
+          isSelected: false,
+          pathToShowPage:
+            getBasePathToShowPage({
+              objectNameSingular: objectMetadataItem.nameSingular,
+            }) + recordId,
+          objectNameSingular: objectMetadataItem.nameSingular,
+          isRecordReadOnly,
         }}
       >
-        <RecordTableCellFieldContextWrapper recordField={recordField}>
-          {children}
-        </RecordTableCellFieldContextWrapper>
-      </RecordTableCellContext.Provider>
-    </RecordTableRowContextProvider>
+        <RecordTableCellContext.Provider
+          value={{
+            recordField,
+            cellPosition: position,
+          }}
+        >
+          <RecordTableCellFieldContextWrapper recordField={recordField}>
+            {children}
+          </RecordTableCellFieldContextWrapper>
+        </RecordTableCellContext.Provider>
+      </RecordTableRowContextProvider>
+    </FieldDisplayTooltipContext.Provider>
   );
 };

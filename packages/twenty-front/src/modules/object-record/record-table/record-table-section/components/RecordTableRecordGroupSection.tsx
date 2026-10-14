@@ -29,12 +29,20 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+import { type FieldDisplayTooltipContextValue } from '@/ui/field/display/types/FieldDisplayTooltipContextValue';
 import {
   filterOutByProperty,
   findByProperty,
   isDefined,
   sumByProperty,
 } from 'twenty-shared/utils';
+
+const RECORD_TABLE_GROUP_HEADER_TOOLTIP_CONTEXT_VALUE: FieldDisplayTooltipContextValue =
+  {
+    withTooltip: true,
+    measureOverflowOnOpen: false,
+  };
 
 const StyledTrContainer = styled.div`
   display: flex;
@@ -177,15 +185,19 @@ export const RecordTableRecordGroupSection = () => {
         className="disable-shadow"
         width={widthOfLabelIdentifierRecordField}
       >
-        <RecordGroupSectionHeader
-          recordGroupDefinition={recordGroupDefinition}
-          fieldMetadataItem={recordIndexGroupFieldMetadataItem}
-          isExpanded={isRecordGroupTableSectionToggled}
-          onToggle={() =>
-            setIsRecordGroupTableSectionToggled((prevState) => !prevState)
-          }
-          chevronWidth={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}
-        />
+        <FieldDisplayTooltipContext.Provider
+          value={RECORD_TABLE_GROUP_HEADER_TOOLTIP_CONTEXT_VALUE}
+        >
+          <RecordGroupSectionHeader
+            recordGroupDefinition={recordGroupDefinition}
+            fieldMetadataItem={recordIndexGroupFieldMetadataItem}
+            isExpanded={isRecordGroupTableSectionToggled}
+            onToggle={() =>
+              setIsRecordGroupTableSectionToggled((prevState) => !prevState)
+            }
+            chevronWidth={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}
+          />
+        </FieldDisplayTooltipContext.Provider>
         <StyledAggregateDropdownContainer
           isNonInteractive={isAggregateDropdownNonInteractive}
           inert={isAggregateDropdownNonInteractive || undefined}

@@ -5,6 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay/TextDisplay';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+
+const WITHOUT_TOOLTIP_CONTEXT_VALUE = {
+  withTooltip: false,
+  measureOverflowOnOpen: false,
+};
 
 const meta: Meta<typeof TextDisplay> = {
   title: 'UI/Data Display/TextDisplay',
@@ -38,12 +44,16 @@ export const MultiLine: Story = {
 export const WithoutTooltip: Story = {
   args: {
     text: 'Some long text with a https://twenty.com link',
-    withTooltip: false,
     displayedMaxRows: 1,
   },
   parameters: {
     container: { width: 100 },
   },
+  render: ({ text, displayedMaxRows }) => (
+    <FieldDisplayTooltipContext.Provider value={WITHOUT_TOOLTIP_CONTEXT_VALUE}>
+      <TextDisplay text={text} displayedMaxRows={displayedMaxRows} />
+    </FieldDisplayTooltipContext.Provider>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const link = canvas.getByRole('link', { name: 'https://twenty.com' });

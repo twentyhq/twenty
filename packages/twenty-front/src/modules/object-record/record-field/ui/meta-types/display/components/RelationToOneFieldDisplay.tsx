@@ -5,14 +5,8 @@ import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-type
 import { useRelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationToOneFieldDisplay';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-type RelationToOneFieldDisplayProps = FieldDisplayTooltipProps;
-
-export const RelationToOneFieldDisplay = ({
-  withTooltip,
-  measureOverflowOnOpen,
-}: RelationToOneFieldDisplayProps) => {
+export const RelationToOneFieldDisplay = () => {
   const {
     fieldValue,
     fieldDefinition,
@@ -47,8 +41,6 @@ export const RelationToOneFieldDisplay = ({
         isWorkspaceMemberFieldMetadataRelation || disableChipClick
       }
       triggerEvent={triggerEvent}
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
     />
   );
 };

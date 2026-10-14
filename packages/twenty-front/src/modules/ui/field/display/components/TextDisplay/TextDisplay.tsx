@@ -1,14 +1,14 @@
 import { css } from '@linaria/core';
 import { clsx } from 'clsx';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   OverflowingTextWithTooltip,
-  Text,
+  OverflowingText,
 } from 'twenty-ui/primitives/typography';
 import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
 
 const styles = {
   container: css`
@@ -23,33 +23,18 @@ const styles = {
       height: 20px;
     }
   `,
-  text: css`
-    & {
-      max-width: 100%;
-    }
-  `,
-  multilineText: css`
-    & {
-      overflow-wrap: break-word;
-      white-space: pre-wrap;
-    }
-  `,
 };
 
-type TextDisplayProps = FieldDisplayTooltipProps & {
+type TextDisplayProps = {
   text: string;
   displayedMaxRows?: number;
 };
 
-export const TextDisplay = ({
-  text,
-  displayedMaxRows,
-  withTooltip = true,
-  measureOverflowOnOpen,
-}: TextDisplayProps) => {
+export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {
+  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
+    useContext(FieldDisplayTooltipContext);
   const linkifiedText = useMemo(() => <LinkifiedText text={text} />, [text]);
-  const isMultiline = isDefined(displayedMaxRows);
-  const fixHeight = !isMultiline || displayedMaxRows === 1;
+  const fixHeight = !isDefined(displayedMaxRows) || displayedMaxRows === 1;
 
   return (
     <div className={clsx(styles.container, fixHeight && styles.fixHeight)}>
@@ -60,18 +45,12 @@ export const TextDisplay = ({
           lineClamp={displayedMaxRows}
           isTooltipMultiline={true}
           measureOverflowOnOpen={measureOverflowOnOpen}
+          initialPointerPosition={getInitialPointerPosition?.()}
         />
       ) : (
-        <Text
-          dir="auto"
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...(isMultiline
-            ? { lineClamp: displayedMaxRows }
-            : { truncate: true })}
-          className={clsx(styles.text, isMultiline && styles.multilineText)}
-        >
+        <OverflowingText lineClamp={displayedMaxRows}>
           {linkifiedText}
-        </Text>
+        </OverflowingText>
       )}
     </div>
   );

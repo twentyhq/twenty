@@ -67,7 +67,7 @@ export const RecordTableCellFocusedPortalContent = () => {
       onMouseMove={handleContainerMouseMove}
     >
       <RecordTableCellDisplayMode>
-        <FieldDisplay measureOverflowOnOpen />
+        <FieldDisplay />
       </RecordTableCellDisplayMode>
     </StyledRecordTableCellFocusPortalContent>
   );

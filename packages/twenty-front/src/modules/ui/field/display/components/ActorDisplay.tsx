@@ -1,18 +1,18 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getActorSourceIcon } from '@/ui/field/display/utils/getActorSourceIcon';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type ActorDisplayProps = Partial<FieldActorValue> &
-  FieldDisplayTooltipProps & {
-    avatarUrl?: string | null;
-  };
+type ActorDisplayProps = Partial<FieldActorValue> & {
+  avatarUrl?: string | null;
+};
 
 export const ActorDisplay = ({
   name,
@@ -20,9 +20,10 @@ export const ActorDisplay = ({
   workspaceMemberId,
   avatarUrl,
   context,
-  withTooltip,
-  measureOverflowOnOpen,
 }: ActorDisplayProps) => {
+  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
+    useContext(FieldDisplayTooltipContext);
+
   const LeftIcon = getActorSourceIcon({ source, context });
 
   return (
@@ -30,6 +31,9 @@ export const ActorDisplay = ({
       variant="ghost"
       withTooltip={withTooltip}
       measureOverflowOnOpen={measureOverflowOnOpen}
+      initialPointerPosition={
+        withTooltip ? getInitialPointerPosition?.() : undefined
+      }
       startElement={
         source === 'APPLICATION' && isDefined(context?.applicationId) ? (
           <AppChip

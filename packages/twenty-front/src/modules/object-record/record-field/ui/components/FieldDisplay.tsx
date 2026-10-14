@@ -56,14 +56,8 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-type FieldDisplayProps = FieldDisplayTooltipProps;
-
-export const FieldDisplay = ({
-  withTooltip,
-  measureOverflowOnOpen,
-}: FieldDisplayProps) => {
+export const FieldDisplay = () => {
   const {
     fieldDefinition,
     isLabelIdentifier,
@@ -89,47 +83,24 @@ export const FieldDisplay = ({
     return (
       <CoreRecordReferenceFieldDisplay
         coreRecordReferenceField={coreRecordReferenceField}
-        withTooltip={withTooltip}
-        measureOverflowOnOpen={measureOverflowOnOpen}
       />
     );
   }
 
   return isChipDisplay ? (
-    <ChipFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <ChipFieldDisplay />
   ) : isFieldRelationManyToOne(fieldDefinition) ? (
-    <RelationToOneFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <RelationToOneFieldDisplay />
   ) : isFieldRelationOneToMany(fieldDefinition) ? (
-    <RelationFromManyFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <RelationFromManyFieldDisplay />
   ) : isFieldMorphRelationManyToOne(fieldDefinition) ? (
-    <MorphRelationManyToOneFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <MorphRelationManyToOneFieldDisplay />
   ) : isFieldMorphRelationOneToMany(fieldDefinition) ? (
-    <MorphRelationOneToManyFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <MorphRelationOneToManyFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
-    <TextFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (
-    <UuidFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <UuidFieldDisplay />
   ) : isFieldDateTime(fieldDefinition) ? (
     <DateTimeFieldDisplay />
   ) : isFieldDate(fieldDefinition) ? (
@@ -141,22 +112,13 @@ export const FieldDisplay = ({
   ) : isFieldCurrency(fieldDefinition) ? (
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
-    <FullNameFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <FullNameFieldDisplay />
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
-    <MultiSelectFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
-    <AddressFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (
     <JsonFieldDisplay />
   ) : isFieldBoolean(fieldDefinition) ? (
@@ -166,20 +128,11 @@ export const FieldDisplay = ({
   ) : isFieldRichText(fieldDefinition) ? (
     <RichTextFieldDisplay />
   ) : isFieldActor(fieldDefinition) ? (
-    <ActorFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <ActorFieldDisplay />
   ) : isFieldArray(fieldDefinition) ? (
-    <ArrayFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <ArrayFieldDisplay />
   ) : isFieldFiles(fieldDefinition) ? (
-    <FilesFieldDisplay
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
+    <FilesFieldDisplay />
   ) : isFieldEmails(fieldDefinition) ? (
     <EmailsFieldDisplay />
   ) : isFieldPhones(fieldDefinition) ? (

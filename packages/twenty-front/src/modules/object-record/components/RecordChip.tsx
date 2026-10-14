@@ -3,18 +3,18 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
-import { type MouseEvent } from 'react';
+import { useContext, type MouseEvent } from 'react';
 import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type RecordChipProps = FieldDisplayTooltipProps & {
+type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
@@ -44,9 +44,10 @@ export const RecordChip = ({
   isIconHidden = false,
   triggerEvent = 'MOUSE_DOWN',
   onClick,
-  withTooltip,
-  measureOverflowOnOpen,
 }: RecordChipProps) => {
+  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
+    useContext(FieldDisplayTooltipContext);
+
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
@@ -79,6 +80,9 @@ export const RecordChip = ({
       <Chip
         withTooltip={withTooltip}
         measureOverflowOnOpen={measureOverflowOnOpen}
+        initialPointerPosition={
+          withTooltip ? getInitialPointerPosition?.() : undefined
+        }
         weight={isBold ? 'medium' : 'regular'}
         size={size}
         maxWidth={maxWidth}
@@ -105,6 +109,9 @@ export const RecordChip = ({
     <LinkChip
       withTooltip={withTooltip}
       measureOverflowOnOpen={measureOverflowOnOpen}
+      initialPointerPosition={
+        withTooltip ? getInitialPointerPosition?.() : undefined
+      }
       size={size}
       maxWidth={maxWidth}
       weight={isBold ? 'medium' : 'regular'}

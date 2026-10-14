@@ -1,24 +1,12 @@
 import { useArrayFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useArrayFieldDisplay';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-type ArrayFieldDisplayProps = FieldDisplayTooltipProps;
-
-export const ArrayFieldDisplay = ({
-  withTooltip,
-  measureOverflowOnOpen,
-}: ArrayFieldDisplayProps) => {
+export const ArrayFieldDisplay = () => {
   const { fieldValue } = useArrayFieldDisplay();
 
   if (!Array.isArray(fieldValue)) {
     return <></>;
   }
 
-  return (
-    <ArrayDisplay
-      value={fieldValue}
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-    />
-  );
+  return <ArrayDisplay value={fieldValue} />;
 };

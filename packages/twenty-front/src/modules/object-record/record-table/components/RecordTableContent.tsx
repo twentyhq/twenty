@@ -15,10 +15,13 @@ import { RecordTableHeader } from '@/object-record/record-table/record-table-hea
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { recordTableHoverPointerPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPointerPositionComponentState';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+import { type FieldDisplayTooltipContextValue } from '@/ui/field/display/types/FieldDisplayTooltipContextValue';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -69,6 +72,24 @@ export const RecordTableContent = ({
       recordTableHoverPositionComponentState,
       recordTableId,
     );
+  const recordTableHoverPointerPositionCallbackState =
+    useAtomComponentStateCallbackState(
+      recordTableHoverPointerPositionComponentState,
+      recordTableId,
+    );
+  const getInitialPointerPosition = useCallback(
+    () => store.get(recordTableHoverPointerPositionCallbackState) ?? undefined,
+    [store, recordTableHoverPointerPositionCallbackState],
+  );
+  const fieldDisplayTooltipContextValue =
+    useMemo<FieldDisplayTooltipContextValue>(
+      () => ({
+        withTooltip: false,
+        measureOverflowOnOpen: false,
+        getInitialPointerPosition,
+      }),
+      [getInitialPointerPosition],
+    );
 
   const isSomeCellInEditMode = useAtomComponentSelectorCallbackState(
     isSomeCellInEditModeComponentSelector,
@@ -76,17 +97,28 @@ export const RecordTableContent = ({
   );
 
   const handleMouseLeave = useCallback(() => {
+    store.set(recordTableHoverPointerPositionCallbackState, null);
     const cellInEditMode = store.get(isSomeCellInEditMode);
 
     if (!cellInEditMode) {
       store.set(recordTableHoverPositionCallbackState, null);
     }
-  }, [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState]);
+  }, [
+    store,
+    isSomeCellInEditMode,
+    recordTableHoverPositionCallbackState,
+    recordTableHoverPointerPositionCallbackState,
+  ]);
 
   const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
   const handleDelegatedMouseMove = useCallback(
     (event: React.MouseEvent) => {
+      store.set(recordTableHoverPointerPositionCallbackState, {
+        clientX: event.clientX,
+        clientY: event.clientY,
+      });
+
       const target = event.target as HTMLElement;
       const cellElement = target.closest<HTMLElement>(
         '[data-record-table-col]',
@@ -105,7 +137,11 @@ export const RecordTableContent = ({
 
       moveHoverToCurrentCell({ column, row });
     },
-    [moveHoverToCurrentCell],
+    [
+      moveHoverToCurrentCell,
+      store,
+      recordTableHoverPointerPositionCallbackState,
+    ],
   );
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
@@ -140,11 +176,15 @@ export const RecordTableContent = ({
         onMouseLeave={handleMouseLeave}
       >
         <RecordTableHeader />
-        {hasRecordGroups ? (
-          <RecordTableRecordGroupsBody />
-        ) : (
-          <RecordTableNoRecordGroupBody />
-        )}
+        <FieldDisplayTooltipContext.Provider
+          value={fieldDisplayTooltipContextValue}
+        >
+          {hasRecordGroups ? (
+            <RecordTableRecordGroupsBody />
+          ) : (
+            <RecordTableNoRecordGroupBody />
+          )}
+        </FieldDisplayTooltipContext.Provider>
         <RecordTableScrollAndZIndexEffect />
         <RecordTableColumnWidthEffect />
         <RecordTableWidthEffect />

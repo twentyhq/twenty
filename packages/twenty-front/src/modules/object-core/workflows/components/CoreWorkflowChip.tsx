@@ -7,21 +7,19 @@ import { Chip } from 'twenty-ui/primitives/data-display';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { GetCoreWorkflowDocument } from '~/generated/graphql';
 
-type CoreWorkflowChipProps = FieldDisplayTooltipProps & {
+type CoreWorkflowChipProps = {
   coreRecordId: string;
 };
 
-export const CoreWorkflowChip = ({
-  coreRecordId,
-  withTooltip,
-  measureOverflowOnOpen,
-}: CoreWorkflowChipProps) => {
+export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
+  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
+    useContext(FieldDisplayTooltipContext);
 
   const apolloCoreClient = useApolloCoreClient();
 
@@ -52,6 +50,9 @@ export const CoreWorkflowChip = ({
       <Chip
         withTooltip={withTooltip}
         measureOverflowOnOpen={measureOverflowOnOpen}
+        initialPointerPosition={
+          withTooltip ? getInitialPointerPosition?.() : undefined
+        }
         variant="ghost"
         startElement={avatar}
         style={{ paddingInlineStart: 0 }}
@@ -65,6 +66,9 @@ export const CoreWorkflowChip = ({
     <LinkChip
       withTooltip={withTooltip}
       measureOverflowOnOpen={measureOverflowOnOpen}
+      initialPointerPosition={
+        withTooltip ? getInitialPointerPosition?.() : undefined
+      }
       to={getAppPath(AppPath.WorkflowCoreShowPage, {
         coreWorkflowId: coreRecordId,
       })}

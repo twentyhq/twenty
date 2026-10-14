@@ -8,7 +8,7 @@ export const RecordTableCell = () => {
     <FieldFocusStaticUnfocusedProvider>
       <RecordTableCellBaseContainer>
         <RecordTableCellDisplayMode>
-          <FieldDisplay withTooltip={false} />
+          <FieldDisplay />
         </RecordTableCellDisplayMode>
       </RecordTableCellBaseContainer>
     </FieldFocusStaticUnfocusedProvider>

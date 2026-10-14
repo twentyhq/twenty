@@ -9,14 +9,8 @@ import { OverflowingList } from 'twenty-ui/components/layout';
 import { useContext } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-type MorphRelationOneToManyFieldDisplayProps = FieldDisplayTooltipProps;
-
-export const MorphRelationOneToManyFieldDisplay = ({
-  withTooltip,
-  measureOverflowOnOpen,
-}: MorphRelationOneToManyFieldDisplayProps) => {
+export const MorphRelationOneToManyFieldDisplay = () => {
   const { t } = useLingui();
 
   const { morphValuesWithObjectNameSingular } =
@@ -64,8 +58,6 @@ export const MorphRelationOneToManyFieldDisplay = ({
               record={record}
               forceDisableClick={disableChipClick}
               triggerEvent={triggerEvent}
-              withTooltip={withTooltip}
-              measureOverflowOnOpen={measureOverflowOnOpen}
             />
           );
         })}
