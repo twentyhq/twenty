@@ -65,6 +65,15 @@ const TeamsUserLinksContent = () => {
   const handleRemove = async (teamsUserLink: TeamsUserLinkRecord) => {
     const result = await removeTeamsUserLink(teamsUserLink.id);
 
+    if (!isDefined(result)) {
+      enqueueSnackbar({
+        message: t('Could not remove the link. Please try again.'),
+        variant: 'error',
+      });
+
+      return;
+    }
+
     enqueueSnackbar({
       message: isNonEmptyString(result.error) ? result.error : result.message,
       variant: result.success ? 'success' : 'error',
