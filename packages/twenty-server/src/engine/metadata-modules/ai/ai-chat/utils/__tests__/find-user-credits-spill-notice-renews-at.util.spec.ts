@@ -4,8 +4,7 @@ const SLICE_END = new Date('2026-11-01T00:00:00.000Z');
 
 const crossingStepDebit = {
   stopReason: null,
-  isUserAllowanceExhausted: true,
-  userAllowancePeriodEnd: SLICE_END,
+  userAllowanceExhaustedUntil: SLICE_END,
 };
 
 describe('findUserCreditsSpillNoticeRenewsAt', () => {
@@ -39,7 +38,7 @@ describe('findUserCreditsSpillNoticeRenewsAt', () => {
   it('gives nothing while the user allowance counter stays below M', () => {
     expect(
       findUserCreditsSpillNoticeRenewsAt({
-        stepDebit: { ...crossingStepDebit, isUserAllowanceExhausted: false },
+        stepDebit: { ...crossingStepDebit, userAllowanceExhaustedUntil: null },
         hadUserCreditsAtTurnStart: true,
       }),
     ).toBeNull();
@@ -50,15 +49,6 @@ describe('findUserCreditsSpillNoticeRenewsAt', () => {
       findUserCreditsSpillNoticeRenewsAt({
         stepDebit: crossingStepDebit,
         hadUserCreditsAtTurnStart: false,
-      }),
-    ).toBeNull();
-  });
-
-  it('gives nothing when the debit carries no period end', () => {
-    expect(
-      findUserCreditsSpillNoticeRenewsAt({
-        stepDebit: { ...crossingStepDebit, userAllowancePeriodEnd: null },
-        hadUserCreditsAtTurnStart: true,
       }),
     ).toBeNull();
   });

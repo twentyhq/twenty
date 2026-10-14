@@ -452,7 +452,7 @@ export class AgentAsyncExecutorService {
       const decrementCreditsForStep = async (
         step: Pick<StepResult<ToolSet>, 'usage' | 'providerMetadata'>,
       ) => {
-        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+        const { stopReason } =
           await this.aiBillingService.decrementAndCheckAvailableCredits({
             modelId: registeredModel.modelId,
             billingInput: {
@@ -466,7 +466,7 @@ export class AgentAsyncExecutorService {
             spenders: { userWorkspaceId, agentId: agent?.id },
           });
 
-        if (stepHasNoMoreAvailableCredits) {
+        if (isDefined(stopReason)) {
           hasNoMoreAvailableCredits = true;
         }
       };
@@ -724,7 +724,7 @@ export class AgentAsyncExecutorService {
       void this.aiBillingService.billNativeWebSearchUsage(
         nativeWebSearchCallCount,
         workspaceId,
-        { userWorkspaceId, agentId: agent?.id },
+        userWorkspaceId,
       );
     }
   }

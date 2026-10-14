@@ -32,7 +32,6 @@ import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/me
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { clampUserCreditsUsedMicro } from 'src/engine/core-modules/usage/utils/clamp-user-credits-used-micro.util';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
@@ -513,16 +512,14 @@ export class ChatExecutionService {
         UsageOperationType.AI_CHAT_TOKEN,
         null,
         userWorkspaceId,
-        clampUserCreditsUsedMicro({
-          userCreditsUsedMicro,
-          creditsUsedMicro,
-        }),
+        // per-step rounding can make the summed user share exceed the turn total
+        Math.min(userCreditsUsedMicro, creditsUsedMicro),
       );
 
       void this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
-        { userWorkspaceId },
+        userWorkspaceId,
       );
 
       const modelAttr = { model: registeredModel.modelId };
@@ -662,7 +659,7 @@ export class ChatExecutionService {
 
         stopReason ??= stepDebit.stopReason;
         userAllowancePeriodEnd =
-          stepDebit.userAllowancePeriodEnd ?? userAllowancePeriodEnd;
+          stepDebit.userAllowanceExhaustedUntil ?? userAllowancePeriodEnd;
 
         const userCreditsSpillRenewsAt = findUserCreditsSpillNoticeRenewsAt({
           stepDebit,

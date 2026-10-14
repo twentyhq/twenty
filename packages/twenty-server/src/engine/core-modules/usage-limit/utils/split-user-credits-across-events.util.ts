@@ -1,4 +1,3 @@
-import { type RecordUsageInputWithUserCredits } from 'src/engine/core-modules/usage/types/record-usage-input-with-user-credits.type';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 
@@ -8,7 +7,7 @@ export const splitUserCreditsAcrossEvents = ({
 }: {
   events: RecordUsageInput[];
   userCreditsUsedMicro: number;
-}): RecordUsageInputWithUserCredits[] => {
+}): RecordUsageInput[] => {
   let remainingMicro = userCreditsUsedMicro;
 
   return events.map((event) => {

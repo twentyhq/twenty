@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -160,7 +158,7 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    const { exhaustedKind, userCreditsUsedMicro, userAllowanceExhaustedUntil } =
+    const { exhaustedKind, ...userAllowanceDebit } =
       await this.usageLimitQuotaService.debitAheadOfRecord({
         workspaceId,
         event: this.buildAiTokenUsageEvent({
@@ -172,21 +170,16 @@ export class AiBillingService {
         }),
       });
 
-    const stopReason = exhaustedKind === 'limit' ? null : exhaustedKind;
-
     return {
-      hasNoMoreAvailableCredits: isDefined(stopReason),
-      stopReason,
-      userCreditsUsedMicro,
-      isUserAllowanceExhausted: isDefined(userAllowanceExhaustedUntil),
-      userAllowancePeriodEnd: userAllowanceExhaustedUntil,
+      stopReason: exhaustedKind === 'limit' ? null : exhaustedKind,
+      ...userAllowanceDebit,
     };
   }
 
   async billNativeWebSearchUsage(
     nativeWebSearchCallCount: number,
     workspaceId: string,
-    spenders: UsageSpenders,
+    userWorkspaceId?: string | null,
   ): Promise<void> {
     if (nativeWebSearchCallCount <= 0) {
       return;
@@ -209,7 +202,7 @@ export class AiBillingService {
           creditsUsedMicro,
           quantity: nativeWebSearchCallCount,
           unit: UsageUnit.INVOCATION,
-          spenders,
+          spenders: { userWorkspaceId },
         },
       ],
     });
