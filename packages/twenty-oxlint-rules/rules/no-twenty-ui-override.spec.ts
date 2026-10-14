@@ -116,16 +116,29 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { css } from '@linaria/core';
         import { styled } from '@linaria/react';
+        import { TabList } from '@/ui/layout/tab-list/components/TabList';
 
-        const StyledContainer = styled.div\`
-          & > div {
-            color: red;
+        const StyledTabList = styled(TabList)\`
+          && {
+            flex-shrink: 0;
+          }
+        \`;
+
+        const StyledDatePickerContainer = styled.div\`
+          & .react-datepicker-popper {
+            transform: none !important;
+          }
+        \`;
+
+        const printClassName = css\`
+          @media print {
+            height: auto !important;
           }
         \`;
 
         const isVisible = isOpen && isEnabled;
-        const markup = html\`<p style="color: red !important"></p>\`;
       `,
       filename: FRONT_FILENAME,
     },
@@ -288,21 +301,21 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { css } from '@linaria/core';
         import { styled } from '@linaria/react';
+        import { Tag } from 'twenty-ui/primitives/data-display';
 
-        const StyledTabList = styled(TabList)\`
+        const StyledTag = styled(Tag)\`
           && {
-            flex-shrink: 0;
+            min-width: fit-content !important;
           }
-        \`;
-
-        const editorClassName = css\`
-          border: none !important;
         \`;
       `,
       filename: FRONT_FILENAME,
       errors: [
+        {
+          messageId: 'styledTwentyUiComponent',
+          data: { componentName: 'Tag' },
+        },
         { messageId: 'doubleAmpersandSelector' },
         { messageId: 'importantDeclaration' },
       ],

@@ -55,6 +55,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx',
+    siteIds: ['S116'],
+    reason: 'React Flow panel classes on ButtonGroup',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/mcp-and-apis/components/SettingsMcpSetupCard.tsx',
     siteIds: ['S123'],
     reason: 'One-off Card.Content row layout',

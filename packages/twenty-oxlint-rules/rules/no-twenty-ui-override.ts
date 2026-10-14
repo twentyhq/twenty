@@ -199,55 +199,42 @@ export const rule = defineRule({
       }
     };
 
-    const reportTemplateElementOverrides = (templateElement: any) => {
+    const reportTemplateElementMatches = ({
+      templateElement,
+      regex,
+      messageId,
+      getData,
+    }: {
+      templateElement: any;
+      regex: RegExp;
+      messageId: string;
+      getData?: (matchedText: string) => Record<string, string>;
+    }) => {
       const templateElementStartOffset = templateElement.range[0];
       const templateElementText = sourceCode.getText(templateElement);
 
-      for (const match of templateElementText.matchAll(
-        PRIVATE_CSS_VARIABLE_DECLARATION_REGEX,
-      )) {
+      for (const match of templateElementText.matchAll(regex)) {
         reportSourceRange({
           startOffset: templateElementStartOffset + match.index,
           length: match[0].length,
-          messageId: 'privateCssVariableWrite',
-          data: { variableName: match[0] },
+          messageId,
+          data: getData?.(match[0]),
         });
       }
-
-      for (const match of templateElementText.matchAll(
-        DOUBLE_AMPERSAND_REGEX,
-      )) {
-        reportSourceRange({
-          startOffset: templateElementStartOffset + match.index,
-          length: match[0].length,
-          messageId: 'doubleAmpersandSelector',
-        });
-      }
-
-      for (const match of templateElementText.matchAll(IMPORTANT_REGEX)) {
-        reportSourceRange({
-          startOffset: templateElementStartOffset + match.index,
-          length: match[0].length,
-          messageId: 'importantDeclaration',
-        });
-      }
-
-      reportPrivateAttributeSelectors({
-        node: templateElement,
-        allowOnStyledElement: true,
-      });
     };
 
-    const reportStyledTwentyUiComponentCall = (callExpression: any) => {
-      const [styledComponent] = callExpression.arguments;
+    const isStyledTwentyUiComponentCall = (node: any): boolean =>
+      node?.type === 'CallExpression' &&
+      node.callee.type === 'Identifier' &&
+      node.callee.name === 'styled' &&
+      isTwentyUiComponentReference(node.arguments[0]);
 
-      if (
-        callExpression.callee.type !== 'Identifier' ||
-        callExpression.callee.name !== 'styled' ||
-        !isTwentyUiComponentReference(styledComponent)
-      ) {
+    const reportStyledTwentyUiComponentCall = (callExpression: any) => {
+      if (!isStyledTwentyUiComponentCall(callExpression)) {
         return;
       }
+
+      const [styledComponent] = callExpression.arguments;
 
       context.report({
         node: styledComponent,
@@ -342,12 +329,42 @@ export const rule = defineRule({
         }
       },
       TaggedTemplateExpression: (taggedTemplateExpression: any) => {
-        if (!isLinariaTag(taggedTemplateExpression.tag)) {
+        const { tag, quasi } = taggedTemplateExpression;
+
+        if (!isLinariaTag(tag)) {
           return;
         }
 
-        for (const templateElement of taggedTemplateExpression.quasi.quasis) {
-          reportTemplateElementOverrides(templateElement);
+        const isTwentyUiComponentTemplate = isStyledTwentyUiComponentCall(tag);
+
+        for (const templateElement of quasi.quasis) {
+          reportTemplateElementMatches({
+            templateElement,
+            regex: PRIVATE_CSS_VARIABLE_DECLARATION_REGEX,
+            messageId: 'privateCssVariableWrite',
+            getData: (variableName) => ({ variableName }),
+          });
+
+          reportPrivateAttributeSelectors({
+            node: templateElement,
+            allowOnStyledElement: true,
+          });
+
+          if (!isTwentyUiComponentTemplate) {
+            continue;
+          }
+
+          reportTemplateElementMatches({
+            templateElement,
+            regex: DOUBLE_AMPERSAND_REGEX,
+            messageId: 'doubleAmpersandSelector',
+          });
+
+          reportTemplateElementMatches({
+            templateElement,
+            regex: IMPORTANT_REGEX,
+            messageId: 'importantDeclaration',
+          });
         }
       },
       JSXOpeningElement: (openingElement: any) => {
