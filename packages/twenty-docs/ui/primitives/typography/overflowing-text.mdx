@@ -1,0 +1,66 @@
+---
+title: OverflowingText
+description: Render truncated text with the same layout as OverflowingTextWithTooltip.
+---
+
+import OverflowingTextReference from '/snippets/ui/generated/typography/overflowing-text.mdx';
+
+`OverflowingText` renders caller-owned content with single-line truncation by default. It shares its text layout with [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) and creates no tooltip state or trigger.
+
+## Usage
+
+Constrain the available width so long text can truncate:
+
+```tsx
+import { OverflowingText } from 'twenty-ui/primitives/typography';
+
+export const RecordTitle = () => (
+  <OverflowingText style={{ maxWidth: 220 }}>
+    Quarterly account review and renewal preparation
+  </OverflowingText>
+);
+```
+
+Use this component for dense layouts that reveal the full content in a separate hover or focus overlay. Render `OverflowingTextWithTooltip` in that overlay when the visible content still needs a tooltip. Both components inherit typography and preserve the same truncation layout.
+
+## Multiline content
+
+Use `lineClamp` with a positive integer to limit visible lines while preserving whitespace and line breaks:
+
+```tsx
+import { OverflowingText } from 'twenty-ui/primitives/typography';
+
+export const RecordDescription = () => (
+  <OverflowingText lineClamp={2} style={{ maxWidth: 220 }}>
+    Review the account history, confirm the renewal date, and prepare the next
+    conversation with the customer.
+  </OverflowingText>
+);
+```
+
+Choose either `truncate` or `lineClamp`. Set `truncate={false}` to allow wrapping without a row limit.
+
+## Composition
+
+Native attributes, children, refs, class names, event handlers, and styles target the rendered text element, a `div` by default. Text direction defaults to `auto`. Use `render` to replace the element, including with a caller-owned link:
+
+```tsx
+import { OverflowingText } from 'twenty-ui/primitives/typography';
+
+export const DocumentationLink = () => (
+  <OverflowingText
+    render={<a href="https://twenty.com/developers" />}
+    style={{ maxWidth: 160, display: 'block' }}
+  >
+    Read the developer documentation
+  </OverflowingText>
+);
+```
+
+Content is rendered unchanged. URL recognition and link navigation belong to the caller. Use [Text](/ui/primitives/typography/text) when you want to opt into truncation rather than enable it by default.
+
+## Props
+
+`OverflowingTextProps` is exported from `twenty-ui/primitives/typography`.
+
+<OverflowingTextReference />

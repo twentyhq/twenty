@@ -1,5 +1,5 @@
 import { type useRender } from '@base-ui/react/use-render';
-import { type ReactNode } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 
 import { type TooltipSide } from '@ui/primitives/surfaces/Tooltip/types/TooltipSide';
 import { type TextTruncationProps } from '@ui/primitives/typography/Text/internal/TextTruncationProps';
@@ -14,6 +14,7 @@ export type OverflowingTextWithTooltipProps = Omit<
     tooltipPlace?: TooltipSide;
     alwaysShowTooltip?: boolean;
     measureOverflowOnOpen?: boolean;
+    initialPointerPosition?: Pick<MouseEvent, 'clientX' | 'clientY'>;
     isFocusable?: boolean;
   } & (
     | {

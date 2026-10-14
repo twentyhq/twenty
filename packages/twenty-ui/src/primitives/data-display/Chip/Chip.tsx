@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
-import { Text } from '@ui/primitives/typography/Text/Text';
+import { OverflowingText } from '@ui/primitives/typography/OverflowingText/OverflowingText';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Chip.module.scss';
@@ -28,6 +28,7 @@ export const Chip = ({
   truncate = true,
   withTooltip = true,
   measureOverflowOnOpen = false,
+  initialPointerPosition,
   tooltipContent,
   tooltipDelay,
   isTooltipMultiline,
@@ -76,16 +77,16 @@ export const Chip = ({
                 tooltipPlace={tooltipPlace}
                 alwaysShowTooltip={alwaysShowTooltip}
                 measureOverflowOnOpen={measureOverflowOnOpen}
+                initialPointerPosition={initialPointerPosition}
               />
             ) : (
-              <Text
+              <OverflowingText
                 render={<span />}
-                dir="auto"
                 style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
                 truncate={truncate}
               >
                 {children}
-              </Text>
+              </OverflowingText>
             ))}
           {isDefined(endElement) && endElement !== false && (
             <>

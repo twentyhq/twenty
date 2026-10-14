@@ -4,7 +4,7 @@ import { isBoolean, isString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
-import { Text } from '@ui/primitives/typography/Text/Text';
+import { OverflowingText } from '@ui/primitives/typography/OverflowingText/OverflowingText';
 import { themeCssVariables } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -20,6 +20,7 @@ export const Tag = ({
   truncate = true,
   withTooltip = true,
   measureOverflowOnOpen = false,
+  initialPointerPosition,
   borderStyle = 'solid',
   className,
   style,
@@ -70,16 +71,15 @@ export const Tag = ({
                   render={<span />}
                   className={styles.overflowingText}
                   measureOverflowOnOpen={measureOverflowOnOpen}
+                  initialPointerPosition={initialPointerPosition}
                 />
               ) : (
-                <Text
+                <OverflowingText
                   render={<span />}
-                  dir="auto"
-                  truncate
                   className={styles.overflowingText}
                 >
                   {children}
-                </Text>
+                </OverflowingText>
               )
             ) : (
               children

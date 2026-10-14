@@ -219,6 +219,8 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_SURFACES_POPOVER: '/ui/primitives/surfaces/popover',
   UI_PRIMITIVES_SURFACES_TOOLTIP: '/ui/primitives/surfaces/tooltip',
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',
+  UI_PRIMITIVES_TYPOGRAPHY_OVERFLOWING_TEXT:
+    '/ui/primitives/typography/overflowing-text',
   UI_PRIMITIVES_TYPOGRAPHY_OVERFLOWING_TEXT_WITH_TOOLTIP:
     '/ui/primitives/typography/overflowing-text-with-tooltip',
   UI_PRIMITIVES_TYPOGRAPHY_SHORTCUT: '/ui/primitives/typography/shortcut',

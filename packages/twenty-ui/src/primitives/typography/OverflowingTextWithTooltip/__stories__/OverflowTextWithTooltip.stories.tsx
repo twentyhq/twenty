@@ -1,11 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { ComponentDecorator } from '@ui/testing';
 
 import { OverflowingTextWithTooltip } from '../OverflowingTextWithTooltip';
+import { OverflowingTextMountedUnderPointer } from './components/OverflowingTextMountedUnderPointer';
 
 const longText =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tellus diam, rhoncus nec consequat quis, dapibus quis massa. Praesent tincidunt augue at ex bibendum, non finibus augue faucibus. In at gravida orci. Nulla facilisi. Proin ut augue ut nisi pellentesque tristique. Proin sodales libero id turpis tincidunt posuere. Sed euismod, nunc at aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nunc. Donec euismod, nunc quis aliquam ultricies, nunc nisl aliquet nunc.';
@@ -65,19 +66,30 @@ export const MeasureOverflowOnOpen: Story = {
   args: {
     text: longText,
     measureOverflowOnOpen: true,
-    tooltipDelay: 0,
+    tooltipDelay: 500,
   },
   decorators: [ComponentDecorator],
+  render: (args) => <OverflowingTextMountedUnderPointer {...args} />,
   play: async ({ canvasElement }) => {
-    const text = within(canvasElement).getByTestId('overflow-text');
+    if (!Reflect.has(globalThis, '__vitest_browser__')) {
+      return;
+    }
+
+    const { page } = await import('vitest/browser');
+    const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
+    const source = canvas.getByTestId('portal-source');
 
+    await page.elementLocator(source).hover();
+
+    const text = await canvas.findByTestId('overflow-text');
     await expect(text.scrollWidth).toBeGreaterThan(text.clientWidth);
-    await fireEvent.mouseEnter(text);
 
-    await expect(await body.findByRole('tooltip')).toHaveTextContent(longText);
+    await expect(
+      await body.findByRole('tooltip', {}, { timeout: 2000 }),
+    ).toHaveTextContent(longText);
 
-    await fireEvent.mouseLeave(text);
+    await page.elementLocator(source).unhover();
     await waitFor(() =>
       expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
     );
@@ -88,19 +100,30 @@ export const MeasureOverflowOnOpenWithFittingText: Story = {
   args: {
     text: 'Short',
     measureOverflowOnOpen: true,
-    tooltipDelay: 0,
+    tooltipDelay: 500,
   },
   decorators: [ComponentDecorator],
+  render: (args) => <OverflowingTextMountedUnderPointer {...args} />,
   play: async ({ canvasElement }) => {
-    const text = within(canvasElement).getByTestId('overflow-text');
-    const body = within(canvasElement.ownerDocument.body);
+    if (!Reflect.has(globalThis, '__vitest_browser__')) {
+      return;
+    }
 
+    const { page } = await import('vitest/browser');
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const source = canvas.getByTestId('portal-source');
+
+    await page.elementLocator(source).hover();
+
+    const text = await canvas.findByTestId('overflow-text');
     await expect(text.scrollWidth).toBeLessThanOrEqual(text.clientWidth);
-    await fireEvent.mouseEnter(text);
 
     await expect(
-      body.findByRole('tooltip', {}, { timeout: 100 }),
+      body.findByRole('tooltip', {}, { timeout: 1000 }),
     ).rejects.toThrow();
+
+    await page.elementLocator(source).unhover();
   },
 };
 

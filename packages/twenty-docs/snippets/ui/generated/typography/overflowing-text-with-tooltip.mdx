@@ -15,6 +15,10 @@
   Allows the tooltip even when the text is not truncated.
 </ParamField>
 
+<ParamField body="initialPointerPosition" type="Pick&lt;MouseEvent&lt;Element, MouseEvent&gt;, &quot;clientX&quot; | &quot;clientY&quot;&gt;">
+  Pointer coordinates captured before mounting the label. Opens after the tooltip delay only if that point still targets the overflowing label.
+</ParamField>
+
 <ParamField body="isFocusable" type="boolean">
   Adds an optional tab stop. Native tabIndex and focusable render elements also open the tooltip on focus.
 </ParamField>

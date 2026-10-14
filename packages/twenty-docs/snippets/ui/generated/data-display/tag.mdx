@@ -19,6 +19,10 @@
   Theme color for the tag, or `transparent` for an unfilled label.
 </ParamField>
 
+<ParamField body="initialPointerPosition" type="Pick&lt;MouseEvent&lt;Element, MouseEvent&gt;, &quot;clientX&quot; | &quot;clientY&quot;&gt;">
+  Pointer coordinates captured before mounting the label, used to open its tooltip without another pointer movement.
+</ParamField>
+
 <ParamField body="measureOverflowOnOpen" type="boolean" default="false">
   Checks truncation when the tooltip tries to open, including labels that mount under the pointer.
 </ParamField>

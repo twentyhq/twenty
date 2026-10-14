@@ -21,6 +21,8 @@ export const CHIP_PROP_DESCRIPTIONS = {
     'Enables the label tooltip. Set to false to render only the text while preserving truncation.',
   measureOverflowOnOpen:
     'Checks truncation when the tooltip tries to open, including labels that mount under the pointer.',
+  initialPointerPosition:
+    'Pointer coordinates captured before mounting the label, used to open its tooltip without another pointer movement.',
   tooltipContent:
     'Tooltip text. Defaults to string children. Supply text explicitly for node content.',
   tooltipPlace: 'Position of the content tooltip.',

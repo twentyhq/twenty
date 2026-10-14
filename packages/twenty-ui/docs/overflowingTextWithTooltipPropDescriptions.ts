@@ -16,6 +16,8 @@ export const OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS = {
   alwaysShowTooltip: 'Allows the tooltip even when the text is not truncated.',
   measureOverflowOnOpen:
     'Keeps hover listeners active before pointer entry and measures overflow when opening. Useful for text mounted beneath the pointer. Defaults to false.',
+  initialPointerPosition:
+    'Pointer coordinates captured before mounting the label. Opens after the tooltip delay only if that point still targets the overflowing label.',
   isFocusable:
     'Adds an optional tab stop. Native tabIndex and focusable render elements also open the tooltip on focus.',
 } satisfies Partial<Record<keyof OverflowingTextWithTooltipProps, string>>;

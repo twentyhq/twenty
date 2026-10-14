@@ -1838,6 +1838,41 @@
     ]
   },
   {
+    "name": "OverflowingText",
+    "entryPoint": "twenty-ui/primitives/typography",
+    "slug": "typography/overflowing-text",
+    "props": [
+      {
+        "name": "dir",
+        "type": "string",
+        "required": false,
+        "defaultValue": "auto",
+        "description": "Text direction. Defaults to auto."
+      },
+      {
+        "name": "lineClamp",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Positive integer limiting visible lines while preserving whitespace and line breaks. Cannot be combined with `truncate`."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the default div. Native props, styles, handlers and ref target the displayed text."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
+      }
+    ]
+  },
+  {
     "name": "OverflowingTextWithTooltip",
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/overflowing-text-with-tooltip",
@@ -1848,6 +1883,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Allows the tooltip even when the text is not truncated."
+      },
+      {
+        "name": "initialPointerPosition",
+        "type": "Pick<MouseEvent<Element, MouseEvent>, \"clientX\" | \"clientY\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Pointer coordinates captured before mounting the label. Opens after the tooltip delay only if that point still targets the overflowing label."
       },
       {
         "name": "isFocusable",
@@ -10397,6 +10439,13 @@
         "description": "Adds a divider before `endElement` when that slot has content."
       },
       {
+        "name": "initialPointerPosition",
+        "type": "Pick<MouseEvent<Element, MouseEvent>, \"clientX\" | \"clientY\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Pointer coordinates captured before mounting the label, used to open its tooltip without another pointer movement."
+      },
+      {
         "name": "isTooltipMultiline",
         "type": "boolean",
         "required": false,
@@ -10514,6 +10563,13 @@
         "required": true,
         "defaultValue": null,
         "description": "Theme color for the tag, or `transparent` for an unfilled label."
+      },
+      {
+        "name": "initialPointerPosition",
+        "type": "Pick<MouseEvent<Element, MouseEvent>, \"clientX\" | \"clientY\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Pointer coordinates captured before mounting the label, used to open its tooltip without another pointer movement."
       },
       {
         "name": "measureOverflowOnOpen",

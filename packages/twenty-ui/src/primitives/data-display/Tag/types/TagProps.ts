@@ -1,6 +1,5 @@
 import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
-
 import { type OverflowingTextWithTooltipProps } from '@ui/primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps';
 
 import { type TagColor } from './TagColor';
@@ -11,7 +10,10 @@ export type TagProps = Omit<
   'color'
 > &
   Partial<TagState> &
-  Pick<OverflowingTextWithTooltipProps, 'measureOverflowOnOpen'> & {
+  Pick<
+    OverflowingTextWithTooltipProps,
+    'measureOverflowOnOpen' | 'initialPointerPosition'
+  > & {
     color: TagColor;
     startIcon?: ReactNode;
     borderStyle?: 'solid' | 'dashed';

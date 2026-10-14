@@ -12,6 +12,8 @@ export const TAG_PROP_DESCRIPTIONS = {
     'Enables the label tooltip. Set to false to preserve truncation without mounting a tooltip.',
   measureOverflowOnOpen:
     'Checks truncation when the tooltip tries to open, including labels that mount under the pointer.',
+  initialPointerPosition:
+    'Pointer coordinates captured before mounting the label, used to open its tooltip without another pointer movement.',
   borderStyle: 'Border style used by the outline variant.',
   render:
     'Replaces the default span. Compose a button or link to provide explicit interaction semantics.',
