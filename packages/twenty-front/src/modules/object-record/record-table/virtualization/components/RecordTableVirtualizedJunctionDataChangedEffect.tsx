@@ -1,17 +1,17 @@
 import { useListenToJunctionRecordOperation } from '@/object-record/record-table-widget/hooks/useListenToJunctionRecordOperation';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { SSE_TABLE_DEBOUNCE_TIME_IN_MS_TO_AVOID_SSE_OWN_EVENTS_RACE_CONDITION } from '@/object-record/record-table/virtualization/constants/SseTableDebounceTimeInMsToAvoidSseOwnEventsRaceCondition';
-import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
+import { useReloadRecordTableBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useReloadRecordTableBecauseDataChanged';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const RecordTableVirtualizedJunctionDataChangedEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
-  const { resetVirtualizationBecauseDataChanged } =
-    useResetVirtualizationBecauseDataChanged(objectNameSingular);
+  const { reloadRecordTableBecauseDataChanged } =
+    useReloadRecordTableBecauseDataChanged(objectNameSingular);
 
-  const debouncedResetVirtualizationBecauseDataChanged = useDebouncedCallback(
-    resetVirtualizationBecauseDataChanged,
+  const debouncedReloadRecordTableBecauseDataChanged = useDebouncedCallback(
+    reloadRecordTableBecauseDataChanged,
     SSE_TABLE_DEBOUNCE_TIME_IN_MS_TO_AVOID_SSE_OWN_EVENTS_RACE_CONDITION,
     {
       leading: false,
@@ -19,7 +19,7 @@ export const RecordTableVirtualizedJunctionDataChangedEffect = () => {
   );
 
   useListenToJunctionRecordOperation({
-    onJunctionRecordOperation: debouncedResetVirtualizationBecauseDataChanged,
+    onJunctionRecordOperation: debouncedReloadRecordTableBecauseDataChanged,
   });
 
   return <></>;
