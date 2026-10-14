@@ -21,13 +21,13 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx',
-    reason: 'Button placement in its parent column',
+      'packages/twenty-front/src/modules/log-console/components/LogConsoleFieldsCard.tsx',
+    reason: 'Card.Root laid out as a padded column of log fields',
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/log-console/components/StyledLogConsoleFieldsCard.tsx',
-    reason: 'Card.Root laid out as a padded column of log fields',
+      'packages/twenty-front/src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx',
+    reason: 'Button placement in its parent column',
   },
   {
     filePath:
