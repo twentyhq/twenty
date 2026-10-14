@@ -99,5 +99,9 @@ export const useTeamsUserLinks = () => {
     };
   }, []);
 
-  return { teamsUserLinks, isLoading, hasLoadError };
+  const dropTeamsUserLink = (id: string) => {
+    setTeamsUserLinks((links) => links.filter((link) => link.id !== id));
+  };
+
+  return { teamsUserLinks, isLoading, hasLoadError, dropTeamsUserLink };
 };
