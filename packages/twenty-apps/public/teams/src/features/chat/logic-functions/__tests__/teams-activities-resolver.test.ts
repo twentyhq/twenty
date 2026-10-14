@@ -11,7 +11,7 @@ const { kvGetMock, verifyTokenMock } = vi.hoisted(() => ({
 }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
+  ...(await importOriginal<Record<string, unknown>>()),
   kv: { get: kvGetMock },
 }));
 
