@@ -22,6 +22,14 @@ const StyledCheckoutButton = styled(MainButton)`
   width: 200px;
 `;
 
+const StyledPricingDialogBody = styled(Dialog.Body)`
+  align-items: center;
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  padding: ${themeCssVariables.spacing[10]};
+`;
+
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 
 type BillingInterval = 'monthly' | 'yearly';
@@ -159,17 +167,8 @@ export const EnterprisePlanModal = () => {
           aria-label={t`Get Organization`}
           onKeyDown={onKeyDown}
           size="md"
-          style={{ padding: 0 }}
         >
-          <Dialog.Body
-            style={{
-              display: 'flex',
-              flex: '1 1 0%',
-              flexDirection: 'column',
-              padding: 'var(--t-spacing-10)',
-              alignItems: 'center',
-            }}
-          >
+          <StyledPricingDialogBody>
             <Title noMarginTop>{t`Get Organization`}</Title>
             <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
 
@@ -212,7 +211,7 @@ export const EnterprisePlanModal = () => {
               startIcon={isLoading && <Loader />}
               disabled={isLoading}
             >{t`Continue`}</StyledCheckoutButton>
-          </Dialog.Body>
+          </StyledPricingDialogBody>
         </Dialog.Popup>
       )}
     </DialogInstance>

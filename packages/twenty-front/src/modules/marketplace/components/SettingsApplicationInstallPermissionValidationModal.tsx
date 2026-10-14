@@ -214,7 +214,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
           aria-label={t`Install ${appDisplayName} on your workspace`}
           onKeyDown={onKeyDown}
           size="fullscreen"
-          style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >
           <StyledFullscreenContainer>
             <StyledLightButton

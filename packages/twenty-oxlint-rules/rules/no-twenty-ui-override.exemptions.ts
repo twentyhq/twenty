@@ -26,6 +26,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx',
+    reason: 'LightButton pinned to the corner of the fullscreen dialog',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsPasswordController.tsx',
     reason: 'Button placement in its parent column',
   },
