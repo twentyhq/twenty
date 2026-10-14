@@ -141,6 +141,7 @@ export const createToastLifecycle = (store: Store<ToastStoreState>) => {
 
     lifecycle.renderers.set(key, configuration);
     synchronize();
+    return lifecycle.countdown;
   };
 
   const removeRenderer = ({ id, key }: { id: string; key: symbol }) => {
@@ -191,7 +192,7 @@ export const createToastLifecycle = (store: Store<ToastStoreState>) => {
   return {
     mount,
     isActive: () => !isDisposed,
-    getCountdown: (id: string) => getNotification(id).countdown,
+    getCountdown: (id: string) => notifications.get(id)?.countdown,
     updateRenderer,
     removeRenderer,
     finishExit,

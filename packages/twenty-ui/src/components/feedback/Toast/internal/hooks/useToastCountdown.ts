@@ -12,17 +12,20 @@ export const useToastCountdown = ({
   duration: number;
   isPaused: boolean;
 }) => {
-  const { lifecycle, id } = useContext(ToastTimingContext);
-  const [clock] = useState(() =>
-    isDefined(lifecycle) && isDefined(id)
-      ? lifecycle.getCountdown(id)
-      : createToastCountdownStore({ duration, isPaused }),
-  );
+  const { lifecycle, id, rendererKey } = useContext(ToastTimingContext);
+  const [clock, setClock] = useState(() => {
+    const sharedClock =
+      isDefined(lifecycle) && isDefined(id) && isDefined(rendererKey)
+        ? lifecycle.getCountdown(id)
+        : undefined;
+
+    return sharedClock ?? createToastCountdownStore({ duration, isPaused });
+  });
   const countdown = useSyncExternalStore(
     clock.subscribe,
     clock.getSnapshot,
     clock.getSnapshot,
   );
 
-  return { countdown, clock };
+  return { countdown, clock, setClock };
 };

@@ -36,6 +36,35 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+it('allocates a shared countdown only when a renderer is registered', () => {
+  const { store } = createStoreWithNotification();
+
+  expect(store.lifecycle.getCountdown('notification')).toBeUndefined();
+  expect(store.lifecycle.getCountdown('notification')).toBeUndefined();
+  expect(
+    store.lifecycle.getCountdown('abandoned notification'),
+  ).toBeUndefined();
+  expect(vi.getTimerCount()).toBe(0);
+
+  const firstClock = store.lifecycle.updateRenderer({
+    id: 'notification',
+    key: Symbol(),
+    configuration: RENDERER_CONFIGURATION,
+  });
+  const secondClock = store.lifecycle.updateRenderer({
+    id: 'notification',
+    key: Symbol(),
+    configuration: RENDERER_CONFIGURATION,
+  });
+
+  expect(store.lifecycle.getCountdown('notification')).toBe(firstClock);
+  expect(secondClock).toBe(firstClock);
+  expect(
+    store.lifecycle.getCountdown('abandoned notification'),
+  ).toBeUndefined();
+  expect(vi.getTimerCount()).toBe(0);
+});
+
 it('shares one countdown across mirrors and dismisses with the latest callback once', () => {
   const { store, onClose } = createStoreWithNotification();
   const firstKey = Symbol();
@@ -106,7 +135,7 @@ it('keeps the shared clock paused until every mirror resumes', () => {
   vi.advanceTimersByTime(10_000);
   expect(onClose).not.toHaveBeenCalled();
   expect(
-    store.lifecycle.getCountdown('notification').getSnapshot(),
+    store.lifecycle.getCountdown('notification')?.getSnapshot(),
   ).toMatchObject({
     remainingDuration: 600,
     isPaused: true,
@@ -395,7 +424,7 @@ it('retains a mirror duration override and its remainder while detached', () => 
 
   expect(onClose).not.toHaveBeenCalled();
   expect(
-    store.lifecycle.getCountdown('notification').getSnapshot(),
+    store.lifecycle.getCountdown('notification')?.getSnapshot(),
   ).toMatchObject({
     duration: 600,
     remainingDuration: 400,

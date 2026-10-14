@@ -8,12 +8,14 @@ import { type createToastCountdownStore } from '../utils/createToastCountdownSto
 
 type ToastCountdownEffectProps = Pick<ToastProps, 'progress' | 'onClose'> & {
   clock: ReturnType<typeof createToastCountdownStore>;
+  onClockChange: (clock: ReturnType<typeof createToastCountdownStore>) => void;
   duration: number;
   isPaused: boolean;
 };
 
 export const ToastCountdownEffect = ({
   clock,
+  onClockChange,
   duration,
   progress,
   isPaused,
@@ -27,6 +29,9 @@ export const ToastCountdownEffect = ({
     rendererKey,
     timingOverrides,
   } = useContext(ToastTimingContext);
+  const isSharedCountdown =
+    isDefined(lifecycle) && isDefined(id) && isDefined(rendererKey);
+  const standaloneClock = isSharedCountdown ? undefined : clock;
   const isProgress = isDefined(progress);
   const isDurationOverridden =
     isDefined(timingOverrides) &&
@@ -36,8 +41,8 @@ export const ToastCountdownEffect = ({
     Object.prototype.propertyIsEnumerable.call(timingOverrides, 'progress');
 
   useLayoutEffect(() => {
-    if (isDefined(lifecycle) && isDefined(id) && isDefined(rendererKey)) {
-      lifecycle.updateRenderer({
+    if (isSharedCountdown) {
+      const sharedClock = lifecycle.updateRenderer({
         id,
         key: rendererKey,
         configuration: {
@@ -46,10 +51,11 @@ export const ToastCountdownEffect = ({
           isPaused,
         },
       });
+      onClockChange(sharedClock);
       return;
     }
 
-    clock.update({
+    standaloneClock?.update({
       duration,
       durationRevision,
       isPaused,
@@ -58,7 +64,9 @@ export const ToastCountdownEffect = ({
       onClose,
     });
   }, [
-    clock,
+    standaloneClock,
+    onClockChange,
+    isSharedCountdown,
     duration,
     durationRevision,
     isPaused,
@@ -74,14 +82,14 @@ export const ToastCountdownEffect = ({
 
   useLayoutEffect(
     () => () => {
-      if (isDefined(lifecycle) && isDefined(id) && isDefined(rendererKey)) {
+      if (isSharedCountdown) {
         lifecycle.removeRenderer({ id, key: rendererKey });
         return;
       }
 
-      clock.stop();
+      standaloneClock?.stop();
     },
-    [clock, lifecycle, id, rendererKey],
+    [standaloneClock, lifecycle, id, rendererKey, isSharedCountdown],
   );
 
   return null;

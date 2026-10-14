@@ -61,7 +61,7 @@ export const Toast = ({
   const [toastElement, setToastElement] = useState<HTMLDivElement | null>(null);
 
   const isPaused = isHovered || isFocused;
-  const { countdown, clock } = useToastCountdown({
+  const { countdown, clock, setClock } = useToastCountdown({
     duration,
     isPaused,
   });
@@ -174,6 +174,7 @@ export const Toast = ({
       />
       <ToastCountdownEffect
         clock={clock}
+        onClockChange={setClock}
         duration={duration}
         progress={progress}
         isPaused={isPaused}
