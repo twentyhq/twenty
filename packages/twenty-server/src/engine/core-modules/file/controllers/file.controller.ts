@@ -204,7 +204,7 @@ export class FileController {
         playground: true,
         workspaceAgnostic: false,
       },
-      apiKey: false,
+      apiKey: true,
       oauthClient: { withUser: true, withoutUser: false },
       application: { withUser: true, withoutUser: false },
     }),

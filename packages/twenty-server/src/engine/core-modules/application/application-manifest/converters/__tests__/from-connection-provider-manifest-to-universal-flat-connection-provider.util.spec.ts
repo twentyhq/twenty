@@ -51,6 +51,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         tokenRequestContentType: 'json',
         usePkce: true,
       },
+      identifyAccountLogicFunctionUniversalIdentifier: null,
       onConnectLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
       createdAt: NOW,
@@ -69,6 +70,27 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       });
 
     expect(result.logo).toBe('public/linear-logomark.svg');
+  });
+
+  it('resolves the identifyAccountLogicFunction universalIdentifier into the flat field when provided', () => {
+    const identifyAccountLogicFunctionUniversalIdentifier =
+      'e3e3e3e3-e3e3-4e3e-e3e3-e3e3e3e3e3e3';
+
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          identifyAccountLogicFunction: {
+            universalIdentifier:
+              identifyAccountLogicFunctionUniversalIdentifier,
+          },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.identifyAccountLogicFunctionUniversalIdentifier).toBe(
+      identifyAccountLogicFunctionUniversalIdentifier,
+    );
   });
 
   it('resolves the onConnectLogicFunction universalIdentifier into the flat field when provided', () => {

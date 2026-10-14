@@ -16,10 +16,10 @@ export const useSetAdvancedMode = () => {
 
   const setAdvancedMode = (isEnabled: boolean) => {
     setIsAdvancedModeEnabled(isEnabled);
+    setLogConsoleSelectedLog(null);
+    setIsLogConsoleFullScreen(false);
 
     if (isEnabled) {
-      setLogConsoleSelectedLog(null);
-      setIsLogConsoleFullScreen(false);
       setLogConsoleHeight(null);
       setLogConsoleDisplayMode('open');
     }

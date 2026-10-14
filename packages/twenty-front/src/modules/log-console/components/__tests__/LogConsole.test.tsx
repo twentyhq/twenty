@@ -15,6 +15,7 @@ import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouse
 import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
@@ -38,6 +39,12 @@ import {
 } from '~/testing/mock-data/users';
 
 let capturedResizeHandleProps: ResizeHandleProps | undefined;
+let mockShouldReduceMotion = false;
+
+jest.mock('framer-motion', () => ({
+  ...jest.requireActual('framer-motion'),
+  useReducedMotion: () => mockShouldReduceMotion,
+}));
 
 jest.mock('twenty-ui/primitives/layout', () => ({
   ...jest.requireActual('twenty-ui/primitives/layout'),
@@ -98,7 +105,8 @@ const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
   });
   jotaiStore.set(isClickHouseConfiguredState.atom, true);
   jotaiStore.set(isAdvancedModeEnabledState.atom, false);
-  jotaiStore.set(logConsoleDisplayModeState.atom, 'closed');
+  jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+  jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
 
   render(
     <I18nProvider i18n={i18n}>
@@ -121,6 +129,7 @@ const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
 describe('LogConsole', () => {
   beforeEach(() => {
     capturedResizeHandleProps = undefined;
+    mockShouldReduceMotion = false;
   });
 
   it('restores the collapsed console when its opening drag is cancelled', () => {
@@ -143,21 +152,20 @@ describe('LogConsole', () => {
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
   });
 
-  it('keeps an explicitly closed console closed when its drag is cancelled', () => {
+  it('opens a console still saved as closed by an earlier version when its bar is dragged', () => {
+    const displayModeSavedByEarlierVersion = 'closed' as unknown as 'collapsed';
+
     renderWithLogsFeatureFlag(true);
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
-      jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+      jotaiStore.set(
+        logConsoleDisplayModeState.atom,
+        displayModeSavedByEarlierVersion,
+      );
     });
     act(() => capturedResizeHandleProps?.onResizeStart?.(100));
-    const onResizeEnd = capturedResizeHandleProps?.onResizeEnd;
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
-
-    act(() => jotaiStore.set(logConsoleDisplayModeState.atom, 'closed'));
-    act(() => onResizeEnd?.({ cancelled: true, value: 0 }));
-
-    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('closed');
   });
 
   it('keeps the console open in full screen when its drag is cancelled', () => {
@@ -256,7 +264,8 @@ describe('LogConsole', () => {
     expect(await screen.findByText('Log results')).toBeInTheDocument();
   });
 
-  it('stays open when developer mode is turned off', async () => {
+  it('hides when developer mode is turned off', async () => {
+    mockShouldReduceMotion = true;
     renderWithLogsFeatureFlag(true);
 
     await userEvent.click(
@@ -269,7 +278,50 @@ describe('LogConsole', () => {
       screen.getByRole('button', { name: 'Developer mode' }),
     );
 
-    expect(screen.getByText('Log results')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Collapse' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('has no close button, so developer mode is the only way to hide it', async () => {
+    renderWithLogsFeatureFlag(true);
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Developer mode' }),
+    );
+
+    expect(
+      await screen.findByRole('button', { name: 'Collapse' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Close' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('reopens on the last selected log source', () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleActiveSourceIdState.atom, 'app-logs');
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    });
+
+    expect(screen.getByRole('tab', { name: 'App logs' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+  });
+
+  it('remembers the log source selected by the user', async () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    });
+
+    await userEvent.click(screen.getByRole('tab', { name: 'App logs' }));
+
+    expect(jotaiStore.get(logConsoleActiveSourceIdState.atom)).toBe('app-logs');
   });
 
   it('toggles with Mod+J on a page that turns off modifier hotkeys', async () => {
