@@ -74,6 +74,10 @@ jobs:
       - name: Unit tests
         run: npx vitest run --maxWorkers=2
         working-directory: packages/twenty-cli
+      - name: Test app publishing with an isolated local registry
+        run: |
+          sudo unshare --net -- sh -c 'ip link set lo up && exec "$@"' sh \
+            env CI=true "$(command -v node)" --test packages/twenty-cli/scripts/test-app-publish.mjs
       - name: Save CLI test cache
         uses: ./.github/actions/save-cache
         with:
