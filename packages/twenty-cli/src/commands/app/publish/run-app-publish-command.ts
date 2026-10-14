@@ -58,7 +58,11 @@ export const runAppPublishCommand: CommandRun = async (context) => {
           if (isDefined(target)) {
             return publishAppToServer({
               packedApp,
-              context: { ...context, target },
+              context: {
+                target,
+                signal: context.signal,
+                output: context.output,
+              },
             });
           }
           return publishAppToNpm({

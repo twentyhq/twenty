@@ -20,7 +20,7 @@ export const publishAppToServer = async ({
   context: { target, signal, output },
 }: {
   packedApp: PackedApp;
-  context: TargetCommandContext;
+  context: Pick<TargetCommandContext, 'target' | 'signal' | 'output'>;
 }) => {
   let phase: PrivatePublishPhase = 'prepare-upload';
   const completedPhases: PrivatePublishPhase[] = [];
