@@ -13,6 +13,10 @@ import { ObjectFilterDropdownInnerSelectOperandDropdown } from '@/object-record/
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -36,6 +40,13 @@ export const ObjectFilterDropdownFilterInput = ({
     selectedOperandInDropdownComponentState,
   );
 
+  const relationTargetFieldMetadataIdUsedInDropdown =
+    useAtomComponentStateValue(
+      relationTargetFieldMetadataIdUsedInDropdownComponentState,
+    );
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
   const isOperandWithFilterValue =
     selectedOperandInDropdown &&
     [
@@ -55,8 +66,18 @@ export const ObjectFilterDropdownFilterInput = ({
     return null;
   }
 
+  // A filter through a relation takes its input from the target field, not the relation.
+  const relationTargetFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? getFieldMetadataItemById({
+        fieldMetadataId: relationTargetFieldMetadataIdUsedInDropdown,
+        objectMetadataItems,
+      }).fieldMetadataItem
+    : null;
+
   const filterType = getFilterTypeFromFieldType(
-    fieldMetadataItemUsedInDropdown.type,
+    (relationTargetFieldMetadataItem ?? fieldMetadataItemUsedInDropdown).type,
   );
 
   const isOnlyOperand = !isOperandWithFilterValue;

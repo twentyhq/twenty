@@ -1,3 +1,4 @@
+import { getRecordGqlFieldPaths } from '@/object-record/graphql/record-gql-fields/utils/getRecordGqlFieldPaths';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
@@ -9,7 +10,9 @@ export const useRecordBoardQueryIdentifier = () => {
     useRecordIndexGroupCommonQueryVariables();
 
   // Newly shown fields are only fetched when this identifier changes
-  const fetchedFieldNames = Object.keys(recordGqlFields).sort().join(',');
+  const fetchedFieldNames = getRecordGqlFieldPaths(recordGqlFields)
+    .sort()
+    .join(',');
 
   const baseQueryIdentifier = getQueryIdentifier({
     objectNameSingular: objectMetadataItem.nameSingular,

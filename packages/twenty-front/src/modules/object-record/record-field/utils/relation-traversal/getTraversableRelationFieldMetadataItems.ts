@@ -19,10 +19,7 @@ export const getTraversableRelationFieldMetadataItems = ({
   objectMetadataItem.readableFields.flatMap((fieldMetadataItem) => {
     if (
       !isActiveFieldMetadataItem({ fieldMetadata: fieldMetadataItem }) ||
-      !isTraversableRelationFieldMetadataItem(fieldMetadataItem, {
-        sourceObjectMetadataId: objectMetadataItem.id,
-        objectMetadataItems,
-      })
+      !isTraversableRelationFieldMetadataItem(fieldMetadataItem)
     ) {
       return [];
     }
@@ -38,6 +35,9 @@ export const getTraversableRelationFieldMetadataItems = ({
     }
 
     return [
-      { relationFieldMetadataItem: fieldMetadataItem, targetObjectMetadataItem },
+      {
+        relationFieldMetadataItem: fieldMetadataItem,
+        targetObjectMetadataItem,
+      },
     ];
   });

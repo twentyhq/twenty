@@ -33,10 +33,7 @@ export const resolveRecordFieldRelationTraversal = ({
 
   if (
     !isDefined(relationFieldMetadataItem) ||
-    !isTraversableRelationFieldMetadataItem(relationFieldMetadataItem, {
-      sourceObjectMetadataId: sourceObjectMetadataItem.id,
-      objectMetadataItems,
-    })
+    !isTraversableRelationFieldMetadataItem(relationFieldMetadataItem)
   ) {
     return null;
   }
