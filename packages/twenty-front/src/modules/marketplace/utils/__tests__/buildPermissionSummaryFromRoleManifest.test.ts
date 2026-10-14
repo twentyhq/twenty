@@ -1,5 +1,6 @@
 import { type RoleManifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
+import { IconLock } from 'twenty-ui/icon';
 
 import { buildPermissionSummaryFromRoleManifest } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
 
@@ -13,6 +14,8 @@ const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-b374-4779-a561-80086cb2e17f';
 const TASK_OBJECT_UNIVERSAL_IDENTIFIER = '20202020-1ba1-48ba-bc83-ef7e5990ed10';
+const APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER =
+  'a1b2c3d4-0000-4000-8000-000000000001';
 
 const objectLabelsByUniversalIdentifier = {
   [PERSON_OBJECT_UNIVERSAL_IDENTIFIER]: 'Person',
@@ -325,7 +328,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       );
     });
 
-    it('deduplicates repeated flags and ignores unknown ones', () => {
+    it('deduplicates repeated flags and counts unknown ones', () => {
       expect(
         getLabels({
           ...baseRole,
@@ -333,12 +336,46 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
             SystemPermissionFlag.WORKFLOWS,
             SystemPermissionFlag.WORKFLOWS,
             'unknown-flag-00000000-0000-0000-0000-000000000000',
+            'unknown-flag-00000000-0000-0000-0000-000000000000',
           ],
         }),
-      ).toEqual(['Manage workflows']);
+      ).toEqual(['Manage workflows', '1 other permission']);
     });
 
-    it('ignores identifiers that name Object prototype properties', () => {
+    it('labels permission flags defined by the application', () => {
+      const appPermissionFlagsByUniversalIdentifier = new Map([
+        [
+          APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+          { Icon: IconLock, label: 'Post to Slack channels' },
+        ],
+      ]);
+
+      expect(
+        getLabels(
+          {
+            ...baseRole,
+            permissionFlagUniversalIdentifiers: [
+              APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+              SystemPermissionFlag.WORKFLOWS,
+            ],
+          },
+          { appPermissionFlagsByUniversalIdentifier },
+        ),
+      ).toEqual(['Post to Slack channels', 'Manage workflows']);
+    });
+
+    it('does not report an empty summary when only app-defined flags are requested', () => {
+      expect(
+        getLabels({
+          ...baseRole,
+          permissionFlagUniversalIdentifiers: [
+            APP_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+          ],
+        }),
+      ).toEqual(['1 other permission']);
+    });
+
+    it('does not resolve identifiers that name Object prototype properties', () => {
       expect(
         getLabels({
           ...baseRole,
@@ -349,7 +386,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
             SystemPermissionFlag.WORKFLOWS,
           ],
         }),
-      ).toEqual(['Manage workflows']);
+      ).toEqual(['Manage workflows', '3 other permissions']);
     });
   });
 

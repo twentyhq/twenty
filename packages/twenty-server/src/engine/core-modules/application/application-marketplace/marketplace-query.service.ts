@@ -176,6 +176,13 @@ export class MarketplaceQueryService {
           labelPlural,
         }),
       ),
+      permissionFlags: manifest?.permissionFlags?.map(
+        ({ universalIdentifier, label, icon }) => ({
+          universalIdentifier,
+          label,
+          icon,
+        }),
+      ),
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
       ),

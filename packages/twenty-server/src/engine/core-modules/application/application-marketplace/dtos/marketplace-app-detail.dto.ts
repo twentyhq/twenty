@@ -14,6 +14,7 @@ import {
 } from 'twenty-shared/application';
 
 import { MarketplaceAppObjectDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-object.dto';
+import { MarketplaceAppPermissionFlagDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-permission-flag.dto';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
@@ -129,6 +130,10 @@ export class MarketplaceAppDetailDTO {
   @IsOptional()
   @Field(() => [MarketplaceAppObjectDTO], { nullable: true })
   objects?: MarketplaceAppObjectDTO[];
+
+  @IsOptional()
+  @Field(() => [MarketplaceAppPermissionFlagDTO], { nullable: true })
+  permissionFlags?: MarketplaceAppPermissionFlagDTO[];
 
   @Field(() => [String])
   requestedCapabilities: ApplicationCapability[];

@@ -1803,6 +1803,7 @@ export interface MarketplaceAppDetail {
     manifest?: Scalars['JSON']
     name: Scalars['String']
     objects?: MarketplaceAppObject[]
+    permissionFlags?: MarketplaceAppPermissionFlag[]
     pricingDescription?: Scalars['String']
     requestedCapabilities: Scalars['String'][]
     roles?: MarketplaceAppRole[]
@@ -1821,6 +1822,13 @@ export interface MarketplaceAppObject {
     labelSingular: Scalars['String']
     universalIdentifier: Scalars['String']
     __typename: 'MarketplaceAppObject'
+}
+
+export interface MarketplaceAppPermissionFlag {
+    icon?: Scalars['String']
+    label: Scalars['String']
+    universalIdentifier: Scalars['String']
+    __typename: 'MarketplaceAppPermissionFlag'
 }
 
 export interface MarketplaceAppRole {
@@ -6031,6 +6039,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     manifest?: boolean | number
     name?: boolean | number
     objects?: MarketplaceAppObjectGenqlSelection
+    permissionFlags?: MarketplaceAppPermissionFlagGenqlSelection
     pricingDescription?: boolean | number
     requestedCapabilities?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
@@ -6048,6 +6057,14 @@ export interface MarketplaceAppDetailGenqlSelection{
 export interface MarketplaceAppObjectGenqlSelection{
     labelPlural?: boolean | number
     labelSingular?: boolean | number
+    universalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MarketplaceAppPermissionFlagGenqlSelection{
+    icon?: boolean | number
+    label?: boolean | number
     universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -9914,6 +9931,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isMarketplaceAppObject = (obj?: { __typename?: any } | null): obj is MarketplaceAppObject => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppObject"')
       return MarketplaceAppObject_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MarketplaceAppPermissionFlag_possibleTypes: string[] = ['MarketplaceAppPermissionFlag']
+    export const isMarketplaceAppPermissionFlag = (obj?: { __typename?: any } | null): obj is MarketplaceAppPermissionFlag => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppPermissionFlag"')
+      return MarketplaceAppPermissionFlag_possibleTypes.includes(obj.__typename)
     }
     
 

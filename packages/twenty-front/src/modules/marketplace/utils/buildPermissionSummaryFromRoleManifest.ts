@@ -13,6 +13,10 @@ export type { PermissionSummaryItem } from '@/marketplace/types/PermissionSummar
 
 export type BuildPermissionSummaryOptions = {
   objectLabelsByUniversalIdentifier?: Record<string, string>;
+  appPermissionFlagsByUniversalIdentifier?: ReadonlyMap<
+    string,
+    PermissionSummaryItem
+  >;
 };
 
 const getRoleAccess = (defaultRole: RoleManifest): RecordAccess => ({
@@ -27,6 +31,7 @@ export const buildPermissionSummaryFromRoleManifest = (
   defaultRole: RoleManifest,
   {
     objectLabelsByUniversalIdentifier = {},
+    appPermissionFlagsByUniversalIdentifier = new Map(),
   }: BuildPermissionSummaryOptions = {},
 ): PermissionSummaryItem[] => {
   const roleAccess = getRoleAccess(defaultRole);
@@ -48,21 +53,25 @@ export const buildPermissionSummaryFromRoleManifest = (
       roleAccess,
       objectLabelsByUniversalIdentifier,
     }),
-    ...buildPermissionFlagSummary(
-      permissionFlagUniversalIdentifiers.filter(
-        (flag) => flag === SystemPermissionFlag.DATA_MODEL,
-      ),
-    ),
+    ...buildPermissionFlagSummary({
+      permissionFlagUniversalIdentifiers:
+        permissionFlagUniversalIdentifiers.filter(
+          (flag) => flag === SystemPermissionFlag.DATA_MODEL,
+        ),
+      appPermissionFlagsByUniversalIdentifier,
+    }),
     ...(defaultRole.canUpdateAllSettings
       ? [{ Icon: IconSettings, label: t`Update all workspace settings` }]
       : []),
     ...(defaultRole.canAccessAllTools
       ? [{ Icon: IconTool, label: t`Use all tools` }]
       : []),
-    ...buildPermissionFlagSummary(
-      permissionFlagUniversalIdentifiers.filter(
-        (flag) => flag !== SystemPermissionFlag.DATA_MODEL,
-      ),
-    ),
+    ...buildPermissionFlagSummary({
+      permissionFlagUniversalIdentifiers:
+        permissionFlagUniversalIdentifiers.filter(
+          (flag) => flag !== SystemPermissionFlag.DATA_MODEL,
+        ),
+      appPermissionFlagsByUniversalIdentifier,
+    }),
   ];
 };
