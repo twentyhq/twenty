@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.9.2
+## 1.10.0
 
 - Use the new Last contact logo from the Twenty app icon family: clock hands inside a message bubble on a violet tile.
 
