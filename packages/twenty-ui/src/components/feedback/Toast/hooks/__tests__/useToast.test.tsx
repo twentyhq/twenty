@@ -87,6 +87,25 @@ it('ignores undefined options without publishing or evicting a toast', () => {
   expect(onClose).not.toHaveBeenCalled();
 });
 
+it('ignores a captured enqueue after final provider disposal', async () => {
+  const { store, result, unmount } = renderToastHooks();
+  const { enqueueToast } = result.current;
+  const stop = store.lifecycle.mount();
+  enqueueToast({ children: 'Saved' });
+  unmount();
+  stop();
+  await Promise.resolve();
+  const disposedSnapshot = store.state.toasts;
+  const listener = vi.fn();
+  store.subscribe(listener);
+
+  enqueueToast({ children: 'Stale notification' });
+
+  expect(disposedSnapshot).toEqual([]);
+  expect(store.state.toasts).toBe(disposedSnapshot);
+  expect(listener).not.toHaveBeenCalled();
+});
+
 it('retains a dismissed toast until its exit finishes and calls onClose once', () => {
   const { store, result } = renderToastHooks();
   const listener = vi.fn();

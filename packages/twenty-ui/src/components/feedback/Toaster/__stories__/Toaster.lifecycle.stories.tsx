@@ -7,6 +7,10 @@ import { ComponentDecorator } from '@ui/testing';
 import { ToasterLifecycleExample } from './ToasterLifecycleExample';
 import { ToasterLifecycleTimingOverrideExample } from './ToasterLifecycleTimingOverrideExample';
 import { ToasterPortalExample } from './ToasterPortalExample';
+import { ToasterProviderLayoutReplayEffect } from './ToasterProviderLayoutReplayEffect';
+import { ToasterProviderPassiveReplayEffect } from './ToasterProviderPassiveReplayEffect';
+import { ToasterProviderReplayExample } from './ToasterProviderReplayExample';
+import { ToasterProviderSuspenseExample } from './ToasterProviderSuspenseExample';
 
 const meta: Meta<typeof ToasterLifecycleExample> = {
   id: 'ui-feedback-toaster-lifecycle',
@@ -770,5 +774,123 @@ export const ScopedAndNullPortalTargets: Story = {
       within(destination).getByRole('region', { name: 'Portal notifications' }),
     ).toHaveAttribute('dir', 'rtl');
     expect(within(destination).getByRole('status').id).toBe(replacement.id);
+  },
+};
+
+export const SuspensePreservesProviderNotificationsAndRemainingTime: Story = {
+  args: { duration: 3000 },
+  render: (args) => (
+    <ToasterProviderSuspenseExample
+      duration={args.duration}
+      onClose={args.onClose}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const user = userEvent.setup();
+    await user.click(
+      canvas.getByRole('button', { name: 'Add timed notification' }),
+    );
+    const original = within(
+      body.getByRole('region', { name: 'Suspense lifecycle notifications' }),
+    ).getByRole('status');
+    const originalId = original.id;
+    await wait(1600);
+    await user.click(
+      canvas.getByRole('button', { name: 'Suspend notification provider' }),
+    );
+    await waitFor(() => {
+      expect(
+        canvas.getByRole('note', { name: 'Provider suspension state' }),
+      ).toHaveTextContent('Notification provider suspended');
+      expect(original).not.toBeVisible();
+    });
+    await wait(3500);
+    expect(body.queryByRole('status')).not.toBeInTheDocument();
+    expect(args.onClose).not.toHaveBeenCalled();
+    await user.click(
+      canvas.getByRole('button', { name: 'Reveal notification provider' }),
+    );
+    const restored = await body.findByRole('status');
+    expect(restored.id).toBe(originalId);
+    expect(restored).toHaveTextContent('Lifecycle notification 1');
+    expect(
+      canvas.getByRole('note', { name: 'Last lifecycle notification ID' }),
+    ).toHaveTextContent(originalId);
+    await wait(400);
+    expect(restored).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    await waitFor(() => expect(args.onClose).toHaveBeenCalledOnce(), {
+      timeout: 1400,
+    });
+    await waitFor(() => expect(restored).not.toBeInTheDocument());
+    expect(args.onClose).toHaveBeenCalledWith('Lifecycle notification 1');
+    await user.click(
+      canvas.getByRole('button', { name: 'Unmount notification provider' }),
+    );
+    await Promise.resolve();
+    expect(body.queryByRole('status')).not.toBeInTheDocument();
+    expect(args.onClose).toHaveBeenCalledOnce();
+  },
+};
+
+export const StrictModePassiveEffectsCloseTheirOwnNotifications: Story = {
+  parameters: { react: { rootOptions: { unstable_strictMode: true } } },
+  render: (args) => (
+    <ToasterProviderReplayExample>
+      <ToasterProviderPassiveReplayEffect onClose={args.onClose} />
+    </ToasterProviderReplayExample>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const user = userEvent.setup();
+    await waitFor(() => {
+      expect(body.getAllByRole('status')).toHaveLength(1);
+      expect(args.onClose).toHaveBeenCalledOnce();
+    });
+    const notification = body.getByRole('status');
+    const notificationId = notification.id;
+    expect(notification).toHaveTextContent('Passive effect notification');
+    expect(args.onClose).not.toHaveBeenNthCalledWith(1, notificationId);
+    await user.click(
+      canvas.getByRole('button', { name: 'Unmount notification provider' }),
+    );
+    await Promise.resolve();
+    expect(notification).not.toBeInTheDocument();
+    expect(body.queryByRole('status')).not.toBeInTheDocument();
+    expect(args.onClose).toHaveBeenCalledTimes(2);
+    expect(args.onClose).toHaveBeenNthCalledWith(2, notificationId);
+  },
+};
+
+export const StrictModeLayoutEffectsCloseTheirOwnNotifications: Story = {
+  parameters: { react: { rootOptions: { unstable_strictMode: true } } },
+  render: (args) => (
+    <ToasterProviderReplayExample>
+      <ToasterProviderLayoutReplayEffect onClose={args.onClose} />
+    </ToasterProviderReplayExample>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const user = userEvent.setup();
+    await waitFor(() => {
+      expect(body.getAllByRole('status')).toHaveLength(1);
+      expect(args.onClose).toHaveBeenCalledOnce();
+    });
+    const notification = body.getByRole('status');
+    const notificationId = notification.id;
+    expect(notification).toHaveTextContent('Layout effect notification');
+    expect(args.onClose).not.toHaveBeenNthCalledWith(1, notificationId);
+    await user.click(
+      canvas.getByRole('button', { name: 'Unmount notification provider' }),
+    );
+    await Promise.resolve();
+    expect(notification).not.toBeInTheDocument();
+    expect(body.queryByRole('status')).not.toBeInTheDocument();
+    expect(args.onClose).toHaveBeenCalledTimes(2);
+    expect(args.onClose).toHaveBeenNthCalledWith(2, notificationId);
   },
 };

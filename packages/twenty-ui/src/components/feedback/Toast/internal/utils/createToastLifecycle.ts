@@ -25,7 +25,7 @@ type NotificationLifecycle = {
 export const createToastLifecycle = (store: Store<ToastStoreState>) => {
   const notifications = new Map<string, NotificationLifecycle>();
   let isMounted = false;
-  let hasMounted = false;
+  let isDisposed = false;
   let lifecycleRevision = 0;
 
   const getNotification = (id: string) => {
@@ -162,7 +162,7 @@ export const createToastLifecycle = (store: Store<ToastStoreState>) => {
 
   const mount = () => {
     isMounted = true;
-    hasMounted = true;
+    isDisposed = false;
     lifecycleRevision += 1;
     const unsubscribe = store.subscribe(synchronize);
     synchronize();
@@ -181,6 +181,7 @@ export const createToastLifecycle = (store: Store<ToastStoreState>) => {
           return;
         }
 
+        isDisposed = true;
         notifications.clear();
         store.set('toasts', []);
       });
@@ -189,7 +190,7 @@ export const createToastLifecycle = (store: Store<ToastStoreState>) => {
 
   return {
     mount,
-    isActive: () => !hasMounted || isMounted,
+    isActive: () => !isDisposed,
     getCountdown: (id: string) => getNotification(id).countdown,
     updateRenderer,
     removeRenderer,

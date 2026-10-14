@@ -223,6 +223,40 @@ it('stops provider work without dismissing and resumes from the same remainder',
   stopRemounted();
 });
 
+it('retains cleanup updates when effect replay cancels provider disposal', async () => {
+  const { store, onClose } = createStoreWithNotification();
+  const stop = store.lifecycle.mount();
+  store.lifecycle.updateRenderer({
+    id: 'notification',
+    key: Symbol(),
+    configuration: RENDERER_CONFIGURATION,
+  });
+  vi.advanceTimersByTime(400);
+  stop();
+
+  expect(vi.getTimerCount()).toBe(0);
+  updateToastInStore({
+    store,
+    id: 'notification',
+    children: 'Updated during cleanup',
+  });
+  expect(store.state.toasts[0]?.notification.children).toBe(
+    'Updated during cleanup',
+  );
+
+  const stopRemounted = store.lifecycle.mount();
+  await Promise.resolve();
+  expect(store.lifecycle.isActive()).toBe(true);
+  expect(store.state.toasts[0]?.notification.children).toBe(
+    'Updated during cleanup',
+  );
+  vi.advanceTimersByTime(599);
+  expect(onClose).not.toHaveBeenCalled();
+  vi.advanceTimersByTime(1);
+  expect(onClose).toHaveBeenCalledOnce();
+  stopRemounted();
+});
+
 it('does not restart stopped provider work when an obsolete timer callback arrives', () => {
   const { store, onClose } = createStoreWithNotification();
   const timeoutSpy = vi.spyOn(globalThis, 'setTimeout');
@@ -459,7 +493,7 @@ it('does not wait again for a completed mirror when its configuration refreshes'
 });
 
 it('discards notifications after final provider teardown without dismissal callbacks', async () => {
-  const { store, notification, onClose } = createStoreWithNotification();
+  const { store, onClose } = createStoreWithNotification();
   const stop = store.lifecycle.mount();
   store.lifecycle.updateRenderer({
     id: 'notification',
@@ -468,11 +502,14 @@ it('discards notifications after final provider teardown without dismissal callb
   });
   stop();
 
-  expect(store.lifecycle.isActive()).toBe(false);
-  updateToastInStore({ store, id: 'notification', children: 'Stale update' });
-  expect(store.state.toasts[0]).toBe(notification);
+  expect(vi.getTimerCount()).toBe(0);
+  expect(onClose).not.toHaveBeenCalled();
   await Promise.resolve();
 
+  expect(store.lifecycle.isActive()).toBe(false);
+  const disposedSnapshot = store.state.toasts;
+  updateToastInStore({ store, id: 'notification', children: 'Stale update' });
+  expect(store.state.toasts).toBe(disposedSnapshot);
   expect(store.state.toasts).toEqual([]);
   vi.advanceTimersByTime(10_000);
   expect(onClose).not.toHaveBeenCalled();
