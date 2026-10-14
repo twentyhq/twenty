@@ -55,24 +55,34 @@ export class CalendarEventSharingService {
     provider: ConnectedAccountProvider;
     fetchedCalendarEvents: FetchedCalendarEvent[];
   }): Promise<void> {
-    const sharingKeys = fetchedCalendarEvents
-      .map((fetchedCalendarEvent) =>
-        computeCalendarEventSharingKey({
-          provider,
-          eventExternalId: fetchedCalendarEvent.id,
-          iCalUid: fetchedCalendarEvent.iCalUid,
-        }),
-      )
-      .filter(isDefined);
+    const lockNames = [
+      ...new Set(
+        fetchedCalendarEvents
+          .map((fetchedCalendarEvent) =>
+            computeCalendarEventSharingKey({
+              provider,
+              eventExternalId: fetchedCalendarEvent.id,
+              iCalUid: fetchedCalendarEvent.iCalUid,
+            }),
+          )
+          .filter(isDefined)
+          .map(
+            (sharingKey) =>
+              `calendar-event-sharing:${transactionScope.workspaceId}:${provider}:${sharingKey}`,
+          ),
+      ),
+    ].sort();
 
-    for (const sharingKey of [...new Set(sharingKeys)].sort()) {
-      await transactionScope.executeRawQuery(
-        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-        [
-          `calendar-event-sharing:${transactionScope.workspaceId}:${provider}:${sharingKey}`,
-        ],
-      );
+    if (lockNames.length === 0) {
+      return;
     }
+
+    await transactionScope.executeRawQuery(
+      `SELECT pg_advisory_xact_lock(hashtextextended("lockName", 0))
+       FROM unnest($1::text[]) WITH ORDINALITY AS "locks"("lockName", "ordinality")
+       ORDER BY "ordinality"`,
+      [lockNames],
+    );
   }
 
   public async findCalendarEventIdsToLink({
@@ -109,7 +119,7 @@ export class CalendarEventSharingService {
             calendarChannelId: Any(otherCalendarChannelIds),
             eventExternalId: Any(fetchedCalendarEvents.map(({ id }) => id)),
           },
-          relations: { calendarEvent: true },
+          select: { calendarEventId: true, eventExternalId: true },
           order: { calendarEventId: 'ASC' },
         });
         break;
@@ -125,7 +135,7 @@ export class CalendarEventSharingService {
               ),
             },
           },
-          relations: { calendarEvent: true },
+          select: { calendarEventId: true, eventExternalId: true },
           order: { calendarEventId: 'ASC' },
         });
         break;
@@ -139,13 +149,40 @@ export class CalendarEventSharingService {
         return assertUnreachable(provider);
     }
 
+    if (otherChannelAssociations.length === 0) {
+      return new Map();
+    }
+
+    const lockedCalendarEvents = await transactionScope
+      .getRepository<CalendarEventWorkspaceEntity>('calendarEvent', {
+        shouldBypassPermissionChecks: true,
+      })
+      .find({
+        where: {
+          id: Any([
+            ...new Set(
+              otherChannelAssociations.map(
+                ({ calendarEventId }) => calendarEventId,
+              ),
+            ),
+          ]),
+        },
+        select: { id: true, iCalUid: true },
+        order: { id: 'ASC' },
+        lock: { mode: 'for_key_share' },
+      });
+    const iCalUidByCalendarEventId = new Map(
+      lockedCalendarEvents.map(({ id, iCalUid }) => [id, iCalUid]),
+    );
+
     const calendarEventIdBySharingKey = new Map<string, string>();
 
     for (const association of otherChannelAssociations) {
       const sharingKey = computeCalendarEventSharingKey({
         provider,
         eventExternalId: association.eventExternalId,
-        iCalUid: association.calendarEvent.iCalUid,
+        iCalUid:
+          iCalUidByCalendarEventId.get(association.calendarEventId) ?? null,
       });
 
       if (
@@ -176,35 +213,6 @@ export class CalendarEventSharingService {
           fetchedCalendarEvent.id,
           calendarEventId,
         );
-      }
-    }
-
-    if (calendarEventIdToLinkByEventExternalId.size === 0) {
-      return calendarEventIdToLinkByEventExternalId;
-    }
-
-    const lockedCalendarEvents = await transactionScope
-      .getRepository<CalendarEventWorkspaceEntity>('calendarEvent', {
-        shouldBypassPermissionChecks: true,
-      })
-      .find({
-        where: {
-          id: Any([...calendarEventIdToLinkByEventExternalId.values()]),
-        },
-        select: { id: true },
-        order: { id: 'ASC' },
-        lock: { mode: 'for_key_share' },
-      });
-    const lockedCalendarEventIds = new Set(
-      lockedCalendarEvents.map(({ id }) => id),
-    );
-
-    for (const [
-      eventExternalId,
-      calendarEventId,
-    ] of calendarEventIdToLinkByEventExternalId) {
-      if (!lockedCalendarEventIds.has(calendarEventId)) {
-        calendarEventIdToLinkByEventExternalId.delete(eventExternalId);
       }
     }
 
