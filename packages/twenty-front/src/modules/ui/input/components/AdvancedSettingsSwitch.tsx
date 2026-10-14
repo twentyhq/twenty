@@ -29,9 +29,7 @@ const StyledText = styled.div`
 `;
 
 const StyledSwitch = styled(Switch)`
-  ${StyledContainer} & {
-    color: ${themeCssVariables.color.yellow};
-  }
+  color: ${themeCssVariables.color.yellow};
 `;
 
 type AdvancedSettingsSwitchProps = {

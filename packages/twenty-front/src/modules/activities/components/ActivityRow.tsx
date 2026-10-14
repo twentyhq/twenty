@@ -6,20 +6,19 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRowContentContainer = styled.div`
-  > div {
-    align-items: center;
-    box-sizing: border-box;
-    display: flex;
-    gap: ${themeCssVariables.spacing[2]};
-    height: ${themeCssVariables.spacing[12]};
-    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
-    position: relative;
-  }
-
   > div:has(> .${CARD_ACTION_CLASS_NAME}:not(:disabled)):hover {
     background: ${themeCssVariables.background.transparent.lighter};
     cursor: pointer;
   }
+`;
+
+const StyledRowContent = styled(Card.Content)`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[12]};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
+  position: relative;
 `;
 
 const StyledRowAction = styled.button`
@@ -71,7 +70,7 @@ export const ActivityRow = ({
 
   return (
     <StyledRowContentContainer>
-      <Card.Content onClick={handleContentClick}>
+      <StyledRowContent onClick={handleContentClick}>
         {isDefined(onClick) && (
           <StyledRowAction
             className={CARD_ACTION_CLASS_NAME}
@@ -82,7 +81,7 @@ export const ActivityRow = ({
           />
         )}
         {children}
-      </Card.Content>
+      </StyledRowContent>
     </StyledRowContentContainer>
   );
 };
