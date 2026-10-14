@@ -121,7 +121,11 @@ const SidePanelRecordCreationFormSettings = ({
   };
 
   const handleDragEnd = ({ source, destination }: DraggableListDropResult) => {
-    if (isSaving || !isDefined(destination)) {
+    if (
+      isSaving ||
+      !isDefined(destination) ||
+      destination.index === source.index
+    ) {
       return;
     }
 
@@ -148,7 +152,7 @@ const SidePanelRecordCreationFormSettings = ({
       ...(isDefined(orderedFieldMetadataIds)
         ? computePageLayoutWidgetPositionUpdates({
             recordFormFields,
-            orderedFieldMetadataIds,
+            reorderedRecordFormFields: orderedConfigurableRecordFormFields,
           })
         : []),
     ];

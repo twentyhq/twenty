@@ -7,55 +7,53 @@ import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const computePageLayoutWidgetPositionUpdates = ({
   recordFormFields,
-  orderedFieldMetadataIds,
+  reorderedRecordFormFields,
 }: {
   recordFormFields: RecordFormField<Pick<FieldMetadataItem, 'id'>>[];
-  orderedFieldMetadataIds: string[];
+  reorderedRecordFormFields: RecordFormField<Pick<FieldMetadataItem, 'id'>>[];
 }): PageLayoutWidgetUpdate[] => {
-  const recordFormFieldByFieldMetadataId = new Map(
-    recordFormFields.map((recordFormField) => [
-      recordFormField.fieldMetadataItem.id,
-      recordFormField,
-    ]),
+  const reorderedFieldMetadataIds = new Set(
+    reorderedRecordFormFields.map(
+      ({ fieldMetadataItem }) => fieldMetadataItem.id,
+    ),
   );
-  const orderedRecordFormFields = orderedFieldMetadataIds
-    .map((fieldMetadataId) =>
-      recordFormFieldByFieldMetadataId.get(fieldMetadataId),
-    )
-    .filter(isDefined);
-  const orderedFieldMetadataIdSet = new Set(orderedFieldMetadataIds);
+  const reorderedSlotIndexes = recordFormFields.flatMap(
+    ({ fieldMetadataItem }, slotIndex) =>
+      reorderedFieldMetadataIds.has(fieldMetadataItem.id) ? [slotIndex] : [],
+  );
+  const recordFormFieldsInNewOrder = [...recordFormFields];
 
-  let nextOrderedRecordFormFieldIndex = 0;
+  reorderedRecordFormFields.forEach((recordFormField, orderIndex) => {
+    const slotIndex = reorderedSlotIndexes[orderIndex];
 
-  const reorderedRecordFormFields = recordFormFields.map((recordFormField) => {
-    if (!orderedFieldMetadataIdSet.has(recordFormField.fieldMetadataItem.id)) {
-      return recordFormField;
+    if (isDefined(slotIndex)) {
+      recordFormFieldsInNewOrder[slotIndex] = recordFormField;
     }
-
-    const orderedRecordFormField =
-      orderedRecordFormFields[nextOrderedRecordFormFieldIndex] ??
-      recordFormField;
-
-    nextOrderedRecordFormFieldIndex++;
-
-    return orderedRecordFormField;
   });
 
-  return reorderedRecordFormFields
+  return recordFormFieldsInNewOrder
     .flatMap(({ widgets }) => widgets)
-    .flatMap((widget, index) =>
-      isDefined(widget.position) &&
-      isVerticalListPosition(widget.position) &&
-      widget.position.index === index
-        ? []
-        : [
-            {
-              widgetId: widget.id,
-              position: {
-                layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-                index,
-              },
-            },
-          ],
-    );
+    .flatMap((widget, index) => {
+      const verticalListPosition =
+        isDefined(widget.position) && isVerticalListPosition(widget.position)
+          ? widget.position
+          : undefined;
+
+      if (verticalListPosition?.index === index) {
+        return [];
+      }
+
+      return [
+        {
+          widgetId: widget.id,
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index,
+            ...(isDefined(verticalListPosition?.heightBehavior)
+              ? { heightBehavior: verticalListPosition.heightBehavior }
+              : {}),
+          },
+        },
+      ];
+    });
 };

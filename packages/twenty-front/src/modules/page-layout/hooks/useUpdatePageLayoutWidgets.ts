@@ -8,17 +8,14 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
-  type PageLayoutTabLayoutMode,
+  type PageLayoutWidgetVerticalListPosition,
   UpdatePageLayoutWidgetDocument,
 } from '~/generated-metadata/graphql';
 
 export type PageLayoutWidgetUpdate = {
   widgetId: string;
   isActive?: boolean;
-  position?: {
-    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST;
-    index: number;
-  };
+  position?: Omit<PageLayoutWidgetVerticalListPosition, '__typename'>;
 };
 
 export const useUpdatePageLayoutWidgets = () => {
@@ -33,8 +30,20 @@ export const useUpdatePageLayoutWidgets = () => {
   const updatePageLayoutWidgets = async (
     pageLayoutWidgetUpdates: PageLayoutWidgetUpdate[],
   ): Promise<{ status: 'successful' | 'failed' }> => {
+    const pageLayoutWidgetInputByWidgetId = new Map<
+      string,
+      Omit<PageLayoutWidgetUpdate, 'widgetId'>
+    >();
+
+    for (const { widgetId, ...input } of pageLayoutWidgetUpdates) {
+      pageLayoutWidgetInputByWidgetId.set(widgetId, {
+        ...pageLayoutWidgetInputByWidgetId.get(widgetId),
+        ...input,
+      });
+    }
+
     try {
-      for (const { widgetId, ...input } of pageLayoutWidgetUpdates) {
+      for (const [widgetId, input] of pageLayoutWidgetInputByWidgetId) {
         const response = await updatePageLayoutWidgetMutation({
           variables: { id: widgetId, input },
         });

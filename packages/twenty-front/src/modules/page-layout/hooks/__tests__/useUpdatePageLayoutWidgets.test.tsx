@@ -119,6 +119,47 @@ describe('useUpdatePageLayoutWidgets', () => {
     ]);
   });
 
+  it('sends the visibility and position changes of a widget in one call', async () => {
+    const { result } = renderUpdateHook(store, [
+      {
+        request: {
+          query: UPDATE_PAGE_LAYOUT_WIDGET,
+          variables: () => true,
+        },
+        maxUsageCount: Number.POSITIVE_INFINITY,
+        result: updatePageLayoutWidgetResult,
+      },
+    ]);
+
+    await act(async () => {
+      await result.current.updatePageLayoutWidgets([
+        { widgetId: 'widget-b', isActive: true },
+        {
+          widgetId: 'widget-b',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
+        },
+      ]);
+    });
+
+    expect(
+      updatePageLayoutWidgetResult.mock.calls.map(([variables]) => variables),
+    ).toEqual([
+      {
+        id: 'widget-b',
+        input: {
+          isActive: true,
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
+        },
+      },
+    ]);
+  });
+
   it('persists a position change and reflects it in the metadata store', async () => {
     const { result } = renderUpdateHook(store, [
       {

@@ -11,6 +11,7 @@ import { SidePanelRecordCreationFormSettingsPage } from '@/side-panel/pages/reco
 import { recordCreationFormSettingsObjectMetadataIdComponentState } from '@/side-panel/pages/record-creation-form-settings/states/recordCreationFormSettingsObjectMetadataIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -100,6 +101,28 @@ jest.mock('@/page-layout/hooks/useUpdatePageLayoutWidgets', () => ({
   }),
 }));
 
+let mockDropDraggableItem: (result: DraggableListDropResult) => void;
+
+jest.mock('@/ui/layout/draggable-list/components/DraggableList', () => ({
+  DraggableList: ({
+    draggableItems,
+    onDragEnd,
+  }: {
+    draggableItems: ReactNode;
+    onDragEnd: (result: DraggableListDropResult) => void;
+  }) => {
+    mockDropDraggableItem = onDragEnd;
+
+    return <>{draggableItems}</>;
+  },
+}));
+
+jest.mock('@/ui/layout/draggable-list/components/DraggableItem', () => ({
+  DraggableItem: ({ itemComponent }: { itemComponent: ReactNode }) => (
+    <>{itemComponent}</>
+  ),
+}));
+
 jest.mock('@/side-panel/hooks/useSidePanelHistory', () => ({
   useSidePanelHistory: () => ({
     goBackFromSidePanel,
@@ -182,10 +205,6 @@ const renderPage = () =>
   render(<SidePanelRecordCreationFormSettingsPage />, { wrapper: Wrapper });
 
 describe('SidePanelRecordCreationFormSettingsPage', () => {
-  beforeAll(() => {
-    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
-  });
-
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
@@ -223,6 +242,59 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
         .getAllByRole('button', { name: /^(Hide|Show) / })
         .map((button) => button.getAttribute('aria-label')),
     ).toEqual(['Hide Name', 'Hide Domain', 'Show Nickname', 'Show Secret']);
+  });
+
+  it('saves the new order of the dragged fields and keeps the other form fields in their slot', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    act(() => {
+      mockDropDraggableItem({
+        draggableId: 'field-name',
+        source: { index: 0 },
+        destination: { index: 3 },
+      });
+    });
+
+    expect(
+      screen
+        .getAllByRole('button', { name: /^(Hide|Show) / })
+        .map((button) => button.getAttribute('aria-label')),
+    ).toEqual(['Hide Domain', 'Show Nickname', 'Show Secret', 'Hide Name']);
+
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(updatePageLayoutWidgets).toHaveBeenCalledWith([
+      {
+        widgetId: 'widget-field-domain',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 0,
+        },
+      },
+      {
+        widgetId: 'widget-field-nickname',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 1,
+        },
+      },
+      {
+        widgetId: 'widget-field-secret',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 2,
+        },
+      },
+      {
+        widgetId: 'widget-field-name',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 3,
+        },
+      },
+    ]);
   });
 
   it('saves only the fields whose visibility changed, then goes back', async () => {
