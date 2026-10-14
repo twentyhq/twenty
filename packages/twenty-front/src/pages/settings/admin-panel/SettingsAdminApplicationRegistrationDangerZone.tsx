@@ -1,4 +1,5 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID } from '@/settings/admin-panel/apps/constants/ClaimApplicationRegistrationOwnershipModalId';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -25,6 +26,7 @@ import {
   DeleteApplicationRegistrationDocument,
   FindApplicationRegistrationStatsDocument,
   FindManyApplicationRegistrationsDocument,
+  PermissionFlagType,
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
 import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
@@ -71,6 +73,9 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   const applicationRegistrationId = registration.id;
 
   const isUnclaimed = !isDefined(registration.ownerWorkspaceId);
+  const hasApplicationsPermission = useHasPermissionFlag(
+    PermissionFlagType.APPLICATIONS,
+  );
 
   const { data: statsData } = useQuery(
     FindApplicationRegistrationStatsDocument,
@@ -244,7 +249,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
                   variant="outline"
                 >{t`Claim ownership`}</Button>
               )
-            : !isUnclaimed && (
+            : hasApplicationsPermission && (
                 <Button
                   startIcon={<IconShare />}
                   onClick={() => openDialog(TRANSFER_OWNERSHIP_MODAL_ID)}
