@@ -51,6 +51,16 @@ describe('elideEchoedScrollAxes', () => {
     ).toEqual({ top: 120 });
   });
 
+  it('should keep an axis whose current offset is unknown', () => {
+    expect(
+      elideEchoedScrollAxes({
+        requestedOffsets: { top: 120 },
+        lastReadOffsets: { top: 120 },
+        currentOffsets: { left: 0 },
+      }),
+    ).toEqual({ top: 120 });
+  });
+
   it('should decide each axis independently', () => {
     expect(
       elideEchoedScrollAxes({

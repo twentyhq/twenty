@@ -289,7 +289,7 @@ describe('createHostScrollController', () => {
     });
   });
 
-  it('should skip but acknowledge the commands older than the latest native edit of their element', async () => {
+  it('should apply scroll commands to an element the user edited natively', async () => {
     const { controller, registerScrollableElement } =
       createScrollControllerFixture();
     const { element, scrollTo } = registerScrollableElement('textarea');
@@ -310,39 +310,10 @@ describe('createHostScrollController', () => {
     });
     await flushScrollCommands();
 
-    expect(scrollTo).not.toHaveBeenCalled();
-    expect(onScrollUpdate).toHaveBeenCalledWith({
-      scrollCommandSequence: 2,
-      scrollPositions: [],
-    });
-  });
-
-  it('should apply a command that acknowledges the latest native edit of its element', async () => {
-    const { controller, registerScrollableElement } =
-      createScrollControllerFixture();
-    const { element, scrollTo } = registerScrollableElement('textarea');
-    const onScrollUpdate = jest.fn();
-
-    latestNativeEditSequenceByHostElement.set(element, 5);
-    controller.enqueueScrollCommands({
-      remoteElementId: 'textarea',
-      scrollCommands: [
-        {
-          sequence: 1,
-          acknowledgedNativeEditSequence: 4,
-          request: { method: 'scrollTo', top: 10 },
-        },
-        {
-          sequence: 2,
-          acknowledgedNativeEditSequence: 5,
-          request: { method: 'scrollTo', top: 20 },
-        },
-      ],
-      onScrollUpdate,
-    });
-    await flushScrollCommands();
-
-    expect(scrollTo.mock.calls).toEqual([[{ top: 20, behavior: 'instant' }]]);
+    expect(scrollTo.mock.calls).toEqual([
+      [{ top: 10, behavior: 'instant' }],
+      [{ top: 20, behavior: 'instant' }],
+    ]);
     expect(onScrollUpdate).toHaveBeenCalledWith({
       scrollCommandSequence: 2,
       scrollPositions: [

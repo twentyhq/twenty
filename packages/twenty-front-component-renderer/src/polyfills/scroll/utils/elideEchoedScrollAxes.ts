@@ -12,7 +12,7 @@ export const elideEchoedScrollAxes = ({
 }: {
   requestedOffsets: ScrollAxisOffsets;
   lastReadOffsets: ScrollAxisOffsets | undefined;
-  currentOffsets: Record<ScrollAxis, number>;
+  currentOffsets: ScrollAxisOffsets;
 }): ScrollAxisOffsets => {
   const remainingOffsets: ScrollAxisOffsets = {};
 

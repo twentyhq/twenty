@@ -20,7 +20,7 @@ export const readNewScrollCommands = ({
       continue;
     }
 
-    const { sequence, acknowledgedNativeEditSequence, request } = scrollCommand;
+    const { sequence, request } = scrollCommand;
 
     if (
       !isNumber(sequence) ||
@@ -30,11 +30,7 @@ export const readNewScrollCommands = ({
       continue;
     }
 
-    newScrollCommands.push({
-      sequence,
-      acknowledgedNativeEditSequence,
-      request,
-    });
+    newScrollCommands.push({ sequence, request });
   }
 
   return newScrollCommands.sort(

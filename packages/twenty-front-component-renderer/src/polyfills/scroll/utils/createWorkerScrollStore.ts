@@ -9,8 +9,10 @@ import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeome
 import { SCROLL_OFFSET_PROPERTY_BY_AXIS } from '@/polyfills/scroll/constants/ScrollOffsetPropertyByAxis';
 import { type AcknowledgedScrollPosition } from '@/polyfills/scroll/types/AcknowledgedScrollPosition';
 import { type EventScrollState } from '@/polyfills/scroll/types/EventScrollState';
+import { type HostScrollOffset } from '@/polyfills/scroll/types/HostScrollOffset';
 import { type WorkerScrollStore } from '@/polyfills/scroll/types/WorkerScrollStore';
 import { elideEchoedScrollAxes } from '@/polyfills/scroll/utils/elideEchoedScrollAxes';
+import { hasPendingScrollWriteOnAxis } from '@/polyfills/scroll/utils/hasPendingScrollWriteOnAxis';
 import { isScrollCommandTarget } from '@/polyfills/scroll/utils/isScrollCommandTarget';
 import { readSerializedEventScrollState } from '@/polyfills/scroll/utils/readSerializedEventScrollState';
 import { resolveOptimisticScrollOffset } from '@/polyfills/scroll/utils/resolveOptimisticScrollOffset';
@@ -48,26 +50,27 @@ export const createWorkerScrollStore = ({
   }: {
     element: object;
     axis: ScrollAxis;
-  }): number => {
+  }): HostScrollOffset => {
     const scrollOffsetProperty = SCROLL_OFFSET_PROPERTY_BY_AXIS[axis];
     const eventScrollOffset =
       eventScrollStates.get(element)?.[scrollOffsetProperty];
 
     if (isDefined(eventScrollOffset)) {
-      return eventScrollOffset;
+      return { offset: eventScrollOffset, isMeasured: true };
     }
 
     const snapshot = geometryStore.resolveElementSnapshot(element);
     const acknowledgedScrollPosition = acknowledgedScrollPositions.get(element);
+    const isMeasured = isDefined(snapshot);
 
     if (
       isDefined(acknowledgedScrollPosition) &&
       acknowledgedScrollPosition.baseSnapshot === snapshot
     ) {
-      return acknowledgedScrollPosition[axis];
+      return { offset: acknowledgedScrollPosition[axis], isMeasured };
     }
 
-    return snapshot?.[scrollOffsetProperty] ?? 0;
+    return { offset: snapshot?.[scrollOffsetProperty] ?? 0, isMeasured };
   };
 
   const readCurrentScrollOffset = ({
@@ -78,10 +81,34 @@ export const createWorkerScrollStore = ({
     axis: ScrollAxis;
   }): number =>
     resolveOptimisticScrollOffset({
-      hostOffset: readHostScrollOffset({ element, axis }),
+      hostOffset: readHostScrollOffset({ element, axis }).offset,
       pendingCommands: commandQueue.readPendingCommands(element),
       axis,
     });
+
+  const readMeasuredScrollOffset = ({
+    element,
+    axis,
+  }: {
+    element: object;
+    axis: ScrollAxis;
+  }): number | undefined => {
+    const hostScrollOffset = readHostScrollOffset({ element, axis });
+    const pendingCommands = commandQueue.readPendingCommands(element);
+
+    if (
+      !hostScrollOffset.isMeasured &&
+      !hasPendingScrollWriteOnAxis({ pendingCommands, axis })
+    ) {
+      return undefined;
+    }
+
+    return resolveOptimisticScrollOffset({
+      hostOffset: hostScrollOffset.offset,
+      pendingCommands,
+      axis,
+    });
+  };
 
   const recordAcknowledgedScrollPosition = ({
     element,
@@ -186,8 +213,8 @@ export const createWorkerScrollStore = ({
       requestedOffsets: request,
       lastReadOffsets: lastReadScrollOffsets.get(element),
       currentOffsets: {
-        top: readCurrentScrollOffset({ element, axis: 'top' }),
-        left: readCurrentScrollOffset({ element, axis: 'left' }),
+        top: readMeasuredScrollOffset({ element, axis: 'top' }),
+        left: readMeasuredScrollOffset({ element, axis: 'left' }),
       },
     });
 

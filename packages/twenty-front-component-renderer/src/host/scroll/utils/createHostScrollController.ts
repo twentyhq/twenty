@@ -1,7 +1,6 @@
 import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isOlderThanLatestNativeEdit } from '@/host/caret/utils/isOlderThanLatestNativeEdit';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { type ReceivedScrollCommand } from '@/host/scroll/types/ReceivedScrollCommand';
@@ -58,15 +57,6 @@ export const createHostScrollController = ({
     const node = geometryTracker.getRegisteredNode(remoteElementId);
 
     if (!isDefined(node) || !node.isConnected) {
-      return [];
-    }
-
-    if (
-      isOlderThanLatestNativeEdit({
-        hostElement: node,
-        nativeEditSequence: scrollCommand.acknowledgedNativeEditSequence,
-      })
-    ) {
       return [];
     }
 
