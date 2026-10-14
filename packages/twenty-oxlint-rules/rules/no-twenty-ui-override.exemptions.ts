@@ -51,7 +51,7 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/settings/mcp-and-apis/components/SettingsMcpSetupCard.tsx',
+      'packages/twenty-front/src/modules/settings/mcp/components/SettingsMcpSetupCard.tsx',
     reason: 'One-off Card.Content row layout',
   },
   {

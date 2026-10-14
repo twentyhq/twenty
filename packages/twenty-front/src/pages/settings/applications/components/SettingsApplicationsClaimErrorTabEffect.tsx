@@ -6,17 +6,15 @@ import { CLAIM_ERROR_CODE_SEARCH_PARAM } from '~/pages/settings/applications/com
 
 type SettingsApplicationsClaimErrorTabEffectProps = {
   tabListId: string;
-  developerTabId: string;
-  hasDeveloperAccess: boolean;
+  appsTabId: string;
 };
 
 // The GitHub claim callback returns here with a claim error code, but the URL
-// hash that selects the developer tab can be dropped on the way back, so
-// select it from the query param instead.
+// hash that selects the apps tab can be dropped on the way back, so select it
+// from the query param instead.
 export const SettingsApplicationsClaimErrorTabEffect = ({
   tabListId,
-  developerTabId,
-  hasDeveloperAccess,
+  appsTabId,
 }: SettingsApplicationsClaimErrorTabEffectProps) => {
   const [searchParams] = useSearchParams();
   const hasClaimError = searchParams.has(CLAIM_ERROR_CODE_SEARCH_PARAM);
@@ -27,10 +25,10 @@ export const SettingsApplicationsClaimErrorTabEffect = ({
   );
 
   useEffect(() => {
-    if (hasClaimError && hasDeveloperAccess) {
-      setActiveTabId(developerTabId);
+    if (hasClaimError) {
+      setActiveTabId(appsTabId);
     }
-  }, [hasClaimError, hasDeveloperAccess, developerTabId, setActiveTabId]);
+  }, [hasClaimError, appsTabId, setActiveTabId]);
 
   return null;
 };

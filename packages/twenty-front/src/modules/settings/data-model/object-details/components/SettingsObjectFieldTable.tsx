@@ -16,9 +16,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
@@ -89,8 +87,6 @@ export const SettingsObjectFieldTable = ({
     objectMetadataItemId: objectMetadataItem.id,
     skip: mode !== 'view',
   });
-
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_FIELD_TABLE_METADATA;
 
@@ -202,15 +198,13 @@ export const SettingsObjectFieldTable = ({
                       checked={showOnlyMostlyEmpty}
                     >{t`Mostly empty`}</SettingsRow>
                   )}
-                  {isAdvancedModeEnabled && (
-                    <SettingsRow
-                      startElement={<IconSettings />}
-                      onCheckedChange={() =>
-                        setShowSystemFields(!showSystemFields)
-                      }
-                      checked={showSystemFields}
-                    >{t`System fields`}</SettingsRow>
-                  )}
+                  <SettingsRow
+                    startElement={<IconSettings />}
+                    onCheckedChange={() =>
+                      setShowSystemFields(!showSystemFields)
+                    }
+                    checked={showSystemFields}
+                  >{t`System fields`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>

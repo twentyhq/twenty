@@ -2772,7 +2772,6 @@ export interface Query {
     findOneLogicFunction: LogicFunction
     findUninstallApplicationJobStatus?: JobStatus
     findUpgradeApplicationJobStatus?: JobStatus
-    findWorkspaceAiStats: WorkspaceAiStats
     findWorkspaceFromInviteHash: Workspace
     findWorkspaceInvitations: WorkspaceInvitation[]
     frontComponent?: FrontComponent
@@ -3843,13 +3842,6 @@ export interface Workspace {
 }
 
 export type WorkspaceActivationStatus = 'ACTIVE' | 'CREATED' | 'INACTIVE' | 'ONGOING_CREATION' | 'PENDING_CREATION' | 'SUSPENDED'
-
-export interface WorkspaceAiStats {
-    conversationsCount: Scalars['Int']
-    skillsCount: Scalars['Int']
-    toolsCount: Scalars['Int']
-    __typename: 'WorkspaceAiStats'
-}
 
 export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'transientError' | 'unavailable'
 
@@ -7026,7 +7018,6 @@ export interface QueryGenqlSelection{
     findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
     findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findUpgradeApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -8442,14 +8433,6 @@ export interface WorkspaceGenqlSelection{
     workspaceDiscoverability?: boolean | number
     workspaceMembersCount?: boolean | number
     workspaceUrls?: WorkspaceUrlsGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface WorkspaceAiStatsGenqlSelection{
-    conversationsCount?: boolean | number
-    skillsCount?: boolean | number
-    toolsCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -11092,14 +11075,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isWorkspace = (obj?: { __typename?: any } | null): obj is Workspace => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspace"')
       return Workspace_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const WorkspaceAiStats_possibleTypes: string[] = ['WorkspaceAiStats']
-    export const isWorkspaceAiStats = (obj?: { __typename?: any } | null): obj is WorkspaceAiStats => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceAiStats"')
-      return WorkspaceAiStats_possibleTypes.includes(obj.__typename)
     }
     
 

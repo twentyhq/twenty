@@ -1,8 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   type Agent,
@@ -29,7 +27,8 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   const { t } = useLingui();
 
   const isAgent = entityType === 'agent';
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  // System agents only show up once searched for, to keep the list short
+  const isSearching = searchFilter !== '';
 
   const { data: agentsData, loading: agentsLoading } = useQuery(
     FindManyAgentsDocument,
@@ -49,16 +48,10 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   const entities = useMemo(() => {
     return ((isAgent
       ? agentsData?.findManyAgents.filter(
-          (agent) =>
-            agent.isCustom && (!agent.isSystem || isAdvancedModeEnabled),
+          (agent) => agent.isCustom && (!agent.isSystem || isSearching),
         )
       : apiKeysData?.apiKeys) || []) as EntityData[];
-  }, [
-    isAgent,
-    agentsData?.findManyAgents,
-    apiKeysData?.apiKeys,
-    isAdvancedModeEnabled,
-  ]);
+  }, [isAgent, agentsData?.findManyAgents, apiKeysData?.apiKeys, isSearching]);
 
   const placeholder = isAgent ? t`Search agents` : t`Search API keys`;
 

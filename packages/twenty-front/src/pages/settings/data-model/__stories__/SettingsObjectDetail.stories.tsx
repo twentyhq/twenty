@@ -3,7 +3,6 @@ import { HttpResponse } from 'msw';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import {
@@ -62,7 +61,6 @@ export const ObjectTabs: Story = {
 export const SettingsTabDropdowns: Story = {
   beforeEach: () => {
     updateOneFieldMetadataItem.mockClear();
-    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
       featureFlags: [
@@ -72,8 +70,6 @@ export const SettingsTabDropdowns: Story = {
         },
       ],
     });
-
-    return () => jotaiStore.set(isAdvancedModeEnabledState.atom, false);
   },
   parameters: {
     msw: {

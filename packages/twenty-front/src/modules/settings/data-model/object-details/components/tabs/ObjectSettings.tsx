@@ -6,7 +6,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
@@ -219,34 +218,30 @@ export const ObjectSettings = ({
             </Section.Root>
           </StyledFormSectionContainer>
         )}
-      <AdvancedSettingsWrapper>
-        <StyledFormSectionContainer>
-          <Section.Root>
-            <Section.Header
-              title={t`Search`}
-              description={t`Configure how this object appears in search results`}
-            />
-            <SettingsObjectSearchSection
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
-          </Section.Root>
-        </StyledFormSectionContainer>
-      </AdvancedSettingsWrapper>
-      <AdvancedSettingsWrapper>
-        <StyledFormSectionContainer>
-          <Section.Root>
-            <Section.Header
-              title={t`Indexes`}
-              description={t`Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent.`}
-            />
-            <SettingsObjectIndexesSection
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
-          </Section.Root>
-        </StyledFormSectionContainer>
-      </AdvancedSettingsWrapper>
+      <StyledFormSectionContainer>
+        <Section.Root>
+          <Section.Header
+            title={t`Search`}
+            description={t`Configure how this object appears in search results`}
+          />
+          <SettingsObjectSearchSection
+            objectMetadataItem={objectMetadataItem}
+            isReadOnly={isReadOnly}
+          />
+        </Section.Root>
+      </StyledFormSectionContainer>
+      <StyledFormSectionContainer>
+        <Section.Root>
+          <Section.Header
+            title={t`Indexes`}
+            description={t`Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent.`}
+          />
+          <SettingsObjectIndexesSection
+            objectMetadataItem={objectMetadataItem}
+            isReadOnly={isReadOnly}
+          />
+        </Section.Root>
+      </StyledFormSectionContainer>
       {!isReadOnly && (
         <StyledFormSectionContainer>
           <Section.Root>

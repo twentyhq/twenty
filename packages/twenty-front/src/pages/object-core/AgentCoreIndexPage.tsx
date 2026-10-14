@@ -10,13 +10,16 @@ import {
   useCoreAgents,
 } from '@/object-core/agents/hooks/useCoreAgents';
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
+import { coreAgentsIncludeSystemState } from '@/object-core/agents/states/coreAgentsIncludeSystemState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { CoreObjectIndexPageLayout } from '@/object-core/components/CoreObjectIndexPageLayout';
+import { CoreObjectSystemFilterChip } from '@/object-core/components/CoreObjectSystemFilterChip';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const getCoreAgentItemLink = (agent: CoreAgent) => getCoreAgentLink(agent.id);
 
@@ -26,7 +29,12 @@ export const AgentCoreIndexPage = () => {
   const tableId =
     useWorkspaceSurfaceScopedComponentInstanceId(CORE_AGENTS_TABLE_ID);
 
-  const { coreAgents, isInitialLoading, error } = useCoreAgents({ tableId });
+  const { coreAgents, hasSystemAgents, isInitialLoading, error } =
+    useCoreAgents({ tableId });
+
+  const [coreAgentsIncludeSystem, setCoreAgentsIncludeSystem] = useAtomState(
+    coreAgentsIncludeSystemState,
+  );
 
   const { createCoreAgent, canCreateCoreAgent, isCreatingCoreAgent } =
     useCreateCoreAgent();
@@ -41,7 +49,16 @@ export const AgentCoreIndexPage = () => {
       icon={
         <IconLego size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       }
-      actionButton={<SidePanelToggleButton />}
+      actionButton={
+        <>
+          {hasSystemAgents && !coreAgentsIncludeSystem && (
+            <CoreObjectSystemFilterChip
+              onRemove={() => setCoreAgentsIncludeSystem(true)}
+            />
+          )}
+          <SidePanelToggleButton />
+        </>
+      }
       isInitialLoading={isInitialLoading}
       hasError={hasError}
       isEmpty={isEmpty}

@@ -18,9 +18,9 @@ import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFu
 import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
-import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
+import { useSetIsLogConsoleEnabled } from '@/log-console/hooks/useSetIsLogConsoleEnabled';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { PageFocusId } from '@/types/PageFocusId';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
@@ -74,16 +74,16 @@ const SETTINGS_PAGE_FOCUS_STACK_ITEM: FocusStackItem = {
   },
 };
 
-const DeveloperModeSwitch = () => {
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
-  const { setAdvancedMode } = useSetAdvancedMode();
+const LogsSwitch = () => {
+  const isLogConsoleEnabled = useAtomStateValue(isLogConsoleEnabledState);
+  const { setIsLogConsoleEnabled } = useSetIsLogConsoleEnabled();
 
   return (
     <button
       type="button"
-      onClick={() => setAdvancedMode(!isAdvancedModeEnabled)}
+      onClick={() => setIsLogConsoleEnabled(!isLogConsoleEnabled)}
     >
-      Developer mode
+      Logs
     </button>
   );
 };
@@ -104,7 +104,7 @@ const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
     permissionFlags: [PermissionFlagType.SECURITY],
   });
   jotaiStore.set(isClickHouseConfiguredState.atom, true);
-  jotaiStore.set(isAdvancedModeEnabledState.atom, false);
+  jotaiStore.set(isLogConsoleEnabledState.atom, false);
   jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
   jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
 
@@ -115,7 +115,7 @@ const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
           <MockedProvider>
             <MemoryRouter>
               <Suspense fallback={null}>
-                <DeveloperModeSwitch />
+                <LogsSwitch />
                 <LogConsole />
               </Suspense>
             </MemoryRouter>
@@ -135,7 +135,7 @@ describe('LogConsole', () => {
   it('restores the collapsed console when its opening drag is cancelled', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
     act(() => capturedResizeHandleProps?.onResizeStart?.(100));
@@ -157,7 +157,7 @@ describe('LogConsole', () => {
 
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(
         logConsoleDisplayModeState.atom,
         displayModeSavedByEarlierVersion,
@@ -171,7 +171,7 @@ describe('LogConsole', () => {
   it('keeps the console open in full screen when its drag is cancelled', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
     act(() => capturedResizeHandleProps?.onResizeStart?.(100));
@@ -189,7 +189,7 @@ describe('LogConsole', () => {
   it('restores the collapsed console when the cancel arrives before the drag start renders', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
     const onResizeStart = capturedResizeHandleProps?.onResizeStart;
@@ -206,7 +206,7 @@ describe('LogConsole', () => {
   it('opens a collapsed console at its saved height on a small keyboard step', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleHeightState.atom, 450);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
@@ -220,7 +220,7 @@ describe('LogConsole', () => {
   it('reflects live resizing without saving the console height until commit', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleHeightState.atom, 450);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
     });
@@ -239,7 +239,7 @@ describe('LogConsole', () => {
   it('starts the resize range of an open console at its minimum height until a drag begins', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
     });
 
@@ -252,43 +252,35 @@ describe('LogConsole', () => {
     expect(capturedResizeHandleProps?.min).toBe(0);
   });
 
-  it('opens when developer mode is turned on', async () => {
+  it('opens when logs is turned on', async () => {
     renderWithLogsFeatureFlag(true);
 
     expect(screen.queryByText('Log results')).not.toBeInTheDocument();
 
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Developer mode' }),
-    );
+    await userEvent.click(await screen.findByRole('button', { name: 'Logs' }));
 
     expect(await screen.findByText('Log results')).toBeInTheDocument();
   });
 
-  it('hides when developer mode is turned off', async () => {
+  it('hides when logs is turned off', async () => {
     mockShouldReduceMotion = true;
     renderWithLogsFeatureFlag(true);
 
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Developer mode' }),
-    );
+    await userEvent.click(await screen.findByRole('button', { name: 'Logs' }));
 
     expect(await screen.findByText('Log results')).toBeInTheDocument();
 
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Developer mode' }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: 'Logs' }));
 
     expect(
       screen.queryByRole('button', { name: 'Collapse' }),
     ).not.toBeInTheDocument();
   });
 
-  it('has no close button, so developer mode is the only way to hide it', async () => {
+  it('has no close button, so logs is the only way to hide it', async () => {
     renderWithLogsFeatureFlag(true);
 
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Developer mode' }),
-    );
+    await userEvent.click(await screen.findByRole('button', { name: 'Logs' }));
 
     expect(
       await screen.findByRole('button', { name: 'Collapse' }),
@@ -301,7 +293,7 @@ describe('LogConsole', () => {
   it('reopens on the last selected log source', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleActiveSourceIdState.atom, 'app-logs');
       jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
     });
@@ -315,7 +307,7 @@ describe('LogConsole', () => {
   it('remembers the log source selected by the user', async () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
     });
 
@@ -327,7 +319,7 @@ describe('LogConsole', () => {
   it('toggles with Mod+J on a page that turns off modifier hotkeys', async () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(focusStackState.atom, [SETTINGS_PAGE_FOCUS_STACK_ITEM]);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
@@ -344,7 +336,7 @@ describe('LogConsole', () => {
   it('ignores Mod+J while a dialog turns off modifier hotkeys', async () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(focusStackState.atom, [
         SETTINGS_PAGE_FOCUS_STACK_ITEM,
         {
@@ -370,9 +362,7 @@ describe('LogConsole', () => {
   it('stays hidden when the logs feature flag is off', async () => {
     renderWithLogsFeatureFlag(false);
 
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Developer mode' }),
-    );
+    await userEvent.click(await screen.findByRole('button', { name: 'Logs' }));
 
     expect(screen.queryByText('Log results')).not.toBeInTheDocument();
   });

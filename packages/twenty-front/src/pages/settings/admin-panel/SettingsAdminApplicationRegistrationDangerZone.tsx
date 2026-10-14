@@ -1,5 +1,6 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID } from '@/settings/admin-panel/apps/constants/ClaimApplicationRegistrationOwnershipModalId';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
@@ -122,11 +123,11 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         );
       } else {
         navigate(
-          SettingsPath.Applications,
+          SettingsPath.Developers,
           undefined,
           undefined,
           undefined,
-          '#developer',
+          `#${SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS}`,
         );
       }
 

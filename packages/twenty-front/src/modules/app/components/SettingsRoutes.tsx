@@ -37,22 +37,24 @@ const SettingsRestPlayground = lazy(() =>
   ),
 );
 
-// TODO: remove these legacy /api-webhooks redirects after 2026-08-04.
-const LEGACY_API_WEBHOOKS_SETTINGS_PATHS = {
-  ApiWebhooks: 'api-webhooks',
-  NewApiKey: 'api-webhooks/apis/new',
-  ApiKeyDetail: 'api-webhooks/apis/:apiKeyId',
-  NewWebhook: 'api-webhooks/webhooks/new',
-  WebhookDetail: 'api-webhooks/webhooks/:webhookId',
-} as const;
+// TODO: remove these legacy redirects after 2027-01-14.
+const LEGACY_DEVELOPERS_SETTINGS_PATH_PREFIXES = ['api-webhooks', 'mcp-apis'];
+
+const LEGACY_DEVELOPERS_SETTINGS_PATHS = [
+  { suffix: '', to: SettingsPath.Developers },
+  { suffix: '/apis/new', to: SettingsPath.NewApiKey },
+  { suffix: '/apis/:apiKeyId', to: SettingsPath.ApiKeyDetail },
+  { suffix: '/webhooks/new', to: SettingsPath.NewWebhook },
+  { suffix: '/webhooks/:webhookId', to: SettingsPath.WebhookDetail },
+] as const;
+
+const LEGACY_APPLICATION_REGISTRATION_DETAIL_PATH =
+  'applications/registrations/:applicationRegistrationId';
 
 type LegacySettingsPathRedirectProps = {
   to:
-    | SettingsPath.ApiWebhooks
-    | SettingsPath.NewApiKey
-    | SettingsPath.ApiKeyDetail
-    | SettingsPath.NewWebhook
-    | SettingsPath.WebhookDetail;
+    | (typeof LEGACY_DEVELOPERS_SETTINGS_PATHS)[number]['to']
+    | SettingsPath.ApplicationRegistrationDetail;
 };
 
 const getLegacySettingsPathRedirectPathname = (
@@ -68,7 +70,11 @@ const getLegacySettingsPathRedirectPathname = (
       return getSettingsPath(SettingsPath.WebhookDetail, {
         webhookId: params.webhookId ?? null,
       });
-    case SettingsPath.ApiWebhooks:
+    case SettingsPath.ApplicationRegistrationDetail:
+      return getSettingsPath(SettingsPath.ApplicationRegistrationDetail, {
+        applicationRegistrationId: params.applicationRegistrationId ?? null,
+      });
+    case SettingsPath.Developers:
     case SettingsPath.NewApiKey:
     case SettingsPath.NewWebhook:
       return getSettingsPath(to);
@@ -241,12 +247,10 @@ const SettingsCustomDomainPage = lazy(() =>
   ),
 );
 
-const SettingsApiWebhooks = lazy(() =>
-  import('~/pages/settings/api-webhooks/SettingsApiWebhooks').then(
-    (module) => ({
-      default: module.SettingsApiWebhooks,
-    }),
-  ),
+const SettingsDevelopers = lazy(() =>
+  import('~/pages/settings/developers/SettingsDevelopers').then((module) => ({
+    default: module.SettingsDevelopers,
+  })),
 );
 
 const SettingsAI = lazy(() =>
@@ -1024,30 +1028,16 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.ApiWebhooks}
-        element={<LegacySettingsPathRedirect to={SettingsPath.ApiWebhooks} />}
-      />
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.NewApiKey}
-        element={<LegacySettingsPathRedirect to={SettingsPath.NewApiKey} />}
-      />
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.ApiKeyDetail}
-        element={<LegacySettingsPathRedirect to={SettingsPath.ApiKeyDetail} />}
-      />
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.NewWebhook}
-        element={<LegacySettingsPathRedirect to={SettingsPath.NewWebhook} />}
-      />
-      <Route
-        path={LEGACY_API_WEBHOOKS_SETTINGS_PATHS.WebhookDetail}
-        element={<LegacySettingsPathRedirect to={SettingsPath.WebhookDetail} />}
-      />
-      <Route
-        path={SettingsPath.ApiWebhooks}
-        element={<SettingsApiWebhooks />}
-      />
+      {LEGACY_DEVELOPERS_SETTINGS_PATH_PREFIXES.flatMap((prefix) =>
+        LEGACY_DEVELOPERS_SETTINGS_PATHS.map(({ suffix, to }) => (
+          <Route
+            key={`${prefix}${suffix}`}
+            path={`${prefix}${suffix}`}
+            element={<LegacySettingsPathRedirect to={to} />}
+          />
+        )),
+      )}
+      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
         path={`${SettingsPath.GraphQLPlayground}`}
         element={<SettingsGraphQLPlayground />}
@@ -1100,6 +1090,14 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ApplicationRegistrationDetail}
         element={<SettingsApplicationRegistrationDetails />}
+      />
+      <Route
+        path={LEGACY_APPLICATION_REGISTRATION_DETAIL_PATH}
+        element={
+          <LegacySettingsPathRedirect
+            to={SettingsPath.ApplicationRegistrationDetail}
+          />
+        }
       />
       <Route
         path={SettingsPath.ApplicationLogicFunctionDetail}
