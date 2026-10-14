@@ -214,7 +214,10 @@ function formatResultRecursively<T>(
       isPlainObject(rawUpdatedDateTime)
     ) {
       // @ts-expect-error legacy noImplicitAny
-      newData[dateTimeField.name] = rawUpdatedDateTime;
+      newData[dateTimeField.name] =
+        typeof rawUpdatedDateTime === 'string'
+          ? new Date(rawUpdatedDateTime)
+          : rawUpdatedDateTime;
     } else {
       const stringifiedUnknownValue = stringifySafely(rawUpdatedDateTime);
 

@@ -1,13 +1,12 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeCursorValueAlias } from 'src/engine/api/utils/compute-cursor-value-alias.util';
 import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
 import {
   checkIfLeafCanCarryCursorValue,
   type OrderByLeaf,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 
 export type OrderByValuesByRecordId = Record<string, Record<string, unknown>>;
 
@@ -18,8 +17,8 @@ export const buildOrderByValuesByRecordId = ({
   rawRows,
   objectNameSingular,
 }: {
-  orderByLeaves: OrderByLeaf<Pick<OrmFlatFieldMetadata, 'type'>>[];
-  records: Pick<ObjectRecord, 'id'>[];
+  orderByLeaves: OrderByLeaf[];
+  records: ObjectRecord[];
   rawRows: Record<string, unknown>[];
   objectNameSingular: string;
 }): OrderByValuesByRecordId => {
@@ -61,7 +60,10 @@ export const buildOrderByValuesByRecordId = ({
         continue;
       }
 
-      const rawValue = rawRow[computeCursorValueAlias(leafColumn)];
+      const rawValue =
+        rawRow[
+          buildColumnResultAlias(leafColumn.tableAlias, leafColumn.columnName)
+        ];
 
       let container = orderByValues;
 

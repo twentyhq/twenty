@@ -25,14 +25,11 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export type OrderByLeaf<
-  TFieldMetadata extends Pick<OrmFlatFieldMetadata, 'type'> =
-    OrmFlatFieldMetadata,
-> = {
+export type OrderByLeaf = {
   // Both the cursor value path and the keyset filter nesting, e.g. ['company', 'name', 'firstName']
   path: string[];
   direction: OrderByDirection;
-  fieldMetadata: TFieldMetadata;
+  fieldMetadata: OrmFlatFieldMetadata;
 } & (
   | // Scalar columns, including join columns addressed directly (e.g. companyId)
     { kind: 'scalar' }
@@ -40,15 +37,13 @@ export type OrderByLeaf<
   | {
       kind: 'relation';
       // Only resolved when flatObjectMetadataMaps is provided; the keyset condition builder needs it for NULL semantics
-      targetFieldMetadata?: TFieldMetadata;
+      targetFieldMetadata?: OrmFlatFieldMetadata;
       targetCompositeProperty?: CompositeProperty;
     }
 );
 
 // RAW_JSON sub-fields can be ordered by in SQL but take no part in cursors
-export const checkIfLeafCanCarryCursorValue = (
-  leaf: OrderByLeaf<Pick<OrmFlatFieldMetadata, 'type'>>,
-): boolean => {
+export const checkIfLeafCanCarryCursorValue = (leaf: OrderByLeaf): boolean => {
   switch (leaf.kind) {
     case 'relation':
       return leaf.targetCompositeProperty?.type !== FieldMetadataType.RAW_JSON;

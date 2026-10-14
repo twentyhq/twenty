@@ -193,7 +193,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       queryBuilder,
       orderByLeaves,
       flatObjectMetadata.nameSingular,
-      columnsToSelect,
     );
 
     // Raw rows carry the ordered join columns, so cursors get relation values whatever the client selected
