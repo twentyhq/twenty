@@ -11,6 +11,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
@@ -211,6 +212,15 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: WorkflowCommonWorkspaceService,
           useValue: workflowCommonWorkspaceService,
+        },
+        {
+          provide: CoreEntityCacheService,
+          useValue: {
+            get: jest.fn().mockResolvedValue({
+              id: 'test-workspace',
+              workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+            }),
+          },
         },
         {
           provide: ApplicationService,
@@ -445,15 +455,20 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         settings: { eventName: 'createEvent' },
       };
 
-      const expectEnqueuedRecord = (record: object) => {
-        expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+      const expectEnqueuedRecord = ({
+        enqueuedWorkflowId = workflowId,
+        record,
+      }: {
+        enqueuedWorkflowId?: string;
+        record: object;
+      }) =>
         expect(messageQueueService.add).toHaveBeenCalledWith(
           WorkflowTriggerJob.name,
           {
             workspaceId,
-            workflowId,
-            coreWorkflowVersionId: `core-version-${workflowId}`,
-            workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
+            workflowId: enqueuedWorkflowId,
+            coreWorkflowVersionId: `core-version-${enqueuedWorkflowId}`,
+            workspaceWorkflowVersionId: `workspace-version-${enqueuedWorkflowId}`,
             payload: {
               ...createPayload.events[0],
               properties: { after: record },
@@ -461,7 +476,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           },
           { retryLimit: 3 },
         );
-      };
 
       beforeEach(() => {
         const companyField = getFlatFieldMetadataMock({
@@ -502,7 +516,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
         await listener.handleObjectRecordCreateEvent(createPayload);
 
-        expectEnqueuedRecord({ ...createdRecord, company });
+        expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+        expectEnqueuedRecord({ record: { ...createdRecord, company } });
       });
 
       it('should not give an application workflow the related company', async () => {
@@ -512,8 +527,38 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
         await listener.handleObjectRecordCreateEvent(createPayload);
 
-        expectEnqueuedRecord(createdRecord);
+        expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+        expectEnqueuedRecord({ record: createdRecord });
         expect(findRelatedRecords).not.toHaveBeenCalled();
+      });
+
+      it('should give the related company only to the workspace workflow when an application workflow listens too', async () => {
+        const workspaceWorkflowId = 'workspace-workflow';
+        const applicationWorkflowId = 'application-workflow';
+
+        setTriggerMap(
+          [
+            {
+              ...createListener,
+              workflowId: workspaceWorkflowId,
+              applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+            },
+            { ...createListener, workflowId: applicationWorkflowId },
+          ],
+          { applicationRole: { canReadObjectRecords: true } },
+        );
+
+        await listener.handleObjectRecordCreateEvent(createPayload);
+
+        expect(messageQueueService.add).toHaveBeenCalledTimes(2);
+        expectEnqueuedRecord({
+          enqueuedWorkflowId: workspaceWorkflowId,
+          record: { ...createdRecord, company },
+        });
+        expectEnqueuedRecord({
+          enqueuedWorkflowId: applicationWorkflowId,
+          record: createdRecord,
+        });
       });
     });
 
