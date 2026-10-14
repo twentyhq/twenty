@@ -2,12 +2,13 @@ import { type WorkspaceIteratorService } from 'src/database/commands/command-run
 import { AddAgentBuildingSkillCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791906324176-add-agent-building-skill.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_SKILL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-skill.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const STANDARD_APPLICATION_ID = '20202020-0000-0000-0000-0000000000a1';
 const AGENT_BUILDING_SKILL_UNIVERSAL_IDENTIFIER =
-  '20202020-17de-403d-a29d-6994eb10d677';
+  STANDARD_SKILL['agent-building'].universalIdentifier;
 
 const buildExistingSkill = ({
   universalIdentifier,
