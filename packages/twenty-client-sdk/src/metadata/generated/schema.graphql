@@ -2690,6 +2690,7 @@ type MarketplaceAppDetail {
   logoUrl: String
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
   name: String!
+  objects: [MarketplaceAppObject!]
   pricingDescription: String
   requestedCapabilities: [String!]!
   roles: [MarketplaceAppRole!]
@@ -2699,6 +2700,12 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
+}
+
+type MarketplaceAppObject {
+  labelPlural: String!
+  labelSingular: String!
+  universalIdentifier: String!
 }
 
 type MarketplaceAppRole {

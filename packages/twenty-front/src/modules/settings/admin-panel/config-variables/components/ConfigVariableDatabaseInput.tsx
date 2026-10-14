@@ -8,7 +8,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -225,6 +225,10 @@ export const ConfigVariableDatabaseInput = ({
               readOnly: disabled === true,
             }}
             onChange={(text) => {
+              if (!isDefined(text)) {
+                return;
+              }
+
               try {
                 onChange(JSON.parse(text) as Record<string, unknown>);
               } catch {

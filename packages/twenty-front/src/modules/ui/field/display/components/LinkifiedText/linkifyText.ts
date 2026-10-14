@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 const URL_REGEX = /https?:\/\/[^\s<>[\]]+[^\s<>[\].,;:!?)]/g;
 
 type LinkifyMatch = {
@@ -6,6 +8,10 @@ type LinkifyMatch = {
 };
 
 export const linkifyText = (text: string): LinkifyMatch[] => {
+  if (!text.includes('http')) {
+    return isNonEmptyString(text) ? [{ type: 'text', content: text }] : [];
+  }
+
   const parts: LinkifyMatch[] = [];
   let lastIndex = 0;
 

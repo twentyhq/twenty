@@ -149,4 +149,46 @@ it('does not publish empty patches but keeps explicit unchanged duration updates
 
   updateToastInStore({ store, id: 'first', duration: 6000 });
   expect(listener).toHaveBeenCalledOnce();
+  expect(store.state.toasts[0]?.durationRevision).toBe(1);
+
+  updateToastInStore({ store, id: 'first', duration: 6000 });
+  expect(store.state.toasts[0]?.durationRevision).toBe(2);
+
+  updateToastInStore({ store, id: 'first', children: 'Updated content' });
+  expect(store.state.toasts[0]?.durationRevision).toBe(2);
+});
+
+it('restarts duration when an explicit undefined patch restores its default', () => {
+  const { store } = createStoreWithToasts();
+
+  updateToastInStore({ store, id: 'first', duration: undefined });
+  expect(store.state.toasts[0]?.durationRevision).toBe(1);
+  expect(store.state.toasts[0]?.notification.duration).toBeUndefined();
+
+  updateToastInStore({ store, id: 'first', duration: undefined });
+  expect(store.state.toasts[0]?.durationRevision).toBe(2);
+});
+
+it('preserves countdown restart operations when progress entry and exit are batched before rendering', () => {
+  const { store } = createStoreWithToasts();
+
+  updateToastInStore({ store, id: 'first', progress: 0 });
+  updateToastInStore({ store, id: 'first', progress: 50 });
+  expect(store.state.toasts[0]?.durationRevision).toBeUndefined();
+
+  updateToastInStore({ store, id: 'first', progress: undefined });
+  expect(store.state.toasts[0]?.durationRevision).toBe(1);
+  expect(store.state.toasts[0]?.notification.progress).toBeUndefined();
+
+  updateToastInStore({ store, id: 'first', progress: undefined });
+  expect(store.state.toasts[0]?.durationRevision).toBe(1);
+
+  updateToastInStore({ store, id: 'first', progress: 100 });
+  updateToastInStore({
+    store,
+    id: 'first',
+    progress: undefined,
+    duration: 6000,
+  });
+  expect(store.state.toasts[0]?.durationRevision).toBe(2);
 });

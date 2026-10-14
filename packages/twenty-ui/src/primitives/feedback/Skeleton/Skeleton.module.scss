@@ -11,6 +11,11 @@
   user-select: none;
   width: 100%;
 
+  &[data-layout='block'] {
+    display: block;
+    height: 1em;
+  }
+
   &[data-animated]::after {
     animation: skeletonShimmer 1.5s ease-in-out infinite;
     background-image: linear-gradient(
