@@ -27,8 +27,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   const { t } = useLingui();
 
   const isAgent = entityType === 'agent';
-  // System agents only show up once searched for, to keep the list short
-  const isSearching = searchFilter !== '';
+  const shouldShowSystemAgents = searchFilter !== '';
 
   const { data: agentsData, loading: agentsLoading } = useQuery(
     FindManyAgentsDocument,
@@ -48,10 +47,16 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   const entities = useMemo(() => {
     return ((isAgent
       ? agentsData?.findManyAgents.filter(
-          (agent) => agent.isCustom && (!agent.isSystem || isSearching),
+          (agent) =>
+            agent.isCustom && (!agent.isSystem || shouldShowSystemAgents),
         )
       : apiKeysData?.apiKeys) || []) as EntityData[];
-  }, [isAgent, agentsData?.findManyAgents, apiKeysData?.apiKeys, isSearching]);
+  }, [
+    isAgent,
+    agentsData?.findManyAgents,
+    apiKeysData?.apiKeys,
+    shouldShowSystemAgents,
+  ]);
 
   const placeholder = isAgent ? t`Search agents` : t`Search API keys`;
 
