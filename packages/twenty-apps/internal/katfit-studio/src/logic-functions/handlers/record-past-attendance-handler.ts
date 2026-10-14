@@ -39,7 +39,7 @@ const createSession = async (client: CoreApiClient, input: RecordPastAttendanceI
   return result.createClassSession;
 };
 
-const createBooking = async (client: CoreApiClient, input: RecordPastAttendanceInput, product: NonNullable<MembershipNode['product']>, classSessionId: string, bookingKey: string, actorId: string): Promise<BookingNode> => {
+const createBooking = async (client: CoreApiClient, input: RecordPastAttendanceInput, product: NonNullable<MembershipNode['product']>, classSessionId: string, bookingKey: string, actorId: string | null): Promise<BookingNode> => {
   const result = await client.mutation({ createStudioBooking: { __args: { data: { name: `Посещение · ${input.startsAt.slice(0, 16)}`, bookingType: product.category === 'PERSONAL' ? 'PERSONAL' : 'REGULAR', status: 'ATTENDED', bookedAt: new Date().toISOString(), consumesVisit: true, externalId: bookingKey, recordedAt: new Date().toISOString(), recordedBy: actorId, recordingReason: input.reason, recordingSource: input.source, recordingSourceDetails: input.sourceDetails || null, personId: input.personId, membershipId: input.membershipId, productId: product.id, classSessionId } }, ...bookingFields } } as never) as unknown as { createStudioBooking: BookingNode };
   return result.createStudioBooking;
 };
@@ -65,7 +65,6 @@ export const recordPastAttendance = async (
   };
   const validation = validateAttendanceInput(input);
   if (!validation.success) return failure(400, validation.code, validation.message);
-  if (!context.userWorkspaceId) return failure(403, 'ACTOR_REQUIRED', 'Не удалось определить оператора.');
 
   const membership = (await query<MembershipNode>(client, 'studioMemberships', { filter: { id: { eq: input.membershipId } }, first: 1 }, membershipFields))[0];
   if (!membership) return failure(404, 'MEMBERSHIP_NOT_FOUND', 'Пакет не найден.');

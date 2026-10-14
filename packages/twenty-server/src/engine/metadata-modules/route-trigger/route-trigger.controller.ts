@@ -16,13 +16,14 @@ import { ApiPath, HTTPMethod } from 'twenty-shared/types';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { RouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger-rest-api-exception-filter';
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
 import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 
 @Controller(ApiPath.RouteTrigger)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-@UseFilters(RouteTriggerRestApiExceptionFilter)
+@UseFilters(RouteTriggerRestApiExceptionFilter, AuthRestApiExceptionFilter)
 export class RouteTriggerController {
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 

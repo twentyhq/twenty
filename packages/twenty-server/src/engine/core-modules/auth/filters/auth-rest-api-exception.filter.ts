@@ -47,6 +47,7 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
           400,
         );
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
+      case AuthExceptionCode.INSUFFICIENT_SCOPES:
       case AuthExceptionCode.WORKSPACE_SUSPENDED:
         return this.httpExceptionHandlerService.handleError(
           exception,
@@ -57,6 +58,8 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
       case AuthExceptionCode.SIGNUP_DISABLED:
       case AuthExceptionCode.WORKSPACE_NOT_FOUND:
+      case AuthExceptionCode.UNAUTHENTICATED:
+      case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

@@ -217,7 +217,7 @@ export class AccessTokenService {
 
     throw new AuthException(
       'Missing authentication token',
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      AuthExceptionCode.UNAUTHENTICATED,
     );
   }
 
