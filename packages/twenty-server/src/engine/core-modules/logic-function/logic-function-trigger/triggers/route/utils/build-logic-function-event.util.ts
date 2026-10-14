@@ -4,6 +4,7 @@ import { type LogicFunctionEvent } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { isObject, isString } from '@sniptt/guards';
 
+import { type SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { isCredentialRequestHeaderName } from 'src/engine/metadata-modules/logic-function/utils/is-credential-request-header-name.util';
 
 const normalizeHeaderValue = (
@@ -15,12 +16,12 @@ export const filterRequestHeaders = ({
   requestHeaders,
   forwardedRequestHeaders,
   forwardAllHeaders = false,
-  forwardableCredentialHeaderNames = [],
+  forwardableCredentialHeaderName,
 }: {
   requestHeaders: Request['headers'];
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
-  forwardableCredentialHeaderNames?: string[];
+  forwardableCredentialHeaderName?: typeof SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME;
 }): Record<string, string | undefined> => {
   if (forwardAllHeaders) {
     const allHeaders: Record<string, string | undefined> = {};
@@ -44,7 +45,7 @@ export const filterRequestHeaders = ({
     .filter(
       (headerName) =>
         !isCredentialRequestHeaderName(headerName) ||
-        forwardableCredentialHeaderNames.includes(headerName),
+        headerName === forwardableCredentialHeaderName,
     );
 
   const filteredHeaders: Record<string, string | undefined> = {};
@@ -149,14 +150,14 @@ export const buildLogicFunctionEvent = ({
   pathParameters,
   forwardedRequestHeaders,
   forwardAllHeaders = false,
-  forwardableCredentialHeaderNames,
+  forwardableCredentialHeaderName,
   userWorkspaceId,
 }: {
   request: Request;
   pathParameters: Record<string, string | string[] | undefined>;
   forwardedRequestHeaders: string[];
   forwardAllHeaders?: boolean;
-  forwardableCredentialHeaderNames?: string[];
+  forwardableCredentialHeaderName?: typeof SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME;
   userWorkspaceId: string | null;
 }): LogicFunctionEvent => {
   const rawBody = extractRawBody(request);
@@ -166,7 +167,7 @@ export const buildLogicFunctionEvent = ({
       requestHeaders: request.headers,
       forwardedRequestHeaders,
       forwardAllHeaders,
-      forwardableCredentialHeaderNames,
+      forwardableCredentialHeaderName,
     }),
     queryStringParameters: normalizeQueryStringParameters(request.query),
     pathParameters: normalizePathParameters(pathParameters),

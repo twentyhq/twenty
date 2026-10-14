@@ -123,9 +123,9 @@ export class ServerRouteTriggerService {
       request,
       pathParameters: {},
       forwardedRequestHeaders,
-      forwardableCredentialHeaderNames: isAuthorizationHeaderForwardable
-        ? [SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME]
-        : [],
+      forwardableCredentialHeaderName: isAuthorizationHeaderForwardable
+        ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME
+        : undefined,
       userWorkspaceId: null,
     });
 
