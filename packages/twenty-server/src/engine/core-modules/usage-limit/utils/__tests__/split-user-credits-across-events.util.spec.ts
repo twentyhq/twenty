@@ -1,4 +1,4 @@
-import { apportionUserCredits } from 'src/engine/core-modules/usage-limit/utils/apportion-user-credits.util';
+import { splitUserCreditsAcrossEvents } from 'src/engine/core-modules/usage-limit/utils/split-user-credits-across-events.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -14,16 +14,19 @@ const buildEvent = (creditsUsedMicro?: number): RecordUsageInput => ({
 });
 
 const findShares = (events: RecordUsageInput[], userCreditsUsedMicro: number) =>
-  apportionUserCredits({ events, userCreditsUsedMicro }).map(
+  splitUserCreditsAcrossEvents({ events, userCreditsUsedMicro }).map(
     (event) => event.userCreditsUsedMicro,
   );
 
-describe('apportionUserCredits', () => {
+describe('splitUserCreditsAcrossEvents', () => {
   it('stamps the share on a single event and keeps the event as it was', () => {
     const event = buildEvent(300);
 
     expect(
-      apportionUserCredits({ events: [event], userCreditsUsedMicro: 100 }),
+      splitUserCreditsAcrossEvents({
+        events: [event],
+        userCreditsUsedMicro: 100,
+      }),
     ).toEqual([{ ...event, userCreditsUsedMicro: 100 }]);
   });
 

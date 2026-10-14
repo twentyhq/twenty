@@ -1,4 +1,4 @@
-import { apportionUserCredits } from 'src/engine/core-modules/usage-limit/utils/apportion-user-credits.util';
+import { splitUserCreditsAcrossEvents } from 'src/engine/core-modules/usage-limit/utils/split-user-credits-across-events.util';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 
 export const subtractUserCredits = ({
@@ -8,7 +8,7 @@ export const subtractUserCredits = ({
   events: RecordUsageInput[];
   userCreditsUsedMicro: number;
 }): RecordUsageInput[] =>
-  apportionUserCredits({ events, userCreditsUsedMicro }).map(
+  splitUserCreditsAcrossEvents({ events, userCreditsUsedMicro }).map(
     ({ userCreditsUsedMicro: eventUserCreditsUsedMicro, ...event }) => ({
       ...event,
       creditsUsedMicro:

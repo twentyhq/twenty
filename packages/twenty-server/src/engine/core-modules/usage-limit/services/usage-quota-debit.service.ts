@@ -10,7 +10,7 @@ import { type UserAllowanceFirstConsumeResult } from 'src/engine/core-modules/us
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaDebit } from 'src/engine/core-modules/usage-limit/types/quota-debit.type';
 import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
-import { apportionUserCredits } from 'src/engine/core-modules/usage-limit/utils/apportion-user-credits.util';
+import { splitUserCreditsAcrossEvents } from 'src/engine/core-modules/usage-limit/utils/split-user-credits-across-events.util';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
 import { computeWorkspaceAllowanceDebitAmount } from 'src/engine/core-modules/usage-limit/utils/compute-workspace-allowance-debit-amount.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
@@ -55,7 +55,7 @@ export class UsageQuotaDebitService {
 
     await this.usageRecorderService.record(
       workspaceId,
-      apportionUserCredits({ events, userCreditsUsedMicro }),
+      splitUserCreditsAcrossEvents({ events, userCreditsUsedMicro }),
     );
 
     return { exhaustedKind, userCreditsUsedMicro };

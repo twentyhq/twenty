@@ -1,37 +1,37 @@
-import { type FundedRecordUsageInput } from 'src/engine/core-modules/usage/types/funded-record-usage-input.type';
+import { type RecordUsageInputWithUserCredits } from 'src/engine/core-modules/usage/types/record-usage-input-with-user-credits.type';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 
-const toApportionableMicro = (amountMicro: number): number =>
+const toValidCreditAmountMicroOrZero = (amountMicro: number): number =>
   isValidCreditAmountMicro(amountMicro) ? amountMicro : 0;
 
-export const apportionUserCredits = ({
+export const splitUserCreditsAcrossEvents = ({
   events,
   userCreditsUsedMicro,
 }: {
   events: RecordUsageInput[];
   userCreditsUsedMicro: number;
-}): FundedRecordUsageInput[] =>
+}): RecordUsageInputWithUserCredits[] =>
   events.reduce<{
     remainingMicro: number;
-    fundedEvents: FundedRecordUsageInput[];
+    eventsWithUserCredits: RecordUsageInputWithUserCredits[];
   }>(
-    ({ remainingMicro, fundedEvents }, event) => {
+    ({ remainingMicro, eventsWithUserCredits }, event) => {
       const eventUserCreditsUsedMicro = Math.min(
         remainingMicro,
-        toApportionableMicro(event.creditsUsedMicro ?? 0),
+        toValidCreditAmountMicroOrZero(event.creditsUsedMicro ?? 0),
       );
 
       return {
         remainingMicro: remainingMicro - eventUserCreditsUsedMicro,
-        fundedEvents: [
-          ...fundedEvents,
+        eventsWithUserCredits: [
+          ...eventsWithUserCredits,
           { ...event, userCreditsUsedMicro: eventUserCreditsUsedMicro },
         ],
       };
     },
     {
-      remainingMicro: toApportionableMicro(userCreditsUsedMicro),
-      fundedEvents: [],
+      remainingMicro: toValidCreditAmountMicroOrZero(userCreditsUsedMicro),
+      eventsWithUserCredits: [],
     },
-  ).fundedEvents;
+  ).eventsWithUserCredits;
