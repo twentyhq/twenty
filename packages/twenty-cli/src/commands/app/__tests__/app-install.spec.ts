@@ -208,7 +208,17 @@ describe('app install', () => {
 
   it('does not start an install if the build fails', async () => {
     build.mockRejectedValue(new Error('Broken app source'));
-    expect((await runJson()).exitCode).toBe(1);
+    const { envelope, exitCode } = await runJson();
+    expect(exitCode).toBe(1);
+    expect(envelope.error).toMatchObject({
+      code: 'INTERNAL_ERROR',
+      message: 'Broken app source',
+      details: { phase: 'build', outcome: 'not-started', completedPhases: [] },
+    });
+    expect(envelope.error.details).not.toHaveProperty('universalIdentifier');
+    expect(envelope.error.details).not.toHaveProperty('jobId');
+    expect(envelope.error.hint).toContain('No installation was started');
+    expect(build).toHaveBeenCalledTimes(1);
     expect(server.requests).toHaveLength(0);
   });
 
@@ -229,7 +239,10 @@ describe('app install', () => {
       'wrong',
     );
     expect(exitCode).toBe(2);
-    expect(envelope.error.code).toBe('INVALID_INPUT');
+    expect(envelope.error).toMatchObject({
+      code: 'INVALID_INPUT',
+      details: { phase: 'build', outcome: 'not-started', completedPhases: [] },
+    });
     expect(build).not.toHaveBeenCalled();
     expect(server.requests).toHaveLength(0);
   });
@@ -360,6 +373,7 @@ describe('app install', () => {
     expect(exitCode).toBe(1);
     expect(envelope.error).toMatchObject({
       code: 'TIMEOUT',
+      message: 'Timed out waiting for the app installation after 1s.',
       details: {
         phase: 'wait',
         outcome: 'unknown',

@@ -23,15 +23,19 @@ export const installRegisteredApp = async ({
   signal: AbortSignal;
   onQueued: (jobId: string) => void;
 }) => {
-  let phase: AppInstallPhase = 'start';
-  let jobId: string | undefined;
   const timeout = AbortSignal.timeout(APP_INSTALL.TIMEOUT_MILLISECONDS);
   const installSignal = AbortSignal.any([signal, timeout]);
   const client = createMetadataClient({ target, signal: installSignal });
 
-  const fail = (error: unknown) =>
+  const fail = (error: unknown, phase: AppInstallPhase, jobId?: string) =>
     createInstallFailure({
-      error,
+      error:
+        timeout.aborted && !signal.aborted
+          ? new CliError({
+              code: 'TIMEOUT',
+              message: `Timed out waiting for the app installation after ${APP_INSTALL.TIMEOUT_MILLISECONDS / 1_000}s.`,
+            })
+          : error,
       phase,
       completedPhases,
       universalIdentifier,
@@ -39,60 +43,57 @@ export const installRegisteredApp = async ({
       signal,
     });
 
-  try {
-    installSignal.throwIfAborted();
-    const result = await client.mutation({
+  const jobId = await client
+    .mutation({
       __name: 'TriggerInstallApplication',
       triggerInstallApplication: {
         __args: { input: { universalIdentifier } },
         jobId: true,
       },
-    });
-    const installation = result?.triggerInstallApplication;
+    })
+    .then((result) => {
+      const installation = result?.triggerInstallApplication;
 
-    if (!isPlainObject(installation) || !isNonEmptyString(installation.jobId)) {
-      throw new CliError({
-        code: 'INVALID_RESPONSE',
-        message: 'The server did not return an installation job identifier.',
-      });
-    }
+      if (
+        !isPlainObject(installation) ||
+        !isNonEmptyString(installation.jobId)
+      ) {
+        throw new CliError({
+          code: 'INVALID_RESPONSE',
+          message: 'The server did not return an installation job identifier.',
+        });
+      }
 
-    jobId = installation.jobId;
-    completedPhases.push('start');
-    phase = 'wait';
-    onQueued(jobId);
-
-    await waitForAppInstall({
-      universalIdentifier,
-      jobId,
-      target,
-      signal: installSignal,
-    });
-    completedPhases.push('wait');
-
-    phase = 'check';
-    const application = await fetchInstalledApp({
-      universalIdentifier,
-      target,
-      signal: installSignal,
+      return installation.jobId;
+    })
+    .catch((error: unknown) => {
+      throw fail(error, 'start');
     });
 
-    return {
-      application: { universalIdentifier, name: application.name },
-      installed: true,
-      jobId,
-    };
-  } catch (error) {
-    if (timeout.aborted && !signal.aborted) {
-      throw fail(
-        new CliError({
-          code: 'TIMEOUT',
-          message:
-            'Timed out waiting for the app installation after 10 minutes.',
-        }),
-      );
-    }
+  completedPhases.push('start');
+  onQueued(jobId);
 
-    throw fail(error);
-  }
+  await waitForAppInstall({
+    universalIdentifier,
+    jobId,
+    target,
+    signal: installSignal,
+  }).catch((error: unknown) => {
+    throw fail(error, 'wait', jobId);
+  });
+  completedPhases.push('wait');
+
+  const application = await fetchInstalledApp({
+    universalIdentifier,
+    target,
+    signal: installSignal,
+  }).catch((error: unknown) => {
+    throw fail(error, 'check', jobId);
+  });
+
+  return {
+    application: { universalIdentifier, name: application.name },
+    installed: true,
+    jobId,
+  };
 };

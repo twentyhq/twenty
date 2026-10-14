@@ -1,3 +1,4 @@
+import { createInstallFailure } from '@/app/deployment/create-install-failure';
 import { installRegisteredApp } from '@/app/deployment/install-registered-app';
 import { type AppInstallPhase } from '@/app/deployment/types/app-install-phase.type';
 import { readApplicationIdentifier } from '@/app/read-application-identifier';
@@ -14,6 +15,13 @@ export const runAppInstallCommand: CommandRun<TargetCommandContext> = async (
   const universalIdentifier = await readApplicationIdentifier({
     context,
     onBuild: () => completedPhases.push('build'),
+  }).catch((error: unknown) => {
+    throw createInstallFailure({
+      error,
+      phase: 'build',
+      completedPhases,
+      signal,
+    });
   });
 
   output.progress(`Installing the registered app on ${target.apiUrl}…`);

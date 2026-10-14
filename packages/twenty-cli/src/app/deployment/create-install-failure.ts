@@ -22,7 +22,10 @@ const getOutcome = ({
   phase: AppInstallPhase;
   code: CliErrorCode;
 }): AppInstallOutcome => {
-  if (phase === 'start' && REJECTED_BEFORE_INSTALL_CODES.has(code)) {
+  if (
+    phase === 'build' ||
+    (phase === 'start' && REJECTED_BEFORE_INSTALL_CODES.has(code))
+  ) {
     return 'not-started';
   }
 
@@ -33,7 +36,17 @@ const getOutcome = ({
   return 'unknown';
 };
 
-const getRecoveryHint = (outcome: AppInstallOutcome) => {
+const getRecoveryHint = ({
+  outcome,
+  phase,
+}: {
+  outcome: AppInstallOutcome;
+  phase: AppInstallPhase;
+}) => {
+  if (phase === 'build') {
+    return 'Fix the app source or identifier, then retry. No installation was started.';
+  }
+
   if (outcome === 'not-started') {
     return 'Check the target workspace, registration and APPLICATIONS permission before retrying.';
   }
@@ -52,8 +65,8 @@ export const createInstallFailure = ({
   error: unknown;
   phase: AppInstallPhase;
   completedPhases: AppInstallPhase[];
-  universalIdentifier: string;
-  jobId: string | undefined;
+  universalIdentifier?: string;
+  jobId?: string;
   signal: AbortSignal;
 }) => {
   const cliError = toCliError(error, signal);
@@ -68,13 +81,13 @@ export const createInstallFailure = ({
       hint: cliError.hint,
       details: {
         ...cliError.details,
-        universalIdentifier,
+        ...(isDefined(universalIdentifier) ? { universalIdentifier } : {}),
         ...(isDefined(jobId) ? { jobId } : {}),
       },
     }),
     phase,
     outcome,
     completedPhases,
-    hint: getRecoveryHint(outcome),
+    hint: getRecoveryHint({ outcome, phase }),
   });
 };
