@@ -1,3 +1,4 @@
+import { isDropdownRow } from './isDropdownRow';
 import { useDropdownContext } from './useDropdownContext';
 
 export const useDropdownItemFocus = ({
@@ -19,6 +20,10 @@ export const useDropdownItemFocus = ({
 
   return {
     tabIndex: isOutsideTabOrder ? -1 : 0,
-    activate: () => rowFocus?.focusRow(id),
+    activate: (item: HTMLElement) => {
+      if (isDropdownRow(item)) {
+        rowFocus?.focusRow(id);
+      }
+    },
   };
 };

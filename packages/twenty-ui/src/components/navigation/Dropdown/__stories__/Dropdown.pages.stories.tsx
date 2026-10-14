@@ -50,6 +50,9 @@ const FilterPages = ({ keepMounted }: { keepMounted?: boolean }) => {
           <Dropdown.OptionItem selected={false}>
             Ada Lovelace
           </Dropdown.OptionItem>
+          <Dropdown.OptionItem selected={false}>
+            Grace Hopper
+          </Dropdown.OptionItem>
         </Dropdown.Page>
       </Dropdown.Content>
     </Dropdown.Root>
@@ -257,14 +260,23 @@ export const BackKeepsItsTabStopBesideSearch: Story = {
       name: 'Search people',
     });
 
+    const ada = body.getByRole('button', { name: 'Ada Lovelace' });
+    const grace = body.getByRole('button', { name: 'Grace Hopper' });
+
     await waitFor(() => expect(search).toHaveFocus());
+    await userEvent.tab();
+    expect(ada).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(grace).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    expect(search).toHaveFocus();
     await userEvent.tab({ shift: true });
     expect(body.getByRole('button', { name: 'Back to filters' })).toHaveFocus();
     await userEvent.tab();
     expect(search).toHaveFocus();
     await userEvent.tab();
-    expect(body.getByRole('button', { name: 'Ada Lovelace' })).toHaveFocus();
-    await userEvent.keyboard('{ArrowUp}');
+    expect(grace).toHaveFocus();
+    await userEvent.keyboard('{ArrowUp}{ArrowUp}');
     expect(search).toHaveFocus();
   },
 };
