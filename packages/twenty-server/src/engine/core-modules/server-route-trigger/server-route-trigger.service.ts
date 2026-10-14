@@ -1,15 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -34,6 +30,7 @@ import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
+import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -45,8 +42,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
-
-const MAX_AUTHORIZATION_TOKEN_CANDIDATES = 3;
 
 export type ServerRouteTriggerResult = {
   response: RouteTriggerResponse;
@@ -68,7 +63,7 @@ export class ServerRouteTriggerService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly jwtWrapperService: JwtWrapperService,
+    private readonly serverRouteAuthorizationHeaderService: ServerRouteAuthorizationHeaderService,
   ) {}
 
   async handle({
@@ -114,13 +109,13 @@ export class ServerRouteTriggerService {
     const forwardedRequestHeaders =
       resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
 
-    const isCredentialHeaderForwardable =
+    const isAuthorizationHeaderForwardable =
       forwardedRequestHeaders.some(
         (headerName) =>
           headerName.toLowerCase() ===
           SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
       ) &&
-      !(await this.containsTwentyCredential(
+      (await this.serverRouteAuthorizationHeaderService.isForwardable(
         request.headers[SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME],
       ));
 
@@ -128,7 +123,7 @@ export class ServerRouteTriggerService {
       request,
       pathParameters: {},
       forwardedRequestHeaders,
-      forwardableCredentialHeaderNames: isCredentialHeaderForwardable
+      forwardableCredentialHeaderNames: isAuthorizationHeaderForwardable
         ? [SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME]
         : [],
       userWorkspaceId: null,
@@ -375,46 +370,6 @@ export class ServerRouteTriggerService {
         return ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED;
       default:
         return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
-    }
-  }
-
-  private async containsTwentyCredential(
-    headerValue: string | undefined,
-  ): Promise<boolean> {
-    if (!isNonEmptyString(headerValue)) {
-      return false;
-    }
-
-    const tokenCandidates = headerValue
-      .split(/[\s,]+/)
-      .filter(isNonEmptyString);
-
-    if (tokenCandidates.length > MAX_AUTHORIZATION_TOKEN_CANDIDATES) {
-      return true;
-    }
-
-    for (const tokenCandidate of tokenCandidates) {
-      if (await this.isTwentyCredential(tokenCandidate)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  private async isTwentyCredential(token: string): Promise<boolean> {
-    if (isUserSessionToken(token)) {
-      return true;
-    }
-
-    try {
-      await this.jwtWrapperService.verifyJwtToken(token, {
-        ignoreExpiration: true,
-      });
-
-      return true;
-    } catch (error) {
-      return !(error instanceof AuthException);
     }
   }
 }

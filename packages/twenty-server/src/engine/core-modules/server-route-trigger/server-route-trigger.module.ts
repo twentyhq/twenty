@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
 import { ServerRouteReachabilityService } from 'src/engine/core-modules/server-route-trigger/server-route-reachability.service';
 import { ServerRouteTriggerController } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.controller';
 import { ServerRouteTriggerGaugeService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger-gauge.service';
@@ -20,6 +21,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   providers: [
     provideWorkspaceScopedRepository(LogicFunctionEntity),
     ServerRouteTriggerService,
+    ServerRouteAuthorizationHeaderService,
     ServerRouteReachabilityService,
     ServerRouteTriggerGaugeService,
   ],
