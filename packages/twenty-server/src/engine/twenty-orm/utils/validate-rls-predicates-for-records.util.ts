@@ -9,6 +9,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -21,7 +22,7 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
-  roleIds: string[];
+  rolePermissionConfig: RolePermissionConfig;
   shouldBypassPermissionChecks: boolean;
 };
 
@@ -30,7 +31,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   objectMetadata,
   internalContext,
   authContext,
-  roleIds,
+  rolePermissionConfig,
   shouldBypassPermissionChecks,
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
   if (shouldBypassPermissionChecks || isSystemAuthContext(authContext)) {
@@ -40,7 +41,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   const recordFilter = resolveRowLevelPermissionRecordFilter({
     internalContext,
     authContext,
-    roleIds,
+    rolePermissionConfig,
     objectMetadata,
   });
 

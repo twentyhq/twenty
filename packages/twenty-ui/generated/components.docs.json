@@ -926,6 +926,13 @@
         "description": "Animated highlight color. Defaults to the theme lighter transparent background."
       },
       {
+        "name": "layout",
+        "type": "\"block\" | \"inline\"",
+        "required": false,
+        "defaultValue": "inline",
+        "description": "`inline` sizes and aligns the placeholder like a line of text. `block` renders a block without a text node, which is cheaper when many placeholders are rendered and alignment with text is not needed."
+      },
+      {
         "name": "ref",
         "type": "Ref<HTMLSpanElement>",
         "required": false,
@@ -9880,7 +9887,7 @@
         "type": "number",
         "required": false,
         "defaultValue": "6000",
-        "description": "Milliseconds before onClose is called. The countdown pauses while the pointer is over the toast or keyboard focus is inside it."
+        "description": "Milliseconds before onClose is called, defaulting to 6000. Zero keeps the toast open. Changes restart the countdown; live updateToast duration patches restart it even when unchanged. Hover and keyboard focus pause it until both leave."
       },
       {
         "name": "icon",
@@ -9908,14 +9915,14 @@
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the close button is clicked or the countdown completes. Providing it shows the close button."
+        "description": "Called once per mounted toast when the close button is clicked or the countdown completes. Providing it shows the close button."
       },
       {
         "name": "progress",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Completion percentage. Providing it disables the countdown."
+        "description": "Completion percentage. Providing it disables the countdown. Removing it starts a fresh duration."
       },
       {
         "name": "ref",
