@@ -159,8 +159,6 @@ export class BackfillMorphRelationHeadsCommand extends ProvisionedWorkspaceComma
         },
       };
 
-      // twenty-standard declares its heads itself and never runs through the
-      // side-effect engine, see docs/UPGRADE_COMMANDS.md.
       const result =
         applicationUniversalIdentifier ===
         twentyStandardApplicationUniversalIdentifier

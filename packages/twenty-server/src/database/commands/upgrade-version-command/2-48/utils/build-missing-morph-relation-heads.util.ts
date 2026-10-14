@@ -57,7 +57,6 @@ const computeMorphName = ({
     ),
   });
 
-// Same shape as the head the engine creates with a new morph field.
 const buildHeadFromTarget = ({
   target,
   name,
@@ -132,8 +131,6 @@ export const buildMissingMorphRelationHeads = ({
       continue;
     }
 
-    // The target reads show while the head flag is off, so the head keeps
-    // the label and settings users see today.
     const target = pickMorphGroupSurvivorOrThrow(targets);
 
     const standardHead =
