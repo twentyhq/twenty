@@ -1,5 +1,4 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
-import { createChangeEventDetails } from '@base-ui/react/internals/createBaseUIEventDetails';
 import { useContext, useId } from 'react';
 import { clsx } from 'clsx';
 
@@ -10,6 +9,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../Dropdown.module.scss';
 import { DropdownOptionItemOwner } from './DropdownOptionItemOwner';
 import { DropdownSelectionContext } from './DropdownSelectionContext';
+import { createDropdownSelectionEventDetails } from './createDropdownSelectionEventDetails';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
@@ -108,11 +108,10 @@ export const DropdownOptionItem = ({
           return;
         }
 
-        const eventDetails = createChangeEventDetails(
-          'item-press',
-          event.nativeEvent,
-          event.currentTarget,
-        );
+        const eventDetails = createDropdownSelectionEventDetails({
+          event: event.nativeEvent,
+          trigger: event.currentTarget,
+        });
 
         onSelect?.(eventDetails);
 
