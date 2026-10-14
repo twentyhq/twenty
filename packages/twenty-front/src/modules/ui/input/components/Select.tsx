@@ -135,6 +135,7 @@ export const Select = <TValue extends SelectValue>({
   const selectableOptions = isDefined(pinnedOption)
     ? [pinnedOption, ...options]
     : options;
+  const isControlOptionSelected = controlSelectedOption.value === value;
 
   return (
     <StyledContainer
@@ -204,7 +205,11 @@ export const Select = <TValue extends SelectValue>({
             <Dropdown.SelectionGroup
               id={`${dropdownId}-selection`}
               aria-label={isNonEmptyString(label) ? label : t`Options`}
-              value={getSelectOptionIdentifier(controlSelectedOption.value)}
+              value={
+                isControlOptionSelected
+                  ? getSelectOptionIdentifier(controlSelectedOption.value)
+                  : null
+              }
               onValueChange={(selectedIdentifier) => {
                 const option = selectableOptions.find(
                   ({ value: optionValue }) =>
