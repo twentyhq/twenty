@@ -77,8 +77,7 @@ export class AgentTitleGenerationService {
           { usage, cacheCreationTokens },
           workspaceId,
           UsageOperationType.AI_CHAT_TOKEN,
-          null,
-          userWorkspaceId,
+          { userWorkspaceId },
         );
       }
     }

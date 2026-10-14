@@ -123,6 +123,35 @@ describe('buildQuotaCounters', () => {
     ]);
   });
 
+  it('ranks an every-resource limit after the resource and every-operation ones', () => {
+    const counters = buildCounters({
+      limits: [
+        buildLimit({
+          id: 'every-resource',
+          resourceType: UsageResourceType.ALL,
+          operationType: UsageOperationType.ALL,
+        }),
+        buildLimit({
+          id: 'every-operation',
+          operationType: UsageOperationType.ALL,
+        }),
+        buildLimit({ id: 'chat' }),
+      ],
+    });
+
+    expect(
+      counters.map(({ resourceType, operationType }) => [
+        resourceType,
+        operationType,
+      ]),
+    ).toEqual([
+      [UsageResourceType.AI, UsageOperationType.AI_CHAT_TOKEN],
+      [UsageResourceType.AI, UsageOperationType.ALL],
+      [UsageResourceType.ALL, UsageOperationType.ALL],
+    ]);
+    expect(counters[2].key).toContain(':quota-consumed:ALL:ALL:workspace:');
+  });
+
   it('ranks a named user counter before workspace counters', () => {
     const counters = buildCounters({
       limits: [

@@ -6,8 +6,11 @@ import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -64,7 +67,13 @@ export class AiGenerateTextController {
     @Body() body: GenerateTextInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ) {
+    const usageSpenders: UsageSpenders = {
+      userWorkspaceId,
+      applicationId: application?.id,
+    };
+
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Please configure at least one AI provider API key.',
@@ -75,7 +84,7 @@ export class AiGenerateTextController {
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      spenders: { userWorkspaceId },
+      spenders: usageSpenders,
     });
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
@@ -123,8 +132,7 @@ export class AiGenerateTextController {
           },
           workspace.id,
           UsageOperationType.AI_WORKFLOW_TOKEN,
-          null,
-          userWorkspaceId,
+          usageSpenders,
         );
       }
     }

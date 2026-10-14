@@ -494,14 +494,13 @@ export class ChatExecutionService {
         totalTokens,
         registeredModel.modelId,
         UsageOperationType.AI_CHAT_TOKEN,
-        null,
-        userWorkspaceId,
+        { userWorkspaceId },
       );
 
       void this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
-        userWorkspaceId,
+        { userWorkspaceId },
       );
 
       const modelAttr = { model: registeredModel.modelId };
@@ -702,8 +701,7 @@ export class ChatExecutionService {
             aiBillingService: this.aiBillingService,
             modelId: registeredModel.modelId,
             workspaceId: workspace.id,
-            userWorkspaceId,
-            agentId: null,
+            spenders: { userWorkspaceId },
             operationType: UsageOperationType.AI_CHAT_TOKEN,
           },
         });

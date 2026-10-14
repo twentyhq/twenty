@@ -113,8 +113,7 @@ export class AiBillingService {
     billingInput: BillingUsageInput,
     workspaceId: string,
     operationType: UsageOperationType,
-    agentId?: string | null,
-    userWorkspaceId?: string | null,
+    spenders: UsageSpenders,
   ): Promise<void> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
@@ -131,7 +130,7 @@ export class AiBillingService {
           totalTokens,
           modelId,
           operationType,
-          spenders: { userWorkspaceId, agentId },
+          spenders,
         }),
       ],
     });
@@ -175,7 +174,7 @@ export class AiBillingService {
   async billNativeWebSearchUsage(
     nativeWebSearchCallCount: number,
     workspaceId: string,
-    userWorkspaceId?: string | null,
+    spenders: UsageSpenders,
   ): Promise<void> {
     if (nativeWebSearchCallCount <= 0) {
       return;
@@ -198,7 +197,7 @@ export class AiBillingService {
           creditsUsedMicro,
           quantity: nativeWebSearchCallCount,
           unit: UsageUnit.INVOCATION,
-          spenders: { userWorkspaceId },
+          spenders,
         },
       ],
     });
@@ -210,8 +209,7 @@ export class AiBillingService {
     totalTokens: number,
     modelId: ModelId,
     operationType: UsageOperationType,
-    agentId?: string | null,
-    userWorkspaceId?: string | null,
+    spenders: UsageSpenders,
   ): Promise<void> {
     await this.usageRecorderService.record(workspaceId, [
       this.buildAiTokenUsageEvent({
@@ -219,7 +217,7 @@ export class AiBillingService {
         totalTokens,
         modelId,
         operationType,
-        spenders: { userWorkspaceId, agentId },
+        spenders,
       }),
     ]);
   }

@@ -63,8 +63,7 @@ export class AiEvaluationService {
       { usage },
       workspaceId,
       UsageOperationType.AI_WORKFLOW_TOKEN,
-      null,
-      userWorkspaceId,
+      { userWorkspaceId },
     );
 
     return { modelId, answers, usage };

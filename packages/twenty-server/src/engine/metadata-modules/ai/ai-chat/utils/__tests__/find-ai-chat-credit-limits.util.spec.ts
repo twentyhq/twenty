@@ -66,6 +66,17 @@ describe('findAiChatCreditLimits', () => {
     expect(findLimits([workspaceQuota])).toEqual([workspaceQuota]);
   });
 
+  it('keeps the workspace quota on every resource, which chat spend counts towards', () => {
+    const allResourcesQuota = buildLimit({
+      resourceType: UsageResourceType.ALL,
+      spenderType: 'workspace',
+      spenderId: '',
+      operationType: UsageOperationType.ALL,
+    });
+
+    expect(findLimits([allResourcesQuota])).toEqual([allResourcesQuota]);
+  });
+
   it('keeps both the workspace quota and the member quota', () => {
     const workspaceQuota = buildLimit({
       id: 'workspace-quota',

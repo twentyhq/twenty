@@ -5385,6 +5385,7 @@ type UsageQuotaWithConsumption {
 
 enum UsageResourceType {
   AI
+  ALL
   API
   APP
   EMAIL

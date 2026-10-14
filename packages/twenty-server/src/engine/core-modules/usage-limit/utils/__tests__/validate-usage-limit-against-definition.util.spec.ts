@@ -81,6 +81,22 @@ describe('validateUsageLimitAgainstDefinition', () => {
     });
   });
 
+  it.each(['workspace', 'application'] as const)(
+    'accepts a credit quota on every resource for a %s',
+    (spenderType) => {
+      accepts({
+        ...validQuotaLimit,
+        resourceType: UsageResourceType.ALL,
+        operationType: UsageOperationType.ALL,
+        spenderType,
+        spenderId:
+          spenderType === 'application'
+            ? '20202020-1c25-4d02-bf25-6aeccf7ea419'
+            : null,
+      });
+    },
+  );
+
   it.each([UsageUnit.CREDIT, UsageUnit.INVOCATION])(
     'accepts a code execution quota counted in %s',
     (unit) => {
@@ -120,6 +136,33 @@ describe('validateUsageLimitAgainstDefinition', () => {
       ...validQuotaLimit,
       spenderType: 'agent',
       spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+    });
+  });
+
+  it('rejects a quota on every resource for a spender some resources do not record', () => {
+    rejects({
+      ...validQuotaLimit,
+      resourceType: UsageResourceType.ALL,
+      operationType: UsageOperationType.ALL,
+      spenderType: 'userWorkspace',
+      spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+    });
+  });
+
+  it('rejects a quota on every resource narrowed to one operation', () => {
+    rejects({
+      ...validQuotaLimit,
+      resourceType: UsageResourceType.ALL,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+    });
+  });
+
+  it('rejects a quota on every resource counted in anything but credits', () => {
+    rejects({
+      ...validQuotaLimit,
+      resourceType: UsageResourceType.ALL,
+      operationType: UsageOperationType.ALL,
+      unit: UsageUnit.INVOCATION,
     });
   });
 

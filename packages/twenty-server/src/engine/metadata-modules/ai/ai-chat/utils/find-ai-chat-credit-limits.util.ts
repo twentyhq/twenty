@@ -13,9 +13,10 @@ export const findAiChatCreditLimits = ({
   usageLimits: UsageLimits;
   userWorkspaceId: string;
 }): FlatUsageLimit[] => {
-  const creditQuotas = (
-    usageLimits.byResourceType[UsageResourceType.AI] ?? []
-  ).filter(
+  const creditQuotas = [
+    ...(usageLimits.byResourceType[UsageResourceType.AI] ?? []),
+    ...(usageLimits.byResourceType[UsageResourceType.ALL] ?? []),
+  ].filter(
     (limit) => limit.limitKind === 'quota' && limit.unit === UsageUnit.CREDIT,
   );
 

@@ -16,6 +16,7 @@ describe('buildQuotaDefinitions', () => {
         limitKind,
       ]),
     ).toEqual([
+      [UsageResourceType.ALL, 'quota'],
       [UsageResourceType.AI, 'quota'],
       [UsageResourceType.WORKFLOW, 'quota'],
       [UsageResourceType.LOGIC_FUNCTION, 'quota'],
@@ -72,6 +73,21 @@ describe('buildQuotaDefinitions', () => {
     expect(
       findQuotaDefinition(UsageResourceType.AI)?.operatorOnlyScopes,
     ).toEqual([]);
+  });
+
+  it('offers every resource as one credit scope for the workspace or an application', () => {
+    const allResources = findQuotaDefinition(UsageResourceType.ALL);
+
+    expect(allResources?.allowedOperations).toEqual([
+      {
+        operationType: UsageOperationType.ALL,
+        allowedUnits: [UsageUnit.CREDIT],
+      },
+    ]);
+    expect(allResources?.allowedSpenderTypes).toEqual([
+      'workspace',
+      'application',
+    ]);
   });
 
   it('offers credits and runs on code execution, with no every-operation entry', () => {

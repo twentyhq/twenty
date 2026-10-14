@@ -8,9 +8,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
-  type UsageOperationType,
+  UsageOperationType,
   type UsageQuotaDefinitionsQuery,
-  type UsageResourceType,
+  UsageResourceType,
 } from '~/generated-metadata/graphql';
 
 const USAGE_DROPDOWN_ID = 'usage-limit-usage';
@@ -37,9 +37,15 @@ export const SettingsBillingLimitUsageSelect = ({
     ? t(USAGE_OPERATION_TYPE_LABELS[operationType])
     : t`All operations`;
 
-  const selectedLabel = isDefined(resourceType)
-    ? `${t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])} · ${operationLabel}`
-    : t`Choose a usage`;
+  const selectedLabel = !isDefined(resourceType)
+    ? t`Choose a usage`
+    : resourceType === UsageResourceType.ALL
+      ? t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])
+      : `${t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])} · ${operationLabel}`;
+
+  const operationDefinitions = definitions.definitions.filter(
+    (definition) => definition.resourceType !== UsageResourceType.ALL,
+  );
 
   return (
     <SettingsBillingLimitNestedSelect
@@ -54,24 +60,46 @@ export const SettingsBillingLimitUsageSelect = ({
     >
       <Dropdown.Page id="root">
         <Dropdown.Section>
-          {definitions.definitions.map((definition) => (
-            <Dropdown.ActionItem
-              key={definition.resourceType}
-              page={definition.resourceType}
-              startIcon={
-                <SelectOptionIcon
-                  Icon={
-                    USAGE_LIMIT_RESOURCE_TYPE_ICONS[definition.resourceType]
-                  }
-                />
-              }
-            >
-              {t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType])}
-            </Dropdown.ActionItem>
-          ))}
+          {definitions.definitions.map((definition) =>
+            definition.resourceType === UsageResourceType.ALL ? (
+              <Dropdown.OptionItem
+                key={definition.resourceType}
+                selected={resourceType === UsageResourceType.ALL}
+                onSelect={() =>
+                  onChange({
+                    resourceType: UsageResourceType.ALL,
+                    operationType: UsageOperationType.ALL,
+                  })
+                }
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={
+                      USAGE_LIMIT_RESOURCE_TYPE_ICONS[definition.resourceType]
+                    }
+                  />
+                }
+              >
+                {t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType])}
+              </Dropdown.OptionItem>
+            ) : (
+              <Dropdown.ActionItem
+                key={definition.resourceType}
+                page={definition.resourceType}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={
+                      USAGE_LIMIT_RESOURCE_TYPE_ICONS[definition.resourceType]
+                    }
+                  />
+                }
+              >
+                {t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType])}
+              </Dropdown.ActionItem>
+            ),
+          )}
         </Dropdown.Section>
       </Dropdown.Page>
-      {definitions.definitions.map((definition) => (
+      {operationDefinitions.map((definition) => (
         <Dropdown.Page
           key={definition.resourceType}
           id={definition.resourceType}

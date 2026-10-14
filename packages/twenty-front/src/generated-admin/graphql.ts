@@ -1074,6 +1074,7 @@ export enum UsageOperationType {
 
 export enum UsageResourceType {
   AI = 'AI',
+  ALL = 'ALL',
   API = 'API',
   APP = 'APP',
   EMAIL = 'EMAIL',
