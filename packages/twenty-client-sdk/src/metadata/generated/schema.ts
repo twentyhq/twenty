@@ -419,6 +419,13 @@ export interface ApplicationHealthCheckResult {
 
 export type ApplicationHealthStatus = 'ERROR' | 'INFO' | 'NEUTRAL' | 'OK' | 'SUCCESS' | 'UNKNOWN' | 'WARNING'
 
+export interface ApplicationPreferences {
+    applicationId: Scalars['UUID']
+    settingsMenuItems: SettingsMenuItem[]
+    variables: UserApplicationVariableValue[]
+    __typename: 'ApplicationPreferences'
+}
+
 export interface ApplicationRegistration {
     createdAt: Scalars['DateTime']
     galleryImagesUrls: Scalars['String'][]
@@ -2827,6 +2834,7 @@ export interface Query {
     metadataTranslations: MetadataTranslation[]
     minimalMetadata: MinimalMetadata
     mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
+    myApplicationPreferences: ApplicationPreferences[]
     myCalendarChannels: CalendarChannel[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myMessageChannels: MessageChannel[]
@@ -4382,6 +4390,14 @@ export interface ApplicationHealthCheckResultGenqlSelection{
     description?: boolean | number
     status?: boolean | number
     title?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationPreferencesGenqlSelection{
+    applicationId?: boolean | number
+    settingsMenuItems?: SettingsMenuItemGenqlSelection
+    variables?: UserApplicationVariableValueGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7082,6 +7098,7 @@ export interface QueryGenqlSelection{
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
+    myApplicationPreferences?: ApplicationPreferencesGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
@@ -8814,6 +8831,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationHealthCheckResult = (obj?: { __typename?: any } | null): obj is ApplicationHealthCheckResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckResult"')
       return ApplicationHealthCheckResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationPreferences_possibleTypes: string[] = ['ApplicationPreferences']
+    export const isApplicationPreferences = (obj?: { __typename?: any } | null): obj is ApplicationPreferences => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationPreferences"')
+      return ApplicationPreferences_possibleTypes.includes(obj.__typename)
     }
     
 

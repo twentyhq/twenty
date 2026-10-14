@@ -20,8 +20,8 @@ import {
 
 const MY_USER_WORKSPACE_ID = '20202020-1a2b-4c3d-8e4f-000000000001';
 const TEAMMATE_USER_WORKSPACE_ID = '20202020-1a2b-4c3d-8e4f-000000000002';
-const FATHOM_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000021';
-const GRANOLA_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000022';
+export const FATHOM_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000021';
+export const GRANOLA_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000022';
 const CREATED_AT = '2026-09-01T00:00:00.000Z';
 
 export const GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000011';
@@ -257,6 +257,9 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
       },
     });
   }),
+  graphql.query('MyApplicationPreferences', () =>
+    HttpResponse.json({ data: { myApplicationPreferences: [] } }),
+  ),
   graphql.query('FindManyBlocklists', () =>
     HttpResponse.json({
       data: {

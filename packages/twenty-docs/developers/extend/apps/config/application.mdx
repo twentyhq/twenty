@@ -185,7 +185,7 @@ const { myUserApplicationVariables } = await client.query({
 
 Values are strings, in the same format as `process.env` (see [Variable types](#variable-types)).
 
-A member saves their own value with `updateMyUserApplicationVariable`, which takes your app's `applicationUniversalIdentifier` and needs no `APPLICATIONS` permission. It takes the member's own session only: an application token is refused, your app's included, so only the member changes their settings.
+`updateMyUserApplicationVariable` saves a member's own value. It takes your app's `applicationUniversalIdentifier` and needs no `APPLICATIONS` permission, and it writes the value of the person behind the token: the member's own session, or your app's token when a member is behind it, such as in a front component or a logic function run for a member. Your app's token can only name your own app, and a token with nobody behind it, such as in a cron job or an install hook, is refused.
 
 ## Default function role
 
