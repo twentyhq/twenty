@@ -21,8 +21,14 @@ export class RunAgentMessageInputDTO implements RunAgentMessage {
   @Field(() => RunAgentMessageRole)
   role: RunAgentMessageRole;
 
-  // the service refuses blank input turns; installed apps still replay blank ones through messages
   @IsString()
+  // TODO(@abdulrahmancodes): restore once callers stop sending empty turns. It rejects the
+  // empty assistant turns the Slack app replays, so those callers go first. The service
+  // already refuses blank turns in input.
+  // @ValidateIf(
+  //   (message: RunAgentMessageInputDTO) => !isNonEmptyArray(message.attachments),
+  // )
+  // @IsNotEmpty()
   @Field()
   content: string;
 
