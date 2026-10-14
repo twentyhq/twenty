@@ -50,6 +50,7 @@ import {
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
+import { isApiKeyRecordExportRequester } from 'src/engine/core-modules/record-export/guards/is-api-key-record-export-requester.guard';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { type RecordExportAuthContext } from 'src/engine/core-modules/record-export/types/record-export-auth-context.type';
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
@@ -345,7 +346,7 @@ export class RecordExportWorkspaceService {
       sub: recordExport.workspaceId,
       workspaceId: recordExport.workspaceId,
       fileId: recordExport.id,
-      ...(recordExport.apiKeyId !== undefined
+      ...(isApiKeyRecordExportRequester(recordExport)
         ? { apiKeyId: recordExport.apiKeyId }
         : {
             userWorkspaceId: recordExport.userWorkspaceId,
@@ -521,7 +522,7 @@ export class RecordExportWorkspaceService {
   async resolveRequester(
     recordExport: RecordExportRequester,
   ): Promise<RecordExportAuthContext> {
-    if (recordExport.apiKeyId !== undefined) {
+    if (isApiKeyRecordExportRequester(recordExport)) {
       const workspace = await this.coreEntityCacheService.get(
         'workspaceEntity',
         recordExport.workspaceId,
@@ -734,7 +735,7 @@ export class RecordExportWorkspaceService {
   }): void {
     if (
       request.workspace?.id !== recordExport.workspaceId ||
-      (recordExport.apiKeyId !== undefined
+      (isApiKeyRecordExportRequester(recordExport)
         ? request.apiKey?.id !== recordExport.apiKeyId
         : isDefined(request.apiKey) ||
           request.userWorkspaceId !== recordExport.userWorkspaceId ||
