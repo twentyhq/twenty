@@ -100,11 +100,14 @@ export class ApplicationUpgradeResolver {
       requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
+    @Args('jobId', { type: () => String, nullable: true })
+    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findUpgradeApplicationJobStatus({
       universalIdentifier,
       workspaceId: workspace.id,
+      jobId,
     });
   }
 }
