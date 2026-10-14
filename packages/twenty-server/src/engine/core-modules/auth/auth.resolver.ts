@@ -652,7 +652,7 @@ export class AuthResolver {
       userSession: true,
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false, withAgent: false },
+      application: { withUser: true, withoutUser: false },
     }),
     NoPermissionGuard,
   )
@@ -668,7 +668,7 @@ export class AuthResolver {
       userSession: true,
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false, withAgent: false },
+      application: { withUser: true, withoutUser: false },
     }),
     NoPermissionGuard,
   )
@@ -741,7 +741,7 @@ export class AuthResolver {
       userSession: true,
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false, withAgent: false },
+      application: { withUser: true, withoutUser: false },
     }),
     NoPermissionGuard,
   )
@@ -778,7 +778,7 @@ export class AuthResolver {
       userSession: true,
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false, withAgent: false },
+      application: { withUser: true, withoutUser: false },
     }),
     NoPermissionGuard,
   )
@@ -813,7 +813,7 @@ export class AuthResolver {
       userSession: true,
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false, withAgent: false },
+      application: { withUser: true, withoutUser: false },
     }),
     NoPermissionGuard,
   )

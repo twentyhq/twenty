@@ -206,7 +206,7 @@ export class FileController {
       },
       apiKey: true,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false, withAgent: false },
+      application: { withUser: true, withoutUser: false },
     }),
     CustomPermissionGuard,
   )

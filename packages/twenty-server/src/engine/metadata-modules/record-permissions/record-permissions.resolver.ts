@@ -32,7 +32,7 @@ const MAX_PERMISSION_TARGETS = 100;
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false, withAgent: false },
+    application: { withUser: true, withoutUser: false },
   }),
   CustomPermissionGuard,
 )

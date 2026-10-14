@@ -29,7 +29,7 @@ import { RecordTargetInput } from 'src/engine/metadata-modules/record-permission
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false, withAgent: false },
+    application: { withUser: true, withoutUser: false },
   }),
   CustomPermissionGuard,
 )

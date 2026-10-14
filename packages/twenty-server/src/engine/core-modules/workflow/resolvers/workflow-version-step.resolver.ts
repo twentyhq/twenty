@@ -45,7 +45,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false, withAgent: false },
+    application: { withUser: true, withoutUser: false },
   }),
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )

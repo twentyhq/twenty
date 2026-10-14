@@ -16,8 +16,8 @@ export type AuthPrincipalGuardConfig = {
     | {
         withUser: boolean;
         withoutUser: boolean;
-        // Tokens bound to an agent (the code interpreter's) also need this, which
-        // `true` does not imply, so new endpoints stay closed to them
-        withAgent: boolean;
+        // Tokens bound to an agent (the code interpreter's) also need this,
+        // which `application: true` leaves out so new endpoints stay closed
+        withAgent?: true;
       };
 };

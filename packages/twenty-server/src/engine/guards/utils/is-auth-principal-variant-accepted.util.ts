@@ -35,7 +35,8 @@ export const isAuthPrincipalVariantAccepted = ({
       return (
         isVariantAccepted(applicationConfig, authPrincipalVariant.variant) &&
         (!authPrincipalVariant.withAgent ||
-          (!isBoolean(applicationConfig) && applicationConfig.withAgent))
+          (!isBoolean(applicationConfig) &&
+            applicationConfig.withAgent === true))
       );
     }
     default:

@@ -54,7 +54,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false, withAgent: false },
+    application: { withUser: true, withoutUser: false },
   }),
   NoPermissionGuard,
 )
