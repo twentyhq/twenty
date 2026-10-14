@@ -189,25 +189,7 @@ export default defineLogicFunction({
 });
 ```
 
-**The `buildIdentifyAccountHandler` shorthand.** When the provider's endpoint is a plain request whose response carries the id and the handle at fixed paths, the SDK can build that handler from a description:
-
-```ts
-import { buildIdentifyAccountHandler } from 'twenty-sdk/logic-function';
-
-export default defineLogicFunction({
-  universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  name: 'slack-identify-account',
-  timeoutSeconds: 10,
-  handler: buildIdentifyAccountHandler({
-    endpoint: 'https://slack.com/api/auth.test',
-    method: 'POST',
-    externalAccountIdPath: 'team_id',
-    handlePath: 'team',
-  }),
-});
-```
-
-It does exactly what the hand-written version above does: calls `endpoint` with `Authorization: Bearer <accessToken>` (plus any `headers` and `body` you pass; `method` defaults to `GET`), parses the JSON response and reads `externalAccountIdPath` and `handlePath` as dot paths (`'team.id'`). It throws when the response is not 2xx or when the id path is missing or empty, leaves the handle out when `handlePath` does not resolve to a non-empty string, and converts numeric ids to strings. Write the handler yourself whenever the provider needs more than that (a GraphQL query, two calls, a computed id).
+Other providers follow the same pattern, whether their "who am I" endpoint is REST or GraphQL. Throw when the provider rejects the token, and return the id as a string: convert numeric ids, such as GitHub user ids, with `String(id)`.
 
 Identification ships with Twenty 2.47.0. If your app relies on it, declare `"engines": { "twenty": ">=2.47.0" }` in its `package.json`.
 

@@ -49,8 +49,6 @@ export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-
 export { reportConnectionAuthFailure } from '@/sdk/logic-function/connections/report-connection-auth-failure';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
-export { buildIdentifyAccountHandler } from '@/sdk/logic-function/connections/build-identify-account-handler';
-export type { IdentifyAccountRequest } from '@/sdk/logic-function/connections/build-identify-account-handler';
 export type {
   IdentifyAccountPayload,
   IdentifyAccountResult,
