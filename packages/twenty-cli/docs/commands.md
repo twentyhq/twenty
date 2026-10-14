@@ -576,6 +576,34 @@ Exit codes:
 | 6    | Conflict                            |
 | 130  | Cancelled                           |
 
+## Publish an app to npm
+
+```sh
+twenty app publish
+twenty app publish --path ./apps/billing --tag beta --json
+```
+
+Builds and typechecks the app, packs that exact build, then publishes the package with public access. No Twenty remote or workspace authentication is required. Publishing to npm does not sync or install the app in a workspace.
+
+Install npm and authenticate with the intended registry first. npm runs from the app directory, so its project/user configuration and environment credentials apply. `--tag` sets the npm dist-tag. GitHub Actions jobs with OIDC request provenance automatically; set `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE=true` to opt out, for example when publishing from a private source repository.
+
+Packing and publishing skip npm lifecycle scripts because the CLI already built the app. npm's package-file selection still applies. If `package.json` has a `files` field, it must include `manifest.json` and the generated app files; the command rejects an incomplete package before publication. npm excludes the root `yarn.lock` from packages. Temporary packages and build snapshots are removed after completion or failure.
+
+Human mode displays npm output and supports interactive authentication when a terminal is available. JSON mode returns one CLI envelope and does not prompt; configure an automation token or npm’s `npm_config_otp` environment option before running it. Failed npm commands return `PUBLISH_FAILED` with the subprocess exit code and captured output. If publication is interrupted after sending the package, check the registry before retrying, since the version may already have been published.
+
+### Publish to a private Twenty registry
+
+```sh
+twenty app publish --private --remote staging
+twenty app publish --private --path ./apps/billing --json
+```
+
+`--private` publishes the same built package to the selected Twenty server registry instead of npm. It uses the normal saved remote or environment credentials, requests a tarball upload, sends the bytes directly to storage, then registers the uploaded app. npm is still needed for local packing, but npm registry credentials are not used and `--tag` is rejected. The server requires file-upload permission and `MARKETPLACE_APPS` permission on the target workspace.
+
+Publishing registers a version; it does not install the app or directly sync the selected workspace. Publishing an update can trigger automatic upgrades in workspaces where the app is already installed with automatic upgrades enabled. The server enforces application ownership, version progression and engine compatibility. JSON results contain `target: "private"`, the selected server under `registry`, the registration and `installed: false`, indicating that this command did not request installation.
+
+Failed uploads never trigger registration. If registration fails or is interrupted after sending the request, the app may already be registered. The error includes the phase, upload file ID and an `unknown` outcome; check the server registry before retrying. Temporary packages are cleaned up in either case.
+
 ## App translations
 
 ```sh
