@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_MY_CONNECTED_ACCOUNTS = gql`
-  query MyConnectedAccounts {
-    myConnectedAccounts {
+  query MyConnectedAccounts($filter: MyConnectedAccountsFilterInput) {
+    myConnectedAccounts(filter: $filter) {
       id
       handle
       provider

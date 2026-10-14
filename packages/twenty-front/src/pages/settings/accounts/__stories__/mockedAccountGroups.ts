@@ -1,5 +1,6 @@
 import { HttpResponse, graphql } from 'msw';
 import { fn } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -28,7 +29,7 @@ export const GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000011';
 export const MICROSOFT_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000014';
 export const FATHOM_ONLY_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000013';
 const FATHOM_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000012';
-const MY_SHARED_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000015';
+export const MY_SHARED_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000015';
 const TEAMMATE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000016';
 const EMAIL_GROUP_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000017';
 const SECOND_GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000018';
@@ -181,6 +182,14 @@ export const CONNECTED_ACCOUNTS = [
   }),
 ];
 
+// What the server returns under the App preferences filter: the caller's own
+// accounts, without their workspace-shared app connections
+export const APP_PREFERENCES_CONNECTED_ACCOUNTS = CONNECTED_ACCOUNTS.filter(
+  (account) =>
+    account.userWorkspaceId === MY_USER_WORKSPACE_ID &&
+    !(account.provider === 'app' && account.visibility === 'workspace'),
+);
+
 const MESSAGE_CHANNELS = [
   buildMessageChannel(
     '20202020-1a2b-4c3d-8e4f-000000000031',
@@ -216,16 +225,24 @@ const deletedAccountIds = new Set<string>();
 
 export const deleteConnectedAccount = fn();
 
+export const myConnectedAccountsQuery = fn();
+
 export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
-  graphql.query('MyConnectedAccounts', () =>
-    HttpResponse.json({
+  graphql.query('MyConnectedAccounts', ({ variables }) => {
+    myConnectedAccountsQuery(variables);
+
+    const connectedAccounts = isDefined(variables.filter)
+      ? APP_PREFERENCES_CONNECTED_ACCOUNTS
+      : CONNECTED_ACCOUNTS;
+
+    return HttpResponse.json({
       data: {
-        myConnectedAccounts: CONNECTED_ACCOUNTS.filter(
+        myConnectedAccounts: connectedAccounts.filter(
           (account) => !deletedAccountIds.has(account.id),
         ),
       },
-    }),
-  ),
+    });
+  }),
   graphql.query('MyMessageChannels', () =>
     HttpResponse.json({
       data: {
@@ -278,6 +295,7 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
 export const seedAccountGroupsStory = async () => {
   deletedAccountIds.clear();
   deleteConnectedAccount.mockClear();
+  myConnectedAccountsQuery.mockClear();
   await mockedApolloClient.clearStore();
 
   jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
