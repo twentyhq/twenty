@@ -1,3 +1,4 @@
+import { gql, InMemoryCache } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -65,5 +66,66 @@ describe('useCreateOneRecord', () => {
 
     expect(mocks[0].result).toHaveBeenCalled();
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps cached counts when the server rejects the record', async () => {
+    const rejectedInput = { name: { firstName: 'Jane', lastName: 'Doe' } };
+    const cachedPeopleQuery = gql`
+      query CachedPeople {
+        people {
+          totalCount
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `;
+    const cache = new InMemoryCache();
+
+    cache.writeQuery({
+      query: cachedPeopleQuery,
+      data: {
+        people: { __typename: 'PersonConnection', totalCount: 5, edges: [] },
+      },
+    });
+
+    const RejectingWrapper = getJestMetadataAndApolloMocksWrapper({
+      cache,
+      apolloMocks: [
+        {
+          request: {
+            query,
+            variables: { input: { ...rejectedInput, id: PERSON_ID } },
+          },
+          error: new Error('A code is required'),
+        },
+      ],
+    });
+
+    const { result } = renderHook(
+      () =>
+        useCreateOneRecord({
+          objectNameSingular: CoreObjectNameSingular.Person,
+        }),
+      { wrapper: RejectingWrapper },
+    );
+
+    await act(async () => {
+      await expect(
+        result.current.createOneRecord(rejectedInput),
+      ).rejects.toThrow('A code is required');
+    });
+
+    expect(
+      cache.readQuery<{ people: { totalCount: number } }>({
+        query: cachedPeopleQuery,
+      })?.people.totalCount,
+    ).toBe(5);
+    expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
+    expect(mockRefetchAggregateQueries).toHaveBeenCalledWith({
+      objectMetadataNamePlural: 'people',
+    });
   });
 });

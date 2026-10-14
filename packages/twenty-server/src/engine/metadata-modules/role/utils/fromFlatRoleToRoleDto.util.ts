@@ -18,6 +18,7 @@ export const fromFlatRoleToRoleDto = ({
   description,
   icon,
   universalIdentifier,
+  applicationId,
 }: FlatRole): RoleDTO => {
   return {
     canAccessAllAgentChatChannels,
@@ -36,5 +37,6 @@ export const fromFlatRoleToRoleDto = ({
     description: description ?? undefined,
     icon: icon ?? undefined,
     universalIdentifier,
+    applicationId,
   };
 };

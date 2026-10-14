@@ -481,6 +481,34 @@ export const SubmitWithControlEnter: Story = {
     submitCompany(canvasElement, '{Control>}{Enter}{/Control}'),
 };
 
+export const CreateAnotherWithOptionEnter: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: /Create company/ }),
+    );
+    const nameInput = await canvas.findByRole('textbox');
+    await userEvent.click(nameInput);
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'Acme');
+    await userEvent.keyboard('{Alt>}{Enter}{/Alt}');
+    await waitFor(() => expect(createCompanyRequest).toHaveBeenCalledTimes(1));
+    await expect(createCompanyRequest).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Acme', position: 'first' }),
+    );
+    await waitFor(() =>
+      expect(canvas.getByRole('textbox')).not.toHaveTextContent('Acme'),
+    );
+    await expect(onRecordCreated).toHaveBeenCalledWith({
+      record: expect.objectContaining({ name: 'Acme' }),
+      recordInput: expect.objectContaining({ name: 'Acme', position: 'first' }),
+    });
+    await expect(
+      canvas.getByTestId('record-creation-form-create-button'),
+    ).toBeVisible();
+  },
+};
+
 export const IgnoreNonSubmitKeys: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

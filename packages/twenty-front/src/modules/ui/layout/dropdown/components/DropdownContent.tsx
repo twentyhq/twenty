@@ -18,7 +18,6 @@ type DropdownContentProps = Pick<
   | 'onClick'
   | 'initialFocus'
   | 'finalFocus'
-  | 'className'
   | 'aria-label'
   | 'ref'
 >;
@@ -36,7 +35,6 @@ export const DropdownContent = ({
   onClick,
   initialFocus,
   finalFocus,
-  className,
   'aria-label': ariaLabel,
   ref,
 }: DropdownContentProps) => {
@@ -57,7 +55,6 @@ export const DropdownContent = ({
       onClick={onClick}
       initialFocus={initialFocus}
       finalFocus={finalFocus}
-      className={className}
       aria-label={ariaLabel}
     >
       <DropdownClickOutsideListenerExclusion>

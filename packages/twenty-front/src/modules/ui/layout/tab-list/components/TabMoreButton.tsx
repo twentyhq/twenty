@@ -16,7 +16,6 @@ const StyledTabMoreButtonContainer = styled.div`
 type TabMoreButtonProps = {
   hiddenTabsCount: number;
   active: boolean;
-  className?: string;
   disableTestId?: boolean;
   isDropdownTrigger?: boolean;
 };
@@ -24,7 +23,6 @@ type TabMoreButtonProps = {
 export const TabMoreButton = ({
   hiddenTabsCount,
   active,
-  className,
   disableTestId,
   isDropdownTrigger = false,
 }: TabMoreButtonProps) => {
@@ -36,7 +34,6 @@ export const TabMoreButton = ({
       active={active}
       children={`+${hiddenTabsCount} ${t`More`}`}
       endIcon={<IconChevronDown />}
-      className={className}
     />
   );
 
