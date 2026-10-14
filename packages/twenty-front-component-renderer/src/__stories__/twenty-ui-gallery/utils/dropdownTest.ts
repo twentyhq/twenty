@@ -4,6 +4,7 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { dropdownSelectionGroupsTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSelectionGroupsTest';
 
 export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -50,8 +51,8 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() => expect(search).toHaveFocus(), {
     timeout: INTERACTION_TIMEOUT,
   });
-  const ada = page.getByRole('button', { name: /^Ada Lovelace/ });
-  const grace = page.getByRole('button', { name: /^Grace Hopper/ });
+  const ada = page.getByRole('option', { name: /^Ada Lovelace/ });
+  const grace = page.getByRole('option', { name: /^Grace Hopper/ });
   const createPerson = page.getByRole('button', { name: 'Create person' });
   await waitFor(() => expect(ada).toHaveAttribute('tabindex', '0'));
   expect(grace).toHaveAttribute('tabindex', '-1');
@@ -83,6 +84,10 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   });
   expect(search).toHaveAttribute('aria-activedescendant', grace.id);
   expect(ada).not.toHaveAttribute('data-highlighted');
+  await userEvent.clear(search);
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Search query')).toHaveTextContent(/^Query:$/),
+  );
   const option = await page.findByText('Ada Lovelace');
   await waitFor(() => expect(option).toBeVisible(), {
     timeout: INTERACTION_TIMEOUT,
@@ -96,5 +101,34 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() =>
     expect(trigger).toHaveAttribute('aria-expanded', 'false'),
   );
+  await userEvent.click(trigger);
+  await userEvent.click(
+    await page.findByRole('menuitem', { name: /^Assign person/ }),
+  );
+  const reopenedSearch = await page.findByRole('searchbox', {
+    name: 'Search people',
+  });
+  await waitFor(() => expect(reopenedSearch).toHaveFocus());
+  const selectedAda = page.getByRole('option', { name: /^Ada Lovelace/ });
+  expect(selectedAda).toHaveAttribute('aria-selected', 'true');
+  await userEvent.type(reopenedSearch, 'Grace');
+  await waitFor(() =>
+    expect(page.queryByRole('option', { name: /^Ada Lovelace/ })).toBeNull(),
+  );
+  expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
+    'Assignee: Ada Lovelace',
+  );
+  await userEvent.clear(reopenedSearch);
+  await waitFor(() =>
+    expect(page.getByRole('option', { name: /^Ada Lovelace/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    ),
+  );
+  await userEvent.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(trigger).toHaveAttribute('aria-expanded', 'false'),
+  );
+  await dropdownSelectionGroupsTest({ canvasElement });
   expect(errorHandler).not.toHaveBeenCalled();
 };

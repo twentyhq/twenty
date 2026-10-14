@@ -36,13 +36,21 @@ const SearchablePicker = ({
   initialSearch?: string;
 }) => {
   const [search, setSearch] = useState(initialSearch);
-  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
   const results = PEOPLE.filter((person) =>
     person.toLowerCase().includes(search.toLowerCase()),
   );
+  const options = results.map((person) => (
+    <Dropdown.OptionItem
+      key={person}
+      value={person}
+      onSelect={() => onSelectPerson(person)}
+    >
+      {person}
+    </Dropdown.OptionItem>
+  ));
 
   return (
-    <Dropdown.Root type="picker" multiple={multiple}>
+    <Dropdown.Root type="picker">
       <Dropdown.Trigger>Assignees</Dropdown.Trigger>
       <Dropdown.Content aria-label="Choose assignees">
         <Dropdown.Search
@@ -53,24 +61,15 @@ const SearchablePicker = ({
         <Dropdown.ActionItem onClick={onCreatePerson}>
           Create person
         </Dropdown.ActionItem>
-        {results.map((person) => (
-          <Dropdown.OptionItem
-            key={person}
-            selected={selectedPeople.includes(person)}
-            onSelect={() => {
-              onSelectPerson(person);
-              setSelectedPeople((current) =>
-                current.includes(person)
-                  ? current.filter(
-                      (selectedPerson) => selectedPerson !== person,
-                    )
-                  : [...current, person],
-              );
-            }}
-          >
-            {person}
-          </Dropdown.OptionItem>
-        ))}
+        {multiple ? (
+          <Dropdown.SelectionGroup id="people" aria-label="People" multiple>
+            {options}
+          </Dropdown.SelectionGroup>
+        ) : (
+          <Dropdown.SelectionGroup id="people" aria-label="People">
+            {options}
+          </Dropdown.SelectionGroup>
+        )}
         {!isNonEmptyArray(results) && (
           <Dropdown.Empty>No people found</Dropdown.Empty>
         )}
@@ -100,15 +99,17 @@ const OwnerPicker = () => {
           </Dropdown.ActionItem>
         </Dropdown.Section>
         <Dropdown.Section label="People">
-          {results.map((person) => (
-            <Dropdown.OptionItem
-              key={person}
-              selected={false}
-              onSelect={() => onSelectPerson(person)}
-            >
-              {person}
-            </Dropdown.OptionItem>
-          ))}
+          <Dropdown.SelectionGroup id="owner" aria-label="Owner">
+            {results.map((person) => (
+              <Dropdown.OptionItem
+                key={person}
+                value={person}
+                onSelect={() => onSelectPerson(person)}
+              >
+                {person}
+              </Dropdown.OptionItem>
+            ))}
+          </Dropdown.SelectionGroup>
         </Dropdown.Section>
         <Button>Manage people</Button>
       </Dropdown.Content>
@@ -287,7 +288,7 @@ export const HighlightFollowsSearch: Story = {
     expect(search).not.toHaveAttribute('aria-activedescendant');
 
     await userEvent.type(search, 'a');
-    const ada = body.getByRole('button', { name: 'Ada Lovelace' });
+    const ada = body.getByRole('option', { name: 'Ada Lovelace' });
 
     await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'));
     expect(search).toHaveAttribute('aria-activedescendant', ada.id);
@@ -296,7 +297,7 @@ export const HighlightFollowsSearch: Story = {
     ).not.toHaveAttribute('data-highlighted');
 
     await userEvent.type(search, 'r');
-    const margaret = body.getByRole('button', { name: 'Margaret Hamilton' });
+    const margaret = body.getByRole('option', { name: 'Margaret Hamilton' });
 
     await waitFor(() => expect(margaret).toHaveAttribute('data-highlighted'));
     expect(search).toHaveAttribute('aria-activedescendant', margaret.id);
@@ -306,7 +307,7 @@ export const HighlightFollowsSearch: Story = {
       expect(search).not.toHaveAttribute('aria-activedescendant'),
     );
     expect(
-      body.getByRole('button', { name: 'Ada Lovelace' }),
+      body.getByRole('option', { name: 'Ada Lovelace' }),
     ).not.toHaveAttribute('data-highlighted');
   },
 };
@@ -326,9 +327,9 @@ export const TypingRightAfterOpening: Story = {
 
     expect(search).toHaveValue('gra');
     expect(
-      body.queryByRole('button', { name: 'Ada Lovelace' }),
+      body.queryByRole('option', { name: 'Ada Lovelace' }),
     ).not.toBeInTheDocument();
-    const grace = body.getByRole('button', { name: 'Grace Hopper' });
+    const grace = body.getByRole('option', { name: 'Grace Hopper' });
 
     await waitFor(() => expect(grace).toHaveAttribute('data-highlighted'));
     expect(search).toHaveAttribute('aria-activedescendant', grace.id);
@@ -349,14 +350,14 @@ export const BackspaceClearingSearch: Story = {
       canvasElement,
       triggerName: 'Assignees',
     });
-    const margaret = body.getByRole('button', { name: 'Margaret Hamilton' });
+    const margaret = body.getByRole('option', { name: 'Margaret Hamilton' });
 
     await waitFor(() => expect(margaret).toHaveAttribute('data-highlighted'));
 
     await trustedUserEvent.keyboard('{Backspace}');
 
     expect(search).toHaveValue('');
-    expect(body.getByRole('button', { name: 'Ada Lovelace' })).toBeVisible();
+    expect(body.getByRole('option', { name: 'Ada Lovelace' })).toBeVisible();
     await waitFor(() =>
       expect(search).not.toHaveAttribute('aria-activedescendant'),
     );
@@ -374,7 +375,7 @@ export const HighlightFollowsTypedSearch: Story = {
       canvasElement,
       triggerName: 'Assignees',
     });
-    const ada = body.getByRole('button', { name: 'Ada Lovelace' });
+    const ada = body.getByRole('option', { name: 'Ada Lovelace' });
 
     await trustedUserEvent.keyboard('a');
 
@@ -502,12 +503,12 @@ export const MixedNavigationFromSearch: Story = {
     await waitFor(() => expect(search).toHaveFocus());
     await userEvent.type(search, 'grace');
     expect(
-      body.queryByRole('button', { name: 'Ada Lovelace' }),
+      body.queryByRole('option', { name: 'Ada Lovelace' }),
     ).not.toBeInTheDocument();
     await userEvent.keyboard('{ArrowDown}');
     expect(body.getByRole('button', { name: 'Create person' })).toHaveFocus();
     await userEvent.keyboard('{ArrowDown}');
-    expect(body.getByRole('button', { name: 'Grace Hopper' })).toHaveFocus();
+    expect(body.getByRole('option', { name: 'Grace Hopper' })).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -522,15 +523,15 @@ export const MultipleSelectionStaysOpen: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await openPicker({ canvasElement, triggerName: 'Assignees' });
-    const ada = body.getByRole('button', { name: 'Ada Lovelace' });
-    const grace = body.getByRole('button', { name: 'Grace Hopper' });
+    const ada = body.getByRole('option', { name: 'Ada Lovelace' });
+    const grace = body.getByRole('option', { name: 'Grace Hopper' });
 
     await userEvent.click(ada);
     await userEvent.click(grace);
-    expect(ada).toHaveAttribute('aria-pressed', 'true');
-    expect(grace).toHaveAttribute('aria-pressed', 'true');
+    expect(ada).toHaveAttribute('aria-selected', 'true');
+    expect(grace).toHaveAttribute('aria-selected', 'true');
     await userEvent.click(ada);
-    expect(ada).toHaveAttribute('aria-pressed', 'false');
+    expect(ada).toHaveAttribute('aria-selected', 'false');
     expect(body.getByRole('dialog')).toBeVisible();
   },
 };
@@ -968,8 +969,8 @@ export const RowsShareOneTabStop: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const search = await openPicker({ canvasElement, triggerName: 'Owner' });
     const create = body.getByRole('button', { name: 'Create person' });
-    const ada = body.getByRole('button', { name: 'Ada Lovelace' });
-    const grace = body.getByRole('button', { name: 'Grace Hopper' });
+    const ada = body.getByRole('option', { name: 'Ada Lovelace' });
+    const grace = body.getByRole('option', { name: 'Grace Hopper' });
     const manage = body.getByRole('button', { name: 'Manage people' });
 
     await waitFor(() => expect(create).toHaveAttribute('tabindex', '0'));
@@ -1010,12 +1011,12 @@ export const TabStopReturnsToFirstRow: Story = {
 
     await userEvent.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}');
     expect(
-      body.getByRole('button', { name: 'Margaret Hamilton' }),
+      body.getByRole('option', { name: 'Margaret Hamilton' }),
     ).toHaveFocus();
     await userEvent.tab({ shift: true });
     expect(search).toHaveFocus();
     await userEvent.type(search, 'gr');
-    const grace = body.getByRole('button', { name: 'Grace Hopper' });
+    const grace = body.getByRole('option', { name: 'Grace Hopper' });
 
     await waitFor(() => expect(grace).toHaveAttribute('data-highlighted'));
     await userEvent.tab();

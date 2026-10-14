@@ -1,5 +1,6 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
-import { useId } from 'react';
+import { createChangeEventDetails } from '@base-ui/react/internals/createBaseUIEventDetails';
+import { useContext, useId } from 'react';
 import { clsx } from 'clsx';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
@@ -7,7 +8,8 @@ import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
-import { DropdownItemOwner } from './DropdownItemOwner';
+import { DropdownOptionItemOwner } from './DropdownOptionItemOwner';
+import { DropdownSelectionContext } from './DropdownSelectionContext';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
@@ -16,7 +18,8 @@ import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
 
 export const DropdownOptionItem = ({
-  selected,
+  value,
+  selected: standaloneSelected,
   indicator,
   onSelect,
   closeOnSelect,
@@ -38,13 +41,31 @@ export const DropdownOptionItem = ({
   id,
   ...props
 }: DropdownOptionItemProps) => {
-  const { type, multiple, closeTree, searchTargetId } = useDropdownContext();
+  const {
+    type,
+    multiple: standaloneMultiple,
+    closeTree,
+    searchTargetId,
+  } = useDropdownContext();
+  const selection = useContext(DropdownSelectionContext);
+  const hasSelectionOwner = isDefined(selection) && isDefined(value);
+  const multiple = hasSelectionOwner ? selection.multiple : standaloneMultiple;
+  const selected = hasSelectionOwner
+    ? selection.multiple
+      ? selection.value.includes(value)
+      : selection.value === value
+    : standaloneSelected;
   const isMenu = type === 'menu';
+  const isPickerOption = type === 'picker' && hasSelectionOwner;
   const hasSelectionState = isDefined(selected);
   const isPressableOption =
-    !isMenu && (nativeButton || props.role === 'button');
+    !isMenu && !isPickerOption && (nativeButton || props.role === 'button');
   const isCurrentOption =
-    !isMenu && !isPressableOption && hasSelectionState && selected;
+    !isMenu &&
+    !isPickerOption &&
+    !isPressableOption &&
+    hasSelectionState &&
+    selected;
   const selectableMenuOptionRole = multiple
     ? 'menuitemcheckbox'
     : 'menuitemradio';
@@ -65,12 +86,14 @@ export const DropdownOptionItem = ({
 
   const item = (
     <ButtonPrimitive
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...props}
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={isMenu ? menuOptionRole : props.role}
+      role={isMenu ? menuOptionRole : isPickerOption ? 'option' : props.role}
       aria-checked={isMenu && hasSelectionState ? selected : undefined}
+      aria-selected={isPickerOption ? selected : undefined}
       aria-pressed={
         isPressableOption && hasSelectionState ? selected : undefined
       }
@@ -85,9 +108,30 @@ export const DropdownOptionItem = ({
           return;
         }
 
-        onSelect?.();
+        const eventDetails = createChangeEventDetails(
+          'item-press',
+          event.nativeEvent,
+          event.currentTarget,
+        );
 
-        if (closeOnSelect ?? !multiple) {
+        onSelect?.(eventDetails);
+
+        if (eventDetails.isCanceled || event.defaultPrevented) {
+          return;
+        }
+
+        if (hasSelectionOwner) {
+          selection.select({ value, eventDetails });
+        }
+
+        if (eventDetails.isCanceled || event.defaultPrevented) {
+          return;
+        }
+
+        if (
+          closeOnSelect ??
+          (hasSelectionOwner ? selection.closeOnSelect : !multiple)
+        ) {
           closeTree();
         }
       }}
@@ -99,9 +143,14 @@ export const DropdownOptionItem = ({
 
         return (
           <ListItem
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...renderProps}
             render={
-              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+              <DropdownOptionItemOwner
+                render={render}
+                disabled={nativeDisabled}
+                state={{ selected: selected ?? false, multiple, disabled }}
+              />
             }
             className={clsx(
               renderProps.className,
