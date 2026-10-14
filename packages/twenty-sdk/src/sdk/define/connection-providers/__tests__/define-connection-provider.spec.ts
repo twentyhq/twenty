@@ -84,6 +84,7 @@ describe('defineConnectionProvider', () => {
   });
 
   const lifecycleHookKeys = [
+    'identifyAccountLogicFunction',
     'onConnectLogicFunction',
     'onDisconnectLogicFunction',
   ] as const;

@@ -107,7 +107,7 @@ PICK_RECORD selects one record from a candidate pool (settings.input.recordIds) 
 CLASSIFY asks an AI model one or more typed questions about a single piece of text and returns a typed answer for each, so later steps can branch on the result. Reach for it when the user describes sorting, routing, triaging, tagging or rating something written — "route support emails to the right team", "flag angry replies", "rate how urgent this is". Prefer it over a CODE step for those: it needs no code and no logic function.
 
 settings.input takes:
-- **state** — the text every question is asked about. Usually a variable, e.g. "{{trigger.record.bodyV2.markdown}}".
+- **state** — the text every question is asked about. Usually a variable, e.g. "{{trigger.properties.after.bodyV2.markdown}}".
 - **questions** — an array. Each needs id (a UUID), name, type, instructions and criteria.
 - **modelId** — optional. Omit it to use the workspace's classification model, which is almost always what you want.
 

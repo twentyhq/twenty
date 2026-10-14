@@ -290,6 +290,7 @@ type AppConnection {
   accessToken: String!
   authFailedAt: String
   authFailedReason: String
+  externalAccountId: String
   handle: String!
   id: ID!
   name: String!
@@ -2095,7 +2096,6 @@ enum FeatureFlagKey {
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
-  IS_VALIDATION_RULES_ENABLED
 }
 
 type Field {

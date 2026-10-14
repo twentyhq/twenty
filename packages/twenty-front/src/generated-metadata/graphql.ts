@@ -330,6 +330,7 @@ export type AppConnection = {
   accessToken: Scalars['String']['output'];
   authFailedAt?: Maybe<Scalars['String']['output']>;
   authFailedReason?: Maybe<Scalars['String']['output']>;
+  externalAccountId?: Maybe<Scalars['String']['output']>;
   handle: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
@@ -2212,8 +2213,7 @@ export enum FeatureFlagKey {
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED = 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED',
-  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
-  IS_VALIDATION_RULES_ENABLED = 'IS_VALIDATION_RULES_ENABLED'
+  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 }
 
 export type Field = {

@@ -51,6 +51,7 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import {
   mockedEventLogApplications,
+  mockedEventLogInstalledApplications,
   mockedEventLogLiveApplicationLogs,
   mockedEventLogLogicFunctions,
   mockedEventLogRecordsByTable,
@@ -66,6 +67,10 @@ import { sleep } from '~/utils/sleep';
 
 const WORKSPACE_WITH_LOGS_CONSOLE = {
   ...mockCurrentWorkspace,
+  installedApplications: [
+    ...mockCurrentWorkspace.installedApplications,
+    ...mockedEventLogInstalledApplications,
+  ],
   featureFlags: [
     { key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED, value: true },
   ],
@@ -753,11 +758,14 @@ export const FullScreen: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByRole('button', { name: 'Command Menu' });
-    const closeButton = await canvas.findByRole('button', { name: 'Close' });
-    const { x, y, width, height } = closeButton.getBoundingClientRect();
+    const exitFullScreenButton = await canvas.findByRole('button', {
+      name: 'Exit full screen',
+    });
+    const { x, y, width, height } =
+      exitFullScreenButton.getBoundingClientRect();
 
     expect(
-      closeButton.contains(
+      exitFullScreenButton.contains(
         document.elementFromPoint(x + width / 2, y + height / 2),
       ),
     ).toBe(true);
