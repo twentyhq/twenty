@@ -570,11 +570,11 @@ twenty app publish
 twenty app publish --path ./apps/billing --tag beta --json
 ```
 
-Builds and typechecks the app, packs that exact build, then publishes the package with public access. No Twenty remote or workspace authentication is required. This replaces the SDK CLI's `app:publish`; it does not sync or install the app in a workspace.
+Builds and typechecks the app, packs that exact build, then publishes the package with public access. No Twenty remote or workspace authentication is required. Publishing to npm does not sync or install the app in a workspace.
 
 Install npm and authenticate with the intended registry first. npm runs from the app directory, so its project/user configuration and environment credentials apply. `--tag` sets the npm dist-tag. GitHub Actions jobs with OIDC request provenance automatically; set `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE=true` to opt out, for example when publishing from a private source repository.
 
-Packing and publishing skip npm lifecycle scripts because the CLI already built the app. npm's package-file selection still applies. If `package.json` has a `files` field, it must include `manifest.json` and the generated app files; the command rejects an incomplete package before publication. npm excludes the root `yarn.lock` from packages, as in the SDK publish flow. Temporary packages and build snapshots are removed after completion or failure.
+Packing and publishing skip npm lifecycle scripts because the CLI already built the app. npm's package-file selection still applies. If `package.json` has a `files` field, it must include `manifest.json` and the generated app files; the command rejects an incomplete package before publication. npm excludes the root `yarn.lock` from packages. Temporary packages and build snapshots are removed after completion or failure.
 
 Human mode displays npm output and supports interactive authentication when a terminal is available. JSON mode returns one CLI envelope and does not prompt; configure an automation token or npm’s `npm_config_otp` environment option before running it. Failed npm commands return `PUBLISH_FAILED` with the subprocess exit code and captured output. If publication is interrupted after sending the package, check the registry before retrying, since the version may already have been published.
 
