@@ -345,10 +345,6 @@ export class ApplicationInstallService {
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
       grantedCapabilities,
-      logo:
-        resolvedPackage.manifest.application.logo ??
-        resolvedPackage.manifest.application.logoUrl ??
-        null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
@@ -406,9 +402,17 @@ export class ApplicationInstallService {
         workspaceId: params.workspaceId,
       });
 
-      if (application.logoFileId !== logoFileId) {
+      const logo =
+        resolvedPackage.manifest.application.logo ??
+        resolvedPackage.manifest.application.logoUrl ??
+        null;
+
+      // Clients load logoUrl as soon as the application is broadcast and never
+      // retry a url that failed, so the logo is only set once its file exists
+      if (application.logo !== logo || application.logoFileId !== logoFileId) {
         await this.applicationService.update(application.id, {
-          logoFileId: logoFileId ?? null,
+          logo,
+          logoFileId,
           workspaceId: params.workspaceId,
         });
       }
@@ -856,7 +860,6 @@ export class ApplicationInstallService {
     universalIdentifier,
     name,
     grantedCapabilities,
-    logo,
     workspaceId,
     applicationRegistrationId,
     sourceType,
@@ -865,7 +868,6 @@ export class ApplicationInstallService {
     universalIdentifier: string;
     name: string;
     grantedCapabilities: ApplicationCapability[];
-    logo: string | null;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
@@ -878,7 +880,6 @@ export class ApplicationInstallService {
       universalIdentifier,
       name,
       grantedCapabilities,
-      logo,
       sourcePath: universalIdentifier,
       sourceType,
       applicationRegistrationId,
