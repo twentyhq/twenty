@@ -12,6 +12,9 @@ import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
+import { sseAppliedRecordVersionsByCacheIdState } from '@/sse-db-event/states/sseAppliedRecordVersionsByCacheIdState';
+import { addSseAppliedRecordVersion } from '@/sse-db-event/utils/addSseAppliedRecordVersion';
+import { pickPlainFieldsFromRecord } from '@/sse-db-event/utils/pickPlainFieldsFromRecord';
 import { captureMessage } from '@sentry/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -116,6 +119,20 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         ) {
           continue;
         }
+
+        store.set(
+          sseAppliedRecordVersionsByCacheIdState.atom,
+          (sseAppliedRecordVersionsByCacheId) =>
+            addSseAppliedRecordVersion({
+              sseAppliedRecordVersionsByCacheId,
+              cacheId: `${getObjectTypename(objectMetadataItem.nameSingular)}:${updatedRecord.id}`,
+              record: pickPlainFieldsFromRecord({
+                objectMetadataItem,
+                record: updatedRecord,
+              }),
+              nowInMs: Date.now(),
+            }),
+        );
 
         const cachedRecordWithConnection = getRecordNodeFromRecord({
           record: cachedRecord,
