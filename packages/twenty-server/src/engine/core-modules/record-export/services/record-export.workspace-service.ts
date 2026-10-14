@@ -30,11 +30,7 @@ import { type RecordExportRequester } from 'src/engine/core-modules/record-expor
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import {
-  type WorkspaceAuthContext,
-  type ApiKeyWorkspaceAuthContext,
-  type UserWorkspaceAuthContext,
-} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -55,6 +51,7 @@ import {
 import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
+import { type RecordExportAuthContext } from 'src/engine/core-modules/record-export/types/record-export-auth-context.type';
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
@@ -77,10 +74,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
-
-type RecordExportAuthContext =
-  | UserWorkspaceAuthContext
-  | ApiKeyWorkspaceAuthContext;
 
 export type RecordExportQueryContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
