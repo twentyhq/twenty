@@ -110,7 +110,7 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
       'captcha-token',
     );
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'info' }),
+      expect.objectContaining({ status: 'info' }),
     );
   });
 
@@ -146,7 +146,7 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
 
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        variant: 'error',
+        status: 'error',
         children: 'Invalid or expired recovery code.',
       }),
     );

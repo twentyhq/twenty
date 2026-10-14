@@ -26,7 +26,7 @@ export const useVerifyLogin = () => {
       enqueueToast(
         CombinedGraphQLErrors.is(error)
           ? getToastOptionsFromError({ error })
-          : { variant: 'error', children: t`Authentication failed` },
+          : { status: 'error', children: t`Authentication failed` },
       );
       navigate(AppPath.SignInUp);
     } finally {

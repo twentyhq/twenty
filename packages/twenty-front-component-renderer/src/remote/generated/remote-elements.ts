@@ -537,6 +537,7 @@ export type HtmlInputProperties = HtmlCommonProperties & {
   disabled?: boolean;
   checked?: boolean;
   readOnly?: boolean;
+  required?: boolean;
   accept?: string;
   multiple?: boolean;
   capture?: string;
@@ -568,6 +569,7 @@ export const HtmlInputElement = createRemoteElement<
     disabled: { type: Boolean },
     checked: { type: Boolean },
     readOnly: { type: Boolean },
+    required: { type: Boolean },
     accept: { type: String },
     multiple: { type: Boolean },
     capture: { type: String },

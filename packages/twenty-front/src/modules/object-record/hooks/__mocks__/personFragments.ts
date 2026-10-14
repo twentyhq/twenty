@@ -16,6 +16,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         name
         context {
           provider
+          applicationId
         }
       }
       deletedAt
@@ -57,6 +58,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         name
         context {
           provider
+          applicationId
         }
       }
       whatsapp {
@@ -142,6 +144,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         name
         context {
           provider
+          applicationId
         }
       }
       deletedAt
@@ -257,6 +260,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         name
         context {
           provider
+          applicationId
         }
       }
       whatsapp {

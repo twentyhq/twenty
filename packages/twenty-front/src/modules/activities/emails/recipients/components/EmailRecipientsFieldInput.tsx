@@ -7,7 +7,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { atom, useStore } from 'jotai';
 import {
   type ClipboardEvent,
-  type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
   useContext,
@@ -18,7 +17,10 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Autocomplete } from 'twenty-ui/primitives/input';
+import {
+  type AutocompleteInputProps,
+  Autocomplete,
+} from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -47,6 +49,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const SUGGESTIONS_SEARCH_DEBOUNCE_MS = 300;
@@ -420,8 +423,12 @@ export const EmailRecipientsFieldInput = ({
     dependencies: [handleSubmitHotkey],
   });
 
-  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.ctrlKey || event.metaKey) {
+  const handleInputKeyDown: AutocompleteInputProps['onKeyDown'] = (event) => {
+    if (
+      isKeyboardEventComposing(event.nativeEvent) ||
+      event.ctrlKey ||
+      event.metaKey
+    ) {
       return;
     }
 
@@ -433,6 +440,7 @@ export const EmailRecipientsFieldInput = ({
     switch (event.key) {
       case 'Enter': {
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (!isEditing && isDropdownOpen && suggestions.length > 0) {
           const highlightedSuggestionId = store.get(
@@ -471,6 +479,7 @@ export const EmailRecipientsFieldInput = ({
       case ',':
       case ';': {
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (!bufferIsEmpty) {
           commitInputAndCloseSuggestions();
@@ -480,6 +489,7 @@ export const EmailRecipientsFieldInput = ({
       case ' ': {
         if (isValidEmailRecipientAddress(inputValue.trim())) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           commitInputAndCloseSuggestions();
         }
         return;
@@ -490,6 +500,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (selectedChipIndices.length > 0) {
           removeSelectedRecipients();
@@ -502,6 +513,7 @@ export const EmailRecipientsFieldInput = ({
       case 'Delete': {
         if (bufferIsEmpty && selectedChipIndices.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           removeSelectedRecipients();
         }
         return;
@@ -509,6 +521,7 @@ export const EmailRecipientsFieldInput = ({
       case 'ArrowDown': {
         if (!isEditing && !isDropdownOpen && suggestions.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           openSuggestions();
         }
         return;
@@ -519,6 +532,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
         scrollChipIntoView(
           event.shiftKey ? extendChipSelection(-1) : moveChipSelection(-1),
         );
@@ -530,6 +544,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
         scrollChipIntoView(
           event.shiftKey ? extendChipSelection(1) : moveChipSelection(1),
         );
@@ -538,6 +553,7 @@ export const EmailRecipientsFieldInput = ({
       case 'Escape': {
         if (isDropdownOpen) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           event.stopPropagation();
           closeSuggestions();
           return;
@@ -545,12 +561,14 @@ export const EmailRecipientsFieldInput = ({
 
         if (isEditing) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           cancelEditing();
           return;
         }
 
         if (selectedChipIndices.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           clearChipSelection();
         }
         return;

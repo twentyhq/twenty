@@ -290,6 +290,7 @@ type AppConnection {
   accessToken: String!
   authFailedAt: String
   authFailedReason: String
+  externalAccountId: String
   handle: String!
   id: ID!
   name: String!
@@ -340,6 +341,7 @@ type Application {
   availablePackages: JSON!
   canBeUninstalled: Boolean!
   commandMenuItems: [CommandMenuItem!]!
+  createdAt: DateTime!
   defaultLogicFunctionRole: Role
   defaultRoleId: String
   description: String
@@ -2080,13 +2082,11 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
-  IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
   IS_APPLICATION_WORKFLOWS_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_CONVERSATIONS_TAB_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -2096,9 +2096,6 @@ enum FeatureFlagKey {
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
-  IS_VALIDATION_RULES_ENABLED
-  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
 type Field {
@@ -2323,12 +2320,18 @@ type FrontComponent {
   universalIdentifier: UUID
   updatedAt: DateTime!
   usesSdkClient: Boolean!
+  widgetAvailability: [FrontComponentWidgetAvailability!]!
 }
 
 type FrontComponentConfiguration {
   configurationType: WidgetConfigurationType!
   frontComponentId: UUID!
   headerCommandMenuItemUniversalIdentifiers: [UUID!]
+}
+
+type FrontComponentWidgetAvailability {
+  objectMetadataId: UUID
+  pageLayoutType: PageLayoutType!
 }
 
 type FullName {
@@ -2671,6 +2674,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billsCredits: Boolean!
   category: String
   defaultRoleUniversalIdentifier: String
   description: String
@@ -2685,6 +2689,7 @@ type MarketplaceAppDetail {
   logoUrl: String
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
   name: String!
+  objects: [MarketplaceAppObject!]
   pricingDescription: String
   requestedCapabilities: [String!]!
   roles: [MarketplaceAppRole!]
@@ -2694,6 +2699,12 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
+}
+
+type MarketplaceAppObject {
+  labelPlural: String!
+  labelSingular: String!
+  universalIdentifier: String!
 }
 
 type MarketplaceAppRole {
@@ -4355,6 +4366,7 @@ type SignUp {
 
 input SignUpInNewWorkspaceInput {
   displayName: String
+  partner: String
   subdomain: String
 }
 
@@ -5087,6 +5099,7 @@ input UpdateWorkspaceInput {
   inviteHash: String
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
+  isCampaignOpenTrackingEnabled: Boolean
   isGoogleAuthBypassEnabled: Boolean
   isGoogleAuthEnabled: Boolean
   isInternalMessagesImportEnabled: Boolean

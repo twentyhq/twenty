@@ -8,13 +8,16 @@ import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescription
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
+import { PROGRESS_PART_PROP_DESCRIPTIONS } from './progressPartPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
+import { STACK_ICON_PROP_DESCRIPTIONS } from './stackIconPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
+import { TOAST_PROP_DESCRIPTIONS } from './toastPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
@@ -185,6 +188,14 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: SKELETON_PROP_DESCRIPTIONS,
   },
   {
+    name: 'Progress',
+    source: 'primitives/feedback/Progress/Progress.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/progress',
+    parts: ['Root', 'Track', 'Indicator', 'Label', 'Value'],
+    partPropDescriptions: PROGRESS_PART_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'ProgressBar',
     source: 'primitives/feedback/ProgressBar/ProgressBar.tsx',
     entryPoint: 'twenty-ui/primitives/feedback',
@@ -193,9 +204,9 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'SegmentedControl',
-    source: 'primitives/input/SegmentedControl/SegmentedControl.tsx',
-    entryPoint: 'twenty-ui/primitives/input',
-    slug: 'input/segmented-control',
+    source: 'components/input/SegmentedControl/SegmentedControl.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/segmented-control',
     propDescriptions: SEGMENTED_CONTROL_PROP_DESCRIPTIONS,
   },
   {
@@ -402,7 +413,9 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Radio/Radio.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio',
+    parts: ['Root', 'Indicator'],
     propDescriptions: RADIO_PROP_DESCRIPTIONS,
+    propDefaults: { size: 'sm', variant: 'default' },
   },
   {
     name: 'RadioGroup',
@@ -415,10 +428,37 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Autocomplete/Autocomplete.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/autocomplete',
+    partPropOverrides: {
+      Root: {
+        items: {
+          type: 'readonly TItem[] | readonly { items: readonly TItem[] }[]',
+          required: false,
+        },
+        filteredItems: {
+          type: 'readonly TItem[] | readonly { items: readonly TItem[] }[]',
+        },
+        filter: {
+          type: 'AutocompleteRootProps<TItem>["filter"]',
+        },
+        itemToStringValue: {
+          type: '(itemValue: TItem) => string',
+        },
+        onItemHighlighted: {
+          type: '(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void',
+        },
+      },
+    },
     partPropDescriptions: {
       Root: {
         items:
-          'Items to display in the list. Nullish entries are not supported.',
+          'Flat items or groups with an items array. Preserves the upstream item type; nullish entries are not supported.',
+      },
+      Value: {
+        children:
+          'Content or render function receiving the current input text.',
+      },
+      Collection: {
+        children: 'Render function receiving each filtered item and its index.',
       },
       Input: {
         size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
@@ -426,8 +466,16 @@ export const DOCUMENTED_COMPONENTS = [
       Popup: {
         width:
           'Width of the popup. Overrides its default minimum anchor width.',
+      },
+      Portal: {
         container:
-          'Element the popup is portaled into. Defaults to the theme portal container.',
+          'Portal destination. Omitted uses the scoped theme container; explicit null waits without rendering. Element, ShadowRoot and ref targets pass through to Base UI.',
+      },
+      Positioner: {
+        ref: 'Ref to the positioning div, separate from Popup and Portal.',
+        sideOffset:
+          'Distance from the anchor. Defaults to 8; supports functional offsets.',
+        align: 'Alignment relative to the anchor. Defaults to start.',
       },
     },
   },
@@ -626,6 +674,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/feedback/Toast/Toast.tsx',
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/toast',
+    propDescriptions: TOAST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Text',
@@ -757,6 +806,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/code-editor',
     slug: 'components/code-editor/code-editor',
     propDescriptions: CODE_EDITOR_PROP_DESCRIPTIONS,
+    propDefaults: { theme: 'Twenty theme', saveViewState: 'true' },
   },
   {
     name: 'CodeEditorHeader',
@@ -827,6 +877,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/data-display',
     slug: 'components/data-display/tinted-icon-tile',
     propDescriptions: TINTED_ICON_TILE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'StackIcon',
+    source: 'components/data-display/StackIcon/StackIcon.tsx',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/stack-icon',
+    propDescriptions: STACK_ICON_PROP_DESCRIPTIONS,
   },
   {
     name: 'Callout',

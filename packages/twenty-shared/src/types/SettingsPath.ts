@@ -25,7 +25,6 @@ export enum SettingsPath {
   ObjectNewFieldSelect = 'objects/:objectNamePlural/new-field/select',
   ObjectNewFieldConfigure = 'objects/:objectNamePlural/new-field/configure',
   ObjectNewIndex = 'objects/:objectNamePlural/new-index',
-  ObjectNewValidationRule = 'objects/:objectNamePlural/new-validation-rule',
   ObjectValidationRuleEdit = 'objects/:objectNamePlural/validation-rules/:validationRuleId',
   ObjectFieldEdit = 'objects/:objectNamePlural/:fieldName',
   ObjectTranslations = 'objects/:objectNamePlural/object-translations',
@@ -95,7 +94,6 @@ export enum SettingsPath {
   AdminPanelWorkspaceDetail = 'admin-panel/workspaces/:workspaceId',
   AdminPanelApplicationRegistrationDetail = 'admin-panel/applications/registrations/:applicationRegistrationId',
   AdminPanelWorkspaceChatThread = 'admin-panel/workspaces/:workspaceId/threads/:threadId',
-  AdminPanelChats = 'admin-panel/chats',
 
   Roles = 'members/roles',
   RoleCreate = 'members/roles/create',

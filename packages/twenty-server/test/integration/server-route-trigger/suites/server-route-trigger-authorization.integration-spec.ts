@@ -1,3 +1,4 @@
+import * as jwt from 'jsonwebtoken';
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -34,6 +35,8 @@ const HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
   '5e5f983f-5c1a-4c60-a3c8-7d0e2a4a55e5';
 const GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
   '6f6f983f-5c1a-4c60-a3c8-7d0e2a4a66f6';
+const AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '7a7f983f-5c1a-4c60-a3c8-7d0e2a4a77a7';
 
 const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 
@@ -62,6 +65,13 @@ const GET_HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE = `export const main = async (ev
 });
 `;
 
+const AUTHORIZATION_ECHO_RESOLVER_BUILT_HANDLER_CODE = `export const main = async (event) => ({
+  ${LOGIC_FUNCTION_HTTP_RESPONSE_MARKER}: true,
+  status: 200,
+  body: { authorization: event.headers.authorization ?? null },
+});
+`;
+
 const TARGET_BUILT_HANDLER_CODE = `export const main = async () => (${JSON.stringify(
   TARGET_FUNCTION_RESPONSE,
 )});
@@ -73,12 +83,14 @@ const buildLogicFunctionManifest = ({
   serverRouteExposed,
   authRequired,
   httpMethods,
+  forwardedRequestHeaders = [],
 }: {
   universalIdentifier: string;
   name: string;
   serverRouteExposed: boolean;
   authRequired: boolean;
   httpMethods?: ServerRouteTriggerSettings['httpMethods'];
+  forwardedRequestHeaders?: string[];
 }): LogicFunctionManifest => ({
   universalIdentifier,
   name,
@@ -98,7 +110,7 @@ const buildLogicFunctionManifest = ({
   ...(serverRouteExposed
     ? {
         serverRouteTriggerSettings: {
-          forwardedRequestHeaders: [],
+          forwardedRequestHeaders,
           ...(isDefined(httpMethods) ? { httpMethods } : {}),
         },
       }
@@ -154,6 +166,11 @@ describe('ServerRouteTrigger authorization (integration)', () => {
     });
 
     await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/authorization-echo-resolver.mjs',
+      builtHandlerCode: AUTHORIZATION_ECHO_RESOLVER_BUILT_HANDLER_CODE,
+    });
+
+    await uploadBuiltHandlerFile({
       builtHandlerPath: 'dist/target-function.mjs',
       builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
     });
@@ -194,6 +211,14 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               serverRouteExposed: true,
               authRequired: false,
               httpMethods: [HTTPMethod.GET, HTTPMethod.POST],
+            }),
+            buildLogicFunctionManifest({
+              universalIdentifier:
+                AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER,
+              name: 'authorization-echo-resolver',
+              serverRouteExposed: true,
+              authRequired: false,
+              forwardedRequestHeaders: ['authorization'],
             }),
             buildLogicFunctionManifest({
               universalIdentifier: TARGET_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -244,6 +269,50 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ challenge: 'abc123' });
     }, 60000);
+
+    it('forwards a third-party JWT to a resolver that asked for it', async () => {
+      const thirdPartyToken = jwt.sign(
+        {
+          iss: 'https://api.botframework.com',
+          aud: 'bot-app-id',
+          type: 'ACCESS',
+        },
+        'third-party-signing-key',
+      );
+
+      const response = await request(baseUrl)
+        .post(
+          `/webhooks/server/${AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+        )
+        .set('Authorization', `Bearer ${thirdPartyToken}`)
+        .send({ any: 'payload' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        authorization: `Bearer ${thirdPartyToken}`,
+      });
+    }, 60000);
+
+    it.each([
+      ['as a bearer token', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`],
+      ['with trailing content', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN} x`],
+      ['without a scheme', APPLE_JANE_ADMIN_ACCESS_TOKEN],
+      ['as a session token', 'Bearer sess_abc123'],
+    ])(
+      'never forwards a Twenty credential %s',
+      async (_, authorization) => {
+        const response = await request(baseUrl)
+          .post(
+            `/webhooks/server/${AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+          )
+          .set('Authorization', authorization)
+          .send({ any: 'payload' });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ authorization: null });
+      },
+      60000,
+    );
 
     it('rejects a server-route-exposed resolver that requires authentication before executing it', async () => {
       const response = await request(baseUrl)

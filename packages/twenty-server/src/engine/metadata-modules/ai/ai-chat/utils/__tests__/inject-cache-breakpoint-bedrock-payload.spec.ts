@@ -7,6 +7,12 @@ import {
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
 import { AI_SDK_BEDROCK } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
+
+const BEDROCK_CLAUDE = {
+  sdkPackage: AI_SDK_BEDROCK,
+  modelFamily: ModelFamily.CLAUDE,
+};
 
 const BEDROCK_MAX_CACHE_POINTS = 4;
 const TOOL_STEPS = 4;
@@ -81,7 +87,7 @@ describe('injectCacheBreakpoint against the Bedrock Converse payload', () => {
       instructions: {
         role: 'system',
         content: 'system prompt',
-        providerOptions: getCacheProviderOptions(AI_SDK_BEDROCK),
+        providerOptions: getCacheProviderOptions(BEDROCK_CLAUDE),
       },
       messages: [{ role: 'user', content: 'find my first targets' }],
       tools: {
@@ -93,7 +99,7 @@ describe('injectCacheBreakpoint against the Bedrock Converse payload', () => {
       },
       stopWhen: isStepCount(TOOL_STEPS + 1),
       prepareStep: ({ messages }) => ({
-        messages: injectCacheBreakpoint(messages, AI_SDK_BEDROCK),
+        messages: injectCacheBreakpoint(messages, BEDROCK_CLAUDE),
       }),
     });
 

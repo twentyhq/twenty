@@ -125,7 +125,7 @@ export const SettingPublicDomain = () => {
       variables: { domain: selectedPublicDomain.domain },
       onCompleted: async () => {
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Custom domain successfully deleted`,
         });
         await refetchPublicDomains();
@@ -158,7 +158,7 @@ export const SettingPublicDomain = () => {
       },
       onCompleted: async () => {
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Custom domain successfully created`,
         });
         await refetchPublicDomains();

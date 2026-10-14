@@ -64,6 +64,7 @@ export { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from './MultiItemFieldDefaultMaxV
 export { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from './MultiItemFieldMinMaxValues';
 export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';
 export { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from './ObjectsWithChannelVisibilityConstraints';
+export { PARTNER_PATTERN } from './PartnerPattern';
 export { PermissionFlagType } from './PermissionFlagType';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { POLLED_MESSAGE_CHANNEL_TYPES } from './PolledMessageChannelTypes';
@@ -84,6 +85,7 @@ export { TWENTY_ICONS_BASE_URL } from './TwentyIconsBaseUrl';
 export { UI_SCALE_VALUES } from './UiScaleValues';
 export { VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE } from './ValidationRuleEmptinessSubfieldsByCompositeType';
 export { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from './ValidationRuleExpressionMaxLength';
+export { VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION } from './ValidationRuleExpressionSyntaxDescription';
 export { VALIDATION_RULE_FUNCTIONS } from './ValidationRuleFunctions';
 export { VALIDATION_RULE_NOW_VARIABLE_NAME } from './ValidationRuleNowVariableName';
 export { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from './ViewGroupLoadLimitOptions';

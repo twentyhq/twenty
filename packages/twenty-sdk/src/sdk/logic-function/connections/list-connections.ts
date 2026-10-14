@@ -8,6 +8,7 @@ const LIST_APP_CONNECTIONS_QUERY = `
       providerName
       name
       handle
+      externalAccountId
       visibility
       userWorkspaceId
       workspaceMemberId

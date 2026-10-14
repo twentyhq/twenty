@@ -117,7 +117,8 @@ The value is a standard [semver range](https://github.com/npm/node-semver#ranges
 **What happens at deploy and install time:**
 
 - If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-- If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
+- If `engines.twenty` is **not set**, no version check runs and the app is accepted on any server version (backward-compatible with existing apps). A blank value is rejected as an invalid range.
+- The marketplace does not list an app whose latest version declares an `engines.twenty` range the server does not satisfy, or an invalid one. The app stays registered and visible in the admin panel.
 - If the server has no `APP_VERSION` configured, the check is skipped.
 
 <Note>

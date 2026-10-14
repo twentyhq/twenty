@@ -1,17 +1,19 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { type RefObject, useLayoutEffect } from 'react';
 
 import { useToastContext } from '@ui/components/feedback/Toast/internal/hooks/useToastContext';
 import { type ToastEntry } from '@ui/components/feedback/Toast/internal/types/ToastEntry';
-import { completeToastExit } from '@ui/components/feedback/Toast/internal/utils/completeToastExit';
 
 type ToasterItemExitEffectProps = {
   elementRef: RefObject<HTMLDivElement | null>;
   toastEntry: ToastEntry;
+  rendererKey: symbol;
 };
 
 export const ToasterItemExitEffect = ({
   elementRef,
   toastEntry,
+  rendererKey,
 }: ToasterItemExitEffectProps) => {
   const store = useToastContext();
 
@@ -20,10 +22,15 @@ export const ToasterItemExitEffect = ({
       return;
     }
 
+    const finishExit = () =>
+      store.lifecycle.finishExit({
+        id: toastEntry.notification.id,
+        key: rendererKey,
+      });
     const exitAnimations = elementRef.current?.getAnimations?.() ?? [];
 
-    if (exitAnimations.length === 0) {
-      completeToastExit({ store, toast: toastEntry });
+    if (!isNonEmptyArray(exitAnimations)) {
+      finishExit();
       return;
     }
 
@@ -32,14 +39,14 @@ export const ToasterItemExitEffect = ({
       exitAnimations.map((animation) => animation.finished),
     ).then(() => {
       if (!isCancelled) {
-        completeToastExit({ store, toast: toastEntry });
+        finishExit();
       }
     });
 
     return () => {
       isCancelled = true;
     };
-  }, [elementRef, toastEntry, store]);
+  }, [elementRef, toastEntry, store, rendererKey]);
 
-  return <></>;
+  return null;
 };

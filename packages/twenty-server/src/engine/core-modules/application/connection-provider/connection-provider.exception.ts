@@ -37,6 +37,12 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`The logic function to run on disconnect was not found.`;
     case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_FAILED:
       return msg`The logic function to run on disconnect failed.`;
+    case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND:
+      return msg`The logic function that identifies the connected account was not found.`;
+    case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED:
+      return msg`We could not identify the account you authorized. Please try again.`;
+    case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
+      return msg`You authorized a different account than the one this connection belongs to.`;
     default:
       assertUnreachable(code);
   }
