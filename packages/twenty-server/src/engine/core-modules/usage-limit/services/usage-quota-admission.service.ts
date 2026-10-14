@@ -10,8 +10,8 @@ import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-r
 import { buildUsageRefusalException } from 'src/engine/core-modules/billing/utils/build-usage-refusal-exception.util';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
 type UsageQuotaScope = {
@@ -84,33 +84,6 @@ export class UsageQuotaAdmissionService {
     }
 
     return { hasAvailableCredits: true };
-  }
-
-  async getApplicationCreditAvailability({
-    workspaceId,
-    applicationId,
-  }: {
-    workspaceId: string;
-    applicationId: string;
-  }): Promise<CreditAvailability> {
-    const usageRefusal = await this.findUsageRefusal({
-      workspaceId,
-      resourceType: UsageResourceType.APP,
-      operationType: UsageOperationType.ALL,
-      spenders: { applicationId },
-    });
-
-    if (!isDefined(usageRefusal)) {
-      return { hasAvailableCredits: true };
-    }
-
-    return {
-      hasAvailableCredits: false,
-      reason:
-        usageRefusal.kind === 'subscriptionInactive'
-          ? usageRefusal.reason
-          : 'NO_CREDITS',
-    };
   }
 
   async hasAvailableCredits(workspaceId: string): Promise<boolean> {
