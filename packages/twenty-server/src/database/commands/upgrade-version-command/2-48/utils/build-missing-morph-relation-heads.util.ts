@@ -1,7 +1,6 @@
 import omit from 'lodash.omit';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
-  capitalize,
   isDefined,
   isMorphRelationHead,
   pickMorphGroupSurvivorOrThrow,
@@ -9,11 +8,12 @@ import {
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildMorphRelationHeadFromTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-morph-relation-head-from-target.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { searchAndReplaceLast } from 'src/engine/metadata-modules/flat-object-metadata/utils/search-and-replace-last.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { resetUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 
 type MorphRelationTarget = FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
 
@@ -22,62 +22,20 @@ export type SkippedMorphRelationHead = {
   reason: string;
 };
 
-const FLAT_FIELD_METADATA_ID_PROPERTIES = [
-  'id',
-  'objectMetadataId',
-  'applicationId',
-  'workspaceId',
-  'relationTargetFieldMetadataId',
-  'relationTargetObjectMetadataId',
-  'kanbanAggregateOperationViewIds',
-  'calendarViewIds',
-  'calendarEndViewIds',
-  'mainGroupByFieldMetadataViewIds',
-  'viewFieldIds',
-  'viewFilterIds',
-  'viewSortIds',
-  'fieldPermissionIds',
-  'searchFieldMetadataIds',
-] as const;
-
-const computeMorphName = ({
-  target,
-  targetObject,
-}: {
-  target: MorphRelationTarget;
-  targetObject: FlatObjectMetadata;
-}) =>
-  searchAndReplaceLast({
-    source: target.name,
-    replace: '',
-    search: capitalize(
-      target.universalSettings.relationType === RelationType.MANY_TO_ONE
-        ? targetObject.nameSingular
-        : targetObject.namePlural,
+const pickTargetShownByReads = (
+  targets: MorphRelationTarget[],
+): MorphRelationTarget => {
+  const { id } = pickMorphGroupSurvivorOrThrow(
+    targets.map((target) =>
+      resolveEffectiveFlatEntity({
+        metadataName: 'fieldMetadata',
+        flatEntity: target,
+      }),
     ),
-  });
+  );
 
-const buildHeadFromTarget = ({
-  target,
-  name,
-}: {
-  target: MorphRelationTarget;
-  name: string;
-}): UniversalFlatFieldMetadata => ({
-  ...resetUniversalFlatEntityForeignKeyAggregators({
-    universalFlatEntity: omit(
-      target,
-      FLAT_FIELD_METADATA_ID_PROPERTIES,
-    ) as UniversalFlatFieldMetadata,
-    metadataName: 'fieldMetadata',
-  }),
-  universalIdentifier: target.morphId,
-  name,
-  isSystemSideEffect: true,
-  universalSettings: omit(target.universalSettings, 'joinColumnName'),
-  relationTargetFieldMetadataUniversalIdentifier: null,
-  relationTargetObjectMetadataUniversalIdentifier: null,
-});
+  return targets.find((target) => target.id === id) ?? targets[0];
+};
 
 export const buildMissingMorphRelationHeads = ({
   flatFieldMetadataMaps,
@@ -131,10 +89,11 @@ export const buildMissingMorphRelationHeads = ({
       continue;
     }
 
-    const target = pickMorphGroupSurvivorOrThrow(targets);
-
-    const standardHead =
-      standardFlatFieldMetadataMaps.byUniversalIdentifier[morphId];
+    const target = pickTargetShownByReads(targets);
+    const object =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        target.objectMetadataUniversalIdentifier
+      ];
     const targetObject = isDefined(
       target.relationTargetObjectMetadataUniversalIdentifier,
     )
@@ -143,37 +102,34 @@ export const buildMissingMorphRelationHeads = ({
         ]
       : undefined;
 
-    const head =
-      standardHead ??
+    const head: UniversalFlatFieldMetadata | undefined =
+      standardFlatFieldMetadataMaps.byUniversalIdentifier[morphId] ??
       (isDefined(targetObject)
-        ? buildHeadFromTarget({
-            target,
-            name: computeMorphName({ target, targetObject }),
-          })
+        ? omit(buildMorphRelationHeadFromTarget({ target, targetObject }), 'id')
         : undefined);
 
-    if (!isDefined(head)) {
-      skipped.push({ morphId, reason: 'target object not found' });
+    if (!isDefined(head) || !isDefined(object)) {
+      skipped.push({ morphId, reason: 'object or target object not found' });
       continue;
     }
 
-    const headNameKey = `${target.objectMetadataUniversalIdentifier}:${head.name}`;
+    const headNameKey = `${object.universalIdentifier}:${head.name}`;
     const isNameTaken =
       headNamesByObject.has(headNameKey) ||
-      (
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        target.objectMetadataUniversalIdentifier
-      ]?.fieldUniversalIdentifiers ?? []
-    ).some(
-      (fieldUniversalIdentifier) =>
-        flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier]
-          ?.name === head.name,
-      );
+      validateFlatFieldMetadataNameAvailability({
+        name: head.name,
+        universalFlatFieldMetadataMaps: flatFieldMetadataMaps,
+        universalFlatObjectMetadata: object,
+        buildOptions: {
+          isSystemBuild: true,
+          applicationUniversalIdentifier: head.applicationUniversalIdentifier,
+        },
+      }).length > 0;
 
     if (isNameTaken) {
       skipped.push({
         morphId,
-        reason: `name "${head.name}" is taken on its object`,
+        reason: `name "${head.name}" is not available on its object`,
       });
       continue;
     }

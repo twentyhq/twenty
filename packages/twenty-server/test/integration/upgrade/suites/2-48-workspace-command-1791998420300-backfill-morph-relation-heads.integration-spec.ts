@@ -9,6 +9,7 @@ import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type BackfillMorphRelationHeadsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791998420300-backfill-morph-relation-heads.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const RUN_ON_WORKSPACE_ARGS = {
@@ -26,6 +27,7 @@ describe('2-48 workspace command - backfill morph relation heads (integration)',
   let workspaceCacheService: WorkspaceCacheService;
   let createdObjectMetadataIds: string[] = [];
   let customMorphId: string;
+  let relationBeforeDown: Awaited<ReturnType<typeof findMorphRelation>>;
 
   const findHeads = async () => {
     const { flatFieldMetadataMaps } =
@@ -36,6 +38,44 @@ describe('2-48 workspace command - backfill morph relation heads (integration)',
     return Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(isMorphRelationHead);
+  };
+
+  const findMorphRelation = async (morphId: string) => {
+    const { flatFieldMetadataMaps } =
+      await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    const targets = Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (field) => field.morphId === morphId && !isMorphRelationHead(field),
+      );
+
+    const joinColumns: { column_name: string }[] =
+      await global.testDataSource.query(
+        `SELECT column_name FROM information_schema.columns
+         WHERE table_schema = $1 AND column_name LIKE 'ownerHeadBackfill%'
+         ORDER BY column_name`,
+        [getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)],
+      );
+
+    return {
+      targets: targets
+        .map(({ id, name, relationTargetFieldMetadataId }) => ({
+          id,
+          name,
+          inverse: isDefined(relationTargetFieldMetadataId)
+            ? flatFieldMetadataMaps.byUniversalIdentifier[
+                flatFieldMetadataMaps.universalIdentifierById[
+                  relationTargetFieldMetadataId
+                ] ?? ''
+              ]?.name
+            : undefined,
+        }))
+        .sort((first, second) => first.name.localeCompare(second.name)),
+      joinColumns: joinColumns.map(({ column_name }) => column_name),
+    };
   };
 
   const findHead = async (morphId: string) =>
@@ -135,9 +175,21 @@ describe('2-48 workspace command - backfill morph relation heads (integration)',
     expect(await findHead(NOTE_TARGET_MORPH_ID)).toBeDefined();
     expect(await findHead(customMorphId)).toBeDefined();
 
+    relationBeforeDown = await findMorphRelation(customMorphId);
+
+    expect(relationBeforeDown.targets).toHaveLength(2);
+    expect(
+      relationBeforeDown.targets.every(({ inverse }) => isDefined(inverse)),
+    ).toBe(true);
+    expect(relationBeforeDown.joinColumns).toEqual([
+      'ownerHeadBackfillPetId',
+      'ownerHeadBackfillToyId',
+    ]);
+
     await command.down(RUN_ON_WORKSPACE_ARGS);
 
     expect(await findHeads()).toEqual([]);
+    expect(await findMorphRelation(customMorphId)).toEqual(relationBeforeDown);
   });
 
   it('recreates the standard and custom heads on up', async () => {
@@ -162,6 +214,7 @@ describe('2-48 workspace command - backfill morph relation heads (integration)',
       relationTargetFieldMetadataId: null,
     });
     expect(customHead?.universalSettings).not.toHaveProperty('joinColumnName');
+    expect(await findMorphRelation(customMorphId)).toEqual(relationBeforeDown);
   });
 
   it('changes nothing when it runs again', async () => {
