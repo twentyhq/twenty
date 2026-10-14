@@ -1,26 +1,28 @@
-import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
+import {
+  ARRAY_FILTER_OPERATORS,
+  BOOLEAN_FILTER_OPERATORS,
+  DATE_FILTER_OPERATORS,
+  ENUM_FILTER_OPERATORS,
+  MULTI_SELECT_FILTER_OPERATORS,
+  NUMBER_FILTER_OPERATORS,
+  RAW_JSON_FILTER_OPERATORS,
+  RICH_TEXT_FILTER_OPERATORS,
+  STRING_FILTER_OPERATORS,
+  UUID_FILTER_OPERATORS,
+} from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/filter-operators.constant';
 
-// search is accepted by no field type, so it never gets a nesting hint
-const FILTER_OPERATORS: Record<Exclude<FilterOperator, 'search'>, true> = {
-  eq: true,
-  neq: true,
-  gt: true,
-  gte: true,
-  lt: true,
-  lte: true,
-  in: true,
-  is: true,
-  like: true,
-  ilike: true,
-  startsWith: true,
-  endsWith: true,
-  containsAny: true,
-  containsIlike: true,
-  isEmptyArray: true,
-};
+const FILTER_OPERATORS_ACCEPTED_BY_A_FIELD_TYPE = new Set<string>([
+  ...STRING_FILTER_OPERATORS,
+  ...NUMBER_FILTER_OPERATORS,
+  ...BOOLEAN_FILTER_OPERATORS,
+  ...DATE_FILTER_OPERATORS,
+  ...UUID_FILTER_OPERATORS,
+  ...ARRAY_FILTER_OPERATORS,
+  ...MULTI_SELECT_FILTER_OPERATORS,
+  ...ENUM_FILTER_OPERATORS,
+  ...RAW_JSON_FILTER_OPERATORS,
+  ...RICH_TEXT_FILTER_OPERATORS,
+]);
 
-const FILTER_OPERATOR_SET = new Set<string>(Object.keys(FILTER_OPERATORS));
-
-export const isFilterOperator = (
-  key: string,
-): key is Exclude<FilterOperator, 'search'> => FILTER_OPERATOR_SET.has(key);
+export const isFilterOperator = (key: string): boolean =>
+  FILTER_OPERATORS_ACCEPTED_BY_A_FIELD_TYPE.has(key);
