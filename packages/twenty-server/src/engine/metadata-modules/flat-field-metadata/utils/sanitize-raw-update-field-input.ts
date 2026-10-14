@@ -125,8 +125,7 @@ export const sanitizeRawUpdateFieldInput = ({
   const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
     rawTranslationEntries,
     'fieldMetadata',
-    optionLabelTranslationProperties,
-  );
+  ).filter((property) => !optionLabelTranslationProperties.includes(property));
 
   if (invalidTranslationProperties.length > 0) {
     throw new FieldMetadataException(

@@ -1,10 +1,10 @@
-import { type Manifest } from 'twenty-shared/application';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import {
   getMetadataLabelContext,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { type MessageDescriptor } from '@/app/translations/message';
@@ -37,20 +37,15 @@ export const collectTranslatableStrings = (
   const addFieldOptionStrings = ({
     type,
     options,
-  }: Record<string, unknown>) => {
-    if (
-      !isFieldMetadataSelectKind(type as FieldMetadataType) ||
-      !Array.isArray(options)
-    ) {
+  }: Pick<FieldManifest, 'type' | 'options'>) => {
+    if (!isFieldMetadataSelectKind(type)) {
       return;
     }
 
     const context = getMetadataLabelContext('fieldMetadata', 'label');
 
-    for (const option of options) {
-      const label = (option as { label?: unknown } | null)?.label;
-
-      if (typeof label !== 'string' || label.length === 0) {
+    for (const { label } of options ?? []) {
+      if (!isNonEmptyString(label)) {
         continue;
       }
 
@@ -85,10 +80,6 @@ export const collectTranslatableStrings = (
         context,
       });
     }
-
-    if (metadataName === 'fieldMetadata') {
-      addFieldOptionStrings(entity as Record<string, unknown>);
-    }
   };
 
   for (const [metadataName, manifestKey] of Object.entries(
@@ -105,9 +96,14 @@ export const collectTranslatableStrings = (
     }
   }
 
+  for (const field of manifest.fields ?? []) {
+    addFieldOptionStrings(field);
+  }
+
   for (const objectManifest of manifest.objects ?? []) {
     for (const field of objectManifest.fields ?? []) {
       addEntityStrings(field, 'fieldMetadata');
+      addFieldOptionStrings(field);
     }
   }
 
