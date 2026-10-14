@@ -21,7 +21,7 @@ export const parseExtractionLocale = (
       exitCode: EXIT_CODE.USAGE,
       message: `"${locale}" is not a supported target locale.`,
       hint: `Choose one of: ${Object.keys(APP_LOCALES)
-        .filter((locale) => locale !== SOURCE_LOCALE)
+        .filter((supportedLocale) => supportedLocale !== SOURCE_LOCALE)
         .join(', ')}.`,
     });
   }

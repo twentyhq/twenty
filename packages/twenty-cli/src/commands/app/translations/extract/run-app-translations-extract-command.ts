@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isArray, isNumber, isString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { createToolingFailure } from '@/app/create-tooling-failure';
@@ -32,8 +32,8 @@ export const runAppTranslationsExtractCommand: CommandRun = async (context) => {
     parseData: (value) => {
       if (
         !isPlainObject(value) ||
-        typeof value.sourceCount !== 'number' ||
-        !Array.isArray(value.updatedLocaleFiles) ||
+        !isNumber(value.sourceCount) ||
+        !isArray(value.updatedLocaleFiles) ||
         !value.updatedLocaleFiles.every(isString)
       ) {
         return;
@@ -68,7 +68,7 @@ export const runAppTranslationsExtractCommand: CommandRun = async (context) => {
     data: { app: project, ...result.data, diagnostics },
     human: [
       formatSuccessLine(
-        `Extracted ${result.data.sourceCount} strings to locales/`,
+        `Extracted ${result.data.sourceCount} ${result.data.sourceCount === 1 ? 'string' : 'strings'} to locales/`,
       ),
       `Updated: ${result.data.updatedLocaleFiles.join(', ')}`,
     ].join('\n'),

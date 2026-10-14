@@ -583,8 +583,10 @@ catalogs. `--locale` also creates a missing supported target catalog, for exampl
 
 Translations for unchanged message/context pairs are preserved. New entries have
 empty translations; obsolete entries are removed. Context groups remain separate.
-Malformed target catalogs fail before writing any catalogs. Files under
-`locales/compiled` are left untouched. Each catalog is replaced atomically; an
+Malformed target catalogs fail with `INVALID_INPUT` before writing any catalogs.
+Unsafe catalog or staging paths report `APP_PATH_UNAVAILABLE`. Files under
+`locales/compiled` are left untouched. Temporary files live under `.twenty/cli`.
+Each catalog is replaced atomically; an
 interrupted run may update only some catalogs, so rerun extraction to finish.
 
 The command validates app definitions but does not bundle or upload them. Edit

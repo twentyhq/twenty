@@ -150,6 +150,16 @@ describe('extractApplicationTranslations', () => {
     expect(await readdir(appPath)).toEqual([]);
   });
 
+  it('refuses a symlinked staging directory before creating catalogs', async () => {
+    const outside = join(appPath, 'outside');
+    await mkdir(outside);
+    await symlink(outside, join(appPath, '.twenty'));
+
+    await expect(extract()).rejects.toThrow('symbolic links');
+    expect(await readdir(outside)).toEqual([]);
+    expect(await readdir(appPath)).not.toContain('locales');
+  });
+
   it('refuses a symlinked target catalog without modifying its destination', async () => {
     const outside = join(appPath, 'outside.json');
     await writeFile(outside, '{"Keep":"Me"}');

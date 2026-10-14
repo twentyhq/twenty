@@ -144,13 +144,29 @@ describe('app translations extract', () => {
     await writeFile(join(appPath, 'locales/fr-FR.json'), '{');
     const result = await run(['--json']);
     expect(result.exitCode).toBe(1);
-    expect(parseSingleJsonLine(result.stdout).error.message).toContain(
-      'Cannot read translation catalog',
-    );
+    expect(parseSingleJsonLine(result.stdout).error).toMatchObject({
+      code: 'INVALID_INPUT',
+      message: expect.stringContaining('Cannot read translation catalog'),
+    });
     expect(await readdir(join(appPath, 'locales'))).toEqual(['fr-FR.json']);
     expect(await readFile(join(appPath, 'locales/fr-FR.json'), 'utf8')).toBe(
       '{',
     );
+  }, 30_000);
+
+  it('reports an unsafe catalog path as APP_PATH_UNAVAILABLE', async () => {
+    const outside = join(appPath, 'outside');
+    await mkdir(outside);
+    await symlink(outside, join(appPath, 'locales'));
+
+    const result = await run(['--json']);
+
+    expect(result.exitCode).toBe(1);
+    expect(parseSingleJsonLine(result.stdout).error).toMatchObject({
+      code: 'APP_PATH_UNAVAILABLE',
+      message: expect.stringContaining('Cannot follow symbolic links'),
+    });
+    expect(await readdir(outside)).toEqual([]);
   }, 30_000);
 
   it('advertises extraction in topic help and machine-readable command discovery', async () => {

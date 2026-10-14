@@ -1,6 +1,8 @@
 import { mkdtemp, readdir, rename, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import { isString } from '@sniptt/guards';
+
 import { type Manifest } from 'twenty-shared/application';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -27,11 +29,8 @@ const readExistingCatalog = async (
       isPlainObject(catalog) &&
       Object.values(catalog).every(
         (value) =>
-          typeof value === 'string' ||
-          (isPlainObject(value) &&
-            Object.values(value).every(
-              (translation) => typeof translation === 'string',
-            )),
+          isString(value) ||
+          (isPlainObject(value) && Object.values(value).every(isString)),
       )
     ) {
       return catalog;
@@ -133,8 +132,14 @@ export const extractApplicationTranslations = async ({
   }
 
   signal.throwIfAborted();
+  const stagingRoot = join('.twenty', 'cli');
+
+  await assertPullPaths({ appPath, relativePaths: [stagingRoot] });
   await ensureDir(localesDir);
-  const stagingDirectory = await mkdtemp(join(localesDir, '.twenty-extract-'));
+  await ensureDir(join(appPath, stagingRoot));
+  const stagingDirectory = await mkdtemp(
+    join(appPath, stagingRoot, 'extract-'),
+  );
 
   try {
     for (const [localeFile, catalog] of catalogs) {
