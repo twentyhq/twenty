@@ -51,26 +51,16 @@ const patchNestedValues = ({
   node: Record<string, unknown>;
   findNewerRecord: FindNewerRecord;
 }) => {
-  let patchedNode = node;
+  const patchedEntries = Object.entries(node).map(
+    ([fieldName, fieldValue]) =>
+      [fieldName, patchValue({ value: fieldValue, findNewerRecord })] as const,
+  );
 
-  for (const [fieldName, fieldValue] of Object.entries(node)) {
-    const patchedFieldValue = patchValue({
-      value: fieldValue,
-      findNewerRecord,
-    });
-
-    if (patchedFieldValue === fieldValue) {
-      continue;
-    }
-
-    if (patchedNode === node) {
-      patchedNode = { ...node };
-    }
-
-    patchedNode[fieldName] = patchedFieldValue;
-  }
-
-  return patchedNode;
+  return patchedEntries.some(
+    ([fieldName, patchedFieldValue]) => patchedFieldValue !== node[fieldName],
+  )
+    ? Object.fromEntries(patchedEntries)
+    : node;
 };
 
 const patchValue = ({

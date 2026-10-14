@@ -7,7 +7,7 @@ export const pickPlainFieldsFromRecord = ({
   objectMetadataItem,
   record,
 }: {
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
   record: Record<string, unknown>;
 }) => {
   const relationFields = objectMetadataItem.fields.filter(

@@ -13,7 +13,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
 import { sseAppliedRecordVersionsByCacheIdState } from '@/sse-db-event/states/sseAppliedRecordVersionsByCacheIdState';
-import { addSseAppliedRecordVersion } from '@/sse-db-event/utils/addSseAppliedRecordVersion';
+import { addSseAppliedRecordVersions } from '@/sse-db-event/utils/addSseAppliedRecordVersions';
 import { pickPlainFieldsFromRecord } from '@/sse-db-event/utils/pickPlainFieldsFromRecord';
 import { captureMessage } from '@sentry/react';
 import { useStore } from 'jotai';
@@ -52,6 +52,11 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
+
+      const appliedRecords: {
+        cacheId: string;
+        record: Record<string, unknown>;
+      }[] = [];
 
       for (const updateEvent of updateEvents) {
         const recordFromEvent = updateEvent.properties.after;
@@ -120,19 +125,13 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           continue;
         }
 
-        store.set(
-          sseAppliedRecordVersionsByCacheIdState.atom,
-          (sseAppliedRecordVersionsByCacheId) =>
-            addSseAppliedRecordVersion({
-              sseAppliedRecordVersionsByCacheId,
-              cacheId: `${getObjectTypename(objectMetadataItem.nameSingular)}:${updatedRecord.id}`,
-              record: pickPlainFieldsFromRecord({
-                objectMetadataItem,
-                record: updatedRecord,
-              }),
-              nowInMs: Date.now(),
-            }),
-        );
+        appliedRecords.push({
+          cacheId: `${getObjectTypename(objectMetadataItem.nameSingular)}:${updatedRecord.id}`,
+          record: pickPlainFieldsFromRecord({
+            objectMetadataItem,
+            record: updatedRecord,
+          }),
+        });
 
         const cachedRecordWithConnection = getRecordNodeFromRecord({
           record: cachedRecord,
@@ -180,6 +179,18 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           objectPermissionsByObjectMetadataId,
           upsertRecordsInStore,
         });
+      }
+
+      if (isNonEmptyArray(appliedRecords)) {
+        store.set(
+          sseAppliedRecordVersionsByCacheIdState.atom,
+          (sseAppliedRecordVersionsByCacheId) =>
+            addSseAppliedRecordVersions({
+              sseAppliedRecordVersionsByCacheId,
+              appliedRecords,
+              nowInMs: Date.now(),
+            }),
+        );
       }
 
       if (isNonEmptyArray(updateEvents)) {

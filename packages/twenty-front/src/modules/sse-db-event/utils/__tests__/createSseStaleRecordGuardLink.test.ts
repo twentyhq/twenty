@@ -9,7 +9,7 @@ import { createStore } from 'jotai';
 
 import { SSE_APPLIED_RECORD_VERSION_TTL_IN_MS } from '@/sse-db-event/constants/SseAppliedRecordVersionTtlInMs';
 import { sseAppliedRecordVersionsByCacheIdState } from '@/sse-db-event/states/sseAppliedRecordVersionsByCacheIdState';
-import { addSseAppliedRecordVersion } from '@/sse-db-event/utils/addSseAppliedRecordVersion';
+import { addSseAppliedRecordVersions } from '@/sse-db-event/utils/addSseAppliedRecordVersions';
 import { createSseStaleRecordGuardLink } from '@/sse-db-event/utils/createSseStaleRecordGuardLink';
 
 const FIND_ONE_WORKFLOW_RUN = gql`
@@ -30,10 +30,14 @@ const setup = ({ responseUpdatedAt }: { responseUpdatedAt: string }) => {
 
   store.set(
     sseAppliedRecordVersionsByCacheIdState.atom,
-    addSseAppliedRecordVersion({
+    addSseAppliedRecordVersions({
       sseAppliedRecordVersionsByCacheId: {},
-      cacheId: 'WorkflowRun:run-1',
-      record: { id: 'run-1', status: 'COMPLETED', updatedAt: COMPLETED_AT },
+      appliedRecords: [
+        {
+          cacheId: 'WorkflowRun:run-1',
+          record: { id: 'run-1', status: 'COMPLETED', updatedAt: COMPLETED_AT },
+        },
+      ],
       nowInMs: Date.now(),
     }),
   );
