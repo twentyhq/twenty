@@ -7,8 +7,10 @@ import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-exe
 import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/utils/build-pending-activation-user-auth-context.util';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -21,21 +23,35 @@ describe('McpProtocolService', () => {
   const workspace = { id: 'workspace-1' } as FlatWorkspace;
   let service: McpProtocolService;
   let userRoleService: { getRoleIdForUserWorkspace: jest.Mock };
+  let toolRegistry: { getToolsByName: jest.Mock };
 
   beforeEach(async () => {
     userRoleService = { getRoleIdForUserWorkspace: jest.fn() };
+    toolRegistry = { getToolsByName: jest.fn().mockResolvedValue({}) };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         McpProtocolService,
-        { provide: ToolRegistryService, useValue: {} },
+        { provide: ToolRegistryService, useValue: toolRegistry },
         { provide: UserRoleService, useValue: userRoleService },
-        { provide: McpToolExecutorService, useValue: {} },
+        {
+          provide: McpToolExecutorService,
+          useValue: { handleToolsListing: jest.fn() },
+        },
         { provide: ApiKeyRoleService, useValue: {} },
         { provide: SkillService, useValue: {} },
         { provide: McpInstructionBuilderService, useValue: {} },
         { provide: WorkspaceManyOrAllFlatEntityMapsCacheService, useValue: {} },
-        { provide: WorkspaceCacheService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              flatRoleTargetByAgentIdMaps: {
+                'agent-id': { roleId: 'agent-role-id' },
+              },
+            }),
+          },
+        },
       ],
     }).compile();
 
@@ -75,6 +91,34 @@ describe('McpProtocolService', () => {
       expect(userRoleService.getRoleIdForUserWorkspace).not.toHaveBeenCalled();
     },
   );
+
+  it('hands the request agent to the tools it builds', async () => {
+    const application = {
+      id: 'application-id',
+      defaultRoleId: 'application-role-id',
+    } as FlatApplication;
+
+    await service.handleMCPCoreQuery(
+      { jsonrpc: '2.0', id: 1, method: 'tools/list' },
+      {
+        authContext: buildApplicationAuthContext({
+          workspace,
+          application,
+          agentId: 'agent-id',
+        }),
+        workspace,
+        apiKey: undefined,
+        application,
+        agentId: 'agent-id',
+        isDirectMode: false,
+      },
+    );
+
+    expect(toolRegistry.getToolsByName).toHaveBeenCalledWith(
+      expect.any(Array),
+      expect.objectContaining({ agentId: 'agent-id' }),
+    );
+  });
 
   it('answers ping from an API key', async () => {
     const apiKey = { id: 'api-key-1' } as FlatApiKey;

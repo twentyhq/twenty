@@ -290,6 +290,7 @@ export class McpProtocolService {
       userWorkspaceId?: string;
       apiKey?: FlatApiKey;
       application?: FlatApplication;
+      agentId?: string;
     },
   ): Promise<{ toolSet: ToolSet; toolContext: ToolProviderContext }> {
     const actorContext = await this.buildActorContext(
@@ -306,6 +307,7 @@ export class McpProtocolService {
       application: options?.application,
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
+      agentId: options?.agentId,
       actorContext,
     };
 
@@ -462,6 +464,7 @@ export class McpProtocolService {
             userId,
             userWorkspaceId,
             apiKey,
+            agentId,
           }),
       );
 
