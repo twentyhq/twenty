@@ -327,6 +327,7 @@ describe('LogConsole', () => {
   it('toggles with Mod+J on a page that turns off modifier hotkeys', async () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(focusStackState.atom, [SETTINGS_PAGE_FOCUS_STACK_ITEM]);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
@@ -343,6 +344,7 @@ describe('LogConsole', () => {
   it('ignores Mod+J while a dialog turns off modifier hotkeys', async () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
       jotaiStore.set(focusStackState.atom, [
         SETTINGS_PAGE_FOCUS_STACK_ITEM,
         {
