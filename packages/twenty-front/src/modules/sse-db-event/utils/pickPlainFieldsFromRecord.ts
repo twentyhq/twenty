@@ -10,22 +10,21 @@ export const pickPlainFieldsFromRecord = ({
   objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
   record: Record<string, unknown>;
 }) => {
-  const relationFields = objectMetadataItem.fields.filter(
-    (field) => isFieldRelation(field) || isFieldMorphRelation(field),
-  );
+  const relationFieldNames = objectMetadataItem.fields
+    .filter((field) => isFieldRelation(field) || isFieldMorphRelation(field))
+    .map((field) => field.name);
 
-  const joinColumnNames = relationFields.map((field) =>
-    computeRelationGqlFieldJoinColumnName({ name: field.name }),
-  );
+  const relationAndJoinColumnNames = new Set([
+    ...relationFieldNames,
+    ...relationFieldNames.map((name) =>
+      computeRelationGqlFieldJoinColumnName({ name }),
+    ),
+  ]);
 
   const plainFieldNames = new Set(
     objectMetadataItem.fields
-      .filter(
-        (field) =>
-          !relationFields.includes(field) &&
-          !joinColumnNames.includes(field.name),
-      )
-      .map((field) => field.name),
+      .map((field) => field.name)
+      .filter((fieldName) => !relationAndJoinColumnNames.has(fieldName)),
   );
 
   return Object.fromEntries(
