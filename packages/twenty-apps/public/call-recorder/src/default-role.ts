@@ -25,8 +25,6 @@ export default defineApplicationRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent.universalIdentifier,
       canReadObjectRecords: true,
-      // Needed to write the app's own Recording Bot field: owning a field
-      // grants no write access on the object it extends.
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,

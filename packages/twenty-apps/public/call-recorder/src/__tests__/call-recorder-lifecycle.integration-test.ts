@@ -3660,8 +3660,6 @@ describe('call recorder app lifecycle (integration)', () => {
   });
 
   describe('Recording Bot preference', () => {
-    // Reconcile with the app's own token so the Recording Bot writes go
-    // through the app role; the shared client's workspace API key bypasses it.
     let applicationClient: CoreApiClient;
 
     beforeEach(() => {
