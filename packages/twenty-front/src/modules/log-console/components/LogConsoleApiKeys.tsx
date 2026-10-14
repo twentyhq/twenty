@@ -23,6 +23,7 @@ import {
   GetApiKeysDocument,
   type GetApiKeysQuery,
 } from '~/generated-metadata/graphql';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ApiKeyListItem = GetApiKeysQuery['apiKeys'][number];
 
@@ -38,9 +39,11 @@ export const LogConsoleApiKeys = () => {
   const getApiKeyName = (apiKey: ApiKeyListItem) =>
     apiKey.name || t`Unnamed API Key`;
 
-  const filteredApiKeys = (apiKeysData?.apiKeys ?? []).filter((apiKey) =>
-    getApiKeyName(apiKey).toLowerCase().includes(searchValue.toLowerCase()),
-  );
+  const filteredApiKeys = filterBySearchQuery({
+    items: apiKeysData?.apiKeys ?? [],
+    searchQuery: searchValue,
+    getSearchableValues: (apiKey) => [getApiKeyName(apiKey)],
+  });
 
   const columns: LogConsoleListTableColumn<ApiKeyListItem>[] = [
     {

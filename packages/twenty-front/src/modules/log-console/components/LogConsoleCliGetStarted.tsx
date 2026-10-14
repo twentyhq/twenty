@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, normalizeUrlOrigin } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCopy, IconTerminal } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
@@ -22,11 +22,11 @@ export const LogConsoleCliGetStarted = () => {
     isLogConsoleCliGuideOpenState,
   );
 
-  const workspaceUrl = (
+  const workspaceUrl = normalizeUrlOrigin(
     isDefined(currentWorkspace?.workspaceUrls)
       ? getWorkspaceUrl(currentWorkspace.workspaceUrls)
-      : window.location.origin
-  ).replace(/\/$/, '');
+      : window.location.origin,
+  );
 
   const steps = [
     {

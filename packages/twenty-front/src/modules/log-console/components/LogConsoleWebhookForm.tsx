@@ -6,7 +6,7 @@ import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebh
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -29,12 +29,10 @@ const DELETE_WEBHOOK_MODAL_ID = 'delete-webhook-modal';
 
 type LogConsoleWebhookFormProps = {
   webhookId?: string;
-  mode: WebhookFormMode;
 };
 
 export const LogConsoleWebhookForm = ({
   webhookId,
-  mode,
 }: LogConsoleWebhookFormProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -42,6 +40,9 @@ export const LogConsoleWebhookForm = ({
     logConsoleWebhooksViewState,
   );
   const { openDialog } = useDialog();
+
+  const goBackToList = () => setLogConsoleWebhooksView({ type: 'list' });
+
   const {
     formConfig,
     loading,
@@ -54,13 +55,11 @@ export const LogConsoleWebhookForm = ({
     error,
   } = useWebhookForm({
     webhookId,
-    mode,
+    mode: isDefined(webhookId) ? WebhookFormMode.Edit : WebhookFormMode.Create,
     onCreated: (createdWebhookId) =>
       setLogConsoleWebhooksView({ type: 'detail', id: createdWebhookId }),
-    onDeleted: () => setLogConsoleWebhooksView({ type: 'list' }),
+    onDeleted: goBackToList,
   });
-
-  const goBackToList = () => setLogConsoleWebhooksView({ type: 'list' });
 
   const getTitle = () => {
     if (isCreationMode) {
@@ -173,7 +172,6 @@ export const LogConsoleWebhookForm = ({
             render={({ field: { value } }) => (
               <SettingsDatabaseEventsForm
                 events={value}
-                compact
                 updateOperation={updateOperation}
                 removeOperation={removeOperation}
               />

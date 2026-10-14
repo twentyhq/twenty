@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
+import { handleClickableElementKeyDown } from 'twenty-ui/primitives/accessibility';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -8,7 +9,6 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { getTableRowActivationKeyDownHandler } from '@/ui/layout/table/utils/getTableRowActivationKeyDownHandler';
 
 const CHEVRON_COLUMN_WIDTH = '32px';
 
@@ -58,15 +58,13 @@ export const LogConsoleListTable = <TItem,>({
         <TableBody>
           {items.map((item) => {
             const itemId = getItemId(item);
-            const handleClick = () => onItemClick(item);
-
             return (
               <TableRow
                 key={itemId}
                 gridTemplateColumns={gridTemplateColumns}
                 isSelected={itemId === selectedItemId}
-                onClick={handleClick}
-                onKeyDown={getTableRowActivationKeyDownHandler(handleClick)}
+                onClick={() => onItemClick(item)}
+                onKeyDown={handleClickableElementKeyDown}
                 role="button"
                 tabIndex={0}
               >

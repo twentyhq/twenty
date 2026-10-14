@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { LogConsoleDetailPanelLayout } from '@/log-console/components/LogConsoleDetailPanelLayout';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
@@ -46,21 +46,10 @@ export const LogConsoleApiKeyNew = () => {
     roleId: '',
   });
 
-  useEffect(() => {
-    if (isDefined(rolesData?.getApiKeyRoles)) {
-      const apiKeyAssignableRoles = rolesData.getApiKeyRoles.filter(
-        (role) => role.canBeAssignedToApiKeys,
-      );
-      if (apiKeyAssignableRoles.length > 0) {
-        setFormValues((prev) => {
-          if (!prev.roleId) {
-            return { ...prev, roleId: apiKeyAssignableRoles[0].id };
-          }
-          return prev;
-        });
-      }
-    }
-  }, [rolesData]);
+  const roleId =
+    formValues.roleId ||
+    roles.find((role) => role.canBeAssignedToApiKeys)?.id ||
+    '';
 
   const [createApiKey] = useMutation(CreateApiKeyDocument, {
     refetchQueries: [GetApiKeysDocument],
@@ -68,13 +57,6 @@ export const LogConsoleApiKeyNew = () => {
   });
 
   const jotaiStore = useStore();
-
-  const setApiKeyTokenCallback = useCallback(
-    (apiKeyId: string, token: string) => {
-      jotaiStore.set(apiKeyTokenFamilyState.atomFamily(apiKeyId), token);
-    },
-    [jotaiStore],
-  );
 
   const handleSave = async () => {
     if (!formValues.name) return;
@@ -84,9 +66,7 @@ export const LogConsoleApiKeyNew = () => {
       formValues.expirationDate ?? 30,
     ).toISOString();
 
-    const roleIdToUse = formValues.roleId;
-
-    if (!roleIdToUse) {
+    if (!roleId) {
       return;
     }
 
@@ -95,7 +75,7 @@ export const LogConsoleApiKeyNew = () => {
         input: {
           name: formValues.name.trim(),
           expiresAt,
-          roleId: roleIdToUse,
+          roleId,
         },
       },
     });
@@ -114,15 +94,15 @@ export const LogConsoleApiKeyNew = () => {
     });
 
     if (isDefined(tokenData.data?.generateApiKeyToken)) {
-      setApiKeyTokenCallback(
-        newApiKey.id,
+      jotaiStore.set(
+        apiKeyTokenFamilyState.atomFamily(newApiKey.id),
         tokenData.data.generateApiKeyToken.token,
       );
       setLogConsoleApisView({ type: 'detail', id: newApiKey.id });
     }
   };
 
-  const canSave = !!formValues.name && !!formValues.roleId;
+  const canSave = !!formValues.name && !!roleId;
 
   const goBackToList = () => setLogConsoleApisView({ type: 'list' });
 
@@ -175,7 +155,7 @@ export const LogConsoleApiKeyNew = () => {
               description={t`What this API can do: Select a user role to define its permissions.`}
             />
             <SettingsDevelopersRoleSelector
-              value={formValues.roleId}
+              value={roleId}
               onChange={(roleId) => {
                 setFormValues((prevState) => ({
                   ...prevState,

@@ -17,6 +17,7 @@ import {
   GetWebhooksDocument,
   type GetWebhooksQuery,
 } from '~/generated-metadata/graphql';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type WebhookListItem = GetWebhooksQuery['webhooks'][number];
 
@@ -29,13 +30,14 @@ export const LogConsoleWebhooks = () => {
   );
   const { data: webhooksData } = useQuery(GetWebhooksDocument);
 
-  const normalizedSearchValue = searchValue.toLowerCase();
-
-  const filteredWebhooks = (webhooksData?.webhooks ?? []).filter((webhook) =>
-    [webhook.targetUrl, webhook.description ?? ''].some((value) =>
-      value.toLowerCase().includes(normalizedSearchValue),
-    ),
-  );
+  const filteredWebhooks = filterBySearchQuery({
+    items: webhooksData?.webhooks ?? [],
+    searchQuery: searchValue,
+    getSearchableValues: (webhook) => [
+      webhook.targetUrl,
+      webhook.description ?? '',
+    ],
+  });
 
   const columns: LogConsoleListTableColumn<WebhookListItem>[] = [
     {

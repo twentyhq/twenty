@@ -5,7 +5,7 @@ import { Button } from 'twenty-ui/primitives/input';
 
 import { LOG_CONSOLE_API_DOCUMENTATION_SCHEMAS } from '@/log-console/constants/LogConsoleApiDocumentationSchemas';
 import { LOG_CONSOLE_API_DOCUMENTATION_TYPES } from '@/log-console/constants/LogConsoleApiDocumentationTypes';
-import { useOpenPlayground } from '@/settings/mcp-and-apis/hooks/useOpenPlayground';
+import { useOpenPlayground } from '@/log-console/hooks/useOpenPlayground';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 

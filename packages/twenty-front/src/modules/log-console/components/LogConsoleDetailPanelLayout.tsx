@@ -66,7 +66,7 @@ type LogConsoleDetailPanelLayoutProps = {
   icon: ReactNode;
   avatar?: ComponentProps<typeof HeaderIdentifier>['avatar'];
   actions?: ReactNode;
-  onClose?: () => void;
+  onClose: () => void;
   children: ReactNode;
 };
 
@@ -85,17 +85,15 @@ export const LogConsoleDetailPanelLayout = ({
   return (
     <StyledPanel>
       <StyledTopBar>
-        {isDefined(onClose) && (
-          <IconButton
-            size="sm"
-            variant="ghost"
-            tooltip={closeLabel}
-            aria-label={closeLabel}
-            onClick={onClose}
-          >
-            <IconLayoutSidebarRightCollapse />
-          </IconButton>
-        )}
+        <IconButton
+          size="sm"
+          variant="ghost"
+          tooltip={closeLabel}
+          aria-label={closeLabel}
+          onClick={onClose}
+        >
+          <IconLayoutSidebarRightCollapse />
+        </IconButton>
         <StyledIdentifier>
           <HeaderIdentifier
             avatar={avatar}

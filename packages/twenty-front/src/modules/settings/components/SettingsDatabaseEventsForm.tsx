@@ -1,6 +1,5 @@
 import { WebhookEntitySelect } from '@/settings/developers/components/WebhookEntitySelect';
 import { Select } from '@/ui/input/components/Select';
-import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,23 +8,18 @@ import { type SelectOption } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const OBJECT_DROPDOWN_WIDTH = 240;
-const ACTION_DROPDOWN_WIDTH = 240;
-const OBJECT_MOBILE_WIDTH = 150;
-const ACTION_MOBILE_WIDTH = 140;
+const OBJECT_MIN_WIDTH = 150;
+const ACTION_MIN_WIDTH = 140;
+const ACTION_MAX_WIDTH = 240;
 
-const StyledFilterRow = styled.div<{ isCompact: boolean }>`
+const StyledFilterRow = styled.div`
   align-items: center;
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: ${({ isCompact }) =>
-    isCompact
-      ? `minmax(${OBJECT_MOBILE_WIDTH}px, 1fr) ${ACTION_MOBILE_WIDTH}px ${
-          themeCssVariables.spacing[8]
-        }`
-      : `minmax(${OBJECT_DROPDOWN_WIDTH}px, 1fr) ${ACTION_DROPDOWN_WIDTH}px ${
-          themeCssVariables.spacing[8]
-        }`};
+  grid-template-columns:
+    minmax(${OBJECT_MIN_WIDTH}px, 1fr)
+    minmax(${ACTION_MIN_WIDTH}px, ${ACTION_MAX_WIDTH}px)
+    ${themeCssVariables.spacing[8]};
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -39,7 +33,6 @@ export const SettingsDatabaseEventsForm = ({
   updateOperation,
   removeOperation,
   disabled = false,
-  compact = false,
 }: {
   events: { object: string | null; action: string; updatedFields?: string[] }[];
   updateOperation?: (
@@ -49,11 +42,7 @@ export const SettingsDatabaseEventsForm = ({
   ) => void;
   removeOperation?: (index: number) => void;
   disabled?: boolean;
-  compact?: boolean;
 }) => {
-  const isMobile = useIsMobile();
-  const isCompact = isMobile || compact;
-
   const getActionOptions = (
     updatedFields?: string[],
   ): SelectOption<string>[] => {
@@ -75,7 +64,7 @@ export const SettingsDatabaseEventsForm = ({
   return (
     <>
       {events.map((operation, index) => (
-        <StyledFilterRow key={index} isCompact={isCompact}>
+        <StyledFilterRow key={index}>
           <WebhookEntitySelect
             dropdownId={`object-webhook-type-select-${index}`}
             value={operation.object}

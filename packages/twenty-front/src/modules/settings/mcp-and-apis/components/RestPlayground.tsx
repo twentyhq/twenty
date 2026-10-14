@@ -6,7 +6,7 @@ import {
 } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useState, lazy, Suspense } from 'react';
+import { type ComponentProps, lazy, Suspense, useMemo, useState } from 'react';
 import { styled } from '@linaria/react';
 
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -57,6 +57,26 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const colorScheme = useThemeColorScheme();
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const [specContent, setSpecContent] = useState<object | null>(null);
+  const token = playgroundApiKey?.token;
+
+  // Scalar re-processes the whole spec whenever it receives a new configuration
+  const configuration = useMemo<
+    ComponentProps<typeof ApiReferenceReact>['configuration']
+  >(
+    () => ({
+      content: specContent,
+      authentication: {
+        preferredSecurityScheme: 'bearerAuth',
+        securitySchemes: { bearerAuth: { token } },
+      },
+      baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
+      forceDarkModeState: colorScheme === 'dark' ? 'dark' : 'light',
+      hideClientButton: true,
+      hideDarkModeToggle: true,
+      hideModels: schema === 'metadata',
+    }),
+    [colorScheme, schema, specContent, token],
+  );
 
   if (!isPlaygroundApiKeyFresh(playgroundApiKey)) {
     onError();
@@ -77,22 +97,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
         fallback
       ) : (
         <Suspense fallback={fallback}>
-          <ApiReferenceReact
-            configuration={{
-              content: specContent,
-              authentication: {
-                preferredSecurityScheme: 'bearerAuth',
-                securitySchemes: {
-                  bearerAuth: { token: playgroundApiKey.token },
-                },
-              },
-              baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
-              forceDarkModeState: colorScheme === 'dark' ? 'dark' : 'light',
-              hideClientButton: true,
-              hideDarkModeToggle: true,
-              hideModels: schema === 'metadata',
-            }}
-          />
+          <ApiReferenceReact configuration={configuration} />
         </Suspense>
       )}
     </StyledContainer>

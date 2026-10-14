@@ -4,15 +4,8 @@ import { lazy, type ReactNode, Suspense, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
 
-import { LogConsoleApiKeyDetail } from '@/log-console/components/LogConsoleApiKeyDetail';
-import { LogConsoleApiKeyNew } from '@/log-console/components/LogConsoleApiKeyNew';
-import { LogConsoleApiKeys } from '@/log-console/components/LogConsoleApiKeys';
-import { LogConsoleCli } from '@/log-console/components/LogConsoleCli';
-import { LogConsoleCliGetStarted } from '@/log-console/components/LogConsoleCliGetStarted';
 import { LogConsoleDetailPanel } from '@/log-console/components/LogConsoleDetailPanel';
 import { LogConsoleLogs } from '@/log-console/components/LogConsoleLogs';
-import { LogConsoleWebhookForm } from '@/log-console/components/LogConsoleWebhookForm';
-import { LogConsoleWebhooks } from '@/log-console/components/LogConsoleWebhooks';
 import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { isLogConsoleCliGuideOpenState } from '@/log-console/states/isLogConsoleCliGuideOpenState';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
@@ -21,9 +14,50 @@ import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebh
 import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
 import { getLogConsoleTransition } from '@/log-console/utils/getLogConsoleTransition';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+const LogConsoleApiKeyDetail = lazy(() =>
+  import('@/log-console/components/LogConsoleApiKeyDetail').then((module) => ({
+    default: module.LogConsoleApiKeyDetail,
+  })),
+);
+
+const LogConsoleApiKeyNew = lazy(() =>
+  import('@/log-console/components/LogConsoleApiKeyNew').then((module) => ({
+    default: module.LogConsoleApiKeyNew,
+  })),
+);
+
+const LogConsoleApiKeys = lazy(() =>
+  import('@/log-console/components/LogConsoleApiKeys').then((module) => ({
+    default: module.LogConsoleApiKeys,
+  })),
+);
+
+const LogConsoleCli = lazy(() =>
+  import('@/log-console/components/LogConsoleCli').then((module) => ({
+    default: module.LogConsoleCli,
+  })),
+);
+
+const LogConsoleCliGetStarted = lazy(() =>
+  import('@/log-console/components/LogConsoleCliGetStarted').then((module) => ({
+    default: module.LogConsoleCliGetStarted,
+  })),
+);
+
+const LogConsoleWebhookForm = lazy(() =>
+  import('@/log-console/components/LogConsoleWebhookForm').then((module) => ({
+    default: module.LogConsoleWebhookForm,
+  })),
+);
+
+const LogConsoleWebhooks = lazy(() =>
+  import('@/log-console/components/LogConsoleWebhooks').then((module) => ({
+    default: module.LogConsoleWebhooks,
+  })),
+);
 
 const LogConsoleApiPlayground = lazy(() =>
   import('@/log-console/components/LogConsoleApiPlayground').then((module) => ({
@@ -108,12 +142,10 @@ export const LogConsoleBody = ({ tabId }: LogConsoleBodyProps) => {
         return <LogConsoleLogs />;
       case 'apis':
         return logConsoleApisView.type === 'playground' ? (
-          <Suspense fallback={<SettingsSkeletonLoader />}>
-            <LogConsoleApiPlayground
-              playgroundType={logConsoleApisView.playgroundType}
-              schema={logConsoleApisView.schema}
-            />
-          </Suspense>
+          <LogConsoleApiPlayground
+            playgroundType={logConsoleApisView.playgroundType}
+            schema={logConsoleApisView.schema}
+          />
         ) : (
           <LogConsoleApiKeys />
         );
@@ -147,12 +179,11 @@ export const LogConsoleBody = ({ tabId }: LogConsoleBodyProps) => {
       case 'webhooks':
         switch (logConsoleWebhooksView.type) {
           case 'new':
-            return <LogConsoleWebhookForm mode={WebhookFormMode.Create} />;
+            return <LogConsoleWebhookForm />;
           case 'detail':
             return (
               <LogConsoleWebhookForm
                 key={logConsoleWebhooksView.id}
-                mode={WebhookFormMode.Edit}
                 webhookId={logConsoleWebhooksView.id}
               />
             );
@@ -201,7 +232,9 @@ export const LogConsoleBody = ({ tabId }: LogConsoleBodyProps) => {
   return (
     <StyledBody>
       <StyledActiveTab isDetailPanelOpen={isDetailPanelOpen}>
-        {renderContent()}
+        <Suspense fallback={<SettingsSkeletonLoader />}>
+          {renderContent()}
+        </Suspense>
       </StyledActiveTab>
       <StyledDetailPanelWrapper
         detailPanelWidth={detailPanelWidth}
@@ -223,7 +256,7 @@ export const LogConsoleBody = ({ tabId }: LogConsoleBodyProps) => {
             onResizeStart={() => setIsDetailPanelResizing(true)}
           />
         )}
-        {detailPanel}
+        <Suspense fallback={<SettingsSkeletonLoader />}>{detailPanel}</Suspense>
       </StyledDetailPanelWrapper>
     </StyledBody>
   );

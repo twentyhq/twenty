@@ -18,7 +18,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -70,13 +70,6 @@ export const LogConsoleApiKeyDetail = ({
   const jotaiStore = useStore();
 
   const apiKeyToken = useAtomFamilyStateValue(apiKeyTokenFamilyState, apiKeyId);
-
-  const setApiKeyTokenCallback = useCallback(
-    (apiKeyId: string, token: string) => {
-      jotaiStore.set(apiKeyTokenFamilyState.atomFamily(apiKeyId), token);
-    },
-    [jotaiStore],
-  );
 
   const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
   const [createApiKey] = useMutation(CreateApiKeyDocument);
@@ -224,7 +217,10 @@ export const LogConsoleApiKeyDetail = ({
         await deleteIntegration(false);
 
         if (isNonEmptyString(newApiKey?.token)) {
-          setApiKeyTokenCallback(newApiKey.id, newApiKey.token);
+          jotaiStore.set(
+            apiKeyTokenFamilyState.atomFamily(newApiKey.id),
+            newApiKey.token,
+          );
           setLogConsoleApisView({ type: 'detail', id: newApiKey.id });
         }
       }

@@ -3,7 +3,6 @@ import { HttpResponse, graphql } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { LogConsoleWebhookForm } from '@/log-console/components/LogConsoleWebhookForm';
-import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { Toaster } from 'twenty-ui/components/feedback';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -31,9 +30,6 @@ export default meta;
 type Story = StoryObj<typeof LogConsoleWebhookForm>;
 
 export const CreateMode: Story = {
-  args: {
-    mode: WebhookFormMode.Create,
-  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText('New webhook', undefined, { timeout: 3000 });
@@ -46,7 +42,6 @@ export const CreateMode: Story = {
 
 export const EditMode: Story = {
   args: {
-    mode: WebhookFormMode.Edit,
     webhookId: '1234',
   },
   play: async ({ canvasElement }) => {
@@ -72,7 +67,6 @@ export const EditMode: Story = {
 
 export const EntityPicker: Story = {
   args: {
-    mode: WebhookFormMode.Edit,
     webhookId: '1234',
   },
   play: async ({ canvasElement }) => {
@@ -131,7 +125,6 @@ export const EntityPicker: Story = {
 
 export const QueryError: Story = {
   args: {
-    mode: WebhookFormMode.Edit,
     webhookId: 'unavailable-webhook',
   },
   decorators: [

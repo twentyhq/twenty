@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import {
   IconArrowUpRight,
   IconCopy,
@@ -8,6 +9,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { LogConsoleListLayout } from '@/log-console/components/LogConsoleListLayout';
 import {
   type LogConsoleListTableColumn,
@@ -15,29 +17,32 @@ import {
 } from '@/log-console/components/LogConsoleListTable';
 import { LOG_CONSOLE_CLI_COMMANDS } from '@/log-console/constants/LogConsoleCliCommands';
 import { isLogConsoleCliGuideOpenState } from '@/log-console/states/isLogConsoleCliGuideOpenState';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
-
-const TWENTY_CLI_DOCUMENTATION_URL = 'https://www.npmjs.com/package/twenty';
 
 type LogConsoleCliCommand = (typeof LOG_CONSOLE_CLI_COMMANDS)[number];
 
 export const LogConsoleCli = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const [searchValue, setSearchValue] = useState('');
   const [isLogConsoleCliGuideOpen, setIsLogConsoleCliGuideOpen] = useAtomState(
     isLogConsoleCliGuideOpenState,
   );
 
-  const normalizedSearchValue = searchValue.toLowerCase();
-
-  const filteredCommands = LOG_CONSOLE_CLI_COMMANDS.filter((cliCommand) =>
-    [cliCommand.command, t(cliCommand.description)].some((value) =>
-      value.toLowerCase().includes(normalizedSearchValue),
-    ),
-  );
+  const filteredCommands = filterBySearchQuery({
+    items: LOG_CONSOLE_CLI_COMMANDS,
+    searchQuery: searchValue,
+    getSearchableValues: (cliCommand) => [
+      cliCommand.command,
+      t(cliCommand.description),
+    ],
+  });
 
   const columns: LogConsoleListTableColumn<LogConsoleCliCommand>[] = [
     {
@@ -68,7 +73,14 @@ export const LogConsoleCli = () => {
             endIcon={<IconArrowUpRight />}
             size="sm"
             variant="outline"
-            onClick={() => openUrlInNewTab(TWENTY_CLI_DOCUMENTATION_URL)}
+            onClick={() =>
+              openUrlInNewTab(
+                getDocumentationUrl({
+                  locale: currentWorkspaceMember?.locale,
+                  path: DOCUMENTATION_PATHS.DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI,
+                }),
+              )
+            }
           >{t`Documentation`}</Button>
           {!isLogConsoleCliGuideOpen && (
             <Button

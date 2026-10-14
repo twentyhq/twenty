@@ -1,7 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import {
   IconApi,
-  type IconComponent,
   IconTerminal,
   IconTerminal2,
   IconWebhook,
@@ -9,15 +8,10 @@ import {
 
 import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-type LogConsoleTab = {
-  id: LogConsoleTabId;
-  title: string;
-  Icon: IconComponent;
-};
-
-export const useLogConsoleTabs = (): LogConsoleTab[] => {
+export const useLogConsoleTabs = () => {
   const { t } = useLingui();
   const hasSecurityPermission = useHasPermissionFlag(
     PermissionFlagType.SECURITY,
@@ -26,32 +20,31 @@ export const useLogConsoleTabs = (): LogConsoleTab[] => {
     PermissionFlagType.API_KEYS_AND_WEBHOOKS,
   );
 
-  return [
+  const tabs: SingleTabProps<LogConsoleTabId>[] = [
     {
-      id: 'logs' as const,
+      id: 'logs',
       title: t`Logs`,
       Icon: IconTerminal2,
-      isAvailable: hasSecurityPermission,
+      hide: !hasSecurityPermission,
     },
     {
-      id: 'apis' as const,
+      id: 'apis',
       title: t`APIs`,
       Icon: IconApi,
-      isAvailable: hasApiKeysAndWebhooksPermission,
+      hide: !hasApiKeysAndWebhooksPermission,
     },
     {
-      id: 'webhooks' as const,
+      id: 'webhooks',
       title: t`Webhooks`,
       Icon: IconWebhook,
-      isAvailable: hasApiKeysAndWebhooksPermission,
+      hide: !hasApiKeysAndWebhooksPermission,
     },
     {
-      id: 'cli' as const,
+      id: 'cli',
       title: t`CLI`,
       Icon: IconTerminal,
-      isAvailable: true,
     },
-  ]
-    .filter(({ isAvailable }) => isAvailable)
-    .map(({ id, title, Icon }) => ({ id, title, Icon }));
+  ];
+
+  return tabs.filter((tab) => tab.hide !== true);
 };

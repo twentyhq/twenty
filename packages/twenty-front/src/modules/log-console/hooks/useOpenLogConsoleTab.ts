@@ -5,18 +5,13 @@ import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDispl
 import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
 import { type LogConsoleApisView } from '@/log-console/types/LogConsoleApisView';
 import { type LogConsoleResourceView } from '@/log-console/types/LogConsoleResourceView';
-import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isDefined } from 'twenty-shared/utils';
 
 type OpenLogConsoleTabArgs = { isFullScreen?: boolean } & (
-  | { tabId: 'apis'; view?: LogConsoleApisView }
-  | {
-      tabId: Exclude<LogConsoleTabId, 'apis'>;
-      view?: LogConsoleResourceView;
-    }
+  | { tabId: 'apis'; view: LogConsoleApisView }
+  | { tabId: 'webhooks'; view: LogConsoleResourceView }
 );
 
 export const useOpenLogConsoleTab = () => {
@@ -37,11 +32,9 @@ export const useOpenLogConsoleTab = () => {
     isFullScreen = false,
     ...tab
   }: OpenLogConsoleTabArgs) => {
-    if (tab.tabId === 'apis' && isDefined(tab.view)) {
+    if (tab.tabId === 'apis') {
       setLogConsoleApisView(tab.view);
-    }
-
-    if (tab.tabId === 'webhooks' && isDefined(tab.view)) {
+    } else {
       setLogConsoleWebhooksView(tab.view);
     }
 
