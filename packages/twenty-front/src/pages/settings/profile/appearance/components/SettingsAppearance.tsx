@@ -12,12 +12,9 @@ import { SettingsAppearanceOption } from '~/pages/settings/profile/appearance/co
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 const StyledChoices = styled.div`
+  flex-direction: row;
+  gap: ${themeCssVariables.spacing[4]};
   width: 100%;
-
-  && {
-    flex-direction: row;
-    gap: ${themeCssVariables.spacing[4]};
-  }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     overflow-x: auto;
