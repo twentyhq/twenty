@@ -178,22 +178,26 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       await claimOwnership({
         variables: { applicationRegistrationId },
       });
-      await apolloAdminClient.refetchQueries({
-        include: [FindOneAdminApplicationRegistrationDocument],
-      });
-      enqueueToast({
-        status: 'success',
-        children: t`Ownership claimed successfully`,
-      });
-      closeDialog(CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID);
     } catch {
       enqueueToast({
         status: 'error',
         children: t`Failed to claim ownership.`,
       });
+
+      return;
     } finally {
       setIsClaiming(false);
     }
+
+    enqueueToast({
+      status: 'success',
+      children: t`Ownership claimed successfully`,
+    });
+    closeDialog(CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID);
+
+    await apolloAdminClient.refetchQueries({
+      include: [FindOneAdminApplicationRegistrationDocument],
+    });
   };
 
   const confirmationValue = t`yes`;
