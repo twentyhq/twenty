@@ -11,26 +11,12 @@ import {
   TEAMS_ACTIVITIES_ROUTE_UNIVERSAL_IDENTIFIER,
 } from 'src/features/chat/constants/universal-identifiers';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
-import { type LoadTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/types/load-teams-bot-connector-keys.type';
+import { TeamsBotConnectorKeysUnavailableError } from 'src/features/chat/logic-functions/types/teams-bot-connector-keys-unavailable-error';
 import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/types/teams-inbound-activity.type';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
-import { getTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/utils/get-teams-bot-connector-keys';
 import { getTeamsBotCredentials } from 'src/features/chat/logic-functions/utils/get-teams-bot-credentials';
+import { loadTeamsBotConnectorKeysOrThrowUnavailable } from 'src/features/chat/logic-functions/utils/load-teams-bot-connector-keys-or-throw-unavailable';
 import { verifyTeamsActivityTokenOrThrow } from 'src/features/chat/logic-functions/utils/verify-teams-activity-token';
-import { toErrorMessage } from 'src/utils/to-error-message';
-
-class TeamsBotConnectorKeysUnavailableError extends Error {}
-
-// Key loading failures must surface as server errors so the Bot Connector retries instead of seeing a rejected token.
-const loadTeamsBotConnectorKeys: LoadTeamsBotConnectorKeys = async (
-  options,
-) => {
-  try {
-    return await getTeamsBotConnectorKeys(options);
-  } catch (error) {
-    throw new TeamsBotConnectorKeysUnavailableError(toErrorMessage(error));
-  }
-};
 
 export const teamsActivitiesResolverHandler = async (
   routePayload: Pick<RoutePayload<TeamsInboundActivity>, 'headers' | 'body'>,
@@ -51,8 +37,9 @@ export const teamsActivitiesResolverHandler = async (
     authorizationHeader: routePayload.headers.authorization,
     activityServiceUrl: activity.serviceUrl,
     botAppId: botCredentials.credentials.appId,
-    loadKeys: loadTeamsBotConnectorKeys,
+    loadKeys: loadTeamsBotConnectorKeysOrThrowUnavailable,
   }).catch((error: unknown) => {
+    // Rethrown as a server error so the Bot Connector retries instead of treating it as a rejected token.
     if (error instanceof TeamsBotConnectorKeysUnavailableError) {
       throw error;
     }
