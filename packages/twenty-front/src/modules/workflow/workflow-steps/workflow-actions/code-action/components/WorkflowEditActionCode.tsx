@@ -1,6 +1,5 @@
 import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
 import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionForm';
-import { createCodeEditorChangeHandler } from '@/ui/input/utils/createCodeEditorChangeHandler';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
@@ -274,8 +273,12 @@ export const WorkflowEditActionCode = ({
     500,
   );
 
-  const handleCodeChange = createCodeEditorChangeHandler(async (newCode) => {
-    if (actionOptions.readonly === true || !isDefined(workflow)) {
+  const handleCodeChange = async (newCode: string | undefined) => {
+    if (
+      actionOptions.readonly === true ||
+      !isDefined(workflow) ||
+      !isDefined(newCode)
+    ) {
       return;
     }
 
@@ -286,7 +289,7 @@ export const WorkflowEditActionCode = ({
     if (isDefined(inferredJsonSchema)) {
       await handleUpdateFunctionInputSchema(newCode, inferredJsonSchema);
     }
-  });
+  };
 
   const tabs = [
     {

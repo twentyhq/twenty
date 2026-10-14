@@ -8,7 +8,6 @@ import {
   buildToolPayloadFromSchema,
   type TriggerKind,
 } from '@/settings/logic-functions/utils/getTriggerSamplePayload';
-import { createCodeEditorChangeHandler } from '@/ui/input/utils/createCodeEditorChangeHandler';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -97,7 +96,11 @@ export const SettingsLogicFunctionTestTab = ({
     triggerButtons.push({ kind: 'tool', label: t`AI tool`, Icon: IconTool });
   }
 
-  const onChange = (value: string) => {
+  const onChange = (value: string | undefined) => {
+    if (!isDefined(value)) {
+      return;
+    }
+
     try {
       updateLogicFunctionInput(JSON.parse(value));
     } catch {
@@ -170,7 +173,7 @@ export const SettingsLogicFunctionTestTab = ({
             value={JSON.stringify(logicFunctionTestData.input, null, 4)}
             language="json"
             height={100}
-            onChange={createCodeEditorChangeHandler(onChange)}
+            onChange={onChange}
             variant="with-header"
             resizable
             resizeLabel={t`Resize input`}

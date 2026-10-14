@@ -1,7 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { createCodeEditorChangeHandler } from '@/ui/input/utils/createCodeEditorChangeHandler';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -9,6 +8,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components/data-display';
 import { IconButton } from 'twenty-ui/components/input';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
@@ -103,6 +103,14 @@ export const RawJsonFieldInput = () => {
     onShiftTab?.({ newValue: value, skipPersist: !success });
   };
 
+  const handleChange = (newText: string | undefined) => {
+    if (!isDefined(newText)) {
+      return;
+    }
+
+    setDraftValue(newText);
+  };
+
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
@@ -165,7 +173,7 @@ export const RawJsonFieldInput = () => {
                 horizontal: 'hidden',
               },
             }}
-            onChange={createCodeEditorChangeHandler(setDraftValue)}
+            onChange={handleChange}
           />
         </StyledCodeEditorContainer>
       ) : (
