@@ -47,6 +47,7 @@ import {
   type JoinClause,
   type OrderByClause,
   type SelectClause,
+  type SelectLockMode,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -98,6 +99,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private findOptions: FindOptionsLike = {};
   private limitValue?: number;
   private offsetValue?: number;
+  private lockMode?: SelectLockMode;
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
@@ -152,6 +154,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     cloned.findOptions = { ...this.findOptions };
     cloned.limitValue = this.limitValue;
     cloned.offsetValue = this.offsetValue;
+    cloned.lockMode = this.lockMode;
     cloned.includeDeleted = this.includeDeleted;
     cloned.explicitSelection =
       this.explicitSelection === undefined
@@ -557,6 +560,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   offset(count: number): this {
     this.offsetValue = count;
+
+    return this;
+  }
+
+  setLock(lockMode: SelectLockMode): this {
+    this.lockMode = lockMode;
 
     return this;
   }
@@ -1284,6 +1293,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       allowPlainToManyJoins: options?.allowPlainToManyJoins ?? false,
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,
+      lockMode: this.lockMode,
     };
   }
 }

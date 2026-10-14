@@ -1,3 +1,6 @@
+import { CalendarChannelSyncStatus } from 'twenty-shared/types';
+
+import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
 import { type ComparableCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -6,6 +9,8 @@ import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fet
 const CALENDAR_CHANNEL_ID = 'calendar-channel-id';
 const CALENDAR_EVENT_ID = 'calendar-event-id';
 const ASSOCIATION_ID = 'association-id';
+const CHANNEL_HANDLE = 'owner@example.com';
+const ORGANIZER_HANDLE = 'organizer@example.com';
 
 const buildFetchedCalendarEvent = (
   overrides: Partial<FetchedCalendarEvent> = {},
@@ -33,6 +38,7 @@ const buildFetchedCalendarEvent = (
     },
   ],
   status: 'confirmed',
+  organizerHandle: '',
   ...overrides,
 });
 
@@ -69,13 +75,57 @@ const buildExistingAssociation = (
     ...overrides,
   }) as CalendarChannelEventAssociationWorkspaceEntity;
 
+const buildCalendarChannel = ({ id, handle }: { id: string; handle: string }) =>
+  ({
+    id,
+    handle,
+    syncStatus: CalendarChannelSyncStatus.ACTIVE,
+    isSyncEnabled: true,
+    connectedAccount: { handleAliases: [] },
+  }) as unknown as CalendarChannelEntity;
+
+const ORGANIZER_CHANNEL = buildCalendarChannel({
+  id: 'organizer-channel-id',
+  handle: ORGANIZER_HANDLE,
+});
+
+const ATTENDEE_CHANNEL = buildCalendarChannel({
+  id: 'attendee-channel-id',
+  handle: 'attendee@example.com',
+});
+
+const buildPlan = ({
+  fetchedCalendarEvents,
+  existingAssociations,
+  existingCalendarEvents,
+  calendarEventIdToLinkByEventExternalId = new Map(),
+  otherCalendarChannels = [],
+}: {
+  fetchedCalendarEvents: FetchedCalendarEvent[];
+  existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
+  existingCalendarEvents: ComparableCalendarEvent[];
+  calendarEventIdToLinkByEventExternalId?: Map<string, string>;
+  otherCalendarChannels?: CalendarChannelEntity[];
+}) =>
+  buildCalendarEventSaveOperations({
+    fetchedCalendarEvents,
+    existingAssociations,
+    existingCalendarEvents,
+    calendarChannelId: CALENDAR_CHANNEL_ID,
+    channelHandles: [CHANNEL_HANDLE],
+    calendarEventIdToLinkByEventExternalId,
+    otherChannelIdsByCalendarEventId: new Map([
+      [CALENDAR_EVENT_ID, otherCalendarChannels.map(({ id }) => id)],
+    ]),
+    otherCalendarChannels,
+  });
+
 describe('buildCalendarEventSaveOperations', () => {
   it('skips updates for an existing event that did not change', () => {
-    const plan = buildCalendarEventSaveOperations({
+    const plan = buildPlan({
       fetchedCalendarEvents: [buildFetchedCalendarEvent()],
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
     });
 
     expect(plan.saveOperations).toEqual({
@@ -97,7 +147,7 @@ describe('buildCalendarEventSaveOperations', () => {
   });
 
   it('ignores provider bookkeeping timestamps when nothing else changed', () => {
-    const plan = buildCalendarEventSaveOperations({
+    const plan = buildPlan({
       fetchedCalendarEvents: [
         buildFetchedCalendarEvent({
           externalCreatedAt: '2026-10-02T15:00:00.000Z',
@@ -106,14 +156,13 @@ describe('buildCalendarEventSaveOperations', () => {
       ],
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
   });
 
   it('reads timestamps without an offset as UTC like the database does', () => {
-    const plan = buildCalendarEventSaveOperations({
+    const plan = buildPlan({
       fetchedCalendarEvents: [
         buildFetchedCalendarEvent({
           startsAt: '2026-10-02T08:00:00.0000000',
@@ -122,18 +171,16 @@ describe('buildCalendarEventSaveOperations', () => {
       ],
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
   });
 
   it('treats an empty fetched end date as equal to a null persisted one', () => {
-    const plan = buildCalendarEventSaveOperations({
+    const plan = buildPlan({
       fetchedCalendarEvents: [buildFetchedCalendarEvent({ endsAt: '' })],
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent({ endsAt: null })],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
@@ -166,11 +213,10 @@ describe('buildCalendarEventSaveOperations', () => {
   ])(
     'updates an existing event when its %s changed',
     (_, overrides, written) => {
-      const plan = buildCalendarEventSaveOperations({
+      const plan = buildPlan({
         fetchedCalendarEvents: [buildFetchedCalendarEvent(overrides)],
         existingAssociations: [buildExistingAssociation()],
         existingCalendarEvents: [buildExistingCalendarEvent()],
-        calendarChannelId: CALENDAR_CHANNEL_ID,
       });
 
       expect(plan.saveOperations.calendarEventsToUpdate).toEqual([
@@ -184,7 +230,7 @@ describe('buildCalendarEventSaveOperations', () => {
   );
 
   it('updates an existing event that has secondary links to clear them', () => {
-    const plan = buildCalendarEventSaveOperations({
+    const plan = buildPlan({
       fetchedCalendarEvents: [buildFetchedCalendarEvent()],
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [
@@ -196,18 +242,16 @@ describe('buildCalendarEventSaveOperations', () => {
           },
         }),
       ],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toHaveLength(1);
   });
 
   it('updates the event and its association when the event was not loaded', () => {
-    const plan = buildCalendarEventSaveOperations({
+    const plan = buildPlan({
       fetchedCalendarEvents: [buildFetchedCalendarEvent()],
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toHaveLength(1);
@@ -220,13 +264,12 @@ describe('buildCalendarEventSaveOperations', () => {
   });
 
   it('updates the association only when the recurring event id changed', () => {
-    const plan = buildCalendarEventSaveOperations({
+    const plan = buildPlan({
       fetchedCalendarEvents: [
         buildFetchedCalendarEvent({ recurringEventExternalId: 'recurring-id' }),
       ],
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
@@ -239,11 +282,10 @@ describe('buildCalendarEventSaveOperations', () => {
   });
 
   it('inserts events that have no existing association', () => {
-    const plan = buildCalendarEventSaveOperations({
+    const plan = buildPlan({
       fetchedCalendarEvents: [buildFetchedCalendarEvent()],
       existingAssociations: [],
       existingCalendarEvents: [],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
     });
 
     expect(plan.saveOperations.calendarEventsToInsert).toHaveLength(1);
@@ -257,5 +299,101 @@ describe('buildCalendarEventSaveOperations', () => {
     ]);
     expect(plan.existingCalendarEventIds).toEqual([]);
     expect(plan.participantsOfNewEvents).toHaveLength(1);
+  });
+
+  it('links an event stored by another channel instead of inserting a second one', () => {
+    const plan = buildPlan({
+      fetchedCalendarEvents: [buildFetchedCalendarEvent()],
+      existingAssociations: [],
+      existingCalendarEvents: [buildExistingCalendarEvent()],
+      calendarEventIdToLinkByEventExternalId: new Map([
+        ['external-event-id', CALENDAR_EVENT_ID],
+      ]),
+      otherCalendarChannels: [ATTENDEE_CHANNEL],
+    });
+
+    expect(plan.saveOperations).toEqual({
+      calendarEventsToInsert: [],
+      calendarEventsToUpdate: [],
+      associationsToInsert: [
+        {
+          calendarEventId: CALENDAR_EVENT_ID,
+          eventExternalId: 'external-event-id',
+          calendarChannelId: CALENDAR_CHANNEL_ID,
+          recurringEventExternalId: '',
+        },
+      ],
+      associationsToUpdate: [],
+    });
+    expect(plan.existingCalendarEventIds).toEqual([]);
+    expect(plan.participantsOfNewEvents).toEqual([]);
+    expect(plan.participantsOfExistingEvents).toEqual([]);
+    expect(plan.participantsOfLinkedEvents).toEqual([
+      expect.objectContaining({
+        handle: 'john@example.com',
+        calendarEventId: CALENDAR_EVENT_ID,
+      }),
+    ]);
+  });
+
+  it('keeps the stored fields of an attendee channel while the organizer channel syncs', () => {
+    const plan = buildPlan({
+      fetchedCalendarEvents: [
+        buildFetchedCalendarEvent({
+          title: 'Weekly sync (stale attendee copy)',
+          organizerHandle: ORGANIZER_HANDLE,
+        }),
+      ],
+      existingAssociations: [buildExistingAssociation()],
+      existingCalendarEvents: [buildExistingCalendarEvent()],
+      otherCalendarChannels: [ORGANIZER_CHANNEL],
+    });
+
+    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
+  });
+
+  it('links an attendee channel without touching the fields while the organizer channel syncs', () => {
+    const plan = buildPlan({
+      fetchedCalendarEvents: [
+        buildFetchedCalendarEvent({
+          title: 'Weekly sync (stale attendee copy)',
+          organizerHandle: ORGANIZER_HANDLE,
+        }),
+      ],
+      existingAssociations: [],
+      existingCalendarEvents: [buildExistingCalendarEvent()],
+      calendarEventIdToLinkByEventExternalId: new Map([
+        ['external-event-id', CALENDAR_EVENT_ID],
+      ]),
+      otherCalendarChannels: [ORGANIZER_CHANNEL],
+    });
+
+    expect(plan.saveOperations.associationsToInsert).toEqual([
+      expect.objectContaining({ calendarEventId: CALENDAR_EVENT_ID }),
+    ]);
+    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
+  });
+
+  it('lets the organizer channel overwrite the fields of a shared event', () => {
+    const plan = buildPlan({
+      fetchedCalendarEvents: [
+        buildFetchedCalendarEvent({
+          title: 'Weekly sync (moved)',
+          organizerHandle: CHANNEL_HANDLE,
+        }),
+      ],
+      existingAssociations: [buildExistingAssociation()],
+      existingCalendarEvents: [buildExistingCalendarEvent()],
+      otherCalendarChannels: [ATTENDEE_CHANNEL],
+    });
+
+    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([
+      {
+        criteria: CALENDAR_EVENT_ID,
+        partialEntity: expect.objectContaining({
+          title: 'Weekly sync (moved)',
+        }),
+      },
+    ]);
   });
 });

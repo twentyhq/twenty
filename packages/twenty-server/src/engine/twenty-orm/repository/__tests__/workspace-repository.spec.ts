@@ -89,9 +89,11 @@ const ROLE_ID = 'role-id';
 const buildRepository = ({
   shouldBypassPermissionChecks = true,
   shouldSkipEventEmission,
+  isTransactional = false,
 }: {
   shouldBypassPermissionChecks?: boolean;
   shouldSkipEventEmission: boolean;
+  isTransactional?: boolean;
 }) => {
   const executedStatements: CompiledStatement[] = [];
 
@@ -132,13 +134,17 @@ const buildRepository = ({
     rolePermissionConfig: { intersectionOf: { apiKeyRoleId: ROLE_ID } },
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
+    isTransactional,
     tableShapeByObjectMetadataId: () => tableShape,
   } as unknown as WorkspaceRepositoryOptions);
 
   const getExecutedStatementKinds = () =>
     executedStatements.map((statement) => statement.text.split(' ')[0]);
 
-  return { repository, getExecutedStatementKinds };
+  const getExecutedStatements = () =>
+    executedStatements.map((statement) => statement.text);
+
+  return { repository, getExecutedStatementKinds, getExecutedStatements };
 };
 
 describe('WorkspaceRepository mutations', () => {
@@ -231,5 +237,41 @@ describe('WorkspaceRepository mutations', () => {
 
       expect(getExecutedStatementKinds()).toEqual(['SELECT', 'DELETE']);
     });
+  });
+});
+
+describe('WorkspaceRepository row locks', () => {
+  it.each(['find', 'findOne'] as const)(
+    'should refuse to %s with a row lock outside a transaction, since the lock would be released immediately',
+    async (method) => {
+      const { repository, getExecutedStatementKinds } = buildRepository({
+        shouldSkipEventEmission: true,
+      });
+
+      await expect(
+        repository[method]({
+          where: { id: 'delivery-id' },
+          lock: { mode: 'pessimistic_write' },
+        }),
+      ).rejects.toThrow('A row lock requires a transactional repository');
+
+      expect(getExecutedStatementKinds()).toEqual([]);
+    },
+  );
+
+  it('should lock the selected rows inside a transaction', async () => {
+    const { repository, getExecutedStatements } = buildRepository({
+      shouldSkipEventEmission: true,
+      isTransactional: true,
+    });
+
+    await repository.find({
+      where: { id: 'delivery-id' },
+      lock: { mode: 'for_key_share' },
+    });
+
+    expect(getExecutedStatements()).toEqual([
+      expect.stringMatching(/ FOR KEY SHARE OF "delivery"$/),
+    ]);
   });
 });

@@ -33,6 +33,7 @@ export type MicrosoftMock = {
   createdAttachments: Array<Record<string, unknown>>;
   sentMessageIds: string[];
   createdCalendarEvents: Event[];
+  actAsAccount: (handle: string) => void;
   serveCalendarEvents: (
     events: Event[],
     options?: { deltaToken?: string; removedEventIds?: string[] },
@@ -208,6 +209,8 @@ export const setupMicrosoftMock = ({
     createdAttachments,
     sentMessageIds,
     createdCalendarEvents,
+    actAsAccount: (accountHandle) =>
+      httpMock.use(...microsoftAuthHandlers(accountHandle, aliases)),
     serveCalendarEvents: (
       events,
       { deltaToken = 'mock-calendar-delta-token', removedEventIds = [] } = {},

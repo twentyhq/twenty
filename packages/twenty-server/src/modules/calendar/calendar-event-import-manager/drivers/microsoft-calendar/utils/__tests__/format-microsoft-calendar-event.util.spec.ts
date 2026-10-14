@@ -71,6 +71,22 @@ describe('formatMicrosoftCalendarEvents', () => {
     expect(formattedEvent.participants[0].handle).toBe('john.doe@example.com');
   });
 
+  it('should take the lowercased organizer handle from the event organizer', () => {
+    const [formattedEvent] = formatMicrosoftCalendarEvents([
+      {
+        ...mockMicrosoftEvent,
+        organizer: {
+          emailAddress: { address: 'Meeting.Organizer@Example.com' },
+        },
+        attendees: [],
+      },
+    ]);
+
+    expect(formattedEvent.organizerHandle).toBe(
+      'meeting.organizer@example.com',
+    );
+  });
+
   it('should correctly format a normal Microsoft Calendar event', () => {
     const result = formatMicrosoftCalendarEvents([mockMicrosoftEvent]);
 

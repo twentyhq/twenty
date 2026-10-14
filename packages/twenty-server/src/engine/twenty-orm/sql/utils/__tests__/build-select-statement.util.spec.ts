@@ -111,6 +111,43 @@ describe('buildSelectStatement', () => {
     expect(sql).toContain('WHERE ("person"."ownerId" = :ownerId)');
   });
 
+  it('should lock only the main alias rows for key share after pagination', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        includeDeleted: true,
+        orderByClauses: [{ expression: '"person"."id"', direction: 'ASC' }],
+        limitValue: 10,
+        lockMode: 'for_key_share',
+      }),
+    );
+
+    expect(sql).toBe(
+      `SELECT "person"."id" AS "person_id" FROM "${SCHEMA_NAME}"."person" AS "person" ` +
+        'ORDER BY "person"."id" ASC LIMIT :ormLimit FOR KEY SHARE OF "person"',
+    );
+  });
+
+  it('should lock only the main alias rows for update', () => {
+    const sql = buildSelectStatement(
+      buildState({ includeDeleted: true, lockMode: 'pessimistic_write' }),
+    );
+
+    expect(sql).toBe(
+      `SELECT "person"."id" AS "person_id" FROM "${SCHEMA_NAME}"."person" AS "person" ` +
+        'FOR UPDATE OF "person"',
+    );
+  });
+
+  it('should not lock rows in a count', () => {
+    const sql = buildCountStatement(
+      buildState({ includeDeleted: true, lockMode: 'pessimistic_write' }),
+    );
+
+    expect(sql).toBe(
+      `SELECT COUNT(1) AS "count" FROM "${SCHEMA_NAME}"."person" AS "person"`,
+    );
+  });
+
   it('should keep row access conditions outside a user OR chain in a count', () => {
     const sql = buildCountStatement(
       buildState({

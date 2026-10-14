@@ -58,6 +58,20 @@ describe('formatGoogleCalendarEvents', () => {
     expect(formattedEvent.participants[0].handle).toBe('john.doe@example.com');
   });
 
+  it('should take the lowercased organizer handle from the event organizer', () => {
+    const [formattedEvent] = formatGoogleCalendarEvents([
+      {
+        ...mockGoogleEvent,
+        organizer: { email: 'Meeting.Organizer@Example.com' },
+        attendees: [],
+      },
+    ]);
+
+    expect(formattedEvent.organizerHandle).toBe(
+      'meeting.organizer@example.com',
+    );
+  });
+
   it('should correctly format a normal Google Calendar event', () => {
     const result = formatGoogleCalendarEvents([mockGoogleEvent]);
 

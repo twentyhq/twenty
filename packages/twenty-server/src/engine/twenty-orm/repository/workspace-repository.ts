@@ -293,6 +293,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   async find(options?: WorkspaceFindOptions): Promise<TEntity[]> {
+    this.assertLockIsTransactional(options);
+
     const records = await applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
@@ -331,6 +333,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   async findOne(options?: WorkspaceFindOptions): Promise<TEntity | null> {
+    this.assertLockIsTransactional(options);
+
     if (!isDefined(options?.where)) {
       throw new TwentyOrmException(
         'findOne requires a "where" condition',
@@ -436,6 +440,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     where?: ObjectWhereLike | ObjectWhereLike[],
   ): Promise<number | null> {
     return this.aggregate('AVG', columnName, where);
+  }
+
+  private assertLockIsTransactional(options?: WorkspaceFindOptions): void {
+    if (isDefined(options?.lock) && !this.options.isTransactional) {
+      throw new TwentyOrmException(
+        'A row lock requires a transactional repository',
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
+      );
+    }
   }
 
   private async aggregate(

@@ -47,6 +47,8 @@ const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
     conferenceLinkLabel: event.onlineMeeting?.joinUrl ?? '',
     conferenceLinkUrl: event.onlineMeeting?.joinUrl ?? '',
     recurringEventExternalId: event.id ?? '',
+    organizerHandle:
+      event.organizer?.emailAddress?.address?.toLowerCase() ?? '',
     participants:
       event.attendees?.map((attendee) => ({
         handle: attendee.emailAddress?.address?.toLowerCase() ?? '',
@@ -71,6 +73,7 @@ const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
     'conferenceLinkLabel',
     'conferenceLinkUrl',
     'recurringEventExternalId',
+    'organizerHandle',
     'status',
   ];
 

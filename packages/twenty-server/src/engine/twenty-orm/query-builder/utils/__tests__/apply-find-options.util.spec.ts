@@ -226,6 +226,15 @@ describe('applyFindOptionsToQueryBuilder relation order', () => {
     expect(sql).toContain('ORDER BY "messages"."receivedAt" DESC');
   });
 
+  it('locks only the parent rows when ordering through a deduped to-many join', () => {
+    const sql = applyFindOptionsToQueryBuilder(buildThreadQueryBuilder(), {
+      order: { messages: { receivedAt: 'DESC' } },
+      lock: { mode: 'for_key_share' },
+    }).getQuery();
+
+    expect(sql).toMatch(/ FOR KEY SHARE OF "thread"$/);
+  });
+
   it('keeps mixed column and relation order entries in their original sequence', () => {
     const queryBuilder = applyFindOptionsToQueryBuilder(
       buildThreadQueryBuilder(),

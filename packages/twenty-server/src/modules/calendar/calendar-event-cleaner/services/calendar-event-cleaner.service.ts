@@ -76,6 +76,8 @@ export class CalendarEventCleanerService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
+    const sortedCalendarEventIds = [...calendarEventIds].sort();
+
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
@@ -93,10 +95,10 @@ export class CalendarEventCleanerService {
 
             for (
               let index = 0;
-              index < calendarEventIds.length;
+              index < sortedCalendarEventIds.length;
               index += CALENDAR_CLEANUP_PAGE_SIZE
             ) {
-              const pageIds = calendarEventIds.slice(
+              const pageIds = sortedCalendarEventIds.slice(
                 index,
                 index + CALENDAR_CLEANUP_PAGE_SIZE,
               );
@@ -115,8 +117,37 @@ export class CalendarEventCleanerService {
                 (eventId) => !referencedEventIds.has(eventId),
               );
 
-              if (orphanEventIds.length > 0) {
-                await calendarEventRepository.delete(orphanEventIds);
+              if (orphanEventIds.length === 0) {
+                continue;
+              }
+
+              const lockedOrphanEvents = await calendarEventRepository.find({
+                where: { id: In(orphanEventIds) },
+                select: { id: true },
+                order: { id: 'ASC' },
+                lock: { mode: 'pessimistic_write' },
+              });
+
+              const relinkedAssociations =
+                await calendarChannelEventAssociationRepository.find({
+                  where: {
+                    calendarEventId: In(lockedOrphanEvents.map(({ id }) => id)),
+                  },
+                  select: { calendarEventId: true },
+                });
+
+              const relinkedEventIds = new Set(
+                relinkedAssociations.map(
+                  ({ calendarEventId }) => calendarEventId,
+                ),
+              );
+
+              const eventIdsToDelete = lockedOrphanEvents
+                .map(({ id }) => id)
+                .filter((eventId) => !relinkedEventIds.has(eventId));
+
+              if (eventIdsToDelete.length > 0) {
+                await calendarEventRepository.delete(eventIdsToDelete);
               }
             }
           },
@@ -177,8 +208,37 @@ export class CalendarEventCleanerService {
                 (eventId) => !referencedEventIds.has(eventId),
               );
 
-              if (orphanEventIds.length > 0) {
-                await calendarEventRepository.delete(orphanEventIds);
+              if (orphanEventIds.length === 0) {
+                continue;
+              }
+
+              const lockedOrphanEvents = await calendarEventRepository.find({
+                where: { id: In(orphanEventIds) },
+                select: { id: true },
+                order: { id: 'ASC' },
+                lock: { mode: 'pessimistic_write' },
+              });
+
+              const relinkedAssociations =
+                await calendarChannelEventAssociationRepository.find({
+                  where: {
+                    calendarEventId: In(lockedOrphanEvents.map(({ id }) => id)),
+                  },
+                  select: { calendarEventId: true },
+                });
+
+              const relinkedEventIds = new Set(
+                relinkedAssociations.map(
+                  ({ calendarEventId }) => calendarEventId,
+                ),
+              );
+
+              const eventIdsToDelete = lockedOrphanEvents
+                .map(({ id }) => id)
+                .filter((eventId) => !relinkedEventIds.has(eventId));
+
+              if (eventIdsToDelete.length > 0) {
+                await calendarEventRepository.delete(eventIdsToDelete);
               }
             }
           },

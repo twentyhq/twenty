@@ -215,7 +215,7 @@ describe('Calendar import transient database errors (integration)', () => {
     expect(updatedParticipantCount).toBe(0);
   }, 180000);
 
-  it('should read and compute outside the transaction and only write inside it', async () => {
+  it('should read existing participants before writing them and match only afterwards', async () => {
     await fetchOneEvent();
 
     const calls: string[] = [];

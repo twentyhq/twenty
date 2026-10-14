@@ -99,6 +99,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         isFullDay: input.isFullDay,
         isCanceled: false,
         status: 'CONFIRMED',
+        organizerHandle: '',
         conferenceLinkLabel: '',
         conferenceLinkUrl: '',
         conferenceSolution: '',

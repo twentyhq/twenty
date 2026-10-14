@@ -45,6 +45,7 @@ export const parseICalEvents = (
         isCanceled: event.status === 'CANCELLED',
         status: event.status || 'CONFIRMED',
         recurringEventExternalId: recurrenceIso,
+        organizerHandle: '',
         conferenceLinkLabel: '',
         conferenceLinkUrl: icalDataExtractPropertyValue(event.url),
         conferenceSolution: '',
