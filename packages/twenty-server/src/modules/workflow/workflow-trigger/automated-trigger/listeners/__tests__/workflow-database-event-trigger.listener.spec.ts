@@ -11,6 +11,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -27,6 +28,9 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 
+const TWENTY_STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
+const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
+
 describe('WorkflowDatabaseEventTriggerListener', () => {
   let listener: WorkflowDatabaseEventTriggerListener;
   let workspaceOrmManager: jest.Mocked<WorkspaceOrmManager>;
@@ -40,19 +44,21 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let findRelatedRecords: jest.Mock;
 
   const setTriggerMap = (
-    listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
+    listeners: Array<{
+      workflowId: string;
+      settings: object;
+      type?: unknown;
+      applicationId?: string;
+    }>,
     {
       applicationVersion = '1.0.1',
-      isWorkflowCached = true,
-      installedApplicationRole,
+      applicationRole,
     }: {
       applicationVersion?: string | null;
-      isWorkflowCached?: boolean;
-      installedApplicationRole?: { canReadObjectRecords: boolean } | null;
+      applicationRole?: { canReadObjectRecords: boolean } | null;
     } = {},
   ) => {
-    const cachedListeners = isWorkflowCached ? listeners : [];
-    const isInstalledApplication = installedApplicationRole !== undefined;
+    const isApplicationWorkflow = applicationRole !== undefined;
 
     workspaceCacheService.getOrRecompute.mockResolvedValue({
       flatObjectMetadataMaps: { byUniversalIdentifier: {} },
@@ -62,22 +68,19 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           'application-id': {
             id: 'application-id',
             version: applicationVersion,
-            canBeUninstalled: isInstalledApplication,
-            defaultRoleId: installedApplicationRole
-              ? 'application-role-id'
-              : null,
+            defaultRoleId: applicationRole ? 'application-role-id' : null,
           },
         },
         idByUniversalIdentifier: {},
       },
-      ...(isInstalledApplication
+      ...(isApplicationWorkflow
         ? {
-            rolesPermissions: installedApplicationRole
+            rolesPermissions: applicationRole
               ? {
                   'application-role-id': {
                     'test-object-metadata': {
                       canReadObjectRecords:
-                        installedApplicationRole.canReadObjectRecords,
+                        applicationRole.canReadObjectRecords,
                       canUpdateObjectRecords: false,
                       canSoftDeleteObjectRecords: false,
                       canDestroyObjectRecords: false,
@@ -95,21 +98,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
             flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
           }
         : {}),
-      flatWorkflowMaps: {
-        byUniversalIdentifier: Object.fromEntries(
-          cachedListeners.map((listener) => [
-            listener.workflowId,
-            { id: listener.workflowId, applicationId: 'application-id' },
-          ]),
-        ),
-        universalIdentifierById: Object.fromEntries(
-          cachedListeners.map((listener) => [
-            listener.workflowId,
-            listener.workflowId,
-          ]),
-        ),
-        universalIdentifiersByApplicationId: {},
-      },
       flatRoleMaps: { byUniversalIdentifier: {} },
       workflowAutomatedTriggerMaps: {
         byWorkflowId: Object.fromEntries(
@@ -119,6 +107,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
               type: AutomatedTriggerType.DATABASE_EVENT,
               coreWorkflowVersionId: `core-version-${listener.workflowId}`,
               workspaceWorkflowVersionId: `workspace-version-${listener.workflowId}`,
+              applicationId: isApplicationWorkflow
+                ? 'application-id'
+                : WORKSPACE_CUSTOM_APPLICATION_ID,
               ...listener,
             },
           ]),
@@ -221,6 +212,21 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           provide: WorkflowCommonWorkspaceService,
           useValue: workflowCommonWorkspaceService,
         },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: {
+                  id: TWENTY_STANDARD_APPLICATION_ID,
+                },
+                workspaceCustomFlatApplication: {
+                  id: WORKSPACE_CUSTOM_APPLICATION_ID,
+                },
+              }),
+          },
+        },
       ],
     }).compile();
 
@@ -280,7 +286,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should not trigger workflow while its application is still installing', async () => {
-      setTriggerMap(mockEventListeners, { applicationVersion: null });
+      setTriggerMap(mockEventListeners, {
+        applicationVersion: null,
+        applicationRole: { canReadObjectRecords: true },
+      });
 
       await listener.handleObjectRecordUpdateEvent(mockPayload);
 
@@ -289,7 +298,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
     it('should trigger an application workflow on records its application role reads', async () => {
       setTriggerMap(mockEventListeners, {
-        installedApplicationRole: { canReadObjectRecords: true },
+        applicationRole: { canReadObjectRecords: true },
       });
 
       await listener.handleObjectRecordUpdateEvent(mockPayload);
@@ -299,7 +308,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
     it('should not trigger an application workflow on records its application role cannot read', async () => {
       setTriggerMap(mockEventListeners, {
-        installedApplicationRole: { canReadObjectRecords: false },
+        applicationRole: { canReadObjectRecords: false },
       });
 
       await listener.handleObjectRecordUpdateEvent(mockPayload);
@@ -308,22 +317,22 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should not trigger an application workflow whose application has no role', async () => {
-      setTriggerMap(mockEventListeners, { installedApplicationRole: null });
+      setTriggerMap(mockEventListeners, { applicationRole: null });
 
       await listener.handleObjectRecordUpdateEvent(mockPayload);
 
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
-    it('should trigger workflow missing from the workflow cache', async () => {
-      setTriggerMap(mockEventListeners, {
-        applicationVersion: null,
-        isWorkflowCached: false,
-      });
+    it('should not trigger a workflow whose application is no longer installed', async () => {
+      setTriggerMap(
+        [{ ...mockEventListeners[0], applicationId: 'removed-application-id' }],
+        { applicationRole: { canReadObjectRecords: true } },
+      );
 
       await listener.handleObjectRecordUpdateEvent(mockPayload);
 
-      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should trigger workflow when no fields are specified', async () => {
@@ -498,12 +507,13 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
       it('should not give an application workflow the related company', async () => {
         setTriggerMap([createListener], {
-          installedApplicationRole: { canReadObjectRecords: true },
+          applicationRole: { canReadObjectRecords: true },
         });
 
         await listener.handleObjectRecordCreateEvent(createPayload);
 
         expectEnqueuedRecord(createdRecord);
+        expect(findRelatedRecords).not.toHaveBeenCalled();
       });
     });
 
@@ -626,7 +636,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
     it('should only trigger workflow for records of a private object shared with the workflow role', async () => {
       const applicationRoleId = 'application-role-id';
-      const applicationId = 'twenty-standard-application-id';
+      const applicationId = TWENTY_STANDARD_APPLICATION_ID;
 
       const privatePayload: WorkspaceEventBatch<ObjectRecordUpdateEvent> = {
         ...mockPayload,
@@ -671,7 +681,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
               }
             : {
                 flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-                flatWorkflowMaps: createEmptyFlatEntityMaps(),
                 workflowAutomatedTriggerMaps: {
                   byWorkflowId: {
                     [workflowId]: {
@@ -679,6 +688,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                       coreWorkflowVersionId: `core-version-${workflowId}`,
                       workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
                       workflowId,
+                      applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
                       settings: { eventName: databaseEventName },
                     },
                   },
@@ -746,7 +756,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
               }
             : {
                 flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-                flatWorkflowMaps: createEmptyFlatEntityMaps(),
                 workflowAutomatedTriggerMaps: {
                   byWorkflowId: {
                     [workflowId]: {
@@ -754,6 +763,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                       coreWorkflowVersionId: `core-version-${workflowId}`,
                       workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
                       workflowId,
+                      applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
                       settings: { eventName: databaseEventName },
                     },
                   },
