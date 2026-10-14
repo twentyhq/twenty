@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'class-validator';
 import {
   FieldMetadataType,
   type OrderByWithGroupBy,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import {
@@ -24,17 +24,11 @@ import {
   type GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
-import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
-import {
-  checkIfLeafCanCarryCursorValue,
-  type OrderByLeaf,
-} from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
-import { quoteColumn } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 
 export class GraphqlQueryParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -152,27 +146,39 @@ export class GraphqlQueryParser {
     return parseResult.orderBy;
   }
 
-  public addCursorColumnsToBuilder(
+  public addRelationOrderColumnsToBuilder(
+    // oxlint-disable-next-line typescript/no-explicit-any
     queryBuilder: WorkspaceSelectQueryBuilder,
-    orderByLeaves: OrderByLeaf[],
+    parsedOrderBy: Record<string, OrderByClause>,
     objectNameSingular: string,
+    columnsToSelect: Record<string, boolean>,
   ): void {
-    for (const leaf of orderByLeaves.filter(checkIfLeafCanCarryCursorValue)) {
-      const column = computeOrderByLeafColumn(leaf, objectNameSingular);
+    // Must run after setFindOptions, which clears addSelect; the underscore alias keeps DISTINCT working
+    for (const orderByKey of Object.keys(parsedOrderBy)) {
+      const parts = orderByKey.split('.');
 
-      if (!isDefined(column)) {
-        continue;
+      if (parts.length === 2) {
+        const [alias, column] = parts;
+
+        // Relation columns are never in columnsToSelect
+        const isMainEntity = alias === objectNameSingular;
+        const isAlreadySelected = isMainEntity && columnsToSelect[column];
+        const tableShape = isMainEntity
+          ? queryBuilder.tableShape
+          : queryBuilder.getJoinedTableShape(alias);
+        const isDateTime =
+          tableShape?.columnShapeByColumnName[column]?.fieldMetadataType ===
+          FieldMetadataType.DATE_TIME;
+
+        if (!isAlreadySelected || isDateTime) {
+          queryBuilder.addSelect(
+            isDateTime
+              ? `to_char("${alias}"."${column}" AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`
+              : `"${alias}"."${column}"`,
+            buildColumnResultAlias(alias, column),
+          );
+        }
       }
-
-      const { tableAlias, columnName, columnType } = column;
-      const columnReference = quoteColumn(tableAlias, columnName);
-
-      queryBuilder.addSelect(
-        columnType === FieldMetadataType.DATE_TIME
-          ? `to_char(${columnReference} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`
-          : columnReference,
-        buildColumnResultAlias(tableAlias, columnName),
-      );
     }
   }
 

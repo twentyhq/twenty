@@ -135,7 +135,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       appliedFilters,
     );
 
-    commonQueryParser.applyOrderToBuilder(
+    const parsedOrderBy = commonQueryParser.applyOrderToBuilder(
       queryBuilder,
       orderByWithIdCondition,
       flatObjectMetadata.nameSingular,
@@ -189,10 +189,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     queryBuilder.limit(limit + 1);
 
     // setFindOptions clears addSelect, so this must come after it
-    commonQueryParser.addCursorColumnsToBuilder(
+    commonQueryParser.addRelationOrderColumnsToBuilder(
       queryBuilder,
-      orderByLeaves,
+      parsedOrderBy,
       flatObjectMetadata.nameSingular,
+      columnsToSelect,
     );
 
     // Raw rows carry the ordered join columns, so cursors get relation values whatever the client selected
