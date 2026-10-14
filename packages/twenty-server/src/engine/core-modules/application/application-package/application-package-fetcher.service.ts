@@ -17,6 +17,7 @@ import { z } from 'zod';
 
 import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
+import { isSameUniversalIdentifier } from 'src/engine/core-modules/application/application-package/utils/is-same-universal-identifier.util';
 import { assertValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
@@ -93,8 +94,10 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       resolvedPackage.manifest.application.universalIdentifier;
 
     if (
-      manifestUniversalIdentifier.toLowerCase() !==
-      appRegistration.universalIdentifier.toLowerCase()
+      !isSameUniversalIdentifier({
+        value: manifestUniversalIdentifier,
+        universalIdentifier: appRegistration.universalIdentifier,
+      })
     ) {
       await this.cleanupExtractedDir(resolvedPackage.cleanupDir);
 
