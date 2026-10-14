@@ -1,4 +1,5 @@
 import { msg, plural, t } from '@lingui/core/macro';
+import { lazy, Suspense } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -29,7 +30,6 @@ import {
 } from 'twenty-ui/icon';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
-import { LogConsoleAppAnalytics } from '@/log-console/components/LogConsoleAppAnalytics';
 import { LogConsoleCredits } from '@/log-console/components/LogConsoleCredits';
 import { LogConsoleMemberChip } from '@/log-console/components/LogConsoleMemberChip';
 import { LogConsoleRecordChangeDetail } from '@/log-console/components/LogConsoleRecordChangeDetail';
@@ -65,6 +65,13 @@ const TIME_DETAIL_FIELD: LogConsoleDetailField = {
   Icon: IconClock,
   renderValue: (_entry, { formattedTimestamp }) => formattedTimestamp,
 };
+
+// Loaded on demand so importing the source list does not pull the chart library into every console consumer
+const LogConsoleAppAnalytics = lazy(() =>
+  import('@/log-console/components/LogConsoleAppAnalytics').then((module) => ({
+    default: module.LogConsoleAppAnalytics,
+  })),
+);
 
 export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
@@ -210,7 +217,11 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     Icon: IconLayoutDashboard,
     requiresAuditLogs: false,
     requiredPermissionFlag: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
-    renderContent: () => <LogConsoleAppAnalytics />,
+    renderContent: () => (
+      <Suspense fallback={null}>
+        <LogConsoleAppAnalytics />
+      </Suspense>
+    ),
   },
   {
     id: 'webhooks',
