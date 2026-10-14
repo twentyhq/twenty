@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isFieldMetadataTypeWithDefaultValue } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -267,6 +267,7 @@ export class FlatFieldMetadataValidatorService {
   }
 
   validateFlatFieldMetadataDeletion({
+    remainingFlatEntityMapsToValidate,
     flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
@@ -315,6 +316,34 @@ export class FlatFieldMetadataValidatorService {
     const parentObjectMetadataHasBeenDeleted = !isDefined(
       relatedFlatObjectMetadata,
     );
+
+    if (
+      !buildOptions.isSystemBuild &&
+      isDefined(relatedFlatObjectMetadata) &&
+      isMorphRelationHead(flatFieldMetadataToDelete)
+    ) {
+      const hasRemainingTargets =
+        relatedFlatObjectMetadata.fieldUniversalIdentifiers.some(
+          (fieldUniversalIdentifier) =>
+            fieldUniversalIdentifier !== universalIdentifier &&
+            optimisticFlatFieldMetadataMaps.byUniversalIdentifier[
+              fieldUniversalIdentifier
+            ]?.morphId === flatFieldMetadataToDelete.morphId &&
+            !isDefined(
+              remainingFlatEntityMapsToValidate.byUniversalIdentifier[
+                fieldUniversalIdentifier
+              ],
+            ),
+        );
+
+      if (hasRemainingTargets) {
+        validationResult.errors.push({
+          code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+          message: 'Delete the morph field together with its targets',
+          userFriendlyMessage: msg`Delete the relation field together with its targets`,
+        });
+      }
+    }
 
     if (
       !buildOptions.isSystemBuild &&

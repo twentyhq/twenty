@@ -575,3 +575,34 @@ Exit codes:
 | 5    | Partial failure                     |
 | 6    | Conflict                            |
 | 130  | Cancelled                           |
+
+## App translations
+
+```sh
+twenty app translations extract
+twenty app translations extract --locale fr-FR
+twenty app translations extract --path ./apps/billing --json
+```
+
+Use `--path` for an explicit app directory. Without `--path`, the CLI finds the
+app containing the current directory.
+
+Extraction runs locally, without a workspace connection. It reads app metadata
+and static `t`, `msg`, and `Trans` strings in front-component source files. It
+refreshes `locales/en.json` with source strings and updates existing target JSON
+catalogs. `--locale` also creates a missing supported target catalog, for example
+`locales/fr-FR.json`. The source locale `en` cannot be a target.
+
+Translations for unchanged message/context pairs are preserved. New entries have
+empty translations; obsolete entries are removed. Context groups remain separate.
+Malformed target catalogs fail with `INVALID_INPUT` before writing any catalogs.
+Unsafe catalog or staging paths report `APP_PATH_UNAVAILABLE`. Files under
+`locales/compiled` are left untouched. Temporary files live under `.twenty/cli`.
+Each catalog is replaced atomically; an
+interrupted run may update only some catalogs, so rerun extraction to finish.
+
+The command validates app definitions but does not bundle or upload them. Edit
+the target catalogs, then run `twenty app apply` to deploy translations. Build
+and apply already compile translations; no separate compile command is needed.
+JSON output includes the app, source-string count, updated catalog paths and
+diagnostics.

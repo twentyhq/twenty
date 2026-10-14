@@ -1,5 +1,5 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/common-select-fields/utils/is-relation-target-excluded-from-selection.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -30,6 +30,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
       | 'type'
       | 'name'
       | 'relationTargetObjectMetadataId'
+      | 'morphId'
     >
   >;
   flatObjectMetadataMaps: FlatEntityMaps<
@@ -62,6 +63,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
 
     if (
       !isFlatFieldMetadataOfTypes(field, [...MORPH_OR_RELATION_FIELD_TYPES]) ||
+      isMorphRelationHead(field) ||
       isDefined(selectableRelationFields[field.name])
     ) {
       continue;
