@@ -1,9 +1,19 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useTranslate } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useTeamsUserLinks } from 'src/features/chat/front-components/hooks/use-teams-user-links';
 import { TEAMS_USER_LINK_SOURCE } from 'src/features/chat/logic-functions/constants/teams-user-link-source';
+import { type TeamsUserLinkSource } from 'src/features/chat/logic-functions/types/teams-user-link-source.type';
+
+const SOURCE_TAG_COLORS: Record<TeamsUserLinkSource, TagColor> = {
+  [TEAMS_USER_LINK_SOURCE.AUTO]: 'green',
+  [TEAMS_USER_LINK_SOURCE.MANUAL]: 'blue',
+};
 
 const StyledSection = styled.section`
   color: ${() => themeCssVariables.font.color.primary};
@@ -29,6 +39,7 @@ const StyledRow = styled.li`
   display: grid;
   font-size: ${() => themeCssVariables.font.size.md};
   gap: ${() => themeCssVariables.spacing[4]};
+  align-items: center;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   padding: ${() => themeCssVariables.spacing[3]}
     ${() => themeCssVariables.spacing[4]};
@@ -45,6 +56,11 @@ const StyledSecondaryText = styled.span`
 const TeamsUserLinksContent = () => {
   const { t } = useTranslate();
   const { teamsUserLinks, isLoading, hasLoadError } = useTeamsUserLinks();
+
+  const sourceLabels: Record<TeamsUserLinkSource, string> = {
+    [TEAMS_USER_LINK_SOURCE.AUTO]: t('Matched on email'),
+    [TEAMS_USER_LINK_SOURCE.MANUAL]: t('Set manually'),
+  };
 
   if (isLoading) {
     return <StyledSecondaryText>{t('Loading…')}</StyledSecondaryText>;
@@ -70,13 +86,25 @@ const TeamsUserLinksContent = () => {
     <StyledList>
       {teamsUserLinks.map((teamsUserLink) => (
         <StyledRow key={teamsUserLink.id}>
-          <span>{teamsUserLink.name}</span>
-          <span>{teamsUserLink.workspaceMemberName}</span>
-          <StyledSecondaryText>
-            {teamsUserLink.source === TEAMS_USER_LINK_SOURCE.MANUAL
-              ? t('Set manually')
-              : t('Matched on email')}
-          </StyledSecondaryText>
+          <OverflowingTextWithTooltip
+            text={
+              isNonEmptyString(teamsUserLink.name)
+                ? teamsUserLink.name
+                : t('Unnamed Teams account')
+            }
+          />
+          <OverflowingTextWithTooltip
+            text={
+              isNonEmptyString(teamsUserLink.workspaceMemberName)
+                ? teamsUserLink.workspaceMemberName
+                : t('No workspace member')
+            }
+          />
+          {isDefined(teamsUserLink.source) && (
+            <Tag color={SOURCE_TAG_COLORS[teamsUserLink.source]}>
+              {sourceLabels[teamsUserLink.source]}
+            </Tag>
+          )}
         </StyledRow>
       ))}
     </StyledList>

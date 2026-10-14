@@ -24,7 +24,7 @@ describe('TeamsUserLinksList', () => {
 
   afterEach(cleanup);
 
-  it('lists linked Teams accounts across pages sorted by name with their member and source', async () => {
+  it('lists linked Teams accounts across pages sorted by name with their member and known source', async () => {
     restGetMock
       .mockResolvedValueOnce({
         data: {
@@ -49,6 +49,12 @@ describe('TeamsUserLinksList', () => {
               source: 'AUTO',
               workspaceMember: { name: { firstName: 'Adam', lastName: '' } },
             },
+            {
+              id: 'link-3',
+              name: 'Mia Teams',
+              source: 'LEGACY',
+              workspaceMember: null,
+            },
           ],
         },
         pageInfo: { hasNextPage: false, endCursor: 'cursor-2' },
@@ -60,6 +66,7 @@ describe('TeamsUserLinksList', () => {
 
     expect(rows.map((row) => row.textContent)).toEqual([
       'Adam TeamsAdamMatched on email',
+      'Mia TeamsNo workspace member',
       'Zoe TeamsZoe DoeSet manually',
     ]);
     expect(restGetMock.mock.calls).toEqual([
