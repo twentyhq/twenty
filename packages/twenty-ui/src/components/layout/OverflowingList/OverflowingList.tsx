@@ -3,18 +3,17 @@ import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { useStableCallback } from '@base-ui/utils/useStableCallback';
 import { isFunction, isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { type ComponentProps, useCallback, useRef, useState } from 'react';
+import { type ComponentProps, useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './OverflowingList.module.scss';
-import { focusOverflowingListFallback } from './internal/focusOverflowingListFallback';
 import { OverflowingListPopupTarget } from './internal/OverflowingListPopupTarget';
 import { OverflowingListItem } from './internal/OverflowingListItem';
 import { OverflowingListLayoutEffect } from './internal/OverflowingListLayoutEffect';
 import { useOverflowingListLayout } from './internal/useOverflowingListLayout';
-import { useFocusedElementUnmountRef } from './internal/useFocusedElementUnmountRef';
+import { useOverflowingListFocus } from './internal/useOverflowingListFocus';
 import { type OverflowingListProps } from './types/OverflowingListProps';
 
 type PopoverActions = NonNullable<
@@ -40,7 +39,6 @@ export const OverflowingList = ({
   ...props
 }: OverflowingListProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [hasFocus, setHasFocus] = useState(false);
   const [popup, setPopup] = useState<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useControlled({
     controlled: open,
@@ -49,18 +47,10 @@ export const OverflowingList = ({
     state: 'open',
   });
   const actionsRef = useRef<PopoverActions>(null);
-  const [focusedItemCountVisibility, setFocusedItemCountVisibility] =
-    useState<boolean>();
-  const isCountVisible =
-    showOverflowCount ??
-    focusedItemCountVisibility ??
-    (isHovered || hasFocus || isOpen);
   const inlineItemCount =
     isDefined(maxInlineCount) && Number.isFinite(maxInlineCount)
       ? Math.min(children.length, Math.max(0, Math.floor(maxInlineCount)))
       : children.length;
-  const isMeasurementEnabled =
-    (showOverflowCount ?? (isHovered || hasFocus)) || isOpen;
   const {
     containerRef,
     itemsRef,
@@ -74,80 +64,30 @@ export const OverflowingList = ({
   });
   const canExpand = hasOverflow && (isOpen || showOverflowCount !== false);
   const isPopupOpen = isOpen && canExpand;
-  const restoreItemFocus = useStableCallback(
-    ({
-      index,
-      element,
-      isInPopup,
-    }: {
-      index: number;
-      element: HTMLElement;
-      isInPopup: boolean;
-    }) => {
-      focusOverflowingListFallback({
-        items: isInPopup && canExpand ? null : itemsRef.current,
-        popup: isInPopup && isPopupOpen ? popup : null,
-        trigger: triggerRef.current,
-        root: containerRef.current,
-        removedIndex: index,
-        excludedItem: element,
-      });
-    },
-  );
-  const restoreTriggerFocus = useCallback(() => {
-    const container = containerRef.current;
-    container?.focus();
-    setHasFocus(container?.ownerDocument.activeElement === container);
-    setFocusedItemCountVisibility(undefined);
-  }, [containerRef]);
-  const restorePopupFocus = useStableCallback(() => {
-    if (isPopupOpen) {
-      return;
-    }
-
-    const container = containerRef.current;
-    const document = container?.ownerDocument;
-    const activeElement = document?.activeElement;
-    const hasFocusedInlineItem =
-      isDefined(activeElement) &&
-      itemsRef.current?.contains(activeElement) &&
-      !isDefined(activeElement.closest('[inert]'));
-    const hasExternalFocus =
-      isDefined(activeElement) &&
-      activeElement !== document?.body &&
-      !container?.contains(activeElement) &&
-      !popup?.contains(activeElement);
-
-    if (hasFocusedInlineItem || hasExternalFocus) {
-      return;
-    }
-
-    if (!canExpand) {
-      focusOverflowingListFallback({
-        items: itemsRef.current,
-        popup: null,
-        trigger: null,
-        root: container,
-        removedIndex: children.length,
-      });
-      return;
-    }
-
-    const trigger = triggerRef.current;
-
-    if (isDefined(trigger) && !trigger.matches(':disabled')) {
-      trigger.focus({ preventScroll: true });
-      return;
-    }
-
-    container?.focus({ preventScroll: true });
+  const {
+    hasFocus,
+    isCountVisible,
+    restoreItemFocus,
+    schedulePopupFocusRestoration,
+    resetFocusWhenFocusedTriggerUnmounts,
+    handleFocusCapture,
+    handleBlurCapture,
+  } = useOverflowingListFocus({
+    containerRef,
+    itemsRef,
+    triggerRef,
+    popup,
+    itemCount: children.length,
+    canExpand,
+    isPopupOpen,
+    isOpen,
+    isHovered,
+    showOverflowCount,
+    onFocusCapture,
+    onBlurCapture,
   });
-  const schedulePopupFocusRestoration = useCallback(() => {
-    queueMicrotask(restorePopupFocus);
-    return false;
-  }, [restorePopupFocus]);
-  const resetFocusWhenFocusedTriggerUnmounts =
-    useFocusedElementUnmountRef(restoreTriggerFocus);
+  const isMeasurementEnabled =
+    (showOverflowCount ?? (isHovered || hasFocus)) || isOpen;
   const mergedRef = useMergedRefs(containerRef, ref);
   const mergedTriggerRef = useMergedRefs(
     triggerRef,
@@ -180,29 +120,8 @@ export const OverflowingList = ({
           setIsHovered(false);
           onMouseLeave?.(event);
         }}
-        onFocusCapture={(event) => {
-          setHasFocus(true);
-
-          if (itemsRef.current?.contains(event.target)) {
-            setFocusedItemCountVisibility(
-              (currentVisibility) => currentVisibility ?? isCountVisible,
-            );
-          }
-
-          onFocusCapture?.(event);
-        }}
-        onBlurCapture={(event) => {
-          const hasRelatedFocus =
-            event.currentTarget.contains(event.relatedTarget) ||
-            (popup?.contains(event.relatedTarget) ?? false);
-          setHasFocus(hasRelatedFocus);
-
-          if (!itemsRef.current?.contains(event.relatedTarget)) {
-            setFocusedItemCountVisibility(undefined);
-          }
-
-          onBlurCapture?.(event);
-        }}
+        onFocusCapture={handleFocusCapture}
+        onBlurCapture={handleBlurCapture}
       >
         <div ref={itemsRef} className={styles.items}>
           {children.slice(0, inlineItemCount).map((child, index) => (
