@@ -41,7 +41,6 @@ import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.modu
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -55,7 +54,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CacheLockModule,
     ClickHouseModule,
     CoreEntityCacheModule,
-    FeatureFlagModule,
     StripeModule,
     PermissionsModule,
     WorkspaceCacheModule,
