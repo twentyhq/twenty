@@ -120,10 +120,6 @@ const StyledTab = styled.button<{ isActive: boolean }>`
 
 const StyledJsonTreeContainer = styled.div`
   overflow-x: auto;
-
-  ul {
-    min-width: 0;
-  }
 `;
 
 const StyledErrorMessage = styled.div`
