@@ -63,10 +63,6 @@ const StyledExternalLink = styled.a`
   display: inline-flex;
   gap: ${themeCssVariables.spacing[1]};
   text-decoration: none;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const StyledMono = styled.span`
