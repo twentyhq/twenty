@@ -114,7 +114,7 @@ export const sanitizeRawUpdateFieldInput = ({
       type: existingFlatFieldMetadata.type,
       options: existingFlatFieldMetadata.options,
     });
-  const optionLabelTranslationProperties = isDefined(
+  const optionLabelTranslationProperties: string[] = isDefined(
     updatedEditableFieldProperties.options,
   )
     ? getFlatFieldMetadataOptionLabelTranslationProperties({

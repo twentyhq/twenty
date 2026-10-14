@@ -125,11 +125,14 @@ describe('field metadata option labels i18n', () => {
 
     fieldMetadataId = fieldData.createOneField.id;
 
-    const options: FieldMetadataComplexOption[] =
-      fieldData.createOneField.options;
+    const options = fieldData.createOneField.options ?? [];
 
-    weekOptionId = options.find(({ value }) => value === 'WEEK')?.id ?? '';
-    monthOptionId = options.find(({ value }) => value === 'MONTH')?.id ?? '';
+    weekOptionId =
+      options.find((option: { value: string }) => option.value === 'WEEK')
+        ?.id ?? '';
+    monthOptionId =
+      options.find((option: { value: string }) => option.value === 'MONTH')
+        ?.id ?? '';
 
     const { errors } = await updateOneFieldMetadata({
       expectToFail: false,
