@@ -19,7 +19,6 @@ type SettingsOptionCardContentSelectProps = {
   title: React.ReactNode;
   description?: string;
   divider?: boolean;
-  disabled?: boolean;
   children?: React.ReactNode;
 };
 
@@ -55,12 +54,11 @@ export const SettingsOptionCardContentSelect = ({
   title,
   description,
   divider,
-  disabled = false,
   children,
 }: SettingsOptionCardContentSelectProps) => {
   return (
     <>
-      <StyledSelectRow disabled={disabled}>
+      <StyledSelectRow>
         {(isDefined(LeftComponent) || isDefined(Icon)) && (
           <StyledSettingsCardIcon>
             {LeftComponent ??

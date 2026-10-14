@@ -6,6 +6,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/activities/components/ActivityList.tsx',
+    reason: 'Card.Root scrolls inside a full-height activity list',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/activities/emails/components/EmailsCardContent.tsx',
     reason: 'Section.Root fills the widget height',
   },
@@ -51,13 +56,29 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesByHealthAccordion.tsx',
+    reason: 'Card.Content laid out as the accordion header row',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/applications/components/SettingsApplicationOverviewCard.tsx',
     reason: 'Card.Root media layout with a minimum height',
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/components/SettingsCard.tsx',
+    reason:
+      'Compact Card.Content column for the settings card header and description',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/components/SettingsListCard.tsx',
     reason: 'Card.Footer laid out around the add button',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/components/SettingsOptions/SettingsCardContentBase.tsx',
+    reason: 'Card.Content laid out as a settings option row',
   },
   {
     filePath:
@@ -81,6 +102,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx',
+    reason: 'Card.Footer laid out around the add option button',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx',
     reason: 'React Flow panel classes on ButtonGroup',
   },
@@ -88,6 +114,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx',
     reason: 'Tinted preview Card.Content',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/event-logs/components/SettingsLogs.tsx',
+    reason: 'Card.Content laid out as the column of log filters and results',
   },
   {
     filePath:

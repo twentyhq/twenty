@@ -56,7 +56,6 @@ export const SettingsDataModelFieldLinksVariantForm = ({
             Icon={IconWorld}
             title={t`Link content`}
             description={t`Store the full URL or just the domain`}
-            disabled={disabled}
           >
             <Select<FieldLinksVariant>
               dropdownWidth={180}

@@ -20,7 +20,6 @@ import {
 import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -209,26 +208,20 @@ export const ObjectSettings = ({
             objectNamePlural={objectMetadataItem.namePlural}
             disabled={hasUnsavedAboutEdits}
           />
-          <UndecoratedLink
+          <SettingsCard
             to={getSettingsPath(SettingsPath.ObjectSearch, {
               objectNamePlural: objectMetadataItem.namePlural,
             })}
-          >
-            <SettingsCard
-              Icon={<IconSearch size={theme.icon.size.md} />}
-              title={t`Configure search`}
-            />
-          </UndecoratedLink>
-          <UndecoratedLink
+            Icon={<IconSearch size={theme.icon.size.md} />}
+            title={t`Configure search`}
+          />
+          <SettingsCard
             to={getSettingsPath(SettingsPath.ObjectIndexes, {
               objectNamePlural: objectMetadataItem.namePlural,
             })}
-          >
-            <SettingsCard
-              Icon={<IconBolt size={theme.icon.size.md} />}
-              title={t`Manage indexes`}
-            />
-          </UndecoratedLink>
+            Icon={<IconBolt size={theme.icon.size.md} />}
+            title={t`Manage indexes`}
+          />
         </StyledLinkCardsContainer>
       </Section.Root>
       {!isReadOnly && (
