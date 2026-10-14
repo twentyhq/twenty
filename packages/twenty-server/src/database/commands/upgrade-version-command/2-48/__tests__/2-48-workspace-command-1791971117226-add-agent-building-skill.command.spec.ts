@@ -1,5 +1,5 @@
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { AddAgentBuildingSkillCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791906324176-add-agent-building-skill.command';
+import { AddAgentBuildingSkillCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791971117226-add-agent-building-skill.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_SKILL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-skill.constant';

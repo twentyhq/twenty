@@ -15,9 +15,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const AGENT_BUILDING_SKILL_UNIVERSAL_IDENTIFIER =
   STANDARD_SKILL['agent-building'].universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.47.0', 1791906324176)
+@RegisteredWorkspaceCommand('2.48.0', 1791971117226)
 @Command({
-  name: 'upgrade:2-47:add-agent-building-skill',
+  name: 'upgrade:2-48:add-agent-building-skill',
   description:
     'Add the standard agent-building skill to existing workspaces',
 })
