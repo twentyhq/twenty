@@ -20,7 +20,7 @@ const FieldFocusEffect = () => {
     setIsFocused(true);
   }, [setIsFocused]);
 
-  return <></>;
+  return null;
 };
 
 const meta: Meta = {

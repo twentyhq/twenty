@@ -1,10 +1,9 @@
 import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectFieldDisplay';
 import { OverflowingList } from 'twenty-ui/components/layout';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { MultiSelectFieldDisplayTag } from '@/object-record/record-field/ui/meta-types/display/components/MultiSelectFieldDisplayTag';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MultiSelectFieldDisplay = () => {
@@ -14,29 +13,26 @@ export const MultiSelectFieldDisplay = () => {
 
   const { isFocused } = useFieldFocus();
 
-  const options = fieldDefinition.metadata.options;
-  const overflowLabel = t`Show all items`;
+  const selectedOptions = isDefined(fieldValue)
+    ? fieldDefinition.metadata.options?.filter((option) =>
+        fieldValue.includes(option.value),
+      )
+    : [];
 
-  return useMemo(() => {
-    const selectedOptions = isDefined(fieldValue)
-      ? options?.filter((option) => fieldValue.includes(option.value))
-      : [];
+  if (!isDefined(selectedOptions)) return null;
 
-    if (!isDefined(selectedOptions)) return null;
-
-    return (
-      <OverflowingList
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
-        overflowLabel={overflowLabel}
-        showOverflowCount={isFocused}
-      >
-        {selectedOptions.map((selectedOption, index) => (
-          <Tag key={index} color={selectedOption.color}>
-            {selectedOption.label}
-          </Tag>
-        ))}
-      </OverflowingList>
-    );
-  }, [fieldValue, options, isFocused, overflowLabel]);
+  return (
+    <OverflowingList
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
+      overflowLabel={t`Show all items`}
+      showOverflowCount={isFocused}
+    >
+      {selectedOptions.map((selectedOption, index) => (
+        <MultiSelectFieldDisplayTag key={index} color={selectedOption.color}>
+          {selectedOption.label}
+        </MultiSelectFieldDisplayTag>
+      ))}
+    </OverflowingList>
+  );
 };
