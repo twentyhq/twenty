@@ -224,12 +224,7 @@ describe('computeCursorArgFilter', () => {
 
       // Empty TEXT values are stored as SQL NULL, so the trailing NULL block continues the scan
       expect(result).toEqual([
-        {
-          or: [
-            { name: { gtStrict: 'John' } },
-            { name: { isStrictly: 'NULL' } },
-          ],
-        },
+        { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
       ]);
     });
 
@@ -246,7 +241,7 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: false,
       });
 
-      expect(result).toEqual([{ name: { ltStrict: 'John' } }]);
+      expect(result).toEqual([{ name: { lt: 'John' } }]);
     });
   });
 
@@ -268,18 +263,11 @@ describe('computeCursorArgFilter', () => {
       });
 
       expect(result).toEqual([
-        {
-          or: [
-            { name: { gtStrict: 'John' } },
-            { name: { isStrictly: 'NULL' } },
-          ],
-        },
+        { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
         {
           and: [
             { name: { eqStrict: 'John' } },
-            {
-              or: [{ age: { ltStrict: 30 } }, { age: { isStrictly: 'NULL' } }],
-            },
+            { or: [{ age: { lt: 30 } }, { age: { isStrictly: 'NULL' } }] },
           ],
         },
       ]);
@@ -312,7 +300,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gtStrict: 'John' } } },
+            { fullName: { firstName: { gt: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -325,7 +313,7 @@ describe('computeCursorArgFilter', () => {
             },
             {
               or: [
-                { fullName: { lastName: { gtStrict: 'Doe' } } },
+                { fullName: { lastName: { gt: 'Doe' } } },
                 { fullName: { lastName: { isStrictly: 'NULL' } } },
               ],
             },
@@ -358,7 +346,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gtStrict: 'John' } } },
+            { fullName: { firstName: { gt: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -391,7 +379,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gtStrict: 'John' } } },
+            { fullName: { firstName: { gt: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -404,7 +392,7 @@ describe('computeCursorArgFilter', () => {
             },
             {
               or: [
-                { fullName: { lastName: { gtStrict: 'Doe' } } },
+                { fullName: { lastName: { gt: 'Doe' } } },
                 { fullName: { lastName: { isStrictly: 'NULL' } } },
               ],
             },
@@ -438,7 +426,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           fullName: {
-            firstName: { ltStrict: 'John' },
+            firstName: { lt: 'John' },
           },
         },
         {
@@ -450,7 +438,7 @@ describe('computeCursorArgFilter', () => {
             },
             {
               fullName: {
-                lastName: { ltStrict: 'Doe' },
+                lastName: { lt: 'Doe' },
               },
             },
           ],
@@ -510,7 +498,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { closeDate: { gtStrict: '2026-01-01T00:00:00Z' } },
+            { closeDate: { gt: '2026-01-01T00:00:00Z' } },
             { closeDate: { isStrictly: 'NULL' } },
           ],
         },
@@ -530,9 +518,7 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      expect(result).toEqual([
-        { closeDate: { gtStrict: '2026-01-01T00:00:00Z' } },
-      ]);
+      expect(result).toEqual([{ closeDate: { gt: '2026-01-01T00:00:00Z' } }]);
     });
 
     it('should continue on tie-breaking keys when the cursor sits in a trailing NULL block', () => {
@@ -555,7 +541,7 @@ describe('computeCursorArgFilter', () => {
         {
           and: [
             { closeDate: { isStrictly: 'NULL' } },
-            { id: { gtStrict: 'uuid-1' } },
+            { id: { gt: 'uuid-1' } },
           ],
         },
       ]);
@@ -582,7 +568,7 @@ describe('computeCursorArgFilter', () => {
         {
           and: [
             { closeDate: { isStrictly: 'NULL' } },
-            { id: { gtStrict: 'uuid-1' } },
+            { id: { gt: 'uuid-1' } },
           ],
         },
       ]);
@@ -604,7 +590,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { closeDate: { ltStrict: '2026-01-01T00:00:00Z' } },
+            { closeDate: { lt: '2026-01-01T00:00:00Z' } },
             { closeDate: { isStrictly: 'NULL' } },
           ],
         },
@@ -624,7 +610,7 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      expect(result).toEqual([{ id: { gtStrict: 'uuid-1' } }]);
+      expect(result).toEqual([{ id: { gt: 'uuid-1' } }]);
     });
   });
 
@@ -710,14 +696,14 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { company: { name: { gtStrict: 'Acme' } } },
+            { company: { name: { gt: 'Acme' } } },
             { company: { name: { isStrictly: 'NULL' } } },
           ],
         },
         {
           and: [
             { company: { name: { eqStrict: 'Acme' } } },
-            { id: { gtStrict: 'uuid-1' } },
+            { id: { gt: 'uuid-1' } },
           ],
         },
       ]);
@@ -739,7 +725,7 @@ describe('computeCursorArgFilter', () => {
         {
           and: [
             { company: { name: { isStrictly: 'NULL' } } },
-            { id: { gtStrict: 'uuid-1' } },
+            { id: { gt: 'uuid-1' } },
           ],
         },
       ]);
@@ -789,7 +775,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { company: { contactName: { firstName: { gtStrict: 'Ada' } } } },
+            { company: { contactName: { firstName: { gt: 'Ada' } } } },
             { company: { contactName: { firstName: { isStrictly: 'NULL' } } } },
           ],
         },
@@ -798,11 +784,7 @@ describe('computeCursorArgFilter', () => {
             { company: { contactName: { firstName: { eqStrict: 'Ada' } } } },
             {
               or: [
-                {
-                  company: {
-                    contactName: { lastName: { gtStrict: 'Lovelace' } },
-                  },
-                },
+                { company: { contactName: { lastName: { gt: 'Lovelace' } } } },
                 {
                   company: {
                     contactName: { lastName: { isStrictly: 'NULL' } },
@@ -818,7 +800,7 @@ describe('computeCursorArgFilter', () => {
             {
               company: { contactName: { lastName: { eqStrict: 'Lovelace' } } },
             },
-            { id: { gtStrict: 'uuid-1' } },
+            { id: { gt: 'uuid-1' } },
           ],
         },
       ]);

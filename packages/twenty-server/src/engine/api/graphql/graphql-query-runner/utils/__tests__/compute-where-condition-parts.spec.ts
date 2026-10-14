@@ -132,16 +132,14 @@ describe('computeWhereConditionParts', () => {
 
     it.each([
       {
-        description:
-          'should compare gtStrict exactly for a microsecond cursor value',
-        operator: 'gtStrict',
+        description: 'should compare gt exactly for a microsecond cursor value',
+        operator: 'gt',
         value: microsecondValue,
         expectedSql: `"person"."createdAt" > :createdAt0000000000`,
       },
       {
-        description:
-          'should compare ltStrict exactly for a microsecond cursor value',
-        operator: 'ltStrict',
+        description: 'should compare lt exactly for a microsecond cursor value',
+        operator: 'lt',
         value: microsecondValue,
         expectedSql: `"person"."createdAt" < :createdAt0000000000`,
       },
@@ -154,8 +152,8 @@ describe('computeWhereConditionParts', () => {
       },
       {
         description:
-          'should compare gtStrict on millisecond buckets for a millisecond cursor value',
-        operator: 'gtStrict',
+          'should compare gt on millisecond buckets for a millisecond cursor value',
+        operator: 'gt',
         value: '2020-01-01T00:00:00.123Z',
         expectedSql: `"person"."createdAt" >= :createdAt0000000000::timestamptz + interval '1 millisecond'`,
       },
@@ -167,24 +165,21 @@ describe('computeWhereConditionParts', () => {
         expectedSql: `("person"."createdAt" >= :createdAt0000000000 AND "person"."createdAt" < :createdAt0000000000::timestamptz + interval '1 millisecond')`,
       },
       {
-        description:
-          'should compare ltStrict exactly for a millisecond cursor value',
-        operator: 'ltStrict',
+        description: 'should compare lt exactly for a millisecond cursor value',
+        operator: 'lt',
         value: '2020-01-01T00:00:00.123Z',
         expectedSql: `"person"."createdAt" < :createdAt0000000000`,
       },
       {
-        description:
-          'should compare gtStrict exactly when microseconds are zero',
-        operator: 'gtStrict',
+        description: 'should compare gt exactly when microseconds are zero',
+        operator: 'gt',
         value: '2020-01-01T00:00:00.123000Z',
         expectedSql: `"person"."createdAt" > :createdAt0000000000`,
       },
       {
-        description:
-          'should keep user-facing gt on millisecond buckets for a microsecond value',
+        description: 'should keep gt on millisecond buckets for a Date value',
         operator: 'gt',
-        value: microsecondValue,
+        value: new Date('2020-01-01T00:00:00.123Z'),
         expectedSql: `"person"."createdAt" >= :createdAt0000000000::timestamptz + interval '1 millisecond'`,
       },
       {

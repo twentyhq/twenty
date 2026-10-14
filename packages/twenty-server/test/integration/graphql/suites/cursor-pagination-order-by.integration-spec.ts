@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 const PAGE_SIZE = 3;
@@ -647,6 +648,62 @@ describe('Cursor pagination ordered by a DATE_TIME field with rows sharing a mil
       '2020-01-01T00:00:00.124Z',
     ]);
   });
+
+  it.each([
+    { operator: 'eq', expectedIds: ascendingIds.slice(0, 3) },
+    { operator: 'gt', expectedIds: ascendingIds.slice(3) },
+  ])(
+    'should preserve millisecond $operator filters while paginating through GraphQL',
+    async ({ operator, expectedIds }) => {
+      const { ids } = await paginateForward({
+        orderBy: { createdAt: 'AscNullsLast' },
+        filter: {
+          and: [
+            filter,
+            { createdAt: { [operator]: '2020-01-01T00:00:00.123Z' } },
+          ],
+        },
+        first: 1,
+      });
+
+      expect(ids).toEqual(expectedIds);
+    },
+  );
+
+  it.each([
+    { operator: 'eq', expectedIds: ascendingIds.slice(0, 3) },
+    { operator: 'gt', expectedIds: ascendingIds.slice(3) },
+  ])(
+    'should preserve millisecond $operator filters while paginating through REST',
+    async ({ operator, expectedIds }) => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < opportunities.length; iteration++) {
+        const path: string =
+          `/opportunities?filter=createdAt[${operator}]:2020-01-01T00:00:00.123Z&order_by=createdAt[AscNullsLast]&limit=1` +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestApiRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.opportunities.map(
+            (opportunity: { id: string }) => opportunity.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toEqual(expectedIds);
+    },
+  );
 
   it.each([
     { direction: 'AscNullsLast', first: 1, expectedIds: ascendingIds },

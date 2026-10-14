@@ -47,7 +47,7 @@ export const computeWhereConditionParts = ({
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
 
-  const isMillisecondDateTimeCursorValue =
+  const isMillisecondDateTimeValue =
     isDateTimeField &&
     !(
       isString(value) && MICROSECOND_DATE_TIME_CURSOR_VALUE_PATTERN.test(value)
@@ -114,10 +114,7 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':
-    case 'gtStrict':
-      if (
-        operator === 'gt' ? isDateTimeField : isMillisecondDateTimeCursorValue
-      ) {
+      if (isMillisecondDateTimeValue) {
         return {
           sql: `${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond'`,
           params: { [`${key}${paramSuffix}`]: value },
@@ -134,7 +131,6 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'lt':
-    case 'ltStrict':
       return {
         sql: `${fieldReference} < :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
@@ -171,7 +167,7 @@ export const computeWhereConditionParts = ({
         params: {},
       };
     case 'eqStrict':
-      if (isMillisecondDateTimeCursorValue) {
+      if (isMillisecondDateTimeValue) {
         return {
           sql: `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')`,
           params: { [`${key}${paramSuffix}`]: value },
