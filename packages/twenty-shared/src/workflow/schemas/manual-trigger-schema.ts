@@ -9,7 +9,7 @@ export const workflowManualTriggerSchema = baseTriggerSchema
       outputSchema: z
         .looseObject({})
         .describe(
-          'Schema defining the output data structure. With SINGLE_RECORD availability, the selected record is accessible via {{trigger.payload.fieldName}}. With BULK_RECORDS availability, the selected records are accessible via {{trigger.payload.objectNamePlural}}. When no record is selected, no record data is available.',
+          'Schema defining the output data structure. With SINGLE_RECORD availability, the selected record is accessible via {{trigger.payload.fieldName}}. With BULK_RECORDS availability, the selected records are accessible via {{trigger.payload.<objectNamePlural>}} (e.g., {{trigger.payload.companies}}). When no record is selected, no record data is available.',
         ),
       icon: z.string().optional(),
       isPinned: z.boolean().optional(),

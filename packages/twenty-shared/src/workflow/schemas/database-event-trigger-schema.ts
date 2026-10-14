@@ -20,7 +20,7 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
       outputSchema: z
         .looseObject({})
         .describe(
-          'Schema defining the output data structure. For database events, the record that triggered the workflow is under properties.after (properties.before for deleted events) and is accessible via {{trigger.properties.after.fieldName}}. The "object" key of a record output schema is display metadata, not part of the variable path.',
+          'Schema defining the output data structure. For database events, the record that triggered the workflow is under properties.after (properties.before for deleted events) and is accessible via {{trigger.properties.after.fieldName}}.',
         ),
       objectType: z.string().optional(),
       fields: z.array(z.string()).optional().nullable(),
