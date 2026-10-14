@@ -5,9 +5,10 @@ import { TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER } from 'src/features/chat
 import { teamsActivitiesResolverHandler } from 'src/features/chat/logic-functions/teams-activities-resolver';
 import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/types/teams-inbound-activity.type';
 
-const { kvGetMock, verifyTokenMock } = vi.hoisted(() => ({
+const { kvGetMock, verifyTokenMock, getKeysMock } = vi.hoisted(() => ({
   kvGetMock: vi.fn(),
   verifyTokenMock: vi.fn(),
+  getKeysMock: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
@@ -18,6 +19,11 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 vi.mock(
   'src/features/chat/logic-functions/utils/verify-teams-activity-token',
   () => ({ verifyTeamsActivityTokenOrThrow: verifyTokenMock }),
+);
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/get-teams-bot-connector-keys',
+  () => ({ getTeamsBotConnectorKeys: getKeysMock }),
 );
 
 const SERVICE_URL = 'https://smba.trafficmanager.net/emea/';
@@ -66,6 +72,7 @@ describe('teamsActivitiesResolverHandler', () => {
           authorizationHeader: 'Bearer bot-framework-token',
           activityServiceUrl: SERVICE_URL,
           botAppId: 'bot-app-id',
+          loadKeys: expect.any(Function),
         },
       ],
     ]);
@@ -81,6 +88,16 @@ describe('teamsActivitiesResolverHandler', () => {
 
     expect(result).toBeInstanceOf(Response);
     expect((result as Response).status).toBe(401);
+    expect(kvGetMock).not.toHaveBeenCalled();
+  });
+
+  it('fails with a server error when the signing keys cannot be loaded', async () => {
+    getKeysMock.mockRejectedValue(new Error('Key endpoint unavailable'));
+    verifyTokenMock.mockImplementation(({ loadKeys }) => loadKeys());
+
+    await expect(resolve(MESSAGE_ACTIVITY)).rejects.toThrow(
+      'Key endpoint unavailable',
+    );
     expect(kvGetMock).not.toHaveBeenCalled();
   });
 
