@@ -1,6 +1,5 @@
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { getRecordTableColumnWidthRules } from '@/object-record/record-table/utils/getRecordTableColumnWidthRules';
-import { useMemo } from 'react';
 
 export const RecordTableColumnWidthStyle = ({
   scopeId,
@@ -9,14 +8,12 @@ export const RecordTableColumnWidthStyle = ({
 }) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const columnWidthRules = useMemo(
-    () =>
-      getRecordTableColumnWidthRules({
+  return (
+    <style>
+      {getRecordTableColumnWidthRules({
         scopeSelector: `[id="${scopeId}"]`,
         columnCount: visibleRecordFields.length,
-      }),
-    [scopeId, visibleRecordFields.length],
+      })}
+    </style>
   );
-
-  return <style>{columnWidthRules}</style>;
 };

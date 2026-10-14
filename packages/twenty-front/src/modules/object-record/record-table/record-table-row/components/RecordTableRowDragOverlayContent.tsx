@@ -32,6 +32,9 @@ import { RecordTableFieldsCells } from '@/object-record/record-table/record-tabl
 import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
+import { RecordTableColumnVirtualizationItemsContextValueProvider } from '@/object-record/record-table/contexts/RecordTableColumnVirtualizationItemsContext';
+import { computeRecordTableColumnRange } from '@/object-record/record-table/virtualization/utils/computeRecordTableColumnRange';
+import { computeRecordTableColumnVirtualizationItems } from '@/object-record/record-table/virtualization/utils/computeRecordTableColumnVirtualizationItems';
 import { RecordTableColumnWidthStyle } from '@/object-record/record-table/components/RecordTableColumnWidthStyle';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
@@ -159,6 +162,18 @@ export const RecordTableRowDragOverlayContent = ({
 
   const recordId = sourceData.recordId;
 
+  const columnVirtualizationItems = computeRecordTableColumnVirtualizationItems(
+    {
+      visibleRecordFields,
+      renderedColumnRange: computeRecordTableColumnRange({
+        visibleRecordFields,
+        visibleStartPosition: 0,
+        visibleEndPosition: visibleTableWidth ?? window.innerWidth,
+      }),
+      columnIndexesRenderedOutsideRange: [],
+    },
+  );
+
   return (
     <StyledRowDragOverlayCSSBridge
       id={rowDragOverlayHtmlId}
@@ -187,7 +202,11 @@ export const RecordTableRowDragOverlayContent = ({
           <RecordTableRowDraggableContextProvider value={{ isDragging: true }}>
             {!isRecordTableDragColumnHidden && <RecordTableCellDragAndDrop />}
             {!isRecordTableCheckboxColumnHidden && <RecordTableCellCheckbox />}
-            <RecordTableFieldsCells />
+            <RecordTableColumnVirtualizationItemsContextValueProvider
+              value={columnVirtualizationItems}
+            >
+              <RecordTableFieldsCells />
+            </RecordTableColumnVirtualizationItemsContextValueProvider>
             <RecordTablePlusButtonCellPlaceholder />
             <RecordTableLastEmptyCell />
           </RecordTableRowDraggableContextProvider>
