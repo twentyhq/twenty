@@ -328,7 +328,9 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const tabList = await canvas.findByRole('tablist');
 
-    expect(getComputedStyle(tabList, '::after').display).toBe('none');
+    expect(tabList.getBoundingClientRect().bottom).toBe(
+      tabList.parentElement!.getBoundingClientRect().bottom,
+    );
     expect(getComputedStyle(tabList.parentElement!, '::after').display).toBe(
       args.presentation === 'identifier-bar' ? 'none' : 'block',
     );
