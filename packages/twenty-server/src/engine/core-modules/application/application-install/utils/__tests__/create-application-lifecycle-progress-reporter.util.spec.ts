@@ -41,4 +41,75 @@ describe('createApplicationLifecycleProgressReporter', () => {
     ).resolves.toBeUndefined();
     expect(updateProgress).toHaveBeenCalledWith(50);
   });
+
+  describe('reportStepProgressDuring', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('reports elapsed time progress within the step until it finishes', async () => {
+      const updateProgress = jest.fn().mockResolvedValue(undefined);
+      const reporter = createApplicationLifecycleProgressReporter({
+        steps: STEPS,
+        updateProgress,
+      });
+      let finishStep = () => {};
+
+      const stepRun = reporter.reportStepProgressDuring({
+        step: 'SECOND',
+        expectedDurationMs: 10_000,
+        run: () =>
+          new Promise<void>((resolve) => {
+            finishStep = resolve;
+          }),
+      });
+
+      await jest.advanceTimersByTimeAsync(5_000);
+      finishStep();
+      await stepRun;
+      await jest.advanceTimersByTimeAsync(5_000);
+
+      expect(updateProgress.mock.calls).toEqual([[28], [30], [33], [35], [38]]);
+    });
+
+    it('stops at the step boundary when the step outlasts its expected duration', async () => {
+      const updateProgress = jest.fn().mockResolvedValue(undefined);
+      const reporter = createApplicationLifecycleProgressReporter({
+        steps: STEPS,
+        updateProgress,
+      });
+
+      const stepRun = reporter.reportStepProgressDuring({
+        step: 'SECOND',
+        expectedDurationMs: 2_000,
+        run: () => new Promise<void>((resolve) => setTimeout(resolve, 5_000)),
+      });
+
+      await jest.advanceTimersByTimeAsync(5_000);
+      await stepRun;
+      await reporter.reportStepCompleted('SECOND');
+      await reporter.reportStepCompleted('THIRD');
+
+      expect(updateProgress.mock.calls).toEqual([[38], [50], [75]]);
+    });
+
+    it('runs the step without an updateProgress callback', async () => {
+      const reporter = createApplicationLifecycleProgressReporter({
+        steps: STEPS,
+      });
+      const run = jest.fn().mockResolvedValue(undefined);
+
+      await reporter.reportStepProgressDuring({
+        step: 'FIRST',
+        expectedDurationMs: 1_000,
+        run,
+      });
+
+      expect(run).toHaveBeenCalledTimes(1);
+    });
+  });
 });
