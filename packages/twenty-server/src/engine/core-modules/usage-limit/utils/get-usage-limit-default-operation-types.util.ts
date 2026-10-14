@@ -1,12 +1,18 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
+import { type UsageLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-default-definition.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
-export type UsageLimitDefaultOperations =
-  | { operationType: UsageOperationType }
-  | { operationTypes: UsageOperationType[] };
-
 export const getUsageLimitDefaultOperationTypes = (
-  usageLimitDefault: UsageLimitDefaultOperations,
-): UsageOperationType[] =>
-  'operationTypes' in usageLimitDefault
-    ? usageLimitDefault.operationTypes
-    : [usageLimitDefault.operationType];
+  usageLimitDefault: UsageLimitDefaultDefinition,
+): UsageOperationType[] => {
+  switch (usageLimitDefault.limitKind) {
+    case 'quota':
+      return usageLimitDefault.operationTypes;
+    case 'speed':
+    case 'stock':
+      return [usageLimitDefault.operationType];
+    default:
+      return assertUnreachable(usageLimitDefault);
+  }
+};

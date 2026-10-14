@@ -64,7 +64,13 @@ describe('findSuppressedUsageLimitDefaults', () => {
           getUsageLimitDefaultOperationTypes(usageLimitDefault);
 
         return operationTypes.length === 1
-          ? [{ ...usageLimitDefault, operationType: operationTypes[0] }]
+          ? [
+              {
+                ...usageLimitDefault,
+                operationType: operationTypes[0],
+                operationTypes,
+              },
+            ]
           : [];
       });
 
