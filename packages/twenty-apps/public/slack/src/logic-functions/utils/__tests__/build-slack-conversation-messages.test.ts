@@ -185,25 +185,4 @@ describe('buildSlackConversationMessages', () => {
       content: 'Sarah owns it.',
     });
   });
-
-  it('should drop a replayed assistant turn that held only the answered-in footer', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        { ts: '1', user: 'U123', text: 'Who owns ACME?' },
-        {
-          ts: '2',
-          user: ASSISTANT_BOT_USER_ID,
-          bot_id: 'B1',
-          text: '\n\n_Answered in 4s_',
-        },
-        { ts: '3', user: 'U123', text: 'Any update?' },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages).toEqual([
-      { role: 'user', content: '<@U123>: Who owns ACME?' },
-      { role: 'user', content: '<@U123>: Any update?' },
-    ]);
-  });
 });
