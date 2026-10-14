@@ -6,7 +6,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type OverflowingTextWithTooltipProps } from '../types/OverflowingTextWithTooltipProps';
 
 type OverflowingTextInitialHoverEffectProps = {
-  textRef: RefObject<HTMLDivElement | null>;
+  textRef: RefObject<HTMLElement | null>;
   pointerPosition: NonNullable<
     OverflowingTextWithTooltipProps['initialPointerPosition']
   >;

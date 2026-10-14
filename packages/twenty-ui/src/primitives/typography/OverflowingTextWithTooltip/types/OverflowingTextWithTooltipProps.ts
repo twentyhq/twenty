@@ -14,7 +14,6 @@ export type OverflowingTextWithTooltipProps = Omit<
     tooltipDelay?: number;
     tooltipPlace?: TooltipSide;
     alwaysShowTooltip?: boolean;
-    measureOverflowOnOpen?: boolean;
     initialPointerPosition?: Pick<MouseEvent, 'clientX' | 'clientY'>;
     isFocusable?: boolean;
   } & (

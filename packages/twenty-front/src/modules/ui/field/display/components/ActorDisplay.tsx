@@ -1,11 +1,10 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+import { useFieldDisplayTooltipProps } from '@/ui/field/display/hooks/useFieldDisplayTooltipProps';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getActorSourceIcon } from '@/ui/field/display/utils/getActorSourceIcon';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -21,19 +20,15 @@ export const ActorDisplay = ({
   avatarUrl,
   context,
 }: ActorDisplayProps) => {
-  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
-    useContext(FieldDisplayTooltipContext);
+  const tooltipProps = useFieldDisplayTooltipProps();
 
   const LeftIcon = getActorSourceIcon({ source, context });
 
   return (
     <Chip
       variant="ghost"
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-      initialPointerPosition={
-        withTooltip ? getInitialPointerPosition?.() : undefined
-      }
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...tooltipProps}
       startElement={
         source === 'APPLICATION' && isDefined(context?.applicationId) ? (
           <AppChip

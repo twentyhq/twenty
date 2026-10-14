@@ -26,7 +26,6 @@ export const Chip = ({
   maxWidth,
   truncate = true,
   withTooltip = true,
-  measureOverflowOnOpen = false,
   initialPointerPosition,
   tooltipContent,
   tooltipDelay,
@@ -75,7 +74,6 @@ export const Chip = ({
               isTooltipMultiline={isTooltipMultiline}
               tooltipPlace={tooltipPlace}
               alwaysShowTooltip={alwaysShowTooltip}
-              measureOverflowOnOpen={measureOverflowOnOpen}
               initialPointerPosition={initialPointerPosition}
             />
           )}

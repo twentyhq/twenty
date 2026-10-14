@@ -1,38 +1,46 @@
-import { mergeProps } from '@base-ui/react/merge-props';
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
-import { useId, useRef, useState, type MouseEvent } from 'react';
+import {
+  useId,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactElement,
+} from 'react';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 import { TooltipBody } from '@ui/primitives/surfaces/Tooltip/internal/TooltipBody';
-import { OverflowingText } from './OverflowingText';
+import { type TextProps } from '@ui/primitives/typography/Text/types/TextProps';
 import { OverflowingTextInitialHoverEffect } from './OverflowingTextInitialHoverEffect';
 import { type OverflowingTextWithTooltipProps } from '../types/OverflowingTextWithTooltipProps';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../OverflowingTextWithTooltip.module.scss';
 
+type OverflowingTextTooltipProps = Pick<
+  OverflowingTextWithTooltipProps,
+  | 'isTooltipMultiline'
+  | 'tooltipDelay'
+  | 'tooltipPlace'
+  | 'alwaysShowTooltip'
+  | 'initialPointerPosition'
+> & {
+  children: ReactElement<TextProps>;
+  tooltipText: string | null;
+};
+
 export const OverflowingTextTooltip = ({
-  text,
+  children,
+  tooltipText,
   isTooltipMultiline,
-  truncate,
-  lineClamp,
-  tooltipContent,
   tooltipDelay = 500,
   tooltipPlace = 'bottom',
   alwaysShowTooltip = false,
-  measureOverflowOnOpen = false,
   initialPointerPosition,
-  isFocusable = false,
-  render,
-  ref,
-  className,
-  ...props
-}: Omit<OverflowingTextWithTooltipProps, 'withTooltip'>) => {
-  const textRef = useRef<HTMLDivElement>(null);
-  const mergedRef = useMergedRefs(textRef, ref);
+}: OverflowingTextTooltipProps) => {
+  const textRef = useRef<HTMLElement>(null);
+  const triggerRef = useMergedRefs(textRef, null);
   const generatedTriggerId = useId();
-  const triggerId = props.id ?? generatedTriggerId;
+  const triggerId = children.props.id ?? generatedTriggerId;
   const [tooltipHandle] = useState(() => Tooltip.createHandle());
 
   const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
@@ -67,12 +75,6 @@ export const OverflowingTextTooltip = ({
     event.preventDefault();
   };
 
-  const tooltipText = isNonEmptyString(tooltipContent)
-    ? tooltipContent
-    : isNonEmptyString(text)
-      ? text
-      : null;
-
   return (
     <Tooltip.Root
       handle={tooltipHandle}
@@ -94,8 +96,7 @@ export const OverflowingTextTooltip = ({
       }}
       disabled={
         !isDefined(tooltipText) ||
-        (!measureOverflowOnOpen &&
-          !isDefined(initialPointerPosition) &&
+        (!isDefined(initialPointerPosition) &&
           !isTitleOverflowing &&
           !alwaysShowTooltip)
       }
@@ -105,25 +106,11 @@ export const OverflowingTextTooltip = ({
         handle={tooltipHandle}
         delay={tooltipDelay}
         closeOnClick={false}
-        render={
-          <OverflowingText
-            {...(isDefined(lineClamp) ? { lineClamp } : { truncate })}
-            data-content-overflowing={isTitleOverflowing ? '' : undefined}
-            className={className}
-            render={render}
-            ref={mergedRef}
-            {...mergeProps<'div'>(
-              {
-                tabIndex: isFocusable ? 0 : undefined,
-                onPointerEnter: updateOverflowState,
-                onFocus: () => handleOpenChange(true),
-              },
-              props,
-            )}
-          >
-            {text}
-          </OverflowingText>
-        }
+        render={children}
+        ref={triggerRef}
+        data-content-overflowing={isTitleOverflowing ? '' : undefined}
+        onPointerEnter={updateOverflowState}
+        onFocus={() => handleOpenChange(true)}
       />
       {isDefined(initialPointerPosition) && (
         <OverflowingTextInitialHoverEffect

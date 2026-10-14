@@ -25,7 +25,6 @@ export const RecordTableCellPortalContexts = ({
     useMemo<FieldDisplayTooltipContextValue>(
       () => ({
         withTooltip: true,
-        measureOverflowOnOpen: true,
         getInitialPointerPosition,
       }),
       [getInitialPointerPosition],

@@ -3,12 +3,12 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+import { useFieldDisplayTooltipProps } from '@/ui/field/display/hooks/useFieldDisplayTooltipProps';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
-import { useContext, type MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
@@ -45,8 +45,7 @@ export const RecordChip = ({
   triggerEvent = 'MOUSE_DOWN',
   onClick,
 }: RecordChipProps) => {
-  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
-    useContext(FieldDisplayTooltipContext);
+  const tooltipProps = useFieldDisplayTooltipProps();
 
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -78,11 +77,8 @@ export const RecordChip = ({
   ) {
     return (
       <Chip
-        withTooltip={withTooltip}
-        measureOverflowOnOpen={measureOverflowOnOpen}
-        initialPointerPosition={
-          withTooltip ? getInitialPointerPosition?.() : undefined
-        }
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...tooltipProps}
         weight={isBold ? 'medium' : 'regular'}
         size={size}
         maxWidth={maxWidth}
@@ -107,11 +103,8 @@ export const RecordChip = ({
 
   return (
     <LinkChip
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-      initialPointerPosition={
-        withTooltip ? getInitialPointerPosition?.() : undefined
-      }
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...tooltipProps}
       size={size}
       maxWidth={maxWidth}
       weight={isBold ? 'medium' : 'regular'}

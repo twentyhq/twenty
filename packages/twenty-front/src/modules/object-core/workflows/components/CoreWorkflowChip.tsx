@@ -7,7 +7,7 @@ import { Chip } from 'twenty-ui/primitives/data-display';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
-import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+import { useFieldDisplayTooltipProps } from '@/ui/field/display/hooks/useFieldDisplayTooltipProps';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { GetCoreWorkflowDocument } from '~/generated/graphql';
@@ -18,8 +18,7 @@ type CoreWorkflowChipProps = {
 
 export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
-  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
-    useContext(FieldDisplayTooltipContext);
+  const tooltipProps = useFieldDisplayTooltipProps();
 
   const apolloCoreClient = useApolloCoreClient();
 
@@ -48,11 +47,8 @@ export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
   if (disableChipClick) {
     return (
       <Chip
-        withTooltip={withTooltip}
-        measureOverflowOnOpen={measureOverflowOnOpen}
-        initialPointerPosition={
-          withTooltip ? getInitialPointerPosition?.() : undefined
-        }
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...tooltipProps}
         variant="ghost"
         startElement={avatar}
         style={{ paddingInlineStart: 0 }}
@@ -64,11 +60,8 @@ export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
 
   return (
     <LinkChip
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-      initialPointerPosition={
-        withTooltip ? getInitialPointerPosition?.() : undefined
-      }
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...tooltipProps}
       to={getAppPath(AppPath.WorkflowCoreShowPage, {
         coreWorkflowId: coreRecordId,
       })}

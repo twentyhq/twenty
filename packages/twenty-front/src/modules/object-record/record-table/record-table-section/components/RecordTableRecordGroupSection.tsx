@@ -41,7 +41,6 @@ import {
 const RECORD_TABLE_GROUP_HEADER_TOOLTIP_CONTEXT_VALUE: FieldDisplayTooltipContextValue =
   {
     withTooltip: true,
-    measureOverflowOnOpen: false,
   };
 
 const StyledTrContainer = styled.div`

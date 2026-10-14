@@ -1,11 +1,11 @@
 import { css } from '@linaria/core';
 import { clsx } from 'clsx';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
-import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+import { useFieldDisplayTooltipProps } from '@/ui/field/display/hooks/useFieldDisplayTooltipProps';
 
 const styles = {
   container: css`
@@ -28,8 +28,7 @@ type TextDisplayProps = {
 };
 
 export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {
-  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
-    useContext(FieldDisplayTooltipContext);
+  const tooltipProps = useFieldDisplayTooltipProps();
   const linkifiedText = useMemo(() => <LinkifiedText text={text} />, [text]);
   const fixHeight = !isDefined(displayedMaxRows) || displayedMaxRows === 1;
 
@@ -40,11 +39,8 @@ export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {
         tooltipContent={text}
         lineClamp={displayedMaxRows}
         isTooltipMultiline={true}
-        withTooltip={withTooltip}
-        measureOverflowOnOpen={measureOverflowOnOpen}
-        initialPointerPosition={
-          withTooltip ? getInitialPointerPosition?.() : undefined
-        }
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...tooltipProps}
       />
     </div>
   );

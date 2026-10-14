@@ -9,7 +9,6 @@ import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDis
 
 const WITHOUT_TOOLTIP_CONTEXT_VALUE = {
   withTooltip: false,
-  measureOverflowOnOpen: false,
 };
 
 const meta: Meta<typeof TextDisplay> = {

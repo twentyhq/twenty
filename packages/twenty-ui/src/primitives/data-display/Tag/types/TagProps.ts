@@ -12,7 +12,7 @@ export type TagProps = Omit<
   Partial<TagState> &
   Pick<
     OverflowingTextWithTooltipProps,
-    'withTooltip' | 'measureOverflowOnOpen' | 'initialPointerPosition'
+    'withTooltip' | 'initialPointerPosition'
   > & {
     color: TagColor;
     startIcon?: ReactNode;

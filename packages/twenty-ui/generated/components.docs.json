@@ -1878,13 +1878,6 @@
         "description": "Positive integer limiting visible lines, matching Text. Cannot be combined with `truncate`."
       },
       {
-        "name": "measureOverflowOnOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Keeps hover listeners active before pointer entry and measures overflow when opening. Useful for text mounted beneath the pointer. Defaults to false."
-      },
-      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
@@ -10432,13 +10425,6 @@
         "description": "Maximum chip width in pixels, used to constrain the content."
       },
       {
-        "name": "measureOverflowOnOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Checks truncation when the tooltip tries to open, including labels that mount under the pointer."
-      },
-      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
@@ -10542,13 +10528,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Pointer coordinates captured before mounting the label, used to open its tooltip without another pointer movement."
-      },
-      {
-        "name": "measureOverflowOnOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Checks truncation when the tooltip tries to open, including labels that mount under the pointer."
       },
       {
         "name": "onClick",

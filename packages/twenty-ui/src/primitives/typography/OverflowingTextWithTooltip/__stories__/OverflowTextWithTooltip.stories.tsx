@@ -65,10 +65,9 @@ export const SingleLineNotOverflowing: Story = {
   },
 };
 
-export const MeasureOverflowOnOpen: Story = {
+export const MountedUnderPointer: Story = {
   args: {
     text: longText,
-    measureOverflowOnOpen: true,
     tooltipDelay: 500,
   },
   decorators: [ComponentDecorator],
@@ -99,10 +98,9 @@ export const MeasureOverflowOnOpen: Story = {
   },
 };
 
-export const MeasureOverflowOnOpenWithFittingText: Story = {
+export const MountedUnderPointerWithFittingText: Story = {
   args: {
     text: 'Short',
-    measureOverflowOnOpen: true,
     tooltipDelay: 500,
   },
   decorators: [ComponentDecorator],
@@ -310,7 +308,6 @@ export const WithoutTooltip: Story = {
     ...ExplicitLink.args,
     withTooltip: false,
     alwaysShowTooltip: true,
-    measureOverflowOnOpen: true,
     tooltipDelay: 500,
     isFocusable: true,
     title: 'Documentation details',

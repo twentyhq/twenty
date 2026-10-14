@@ -85,7 +85,6 @@ export const RecordTableContent = ({
     useMemo<FieldDisplayTooltipContextValue>(
       () => ({
         withTooltip: false,
-        measureOverflowOnOpen: false,
         getInitialPointerPosition,
       }),
       [getInitialPointerPosition],

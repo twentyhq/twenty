@@ -19,8 +19,6 @@ export const CHIP_PROP_DESCRIPTIONS = {
   truncate: 'Truncates overflowing content with an ellipsis. Defaults to true.',
   withTooltip:
     'Enables the label tooltip. Set to false to render only the text while preserving truncation.',
-  measureOverflowOnOpen:
-    'Checks truncation when the tooltip tries to open, including labels that mount under the pointer.',
   initialPointerPosition:
     'Pointer coordinates captured before mounting the label, used to open its tooltip without another pointer movement.',
   tooltipContent:

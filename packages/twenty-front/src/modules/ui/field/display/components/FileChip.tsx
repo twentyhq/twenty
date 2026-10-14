@@ -3,9 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
+import { useFieldDisplayTooltipProps } from '@/ui/field/display/hooks/useFieldDisplayTooltipProps';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
-import { useContext } from 'react';
 import { Chip } from 'twenty-ui/primitives/data-display';
 
 const MAX_WIDTH = 120;
@@ -21,8 +20,7 @@ export const FileChip = ({
   onClick,
   forceDisableClick,
 }: FileChipProps) => {
-  const { withTooltip, measureOverflowOnOpen, getInitialPointerPosition } =
-    useContext(FieldDisplayTooltipContext);
+  const tooltipProps = useFieldDisplayTooltipProps();
 
   const isDeleted = file.isDeleted === true;
   const isClickable = forceDisableClick !== true && !isDeleted;
@@ -52,11 +50,8 @@ export const FileChip = ({
 
   return (
     <Chip
-      withTooltip={withTooltip}
-      measureOverflowOnOpen={measureOverflowOnOpen}
-      initialPointerPosition={
-        withTooltip ? getInitialPointerPosition?.() : undefined
-      }
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...tooltipProps}
       render={
         forceDisableClick ? undefined : (
           <button type="button" disabled={isDeleted} />

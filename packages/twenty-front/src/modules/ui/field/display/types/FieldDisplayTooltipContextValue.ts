@@ -2,6 +2,5 @@ import { type OverflowingTextWithTooltipProps } from 'twenty-ui/primitives/typog
 
 export type FieldDisplayTooltipContextValue = {
   withTooltip: boolean;
-  measureOverflowOnOpen: boolean;
   getInitialPointerPosition?: () => OverflowingTextWithTooltipProps['initialPointerPosition'];
 };

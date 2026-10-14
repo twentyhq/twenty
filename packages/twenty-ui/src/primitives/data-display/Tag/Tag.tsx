@@ -18,7 +18,6 @@ export const Tag = ({
   startIcon,
   truncate = true,
   withTooltip = true,
-  measureOverflowOnOpen = false,
   initialPointerPosition,
   borderStyle = 'solid',
   className,
@@ -69,7 +68,6 @@ export const Tag = ({
                 render={<span />}
                 className={styles.overflowingText}
                 withTooltip={withTooltip}
-                measureOverflowOnOpen={measureOverflowOnOpen}
                 initialPointerPosition={initialPointerPosition}
               />
             ) : (

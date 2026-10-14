@@ -83,7 +83,7 @@ React content requires a plain-string `tooltipContent`. With string text, that p
 
 `alwaysShowTooltip` allows the tooltip even without truncation. `tooltipDelay` controls the hover delay and defaults to 500 milliseconds. `tooltipPlace` defaults to `bottom`.
 
-Set `measureOverflowOnOpen` for text mounted beneath the pointer, such as a hover overlay. This keeps hover listeners active before pointer entry and checks overflow when the tooltip is requested. Fitting text still does not open a tooltip. The default is `false`.
+Pass `initialPointerPosition` with captured `clientX` and `clientY` coordinates when text mounts beneath the pointer, such as a hover overlay. After the tooltip delay, it checks that the point still targets the label and applies the usual overflow check before opening.
 
 Native attributes, styles, class names, event handlers, and refs target the displayed Text element, a `div` by default. `render` can replace that element while retaining truncation and tooltip behavior. `OverflowingTextWithTooltipProps` is exported from `twenty-ui/primitives/typography`. Typography inherits from the surrounding layout. Set `truncate={false}` to wrap; choose either `truncate` or `lineClamp`. Focusable rendered elements and a caller-supplied `tabIndex` also reveal the tooltip on focus. Use [Text](/ui/primitives/typography/text) and [Tooltip](/ui/primitives/surfaces/tooltip) directly when you need custom composition. Interactive popup content belongs in [Popover](/ui/primitives/surfaces/popover).
 
