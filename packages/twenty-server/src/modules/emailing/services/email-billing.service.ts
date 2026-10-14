@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaDebitService } from 'src/engine/core-modules/usage-limit/services/usage-quota-debit.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -21,7 +21,7 @@ type EmailSendScope = EmailUsageScope & { emailCount?: number };
 export class EmailBillingService {
   constructor(
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageQuotaDebitService: UsageQuotaDebitService,
   ) {}
 
   async validateEmailSendOrThrow({
@@ -61,7 +61,7 @@ export class EmailBillingService {
       return;
     }
 
-    await this.usageLimitQuotaService.charge({
+    await this.usageQuotaDebitService.charge({
       workspaceId,
       events: [
         {

@@ -4,7 +4,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { type UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { type UsageQuotaConsumptionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-consumption.service';
+import { type UsageQuotaDebitService } from 'src/engine/core-modules/usage-limit/services/usage-quota-debit.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -186,8 +187,13 @@ export const quitBillingFixtureRedis = async (): Promise<void> => {
   }
 };
 
-const getUsageLimitQuotaService = () =>
-  getAppProviderByClassName<UsageLimitQuotaService>('UsageLimitQuotaService');
+const getUsageQuotaDebitService = () =>
+  getAppProviderByClassName<UsageQuotaDebitService>('UsageQuotaDebitService');
+
+const getUsageQuotaConsumptionService = () =>
+  getAppProviderByClassName<UsageQuotaConsumptionService>(
+    'UsageQuotaConsumptionService',
+  );
 
 export const refreshCurrentBillingSubscription = (
   workspaceId: string,
@@ -200,7 +206,7 @@ export const debitInFlightCredits = async (
   workspaceId: string,
   creditsUsedMicro: number,
 ): Promise<void> => {
-  await getUsageLimitQuotaService().debitAheadOfRecord({
+  await getUsageQuotaDebitService().debitAheadOfRecord({
     workspaceId,
     event: {
       resourceType: UsageResourceType.AI,
@@ -217,7 +223,7 @@ export const readAllowanceConsumedMicro = async (
   workspaceId: string,
 ): Promise<number> => {
   const workspaceAllowanceUsage =
-    await getUsageLimitQuotaService().getWorkspaceAllowanceUsage(workspaceId);
+    await getUsageQuotaConsumptionService().getWorkspaceAllowanceUsage(workspaceId);
 
   if (!isDefined(workspaceAllowanceUsage?.consumedValue)) {
     throw new Error(`No allowance consumption for workspace ${workspaceId}`);
@@ -230,7 +236,7 @@ export const readAllowanceLimitMicro = async (
   workspaceId: string,
 ): Promise<number> => {
   const workspaceAllowanceUsage =
-    await getUsageLimitQuotaService().getWorkspaceAllowanceUsage(workspaceId);
+    await getUsageQuotaConsumptionService().getWorkspaceAllowanceUsage(workspaceId);
 
   if (!isDefined(workspaceAllowanceUsage)) {
     throw new Error(`No allowance for workspace ${workspaceId}`);

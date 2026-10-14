@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UsageAdmission } from 'src/engine/core-modules/billing/types/usage-admission.type';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaDebitService } from 'src/engine/core-modules/usage-limit/services/usage-quota-debit.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -37,7 +37,7 @@ export class AiBillingService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageQuotaDebitService: UsageQuotaDebitService,
   ) {}
 
   async assertAiExecutionAllowed({
@@ -128,7 +128,7 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    return this.usageLimitQuotaService.charge({
+    return this.usageQuotaDebitService.charge({
       workspaceId,
       events: [
         this.buildAiTokenUsageEvent({
@@ -167,7 +167,7 @@ export class AiBillingService {
       userCreditsUsedMicro,
       isUserAllowanceExhausted,
       userAllowancePeriodEnd,
-    } = await this.usageLimitQuotaService.debitAheadOfRecord({
+    } = await this.usageQuotaDebitService.debitAheadOfRecord({
       workspaceId,
       event: this.buildAiTokenUsageEvent({
         creditsUsedMicro,
@@ -206,7 +206,7 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    return this.usageLimitQuotaService.charge({
+    return this.usageQuotaDebitService.charge({
       workspaceId,
       events: [
         {

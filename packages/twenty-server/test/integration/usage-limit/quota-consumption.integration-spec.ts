@@ -25,7 +25,9 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
 import { type UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
-import { type UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { type UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { type UsageQuotaCounterStoreService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter-store.service';
+import { type UsageQuotaDebitService } from 'src/engine/core-modules/usage-limit/services/usage-quota-debit.service';
 import { type UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
@@ -121,8 +123,18 @@ describe('Usage quota consumption', () => {
   const savedUsageLimitIds: string[] = [];
   const chargedSpenderIds: string[] = [];
 
-  const getQuotaService = () =>
-    getAppProviderByClassName<UsageLimitQuotaService>('UsageLimitQuotaService');
+  const getDebitService = () =>
+    getAppProviderByClassName<UsageQuotaDebitService>('UsageQuotaDebitService');
+
+  const getAdmissionService = () =>
+    getAppProviderByClassName<UsageQuotaAdmissionService>(
+      'UsageQuotaAdmissionService',
+    );
+
+  const getCounterStoreService = () =>
+    getAppProviderByClassName<UsageQuotaCounterStoreService>(
+      'UsageQuotaCounterStoreService',
+    );
 
   const getUsageLimitService = () =>
     getAppProviderByClassName<UsageLimitService>('UsageLimitService');
@@ -164,13 +176,13 @@ describe('Usage quota consumption', () => {
       .map((metric) => metric.attributes);
 
   const chargeRun = (event: Parameters<typeof buildRunEvent>[0]) =>
-    getQuotaService().charge({
+    getDebitService().charge({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       events: [buildRunEvent(event)],
     });
 
   const debitRunAheadOfRecord = (event: Parameters<typeof buildRunEvent>[0]) =>
-    getQuotaService().debitAheadOfRecord({
+    getDebitService().debitAheadOfRecord({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       event: buildRunEvent(event),
     });
@@ -182,8 +194,8 @@ describe('Usage quota consumption', () => {
     spenderId: string;
     costMicro: number;
   }) =>
-    getQuotaService()
-      .findAdmission({
+    getAdmissionService()
+      .findQuotaAdmission({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         resourceType: UsageResourceType.LOGIC_FUNCTION,
         operationType: UsageOperationType.CODE_EXECUTION,
@@ -742,8 +754,8 @@ describe('Usage quota consumption', () => {
     });
 
     const findEmailRefusal = (invocationCost: number) =>
-      getQuotaService()
-        .findAdmission({
+      getAdmissionService()
+        .findQuotaAdmission({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           resourceType: UsageResourceType.EMAIL,
           operationType: UsageOperationType.EMAIL_SEND,
@@ -756,13 +768,13 @@ describe('Usage quota consumption', () => {
         .then(({ exhaustedScope }) => exhaustedScope);
 
     const debitEmailAheadOfRecord = (quantity: number) =>
-      getQuotaService().debitAheadOfRecord({
+      getDebitService().debitAheadOfRecord({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         event: buildEmailEvent(quantity),
       });
 
     const chargeEmail = async (quantity: number) => {
-      await getQuotaService().charge({
+      await getDebitService().charge({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         events: [buildEmailEvent(quantity)],
       });
@@ -881,7 +893,7 @@ describe('Usage quota consumption', () => {
         limitValue: 0,
       });
       const cacheStorage: CacheStorageService =
-        getQuotaService()['cacheStorage'];
+        getCounterStoreService()['cacheStorage'];
       const incrementCounterBySpy = spyOnMetrics();
       const runScriptSpy = jest
         .spyOn(cacheStorage, 'runScript')
