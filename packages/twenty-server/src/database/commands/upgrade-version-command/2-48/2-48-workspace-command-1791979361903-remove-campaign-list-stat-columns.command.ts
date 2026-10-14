@@ -43,9 +43,9 @@ const STAT_COLUMN_UNIVERSAL_IDENTIFIERS = STAT_FIELD_NAMES.map((fieldName) =>
   }),
 );
 
-@RegisteredWorkspaceCommand('2.47.0', 1791902574822)
+@RegisteredWorkspaceCommand('2.48.0', 1791979361903)
 @Command({
-  name: 'upgrade:2-47:remove-campaign-list-stat-columns',
+  name: 'upgrade:2-48:remove-campaign-list-stat-columns',
   description:
     'Remove the delivery and engagement stat columns from the all campaigns view in existing workspaces',
 })

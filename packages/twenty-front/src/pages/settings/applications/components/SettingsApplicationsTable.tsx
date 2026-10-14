@@ -1,3 +1,4 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -38,13 +39,15 @@ export const SettingsApplicationsTable = ({
 
   const [searchTerm, setSearchTerm] = useState('');
 
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+
   const filteredApplications = applications
     .filter(
       (application) =>
-        application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        application.name.toLowerCase().includes(normalizedSearchTerm) ||
         (application.description ?? '')
           .toLowerCase()
-          .includes(searchTerm.toLowerCase()),
+          .includes(normalizedSearchTerm),
     )
     .sort((a, b) => {
       const aIsOAuth =
@@ -76,13 +79,17 @@ export const SettingsApplicationsTable = ({
         <TableRow
           gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
         >
-          <TableHeader> {t`Name`}</TableHeader>
-          <TableHeader> {t`Type`}</TableHeader>
-          <TableHeader> {t`Description`}</TableHeader>
-          <TableHeader> {''}</TableHeader>
+          <TableHeader>{t`Name`}</TableHeader>
+          <TableHeader>{t`Type`}</TableHeader>
+          <TableHeader>{t`Description`}</TableHeader>
           <TableHeader />
         </TableRow>
         <StyledTableRowsContainer>
+          {filteredApplications.length === 0 && (
+            <SettingsEmptyPlaceholder padding="4">
+              <span role="status">{t`No application matches your search`}</span>
+            </SettingsEmptyPlaceholder>
+          )}
           {filteredApplications.map((application) => {
             const isNpmApp =
               application.applicationRegistration?.sourceType ===

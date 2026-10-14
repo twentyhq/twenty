@@ -6,8 +6,8 @@ import {
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { ViewKey, ViewType } from 'twenty-shared/types';
 
-import { type RemoveCampaignListStatColumnsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791902574822-remove-campaign-list-stat-columns.command';
-import { type AddCampaignListViewCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791909534165-add-campaign-list-view.command';
+import { type RemoveCampaignListStatColumnsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791979361903-remove-campaign-list-stat-columns.command';
+import { type AddCampaignListViewCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791979361904-add-campaign-list-view.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -71,7 +71,7 @@ const readView = async (viewUniversalIdentifier: string) => {
   return view;
 };
 
-describe('2-47 workspace commands - campaign list view (integration)', () => {
+describe('2-48 workspace commands - campaign list view (integration)', () => {
   let removeStatColumnsCommand: RemoveCampaignListStatColumnsCommand;
   let addListViewCommand: AddCampaignListViewCommand;
   let workspaceCacheService: WorkspaceCacheService;

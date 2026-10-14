@@ -30,9 +30,9 @@ const LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   CAMPAIGN.views.messageCampaignList.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
 
-@RegisteredWorkspaceCommand('2.47.0', 1791909534165)
+@RegisteredWorkspaceCommand('2.48.0', 1791979361904)
 @Command({
-  name: 'upgrade:2-47:add-campaign-list-view',
+  name: 'upgrade:2-48:add-campaign-list-view',
   description:
     'Turn the campaigns INDEX view back into a table and add the standard campaigns list view on top of it in existing workspaces',
 })

@@ -68,6 +68,8 @@ import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-o
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-child-links.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { getActiveValidationRules } from 'src/engine/twenty-orm/utils/get-active-validation-rules.util';
@@ -141,7 +143,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   authContext: WorkspaceAuthContext;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
-  roleIds: string[];
+  rolePermissionConfig: RolePermissionConfig;
   shouldBypassPermissionChecks: boolean;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
   // and timeline activities will NOT fire
@@ -1070,7 +1072,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectMetadata: this.options.flatObjectMetadata,
       internalContext: this.options.internalContext,
       authContext: this.options.authContext,
-      roleIds: this.options.roleIds,
+      rolePermissionConfig: this.options.rolePermissionConfig,
       shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
     });
 
@@ -2486,7 +2488,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectsPermissions: this.options.objectRecordsPermissions,
       principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
       canAccessAllRecords: canRolesAccessAllRecords({
-        roleIds: this.options.roleIds,
+        roleIds: getRoleIdsFromRolePermissionConfig(
+          this.options.rolePermissionConfig,
+        ),
         roleIdsWithAllRecordsAccess:
           this.options.internalContext.roleIdsWithAllRecordsAccess,
       }),
@@ -2499,7 +2503,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         resolveRowLevelPermissionRecordFilter({
           internalContext: this.options.internalContext,
           authContext: this.options.authContext,
-          roleIds: this.options.roleIds,
+          rolePermissionConfig: this.options.rolePermissionConfig,
           objectMetadata,
         }),
     };

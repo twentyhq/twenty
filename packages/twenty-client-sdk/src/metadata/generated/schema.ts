@@ -232,6 +232,7 @@ export interface AppConnection {
     accessToken: Scalars['String']
     authFailedAt?: Scalars['String']
     authFailedReason?: Scalars['String']
+    externalAccountId?: Scalars['String']
     handle: Scalars['String']
     id: Scalars['ID']
     name: Scalars['String']
@@ -1496,6 +1497,7 @@ export interface FrontComponent {
     universalIdentifier?: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     usesSdkClient: Scalars['Boolean']
+    widgetAvailability: FrontComponentWidgetAvailability[]
     __typename: 'FrontComponent'
 }
 
@@ -1504,6 +1506,12 @@ export interface FrontComponentConfiguration {
     frontComponentId: Scalars['UUID']
     headerCommandMenuItemUniversalIdentifiers?: Scalars['UUID'][]
     __typename: 'FrontComponentConfiguration'
+}
+
+export interface FrontComponentWidgetAvailability {
+    objectMetadataId?: Scalars['UUID']
+    pageLayoutType: PageLayoutType
+    __typename: 'FrontComponentWidgetAvailability'
 }
 
 export interface FullName {
@@ -1795,6 +1803,7 @@ export interface MarketplaceAppDetail {
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: Scalars['JSON']
     name: Scalars['String']
+    objects?: MarketplaceAppObject[]
     pricingDescription?: Scalars['String']
     requestedCapabilities: Scalars['String'][]
     roles?: MarketplaceAppRole[]
@@ -1806,6 +1815,13 @@ export interface MarketplaceAppDetail {
     universalIdentifier: Scalars['String']
     websiteUrl?: Scalars['String']
     __typename: 'MarketplaceAppDetail'
+}
+
+export interface MarketplaceAppObject {
+    labelPlural: Scalars['String']
+    labelSingular: Scalars['String']
+    universalIdentifier: Scalars['String']
+    __typename: 'MarketplaceAppObject'
 }
 
 export interface MarketplaceAppRole {
@@ -4167,6 +4183,7 @@ export interface AppConnectionGenqlSelection{
     accessToken?: boolean | number
     authFailedAt?: boolean | number
     authFailedReason?: boolean | number
+    externalAccountId?: boolean | number
     handle?: boolean | number
     id?: boolean | number
     name?: boolean | number
@@ -5677,6 +5694,7 @@ export interface FrontComponentGenqlSelection{
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
     usesSdkClient?: boolean | number
+    widgetAvailability?: FrontComponentWidgetAvailabilityGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5685,6 +5703,13 @@ export interface FrontComponentConfigurationGenqlSelection{
     configurationType?: boolean | number
     frontComponentId?: boolean | number
     headerCommandMenuItemUniversalIdentifiers?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FrontComponentWidgetAvailabilityGenqlSelection{
+    objectMetadataId?: boolean | number
+    pageLayoutType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6007,6 +6032,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
     name?: boolean | number
+    objects?: MarketplaceAppObjectGenqlSelection
     pricingDescription?: boolean | number
     requestedCapabilities?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
@@ -6017,6 +6043,14 @@ export interface MarketplaceAppDetailGenqlSelection{
     termsUrl?: boolean | number
     universalIdentifier?: boolean | number
     websiteUrl?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MarketplaceAppObjectGenqlSelection{
+    labelPlural?: boolean | number
+    labelSingular?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9646,6 +9680,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const FrontComponentWidgetAvailability_possibleTypes: string[] = ['FrontComponentWidgetAvailability']
+    export const isFrontComponentWidgetAvailability = (obj?: { __typename?: any } | null): obj is FrontComponentWidgetAvailability => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentWidgetAvailability"')
+      return FrontComponentWidgetAvailability_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const FullName_possibleTypes: string[] = ['FullName']
     export const isFullName = (obj?: { __typename?: any } | null): obj is FullName => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFullName"')
@@ -9866,6 +9908,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isMarketplaceAppDetail = (obj?: { __typename?: any } | null): obj is MarketplaceAppDetail => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppDetail"')
       return MarketplaceAppDetail_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MarketplaceAppObject_possibleTypes: string[] = ['MarketplaceAppObject']
+    export const isMarketplaceAppObject = (obj?: { __typename?: any } | null): obj is MarketplaceAppObject => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppObject"')
+      return MarketplaceAppObject_possibleTypes.includes(obj.__typename)
     }
     
 
