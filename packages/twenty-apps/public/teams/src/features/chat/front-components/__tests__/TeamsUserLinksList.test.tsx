@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -121,13 +121,12 @@ describe('TeamsUserLinksList', () => {
       await screen.findByRole('button', { name: 'Remove link for Adam Teams' }),
     );
 
-    expect(restPostMock).toHaveBeenCalledWith('/s/teams-user-links/remove', {
-      id: 'link-1',
-    });
-    expect(enqueueSnackbarMock).toHaveBeenCalledWith({
-      message: 'Removed the Teams user link.',
-      variant: 'success',
-    });
+    expect(restPostMock.mock.calls).toEqual([
+      ['/s/teams-user-links/remove', { id: 'link-1' }],
+    ]);
+    expect(enqueueSnackbarMock.mock.calls).toEqual([
+      [{ message: 'Removed the Teams user link.', variant: 'success' }],
+    ]);
     expect(screen.queryByText('Adam Teams')).toBeNull();
     expect(screen.getByText('Zoe Teams')).toBeTruthy();
   });
@@ -151,11 +150,67 @@ describe('TeamsUserLinksList', () => {
       await screen.findByRole('button', { name: 'Remove link for Adam Teams' }),
     );
 
-    expect(enqueueSnackbarMock).toHaveBeenCalledWith({
-      message:
-        'Only members with the roles permission can remove Teams user links.',
-      variant: 'error',
-    });
+    expect(restPostMock.mock.calls).toEqual([
+      ['/s/teams-user-links/remove', { id: 'link-1' }],
+    ]);
+    expect(enqueueSnackbarMock.mock.calls).toEqual([
+      [
+        {
+          message:
+            'Only members with the roles permission can remove Teams user links.',
+          variant: 'error',
+        },
+      ],
+    ]);
     expect(screen.getByText('Adam Teams')).toBeTruthy();
+  });
+
+  it('locks every Remove button while a removal is pending and recovers when it fails', async () => {
+    restGetMock.mockResolvedValue({
+      data: {
+        teamsUserLinks: [
+          { id: 'link-1', name: 'Adam Teams', source: 'AUTO' },
+          { id: 'link-2', name: 'Zoe Teams', source: 'MANUAL' },
+        ],
+      },
+    });
+    let rejectRemoval: ((error: Error) => void) | undefined;
+    restPostMock.mockReturnValueOnce(
+      new Promise((_, reject) => {
+        rejectRemoval = reject;
+      }),
+    );
+    const user = userEvent.setup();
+
+    render(<TeamsUserLinksList />);
+    await user.click(
+      await screen.findByRole('button', { name: 'Remove link for Adam Teams' }),
+    );
+
+    const removeButtons = screen.getAllByRole('button', {
+      name: /^Remove link for/,
+    });
+
+    for (const button of removeButtons) {
+      expect(button.hasAttribute('disabled')).toBe(true);
+    }
+
+    await act(async () => {
+      rejectRemoval?.(new Error('Network error'));
+    });
+
+    expect(restPostMock).toHaveBeenCalledTimes(1);
+    expect(enqueueSnackbarMock.mock.calls).toEqual([
+      [
+        {
+          message: 'Could not remove the link. Please try again.',
+          variant: 'error',
+        },
+      ],
+    ]);
+    expect(screen.getByText('Adam Teams')).toBeTruthy();
+    for (const button of removeButtons) {
+      expect(button.hasAttribute('disabled')).toBe(false);
+    }
   });
 });
