@@ -14,7 +14,7 @@ export const publishAppToNpm = async ({
   packedApp: PackedApp;
   appPath: string;
   tag?: string;
-  context: CommandContext;
+  context: Pick<CommandContext, 'options' | 'outputMode' | 'output' | 'signal'>;
 }) => {
   const supportsProvenance =
     isDefined(process.env.ACTIONS_ID_TOKEN_REQUEST_URL) &&
