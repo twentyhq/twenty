@@ -29,7 +29,7 @@ type ConnectionLifecycleHook = 'identifyAccount' | 'onConnect' | 'onDisconnect';
 
 type ConnectionLifecycleHookProvider = Pick<
   ConnectionProviderEntity,
-  'id' | 'name'
+  'id' | 'name' | 'applicationId'
 >;
 
 const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
@@ -62,7 +62,10 @@ export class ConnectionProviderLifecycleHookService {
   }: {
     provider: Pick<
       ConnectionProviderEntity,
-      'id' | 'name' | 'onConnectLogicFunctionUniversalIdentifier'
+      | 'id'
+      | 'name'
+      | 'applicationId'
+      | 'onConnectLogicFunctionUniversalIdentifier'
     >;
     workspaceId: string;
     connectedAccountId: string;
@@ -103,7 +106,10 @@ export class ConnectionProviderLifecycleHookService {
   }: {
     provider: Pick<
       ConnectionProviderEntity,
-      'id' | 'name' | 'identifyAccountLogicFunctionUniversalIdentifier'
+      | 'id'
+      | 'name'
+      | 'applicationId'
+      | 'identifyAccountLogicFunctionUniversalIdentifier'
     >;
     workspaceId: string;
     accessToken: string;
@@ -282,10 +288,11 @@ export class ConnectionProviderLifecycleHookService {
 
     if (
       !isDefined(flatLogicFunction) ||
-      isDefined(flatLogicFunction.deletedAt)
+      isDefined(flatLogicFunction.deletedAt) ||
+      flatLogicFunction.applicationId !== provider.applicationId
     ) {
       throw new ConnectionProviderException(
-        `Connection provider ${provider.id} references ${hook} logic function ${logicFunctionUniversalIdentifier}, which was not found in workspace ${workspaceId}.`,
+        `Connection provider ${provider.id} references ${hook} logic function ${logicFunctionUniversalIdentifier}, which was not found in its application.`,
         MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK[hook],
       );
     }

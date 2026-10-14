@@ -382,6 +382,24 @@ export class ApplicationManifestMigrationService {
         })
       : null;
 
+    for (const connectionProvider of manifest.connectionProviders ?? []) {
+      for (const [hook, logicFunctionReference] of Object.entries({
+        identifyAccount: connectionProvider.identifyAccountLogicFunction,
+        onConnect: connectionProvider.onConnectLogicFunction,
+        onDisconnect: connectionProvider.onDisconnectLogicFunction,
+      })) {
+        if (isDefined(logicFunctionReference)) {
+          resolveApplicationReferenceIdOrThrow({
+            flatEntityMaps: refreshedFlatLogicFunctionMaps,
+            universalIdentifier: logicFunctionReference.universalIdentifier,
+            referenceLabel: `${hook} logic function of connection provider ${connectionProvider.name}`,
+            exceptionCode: ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+            ownerApplicationId: ownerFlatApplication.id,
+          });
+        }
+      }
+    }
+
     await this.applicationService.update(ownerFlatApplication.id, {
       workspaceId,
       ...(isDefined(settingsCustomTabFrontComponentId) ||

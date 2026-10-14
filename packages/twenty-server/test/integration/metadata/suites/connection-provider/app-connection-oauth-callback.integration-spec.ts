@@ -14,6 +14,10 @@ import { generateTransientTokenResponse } from 'test/integration/utils/generate-
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import {
+  type LogicFunctionManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { z } from 'zod';
@@ -352,6 +356,25 @@ export const handler = ({ connectedAccountId }) => {
     expect(readExecutions(onConnectExecutionsPath)).toEqual([connection.id]);
   });
 
+  it('clears the stored account when a reconnect opts out', async () => {
+    await callback(await authorize(), 'team-a:first');
+    const [original] = await readAccounts();
+
+    const redirect = await callback(
+      await authorize({ reconnectingConnectedAccountId: original.id }),
+      'unidentifiable:second',
+    );
+    const connections = await readAccounts();
+
+    expect(redirect.searchParams.has('errorMessage')).toBe(false);
+    expect(connections).toHaveLength(1);
+    expect(connections[0]).toMatchObject({
+      id: original.id,
+      externalAccountId: null,
+    });
+    expect(decryptAccessToken(connections[0])).toBe('unidentifiable:second');
+  });
+
   it('saves nothing and skips onConnect when the identify function returns nothing', async () => {
     const redirect = await callback(await authorize(), 'silent:first');
 
@@ -385,5 +408,142 @@ export const handler = ({ connectedAccountId }) => {
     expect(tokenExchanges).toEqual([]);
     expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
     expect(await readAccounts()).toEqual([]);
+  });
+
+  describe('identify function owned by another application', () => {
+    const OTHER_APPLICATION_IDENTIFIER = v4();
+    const OTHER_IDENTIFY_ACCOUNT_IDENTIFIER = v4();
+    const OTHER_ROLE_IDENTIFIER = v4();
+    let otherIdentifyExecutionsPath: string;
+    let otherLogicFunctionManifest: LogicFunctionManifest;
+
+    const buildOtherApplicationManifest = (
+      connectionProviders: Manifest['connectionProviders'] = [],
+    ) =>
+      buildBaseManifest({
+        appId: OTHER_APPLICATION_IDENTIFIER,
+        roleId: OTHER_ROLE_IDENTIFIER,
+        overrides: {
+          roles: [
+            {
+              universalIdentifier: OTHER_ROLE_IDENTIFIER,
+              label: 'Other application role',
+            },
+          ],
+          logicFunctions: [otherLogicFunctionManifest],
+          connectionProviders,
+        },
+      });
+
+    beforeAll(async () => {
+      otherIdentifyExecutionsPath = join(
+        fixtureDirectory,
+        'other-identify-executions',
+      );
+
+      const source = `import { appendFileSync } from 'node:fs';
+export const handler = () => {
+  appendFileSync(${JSON.stringify(otherIdentifyExecutionsPath)}, 'executed\\n');
+  return { externalAccountId: 'other-application' };
+};`;
+
+      await setupApplicationForSync({
+        applicationUniversalIdentifier: OTHER_APPLICATION_IDENTIFIER,
+        name: 'OAuth callback other application',
+        description: 'Owns a logic function another app tries to use',
+        sourcePath: 'oauth-callback-other-application',
+      });
+      jest.useRealTimers();
+
+      const uploaded = await uploadApplicationFile({
+        applicationUniversalIdentifier: OTHER_APPLICATION_IDENTIFIER,
+        fileFolder: 'BuiltLogicFunction',
+        filePath: 'dist/other-identify-account.mjs',
+        filename: 'other-identify-account.mjs',
+        contentType: 'application/javascript',
+        fileBuffer: Buffer.from(source),
+      });
+
+      expect(uploaded.errors).toBeUndefined();
+
+      otherLogicFunctionManifest = {
+        universalIdentifier: OTHER_IDENTIFY_ACCOUNT_IDENTIFIER,
+        name: 'other-identify-account',
+        handlerName: 'handler',
+        sourceHandlerPath: 'src/other-identify-account.ts',
+        builtHandlerPath: 'dist/other-identify-account.mjs',
+        builtHandlerChecksum: createHash('sha256').update(source).digest('hex'),
+        timeoutSeconds: 10,
+      };
+
+      const { errors } = await syncApplication({
+        manifest: buildOtherApplicationManifest(),
+      });
+
+      expect(errors).toBeUndefined();
+      jest.useRealTimers();
+    }, 120000);
+
+    beforeEach(() => {
+      rmSync(otherIdentifyExecutionsPath, { force: true });
+    });
+
+    afterAll(async () => {
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier: OTHER_APPLICATION_IDENTIFIER,
+      });
+    });
+
+    it('refuses to install a provider that references it', async () => {
+      const { errors } = await syncApplication({
+        manifest: buildOtherApplicationManifest([
+          {
+            universalIdentifier: v4(),
+            name: 'foreign-identify-provider',
+            displayName: 'Foreign identify provider',
+            type: 'oauth',
+            oauth: {
+              authorizationEndpoint:
+                'https://connection-provider.example.com/authorize',
+              tokenEndpoint: TOKEN_ENDPOINT,
+              scopes: ['read'],
+              clientIdVariable: 'CLIENT_ID',
+              clientSecretVariable: 'CLIENT_SECRET',
+            },
+            identifyAccountLogicFunction: {
+              universalIdentifier: IDENTIFY_ACCOUNT_IDENTIFIER,
+            },
+          },
+        ]),
+        expectToFail: true,
+      });
+
+      expect(errors?.[0]?.message).toContain(
+        'identifyAccount logic function of connection provider foreign-identify-provider',
+      );
+    });
+
+    it('does not run it for a provider that already references it', async () => {
+      await globalThis.testDataSource.query(
+        'UPDATE core."connectionProvider" SET "identifyAccountLogicFunctionUniversalIdentifier" = $1 WHERE id = $2',
+        [OTHER_IDENTIFY_ACCOUNT_IDENTIFIER, provider.id],
+      );
+
+      try {
+        const redirect = await callback(await authorize(), 'team-a:first');
+
+        expect(redirect.searchParams.get('errorMessage')).toContain(
+          'not found in its application',
+        );
+        expect(await readAccounts()).toEqual([]);
+        expect(readExecutions(otherIdentifyExecutionsPath)).toEqual([]);
+        expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
+      } finally {
+        await globalThis.testDataSource.query(
+          'UPDATE core."connectionProvider" SET "identifyAccountLogicFunctionUniversalIdentifier" = $1 WHERE id = $2',
+          [IDENTIFY_ACCOUNT_IDENTIFIER, provider.id],
+        );
+      }
+    });
   });
 });

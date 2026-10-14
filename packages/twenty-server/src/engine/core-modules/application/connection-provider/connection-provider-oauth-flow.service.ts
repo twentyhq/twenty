@@ -334,9 +334,7 @@ export class ConnectionProviderOAuthFlowService {
       authFailedReason: null,
       visibility,
       handle,
-      ...(isDefined(identifiedAccount)
-        ? { externalAccountId: identifiedAccount.externalAccountId }
-        : {}),
+      externalAccountId: identifiedAccount?.externalAccountId ?? null,
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {
