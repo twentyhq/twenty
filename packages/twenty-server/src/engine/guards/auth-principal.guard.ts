@@ -27,12 +27,8 @@ export const AuthPrincipalGuard = (
       const authPrincipalVariant = isDefined(request)
         ? classifyAuthPrincipal(request)
         : undefined;
-      const isAgentTokenRefused =
-        isDefined(request?.agentId) &&
-        authPrincipalGuardConfig.isAgentTokenAccepted !== true;
 
       if (
-        !isAgentTokenRefused &&
         isDefined(authPrincipalVariant) &&
         isAuthPrincipalVariantAccepted({
           authPrincipalGuardConfig,
