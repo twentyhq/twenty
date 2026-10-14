@@ -102,6 +102,9 @@ const DropdownExample = () => {
       <Text role="status" aria-label="Assignee">
         Assignee: {selection ?? 'Unassigned'}
       </Text>
+      <Text role="status" aria-label="Search query">
+        Query: {query}
+      </Text>
       <Text role="status" aria-label="Assignment actions">
         Actions: {actionCount}
       </Text>

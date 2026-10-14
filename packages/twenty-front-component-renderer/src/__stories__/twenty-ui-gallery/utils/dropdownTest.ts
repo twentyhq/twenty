@@ -112,6 +112,12 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   const selectedAda = page.getByRole('option', { name: /^Ada Lovelace/ });
   expect(selectedAda).toHaveAttribute('aria-selected', 'true');
   await userEvent.type(reopenedSearch, 'Grace');
+  await waitFor(() => expect(reopenedSearch).toHaveValue('Grace'));
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Search query')).toHaveTextContent(
+      /^Query: Grace$/,
+    ),
+  );
   await waitFor(() =>
     expect(page.queryByRole('option', { name: /^Ada Lovelace/ })).toBeNull(),
   );
@@ -119,6 +125,9 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
     'Assignee: Ada Lovelace',
   );
   await userEvent.clear(reopenedSearch);
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Search query')).toHaveTextContent(/^Query:$/),
+  );
   await waitFor(() =>
     expect(page.getByRole('option', { name: /^Ada Lovelace/ })).toHaveAttribute(
       'aria-selected',
