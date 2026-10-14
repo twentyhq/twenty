@@ -70,17 +70,6 @@ const StyledMobilePlanNamesGrid = styled.div`
   }
 `;
 
-const StyledMobilePlanName = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: 1.4;
-  overflow: hidden;
-  padding: ${themeCssVariables.spacing[2]};
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const StyledComparisonTable = styled.div`
   display: grid;
   row-gap: ${themeCssVariables.spacing[2]};
@@ -149,6 +138,14 @@ const StyledPlanTitle = styled.div`
   line-height: 1.4;
   min-height: 20px;
   width: 100%;
+`;
+
+const StyledMobilePlanName = styled(StyledPlanTitle)`
+  display: block;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[2]};
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledComparisonTitle = styled(StyledPlanTitle)`
