@@ -296,14 +296,9 @@ export class UsageQuotaCounterStoreService {
   countAdmitOnFailure({
     operation,
     resourceType,
-    counterKind,
     creditsUsedMicro,
   }: QuotaEnforcement): void {
-    const attributes = {
-      operation,
-      resourceType,
-      ...(isDefined(counterKind) && { counterKind }),
-    };
+    const attributes = { operation, resourceType };
 
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,

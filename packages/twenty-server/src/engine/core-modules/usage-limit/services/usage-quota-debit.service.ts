@@ -349,7 +349,6 @@ export class UsageQuotaDebitService {
         this.usageQuotaCounterStoreService.countAdmitOnFailure({
           operation: 'consume',
           resourceType,
-          counterKind: 'userAllowance',
           creditsUsedMicro: isDefined(workspaceAllowanceConsumed) ? 0 : amount,
         });
 
@@ -363,7 +362,6 @@ export class UsageQuotaDebitService {
         this.usageQuotaCounterStoreService.countAdmitOnFailure({
           operation: 'consume',
           resourceType,
-          counterKind: 'userAllowance',
           creditsUsedMicro: amount,
         });
 

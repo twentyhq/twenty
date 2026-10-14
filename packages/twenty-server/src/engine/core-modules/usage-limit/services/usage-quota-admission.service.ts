@@ -248,15 +248,8 @@ export class UsageQuotaAdmissionService {
       }),
     ]);
 
-    if (isDegraded || isWorkspaceAllowanceSkipped) {
+    if (isDegraded || isUserAllowanceDegraded || isWorkspaceAllowanceSkipped) {
       this.usageQuotaCounterStoreService.countAdmitOnFailure(enforcement);
-    }
-
-    if (isUserAllowanceDegraded) {
-      this.usageQuotaCounterStoreService.countAdmitOnFailure({
-        ...enforcement,
-        counterKind: 'userAllowance',
-      });
     }
 
     const { exhaustedCounters, ...userAllowanceAdmission } =
