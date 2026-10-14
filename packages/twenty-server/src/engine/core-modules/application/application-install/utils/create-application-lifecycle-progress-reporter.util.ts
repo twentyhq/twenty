@@ -32,8 +32,6 @@ export const createApplicationLifecycleProgressReporter = <
       steps.indexOf(step) + Math.min(fractionCompleted, 1);
     const percentage = Math.round((completedStepCount / steps.length) * 100);
 
-    // Each update is a Redis write and an event stream broadcast, and elapsed
-    // time ticks mostly land on the percentage already reported
     if (percentage <= lastReportedPercentage) {
       return;
     }

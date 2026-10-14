@@ -424,8 +424,6 @@ export class ApplicationSyncService {
           logicFunction.id === application.uninstallLogicFunctionId,
       );
 
-      // The hook is one opaque call that can run until its timeout, so elapsed
-      // time is the only progress signal while it runs
       await (isDefined(uninstallLogicFunction)
         ? progressReporter.reportStepProgressDuring({
             step: 'UNINSTALL_HOOK',
