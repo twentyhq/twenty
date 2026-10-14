@@ -186,7 +186,7 @@ export const ObjectSettings = ({
             <Section.Root>
               <Section.Header
                 title={t`Validation rules`}
-                description={t`A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows.`}
+                description={t`Block records that break your rules, like an opportunity marked Won with no amount. Checked on every save.`}
                 actions={<OrganizationAdornment />}
               />
               {hasValidationRulesEntitlement ? (
