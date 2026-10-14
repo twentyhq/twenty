@@ -52,7 +52,7 @@
 </ParamField>
 
 <ParamField body="onClose" type="(() =&gt; void)">
-  Called once per mounted toast when the close button is clicked or the countdown completes. Providing it shows the close button.
+  For standalone Toast, called once per mount by the close button or expiry. For provider notifications, called once on close, expiry, closeToast, or limit eviction, after dismissal and before exit cleanup. Provider teardown does not call it.
 </ParamField>
 
 <ParamField body="progress" type="number">

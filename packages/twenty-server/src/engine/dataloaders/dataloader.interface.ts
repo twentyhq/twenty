@@ -5,13 +5,13 @@ import { type IndexMetadataConnectionLoaderPayload } from 'src/engine/dataloader
 import {
   type AgentsByRoleIdLoaderPayload,
   type ApiKeysByRoleIdLoaderPayload,
+  type ApplicationRegistrationConfigurationIssuesLoaderPayload,
   type ApplicationRegistrationInstallCountLoaderPayload,
   type ApplicationTranslationCatalogLoaderPayload,
   type FieldMetadataLoaderPayload,
   type IndexFieldMetadataLoaderPayload,
   type IndexMetadataLoaderPayload,
   type SearchFieldMetadataLoaderPayload,
-  type IsConfiguredLoaderPayload,
   type MorphRelationLoaderPayload,
   type ApplicationAuthorIdentifiersLoaderPayload,
   type ObjectMetadataLoaderPayload,
@@ -26,6 +26,7 @@ import {
   type ViewSortsByViewIdLoaderPayload,
   type WorkspaceMembersByRoleIdLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
+import { type ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
@@ -125,7 +126,10 @@ export interface IDataloaders {
     ViewFilterGroupDTO[]
   >;
 
-  isConfiguredLoader: DataLoader<IsConfiguredLoaderPayload, boolean>;
+  applicationRegistrationConfigurationIssuesLoader: DataLoader<
+    ApplicationRegistrationConfigurationIssuesLoaderPayload,
+    ApplicationRegistrationConfigurationIssue[]
+  >;
 
   applicationRegistrationInstallCountLoader: DataLoader<
     ApplicationRegistrationInstallCountLoaderPayload,
