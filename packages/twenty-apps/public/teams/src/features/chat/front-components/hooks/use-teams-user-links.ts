@@ -7,6 +7,8 @@ import { type TeamsUserLinkRecord } from 'src/features/chat/front-components/typ
 
 const TEAMS_USER_LINKS_PAGE_SIZE = 200;
 
+const TEAMS_USER_LINK_SOURCES = Object.values(TEAMS_USER_LINK_SOURCE);
+
 type TeamsUserLinksResponse = {
   data?: {
     teamsUserLinks?: {
@@ -51,7 +53,7 @@ const fetchTeamsUserLinks = async (): Promise<TeamsUserLinkRecord[]> => {
         ]
           .filter(isNonEmptyString)
           .join(' '),
-        source: Object.values(TEAMS_USER_LINK_SOURCE).find(
+        source: TEAMS_USER_LINK_SOURCES.find(
           (source) => source === record.source,
         ),
       });

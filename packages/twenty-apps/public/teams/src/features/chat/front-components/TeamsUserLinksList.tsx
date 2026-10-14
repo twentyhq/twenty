@@ -42,38 +42,54 @@ const StyledSecondaryText = styled.span`
   color: ${() => themeCssVariables.font.color.secondary};
 `;
 
-export const TeamsUserLinksList = () => {
+const TeamsUserLinksContent = () => {
   const { t } = useTranslate();
   const { teamsUserLinks, isLoading, hasLoadError } = useTeamsUserLinks();
+
+  if (isLoading) {
+    return <StyledSecondaryText>{t('Loading…')}</StyledSecondaryText>;
+  }
+
+  if (hasLoadError) {
+    return (
+      <p role="alert">
+        {t('Could not load linked Teams accounts. Please try again.')}
+      </p>
+    );
+  }
+
+  if (teamsUserLinks.length === 0) {
+    return (
+      <StyledSecondaryText>
+        {t('No Teams account is linked yet.')}
+      </StyledSecondaryText>
+    );
+  }
+
+  return (
+    <StyledList>
+      {teamsUserLinks.map((teamsUserLink) => (
+        <StyledRow key={teamsUserLink.id}>
+          <span>{teamsUserLink.name}</span>
+          <span>{teamsUserLink.workspaceMemberName}</span>
+          <StyledSecondaryText>
+            {teamsUserLink.source === TEAMS_USER_LINK_SOURCE.MANUAL
+              ? t('Set manually')
+              : t('Matched on email')}
+          </StyledSecondaryText>
+        </StyledRow>
+      ))}
+    </StyledList>
+  );
+};
+
+export const TeamsUserLinksList = () => {
+  const { t } = useTranslate();
 
   return (
     <StyledSection aria-label={t('Linked Teams accounts')}>
       <StyledTitle>{t('Linked Teams accounts')}</StyledTitle>
-      {isLoading ? (
-        <StyledSecondaryText>{t('Loading…')}</StyledSecondaryText>
-      ) : hasLoadError ? (
-        <p role="alert">
-          {t('Could not load linked Teams accounts. Please try again.')}
-        </p>
-      ) : teamsUserLinks.length === 0 ? (
-        <StyledSecondaryText>
-          {t('No Teams account is linked yet.')}
-        </StyledSecondaryText>
-      ) : (
-        <StyledList>
-          {teamsUserLinks.map((teamsUserLink) => (
-            <StyledRow key={teamsUserLink.id}>
-              <span>{teamsUserLink.name}</span>
-              <span>{teamsUserLink.workspaceMemberName}</span>
-              <StyledSecondaryText>
-                {teamsUserLink.source === TEAMS_USER_LINK_SOURCE.MANUAL
-                  ? t('Set manually')
-                  : t('Matched on email')}
-              </StyledSecondaryText>
-            </StyledRow>
-          ))}
-        </StyledList>
-      )}
+      <TeamsUserLinksContent />
     </StyledSection>
   );
 };
