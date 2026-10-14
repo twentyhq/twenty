@@ -1,42 +1,26 @@
-import { isValidUniversalIdentifier } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-
 import { installRegisteredApp } from '@/app/deployment/install-registered-app';
-import { runAppBuild } from '@/app/run-app-operation';
-import { readStringOption } from '@/catalog/read-command-values';
+import { type AppInstallPhase } from '@/app/deployment/types/app-install-phase.type';
+import { readApplicationIdentifier } from '@/app/read-application-identifier';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
 import { formatDataValue } from '@/data/format-data-value';
-import { CliError } from '@/output/cli-error';
-import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { formatSuccessLine } from '@/output/style';
 
 export const runAppInstallCommand: CommandRun<TargetCommandContext> = async (
   context,
 ) => {
-  const { options, target, signal, output } = context;
-  let universalIdentifier = readStringOption(options, 'universalIdentifier');
-
-  if (
-    isDefined(universalIdentifier) &&
-    !isValidUniversalIdentifier(universalIdentifier)
-  ) {
-    throw new CliError({
-      code: 'INVALID_INPUT',
-      exitCode: EXIT_CODE.USAGE,
-      message: `--universal-identifier must be a UUID of version 4 or later, not ${universalIdentifier}.`,
-    });
-  }
-
-  if (!isDefined(universalIdentifier)) {
-    const { data: build } = await runAppBuild({ context });
-    universalIdentifier = build.application.universalIdentifier;
-  }
+  const { target, signal, output } = context;
+  const completedPhases: AppInstallPhase[] = [];
+  const universalIdentifier = await readApplicationIdentifier({
+    context,
+    onBuild: () => completedPhases.push('build'),
+  });
 
   output.progress(`Installing the registered app on ${target.apiUrl}…`);
 
   const result = await installRegisteredApp({
-    universalIdentifier: universalIdentifier.toLowerCase(),
+    universalIdentifier,
+    completedPhases,
     target,
     signal,
     onQueued: (jobId) =>

@@ -448,7 +448,7 @@ The server selects the registered package and version. Local source changes are 
 
 The command waits up to ten minutes for its server installation job to complete, then verifies that the app is installed. JSON returns `application`, `installed: true` and `jobId`. Failed jobs return `INSTALL_FAILED`; missing or mismatched job status is an error, not a successful installation.
 
-Errors include `details.phase`, `details.outcome`, the universal identifier and the job identifier when available. Ctrl+C or a timeout stops waiting but does not cancel the server job. An installation may have partly run; check the app in workspace settings before retrying. The command requires the server's `triggerInstallApplication` and `findInstallApplicationJobStatus` APIs, including lookup by `jobId`.
+Errors include `details.phase`, `details.completedPhases`, `details.outcome`, the universal identifier and the job identifier when available. Ctrl+C or a timeout stops waiting but does not cancel the server job. An installation may have partly run; check the app in workspace settings before retrying. The command requires the server's `triggerInstallApplication` and `findInstallApplicationJobStatus` APIs, including lookup by `jobId`.
 
 ## Uninstall an app
 

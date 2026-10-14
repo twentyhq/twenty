@@ -37,6 +37,7 @@ const state = {
   startResult: { jobId: JOB_ID } as unknown,
   startError: undefined as string | undefined,
   statuses: [] as unknown[],
+  statusError: undefined as string | undefined,
   installedApplication: application as unknown,
   holdStart: false,
   heldResponse: undefined as ServerResponse | undefined,
@@ -66,6 +67,18 @@ const server = await startTestServer((request, response) => {
     });
   }
   if (query.includes('findInstallApplicationJobStatus')) {
+    if (state.statusError) {
+      return sendJson(response, 200, {
+        data: null,
+        errors: [
+          {
+            message: 'Status refused',
+            path: ['findInstallApplicationJobStatus'],
+            extensions: { code: state.statusError },
+          },
+        ],
+      });
+    }
     const status =
       state.statuses.length > 1 ? state.statuses.shift() : state.statuses[0];
     return sendJson(response, 200, {
@@ -107,6 +120,7 @@ describe('app install', () => {
       startResult: { jobId: JOB_ID },
       startError: undefined,
       statuses: [jobStatus('COMPLETED')],
+      statusError: undefined,
       installedApplication: application,
       holdStart: false,
       heldResponse: undefined,
@@ -164,6 +178,7 @@ describe('app install', () => {
   it('uses the local build identifier without uploading or syncing source', async () => {
     const { exitCode } = await runJson('--path', '/app/source');
     expect(exitCode).toBe(0);
+    expect(build).toHaveBeenCalledTimes(1);
     expect(build).toHaveBeenCalledWith({
       context: expect.objectContaining({
         options: expect.objectContaining({ path: '/app/source' }),
@@ -173,6 +188,22 @@ describe('app install', () => {
     expect(readGraphqlRequest(server.requests[0]).arguments).toEqual({
       input: { universalIdentifier: UNIVERSAL_IDENTIFIER },
     });
+  });
+
+  it('includes a completed local build in installation failure details', async () => {
+    state.statuses = [jobStatus('FAILED')];
+    const { envelope, exitCode } = await runJson();
+    expect(exitCode).toBe(1);
+    expect(envelope.error).toMatchObject({
+      code: 'INSTALL_FAILED',
+      details: {
+        phase: 'wait',
+        outcome: 'failed',
+        jobId: JOB_ID,
+        completedPhases: ['build', 'start'],
+      },
+    });
+    expect(build).toHaveBeenCalledTimes(1);
   });
 
   it('does not start an install if the build fails', async () => {
@@ -211,7 +242,7 @@ describe('app install', () => {
       expect(exitCode).toBe(1);
       expect(envelope.error).toMatchObject({
         code: 'INVALID_RESPONSE',
-        details: { phase: 'start', outcome: 'unknown' },
+        details: { phase: 'start', outcome: 'unknown', completedPhases: [] },
       });
       expect(server.requests).toHaveLength(1);
     },
@@ -229,7 +260,12 @@ describe('app install', () => {
       expect(exitCode).toBe(1);
       expect(envelope.error).toMatchObject({
         code: 'INVALID_RESPONSE',
-        details: { phase: 'wait', outcome: 'unknown', jobId: JOB_ID },
+        details: {
+          phase: 'wait',
+          outcome: 'unknown',
+          jobId: JOB_ID,
+          completedPhases: ['start'],
+        },
       });
       expect(
         operationNames().some((query) => query.includes('findOneApplication')),
@@ -246,7 +282,12 @@ describe('app install', () => {
     expect(envelope.error).toMatchObject({
       code: 'INSTALL_FAILED',
       message: 'Post-install hook failed',
-      details: { phase: 'wait', outcome: 'failed', jobId: JOB_ID },
+      details: {
+        phase: 'wait',
+        outcome: 'failed',
+        jobId: JOB_ID,
+        completedPhases: ['start'],
+      },
     });
     expect(envelope.error.hint).toContain('partly run');
     expect(
@@ -263,7 +304,12 @@ describe('app install', () => {
     expect(exitCode).toBe(1);
     expect(envelope.error).toMatchObject({
       code: 'INVALID_RESPONSE',
-      details: { phase: 'check', outcome: 'unknown', jobId: JOB_ID },
+      details: {
+        phase: 'check',
+        outcome: 'unknown',
+        jobId: JOB_ID,
+        completedPhases: ['start', 'wait'],
+      },
     });
   });
 
@@ -273,7 +319,7 @@ describe('app install', () => {
     expect(exitCode).toBe(3);
     expect(envelope.error).toMatchObject({
       code: 'PERMISSION_DENIED',
-      details: { phase: 'start', outcome: 'not-started' },
+      details: { phase: 'start', outcome: 'not-started', completedPhases: [] },
     });
     expect(server.requests).toHaveLength(1);
   });
@@ -284,10 +330,27 @@ describe('app install', () => {
     expect(exitCode).toBe(3);
     expect(envelope.error).toMatchObject({
       code: 'AUTH_REQUIRED',
-      details: { phase: 'start', outcome: 'not-started' },
+      details: { phase: 'start', outcome: 'not-started', completedPhases: [] },
     });
     expect(envelope.error.hint).toContain('TWENTY_API_KEY');
     expect(server.requests).toHaveLength(1);
+  });
+
+  it('preserves authentication recovery hints when polling fails after queuing', async () => {
+    state.statusError = 'UNAUTHENTICATED';
+    const { envelope, exitCode } = await installByIdentifier();
+    expect(exitCode).toBe(3);
+    expect(envelope.error).toMatchObject({
+      code: 'AUTH_REQUIRED',
+      details: {
+        phase: 'wait',
+        outcome: 'unknown',
+        jobId: JOB_ID,
+        completedPhases: ['start'],
+      },
+    });
+    expect(envelope.error.hint).toContain('TWENTY_API_KEY');
+    expect(server.requests).toHaveLength(2);
   });
 
   it('bounds waiting without claiming the server job was cancelled', async () => {
@@ -297,7 +360,12 @@ describe('app install', () => {
     expect(exitCode).toBe(1);
     expect(envelope.error).toMatchObject({
       code: 'TIMEOUT',
-      details: { phase: 'wait', outcome: 'unknown', jobId: JOB_ID },
+      details: {
+        phase: 'wait',
+        outcome: 'unknown',
+        jobId: JOB_ID,
+        completedPhases: ['start'],
+      },
     });
     expect(envelope.error.hint).toContain('does not cancel');
   });
@@ -311,7 +379,12 @@ describe('app install', () => {
     expect(exitCode).toBe(130);
     expect(envelope.error).toMatchObject({
       code: 'CANCELLED',
-      details: { phase: 'wait', outcome: 'unknown', jobId: JOB_ID },
+      details: {
+        phase: 'wait',
+        outcome: 'unknown',
+        jobId: JOB_ID,
+        completedPhases: ['start'],
+      },
     });
   });
 
@@ -324,7 +397,7 @@ describe('app install', () => {
     expect(exitCode).toBe(130);
     expect(envelope.error).toMatchObject({
       code: 'CANCELLED',
-      details: { phase: 'start', outcome: 'unknown' },
+      details: { phase: 'start', outcome: 'unknown', completedPhases: [] },
     });
   });
 
