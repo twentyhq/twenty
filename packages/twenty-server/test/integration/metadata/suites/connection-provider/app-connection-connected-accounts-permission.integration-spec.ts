@@ -197,7 +197,7 @@ describe('app connection connected accounts permission', () => {
     });
   });
 
-  it('refuses the callback for a member who lost the connected accounts permission after authorizing', async () => {
+  it('refuses the callback for a member without the connected accounts permission', async () => {
     const jwtWrapperService =
       getAppProviderByClassName<JwtWrapperService>('JwtWrapperService');
 

@@ -253,13 +253,25 @@ export class ConnectionProviderOAuthFlowService {
       }
     }
 
-    await this.appConnectionAccessService.validateCallerCanManageConnection({
-      isWorkspaceShared:
-        visibility === 'workspace' ||
-        reconnectTarget?.visibility === 'workspace',
-      workspaceId,
-      userWorkspaceId,
-    });
+    if (
+      visibility === 'workspace' ||
+      reconnectTarget?.visibility === 'workspace'
+    ) {
+      await this.appConnectionAccessService.validateCallerCanManageConnection({
+        isWorkspaceShared: true,
+        workspaceId,
+        userWorkspaceId,
+      });
+    }
+
+    // Checked on the resulting visibility so reconnecting a shared row as 'user' cannot skip it
+    if (visibility === 'user') {
+      await this.appConnectionAccessService.validateCallerCanManageConnection({
+        isWorkspaceShared: false,
+        workspaceId,
+        userWorkspaceId,
+      });
+    }
   }
 
   private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {
