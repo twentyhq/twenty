@@ -1809,13 +1809,11 @@ export class UsageLimitQuotaService {
     counter: WorkspaceAllowanceQuotaCounter;
   }): Promise<number> {
     const { workspaceCreditsUsedMicro } =
-      await this.usageAnalyticsService.getWorkspaceCreditsUsedMicroForBillingPeriod(
-        {
-          workspaceId,
-          periodStart: counter.periodStart,
-          periodEnd: counter.periodEnd,
-        },
-      );
+      await this.usageAnalyticsService.getCreditsUsedMicroForBillingPeriod({
+        workspaceId,
+        periodStart: counter.periodStart,
+        periodEnd: counter.periodEnd,
+      });
 
     return workspaceCreditsUsedMicro;
   }

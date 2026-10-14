@@ -21,7 +21,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
-import { type WorkspaceCreditsUsage } from 'src/engine/core-modules/billing/types/workspace-credits-usage.type';
+import { type CreditsUsage } from 'src/engine/core-modules/billing/types/credits-usage.type';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -77,7 +77,7 @@ export class BillingUsageService {
 
   async getResourceCreditProductUsage(
     workspace: WorkspaceEntity,
-  ): Promise<WorkspaceCreditsUsage[]> {
+  ): Promise<CreditsUsage[]> {
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId: workspace.id },
@@ -121,26 +121,25 @@ export class BillingUsageService {
     >,
     periodStart: Date,
     periodEnd: Date,
-  ): Promise<WorkspaceCreditsUsage> {
-    const [workspaceAndUserCreditsUsed, workspaceCreditsRolledOverMicro] =
-      await Promise.all([
-        // Fails open: an unreadable usage total must never block a paying workspace
-        this.usageAnalyticsService
-          .getWorkspaceCreditsUsedMicroForBillingPeriod({
-            workspaceId,
-            periodStart,
-            periodEnd,
-          })
-          .catch((error) => {
-            this.logger.error(
-              `Could not read credits used for workspace ${workspaceId}`,
-              error,
-            );
+  ): Promise<CreditsUsage> {
+    const [creditsUsed, workspaceCreditsRolledOverMicro] = await Promise.all([
+      // Fails open: an unreadable usage total must never block a paying workspace
+      this.usageAnalyticsService
+        .getCreditsUsedMicroForBillingPeriod({
+          workspaceId,
+          periodStart,
+          periodEnd,
+        })
+        .catch((error) => {
+          this.logger.error(
+            `Could not read credits used for workspace ${workspaceId}`,
+            error,
+          );
 
-            return null;
-          }),
-        this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
-      ]);
+          return null;
+        }),
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
+    ]);
 
     const workspaceCreditsGrantedMicro =
       subscription.status === SubscriptionStatus.Trialing
@@ -151,14 +150,12 @@ export class BillingUsageService {
       productKey: item.productKey,
       periodStart,
       periodEnd,
-      workspaceCreditsUsedMicro:
-        workspaceAndUserCreditsUsed?.workspaceCreditsUsedMicro ?? 0,
+      workspaceCreditsUsedMicro: creditsUsed?.workspaceCreditsUsedMicro ?? 0,
       workspaceCreditsGrantedMicro,
       workspaceCreditsRolledOverMicro,
       workspaceCreditsTotalMicro:
         workspaceCreditsGrantedMicro + workspaceCreditsRolledOverMicro,
-      userCreditsUsedMicro:
-        workspaceAndUserCreditsUsed?.userCreditsUsedMicro ?? 0,
+      userCreditsUsedMicro: creditsUsed?.userCreditsUsedMicro ?? 0,
       unitPriceCents: item.unitPriceCents,
     };
   }

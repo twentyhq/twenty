@@ -2,7 +2,7 @@
 
 import { type BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 
-export type WorkspaceCreditsUsage = {
+export type CreditsUsage = {
   productKey: BillingProductKey;
   periodStart: Date;
   periodEnd: Date;
