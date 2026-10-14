@@ -9,7 +9,6 @@ import {
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
 
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
@@ -33,6 +32,7 @@ import {
   type RecordExportProgress,
 } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { formatRecordExportRow } from 'src/engine/core-modules/record-export/utils/format-record-export-row.util';
+import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -73,9 +73,7 @@ export class GenerateRecordExportJob {
       );
       const requester =
         await this.recordExportWorkspaceService.resolveRequester(recordExport);
-      locale = isUserAuthContext(requester)
-        ? requester.workspaceMember.locale
-        : SOURCE_LOCALE;
+      locale = getRecordExportLocale(requester);
       const context = await this.recordExportWorkspaceService.buildContext({
         parameters: recordExport.parameters,
         authContext: requester,

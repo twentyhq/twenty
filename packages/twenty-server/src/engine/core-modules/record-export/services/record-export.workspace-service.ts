@@ -14,7 +14,6 @@ import { setTimeout } from 'node:timers/promises';
 import { type Readable } from 'stream';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -24,6 +23,7 @@ import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-q
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { isApiKeyActive } from 'src/engine/core-modules/api-key/utils/is-api-key-active.util';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { type RecordExportRequester } from 'src/engine/core-modules/record-export/types/record-export-requester.type';
@@ -60,6 +60,7 @@ import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-module
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
+import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -499,8 +500,7 @@ export class RecordExportWorkspaceService {
 
     if (
       isApiKeyAuthContext(authContext) &&
-      (isDefined(authContext.apiKey.revokedAt) ||
-        new Date(authContext.apiKey.expiresAt).getTime() <= Date.now())
+      !isApiKeyActive(authContext.apiKey)
     ) {
       throw new ForbiddenException(
         t`You do not have permission to export records.`,
@@ -622,9 +622,7 @@ export class RecordExportWorkspaceService {
       await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
         {
           applicationIds: rawFields.map((field) => field.applicationId),
-          locale: isUserAuthContext(authContext)
-            ? authContext.workspaceMember.locale
-            : SOURCE_LOCALE,
+          locale: getRecordExportLocale(authContext),
           workspaceId: authContext.workspace.id,
         },
       );
