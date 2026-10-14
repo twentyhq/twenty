@@ -25,7 +25,8 @@ export const LogConsoleToggleHotkeyEffect = ({
         isDefined(lastFocusStackItem) &&
         lastFocusStackItem.componentInstance.componentType !==
           FocusComponentType.PAGE &&
-        !lastFocusStackItem.globalHotkeysConfig.enableGlobalHotkeysWithModifiers;
+        !lastFocusStackItem.globalHotkeysConfig
+          .enableGlobalHotkeysWithModifiers;
 
       if (isBlockedByOverlay) {
         return;
