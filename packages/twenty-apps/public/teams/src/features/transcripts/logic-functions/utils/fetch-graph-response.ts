@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { GRAPH_REQUEST_MAX_ATTEMPTS } from 'src/features/transcripts/logic-functions/constants/graph-request-max-attempts';
+import { GRAPH_REQUEST_MAX_TOTAL_RETRY_WAIT_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/graph-request-max-total-retry-wait-milliseconds';
 import { GRAPH_REQUEST_RETRY_BASE_DELAY_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/graph-request-retry-base-delay-milliseconds';
 import { GRAPH_RETRYABLE_STATUSES } from 'src/features/transcripts/logic-functions/constants/graph-retryable-statuses';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
@@ -31,7 +32,11 @@ const fetchGraphResponseWithRetries = async ({
   method,
   body,
   attempt,
-}: GraphRequest & { attempt: number }): Promise<Response> => {
+  waitedMilliseconds,
+}: GraphRequest & {
+  attempt: number;
+  waitedMilliseconds: number;
+}): Promise<Response> => {
   const response = await fetch(url, {
     method,
     redirect: 'error',
@@ -52,21 +57,27 @@ const fetchGraphResponseWithRetries = async ({
     attempt + 1 < GRAPH_REQUEST_MAX_ATTEMPTS
   ) {
     const retryAfterSeconds = Number(response.headers.get('Retry-After'));
-
-    await sleepForMilliseconds(
+    const retryWaitMilliseconds =
       retryAfterSeconds > 0
         ? retryAfterSeconds * 1_000
-        : GRAPH_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt,
-    );
+        : GRAPH_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt;
 
-    return fetchGraphResponseWithRetries({
-      accessToken,
-      url,
-      accept,
-      method,
-      body,
-      attempt: attempt + 1,
-    });
+    if (
+      waitedMilliseconds + retryWaitMilliseconds <=
+      GRAPH_REQUEST_MAX_TOTAL_RETRY_WAIT_MILLISECONDS
+    ) {
+      await sleepForMilliseconds(retryWaitMilliseconds);
+
+      return fetchGraphResponseWithRetries({
+        accessToken,
+        url,
+        accept,
+        method,
+        body,
+        attempt: attempt + 1,
+        waitedMilliseconds: waitedMilliseconds + retryWaitMilliseconds,
+      });
+    }
   }
 
   const errorBody: GraphErrorBody = await response.json().catch(() => ({}));
@@ -92,4 +103,5 @@ export const fetchGraphResponse = ({
     ...request,
     url: resolveGraphUrlOrThrow(url),
     attempt: 0,
+    waitedMilliseconds: 0,
   });
