@@ -176,6 +176,7 @@ describe('SettingsAdminApplicationRegistrationConfigurationIssues', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Claim' }));
 
+    expect(mockOpenDialog).toHaveBeenCalledTimes(1);
     expect(mockOpenDialog).toHaveBeenCalledWith(
       CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID,
     );
