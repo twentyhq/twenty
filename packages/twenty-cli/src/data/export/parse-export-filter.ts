@@ -98,6 +98,22 @@ const unquote = (value: string) =>
     ? value.slice(1, -1)
     : value;
 
+const parseFilterValue = ({
+  comparator,
+  text,
+}: {
+  comparator: string;
+  text: string;
+}): FilterValue => {
+  if (comparator !== 'in' && comparator !== 'containsAny') {
+    return comparator === 'is' ? text : unquote(text);
+  }
+  if (!text.startsWith('[') || !text.endsWith(']')) {
+    throw invalidFilter();
+  }
+  return text.slice(1, -1).split(',').map(unquote);
+};
+
 const parsePredicate = ({
   expression,
   depth,
@@ -126,13 +142,7 @@ const parsePredicate = ({
     throw invalidFilter();
   }
   const [, field, comparator, text] = condition;
-  let value: FilterValue = comparator === 'is' ? text : unquote(text);
-  if (comparator === 'in' || comparator === 'containsAny') {
-    if (!text.startsWith('[') || !text.endsWith(']')) {
-      throw invalidFilter();
-    }
-    value = text.slice(1, -1).split(',').map(unquote);
-  }
+  const value = parseFilterValue({ comparator, text });
   return field
     .split('.')
     .reverse()
