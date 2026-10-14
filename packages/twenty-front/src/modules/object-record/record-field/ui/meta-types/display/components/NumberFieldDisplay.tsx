@@ -1,7 +1,13 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useNumberFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useNumberFieldDisplay';
 import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
-import { Text } from 'twenty-ui/primitives/typography';
+import { css } from '@linaria/core';
+
+const truncatedTextClassName = css`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 export const NumberFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useNumberFieldDisplay();
@@ -10,7 +16,7 @@ export const NumberFieldDisplay = () => {
   const { formatNumber } = useNumberFormat();
 
   if (!isDefined(fieldValue)) {
-    return <Text truncate />;
+    return <div className={truncatedTextClassName} />;
   }
 
   const numericValue = Number(fieldValue);
@@ -24,5 +30,5 @@ export const NumberFieldDisplay = () => {
     formattedValue = formatNumber(numericValue, { decimals });
   }
 
-  return <Text truncate>{formattedValue}</Text>;
+  return <div className={truncatedTextClassName}>{formattedValue}</div>;
 };

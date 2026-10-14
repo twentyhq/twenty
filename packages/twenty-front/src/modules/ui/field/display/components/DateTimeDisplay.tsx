@@ -1,6 +1,7 @@
 import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
@@ -25,6 +26,7 @@ export const DateTimeDisplay = ({
   dateFieldSettings,
 }: DateTimeDisplayProps) => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { isSystemTimezone } = useUserTimezone();
   const dateLocale = useAtomStateValue(dateLocaleState);
 
   const formattedDate = formatDateTimeString({
@@ -43,7 +45,9 @@ export const DateTimeDisplay = ({
       {isNonEmptyString(value) && (
         <>
           <StyledTimeZoneSpacer />
-          <TimeZoneAbbreviation instant={Temporal.Instant.from(value)} />
+          {!isSystemTimezone && (
+            <TimeZoneAbbreviation instant={Temporal.Instant.from(value)} />
+          )}
         </>
       )}
     </EllipsisDisplay>
