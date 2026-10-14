@@ -45,14 +45,20 @@ export const buildQuotaDefinitions = (): UsageQuotaDefinitionDTO[] =>
             }),
             allowedSpenderTypes: definition.allowedSpenderTypes,
             operatorOnlyScopes: definition.defaults.flatMap(
-              (quotaLimitDefault) =>
-                quotaLimitDefault.isOverridable
+              ({
+                operationTypes,
+                isOverridable,
+                spenderType,
+                unit,
+                periodUnit,
+              }) =>
+                isOverridable && operationTypes.length === 1
                   ? [
                       {
-                        operationType: quotaLimitDefault.operationTypes[0],
-                        spenderType: quotaLimitDefault.spenderType,
-                        unit: quotaLimitDefault.unit,
-                        periodUnit: quotaLimitDefault.periodUnit,
+                        operationType: operationTypes[0],
+                        spenderType,
+                        unit,
+                        periodUnit,
                       },
                     ]
                   : [],

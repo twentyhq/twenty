@@ -5,14 +5,11 @@ import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usa
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
-type QuotaLimitDefaultOperationScope =
-  | { operationTypes: [UsageOperationType]; isOverridable: true }
-  | { operationTypes: UsageOperationType[]; isOverridable: false };
-
 export type QuotaLimitDefaultDefinition<
   TResourceType extends UsageResourceType = UsageResourceType,
-> = QuotaLimitDefaultOperationScope & {
+> = {
   resourceType: TResourceType;
+  operationTypes: UsageOperationType[];
   limitKind: 'quota';
   spenderType: SpenderType;
   spenderId: '';
@@ -21,4 +18,5 @@ export type QuotaLimitDefaultDefinition<
   periodUnit: AnchoredPeriodUnit;
   periodCount: 1;
   limitValueConfigVariable: OptionalNumericConfigVariableKey;
+  isOverridable: boolean;
 };

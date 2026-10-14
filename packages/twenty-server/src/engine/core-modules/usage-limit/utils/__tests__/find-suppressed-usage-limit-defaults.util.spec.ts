@@ -60,10 +60,12 @@ describe('findSuppressedUsageLimitDefaults', () => {
       .flatMap((resourceType) => findUsageLimitDefaults({ resourceType }))
       .filter((usageLimitDefault) => usageLimitDefault.isOverridable)
       .flatMap((usageLimitDefault) => {
-        const [operationType] =
+        const operationTypes =
           getUsageLimitDefaultOperationTypes(usageLimitDefault);
 
-        return [{ ...usageLimitDefault, operationType }];
+        return operationTypes.length === 1
+          ? [{ ...usageLimitDefault, operationType: operationTypes[0] }]
+          : [];
       });
 
     const defaultsSharingAScope = overridableDefaults.filter(
