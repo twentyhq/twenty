@@ -140,6 +140,7 @@ describe('buildQuotaExhaustedScope', () => {
       periodCount: 1,
       periodUnit: 'week',
       retryAfterMs: USER_ALLOWANCE_PERIOD_END.getTime() - NOW.getTime(),
+      isDefault: true,
     });
   });
 
