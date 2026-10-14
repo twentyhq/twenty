@@ -12,7 +12,6 @@ import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
-import { registerSseAppliedRecordVersion } from '@/sse-db-event/utils/registerSseAppliedRecordVersion';
 import { captureMessage } from '@sentry/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -117,11 +116,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         ) {
           continue;
         }
-
-        registerSseAppliedRecordVersion({
-          cacheId: `${getObjectTypename(objectMetadataItem.nameSingular)}:${updatedRecord.id}`,
-          record: updatedRecord,
-        });
 
         const cachedRecordWithConnection = getRecordNodeFromRecord({
           record: cachedRecord,

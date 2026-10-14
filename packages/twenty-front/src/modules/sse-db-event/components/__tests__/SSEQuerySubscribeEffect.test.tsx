@@ -10,6 +10,7 @@ import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamRe
 
 type MockSentMutation = {
   operationName: string;
+  eventStreamId: string;
   queryId: string;
   resolve: () => void;
 };
@@ -18,10 +19,15 @@ const mockSentMutations: MockSentMutation[] = [];
 
 const mockSendMutation =
   (operationName: string) =>
-  ({ variables }: { variables: { input: { queryId: string } } }) =>
+  ({
+    variables,
+  }: {
+    variables: { input: { eventStreamId: string; queryId: string } };
+  }) =>
     new Promise((resolve) => {
       mockSentMutations.push({
         operationName,
+        eventStreamId: variables.input.eventStreamId,
         queryId: variables.input.queryId,
         resolve: () =>
           resolve({
@@ -153,6 +159,30 @@ describe('SSEQuerySubscribeEffect', () => {
     expect(getSentMutations()).toEqual([
       { operationName: 'AddQueryToEventStream', queryId: 'opened-panel' },
       { operationName: 'RemoveQueryFromEventStream', queryId: 'closed-panel' },
+    ]);
+  });
+
+  it('should register listeners on a new stream while a request to the previous one is still pending', async () => {
+    const { store } = setup();
+
+    await flushAfter(() =>
+      store.set(requiredQueryListenersState.atom, [
+        buildQueryListener('record-table'),
+      ]),
+    );
+
+    await flushAfter(() =>
+      store.set(sseEventStreamIdState.atom, 'event-stream-2'),
+    );
+
+    expect(
+      mockSentMutations.map(({ eventStreamId, queryId }) => ({
+        eventStreamId,
+        queryId,
+      })),
+    ).toEqual([
+      { eventStreamId: 'event-stream-1', queryId: 'record-table' },
+      { eventStreamId: 'event-stream-2', queryId: 'record-table' },
     ]);
   });
 });

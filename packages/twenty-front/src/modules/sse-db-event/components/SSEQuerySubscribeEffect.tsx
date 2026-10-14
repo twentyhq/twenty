@@ -196,7 +196,11 @@ export const SSEQuerySubscribeEffect = () => {
     );
   }, [handleError, removeQueryFromEventStream, store]);
 
-  const queryListenersSyncQueue = useMemo(() => createSerialTaskQueue(), []);
+  const queryListenersSyncQueue = useMemo(
+    () => createSerialTaskQueue(),
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    [sseEventStreamId],
+  );
 
   const enqueueSyncAdditions = useCallback(() => {
     void queryListenersSyncQueue.enqueue(syncAdditions);
