@@ -12,6 +12,7 @@ import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/applica
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
+import { assertConnectionProviderLogicFunctionsAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-connection-provider-logic-functions-are-own.util';
 import { resolveApplicationReferenceIdOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-application-reference-id-or-throw.util';
 import {
   ApplicationException,
@@ -211,6 +212,13 @@ export class ApplicationManifestMigrationService {
         workspaceId,
       });
 
+    assertConnectionProviderLogicFunctionsAreOwn({
+      manifest,
+      fromAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps,
+      inferDeletionFromMissingEntities,
+    });
+
     const idByUniversalIdentifierByMetadataName =
       (manifest.workflows ?? []).length > 0
         ? preallocateWorkflowReferenceIds({
@@ -381,24 +389,6 @@ export class ApplicationManifestMigrationService {
           ownerApplicationId: ownerFlatApplication.id,
         })
       : null;
-
-    for (const connectionProvider of manifest.connectionProviders ?? []) {
-      for (const [hook, logicFunctionReference] of Object.entries({
-        identifyAccount: connectionProvider.identifyAccountLogicFunction,
-        onConnect: connectionProvider.onConnectLogicFunction,
-        onDisconnect: connectionProvider.onDisconnectLogicFunction,
-      })) {
-        if (isDefined(logicFunctionReference)) {
-          resolveApplicationReferenceIdOrThrow({
-            flatEntityMaps: refreshedFlatLogicFunctionMaps,
-            universalIdentifier: logicFunctionReference.universalIdentifier,
-            referenceLabel: `${hook} logic function of connection provider ${connectionProvider.name}`,
-            exceptionCode: ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-            ownerApplicationId: ownerFlatApplication.id,
-          });
-        }
-      }
-    }
 
     await this.applicationService.update(ownerFlatApplication.id, {
       workspaceId,

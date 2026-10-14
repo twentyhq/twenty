@@ -494,33 +494,46 @@ export const handler = () => {
       });
     });
 
-    it('refuses to install a provider that references it', async () => {
-      const { errors } = await syncApplication({
-        manifest: buildOtherApplicationManifest([
-          {
-            universalIdentifier: v4(),
-            name: 'foreign-identify-provider',
-            displayName: 'Foreign identify provider',
-            type: 'oauth',
-            oauth: {
-              authorizationEndpoint:
-                'https://connection-provider.example.com/authorize',
-              tokenEndpoint: TOKEN_ENDPOINT,
-              scopes: ['read'],
-              clientIdVariable: 'CLIENT_ID',
-              clientSecretVariable: 'CLIENT_SECRET',
-            },
-            identifyAccountLogicFunction: {
-              universalIdentifier: IDENTIFY_ACCOUNT_IDENTIFIER,
-            },
+    it('refuses to install a provider that references it without writing anything', async () => {
+      const foreignProviderIdentifier = v4();
+      const manifest = buildOtherApplicationManifest([
+        {
+          universalIdentifier: foreignProviderIdentifier,
+          name: 'foreign-identify-provider',
+          displayName: 'Foreign identify provider',
+          type: 'oauth',
+          oauth: {
+            authorizationEndpoint:
+              'https://connection-provider.example.com/authorize',
+            tokenEndpoint: TOKEN_ENDPOINT,
+            scopes: ['read'],
+            clientIdVariable: 'CLIENT_ID',
+            clientSecretVariable: 'CLIENT_SECRET',
           },
-        ]),
-        expectToFail: true,
-      });
+          identifyAccountLogicFunction: {
+            universalIdentifier: IDENTIFY_ACCOUNT_IDENTIFIER,
+          },
+        },
+      ]);
 
-      expect(errors?.[0]?.message).toContain(
-        'identifyAccount logic function of connection provider foreign-identify-provider',
-      );
+      for (const dryRun of [true, false]) {
+        const { errors } = await syncApplication({
+          manifest,
+          dryRun,
+          expectToFail: true,
+        });
+
+        expect(errors?.[0]?.message).toContain(
+          'identifyAccount logic function of connection provider foreign-identify-provider',
+        );
+      }
+
+      expect(
+        await globalThis.testDataSource.query(
+          'SELECT id FROM core."connectionProvider" WHERE "universalIdentifier" = $1',
+          [foreignProviderIdentifier],
+        ),
+      ).toEqual([]);
     });
 
     it('does not run it for a provider that already references it', async () => {
