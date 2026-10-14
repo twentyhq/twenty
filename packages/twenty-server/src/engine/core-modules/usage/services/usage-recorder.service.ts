@@ -6,18 +6,16 @@ import {
   type OnModuleDestroy,
   type OnModuleInit,
 } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
+import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
-import { type CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
-import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { buildUsageEventEnvelopes } from 'src/engine/core-modules/usage/utils/build-usage-event-envelopes';
 import { UsageRollupBuffer } from 'src/engine/core-modules/usage/utils/usage-rollup-buffer';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -30,20 +28,15 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   private readonly buffer = new UsageRollupBuffer(MAX_BUFFERED_ROLLUPS);
   private flushTimer: NodeJS.Timeout | null = null;
   private pendingFlush: Promise<void> = Promise.resolve();
-  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly discoveryService: DiscoveryService,
+    private readonly billingCreditAllowanceService: BillingCreditAllowanceService,
   ) {}
 
   onModuleInit() {
-    this.creditAllowanceProvider = findCreditAllowanceProvider(
-      this.discoveryService,
-    );
-
     this.flushTimer = setInterval(
       () => void this.flush(),
       this.twentyConfigService.get('USAGE_ROLLUP_FLUSH_INTERVAL_MS'),
@@ -176,7 +169,9 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
   ): Promise<Date | undefined> {
     const period =
-      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
+      await this.billingCreditAllowanceService.getCreditAllowancePeriod(
+        workspaceId,
+      );
 
     return period?.periodStart;
   }

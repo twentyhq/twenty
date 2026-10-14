@@ -25,8 +25,8 @@ export const SettingsAdminWorkspaceChatThread = () => {
   const { data, loading: isLoading } =
     useQuery<GetAdminChatThreadMessagesQuery>(GET_ADMIN_CHAT_THREAD_MESSAGES, {
       client: apolloAdminClient,
-      variables: { threadId },
-      skip: !threadId,
+      variables: { workspaceId, threadId },
+      skip: !workspaceId || !threadId,
     });
 
   const thread = data?.getAdminChatThreadMessages?.thread;

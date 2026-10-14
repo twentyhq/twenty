@@ -13,7 +13,7 @@ const StyledContainer = styled.div<{ isScrollable: boolean }>`
   position: relative;
   ${SCROLLABLE_TAB_ROW_CSS}
 
-  &&::after {
+  &::after {
     display: none;
   }
 `;
@@ -49,6 +49,7 @@ export const TabListRow = ({
       render={<StyledContainer isScrollable={isScrollable} />}
     >
       {children}
+      <Tabs.Indicator />
     </Tabs.List>
   );
 };

@@ -26,11 +26,11 @@ export const useRevokeSigningKey = (onSuccess?: () => void) => {
         awaitRefetchQueries: true,
       });
 
-      enqueueToast({ variant: 'success', children: t`Signing key revoked` });
+      enqueueToast({ status: 'success', children: t`Signing key revoked` });
       onSuccess?.();
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)
           : t`Failed to revoke signing key. Please try again later.`,

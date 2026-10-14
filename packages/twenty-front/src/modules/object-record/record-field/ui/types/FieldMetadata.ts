@@ -327,6 +327,7 @@ export const FieldActorValueSchema = z.object({
     .object({
       // GraphQL ActorContext returns provider: null for MANUAL/SYSTEM/… actors
       provider: z.enum(ConnectedAccountProvider).nullish(),
+      applicationId: z.string().nullish(),
     })
     .nullable(),
 });

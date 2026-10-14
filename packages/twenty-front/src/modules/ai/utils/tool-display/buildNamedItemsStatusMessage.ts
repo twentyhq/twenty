@@ -1,5 +1,5 @@
 import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
-import { formatDisplayList } from '@/ai/utils/tool-display/formatDisplayList';
+import { formatDisplayList } from '~/utils/format/formatDisplayList';
 import { getInnerToolName } from '@/ai/utils/tool-display/getInnerToolName';
 import { pickStatusLabel } from '@/ai/utils/tool-display/pickStatusLabel';
 

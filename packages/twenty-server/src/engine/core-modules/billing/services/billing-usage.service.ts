@@ -20,32 +20,16 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type CreditAvailability } from 'src/engine/core-modules/billing/types/credit-availability.type';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
-import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
-import { buildUsageRefusalException } from 'src/engine/core-modules/billing/utils/build-usage-refusal-exception.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
-import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
-import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type UsageSumRow = {
   total: string | number | null;
-};
-
-type UsageQuotaScope = {
-  workspaceId: string;
-  resourceType: UsageResourceType;
-  operationType: UsageOperationType;
-  spenders: UsageSpenders;
-  cost?: QuotaCost;
 };
 
 @Injectable()
@@ -59,46 +43,8 @@ export class BillingUsageService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
   ) {}
-
-  async assertUsageAllowed(scope: UsageQuotaScope): Promise<void> {
-    const usageRefusal = await this.findUsageRefusal(scope);
-
-    if (isDefined(usageRefusal)) {
-      throw buildUsageRefusalException({
-        usageRefusal,
-        workspaceId: scope.workspaceId,
-      });
-    }
-  }
-
-  async findUsageRefusal({
-    workspaceId,
-    resourceType,
-    operationType,
-    spenders,
-    cost,
-  }: UsageQuotaScope): Promise<UsageRefusal | null> {
-    const subscriptionInactiveReason =
-      await this.getSubscriptionInactiveReason(workspaceId);
-
-    if (isDefined(subscriptionInactiveReason)) {
-      return {
-        kind: 'subscriptionInactive',
-        reason: subscriptionInactiveReason,
-      };
-    }
-
-    const exhaustedScope = await this.usageLimitQuotaService.findExhaustedScope(
-      { workspaceId, resourceType, operationType, spenders, cost },
-    );
-
-    return isDefined(exhaustedScope)
-      ? { kind: 'quotaExhausted', exhaustedScope }
-      : null;
-  }
 
   async getSubscriptionInactiveReason(
     workspaceId: string,
@@ -127,33 +73,6 @@ export class BillingUsageService {
     }
 
     return null;
-  }
-
-  async getCreditAvailability(
-    workspaceId: string,
-  ): Promise<CreditAvailability> {
-    const subscriptionInactiveReason =
-      await this.getSubscriptionInactiveReason(workspaceId);
-
-    if (isDefined(subscriptionInactiveReason)) {
-      return { hasAvailableCredits: false, reason: subscriptionInactiveReason };
-    }
-
-    const remainingMicro =
-      await this.usageLimitQuotaService.getAllowanceRemainingMicro(workspaceId);
-
-    if (isDefined(remainingMicro) && remainingMicro <= 0) {
-      return { hasAvailableCredits: false, reason: 'NO_CREDITS' };
-    }
-
-    return { hasAvailableCredits: true };
-  }
-
-  async hasAvailableCredits(workspaceId: string): Promise<boolean> {
-    const { hasAvailableCredits } =
-      await this.getCreditAvailability(workspaceId);
-
-    return hasAvailableCredits;
   }
 
   async getResourceCreditProductUsage(
@@ -241,7 +160,7 @@ export class BillingUsageService {
     );
   }
 
-  getResourceUsageCap(subscription: BillingSubscriptionEntity): number {
+  findResourceUsageCap(subscription: BillingSubscriptionEntity): number | null {
     const isInFreeTrial = subscription.status === SubscriptionStatus.Trialing;
 
     if (isInFreeTrial) {
@@ -260,10 +179,7 @@ export class BillingUsageService {
       );
 
     if (!isDefined(resourceCreditPrice)) {
-      throw new BillingException(
-        `Resource credit price not found for workspace ${subscription.workspaceId}`,
-        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
-      );
+      return null;
     }
 
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);

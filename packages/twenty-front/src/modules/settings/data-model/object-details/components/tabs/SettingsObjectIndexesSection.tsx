@@ -155,7 +155,7 @@ export const SettingsObjectIndexesSection = ({
     closeDialog(DELETE_INDEX_MODAL_ID);
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Index deleted` });
+      enqueueToast({ status: 'success', children: t`Index deleted` });
       setPendingDelete(null);
     }
   };
@@ -175,7 +175,7 @@ export const SettingsObjectIndexesSection = ({
             <DropdownContent align="end" sideOffset={8}>
               <Dropdown.Section>
                 <SettingsRow
-                  startIcon={<IconEyeOff />}
+                  startElement={<IconEyeOff />}
                   onCheckedChange={() =>
                     setHideSystemIndexes(!hideSystemIndexes)
                   }

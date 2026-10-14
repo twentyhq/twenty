@@ -137,7 +137,7 @@ describe('DatabaseToolProvider', () => {
       {
         workspaceId,
         roleId,
-        rolePermissionConfig: { unionOf: [roleId] },
+        rolePermissionConfig: { intersectionOf: { agentRoleId: roleId } },
         requireExplicitObjectGrants: options?.requireExplicitObjectGrants,
       },
       { includeSchemas: false },
@@ -228,22 +228,23 @@ describe('DatabaseToolProvider', () => {
       ]),
     );
 
-    expect(descriptorNames).toEqual(
-      expect.not.arrayContaining([
-        'create_one_workspace_member',
-        'update_one_workspace_member',
-        'delete_one_workspace_member',
-        'create_one_message',
-        'update_one_message',
-        'delete_one_message',
-        'create_one_calendar_event',
-        'update_one_calendar_event',
-        'delete_one_calendar_event',
-        'create_one_dashboard',
-        'update_one_dashboard',
-        'delete_one_dashboard',
-      ]),
-    );
+    for (const blockedToolName of [
+      'create_one_workspace_member',
+      'update_one_workspace_member',
+      'delete_one_workspace_member',
+      'create_one_message',
+      'update_one_message',
+      'delete_one_message',
+      'create_one_calendar_event',
+      'update_one_calendar_event',
+      'delete_one_calendar_event',
+      'create_one_dashboard',
+      'update_one_dashboard',
+      'delete_one_dashboard',
+      'delete_many_dashboards',
+    ]) {
+      expect(descriptorNames).not.toContain(blockedToolName);
+    }
   });
 
   it('generates labels from operation verb and object metadata labels', async () => {

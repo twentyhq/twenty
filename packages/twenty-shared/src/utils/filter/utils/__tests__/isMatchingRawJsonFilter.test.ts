@@ -43,11 +43,31 @@ describe('isMatchingRawJsonFilter', () => {
       ).toBe(false);
     });
 
-    it('should match across lines', () => {
+    it('should be case sensitive', () => {
       expect(
         isMatchingRawJsonFilter({
-          rawJsonFilter: { like: '%value%' },
-          value: { key: 'value' } as any,
+          rawJsonFilter: { like: '%acme%' },
+          value: { name: 'Acme' },
+        }),
+      ).toBe(false);
+    });
+
+    it('should not match a null value', () => {
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%null%' },
+          value: null,
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('ilike', () => {
+    it('should match case insensitively', () => {
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { ilike: '%acme%' },
+          value: { name: 'Acme' },
         }),
       ).toBe(true);
     });

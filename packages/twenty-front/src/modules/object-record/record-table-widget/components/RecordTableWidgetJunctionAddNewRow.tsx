@@ -54,7 +54,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   const handleTargetRecordSelected = (targetRecordId: string) => {
     createJunctionRecord(targetRecordId).catch((error) => {
       logError(error);
-      enqueueToast({ variant: 'error', children: t`Failed to add record` });
+      enqueueToast({ status: 'error', children: t`Failed to add record` });
     });
   };
 

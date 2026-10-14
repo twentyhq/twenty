@@ -1,38 +1,98 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type Meeting } from 'fathom-typescript/sdk/models/shared';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection } from 'twenty-sdk/logic-function';
+import {
+  getConnection,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
+import {
+  FATHOM_RETRY_FALLBACK_DELAY_MILLISECONDS,
+  MAX_FATHOM_BACKFILL_REQUEUE_ATTEMPTS,
+} from 'src/constants/fathom.constant';
 import { FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { type SerializedFathomMeeting } from 'src/logic-functions/types/serialized-fathom-meeting.type';
+import { type FathomBackfillBatchPayload } from 'src/logic-functions/types/fathom-backfill-batch-payload.type';
 import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
+import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
+import { enqueueFathomBackfillBatch } from 'src/logic-functions/utils/enqueue-fathom-backfill-batch.util';
+import { getFathomRequeueDelay } from 'src/logic-functions/utils/get-fathom-requeue-delay.util';
 import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-meeting.util';
-import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
 import { syncFathomMeetingToCallRecording } from 'src/logic-functions/utils/sync-fathom-meeting-to-call-recording.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
-export const fathomBackfillBatchHandler = async (payload: {
-  connectedAccountId: string;
-  meetings: SerializedFathomMeeting[];
-}) => {
+export const fathomBackfillBatchHandler = async (
+  payload: FathomBackfillBatchPayload,
+) => {
   const connection = await getConnection(payload.connectedAccountId);
   const fathomClient = createFathomClient(connection.accessToken);
-  const coreApiClient = new CoreApiClient({ runAs: 'application' });
-  const results = [];
+  const coreApiClient = createFathomCoreApiClient();
+  const requeueAttempt = payload.requeueAttempt ?? 0;
+  const results: Awaited<
+    ReturnType<typeof syncFathomMeetingToCallRecording>
+  >[] = [];
+  let skippedMeetingCount = 0;
+
+  const requeueRemainingMeetings = async ({
+    meetingIndex,
+    operation,
+    error,
+    delay,
+  }: {
+    meetingIndex: number;
+    operation: string;
+    error: unknown;
+    delay: number;
+  }) => {
+    if (requeueAttempt >= MAX_FATHOM_BACKFILL_REQUEUE_ATTEMPTS) {
+      throw buildRetryableFathomError({ operation, error });
+    }
+
+    const remainingMeetings = payload.meetings.slice(meetingIndex);
+
+    try {
+      await enqueueFathomBackfillBatch({
+        connectedAccountId: payload.connectedAccountId,
+        meetings: remainingMeetings,
+        requeueAttempt: requeueAttempt + 1,
+        notBeforeDelayMilliseconds: delay,
+      });
+    } catch (enqueueError) {
+      throw buildRetryableFathomError({
+        operation: `re-enqueue after ${operation}`,
+        error: enqueueError,
+      });
+    }
+
+    console.warn(
+      `[fathom] ${operation} failed, re-enqueued ${remainingMeetings.length} meetings in ${delay}ms: ${toErrorMessage(error)}`,
+    );
+
+    return {
+      success: true,
+      importedMeetingCount: results.length,
+      failedMeetingCount: skippedMeetingCount,
+      requeuedMeetingCount: remainingMeetings.length,
+      results,
+    };
+  };
 
   // Sequential on purpose: the batch is the unit of pacing against Fathom.
-  for (const serializedMeeting of payload.meetings) {
-    const meeting = await hydrateFathomMeeting({
-      fathomClient,
-      serializedMeeting,
-    }).catch((error: unknown) => {
-      // Only a RetryableLogicFunctionError makes the platform retry, so a rate
-      // limit or a Fathom outage is rethrown as one.
-      if (isTransientFathomError(error)) {
-        throw buildRetryableFathomError({
-          operation: `hydrate recording ${serializedMeeting.recordingId}`,
+  for (const [meetingIndex, serializedMeeting] of payload.meetings.entries()) {
+    const hydrateOperation = `hydrate recording ${serializedMeeting.recordingId}`;
+    let meeting: Meeting;
+
+    try {
+      meeting = await hydrateFathomMeeting({ fathomClient, serializedMeeting });
+    } catch (error) {
+      const delay = getFathomRequeueDelay({ error, now: new Date() });
+
+      if (isDefined(delay)) {
+        return requeueRemainingMeetings({
+          meetingIndex,
+          operation: hydrateOperation,
           error,
+          delay,
         });
       }
 
@@ -40,35 +100,40 @@ export const fathomBackfillBatchHandler = async (payload: {
       console.error(
         `[fathom] skipped recording ${serializedMeeting.recordingId}: ${toErrorMessage(error)}`,
       );
+      skippedMeetingCount += 1;
 
-      return undefined;
-    });
-
-    if (!isDefined(meeting)) {
       continue;
     }
 
-    // A failed upsert retries the whole batch. The replay re-fetches the
-    // meetings already imported, which costs calls but cannot duplicate
-    // records: the CallRecording id is derived from the recording.
-    results.push(
-      await syncFathomMeetingToCallRecording({
-        coreApiClient,
-        meeting,
-        connectedAccountId: payload.connectedAccountId,
-      }).catch((error: unknown) => {
-        throw buildRetryableFathomError({
-          operation: `sync recording ${serializedMeeting.recordingId}`,
-          error,
-        });
-      }),
-    );
+    try {
+      results.push(
+        await syncFathomMeetingToCallRecording({
+          coreApiClient,
+          meeting,
+          connectedAccountId: payload.connectedAccountId,
+        }),
+      );
+    } catch (error) {
+      const operation = `sync recording ${serializedMeeting.recordingId}`;
+
+      if (!(error instanceof RetryableLogicFunctionError)) {
+        throw buildRetryableFathomError({ operation, error });
+      }
+
+      return requeueRemainingMeetings({
+        meetingIndex,
+        operation,
+        error,
+        delay: FATHOM_RETRY_FALLBACK_DELAY_MILLISECONDS,
+      });
+    }
   }
 
   return {
     success: true,
     importedMeetingCount: results.length,
-    failedMeetingCount: payload.meetings.length - results.length,
+    failedMeetingCount: skippedMeetingCount,
+    requeuedMeetingCount: 0,
     results,
   };
 };

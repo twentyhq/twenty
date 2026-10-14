@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
@@ -24,7 +25,7 @@ describe('getRecordNodeFromRecord', () => {
       throw new Error('Object metadata item not found');
     }
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       name: true,
       company: true,
     };
@@ -66,7 +67,7 @@ describe('getRecordNodeFromRecord', () => {
       throw new Error('Object metadata item not found');
     }
 
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       name: true,
       company: true,
     };
@@ -117,7 +118,7 @@ describe('getRecordNodeFromRecord', () => {
       ...peopleMock[0],
       [oneToManyRelationField.name]: null,
     };
-    const recordGqlFields = {
+    const recordGqlFields: RecordGqlFields = {
       name: true,
       [oneToManyRelationField.name]: true,
     };

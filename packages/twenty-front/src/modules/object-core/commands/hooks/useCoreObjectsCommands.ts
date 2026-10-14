@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import {
   ContextStorePageType,
   CoreObjectNameSingular,
-  FeatureFlagKey,
 } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -18,7 +17,6 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const useCoreObjectsCommands = () => {
@@ -26,10 +24,6 @@ export const useCoreObjectsCommands = () => {
   const { isInPreviewMode, commandMenuContextApi } =
     useContext(CommandMenuContext);
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
-
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
 
   const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
 
@@ -44,7 +38,6 @@ export const useCoreObjectsCommands = () => {
   });
 
   const isOnCoreWorkflowsIndex =
-    isWorkflowCoreIndexPageEnabled &&
     commandMenuContextApi.pageType === ContextStorePageType.Index &&
     commandMenuContextApi.objectMetadataItem.nameSingular ===
       CoreObjectNameSingular.Workflow;

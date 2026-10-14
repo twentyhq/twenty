@@ -360,3 +360,7 @@ export const buildPersonUpdateData = (
   lastContactItemCalendarEventId:
     agg?.item?.kind === 'meeting' ? agg.item.id : null,
 });
+
+export const PERSON_LAST_CONTACT_FIELD_NAMES = Object.keys(
+  buildPersonUpdateData(undefined),
+);

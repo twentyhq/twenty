@@ -113,7 +113,7 @@ describe('BookCallOnboardingStepActions', () => {
 
     expect(skipButton).not.toBeDisabled();
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error', children: 'network error' }),
+      expect.objectContaining({ status: 'error', children: 'network error' }),
     );
   });
 

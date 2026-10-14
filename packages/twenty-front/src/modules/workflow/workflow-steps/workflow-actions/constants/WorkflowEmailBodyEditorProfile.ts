@@ -1,3 +1,4 @@
+import { HtmlDocumentNode } from '@/advanced-text-editor/extensions/blocks/HtmlDocumentNode';
 import { HtmlNode } from '@/advanced-text-editor/extensions/blocks/HtmlNode';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { buildFullRichTextExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
@@ -13,5 +14,6 @@ export const WORKFLOW_EMAIL_BODY_EDITOR_PROFILE = {
     ...buildFullRichTextExtensions(context),
     WorkflowVariableTag,
     HtmlNode.configure({ isInlineEditable: true, defaultHtml: '' }),
+    HtmlDocumentNode.configure({ isInlineEditable: true, defaultHtml: '' }),
   ],
 } satisfies AdvancedTextEditorProfile;

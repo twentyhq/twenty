@@ -24,6 +24,7 @@ export type { ToastNotification } from './Toast/types/ToastNotification';
 export type { ToastOptions } from './Toast/types/ToastOptions';
 export type { ToastProps } from './Toast/types/ToastProps';
 export type { ToastProviderProps } from './Toast/types/ToastProviderProps';
-export type { ToastVariant } from './Toast/types/ToastVariant';
+export type { ToastStatus } from './Toast/types/ToastStatus';
+export type { ToastUpdate } from './Toast/types/ToastUpdate';
 export { Toaster } from './Toaster/Toaster';
 export type { ToasterProps } from './Toaster/types/ToasterProps';

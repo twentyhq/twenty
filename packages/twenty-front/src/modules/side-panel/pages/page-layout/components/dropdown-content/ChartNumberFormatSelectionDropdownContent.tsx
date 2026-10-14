@@ -12,7 +12,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ChartNumberFormat } from '~/generated-metadata/graphql';
 
 export const ChartNumberFormatSelectionDropdownContent = () => {
@@ -82,7 +82,7 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
               handleSelectNumberFormatOption(option);
             }}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === option}
               onClick={() => {
                 handleSelectNumberFormatOption(option);
@@ -93,7 +93,7 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
               indicator="check"
             >
               {getChartNumberFormatLabel(option)}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
         ))}
       </SelectableList>

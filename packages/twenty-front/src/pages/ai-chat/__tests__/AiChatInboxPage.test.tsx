@@ -88,7 +88,7 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
     ) => void;
   }) =>
     threads.map((thread) => (
-      <div key={thread.id}>
+      <div key={thread.id} data-selectable-id={thread.id}>
         <input
           type="checkbox"
           aria-label={`Select ${thread.title}`}
@@ -227,6 +227,10 @@ const getTargetedThreadIds = (contextStoreInstanceId: string) =>
   );
 
 describe('AiChatInboxPage', () => {
+  beforeAll(() => {
+    Element.prototype.scrollIntoView = jest.fn();
+  });
+
   beforeEach(() => {
     // The list filter is kept in local storage
     localStorage.clear();
@@ -239,6 +243,25 @@ describe('AiChatInboxPage', () => {
       hasNextPage: false,
       endCursor: null,
     });
+    // The member's own chats, which they follow
+    jotaiStore.set(
+      agentChatThreadParticipantsState.atom,
+      Object.fromEntries(
+        THREADS.map(({ id, updatedAt }) => [
+          id,
+          {
+            id: `participant-${id}`,
+            threadId: id,
+            lastReadAt: updatedAt,
+            archivedAt: null,
+            snoozedUntil: null,
+            isSubscribed: true,
+            lastMentionedAt: null,
+            updatedAt,
+          },
+        ]),
+      ),
+    );
     isMobile = false;
     mockIsAiChatInboxEnabled = true;
   });
@@ -419,6 +442,31 @@ describe('AiChatInboxPage', () => {
     expect(screen.getByText('3 chats selected')).toBeInTheDocument();
   });
 
+  it('moves between chats with the arrow keys', async () => {
+    renderInbox();
+
+    await userEvent.keyboard('{ArrowDown}{ArrowDown}');
+    expect(screen.getByText(`Chat page ${thirdThread.id}`)).toBeInTheDocument();
+
+    await userEvent.keyboard('{ArrowUp}');
+    expect(
+      screen.getByText(`Chat page ${secondThread.id}`),
+    ).toBeInTheDocument();
+  });
+
+  it('selects chats from the one on screen with shift+arrow keys', async () => {
+    renderInbox();
+
+    await userEvent.keyboard('{Shift>}{ArrowDown}{ArrowDown}{/Shift}');
+    expect(screen.getByText('3 chats selected')).toBeInTheDocument();
+
+    await userEvent.keyboard('{Shift>}{ArrowUp}{/Shift}');
+    expect(screen.getByText('2 chats selected')).toBeInTheDocument();
+
+    await userEvent.keyboard('{ArrowDown}');
+    expect(screen.getByText(`Chat page ${thirdThread.id}`)).toBeInTheDocument();
+  });
+
   it('goes back to the chat on screen once the selection is cleared', () => {
     renderInbox();
 
@@ -508,6 +556,23 @@ describe('AiChatInboxPage', () => {
       expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: 'Third chat' }),
+      ).toBeInTheDocument();
+    });
+
+    it('moves between chats with the arrow keys without selecting any from the chat', async () => {
+      renderInbox(`/inbox/${firstThread.id}`);
+
+      await userEvent.keyboard('{Shift>}{ArrowDown}{/Shift}');
+
+      expect(
+        screen.getByText(`Chat page ${firstThread.id}`),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/selected/)).not.toBeInTheDocument();
+
+      await userEvent.keyboard('{ArrowDown}');
+
+      expect(
+        screen.getByText(`Chat page ${secondThread.id}`),
       ).toBeInTheDocument();
     });
 

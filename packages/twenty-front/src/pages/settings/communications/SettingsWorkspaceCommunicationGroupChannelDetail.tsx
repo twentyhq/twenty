@@ -118,7 +118,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       );
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update sender name.`,
       });
     } finally {
@@ -132,7 +132,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       navigateSettings(SettingsPath.WorkspaceCommunications);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to delete email channel.`,
       });
     }

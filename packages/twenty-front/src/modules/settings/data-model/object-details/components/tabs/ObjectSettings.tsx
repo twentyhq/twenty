@@ -7,12 +7,14 @@ import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectCol
 import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
+import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
@@ -21,6 +23,7 @@ import { SettingsTranslationsCard } from '@/settings/translations/components/Set
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
@@ -102,6 +105,7 @@ export const ObjectSettings = ({
   const isValidationRulesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
   );
+  const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
@@ -126,7 +130,7 @@ export const ObjectSettings = ({
     const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Object deleted` });
+      enqueueToast({ status: 'success', children: t`Object deleted` });
       closeDialog(DELETE_OBJECT_MODAL_ID);
       navigate(SettingsPath.Objects);
       return;
@@ -183,11 +187,20 @@ export const ObjectSettings = ({
               <Section.Header
                 title={t`Validation rules`}
                 description={t`A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows.`}
+                actions={<OrganizationAdornment />}
               />
-              <SettingsObjectValidationRulesSection
-                objectMetadataItem={objectMetadataItem}
-                isReadOnly={isReadOnly}
-              />
+              {hasValidationRulesEntitlement ? (
+                <SettingsObjectValidationRulesSection
+                  objectMetadataItem={objectMetadataItem}
+                  isReadOnly={isReadOnly}
+                />
+              ) : (
+                <SettingsEnterpriseFeatureGateCard
+                  title={t`Organization feature`}
+                  description={t`Upgrade to Organization to set validation rules.`}
+                  buttonTitle={t`Activate`}
+                />
+              )}
             </Section.Root>
           </StyledFormSectionContainer>
         )}

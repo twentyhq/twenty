@@ -5,7 +5,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
 import { useTheme, themeCssVariables, type ThemeColor } from 'twenty-ui/theme';
 
@@ -63,7 +63,7 @@ export const ChartColorPaletteOption = ({
         onSelectColor('auto');
       }}
     >
-      <ListItem
+      <ListItemButton
         focused={selectedItemId === 'auto' || currentColor === 'auto'}
         onClick={() => {
           onSelectColor('auto');
@@ -74,7 +74,7 @@ export const ChartColorPaletteOption = ({
         indicator="check"
         description={colorSamples}
         descriptionPlacement={'end'}
-      >{t`Default palette`}</ListItem>
+      >{t`Default palette`}</ListItemButton>
     </SelectableListItem>
   );
 };

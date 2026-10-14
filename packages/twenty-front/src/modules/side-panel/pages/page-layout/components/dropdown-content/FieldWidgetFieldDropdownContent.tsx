@@ -1,4 +1,4 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -35,7 +35,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -325,7 +325,7 @@ export const FieldWidgetFieldDropdownContent = () => {
                 itemId={fieldMetadataItem.id}
                 onEnter={handleClick}
               >
-                <ListItem
+                <ListItemButton
                   focused={selectedItemId === fieldMetadataItem.id}
                   onClick={handleClick}
                   role="option"
@@ -340,17 +340,18 @@ export const FieldWidgetFieldDropdownContent = () => {
                   indicator="check"
                   hasSubmenu={hasNestedFieldCandidates}
                   startIcon={
-                    <SelectOptionIcon
+                    <ApplicationStackIcon
                       Icon={getIcon(
                         currentFieldMetadataId === fieldMetadataItem.id
                           ? currentFieldMetadataItem?.icon
                           : fieldMetadataItem.icon,
                       )}
+                      applicationId={fieldMetadataItem.applicationId}
                     />
                   }
                 >
                   {fieldMetadataItem.label}
-                </ListItem>
+                </ListItemButton>
               </SelectableListItem>
             );
           })}
