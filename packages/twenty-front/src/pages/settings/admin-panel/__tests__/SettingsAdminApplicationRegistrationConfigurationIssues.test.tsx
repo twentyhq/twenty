@@ -167,7 +167,7 @@ describe('SettingsAdminApplicationRegistrationConfigurationIssues', () => {
     ).toBeVisible();
     expect(
       screen.getByText(
-        'Once claimed, install this app on its owner workspace so its server routes can be reached',
+        'Once claimed, install this app on its owner workspace to enable its server routes',
       ),
     ).toBeVisible();
     expect(
@@ -191,7 +191,7 @@ describe('SettingsAdminApplicationRegistrationConfigurationIssues', () => {
 
     expect(
       screen.getByText(
-        'Install this app on this workspace, its owner, so its server routes can be reached',
+        'Install this app on this workspace, its owner, to enable its server routes',
       ),
     ).toBeVisible();
     expect(screen.getByRole('link', { name: 'Install' })).toHaveAttribute(
@@ -210,7 +210,7 @@ describe('SettingsAdminApplicationRegistrationConfigurationIssues', () => {
 
     expect(
       await screen.findByText(
-        'Install this app on its owner workspace Globex so its server routes can be reached',
+        'Install this app on its owner workspace Globex to enable its server routes',
       ),
     ).toBeVisible();
     expect(

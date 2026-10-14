@@ -116,7 +116,7 @@ const NotInstalledOnOwnerWorkspaceBanner = ({
   if (!isDefined(ownerWorkspaceId)) {
     return (
       <InlineBanner status="error">
-        {t`Once claimed, install this app on its owner workspace so its server routes can be reached`}
+        {t`Once claimed, install this app on its owner workspace to enable its server routes`}
       </InlineBanner>
     );
   }
@@ -138,7 +138,7 @@ const NotInstalledOnOwnerWorkspaceBanner = ({
             render={<Link to={installPath} />}
           >{t`Install`}</InlineBanner.Action>
         }
-      >{t`Install this app on this workspace, its owner, so its server routes can be reached`}</InlineBanner>
+      >{t`Install this app on this workspace, its owner, to enable its server routes`}</InlineBanner>
     );
   }
 
@@ -163,7 +163,7 @@ const NotInstalledOnOwnerWorkspaceBanner = ({
           render={<Link to={ownerWorkspacePath} />}
         >{t`View workspace`}</InlineBanner.Action>
       }
-    >{t`Install this app on its owner workspace ${ownerWorkspaceDisplayName} so its server routes can be reached`}</InlineBanner>
+    >{t`Install this app on its owner workspace ${ownerWorkspaceDisplayName} to enable its server routes`}</InlineBanner>
   );
 };
 
