@@ -64,11 +64,15 @@ export const matchTranslatablePropertyPath = ({
   return itemIds;
 };
 
-const listPathValues = (
-  segments: string[],
-  value: unknown,
-  pathSegments: string[],
-): { property: string; value: unknown }[] => {
+const listPathValues = ({
+  segments,
+  value,
+  pathSegments,
+}: {
+  segments: string[];
+  value: unknown;
+  pathSegments: string[];
+}): { property: string; value: unknown }[] => {
   const [segment, ...remainingSegments] = segments;
 
   if (!isDefined(segment)) {
@@ -79,20 +83,22 @@ const listPathValues = (
     return Array.isArray(value)
       ? value.flatMap((item) =>
           isPlainObject(item) && isNonEmptyString(item.id)
-            ? listPathValues(remainingSegments, item, [
-                ...pathSegments,
-                item.id,
-              ])
+            ? listPathValues({
+                segments: remainingSegments,
+                value: item,
+                pathSegments: [...pathSegments, item.id],
+              })
             : [],
         )
       : [];
   }
 
   return isPlainObject(value) && segment in value
-    ? listPathValues(remainingSegments, value[segment], [
-        ...pathSegments,
-        segment,
-      ])
+    ? listPathValues({
+        segments: remainingSegments,
+        value: value[segment],
+        pathSegments: [...pathSegments, segment],
+      })
     : [];
 };
 
@@ -103,4 +109,8 @@ export const listTranslatablePropertyPathValues = ({
   pattern: string;
   value: unknown;
 }): { property: string; value: unknown }[] =>
-  listPathValues(pattern.split(PATH_SEPARATOR), value, []);
+  listPathValues({
+    segments: pattern.split(PATH_SEPARATOR),
+    value,
+    pathSegments: [],
+  });
