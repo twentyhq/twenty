@@ -18,6 +18,7 @@ import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-reco
 import { QueueJobEventListener } from 'src/engine/subscriptions/queue-job-event/queue-job-event.listener';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Global()
@@ -30,6 +31,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     NavigationMenuItemModule,
     ApplicationTranslationCatalogModule,
     RecordShareModule,
+    FeatureFlagModule,
   ],
   providers: [
     SubscriptionService,

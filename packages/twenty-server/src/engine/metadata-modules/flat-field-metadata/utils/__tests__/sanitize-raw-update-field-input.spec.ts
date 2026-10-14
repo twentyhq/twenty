@@ -93,4 +93,43 @@ describe('sanitizeRawUpdateFieldInput', () => {
       }),
     ).toEqual(ratingOptions);
   });
+
+  describe('system side effect fields', () => {
+    const sanitizeLabelUpdate = ({ morphId }: { morphId: string | null }) =>
+      sanitizeRawUpdateFieldInput({
+        existingFlatFieldMetadata: getFlatFieldMetadataMock({
+          id: FIELD_ID,
+          type: FieldMetadataType.MORPH_RELATION,
+          universalIdentifier: 'ab0e6d76-67d8-466f-918a-4b8a8d044131',
+          objectMetadataId: '6450cd8f-c202-498f-8be4-65e1b1c93e32',
+          applicationUniversalIdentifier:
+            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isSystemSideEffect: true,
+          morphId,
+        }),
+        rawUpdateFieldInput: {
+          id: FIELD_ID,
+          label: 'Related to',
+        } as UpdateFieldInput,
+        isSystemBuild: false,
+        workspaceCustomApplicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+    it('lets a morph relation head be edited', () => {
+      expect(
+        sanitizeLabelUpdate({
+          morphId: 'ab0e6d76-67d8-466f-918a-4b8a8d044131',
+        }).updatedEditableFieldProperties.label,
+      ).toBe('Related to');
+    });
+
+    it('rejects edits on other system side effect fields', () => {
+      expect(() =>
+        sanitizeLabelUpdate({
+          morphId: '0d3f8a52-6c1e-4f7b-9a2d-5e8c7b4a1f30',
+        }),
+      ).toThrow('Cannot edit system-managed field');
+    });
+  });
 });
