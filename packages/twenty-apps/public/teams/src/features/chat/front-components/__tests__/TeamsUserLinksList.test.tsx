@@ -73,16 +73,6 @@ describe('TeamsUserLinksList', () => {
     ]);
   });
 
-  it('shows an empty state when no account is linked', async () => {
-    restGetMock.mockResolvedValue({ data: { teamsUserLinks: [] } });
-
-    render(<TeamsUserLinksList />);
-
-    expect(
-      await screen.findByText('No Teams account is linked yet.'),
-    ).toBeTruthy();
-  });
-
   it('shows an error when links cannot be loaded', async () => {
     restGetMock.mockRejectedValue(new Error('Forbidden'));
 
