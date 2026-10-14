@@ -21,6 +21,7 @@ import { OverflowingList } from '../OverflowingList';
 import { type OverflowingListProps } from '../types/OverflowingListProps';
 import { OVERFLOWING_LIST_STORY_ITEMS } from './OVERFLOWING_LIST_STORY_ITEMS';
 import { OverflowingListEventBlockingExample } from './OverflowingListEventBlockingExample';
+import { OverflowingListActionsExample } from './OverflowingListActionsExample';
 import { OverflowingListCanceledCloseExample } from './OverflowingListCanceledCloseExample';
 import { OverflowingListControlledExample } from './OverflowingListControlledExample';
 import { OverflowingListControlledStateExample } from './OverflowingListControlledStateExample';
@@ -1311,5 +1312,95 @@ export const CanceledUnavailableClose: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const DeferredCloseActions: Story = {
+  parameters: { container: { width: 600, height: 360 } },
+  args: { onOpenChange },
+  render: (args) => (
+    <OverflowingListActionsExample
+      deferClose
+      onOpenChange={args.onOpenChange}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await canvas.findByRole('button', {
+      name: /Show all items$/,
+    });
+    const finishExit = canvas.getByRole('button', { name: 'Finish exit' });
+
+    for (const closeAction of ['escape-key', 'imperative-action']) {
+      await userEvent.click(trigger);
+      const dialog = await body.findByRole('dialog', {
+        name: 'Show all items',
+      });
+      await waitFor(() =>
+        expect(
+          within(dialog).getByRole('button', { name: 'First item' }),
+        ).toHaveFocus(),
+      );
+
+      if (closeAction === 'escape-key') {
+        await userEvent.keyboard('{Escape}');
+      }
+
+      if (closeAction === 'imperative-action') {
+        await userEvent.click(
+          within(dialog).getByRole('button', { name: 'Close with actions' }),
+        );
+      }
+
+      await waitFor(() => expect(dialog).not.toBeVisible());
+      expect(dialog).toBeInTheDocument();
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      expect(onOpenChange).toHaveBeenLastCalledWith(
+        false,
+        expect.objectContaining({ reason: closeAction }),
+      );
+      await userEvent.click(finishExit);
+      await waitFor(() => expect(dialog).not.toBeInTheDocument());
+      await waitFor(() => expect(trigger).toHaveFocus());
+    }
+  },
+};
+
+export const PublicActionsResponsiveClose: Story = {
+  parameters: { container: { width: 600, height: 360 } },
+  args: { onOpenChange },
+  render: (args) => (
+    <OverflowingListActionsExample onOpenChange={args.onOpenChange} />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const list = canvas.getByRole('group', {
+      name: 'Items with public actions',
+    });
+    const trigger = await canvas.findByRole('button', {
+      name: /Show all items$/,
+    });
+
+    await userEvent.click(trigger);
+    const dialog = await body.findByRole('dialog', { name: 'Show all items' });
+    await waitFor(() =>
+      expect(
+        within(dialog).getByRole('button', { name: 'First item' }),
+      ).toHaveFocus(),
+    );
+    list.style.width = '500px';
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    expect(onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'imperative-action' }),
+    );
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Third item' })).toHaveFocus(),
+    );
+    expect(
+      canvas.queryByRole('button', { name: /Show all items$/ }),
+    ).not.toBeInTheDocument();
   },
 };

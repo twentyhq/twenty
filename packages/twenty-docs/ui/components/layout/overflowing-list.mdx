@@ -57,6 +57,8 @@ The list owns its popup state when `open` is omitted. Use `defaultOpen` for its 
 
 Pass `open` and update it in `onOpenChange` to own the popup state. The callback receives the requested boolean and the installed [Popover](/ui/primitives/surfaces/popover) event details, including `reason`, `event`, `trigger`, `cancel()` and `preventUnmountOnClose()`. Calling `cancel()` prevents the requested state change. In controlled use, update your state only for changes you accept.
 
+Pass `actionsRef` to receive the Popover `close()` and `unmount()` methods. `close()` requests closure through `onOpenChange` and respects cancellation. If your callback calls `preventUnmountOnClose()` to run a caller-owned exit, call `actionsRef.current?.unmount()` when that exit finishes. This releases the retained popup without removing the list and allows it to open again.
+
 ```tsx
 import { useState } from 'react';
 import { OverflowingList } from 'twenty-ui/components/layout';

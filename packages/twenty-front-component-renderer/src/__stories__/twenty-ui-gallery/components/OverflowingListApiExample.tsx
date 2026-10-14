@@ -3,6 +3,8 @@ import { useRef, useState } from 'react';
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 
+import { OverflowingListDeferredCloseExample } from './OverflowingListDeferredCloseExample';
+
 export const OverflowingListApiExample = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEscapeBlocked, setIsEscapeBlocked] = useState(true);
@@ -91,6 +93,7 @@ export const OverflowingListApiExample = () => {
       >
         {[<Button key="initial">Initially hidden item</Button>]}
       </OverflowingList>
+      <OverflowingListDeferredCloseExample />
       <output aria-label="Overflow trigger click">{lastTriggerClick}</output>
       <output aria-label="Overflow popup click">{lastPopupClick}</output>
       <output aria-label="Overflow open changes">{lastChange}</output>

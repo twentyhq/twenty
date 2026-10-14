@@ -13,6 +13,8 @@ export const OVERFLOWING_LIST_PROP_DESCRIPTIONS = {
     'Accessible label for the popup. The default overflow button is named by its visible count followed by this label. Defaults to Show all items.',
   open: 'Controlled popup visibility. A popup can appear only when items overflow.',
   defaultOpen: 'Initial popup visibility when uncontrolled. Defaults to false.',
+  actionsRef:
+    'Ref exposing the Popover close() and unmount() methods. After preventUnmountOnClose(), call unmount() when the caller-owned exit finishes.',
   onOpenChange:
     'Receives the requested open state and unchanged Base UI event details, including reason, event, trigger, cancel() and preventUnmountOnClose().',
   triggerProps:

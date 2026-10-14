@@ -11,6 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="actionsRef" type="RefObject&lt;PopoverRootActions | null&gt;">
+  Ref exposing the Popover close() and unmount() methods. After preventUnmountOnClose(), call unmount() when the caller-owned exit finishes.
+</ParamField>
+
 <ParamField body="children" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;[]" required>
   Complete ordered list of elements, each with a stable key. The popup contains the complete list, including items visible in the compact row.
 </ParamField>

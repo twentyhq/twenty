@@ -102,5 +102,50 @@ export const overflowingListApiTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.keyboard('{Escape}');
   await waitFor(() => expect(externallyOpenedPopup).not.toBeVisible());
   await waitFor(() => expect(trigger).toHaveFocus());
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Open deferred overflow' }),
+  );
+  const deferredPopup = await page.findByRole('dialog', {
+    name: 'Deferred overflow items',
+  });
+  await waitFor(() =>
+    expect(within(deferredPopup).getAllByRole('button')).toHaveLength(3),
+  );
+  await userEvent.click(
+    within(deferredPopup).getByRole('button', {
+      name: 'Close deferred overflow',
+    }),
+  );
+  await waitFor(() => {
+    expect(
+      canvas.getByLabelText('Deferred overflow open changes'),
+    ).toHaveTextContent('false:imperative-action');
+    expect(deferredPopup).toHaveAttribute('data-closed');
+    expect(
+      canvas.getByLabelText('Deferred overflow popup mounted'),
+    ).toHaveTextContent(/^mounted$/);
+  });
+  await expect(deferredPopup.isConnected).toBe(true);
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Complete deferred exit' }),
+  );
+  await waitFor(() => {
+    expect(deferredPopup.isConnected).toBe(false);
+    expect(
+      canvas.getByLabelText('Deferred overflow popup mounted'),
+    ).toHaveTextContent(/^unmounted$/);
+  });
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Open deferred overflow' }),
+  );
+  const reopenedDeferredPopup = await page.findByRole('dialog', {
+    name: 'Deferred overflow items',
+  });
+  await waitFor(() => {
+    expect(reopenedDeferredPopup).toBeVisible();
+    expect(within(reopenedDeferredPopup).getAllByRole('button')).toHaveLength(
+      3,
+    );
+  });
   expect(errorHandler).not.toHaveBeenCalled();
 };

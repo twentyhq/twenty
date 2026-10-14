@@ -11894,6 +11894,13 @@
     "slug": "components/layout/overflowing-list",
     "props": [
       {
+        "name": "actionsRef",
+        "type": "RefObject<PopoverRootActions | null>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref exposing the Popover close() and unmount() methods. After preventUnmountOnClose(), call unmount() when the caller-owned exit finishes."
+      },
+      {
         "name": "children",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>>[]",
         "required": true,

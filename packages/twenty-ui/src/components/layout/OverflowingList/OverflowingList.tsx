@@ -35,6 +35,7 @@ export const OverflowingList = ({
   open,
   defaultOpen = false,
   onOpenChange,
+  actionsRef,
   triggerProps,
   popupProps,
   className,
@@ -53,7 +54,8 @@ export const OverflowingList = ({
     name: 'OverflowingList',
     state: 'open',
   });
-  const actionsRef = useRef<PopoverActions>(null);
+  const internalActionsRef = useRef<PopoverActions>(null);
+  const popoverActionsRef = actionsRef ?? internalActionsRef;
   const inlineItemCount =
     isDefined(maxInlineCount) && Number.isFinite(maxInlineCount)
       ? Math.min(children.length, Math.max(0, Math.floor(maxInlineCount)))
@@ -109,7 +111,7 @@ export const OverflowingList = ({
   const hiddenItemCount = children.length - visibleItemCount;
 
   const closeUnavailableOverflow = useStableCallback(() => {
-    actionsRef.current?.close();
+    popoverActionsRef.current?.close();
   });
 
   return (
@@ -149,7 +151,7 @@ export const OverflowingList = ({
         {(canExpand || isOpen) && (
           <Popover.Root
             open={isPopupOpen}
-            actionsRef={actionsRef}
+            actionsRef={popoverActionsRef}
             onOpenChange={(nextOpen, eventDetails) => {
               onOpenChange?.(nextOpen, eventDetails);
 

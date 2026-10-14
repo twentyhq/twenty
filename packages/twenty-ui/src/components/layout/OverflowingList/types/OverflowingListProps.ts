@@ -8,7 +8,7 @@ export type OverflowingListProps = Omit<
 > &
   Pick<
     ComponentPropsWithRef<typeof Popover.Root>,
-    'open' | 'defaultOpen' | 'onOpenChange'
+    'open' | 'defaultOpen' | 'onOpenChange' | 'actionsRef'
   > & {
     children: ReactElement[];
     showOverflowCount?: boolean;
