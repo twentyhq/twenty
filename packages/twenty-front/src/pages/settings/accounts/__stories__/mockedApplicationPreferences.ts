@@ -150,7 +150,13 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   ),
   graphql.mutation('UpdateMyUserApplicationVariable', ({ variables }) => {
     updateMyUserApplicationVariable(variables);
-    savedValueByKey.set(variables.key, variables.value);
+
+    // Like the server, an empty value resets the variable to its default
+    if (variables.value === '') {
+      savedValueByKey.delete(variables.key);
+    } else {
+      savedValueByKey.set(variables.key, variables.value);
+    }
 
     return HttpResponse.json({
       data: { updateMyUserApplicationVariable: true },

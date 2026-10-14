@@ -219,17 +219,26 @@ export class UserApplicationVariableValueService {
         key,
       });
 
-    await this.userApplicationVariableValueRepository.upsert(
-      workspaceId,
-      {
+    // A stored empty value would hide the default forever, so clearing a
+    // value removes the member's row instead, and is a no-op without one.
+    if (plainTextValue === '') {
+      await this.userApplicationVariableValueRepository.delete(workspaceId, {
         applicationVariableId: flatApplicationVariable.id,
         userWorkspaceId,
-        value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
-          workspaceId,
-        }),
-      },
-      ['applicationVariableId', 'userWorkspaceId'],
-    );
+      });
+    } else {
+      await this.userApplicationVariableValueRepository.upsert(
+        workspaceId,
+        {
+          applicationVariableId: flatApplicationVariable.id,
+          userWorkspaceId,
+          value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
+            workspaceId,
+          }),
+        },
+        ['applicationVariableId', 'userWorkspaceId'],
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'userApplicationVariableValueMaps',

@@ -87,6 +87,38 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
   },
 };
 
+export const ClearedValueFallsBackToTheDefault: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const recordMyMeetingsInput = await canvas.findByDisplayValue(
+      'always',
+      undefined,
+      { timeout: 3000 },
+    );
+    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+
+    await userEvent.clear(recordMyMeetingsInput);
+
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(updateMyUserApplicationVariable.mock.calls).toEqual([
+        [
+          {
+            applicationUniversalIdentifier: FATHOM_APPLICATION_ID,
+            key: 'RECORD_MY_MEETINGS',
+            value: '',
+          },
+        ],
+      ]),
+    );
+    await waitFor(() => expect(saveButton).toBeDisabled());
+    expect(canvas.getByDisplayValue('always')).toBeVisible();
+  },
+};
+
 export const SavedSecretIsReplacedNotAppended: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
