@@ -26,6 +26,7 @@ import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-execu
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util';
 import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
+import { findRecordFilterWithMissingField } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/find-record-filter-with-missing-field.util';
 import { resolveRecordFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-record-filters.util';
 
 @Injectable()
@@ -86,14 +87,32 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       }
     }
 
+    const fieldMetadataItems = Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    // A filter on a missing field is dropped when compiled, and inside a group
+    // that still yields a non-empty filter, so it is rejected up front
+    const recordFilterWithMissingField = findRecordFilterWithMissingField({
+      recordFilters: recordFilters ?? [],
+      existingFieldMetadataIds: new Set(
+        fieldMetadataItems.map((fieldMetadataItem) => fieldMetadataItem.id),
+      ),
+    });
+
+    if (isDefined(recordFilterWithMissingField)) {
+      throw new WorkflowStepExecutorException(
+        `Filter references a field that no longer exists. Filter field: ${recordFilterWithMissingField.fieldMetadataId}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
     let gqlOperationFilter: RecordGqlOperationFilter;
 
     try {
       gqlOperationFilter = isDefined(recordFilters)
         ? computeRecordGqlOperationFilter({
-            fieldMetadataItems: Object.values(
-              flatFieldMetadataMaps.byUniversalIdentifier,
-            ).filter(isDefined),
+            fieldMetadataItems,
             recordFilters,
             recordFilterGroups:
               workflowActionInput.filter?.recordFilterGroups ?? [],

@@ -43,6 +43,23 @@ export const attachUngroupedRecordFiltersToRootRecordFilterGroup = <
     rootRecordFilterGroup.logicalOperator ===
       RecordFilterGroupLogicalOperator.AND;
 
+  const rootRecordFilterGroupHasChildGroups =
+    isDefined(rootRecordFilterGroup) &&
+    recordFilterGroups.some(
+      (recordFilterGroup) =>
+        recordFilterGroup.parentRecordFilterGroupId ===
+        rootRecordFilterGroup.id,
+    );
+
+  // Nesting an OR root that has child groups would add a third level, which
+  // the editor cannot render
+  if (
+    !canAttachToRootRecordFilterGroup &&
+    rootRecordFilterGroupHasChildGroups
+  ) {
+    return { recordFilters, recordFilterGroups };
+  }
+
   const targetRecordFilterGroup: RecordFilterGroup =
     canAttachToRootRecordFilterGroup
       ? rootRecordFilterGroup

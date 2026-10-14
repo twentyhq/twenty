@@ -148,4 +148,28 @@ describe('attachUngroupedRecordFiltersToRootRecordFilterGroup', () => {
       }),
     ]);
   });
+
+  it('should leave filters and groups untouched when nesting an OR root would add a third group level', () => {
+    const recordFilters = [buildRecordFilter({ id: 'ungrouped-filter-id' })];
+    const recordFilterGroups: RecordFilterGroup[] = [
+      {
+        id: 'root-group-id',
+        logicalOperator: RecordFilterGroupLogicalOperator.OR,
+      },
+      {
+        id: 'child-group-id',
+        parentRecordFilterGroupId: 'root-group-id',
+        logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        positionInRecordFilterGroup: 0,
+      },
+    ];
+
+    const result = attachUngroupedRecordFiltersToRootRecordFilterGroup({
+      recordFilters,
+      recordFilterGroups,
+    });
+
+    expect(result.recordFilters).toBe(recordFilters);
+    expect(result.recordFilterGroups).toBe(recordFilterGroups);
+  });
 });
