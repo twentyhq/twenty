@@ -25,10 +25,12 @@ import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
+import { type MyConnectedAccountsFilterInput } from 'src/engine/metadata-modules/connected-account/dtos/my-connected-accounts-filter.input';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
 import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/types/connected-account-usable-by-caller.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
+import { buildMyConnectedAccountsWhere } from 'src/engine/metadata-modules/connected-account/utils/build-my-connected-accounts-where.util';
 import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
@@ -106,14 +108,17 @@ export class ConnectedAccountMetadataService {
   async findUsableByCaller({
     userWorkspaceId,
     workspaceId,
+    filter,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
+    filter?: MyConnectedAccountsFilterInput;
   }): Promise<ConnectedAccountEntity[]> {
     const accounts = await this.repository.find({
-      where: buildConnectedAccountUsableByCallerWhere({
-        baseWhere: { workspaceId },
+      where: buildMyConnectedAccountsWhere({
+        workspaceId,
         userWorkspaceId,
+        filter,
       }),
       order: { createdAt: 'ASC', id: 'ASC' },
     });
