@@ -1913,10 +1913,10 @@ export default {
             "unitPriceCents": [
                 11
             ],
-            "usedCredits": [
+            "userCreditsUsed": [
                 11
             ],
-            "userCreditsUsed": [
+            "workspaceCreditsUsed": [
                 11
             ],
             "__typename": [

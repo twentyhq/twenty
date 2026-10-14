@@ -211,7 +211,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
         {
           Icon: IconChartBar,
           label: t`Credits used`,
-          value: `${formatCredits(usage.usedCredits)} / ${formatCredits(usage.totalGrantedCredits)}`,
+          value: `${formatCredits(usage.workspaceCreditsUsed)} / ${formatCredits(usage.totalGrantedCredits)}`,
         },
         ...(!isTrialing
           ? [

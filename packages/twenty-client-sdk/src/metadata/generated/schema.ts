@@ -778,8 +778,8 @@ export interface BillingResourceCreditUsage {
     rolloverCredits: Scalars['Float']
     totalGrantedCredits: Scalars['Float']
     unitPriceCents: Scalars['Float']
-    usedCredits: Scalars['Float']
     userCreditsUsed: Scalars['Float']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
 }
 
@@ -4764,8 +4764,8 @@ export interface BillingResourceCreditUsageGenqlSelection{
     rolloverCredits?: boolean | number
     totalGrantedCredits?: boolean | number
     unitPriceCents?: boolean | number
-    usedCredits?: boolean | number
     userCreditsUsed?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

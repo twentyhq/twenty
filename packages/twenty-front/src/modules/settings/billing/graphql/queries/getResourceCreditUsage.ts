@@ -4,7 +4,7 @@ export const GET_RESOURCE_CREDIT_USAGE = gql`
   query GetResourceCreditUsage {
     getResourceCreditUsage {
       productKey
-      usedCredits
+      workspaceCreditsUsed
       grantedCredits
       rolloverCredits
       totalGrantedCredits

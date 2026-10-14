@@ -9,7 +9,7 @@ export class AdminPanelWorkspaceUsageDTO {
   periodEnd: Date;
 
   @Field(() => Float)
-  usedCredits: number;
+  workspaceCreditsUsed: number;
 
   @Field(() => Float)
   grantedCredits: number;

@@ -160,8 +160,12 @@ export const SettingsBillingCreditsSection = ({
 
   const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
-  const { usedCredits, grantedCredits, totalGrantedCredits, rolloverCredits } =
-    getResourceCreditUsage();
+  const {
+    workspaceCreditsUsed,
+    grantedCredits,
+    totalGrantedCredits,
+    rolloverCredits,
+  } = getResourceCreditUsage();
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
   const packageCredits = currentResourceCreditBillingPrice?.creditAmount;
@@ -175,7 +179,8 @@ export const SettingsBillingCreditsSection = ({
 
   const remainingCreditsPercentage =
     totalGrantedCredits > 0
-      ? ((totalGrantedCredits - usedCredits) / totalGrantedCredits) * 100
+      ? ((totalGrantedCredits - workspaceCreditsUsed) / totalGrantedCredits) *
+        100
       : 0;
   const clampedRemainingCreditsPercentage = Math.min(
     100,
@@ -186,7 +191,9 @@ export const SettingsBillingCreditsSection = ({
   const extraCredits = rolloverCredits;
   const hasExtraCredits = extraCredits > 0;
 
-  const usedCreditsDisplay = formatNumber(usedCredits, { decimals: 2 });
+  const workspaceCreditsUsedDisplay = formatNumber(workspaceCreditsUsed, {
+    decimals: 2,
+  });
   const grantedCreditsDisplay = formatNumber(displayedGrantedCredits, {
     decimals: 2,
   });
@@ -282,7 +289,9 @@ export const SettingsBillingCreditsSection = ({
             )}
             <StyledUsageMetrics>
               <span>
-                <StyledMetricValue>{usedCreditsDisplay}</StyledMetricValue>{' '}
+                <StyledMetricValue>
+                  {workspaceCreditsUsedDisplay}
+                </StyledMetricValue>{' '}
                 {t`credits used`}
               </span>
               <span>·</span>

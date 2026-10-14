@@ -527,7 +527,7 @@ export class BillingResolver {
       productKey: item.productKey,
       periodStart: item.periodStart,
       periodEnd: item.periodEnd,
-      usedCredits: toDisplayCredits(item.workspaceCreditsUsedMicro),
+      workspaceCreditsUsed: toDisplayCredits(item.workspaceCreditsUsedMicro),
       userCreditsUsed: toDisplayCredits(item.userCreditsUsedMicro),
       grantedCredits: toDisplayCredits(item.workspaceCreditsGrantedMicro),
       rolloverCredits: toDisplayCredits(item.workspaceCreditsRolledOverMicro),

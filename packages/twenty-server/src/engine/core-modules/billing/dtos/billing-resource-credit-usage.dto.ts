@@ -14,7 +14,7 @@ export class BillingResourceCreditUsageDTO {
   periodEnd: Date;
 
   @Field(() => Float)
-  usedCredits: number;
+  workspaceCreditsUsed: number;
 
   @Field(() => Float)
   userCreditsUsed: number;

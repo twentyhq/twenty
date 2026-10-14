@@ -874,8 +874,8 @@ type BillingResourceCreditUsage {
   rolloverCredits: Float!
   totalGrantedCredits: Float!
   unitPriceCents: Float!
-  usedCredits: Float!
   userCreditsUsed: Float!
+  workspaceCreditsUsed: Float!
 }
 
 type BillingSession {

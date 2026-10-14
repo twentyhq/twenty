@@ -284,7 +284,7 @@ export class AdminPanelBillingService {
       return {
         periodStart: usage.periodStart,
         periodEnd: usage.periodEnd,
-        usedCredits: workspaceCreditsUsed,
+        workspaceCreditsUsed,
         grantedCredits: toDisplayCredits(usage.workspaceCreditsGrantedMicro),
         rolloverCredits: toDisplayCredits(
           usage.workspaceCreditsRolledOverMicro,
