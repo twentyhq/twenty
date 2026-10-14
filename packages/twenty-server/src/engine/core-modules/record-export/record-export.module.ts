@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -20,6 +21,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TypeOrmModule.forFeature([FileEntity]),
     UserSessionModule,
     CoreCommonApiModule,
+    CoreEntityCacheModule,
     FeatureFlagModule,
     JwtModule,
     UserWorkspaceModule,

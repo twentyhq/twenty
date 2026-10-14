@@ -16,9 +16,9 @@ const MEMBERS_NAME_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.person.views.messageListRecordPageMembers.viewFields.name
     .universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.47.0', 1791907077129)
+@RegisteredWorkspaceCommand('2.48.0', 1791977057418)
 @Command({
-  name: 'upgrade:2-47:count-message-list-members',
+  name: 'upgrade:2-48:count-message-list-members',
   description:
     'Show the member count under the members table of message list record pages',
 })

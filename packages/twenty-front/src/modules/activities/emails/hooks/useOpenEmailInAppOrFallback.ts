@@ -1,29 +1,25 @@
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
+import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
+import { findFirstConnectedAccountAbleToSendEmail } from '@/accounts/utils/findFirstConnectedAccountAbleToSendEmail';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
 import { isDefined } from 'twenty-shared/utils';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
-type UseOpenEmailInAppOrFallbackOptions = {
-  skip?: boolean;
-};
-
-// Falls back to mailto: when no connected account exists, rather than
-// redirecting to settings.
-export const useOpenEmailInAppOrFallback = (
-  options?: UseOpenEmailInAppOrFallbackOptions,
-) => {
-  const { connectedAccountId, loading } = useFirstConnectedAccount({
-    skip: options?.skip,
-  });
+export const useOpenEmailInAppOrFallback = () => {
+  const store = useStore();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
 
   const openEmail = useCallback(
     (email: string) => {
-      if (isDefined(connectedAccountId)) {
+      const connectedAccount = findFirstConnectedAccountAbleToSendEmail(
+        store.get(myConnectedAccountsState.atom) ?? [],
+      );
+
+      if (isDefined(connectedAccount)) {
         openComposeEmailInSidePanel({
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           defaultTo: email,
         });
 
@@ -32,8 +28,8 @@ export const useOpenEmailInAppOrFallback = (
 
       openUrlInNewTab(`mailto:${email}`);
     },
-    [connectedAccountId, openComposeEmailInSidePanel],
+    [store, openComposeEmailInSidePanel],
   );
 
-  return { openEmail, loading };
+  return { openEmail };
 };

@@ -2,7 +2,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { AggregateOperations } from 'twenty-shared/types';
 
-import { type CountMessageListMembersCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791907077129-count-message-list-members.command';
+import { type CountMessageListMembersCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791977057418-count-message-list-members.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -29,7 +29,7 @@ const readMembersAggregateOperation = async () => {
   return viewField.aggregateOperation;
 };
 
-describe('2-47 workspace command - count message list members (integration)', () => {
+describe('2-48 workspace command - count message list members (integration)', () => {
   let command: CountMessageListMembersCommand;
   let workspaceCacheService: WorkspaceCacheService;
 

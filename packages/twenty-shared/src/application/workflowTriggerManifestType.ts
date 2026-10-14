@@ -6,6 +6,7 @@ import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { isDefined } from '@/utils/validation/isDefined';
 import { workflowCronTriggerSchema } from '@/workflow/schemas/cron-trigger-schema';
 import { stepFilterGroupSchema } from '@/workflow/schemas/step-filter-group-schema';
+import { workflowWebhookTriggerSchema } from '@/workflow/schemas/webhook-trigger-schema';
 
 const DATABASE_EVENT_ACTIONS_WITH_WATCHED_FIELDS = ['updated', 'upserted'];
 
@@ -43,6 +44,25 @@ const cronTriggerSettingsManifestSchema = z.discriminatedUnion('type', [
     .strict(),
   customCronSettingsSchema.omit({ outputSchema: true }).strict(),
 ]);
+
+const [getRequestWebhookSettingsSchema, postRequestWebhookSettingsSchema] =
+  workflowWebhookTriggerSchema.shape.settings.options;
+
+const webhookTriggerSettingsManifestSchema = z.discriminatedUnion(
+  'httpMethod',
+  [
+    getRequestWebhookSettingsSchema
+      .omit({ outputSchema: true, authentication: true })
+      .strict(),
+    postRequestWebhookSettingsSchema
+      .omit({
+        outputSchema: true,
+        expectedOutputSchema: true,
+        authentication: true,
+      })
+      .strict(),
+  ],
+);
 
 const workflowTriggerManifestOptions = [
   z.strictObject({
@@ -186,6 +206,12 @@ const workflowTriggerManifestOptions = [
           }
         });
       }),
+  }),
+  z.strictObject({
+    universalIdentifier: z.uuid(),
+    type: z.literal('WEBHOOK'),
+    nextStepIds: z.array(z.uuid()).min(1),
+    settings: webhookTriggerSettingsManifestSchema,
   }),
 ] as const;
 

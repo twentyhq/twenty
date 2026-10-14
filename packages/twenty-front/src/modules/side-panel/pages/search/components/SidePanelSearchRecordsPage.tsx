@@ -23,10 +23,10 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 // The card brings its own surface, so the tooltip only contributes the shadow.
 const previewTooltipClass = css`
-  background: transparent !important;
-  border-radius: ${themeCssVariables.border.radius.md} !important;
-  box-shadow: ${themeCssVariables.boxShadow.strong} !important;
-  padding: 0 !important;
+  background: transparent;
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  padding: 0;
 `;
 
 export const SidePanelSearchRecordsPage = () => {

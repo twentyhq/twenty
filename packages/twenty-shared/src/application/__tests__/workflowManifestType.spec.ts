@@ -195,11 +195,11 @@ describe('workflow manifest manual trigger', () => {
 
   it('names the supported trigger types when the type is unknown', () => {
     const result = workflowManifestSchema.safeParse(
-      withTrigger({ type: 'WEBHOOK' }),
+      withTrigger({ type: 'UNKNOWN' }),
     );
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
-      'Unsupported trigger type. Application workflows support: MANUAL, CRON, DATABASE_EVENT',
+      'Unsupported trigger type. Application workflows support: MANUAL, CRON, DATABASE_EVENT, WEBHOOK',
     );
   });
 });
@@ -256,6 +256,55 @@ describe('workflow manifest cron trigger', () => {
       'settings',
       'schedule',
     ]);
+  });
+});
+
+describe('workflow manifest webhook trigger', () => {
+  const withWebhook = (settings: Record<string, unknown>) => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      trigger: {
+        universalIdentifier: workflow.version.trigger.universalIdentifier,
+        type: 'WEBHOOK',
+        nextStepIds: workflow.version.trigger.nextStepIds,
+        settings,
+      },
+    },
+  });
+
+  it('accepts a GET webhook and a POST webhook with its expected body', () => {
+    for (const settings of [
+      { httpMethod: 'GET' },
+      {
+        httpMethod: 'POST',
+        expectedBody: { email: 'jane@example.com', score: 3 },
+      },
+    ]) {
+      expect(
+        workflowManifestSchema.safeParse(withWebhook(settings)).success,
+      ).toBe(true);
+    }
+  });
+
+  it('requires the expected body of a POST webhook', () => {
+    const result = workflowManifestSchema.safeParse(
+      withWebhook({ httpMethod: 'POST' }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'expectedBody',
+    ]);
+  });
+
+  it('refuses an authentication setting, which webhook triggers do not enforce', () => {
+    const result = workflowManifestSchema.safeParse(
+      withWebhook({ httpMethod: 'GET', authentication: 'API_KEY' }),
+    );
+    expect(result.success).toBe(false);
   });
 });
 

@@ -13,12 +13,15 @@ export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   const trigger = await canvas.findByRole('button', {
     name: /Show all measured items$/,
   });
-  await waitFor(() => expect(trigger).toHaveTextContent('+3'));
+  await waitFor(() => expect(trigger).toHaveTextContent('+2'));
   await expect(
     canvas.getByRole('button', { name: 'Measured Alpha' }),
   ).toBeVisible();
   await expect(
-    canvas.queryByRole('button', { name: 'Measured Delta' }),
+    canvas.getByRole('button', { name: 'Measured Bravo' }),
+  ).toBeInTheDocument();
+  await expect(
+    canvas.queryByRole('button', { name: 'Measured Charlie' }),
   ).toBeNull();
 
   await userEvent.click(
