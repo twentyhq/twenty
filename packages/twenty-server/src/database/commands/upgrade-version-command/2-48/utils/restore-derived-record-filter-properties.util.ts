@@ -8,7 +8,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 const SEARCH_VECTOR_FIELD_NAME = 'searchVector';
 
 // Rebuilds the type, label and display value that record filters carried
-// before 2.47, so the previous release can still read them after a rollback
+// before 2.48, so the previous release can still read them after a rollback
 export const restoreDerivedRecordFilterProperties = ({
   recordFilter,
   flatFieldMetadataMaps,

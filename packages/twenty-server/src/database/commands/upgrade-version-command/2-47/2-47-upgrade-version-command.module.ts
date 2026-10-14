@@ -12,7 +12,6 @@ import { SyncCampaignEngagementFieldsCommand } from 'src/database/commands/upgra
 import { ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811310066-convert-workflow-email-bodies-to-email-documents.command';
 import { RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791823009575-remove-workflow-core-index-flag-from-command-menu-items.command';
 import { RelabelNoteAndTaskTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791926793834-relabel-note-and-task-target-fields.command';
-import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791936317298-strip-derived-record-filter-properties.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -40,7 +39,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ConvertWorkflowEmailBodiesToEmailDocumentsCommand,
     RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand,
     RelabelNoteAndTaskTargetFieldsCommand,
-    StripDerivedRecordFilterPropertiesCommand,
     provideWorkspaceScopedRepository(FieldMetadataEntity),
   ],
 })

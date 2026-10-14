@@ -9,12 +9,12 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import {
   mapChartWidgetRecordFilters,
   mapFindRecordsStepRecordFilters,
-} from 'src/database/commands/upgrade-version-command/2-47/utils/map-stored-record-filters.util';
-import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-47/utils/restore-derived-record-filter-properties.util';
+} from 'src/database/commands/upgrade-version-command/2-48/utils/map-stored-record-filters.util';
+import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/restore-derived-record-filter-properties.util';
 import {
   stripDerivedChartRecordFilterProperties,
   stripDerivedFindRecordsRecordFilterProperties,
-} from 'src/database/commands/upgrade-version-command/2-47/utils/strip-derived-record-filter-properties.util';
+} from 'src/database/commands/upgrade-version-command/2-48/utils/strip-derived-record-filter-properties.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -42,9 +42,9 @@ const INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH =
 
 // Type, label and display value are derived from field metadata when the
 // filters are loaded, and stale copies of them broke the filter editors
-@RegisteredWorkspaceCommand('2.47.0', 1791936317298)
+@RegisteredWorkspaceCommand('2.48.0', 1791970596603)
 @Command({
-  name: 'upgrade:2-47:strip-derived-record-filter-properties',
+  name: 'upgrade:2-48:strip-derived-record-filter-properties',
   description:
     'Store the record filters of workflow Find Records steps and chart widgets as field references only, without the type, label and display value derived from field metadata',
 })
