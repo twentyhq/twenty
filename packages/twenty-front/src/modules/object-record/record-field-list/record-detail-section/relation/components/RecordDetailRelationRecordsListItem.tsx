@@ -19,8 +19,6 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -52,6 +50,10 @@ const StyledClickableZone = styled.div`
   flex: 1 0 auto;
   height: 100%;
   justify-content: flex-end;
+`;
+
+const StyledHoverRevealedAction = styled.div`
+  display: flex;
 `;
 
 const MotionIconChevronDown = motion.create(IconChevronDown);
@@ -123,11 +125,6 @@ export const RecordDetailRelationRecordsListItem = ({
     CoreObjectNameSingular.WorkspaceMember;
 
   const dropdownInstanceId = `record-field-card-menu:${scopeInstanceId}:${relationFieldMetadataId}:${relationRecord.id}`;
-
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownInstanceId,
-  );
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -207,36 +204,32 @@ export const RecordDetailRelationRecordsListItem = ({
 
   return (
     <>
-      <RecordDetailRecordsListItemContainer
-        isDropdownOpen={isDropdownOpen}
-        data-testid="record-detail-records-list-item"
-      >
+      <RecordDetailRecordsListItemContainer data-testid="record-detail-records-list-item">
         <RecordChip
           record={relationRecord}
           objectNameSingular={relationObjectMetadataItem.nameSingular}
         />
         <StyledClickableZone onClick={handleClick} data-testid="expand-button">
-          <LightIconButton
-            className="displayOnHover"
-            emphasis="subtle"
-            aria-label={t`Expand relation`}
-          >
-            <AnimatedIconChevronDown />
-          </LightIconButton>
+          <StyledHoverRevealedAction className="displayOnHover">
+            <LightIconButton emphasis="subtle" aria-label={t`Expand relation`}>
+              <AnimatedIconChevronDown />
+            </LightIconButton>
+          </StyledHoverRevealedAction>
         </StyledClickableZone>
         {!parentIsRecordFieldReadOnly && (
           <DropdownRoot dropdownId={dropdownInstanceId} type="menu">
-            <Dropdown.Trigger
-              render={
-                <LightIconButton
-                  className="displayOnHover"
-                  emphasis="subtle"
-                  aria-label={t`More options`}
-                >
-                  <IconDotsVertical />
-                </LightIconButton>
-              }
-            />
+            <StyledHoverRevealedAction className="displayOnHover">
+              <Dropdown.Trigger
+                render={
+                  <LightIconButton
+                    emphasis="subtle"
+                    aria-label={t`More options`}
+                  >
+                    <IconDotsVertical />
+                  </LightIconButton>
+                }
+              />
+            </StyledHoverRevealedAction>
             <DropdownContent
               side="right"
               align="start"
