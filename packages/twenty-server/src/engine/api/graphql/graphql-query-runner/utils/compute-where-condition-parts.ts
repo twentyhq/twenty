@@ -161,13 +161,6 @@ export const computeWhereConditionParts = ({
         params: {},
       };
     case 'eqStrict':
-      if (isDateTimeField && !useExactDateTimeComparison) {
-        return {
-          sql: `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')`,
-          params: { [`${key}${paramSuffix}`]: value },
-        };
-      }
-
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },

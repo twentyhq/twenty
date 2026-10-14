@@ -154,7 +154,6 @@ describe('computeWhereConditionParts', () => {
         computeWhereConditionParts({
           ...condition,
           operator: 'eqStrict',
-          useExactDateTimeComparison: true,
         }),
       ).toEqual({
         sql: `"person"."createdAt" = :createdAt0000000000`,
