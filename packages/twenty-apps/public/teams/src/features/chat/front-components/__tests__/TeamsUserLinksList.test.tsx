@@ -6,10 +6,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TeamsUserLinksList } from 'src/features/chat/front-components/TeamsUserLinksList';
 
-const { restGetMock, restPostMock, enqueueSnackbarMock } = vi.hoisted(() => ({
+const {
+  restGetMock,
+  restPostMock,
+  enqueueSnackbarMock,
+  hasRolesPermissionMock,
+} = vi.hoisted(() => ({
   restGetMock: vi.fn(),
   restPostMock: vi.fn(),
   enqueueSnackbarMock: vi.fn(),
+  hasRolesPermissionMock: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/front-component', () => ({
@@ -27,9 +33,15 @@ vi.mock('twenty-client-sdk/rest', () => ({
   },
 }));
 
+vi.mock(
+  'src/features/chat/logic-functions/utils/current-user-has-roles-permission',
+  () => ({ currentUserHasRolesPermission: hasRolesPermissionMock }),
+);
+
 describe('TeamsUserLinksList', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    hasRolesPermissionMock.mockResolvedValue(true);
   });
 
   afterEach(cleanup);
@@ -125,13 +137,13 @@ describe('TeamsUserLinksList', () => {
       ['/s/teams-user-links/remove', { id: 'link-1' }],
     ]);
     expect(enqueueSnackbarMock.mock.calls).toEqual([
-      [{ message: 'Removed the Teams user link.', variant: 'success' }],
+      [{ message: 'Link removed', variant: 'success' }],
     ]);
     expect(screen.queryByText('Adam Teams')).toBeNull();
     expect(screen.getByText('Zoe Teams')).toBeTruthy();
   });
 
-  it('keeps the link and shows the reason when removal is refused', async () => {
+  it('keeps the link when removal is refused', async () => {
     restGetMock.mockResolvedValue({
       data: {
         teamsUserLinks: [{ id: 'link-1', name: 'Adam Teams', source: 'AUTO' }],
@@ -156,13 +168,28 @@ describe('TeamsUserLinksList', () => {
     expect(enqueueSnackbarMock.mock.calls).toEqual([
       [
         {
-          message:
-            'Only members with the roles permission can remove Teams user links.',
+          message: 'Could not remove the link. Please try again.',
           variant: 'error',
         },
       ],
     ]);
     expect(screen.getByText('Adam Teams')).toBeTruthy();
+  });
+
+  it('hides the Remove button from members without the roles permission', async () => {
+    hasRolesPermissionMock.mockResolvedValue(false);
+    restGetMock.mockResolvedValue({
+      data: {
+        teamsUserLinks: [{ id: 'link-1', name: 'Adam Teams', source: 'AUTO' }],
+      },
+    });
+
+    render(<TeamsUserLinksList />);
+
+    expect(await screen.findByText('Adam Teams')).toBeTruthy();
+    expect(
+      screen.queryByRole('button', { name: /^Remove link for/ }),
+    ).toBeNull();
   });
 
   it('locks every Remove button while a removal is pending and recovers when it fails', async () => {

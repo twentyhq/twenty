@@ -1,4 +1,3 @@
-import { isBoolean } from '@sniptt/guards';
 import { useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
@@ -10,9 +9,7 @@ export const useRemoveTeamsUserLink = () => {
     undefined,
   );
 
-  const removeTeamsUserLink = async (
-    id: string,
-  ): Promise<TeamsUserLinkActionResult | undefined> => {
+  const removeTeamsUserLink = async (id: string): Promise<boolean> => {
     setRemovingLinkId(id);
 
     try {
@@ -20,9 +17,9 @@ export const useRemoveTeamsUserLink = () => {
         TeamsUserLinkActionResult | undefined
       >(`/s${TEAMS_USER_LINKS_REMOVE_ROUTE_PATH}`, { id });
 
-      return isBoolean(result?.success) ? result : undefined;
+      return result?.success ?? false;
     } catch {
-      return undefined;
+      return false;
     } finally {
       setRemovingLinkId(undefined);
     }

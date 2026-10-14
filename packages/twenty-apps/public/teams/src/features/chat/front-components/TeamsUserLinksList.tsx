@@ -7,6 +7,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useCanManageTeamsUserLinks } from 'src/features/chat/front-components/hooks/use-can-manage-teams-user-links';
 import { useRemoveTeamsUserLink } from 'src/features/chat/front-components/hooks/use-remove-teams-user-link';
 import { useTeamsUserLinks } from 'src/features/chat/front-components/hooks/use-teams-user-links';
 import { TEAMS_USER_LINK_SOURCE } from 'src/features/chat/logic-functions/constants/teams-user-link-source';
@@ -61,11 +62,12 @@ const TeamsUserLinksContent = () => {
   const { teamsUserLinks, isLoading, hasLoadError, dropTeamsUserLink } =
     useTeamsUserLinks();
   const { removeTeamsUserLink, removingLinkId } = useRemoveTeamsUserLink();
+  const { canManage } = useCanManageTeamsUserLinks();
 
   const handleRemove = async (teamsUserLink: TeamsUserLinkRecord) => {
-    const result = await removeTeamsUserLink(teamsUserLink.id);
+    const isRemoved = await removeTeamsUserLink(teamsUserLink.id);
 
-    if (!isDefined(result)) {
+    if (!isRemoved) {
       enqueueSnackbar({
         message: t('Could not remove the link. Please try again.'),
         variant: 'error',
@@ -74,14 +76,8 @@ const TeamsUserLinksContent = () => {
       return;
     }
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
-
-    if (result.success) {
-      dropTeamsUserLink(teamsUserLink.id);
-    }
+    dropTeamsUserLink(teamsUserLink.id);
+    enqueueSnackbar({ message: t('Link removed'), variant: 'success' });
   };
 
   const sourceLabels: Record<TeamsUserLinkSource, string> = {
@@ -133,19 +129,21 @@ const TeamsUserLinksContent = () => {
                 </Tag>
               )}
             </span>
-            <Button
-              variant="ghost"
-              color="danger"
-              size="sm"
-              aria-label={t('Remove link for {name}', {
-                name: teamsAccountName,
-              })}
-              loading={removingLinkId === teamsUserLink.id}
-              disabled={isDefined(removingLinkId)}
-              onClick={() => handleRemove(teamsUserLink)}
-            >
-              {t('Remove')}
-            </Button>
+            {canManage && (
+              <Button
+                variant="ghost"
+                color="danger"
+                size="sm"
+                aria-label={t('Remove link for {name}', {
+                  name: teamsAccountName,
+                })}
+                loading={removingLinkId === teamsUserLink.id}
+                disabled={isDefined(removingLinkId)}
+                onClick={() => handleRemove(teamsUserLink)}
+              >
+                {t('Remove')}
+              </Button>
+            )}
           </StyledRow>
         );
       })}
