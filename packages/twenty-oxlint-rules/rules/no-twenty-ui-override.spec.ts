@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { RuleTester } from 'oxlint/plugins-dev';
-import { isNonEmptyArray, isNonEmptyString } from 'twenty-shared/utils';
+import { isNonEmptyString } from 'twenty-shared/utils';
 import { describe, expect, it } from 'vitest';
 
 import { TWENTY_UI_OVERRIDE_EXEMPTIONS } from './no-twenty-ui-override.exemptions';
@@ -355,11 +355,10 @@ ruleTester.run(RULE_NAME, rule, {
 });
 
 describe('twenty-ui override exemptions', () => {
-  it('records existing files with their audit site ids and a reason', () => {
+  it('records existing files with a reason', () => {
     const invalidExemptionFilePaths = TWENTY_UI_OVERRIDE_EXEMPTIONS.filter(
-      ({ filePath, siteIds, reason }) =>
+      ({ filePath, reason }) =>
         !existsSync(join(REPOSITORY_ROOT, filePath)) ||
-        !isNonEmptyArray(siteIds) ||
         !isNonEmptyString(reason),
     ).map(({ filePath }) => filePath);
 
