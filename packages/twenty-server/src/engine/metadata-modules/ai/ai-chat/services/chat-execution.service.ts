@@ -130,7 +130,7 @@ export type ChatExecutionOptions = {
   modelId?: string;
   abortSignal: AbortSignal;
   conversationSizeTokens: number;
-  isUserAllowanceAvailableAtAdmission: boolean | null;
+  hadUserCreditsAtTurnStart: boolean;
   onUserCreditsExhausted: (renewsAt: Date) => void;
 };
 
@@ -178,7 +178,7 @@ export class ChatExecutionService {
     modelId,
     abortSignal,
     conversationSizeTokens,
-    isUserAllowanceAvailableAtAdmission,
+    hadUserCreditsAtTurnStart,
     onUserCreditsExhausted,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const getAuthorization = createTurnAuthorizer({
@@ -666,7 +666,7 @@ export class ChatExecutionService {
 
         const userCreditsSpillRenewsAt = findUserCreditsSpillNoticeRenewsAt({
           stepDebit,
-          isUserAllowanceAvailableAtAdmission,
+          hadUserCreditsAtTurnStart,
         });
 
         if (

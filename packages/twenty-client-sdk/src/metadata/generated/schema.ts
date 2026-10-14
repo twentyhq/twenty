@@ -3081,7 +3081,7 @@ export interface SearchField {
 }
 
 export interface SendChatMessageResult {
-    isWorkspaceAllowanceAvailable?: Scalars['Boolean']
+    hasWorkspaceCreditsLeft: Scalars['Boolean']
     mentionedParticipantWorkspaceMemberIds?: Scalars['UUID'][]
     messageId?: Scalars['String']
     queued: Scalars['Boolean']
@@ -7364,7 +7364,7 @@ export interface SearchFieldGenqlSelection{
 }
 
 export interface SendChatMessageResultGenqlSelection{
-    isWorkspaceAllowanceAvailable?: boolean | number
+    hasWorkspaceCreditsLeft?: boolean | number
     mentionedParticipantWorkspaceMemberIds?: boolean | number
     messageId?: boolean | number
     queued?: boolean | number

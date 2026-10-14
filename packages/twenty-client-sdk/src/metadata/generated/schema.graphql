@@ -4229,7 +4229,7 @@ type SearchField {
 }
 
 type SendChatMessageResult {
-  isWorkspaceAllowanceAvailable: Boolean
+  hasWorkspaceCreditsLeft: Boolean!
   mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
   queued: Boolean!

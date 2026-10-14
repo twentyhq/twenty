@@ -18,21 +18,22 @@ export const selectUserAllowanceFirstExhaustedCounters = ({
 }): Omit<QuotaAdmission, 'exhaustedScope'> & {
   exhaustedCounters: QuotaCounter[];
 } => {
+  const isWorkspaceAllowanceExhausted = exhaustedCounters.some(
+    (counter) => counter.kind === 'workspaceAllowance',
+  );
+
   if (!isDefined(userAllowanceCounter)) {
     return {
       exhaustedCounters,
       hasUserAllowanceCounter: false,
-      isUserAllowanceAvailable: null,
-      isWorkspaceAllowanceAvailable: null,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: !isWorkspaceAllowanceExhausted,
     };
   }
 
   const isUserAllowanceRead = isDefined(userAllowanceConsumed);
   const isUserAllowanceExhausted = exhaustedCounters.some(
     (counter) => counter.kind === 'userAllowance',
-  );
-  const isWorkspaceAllowanceExhausted = exhaustedCounters.some(
-    (counter) => counter.kind === 'workspaceAllowance',
   );
 
   const isPaidWithWorkspaceCredits =
@@ -55,20 +56,12 @@ export const selectUserAllowanceFirstExhaustedCounters = ({
     }
   });
 
-  const isUserAllowanceAvailable =
-    isUserAllowanceRead && !isUserAllowanceExhausted;
-
   return {
     exhaustedCounters: selectedExhaustedCounters,
     hasUserAllowanceCounter: true,
-    isUserAllowanceAvailable,
-    isWorkspaceAllowanceAvailable:
-      selectedExhaustedCounters.length > 0
-        ? null
-        : !(
-            isUserAllowanceAvailable &&
-            (!isDefined(workspaceAllowanceConsumed) ||
-              isWorkspaceAllowanceExhausted)
-          ),
+    hasUserCreditsLeft: isUserAllowanceRead && !isUserAllowanceExhausted,
+    hasWorkspaceCreditsLeft:
+      !isWorkspaceAllowanceExhausted &&
+      (isPaidWithWorkspaceCredits || isDefined(workspaceAllowanceConsumed)),
   };
 };

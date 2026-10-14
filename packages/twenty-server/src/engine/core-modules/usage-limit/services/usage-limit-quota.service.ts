@@ -113,8 +113,8 @@ type QuotaAdmissionArgs = QuotaConsumeArgs & {
 const QUOTA_ADMISSION_WITHOUT_USER_ALLOWANCE_COUNTER: QuotaAdmission = {
   exhaustedScope: null,
   hasUserAllowanceCounter: false,
-  isUserAllowanceAvailable: null,
-  isWorkspaceAllowanceAvailable: null,
+  hasUserCreditsLeft: false,
+  hasWorkspaceCreditsLeft: true,
 };
 
 type UserAllowanceFirstScriptAttempt =

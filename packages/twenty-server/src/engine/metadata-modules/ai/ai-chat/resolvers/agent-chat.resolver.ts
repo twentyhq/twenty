@@ -250,7 +250,7 @@ export class AgentChatResolver {
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
   }): Promise<SendChatMessageResultDTO> {
-    const { thread, isWorkspaceAllowanceAvailable } =
+    const { thread, hasWorkspaceCreditsLeft } =
       await this.turnPreflightService.assertCanStartChatTurn({
         threadId,
         modelId,
@@ -289,7 +289,7 @@ export class AgentChatResolver {
       return {
         messageId: queuedMessage.id,
         queued: true,
-        isWorkspaceAllowanceAvailable,
+        hasWorkspaceCreditsLeft,
       };
     }
 
@@ -315,7 +315,7 @@ export class AgentChatResolver {
       return {
         messageId: result.messageId,
         queued: true,
-        isWorkspaceAllowanceAvailable,
+        hasWorkspaceCreditsLeft,
       };
     }
 
@@ -330,7 +330,7 @@ export class AgentChatResolver {
       messageId: result.messageId,
       queued: false,
       streamId: result.streamId,
-      isWorkspaceAllowanceAvailable,
+      hasWorkspaceCreditsLeft,
     };
   }
 
@@ -343,7 +343,7 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    const { isWorkspaceAllowanceAvailable } =
+    const { hasWorkspaceCreditsLeft } =
       await this.turnPreflightService.assertCanStartChatTurn({
         threadId,
         modelId,
@@ -371,7 +371,7 @@ export class AgentChatResolver {
       messageId: result.messageId,
       queued: false,
       streamId: result.streamId,
-      isWorkspaceAllowanceAvailable,
+      hasWorkspaceCreditsLeft,
     };
   }
 

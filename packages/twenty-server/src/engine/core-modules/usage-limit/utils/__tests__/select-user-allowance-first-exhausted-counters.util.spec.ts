@@ -106,104 +106,104 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
     userAllowance: CounterState;
     workspaceAllowance: CounterState;
     expectedKind: ExpectedKind;
-    isUserAllowanceAvailable: boolean;
-    isWorkspaceAllowanceAvailable: boolean | null;
+    hasUserCreditsLeft: boolean;
+    hasWorkspaceCreditsLeft: boolean;
   }>([
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'below',
       workspaceAllowance: 'below',
       expectedKind: null,
-      isUserAllowanceAvailable: true,
-      isWorkspaceAllowanceAvailable: true,
+      hasUserCreditsLeft: true,
+      hasWorkspaceCreditsLeft: true,
     },
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'below',
       workspaceAllowance: 'reached',
       expectedKind: null,
-      isUserAllowanceAvailable: true,
-      isWorkspaceAllowanceAvailable: false,
+      hasUserCreditsLeft: true,
+      hasWorkspaceCreditsLeft: false,
     },
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'below',
       workspaceAllowance: 'unreadable',
       expectedKind: null,
-      isUserAllowanceAvailable: true,
-      isWorkspaceAllowanceAvailable: false,
+      hasUserCreditsLeft: true,
+      hasWorkspaceCreditsLeft: false,
     },
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'reached',
       workspaceAllowance: 'below',
       expectedKind: null,
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: true,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: true,
     },
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'reached',
       workspaceAllowance: 'reached',
       expectedKind: 'workspaceAllowance',
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: null,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: false,
     },
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'reached',
       workspaceAllowance: 'unreadable',
       expectedKind: null,
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: true,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: true,
     },
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'unreadable',
       workspaceAllowance: 'below',
       expectedKind: null,
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: true,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: true,
     },
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'unreadable',
       workspaceAllowance: 'reached',
       expectedKind: 'workspaceAllowance',
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: null,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: false,
     },
     {
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'unreadable',
       workspaceAllowance: 'unreadable',
       expectedKind: null,
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: true,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: true,
     },
     {
       fallback: 'STOP',
       userAllowance: 'reached',
       workspaceAllowance: 'below',
       expectedKind: 'userAllowance',
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: null,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: true,
     },
     {
       fallback: 'STOP',
       userAllowance: 'reached',
       workspaceAllowance: 'reached',
       expectedKind: 'userAllowance',
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: null,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: false,
     },
     {
       fallback: 'STOP',
       userAllowance: 'reached',
       workspaceAllowance: 'unreadable',
       expectedKind: 'userAllowance',
-      isUserAllowanceAvailable: false,
-      isWorkspaceAllowanceAvailable: null,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: false,
     },
   ])(
     'in $fallback mode with the userAllowance $userAllowance and the workspaceAllowance $workspaceAllowance',
@@ -212,8 +212,8 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
       userAllowance,
       workspaceAllowance,
       expectedKind,
-      isUserAllowanceAvailable,
-      isWorkspaceAllowanceAvailable,
+      hasUserCreditsLeft,
+      hasWorkspaceCreditsLeft,
     }) => {
       it(
         expectedKind === null ? 'admits' : `refuses on ${expectedKind}`,
@@ -227,19 +227,19 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
         },
       );
 
-      it('reports a user workspaceAllowance counter and both availability flags', () => {
+      it('reports the user allowance counter and which credits are left', () => {
         expect(
           select({ fallback, userAllowance, workspaceAllowance }),
         ).toMatchObject({
           hasUserAllowanceCounter: true,
-          isUserAllowanceAvailable,
-          isWorkspaceAllowanceAvailable,
+          hasUserCreditsLeft,
+          hasWorkspaceCreditsLeft,
         });
       });
     },
   );
 
-  it('keeps an exhausted limit and then reports no workspace flag', () => {
+  it('keeps an exhausted limit and still reports which credits are left', () => {
     const selection = select({
       fallback: 'WORKSPACE_CREDITS',
       userAllowance: 'below',
@@ -248,8 +248,8 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
     });
 
     expect(toKinds(selection.exhaustedCounters)).toEqual(['limit']);
-    expect(selection.isWorkspaceAllowanceAvailable).toBeNull();
-    expect(selection.isUserAllowanceAvailable).toBe(true);
+    expect(selection.hasWorkspaceCreditsLeft).toBe(true);
+    expect(selection.hasUserCreditsLeft).toBe(true);
   });
 
   it.each<{
@@ -306,7 +306,7 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
     },
   );
 
-  it('keeps every exhausted counter and reports no flags without a user workspaceAllowance counter', () => {
+  it('keeps every exhausted counter and reports no user credits without a user allowance counter', () => {
     const exhaustedCounters: QuotaCounter[] = [
       limitCounter,
       workspaceAllowanceCounter,
@@ -322,8 +322,8 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
     ).toEqual({
       exhaustedCounters,
       hasUserAllowanceCounter: false,
-      isUserAllowanceAvailable: null,
-      isWorkspaceAllowanceAvailable: null,
+      hasUserCreditsLeft: false,
+      hasWorkspaceCreditsLeft: false,
     });
   });
 });

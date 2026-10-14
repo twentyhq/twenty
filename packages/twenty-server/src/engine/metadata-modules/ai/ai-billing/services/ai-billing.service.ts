@@ -48,7 +48,7 @@ export class AiBillingService {
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-  }): Promise<Pick<UsageAdmission, 'isWorkspaceAllowanceAvailable'>> {
+  }): Promise<Pick<UsageAdmission, 'hasWorkspaceCreditsLeft'>> {
     return this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,

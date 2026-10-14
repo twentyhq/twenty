@@ -11362,7 +11362,7 @@ export default {
             ]
         },
         "SendChatMessageResult": {
-            "isWorkspaceAllowanceAvailable": [
+            "hasWorkspaceCreditsLeft": [
                 4
             ],
             "mentionedParticipantWorkspaceMemberIds": [

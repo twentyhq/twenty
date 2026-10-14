@@ -123,7 +123,7 @@ const buildResolver = () => {
       {
         assertAiExecutionAllowed: jest
           .fn()
-          .mockResolvedValue({ isWorkspaceAllowanceAvailable: null }),
+          .mockResolvedValue({ hasWorkspaceCreditsLeft: true }),
       } as never,
     ),
     threadLifecycle,

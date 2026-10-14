@@ -32,8 +32,8 @@ export class UsageQuotaAdmissionService {
 
   async assertUsageAllowed(
     scope: UsageQuotaScope,
-  ): Promise<Pick<UsageAdmission, 'isWorkspaceAllowanceAvailable'>> {
-    const { refusal, isWorkspaceAllowanceAvailable } =
+  ): Promise<Pick<UsageAdmission, 'hasWorkspaceCreditsLeft'>> {
+    const { refusal, hasWorkspaceCreditsLeft } =
       await this.findUsageAdmission(scope);
 
     if (isDefined(refusal)) {
@@ -43,7 +43,7 @@ export class UsageQuotaAdmissionService {
       });
     }
 
-    return { isWorkspaceAllowanceAvailable };
+    return { hasWorkspaceCreditsLeft };
   }
 
   async findUsageRefusal(scope: UsageQuotaScope): Promise<UsageRefusal | null> {
@@ -72,8 +72,8 @@ export class UsageQuotaAdmissionService {
           reason: subscriptionInactiveReason,
         },
         hasUserAllowanceCounter: false,
-        isUserAllowanceAvailable: null,
-        isWorkspaceAllowanceAvailable: null,
+        hasUserCreditsLeft: false,
+        hasWorkspaceCreditsLeft: false,
       };
     }
 

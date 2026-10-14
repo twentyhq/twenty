@@ -36,7 +36,7 @@ export class AgentChatTurnPreflightService {
   }): Promise<
     { thread: AgentChatThreadWorkspaceEntity } & Pick<
       UsageAdmission,
-      'isWorkspaceAllowanceAvailable'
+      'hasWorkspaceCreditsLeft'
     >
   > {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
@@ -56,13 +56,13 @@ export class AgentChatTurnPreflightService {
       workspaceId: workspace.id,
     });
 
-    const { isWorkspaceAllowanceAvailable } =
+    const { hasWorkspaceCreditsLeft } =
       await this.aiBillingService.assertAiExecutionAllowed({
         workspaceId: workspace.id,
         operationType: UsageOperationType.AI_CHAT_TOKEN,
         spenders: { userWorkspaceId },
       });
 
-    return { thread, isWorkspaceAllowanceAvailable };
+    return { thread, hasWorkspaceCreditsLeft };
   }
 }

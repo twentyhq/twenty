@@ -260,8 +260,7 @@ export class StreamAgentChatJob {
         titlePromise,
         abortSignal: abortController.signal,
         turnModelId,
-        isUserAllowanceAvailableAtAdmission:
-          userCreditsAdmission.isUserAllowanceAvailable,
+        hadUserCreditsAtTurnStart: userCreditsAdmission.hasUserCreditsLeft,
       });
     } catch (error) {
       this.logger.error(
@@ -478,7 +477,7 @@ export class StreamAgentChatJob {
     titlePromise,
     abortSignal,
     turnModelId,
-    isUserAllowanceAvailableAtAdmission,
+    hadUserCreditsAtTurnStart,
   }: {
     workspace: WorkspaceEntity;
     data: StreamAgentChatJobData;
@@ -488,7 +487,7 @@ export class StreamAgentChatJob {
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
     turnModelId: string;
-    isUserAllowanceAvailableAtAdmission: boolean | null;
+    hadUserCreditsAtTurnStart: boolean;
   }): Promise<void> {
     const assistantMessageId = uuidv5(
       data.streamId,
@@ -603,7 +602,7 @@ export class StreamAgentChatJob {
             onCompaction,
             abortSignal,
             conversationSizeTokens: data.conversationSizeTokens,
-            isUserAllowanceAvailableAtAdmission,
+            hadUserCreditsAtTurnStart,
             onUserCreditsExhausted,
           });
           const { stream, modelConfig, getStreamError } = chatExecution;

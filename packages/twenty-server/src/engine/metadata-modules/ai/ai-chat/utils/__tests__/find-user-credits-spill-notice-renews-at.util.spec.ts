@@ -13,7 +13,7 @@ describe('findUserCreditsSpillNoticeRenewsAt', () => {
     expect(
       findUserCreditsSpillNoticeRenewsAt({
         stepDebit: crossingStepDebit,
-        isUserAllowanceAvailableAtAdmission: true,
+        hadUserCreditsAtTurnStart: true,
       }),
     ).toEqual(SLICE_END);
   });
@@ -22,7 +22,7 @@ describe('findUserCreditsSpillNoticeRenewsAt', () => {
     expect(
       findUserCreditsSpillNoticeRenewsAt({
         stepDebit: { ...crossingStepDebit, stopReason: 'workspaceAllowance' },
-        isUserAllowanceAvailableAtAdmission: true,
+        hadUserCreditsAtTurnStart: true,
       }),
     ).toEqual(SLICE_END);
   });
@@ -31,7 +31,7 @@ describe('findUserCreditsSpillNoticeRenewsAt', () => {
     expect(
       findUserCreditsSpillNoticeRenewsAt({
         stepDebit: { ...crossingStepDebit, stopReason: 'userAllowance' },
-        isUserAllowanceAvailableAtAdmission: true,
+        hadUserCreditsAtTurnStart: true,
       }),
     ).toBeNull();
   });
@@ -40,7 +40,7 @@ describe('findUserCreditsSpillNoticeRenewsAt', () => {
     expect(
       findUserCreditsSpillNoticeRenewsAt({
         stepDebit: { ...crossingStepDebit, isUserAllowanceExhausted: false },
-        isUserAllowanceAvailableAtAdmission: true,
+        hadUserCreditsAtTurnStart: true,
       }),
     ).toBeNull();
   });
@@ -49,7 +49,7 @@ describe('findUserCreditsSpillNoticeRenewsAt', () => {
     expect(
       findUserCreditsSpillNoticeRenewsAt({
         stepDebit: crossingStepDebit,
-        isUserAllowanceAvailableAtAdmission: false,
+        hadUserCreditsAtTurnStart: false,
       }),
     ).toBeNull();
   });
@@ -58,7 +58,7 @@ describe('findUserCreditsSpillNoticeRenewsAt', () => {
     expect(
       findUserCreditsSpillNoticeRenewsAt({
         stepDebit: { ...crossingStepDebit, userAllowancePeriodEnd: null },
-        isUserAllowanceAvailableAtAdmission: true,
+        hadUserCreditsAtTurnStart: true,
       }),
     ).toBeNull();
   });

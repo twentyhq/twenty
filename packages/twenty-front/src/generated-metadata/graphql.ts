@@ -6315,7 +6315,7 @@ export type SearchField = {
 
 export type SendChatMessageResult = {
   __typename?: 'SendChatMessageResult';
-  isWorkspaceAllowanceAvailable?: Maybe<Scalars['Boolean']['output']>;
+  hasWorkspaceCreditsLeft: Scalars['Boolean']['output'];
   mentionedParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   messageId?: Maybe<Scalars['String']['output']>;
   queued: Scalars['Boolean']['output'];

@@ -361,8 +361,8 @@ describe('StreamAgentChatJob', () => {
         findUsageAdmission: jest.fn().mockResolvedValue({
           refusal: null,
           hasUserAllowanceCounter: false,
-          isUserAllowanceAvailable: null,
-          isWorkspaceAllowanceAvailable: null,
+          hasUserCreditsLeft: false,
+          hasWorkspaceCreditsLeft: true,
         }),
       } as never,
     );

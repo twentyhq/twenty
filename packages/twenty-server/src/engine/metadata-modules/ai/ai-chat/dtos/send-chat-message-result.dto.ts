@@ -19,6 +19,6 @@ export class SendChatMessageResultDTO {
   @Field(() => [UUIDScalarType], { nullable: true })
   mentionedParticipantWorkspaceMemberIds?: string[];
 
-  @Field(() => Boolean, { nullable: true })
-  isWorkspaceAllowanceAvailable?: boolean | null;
+  @Field(() => Boolean)
+  hasWorkspaceCreditsLeft: boolean;
 }

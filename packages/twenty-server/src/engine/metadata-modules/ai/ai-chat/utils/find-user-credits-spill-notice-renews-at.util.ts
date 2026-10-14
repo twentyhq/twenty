@@ -4,16 +4,16 @@ import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/
 
 export const findUserCreditsSpillNoticeRenewsAt = ({
   stepDebit,
-  isUserAllowanceAvailableAtAdmission,
+  hadUserCreditsAtTurnStart,
 }: {
   stepDebit: Pick<
     StepDebitResult,
     'stopReason' | 'isUserAllowanceExhausted' | 'userAllowancePeriodEnd'
   >;
-  isUserAllowanceAvailableAtAdmission: boolean | null;
+  hadUserCreditsAtTurnStart: boolean;
 }): Date | null => {
   if (
-    isUserAllowanceAvailableAtAdmission !== true ||
+    !hadUserCreditsAtTurnStart ||
     !stepDebit.isUserAllowanceExhausted ||
     stepDebit.stopReason === 'userAllowance'
   ) {
