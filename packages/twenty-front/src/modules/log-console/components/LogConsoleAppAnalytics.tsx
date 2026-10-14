@@ -5,11 +5,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
+import { LogConsoleAppAnalyticsRangeDropdown } from '@/log-console/components/LogConsoleAppAnalyticsRangeDropdown';
 import { LogConsoleAppAnalyticsReport } from '@/log-console/components/LogConsoleAppAnalyticsReport';
-import { logConsoleAppAnalyticsPeriodState } from '@/log-console/states/logConsoleAppAnalyticsPeriodState';
+import { logConsoleAppAnalyticsRangeState } from '@/log-console/states/logConsoleAppAnalyticsRangeState';
 import { logConsoleAppAnalyticsRegistrationIdState } from '@/log-console/states/logConsoleAppAnalyticsRegistrationIdState';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
 import { Select } from '@/ui/input/components/Select';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -49,8 +49,8 @@ export const LogConsoleAppAnalytics = () => {
     logConsoleAppAnalyticsRegistrationId,
     setLogConsoleAppAnalyticsRegistrationId,
   ] = useAtomState(logConsoleAppAnalyticsRegistrationIdState);
-  const [logConsoleAppAnalyticsPeriod, setLogConsoleAppAnalyticsPeriod] =
-    useAtomState(logConsoleAppAnalyticsPeriodState);
+  const [logConsoleAppAnalyticsRange, setLogConsoleAppAnalyticsRange] =
+    useAtomState(logConsoleAppAnalyticsRangeState);
 
   const { data, loading, refetch } = useQuery(
     FindManyApplicationRegistrationsDocument,
@@ -95,14 +95,9 @@ export const LogConsoleAppAnalytics = () => {
           withSearchInput={registrations.length > 5}
           needIconCheck
         />
-        <Select
-          dropdownId="log-console-app-analytics-period"
-          aria-label={t`Period`}
-          value={logConsoleAppAnalyticsPeriod}
-          options={getPeriodOptions()}
-          onChange={setLogConsoleAppAnalyticsPeriod}
-          selectSizeVariant="small"
-          needIconCheck
+        <LogConsoleAppAnalyticsRangeDropdown
+          range={logConsoleAppAnalyticsRange}
+          onRangeChange={setLogConsoleAppAnalyticsRange}
         />
       </StyledToolbar>
       <ScrollWrapper
@@ -112,7 +107,8 @@ export const LogConsoleAppAnalytics = () => {
           <LogConsoleAppAnalyticsReport
             key={selectedRegistration.id}
             applicationRegistrationId={selectedRegistration.id}
-            period={logConsoleAppAnalyticsPeriod}
+            registrationCreatedAt={selectedRegistration.createdAt}
+            range={logConsoleAppAnalyticsRange}
           />
         </StyledContent>
       </ScrollWrapper>

@@ -1,21 +1,21 @@
 import { useQuery } from '@apollo/client/react';
 
-import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
-import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 import { FindApplicationRegistrationAnalyticsDocument } from '~/generated-metadata/graphql';
 
 export const useApplicationRegistrationAnalytics = ({
   applicationRegistrationId,
-  period,
+  periodStart,
+  periodEnd,
 }: {
   applicationRegistrationId: string;
-  period: PeriodPreset;
+  periodStart: string;
+  periodEnd: string;
 }) => {
   const { data, loading, previousData, error } = useQuery(
     FindApplicationRegistrationAnalyticsDocument,
     {
       variables: {
-        input: { id: applicationRegistrationId, ...getPeriodDates(period) },
+        input: { id: applicationRegistrationId, periodStart, periodEnd },
       },
     },
   );

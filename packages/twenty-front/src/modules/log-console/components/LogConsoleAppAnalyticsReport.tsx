@@ -6,28 +6,41 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { LogConsoleAppAnalyticsBreakdownTable } from '@/log-console/components/LogConsoleAppAnalyticsBreakdownTable';
 import { LogConsoleAppAnalyticsLineChartSection } from '@/log-console/components/LogConsoleAppAnalyticsLineChartSection';
 import { LogConsoleAppAnalyticsTotals } from '@/log-console/components/LogConsoleAppAnalyticsTotals';
+import { type LogConsoleAppAnalyticsRange } from '@/log-console/types/LogConsoleAppAnalyticsRange';
+import { getLogConsoleAppAnalyticsPeriod } from '@/log-console/utils/getLogConsoleAppAnalyticsPeriod';
 import { useApplicationRegistrationAnalytics } from '@/settings/application-registrations/hooks/useApplicationRegistrationAnalytics';
 import { buildApplicationRegistrationAnalyticsLineSeries } from '@/settings/application-registrations/utils/buildApplicationRegistrationAnalyticsLineSeries';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
-import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 
 type LogConsoleAppAnalyticsReportProps = {
   applicationRegistrationId: string;
-  period: PeriodPreset;
+  registrationCreatedAt: string;
+  range: LogConsoleAppAnalyticsRange;
 };
 
 export const LogConsoleAppAnalyticsReport = ({
   applicationRegistrationId,
-  period,
+  registrationCreatedAt,
+  range,
 }: LogConsoleAppAnalyticsReportProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
   const { formatUsageValue } = useUsageValueFormatter();
 
+  const { periodStart, periodEnd } = getLogConsoleAppAnalyticsPeriod({
+    range,
+    now: new Date().toISOString(),
+    registrationCreatedAt,
+  });
+
   const { analytics, isInitialLoading, error } =
-    useApplicationRegistrationAnalytics({ applicationRegistrationId, period });
+    useApplicationRegistrationAnalytics({
+      applicationRegistrationId,
+      periodStart,
+      periodEnd,
+    });
 
   if (isInitialLoading) {
     return <UsageSectionSkeleton />;

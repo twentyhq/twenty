@@ -4,7 +4,15 @@ import { type ExecutionResult, print } from 'graphql';
 import { type RequestParams, type Sink } from 'graphql-sse';
 import { http, HttpResponse } from 'msw';
 import { type ReactNode, useEffect } from 'react';
-import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  screen,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -796,6 +804,7 @@ const APP_ANALYTICS_REGISTRATION = {
   name: 'Lead scoring',
   sourceType: 'LOCAL',
   logoUrl: null,
+  createdAt: '2026-09-20T15:45:00.000Z',
 };
 
 const buildAppAnalyticsPoint = ({
@@ -939,5 +948,83 @@ export const AppAnalyticsOpen: Story = {
     await canvas.findByText('Active workspaces', {}, { timeout: 5000 });
     await canvas.findByText('Lead scoring');
     await canvas.findByText('TIMEOUT');
+  },
+};
+
+export const AppAnalyticsRangeMenu: Story = {
+  ...AppAnalyticsOpen,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Active workspaces', {}, { timeout: 5000 });
+
+    await userEvent.click(canvas.getByText('Last 30 days'));
+
+    await screen.findByRole('option', { name: 'Last year' });
+    await screen.findByRole('option', { name: 'All time' });
+
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Custom range' }),
+    );
+
+    await screen.findByText('Start date');
+  },
+};
+
+export const AppAnalyticsChartTooltip: Story = {
+  ...AppAnalyticsOpen,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Active workspaces', {}, { timeout: 5000 });
+
+    const chartContainer = canvasElement.querySelector(
+      '#log-console-app-analytics-executions-line-chart',
+    );
+
+    if (!(chartContainer instanceof HTMLElement)) {
+      throw new Error('Executions chart not found');
+    }
+
+    chartContainer.scrollIntoView();
+
+    const tooltip = await within(chartContainer).findByRole('tooltip');
+
+    // nivo measures the chart and remounts its hover area after mount, so the hover is retried on whatever sits under the pointer
+    await waitFor(
+      () => {
+        const chartSvg = chartContainer.querySelector('svg');
+
+        if (!(chartSvg instanceof SVGElement)) {
+          throw new Error('Executions chart is not drawn yet');
+        }
+
+        const chartSvgRect = chartSvg.getBoundingClientRect();
+        const hoverX = chartSvgRect.left + chartSvgRect.width * 0.6;
+        const hoverY = chartSvgRect.top + chartSvgRect.height / 2;
+        const hoveredElement = document.elementFromPoint(hoverX, hoverY);
+
+        if (!isDefined(hoveredElement)) {
+          throw new Error('Nothing under the pointer');
+        }
+
+        fireEvent.mouseMove(hoveredElement, {
+          clientX: hoverX,
+          clientY: hoverY,
+        });
+
+        expect(tooltip).toHaveStyle({ opacity: '1' });
+      },
+      { timeout: 5000 },
+    );
+
+    // The tooltip is fixed-positioned under a container-type ancestor, where a stale floating-ui copy used to render it far above the chart
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const chartRect = chartContainer.getBoundingClientRect();
+
+    expect(tooltipRect.left).toBeGreaterThanOrEqual(chartRect.left);
+    expect(tooltipRect.right).toBeLessThanOrEqual(chartRect.right);
+    expect(tooltipRect.top).toBeGreaterThanOrEqual(chartRect.top);
+    expect(tooltipRect.bottom).toBeLessThanOrEqual(chartRect.bottom);
   },
 };

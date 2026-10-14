@@ -48,6 +48,7 @@ const renderWithRegistrations = (
                       universalIdentifier: `${registration.id}-universal`,
                       sourceType: ApplicationRegistrationSourceType.LOCAL,
                       logoUrl: null,
+                      createdAt: '2026-09-20T15:45:00.000Z',
                     }),
                   ),
                 },
