@@ -1,13 +1,32 @@
+import {
+  isDefined,
+  parseTemplateVariableWithFallback,
+} from 'twenty-shared/utils';
+import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
+
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
-import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campaign-variable-pattern.constant';
+import { resolveCampaignVariableValue } from 'src/modules/emailing/utils/resolve-campaign-variable-value.util';
 
 export const renderCampaignTemplate = (
   template: string,
   variables: Record<string, string>,
   { escapeValues }: { escapeValues: boolean },
 ): string =>
-  template.replace(CAMPAIGN_VARIABLE_PATTERN, (_match, variableName) => {
-    const value = variables[variableName] ?? '';
+  template.replace(
+    CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+    (rawTemplateVariable) => {
+      const campaignVariable =
+        parseTemplateVariableWithFallback(rawTemplateVariable);
 
-    return escapeValues ? escapeHtml(value) : value;
-  });
+      if (!isDefined(campaignVariable)) {
+        return rawTemplateVariable;
+      }
+
+      const value = resolveCampaignVariableValue({
+        campaignVariable,
+        variables,
+      });
+
+      return escapeValues ? escapeHtml(value) : value;
+    },
+  );
