@@ -2,10 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type UsageAdmission } from 'src/engine/core-modules/billing/types/usage-admission.type';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
-import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -48,8 +46,8 @@ export class AiBillingService {
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-  }): Promise<Pick<UsageAdmission, 'hasWorkspaceCreditsLeft'>> {
-    return this.usageQuotaAdmissionService.assertUsageAllowed({
+  }): Promise<void> {
+    await this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
@@ -120,7 +118,7 @@ export class AiBillingService {
     operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
-  ): Promise<Pick<QuotaDebitResult, 'exhaustedKind' | 'userCreditsUsedMicro'>> {
+  ): Promise<void> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -128,7 +126,7 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    return this.usageLimitQuotaService.charge({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
       events: [
         this.buildAiTokenUsageEvent({
@@ -162,21 +160,17 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    const {
-      exhaustedKind,
-      userCreditsUsedMicro,
-      isUserAllowanceExhausted,
-      userAllowancePeriodEnd,
-    } = await this.usageLimitQuotaService.debitAheadOfRecord({
-      workspaceId,
-      event: this.buildAiTokenUsageEvent({
-        creditsUsedMicro,
-        totalTokens,
-        modelId,
-        operationType,
-        spenders,
-      }),
-    });
+    const { exhaustedKind, userCreditsUsedMicro, userAllowanceExhaustedUntil } =
+      await this.usageLimitQuotaService.debitAheadOfRecord({
+        workspaceId,
+        event: this.buildAiTokenUsageEvent({
+          creditsUsedMicro,
+          totalTokens,
+          modelId,
+          operationType,
+          spenders,
+        }),
+      });
 
     const stopReason = exhaustedKind === 'limit' ? null : exhaustedKind;
 
@@ -184,8 +178,8 @@ export class AiBillingService {
       hasNoMoreAvailableCredits: isDefined(stopReason),
       stopReason,
       userCreditsUsedMicro,
-      isUserAllowanceExhausted,
-      userAllowancePeriodEnd,
+      isUserAllowanceExhausted: isDefined(userAllowanceExhaustedUntil),
+      userAllowancePeriodEnd: userAllowanceExhaustedUntil,
     };
   }
 
@@ -193,9 +187,9 @@ export class AiBillingService {
     nativeWebSearchCallCount: number,
     workspaceId: string,
     spenders: UsageSpenders,
-  ): Promise<Pick<QuotaDebitResult, 'exhaustedKind' | 'userCreditsUsedMicro'>> {
+  ): Promise<void> {
     if (nativeWebSearchCallCount <= 0) {
-      return { exhaustedKind: null, userCreditsUsedMicro: 0 };
+      return;
     }
 
     const costInDollars =
@@ -206,7 +200,7 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    return this.usageLimitQuotaService.charge({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
       events: [
         {

@@ -57,6 +57,15 @@ const logicFunctionEvent: RecordUsageInput = {
   unit: UsageUnit.INVOCATION,
 };
 
+const aiChatEvent: RecordUsageInput = {
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  creditsUsedMicro: 500,
+  quantity: 1_200,
+  unit: UsageUnit.TOKEN,
+  spenders: { userWorkspaceId: 'user-workspace-1' },
+};
+
 const workflowEvent: RecordUsageInput = {
   resourceType: UsageResourceType.WORKFLOW,
   operationType: UsageOperationType.WORKFLOW_EXECUTION,
@@ -74,7 +83,7 @@ describe('buildQuotaDebits', () => {
         counters: [creditCounter],
         events: [logicFunctionEvent, workflowEvent],
       }),
-    ).toEqual([{ counter: creditCounter, amount: 100 }]);
+    ).toEqual([{ counter: creditCounter, amount: 100, split: null }]);
   });
 
   it('debits the allowance with the credits of every event', () => {
@@ -83,16 +92,62 @@ describe('buildQuotaDebits', () => {
         counters: [workspaceAllowanceCounter],
         events: [logicFunctionEvent, workflowEvent],
       }),
-    ).toEqual([{ counter: workspaceAllowanceCounter, amount: 400 }]);
+    ).toEqual([
+      { counter: workspaceAllowanceCounter, amount: 400, split: null },
+    ]);
   });
 
-  it('never debits a user allowance counter', () => {
+  it('splits the credits between the user allowance and workspace credit counters', () => {
+    const workspaceCreditLimitCounter = {
+      ...buildLimitCounter(UsageUnit.CREDIT),
+      resourceType: UsageResourceType.AI,
+    };
+    const userCreditLimitCounter: LimitQuotaCounter = {
+      ...workspaceCreditLimitCounter,
+      key: 'user-credit-limit',
+      spenderType: 'userWorkspace',
+      spenderId: 'user-workspace-1',
+    };
+
+    expect(
+      buildQuotaDebits({
+        counters: [
+          userAllowanceCounter,
+          workspaceCreditLimitCounter,
+          userCreditLimitCounter,
+          workspaceAllowanceCounter,
+        ],
+        events: [aiChatEvent],
+      }),
+    ).toEqual([
+      {
+        counter: userAllowanceCounter,
+        amount: 500,
+        split: { kind: 'user', limitValue: 1_000 },
+      },
+      {
+        counter: workspaceCreditLimitCounter,
+        amount: 500,
+        split: { kind: 'workspaceCredits' },
+      },
+      { counter: userCreditLimitCounter, amount: 500, split: null },
+      {
+        counter: workspaceAllowanceCounter,
+        amount: 500,
+        split: { kind: 'workspaceCredits' },
+      },
+    ]);
+  });
+
+  it('splits nothing when the user allowance has nothing to pay', () => {
     expect(
       buildQuotaDebits({
         counters: [userAllowanceCounter, workspaceAllowanceCounter],
         events: [logicFunctionEvent],
       }),
-    ).toEqual([{ counter: workspaceAllowanceCounter, amount: 100 }]);
+    ).toEqual([
+      { counter: workspaceAllowanceCounter, amount: 100, split: null },
+    ]);
   });
 
   it('drops a counter the events consume nothing of', () => {

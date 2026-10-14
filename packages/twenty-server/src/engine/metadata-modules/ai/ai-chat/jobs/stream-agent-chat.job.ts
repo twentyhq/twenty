@@ -26,20 +26,15 @@ import { v5 as uuidv5 } from 'uuid';
 
 import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
-import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
-import { AGENT_TURN_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-credits-exhausted-error.constant';
 import {
   AiException,
   AiExceptionCode,
@@ -114,7 +109,6 @@ export class StreamAgentChatJob {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
     private readonly turnRecorderService: AgentTurnRecorderService,
-    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -206,27 +200,6 @@ export class StreamAgentChatJob {
         );
       }
 
-      const userCreditsAdmission =
-        await this.usageQuotaAdmissionService.findUsageAdmission({
-          workspaceId: data.workspaceId,
-          resourceType: UsageResourceType.AI,
-          operationType: UsageOperationType.AI_CHAT_TOKEN,
-          spenders: { userWorkspaceId: data.userWorkspaceId },
-          requireUserAllowanceCounter: true,
-        });
-
-      if (
-        userCreditsAdmission.hasUserAllowanceCounter &&
-        (await this.refuseTurnWithoutCredits({
-          data,
-          workspaceMemberId: authorization.authContext.workspaceMemberId,
-          refusal: userCreditsAdmission.refusal,
-          turnModelId,
-        }))
-      ) {
-        return;
-      }
-
       const isRunning = await this.turnRecorderService.markRunning({
         workspaceId: data.workspaceId,
         turnId,
@@ -260,7 +233,7 @@ export class StreamAgentChatJob {
         titlePromise,
         abortSignal: abortController.signal,
         turnModelId,
-        hadUserCreditsAtTurnStart: userCreditsAdmission.hasUserCreditsLeft,
+        hadUserCreditsAtTurnStart: true,
       });
     } catch (error) {
       this.logger.error(
@@ -336,90 +309,6 @@ export class StreamAgentChatJob {
     } catch {
       return modelId;
     }
-  }
-
-  private async refuseTurnWithoutCredits({
-    data,
-    workspaceMemberId,
-    refusal,
-    turnModelId,
-  }: {
-    data: StreamAgentChatJobData;
-    workspaceMemberId: string;
-    refusal: UsageRefusal | null;
-    turnModelId: string;
-  }): Promise<boolean> {
-    if (refusal?.kind !== 'quotaExhausted') {
-      return false;
-    }
-
-    const { exhaustedScope } = refusal;
-    const streamClaim = {
-      threadId: data.threadId,
-      workspaceId: data.workspaceId,
-      streamId: data.streamId,
-    };
-
-    switch (exhaustedScope.exhaustedKind) {
-      case 'userAllowance':
-        await this.eventPublisherService.publish({
-          threadId: data.threadId,
-          workspaceId: data.workspaceId,
-          event: {
-            type: 'user-credits-exhausted',
-            workspaceMemberId,
-            isFallingBackToWorkspaceCredits: false,
-            renewsAt: new Date(
-              Date.now() + exhaustedScope.retryAfterMs,
-            ).toISOString(),
-          },
-        });
-
-        await this.streamRecoveryService.failStream({
-          ...streamClaim,
-          error: new AiException(
-            'Your AI credits for this period are used up.',
-            AiExceptionCode.USER_CREDITS_EXHAUSTED,
-          ),
-        });
-
-        this.recordTurnOutcome(
-          { kind: 'failed', failurePhase: 'user_credits_exhausted' },
-          turnModelId,
-        );
-        break;
-      case 'workspaceAllowance':
-        await this.streamRecoveryService.releaseStreamClaim({
-          ...streamClaim,
-          turnError: AGENT_TURN_CREDITS_EXHAUSTED_ERROR,
-        });
-
-        await this.eventPublisherService.publish({
-          threadId: data.threadId,
-          workspaceId: data.workspaceId,
-          event: { type: 'credits-exhausted' },
-        });
-
-        this.recordTurnOutcome(
-          { kind: 'failed', failurePhase: 'credits_exhausted' },
-          turnModelId,
-        );
-        break;
-      case 'limit':
-        return false;
-      default:
-        return assertUnreachable(exhaustedScope.exhaustedKind);
-    }
-
-    await this.eventPublisherService
-      .publish({
-        threadId: data.threadId,
-        workspaceId: data.workspaceId,
-        event: { type: 'queue-updated' },
-      })
-      .catch(() => {});
-
-    return true;
   }
 
   private recordTurnOutcome(

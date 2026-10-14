@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type CreditAvailability } from 'src/engine/core-modules/billing/types/credit-availability.type';
-import { type UsageAdmission } from 'src/engine/core-modules/billing/types/usage-admission.type';
 import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { buildUsageRefusalException } from 'src/engine/core-modules/billing/utils/build-usage-refusal-exception.util';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
@@ -30,69 +29,41 @@ export class UsageQuotaAdmissionService {
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
-  async assertUsageAllowed(
-    scope: UsageQuotaScope,
-  ): Promise<Pick<UsageAdmission, 'hasWorkspaceCreditsLeft'>> {
-    const { refusal, hasWorkspaceCreditsLeft } =
-      await this.findUsageAdmission(scope);
+  async assertUsageAllowed(scope: UsageQuotaScope): Promise<void> {
+    const usageRefusal = await this.findUsageRefusal(scope);
 
-    if (isDefined(refusal)) {
+    if (isDefined(usageRefusal)) {
       throw buildUsageRefusalException({
-        usageRefusal: refusal,
+        usageRefusal,
         workspaceId: scope.workspaceId,
       });
     }
-
-    return { hasWorkspaceCreditsLeft };
   }
 
-  async findUsageRefusal(scope: UsageQuotaScope): Promise<UsageRefusal | null> {
-    const { refusal } = await this.findUsageAdmission(scope);
-
-    return refusal;
-  }
-
-  async findUsageAdmission({
+  async findUsageRefusal({
     workspaceId,
     resourceType,
     operationType,
     spenders,
     cost,
-    requireUserAllowanceCounter,
-  }: UsageQuotaScope & {
-    requireUserAllowanceCounter?: boolean;
-  }): Promise<UsageAdmission> {
+  }: UsageQuotaScope): Promise<UsageRefusal | null> {
     const subscriptionInactiveReason =
       await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
 
     if (isDefined(subscriptionInactiveReason)) {
       return {
-        refusal: {
-          kind: 'subscriptionInactive',
-          reason: subscriptionInactiveReason,
-        },
-        hasUserAllowanceCounter: false,
-        hasUserCreditsLeft: false,
-        hasWorkspaceCreditsLeft: false,
+        kind: 'subscriptionInactive',
+        reason: subscriptionInactiveReason,
       };
     }
 
-    const { exhaustedScope, ...userAllowanceAdmission } =
-      await this.usageLimitQuotaService.findQuotaAdmission({
-        workspaceId,
-        resourceType,
-        operationType,
-        spenders,
-        cost,
-        requireUserAllowanceCounter,
-      });
+    const exhaustedScope = await this.usageLimitQuotaService.findExhaustedScope(
+      { workspaceId, resourceType, operationType, spenders, cost },
+    );
 
-    return {
-      refusal: isDefined(exhaustedScope)
-        ? { kind: 'quotaExhausted', exhaustedScope }
-        : null,
-      ...userAllowanceAdmission,
-    };
+    return isDefined(exhaustedScope)
+      ? { kind: 'quotaExhausted', exhaustedScope }
+      : null;
   }
 
   async getCreditAvailability(

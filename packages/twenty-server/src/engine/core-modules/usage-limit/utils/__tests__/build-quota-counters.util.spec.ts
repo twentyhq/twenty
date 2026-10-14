@@ -263,6 +263,44 @@ describe('buildQuotaCounters', () => {
     ]);
   });
 
+  it('builds a user allowance counter from a user credit default', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [
+        buildDefault({
+          spenderType: 'userWorkspace',
+          isPerSpender: true,
+          unit: UsageUnit.USER_CREDIT,
+        }),
+      ],
+    });
+
+    expect(counters).toEqual([
+      expect.objectContaining({
+        kind: 'userAllowance',
+        spenderId: 'user-1',
+        unit: UsageUnit.USER_CREDIT,
+      }),
+    ]);
+  });
+
+  it('builds no user allowance counter when user credits are 0', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [
+        buildDefault({
+          spenderType: 'userWorkspace',
+          isPerSpender: true,
+          unit: UsageUnit.USER_CREDIT,
+          limitValue: 0,
+        }),
+        buildDefault({ limitValue: 0 }),
+      ],
+    });
+
+    expect(counters).toEqual([
+      expect.objectContaining({ kind: 'limit', limitValue: 0 }),
+    ]);
+  });
+
   it('shares one counter across spenders for a default that is not per spender', () => {
     const counters = buildCounters({
       quotaLimitDefaults: [buildDefault({ spenderType: 'userWorkspace' })],

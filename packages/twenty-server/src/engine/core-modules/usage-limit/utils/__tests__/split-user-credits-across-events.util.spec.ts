@@ -50,8 +50,4 @@ describe('splitUserCreditsAcrossEvents', () => {
       ),
     ).toEqual([0, 0, 250]);
   });
-
-  it('stamps 0 everywhere for a share that is not a whole number', () => {
-    expect(findShares([buildEvent(300)], 100.5)).toEqual([0]);
-  });
 });

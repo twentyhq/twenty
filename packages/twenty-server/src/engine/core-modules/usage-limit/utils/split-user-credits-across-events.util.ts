@@ -2,36 +2,23 @@ import { type RecordUsageInputWithUserCredits } from 'src/engine/core-modules/us
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 
-const toValidCreditAmountMicroOrZero = (amountMicro: number): number =>
-  isValidCreditAmountMicro(amountMicro) ? amountMicro : 0;
-
 export const splitUserCreditsAcrossEvents = ({
   events,
   userCreditsUsedMicro,
 }: {
   events: RecordUsageInput[];
   userCreditsUsedMicro: number;
-}): RecordUsageInputWithUserCredits[] =>
-  events.reduce<{
-    remainingMicro: number;
-    eventsWithUserCredits: RecordUsageInputWithUserCredits[];
-  }>(
-    ({ remainingMicro, eventsWithUserCredits }, event) => {
-      const eventUserCreditsUsedMicro = Math.min(
-        remainingMicro,
-        toValidCreditAmountMicroOrZero(event.creditsUsedMicro ?? 0),
-      );
+}): RecordUsageInputWithUserCredits[] => {
+  let remainingMicro = userCreditsUsedMicro;
 
-      return {
-        remainingMicro: remainingMicro - eventUserCreditsUsedMicro,
-        eventsWithUserCredits: [
-          ...eventsWithUserCredits,
-          { ...event, userCreditsUsedMicro: eventUserCreditsUsedMicro },
-        ],
-      };
-    },
-    {
-      remainingMicro: toValidCreditAmountMicroOrZero(userCreditsUsedMicro),
-      eventsWithUserCredits: [],
-    },
-  ).eventsWithUserCredits;
+  return events.map((event) => {
+    const creditsUsedMicro = event.creditsUsedMicro ?? 0;
+    const eventUserCreditsUsedMicro = isValidCreditAmountMicro(creditsUsedMicro)
+      ? Math.min(remainingMicro, creditsUsedMicro)
+      : 0;
+
+    remainingMicro -= eventUserCreditsUsedMicro;
+
+    return { ...event, userCreditsUsedMicro: eventUserCreditsUsedMicro };
+  });
+};

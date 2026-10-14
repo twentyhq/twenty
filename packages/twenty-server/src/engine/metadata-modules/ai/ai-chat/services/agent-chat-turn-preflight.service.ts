@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { type UsageAdmission } from 'src/engine/core-modules/billing/types/usage-admission.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -33,12 +32,10 @@ export class AgentChatTurnPreflightService {
     userWorkspaceId: string;
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
-  }): Promise<
-    { thread: AgentChatThreadWorkspaceEntity } & Pick<
-      UsageAdmission,
-      'hasWorkspaceCreditsLeft'
-    >
-  > {
+  }): Promise<{
+    thread: AgentChatThreadWorkspaceEntity;
+    hasWorkspaceCreditsLeft: boolean;
+  }> {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
@@ -56,13 +53,12 @@ export class AgentChatTurnPreflightService {
       workspaceId: workspace.id,
     });
 
-    const { hasWorkspaceCreditsLeft } =
-      await this.aiBillingService.assertAiExecutionAllowed({
-        workspaceId: workspace.id,
-        operationType: UsageOperationType.AI_CHAT_TOKEN,
-        spenders: { userWorkspaceId },
-      });
+    await this.aiBillingService.assertAiExecutionAllowed({
+      workspaceId: workspace.id,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
-    return { thread, hasWorkspaceCreditsLeft };
+    return { thread, hasWorkspaceCreditsLeft: true };
   }
 }

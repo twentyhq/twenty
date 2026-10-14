@@ -182,15 +182,13 @@ describe('Usage quota consumption', () => {
     spenderId: string;
     costMicro: number;
   }) =>
-    getQuotaService()
-      .findQuotaAdmission({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        spenders: { logicFunctionId: spenderId },
-        cost: { [UsageUnit.CREDIT]: costMicro },
-      })
-      .then(({ exhaustedScope }) => exhaustedScope);
+    getQuotaService().findExhaustedScope({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders: { logicFunctionId: spenderId },
+      cost: { [UsageUnit.CREDIT]: costMicro },
+    });
 
   const countUsageEventRows = async (
     spenderId: string = logicFunctionId,
@@ -742,18 +740,16 @@ describe('Usage quota consumption', () => {
     });
 
     const findEmailRefusal = (invocationCost: number) =>
-      getQuotaService()
-        .findQuotaAdmission({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          resourceType: UsageResourceType.EMAIL,
-          operationType: UsageOperationType.EMAIL_SEND,
-          spenders: {},
-          cost: {
-            [UsageUnit.CREDIT]: 0,
-            [UsageUnit.INVOCATION]: invocationCost,
-          },
-        })
-        .then(({ exhaustedScope }) => exhaustedScope);
+      getQuotaService().findExhaustedScope({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        spenders: {},
+        cost: {
+          [UsageUnit.CREDIT]: 0,
+          [UsageUnit.INVOCATION]: invocationCost,
+        },
+      });
 
     const debitEmailAheadOfRecord = (quantity: number) =>
       getQuotaService().debitAheadOfRecord({
@@ -891,7 +887,6 @@ describe('Usage quota consumption', () => {
         expect(await findRunRefusal({ spenderId, costMicro: 1 })).toBeNull();
         expect(await chargeRun({ spenderId, creditsUsedMicro: 100 })).toEqual({
           exhaustedKind: null,
-          userCreditsUsedMicro: 0,
         });
         expect(findAdmittedOnFailureAttributes(incrementCounterBySpy)).toEqual([
           {
@@ -942,7 +937,6 @@ describe('Usage quota consumption', () => {
     try {
       expect(await chargeRun({ spenderId, creditsUsedMicro: 100 })).toEqual({
         exhaustedKind: null,
-        userCreditsUsedMicro: 0,
       });
       expect(await findSpenderCounterKeys(spenderId)).toHaveLength(1);
       expect(findAdmittedOnFailureAttributes(incrementCounterBySpy)).toEqual([

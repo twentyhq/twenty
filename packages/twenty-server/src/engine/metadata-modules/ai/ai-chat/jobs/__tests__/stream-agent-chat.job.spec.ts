@@ -357,14 +357,6 @@ describe('StreamAgentChatJob', () => {
       aiModelRegistryService as never,
       actorService as never,
       turnRecorderService as never,
-      {
-        findUsageAdmission: jest.fn().mockResolvedValue({
-          refusal: null,
-          hasUserAllowanceCounter: false,
-          hasUserCreditsLeft: false,
-          hasWorkspaceCreditsLeft: true,
-        }),
-      } as never,
     );
 
     const turnCounts = (key: string) =>

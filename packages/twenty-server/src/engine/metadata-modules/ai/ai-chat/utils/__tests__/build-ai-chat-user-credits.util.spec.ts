@@ -7,7 +7,7 @@ const userAllowanceUsage = {
   limitValue: 3_000_000,
   consumedValue: 1_000_000,
   periodEnd: SLICE_END,
-  fallback: 'WORKSPACE_CREDITS' as const,
+  fallback: UserCreditsFallback.WORKSPACE_CREDITS,
 };
 
 describe('buildAiChatUserCredits', () => {
@@ -39,7 +39,7 @@ describe('buildAiChatUserCredits', () => {
       buildAiChatUserCredits({
         ...userAllowanceUsage,
         consumedValue: 3_000_000,
-        fallback: 'STOP',
+        fallback: UserCreditsFallback.STOP,
       }),
     ).toMatchObject({
       fallback: UserCreditsFallback.STOP,
