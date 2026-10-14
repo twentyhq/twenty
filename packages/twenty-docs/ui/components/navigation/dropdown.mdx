@@ -91,7 +91,7 @@ Use `tabIndex={-1}` for a pointer-only secondary action that has a separate keyb
   height={420}
 />
 
-Wrap selectable options in `SelectionGroup`. Give the group an `id` unique within its dropdown root and each option a stable `value` unique within the group. Single selection uses a string or `null` for no selection. Multiple selection uses an array, including `[]` for no selection.
+Wrap selectable options in `SelectionGroup`. Give the group an `id` unique within its dropdown tree, including submenus, and each option a stable `value` unique within the group. Independently nested `Root` components keep their own selection store. Single selection uses a string or `null` for no selection. Multiple selection uses an array, including `[]` for no selection.
 
 ```tsx
 import { useState } from 'react';

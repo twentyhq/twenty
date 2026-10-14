@@ -929,5 +929,23 @@ export const SubmenuDismissalKeepsOwner: Story = {
     );
     await waitFor(() => expect(trigger).toHaveFocus());
     expect(onOwnerChange).toHaveBeenLastCalledWith('grace', expect.anything());
+
+    await userEvent.click(trigger);
+    await body.findByRole('menuitem', { name: 'Owner' });
+    await userEvent.keyboard('{ArrowRight}');
+    const reopened = await body.findByRole('dialog', { name: 'Owner picker' });
+    const grace = within(reopened).getByRole('option', {
+      name: 'Grace Hopper',
+    });
+
+    expect(grace).toHaveAttribute('aria-selected', 'true');
+    await waitFor(() => expect(grace).toHaveFocus());
+    expect(onOwnerChange).toHaveBeenCalledOnce();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(reopened).not.toBeInTheDocument());
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
   },
 };
