@@ -63,10 +63,6 @@ const StyledRightContent = styled.div`
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
-
-  svg {
-    min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
-  }
 `;
 
 const StyledDisplayMessage = styled.span`

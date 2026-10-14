@@ -11,6 +11,7 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CURRENCY_CODE_LABELS } from 'twenty-shared/constants';
 import { CURRENCY_CODE_ICONS } from '@/ui/input/components/internal/currency/constants/CurrencyCodeIcons';
+import { FIELD_DISPLAY_LEADING_ICON_CLASS_NAME } from '@/ui/field/display/constants/FieldDisplayLeadingIconClassName';
 import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
@@ -66,7 +67,9 @@ export const CurrencyDisplay = ({
             side="top"
             positionMethod="fixed"
           >
-            <StyledCurrencyIconContainer>
+            <StyledCurrencyIconContainer
+              className={FIELD_DISPLAY_LEADING_ICON_CLASS_NAME}
+            >
               <CurrencyIcon
                 color={theme.font.color.primary}
                 size={theme.icon.size.md}
