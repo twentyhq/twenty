@@ -57,6 +57,24 @@ export class ApplicationRegistrationAnalyticsTimeSeriesPointDTO extends Applicat
   date: string;
 }
 
+@ObjectType('ApplicationRegistrationAnalyticsVersionTimeSeriesPoint')
+export class ApplicationRegistrationAnalyticsVersionTimeSeriesPointDTO {
+  @Field(() => String)
+  date: string;
+
+  @Field(() => Int)
+  activeWorkspaces: number;
+}
+
+@ObjectType('ApplicationRegistrationAnalyticsVersion')
+export class ApplicationRegistrationAnalyticsVersionDTO extends ApplicationRegistrationAnalyticsTotalsDTO {
+  @Field(() => String)
+  version: string;
+
+  @Field(() => [ApplicationRegistrationAnalyticsVersionTimeSeriesPointDTO])
+  timeSeries: ApplicationRegistrationAnalyticsVersionTimeSeriesPointDTO[];
+}
+
 @ObjectType('ApplicationRegistrationAnalytics')
 export class ApplicationRegistrationAnalyticsDTO {
   @Field(() => Date)
@@ -85,4 +103,7 @@ export class ApplicationRegistrationAnalyticsDTO {
 
   @Field(() => [ApplicationRegistrationAnalyticsBreakdownItemDTO])
   creditsChargedByOperation: ApplicationRegistrationAnalyticsBreakdownItemDTO[];
+
+  @Field(() => [ApplicationRegistrationAnalyticsVersionDTO])
+  versions: ApplicationRegistrationAnalyticsVersionDTO[];
 }

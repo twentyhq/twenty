@@ -55,6 +55,18 @@ export const FIND_APPLICATION_REGISTRATION_ANALYTICS = gql`
         key
         value
       }
+      versions {
+        version
+        activeWorkspaces
+        installSucceeded
+        upgradeSucceeded
+        functionExecutions
+        functionErrors
+        timeSeries {
+          date
+          activeWorkspaces
+        }
+      }
     }
   }
 `;

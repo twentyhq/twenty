@@ -843,6 +843,35 @@ const buildAppAnalyticsPoint = ({
   creditsCharged: 12.5,
 });
 
+const buildAppAnalyticsVersion = ({
+  version,
+  installSucceeded,
+  upgradeSucceeded,
+  functionExecutions,
+  functionErrors,
+  dailyActiveWorkspaces,
+}: {
+  version: string;
+  installSucceeded: number;
+  upgradeSucceeded: number;
+  functionExecutions: number;
+  functionErrors: number;
+  dailyActiveWorkspaces: number[];
+}) => ({
+  __typename: 'ApplicationRegistrationAnalyticsVersion',
+  version,
+  activeWorkspaces: Math.max(...dailyActiveWorkspaces),
+  installSucceeded,
+  upgradeSucceeded,
+  functionExecutions,
+  functionErrors,
+  timeSeries: ['2026-09-21', '2026-09-22', '2026-09-23'].map((date, index) => ({
+    __typename: 'ApplicationRegistrationAnalyticsVersionTimeSeriesPoint',
+    date,
+    activeWorkspaces: dailyActiveWorkspaces[index],
+  })),
+});
+
 const APP_ANALYTICS = {
   __typename: 'ApplicationRegistrationAnalytics',
   periodStart: '2026-08-25T00:00:00.000Z',
@@ -919,6 +948,24 @@ const APP_ANALYTICS = {
       value: 37.5,
     },
   ],
+  versions: [
+    buildAppAnalyticsVersion({
+      version: '1.3.0',
+      installSucceeded: 2,
+      upgradeSucceeded: 4,
+      functionExecutions: 900,
+      functionErrors: 18,
+      dailyActiveWorkspaces: [1, 3, 4],
+    }),
+    buildAppAnalyticsVersion({
+      version: '1.2.0',
+      installSucceeded: 10,
+      upgradeSucceeded: 0,
+      functionExecutions: 940,
+      functionErrors: 5,
+      dailyActiveWorkspaces: [6, 4, 2],
+    }),
+  ],
 };
 
 export const AppAnalyticsOpen: Story = {
@@ -960,6 +1007,8 @@ export const AppAnalyticsOpen: Story = {
     await canvas.findByText('Active workspaces', {}, { timeout: 5000 });
     await canvas.findByText('Lead scoring');
     await canvas.findByText('TIMEOUT');
+    await canvas.findByText('Version adoption');
+    await canvas.findByText('18 (2%)');
   },
 };
 

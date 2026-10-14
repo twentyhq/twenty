@@ -531,6 +531,7 @@ type ApplicationRegistrationAnalytics {
   periodStart: DateTime!
   timeSeries: [ApplicationRegistrationAnalyticsTimeSeriesPoint!]!
   totals: ApplicationRegistrationAnalyticsTotals!
+  versions: [ApplicationRegistrationAnalyticsVersion!]!
 }
 
 type ApplicationRegistrationAnalyticsBreakdownItem {
@@ -572,6 +573,28 @@ type ApplicationRegistrationAnalyticsTotals {
   uninstallSucceeded: Int!
   upgradeFailed: Int!
   upgradeSucceeded: Int!
+}
+
+type ApplicationRegistrationAnalyticsVersion {
+  activeWorkspaces: Int!
+  apiRateLimited: Int!
+  creditsCharged: Float!
+  functionErrors: Int!
+  functionExecutions: Int!
+  installFailed: Int!
+  installSucceeded: Int!
+  jobRateLimited: Int!
+  timeSeries: [ApplicationRegistrationAnalyticsVersionTimeSeriesPoint!]!
+  uninstallFailed: Int!
+  uninstallSucceeded: Int!
+  upgradeFailed: Int!
+  upgradeSucceeded: Int!
+  version: String!
+}
+
+type ApplicationRegistrationAnalyticsVersionTimeSeriesPoint {
+  activeWorkspaces: Int!
+  date: String!
 }
 
 enum ApplicationRegistrationSourceType {

@@ -451,6 +451,7 @@ export interface ApplicationRegistrationAnalytics {
     periodStart: Scalars['DateTime']
     timeSeries: ApplicationRegistrationAnalyticsTimeSeriesPoint[]
     totals: ApplicationRegistrationAnalyticsTotals
+    versions: ApplicationRegistrationAnalyticsVersion[]
     __typename: 'ApplicationRegistrationAnalytics'
 }
 
@@ -490,6 +491,30 @@ export interface ApplicationRegistrationAnalyticsTotals {
     upgradeFailed: Scalars['Int']
     upgradeSucceeded: Scalars['Int']
     __typename: 'ApplicationRegistrationAnalyticsTotals'
+}
+
+export interface ApplicationRegistrationAnalyticsVersion {
+    activeWorkspaces: Scalars['Int']
+    apiRateLimited: Scalars['Int']
+    creditsCharged: Scalars['Float']
+    functionErrors: Scalars['Int']
+    functionExecutions: Scalars['Int']
+    installFailed: Scalars['Int']
+    installSucceeded: Scalars['Int']
+    jobRateLimited: Scalars['Int']
+    timeSeries: ApplicationRegistrationAnalyticsVersionTimeSeriesPoint[]
+    uninstallFailed: Scalars['Int']
+    uninstallSucceeded: Scalars['Int']
+    upgradeFailed: Scalars['Int']
+    upgradeSucceeded: Scalars['Int']
+    version: Scalars['String']
+    __typename: 'ApplicationRegistrationAnalyticsVersion'
+}
+
+export interface ApplicationRegistrationAnalyticsVersionTimeSeriesPoint {
+    activeWorkspaces: Scalars['Int']
+    date: Scalars['String']
+    __typename: 'ApplicationRegistrationAnalyticsVersionTimeSeriesPoint'
 }
 
 export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' | 'TARBALL'
@@ -4470,6 +4495,7 @@ export interface ApplicationRegistrationAnalyticsGenqlSelection{
     periodStart?: boolean | number
     timeSeries?: ApplicationRegistrationAnalyticsTimeSeriesPointGenqlSelection
     totals?: ApplicationRegistrationAnalyticsTotalsGenqlSelection
+    versions?: ApplicationRegistrationAnalyticsVersionGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4513,6 +4539,32 @@ export interface ApplicationRegistrationAnalyticsTotalsGenqlSelection{
     uninstallSucceeded?: boolean | number
     upgradeFailed?: boolean | number
     upgradeSucceeded?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationAnalyticsVersionGenqlSelection{
+    activeWorkspaces?: boolean | number
+    apiRateLimited?: boolean | number
+    creditsCharged?: boolean | number
+    functionErrors?: boolean | number
+    functionExecutions?: boolean | number
+    installFailed?: boolean | number
+    installSucceeded?: boolean | number
+    jobRateLimited?: boolean | number
+    timeSeries?: ApplicationRegistrationAnalyticsVersionTimeSeriesPointGenqlSelection
+    uninstallFailed?: boolean | number
+    uninstallSucceeded?: boolean | number
+    upgradeFailed?: boolean | number
+    upgradeSucceeded?: boolean | number
+    version?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationAnalyticsVersionTimeSeriesPointGenqlSelection{
+    activeWorkspaces?: boolean | number
+    date?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8962,6 +9014,22 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationRegistrationAnalyticsTotals = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalyticsTotals => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalyticsTotals"')
       return ApplicationRegistrationAnalyticsTotals_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationRegistrationAnalyticsVersion_possibleTypes: string[] = ['ApplicationRegistrationAnalyticsVersion']
+    export const isApplicationRegistrationAnalyticsVersion = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalyticsVersion => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalyticsVersion"')
+      return ApplicationRegistrationAnalyticsVersion_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationRegistrationAnalyticsVersionTimeSeriesPoint_possibleTypes: string[] = ['ApplicationRegistrationAnalyticsVersionTimeSeriesPoint']
+    export const isApplicationRegistrationAnalyticsVersionTimeSeriesPoint = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalyticsVersionTimeSeriesPoint => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalyticsVersionTimeSeriesPoint"')
+      return ApplicationRegistrationAnalyticsVersionTimeSeriesPoint_possibleTypes.includes(obj.__typename)
     }
     
 

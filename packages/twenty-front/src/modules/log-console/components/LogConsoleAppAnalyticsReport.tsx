@@ -1,18 +1,39 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { LogConsoleAppAnalyticsBreakdownTable } from '@/log-console/components/LogConsoleAppAnalyticsBreakdownTable';
 import { LogConsoleAppAnalyticsLineChartSection } from '@/log-console/components/LogConsoleAppAnalyticsLineChartSection';
 import { LogConsoleAppAnalyticsTotals } from '@/log-console/components/LogConsoleAppAnalyticsTotals';
+import { LogConsoleAppAnalyticsVersionTable } from '@/log-console/components/LogConsoleAppAnalyticsVersionTable';
+import { LOG_CONSOLE_APP_ANALYTICS_VERSION_CHART_MAX_SERIES } from '@/log-console/constants/LogConsoleAppAnalyticsVersionChartMaxSeries';
 import { type LogConsoleAppAnalyticsRange } from '@/log-console/types/LogConsoleAppAnalyticsRange';
 import { getLogConsoleAppAnalyticsPeriod } from '@/log-console/utils/getLogConsoleAppAnalyticsPeriod';
 import { useApplicationRegistrationAnalytics } from '@/settings/application-registrations/hooks/useApplicationRegistrationAnalytics';
 import { buildApplicationRegistrationAnalyticsLineSeries } from '@/settings/application-registrations/utils/buildApplicationRegistrationAnalyticsLineSeries';
+import { buildApplicationRegistrationAnalyticsVersionLineSeries } from '@/settings/application-registrations/utils/buildApplicationRegistrationAnalyticsVersionLineSeries';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+
+const StyledReport = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+`;
+
+const StyledBreakdownGrid = styled.div`
+  display: grid;
+  gap: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]};
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+  &:empty {
+    display: none;
+  }
+`;
 
 type LogConsoleAppAnalyticsReportProps = {
   applicationRegistrationId: string;
@@ -94,8 +115,16 @@ export const LogConsoleAppAnalyticsReport = ({
     ],
   });
 
+  const versionAdoptionSeries =
+    buildApplicationRegistrationAnalyticsVersionLineSeries(
+      analytics.versions.slice(
+        0,
+        LOG_CONSOLE_APP_ANALYTICS_VERSION_CHART_MAX_SERIES,
+      ),
+    );
+
   return (
-    <>
+    <StyledReport>
       <Section.Root>
         <Section.Header
           title={t`Overview`}
@@ -110,6 +139,24 @@ export const LogConsoleAppAnalyticsReport = ({
         series={lifecycleSeries}
         formatValue={formatCount}
       />
+      <StyledBreakdownGrid>
+        <LogConsoleAppAnalyticsBreakdownTable
+          title={t`Install failures by error code`}
+          description={t`Failed installs, upgrades and uninstalls grouped by error code.`}
+          keyHeader={t`Error code`}
+          valueHeader={t`Failures`}
+          items={analytics.lifecycleFailuresByErrorCode}
+          formatValue={formatCount}
+        />
+      </StyledBreakdownGrid>
+      <LogConsoleAppAnalyticsLineChartSection
+        title={t`Version adoption`}
+        description={t`Workspaces active on each of the most recent versions per day.`}
+        chartId="log-console-app-analytics-version-adoption"
+        series={versionAdoptionSeries}
+        formatValue={formatCount}
+      />
+      <LogConsoleAppAnalyticsVersionTable versions={analytics.versions} />
       <LogConsoleAppAnalyticsLineChartSection
         title={t`Function executions`}
         description={t`Logic function runs and failures per day.`}
@@ -117,6 +164,32 @@ export const LogConsoleAppAnalyticsReport = ({
         series={executionSeries}
         formatValue={formatCount}
       />
+      <StyledBreakdownGrid>
+        <LogConsoleAppAnalyticsBreakdownTable
+          title={t`Executions by function`}
+          description={t`Logic function runs grouped by function.`}
+          keyHeader={t`Function`}
+          valueHeader={t`Executions`}
+          items={analytics.functionExecutionsByFunction}
+          formatValue={formatCount}
+        />
+        <LogConsoleAppAnalyticsBreakdownTable
+          title={t`Errors by function`}
+          description={t`Logic function failures grouped by function.`}
+          keyHeader={t`Function`}
+          valueHeader={t`Errors`}
+          items={analytics.functionErrorsByFunction}
+          formatValue={formatCount}
+        />
+        <LogConsoleAppAnalyticsBreakdownTable
+          title={t`Errors by category`}
+          description={t`Logic function failures grouped by error category.`}
+          keyHeader={t`Error category`}
+          valueHeader={t`Errors`}
+          items={analytics.functionErrorsByType}
+          formatValue={formatCount}
+        />
+      </StyledBreakdownGrid>
       <LogConsoleAppAnalyticsLineChartSection
         title={t`Rate limits`}
         description={t`API requests and job enqueues refused per day because the app exceeded its limits.`}
@@ -131,46 +204,16 @@ export const LogConsoleAppAnalyticsReport = ({
         series={revenueSeries}
         formatValue={formatUsageValue}
       />
-      <LogConsoleAppAnalyticsBreakdownTable
-        title={t`Errors by category`}
-        description={t`Logic function failures grouped by error category.`}
-        keyHeader={t`Error category`}
-        valueHeader={t`Errors`}
-        items={analytics.functionErrorsByType}
-        formatValue={formatCount}
-      />
-      <LogConsoleAppAnalyticsBreakdownTable
-        title={t`Errors by function`}
-        description={t`Logic function failures grouped by function.`}
-        keyHeader={t`Function`}
-        valueHeader={t`Errors`}
-        items={analytics.functionErrorsByFunction}
-        formatValue={formatCount}
-      />
-      <LogConsoleAppAnalyticsBreakdownTable
-        title={t`Executions by function`}
-        description={t`Logic function runs grouped by function.`}
-        keyHeader={t`Function`}
-        valueHeader={t`Executions`}
-        items={analytics.functionExecutionsByFunction}
-        formatValue={formatCount}
-      />
-      <LogConsoleAppAnalyticsBreakdownTable
-        title={t`Install failures by error code`}
-        description={t`Failed installs, upgrades and uninstalls grouped by error code.`}
-        keyHeader={t`Error code`}
-        valueHeader={t`Failures`}
-        items={analytics.lifecycleFailuresByErrorCode}
-        formatValue={formatCount}
-      />
-      <LogConsoleAppAnalyticsBreakdownTable
-        title={t`Revenue by operation`}
-        description={t`Credits charged grouped by the operation the app declared.`}
-        keyHeader={t`Operation`}
-        valueHeader={t`Credits`}
-        items={analytics.creditsChargedByOperation}
-        formatValue={formatUsageValue}
-      />
-    </>
+      <StyledBreakdownGrid>
+        <LogConsoleAppAnalyticsBreakdownTable
+          title={t`Revenue by operation`}
+          description={t`Credits charged grouped by the operation the app declared.`}
+          keyHeader={t`Operation`}
+          valueHeader={t`Credits`}
+          items={analytics.creditsChargedByOperation}
+          formatValue={formatUsageValue}
+        />
+      </StyledBreakdownGrid>
+    </StyledReport>
   );
 };

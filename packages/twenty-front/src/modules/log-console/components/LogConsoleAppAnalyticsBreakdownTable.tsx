@@ -7,7 +7,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type ApplicationRegistrationAnalyticsBreakdownItem } from '~/generated-metadata/graphql';
 
-const GRID_TEMPLATE_COLUMNS = '1fr 160px';
+const GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
 type LogConsoleAppAnalyticsBreakdownTableProps = {
   title: string;

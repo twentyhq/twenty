@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
 import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
@@ -27,7 +28,12 @@ export const LogConsoleAppAnalyticsLineChartSection = ({
   series,
   formatValue,
 }: LogConsoleAppAnalyticsLineChartSectionProps) => {
-  if (series.every((singleSeries) => singleSeries.data.length === 0)) {
+  // The overview already reports zero totals, and a flat zero line only adds noise
+  const hasActivity = series.some((singleSeries) =>
+    singleSeries.data.some((point) => isDefined(point.y) && point.y !== 0),
+  );
+
+  if (!hasActivity) {
     return null;
   }
 
