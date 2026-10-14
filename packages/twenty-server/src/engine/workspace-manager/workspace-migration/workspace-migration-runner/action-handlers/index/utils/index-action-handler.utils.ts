@@ -42,9 +42,15 @@ export const computeFlatIndexFieldColumnNames = ({
         );
       }
 
+      if (isMorphRelationHead(flatFieldMetadata)) {
+        throw new FlatEntityMapsException(
+          'Cannot index a relation field that has no join column',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
       if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
         if (
-          isMorphRelationHead(flatFieldMetadata) ||
           flatFieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
         ) {
           throw new FlatEntityMapsException(
