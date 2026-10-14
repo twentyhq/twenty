@@ -42,7 +42,7 @@ const INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH =
 
 // Type, label and display value are derived from field metadata when the
 // filters are loaded, and stale copies of them broke the filter editors
-@RegisteredWorkspaceCommand('2.48.0', 1791970596603)
+@RegisteredWorkspaceCommand('2.48.0', 1791986817506)
 @Command({
   name: 'upgrade:2-48:strip-derived-record-filter-properties',
   description:

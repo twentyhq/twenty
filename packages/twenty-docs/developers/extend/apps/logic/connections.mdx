@@ -45,6 +45,10 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app that returns a stable id for the
+  // upstream account, run before the tokens are saved. See "Identify the
+  // connected account".
+  // identifyAccountLogicFunction: { universalIdentifier: '2f1e0d9c-...-...' },
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
@@ -94,6 +98,100 @@ The OAuth callback URL your provider needs to whitelist is:
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Identify the connected account" description="Stop a reconnect from silently switching upstream accounts">
+
+When a user clicks **Reconnect**, nothing stops them from authorizing a different upstream account than the one the connection was made with: Slack workspace B instead of workspace A, another GitHub organization, another Google account. Without a way to tell the two apart, Twenty would overwrite A's tokens with B's and everything your app built on that connection would quietly start talking to B.
+
+Set `identifyAccountLogicFunction` to a logic function in the same app that returns a stable id for the account behind the freshly issued token:
+
+```ts src/connection-providers/slack-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+import { SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  identifyAccountLogicFunction: {
+    universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+**When it runs.** Synchronously inside the OAuth callback, right after the authorization code is exchanged for tokens and **before** anything is saved. The user is waiting on the redirect, so when the app is installed or synced Twenty caps the function's `timeoutSeconds` at 10, whatever the manifest declares; keep it to a single request to the provider's "who am I" endpoint. The on-connect hook, if any, still runs afterwards, once the connection is saved.
+
+**Payload.** The handler receives the provisional access token. It has not been persisted yet, so `getConnection` cannot return it; use it directly and do not log it.
+
+```ts
+type IdentifyAccountPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  accessToken: string;
+};
+```
+
+**Result.** Return the account's id, and optionally a handle to display:
+
+```ts
+type IdentifyAccountResult = {
+  externalAccountId: string | null; // non-empty, at most 512 characters; null opts out
+  handle?: string; // non-empty when present
+};
+```
+
+- `externalAccountId` must be stable for the life of the upstream account (a team id, an organization id, a user id), never a name the user can change. Twenty trims it and stores it on the connection on first connect.
+- `handle`, when returned, replaces the handle Twenty would otherwise derive (the OIDC `id_token` email, or the connecting user's email). Return something a user recognizes, such as the Slack workspace name.
+- Return `{ externalAccountId: null }` when the provider has no stable id to offer. Twenty then behaves as if no identify function were declared: no id is stored, a reconnect clears any id stored earlier, and reconnects are not checked. A bare `null` or a missing return is treated as an error, so a handler that forgets to return cannot silently disable the check.
+- If the function throws, times out, or returns anything else, the connection is **not** saved and the user lands back on the settings page with an error. Throw only when you genuinely cannot identify the account.
+
+**Reconnect refusal.** On a reconnect, Twenty compares the returned `externalAccountId` with the one stored on the connection. If they differ, the callback is refused before anything is written: the existing tokens, handle and visibility stay as they were, the on-connect hook does not run, and the user sees which account they authorized and which one the connection belongs to. Connections created before your app declared the function have no stored id yet; their next reconnect stores it.
+
+Twenty does not deduplicate on `externalAccountId`: connecting the same upstream account twice through **Add connection** creates two connections. The id is exposed on `listConnections` and `getConnection`, so an app that wants one connection per upstream account can detect duplicates itself (for instance in its on-connect hook).
+
+**Writing the function.** Most providers expose a single endpoint that describes the current token. For Slack that is `auth.test`, which returns the workspace (`team_id`, `team`) and the user behind the token:
+
+```ts src/logic-functions/slack-identify-account.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type {
+  IdentifyAccountPayload,
+  IdentifyAccountResult,
+} from 'twenty-sdk/logic-function';
+
+import { SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineLogicFunction({
+  universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'slack-identify-account',
+  timeoutSeconds: 10,
+  handler: async ({
+    accessToken,
+  }: IdentifyAccountPayload): Promise<IdentifyAccountResult> => {
+    const response = await fetch('https://slack.com/api/auth.test', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const { ok, error, team_id, team } = await response.json();
+
+    if (!ok) {
+      throw new Error(`auth.test failed: ${error}`);
+    }
+
+    return { externalAccountId: team_id, handle: team };
+  },
+});
+```
+
+Other providers follow the same pattern, whether their "who am I" endpoint is REST or GraphQL. Throw when the provider rejects the token, and return the id as a string: convert numeric ids, such as GitHub user ids, with `String(id)`.
+
+Identification ships with Twenty 2.48.0. If your app relies on it, declare `"engines": { "twenty": ">=2.48.0" }` in its `package.json`.
 
 </Accordion>
 
@@ -225,7 +323,8 @@ Each connection has:
 | `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                                                                                                                                             |
 | `accessToken`       | Fresh OAuth access token (refreshed automatically if expired)                                                                                                                                                              |
 | `name`              | The connection's display name (auto-derived at OAuth callback, user-renameable)                                                                                                                                            |
-| `handle`            | The connected upstream account's email, refreshed on each reconnect; resolved from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider doesn't return one |
+| `handle`            | The connected upstream account's label, refreshed on each reconnect: the `handle` returned by the identify function when there is one, otherwise the email from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email |
+| `externalAccountId` | Stable id of the upstream account returned by the identify function, or `null` when the provider declares none or the connection predates it. Not unique: use it to deduplicate connections yourself                         |
 | `authFailedAt`      | Set when the most recent refresh failed, or when the app reported the credential dead via `reportConnectionAuthFailure`; the user must reconnect                                                                           |
 | `authFailedReason`  | Human-readable explanation for `authFailedAt`, when the reporter gave one; shown on the connection detail page in settings                                                                                                 |
 
