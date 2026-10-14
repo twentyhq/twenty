@@ -24,6 +24,9 @@ const getHeroImage = () =>
     screen.getByRole('button', { name: 'View screenshot in full screen' }),
   ).getByRole('img');
 
+const getThumbnailImage = (name: string) =>
+  within(screen.getByRole('button', { name })).getByRole('presentation');
+
 describe('SettingsApplicationScreenshotGallery', () => {
   it('shows the selected screenshot in the hero', async () => {
     renderGallery();
@@ -42,20 +45,16 @@ describe('SettingsApplicationScreenshotGallery', () => {
       screen.getByRole('button', { name: 'Stripe screenshot 2' }),
     );
 
-    const firstThumbnailImage = screen
-      .getByRole('button', { name: 'Stripe screenshot 1' })
-      .querySelector('img');
-
-    expect(firstThumbnailImage).not.toBeNull();
-
-    fireEvent.error(firstThumbnailImage as HTMLImageElement);
+    fireEvent.error(getThumbnailImage('Stripe screenshot 1'));
 
     expect(getHeroImage()).toHaveAttribute('src', SECOND_SCREENSHOT);
+    expect(getThumbnailImage('Stripe screenshot 1')).toHaveAttribute(
+      'src',
+      SECOND_SCREENSHOT,
+    );
     expect(
-      screen
-        .getByRole('button', { name: 'Stripe screenshot 1', pressed: true })
-        .querySelector('img'),
-    ).toHaveAttribute('src', SECOND_SCREENSHOT);
+      screen.getByRole('button', { name: 'Stripe screenshot 1' }),
+    ).toHaveAttribute('aria-pressed', 'true');
     expect(
       screen.queryByRole('button', { name: 'Stripe screenshot 3' }),
     ).not.toBeInTheDocument();
