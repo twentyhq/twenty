@@ -36,7 +36,7 @@ const createDropCursorView = (view: EditorView) => {
       return;
     }
 
-    const cursorRect = getDropCursorRect(view, position);
+    const cursorRect = getDropCursorRect({ view, position });
     const containerRect = container.getBoundingClientRect();
 
     cursorPosition = position;
@@ -55,11 +55,11 @@ const createDropCursorView = (view: EditorView) => {
       return;
     }
 
-    const position = getDropPosition(
+    const position = getDropPosition({
       view,
-      lastDragOverCoordinates,
-      view.dragging?.slice,
-    );
+      coordinates: lastDragOverCoordinates,
+      slice: view.dragging?.slice,
+    });
 
     if (isDefined(position)) {
       renderCursor(position);
@@ -124,11 +124,11 @@ export const DropCursor = Extension.create({
               return false;
             }
 
-            const position = getDropPosition(
+            const position = getDropPosition({
               view,
-              { left: event.clientX, top: event.clientY },
+              coordinates: { left: event.clientX, top: event.clientY },
               slice,
-            );
+            });
 
             if (!isDefined(position)) {
               return false;
@@ -158,7 +158,7 @@ export const DropCursor = Extension.create({
             const isDroppedNodeSelectable =
               isDefined(droppedNode) &&
               NodeSelection.isSelectable(droppedNode) &&
-              $insertPosition.nodeAfter?.sameMarkup(droppedNode) === true;
+              ($insertPosition.nodeAfter?.sameMarkup(droppedNode) ?? false);
 
             transaction.setSelection(
               isDroppedNodeSelectable

@@ -73,10 +73,10 @@ export const AdvancedTextEditorBlockHandle = ({
 
     return {
       getBoundingClientRect: () =>
-        getBlockHandleAnchorRect(
+        getBlockHandleAnchorRect({
           blockElement,
-          handleSlotRef.current?.offsetHeight ?? 0,
-        ),
+          handleHeight: handleSlotRef.current?.offsetHeight ?? 0,
+        }),
     };
   };
 

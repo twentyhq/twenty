@@ -28,13 +28,12 @@ export const listItem = (
     >
       {(node.content ?? []).map((childNode, index) =>
         childNode.type === TIPTAP_NODE_TYPES.PARAGRAPH ? (
-          <span
+          <div
             key={index}
             style={{ color: textColor, ...blockStyle(childNode.attrs?.style) }}
           >
-            {index > 0 && <br />}
             {mappedNodeContent(childNode, inherited)}
-          </span>
+          </div>
         ) : (
           <Fragment key={index}>
             {mappedNodeContent({ content: [childNode] }, inherited)}

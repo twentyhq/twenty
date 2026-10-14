@@ -28,7 +28,9 @@ const recordInsertedHtmlPositions = (editor: Editor) => {
   const positions: (number | null)[] = [];
 
   editor.on('transaction', ({ transaction }) => {
-    positions.push(getInsertedNodePosition(transaction, 'html'));
+    positions.push(
+      getInsertedNodePosition({ transaction, nodeTypeName: 'html' }),
+    );
   });
 
   return positions;

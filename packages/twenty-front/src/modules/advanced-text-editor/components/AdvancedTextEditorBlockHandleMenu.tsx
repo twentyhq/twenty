@@ -1,12 +1,12 @@
 import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnIntoBlockOptions';
 import { isAdvancedTextEditorBlockNodeType } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
+import { getTurnIntoSelection } from '@/advanced-text-editor/utils/getTurnIntoSelection';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
-import { TextSelection } from '@tiptap/pm/state';
 import { useId } from 'react';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -84,13 +84,15 @@ export const AdvancedTextEditorBlockHandleMenu = ({
   };
 
   const handleTurnIntoOpenChange = (isOpen: boolean) => {
-    if (isOpen) {
-      editor.view.dispatch(
-        editor.state.tr.setSelection(
-          TextSelection.near(editor.state.doc.resolve(blockPos + 1)),
-        ),
-      );
+    if (!isOpen) {
+      return;
     }
+
+    editor.view.dispatch(
+      editor.state.tr.setSelection(
+        getTurnIntoSelection({ doc: editor.state.doc, blockPos }),
+      ),
+    );
   };
 
   const handleDelete = () =>

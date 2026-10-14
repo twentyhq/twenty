@@ -55,11 +55,11 @@ describe('getDropPosition', () => {
     hover(editor, { pos: 12, inside: 7 });
 
     expect(
-      getDropPosition(
-        editor.view,
-        { left: 0, top: UPPER_HALF_TOP },
-        createBlockSlice(editor, paragraph('Dragged')),
-      ),
+      getDropPosition({
+        view: editor.view,
+        coordinates: { left: 0, top: UPPER_HALF_TOP },
+        slice: createBlockSlice(editor, paragraph('Dragged')),
+      }),
     ).toBe(7);
     editor.destroy();
   });
@@ -70,11 +70,11 @@ describe('getDropPosition', () => {
     hover(editor, { pos: 8, inside: 7 });
 
     expect(
-      getDropPosition(
-        editor.view,
-        { left: 0, top: LOWER_HALF_TOP },
-        createBlockSlice(editor, paragraph('Dragged')),
-      ),
+      getDropPosition({
+        view: editor.view,
+        coordinates: { left: 0, top: LOWER_HALF_TOP },
+        slice: createBlockSlice(editor, paragraph('Dragged')),
+      }),
     ).toBe(15);
     editor.destroy();
   });
@@ -89,11 +89,11 @@ describe('getDropPosition', () => {
     hover(editor, { pos: 8, inside: 7 });
 
     expect(
-      getDropPosition(
-        editor.view,
-        { left: 0, top: LOWER_HALF_TOP },
-        createBlockSlice(editor, paragraph('Dragged')),
-      ),
+      getDropPosition({
+        view: editor.view,
+        coordinates: { left: 0, top: LOWER_HALF_TOP },
+        slice: createBlockSlice(editor, paragraph('Dragged')),
+      }),
     ).toBe(8);
     editor.destroy();
   });
@@ -106,11 +106,11 @@ describe('getDropPosition', () => {
     hover(editor, { pos: 4, inside: 2 });
 
     expect(
-      getDropPosition(
-        editor.view,
-        { left: 0, top: LOWER_HALF_TOP },
-        createBlockSlice(editor, listItem('Dragged')),
-      ),
+      getDropPosition({
+        view: editor.view,
+        coordinates: { left: 0, top: LOWER_HALF_TOP },
+        slice: createBlockSlice(editor, listItem('Dragged')),
+      }),
     ).toBe(8);
     editor.destroy();
   });
@@ -121,11 +121,11 @@ describe('getDropPosition', () => {
     hover(editor, { pos: 8, inside: 0 });
 
     expect(
-      getDropPosition(
-        editor.view,
-        { left: 0, top: LOWER_HALF_TOP },
-        editor.state.doc.slice(1, 6),
-      ),
+      getDropPosition({
+        view: editor.view,
+        coordinates: { left: 0, top: LOWER_HALF_TOP },
+        slice: editor.state.doc.slice(1, 6),
+      }),
     ).toBe(8);
     editor.destroy();
   });
@@ -136,11 +136,11 @@ describe('getDropPosition', () => {
     hover(editor, { pos: 15, inside: -1 });
 
     expect(
-      getDropPosition(
-        editor.view,
-        { left: 0, top: UPPER_HALF_TOP },
-        createBlockSlice(editor, paragraph('Dragged')),
-      ),
+      getDropPosition({
+        view: editor.view,
+        coordinates: { left: 0, top: UPPER_HALF_TOP },
+        slice: createBlockSlice(editor, paragraph('Dragged')),
+      }),
     ).toBe(15);
     editor.destroy();
   });

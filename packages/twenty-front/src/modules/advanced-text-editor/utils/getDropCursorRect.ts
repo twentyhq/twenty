@@ -19,7 +19,15 @@ const getLineTop = (rectBefore: DOMRect | null, rectAfter: DOMRect | null) => {
   return rectBefore?.bottom ?? rectAfter?.top ?? null;
 };
 
-export const getDropCursorRect = (view: EditorView, position: number) => {
+type GetDropCursorRectArgs = {
+  view: EditorView;
+  position: number;
+};
+
+export const getDropCursorRect = ({
+  view,
+  position,
+}: GetDropCursorRectArgs) => {
   const $position = view.state.doc.resolve(position);
   const { nodeBefore, nodeAfter } = $position;
 

@@ -30,10 +30,10 @@ export const EmailEditorHtmlBlockSettingsEffect = ({
         return;
       }
 
-      const insertedHtmlBlockPosition = getInsertedNodePosition(
+      const insertedHtmlBlockPosition = getInsertedNodePosition({
         transaction,
-        TIPTAP_NODE_TYPES.HTML,
-      );
+        nodeTypeName: TIPTAP_NODE_TYPES.HTML,
+      });
 
       if (!isDefined(insertedHtmlBlockPosition)) {
         return;
