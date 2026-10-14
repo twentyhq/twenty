@@ -33,15 +33,23 @@ export const SettingsBillingLimitUsageSelect = ({
 }: SettingsBillingLimitUsageSelectProps) => {
   const { t } = useLingui();
 
-  const operationLabel = isDefined(operationType)
-    ? t(USAGE_OPERATION_TYPE_LABELS[operationType])
-    : t`All operations`;
+  const getSelectedLabel = (): string => {
+    if (!isDefined(resourceType)) {
+      return t`Choose a usage`;
+    }
 
-  const selectedLabel = !isDefined(resourceType)
-    ? t`Choose a usage`
-    : resourceType === UsageResourceType.ALL
-      ? t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])
-      : `${t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])} · ${operationLabel}`;
+    const resourceLabel = t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType]);
+
+    if (resourceType === UsageResourceType.ALL) {
+      return resourceLabel;
+    }
+
+    const operationLabel = isDefined(operationType)
+      ? t(USAGE_OPERATION_TYPE_LABELS[operationType])
+      : t`All operations`;
+
+    return `${resourceLabel} · ${operationLabel}`;
+  };
 
   const operationDefinitions = definitions.definitions.filter(
     (definition) => definition.resourceType !== UsageResourceType.ALL,
@@ -51,7 +59,7 @@ export const SettingsBillingLimitUsageSelect = ({
     <SettingsBillingLimitNestedSelect
       dropdownId={USAGE_DROPDOWN_ID}
       label={t`Usage`}
-      selectedLabel={selectedLabel}
+      selectedLabel={getSelectedLabel()}
       SelectedIcon={
         isDefined(resourceType)
           ? USAGE_LIMIT_RESOURCE_TYPE_ICONS[resourceType]
