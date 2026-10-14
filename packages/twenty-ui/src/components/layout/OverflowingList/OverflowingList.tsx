@@ -3,7 +3,12 @@ import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { useStableCallback } from '@base-ui/utils/useStableCallback';
 import { isFunction, isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { type ComponentProps, useRef, useState } from 'react';
+import {
+  type ComponentProps,
+  type SyntheticEvent,
+  useRef,
+  useState,
+} from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -19,6 +24,8 @@ import { type OverflowingListProps } from './types/OverflowingListProps';
 type PopoverActions = NonNullable<
   ComponentProps<typeof Popover.Root>['actionsRef']
 >['current'];
+
+const stopPropagation = (event: SyntheticEvent) => event.stopPropagation();
 
 export const OverflowingList = ({
   children,
@@ -156,6 +163,11 @@ export const OverflowingList = ({
                 type="button"
                 aria-label={`+${hiddenItemCount} ${overflowLabel}`}
                 {...triggerProps}
+                onClick={triggerProps?.onClick ?? stopPropagation}
+                onMouseDown={triggerProps?.onMouseDown ?? stopPropagation}
+                onPointerDown={triggerProps?.onPointerDown ?? stopPropagation}
+                onKeyDown={triggerProps?.onKeyDown ?? stopPropagation}
+                onKeyUp={triggerProps?.onKeyUp ?? stopPropagation}
                 ref={mergedTriggerRef}
                 className={(state) =>
                   clsx(
@@ -182,6 +194,11 @@ export const OverflowingList = ({
                 <Popover.Popup
                   aria-label={overflowLabel}
                   {...popupProps}
+                  onClick={popupProps?.onClick ?? stopPropagation}
+                  onMouseDown={popupProps?.onMouseDown ?? stopPropagation}
+                  onPointerDown={popupProps?.onPointerDown ?? stopPropagation}
+                  onKeyDown={popupProps?.onKeyDown ?? stopPropagation}
+                  onKeyUp={popupProps?.onKeyUp ?? stopPropagation}
                   ref={mergedPopupRef}
                   render={(renderProps, state) => (
                     <OverflowingListPopupTarget

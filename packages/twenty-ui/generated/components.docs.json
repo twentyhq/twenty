@@ -11940,7 +11940,7 @@
         "type": "Omit<PopoverPopupProps, \"children\">",
         "required": false,
         "defaultValue": null,
-        "description": "Popover.Popup native props, handlers, ref, render composition and focus options for the overflow content."
+        "description": "Popover.Popup native props, handlers, ref, render composition and focus options for the overflow content. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default."
       },
       {
         "name": "ref",
@@ -11961,7 +11961,7 @@
         "type": "Omit<\n      ComponentPropsWithRef<typeof Popover.Trigger>,\n      'handle' | 'payload' | 'ref'\n    > & { ref?: Ref<HTMLElement> }",
         "required": false,
         "defaultValue": null,
-        "description": "Popover.Trigger native props, handlers, ref, children and render composition for the count button. Custom components must forward supplied props and ref."
+        "description": "Popover.Trigger native props, handlers, ref, children and render composition for the count button. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default. Custom components must forward supplied props and ref."
       }
     ]
   },

@@ -16,9 +16,9 @@ export const OVERFLOWING_LIST_PROP_DESCRIPTIONS = {
   onOpenChange:
     'Receives the requested open state and unchanged Base UI event details, including reason, event, trigger, cancel() and preventUnmountOnClose().',
   triggerProps:
-    'Popover.Trigger native props, handlers, ref, children and render composition for the count button. Custom components must forward supplied props and ref.',
+    'Popover.Trigger native props, handlers, ref, children and render composition for the count button. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default. Custom components must forward supplied props and ref.',
   popupProps:
-    'Popover.Popup native props, handlers, ref, render composition and focus options for the overflow content.',
+    'Popover.Popup native props, handlers, ref, render composition and focus options for the overflow content. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default.',
   ref: 'Ref forwarded to the compact row root div.',
 } satisfies Partial<
   Record<keyof ComponentProps<typeof OverflowingList>, string>

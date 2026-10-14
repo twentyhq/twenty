@@ -99,9 +99,9 @@ Native `div` attributes, handlers, styles, class names and refs on `OverflowingL
 
 Customize the trigger with `triggerProps.render`, as in the controlled example, or supply `triggerProps.children` to replace `+N`. Custom components must [forward the supplied props and ref](/ui/primitives/overview#custom-components). Custom popup components must also render the supplied children; OverflowingList owns the item content. `overflowLabel` defaults to "Show all items". The default button's accessible name combines its count and that label, for example "+3 Show all teams". Override `triggerProps['aria-label']` or `popupProps['aria-label']` when their content needs a different name.
 
-Caller handlers remain available, and trigger/popup events can reach the surrounding React tree. Popup handlers follow React event propagation, including portal ancestry. A custom popup component owns its internal handlers. A clickable field host can stop the specific interactions it needs through its own handlers or the trigger/popup props.
+`OverflowingList` stops `click`, `mousedown`, `pointerdown`, `keydown` and `keyup` propagation on the trigger and popup by default. This keeps opening the popup and interacting with its items from activating a surrounding field or picker. A handler supplied through `triggerProps` or `popupProps` replaces the default for that event. Call `event.stopPropagation()` in your handler to retain blocking, or omit it to allow that event to bubble. Other events keep their defaults. Handlers on a custom `render` element compose with the supplied props as usual.
 
-With the installed Base UI portal, a popup click can reach a surrounding React ancestor twice with the same native event. This also occurs with a plain `Popover`. OverflowingList preserves that upstream propagation behavior; it does not guarantee one ancestor callback per native popup event.
+When a popup click override allows bubbling, the installed Base UI portal can dispatch that click to a surrounding React ancestor twice with the same native event. This also occurs with a plain `Popover`. OverflowingList preserves that upstream behavior; it does not guarantee one ancestor callback per native popup event when bubbling is enabled.
 
 ## Keyboard and focus
 
@@ -119,7 +119,7 @@ Hydration reuses the provisional row and applies responsive measurement after cl
 
 ## Migration
 
-The popup continues to show the complete list and uses "Show all items" by default. `showOverflowCount={false}` preserves the clipped row and hides the count. It does not dismiss an already-open popup. Host event suppression belongs in caller handlers rather than being applied to every trigger and popup event.
+The popup continues to show the complete list and uses "Show all items" by default. `showOverflowCount={false}` preserves the clipped row and hides the count. It does not dismiss an already-open popup. The trigger and popup retain their default blocking for click, mousedown, pointerdown, keydown and keyup. Override an individual handler through `triggerProps` or `popupProps` when the surrounding interface should receive that event.
 
 ## Props
 

@@ -26,8 +26,6 @@ const OverflowingListExample = () => {
         >
           <OverflowingList
             showOverflowCount
-            triggerProps={{ onClick: (event) => event.stopPropagation() }}
-            popupProps={{ onClick: (event) => event.stopPropagation() }}
             maxInlineCount={2}
             overflowLabel="Show all targets"
           >

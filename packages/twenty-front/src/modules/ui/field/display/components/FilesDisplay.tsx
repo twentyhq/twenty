@@ -1,4 +1,3 @@
-import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { useLingui } from '@lingui/react/macro';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
@@ -52,11 +51,7 @@ export const FilesDisplay = ({
   }
 
   return (
-    <OverflowingList
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
-      overflowLabel={t`Show all items`}
-    >
+    <OverflowingList overflowLabel={t`Show all items`}>
       {value.map((file) => (
         <FileChip
           key={file.fileId}

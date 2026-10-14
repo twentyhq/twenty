@@ -19,11 +19,11 @@ export const OverflowingListTriggerRefExample = () => {
           ref: (element) => {
             triggerRef.current = element;
           },
-        }}
-        onKeyDown={(event) => {
-          if (event.key === 'r') {
-            setRenderCount((currentCount) => currentCount + 1);
-          }
+          onKeyDown: (event) => {
+            if (event.key === 'r') {
+              setRenderCount((currentCount) => currentCount + 1);
+            }
+          },
         }}
       >
         {OVERFLOWING_LIST_STORY_ITEMS}

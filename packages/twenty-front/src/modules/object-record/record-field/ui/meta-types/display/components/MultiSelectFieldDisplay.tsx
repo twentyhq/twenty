@@ -1,4 +1,3 @@
-import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { useLingui } from '@lingui/react/macro';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectFieldDisplay';
@@ -23,8 +22,6 @@ export const MultiSelectFieldDisplay = () => {
 
   return (
     <OverflowingList
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
       overflowLabel={t`Show all items`}
       showOverflowCount={isFocused}
     >

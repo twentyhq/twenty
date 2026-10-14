@@ -1,4 +1,3 @@
-import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { useLingui } from '@lingui/react/macro';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -54,12 +53,7 @@ export const PhonesDisplay = ({
   };
 
   return isFocused ? (
-    <OverflowingList
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
-      overflowLabel={t`Show all items`}
-      showOverflowCount
-    >
+    <OverflowingList overflowLabel={t`Show all items`} showOverflowCount>
       {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
           parsePhoneNumberOrReturnInvalidValue(callingCode + number);

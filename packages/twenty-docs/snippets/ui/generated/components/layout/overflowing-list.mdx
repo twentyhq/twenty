@@ -36,7 +36,7 @@
 </ParamField>
 
 <ParamField body="popupProps" type="Omit&lt;PopoverPopupProps, &quot;children&quot;&gt;">
-  Popover.Popup native props, handlers, ref, render composition and focus options for the overflow content.
+  Popover.Popup native props, handlers, ref, render composition and focus options for the overflow content. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default.
 </ParamField>
 
 <ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
@@ -51,5 +51,5 @@
       ComponentPropsWithRef&lt;typeof Popover.Trigger&gt;,
       'handle' | 'payload' | 'ref'
     &gt; &amp; { ref?: Ref&lt;HTMLElement&gt; }">
-  Popover.Trigger native props, handlers, ref, children and render composition for the count button. Custom components must forward supplied props and ref.
+  Popover.Trigger native props, handlers, ref, children and render composition for the count button. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default. Custom components must forward supplied props and ref.
 </ParamField>

@@ -39,6 +39,9 @@ export const overflowingListApiTest: TwentyUiGalleryPlayFunction = async ({
     ),
   );
   await expect(
+    canvas.getByLabelText('Overflow trigger click'),
+  ).toHaveTextContent('click');
+  await expect(
     canvas.getByLabelText('Overflow parent activations'),
   ).toHaveTextContent('1');
   await waitFor(() =>

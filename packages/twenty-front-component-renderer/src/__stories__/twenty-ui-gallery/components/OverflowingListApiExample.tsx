@@ -10,6 +10,7 @@ export const OverflowingListApiExample = () => {
   const [nativeTargets, setNativeTargets] = useState('unread');
   const [parentActivations, setParentActivations] = useState(0);
   const [lastPopupClick, setLastPopupClick] = useState('none');
+  const [lastTriggerClick, setLastTriggerClick] = useState('none');
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -51,6 +52,7 @@ export const OverflowingListApiExample = () => {
             ref: triggerRef,
             render: <Button variant="outline" data-native-trigger="custom" />,
             'aria-label': 'Custom overflow trigger',
+            onClick: (event) => setLastTriggerClick(event.nativeEvent.type),
           }}
           popupProps={{
             ref: popupRef,
@@ -89,6 +91,7 @@ export const OverflowingListApiExample = () => {
       >
         {[<Button key="initial">Initially hidden item</Button>]}
       </OverflowingList>
+      <output aria-label="Overflow trigger click">{lastTriggerClick}</output>
       <output aria-label="Overflow popup click">{lastPopupClick}</output>
       <output aria-label="Overflow open changes">{lastChange}</output>
       <output aria-label="Overflow native targets">{nativeTargets}</output>

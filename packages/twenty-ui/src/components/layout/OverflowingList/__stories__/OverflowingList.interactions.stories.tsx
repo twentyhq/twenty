@@ -1,6 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createRef, StrictMode } from 'react';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -13,6 +20,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { OverflowingList } from '../OverflowingList';
 import { type OverflowingListProps } from '../types/OverflowingListProps';
 import { OVERFLOWING_LIST_STORY_ITEMS } from './OVERFLOWING_LIST_STORY_ITEMS';
+import { OverflowingListEventBlockingExample } from './OverflowingListEventBlockingExample';
 import { OverflowingListCanceledCloseExample } from './OverflowingListCanceledCloseExample';
 import { OverflowingListControlledExample } from './OverflowingListControlledExample';
 import { OverflowingListControlledStateExample } from './OverflowingListControlledStateExample';
@@ -26,6 +34,8 @@ import { OverflowingListStateExample } from './OverflowingListStateExample';
 import { OverflowingListResizeExample } from './OverflowingListResizeExample';
 import { expectOverflowingListPopupGeometry } from './expectOverflowingListPopupGeometry';
 
+const onEventHost = fn();
+const onEventOverride = fn();
 const onHostClick = fn();
 const onHostMouseDown = fn();
 const onHostKeyDown = fn();
@@ -67,6 +77,8 @@ const meta: Meta<typeof OverflowingList> = {
     style: { width: 180, alignSelf: 'center' },
   },
   beforeEach: () => {
+    onEventHost.mockClear();
+    onEventOverride.mockClear();
     onHostClick.mockClear();
     onHostMouseDown.mockClear();
     onHostKeyDown.mockClear();
@@ -480,6 +492,8 @@ export const NativeCompositionAndPropagation: Story = {
     expect(onPopupClick).not.toHaveBeenCalled();
     expect(onPopupRenderClick).not.toHaveBeenCalled();
     onItemClick.mockClear();
+    onHostMouseDown.mockClear();
+    onHostKeyDown.mockClear();
     await userEvent.click(trigger);
     const dialog = await body.findByRole('dialog', {
       name: 'Show all items',
@@ -524,8 +538,87 @@ export const NativeCompositionAndPropagation: Story = {
     );
 
     expect(onHostClick).toHaveBeenCalled();
-    expect(onHostMouseDown).toHaveBeenCalled();
-    expect(onHostKeyDown).toHaveBeenCalled();
+    expect(onHostMouseDown).not.toHaveBeenCalled();
+    expect(onHostKeyDown).not.toHaveBeenCalled();
+  },
+};
+
+export const DefaultEventBlockingAndOverrides: Story = {
+  render: () => (
+    <OverflowingListEventBlockingExample
+      onHostEvent={onEventHost}
+      onOverrideEvent={onEventOverride}
+    />
+  ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    const document = canvasElement.ownerDocument;
+    const trigger = await canvas.findByRole('button', {
+      name: /Show all items$/,
+    });
+    const dialog = await within(document.body).findByRole('dialog', {
+      name: 'Show all items',
+    });
+    const onDocumentMouseDown = fn();
+    const eventNames = [
+      'click',
+      'mouseDown',
+      'pointerDown',
+      'keyDown',
+      'keyUp',
+    ] as const;
+
+    await waitFor(() => expect(dialog).toBeVisible());
+    document.addEventListener('mousedown', onDocumentMouseDown);
+
+    try {
+      for (const overrideEvent of [undefined, ...eventNames]) {
+        await userEvent.click(
+          canvas.getByRole('button', {
+            name: isDefined(overrideEvent)
+              ? `Allow ${overrideEvent}`
+              : 'Default blocking',
+          }),
+        );
+
+        for (const target of [trigger, dialog]) {
+          for (const eventName of eventNames) {
+            await step(
+              `${target === trigger ? 'Trigger' : 'Popup'} ${eventName} with ${overrideEvent ?? 'default'} blocking`,
+              async () => {
+                onEventHost.mockClear();
+                onEventOverride.mockClear();
+                onDocumentMouseDown.mockClear();
+                await fireEvent[eventName](target, { key: 'a' });
+
+                if (eventName === overrideEvent) {
+                  expect(onEventOverride).toHaveBeenCalledWith(
+                    expect.objectContaining({ target }),
+                  );
+                  expect(onEventHost).toHaveBeenCalledWith(
+                    expect.objectContaining({ target }),
+                  );
+
+                  if (eventName === 'mouseDown') {
+                    expect(onDocumentMouseDown).toHaveBeenCalledWith(
+                      expect.objectContaining({ target }),
+                    );
+                  }
+
+                  return;
+                }
+
+                expect(onEventOverride).not.toHaveBeenCalled();
+                expect(onEventHost).not.toHaveBeenCalled();
+                expect(onDocumentMouseDown).not.toHaveBeenCalled();
+              },
+            );
+          }
+        }
+      }
+    } finally {
+      document.removeEventListener('mousedown', onDocumentMouseDown);
+    }
   },
 };
 

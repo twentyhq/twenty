@@ -1,4 +1,3 @@
-import { OVERFLOWING_LIST_EVENT_ISOLATION_PROPS } from '@/ui/layout/overflowing-list/constants/OverflowingListEventIsolationProps';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 
@@ -91,8 +90,6 @@ export const RelationFromManyFieldDisplay = () => {
 
     return (
       <OverflowingList
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
         overflowLabel={t`Show all items`}
         showOverflowCount={isFocused}
         maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
@@ -112,8 +109,6 @@ export const RelationFromManyFieldDisplay = () => {
 
   return (
     <OverflowingList
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...OVERFLOWING_LIST_EVENT_ISOLATION_PROPS}
       overflowLabel={t`Show all items`}
       showOverflowCount={isFocused}
       maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
