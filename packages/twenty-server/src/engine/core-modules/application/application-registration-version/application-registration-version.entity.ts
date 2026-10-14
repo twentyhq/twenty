@@ -12,7 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_APPLICATION_REGISTRATION_VERSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/add-application-registration-versions-upgrade-command-name.constant';
+import { ADD_APPLICATION_REGISTRATION_VERSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-48/add-application-registration-versions-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationVersionReviewState } from 'src/engine/core-modules/application/application-registration-version/enums/application-registration-version-review-state.enum';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
