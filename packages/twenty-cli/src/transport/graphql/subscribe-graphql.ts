@@ -9,12 +9,12 @@ import {
   createRedirectError,
   toTransportError,
 } from '@/transport/create-target-fetch';
-import { createHttpStatusError } from '@/transport/create-http-status-error';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 import { GRAPHQL_ENDPOINT_PATHS } from '@/transport/graphql/constants/graphql-endpoint-paths.constant';
 import { createGraphqlError } from '@/transport/graphql/create-graphql-error';
 import { parseGraphqlResponse } from '@/transport/graphql/parse-graphql-response';
 import { readEventStream } from '@/transport/graphql/read-event-stream';
+import { readGraphqlStreamError } from '@/transport/graphql/read-graphql-stream-error';
 import { readBoundedBody } from '@/transport/read-bounded-body';
 import { resolveRequestUrl } from '@/transport/resolve-request-url';
 
@@ -91,34 +91,27 @@ export const subscribeGraphql = async ({
       });
       throw invalidStream('The server did not return a GraphQL event stream.');
     }
+    if (!response.ok) {
+      throw await readGraphqlStreamError({
+        response,
+        target,
+        signal: requestSignal,
+      });
+    }
     if (!isDefined(response.body)) {
       throw invalidStream('The server returned an empty log stream.');
     }
-    const assertSuccessfulResponse = () => {
-      if (!response.ok) {
-        throw createHttpStatusError({
-          status: response.status,
-          headers: response.headers,
-          body: undefined,
-          target,
-        });
-      }
-    };
-    if (response.ok) {
-      clearTimeout(timer);
-      await onConnected();
-    }
+    clearTimeout(timer);
+    await onConnected();
 
     for await (const message of readEventStream({
       body: response.body,
       signal: requestSignal,
     })) {
       if (message.event === 'complete') {
-        assertSuccessfulResponse();
         return;
       }
       if (message.event !== 'next') {
-        assertSuccessfulResponse();
         throw invalidStream(
           'The server returned an unsupported GraphQL stream event.',
         );
@@ -127,11 +120,9 @@ export const subscribeGraphql = async ({
       try {
         payload = JSON.parse(message.data);
       } catch {
-        assertSuccessfulResponse();
         throw invalidStream('The log stream contains invalid JSON.');
       }
       if (!isPlainObject(payload)) {
-        assertSuccessfulResponse();
         throw invalidStream(
           'The log stream contains an invalid GraphQL result.',
         );
@@ -145,14 +136,12 @@ export const subscribeGraphql = async ({
           target,
         });
       }
-      assertSuccessfulResponse();
       if (!('data' in payload)) {
         throw invalidStream('The log stream contains no GraphQL data.');
       }
       await onData(payload.data);
     }
 
-    assertSuccessfulResponse();
     throw new CliError({
       code: 'NETWORK_ERROR',
       message: 'The log stream ended without a completion event.',

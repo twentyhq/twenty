@@ -14,6 +14,20 @@ it.each([
   {
     status: 401,
     contentType: 'text/event-stream',
+    body: '',
+    code: 'AUTH_REQUIRED',
+    message: undefined,
+  },
+  {
+    status: 200,
+    contentType: 'text/event-stream',
+    body: 'event: next\ndata: {"errors":[{"message":"Subscription denied."}]}\n\n',
+    code: 'GRAPHQL_ERROR',
+    message: 'Subscription denied.',
+  },
+  {
+    status: 401,
+    contentType: 'text/event-stream',
     body: 'event: next\ndata: {invalid\n\n',
     code: 'AUTH_REQUIRED',
     message: undefined,
@@ -108,7 +122,7 @@ it.each([
           : {}),
       });
       expect(onData).not.toHaveBeenCalled();
-      expect(onConnected).not.toHaveBeenCalled();
+      expect(onConnected).toHaveBeenCalledTimes(status === 200 ? 1 : 0);
       expect(server.requests).toHaveLength(1);
     } finally {
       await server.close();
