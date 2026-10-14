@@ -423,7 +423,7 @@ export const LogConsole = () => {
   const handleResizeStart = (height: number) => {
     setIsResizing(true);
 
-    if (height > 0 && logConsoleDisplayMode === 'collapsed') {
+    if (height > 0 && !isOpen) {
       openLogConsole();
     }
   };

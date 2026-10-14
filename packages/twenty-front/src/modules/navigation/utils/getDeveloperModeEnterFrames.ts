@@ -12,24 +12,27 @@ const getCodeFontSweepFrames = (text: string): DeveloperModeTypingFrame[] =>
 
 const getTypedFrames = (text: string) =>
   Array.from({ length: text.length }, (_, index) =>
-    getDeveloperModeCodeFontFrame(
-      text.slice(0, index + 1),
-      DEVELOPER_MODE_TYPING_DELAYS_IN_MS.typedLetter,
-    ),
+    getDeveloperModeCodeFontFrame({
+      text: text.slice(0, index + 1),
+      delayAfterMs: DEVELOPER_MODE_TYPING_DELAYS_IN_MS.typedLetter,
+    }),
   );
 
 const getErasedFrames = (text: string) =>
   Array.from({ length: text.length }, (_, index) =>
-    getDeveloperModeCodeFontFrame(
-      text.slice(0, text.length - index - 1),
-      DEVELOPER_MODE_TYPING_DELAYS_IN_MS.erasedLetter,
-    ),
+    getDeveloperModeCodeFontFrame({
+      text: text.slice(0, text.length - index - 1),
+      delayAfterMs: DEVELOPER_MODE_TYPING_DELAYS_IN_MS.erasedLetter,
+    }),
   );
 
-const holdLastFrame = (
-  frames: DeveloperModeTypingFrame[],
-  holdMs: number,
-): DeveloperModeTypingFrame[] =>
+const holdLastFrame = ({
+  frames,
+  holdMs,
+}: {
+  frames: DeveloperModeTypingFrame[];
+  holdMs: number;
+}): DeveloperModeTypingFrame[] =>
   frames.map((frame, index) =>
     index === frames.length - 1 ? { ...frame, delayAfterMs: holdMs } : frame,
   );
@@ -41,21 +44,21 @@ export const getDeveloperModeEnterFrames = ({
   label: string;
   phrase: string;
 }): DeveloperModeTypingFrame[] => [
-  ...holdLastFrame(
-    getCodeFontSweepFrames(label),
-    DEVELOPER_MODE_TYPING_DELAYS_IN_MS.codeFontSweepHold,
-  ),
-  ...holdLastFrame(
-    getErasedFrames(label),
-    DEVELOPER_MODE_TYPING_DELAYS_IN_MS.erasedHold,
-  ),
-  ...holdLastFrame(
-    getTypedFrames(phrase),
-    DEVELOPER_MODE_TYPING_DELAYS_IN_MS.phraseHold,
-  ),
-  ...holdLastFrame(
-    getErasedFrames(phrase),
-    DEVELOPER_MODE_TYPING_DELAYS_IN_MS.erasedHold,
-  ),
+  ...holdLastFrame({
+    frames: getCodeFontSweepFrames(label),
+    holdMs: DEVELOPER_MODE_TYPING_DELAYS_IN_MS.codeFontSweepHold,
+  }),
+  ...holdLastFrame({
+    frames: getErasedFrames(label),
+    holdMs: DEVELOPER_MODE_TYPING_DELAYS_IN_MS.erasedHold,
+  }),
+  ...holdLastFrame({
+    frames: getTypedFrames(phrase),
+    holdMs: DEVELOPER_MODE_TYPING_DELAYS_IN_MS.phraseHold,
+  }),
+  ...holdLastFrame({
+    frames: getErasedFrames(phrase),
+    holdMs: DEVELOPER_MODE_TYPING_DELAYS_IN_MS.erasedHold,
+  }),
   ...getTypedFrames(label),
 ];

@@ -26,5 +26,5 @@ export const getDeveloperModeDisplayedFrame = ({
     return sequenceFrame;
   }
 
-  return getDeveloperModeCodeFontFrame(label, 0);
+  return getDeveloperModeCodeFontFrame({ text: label, delayAfterMs: 0 });
 };

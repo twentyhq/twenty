@@ -22,12 +22,12 @@ const StyledCodeFontText = styled.span`
 const StyledCaret = styled.span`
   animation: developer-mode-caret-blink 1.06s steps(1) infinite;
   background: ${themeCssVariables.accent.accent9};
-  border-radius: 1px;
+  border-radius: ${themeCssVariables.border.radius.xs};
   display: inline-block;
-  height: 12px;
-  margin-left: 1px;
+  height: ${themeCssVariables.spacing[3]};
+  margin-left: ${themeCssVariables.spacing[0.5]};
   vertical-align: middle;
-  width: 2px;
+  width: ${themeCssVariables.spacing[0.5]};
 
   @keyframes developer-mode-caret-blink {
     50% {

@@ -134,6 +134,22 @@ describe('LogConsole', () => {
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
   });
 
+  it('opens a console still saved as closed by an earlier version when its bar is dragged', () => {
+    const displayModeSavedByEarlierVersion = 'closed' as unknown as 'collapsed';
+
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(
+        logConsoleDisplayModeState.atom,
+        displayModeSavedByEarlierVersion,
+      );
+    });
+    act(() => capturedResizeHandleProps?.onResizeStart?.(100));
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+  });
+
   it('keeps the console open in full screen when its drag is cancelled', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {

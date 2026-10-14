@@ -24,7 +24,7 @@ export const useDeveloperModeTypingSequence = (isEnabled: boolean) => {
     sequence.index < sequence.frames.length - 1;
 
   const playEnterSequence = () => {
-    if (shouldReduceMotion === true) {
+    if (shouldReduceMotion) {
       setSequence(null);
       return;
     }
@@ -46,7 +46,7 @@ export const useDeveloperModeTypingSequence = (isEnabled: boolean) => {
   };
 
   const playExitSequence = () => {
-    if (shouldReduceMotion === true || isEntering) {
+    if (shouldReduceMotion || isEntering) {
       setSequence(null);
       return;
     }
