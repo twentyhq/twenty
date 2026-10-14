@@ -8,6 +8,7 @@ export const fromRoleEntityToRoleDto = (role: RoleEntity): RoleDTO => {
     id: role.id,
     label: role.label,
     universalIdentifier: role.universalIdentifier,
+    applicationId: role.applicationId,
     canUpdateAllSettings: role.canUpdateAllSettings,
     canAccessAllTools: role.canAccessAllTools,
     description: role.description ?? undefined,

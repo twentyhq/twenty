@@ -7,29 +7,45 @@ import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { UpdatePageLayoutWidgetIsActiveDocument } from '~/generated-metadata/graphql';
+import {
+  type PageLayoutWidgetVerticalListPosition,
+  UpdatePageLayoutWidgetDocument,
+} from '~/generated-metadata/graphql';
 
-export type PageLayoutWidgetIsActiveUpdate = {
+export type PageLayoutWidgetUpdate = {
   widgetId: string;
-  isActive: boolean;
+  isActive?: boolean;
+  position?: Omit<PageLayoutWidgetVerticalListPosition, '__typename'>;
 };
 
-export const useUpdatePageLayoutWidgetsIsActive = () => {
-  const [updatePageLayoutWidgetIsActiveMutation] = useMutation(
-    UpdatePageLayoutWidgetIsActiveDocument,
+export const useUpdatePageLayoutWidgets = () => {
+  const [updatePageLayoutWidgetMutation] = useMutation(
+    UpdatePageLayoutWidgetDocument,
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueToast } = useToast();
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
-  const updatePageLayoutWidgetsIsActive = async (
-    pageLayoutWidgetIsActiveUpdates: PageLayoutWidgetIsActiveUpdate[],
+  const updatePageLayoutWidgets = async (
+    pageLayoutWidgetUpdates: PageLayoutWidgetUpdate[],
   ): Promise<{ status: 'successful' | 'failed' }> => {
+    const pageLayoutWidgetInputByWidgetId = new Map<
+      string,
+      Omit<PageLayoutWidgetUpdate, 'widgetId'>
+    >();
+
+    for (const { widgetId, ...input } of pageLayoutWidgetUpdates) {
+      pageLayoutWidgetInputByWidgetId.set(widgetId, {
+        ...pageLayoutWidgetInputByWidgetId.get(widgetId),
+        ...input,
+      });
+    }
+
     try {
-      for (const { widgetId, isActive } of pageLayoutWidgetIsActiveUpdates) {
-        const response = await updatePageLayoutWidgetIsActiveMutation({
-          variables: { id: widgetId, isActive },
+      for (const [widgetId, input] of pageLayoutWidgetInputByWidgetId) {
+        const response = await updatePageLayoutWidgetMutation({
+          variables: { id: widgetId, input },
         });
 
         const updatedWidget = response.data?.updatePageLayoutWidget;
@@ -39,6 +55,7 @@ export const useUpdatePageLayoutWidgetsIsActive = () => {
             {
               id: updatedWidget.id,
               isActive: updatedWidget.isActive,
+              position: updatedWidget.position,
             } as FlatPageLayoutWidget,
           ]);
         }
@@ -61,5 +78,5 @@ export const useUpdatePageLayoutWidgetsIsActive = () => {
     }
   };
 
-  return { updatePageLayoutWidgetsIsActive };
+  return { updatePageLayoutWidgets };
 };

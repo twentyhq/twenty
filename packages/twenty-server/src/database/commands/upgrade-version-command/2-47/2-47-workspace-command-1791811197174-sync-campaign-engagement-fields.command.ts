@@ -26,14 +26,6 @@ const ENGAGEMENT_FIELD_UNIVERSAL_IDENTIFIERS = [
 ];
 
 const ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
-  CAMPAIGN.views.allMessageCampaigns.viewFields.uniqueClickCount
-    .universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.clickRate
-    .universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.uniqueOpenCount
-    .universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.openRate
-    .universalIdentifier,
   CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.uniqueClickCount
     .universalIdentifier,
   CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.clickRate

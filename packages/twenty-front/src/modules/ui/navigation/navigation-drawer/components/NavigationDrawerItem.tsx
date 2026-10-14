@@ -111,10 +111,6 @@ const StyledItem = styled.button<StyledItemProps>`
         : themeCssVariables.font.color.primary};
   }
 
-  &:hover .keyboard-shortcuts {
-    visibility: visible;
-  }
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     height: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
   }
@@ -402,11 +398,7 @@ export const NavigationDrawerItem = ({
 
             {isDefined(keyboardKeys) && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <Shortcut
-                  className="keyboard-shortcuts"
-                  shortcut={keyboardKeys}
-                  sequenceJoinLabel={t`then`}
-                />
+                <Shortcut shortcut={keyboardKeys} sequenceJoinLabel={t`then`} />
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 
