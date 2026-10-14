@@ -4,6 +4,8 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 
 const CREATED_BY = {
   source: 'WORKFLOW',
@@ -43,6 +45,9 @@ const buildExecution = (
   },
   ...overrides,
 });
+
+const buildAgent = (responseFormat: AgentResponseFormat): AgentEntity =>
+  Object.assign(new AgentEntity(), { id: 'agent-id', responseFormat });
 
 const RUN_INPUT: AgentRunnerRunInput = {
   workspaceId: 'workspace-id',
@@ -218,7 +223,7 @@ describe('AgentRunnerService', () => {
 
     await service.run({
       ...RUN_INPUT,
-      agent: { id: 'agent-id', responseFormat: { type: 'text' } } as never,
+      agent: buildAgent({ type: 'text' }),
       spec: { ...RUN_INPUT.spec, responseFormat: callerResponseFormat },
     });
 
@@ -240,7 +245,7 @@ describe('AgentRunnerService', () => {
 
     await service.run({
       ...RUN_INPUT,
-      agent: { id: 'agent-id', responseFormat: agentResponseFormat } as never,
+      agent: buildAgent(agentResponseFormat),
     });
 
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledTimes(1);
