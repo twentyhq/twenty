@@ -88,6 +88,7 @@ const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[]
     'userWorkspaceRoleMap',
     'apiKeyRoleMap',
     'flatRoleMaps',
+    'flatApplicationMaps',
     'flatRowLevelPermissionPredicateMaps',
     'flatRowLevelPermissionPredicateGroupMaps',
     'flatWorkspaceMemberMaps',
@@ -216,6 +217,7 @@ export class RecordExportWorkspaceService {
         : {
             userWorkspaceId: requester.userWorkspaceId,
             workspaceMemberId: requester.workspaceMemberId,
+            applicationId: requester.application?.id,
           }),
       requestTokenHash,
       permissionsHash,
@@ -351,6 +353,7 @@ export class RecordExportWorkspaceService {
         : {
             userWorkspaceId: recordExport.userWorkspaceId,
             workspaceMemberId: recordExport.workspaceMemberId,
+            applicationId: recordExport.applicationId,
           }),
       requestTokenHash: recordExport.requestTokenHash,
       permissionsHash: recordExport.permissionsHash,
@@ -485,9 +488,7 @@ export class RecordExportWorkspaceService {
   ): Promise<RecordExportAuthContext> {
     if (
       !isApiKeyAuthContext(authContext) &&
-      (!isUserAuthContext(authContext) ||
-        isDefined(authContext.application) ||
-        isDefined(authContext.viaApplication))
+      (!isUserAuthContext(authContext) || isDefined(authContext.viaApplication))
     ) {
       throw new ForbiddenException(t`Sign in to export records.`);
     }
@@ -507,7 +508,9 @@ export class RecordExportWorkspaceService {
         ...(isApiKeyAuthContext(authContext)
           ? { apiKeyId: authContext.apiKey.id }
           : { userWorkspaceId: authContext.userWorkspaceId }),
-        applicationId: undefined,
+        applicationId: isUserAuthContext(authContext)
+          ? authContext.application?.id
+          : undefined,
         setting: PermissionFlagType.EXPORT_CSV,
       }))
     ) {
@@ -571,6 +574,24 @@ export class RecordExportWorkspaceService {
       );
     }
 
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        recordExport.workspaceId,
+        ['flatApplicationMaps'],
+      );
+    const application = isDefined(recordExport.applicationId)
+      ? flatApplicationMaps.byId[recordExport.applicationId]
+      : undefined;
+
+    if (
+      isDefined(recordExport.applicationId) &&
+      (!isDefined(application) || isDefined(application.deletedAt))
+    ) {
+      throw new ForbiddenException(
+        t`You do not have permission to export records.`,
+      );
+    }
+
     return this.assertCanExport(
       buildUserAuthContext({
         workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
@@ -578,6 +599,7 @@ export class RecordExportWorkspaceService {
         userWorkspaceId: userWorkspace.id,
         workspaceMember,
         workspaceMemberId: workspaceMember.id,
+        application,
       }),
     );
   }
@@ -739,7 +761,8 @@ export class RecordExportWorkspaceService {
         ? request.apiKey?.id !== recordExport.apiKeyId
         : isDefined(request.apiKey) ||
           request.userWorkspaceId !== recordExport.userWorkspaceId ||
-          request.workspaceMemberId !== recordExport.workspaceMemberId) ||
+          request.workspaceMemberId !== recordExport.workspaceMemberId ||
+          request.application?.id !== recordExport.applicationId) ||
       this.getRequestTokenHashOrThrow(request) !== recordExport.requestTokenHash
     ) {
       throw new ForbiddenException(

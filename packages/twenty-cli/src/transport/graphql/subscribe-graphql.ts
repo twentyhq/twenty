@@ -9,6 +9,7 @@ import {
   createRedirectError,
   toTransportError,
 } from '@/transport/create-target-fetch';
+import { createHttpStatusError } from '@/transport/create-http-status-error';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 import { GRAPHQL_ENDPOINT_PATHS } from '@/transport/graphql/constants/graphql-endpoint-paths.constant';
 import { createGraphqlError } from '@/transport/graphql/create-graphql-error';
@@ -71,7 +72,6 @@ export const subscribeGraphql = async ({
       throw createRedirectError(response, url);
     }
     if (
-      !response.ok ||
       response.headers
         .get('content-type')
         ?.split(';')[0]
@@ -94,14 +94,27 @@ export const subscribeGraphql = async ({
     if (!isDefined(response.body)) {
       throw invalidStream('The server returned an empty log stream.');
     }
-    clearTimeout(timer);
-    await onConnected();
+    const assertSuccessfulResponse = () => {
+      if (!response.ok) {
+        throw createHttpStatusError({
+          status: response.status,
+          headers: response.headers,
+          body: undefined,
+          target,
+        });
+      }
+    };
+    if (response.ok) {
+      clearTimeout(timer);
+      await onConnected();
+    }
 
     for await (const message of readEventStream({
       body: response.body,
       signal: requestSignal,
     })) {
       if (message.event === 'complete') {
+        assertSuccessfulResponse();
         return;
       }
       if (message.event !== 'next') {
@@ -129,12 +142,14 @@ export const subscribeGraphql = async ({
           target,
         });
       }
+      assertSuccessfulResponse();
       if (!('data' in payload)) {
         throw invalidStream('The log stream contains no GraphQL data.');
       }
       await onData(payload.data);
     }
 
+    assertSuccessfulResponse();
     throw new CliError({
       code: 'NETWORK_ERROR',
       message: 'The log stream ended without a completion event.',
