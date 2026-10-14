@@ -14,6 +14,7 @@ import { GRAPHQL_ENDPOINT_PATHS } from '@/transport/graphql/constants/graphql-en
 import { createGraphqlError } from '@/transport/graphql/create-graphql-error';
 import { parseGraphqlResponse } from '@/transport/graphql/parse-graphql-response';
 import { readEventStream } from '@/transport/graphql/read-event-stream';
+import { readGraphqlStreamError } from '@/transport/graphql/read-graphql-stream-error';
 import { readBoundedBody } from '@/transport/read-bounded-body';
 import { resolveRequestUrl } from '@/transport/resolve-request-url';
 
@@ -71,7 +72,6 @@ export const subscribeGraphql = async ({
       throw createRedirectError(response, url);
     }
     if (
-      !response.ok ||
       response.headers
         .get('content-type')
         ?.split(';')[0]
@@ -90,6 +90,13 @@ export const subscribeGraphql = async ({
         target,
       });
       throw invalidStream('The server did not return a GraphQL event stream.');
+    }
+    if (!response.ok) {
+      throw await readGraphqlStreamError({
+        response,
+        target,
+        signal: requestSignal,
+      });
     }
     if (!isDefined(response.body)) {
       throw invalidStream('The server returned an empty log stream.');
