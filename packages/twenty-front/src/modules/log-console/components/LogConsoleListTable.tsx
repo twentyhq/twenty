@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
+import { IconChevronRight } from 'twenty-ui/icon';
 import { handleClickableElementKeyDown } from 'twenty-ui/primitives/accessibility';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -24,7 +24,6 @@ type LogConsoleListTableProps<TItem> = {
   getItemId: (item: TItem) => string;
   selectedItemId?: string;
   onItemClick: (item: TItem) => void;
-  RowActionIcon?: IconComponent;
   emptyLabel: string;
 };
 
@@ -34,7 +33,6 @@ export const LogConsoleListTable = <TItem,>({
   getItemId,
   selectedItemId,
   onItemClick,
-  RowActionIcon = IconChevronRight,
   emptyLabel,
 }: LogConsoleListTableProps<TItem>) => {
   const theme = useTheme();
@@ -84,7 +82,7 @@ export const LogConsoleListTable = <TItem,>({
                   </TableCell>
                 ))}
                 <TableCell align="right">
-                  <RowActionIcon
+                  <IconChevronRight
                     size={theme.icon.size.md}
                     stroke={theme.icon.stroke.sm}
                     color={themeCssVariables.font.color.tertiary}

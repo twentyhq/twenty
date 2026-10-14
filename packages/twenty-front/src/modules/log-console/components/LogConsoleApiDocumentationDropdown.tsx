@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconArrowUpRight, IconChevronDown } from 'twenty-ui/icon';
+import { IconArrowUpRight } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { LOG_CONSOLE_API_DOCUMENTATION_SCHEMAS } from '@/log-console/constants/LogConsoleApiDocumentationSchemas';
@@ -22,11 +22,7 @@ export const LogConsoleApiDocumentationDropdown = () => {
       type="menu"
     >
       <Dropdown.Trigger
-        render={
-          <Button variant="outline" size="sm" endIcon={<IconChevronDown />}>
-            {t`Documentation`}
-          </Button>
-        }
+        render={<Button variant="outline">{t`Documentation`}</Button>}
       />
       <DropdownContent align="end" aria-label={t`Documentation`}>
         {LOG_CONSOLE_API_DOCUMENTATION_TYPES.map((documentationType) => (

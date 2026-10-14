@@ -31,6 +31,7 @@ import {
   GenerateApiKeyTokenDocument,
   GetApiKeyDocument,
   GetApiKeyRolesDocument,
+  GetApiKeysDocument,
   RevokeApiKeyDocument,
 } from '~/generated-metadata/graphql';
 
@@ -72,8 +73,12 @@ export const LogConsoleApiKeyDetail = ({
   const apiKeyToken = useAtomFamilyStateValue(apiKeyTokenFamilyState, apiKeyId);
 
   const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
-  const [createApiKey] = useMutation(CreateApiKeyDocument);
-  const [revokeApiKey] = useMutation(RevokeApiKeyDocument);
+  const [createApiKey] = useMutation(CreateApiKeyDocument, {
+    refetchQueries: [GetApiKeysDocument],
+  });
+  const [revokeApiKey] = useMutation(RevokeApiKeyDocument, {
+    refetchQueries: [GetApiKeysDocument],
+  });
   const [assignRoleToApiKey] = useMutation(AssignRoleToApiKeyDocument);
 
   const { data: apiKeyData, loading: apiKeyLoading } = useQuery(

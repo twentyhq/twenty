@@ -88,7 +88,6 @@ export const LogConsoleApiKeys = () => {
           <LogConsoleApiDocumentationDropdown />
           <Button
             startIcon={<IconPlus />}
-            size="sm"
             variant="outline"
             onClick={() => setLogConsoleApisView({ type: 'new' })}
           >{t`New API key`}</Button>

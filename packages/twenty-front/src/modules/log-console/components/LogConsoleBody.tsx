@@ -7,7 +7,6 @@ import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import { LogConsoleDetailPanel } from '@/log-console/components/LogConsoleDetailPanel';
 import { LogConsoleLogs } from '@/log-console/components/LogConsoleLogs';
 import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
-import { isLogConsoleCliGuideOpenState } from '@/log-console/states/isLogConsoleCliGuideOpenState';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
@@ -38,12 +37,6 @@ const LogConsoleApiKeys = lazy(() =>
 const LogConsoleCli = lazy(() =>
   import('@/log-console/components/LogConsoleCli').then((module) => ({
     default: module.LogConsoleCli,
-  })),
-);
-
-const LogConsoleCliGetStarted = lazy(() =>
-  import('@/log-console/components/LogConsoleCliGetStarted').then((module) => ({
-    default: module.LogConsoleCliGetStarted,
   })),
 );
 
@@ -125,9 +118,6 @@ export const LogConsoleBody = ({ tabId }: LogConsoleBodyProps) => {
   const logConsoleSelectedLog = useAtomStateValue(logConsoleSelectedLogState);
   const logConsoleApisView = useAtomStateValue(logConsoleApisViewState);
   const logConsoleWebhooksView = useAtomStateValue(logConsoleWebhooksViewState);
-  const isLogConsoleCliGuideOpen = useAtomStateValue(
-    isLogConsoleCliGuideOpenState,
-  );
   const [detailPanelWidth, setDetailPanelWidth] = useState(
     LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.default,
   );
@@ -191,7 +181,7 @@ export const LogConsoleBody = ({ tabId }: LogConsoleBodyProps) => {
             return null;
         }
       case 'cli':
-        return isLogConsoleCliGuideOpen ? <LogConsoleCliGetStarted /> : null;
+        return null;
     }
   };
 

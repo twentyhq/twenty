@@ -78,7 +78,6 @@ export const LogConsoleWebhooks = () => {
       actions={
         <Button
           startIcon={<IconPlus />}
-          size="sm"
           variant="outline"
           onClick={() => setLogConsoleWebhooksView({ type: 'new' })}
         >{t`New webhook`}</Button>

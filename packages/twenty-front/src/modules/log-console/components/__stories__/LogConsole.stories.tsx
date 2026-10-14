@@ -20,7 +20,6 @@ import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDispl
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
-import { isLogConsoleCliGuideOpenState } from '@/log-console/states/isLogConsoleCliGuideOpenState';
 import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
@@ -893,21 +892,13 @@ export const WebhooksTab: Story = {
 
 export const CliTab: Story = {
   beforeEach: () => {
-    jotaiStore.set(isLogConsoleCliGuideOpenState.atom, true);
     openLogConsoleTab('cli');
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('twenty metadata object list');
-    await canvas.findByRole('heading', { name: 'Get started' });
-    await canvas.findByDisplayValue('npx twenty data list companies --limit 5');
-
-    await userEvent.type(
-      canvas.getByPlaceholderText('Search commands'),
-      'doctor',
-    );
-
-    expect(canvas.queryByText('twenty app dev')).not.toBeInTheDocument();
+    await canvas.findByText('Get started');
+    await canvas.findByText('Build an app');
+    await canvas.findByText('npx twenty data list companies --limit 5');
   },
 };

@@ -22,6 +22,7 @@ import {
   CreateWebhookDocument,
   DeleteWebhookDocument,
   GetWebhookDocument,
+  GetWebhooksDocument,
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 
@@ -49,9 +50,13 @@ export const useWebhookForm = ({
 
   const isCreationMode = mode === WebhookFormMode.Create;
 
-  const [createWebhook] = useMutation(CreateWebhookDocument);
+  const [createWebhook] = useMutation(CreateWebhookDocument, {
+    refetchQueries: [GetWebhooksDocument],
+  });
   const [updateWebhook] = useMutation(UpdateWebhookDocument);
-  const [deleteWebhook] = useMutation(DeleteWebhookDocument);
+  const [deleteWebhook] = useMutation(DeleteWebhookDocument, {
+    refetchQueries: [GetWebhooksDocument],
+  });
 
   const formConfig = useForm<WebhookFormValues>({
     mode: isCreationMode ? 'onSubmit' : 'onTouched',
