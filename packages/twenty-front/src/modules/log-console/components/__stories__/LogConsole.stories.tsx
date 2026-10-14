@@ -174,9 +174,6 @@ const meta: Meta<PageDecoratorArgs> = {
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
     jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
-    jotaiStore.set(logConsoleFiltersState.atom, []);
-    jotaiStore.set(logConsoleTimeRangeState.atom, '24h');
-    jotaiStore.set(logConsoleTimeZoneState.atom, 'member');
   },
   parameters: {
     layout: 'fullscreen',

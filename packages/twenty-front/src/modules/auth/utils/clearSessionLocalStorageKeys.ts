@@ -12,7 +12,6 @@ const SESSION_KEYS_TO_CLEAR = [
   'currentWorkspaceState',
   'currentWorkspaceMemberState',
   'currentUserWorkspaceState',
-  'logConsoleFiltersState',
 ];
 
 export const clearSessionLocalStorageKeys = () => {
