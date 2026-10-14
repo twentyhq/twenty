@@ -1,21 +1,15 @@
-import { useStore } from 'jotai';
-
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { createSseStaleRecordGuardLink } from '@/sse-db-event/utils/createSseStaleRecordGuardLink';
+import { workflowRunStaleResponseGuardLink } from '@/workflow/utils/workflowRunStaleResponseGuardLink';
 
 export const ApolloCoreProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const store = useStore();
-
-  const sseStaleRecordGuardLink = createSseStaleRecordGuardLink({ store });
-
   const apolloCoreClient = useApolloFactory({
-    extraLinks: [sseStaleRecordGuardLink],
+    extraLinks: [workflowRunStaleResponseGuardLink],
   });
 
   return (

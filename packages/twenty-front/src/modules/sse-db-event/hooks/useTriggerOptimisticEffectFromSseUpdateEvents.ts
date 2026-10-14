@@ -12,10 +12,6 @@ import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
-import { sseAppliedRecordVersionsByCacheIdState } from '@/sse-db-event/states/sseAppliedRecordVersionsByCacheIdState';
-import { type SseAppliedRecord } from '@/sse-db-event/types/SseAppliedRecord';
-import { addSseAppliedRecordVersions } from '@/sse-db-event/utils/addSseAppliedRecordVersions';
-import { pickPlainFieldsFromRecord } from '@/sse-db-event/utils/pickPlainFieldsFromRecord';
 import { captureMessage } from '@sentry/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -53,8 +49,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
-
-      const appliedRecords: SseAppliedRecord[] = [];
 
       for (const updateEvent of updateEvents) {
         const recordFromEvent = updateEvent.properties.after;
@@ -123,14 +117,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           continue;
         }
 
-        appliedRecords.push({
-          cacheId: `${getObjectTypename(objectMetadataItem.nameSingular)}:${updatedRecord.id}`,
-          record: pickPlainFieldsFromRecord({
-            objectMetadataItem,
-            record: updatedRecord,
-          }),
-        });
-
         const cachedRecordWithConnection = getRecordNodeFromRecord({
           record: cachedRecord,
           objectMetadataItem,
@@ -177,18 +163,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           objectPermissionsByObjectMetadataId,
           upsertRecordsInStore,
         });
-      }
-
-      if (isNonEmptyArray(appliedRecords)) {
-        store.set(
-          sseAppliedRecordVersionsByCacheIdState.atom,
-          (sseAppliedRecordVersionsByCacheId) =>
-            addSseAppliedRecordVersions({
-              sseAppliedRecordVersionsByCacheId,
-              appliedRecords,
-              nowInMs: Date.now(),
-            }),
-        );
       }
 
       if (isNonEmptyArray(updateEvents)) {
