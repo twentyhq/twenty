@@ -4,8 +4,8 @@ import {
   TIPTAP_NODE_TYPES,
   isDefined,
   parseTemplateVariableWithFallback,
+  TEMPLATE_VARIABLE_PATTERN,
 } from 'twenty-shared/utils';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 
 type FindTemplateVariableFallbacksByNameArgs = {
   rawContent: string;
@@ -25,7 +25,7 @@ export const findTemplateVariableFallbacksByName = ({
   editorContent,
 }: FindTemplateVariableFallbacksByNameArgs): Map<string, string> => {
   const rawContentRawTemplateVariables = Array.from(
-    rawContent.matchAll(CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX),
+    rawContent.matchAll(TEMPLATE_VARIABLE_PATTERN),
     ([rawTemplateVariable]) => rawTemplateVariable,
   );
   const editorContentRawTemplateVariables = isDefined(editorContent)
