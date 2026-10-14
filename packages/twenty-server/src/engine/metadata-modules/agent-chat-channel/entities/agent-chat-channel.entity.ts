@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/add-agent-chat-channel-upgrade-command-name.constant';
+import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-48/add-agent-chat-channel-upgrade-command-name.constant';
 import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';

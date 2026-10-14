@@ -2,7 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791928412318-add-agent-chat-channels.command';
+import { type AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791928412318-add-agent-chat-channels.command';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -31,7 +31,7 @@ const ADDED_STATE = {
   },
 };
 
-describe('2-47 workspace command - add agent chat channels (integration)', () => {
+describe('2-48 workspace command - add agent chat channels (integration)', () => {
   let command: AddAgentChatChannelsCommand;
   let workspaceCacheService: WorkspaceCacheService;
 
