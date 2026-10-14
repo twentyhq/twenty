@@ -82,6 +82,44 @@ describe('computeFieldMetadataOptionLabelUpdates', () => {
     });
   });
 
+  it('treats an option with a translation equal to its source label as translated', () => {
+    expect(
+      computeFieldMetadataOptionLabelUpdates({
+        fieldMetadataType: FieldMetadataType.SELECT,
+        updatedOptions: [
+          { id: MONTH_OPTION_ID, value: 'MONTH', label: 'Monthly' },
+        ],
+        existingOptions,
+        overrides: {
+          [CUSTOM]: {
+            translations: {
+              en: { [`options.${MONTH_OPTION_ID}.label`]: 'Месяц' },
+            },
+          },
+        },
+        i18nContext,
+      }),
+    ).toEqual({
+      options: [{ id: MONTH_OPTION_ID, value: 'MONTH', label: 'Месяц' }],
+      translationEntries: [
+        {
+          locale: 'en',
+          property: `options.${MONTH_OPTION_ID}.label`,
+          value: 'Monthly',
+        },
+      ],
+    });
+  });
+
+  it('leaves a blank label untouched so validation rejects it', () => {
+    expect(
+      computeUpdates([{ id: WEEK_OPTION_ID, value: 'WEEK', label: '  ' }]),
+    ).toEqual({
+      options: [{ id: WEEK_OPTION_ID, value: 'WEEK', label: '  ' }],
+      translationEntries: [],
+    });
+  });
+
   it('keeps labels of new options', () => {
     expect(computeUpdates([{ value: 'YEAR', label: 'Week' }])).toEqual({
       options: [{ value: 'YEAR', label: 'Week' }],
