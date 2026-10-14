@@ -73,6 +73,23 @@ export const TemplateVariableWithFallbackChip = ({
     }
   };
 
+  const missingFallbackIcon = isNonEmptyString(
+    templateVariableWithFallback.fallback,
+  ) ? undefined : (
+    <Tooltip
+      content={t`Add a fallback value to avoid empty personalization`}
+      delay={TooltipDelay.shortDelay}
+    >
+      <StyledMissingFallbackIcon>
+        <IconAlertTriangle
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
+          color={theme.color.orange}
+        />
+      </StyledMissingFallbackIcon>
+    </Tooltip>
+  );
+
   return (
     <NodeViewWrapper as={StyledWrapper} style={{ whiteSpace: 'nowrap' }}>
       <DropdownRoot dropdownId={dropdownId} type="panel">
@@ -84,24 +101,7 @@ export const TemplateVariableWithFallbackChip = ({
           <BaseChip
             label={`{{${templateVariableWithFallback.name}}}`}
             title={rawTemplateVariable}
-            leftIcon={
-              isNonEmptyString(
-                templateVariableWithFallback.fallback,
-              ) ? undefined : (
-                <Tooltip
-                  content={t`Add a fallback value to avoid empty personalization`}
-                  delay={TooltipDelay.shortDelay}
-                >
-                  <StyledMissingFallbackIcon>
-                    <IconAlertTriangle
-                      size={theme.icon.size.sm}
-                      stroke={theme.icon.stroke.sm}
-                      color={theme.color.orange}
-                    />
-                  </StyledMissingFallbackIcon>
-                </Tooltip>
-              )
-            }
+            leftIcon={missingFallbackIcon}
             onRemove={(event) => {
               event.stopPropagation();
               deleteNode();
