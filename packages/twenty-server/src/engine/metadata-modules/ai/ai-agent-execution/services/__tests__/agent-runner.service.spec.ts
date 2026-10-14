@@ -4,6 +4,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 
 const CREATED_BY = {
   source: 'WORKFLOW',
@@ -15,6 +16,8 @@ const CREATED_BY = {
 const PRIOR_MESSAGES = [{ id: 'message-id', role: 'assistant', parts: [] }];
 
 const MESSAGES = [{ role: 'user' as const, content: 'Draft a quote' }];
+
+const AGENT = { id: 'agent-id' } as AgentEntity;
 
 const buildExecution = (
   overrides: Partial<AgentExecutionResult> = {},
@@ -52,7 +55,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
     ref: { workflowRunId: 'run', stepId: 'step' },
   },
   spec: {
-    agentId: null,
+    agentId: 'agent-id',
     title: 'Draft the quote',
     baseSystemPrompt: 'base prompt',
     instructions: null,
@@ -60,7 +63,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
       canAskHumans: false,
     },
   },
-  agent: null,
+  agent: AGENT,
   prompt: {
     messages: MESSAGES,
     senderUserWorkspaceId: 'user-workspace-id',
@@ -136,7 +139,7 @@ const buildService = (execution = buildExecution()) => {
     agentRunSuspensionService as never,
     { getHandlerOrThrow: () => callerHandler } as never,
     pendingWakeUpService as never,
-    {} as never,
+    { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
   );
 
   return {
@@ -182,7 +185,7 @@ describe('AgentRunnerService', () => {
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       title: 'Draft the quote',
-      agentId: null,
+      agentId: 'agent-id',
       senderUserWorkspaceId: 'user-workspace-id',
       senderApplicationId: null,
       createdBy: CREATED_BY,
@@ -434,6 +437,32 @@ describe('AgentRunnerService', () => {
       expect.objectContaining({
         outcome: { status: 'FAILED', error: 'answer lost' },
         isAwaitingAnswer: true,
+      }),
+    );
+  });
+
+  it('fails a continued run whose suspension has no agent', async () => {
+    const {
+      service,
+      pendingWakeUpService,
+      agentRunSuspensionService,
+      agentAsyncExecutorService,
+    } = buildService();
+
+    pendingWakeUpService.find.mockResolvedValue({
+      condition: { type: 'ANSWER', threadId: 'thread-id' },
+      payload: {
+        ...SUSPENSION,
+        runSpec: { ...SUSPENSION.runSpec, agentId: null },
+      },
+    });
+
+    await service.continue(CONTINUATION);
+
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'Agent with id null not found' },
       }),
     );
   });

@@ -9,17 +9,19 @@ import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow
 // what the engine needs to run the step's agent, and to continue it after a pause
 export const buildWorkflowAgentRunSpec = ({
   step,
+  agentId,
   isApplicationBound,
 }: {
   step: WorkflowAiAgentAction;
+  agentId: string;
   isApplicationBound: boolean;
 }): AgentRunSpec => {
-  const { agentId, humanInputInstructions } = step.settings.input;
+  const { humanInputInstructions } = step.settings.input;
   const trimmedHumanInputInstructions = humanInputInstructions?.trim();
   const canAskHumans = isNonEmptyString(trimmedHumanInputInstructions);
 
   return {
-    agentId: isNonEmptyString(agentId) ? agentId : null,
+    agentId,
     title: step.name,
     baseSystemPrompt: WORKFLOW_BASE_SYSTEM_PROMPT,
     instructions: canAskHumans

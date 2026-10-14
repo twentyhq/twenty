@@ -29,11 +29,12 @@ describe('buildWorkflowAgentRunSpec', () => {
         prompt: 'Draft the quote',
         humanInputInstructions: '  ',
       }),
+      agentId: 'agent-id',
       isApplicationBound: false,
     });
 
     expect(spec).toMatchObject({
-      agentId: null,
+      agentId: 'agent-id',
       title: 'Draft the quote',
       instructions: null,
       capabilities: {
@@ -46,9 +47,9 @@ describe('buildWorkflowAgentRunSpec', () => {
   it('lets the agent ask humans with the instructions the step gives', () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({
-        agentId: 'agent-id',
         humanInputInstructions: ' Ask before choosing a plan. ',
       }),
+      agentId: 'agent-id',
       isApplicationBound: false,
     });
 
@@ -63,6 +64,7 @@ describe('buildWorkflowAgentRunSpec', () => {
     expect(
       buildWorkflowAgentRunSpec({
         step: buildStep({ prompt: 'Draft the quote' }),
+        agentId: 'agent-id',
         isApplicationBound: true,
       }).additionalExcludedToolNames,
     ).toContain('send_email');

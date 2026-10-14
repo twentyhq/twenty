@@ -87,15 +87,18 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    let agent: AgentEntity | null = null;
-
-    if (agentId) {
-      agent = await this.agentRepository.findOne(workspaceId, {
-        where: { id: agentId },
-      });
+    if (!isNonEmptyString(agentId)) {
+      throw new WorkflowStepExecutorException(
+        `Agent step "${step.name}" has no agent selected`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
     }
 
-    if (agentId && !agent) {
+    const agent = await this.agentRepository.findOne(workspaceId, {
+      where: { id: agentId },
+    });
+
+    if (!isDefined(agent)) {
       throw new WorkflowStepExecutorException(
         `Agent with id ${agentId} not found`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
@@ -107,15 +110,13 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const { application } = executionContext;
 
-    if (isDefined(agent)) {
-      this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
-        {
-          application,
-          targetApplicationId: agent.applicationId,
-          targetLabel: `Agent "${agent.name}"`,
-        },
-      );
-    }
+    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+      {
+        application,
+        targetApplicationId: agent.applicationId,
+        targetLabel: `Agent "${agent.name}"`,
+      },
+    );
 
     const conversation =
       await this.workflowAgentConversationService.openConversation({
@@ -153,6 +154,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       }),
       spec: buildWorkflowAgentRunSpec({
         step,
+        agentId: agent.id,
         isApplicationBound: isDefined(application),
       }),
       agent,
