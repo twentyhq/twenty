@@ -55,7 +55,8 @@ export const buildQuotaCounters = ({
   const defaultCounters = quotaLimitDefaults
     .filter(
       (quotaLimitDefault) =>
-        quotaLimitDefault.operationType === operationType &&
+        (quotaLimitDefault.operationType === UsageOperationType.ALL ||
+          quotaLimitDefault.operationType === operationType) &&
         spenderTypes.has(quotaLimitDefault.spenderType) &&
         !limits.some((limit) =>
           doesUsageLimitRowSuppressDefault({

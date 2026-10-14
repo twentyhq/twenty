@@ -49,20 +49,6 @@ describe('isUserCreditsEligibleEvent', () => {
     ).toBe(true);
   });
 
-  it('rejects an app charge of a chat token operation', () => {
-    expect(
-      isEligible(buildEvent({ resourceType: UsageResourceType.APP })),
-    ).toBe(false);
-  });
-
-  it('rejects a workflow or agent token charge', () => {
-    expect(
-      isEligible(
-        buildEvent({ operationType: UsageOperationType.AI_WORKFLOW_TOKEN }),
-      ),
-    ).toBe(false);
-  });
-
   it('rejects a charge that names no member', () => {
     expect(isEligible(buildEvent({ spenders: {} }))).toBe(false);
     expect(isEligible(buildEvent({ spenders: undefined }))).toBe(false);

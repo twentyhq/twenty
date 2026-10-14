@@ -70,8 +70,21 @@ describe('buildQuotaDefinitions', () => {
 
   it('lists no operator-only scope for a resource without quota defaults', () => {
     expect(
-      findQuotaDefinition(UsageResourceType.AI)?.operatorOnlyScopes,
+      findQuotaDefinition(UsageResourceType.LOGIC_FUNCTION)?.operatorOnlyScopes,
     ).toEqual([]);
+  });
+
+  it('lists the AI user credit default as an operator-only scope', () => {
+    expect(
+      findQuotaDefinition(UsageResourceType.AI)?.operatorOnlyScopes,
+    ).toEqual([
+      {
+        operationType: UsageOperationType.ALL,
+        spenderType: 'userWorkspace',
+        unit: UsageUnit.USER_CREDIT,
+        periodUnit: 'week',
+      },
+    ]);
   });
 
   it('offers credits and runs on code execution, with no every-operation entry', () => {

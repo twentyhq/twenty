@@ -78,7 +78,20 @@ export const USAGE_LIMIT_DEFINITIONS = {
         'apiKey',
         'application',
       ],
-      defaults: [],
+      defaults: [
+        {
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.ALL,
+          limitKind: 'quota',
+          spenderType: 'userWorkspace',
+          spenderId: '',
+          unit: UsageUnit.USER_CREDIT,
+          periodUnit: 'week',
+          periodCount: 1,
+          limitValueConfigVariable: 'AI_USER_CREDITS_LIMIT',
+          isOverridable: true,
+        },
+      ],
     },
   },
   [UsageResourceType.WORKFLOW]: {

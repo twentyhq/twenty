@@ -262,6 +262,7 @@ export class UsageAnalyticsService {
 
   async getUserCreditsUsedMicroForScope({
     workspaceId,
+    userWorkspaceId,
     resourceType,
     operationType,
     periodStart,
@@ -269,12 +270,17 @@ export class UsageAnalyticsService {
     periodAnchor,
   }: {
     workspaceId: string;
+    userWorkspaceId?: string;
     resourceType: UsageResourceType;
     operationType: UsageOperationType;
     periodStart: Date;
     periodEnd: Date;
     periodAnchor: UsagePeriodAnchor;
   }): Promise<number> {
+    const userWorkspaceClause = isNonEmptyString(userWorkspaceId)
+      ? 'AND userWorkspaceId = {userWorkspaceId:String}'
+      : '';
+
     const operationTypeClause =
       operationType === UsageOperationType.ALL
         ? ''
@@ -286,40 +292,13 @@ export class UsageAnalyticsService {
        WHERE workspaceId = {workspaceId:String}
          AND resourceType = {resourceType:String}
          ${operationTypeClause}
+         ${userWorkspaceClause}
          ${buildUsagePeriodClause(periodAnchor)}`,
       {
         workspaceId,
+        userWorkspaceId,
         resourceType,
         operationType,
-        periodStart: formatDateTimeForClickHouse(periodStart),
-        periodEnd: formatDateTimeForClickHouse(periodEnd),
-      },
-    );
-
-    return Number(rows[0]?.total ?? 0);
-  }
-
-  async getUserCreditsUsedMicroForUserWorkspace({
-    workspaceId,
-    userWorkspaceId,
-    periodStart,
-    periodEnd,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    periodStart: Date;
-    periodEnd: Date;
-  }): Promise<number> {
-    const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
-      `SELECT sum(userCreditsUsedMicro) AS total
-       FROM usageEvent
-       WHERE workspaceId = {workspaceId:String}
-         AND timestamp >= {periodStart:DateTime64(3)}
-         AND timestamp < {periodEnd:DateTime64(3)}
-         AND userWorkspaceId = {userWorkspaceId:String}`,
-      {
-        workspaceId,
-        userWorkspaceId,
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
       },

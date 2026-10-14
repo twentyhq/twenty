@@ -3462,7 +3462,7 @@ export interface UsageTimeSeries {
     __typename: 'UsageTimeSeries'
 }
 
-export type UsageUnit = 'BYTE' | 'COMPLEXITY' | 'CREDIT' | 'FILE' | 'INVOCATION' | 'MILLISECOND' | 'MINUTE' | 'RECORD' | 'REQUEST' | 'SEAT' | 'TOKEN'
+export type UsageUnit = 'BYTE' | 'COMPLEXITY' | 'CREDIT' | 'FILE' | 'INVOCATION' | 'MILLISECOND' | 'MINUTE' | 'RECORD' | 'REQUEST' | 'SEAT' | 'TOKEN' | 'USER_CREDIT'
 
 export interface UsageUserDaily {
     dailyUsage: UsageTimeSeries[]
@@ -11982,7 +11982,8 @@ export const enumUsageUnit = {
    RECORD: 'RECORD' as const,
    REQUEST: 'REQUEST' as const,
    SEAT: 'SEAT' as const,
-   TOKEN: 'TOKEN' as const
+   TOKEN: 'TOKEN' as const,
+   USER_CREDIT: 'USER_CREDIT' as const
 }
 
 export const enumUserCreditsFallback = {

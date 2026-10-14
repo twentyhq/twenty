@@ -16,7 +16,6 @@ import { USER_ALLOWANCE_STOP_OVERSHOOT_MICRO_BUCKET_BOUNDARIES } from 'src/engin
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { USER_CREDITS_DEFAULT_DEFINITION } from 'src/engine/core-modules/usage-limit/constants/user-credits-default-definition.constant';
 import { WARM_AND_CONSUME_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-counters-script.constant';
 import { WARM_AND_CONSUME_USER_ALLOWANCE_FIRST_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-user-allowance-first-script.constant';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
@@ -305,9 +304,13 @@ export class UsageLimitQuotaService {
   async getUserAllowanceUsage({
     workspaceId,
     userWorkspaceId,
+    resourceType,
+    operationType,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
+    resourceType: UsageResourceType;
+    operationType: UsageOperationType;
   }): Promise<{
     limitValue: number;
     consumedValue: number | null;
@@ -317,6 +320,8 @@ export class UsageLimitQuotaService {
     const userAllowanceCounter = await this.buildUserAllowanceCounter({
       workspaceId,
       userWorkspaceId,
+      resourceType,
+      operationType,
     });
 
     if (!isDefined(userAllowanceCounter)) {
@@ -1286,7 +1291,17 @@ export class UsageLimitQuotaService {
     }
   }
 
-  private async buildLimitCounters({
+  private async buildLimitCounters(
+    args: QuotaConsumeArgs,
+  ): Promise<LimitQuotaCounter[]> {
+    const quotaCounters = await this.buildQuotaCountersForScope(args);
+
+    return quotaCounters.filter(
+      (counter) => counter.unit !== UsageUnit.USER_CREDIT,
+    );
+  }
+
+  private async buildQuotaCountersForScope({
     workspaceId,
     resourceType,
     operationType,
@@ -1460,60 +1475,84 @@ export class UsageLimitQuotaService {
       return null;
     }
 
-    return this.buildUserAllowanceCounter({ workspaceId, userWorkspaceId });
+    const userAllowanceCounters = await Promise.all(
+      uniqBy(events, (event) =>
+        JSON.stringify([event.resourceType, event.operationType]),
+      ).map(({ resourceType, operationType }) =>
+        this.buildUserAllowanceCounter({
+          workspaceId,
+          userWorkspaceId,
+          resourceType,
+          operationType,
+        }),
+      ),
+    );
+
+    const [userAllowanceCounter] = userAllowanceCounters;
+
+    return isDefined(userAllowanceCounter) &&
+      userAllowanceCounters.every(
+        (counter) => counter?.key === userAllowanceCounter.key,
+      )
+      ? userAllowanceCounter
+      : null;
   }
 
   private async buildUserAllowanceCounter({
     workspaceId,
     userWorkspaceId,
+    resourceType,
+    operationType,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
+    resourceType: UsageResourceType;
+    operationType: UsageOperationType;
   }): Promise<UserAllowanceQuotaCounter | null> {
-    if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
-      return null;
-    }
-
     try {
-      const limitValue =
-        await this.usageLimitDefaultValueService.findDefaultLimitValue({
+      const [userCreditLimitCounter] = (
+        await this.buildQuotaCountersForScope({
           workspaceId,
-          limitValueConfigVariable:
-            USER_CREDITS_DEFAULT_DEFINITION.limitValueConfigVariable,
-        });
+          resourceType,
+          operationType,
+          spenders: { userWorkspaceId },
+        })
+      ).filter(
+        (counter) =>
+          counter.unit === UsageUnit.USER_CREDIT &&
+          counter.spenderType === 'userWorkspace',
+      );
 
       if (
-        !isDefined(limitValue) ||
-        !isValidCreditAmountMicro(limitValue) ||
-        limitValue === 0
+        !isDefined(userCreditLimitCounter) ||
+        !isValidCreditAmountMicro(userCreditLimitCounter.limitValue) ||
+        userCreditLimitCounter.limitValue === 0
       ) {
         return null;
       }
 
-      const [period, fallback] = await Promise.all([
-        this.usagePeriodService.findCurrentPeriod({
+      const fallback =
+        await this.billingCreditAllowanceService.getUserCreditsFallback(
           workspaceId,
-          periodUnit: USER_CREDITS_DEFAULT_DEFINITION.periodUnit,
-        }),
-        this.billingCreditAllowanceService.getUserCreditsFallback(workspaceId),
-      ]);
-
-      if (!isDefined(period)) {
-        return null;
-      }
+        );
 
       return {
         kind: 'userAllowance',
         key: buildUserAllowanceCounterKey({
           workspaceId,
           userWorkspaceId,
-          periodStart: period.periodStart,
+          resourceType: userCreditLimitCounter.resourceType,
+          operationType: userCreditLimitCounter.operationType,
+          periodStart: userCreditLimitCounter.periodStart,
         }),
-        limitValue,
-        unit: UsageUnit.CREDIT,
+        limitValue: userCreditLimitCounter.limitValue,
+        unit: UsageUnit.USER_CREDIT,
+        resourceType: userCreditLimitCounter.resourceType,
+        operationType: userCreditLimitCounter.operationType,
+        periodUnit: userCreditLimitCounter.periodUnit,
         userWorkspaceId,
-        periodStart: period.periodStart,
-        periodEnd: period.periodEnd,
+        periodStart: userCreditLimitCounter.periodStart,
+        periodEnd: userCreditLimitCounter.periodEnd,
         fallback,
       };
     } catch (error) {
@@ -1703,14 +1742,15 @@ export class UsageLimitQuotaService {
               counter,
             });
           case 'userAllowance':
-            return this.usageAnalyticsService.getUserCreditsUsedMicroForUserWorkspace(
-              {
-                workspaceId,
-                userWorkspaceId: counter.userWorkspaceId,
-                periodStart: counter.periodStart,
-                periodEnd: counter.periodEnd,
-              },
-            );
+            return this.usageAnalyticsService.getUserCreditsUsedMicroForScope({
+              workspaceId,
+              userWorkspaceId: counter.userWorkspaceId,
+              resourceType: counter.resourceType,
+              operationType: counter.operationType,
+              periodStart: counter.periodStart,
+              periodEnd: counter.periodEnd,
+              periodAnchor: getPeriodAnchor(counter.periodUnit),
+            });
           case 'limit': {
             const periodGroupKey = buildPeriodGroupKey(counter);
 

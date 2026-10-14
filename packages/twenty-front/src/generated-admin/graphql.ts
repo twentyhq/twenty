@@ -1097,7 +1097,8 @@ export enum UsageUnit {
   RECORD = 'RECORD',
   REQUEST = 'REQUEST',
   SEAT = 'SEAT',
-  TOKEN = 'TOKEN'
+  TOKEN = 'TOKEN',
+  USER_CREDIT = 'USER_CREDIT'
 }
 
 export type UserInfo = {

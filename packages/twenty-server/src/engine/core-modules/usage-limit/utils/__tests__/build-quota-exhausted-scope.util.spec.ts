@@ -37,16 +37,19 @@ const workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter = {
   periodEnd: PERIOD_END,
 };
 
-const SLICE_END = new Date('2026-08-25T00:00:00.000Z');
+const USER_ALLOWANCE_PERIOD_END = new Date('2026-08-25T00:00:00.000Z');
 
 const userAllowanceCounter: UserAllowanceQuotaCounter = {
   kind: 'userAllowance',
   key: 'user-allowance-key',
   limitValue: 3_000_000,
-  unit: UsageUnit.CREDIT,
+  unit: UsageUnit.USER_CREDIT,
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.ALL,
+  periodUnit: 'week',
   userWorkspaceId: 'user-workspace-1',
   periodStart: new Date('2026-07-25T00:00:00.000Z'),
-  periodEnd: SLICE_END,
+  periodEnd: USER_ALLOWANCE_PERIOD_END,
   fallback: 'STOP',
 };
 
@@ -126,12 +129,12 @@ describe('buildQuotaExhaustedScope', () => {
       spenderType: 'userWorkspace',
       spenderId: 'user-workspace-1',
       operationType: UsageOperationType.ALL,
-      unit: UsageUnit.CREDIT,
+      unit: UsageUnit.USER_CREDIT,
       limitValue: 3_000_000,
       remaining: 0,
-      periodCount: null,
-      periodUnit: null,
-      retryAfterMs: SLICE_END.getTime() - NOW.getTime(),
+      periodCount: 1,
+      periodUnit: 'week',
+      retryAfterMs: USER_ALLOWANCE_PERIOD_END.getTime() - NOW.getTime(),
     });
   });
 

@@ -53,12 +53,12 @@ export const buildQuotaExhaustedScope = ({
         exhaustedKind: 'userAllowance',
         spenderType: 'userWorkspace',
         spenderId: counter.userWorkspaceId,
-        operationType: UsageOperationType.ALL,
+        operationType: counter.operationType,
         unit: counter.unit,
         limitValue: counter.limitValue,
         remaining: 0,
-        periodCount: null,
-        periodUnit: null,
+        periodCount: 1,
+        periodUnit: counter.periodUnit,
         retryAfterMs,
       };
     default:
