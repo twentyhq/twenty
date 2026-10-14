@@ -16,7 +16,7 @@ import {
   type SegmentedControlOption,
 } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import {
   BillingPlanKey,
   SubscriptionInterval,
@@ -64,6 +64,11 @@ const StyledComparisonHeaderGrid = styled.div`
   overflow: clip;
   row-gap: 1px;
   width: 100%;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    background: ${themeCssVariables.background.secondary};
+    row-gap: 0;
+  }
 `;
 
 const StyledComparisonBodyGrid = styled.div`
@@ -84,6 +89,18 @@ const StyledHeaderCell = styled.div`
   min-width: 0;
   overflow: clip;
   padding: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledComparisonHeaderCell = styled(StyledHeaderCell)`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+    grid-column: 1 / -1;
+    min-height: auto;
+
+    & + * {
+      grid-column-start: 2;
+    }
+  }
 `;
 
 const StyledHeaderText = styled.div`
@@ -175,7 +192,7 @@ export const SettingsBillingPlanComparisonTable = ({
       <StyledComparisonTable>
         <StyledStickyHeaderContainer>
           <StyledComparisonHeaderGrid>
-            <StyledHeaderCell>
+            <StyledComparisonHeaderCell>
               <StyledHeaderText>
                 <StyledComparisonTitle>{t`Compare plans`}</StyledComparisonTitle>
                 <StyledPlanSubtitle>
@@ -191,7 +208,7 @@ export const SettingsBillingPlanComparisonTable = ({
                 options={billingIntervalOptions}
                 value={billingInterval}
               />
-            </StyledHeaderCell>
+            </StyledComparisonHeaderCell>
 
             {SETTINGS_BILLING_COMPARED_PLAN_KEYS.map((planKey) => {
               const action = planActions[planKey];
