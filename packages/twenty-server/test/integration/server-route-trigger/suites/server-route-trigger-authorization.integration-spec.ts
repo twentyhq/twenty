@@ -293,19 +293,8 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       });
     }, 60000);
 
-    it('never forwards a Twenty-issued token', async () => {
-      const response = await request(baseUrl)
-        .post(
-          `/webhooks/server/${AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
-        )
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({ any: 'payload' });
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({ authorization: null });
-    }, 60000);
-
     it.each([
+      ['as a bearer token', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`],
       ['with trailing content', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN} x`],
       ['without a scheme', APPLE_JANE_ADMIN_ACCESS_TOKEN],
       ['as a session token', 'Bearer sess_abc123'],

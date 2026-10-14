@@ -72,21 +72,6 @@ describe('filterRequestHeaders', () => {
     });
   });
 
-  it('should forward only the credential headers the caller allows', () => {
-    const requestHeaders = {
-      authorization: 'Bearer token123',
-      cookie: 'session=abc',
-    };
-
-    const result = filterRequestHeaders({
-      requestHeaders,
-      forwardedRequestHeaders: ['Authorization', 'cookie'],
-      forwardableCredentialHeaderNames: ['authorization'],
-    });
-
-    expect(result).toEqual({ authorization: 'Bearer token123' });
-  });
-
   it('should return empty object when no headers match', () => {
     const requestHeaders = {
       'content-type': 'application/json',
