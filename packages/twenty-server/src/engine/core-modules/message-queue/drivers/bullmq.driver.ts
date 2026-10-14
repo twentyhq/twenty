@@ -495,12 +495,11 @@ export class BullMQDriver
   }
 
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
-    const waitingJobs = await this.queueMap[queueName].getJobs([
-      'waiting',
-      'prioritized',
-    ]);
-
-    return waitingJobs.map((job) => job.id).filter(isDefined);
+    return this.queueMap[queueName].getRanges(
+      ['waiting', 'paused', 'prioritized'],
+      0,
+      -1,
+    );
   }
 
   private async filterOutAlreadyWaitingJobs<T extends MessageQueueJobData>(
