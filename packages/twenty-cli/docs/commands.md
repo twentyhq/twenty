@@ -332,7 +332,7 @@ twenty app apply --no-delete
 - **Uploads.** File bytes go straight to the upload URLs the server returns, without the CLI's credentials. Each file is checked against the build's size and SHA-256 before anything is uploaded.
 - **Pull baseline.** After an acknowledged sync, the CLI fetches the workspace ID and fresh application export, then atomically records `.twenty/cli/pull-base.json`. This baseline lets `app pull` distinguish workspace changes from local edits. It is bound to the normalized API URL, workspace UUID and app UUID. JSON reports `pullBase: "recorded"`, `"failed"` or `"unsupported"`; only a recorded base adds `pullBase` to `completedPhases`. Invalid exports or file-write errors preserve the prior base, warn with `PULL_BASE_NOT_RECORDED`, and allow client generation to continue. A server without the export API reports `"unsupported"` without a warning on every apply. The export is recorded as the server sent it; collections it lacks are read as empty by pull. Cancellation before the base is committed exits 130 with `outcome: "applied"` and `phase: "pullBase"`.
 - **Typed client.** After the sync, the CLI fetches the app's GraphQL schema from the workspace and calls the app's own `twenty-client-sdk/generate` to regenerate the client in the app's own `node_modules/twenty-client-sdk` (`clientGeneration: "generated"`). It is skipped with a `CLIENT_NOT_GENERATED` warning when the app has no `node_modules/twenty-client-sdk` of its own, as in a hoisted workspace. A symlinked client package is followed and its target rewritten, so don't apply two apps that share one client package at the same time.
-- **Failures.** A failed apply reports `details.phase`, `details.completedPhases` and `details.outcome`: `not-started` when the failing step changed nothing, `partial` when some files were uploaded, `unknown` when a request was sent but its effect is not known, such as a failed or interrupted sync, and `applied` when the sync succeeded but baseline recording was cancelled or client generation failed. Earlier steps, like a new registration, stay done. There is no rollback and no automatic retry: run `twenty app plan` to see where the workspace stands, then apply again. After `applied`, the workspace has the new version but the client files may be incomplete: fix the problem, then run `twenty app apply` again, which repeats the plan, upload and sync before regenerating the client. Ctrl+C exits with 130 and reports the step it interrupted.
+- **Failures.** A failed apply reports `details.phase`, `details.completedPhases` and `details.outcome`: `not-started` when the failing step changed nothing, `partial` when some files were uploaded, `unknown` when a request was sent but its effect is not known, such as a failed or interrupted sync, and `applied` when the sync succeeded but baseline recording was cancelled or client generation failed. Earlier steps, like a new registration, stay done. There is no rollback and no automatic retry: run `twenty app plan` to see where the workspace stands, then apply again. When client generation failed, the workspace has the new version but the client files may be incomplete: fix the problem, then run `twenty app generate-client`, which regenerates the client without syncing again. Ctrl+C exits with 130 and reports the step it interrupted.
 
 Remote changes made between the plan and the sync can change what the sync does. Remote changes between the acknowledged sync and the export can also enter the saved baseline without appearing in local source; this is not an atomic server snapshot of the sync. Planning, a failed sync, or a sync with an unknown outcome never advances the baseline.
 
@@ -379,7 +379,7 @@ Compilation pauses during generation, then explicitly rebuilds. Unchanged client
 inputs and unchanged build output prevent a generation/sync loop. A schema fetch
 failure keeps the old client and prints a warning. If generation starts writing
 and fails, dev stops because the client files may be incomplete; fix the problem
-and run `twenty app apply` before restarting dev.
+and run `twenty app generate-client` before restarting dev.
 
 Use human output or `--format ndjson`; `--json` is rejected before target lookup.
 NDJSON uses ordered `progress` events with `data.kind`: `watch-ready`,
@@ -394,6 +394,17 @@ An abnormal worker exit or a filesystem-watcher failure ends the session; fix
 the cause and restart `twenty app dev`. A killed process can leave temporary
 folders in `.twenty/cli/snapshots`. After stopping all dev/apply sessions for that
 app, abandoned snapshot folders can be removed.
+
+## Regenerate the typed client
+
+```bash
+twenty app generate-client --remote dev
+twenty app generate-client --path ./apps/billing --json
+```
+
+`app generate-client` fetches the app's GraphQL schema from the workspace and regenerates the typed client in the app's own `node_modules/twenty-client-sdk`, the same step `app apply` and `app dev` run after a sync, without building, uploading or syncing. Use it after installing dependencies, after a failed client generation, or to pick up schema changes made in the workspace. It needs no server permission flag.
+
+The app must already be installed in the workspace; otherwise the command fails with `APP_NOT_INSTALLED` (exit 4), and `twenty app apply` installs it and generates the client. An app without its own `node_modules/twenty-client-sdk`, as in a hoisted workspace, fails with `CLIENT_SDK_NOT_INSTALLED` instead of the warning `app apply` prints.
 
 ## Pull an app
 
