@@ -510,7 +510,7 @@ export class UsageLimitQuotaService {
       });
 
     const exhaustedScopes = exhaustedCounters.map((counter) =>
-      buildQuotaExhaustedScope({ resourceType, counter }),
+      buildQuotaExhaustedScope({ resourceType, operationType, counter }),
     );
 
     const [latestUserAllowanceScope] = exhaustedScopes

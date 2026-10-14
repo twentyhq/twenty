@@ -51,16 +51,18 @@ const buildDefault = (
 const buildCounters = ({
   limits = [],
   quotaLimitDefaults = [],
+  operationType = UsageOperationType.AI_CHAT_TOKEN,
 }: {
   limits?: FlatQuotaLimit[];
   quotaLimitDefaults?: QuotaLimitDefault[];
+  operationType?: UsageOperationType;
 }) =>
   buildQuotaCounters({
     limits,
     quotaLimitDefaults,
     usageSpenders: { userWorkspaceId: 'user-1' },
     workspaceId: 'workspace-1',
-    operationType: UsageOperationType.AI_CHAT_TOKEN,
+    operationType,
     periodByUnit: { month: MONTH_PERIOD, week: WEEK_PERIOD },
   });
 
@@ -272,6 +274,64 @@ describe('buildQuotaCounters', () => {
         spenderId: null,
         key: `{workspace-1}:quota-consumed:AI:AI_CHAT_TOKEN:userWorkspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
       }),
+    ]);
+  });
+
+  it('shares one counter across the operations a default lists', () => {
+    const quotaLimitDefaults = [
+      buildDefault({
+        operationType: [
+          UsageOperationType.AI_CHAT_TOKEN,
+          UsageOperationType.WEB_SEARCH,
+        ],
+        isOverridable: false,
+      }),
+    ];
+
+    const [chatCounter] = buildCounters({ quotaLimitDefaults });
+    const [webSearchCounter] = buildCounters({
+      quotaLimitDefaults,
+      operationType: UsageOperationType.WEB_SEARCH,
+    });
+
+    expect(chatCounter.key).toBe(webSearchCounter.key);
+  });
+
+  it('ignores a default listing other operations', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [
+        buildDefault({
+          operationType: [
+            UsageOperationType.WEB_SEARCH,
+            UsageOperationType.AI_WORKFLOW_TOKEN,
+          ],
+          isOverridable: false,
+        }),
+      ],
+    });
+
+    expect(counters).toEqual([]);
+  });
+
+  it('ranks a single operation before a list, and a list before every operation', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [
+        buildDefault({ operationType: UsageOperationType.ALL }),
+        buildDefault({
+          operationType: [
+            UsageOperationType.AI_CHAT_TOKEN,
+            UsageOperationType.WEB_SEARCH,
+          ],
+          isOverridable: false,
+        }),
+        buildDefault(),
+      ],
+    });
+
+    expect(counters.map((counter) => counter.operationType)).toEqual([
+      UsageOperationType.AI_CHAT_TOKEN,
+      [UsageOperationType.AI_CHAT_TOKEN, UsageOperationType.WEB_SEARCH],
+      UsageOperationType.ALL,
     ]);
   });
 });

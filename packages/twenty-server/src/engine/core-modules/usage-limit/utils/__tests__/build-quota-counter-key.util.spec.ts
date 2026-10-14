@@ -39,4 +39,17 @@ describe('buildQuotaCounterKey', () => {
   ])('gives two counters differing only by %s their own key', (_, differs) => {
     expect(buildKey(differs)).not.toBe(buildKey());
   });
+
+  it('keys a counter over several operations by their sorted list', () => {
+    expect(
+      buildKey({
+        operationType: [
+          UsageOperationType.WEB_SEARCH,
+          UsageOperationType.AI_CHAT_TOKEN,
+        ],
+      }),
+    ).toBe(
+      `{${WORKSPACE_ID}}:quota-consumed:AI:AI_CHAT_TOKEN+WEB_SEARCH:workspace:-:CREDIT:month:${PERIOD_START.getTime()}`,
+    );
+  });
 });

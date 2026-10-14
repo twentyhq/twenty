@@ -213,4 +213,18 @@ describe('computeQuotaConsumed', () => {
       }),
     ).toBe(20_000_000);
   });
+
+  it('sums only the listed operations for a scope over several operations', () => {
+    expect(
+      computeQuotaConsumed({
+        rows,
+        scope: buildCounter({
+          operationType: [
+            UsageOperationType.AI_CHAT_TOKEN,
+            UsageOperationType.WEB_SEARCH,
+          ],
+        }),
+      }),
+    ).toBe(140);
+  });
 });

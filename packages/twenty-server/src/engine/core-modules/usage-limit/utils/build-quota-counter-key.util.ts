@@ -20,4 +20,4 @@ export const buildQuotaCounterKey = ({
     | 'periodStart'
   >;
 }): string =>
-  `{${workspaceId}}:quota-consumed:${counter.resourceType}:${counter.operationType}:${counter.spenderType}:${isNonEmptyString(counter.spenderId) ? counter.spenderId : ABSENT}:${counter.unit}:${counter.periodUnit}:${counter.periodStart.getTime()}`;
+  `{${workspaceId}}:quota-consumed:${counter.resourceType}:${Array.isArray(counter.operationType) ? [...counter.operationType].sort().join('+') : counter.operationType}:${counter.spenderType}:${isNonEmptyString(counter.spenderId) ? counter.spenderId : ABSENT}:${counter.unit}:${counter.periodUnit}:${counter.periodStart.getTime()}`;

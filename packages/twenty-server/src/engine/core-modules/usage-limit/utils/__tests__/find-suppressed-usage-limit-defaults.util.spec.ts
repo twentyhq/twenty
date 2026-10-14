@@ -57,7 +57,17 @@ describe('findSuppressedUsageLimitDefaults', () => {
   it('declares at most one overridable default per suppressible scope', () => {
     const overridableDefaults = Object.values(UsageResourceType)
       .flatMap((resourceType) => findUsageLimitDefaults({ resourceType }))
-      .filter((usageLimitDefault) => usageLimitDefault.isOverridable);
+      .filter((usageLimitDefault) => usageLimitDefault.isOverridable)
+      .flatMap((usageLimitDefault) =>
+        Array.isArray(usageLimitDefault.operationType)
+          ? []
+          : [
+              {
+                ...usageLimitDefault,
+                operationType: usageLimitDefault.operationType,
+              },
+            ],
+      );
 
     const defaultsSharingAScope = overridableDefaults.filter(
       (usageLimitDefault) =>

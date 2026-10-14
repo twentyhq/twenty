@@ -1,3 +1,4 @@
+import { type QuotaOperationScope } from 'src/engine/core-modules/usage-limit/types/quota-operation-scope.type';
 import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 
 type SuppressibleScope = Omit<UsageLimitScope, 'periodCount'>;
@@ -7,7 +8,10 @@ export const doesUsageLimitRowSuppressDefault = ({
   usageLimitDefault,
 }: {
   scope: SuppressibleScope;
-  usageLimitDefault: SuppressibleScope & { isOverridable: boolean };
+  usageLimitDefault: Omit<SuppressibleScope, 'operationType'> & {
+    operationType: QuotaOperationScope;
+    isOverridable: boolean;
+  };
 }): boolean =>
   usageLimitDefault.isOverridable &&
   scope.resourceType === usageLimitDefault.resourceType &&

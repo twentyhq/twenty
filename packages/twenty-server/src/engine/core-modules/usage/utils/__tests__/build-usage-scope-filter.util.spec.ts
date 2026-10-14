@@ -86,4 +86,26 @@ describe('buildUsageScopeFilter', () => {
 
     expect(filter.clause).toBe(`AND ${column} = {spenderId:String}`);
   });
+
+  it('lists the operations when the scope covers several', () => {
+    const filter = buildUsageScopeFilter({
+      operationType: [
+        UsageOperationType.AI_CHAT_TOKEN,
+        UsageOperationType.WEB_SEARCH,
+      ],
+      unit: null,
+      spenderType: 'workspace',
+      spenderId: null,
+    });
+
+    expect(filter.clause).toContain(
+      'AND operationType IN ({operationTypes:Array(String)})',
+    );
+    expect(filter.params).toEqual({
+      operationTypes: [
+        UsageOperationType.AI_CHAT_TOKEN,
+        UsageOperationType.WEB_SEARCH,
+      ],
+    });
+  });
 });

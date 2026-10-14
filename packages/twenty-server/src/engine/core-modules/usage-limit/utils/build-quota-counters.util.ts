@@ -10,14 +10,23 @@ import { buildQuotaDefaultCounter } from 'src/engine/core-modules/usage-limit/ut
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
+import { isOperationInScope } from 'src/engine/core-modules/usage-limit/utils/is-operation-in-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
+const operationScopeSpecificity = (counter: LimitQuotaCounter): number => {
+  if (Array.isArray(counter.operationType)) {
+    return 1;
+  }
+
+  return counter.operationType === UsageOperationType.ALL ? 2 : 0;
+};
+
 const counterSpecificity = (counter: LimitQuotaCounter): number =>
-  SPENDER_TYPE_SPECIFICITY[counter.spenderType] * 4 +
-  (isDefined(counter.spenderId) ? 0 : 2) +
-  (counter.operationType === UsageOperationType.ALL ? 1 : 0);
+  SPENDER_TYPE_SPECIFICITY[counter.spenderType] * 8 +
+  (isDefined(counter.spenderId) ? 0 : 4) +
+  operationScopeSpecificity(counter);
 
 export const buildQuotaCounters = ({
   limits,
@@ -55,8 +64,10 @@ export const buildQuotaCounters = ({
   const defaultCounters = quotaLimitDefaults
     .filter(
       (quotaLimitDefault) =>
-        (quotaLimitDefault.operationType === UsageOperationType.ALL ||
-          quotaLimitDefault.operationType === operationType) &&
+        isOperationInScope({
+          operationScope: quotaLimitDefault.operationType,
+          operationType,
+        }) &&
         spenderTypes.has(quotaLimitDefault.spenderType) &&
         !limits.some((limit) =>
           doesUsageLimitRowSuppressDefault({

@@ -68,6 +68,7 @@ describe('buildQuotaExhaustedScope', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         counter: buildLimitCounter(),
       }),
     ).toEqual({
@@ -91,6 +92,7 @@ describe('buildQuotaExhaustedScope', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         counter: buildLimitCounter({ isDefault: true }),
       }),
     ).toMatchObject({ exhaustedKind: 'limit', isDefault: true });
@@ -100,6 +102,7 @@ describe('buildQuotaExhaustedScope', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         counter: workspaceAllowanceCounter,
       }),
     ).toEqual({
@@ -122,6 +125,7 @@ describe('buildQuotaExhaustedScope', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         counter: userAllowanceCounter,
       }),
     ).toEqual({
@@ -144,10 +148,26 @@ describe('buildQuotaExhaustedScope', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         counter: buildLimitCounter({
           periodEnd: new Date('2026-08-10T00:00:00.000Z'),
         }),
       }),
     ).toMatchObject({ retryAfterMs: 0 });
+  });
+
+  it('reports the charge operation for a counter over several operations', () => {
+    expect(
+      buildQuotaExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.WEB_SEARCH,
+        counter: buildLimitCounter({
+          operationType: [
+            UsageOperationType.AI_CHAT_TOKEN,
+            UsageOperationType.WEB_SEARCH,
+          ],
+        }),
+      }),
+    ).toMatchObject({ operationType: UsageOperationType.WEB_SEARCH });
   });
 });

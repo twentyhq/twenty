@@ -8,6 +8,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { type QuotaOperationScope } from 'src/engine/core-modules/usage-limit/types/quota-operation-scope.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -269,7 +270,7 @@ export class UsageAnalyticsService {
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-    operationType: UsageOperationType;
+    operationType: QuotaOperationScope;
     spenderType: SpenderType;
     spenderId: string | null;
     periodStart: Date;

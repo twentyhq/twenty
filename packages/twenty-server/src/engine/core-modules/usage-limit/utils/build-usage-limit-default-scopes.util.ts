@@ -38,7 +38,8 @@ export const buildUsageLimitDefaultScopes = ({
         usageLimitDefault.limitValueConfigVariable,
       );
 
-      return isDefined(limitValue)
+      return isDefined(limitValue) &&
+        !Array.isArray(usageLimitDefault.operationType)
         ? [
             {
               resourceType: usageLimitDefault.resourceType,
