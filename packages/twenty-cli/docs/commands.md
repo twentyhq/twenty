@@ -571,9 +571,8 @@ twenty app translations extract --locale fr-FR
 twenty app translations extract --path ./apps/billing --json
 ```
 
-Replaces the SDK CLI's `dev:translations-extract [appPath]` command. Update app
-scripts to the new command and use `--path` for an explicit directory. Without
-`--path`, the CLI finds the app containing the current directory.
+Use `--path` for an explicit app directory. Without `--path`, the CLI finds the
+app containing the current directory.
 
 Extraction runs locally, without a workspace connection. It reads app metadata
 and static `t`, `msg`, and `Trans` strings in front-component source files. It
