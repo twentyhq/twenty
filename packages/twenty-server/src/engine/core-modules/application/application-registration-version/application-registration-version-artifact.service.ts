@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isAxiosError } from 'axios';
@@ -12,8 +12,8 @@ import {
   APPLICATION_REGISTRATION_VERSION_ARTIFACT_ROUTE,
   APPLICATION_REGISTRATION_VERSIONS_FILES_PATH,
 } from 'src/engine/core-modules/application/application-registration-version/constants/application-registration-version-artifact-route.constant';
-import { compareSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compare-sri-integrity.util';
-import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { assertSriIntegrityMatches } from 'src/engine/core-modules/application/application-registration-version/utils/assert-sri-integrity-matches.util';
+import { computeSupportedSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationException,
@@ -35,10 +35,6 @@ export type DownloadedRegistryArtifact = {
 
 @Injectable()
 export class ApplicationRegistrationVersionArtifactService {
-  private readonly logger = new Logger(
-    ApplicationRegistrationVersionArtifactService.name,
-  );
-
   constructor(
     @InjectRepository(ApplicationRegistrationVersionEntity)
     private readonly applicationRegistrationVersionRepository: Repository<ApplicationRegistrationVersionEntity>,
@@ -151,22 +147,10 @@ export class ApplicationRegistrationVersionArtifactService {
       return;
     }
 
-    const comparison = compareSriIntegrity({
+    assertSriIntegrityMatches({
       expected: version.checksum,
-      actual: computeSriIntegrity(buffer),
+      actual: computeSupportedSriIntegrity(buffer),
+      subject: `Artifact served for version ${version.version} (${version.id})`,
     });
-
-    if (comparison === 'mismatch') {
-      throw new ApplicationException(
-        `Artifact served for version ${version.version} (${version.id}) does not match its recorded fingerprint`,
-        ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH,
-      );
-    }
-
-    if (comparison === 'incomparable') {
-      this.logger.warn(
-        `Fingerprint recorded for version ${version.version} (${version.id}) uses an algorithm this server cannot verify`,
-      );
-    }
   }
 }

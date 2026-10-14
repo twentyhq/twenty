@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
+import { registryVersionDistSchema } from 'src/engine/core-modules/application/application-package/zod-schemas/registry-version-dist.zod-schema';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const MAX_REGISTRY_ASSET_SIZE_BYTES = 10 * 1024 * 1024;
@@ -46,13 +47,8 @@ const registrySearchResultSchema = z.object({
 
 type RegistrySearchResult = z.infer<typeof registrySearchResultSchema>;
 
-const registryVersionDistSchema = z.object({
-  dist: z
-    .object({
-      tarball: z.string().optional(),
-      integrity: z.string().optional(),
-    })
-    .optional(),
+const registryVersionMetadataSchema = z.object({
+  dist: registryVersionDistSchema.optional(),
 });
 
 export type RegistryPackageVersionDist = {
@@ -119,7 +115,7 @@ export class MarketplaceService {
         timeout: 5_000,
       });
 
-      const parsed = registryVersionDistSchema.safeParse(data);
+      const parsed = registryVersionMetadataSchema.safeParse(data);
 
       if (!parsed.success) {
         return null;

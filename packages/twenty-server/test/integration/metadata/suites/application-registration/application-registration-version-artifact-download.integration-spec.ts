@@ -175,6 +175,33 @@ describe('Application registration version artifact download (integration)', () 
     expect(response.status).toBe(502);
   });
 
+  it('refuses to serve bytes that differ from a recorded sha256 fingerprint', async () => {
+    const setRecordedChecksum = (checksum: string) =>
+      globalThis.testDataSource.query(
+        `UPDATE core."applicationRegistrationVersion" SET checksum = $1 WHERE id = $2`,
+        [checksum, applicationRegistrationVersionId],
+      );
+
+    await setRecordedChecksum(
+      computeSriIntegrity(registryPackage.tarballBuffer, 'sha256'),
+    );
+
+    activeStub = stubNpmRegistry({
+      ...registryPackage,
+      tarballBuffer: Buffer.from('bytes the registry serves today'),
+    });
+
+    try {
+      const response = await downloadArtifact(await fetchArtifactDownloadUrl());
+
+      expect(response.status).toBe(502);
+    } finally {
+      await setRecordedChecksum(
+        computeSriIntegrity(registryPackage.tarballBuffer),
+      );
+    }
+  });
+
   it('refuses a download without a token signed for that version', async () => {
     const { pathname, search } = new URL(await fetchArtifactDownloadUrl());
 

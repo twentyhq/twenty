@@ -21,8 +21,12 @@ import { extractTarballSecurely } from 'src/engine/core-modules/application/appl
 import { assertValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
-import { compareSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compare-sri-integrity.util';
-import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { registryVersionDistSchema } from 'src/engine/core-modules/application/application-package/zod-schemas/registry-version-dist.zod-schema';
+import { assertSriIntegrityMatches } from 'src/engine/core-modules/application/application-registration-version/utils/assert-sri-integrity-matches.util';
+import {
+  computeSriIntegrity,
+  computeSupportedSriIntegrity,
+} from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -54,17 +58,13 @@ export type ResolvedPackage = {
   manifest: Manifest;
   packageJson: PackageJson;
   integrity: string;
+  supportedAlgorithmsIntegrity: string;
   registryTarballUrl?: string;
 };
 
 const registryVersionMetadataSchema = z.object({
   name: z.string(),
-  dist: z
-    .object({
-      tarball: z.string().optional(),
-      integrity: z.string().optional(),
-    })
-    .optional(),
+  dist: registryVersionDistSchema.optional(),
 });
 
 @Injectable()
@@ -183,14 +183,16 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         authToken,
       );
 
-      const integrity = computeSriIntegrity(tarballBuffer);
+      const supportedAlgorithmsIntegrity =
+        computeSupportedSriIntegrity(tarballBuffer);
 
-      this.assertRegistryIntegrity({
-        sourcePackage,
-        versionSpec,
-        registryIntegrity: registryArtifact.integrity,
-        integrity,
-      });
+      if (isDefined(registryArtifact.integrity)) {
+        assertSriIntegrityMatches({
+          expected: registryArtifact.integrity,
+          actual: supportedAlgorithmsIntegrity,
+          subject: `Tarball downloaded for ${sourcePackage}@${versionSpec}`,
+        });
+      }
 
       const tarballPath = join(workDir, 'package.tgz');
 
@@ -220,7 +222,8 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
-        integrity,
+        integrity: computeSriIntegrity(tarballBuffer),
+        supportedAlgorithmsIntegrity,
         registryTarballUrl: registryArtifact.tarballUrl,
       };
     } catch (error) {
@@ -279,7 +282,6 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       });
 
       const tarballBuffer = await streamToBuffer(tarballStream);
-      const integrity = computeSriIntegrity(tarballBuffer);
       const tarballPath = join(workDir, 'app.tar.gz');
 
       await fs.writeFile(tarballPath, tarballBuffer);
@@ -301,7 +303,9 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
-        integrity,
+        integrity: computeSriIntegrity(tarballBuffer),
+        supportedAlgorithmsIntegrity:
+          computeSupportedSriIntegrity(tarballBuffer),
       };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
@@ -384,40 +388,6 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
 
     return { tarballUrl, integrity: metadata.dist?.integrity ?? null };
-  }
-
-  private assertRegistryIntegrity({
-    sourcePackage,
-    versionSpec,
-    registryIntegrity,
-    integrity,
-  }: {
-    sourcePackage: string;
-    versionSpec: string;
-    registryIntegrity: string | null;
-    integrity: string;
-  }): void {
-    if (!isDefined(registryIntegrity)) {
-      return;
-    }
-
-    const comparison = compareSriIntegrity({
-      expected: registryIntegrity,
-      actual: integrity,
-    });
-
-    if (comparison === 'mismatch') {
-      throw new ApplicationException(
-        `Tarball downloaded for ${sourcePackage}@${versionSpec} does not match the integrity the registry attests`,
-        ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH,
-      );
-    }
-
-    if (comparison === 'incomparable') {
-      this.logger.warn(
-        `Registry integrity for ${sourcePackage}@${versionSpec} uses an algorithm this server cannot verify`,
-      );
-    }
   }
 
   private async downloadTarball(

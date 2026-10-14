@@ -27,7 +27,7 @@ import {
 } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { type ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
-import { compareSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compare-sri-integrity.util';
+import { assertSriIntegrityMatches } from 'src/engine/core-modules/application/application-registration-version/utils/assert-sri-integrity-matches.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
@@ -645,31 +645,53 @@ export class ApplicationInstallService {
     resolvedPackage: ResolvedPackage;
     version: string;
   }): Promise<string | null> {
+    const recordedVersion = await this.findOrRecordInstalledVersion({
+      appRegistration,
+      resolvedPackage,
+      version,
+    });
+
+    if (!isDefined(recordedVersion)) {
+      return null;
+    }
+
+    this.assertResolvedPackageMatchesRecordedVersion({
+      universalIdentifier: appRegistration.universalIdentifier,
+      recordedVersion,
+      resolvedPackage,
+    });
+
+    const isArtifactUrlMissing =
+      !isDefined(recordedVersion.artifactUrl) &&
+      isDefined(resolvedPackage.registryTarballUrl);
+
+    if (isArtifactUrlMissing || !isDefined(recordedVersion.checksum)) {
+      await this.applicationRegistrationVersionService.fillMissingArtifact({
+        id: recordedVersion.id,
+        artifactUrl: resolvedPackage.registryTarballUrl ?? null,
+        checksum: resolvedPackage.integrity,
+      });
+    }
+
+    return recordedVersion.id;
+  }
+
+  private async findOrRecordInstalledVersion({
+    appRegistration,
+    resolvedPackage,
+    version,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    resolvedPackage: ResolvedPackage;
+    version: string;
+  }): Promise<ApplicationRegistrationVersionEntity | null> {
     const recordedVersion =
       await this.applicationRegistrationVersionService.findOneByApplicationRegistrationIdAndVersion(
         { applicationRegistrationId: appRegistration.id, version },
       );
 
     if (isDefined(recordedVersion)) {
-      this.assertResolvedPackageMatchesRecordedVersion({
-        universalIdentifier: appRegistration.universalIdentifier,
-        recordedVersion,
-        resolvedPackage,
-      });
-
-      const isArtifactUrlMissing =
-        !isDefined(recordedVersion.artifactUrl) &&
-        isDefined(resolvedPackage.registryTarballUrl);
-
-      if (isArtifactUrlMissing || !isDefined(recordedVersion.checksum)) {
-        await this.applicationRegistrationVersionService.fillMissingArtifact({
-          id: recordedVersion.id,
-          artifactUrl: resolvedPackage.registryTarballUrl ?? null,
-          checksum: resolvedPackage.integrity,
-        });
-      }
-
-      return recordedVersion.id;
+      return recordedVersion;
     }
 
     if (
@@ -679,17 +701,14 @@ export class ApplicationInstallService {
       return null;
     }
 
-    const installedVersion =
-      await this.applicationRegistrationVersionService.recordPublishedVersion({
-        applicationRegistrationId: appRegistration.id,
-        version,
-        sourceType: ApplicationRegistrationSourceType.NPM,
-        sourcePackage: appRegistration.sourcePackage,
-        artifactUrl: resolvedPackage.registryTarballUrl,
-        checksum: resolvedPackage.integrity,
-      });
-
-    return installedVersion.id;
+    return this.applicationRegistrationVersionService.recordPublishedVersion({
+      applicationRegistrationId: appRegistration.id,
+      version,
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      sourcePackage: appRegistration.sourcePackage,
+      artifactUrl: resolvedPackage.registryTarballUrl,
+      checksum: resolvedPackage.integrity,
+    });
   }
 
   private assertResolvedPackageMatchesRecordedVersion({
@@ -702,29 +721,17 @@ export class ApplicationInstallService {
       ApplicationRegistrationVersionEntity,
       'version' | 'checksum'
     >;
-    resolvedPackage: Pick<ResolvedPackage, 'integrity'>;
+    resolvedPackage: Pick<ResolvedPackage, 'supportedAlgorithmsIntegrity'>;
   }): void {
     if (!isDefined(recordedVersion.checksum)) {
       return;
     }
 
-    const comparison = compareSriIntegrity({
+    assertSriIntegrityMatches({
       expected: recordedVersion.checksum,
-      actual: resolvedPackage.integrity,
+      actual: resolvedPackage.supportedAlgorithmsIntegrity,
+      subject: `Package resolved for ${universalIdentifier}@${recordedVersion.version}`,
     });
-
-    if (comparison === 'mismatch') {
-      throw new ApplicationException(
-        `Package resolved for ${universalIdentifier}@${recordedVersion.version} does not match the fingerprint recorded for that version`,
-        ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH,
-      );
-    }
-
-    if (comparison === 'incomparable') {
-      this.logger.warn(
-        `Fingerprint recorded for ${universalIdentifier}@${recordedVersion.version} uses an algorithm this server cannot verify`,
-      );
-    }
   }
 
   private async markInstallCompleted({
