@@ -18,6 +18,7 @@ import { RecordGroupAggregateDropdown } from '@/object-record/record-group/compo
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
+import { canEditRecordTableWidgetViewSettings } from '@/object-record/record-table-widget/utils/canEditRecordTableWidgetViewSettings';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useIsRecordTableWidgetAggregateNonInteractive } from '@/object-record/record-table-widget/hooks/useIsRecordTableWidgetAggregateNonInteractive';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -171,7 +172,7 @@ export const RecordBoardColumnHeader = () => {
     useIsRecordTableWidgetAggregateNonInteractive() ?? false;
 
   const isColumnResizable = isDefined(recordTableWidgetContext)
-    ? recordTableWidgetContext.isPageLayoutInEditMode
+    ? canEditRecordTableWidgetViewSettings(recordTableWidgetContext)
     : !isRecordBoardViewSettingsReadOnly;
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(

@@ -4,6 +4,7 @@ import { buildRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { makeWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 const view = constructViewFromRecordTableWidgetViewSnapshot(
   buildRecordTableWidgetViewSnapshot(
@@ -56,6 +57,21 @@ describe('buildMissingRecordTableWidgetViewDraftSnapshots', () => {
   it('should skip widgets whose configuration has no view', () => {
     const snapshots = buildMissingRecordTableWidgetViewDraftSnapshots({
       widgets: [makeViewBackedWidget('widget-1', undefined)],
+      existingSnapshotsByWidgetId: {},
+      views: [view],
+    });
+
+    expect(snapshots).toEqual({});
+  });
+
+  it('should skip VIEW widgets since they do not own their view', () => {
+    const snapshots = buildMissingRecordTableWidgetViewDraftSnapshots({
+      widgets: [
+        {
+          ...makeViewBackedWidget('widget-1', view.id),
+          type: WidgetType.VIEW,
+        },
+      ],
       existingSnapshotsByWidgetId: {},
       views: [view],
     });

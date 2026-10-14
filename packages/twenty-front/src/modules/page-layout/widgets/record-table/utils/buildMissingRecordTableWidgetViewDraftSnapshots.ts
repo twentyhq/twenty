@@ -4,6 +4,7 @@ import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record
 import { buildRecordTableWidgetViewSnapshotFromView } from '@/page-layout/widgets/record-table/utils/buildRecordTableWidgetViewSnapshotFromView';
 import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 type BuildMissingRecordTableWidgetViewDraftSnapshotsParams = {
   widgets: PageLayoutWidget[];
@@ -26,6 +27,11 @@ export const buildMissingRecordTableWidgetViewDraftSnapshots = ({
 
   for (const widget of widgets) {
     if (widget.id in existingSnapshotsByWidgetId) {
+      continue;
+    }
+
+    // A VIEW widget only references a view it does not own, so it never gets a draft to edit.
+    if (widget.type === WidgetType.VIEW) {
       continue;
     }
 

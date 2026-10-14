@@ -20,6 +20,7 @@ import { TimelineWidget } from '@/page-layout/widgets/timeline/components/Timeli
 import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
 import { WorkflowVersionWidget } from '@/page-layout/widgets/workflow/components/WorkflowVersionWidget';
 import { RecordTableWidgetRenderer } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRenderer';
+import { ViewWidgetRenderer } from '@/page-layout/widgets/view/components/ViewWidgetRenderer';
 import { WorkflowWidget } from '@/page-layout/widgets/workflow/components/WorkflowWidget';
 import { WidgetType } from '~/generated-metadata/graphql';
 
@@ -87,6 +88,9 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.RECORD_TABLE:
       return <RecordTableWidgetRenderer widget={widget} />;
+
+    case WidgetType.VIEW:
+      return <ViewWidgetRenderer widget={widget} />;
 
     case WidgetType.EMAIL_THREAD:
       return <EmailThreadWidget widget={widget} />;

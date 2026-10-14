@@ -28,6 +28,7 @@ type RecordTableWidgetRendererContentProps = {
   widgetId: string;
   isUIEditable?: boolean;
   isEmptyStateHidden?: boolean;
+  isViewLocked?: boolean;
   recordLimit?: number;
   instanceIdSuffix?: string;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
@@ -40,6 +41,7 @@ export const RecordTableWidgetRendererContent = ({
   widgetId,
   isUIEditable = false,
   isEmptyStateHidden = false,
+  isViewLocked = false,
   recordLimit,
   instanceIdSuffix,
   nestedRelationCreateThrough,
@@ -100,6 +102,7 @@ export const RecordTableWidgetRendererContent = ({
       nestedRelationCreateThrough={nestedRelationCreateThrough}
       junctionCreateThrough={junctionCreateThrough}
       contextStoreViewType={getContextStoreViewType(widgetViewLayout)}
+      isViewLocked={isViewLocked}
     >
       {renderWidgetForLayout[widgetViewLayout]()}
     </RecordTableWidgetProvider>

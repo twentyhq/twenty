@@ -5,6 +5,7 @@ const getWidgetContext = (
   overrides: Partial<RecordTableWidgetContextValue> = {},
 ): RecordTableWidgetContextValue => ({
   isPageLayoutInEditMode: false,
+  isViewLocked: false,
   pageLayoutId: 'page-layout-id',
   widgetId: 'widget-id',
   updateViewDraftField: jest.fn(),
@@ -30,6 +31,15 @@ describe('getViewPersistTarget', () => {
     expect(getViewPersistTarget(getWidgetContext())).toEqual({
       target: 'none',
     });
+  });
+
+  it('does not persist from a widget editor when the view is locked', () => {
+    const widgetContext = getWidgetContext({
+      isPageLayoutInEditMode: true,
+      isViewLocked: true,
+    });
+
+    expect(getViewPersistTarget(widgetContext)).toEqual({ target: 'none' });
   });
 
   it('does not persist from a widget editor missing its page layout id', () => {

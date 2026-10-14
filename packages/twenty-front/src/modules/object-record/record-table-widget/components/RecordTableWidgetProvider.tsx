@@ -33,6 +33,7 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   recordLimit?: number;
   instanceIdSuffix?: string;
   contextStoreViewType?: ContextStoreViewType;
+  isViewLocked?: boolean;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
   junctionCreateThrough?: RecordTableWidgetJunctionCreateThrough;
 }>;
@@ -44,6 +45,7 @@ export const RecordTableWidgetProvider = ({
   recordLimit,
   instanceIdSuffix,
   contextStoreViewType,
+  isViewLocked = false,
   nestedRelationCreateThrough,
   junctionCreateThrough,
   children,
@@ -113,6 +115,7 @@ export const RecordTableWidgetProvider = ({
   const recordTableWidgetContext = useMemo(
     () => ({
       isPageLayoutInEditMode,
+      isViewLocked,
       pageLayoutId,
       widgetId,
       nestedRelationCreateThrough,
@@ -122,6 +125,7 @@ export const RecordTableWidgetProvider = ({
     }),
     [
       isPageLayoutInEditMode,
+      isViewLocked,
       pageLayoutId,
       widgetId,
       nestedRelationCreateThrough,

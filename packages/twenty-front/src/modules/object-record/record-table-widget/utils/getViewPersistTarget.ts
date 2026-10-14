@@ -1,3 +1,4 @@
+import { canEditRecordTableWidgetViewSettings } from '@/object-record/record-table-widget/utils/canEditRecordTableWidgetViewSettings';
 import { type RecordTableWidgetContextValue } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,7 +17,7 @@ export const getViewPersistTarget = (
   }
 
   if (
-    widgetContext.isPageLayoutInEditMode &&
+    canEditRecordTableWidgetViewSettings(widgetContext) &&
     isDefined(widgetContext.pageLayoutId)
   ) {
     return { target: 'pageLayoutDraft', widgetContext };

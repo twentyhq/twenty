@@ -22,6 +22,8 @@ export type RecordTableWidgetJunctionCreateThrough = {
 
 export type RecordTableWidgetContextValue = {
   isPageLayoutInEditMode: boolean;
+  // The widget displays a view it does not own, so it must never change it.
+  isViewLocked: boolean;
   pageLayoutId?: string;
   widgetId: string;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
