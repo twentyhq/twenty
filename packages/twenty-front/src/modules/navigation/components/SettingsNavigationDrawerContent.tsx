@@ -5,6 +5,7 @@ import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNa
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
+import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,7 +19,14 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledAdvancedSwitchFixedContent = styled.div<{ isMobile: boolean }>`
   border-top: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
+  height: ${({ isMobile }) => (isMobile ? 'auto' : TAB_LIST_HEIGHT)};
+  justify-content: center;
+  margin-bottom: ${({ isMobile }) =>
+    isMobile ? '0' : `calc(-1 * ${themeCssVariables.spacing[4]})`};
   margin-top: auto;
   padding-bottom: ${({ isMobile }) =>
     isMobile ? MOBILE_NAVIGATION_BAR_CLEARANCE : '0'};
@@ -26,7 +34,8 @@ const StyledAdvancedSwitchFixedContent = styled.div<{ isMobile: boolean }>`
     isMobile ? themeCssVariables.spacing[5] : '0'};
   padding-right: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};
-  padding-top: ${themeCssVariables.spacing[2]};
+  padding-top: ${({ isMobile }) =>
+    isMobile ? themeCssVariables.spacing[2] : '0'};
 `;
 
 const advancedSettingsSwitchClassName = css`
