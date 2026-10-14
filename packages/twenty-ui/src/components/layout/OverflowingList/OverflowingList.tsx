@@ -167,140 +167,141 @@ export const OverflowingList = ({
 
   return (
     <>
-      <Popover.Root
-        open={isPopupOpen}
-        actionsRef={actionsRef}
-        onOpenChange={(nextOpen, eventDetails) => {
-          onOpenChange?.(nextOpen, eventDetails);
+      <div
+        {...props}
+        ref={mergedRef}
+        tabIndex={props.tabIndex ?? -1}
+        className={clsx(styles.root, className)}
+        onMouseEnter={(event) => {
+          setIsHovered(true);
+          onMouseEnter?.(event);
+        }}
+        onMouseLeave={(event) => {
+          setIsHovered(false);
+          onMouseLeave?.(event);
+        }}
+        onFocusCapture={(event) => {
+          setHasFocus(true);
 
-          if (!eventDetails.isCanceled) {
-            setIsOpen(nextOpen);
+          if (itemsRef.current?.contains(event.target)) {
+            setFocusedItemCountVisibility(
+              (currentVisibility) => currentVisibility ?? isCountVisible,
+            );
           }
+
+          onFocusCapture?.(event);
+        }}
+        onBlurCapture={(event) => {
+          const hasRelatedFocus =
+            event.currentTarget.contains(event.relatedTarget) ||
+            (popup?.contains(event.relatedTarget) ?? false);
+          setHasFocus(hasRelatedFocus);
+
+          if (!itemsRef.current?.contains(event.relatedTarget)) {
+            setFocusedItemCountVisibility(undefined);
+          }
+
+          onBlurCapture?.(event);
         }}
       >
-        <div
-          {...props}
-          ref={mergedRef}
-          tabIndex={props.tabIndex ?? -1}
-          className={clsx(styles.root, className)}
-          onMouseEnter={(event) => {
-            setIsHovered(true);
-            onMouseEnter?.(event);
-          }}
-          onMouseLeave={(event) => {
-            setIsHovered(false);
-            onMouseLeave?.(event);
-          }}
-          onFocusCapture={(event) => {
-            setHasFocus(true);
-
-            if (itemsRef.current?.contains(event.target)) {
-              setFocusedItemCountVisibility(
-                (currentVisibility) => currentVisibility ?? isCountVisible,
-              );
-            }
-
-            onFocusCapture?.(event);
-          }}
-          onBlurCapture={(event) => {
-            const hasRelatedFocus =
-              event.currentTarget.contains(event.relatedTarget) ||
-              (popup?.contains(event.relatedTarget) ?? false);
-            setHasFocus(hasRelatedFocus);
-
-            if (!itemsRef.current?.contains(event.relatedTarget)) {
-              setFocusedItemCountVisibility(undefined);
-            }
-
-            onBlurCapture?.(event);
-          }}
-        >
-          <div ref={itemsRef} className={styles.items}>
-            {children.slice(0, inlineItemCount).map((child, index) => (
-              <OverflowingListItem
-                key={child.key ?? index}
-                index={index}
-                isHidden={index >= displayedItemCount}
-                isLastVisible={
-                  showOverflowCount !== false &&
-                  index === displayedItemCount - 1
-                }
-                isInPopup={false}
-                onFocusLost={restoreItemFocus}
-              >
-                {child}
-              </OverflowingListItem>
-            ))}
-          </div>
-          {canExpand && (
-            <Popover.Trigger
-              type="button"
-              aria-label={`+${hiddenItemCount} ${overflowLabel}`}
-              {...triggerProps}
-              ref={mergedTriggerRef}
-              className={(state) =>
-                clsx(
-                  styles.trigger,
-                  isFunction(triggerProps?.className)
-                    ? triggerProps.className(state)
-                    : triggerProps?.className,
-                )
+        <div ref={itemsRef} className={styles.items}>
+          {children.slice(0, inlineItemCount).map((child, index) => (
+            <OverflowingListItem
+              key={child.key ?? index}
+              index={index}
+              isHidden={index >= displayedItemCount}
+              isLastVisible={
+                showOverflowCount !== false && index === displayedItemCount - 1
               }
-              data-visible={isCountVisible || undefined}
+              isInPopup={false}
+              onFocusLost={restoreItemFocus}
             >
-              {isUndefined(triggerProps?.children)
-                ? `+${hiddenItemCount}`
-                : triggerProps.children}
-            </Popover.Trigger>
-          )}
-          <Popover.Portal>
-            <Popover.Positioner
-              anchor={containerRef}
-              align="start"
-              sideOffset={-9}
-              alignOffset={-7}
-            >
-              <Popover.Popup
-                aria-label={overflowLabel}
-                {...popupProps}
-                ref={mergedPopupRef}
-                render={(renderProps, state) => (
-                  <OverflowingListPopupTarget
-                    props={renderProps}
-                    state={state}
-                    render={popupProps?.render}
-                  />
-                )}
-                finalFocus={
-                  popupProps?.finalFocus ?? schedulePopupFocusRestoration
-                }
+              {child}
+            </OverflowingListItem>
+          ))}
+        </div>
+        {(canExpand || isOpen) && (
+          <Popover.Root
+            open={isPopupOpen}
+            actionsRef={actionsRef}
+            onOpenChange={(nextOpen, eventDetails) => {
+              onOpenChange?.(nextOpen, eventDetails);
+
+              if (!eventDetails.isCanceled) {
+                setIsOpen(nextOpen);
+              }
+            }}
+          >
+            {canExpand && (
+              <Popover.Trigger
+                type="button"
+                aria-label={`+${hiddenItemCount} ${overflowLabel}`}
+                {...triggerProps}
+                ref={mergedTriggerRef}
                 className={(state) =>
                   clsx(
-                    styles.popup,
-                    isFunction(popupProps?.className)
-                      ? popupProps.className(state)
-                      : popupProps?.className,
+                    styles.trigger,
+                    isFunction(triggerProps?.className)
+                      ? triggerProps.className(state)
+                      : triggerProps?.className,
                   )
                 }
-                data-overflowing-list-popup=""
+                data-visible={isCountVisible || undefined}
               >
-                {children.map((child, index) => (
-                  <OverflowingListItem
-                    key={child.key ?? index}
-                    index={index}
-                    isHidden={false}
-                    isLastVisible={false}
-                    isInPopup
-                    onFocusLost={restoreItemFocus}
-                  >
-                    {child}
-                  </OverflowingListItem>
-                ))}
-              </Popover.Popup>
-            </Popover.Positioner>
-          </Popover.Portal>
-        </div>
-      </Popover.Root>
+                {isUndefined(triggerProps?.children)
+                  ? `+${hiddenItemCount}`
+                  : triggerProps.children}
+              </Popover.Trigger>
+            )}
+            <Popover.Portal>
+              <Popover.Positioner
+                anchor={containerRef}
+                align="start"
+                sideOffset={-9}
+                alignOffset={-7}
+              >
+                <Popover.Popup
+                  aria-label={overflowLabel}
+                  {...popupProps}
+                  ref={mergedPopupRef}
+                  render={(renderProps, state) => (
+                    <OverflowingListPopupTarget
+                      props={renderProps}
+                      state={state}
+                      render={popupProps?.render}
+                    />
+                  )}
+                  finalFocus={
+                    popupProps?.finalFocus ?? schedulePopupFocusRestoration
+                  }
+                  className={(state) =>
+                    clsx(
+                      styles.popup,
+                      isFunction(popupProps?.className)
+                        ? popupProps.className(state)
+                        : popupProps?.className,
+                    )
+                  }
+                  data-overflowing-list-popup=""
+                >
+                  {children.map((child, index) => (
+                    <OverflowingListItem
+                      key={child.key ?? index}
+                      index={index}
+                      isHidden={false}
+                      isLastVisible={false}
+                      isInPopup
+                      onFocusLost={restoreItemFocus}
+                    >
+                      {child}
+                    </OverflowingListItem>
+                  ))}
+                </Popover.Popup>
+              </Popover.Positioner>
+            </Popover.Portal>
+          </Popover.Root>
+        )}
+      </div>
       <OverflowingListLayoutEffect
         containerRef={containerRef}
         itemsRef={itemsRef}
