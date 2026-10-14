@@ -25,7 +25,7 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
-import { restoreSourceFieldMetadataOptionLabels } from 'src/engine/metadata-modules/overrides/utils/restore-source-field-metadata-option-labels.util';
+import { computeFieldMetadataOptionLabelUpdates } from 'src/engine/metadata-modules/overrides/utils/compute-field-metadata-option-label-updates.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
@@ -254,9 +254,9 @@ export class FieldMetadataService {
       },
     );
 
-    const updateFieldInputWithSourceOptionLabels = isSystemBuild
+    const updateFieldInputWithOptionLabelUpdates = isSystemBuild
       ? updateFieldInput
-      : await this.restoreSourceOptionLabels({
+      : await this.applyOptionLabelUpdates({
           updateFieldInput,
           flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           locale,
@@ -268,7 +268,7 @@ export class FieldMetadataService {
       flatIndexMaps: existingFlatIndexMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       updateFieldInput: {
-        ...updateFieldInputWithSourceOptionLabels,
+        ...updateFieldInputWithOptionLabelUpdates,
         workspaceId,
       },
       flatViewFilterMaps: existingFlatViewFilterMaps,
@@ -495,7 +495,7 @@ export class FieldMetadataService {
     );
   }
 
-  private async restoreSourceOptionLabels({
+  private async applyOptionLabelUpdates({
     updateFieldInput,
     flatFieldMetadataMaps,
     locale,
@@ -528,15 +528,22 @@ export class FieldMetadataService {
         },
       );
 
-    return {
-      ...updateFieldInput,
-      options: restoreSourceFieldMetadataOptionLabels({
+    const { options, translationEntries } =
+      computeFieldMetadataOptionLabelUpdates({
         fieldMetadataType: existingFlatFieldMetadata.type,
         updatedOptions: updateFieldInput.options,
         existingOptions: existingFlatFieldMetadata.options,
         overrides: existingFlatFieldMetadata.overrides,
         i18nContext: getI18nContext(existingFlatFieldMetadata.applicationId),
-      }),
+      });
+
+    return {
+      ...updateFieldInput,
+      options,
+      translations: [
+        ...translationEntries,
+        ...(updateFieldInput.translations ?? []),
+      ],
     };
   }
 }

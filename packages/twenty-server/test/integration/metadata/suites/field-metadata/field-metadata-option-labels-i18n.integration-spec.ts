@@ -288,6 +288,39 @@ describe('field metadata option labels i18n', () => {
     ]);
   });
 
+  it('should save an edited translated label as a translation of the member locale', async () => {
+    await updateWorkspaceMemberLocale('en');
+
+    const translatedOptions = await findFieldOptions(fieldMetadataId);
+
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: fieldMetadataId,
+        updatePayload: {
+          options: translatedOptions.map((option) =>
+            option.id === weekOptionId
+              ? { ...option, label: 'Weekly' }
+              : option,
+          ),
+        },
+      },
+    });
+
+    expect(errors).toBeUndefined();
+    expect(await findOptionLabels(fieldMetadataId)).toEqual([
+      'Weekly',
+      'Month',
+    ]);
+
+    await updateWorkspaceMemberLocale('fr-FR');
+
+    expect(await findOptionLabels(fieldMetadataId)).toEqual([
+      'Неделя',
+      'Месяц',
+    ]);
+  });
+
   it('should reject translations of unknown options', async () => {
     const { errors } = await updateOneFieldMetadata({
       expectToFail: true,
