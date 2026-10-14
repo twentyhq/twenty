@@ -11,6 +11,12 @@ import {
   AI_SDK_BEDROCK,
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
+
+const BEDROCK_CLAUDE = {
+  sdkPackage: AI_SDK_BEDROCK,
+  modelFamily: ModelFamily.CLAUDE,
+};
 
 describe('provider-options.util', () => {
   describe('getCallLevelProviderOptions', () => {
@@ -154,12 +160,21 @@ describe('provider-options.util', () => {
   });
 
   describe('getCacheProviderOptions', () => {
-    it('returns cache point provider options for Bedrock models', () => {
-      expect(getCacheProviderOptions(AI_SDK_BEDROCK)).toEqual({
+    it('returns cache point provider options for Bedrock Claude models', () => {
+      expect(getCacheProviderOptions(BEDROCK_CLAUDE)).toEqual({
         bedrock: {
           cachePoint: { type: 'default' },
         },
       });
+    });
+
+    it('returns no cache point for Bedrock models that do not support it', () => {
+      expect(
+        getCacheProviderOptions({
+          sdkPackage: AI_SDK_BEDROCK,
+          modelFamily: ModelFamily.GPT,
+        }),
+      ).toBeUndefined();
     });
   });
 
@@ -179,7 +194,7 @@ describe('provider-options.util', () => {
               },
             },
           ],
-          AI_SDK_BEDROCK,
+          BEDROCK_CLAUDE,
         ),
       ).toEqual([
         { role: 'user', content: 'first' },
@@ -214,7 +229,7 @@ describe('provider-options.util', () => {
             },
             { role: 'tool', content: [] },
           ],
-          AI_SDK_BEDROCK,
+          BEDROCK_CLAUDE,
         ),
       ).toEqual([
         { role: 'user', content: 'first' },
@@ -244,7 +259,7 @@ describe('provider-options.util', () => {
               providerOptions: { bedrock: { guardrail: 'off' } },
             },
           ],
-          AI_SDK_BEDROCK,
+          BEDROCK_CLAUDE,
         ),
       ).toEqual([
         {
@@ -262,7 +277,7 @@ describe('provider-options.util', () => {
       ]);
     });
 
-    it('leaves messages untouched for non-Bedrock providers', () => {
+    it('leaves messages untouched for models without Bedrock cache points', () => {
       const messages: ModelMessage[] = [
         { role: 'user', content: 'first' },
         {
@@ -272,8 +287,18 @@ describe('provider-options.util', () => {
         },
       ];
 
-      expect(injectCacheBreakpoint(messages, AI_SDK_ANTHROPIC)).toBe(messages);
-      expect(injectCacheBreakpoint(messages, AI_SDK_OPENAI)).toBe(messages);
+      expect(
+        injectCacheBreakpoint(messages, {
+          sdkPackage: AI_SDK_ANTHROPIC,
+          modelFamily: ModelFamily.CLAUDE,
+        }),
+      ).toBe(messages);
+      expect(
+        injectCacheBreakpoint(messages, {
+          sdkPackage: AI_SDK_BEDROCK,
+          modelFamily: ModelFamily.GPT,
+        }),
+      ).toBe(messages);
     });
   });
 });

@@ -6,8 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
-import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 
 import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
 
@@ -28,18 +26,10 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   selectedWorkflowRecordIds,
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
-  const isCore = useIsWorkflowCoreEnabled();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
-    isCore ? [] : selectedWorkflowRecordIds,
-  );
   const coreWorkflowsWithCurrentVersions = useCoreWorkflowsWithCurrentVersions(
-    isCore ? selectedWorkflowRecordIds : [],
+    selectedWorkflowRecordIds,
   );
-
-  const workflows = isCore
-    ? coreWorkflowsWithCurrentVersions
-    : workflowsWithCurrentVersions;
 
   const applicationManagedWorkflowIds = new Set(
     coreWorkflowsWithCurrentVersions
@@ -57,7 +47,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {
-      const workflowWithCurrentVersion = workflows.find(
+      const workflowWithCurrentVersion = coreWorkflowsWithCurrentVersions.find(
         (workflow) => workflow.id === record.id,
       );
 

@@ -80,7 +80,7 @@ export const SettingsSecurityEditableProfileFields = () => {
 
   const toggleField = (field: string) => {
     if (!currentWorkspace?.id) {
-      enqueueToast({ variant: 'error', children: t`User is not logged in` });
+      enqueueToast({ status: 'error', children: t`User is not logged in` });
       return;
     }
 

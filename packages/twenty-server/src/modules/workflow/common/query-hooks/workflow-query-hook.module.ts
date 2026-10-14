@@ -1,90 +1,64 @@
-import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { Module } from '@nestjs/common';
 
-import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
-import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
-import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
-import { WorkflowCreateManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.post-query.hook';
 import { WorkflowCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.pre-query.hook';
-import { WorkflowCreateOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.post-query.hook';
 import { WorkflowCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.pre-query.hook';
-import { WorkflowDeleteManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-delete-many.post-query.hook';
-import { WorkflowDeleteOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-delete-one.post-query.hook';
-import { WorkflowDestroyManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-many.post-query.hook';
+import { WorkflowDeleteManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-delete-many.pre-query.hook';
+import { WorkflowDeleteOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-delete-one.pre-query.hook';
 import { WorkflowDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-many.pre-query.hook';
-import { WorkflowDestroyOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-one.post-query.hook';
 import { WorkflowDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-one.pre-query.hook';
-import { WorkflowRestoreManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-many.post-query.hook';
-import { WorkflowRestoreOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-one.post-query.hook';
+import { WorkflowMergeManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-merge-many.pre-query.hook';
+import { WorkflowRestoreManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-many.pre-query.hook';
+import { WorkflowRestoreOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-one.pre-query.hook';
 import { WorkflowRunCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-many.pre-query.hook';
 import { WorkflowRunCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-one.pre-query.hook';
 import { WorkflowRunDeleteManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-delete-many.pre-query.hook';
 import { WorkflowRunDeleteOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-delete-one.pre-query.hook';
 import { WorkflowRunUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-update-many.pre-query.hook';
 import { WorkflowRunUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-update-one.pre-query.hook';
-import { WorkflowUpdateManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-many.post-query.hook';
 import { WorkflowUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-many.pre-query.hook';
-import { WorkflowUpdateOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-one.post-query.hook';
 import { WorkflowUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-one.pre-query.hook';
 import { WorkflowVersionCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-create-many.pre-query.hook';
 import { WorkflowVersionCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-create-one.pre-query.hook';
 import { WorkflowVersionDeleteManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-many.pre-query.hook';
-import { WorkflowVersionDeleteOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-one.post-query.hook';
 import { WorkflowVersionDeleteOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-one.pre-query.hook';
 import { WorkflowVersionDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-destroy-many.pre-query.hook';
 import { WorkflowVersionDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-destroy-one.pre-query.hook';
+import { WorkflowVersionMergeManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-merge-many.pre-query.hook';
 import { WorkflowVersionRestoreManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-restore-many.pre-query.hook';
 import { WorkflowVersionRestoreOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-restore-one.pre-query.hook';
 import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-many.pre-query.hook';
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
-import { WorkflowVersionQueryValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service';
 
 @Module({
-  imports: [
-    WorkflowCoreModule,
-    RecordPositionModule,
-    CommandMenuItemModule,
-    WorkflowVersionCoreModule,
-    WorkflowMetadataReadModule,
-  ],
   providers: [
-    WorkflowCreateOnePreQueryHook,
     WorkflowCreateManyPreQueryHook,
-    WorkflowUpdateOnePreQueryHook,
-    WorkflowUpdateManyPreQueryHook,
-    WorkflowUpdateOnePostQueryHook,
-    WorkflowUpdateManyPostQueryHook,
-    WorkflowRunCreateOnePreQueryHook,
-    WorkflowRunCreateManyPreQueryHook,
-    WorkflowRunUpdateOnePreQueryHook,
-    WorkflowRunUpdateManyPreQueryHook,
-    WorkflowRunDeleteOnePreQueryHook,
-    WorkflowRunDeleteManyPreQueryHook,
-    WorkflowRestoreOnePostQueryHook,
-    WorkflowRestoreManyPostQueryHook,
-    WorkflowVersionCreateOnePreQueryHook,
-    WorkflowVersionCreateManyPreQueryHook,
-    WorkflowVersionUpdateOnePreQueryHook,
-    WorkflowVersionUpdateManyPreQueryHook,
-    WorkflowVersionDeleteOnePreQueryHook,
-    WorkflowVersionDeleteOnePostQueryHook,
-    WorkflowVersionDeleteManyPreQueryHook,
-    WorkflowVersionDestroyOnePreQueryHook,
-    WorkflowVersionDestroyManyPreQueryHook,
-    WorkflowVersionRestoreOnePreQueryHook,
-    WorkflowVersionRestoreManyPreQueryHook,
-    WorkflowCreateOnePostQueryHook,
-    WorkflowCreateManyPostQueryHook,
-    WorkflowVersionQueryValidationWorkspaceService,
-    WorkflowCommonWorkspaceService,
-    WorkflowDeleteManyPostQueryHook,
-    WorkflowDeleteOnePostQueryHook,
-    WorkflowDestroyOnePreQueryHook,
+    WorkflowCreateOnePreQueryHook,
+    WorkflowDeleteManyPreQueryHook,
+    WorkflowDeleteOnePreQueryHook,
     WorkflowDestroyManyPreQueryHook,
-    WorkflowDestroyOnePostQueryHook,
-    WorkflowDestroyManyPostQueryHook,
+    WorkflowDestroyOnePreQueryHook,
+    WorkflowMergeManyPreQueryHook,
+    WorkflowRestoreManyPreQueryHook,
+    WorkflowRestoreOnePreQueryHook,
+    WorkflowRunCreateManyPreQueryHook,
+    WorkflowRunCreateOnePreQueryHook,
+    WorkflowRunDeleteManyPreQueryHook,
+    WorkflowRunDeleteOnePreQueryHook,
+    WorkflowRunUpdateManyPreQueryHook,
+    WorkflowRunUpdateOnePreQueryHook,
+    WorkflowUpdateManyPreQueryHook,
+    WorkflowUpdateOnePreQueryHook,
+    WorkflowVersionCreateManyPreQueryHook,
+    WorkflowVersionCreateOnePreQueryHook,
+    WorkflowVersionDeleteManyPreQueryHook,
+    WorkflowVersionDeleteOnePreQueryHook,
+    WorkflowVersionDestroyManyPreQueryHook,
+    WorkflowVersionDestroyOnePreQueryHook,
+    WorkflowVersionMergeManyPreQueryHook,
+    WorkflowVersionRestoreManyPreQueryHook,
+    WorkflowVersionRestoreOnePreQueryHook,
+    WorkflowVersionUpdateManyPreQueryHook,
+    WorkflowVersionUpdateOnePreQueryHook,
   ],
 })
 export class WorkflowQueryHookModule {}

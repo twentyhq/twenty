@@ -44,7 +44,7 @@ export const WorkspaceLogoUploader = () => {
       const message =
         error instanceof Error ? error.message : t`Failed to upload picture`;
       setErrorMessage(t`An error occurred while uploading the picture.`);
-      enqueueToast({ variant: 'error', children: message });
+      enqueueToast({ status: 'error', children: message });
     } finally {
       setIsUploading(false);
     }
@@ -76,7 +76,7 @@ export const WorkspaceLogoUploader = () => {
       const message =
         error instanceof Error ? error.message : t`Failed to remove picture`;
       setErrorMessage(t`An error occurred while removing the picture.`);
-      enqueueToast({ variant: 'error', children: message });
+      enqueueToast({ status: 'error', children: message });
     } finally {
       setIsRemoving(false);
     }

@@ -47,12 +47,14 @@ export const OverflowingList = ({
     isDefined(maxInlineCount) && Number.isFinite(maxInlineCount)
       ? Math.min(children.length, Math.max(0, Math.floor(maxInlineCount)))
       : children.length;
+  const isMeasurementEnabled =
+    showOverflowCount ?? (isHovered || hasFocus || isOpen);
   const { containerRef, itemsRef, triggerRef, visibleItemCount, hasOverflow } =
     useOverflowingListLayout({
       itemCount: children.length,
       inlineItemCount,
       reserveCountSpace: isCountVisible,
-      isMeasurementEnabled: showOverflowCount !== false || isOpen,
+      isMeasurementEnabled,
     });
   const resetFocusState = useCallback(() => {
     setHasFocus(false);
@@ -65,8 +67,9 @@ export const OverflowingList = ({
     triggerRef,
     resetFocusWhenFocusedTriggerUnmounts,
   );
-  const displayedItemCount =
-    showOverflowCount === false ? inlineItemCount : visibleItemCount;
+  const displayedItemCount = isMeasurementEnabled
+    ? visibleItemCount
+    : inlineItemCount;
   const hiddenItemCount = children.length - visibleItemCount;
   const canExpand = hasOverflow && (isOpen || showOverflowCount !== false);
 
@@ -75,55 +78,55 @@ export const OverflowingList = ({
   }
 
   return (
-    <Popover.Root open={isOpen && canExpand} onOpenChange={setIsOpen}>
-      <div
-        {...props}
-        ref={mergedRef}
-        className={clsx(styles.root, className)}
-        onMouseEnter={(event) => {
-          setIsHovered(true);
-          onMouseEnter?.(event);
-        }}
-        onMouseLeave={(event) => {
-          setIsHovered(false);
-          onMouseLeave?.(event);
-        }}
-        onFocusCapture={(event) => {
-          setHasFocus(true);
+    <div
+      {...props}
+      ref={mergedRef}
+      className={clsx(styles.root, className)}
+      onMouseEnter={(event) => {
+        setIsHovered(true);
+        onMouseEnter?.(event);
+      }}
+      onMouseLeave={(event) => {
+        setIsHovered(false);
+        onMouseLeave?.(event);
+      }}
+      onFocusCapture={(event) => {
+        setHasFocus(true);
 
-          if (itemsRef.current?.contains(event.target)) {
-            setFocusedItemCountVisibility(
-              (currentVisibility) => currentVisibility ?? isCountVisible,
-            );
-          }
+        if (itemsRef.current?.contains(event.target)) {
+          setFocusedItemCountVisibility(
+            (currentVisibility) => currentVisibility ?? isCountVisible,
+          );
+        }
 
-          onFocusCapture?.(event);
-        }}
-        onBlurCapture={(event) => {
-          setHasFocus(event.currentTarget.contains(event.relatedTarget));
+        onFocusCapture?.(event);
+      }}
+      onBlurCapture={(event) => {
+        setHasFocus(event.currentTarget.contains(event.relatedTarget));
 
-          if (!itemsRef.current?.contains(event.relatedTarget)) {
-            setFocusedItemCountVisibility(undefined);
-          }
+        if (!itemsRef.current?.contains(event.relatedTarget)) {
+          setFocusedItemCountVisibility(undefined);
+        }
 
-          onBlurCapture?.(event);
-        }}
-      >
-        <div ref={itemsRef} className={styles.items}>
-          {children.slice(0, inlineItemCount).map((child, index) => (
-            <OverflowingListItem
-              key={child.key ?? index}
-              isHidden={index >= displayedItemCount}
-              isLastVisible={
-                showOverflowCount !== false && index === displayedItemCount - 1
-              }
-              onFocusedItemUnmount={resetFocusState}
-            >
-              {child}
-            </OverflowingListItem>
-          ))}
-        </div>
-        {canExpand && (
+        onBlurCapture?.(event);
+      }}
+    >
+      <div ref={itemsRef} className={styles.items}>
+        {children.slice(0, inlineItemCount).map((child, index) => (
+          <OverflowingListItem
+            key={child.key ?? index}
+            isHidden={index >= displayedItemCount}
+            isLastVisible={
+              showOverflowCount !== false && index === displayedItemCount - 1
+            }
+            onFocusedItemUnmount={resetFocusState}
+          >
+            {child}
+          </OverflowingListItem>
+        ))}
+      </div>
+      {canExpand && (
+        <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
           <Popover.Trigger
             ref={mergedTriggerRef}
             type="button"
@@ -134,25 +137,25 @@ export const OverflowingList = ({
           >
             +{hiddenItemCount}
           </Popover.Trigger>
-        )}
-        <Popover.Portal>
-          <Popover.Positioner
-            anchor={containerRef}
-            align="start"
-            sideOffset={-9}
-            alignOffset={-7}
-          >
-            <Popover.Popup
-              aria-label={overflowLabel}
-              className={styles.popup}
-              data-overflowing-list-popup=""
-              {...STOP_PROPAGATION_PROPS}
+          <Popover.Portal>
+            <Popover.Positioner
+              anchor={containerRef}
+              align="start"
+              sideOffset={-9}
+              alignOffset={-7}
             >
-              {children}
-            </Popover.Popup>
-          </Popover.Positioner>
-        </Popover.Portal>
-      </div>
-    </Popover.Root>
+              <Popover.Popup
+                aria-label={overflowLabel}
+                className={styles.popup}
+                data-overflowing-list-popup=""
+                {...STOP_PROPAGATION_PROPS}
+              >
+                {children}
+              </Popover.Popup>
+            </Popover.Positioner>
+          </Popover.Portal>
+        </Popover.Root>
+      )}
+    </div>
   );
 };

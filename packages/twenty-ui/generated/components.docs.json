@@ -258,14 +258,14 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "ID of the visible label that names the measured operation."
+        "description": "ID of the visible label that names the operation."
       },
       {
         "name": "aria-valuetext",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Human-readable progress value when a percentage alone is insufficient."
+        "description": "Human-readable progress value overriding the default formatted value."
       },
       {
         "name": "barColor",
@@ -279,21 +279,63 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Optional preformatted value displayed before the ring."
+        "description": "Optional preformatted value or Progress parts displayed before the ring."
       },
       {
         "name": "className",
-        "type": "string",
+        "type": "string | ((state: ProgressRootState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the progress root."
+        "description": "Class applied to the progress root, or a callback receiving its status."
+      },
+      {
+        "name": "format",
+        "type": "NumberFormatOptions",
+        "required": false,
+        "defaultValue": null,
+        "description": "Intl.NumberFormat options for the clamped numeric value. The default displays the normalized percentage."
+      },
+      {
+        "name": "getAriaValueText",
+        "type": "((formattedValue: string, value: number | null) => string)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the formatted value and raw value, including null, and returns an accessible value description."
+      },
+      {
+        "name": "locale",
+        "type": "LocalesArgument",
+        "required": false,
+        "defaultValue": null,
+        "description": "Locale or locale list used to format the value. Defaults to the runtime locale."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false,
+        "defaultValue": "100",
+        "description": "Inclusive maximum. Defaults to 100."
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "Inclusive minimum. Defaults to 0."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element composed through render."
       },
       {
         "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressRootState>",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the root element while preserving progress semantics."
+        "description": "Composes the root with an element or render callback. Forward the supplied props and ref to retain progress semantics."
       },
       {
         "name": "size",
@@ -304,17 +346,17 @@
       },
       {
         "name": "style",
-        "type": "CSSProperties",
+        "type": "CSSProperties | ((state: ProgressRootState) => CSSProperties | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "Inline styles applied to the progress root."
+        "description": "Inline styles applied to the progress root, or a callback receiving its status."
       },
       {
         "name": "value",
-        "type": "number",
+        "type": "number | null",
         "required": true,
         "defaultValue": null,
-        "description": "Controlled progress from 0 to 100. Out-of-range values are bounded and NaN renders as zero."
+        "description": "Controlled value in the min/max range. Use null for indeterminate progress."
       }
     ]
   },
@@ -356,7 +398,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Accessible value text for the progress ring. Overrides the string value fallback; supply it when formatted content needs more context than a percentage."
+        "description": "Accessible value text for the progress ring. Nonempty text overrides the string value fallback; an empty string uses the ring percentage. Supply it when formatted content needs more context than a percentage."
       },
       {
         "name": "render",
@@ -384,7 +426,7 @@
         "type": "ReactNode",
         "required": true,
         "defaultValue": null,
-        "description": "Preformatted value displayed at the end of the row. String values also supply the progress ring accessible value text."
+        "description": "Preformatted value displayed at the end of the row. Nonempty string values also supply the progress ring accessible value text."
       }
     ]
   },
@@ -884,6 +926,13 @@
         "description": "Animated highlight color. Defaults to the theme lighter transparent background."
       },
       {
+        "name": "layout",
+        "type": "\"block\" | \"inline\"",
+        "required": false,
+        "defaultValue": "inline",
+        "description": "`inline` sizes and aligns the placeholder like a line of text. `block` renders a block without a text node, which is cheaper when many placeholders are rendered and alignment with text is not needed."
+      },
+      {
         "name": "ref",
         "type": "Ref<HTMLSpanElement>",
         "required": false,
@@ -914,16 +963,294 @@
     ]
   },
   {
+    "name": "Progress",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/progress",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "aria-label",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Accessible name identifying the measured operation."
+          },
+          {
+            "name": "aria-labelledby",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the visible label that names the operation."
+          },
+          {
+            "name": "aria-valuetext",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Human-readable progress value overriding the default formatted value."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composed Progress parts and supporting content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressRootState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "format",
+            "type": "NumberFormatOptions",
+            "required": false,
+            "defaultValue": null,
+            "description": "Intl.NumberFormat options for the clamped numeric value. The default displays the normalized percentage."
+          },
+          {
+            "name": "getAriaValueText",
+            "type": "((formattedValue: string, value: number | null) => string)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Receives the formatted value and raw value, including null, and returns an accessible value description."
+          },
+          {
+            "name": "locale",
+            "type": "LocalesArgument",
+            "required": false,
+            "defaultValue": null,
+            "description": "Locale or locale list used to format the value. Defaults to the runtime locale."
+          },
+          {
+            "name": "max",
+            "type": "number",
+            "required": false,
+            "defaultValue": "100",
+            "description": "Inclusive maximum. Defaults to 100."
+          },
+          {
+            "name": "min",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "Inclusive minimum. Defaults to 0."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the root div, or the element composed through Root.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressRootState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressRootState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "value",
+            "type": "number | null",
+            "required": true,
+            "defaultValue": null,
+            "description": "Controlled value in the min/max range. Use null for indeterminate progress."
+          }
+        ]
+      },
+      {
+        "name": "Track",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "The indicator and optional supporting content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressTrackState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the track div, or the element composed through Track.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressTrackState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressTrackState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          }
+        ]
+      },
+      {
+        "name": "Indicator",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressIndicatorState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the indicator div, or the element composed through Indicator.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressIndicatorState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressIndicatorState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          }
+        ]
+      },
+      {
+        "name": "Value",
+        "props": [
+          {
+            "name": "children",
+            "type": "((formattedValue: string | null, value: number | null) => ReactNode) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional callback receiving the formatted value and raw value. Indeterminate progress passes indeterminate as formatted text. Without a callback, indeterminate progress displays no content."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressValueState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLSpanElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the value span, or the element composed through Value.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressValueState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressValueState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          }
+        ]
+      },
+      {
+        "name": "Label",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Visible text that supplies the accessible name of the root."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: ProgressLabelState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to this part, or a callback receiving its progress status."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLSpanElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the label span, or the element composed through Label.render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressLabelState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes this part with an element or render callback. Forward the supplied props and ref to the corresponding DOM element."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: ProgressLabelState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to this part, or a callback receiving its progress status."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "ProgressBar",
     "entryPoint": "twenty-ui/primitives/feedback",
     "slug": "feedback/progress-bar",
     "props": [
       {
-        "name": "ariaLabel",
+        "name": "aria-label",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Accessible name describing the operation being measured."
+        "description": "Accessible name identifying the measured operation."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the visible label that names the operation."
+      },
+      {
+        "name": "aria-valuetext",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Human-readable progress value overriding the default formatted value."
       },
       {
         "name": "backgroundColor",
@@ -940,32 +1267,88 @@
         "description": "CSS color of the filled bar. Defaults to the primary text color."
       },
       {
-        "name": "className",
-        "type": "string",
+        "name": "children",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the progress root."
+        "description": "Additional Progress parts or supporting content inside the root."
       },
       {
-        "name": "onGrowInComplete",
-        "type": "(() => void)",
+        "name": "className",
+        "type": "string | ((state: ProgressRootState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the grow-in animation ends."
+        "description": "Class applied to the progress root, or a callback receiving its status."
+      },
+      {
+        "name": "format",
+        "type": "NumberFormatOptions",
+        "required": false,
+        "defaultValue": null,
+        "description": "Intl.NumberFormat options for the clamped numeric value. The default displays the normalized percentage."
+      },
+      {
+        "name": "getAriaValueText",
+        "type": "((formattedValue: string, value: number | null) => string)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the formatted value and raw value, including null, and returns an accessible value description."
+      },
+      {
+        "name": "locale",
+        "type": "LocalesArgument",
+        "required": false,
+        "defaultValue": null,
+        "description": "Locale or locale list used to format the value. Defaults to the runtime locale."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false,
+        "defaultValue": "100",
+        "description": "Inclusive maximum. Defaults to 100."
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "Inclusive minimum. Defaults to 0."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element composed through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ProgressRootState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Composes the root with an element or render callback. Forward the supplied props and ref to retain progress semantics."
       },
       {
         "name": "size",
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Bar height: `sm` (6px) or `md` (8px)."
+        "description": "Bar height: sm (6px) or md (8px)."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ProgressRootState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the progress root, or a callback receiving its status."
       },
       {
         "name": "value",
-        "type": "number",
+        "type": "number | null",
         "required": true,
         "defaultValue": null,
-        "description": "Current progress from 0 to 100."
+        "description": "Controlled value in the min/max range. Use null for indeterminate progress."
       },
       {
         "name": "withBorderRadius",
@@ -975,32 +1358,11 @@
         "description": "Rounds the track and indicator corners."
       },
       {
-        "name": "withGlint",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Sweeps a highlight across the filled bar each time the value changes."
-      },
-      {
-        "name": "withGrowIn",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Grows the bar in from zero width when it mounts."
-      },
-      {
         "name": "withMinimumFillWidth",
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Keeps a small visible fill for any value above zero."
-      },
-      {
-        "name": "withSpringFill",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Animates value changes with a spring that slightly overshoots the target."
+        "description": "Applies a cosmetic minimum of up to 12px, capped at half the track width, only above the minimum and below completion."
       }
     ]
   },
@@ -9490,84 +9852,112 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Content rendered in the footer, such as an action button."
+        "description": "Optional footer node, such as a Button with a caller-owned action."
       },
       {
         "name": "cancelLabel",
-        "type": "string",
+        "type": "ReactNode",
         "required": false,
         "defaultValue": "Cancel",
-        "description": "Label of the cancel button."
+        "description": "Cancel button content node. Defaults to Cancel. Pass null to hide the control."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Main message node. Callers own its content and accessible text."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class names merged onto the root."
       },
       {
         "name": "closeLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Close",
-        "description": "Accessible name of the close button."
+        "description": "Accessible name of the close button. Defaults to Close."
       },
       {
         "name": "description",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Supporting content rendered below the message."
+        "description": "Optional supporting content node rendered below the message."
       },
       {
         "name": "duration",
         "type": "number",
         "required": false,
         "defaultValue": "6000",
-        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast or keyboard focus is inside it."
+        "description": "Milliseconds before onClose is called, defaulting to 6000. Zero keeps the toast open. Changes restart the countdown; live updateToast duration patches restart it even when unchanged. Hover and keyboard focus pause it until both leave."
       },
       {
         "name": "icon",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the variant's icon."
+        "description": "Leading icon node. Defaults to the status icon. Pass null to omit it."
       },
       {
         "name": "iconLabel",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Accessible name of the default icon. Without it, the icon is hidden from\nassistive technology."
+        "description": "Accessible name of the default icon. Without it, the icon is decorative."
       },
       {
         "name": "onCancel",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the cancel button is clicked. The button renders only when\nthis callback is provided."
+        "description": "Called when the cancel button is clicked. Providing it and renderable cancelLabel content shows the button."
       },
       {
         "name": "onClose",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the close button is clicked or the countdown completes. The\nbutton renders only when this callback is provided."
+        "description": "Called once per mounted toast when the close button is clicked or the countdown completes. Providing it shows the close button."
       },
       {
         "name": "progress",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Completion percentage shown in the progress bar. When set, the countdown\nis disabled."
+        "description": "Completion percentage. Providing it disables the countdown. Removing it starts a fresh duration."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root div, or the element supplied through render."
       },
       {
         "name": "render",
         "type": "RenderProp<Record<string, unknown>>",
         "required": false,
         "defaultValue": null,
-        "description": "Replaces the rendered element or composes it with another component.\nAccepts a React element or a function that returns the element to render."
+        "description": "Element or callback composition for the root. Native props and the ref target the rendered element."
       },
       {
-        "name": "variant",
-        "type": "\"default\" | \"error\" | \"info\" | \"success\" | \"warning\"",
+        "name": "status",
+        "type": "\"error\" | \"info\" | \"neutral\" | \"success\" | \"warning\"",
         "required": false,
-        "defaultValue": "default",
-        "description": "Visual variant that selects the icon and colors."
+        "defaultValue": "neutral",
+        "description": "Feedback meaning: neutral, info, success, warning, or error. Defaults to neutral and selects the icon and theme palette."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles forwarded to the root."
       }
     ]
   },
@@ -11662,18 +12052,60 @@
         "description": "Grows the editor to fit its content instead of using `height`. Ignored when `resizable` is set."
       },
       {
+        "name": "beforeMount",
+        "type": "BeforeMount",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with Monaco before editor creation, after the Twenty theme has been defined. Use it to register custom themes or languages."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the Monaco editor-container div."
+      },
+      {
+        "name": "containerProps",
+        "type": "Omit<Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, \"ref\">, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native props, className and style for the outer Twenty group div. Its default `display: contents` preserves the Monaco section's parent sizing and flex layout without creating a layout box. Background, border, padding and dimensions require overriding `display`. Prefer `wrapperProps` for section layout styles. Its keyboard handler runs before focused editor keystrokes stop propagating."
+      },
+      {
         "name": "contentPadding",
         "type": "\"comfortable\" | \"default\"",
         "required": false,
         "defaultValue": "default",
-        "description": "`default` pads the top and bottom of the content. `comfortable` also widens the gap between line numbers and code."
+        "description": "`default` supplies top and bottom padding. `comfortable` also widens the gap between line numbers and code. Explicit Monaco options override these defaults."
+      },
+      {
+        "name": "defaultLanguage",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial Monaco language for a newly created model."
+      },
+      {
+        "name": "defaultPath",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial model URI, used when `path` is omitted."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial content for a model created by Monaco React."
       },
       {
         "name": "height",
         "type": "string | number",
         "required": false,
         "defaultValue": "450",
-        "description": "Editor height in pixels or as a CSS length. With `resizable`, a numeric height sets the initial height."
+        "description": "Editor height in pixels or as a CSS length, defaulting to 450px. Resizing starts from this rendered height and resets when this prop changes. Auto-height uses it until content is measured."
       },
       {
         "name": "isLoading",
@@ -11683,6 +12115,13 @@
         "description": "Shows a loader at the editor height instead of the editor. A loader also shows while Monaco loads."
       },
       {
+        "name": "keepCurrentModel",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps the current model when the editor unmounts. Defaults to false. The caller owns disposal of retained models."
+      },
+      {
         "name": "language",
         "type": "string",
         "required": false,
@@ -11690,18 +12129,32 @@
         "description": "Monaco language identifier for highlighting and language services, such as `json` or `typescript`."
       },
       {
-        "name": "onChange",
-        "type": "((value: string) => void)",
+        "name": "line",
+        "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the full content whenever it changes."
+        "description": "Line revealed when the editor mounts or this prop changes."
+      },
+      {
+        "name": "loading",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": "<Loader />",
+        "description": "Content shown while Monaco loads or `isLoading` is true. Defaults to the Twenty Loader."
+      },
+      {
+        "name": "onChange",
+        "type": "OnChange",
+        "required": false,
+        "defaultValue": null,
+        "description": "Monaco React callback with the full content (string or undefined) and the original IModelContentChangedEvent."
       },
       {
         "name": "onMount",
         "type": "OnMount",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the editor is ready, with the editor instance and the Monaco namespace. The Twenty theme is already applied."
+        "description": "Called when the editor is ready, with the editor instance and the Monaco namespace. The selected theme is already applied."
       },
       {
         "name": "onValidate",
@@ -11715,14 +12168,35 @@
         "type": "IStandaloneEditorConstructionOptions",
         "required": false,
         "defaultValue": null,
-        "description": "Monaco editor options merged over the Twenty defaults. `padding` is ignored; use `contentPadding` instead."
+        "description": "Monaco editor options merged over Twenty defaults. Explicit values, including padding, replace the corresponding defaults. The `theme` prop takes precedence over `options.theme`."
+      },
+      {
+        "name": "overrideServices",
+        "type": "IEditorOverrideServices",
+        "required": false,
+        "defaultValue": null,
+        "description": "Monaco services passed through when the editor is created."
+      },
+      {
+        "name": "path",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "URI of the current model. Changing it selects or creates a model using Monaco React behavior."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the outer Twenty group div, which has no measurable layout box with its default `display: contents`. Use `wrapperProps` for a measurable section ref or `onMount` for the Monaco editor instance."
       },
       {
         "name": "resizable",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Adds a handle below the editor to drag its height."
+        "description": "Adds a height resize handle after Monaco mounts, bounded from 50px to 500px. Takes precedence over autoHeight. A changed height prop resets the resized height within these bounds."
       },
       {
         "name": "resizeLabel",
@@ -11732,11 +12206,25 @@
         "description": "Accessible name of the resize handle. Pass a localized label when `resizable` is enabled."
       },
       {
+        "name": "saveViewState",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Preserves Monaco React view state between model changes. Defaults to true."
+      },
+      {
         "name": "setMarkers",
         "type": "((value: string) => IMarkerData[])",
         "required": false,
         "defaultValue": null,
-        "description": "Returns custom validation markers for the content. Runs when the editor mounts and after every change, replacing the previous custom markers."
+        "description": "Returns custom validation markers for the current model content. Runs on mount, model selection and content changes, including controlled updates."
+      },
+      {
+        "name": "theme",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Twenty theme",
+        "description": "Monaco theme name. Takes precedence over `options.theme`, which takes precedence over the Twenty theme. Define custom themes in `beforeMount`."
       },
       {
         "name": "transparentBackground",
@@ -11758,6 +12246,20 @@
         "required": false,
         "defaultValue": "default",
         "description": "Border treatment: `default` draws a rounded border, `with-header` attaches the editor below a `CodeEditorHeader`, and `borderless` removes the border."
+      },
+      {
+        "name": "width",
+        "type": "string | number",
+        "required": false,
+        "defaultValue": "100%",
+        "description": "Width of the Monaco React section, in pixels or as a CSS length."
+      },
+      {
+        "name": "wrapperProps",
+        "type": "object",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native props passed unchanged to the Monaco React section around the editor and Monaco React loading content. Use this section for layout styles and a measurable native ref. Not applied to the separate Twenty loader during initial Monaco configuration or `isLoading`. Native styles can override the section sizing."
       }
     ]
   },
@@ -12234,6 +12736,48 @@
         "required": false,
         "defaultValue": null,
         "description": "Inline styles override tile geometry and palette defaults."
+      }
+    ]
+  },
+  {
+    "name": "StackIcon",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/stack-icon",
+    "props": [
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the container root."
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Main icon content. The caller controls its dimensions and stroke."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the div root while preserving the icon content and native props."
+      },
+      {
+        "name": "stackedIcon",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Smaller content stacked on the bottom-right corner of the main icon, such as a 12px avatar."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the container root."
       }
     ]
   },
@@ -13409,7 +13953,7 @@
         "type": "\"always\" | \"never\" | \"onHover\"",
         "required": false,
         "defaultValue": "never",
-        "description": "Grip visibility: never, always, or onHover. onHover swaps LeftIcon for the grip on hover and shows no grip without LeftIcon. Does not implement dragging."
+        "description": "Grip visibility: never, always, or onHover. always and onHover render a single leading content (LeftComponent when set, otherwise LeftIcon); onHover swaps it for the grip on hover and shows no grip without leading content. Does not implement dragging."
       },
       {
         "name": "iconButtons",
@@ -13445,6 +13989,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Accepted for compatibility; currently has no effect."
+      },
+      {
+        "name": "LeftComponent",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Custom leading content."
       },
       {
         "name": "LeftIcon",

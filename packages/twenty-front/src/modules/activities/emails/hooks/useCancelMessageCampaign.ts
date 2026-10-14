@@ -39,7 +39,7 @@ export const useCancelMessageCampaign = () => {
 
       if (!isDefined(canceled)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to cancel campaign`,
         });
 
@@ -61,7 +61,7 @@ export const useCancelMessageCampaign = () => {
 
       if (wasScheduled) {
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Campaign unscheduled and back in your drafts`,
         });
 
@@ -69,7 +69,7 @@ export const useCancelMessageCampaign = () => {
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: plural(canceled.canceledMessageCount, {
           one: `Campaign canceled, ${canceled.canceledMessageCount} pending email stopped`,
           other: `Campaign canceled, ${canceled.canceledMessageCount} pending emails stopped`,

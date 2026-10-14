@@ -21,7 +21,6 @@ import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign'
 import { buildCampaignDeliveryHint } from '@/activities/emails/utils/buildCampaignDeliveryHint';
 import { buildCampaignSendButtonTitle } from '@/activities/emails/utils/buildCampaignSendButtonTitle';
 import { buildDefaultCampaignScheduledAt } from '@/activities/emails/utils/buildDefaultCampaignScheduledAt';
-import { formatDisplayList } from '@/ai/utils/tool-display/formatDisplayList';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
@@ -32,6 +31,7 @@ import { SendCampaignRecipientsCard } from '@/side-panel/pages/send-campaign/com
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { formatDisplayList } from '~/utils/format/formatDisplayList';
 
 const StyledContainer = styled.div`
   display: flex;

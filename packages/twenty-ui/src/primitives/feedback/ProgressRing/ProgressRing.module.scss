@@ -9,8 +9,14 @@
 }
 
 .ring {
+  display: inline-flex;
   flex-shrink: 0;
   transform: rotate(-90deg);
+
+  &[data-indeterminate] {
+    animation: progressRingIndeterminate calc(#{duration(normal)} * 5) linear
+      infinite;
+  }
 }
 
 .track {
@@ -28,7 +34,17 @@
   transition: stroke-dashoffset duration(normal) ease;
 }
 
+@keyframes progressRingIndeterminate {
+  to {
+    transform: rotate(270deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .ring[data-indeterminate] {
+    animation: none;
+  }
+
   .indicator {
     transition: none;
   }

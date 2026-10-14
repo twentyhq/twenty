@@ -31,7 +31,7 @@ export const useResetPageLayoutWidgetToDefault = (
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ status: 'error', children: t`An error occurred.` });
         }
       }
     },

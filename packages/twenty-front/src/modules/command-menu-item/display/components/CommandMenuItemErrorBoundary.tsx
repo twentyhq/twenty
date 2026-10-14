@@ -22,7 +22,7 @@ export const CommandMenuItemErrorBoundary = ({
   );
 
   const handleError = async (error: Error) => {
-    enqueueToast({ variant: 'error', children: error.message });
+    enqueueToast({ status: 'error', children: error.message });
 
     if (shouldReportToSentry) {
       try {

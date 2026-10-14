@@ -7,6 +7,9 @@ Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
+
+The standalone Toast countdown fixture checks remaining time after repeated content updates, zero-duration persistence, manual dismissal, progress suppression and restart, and overlapping hover/focus pauses in React and Preact. It does not cover `updateToast`, `ToastProvider` or `Toaster` in the worker. The SDK snackbar stories check the separate host notification API.
+
 Textarea auto-resize remains a renderer limitation. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. These stale reads can also produce cumulative height growth instead of fitting the current content. The field fixture verifies values, refs, events and accessibility without treating incidental height changes as resize acceptance. Standalone Textarea browser checks pass.
 
 NumberField checks locale formatting and localized paste, controlled empty values, uncontrolled typing, bounds, keyboard commits, pointer value changes, callback event details, accessible labels, native forms, refs and render composition in both runtimes. Sequential typing after clearing a formatted value can reset the caret and insert subsequent digits before earlier input. Formatted pointer edits can also restore stale display values when host blur races the worker update. Pointer button release does not emit its commit callback, although host blur can emit an input-blur commit. ScrubArea can enter its scrubbing state, but drag movement and release do not reach the worker window listeners; pointer lock and the custom scrub cursor are also unavailable. These renderer limits apply independently of the standalone React NumberField browser checks.
@@ -30,6 +33,8 @@ SegmentedControl is imported from `twenty-ui/components/input` and presents an a
 AvatarGroup checks derived counts, partially loaded totals, custom overflow and surviving keyed child state. Its native button and link (`target="_blank"`) verify refs, focus and pointer/keyboard activation in React and Preact.
 
 Badge checks ordinary node content, compact sizes, colors and circle shape. Its React and Preact fixtures keep count clamping and zero visibility in the caller, and verify native span attributes, refs and pointer handlers plus explicit button and link render composition with keyboard activation.
+
+Progress composes Root, Track, Indicator, Label and Value alongside the ProgressBar and ProgressRing presets. The shared React and Preact fixture covers native names, attributes, refs, render composition and pointer handlers, nonzero minima, changing ranges and values, clamped boundaries, indeterminate progress and agreement between bar fill and ring geometry. The fixture also checks zero and complete fill and a minimum fill that stays below the full width of a narrow track. SVG bindings currently omit the `focusable` attribute; these cases verify `aria-hidden` and that keyboard Tab skips the decorative SVG.
 
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
@@ -66,6 +71,7 @@ effect within the interaction timeout.
 | `twenty-ui-overflowing-list`     | OverflowingList                                                                                                                         |
 | `twenty-ui-phone-country-picker` | PhoneCountryPicker                                                                                                                      |
 | `twenty-ui-currency-picker`      | CurrencyPicker                                                                                                                          |
+| `twenty-ui-progress`           | Progress parts, ProgressBar, ProgressRing and MetricRow (native composition, range normalization, indeterminate values and geometry)      |
 | `twenty-ui-popover`              | Popover                                                                                                                                 |
 | `twenty-ui-card-composition`     | Card (native parts and refs, render composition, display semantics, button/link ownership and nested controls)                          |
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |

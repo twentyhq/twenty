@@ -54,7 +54,7 @@ export const useUninstallApplication = ({
     (jobStatus: TrackedJobStatus, trackedUninstallIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: isNonEmptyString(jobStatus.failedReason)
             ? jobStatus.failedReason
             : t`Error uninstalling application.`,
@@ -77,7 +77,7 @@ export const useUninstallApplication = ({
       );
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Application successfully uninstalled.`,
       });
       onCompleted?.();
@@ -109,7 +109,7 @@ export const useUninstallApplication = ({
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: graphqlMessage ?? t`Error uninstalling application.`,
       });
     }

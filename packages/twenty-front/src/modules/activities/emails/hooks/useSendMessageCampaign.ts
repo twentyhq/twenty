@@ -50,7 +50,7 @@ export const useSendMessageCampaign = () => {
 
       if (!queued) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to send campaign`,
         });
 
@@ -87,14 +87,14 @@ export const useSendMessageCampaign = () => {
         });
 
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: wasAlreadyScheduled
             ? t`Campaign moved to ${sendTime}`
             : t`Campaign scheduled for ${sendTime}`,
         });
       } else if (queuedCount === 0) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`No recipients to send to (${skipReasons})`,
         });
       } else {
@@ -104,7 +104,7 @@ export const useSendMessageCampaign = () => {
         });
 
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children:
             skipReasons.length > 0
               ? t`${queuedMessage}, skipping ${skipReasons}`

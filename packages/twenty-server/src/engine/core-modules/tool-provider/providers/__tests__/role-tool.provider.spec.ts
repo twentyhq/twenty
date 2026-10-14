@@ -95,7 +95,9 @@ const buildProvider = (options?: { hasRolesPermission?: boolean }) => {
 const context: ToolProviderContext = {
   workspaceId,
   roleId: callerRoleId,
-  rolePermissionConfig: { unionOf: [callerRoleId] },
+  rolePermissionConfig: {
+    intersectionOf: { userWorkspaceRoleId: callerRoleId },
+  },
   userWorkspaceId: callerUserWorkspaceId,
   actorContext: {
     source: FieldActorSource.MANUAL,

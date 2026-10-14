@@ -186,7 +186,7 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     });
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'An error occurred.',
     });
   });

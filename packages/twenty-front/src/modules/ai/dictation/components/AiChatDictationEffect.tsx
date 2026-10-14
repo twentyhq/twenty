@@ -87,7 +87,7 @@ export const AiChatDictationEffect = ({
             setHasWebSpeechProvenSilent(true);
           }
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: getDictationFailureMessage(event.reason),
           });
           break;

@@ -92,9 +92,7 @@ export class CoreWorkflowRunnerService {
 
     if (
       !isDefined(workflow) ||
-      workflowVersion.workflowId !== workflow.workspaceWorkflowId ||
-      isDefined(workflow.workspaceWorkflowId) !==
-        isDefined(workspaceWorkflowVersionId)
+      workflowVersion.workflowId !== workflow.workspaceWorkflowId
     ) {
       throw new WorkflowRunException(
         'Core workflow not found',
@@ -119,17 +117,14 @@ export class CoreWorkflowRunnerService {
       : isManualTrigger
         ? WorkflowRunStatus.ENQUEUED
         : WorkflowRunStatus.NOT_STARTED;
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+    const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
     const createdBy = buildWorkflowRunCreatedBy({
       source,
       workflowApplicationId: workflow.applicationId,
-      workspaceOwnedApplicationIds: [
-        workspaceCustomFlatApplication.id,
-        twentyStandardFlatApplication.id,
-      ],
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
     const createdWorkflowRunId =
       await this.workflowRunWorkspaceService.createCoreWorkflowRun({

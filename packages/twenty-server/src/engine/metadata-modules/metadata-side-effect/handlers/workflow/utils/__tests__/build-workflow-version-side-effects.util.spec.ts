@@ -308,15 +308,53 @@ describe('managed workflow version validation', () => {
     expect(validate(version).errors.length).toBeGreaterThan(1);
   });
 
-  it('refuses a trigger type applications cannot use', () => {
+  it('refuses an unknown trigger type', () => {
     const { version } = convert();
     const [trigger] = version.triggers ?? [];
     expect(
       validate({
         ...version,
-        triggers: [{ ...trigger, type: WorkflowTriggerType.WEBHOOK }],
+        triggers: [
+          { ...trigger, type: 'UNKNOWN' as unknown as WorkflowTriggerType },
+        ],
       } as typeof version).errors[0]?.message,
     ).toContain('Application workflows require one trigger of type MANUAL');
+  });
+
+  it('only accepts webhook body variables declared in the expected body', () => {
+    const readingTriggerField = (field: string) =>
+      convert({
+        ...manifest,
+        version: {
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'WEBHOOK',
+            nextStepIds: [STEP_ID],
+            settings: {
+              httpMethod: 'POST',
+              expectedBody: { email: 'jane@example.com' },
+            },
+          },
+          steps: [
+            {
+              universalIdentifier: STEP_ID,
+              name: 'Forward',
+              type: 'HTTP_REQUEST',
+              input: {
+                url: 'https://example.com/hook',
+                method: 'POST',
+                body: { contact: `{{trigger.${field}}}` },
+              },
+              nextStepIds: [],
+            },
+          ],
+        },
+      }).version;
+
+    expect(validate(readingTriggerField('email')).errors).toEqual([]);
+    expect(validate(readingTriggerField('phone')).errors[0]?.message).toContain(
+      '{{trigger.phone}}',
+    );
   });
 
   it('validates a managed definition but leaves API definitions unchanged', () => {
