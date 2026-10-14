@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { recordPastAttendance } from '../record-past-attendance-handler.ts';
 
 import {
   createClassSession,
@@ -42,6 +43,8 @@ class FakeClient {
   };
   bookingAttempts = 0;
   failSecondBooking = false;
+  failBookingEvent = false;
+  loseBookingEventResponse = false;
   nextId = 1;
   matches(record: RecordData, filter: Filter = {}): boolean {
     if (filter.or) return filter.or.some((item) => this.matches(record, item));
@@ -85,6 +88,14 @@ class FakeClient {
   async mutation(selection: Selection) {
     const [operation, { __args: args }] = Object.entries(selection)[0];
     if (
+      operation === 'createStudioEvent' &&
+      args.data?.eventType === 'BOOKING_CREATED' &&
+      this.failBookingEvent
+    ) {
+      this.failBookingEvent = false;
+      throw new Error('Audit write failed');
+    }
+    if (
       operation === 'createStudioBooking' &&
       ++this.bookingAttempts === 2 &&
       this.failSecondBooking
@@ -118,6 +129,14 @@ class FakeClient {
     )
       throw new Error('duplicate entry');
     records.push(data);
+    if (
+      operation === 'createStudioEvent' &&
+      args.data?.eventType === 'BOOKING_CREATED' &&
+      this.loseBookingEventResponse
+    ) {
+      this.loseBookingEventResponse = false;
+      throw new Error('Audit response lost');
+    }
     return { [operation]: this.node(data) };
   }
   asClient() {
@@ -209,6 +228,64 @@ test('personal/group differentiation and eligibility are checked before creating
     ).success,
   );
   assert.equal(client.records.studioBookings[0].bookingType, 'PERSONAL');
+});
+test('standalone historical attendance requires its event and recovers audit failures without another consume', async () => {
+  for (const mode of [
+    'failBookingEvent',
+    'loseBookingEventResponse',
+  ] as const) {
+    const client = new FakeClient();
+    const attendance = {
+      personId: 'person-one',
+      membershipId: 'membership-one',
+      startsAt: '2026-01-01T10:00:00Z',
+      endsAt: '2026-01-01T10:55:00Z',
+      reason: 'По журналу',
+      source: 'ADMIN' as const,
+      idempotencyKey: 'standalone',
+    };
+    assert.ok(
+      (
+        await recordPastAttendance(
+          { ...attendance, previewOnly: true },
+          { userWorkspaceId: null },
+          client.asClient(),
+        )
+      ).success,
+    );
+    assert.equal(client.records.studioEvents.length, 0);
+    client[mode] = true;
+    await assert.rejects(
+      recordPastAttendance(
+        attendance,
+        { userWorkspaceId: null },
+        client.asClient(),
+      ),
+      /Audit/,
+    );
+    const repeated = await recordPastAttendance(
+      attendance,
+      { userWorkspaceId: null },
+      client.asClient(),
+    );
+    assert.ok(
+      repeated.success && 'duplicate' in repeated && repeated.duplicate,
+    );
+    assert.equal(client.records.studioBookings.length, 1);
+    assert.equal(client.records.classSessions.length, 1);
+    assert.equal(
+      client.records.membershipTransactions.filter(
+        (record) => record.transactionType === 'CONSUME',
+      ).length,
+      1,
+    );
+    assert.equal(client.records.studioEvents.length, 1);
+    assert.equal(
+      client.records.studioEvents[0].name,
+      'Внесено прошедшее посещение',
+    );
+    assert.equal(client.records.studioMemberships[0].visitsAvailable, 7);
+  }
 });
 test('historical selected people go through preview and consume, never future reservation', async () => {
   const client = new FakeClient();

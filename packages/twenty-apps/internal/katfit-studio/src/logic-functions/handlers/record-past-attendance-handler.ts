@@ -1,4 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { recordBookingEvent } from 'src/logic-functions/utils/booking-event';
 
 import { calculateLedgerBalance, findDuplicateAttendance, getAttendanceEndsAt, type LedgerEntry, type RecordPastAttendanceInput, validateAttendanceInput } from 'src/logic-functions/utils/past-attendance';
 
@@ -134,5 +135,6 @@ export const recordPastAttendance = async (
   const sessionBookings = await query<BookingNode>(client, 'studioBookings', { filter: { classSessionId: { eq: session.id } }, first: 1000 }, { id: true, status: true });
   if (sessionBookings.length === 1000) throw new Error('Слишком много записей занятия для безопасного пересчёта.');
   await client.mutation({ updateClassSession: { __args: { id: session.id, data: { bookedCount: sessionBookings.filter((entry) => ['BOOKED', 'ATTENDED'].includes(entry.status)).length, attendedCount: sessionBookings.filter((entry) => entry.status === 'ATTENDED').length } }, id: true } } as never);
+  await recordBookingEvent({ bookingId: booking.id, classSessionId: session.id, membershipId: membership.id, eventType: 'BOOKING_CREATED', idempotencyKey: input.idempotencyKey, name: 'Внесено прошедшее посещение', details: JSON.stringify({ personId: input.personId, transactionId: transaction.id, startsAt: validation.startsAt, reason: input.reason, source: input.source, sourceDetails: input.sourceDetails ?? null }) }, client);
   return { success: true, duplicate, bookingId: booking.id, classSessionId: session.id, transactionId: transaction.id, visitsAvailable: updated.available };
 };

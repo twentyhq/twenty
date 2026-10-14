@@ -3,7 +3,6 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { SESSION_FORMAT_OPTIONS } from 'src/constants/select-options';
 import { createRegularBooking } from 'src/logic-functions/handlers/create-regular-booking-handler';
 import { recordPastAttendance } from 'src/logic-functions/handlers/record-past-attendance-handler';
-import { recordBookingEvent } from 'src/logic-functions/utils/booking-event';
 
 export type CreateClassSessionInput = {
   name?: string;
@@ -419,16 +418,6 @@ export const createClassSession = async (
           'Внесение посещений не завершено. Проверьте CRM и повторите прежний запрос.',
           409,
         );
-      await recordBookingEvent(
-        {
-          bookingId: attendance.bookingId,
-          classSessionId: session.id,
-          membershipId: participant.membershipId,
-          eventType: 'BOOKING_CREATED',
-          idempotencyKey: attendanceInputs[index].idempotencyKey,
-        },
-        client,
-      );
     }
   }
   return { success: true, classSessionId: session.id, duplicate };

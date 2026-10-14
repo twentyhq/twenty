@@ -17,7 +17,7 @@ class FakeClient {
       person: { id: 'person' },
       product: { id: 'product', name: 'Пакет', category: 'GROUP_PACKAGE', sessionFormat: 'GROUP_REFORMER', durationMinutes: 55 },
     }],
-    studioBookings: [], classSessions: [],
+    studioBookings: [], classSessions: [], studioEvents: [],
     membershipTransactions: [{ id: 'grant', transactionType: 'GRANT', visitDelta: 2,
       occurredAt: '2020-01-01T00:00:00.000Z', membershipId: 'membership' }],
   };
@@ -34,6 +34,7 @@ class FakeClient {
     const objects: Record<string, string> = {
       createClassSession: 'classSessions', createStudioBooking: 'studioBookings',
       createMembershipTransaction: 'membershipTransactions',
+      createStudioEvent: 'studioEvents',
       updateStudioMembership: 'studioMemberships', updateClassSession: 'classSessions',
     };
     const records = this.records[objects[operation]];
@@ -79,6 +80,8 @@ test('API-key context records once without fabricating an operator', async () =>
   assert.equal(client.records.studioBookings.length, 1);
   assert.equal(client.records.membershipTransactions.length, 2);
   assert.equal(client.records.studioMemberships[0].visitsAvailable, 1);
+  assert.equal(client.records.studioEvents.length, 1);
+  assert.equal(client.records.studioEvents[0].eventType, 'BOOKING_CREATED');
 });
 
 test('user context still records the authenticated operator', async () => {

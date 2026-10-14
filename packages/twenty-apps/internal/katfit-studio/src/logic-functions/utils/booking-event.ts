@@ -6,6 +6,8 @@ type BookingEventInput = {
   eventType: 'BOOKING_CREATED' | 'BOOKING_CANCELLED';
   idempotencyKey: string;
   membershipId: string;
+  name?: string;
+  details?: string;
 };
 
 export const recordBookingEvent = async (
@@ -81,9 +83,10 @@ export const recordBookingEvent = async (
           id: eventId,
           ...input,
           name:
-            input.eventType === 'BOOKING_CREATED'
+            input.name ??
+            (input.eventType === 'BOOKING_CREATED'
               ? 'Клиент добавлен в тренировку'
-              : 'Клиент убран из тренировки студией',
+              : 'Клиент убран из тренировки студией'),
           outcome: 'SUCCESS',
           occurredAt: new Date().toISOString(),
         },
