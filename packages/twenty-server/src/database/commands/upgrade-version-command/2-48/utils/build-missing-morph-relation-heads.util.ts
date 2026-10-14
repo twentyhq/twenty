@@ -1,6 +1,7 @@
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  assertIsDefinedOrThrow,
   isDefined,
   isMorphRelationHead,
   pickMorphGroupSurvivorOrThrow,
@@ -34,7 +35,11 @@ const pickTargetShownByReads = (
     ),
   );
 
-  return targets.find((target) => target.id === id) ?? targets[0];
+  const target = targets.find((candidate) => candidate.id === id);
+
+  assertIsDefinedOrThrow(target);
+
+  return target;
 };
 
 export const buildMissingMorphRelationHeads = ({
