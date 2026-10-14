@@ -10,6 +10,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { getDropdownRowCollection } from './getDropdownRowCollection';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
+import { subscribeToDropdownRegistry } from './subscribeToDropdownRegistry';
 import { useDropdownContext } from './useDropdownContext';
 
 type DropdownRowsEffectProps = {
@@ -24,16 +25,14 @@ export const DropdownRowsEffect = ({
   const { type, registry, setSearchTargetId } = useDropdownContext();
   const [registryVersion, setRegistryVersion] = useState(0);
 
-  useLayoutEffect(() => {
-    const handleRegistryChange = () =>
-      setRegistryVersion((version) => version + 1);
-
-    registry.listeners.add(handleRegistryChange);
-
-    return () => {
-      registry.listeners.delete(handleRegistryChange);
-    };
-  }, [registry]);
+  useLayoutEffect(
+    () =>
+      subscribeToDropdownRegistry({
+        registry,
+        listener: () => setRegistryVersion((version) => version + 1),
+      }),
+    [registry],
+  );
 
   useLayoutEffect(() => {
     if (!isDefined(content)) {

@@ -29,7 +29,6 @@ export type DropdownContextValue = {
   closeTree: (tabOutEvent?: Event) => void;
   goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
-  registerPage: (page: { id: string; type?: DropdownType }) => void;
   registerOpenNestedRoot: () => () => void;
   searchTargetId?: string;
   setSearchTargetId: (id: string | undefined) => void;
