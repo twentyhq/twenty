@@ -15,18 +15,30 @@ import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { colorText, dimText, formatWarningLine } from '@/output/style';
 import { toCliError } from '@/output/to-cli-error';
+import { type CliWarning } from '@/output/types/cli-warning.type';
 import { toPublicTarget } from '@/target/to-public-target';
 
 export const runAppLogsCommand: CommandRun<TargetCommandContext> = async (
   context,
 ) => {
   const { options, output, outputMode, signal, target } = context;
+  const warn = (warning: CliWarning) => {
+    if (outputMode === 'human') {
+      output.progress(formatWarningLine(warning.message));
+    } else {
+      output.warn(warning);
+    }
+  };
   const filter = readLogsFilter(options);
   const project = await resolveAppProject({
     explicitPath: readStringOption(options, 'path'),
     workingDirectory: process.cwd(),
   });
-  const identity = await readAppIdentity({ appPath: project.path, signal });
+  const identity = await readAppIdentity({
+    appPath: project.path,
+    signal,
+    warn,
+  });
   if (!isDefined(identity.application)) {
     throw new CliError({
       code: 'INVALID_INPUT',
@@ -65,18 +77,12 @@ export const runAppLogsCommand: CommandRun<TargetCommandContext> = async (
       signal,
       onConnected: () =>
         output.event('progress', { kind: 'connected' }, signal),
-      onIdentityUnavailable: async () => {
-        const warning = {
+      onIdentityUnavailable: async () =>
+        warn({
           code: 'LOG_IDENTITY_UNAVAILABLE',
           message:
             'This server returns log text without function identities. Mixed logs cannot be attributed to individual functions; use --universal-identifier to isolate one, or upgrade the server.',
-        };
-        if (outputMode === 'human') {
-          output.progress(formatWarningLine(warning.message));
-        } else {
-          output.warn(warning);
-        }
-      },
+        }),
       onRecord: async (record) => {
         if (outputMode === 'ndjson') {
           await output.event('record', record, signal);

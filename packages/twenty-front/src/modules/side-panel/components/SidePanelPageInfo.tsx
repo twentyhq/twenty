@@ -7,7 +7,7 @@ import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLa
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
+import { type SidePanelContextChipProps } from '@/side-panel/types/SidePanelContextChipProps';
 
 type SidePanelPageInfoProps = {
   pageChip: SidePanelContextChipProps | undefined;

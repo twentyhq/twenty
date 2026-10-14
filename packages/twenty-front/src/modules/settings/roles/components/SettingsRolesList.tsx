@@ -159,11 +159,7 @@ export const SettingsRolesList = () => {
             </TableCell>
           ) : (
             filteredRoles.map((role) => (
-              <SettingsRolesTableRow
-                key={role.id}
-                role={role}
-                application={installedApplicationByDefaultRoleId.get(role.id)}
-              />
+              <SettingsRolesTableRow key={role.id} role={role} />
             ))
           )}
         </StyledTableRows>

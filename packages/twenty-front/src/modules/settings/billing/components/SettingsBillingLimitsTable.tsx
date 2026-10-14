@@ -213,10 +213,8 @@ export const SettingsBillingLimitsTable = ({
               placeholder={t`Search a limit`}
               value={searchText}
               onValueChange={setSearchText}
-              filterButtonAriaLabel={t`Filter limits`}
-              filterDropdown={(filterButton) => (
+              actions={
                 <SettingsBillingLimitsFilterDropdown
-                  filterButton={filterButton}
                   resourceTypes={resourceTypes}
                   spenderTypes={spenderTypes}
                   selectedResourceType={resourceType}
@@ -224,7 +222,7 @@ export const SettingsBillingLimitsTable = ({
                   onSelectResourceType={setResourceType}
                   onSelectSpenderType={setSpenderType}
                 />
-              )}
+              }
             />
           </StyledToolbar>
         }

@@ -50,10 +50,7 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export const MobileBreadcrumb = ({
-  className,
-  links,
-}: MobileBreadcrumbProps) => {
+export const MobileBreadcrumb = ({ links }: MobileBreadcrumbProps) => {
   const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
 
@@ -67,7 +64,6 @@ export const MobileBreadcrumb = ({
     return (
       <BreadcrumbPrimitive
         aria-label={t`Breadcrumb`}
-        className={className}
         links={getBreadcrumbItems(links)}
       />
     );
@@ -77,7 +73,7 @@ export const MobileBreadcrumb = ({
   const title = isNonEmptyString(text) ? text : undefined;
 
   return (
-    <StyledWrapper aria-label={t`Breadcrumb`} className={className}>
+    <StyledWrapper aria-label={t`Breadcrumb`}>
       {isNonEmptyString(previousLink.href) ? (
         <>
           <IconChevronLeft size={theme.icon.size.md} aria-hidden />
