@@ -128,105 +128,48 @@ describe('computeWhereConditionParts', () => {
   });
 
   describe('DATE_TIME precision', () => {
-    const microsecondValue = '2020-01-01T00:00:00.123900Z';
-
     it.each([
-      {
-        description: 'should compare gt exactly for a raw Postgres timestamp',
-        operator: 'gt',
-        value: '2020-01-01 00:00:00.1239+00',
-        expectedSql: `"person"."createdAt" > :createdAt0000000000`,
-      },
-      {
-        description:
-          'should compare gt exactly when Postgres omits fractional seconds',
-        operator: 'gt',
-        value: '2020-01-01 00:00:00+00',
-        expectedSql: `"person"."createdAt" > :createdAt0000000000`,
-      },
-      {
-        description:
-          'should compare gt exactly when Postgres trims fractional zeros',
-        operator: 'gt',
-        value: '2020-01-01 00:00:00.123+00',
-        expectedSql: `"person"."createdAt" > :createdAt0000000000`,
-      },
-      {
-        description:
-          'should compare eqStrict exactly for a raw Postgres timestamp with an offset',
-        operator: 'eqStrict',
-        value: '2020-01-01 05:30:00.1239+05:30',
-        expectedSql: `"person"."createdAt" = :createdAt0000000000`,
-      },
-      {
-        description: 'should compare gt exactly for a microsecond cursor value',
-        operator: 'gt',
-        value: microsecondValue,
-        expectedSql: `"person"."createdAt" > :createdAt0000000000`,
-      },
-      {
-        description: 'should compare lt exactly for a microsecond cursor value',
-        operator: 'lt',
-        value: microsecondValue,
-        expectedSql: `"person"."createdAt" < :createdAt0000000000`,
-      },
-      {
-        description:
-          'should compare eqStrict exactly for a microsecond cursor value',
-        operator: 'eqStrict',
-        value: microsecondValue,
-        expectedSql: `"person"."createdAt" = :createdAt0000000000`,
-      },
-      {
-        description:
-          'should compare gt on millisecond buckets for a millisecond cursor value',
-        operator: 'gt',
-        value: '2020-01-01T00:00:00.123Z',
-        expectedSql: `"person"."createdAt" >= :createdAt0000000000::timestamptz + interval '1 millisecond'`,
-      },
-      {
-        description:
-          'should compare eqStrict on millisecond buckets for a millisecond cursor value',
-        operator: 'eqStrict',
-        value: '2020-01-01T00:00:00.123Z',
-        expectedSql: `("person"."createdAt" >= :createdAt0000000000 AND "person"."createdAt" < :createdAt0000000000::timestamptz + interval '1 millisecond')`,
-      },
-      {
-        description: 'should compare lt exactly for a millisecond cursor value',
-        operator: 'lt',
-        value: '2020-01-01T00:00:00.123Z',
-        expectedSql: `"person"."createdAt" < :createdAt0000000000`,
-      },
-      {
-        description: 'should compare gt exactly when microseconds are zero',
-        operator: 'gt',
-        value: '2020-01-01T00:00:00.123000Z',
-        expectedSql: `"person"."createdAt" > :createdAt0000000000`,
-      },
-      {
-        description: 'should keep gt on millisecond buckets for a Date value',
-        operator: 'gt',
-        value: new Date('2020-01-01T00:00:00.123Z'),
-        expectedSql: `"person"."createdAt" >= :createdAt0000000000::timestamptz + interval '1 millisecond'`,
-      },
-      {
-        description:
-          'should keep user-facing eq on millisecond buckets for a microsecond value',
-        operator: 'eq',
-        value: microsecondValue,
-        expectedSql: `("person"."createdAt" >= :createdAt0000000000 AND "person"."createdAt" < :createdAt0000000000::timestamptz + interval '1 millisecond')`,
-      },
-    ])('$description', ({ operator, value, expectedSql }) => {
+      '2020-01-01 00:00:00.1239+00',
+      '2020-01-01T00:00:00.123900Z',
+      '2020-01-01T00:00:00.123Z',
+    ])('uses explicit comparison context for %s', (value) => {
+      const condition = {
+        objectNameSingular: 'person',
+        key: 'createdAt',
+        value,
+        fieldMetadataType: FieldMetadataType.DATE_TIME,
+      };
+
       expect(
         computeWhereConditionParts({
-          operator,
-          objectNameSingular: 'person',
-          key: 'createdAt',
-          value,
-          fieldMetadataType: FieldMetadataType.DATE_TIME,
+          ...condition,
+          operator: 'gt',
+          useExactDateTimeComparison: true,
         }),
       ).toEqual({
-        sql: expectedSql,
+        sql: `"person"."createdAt" > :createdAt0000000000`,
+        params: { createdAt0000000000: value },
+      });
+      expect(
+        computeWhereConditionParts({
+          ...condition,
+          operator: 'eqStrict',
+          useExactDateTimeComparison: true,
+        }),
+      ).toEqual({
+        sql: `"person"."createdAt" = :createdAt0000000000`,
+        params: { createdAt0000000000: value },
+      });
+      expect(
+        computeWhereConditionParts({ ...condition, operator: 'gt' }),
+      ).toEqual({
+        sql: `"person"."createdAt" >= :createdAt0000000000::timestamptz + interval '1 millisecond'`,
+        params: { createdAt0000000000: value },
+      });
+      expect(
+        computeWhereConditionParts({ ...condition, operator: 'eq' }),
+      ).toEqual({
+        sql: `("person"."createdAt" >= :createdAt0000000000 AND "person"."createdAt" < :createdAt0000000000::timestamptz + interval '1 millisecond')`,
         params: { createdAt0000000000: value },
       });
     });

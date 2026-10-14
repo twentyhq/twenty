@@ -4,6 +4,7 @@ import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
+import { USE_EXACT_DATE_TIME_COMPARISON } from 'src/engine/api/common/constants/use-exact-date-time-comparison.constant';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import {
   GraphqlQueryRunnerException,
@@ -148,6 +149,8 @@ export class GraphqlQueryFilterFieldParser {
       value,
       fieldMetadataType: fieldMetadata.type,
       useDirectTableReference,
+      useExactDateTimeComparison:
+        filterValue[USE_EXACT_DATE_TIME_COMPARISON] === true,
     });
 
     if (isFirst) {

@@ -1,3 +1,6 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { USE_EXACT_DATE_TIME_COMPARISON } from 'src/engine/api/common/constants/use-exact-date-time-comparison.constant';
 import { buildCursorKeysetCondition } from 'src/engine/api/utils/build-cursor-keyset-condition.utils';
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 
@@ -26,6 +29,9 @@ export function buildCursorLeafWhereCondition({
   isForwardPagination,
   isEqualityCondition,
 }: BuildCursorLeafWhereConditionParams): Record<string, unknown> | null {
+  const fieldMetadata =
+    leaf.kind === 'relation' ? leaf.targetFieldMetadata : leaf.fieldMetadata;
+
   return buildCursorKeysetCondition({
     cursorValue,
     orderByDirection: leaf.direction,
@@ -35,7 +41,9 @@ export function buildCursorLeafWhereCondition({
     buildLeafCondition: (leafFilter) =>
       leaf.path.reduceRight<Record<string, unknown>>(
         (nested, key) => ({ [key]: nested }),
-        leafFilter,
+        fieldMetadata?.type === FieldMetadataType.DATE_TIME
+          ? { ...leafFilter, [USE_EXACT_DATE_TIME_COMPARISON]: true }
+          : leafFilter,
       ),
   });
 }

@@ -9,6 +9,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { USE_EXACT_DATE_TIME_COMPARISON } from 'src/engine/api/common/constants/use-exact-date-time-comparison.constant';
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -498,8 +499,18 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { closeDate: { gt: '2026-01-01T00:00:00Z' } },
-            { closeDate: { isStrictly: 'NULL' } },
+            {
+              closeDate: {
+                [USE_EXACT_DATE_TIME_COMPARISON]: true,
+                gt: '2026-01-01T00:00:00Z',
+              },
+            },
+            {
+              closeDate: {
+                [USE_EXACT_DATE_TIME_COMPARISON]: true,
+                isStrictly: 'NULL',
+              },
+            },
           ],
         },
       ]);
@@ -518,7 +529,14 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      expect(result).toEqual([{ closeDate: { gt: '2026-01-01T00:00:00Z' } }]);
+      expect(result).toEqual([
+        {
+          closeDate: {
+            [USE_EXACT_DATE_TIME_COMPARISON]: true,
+            gt: '2026-01-01T00:00:00Z',
+          },
+        },
+      ]);
     });
 
     it('should continue on tie-breaking keys when the cursor sits in a trailing NULL block', () => {
@@ -540,7 +558,12 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           and: [
-            { closeDate: { isStrictly: 'NULL' } },
+            {
+              closeDate: {
+                [USE_EXACT_DATE_TIME_COMPARISON]: true,
+                isStrictly: 'NULL',
+              },
+            },
             { id: { gt: 'uuid-1' } },
           ],
         },
@@ -564,10 +587,20 @@ describe('computeCursorArgFilter', () => {
       });
 
       expect(result).toEqual([
-        { closeDate: { isStrictly: 'NOT_NULL' } },
+        {
+          closeDate: {
+            [USE_EXACT_DATE_TIME_COMPARISON]: true,
+            isStrictly: 'NOT_NULL',
+          },
+        },
         {
           and: [
-            { closeDate: { isStrictly: 'NULL' } },
+            {
+              closeDate: {
+                [USE_EXACT_DATE_TIME_COMPARISON]: true,
+                isStrictly: 'NULL',
+              },
+            },
             { id: { gt: 'uuid-1' } },
           ],
         },
@@ -590,8 +623,18 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { closeDate: { lt: '2026-01-01T00:00:00Z' } },
-            { closeDate: { isStrictly: 'NULL' } },
+            {
+              closeDate: {
+                [USE_EXACT_DATE_TIME_COMPARISON]: true,
+                lt: '2026-01-01T00:00:00Z',
+              },
+            },
+            {
+              closeDate: {
+                [USE_EXACT_DATE_TIME_COMPARISON]: true,
+                isStrictly: 'NULL',
+              },
+            },
           ],
         },
       ]);

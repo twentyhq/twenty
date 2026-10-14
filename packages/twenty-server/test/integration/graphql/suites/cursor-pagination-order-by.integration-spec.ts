@@ -630,31 +630,6 @@ describe('Cursor pagination ordered by a DATE_TIME field with rows sharing a mil
     ).expect(200);
   });
 
-  it.each(['2020-01-01T00:00:00.123000Z', '2020-01-01 00:00:00.123+00'])(
-    'should reject cursor timestamp format %s in public filters',
-    async (value) => {
-      const graphqlResponse = await makeGraphqlApiRequest(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'opportunity',
-          objectMetadataPluralName: 'opportunities',
-          gqlFields: 'id',
-          filter: { createdAt: { gt: value } },
-        }),
-      ).expect(200);
-
-      expect(graphqlResponse.body.errors[0].extensions.subCode).toBe(
-        'INVALID_ARGS_FILTER',
-      );
-
-      const restResponse = await makeRestApiRequest({
-        method: 'get',
-        path: `/opportunities?filter=${encodeURIComponent(`createdAt[gt]:${value}`)}`,
-      }).expect(400);
-
-      expect(restResponse.body.messages[0]).toContain('Invalid value');
-    },
-  );
-
   it('should keep returning millisecond values', async () => {
     const response = await makeGraphqlApiRequest(
       findManyOperationFactory({

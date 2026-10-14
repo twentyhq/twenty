@@ -1,6 +1,5 @@
 import { randomBytes } from 'crypto';
 
-import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
@@ -12,9 +11,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-
-const PRECISE_DATE_TIME_PATTERN =
-  /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}\.\d{6}Z| \d{2}:\d{2}:\d{2}(?:\.\d{1,6})?[+-]\d{2}(?::\d{2}){0,2})$/;
 
 type WhereConditionParts = {
   sql: string;
@@ -29,6 +25,7 @@ export const computeWhereConditionParts = ({
   value,
   fieldMetadataType,
   useDirectTableReference = false,
+  useExactDateTimeComparison = false,
 }: {
   operator: string;
   objectNameSingular: string;
@@ -38,6 +35,7 @@ export const computeWhereConditionParts = ({
   value: any;
   fieldMetadataType: FieldMetadataType;
   useDirectTableReference?: boolean;
+  useExactDateTimeComparison?: boolean;
 }): WhereConditionParts => {
   const paramSuffix = randomBytes(5).toString('hex');
 
@@ -48,10 +46,6 @@ export const computeWhereConditionParts = ({
     : `"${objectNameSingular}"."${key}"`;
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
-
-  const isMillisecondDateTimeValue =
-    isDateTimeField &&
-    !(isString(value) && PRECISE_DATE_TIME_PATTERN.test(value));
 
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(
@@ -114,7 +108,7 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':
-      if (isMillisecondDateTimeValue) {
+      if (isDateTimeField && !useExactDateTimeComparison) {
         return {
           sql: `${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond'`,
           params: { [`${key}${paramSuffix}`]: value },
@@ -167,7 +161,7 @@ export const computeWhereConditionParts = ({
         params: {},
       };
     case 'eqStrict':
-      if (isMillisecondDateTimeValue) {
+      if (isDateTimeField && !useExactDateTimeComparison) {
         return {
           sql: `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')`,
           params: { [`${key}${paramSuffix}`]: value },
