@@ -4,9 +4,8 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildWorkflowRunIndexWorkflowVersionViewFieldOperations } from 'src/database/commands/upgrade-version-command/2-47/utils/build-workflow-run-index-workflow-version-view-field-operations.util';
+import { findStandardWorkflowRunIndexWorkflowVersionViewFields } from 'src/database/commands/upgrade-version-command/2-47/utils/find-standard-workflow-run-index-workflow-version-view-fields.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -15,7 +14,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-47:remove-workflow-run-index-workflow-version-column',
   description:
-    'Remove the "Workflow version" column from the workflow runs index view',
+    'Remove the standard "Workflow version" column from the workflow runs index view',
 })
 export class RemoveWorkflowRunIndexWorkflowVersionColumnCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -30,79 +29,48 @@ export class RemoveWorkflowRunIndexWorkflowVersionColumnCommand extends Provisio
     await this.up(args);
   }
 
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.syncWorkflowVersionColumn(args, 'up');
-  }
-
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.syncWorkflowVersionColumn(args, 'down');
-  }
-
-  private async syncWorkflowVersionColumn(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    direction: 'up' | 'down',
-  ): Promise<void> {
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
     const flatMaps = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
-      ['flatViewMaps', 'flatViewFieldMaps', 'flatFieldMetadataMaps'],
+      ['flatViewMaps', 'flatViewFieldMaps'],
     );
 
-    const { viewFieldsToCreate, viewFieldsToDelete } =
-      buildWorkflowRunIndexWorkflowVersionViewFieldOperations({
-        flatMaps,
-        now: new Date().toISOString(),
-        direction,
-      });
+    const viewFieldsToDelete =
+      findStandardWorkflowRunIndexWorkflowVersionViewFields(flatMaps);
 
-    const applicationUniversalIdentifiers = new Set(
-      [...viewFieldsToCreate, ...viewFieldsToDelete].map(
-        (viewField) => viewField.applicationUniversalIdentifier,
-      ),
-    );
-
-    if (applicationUniversalIdentifiers.size === 0) {
+    if (viewFieldsToDelete.length === 0) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${direction === 'up' ? 'removing' : 'restoring'} the workflow runs "Workflow version" column`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: removing the workflow runs "Workflow version" column`,
     );
 
     if (options.dryRun) {
       return;
     }
 
-    for (const applicationUniversalIdentifier of applicationUniversalIdentifiers) {
-      const isOwnedByApplication = (viewField: FlatViewField) =>
-        viewField.applicationUniversalIdentifier ===
-        applicationUniversalIdentifier;
-
-      const migrationArgs = {
-        workspaceId,
-        isSystemBuild: true,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          viewField: {
-            flatEntityToCreate: viewFieldsToCreate.filter(isOwnedByApplication),
-            flatEntityToDelete: viewFieldsToDelete.filter(isOwnedByApplication),
-            flatEntityToUpdate: [],
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          workspaceId,
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          allFlatEntityOperationByMetadataName: {
+            viewField: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: viewFieldsToDelete,
+              flatEntityToUpdate: [],
+            },
           },
         },
-      };
+      );
 
-      const result =
-        applicationUniversalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
-          ? await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-              migrationArgs,
-            )
-          : await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-              migrationArgs,
-            );
-
-      if (result.status === 'fail') {
-        throw new WorkspaceMigrationBuilderException(result);
-      }
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(result);
     }
   }
+
+  async down(_args: RunOnWorkspaceArgs): Promise<void> {}
 }
