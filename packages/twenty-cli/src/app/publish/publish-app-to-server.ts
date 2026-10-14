@@ -6,7 +6,7 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { putUploadFile } from '@/app/deployment/put-upload-file';
 import { withPhaseDetails } from '@/app/deployment/with-phase-details';
-import { type PackedApp } from '@/app/publish/with-packed-app';
+import { type PackedApp } from '@/app/publish/types/packed-app.type';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
 import { CliError } from '@/output/cli-error';
 import { toCliError } from '@/output/to-cli-error';

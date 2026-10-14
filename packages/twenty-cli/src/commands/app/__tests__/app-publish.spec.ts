@@ -247,31 +247,40 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
   });
 
   it.each([
-    '{invalid',
-    '[]',
-    JSON.stringify([
-      {
-        name: '@test/billing',
-        version: '1.2.3',
-        filename: '../outside.tgz',
-        files: [],
-      },
-    ]),
-    JSON.stringify([
-      {
-        name: '@test/billing',
-        version: '1.2.3',
-        filename: 'billing.tgz',
-        files: [{ path: 1 }],
-      },
-    ]),
+    ['{invalid', 'npm pack returned invalid JSON.'],
+    ['[]', 'npm pack returned an invalid package description.'],
+    [
+      JSON.stringify([
+        {
+          name: '@test/billing',
+          version: '1.2.3',
+          filename: '../outside.tgz',
+          files: [],
+        },
+      ]),
+      'npm pack returned an invalid package description.',
+    ],
+    [
+      JSON.stringify([
+        {
+          name: '@test/billing',
+          version: '1.2.3',
+          filename: 'billing.tgz',
+          files: [{ path: 1 }],
+        },
+      ]),
+      'npm pack returned an invalid package file.',
+    ],
   ])(
     'rejects invalid npm pack output before publishing: %s',
-    async (stdout) => {
+    async (stdout, message) => {
       vi.stubEnv('PUBLISH_TEST_PACK_OUTPUT', stdout);
       const result = await runPublish();
       expect(result.exitCode).toBe(1);
-      expect(result.envelope.error.code).toBe('PUBLISH_FAILED');
+      expect(result.envelope.error).toMatchObject({
+        code: 'PUBLISH_FAILED',
+        message,
+      });
       const invocations = await readInvocations();
       expect(invocations).toHaveLength(1);
       await expect(access(invocations[0].args.at(-1))).rejects.toThrow();

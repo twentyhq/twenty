@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { runNpmCommand } from '@/app/publish/run-npm-command';
-import { type PackedApp } from '@/app/publish/with-packed-app';
+import { type PackedApp } from '@/app/publish/types/packed-app.type';
 import { type CommandContext } from '@/catalog/types/command-context.type';
 import { isInteractionAllowed } from '@/program/is-interaction-allowed';
 
