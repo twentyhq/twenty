@@ -56,6 +56,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/config-variables/components/ConfigVariableEdit.tsx',
+    reason: 'Section.Header without trailing margin above the variable input',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx',
     reason: 'Tinted preview Card.Content and unpadded form Card.Content',
   },

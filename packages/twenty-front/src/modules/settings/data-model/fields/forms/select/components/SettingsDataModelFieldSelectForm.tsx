@@ -109,13 +109,6 @@ const StyledFooter = styled(Card.Footer)`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledButtonContainer = styled.div`
-  > button {
-    justify-content: center;
-    width: 100%;
-  }
-`;
-
 const StyledOptionsHeaderContainer = styled.div`
   align-items: center;
   display: flex;
@@ -505,12 +498,11 @@ export const SettingsDataModelFieldSelectForm = ({
             </StyledContainerWrapper>
             {!disabled && !isBulkInputMode && (
               <StyledFooter>
-                <StyledButtonContainer>
-                  <LightButton
-                    startIcon={<IconPlus />}
-                    onClick={handleAddOption}
-                  >{t`Add option`}</LightButton>
-                </StyledButtonContainer>
+                <LightButton
+                  startIcon={<IconPlus />}
+                  fullWidth
+                  onClick={handleAddOption}
+                >{t`Add option`}</LightButton>
               </StyledFooter>
             )}
           </>
