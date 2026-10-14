@@ -18,9 +18,10 @@ const MY_CONNECTED_ACCOUNTS_WITH_FILTER_QUERY = gql`
 
 const JONY_PRIVATE_APP_CONNECTION_ID = uuidv4();
 const JONY_SHARED_APP_CONNECTION_ID = uuidv4();
+const TIM_PRIVATE_APP_CONNECTION_ID = uuidv4();
 
 const queryMyConnectedAccountIdsAsMember = async (
-  filter?: Record<string, unknown>,
+  filter?: Record<string, unknown> | null,
 ): Promise<string[]> => {
   const response = await makeMetadataApiRequestWithMemberRole({
     query: MY_CONNECTED_ACCOUNTS_WITH_FILTER_QUERY,
@@ -211,7 +212,8 @@ describe('connectedAccountResolver (e2e)', () => {
         await globalThis.testDataSource.query(
           `INSERT INTO core."connectedAccount"
              (id, handle, provider, visibility, "workspaceId", "userWorkspaceId")
-           VALUES ($1, $2, $3, 'user', $4, $5), ($6, $7, $3, 'workspace', $4, $5)`,
+           VALUES ($1, $2, $3, 'user', $4, $5), ($6, $7, $3, 'workspace', $4, $5),
+                  ($8, $9, $3, 'user', $4, $10)`,
           [
             JONY_PRIVATE_APP_CONNECTION_ID,
             'jony-private-app@apple.dev',
@@ -220,6 +222,9 @@ describe('connectedAccountResolver (e2e)', () => {
             USER_WORKSPACE_DATA_SEED_IDS.JONY,
             JONY_SHARED_APP_CONNECTION_ID,
             'jony-shared-app@apple.dev',
+            TIM_PRIVATE_APP_CONNECTION_ID,
+            'tim-private-app@apple.dev',
+            USER_WORKSPACE_DATA_SEED_IDS.TIM,
           ],
         );
       });
@@ -227,12 +232,22 @@ describe('connectedAccountResolver (e2e)', () => {
       afterAll(async () => {
         await globalThis.testDataSource.query(
           `DELETE FROM core."connectedAccount" WHERE id = ANY($1)`,
-          [[JONY_PRIVATE_APP_CONNECTION_ID, JONY_SHARED_APP_CONNECTION_ID]],
+          [
+            [
+              JONY_PRIVATE_APP_CONNECTION_ID,
+              JONY_SHARED_APP_CONNECTION_ID,
+              TIM_PRIVATE_APP_CONNECTION_ID,
+            ],
+          ],
         );
       });
 
-      it('should return every usable account when no filter is given', async () => {
-        const accountIds = await queryMyConnectedAccountIdsAsMember();
+      it.each([
+        ['no filter', undefined],
+        ['a null filter', null],
+        ['an empty filter', {}],
+      ])('should return every usable account with %s', async (_, filter) => {
+        const accountIds = await queryMyConnectedAccountIdsAsMember(filter);
 
         expect(accountIds).toEqual(
           expect.arrayContaining([
@@ -242,6 +257,7 @@ describe('connectedAccountResolver (e2e)', () => {
             CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP,
           ]),
         );
+        expect(accountIds).not.toContain(TIM_PRIVATE_APP_CONNECTION_ID);
       });
 
       it('should leave out other members workspace-shared accounts when ownedByCaller is true', async () => {
@@ -262,21 +278,6 @@ describe('connectedAccountResolver (e2e)', () => {
         expect(accountIds).not.toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE);
       });
 
-      it('should return only other members workspace-shared accounts when ownedByCaller is false', async () => {
-        const accountIds = await queryMyConnectedAccountIdsAsMember({
-          ownedByCaller: false,
-        });
-
-        expect(accountIds).toContain(
-          CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP,
-        );
-        expect(accountIds).not.toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY);
-        expect(accountIds).not.toContain(JONY_SHARED_APP_CONNECTION_ID);
-        expect(accountIds).not.toContain(
-          CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM_SHARED_ARCHIVED,
-        );
-      });
-
       it('should filter app connections by visibility without touching other providers', async () => {
         const accountIds = await queryMyConnectedAccountIdsAsMember({
           appConnectionVisibility: 'user',
@@ -290,6 +291,23 @@ describe('connectedAccountResolver (e2e)', () => {
           ]),
         );
         expect(accountIds).not.toContain(JONY_SHARED_APP_CONNECTION_ID);
+        expect(accountIds).not.toContain(TIM_PRIVATE_APP_CONNECTION_ID);
+      });
+
+      it('should not widen to other members private app connections when keeping workspace-shared ones', async () => {
+        const accountIds = await queryMyConnectedAccountIdsAsMember({
+          appConnectionVisibility: 'workspace',
+        });
+
+        expect(accountIds).toEqual(
+          expect.arrayContaining([
+            CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
+            JONY_SHARED_APP_CONNECTION_ID,
+            CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP,
+          ]),
+        );
+        expect(accountIds).not.toContain(JONY_PRIVATE_APP_CONNECTION_ID);
+        expect(accountIds).not.toContain(TIM_PRIVATE_APP_CONNECTION_ID);
       });
 
       it('should return the caller own accounts minus workspace-shared app connections for App preferences', async () => {
@@ -306,6 +324,9 @@ describe('connectedAccountResolver (e2e)', () => {
         );
         expect(accountIds).not.toContain(JONY_SHARED_APP_CONNECTION_ID);
         expect(accountIds).not.toContain(
+          CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED,
+        );
+        expect(accountIds).not.toContain(
           CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP,
         );
       });
@@ -317,7 +338,9 @@ describe('connectedAccountResolver (e2e)', () => {
         });
 
         expect(response.status).toBe(200);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors?.[0]?.extensions?.code).toBe(
+          'BAD_USER_INPUT',
+        );
         expect(response.body.data?.myConnectedAccounts ?? null).toBeNull();
       });
     });

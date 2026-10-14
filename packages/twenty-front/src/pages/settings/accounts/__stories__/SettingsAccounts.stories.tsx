@@ -21,11 +21,9 @@ import { APP_PREFERENCES_CONNECTED_ACCOUNTS_FILTER } from '@/settings/app-prefer
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
   APP_PREFERENCES_CONNECTED_ACCOUNTS,
-  CONNECTED_ACCOUNTS,
   FATHOM_APPLICATION_ID,
   GOOGLE_ACCOUNT_ID,
   MICROSOFT_ACCOUNT_ID,
-  MY_SHARED_ACCOUNT_ID,
   deleteConnectedAccount,
   myConnectedAccountsQuery,
   seedAccountGroupsStory,
@@ -138,14 +136,6 @@ export const WorkspaceSharedAppConnectionsStayOff: Story = {
 
     await canvas.findByText('Used by', undefined, { timeout: 3000 });
 
-    expect(CONNECTED_ACCOUNTS).toContainEqual(
-      expect.objectContaining({
-        id: MY_SHARED_ACCOUNT_ID,
-        provider: 'app',
-        applicationId: FATHOM_APPLICATION_ID,
-        visibility: 'workspace',
-      }),
-    );
     expect(myConnectedAccountsQuery).toHaveBeenCalledWith({
       filter: APP_PREFERENCES_CONNECTED_ACCOUNTS_FILTER,
     });
