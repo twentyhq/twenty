@@ -27,17 +27,17 @@ export const DropdownRowRegistrationEffect = ({
   ariaDisabled,
   page,
 }: DropdownRowRegistrationEffectProps) => {
-  const rowRegistry = useContext(DropdownRowScopeContext)?.rowRegistry;
+  const registry = useContext(DropdownRowScopeContext)?.registry;
   const isRegisteredAsDisabled =
     disabled || ariaDisabled === true || ariaDisabled === 'true';
 
   useLayoutEffect(() => {
-    if (!isDefined(rowRegistry)) {
+    if (!isDefined(registry)) {
       return;
     }
 
     return registerDropdownRow({
-      rowRegistry,
+      registry,
       registration: {
         id,
         kind,
@@ -46,7 +46,7 @@ export const DropdownRowRegistrationEffect = ({
         elementRef,
       },
     });
-  }, [elementRef, rowRegistry, id, kind, isRegisteredAsDisabled, page]);
+  }, [elementRef, registry, id, kind, isRegisteredAsDisabled, page]);
 
   return null;
 };

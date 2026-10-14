@@ -1,5 +1,5 @@
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 import { getDropdownRows } from './getDropdownRows';
 
-export const getEnabledDropdownRows = (rowRegistry: DropdownRowRegistry) =>
-  getDropdownRows(rowRegistry).filter((row) => !row.disabled);
+export const getEnabledDropdownRows = (registry: DropdownRegistry) =>
+  getDropdownRows(registry).filter((row) => !row.disabled);

@@ -1,10 +1,10 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownRow } from './DropdownRow';
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 
-export const getDropdownRows = (rowRegistry: DropdownRowRegistry) =>
-  Array.from(rowRegistry.rows)
+export const getDropdownRows = (registry: DropdownRegistry) =>
+  Array.from(registry.rows)
     .map(({ elementRef, ...registration }) => ({
       ...registration,
       element: elementRef.current,

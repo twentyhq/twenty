@@ -3,7 +3,7 @@ import { type RefObject } from 'react';
 import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 
 export type DropdownContextValue = {
   type: DropdownType;
@@ -12,7 +12,7 @@ export type DropdownContextValue = {
   multiple: boolean;
   isSubmenu: boolean;
   parentType?: DropdownType;
-  rowRegistry: DropdownRowRegistry;
+  registry: DropdownRegistry;
   contentRef: RefObject<HTMLDivElement | null>;
   submenuTriggerRef: RefObject<HTMLElement | null>;
   focusedRowId?: string;

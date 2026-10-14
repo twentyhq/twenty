@@ -1,9 +1,9 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 
-export const getDropdownSearch = (rowRegistry: DropdownRowRegistry) =>
-  Array.from(rowRegistry.searches)
+export const getDropdownSearch = (registry: DropdownRegistry) =>
+  Array.from(registry.searches)
     .map((searchRef) => searchRef.current)
     .find(
       (search): search is HTMLInputElement =>

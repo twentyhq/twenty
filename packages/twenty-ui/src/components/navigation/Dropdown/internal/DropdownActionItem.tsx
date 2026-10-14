@@ -71,12 +71,12 @@ export const DropdownActionItem = ({
         }
 
         if (isDefined(page)) {
-          if (!isDefined(row.rowRegistry)) {
+          if (!isDefined(row.registry)) {
             return;
           }
 
           const { currentTarget } = event;
-          const index = getEnabledDropdownRows(row.rowRegistry).findIndex(
+          const index = getEnabledDropdownRows(row.registry).findIndex(
             (enabledRow) => enabledRow.element === currentTarget,
           );
 

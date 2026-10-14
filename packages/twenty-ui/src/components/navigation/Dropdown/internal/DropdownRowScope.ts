@@ -1,7 +1,7 @@
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 
 export type DropdownRowScope = {
-  rowRegistry: DropdownRowRegistry;
+  registry: DropdownRegistry;
   rowIds?: string[];
   tabStopRowId?: string;
 };

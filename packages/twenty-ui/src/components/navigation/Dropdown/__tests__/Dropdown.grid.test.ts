@@ -1,4 +1,4 @@
-import { createDropdownRowRegistry } from '../internal/createDropdownRowRegistry';
+import { createDropdownRegistry } from '../internal/createDropdownRegistry';
 import { getEnabledDropdownRows } from '../internal/getEnabledDropdownRows';
 import { getNextDropdownItem } from '../internal/getNextDropdownItem';
 import { registerDropdownRow } from '../internal/registerDropdownRow';
@@ -11,11 +11,11 @@ const createCell = (label: string) => {
 };
 
 const getEnabledItems = (rowElements: HTMLButtonElement[]) => {
-  const rowRegistry = createDropdownRowRegistry();
+  const registry = createDropdownRegistry();
 
   for (const element of [...rowElements].reverse()) {
     registerDropdownRow({
-      rowRegistry,
+      registry,
       registration: {
         id: element.textContent ?? '',
         kind: 'option',
@@ -25,7 +25,7 @@ const getEnabledItems = (rowElements: HTMLButtonElement[]) => {
     });
   }
 
-  return getEnabledDropdownRows(rowRegistry).map((row) => row.element);
+  return getEnabledDropdownRows(registry).map((row) => row.element);
 };
 
 const createGrid = ({

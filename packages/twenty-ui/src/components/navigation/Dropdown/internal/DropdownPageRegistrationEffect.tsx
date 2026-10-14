@@ -15,15 +15,15 @@ export const DropdownPageRegistrationEffect = ({
   id,
   type,
 }: DropdownPageRegistrationEffectProps) => {
-  const { rowRegistry } = useDropdownContext();
+  const { registry } = useDropdownContext();
 
   useLayoutEffect(
     () =>
       registerDropdownPage({
-        rowRegistry,
+        registry,
         page: { id, type, elementRef: pageRef },
       }),
-    [pageRef, rowRegistry, id, type],
+    [pageRef, registry, id, type],
   );
 
   return null;

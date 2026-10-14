@@ -1,16 +1,16 @@
 import { type DropdownPageRegistration } from './DropdownPageRegistration';
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 
 export const registerDropdownPage = ({
-  rowRegistry,
+  registry,
   page,
 }: {
-  rowRegistry: DropdownRowRegistry;
+  registry: DropdownRegistry;
   page: DropdownPageRegistration;
 }) => {
-  rowRegistry.pages.add(page);
+  registry.pages.add(page);
 
   return () => {
-    rowRegistry.pages.delete(page);
+    registry.pages.delete(page);
   };
 };

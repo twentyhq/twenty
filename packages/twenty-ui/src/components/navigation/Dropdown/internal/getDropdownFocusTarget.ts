@@ -4,7 +4,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownPageType } from './getDropdownPageType';
 import { getDropdownRows } from './getDropdownRows';
@@ -13,28 +13,28 @@ import { getEnabledDropdownRows } from './getEnabledDropdownRows';
 
 export const getDropdownFocusTarget = ({
   content,
-  rowRegistry,
+  registry,
   pageId,
   type,
   target,
   edge = 'first',
 }: {
   content: HTMLElement;
-  rowRegistry: DropdownRowRegistry;
+  registry: DropdownRegistry;
   pageId?: string;
   type: DropdownType;
   target?: DropdownFocusTarget;
   edge?: 'first' | 'last';
 }) => {
   const previousTrigger = isDefined(target?.id)
-    ? getDropdownRows(rowRegistry).find((row) => row.id === target.id)
+    ? getDropdownRows(registry).find((row) => row.id === target.id)
     : undefined;
 
   if (isDefined(previousTrigger)) {
     return previousTrigger.element;
   }
 
-  const enabledRows = getEnabledDropdownRows(rowRegistry);
+  const enabledRows = getEnabledDropdownRows(registry);
   const pageTriggers = isDefined(target)
     ? enabledRows.filter((row) => row.page === target.page)
     : [];
@@ -70,13 +70,13 @@ export const getDropdownFocusTarget = ({
     'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
   );
 
-  const resolvedType = getDropdownPageType({ rowRegistry, pageId }) ?? type;
+  const resolvedType = getDropdownPageType({ registry, pageId }) ?? type;
 
   if (resolvedType === 'panel') {
     return firstFormControl ?? content;
   }
 
-  const search = getDropdownSearch(rowRegistry);
+  const search = getDropdownSearch(registry);
 
   if (isDefined(search)) {
     return search;

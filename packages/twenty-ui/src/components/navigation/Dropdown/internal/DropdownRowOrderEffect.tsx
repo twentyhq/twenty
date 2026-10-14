@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { hasMovedDropdownNode } from './hasMovedDropdownNode';
-import { notifyDropdownRowRegistryListeners } from './notifyDropdownRowRegistryListeners';
+import { notifyDropdownRegistryListeners } from './notifyDropdownRegistryListeners';
 import { useDropdownContext } from './useDropdownContext';
 
 type DropdownRowOrderEffectProps = {
@@ -13,7 +13,7 @@ type DropdownRowOrderEffectProps = {
 export const DropdownRowOrderEffect = ({
   content,
 }: DropdownRowOrderEffectProps) => {
-  const { rowRegistry } = useDropdownContext();
+  const { registry } = useDropdownContext();
 
   useLayoutEffect(() => {
     if (!isDefined(content)) {
@@ -22,14 +22,14 @@ export const DropdownRowOrderEffect = ({
 
     const observer = new MutationObserver((records) => {
       if (hasMovedDropdownNode(records)) {
-        notifyDropdownRowRegistryListeners(rowRegistry);
+        notifyDropdownRegistryListeners(registry);
       }
     });
 
     observer.observe(content, { childList: true, subtree: true });
 
     return () => observer.disconnect();
-  }, [content, rowRegistry]);
+  }, [content, registry]);
 
   return null;
 };

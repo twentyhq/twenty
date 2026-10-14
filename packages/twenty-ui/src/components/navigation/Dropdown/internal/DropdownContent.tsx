@@ -17,7 +17,7 @@ import { getDropdownSearch } from './getDropdownSearch';
 import { getDropdownTabStopRowId } from './getDropdownTabStopRowId';
 import { isRovingDropdownRow } from './isRovingDropdownRow';
 import { isUnhandledModifierShortcut } from './isUnhandledModifierShortcut';
-import { notifyDropdownRowRegistryListeners } from './notifyDropdownRowRegistryListeners';
+import { notifyDropdownRegistryListeners } from './notifyDropdownRegistryListeners';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownKeyboardNavigation } from './useDropdownKeyboardNavigation';
 
@@ -50,7 +50,7 @@ export const DropdownContent = ({
     type,
     isSubmenu,
     pageId,
-    rowRegistry,
+    registry,
     contentRef,
     focusedRowId,
     setFocusedRowId,
@@ -65,8 +65,8 @@ export const DropdownContent = ({
   const handleNavigation = useDropdownKeyboardNavigation();
   const tabStopRowId = getDropdownTabStopRowId({ rowIds, focusedRowId });
   const rowScope = useMemo(
-    () => ({ rowRegistry, rowIds, tabStopRowId }),
-    [rowRegistry, rowIds, tabStopRowId],
+    () => ({ registry, rowIds, tabStopRowId }),
+    [registry, rowIds, tabStopRowId],
   );
   const defaultAriaLabelledBy = isDefined(ariaLabel)
     ? undefined
@@ -108,7 +108,7 @@ export const DropdownContent = ({
 
                 return getDropdownFocusTarget({
                   content: contentRef.current,
-                  rowRegistry,
+                  registry,
                   pageId,
                   type,
                   edge: initialFocusEdge,
@@ -126,7 +126,7 @@ export const DropdownContent = ({
             onFocus={(event) => {
               onFocus?.(event);
 
-              const row = Array.from(rowRegistry.rows).find(
+              const row = Array.from(registry.rows).find(
                 (registration) =>
                   registration.elementRef.current === event.target,
               );
@@ -135,7 +135,7 @@ export const DropdownContent = ({
                 isDefined(row) &&
                 isRovingDropdownRow({
                   row,
-                  search: getDropdownSearch(rowRegistry),
+                  search: getDropdownSearch(registry),
                 })
               ) {
                 setFocusedRowId(row.id);
@@ -143,7 +143,7 @@ export const DropdownContent = ({
             }}
             onInput={(event) => {
               onInput?.(event);
-              notifyDropdownRowRegistryListeners(rowRegistry);
+              notifyDropdownRegistryListeners(registry);
             }}
             onClick={(event) => {
               event.stopPropagation();

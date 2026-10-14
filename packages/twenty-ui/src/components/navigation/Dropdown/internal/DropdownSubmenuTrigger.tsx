@@ -41,7 +41,7 @@ export const DropdownSubmenuTrigger = ({
     parentType,
     open,
     pageId,
-    rowRegistry,
+    registry,
     contentRef,
     submenuTriggerRef,
     setOpen,
@@ -96,7 +96,7 @@ export const DropdownSubmenuTrigger = ({
             if (open && isDefined(submenuContent)) {
               getDropdownFocusTarget({
                 content: submenuContent,
-                rowRegistry,
+                registry,
                 pageId,
                 type,
               }).focus();

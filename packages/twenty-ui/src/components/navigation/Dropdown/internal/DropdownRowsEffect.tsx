@@ -21,19 +21,19 @@ export const DropdownRowsEffect = ({
   content,
   setRowIds,
 }: DropdownRowsEffectProps) => {
-  const { type, rowRegistry, setSearchTargetId } = useDropdownContext();
-  const [rowRegistryVersion, setRowRegistryVersion] = useState(0);
+  const { type, registry, setSearchTargetId } = useDropdownContext();
+  const [registryVersion, setRegistryVersion] = useState(0);
 
   useLayoutEffect(() => {
-    const handleRowRegistryChange = () =>
-      setRowRegistryVersion((version) => version + 1);
+    const handleRegistryChange = () =>
+      setRegistryVersion((version) => version + 1);
 
-    rowRegistry.listeners.add(handleRowRegistryChange);
+    registry.listeners.add(handleRegistryChange);
 
     return () => {
-      rowRegistry.listeners.delete(handleRowRegistryChange);
+      registry.listeners.delete(handleRegistryChange);
     };
-  }, [rowRegistry]);
+  }, [registry]);
 
   useLayoutEffect(() => {
     if (!isDefined(content)) {
@@ -41,7 +41,7 @@ export const DropdownRowsEffect = ({
     }
 
     const { search, enabledRows, rovingRows } =
-      getDropdownRowCollection(rowRegistry);
+      getDropdownRowCollection(registry);
     const rowIds = rovingRows.map((row) => row.id);
 
     setRowIds((currentRowIds) =>
@@ -52,14 +52,7 @@ export const DropdownRowsEffect = ({
     setSearchTargetId(
       getDropdownSearchTarget({ enabledRows, search, type })?.id,
     );
-  }, [
-    content,
-    rowRegistry,
-    rowRegistryVersion,
-    type,
-    setRowIds,
-    setSearchTargetId,
-  ]);
+  }, [content, registry, registryVersion, type, setRowIds, setSearchTargetId]);
 
   useLayoutEffect(() => {
     if (!isDefined(content)) {

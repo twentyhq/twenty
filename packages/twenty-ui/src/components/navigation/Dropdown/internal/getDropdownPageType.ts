@@ -1,15 +1,15 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 
 export const getDropdownPageType = ({
-  rowRegistry,
+  registry,
   pageId,
 }: {
-  rowRegistry: DropdownRowRegistry;
+  registry: DropdownRegistry;
   pageId?: string;
 }) =>
-  Array.from(rowRegistry.pages).find(
+  Array.from(registry.pages).find(
     (page) =>
       page.id === pageId &&
       isDefined(page.elementRef.current) &&

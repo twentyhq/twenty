@@ -10,7 +10,7 @@ export const DropdownPageFocusEffect = () => {
     open,
     type,
     pageId,
-    rowRegistry,
+    registry,
     contentRef,
     pageFocusRequest,
     setPageFocusRequest,
@@ -33,7 +33,7 @@ export const DropdownPageFocusEffect = () => {
 
     getDropdownFocusTarget({
       content: contentRef.current,
-      rowRegistry,
+      registry,
       pageId,
       type,
       target: pageFocusRequest.target,
@@ -43,7 +43,7 @@ export const DropdownPageFocusEffect = () => {
     open,
     pageId,
     pageFocusRequest,
-    rowRegistry,
+    registry,
     setPageFocusRequest,
     type,
   ]);

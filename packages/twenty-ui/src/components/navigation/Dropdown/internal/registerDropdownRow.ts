@@ -1,19 +1,19 @@
 import { type DropdownRowRegistration } from './DropdownRowRegistration';
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
-import { notifyDropdownRowRegistryListeners } from './notifyDropdownRowRegistryListeners';
+import { type DropdownRegistry } from './DropdownRegistry';
+import { notifyDropdownRegistryListeners } from './notifyDropdownRegistryListeners';
 
 export const registerDropdownRow = ({
-  rowRegistry,
+  registry,
   registration,
 }: {
-  rowRegistry: DropdownRowRegistry;
+  registry: DropdownRegistry;
   registration: DropdownRowRegistration;
 }) => {
-  rowRegistry.rows.add(registration);
-  notifyDropdownRowRegistryListeners(rowRegistry);
+  registry.rows.add(registration);
+  notifyDropdownRegistryListeners(registry);
 
   return () => {
-    rowRegistry.rows.delete(registration);
-    notifyDropdownRowRegistryListeners(rowRegistry);
+    registry.rows.delete(registration);
+    notifyDropdownRegistryListeners(registry);
   };
 };

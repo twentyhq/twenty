@@ -1,20 +1,20 @@
 import { type RefObject } from 'react';
 
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
-import { notifyDropdownRowRegistryListeners } from './notifyDropdownRowRegistryListeners';
+import { type DropdownRegistry } from './DropdownRegistry';
+import { notifyDropdownRegistryListeners } from './notifyDropdownRegistryListeners';
 
 export const registerDropdownSearch = ({
-  rowRegistry,
+  registry,
   searchRef,
 }: {
-  rowRegistry: DropdownRowRegistry;
+  registry: DropdownRegistry;
   searchRef: RefObject<HTMLInputElement | null>;
 }) => {
-  rowRegistry.searches.add(searchRef);
-  notifyDropdownRowRegistryListeners(rowRegistry);
+  registry.searches.add(searchRef);
+  notifyDropdownRegistryListeners(registry);
 
   return () => {
-    rowRegistry.searches.delete(searchRef);
-    notifyDropdownRowRegistryListeners(rowRegistry);
+    registry.searches.delete(searchRef);
+    notifyDropdownRegistryListeners(registry);
   };
 };

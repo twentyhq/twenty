@@ -1,11 +1,11 @@
-import { type DropdownRowRegistry } from './DropdownRowRegistry';
+import { type DropdownRegistry } from './DropdownRegistry';
 import { getDropdownSearch } from './getDropdownSearch';
 import { getEnabledDropdownRows } from './getEnabledDropdownRows';
 import { isRovingDropdownRow } from './isRovingDropdownRow';
 
-export const getDropdownRowCollection = (rowRegistry: DropdownRowRegistry) => {
-  const search = getDropdownSearch(rowRegistry);
-  const enabledRows = getEnabledDropdownRows(rowRegistry);
+export const getDropdownRowCollection = (registry: DropdownRegistry) => {
+  const search = getDropdownSearch(registry);
+  const enabledRows = getEnabledDropdownRows(registry);
   const rovingRows = enabledRows.filter((row) =>
     isRovingDropdownRow({ row, search }),
   );

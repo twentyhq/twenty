@@ -10,7 +10,7 @@ import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
-import { createDropdownRowRegistry } from './createDropdownRowRegistry';
+import { createDropdownRegistry } from './createDropdownRegistry';
 import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { useRegisteredElementId } from './useRegisteredElementId';
 
@@ -47,7 +47,7 @@ export const DropdownRoot = ({
     id: string;
     type: DropdownType;
   }>();
-  const [rowRegistry] = useState(createDropdownRowRegistry);
+  const [registry] = useState(createDropdownRegistry);
   const contentRef = useRef<HTMLDivElement>(null);
   const submenuTriggerRef = useRef<HTMLElement>(null);
   const [focusedRowId, setFocusedRowId] = useState<string>();
@@ -203,7 +203,7 @@ export const DropdownRoot = ({
           multiple,
           isSubmenu,
           parentType: parent?.type,
-          rowRegistry,
+          registry,
           contentRef,
           submenuTriggerRef,
           focusedRowId,

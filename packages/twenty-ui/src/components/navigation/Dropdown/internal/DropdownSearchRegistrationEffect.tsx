@@ -14,15 +14,15 @@ export const DropdownSearchRegistrationEffect = ({
   searchRef,
   disabled,
 }: DropdownSearchRegistrationEffectProps) => {
-  const rowRegistry = useContext(DropdownRowScopeContext)?.rowRegistry;
+  const registry = useContext(DropdownRowScopeContext)?.registry;
 
   useLayoutEffect(() => {
-    if (!isDefined(rowRegistry) || disabled) {
+    if (!isDefined(registry) || disabled) {
       return;
     }
 
-    return registerDropdownSearch({ rowRegistry, searchRef });
-  }, [searchRef, rowRegistry, disabled]);
+    return registerDropdownSearch({ registry, searchRef });
+  }, [searchRef, registry, disabled]);
 
   return null;
 };

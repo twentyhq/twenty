@@ -14,14 +14,8 @@ import { useDropdownContext } from './useDropdownContext';
 const TYPEAHEAD_RESET_DELAY = 500;
 
 export const useDropdownKeyboardNavigation = () => {
-  const {
-    type,
-    isSubmenu,
-    setOpen,
-    closeTree,
-    rowRegistry,
-    submenuTriggerRef,
-  } = useDropdownContext();
+  const { type, isSubmenu, setOpen, closeTree, registry, submenuTriggerRef } =
+    useDropdownContext();
   const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
@@ -51,9 +45,7 @@ export const useDropdownKeyboardNavigation = () => {
       isSubmenuBackwardKey && type !== 'panel'
         ? getNextDropdownGridItem({
             key: event.key,
-            items: getEnabledDropdownRows(rowRegistry).map(
-              (row) => row.element,
-            ),
+            items: getEnabledDropdownRows(registry).map((row) => row.element),
             currentItem: target,
             search: null,
             isRightToLeft,
@@ -86,7 +78,7 @@ export const useDropdownKeyboardNavigation = () => {
     }
 
     const { search, enabledRows, rovingRows } =
-      getDropdownRowCollection(rowRegistry);
+      getDropdownRowCollection(registry);
     const isSearch = target === search;
     if (isEditable && !isSearch) {
       return;

@@ -19,6 +19,6 @@ export const useDropdownRow = ({
 
   return {
     tabIndex: isOutsideTabOrder ? -1 : 0,
-    rowRegistry: rowScope?.rowRegistry,
+    registry: rowScope?.registry,
   };
 };
