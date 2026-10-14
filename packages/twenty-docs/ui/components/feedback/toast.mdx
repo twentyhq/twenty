@@ -113,6 +113,28 @@ export const SaveButton = ({ saveRecord, onViewRecord }: SaveButtonProps) => {
 
 `ToastUpdate` requires `id` and accepts partial Toast options. Omitted fields keep their current values. Explicit `undefined` clears an optional field or restores its component default, such as `progress: undefined` or `status: undefined`. Pass `null` to remove a content slot, including `description`, `icon`, or `action`. Setting `cancelLabel: null` hides the cancel control while preserving its callback. Callback changes take effect on the existing notification. `dedupeKey` belongs to enqueueing and cannot be updated.
 
+## Dismissal timing
+
+The countdown defaults to 6,000 milliseconds. It pauses while the pointer is over the toast or keyboard focus is inside it, and resumes only after both leave. The visual countdown follows the remaining dismissal time. Automatic dismissal also works when reduced motion disables the animation.
+
+<StoryEmbed
+  storyId="ui-feedback-toaster-timing--documentation"
+  title="Toast timing controls"
+  height={400}
+/>
+
+| Operation                                     | Countdown behavior                                                                                                         |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Update content, status, actions, or callbacks | Preserve the remaining time. Repeated updates do not extend it.                                                            |
+| Supply `duration` to `updateToast`            | Start a fresh duration, including when the value is unchanged. `duration: undefined` restores the default and restarts it. |
+| Change a standalone `Toast`'s `duration` prop | Start a fresh duration. Rendering the same value again keeps the remaining time.                                           |
+| Set `duration: 0`                             | Keep the toast open until it is dismissed.                                                                                 |
+| Supply `progress`                             | Stop the countdown while progress is present.                                                                              |
+| Remove `progress`                             | Start a fresh duration, or keep it open when its duration is zero.                                                         |
+| Update while hovered or focused               | Apply the same rules, keeping the resulting countdown paused until both pointer and focus leave.                           |
+
+For example, `updateToast({ id, children: 'Still saving' })` preserves the remaining time, while `updateToast({ id, duration: 6000 })` gives the reader another six seconds. These rules apply to the existing notification without changing its ID or position.
+
 ## Dismissible notification
 
 ```tsx
@@ -141,7 +163,7 @@ export const SaveNotification = () => {
 };
 ```
 
-`onClose` is called by the close button and when the countdown completes. Remove the toast in that callback. The countdown defaults to 6,000 milliseconds and pauses while the pointer is over the toast or a control inside it has keyboard focus. It resumes when both leave the toast.
+`onClose` is called once by the close button or when the countdown completes. Remove the toast in that callback. Use `duration={0}` for a notification that stays open until dismissal.
 
 ## Progress and cancellation
 
@@ -163,7 +185,7 @@ export const ImportProgress = ({ progress, onCancel }: ImportProgressProps) => (
 );
 ```
 
-Passing `progress` supplies a percentage and disables the countdown. Cancellation invokes `onCancel`; the parent owns cancellation and removal. `cancelLabel` accepts a React node for the button content. Children, `description`, `icon`, and `action` also accept caller-owned React nodes. Use Twenty UI controls for interactive actions and provide their accessible names.
+Passing `progress` supplies a percentage and disables the countdown. Remove it after the operation finishes to start a fresh duration. Cancellation invokes `onCancel`; the parent owns cancellation and removal. `cancelLabel` accepts a React node for the button content. Children, `description`, `icon`, and `action` also accept caller-owned React nodes. Use Twenty UI controls for interactive actions and provide their accessible names.
 
 ## Appearance and announcements
 

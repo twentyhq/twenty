@@ -15,10 +15,10 @@ import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
-import { logConsoleSourceIdState } from '@/log-console/states/logConsoleSourceIdState';
 import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
 import { isLogConsoleCliGuideOpenState } from '@/log-console/states/isLogConsoleCliGuideOpenState';
 import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
@@ -185,7 +185,7 @@ const meta: Meta<PageDecoratorArgs> = {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
-    jotaiStore.set(logConsoleSourceIdState.atom, 'record-changes');
+    jotaiStore.set(logConsoleActiveSourceIdState.atom, 'record-changes');
   },
   parameters: {
     layout: 'fullscreen',
@@ -357,7 +357,7 @@ export const AppLogDetail: Story = {
 export const AppLogsLive: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(logConsoleSourceIdState.atom, 'app-logs');
+    jotaiStore.set(logConsoleActiveSourceIdState.atom, 'app-logs');
     jotaiStore.set(sseClientState.atom, fakeSseClient as never);
   },
   play: async ({ canvasElement }) => {
@@ -402,7 +402,7 @@ export const AppLogsLive: Story = {
 export const Clear: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(logConsoleSourceIdState.atom, 'app-logs');
+    jotaiStore.set(logConsoleActiveSourceIdState.atom, 'app-logs');
     jotaiStore.set(sseClientState.atom, fakeSseClient as never);
   },
   play: async ({ canvasElement }) => {
@@ -445,7 +445,7 @@ const APPLICATION_LOGS_PER_PAGE = 3;
 export const LoadNextPage: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(logConsoleSourceIdState.atom, 'app-logs');
+    jotaiStore.set(logConsoleActiveSourceIdState.atom, 'app-logs');
   },
   parameters: {
     msw: {
@@ -588,7 +588,7 @@ export const LastSevenDaysInUtc: Story = {
 export const LevelFilter: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(logConsoleSourceIdState.atom, 'app-logs');
+    jotaiStore.set(logConsoleActiveSourceIdState.atom, 'app-logs');
     jotaiStore.set(logConsoleFiltersState.atom, [
       {
         filterFieldId: 'level',
@@ -738,11 +738,14 @@ export const FullScreen: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByRole('button', { name: 'Command Menu' });
-    const closeButton = await canvas.findByRole('button', { name: 'Close' });
-    const { x, y, width, height } = closeButton.getBoundingClientRect();
+    const exitFullScreenButton = await canvas.findByRole('button', {
+      name: 'Exit full screen',
+    });
+    const { x, y, width, height } =
+      exitFullScreenButton.getBoundingClientRect();
 
     expect(
-      closeButton.contains(
+      exitFullScreenButton.contains(
         document.elementFromPoint(x + width / 2, y + height / 2),
       ),
     ).toBe(true);

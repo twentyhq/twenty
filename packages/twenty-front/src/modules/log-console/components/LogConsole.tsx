@@ -5,15 +5,13 @@ import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { type TransitionEvent, useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
-import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import {
   IconChevronDown,
   IconChevronUp,
   IconMaximize,
   IconMinimize,
-  IconX,
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -27,7 +25,6 @@ import { useLogConsoleTabs } from '@/log-console/hooks/useLogConsoleTabs';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
-import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
 import { getLogConsoleTransition } from '@/log-console/utils/getLogConsoleTransition';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
@@ -37,10 +34,11 @@ import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
 
@@ -178,10 +176,10 @@ const getWindowHeight = () => window.innerHeight;
 export const LogConsole = () => {
   const { t } = useLingui();
   const store = useStore();
-  const { enqueueToast } = useToast();
   const shouldReduceMotion = useReducedMotion();
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const tabs = useLogConsoleTabs();
 
   const [logConsoleDisplayMode, setLogConsoleDisplayMode] = useAtomState(
@@ -197,13 +195,12 @@ export const LogConsole = () => {
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
-  const setLogConsoleSelectedLog = useSetAtomState(logConsoleSelectedLogState);
   const [isResizing, setIsResizing] = useState(false);
   const [liveHeight, setLiveHeight] = useState<number | null>(null);
 
   const isOpen = logConsoleDisplayMode === 'open';
   const isFullScreen = isOpen && isLogConsoleFullScreen;
-  const isVisible = isLogConsoleAllowed && logConsoleDisplayMode !== 'closed';
+  const isVisible = isLogConsoleAllowed && isAdvancedModeEnabled;
 
   const [renderedLayout, setRenderedLayout] = useState<LogConsoleLayout | null>(
     isVisible ? { isOpen, isFullScreen } : null,
@@ -265,7 +262,7 @@ export const LogConsole = () => {
     shortcut: ['Mod', 'J'],
   });
 
-  const toggleHotkeyEffect = isLogConsoleAllowed ? (
+  const toggleHotkeyEffect = isVisible ? (
     <LogConsoleToggleHotkeyEffect onToggle={toggleLogConsoleOpen} />
   ) : null;
 
@@ -303,7 +300,7 @@ export const LogConsole = () => {
   const handleResizeStart = (height: number) => {
     setIsResizing(true);
 
-    if (height > 0 && logConsoleDisplayMode === 'collapsed') {
+    if (height > 0 && !isOpen) {
       openLogConsole();
     }
   };
@@ -366,16 +363,6 @@ export const LogConsole = () => {
     setIsLogConsoleFullScreen(!isFullScreen);
   };
 
-  const closeLogConsole = () => {
-    setLogConsoleSelectedLog(null);
-    setLogConsoleDisplayMode('closed');
-    setIsLogConsoleFullScreen(false);
-    enqueueToast({
-      status: 'info',
-      children: t`Developer console hidden. Press ${toggleHotkeyLabel} to open it again.`,
-    });
-  };
-
   const handlePanelTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
     if (
       event.target !== event.currentTarget ||
@@ -399,7 +386,6 @@ export const LogConsole = () => {
   const fullScreenLabel = displayedLayout.isFullScreen
     ? t`Exit full screen`
     : t`Full screen`;
-  const closeLabel = t`Close`;
 
   return (
     <>
@@ -450,15 +436,6 @@ export const LogConsole = () => {
                     <IconMaximize />
                   )}
                 </LightIconButton>
-                <IconButton
-                  size="sm"
-                  variant="outline"
-                  tooltip={closeLabel}
-                  aria-label={closeLabel}
-                  onClick={closeLogConsole}
-                >
-                  <IconX />
-                </IconButton>
               </StyledBarActions>
             }
           />

@@ -18,9 +18,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledSelectedOptionTag = styled(Tag)`
-  && {
-    min-width: fit-content;
-  }
+  min-width: fit-content;
 `;
 
 export const MultiSelectDisplay = ({

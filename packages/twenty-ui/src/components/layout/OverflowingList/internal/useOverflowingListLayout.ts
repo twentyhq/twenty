@@ -90,7 +90,7 @@ export const useOverflowingListLayout = ({
           itemWidths,
           availableWidth,
           gap,
-          includePartialItem: !latestLayoutInput.reserveCountSpace,
+          includePartialItem: true,
         }),
       );
     };

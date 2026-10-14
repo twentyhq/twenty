@@ -567,12 +567,6 @@ const SettingsAdminWorkspaceChatThread = lazy(() =>
   ),
 );
 
-const SettingsAdminChats = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminChats').then((module) => ({
-    default: module.SettingsAdminChats,
-  })),
-);
-
 const SettingsCommunity = lazy(() =>
   import('~/pages/settings/community/SettingsCommunity').then((module) => ({
     default: module.SettingsCommunity,
@@ -1097,10 +1091,6 @@ const createSettingsRouteElements = ({
         <Route
           path={SettingsPath.AdminPanelWorkspaceChatThread}
           element={<SettingsAdminWorkspaceChatThread />}
-        />
-        <Route
-          path={SettingsPath.AdminPanelChats}
-          element={<SettingsAdminChats />}
         />
       </>
     )}

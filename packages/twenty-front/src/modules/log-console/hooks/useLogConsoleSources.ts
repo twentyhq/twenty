@@ -2,7 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
-import { logConsoleSourceIdState } from '@/log-console/states/logConsoleSourceIdState';
+import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleSourceId } from '@/log-console/types/LogConsoleSourceId';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -13,8 +13,8 @@ import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
 export const useLogConsoleSources = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const [logConsoleSourceId, setLogConsoleSourceId] = useAtomState(
-    logConsoleSourceIdState,
+  const [logConsoleActiveSourceId, setLogConsoleActiveSourceId] = useAtomState(
+    logConsoleActiveSourceIdState,
   );
   const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
   const setLogConsoleSelectedLog = useSetAtomState(logConsoleSelectedLogState);
@@ -33,13 +33,14 @@ export const useLogConsoleSources = () => {
   ];
 
   const activeSource =
-    sources.find((source) => source.id === logConsoleSourceId) ?? sources[0];
+    sources.find((source) => source.id === logConsoleActiveSourceId) ??
+    sources[0];
 
   const changeSource = (sourceId: LogConsoleSourceId) => {
     const filterFields =
       sources.find((source) => source.id === sourceId)?.filterFields ?? [];
 
-    setLogConsoleSourceId(sourceId);
+    setLogConsoleActiveSourceId(sourceId);
     setLogConsoleSelectedLog(null);
     setLogConsoleFilters((filters) =>
       filters.filter((filter) =>

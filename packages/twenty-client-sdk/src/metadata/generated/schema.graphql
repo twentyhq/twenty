@@ -2320,12 +2320,18 @@ type FrontComponent {
   universalIdentifier: UUID
   updatedAt: DateTime!
   usesSdkClient: Boolean!
+  widgetAvailability: [FrontComponentWidgetAvailability!]!
 }
 
 type FrontComponentConfiguration {
   configurationType: WidgetConfigurationType!
   frontComponentId: UUID!
   headerCommandMenuItemUniversalIdentifiers: [UUID!]
+}
+
+type FrontComponentWidgetAvailability {
+  objectMetadataId: UUID
+  pageLayoutType: PageLayoutType!
 }
 
 type FullName {
@@ -2683,6 +2689,7 @@ type MarketplaceAppDetail {
   logoUrl: String
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
   name: String!
+  objects: [MarketplaceAppObject!]
   pricingDescription: String
   requestedCapabilities: [String!]!
   roles: [MarketplaceAppRole!]
@@ -2692,6 +2699,12 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
+}
+
+type MarketplaceAppObject {
+  labelPlural: String!
+  labelSingular: String!
+  universalIdentifier: String!
 }
 
 type MarketplaceAppRole {

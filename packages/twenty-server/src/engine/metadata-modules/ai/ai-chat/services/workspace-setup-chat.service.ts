@@ -8,9 +8,9 @@ import {
   type WorkspacePersonEnrichment,
 } from 'twenty-shared/workspace';
 
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -49,7 +49,7 @@ export class WorkspaceSetupChatService {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly i18nService: I18nService,
@@ -149,7 +149,7 @@ export class WorkspaceSetupChatService {
     }
 
     const hasAvailableCredits =
-      await this.billingUsageService.hasAvailableCredits(workspace.id);
+      await this.usageQuotaAdmissionService.hasAvailableCredits(workspace.id);
 
     if (!hasAvailableCredits) {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };

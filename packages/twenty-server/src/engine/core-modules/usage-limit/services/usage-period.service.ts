@@ -1,36 +1,30 @@
 /* @license Enterprise */
 
-import { Injectable, type OnModuleInit } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { Injectable } from '@nestjs/common';
 
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { type CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
+import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
 import { type CalendarPeriodUnit } from 'src/engine/core-modules/usage-limit/types/calendar-period-unit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
-import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { getCalendarDayPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-day-period.util';
 import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-week-period.util';
 import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
 
 @Injectable()
-export class UsagePeriodService implements OnModuleInit {
-  private creditAllowanceProvider: CreditAllowanceProvider;
-
-  constructor(private readonly discoveryService: DiscoveryService) {}
-
-  onModuleInit() {
-    this.creditAllowanceProvider = findCreditAllowanceProvider(
-      this.discoveryService,
-    );
-  }
+export class UsagePeriodService {
+  constructor(
+    private readonly billingCreditAllowanceService: BillingCreditAllowanceService,
+  ) {}
 
   async hasAllowancePeriod(workspaceId: string): Promise<boolean> {
     return isDefined(
-      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId),
+      await this.billingCreditAllowanceService.getCreditAllowancePeriod(
+        workspaceId,
+      ),
     );
   }
 
@@ -45,7 +39,9 @@ export class UsagePeriodService implements OnModuleInit {
       return this.getCalendarPeriod(periodUnit);
     }
 
-    return this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
+    return this.billingCreditAllowanceService.getCreditAllowancePeriod(
+      workspaceId,
+    );
   }
 
   async findCurrentPeriodsByUnit({

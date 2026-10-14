@@ -6,6 +6,7 @@ import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebh
 import { type LogConsoleApisView } from '@/log-console/types/LogConsoleApisView';
 import { type LogConsoleResourceView } from '@/log-console/types/LogConsoleResourceView';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -27,6 +28,7 @@ export const useOpenLogConsoleTab = () => {
   const setLogConsoleWebhooksView = useSetAtomState(
     logConsoleWebhooksViewState,
   );
+  const setIsAdvancedModeEnabled = useSetAtomState(isAdvancedModeEnabledState);
 
   const openLogConsoleTab = ({
     isFullScreen = false,
@@ -41,6 +43,7 @@ export const useOpenLogConsoleTab = () => {
     setActiveTabId(tab.tabId);
     setIsLogConsoleFullScreen(isFullScreen);
     setLogConsoleDisplayMode('open');
+    setIsAdvancedModeEnabled(true);
   };
 
   return { openLogConsoleTab };

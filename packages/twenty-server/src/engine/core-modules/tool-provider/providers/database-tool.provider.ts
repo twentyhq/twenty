@@ -395,7 +395,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (canSoftDeleteRecords) {
+      if (canSoftDeleteRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `delete_one_${snakeSingular}`,
           ...getCrudToolLabels(

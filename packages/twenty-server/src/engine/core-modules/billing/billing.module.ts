@@ -21,6 +21,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
+import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
@@ -30,8 +31,6 @@ import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/s
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
-import { BillingCreditAllowanceProvider } from 'src/engine/core-modules/billing/services/billing-credit-allowance-provider.service';
-import { BillingUsageLimitEntitlementProvider } from 'src/engine/core-modules/billing/services/billing-usage-limit-entitlement-provider.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -47,7 +46,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -74,7 +72,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetricsModule,
     EnterpriseModule,
     UsageAnalyticsModule,
-    UsageLimitModule,
     WorkspaceIteratorModule,
   ],
   providers: [
@@ -93,8 +90,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
     BillingUsageService,
-    BillingCreditAllowanceProvider,
-    BillingUsageLimitEntitlementProvider,
+    BillingCreditAllowanceService,
     BillingPriceService,
     BillingCreditRolloverService,
     BillingCreditGrantService,
@@ -109,6 +105,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   exports: [
     BillingSubscriptionService,
+    BillingCreditAllowanceService,
     BillingSubscriptionUpdateService,
     BillingService,
     BillingUsageService,
