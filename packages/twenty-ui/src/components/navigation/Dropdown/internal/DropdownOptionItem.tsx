@@ -10,6 +10,8 @@ import styles from '../Dropdown.module.scss';
 import { DropdownOptionItemOwner } from './DropdownOptionItemOwner';
 import { DropdownSelectionContext } from './DropdownSelectionContext';
 import { createDropdownSelectionEventDetails } from './createDropdownSelectionEventDetails';
+import { getDropdownOptionItemRole } from './getDropdownOptionItemRole';
+import { isDropdownOptionItemSelected } from './isDropdownOptionItemSelected';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
@@ -50,11 +52,11 @@ export const DropdownOptionItem = ({
   const selection = useContext(DropdownSelectionContext);
   const hasSelectionOwner = isDefined(selection) && isDefined(value);
   const multiple = hasSelectionOwner ? selection.multiple : standaloneMultiple;
-  const selected = hasSelectionOwner
-    ? selection.multiple
-      ? selection.value.includes(value)
-      : selection.value === value
-    : standaloneSelected;
+  const selected = isDropdownOptionItemSelected({
+    selection,
+    value,
+    standaloneSelected,
+  });
   const isMenu = type === 'menu';
   const isPickerOption = type === 'picker' && hasSelectionOwner;
   const hasSelectionState = isDefined(selected);
@@ -66,12 +68,13 @@ export const DropdownOptionItem = ({
     !isPressableOption &&
     hasSelectionState &&
     selected;
-  const selectableMenuOptionRole = multiple
-    ? 'menuitemcheckbox'
-    : 'menuitemradio';
-  const menuOptionRole = hasSelectionState
-    ? selectableMenuOptionRole
-    : 'menuitem';
+  const role = getDropdownOptionItemRole({
+    type,
+    hasSelectionState,
+    hasSelectionOwner,
+    multiple,
+    role: props.role,
+  });
   const selectionIndicator = multiple ? 'checkbox' : 'check';
   const generatedId = useId();
   const itemId = getDropdownItemExplicitId({ id, render }) ?? generatedId;
@@ -91,7 +94,7 @@ export const DropdownOptionItem = ({
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={isMenu ? menuOptionRole : isPickerOption ? 'option' : props.role}
+      role={role}
       aria-checked={isMenu && hasSelectionState ? selected : undefined}
       aria-selected={isPickerOption ? selected : undefined}
       aria-pressed={
