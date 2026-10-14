@@ -1,4 +1,5 @@
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,7 +13,7 @@ import { applicationVariablesDraftFamilyState } from '@/settings/applications/st
 export const useApplicationVariablesDraft = <
   DraftableApplicationVariable extends Pick<
     ApplicationVariable,
-    'key' | 'value'
+    'key' | 'value' | 'isSecret'
   >,
 >({
   applicationId,
@@ -41,15 +42,24 @@ export const useApplicationVariablesDraft = <
     (applicationVariable) => {
       const draftValue = draftValueByKey[applicationVariable.key];
 
-      return isDefined(draftValue)
-        ? { ...applicationVariable, value: draftValue }
-        : applicationVariable;
+      // A saved secret arrives masked, so its input starts empty: editing the
+      // mask would save the mask itself as part of the new secret.
+      const savedValueToEdit = applicationVariable.isSecret
+        ? ''
+        : applicationVariable.value;
+
+      return {
+        ...applicationVariable,
+        value: isDefined(draftValue) ? draftValue : savedValueToEdit,
+        savedValue: applicationVariable.value,
+      };
     },
   );
 
   const editedApplicationVariables = draftApplicationVariables.filter(
-    (draftApplicationVariable, index) =>
-      draftApplicationVariable.value !== applicationVariables[index].value,
+    ({ value, savedValue, isSecret }) =>
+      // An empty secret input keeps the saved secret instead of clearing it.
+      isSecret ? isNonEmptyString(value) : value !== savedValue,
   );
 
   const setApplicationVariableValue = (key: string, value: string) => {

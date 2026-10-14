@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -14,16 +15,17 @@ const StyledContainer = styled.div`
 `;
 
 type SettingsApplicationDetailVariablesTabProps = {
-  applicationVariables: Pick<
+  applicationVariables: (Pick<
     ApplicationVariable,
     | 'key'
     | 'label'
     | 'description'
     | 'isDeprecated'
+    | 'isSecret'
     | 'type'
     | 'value'
     | 'options'
-  >[];
+  > & { savedValue: string })[];
   onVariableChange: (key: string, value: string) => void;
 };
 
@@ -61,7 +63,13 @@ export const SettingsApplicationDetailVariablesTab = ({
               onChange={(newValue) =>
                 onVariableChange(applicationVariable.key, newValue)
               }
-              placeholder={t`Value`}
+              isSecret={applicationVariable.isSecret}
+              placeholder={
+                applicationVariable.isSecret &&
+                isNonEmptyString(applicationVariable.savedValue)
+                  ? applicationVariable.savedValue
+                  : t`Value`
+              }
             />
           </div>
         ))}

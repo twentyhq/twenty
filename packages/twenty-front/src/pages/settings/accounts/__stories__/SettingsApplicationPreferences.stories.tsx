@@ -54,7 +54,7 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
     expect(canvas.getByText('App preferences')).toBeVisible();
     expect(canvas.getByText('Record my meetings')).toBeVisible();
     expect(canvas.getByDisplayValue('always')).toBeVisible();
-    expect(canvas.getByDisplayValue('********')).toBeVisible();
+    expect(canvas.getByPlaceholderText('sk-1********')).toHaveValue('');
     expect(canvas.queryByText('Old flag')).not.toBeInTheDocument();
 
     const saveButton = canvas.getByRole('button', { name: 'Save settings' });
@@ -82,8 +82,50 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
     );
     await waitFor(() => expect(saveButton).toBeDisabled());
     expect(canvas.getByDisplayValue('never')).toBeVisible();
-    expect(canvas.getByDisplayValue('********')).toBeVisible();
+    expect(canvas.getByPlaceholderText('sk-1********')).toHaveValue('');
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+export const SavedSecretIsReplacedNotAppended: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const personalApiKeyInput = await canvas.findByPlaceholderText(
+      'sk-1********',
+      undefined,
+      { timeout: 3000 },
+    );
+
+    expect(personalApiKeyInput).toHaveValue('');
+    expect(personalApiKeyInput).toHaveAttribute('type', 'password');
+
+    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+
+    await userEvent.type(personalApiKeyInput, 'x');
+    await userEvent.clear(personalApiKeyInput);
+
+    expect(saveButton).toBeDisabled();
+
+    await userEvent.type(personalApiKeyInput, 'sk-new-key');
+
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(updateMyUserApplicationVariable.mock.calls).toEqual([
+        [
+          {
+            applicationUniversalIdentifier: FATHOM_APPLICATION_ID,
+            key: 'PERSONAL_API_KEY',
+            value: 'sk-new-key',
+          },
+        ],
+      ]),
+    );
+    await waitFor(() =>
+      expect(canvas.getByPlaceholderText('sk-1********')).toHaveValue(''),
+    );
   },
 };
 

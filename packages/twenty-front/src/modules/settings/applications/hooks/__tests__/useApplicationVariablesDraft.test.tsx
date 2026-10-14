@@ -10,10 +10,16 @@ const OTHER_KEY = 'REGION';
 const OLD_VALUE = 'old';
 const NEW_VALUE = 'new';
 const LATER_VALUE = 'later';
+const MASKED_SECRET = 'sk-1********';
 
-const buildApplicationVariable = (key: string, value: string) => ({
+const buildApplicationVariable = (
+  key: string,
+  value: string,
+  isSecret = false,
+) => ({
   key,
   value,
+  isSecret,
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
@@ -28,7 +34,7 @@ const renderVariablesDraft = ({
 }: {
   applicationId: string;
   scope?: ApplicationVariableScope;
-  applicationVariables?: { key: string; value: string }[];
+  applicationVariables?: { key: string; value: string; isSecret: boolean }[];
   updateApplicationVariable?: jest.Mock;
 }) => {
   const refetchApplicationVariables = jest.fn().mockResolvedValue(undefined);
@@ -156,6 +162,50 @@ describe('useApplicationVariablesDraft', () => {
     expect(refetchApplicationVariables).not.toHaveBeenCalled();
     expect(result.current.draftApplicationVariables[0].value).toBe(NEW_VALUE);
     expect(result.current.isSavingApplicationVariables).toBe(false);
+  });
+
+  it('starts a saved secret empty and keeps it when the input is emptied', () => {
+    const { result } = renderVariablesDraft({
+      applicationId: 'app-secret-kept',
+      applicationVariables: [
+        buildApplicationVariable(KEY, MASKED_SECRET, true),
+      ],
+    });
+
+    expect(result.current.draftApplicationVariables[0]).toMatchObject({
+      value: '',
+      savedValue: MASKED_SECRET,
+    });
+
+    act(() => {
+      result.current.setApplicationVariableValue(KEY, NEW_VALUE);
+    });
+    act(() => {
+      result.current.setApplicationVariableValue(KEY, '');
+    });
+
+    expect(result.current.hasUnsavedApplicationVariables).toBe(false);
+  });
+
+  it('replaces a saved secret with only the newly typed value', async () => {
+    const { result, updateApplicationVariable } = renderVariablesDraft({
+      applicationId: 'app-secret-replaced',
+      applicationVariables: [
+        buildApplicationVariable(KEY, MASKED_SECRET, true),
+      ],
+    });
+
+    act(() => {
+      result.current.setApplicationVariableValue(KEY, NEW_VALUE);
+    });
+
+    await act(async () => {
+      await result.current.saveApplicationVariables();
+    });
+
+    expect(updateApplicationVariable.mock.calls).toEqual([
+      [{ key: KEY, value: NEW_VALUE }],
+    ]);
   });
 
   it('keeps the workspace and user drafts of an application apart', () => {
