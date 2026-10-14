@@ -62,4 +62,22 @@ describe('ViewWidgetRenderer', () => {
     expect(screen.getByText('View unavailable')).toBeInTheDocument();
     expect(screen.queryByTestId('widget-content')).not.toBeInTheDocument();
   });
+
+  it('asks for a view when none is selected yet', () => {
+    mockedUseViewById.mockReturnValue({ view: undefined });
+
+    render(
+      <ViewWidgetRenderer
+        widget={{
+          ...VIEW_WIDGET,
+          configuration: {
+            ...VIEW_WIDGET.configuration,
+            viewId: null,
+          } as PageLayoutWidget['configuration'],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('No view selected')).toBeInTheDocument();
+  });
 });

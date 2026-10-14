@@ -16,7 +16,18 @@ export const ViewWidgetRenderer = ({ widget }: ViewWidgetRendererProps) => {
 
   const { view } = useViewById(viewId);
 
-  if (!isDefined(widget.objectMetadataId) || !isDefined(view)) {
+  if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
+    return (
+      <PageLayoutWidgetStatusDisplay
+        tooltipId={`widget-view-missing-tooltip-${widget.id}`}
+        text={t`No view selected`}
+        tooltipContent={t`Select a view in the widget settings.`}
+        color="gray"
+      />
+    );
+  }
+
+  if (!isDefined(view)) {
     return (
       <PageLayoutWidgetStatusDisplay
         tooltipId={`widget-view-unavailable-tooltip-${widget.id}`}
