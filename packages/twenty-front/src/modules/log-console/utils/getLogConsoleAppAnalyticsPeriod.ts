@@ -3,6 +3,7 @@ import { Temporal } from 'temporal-polyfill';
 import { LOG_CONSOLE_APP_ANALYTICS_RANGE_PRESETS } from '@/log-console/constants/LogConsoleAppAnalyticsRangePresets';
 import { LOG_CONSOLE_APP_ANALYTICS_RETENTION_IN_DAYS } from '@/log-console/constants/LogConsoleAppAnalyticsRetentionInDays';
 import { type LogConsoleAppAnalyticsRange } from '@/log-console/types/LogConsoleAppAnalyticsRange';
+import { type LogConsoleAppAnalyticsRangePreset } from '@/log-console/types/LogConsoleAppAnalyticsRangePreset';
 
 const UTC_TIME_ZONE = 'UTC';
 
@@ -15,6 +16,24 @@ const laterOf = (
   left: Temporal.ZonedDateTime,
   right: Temporal.ZonedDateTime,
 ) => (Temporal.ZonedDateTime.compare(left, right) > 0 ? left : right);
+
+const getPresetStart = ({
+  preset,
+  periodEnd,
+  registrationCreatedAt,
+}: {
+  preset: LogConsoleAppAnalyticsRangePreset;
+  periodEnd: Temporal.ZonedDateTime;
+  registrationCreatedAt: string;
+}) => {
+  const { lastDays } = LOG_CONSOLE_APP_ANALYTICS_RANGE_PRESETS[preset];
+
+  if (lastDays === undefined) {
+    return toUtcDayStart(registrationCreatedAt);
+  }
+
+  return periodEnd.subtract({ days: lastDays });
+};
 
 // Analytics are aggregated per UTC day, so every range is expressed as [UTC day start, next UTC day start)
 export const getLogConsoleAppAnalyticsPeriod = ({
@@ -40,14 +59,11 @@ export const getLogConsoleAppAnalyticsPeriod = ({
   const requestedStart =
     range.kind === 'custom'
       ? Temporal.PlainDate.from(range.startDate).toZonedDateTime(UTC_TIME_ZONE)
-      : (() => {
-          const lastDays =
-            LOG_CONSOLE_APP_ANALYTICS_RANGE_PRESETS[range.preset].lastDays;
-
-          return lastDays === undefined
-            ? toUtcDayStart(registrationCreatedAt)
-            : periodEnd.subtract({ days: lastDays });
-        })();
+      : getPresetStart({
+          preset: range.preset,
+          periodEnd,
+          registrationCreatedAt,
+        });
 
   return {
     periodStart: laterOf(requestedStart, retentionStart).toInstant().toString(),
