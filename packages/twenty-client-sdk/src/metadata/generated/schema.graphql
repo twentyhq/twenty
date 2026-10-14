@@ -191,15 +191,6 @@ type AiChatUsage {
   kind: String!
   limitValue: BigInt!
   periodEnd: DateTime
-  userCredits: AiChatUserCredits
-}
-
-type AiChatUserCredits {
-  consumedValue: BigInt
-  fallback: UserCreditsFallback!
-  isUsingWorkspaceCredits: Boolean!
-  limitValue: BigInt!
-  periodEnd: DateTime!
 }
 
 enum AiModelTier {
@@ -4243,7 +4234,6 @@ type SearchField {
 }
 
 type SendChatMessageResult {
-  hasWorkspaceCreditsLeft: Boolean!
   mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
   queued: Boolean!

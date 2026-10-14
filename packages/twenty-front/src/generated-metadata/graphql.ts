@@ -223,16 +223,6 @@ export type AiChatUsage = {
   kind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
   periodEnd?: Maybe<Scalars['DateTime']['output']>;
-  userCredits?: Maybe<AiChatUserCredits>;
-};
-
-export type AiChatUserCredits = {
-  __typename?: 'AiChatUserCredits';
-  consumedValue?: Maybe<Scalars['BigInt']['output']>;
-  fallback: UserCreditsFallback;
-  isUsingWorkspaceCredits: Scalars['Boolean']['output'];
-  limitValue: Scalars['BigInt']['output'];
-  periodEnd: Scalars['DateTime']['output'];
 };
 
 export enum AiModelTier {
@@ -6331,7 +6321,6 @@ export type SearchField = {
 
 export type SendChatMessageResult = {
   __typename?: 'SendChatMessageResult';
-  hasWorkspaceCreditsLeft: Scalars['Boolean']['output'];
   mentionedParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   messageId?: Maybe<Scalars['String']['output']>;
   queued: Scalars['Boolean']['output'];

@@ -171,17 +171,7 @@ export interface AiChatUsage {
     kind: Scalars['String']
     limitValue: Scalars['BigInt']
     periodEnd?: Scalars['DateTime']
-    userCredits?: AiChatUserCredits
     __typename: 'AiChatUsage'
-}
-
-export interface AiChatUserCredits {
-    consumedValue?: Scalars['BigInt']
-    fallback: UserCreditsFallback
-    isUsingWorkspaceCredits: Scalars['Boolean']
-    limitValue: Scalars['BigInt']
-    periodEnd: Scalars['DateTime']
-    __typename: 'AiChatUserCredits'
 }
 
 export type AiModelTier = 'balanced' | 'extraFast' | 'extraSmart' | 'fast' | 'smart'
@@ -3098,7 +3088,6 @@ export interface SearchField {
 }
 
 export interface SendChatMessageResult {
-    hasWorkspaceCreditsLeft: Scalars['Boolean']
     mentionedParticipantWorkspaceMemberIds?: Scalars['UUID'][]
     messageId?: Scalars['String']
     queued: Scalars['Boolean']
@@ -4136,17 +4125,6 @@ export interface AggregateChartConfigurationGenqlSelection{
 export interface AiChatUsageGenqlSelection{
     consumedValue?: boolean | number
     kind?: boolean | number
-    limitValue?: boolean | number
-    periodEnd?: boolean | number
-    userCredits?: AiChatUserCreditsGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AiChatUserCreditsGenqlSelection{
-    consumedValue?: boolean | number
-    fallback?: boolean | number
-    isUsingWorkspaceCredits?: boolean | number
     limitValue?: boolean | number
     periodEnd?: boolean | number
     __typename?: boolean | number
@@ -7400,7 +7378,6 @@ export interface SearchFieldGenqlSelection{
 }
 
 export interface SendChatMessageResultGenqlSelection{
-    hasWorkspaceCreditsLeft?: boolean | number
     mentionedParticipantWorkspaceMemberIds?: boolean | number
     messageId?: boolean | number
     queued?: boolean | number
@@ -8655,14 +8632,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAiChatUsage = (obj?: { __typename?: any } | null): obj is AiChatUsage => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUsage"')
       return AiChatUsage_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AiChatUserCredits_possibleTypes: string[] = ['AiChatUserCredits']
-    export const isAiChatUserCredits = (obj?: { __typename?: any } | null): obj is AiChatUserCredits => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUserCredits"')
-      return AiChatUserCredits_possibleTypes.includes(obj.__typename)
     }
     
 
