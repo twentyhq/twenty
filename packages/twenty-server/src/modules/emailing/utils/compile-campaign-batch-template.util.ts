@@ -4,10 +4,9 @@ import {
   isDefined,
   parseCanonicalEmailDocument,
   parseJson,
-  parseTemplateVariableWithFallback,
+  replaceTemplateVariables,
   type TemplateVariableWithFallback,
 } from 'twenty-shared/utils';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
 import { resolveEmailDocumentBindings } from 'src/engine/core-modules/email/utils/resolve-email-document-bindings.util';
@@ -74,18 +73,10 @@ export const compileCampaignBatchTemplate = async ({
   };
 
   const toTags = (value: string, tagFamily: CampaignBatchTagFamily): string =>
-    value.replace(
-      CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
-      (rawTemplateVariable) => {
-        const campaignVariable =
-          parseTemplateVariableWithFallback(rawTemplateVariable);
-
-        if (!isDefined(campaignVariable)) {
-          return rawTemplateVariable;
-        }
-
-        return `{{${CAMPAIGN_BATCH_TAG_PREFIXES[tagFamily]}_${indexOfVariable(campaignVariable)}}}`;
-      },
+    replaceTemplateVariables(
+      value,
+      (campaignVariable) =>
+        `{{${CAMPAIGN_BATCH_TAG_PREFIXES[tagFamily]}_${indexOfVariable(campaignVariable)}}}`,
     );
 
   const subject = toTags(subjectTemplate, 'raw');
