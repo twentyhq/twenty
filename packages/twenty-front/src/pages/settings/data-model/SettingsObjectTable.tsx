@@ -29,20 +29,16 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { SearchInput } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import {
-  IconArchive,
-  IconChevronRight,
-  IconFilter,
-  IconSettings,
-} from 'twenty-ui/icon';
+import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledIconChevronRightContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -173,13 +169,7 @@ export const SettingsObjectTable = ({
                 dropdownId="settings-objects-filter-dropdown"
                 type="panel"
               >
-                <Dropdown.Trigger
-                  render={
-                    <IconButton aria-label={t`Filter`}>
-                      <IconFilter />
-                    </IconButton>
-                  }
-                />
+                <SettingsSearchFilterTrigger />
                 <DropdownContent
                   side="bottom"
                   align="end"

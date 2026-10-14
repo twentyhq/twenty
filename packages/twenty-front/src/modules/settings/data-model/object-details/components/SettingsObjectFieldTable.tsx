@@ -25,19 +25,15 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { SearchInput } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import {
-  IconArchive,
-  IconCircleDashed,
-  IconFilter,
-  IconSettings,
-} from 'twenty-ui/icon';
+import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '@/settings/data-model/object-details/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '@/settings/data-model/types/SettingsObjectDetailTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -184,13 +180,7 @@ export const SettingsObjectFieldTable = ({
               dropdownId="settings-fields-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger
-                render={
-                  <IconButton aria-label={t`Filter`}>
-                    <IconFilter />
-                  </IconButton>
-                }
-              />
+              <SettingsSearchFilterTrigger />
               <DropdownContent
                 side="bottom"
                 align="end"

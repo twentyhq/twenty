@@ -9,15 +9,16 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconFilter, IconSparkles } from 'twenty-ui/icon';
+import { IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { filterMarketplaceApps } from '~/pages/settings/applications/utils/filterMarketplaceApps';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -140,13 +141,7 @@ export const SettingsApplicationsAvailableTab = () => {
           onValueChange={setSearchTerm}
           actions={
             <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
-              <Dropdown.Trigger
-                render={
-                  <IconButton aria-label={t`Filter applications`}>
-                    <IconFilter />
-                  </IconButton>
-                }
-              />
+              <SettingsSearchFilterTrigger ariaLabel={t`Filter applications`} />
               <DropdownContent
                 side="bottom"
                 align="end"

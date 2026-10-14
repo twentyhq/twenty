@@ -11,11 +11,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconArchive, IconFilter, IconSettings } from 'twenty-ui/icon';
+import { IconArchive, IconSettings } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   ActivateSkillDocument,
@@ -26,6 +26,7 @@ import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/Set
 import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -133,13 +134,7 @@ export const SettingsAgentSkillsTab = () => {
               dropdownId="settings-skills-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger
-                render={
-                  <IconButton aria-label={t`Filter`}>
-                    <IconFilter />
-                  </IconButton>
-                }
-              />
+              <SettingsSearchFilterTrigger />
               <DropdownContent
                 side="bottom"
                 align="end"

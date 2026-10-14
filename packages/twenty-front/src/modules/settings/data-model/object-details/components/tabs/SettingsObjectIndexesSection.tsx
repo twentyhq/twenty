@@ -17,15 +17,16 @@ import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { SearchInput } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconEyeOff, IconFilter, IconPlus } from 'twenty-ui/icon';
+import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsObjectIndexTable } from '@/settings/data-model/object-details/components/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '@/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 type SettingsObjectIndexesSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -171,13 +172,7 @@ export const SettingsObjectIndexesSection = ({
             dropdownId={HIDE_SYSTEM_INDEXES_DROPDOWN_ID}
             type="panel"
           >
-            <Dropdown.Trigger
-              render={
-                <IconButton aria-label={t`Filter`}>
-                  <IconFilter />
-                </IconButton>
-              }
-            />
+            <SettingsSearchFilterTrigger />
             <DropdownContent align="end" sideOffset={8}>
               <Dropdown.Section>
                 <SettingsRow
