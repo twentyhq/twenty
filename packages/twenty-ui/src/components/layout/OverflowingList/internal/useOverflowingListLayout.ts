@@ -39,11 +39,15 @@ export const useOverflowingListLayout = ({
       return;
     }
 
-    const supportsSynchronousLayout = isDefined(globalThis.ResizeObserver);
+    const supportsSynchronousLayout = !('WorkerGlobalScope' in globalThis);
     const observedElements = new Set<Element>();
     const measure = () => {
       const itemElements = Array.from(items.children);
-      const currentElements = new Set<Element>([container, ...itemElements]);
+      const currentElements = new Set<Element>([
+        container,
+        items,
+        ...itemElements,
+      ]);
 
       if (isDefined(triggerRef.current)) {
         currentElements.add(triggerRef.current);
@@ -95,7 +99,7 @@ export const useOverflowingListLayout = ({
       );
     };
 
-    const observer = supportsSynchronousLayout
+    const observer = isDefined(globalThis.ResizeObserver)
       ? new ResizeObserver(measure)
       : undefined;
 

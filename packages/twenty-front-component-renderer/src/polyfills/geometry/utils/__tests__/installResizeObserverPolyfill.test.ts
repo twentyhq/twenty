@@ -46,18 +46,6 @@ const createSandbox = () => {
     observeElementGeometry,
     unobserveElementGeometry,
   });
-  const unsubscribeGeometry = jest.fn();
-  const subscribeToGeometryUpdates = geometryStore.subscribeToGeometryUpdates;
-  const subscribe = jest
-    .spyOn(geometryStore, 'subscribeToGeometryUpdates')
-    .mockImplementation((listener) => {
-      const unsubscribe = subscribeToGeometryUpdates(listener);
-
-      return () => {
-        unsubscribe();
-        unsubscribeGeometry();
-      };
-    });
   const globalScope: Record<string, unknown> = { window: polyfillWindow };
   installResizeObserverPolyfill({
     globalScope,
@@ -93,8 +81,6 @@ const createSandbox = () => {
     root,
     target,
     geometryStore,
-    subscribe,
-    unsubscribeGeometry,
     observeElementGeometry,
     unobserveElementGeometry,
     applySnapshot,
@@ -219,7 +205,7 @@ describe('installResizeObserverPolyfill', () => {
     expect(borderCallback).toHaveBeenCalledTimes(2);
   });
 
-  it('unobserves one target while keeping other measured targets subscribed', async () => {
+  it('unobserves one target while keeping other measured targets delivered', async () => {
     const {
       ResizeObserver,
       target,
@@ -227,7 +213,6 @@ describe('installResizeObserverPolyfill', () => {
       root,
       geometryStore,
       applySnapshot,
-      unsubscribeGeometry,
     } = createSandbox();
     const secondTarget = document.createElement('div');
     root.appendChild(secondTarget);
@@ -274,10 +259,11 @@ describe('installResizeObserverPolyfill', () => {
         (entry: ResizeObserverEntry) => entry.target,
       ),
     ).toEqual([secondTarget]);
-    expect(unsubscribeGeometry).not.toHaveBeenCalled();
 
     observer.unobserve(secondTarget);
-    expect(unsubscribeGeometry).toHaveBeenCalledTimes(1);
+    applySnapshot({ clientWidth: 300 });
+    await flushMicrotasks();
+    expect(callback).toHaveBeenCalledTimes(2);
   });
 
   it('releases host capacity while observing and unobserving connected targets', async () => {
@@ -514,14 +500,8 @@ describe('installResizeObserverPolyfill', () => {
     expect(callback).toHaveBeenCalledTimes(1);
   });
 
-  it('disconnects its geometry subscription and leaves other observers working', async () => {
-    const {
-      ResizeObserver,
-      target,
-      applySnapshot,
-      subscribe,
-      unsubscribeGeometry,
-    } = createSandbox();
+  it('disconnects one observer and leaves other observers working', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
     const disconnectedCallback = jest.fn();
     const liveCallback = jest.fn();
     const disconnectedObserver = new ResizeObserver(disconnectedCallback);
@@ -533,8 +513,6 @@ describe('installResizeObserverPolyfill', () => {
 
     expect(disconnectedCallback).not.toHaveBeenCalled();
     expect(liveCallback).toHaveBeenCalledTimes(1);
-    expect(subscribe).toHaveBeenCalledTimes(2);
-    expect(unsubscribeGeometry).toHaveBeenCalledTimes(1);
   });
 
   it('should report a zero size when a measured target is removed and resume after reinsertion', async () => {

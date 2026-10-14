@@ -11,6 +11,7 @@ import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeome
 import { createDocumentScopedElementGeometrySnapshot } from '@/polyfills/geometry/utils/createDocumentScopedElementGeometrySnapshot';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 import { isHostRenderedElement } from '@/polyfills/geometry/utils/isHostRenderedElement';
+import { restoreUnchangedComputedStyle } from '@/polyfills/geometry/utils/restoreUnchangedComputedStyle';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 import { type GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
@@ -289,7 +290,10 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
 
   const applyGeometryBatch = (batch: GeometryUpdateBatch): void => {
     if (isDefined(batch.viewport)) {
-      viewportSnapshot = batch.viewport;
+      viewportSnapshot = restoreUnchangedComputedStyle({
+        previousSnapshot: viewportSnapshot,
+        nextSnapshot: batch.viewport,
+      });
     }
 
     if (isDefined(batch.elements)) {
@@ -297,7 +301,13 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
         batch.elements,
       )) {
         if (observedRemoteElementIds.has(remoteElementId)) {
-          elementSnapshots.set(remoteElementId, snapshot);
+          elementSnapshots.set(
+            remoteElementId,
+            restoreUnchangedComputedStyle({
+              previousSnapshot: elementSnapshots.get(remoteElementId),
+              nextSnapshot: snapshot,
+            }),
+          );
         }
       }
     }

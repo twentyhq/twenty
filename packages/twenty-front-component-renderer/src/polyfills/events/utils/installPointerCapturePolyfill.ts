@@ -19,9 +19,13 @@ const DISPATCHABLE_POINTER_EVENT_TYPES: ReadonlySet<string> = new Set([
 ]);
 
 type CapturedPointer = {
-  pointerId: number;
   captureToken: number;
   removeListeners: () => void;
+};
+
+type ElementPointer = {
+  element: Element;
+  pointerId: number;
 };
 
 const hasPointerId = ({
@@ -39,31 +43,51 @@ export const installPointerCapturePolyfill = ({
   elementPrototype: object;
   documentTarget: Document;
 }): WorkerPointerCapture => {
-  const capturedPointers = new Map<Element, CapturedPointer>();
+  const capturedPointersByElement = new Map<
+    Element,
+    Map<number, CapturedPointer>
+  >();
   let lastCaptureToken = 0;
   let hasScheduledDetachedCaptureSweep = false;
   let gesturePointerTarget: Element | null = null;
 
-  const clearCapture = (element: Element) => {
-    const capture = capturedPointers.get(element);
+  const findCapture = ({
+    element,
+    pointerId,
+  }: ElementPointer): CapturedPointer | undefined =>
+    capturedPointersByElement.get(element)?.get(pointerId);
 
-    if (!isDefined(capture)) {
+  const clearCapture = ({ element, pointerId }: ElementPointer) => {
+    const elementCaptures = capturedPointersByElement.get(element);
+    const capture = elementCaptures?.get(pointerId);
+
+    if (!isDefined(elementCaptures) || !isDefined(capture)) {
       return;
     }
 
-    capturedPointers.delete(element);
+    elementCaptures.delete(pointerId);
     capture.removeListeners();
+
+    if (elementCaptures.size === 0) {
+      capturedPointersByElement.delete(element);
+    }
+  };
+
+  const clearElementCaptures = (element: Element) => {
+    for (const pointerId of [
+      ...(capturedPointersByElement.get(element)?.keys() ?? []),
+    ]) {
+      clearCapture({ element, pointerId });
+    }
   };
 
   const clearCaptureWhenCurrent = ({
     element,
+    pointerId,
     captureToken,
-  }: {
-    element: Element;
-    captureToken: number;
-  }) => {
-    if (capturedPointers.get(element)?.captureToken === captureToken) {
-      clearCapture(element);
+  }: ElementPointer & { captureToken: number }) => {
+    if (findCapture({ element, pointerId })?.captureToken === captureToken) {
+      clearCapture({ element, pointerId });
     }
   };
 
@@ -71,46 +95,52 @@ export const installPointerCapturePolyfill = ({
     if (
       !isInteger(pointerId) ||
       !isElementUnderRemoteRoot(element, documentTarget.body) ||
-      capturedPointers.get(element)?.pointerId === pointerId
+      isDefined(findCapture({ element, pointerId }))
     ) {
       return;
     }
 
-    clearCapture(element);
     lastCaptureToken += 1;
     const captureToken = lastCaptureToken;
 
     const clearCaptureAfterGestureEnd = (event: Event) => {
       if (hasPointerId({ event, pointerId })) {
         queueMicrotask(() =>
-          clearCaptureWhenCurrent({ element, captureToken }),
+          clearCaptureWhenCurrent({ element, pointerId, captureToken }),
         );
       }
     };
     const clearCaptureOnLoss = (event: Event) => {
       if (hasPointerId({ event, pointerId })) {
-        clearCaptureWhenCurrent({ element, captureToken });
+        clearCaptureWhenCurrent({ element, pointerId, captureToken });
       }
     };
 
     for (const eventType of POINTER_GESTURE_END_EVENT_TYPES) {
-      documentTarget.addEventListener(eventType, clearCaptureAfterGestureEnd);
+      documentTarget.addEventListener(eventType, clearCaptureAfterGestureEnd, {
+        capture: true,
+      });
     }
     element.addEventListener('lostpointercapture', clearCaptureOnLoss);
 
-    capturedPointers.set(element, {
-      pointerId,
+    const elementCaptures =
+      capturedPointersByElement.get(element) ??
+      new Map<number, CapturedPointer>();
+
+    elementCaptures.set(pointerId, {
       captureToken,
       removeListeners: () => {
         for (const eventType of POINTER_GESTURE_END_EVENT_TYPES) {
           documentTarget.removeEventListener(
             eventType,
             clearCaptureAfterGestureEnd,
+            { capture: true },
           );
         }
         element.removeEventListener('lostpointercapture', clearCaptureOnLoss);
       },
     });
+    capturedPointersByElement.set(element, elementCaptures);
     callRemoteElementMethod(
       element,
       'setPointerCapture',
@@ -120,19 +150,23 @@ export const installPointerCapturePolyfill = ({
   };
 
   const releasePointerCapture = (element: Element, pointerId: unknown) => {
-    const capture = capturedPointers.get(element);
-
-    if (!isDefined(capture) || capture.pointerId !== pointerId) {
+    if (!isInteger(pointerId)) {
       return;
     }
 
-    clearCapture(element);
+    const capture = findCapture({ element, pointerId });
+
+    if (!isDefined(capture)) {
+      return;
+    }
+
+    clearCapture({ element, pointerId });
 
     if (isElementUnderRemoteRoot(element, documentTarget.body)) {
       callRemoteElementMethod(
         element,
         'releasePointerCapture',
-        capture.pointerId,
+        pointerId,
         capture.captureToken,
       );
     }
@@ -152,13 +186,13 @@ export const installPointerCapturePolyfill = ({
     target: elementPrototype,
     methodName: 'hasPointerCapture',
     method: (element, pointerId) =>
-      capturedPointers.get(element)?.pointerId === pointerId,
+      isInteger(pointerId) && isDefined(findCapture({ element, pointerId })),
   });
 
   const findCapturedPointerTarget = (
     remoteElementId: string,
   ): Element | null => {
-    for (const element of capturedPointers.keys()) {
+    for (const element of capturedPointersByElement.keys()) {
       if (remoteId(element) === remoteElementId) {
         return element;
       }
@@ -183,9 +217,9 @@ export const installPointerCapturePolyfill = ({
   const sweepDetachedCaptures = () => {
     hasScheduledDetachedCaptureSweep = false;
 
-    for (const element of [...capturedPointers.keys()]) {
+    for (const element of [...capturedPointersByElement.keys()]) {
       if (!isElementUnderRemoteRoot(element, documentTarget.body)) {
-        clearCapture(element);
+        clearElementCaptures(element);
       }
     }
   };
@@ -221,18 +255,20 @@ export const installPointerCapturePolyfill = ({
       pointerId,
       captureToken,
     }: PointerCaptureRequest) => {
-      for (const [element, capture] of capturedPointers) {
+      for (const element of capturedPointersByElement.keys()) {
         if (
-          capture.pointerId === pointerId &&
-          capture.captureToken === captureToken
+          findCapture({ element, pointerId })?.captureToken === captureToken
         ) {
-          clearCapture(element);
+          clearCapture({ element, pointerId });
           return;
         }
       }
     },
     scheduleDetachedCaptureSweep: () => {
-      if (hasScheduledDetachedCaptureSweep || capturedPointers.size === 0) {
+      if (
+        hasScheduledDetachedCaptureSweep ||
+        capturedPointersByElement.size === 0
+      ) {
         return;
       }
 

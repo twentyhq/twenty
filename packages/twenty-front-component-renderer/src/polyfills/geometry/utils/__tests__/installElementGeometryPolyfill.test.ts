@@ -46,13 +46,20 @@ const installOn = (geometryStore: WorkerGeometryStore) => {
   return { documentBody, documentElement };
 };
 
-const installTextareaResizeFixture = () => {
-  let snapshot = createElementGeometrySnapshotFixture({
+const createTextareaSnapshot = () =>
+  createElementGeometrySnapshotFixture({
     offsetHeight: 50,
     clientHeight: 48,
     scrollHeight: 48,
     textareaIntrinsicScrollHeight: 48,
   });
+
+const installTextareaResizeFixture = ({
+  initialSnapshot = createTextareaSnapshot(),
+}: {
+  initialSnapshot?: ElementGeometrySnapshot | null;
+} = {}) => {
+  let snapshot = initialSnapshot;
   const geometryUpdates = createSubscriptionStub();
 
   installOn(
@@ -68,12 +75,19 @@ const installTextareaResizeFixture = () => {
   textarea.style.blockSize = 'auto';
 
   const resizeToContent = () => {
+    textarea.style.blockSize = 'auto';
+    const scrollHeight = textarea.scrollHeight;
+
+    if (scrollHeight === 0) {
+      return;
+    }
+
     const borderBlockSize = textarea.offsetHeight - textarea.clientHeight;
-    textarea.style.blockSize = `${textarea.scrollHeight + borderBlockSize}px`;
+    textarea.style.blockSize = `${scrollHeight + borderBlockSize}px`;
   };
 
   const pushSnapshot = (overrides: Partial<ElementGeometrySnapshot>) => {
-    snapshot = { ...snapshot, ...overrides };
+    snapshot = { ...(snapshot ?? createTextareaSnapshot()), ...overrides };
     geometryUpdates.notify();
   };
 
@@ -149,6 +163,19 @@ describe('installElementGeometryPolyfill', () => {
     pushSnapshot({ textareaIntrinsicScrollHeight: 80 });
 
     expect(textarea.style.blockSize).toBe('82px');
+
+    pushSnapshot({ textareaIntrinsicScrollHeight: 32 });
+
+    expect(textarea.style.blockSize).toBe('34px');
+  });
+
+  it('should keep the automatic block size until the first textarea measurement arrives', () => {
+    const { textarea, resizeToContent, pushSnapshot } =
+      installTextareaResizeFixture({ initialSnapshot: null });
+
+    resizeToContent();
+
+    expect(textarea.style.blockSize).toBe('auto');
 
     pushSnapshot({ textareaIntrinsicScrollHeight: 32 });
 

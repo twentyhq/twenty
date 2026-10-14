@@ -19,10 +19,9 @@ const formatTextareaBlockSize = ({
   snapshot,
 }: {
   scrollHeight: number;
-  snapshot: ElementGeometrySnapshot | null;
+  snapshot: ElementGeometrySnapshot;
 }): string => {
-  const borderBlockSize =
-    (snapshot?.offsetHeight ?? 0) - (snapshot?.clientHeight ?? 0);
+  const borderBlockSize = snapshot.offsetHeight - snapshot.clientHeight;
 
   return `${scrollHeight + borderBlockSize}px`;
 };
@@ -86,11 +85,20 @@ export const createTextareaIntrinsicSizeReader = (
       return snapshot?.scrollHeight ?? 0;
     }
 
+    if (!isDefined(snapshot)) {
+      pendingMeasurements.set(textarea, {
+        blockSize: 'auto',
+        hasReceivedSnapshot: false,
+      });
+
+      return 0;
+    }
+
     const scrollHeight =
-      snapshot?.textareaIntrinsicScrollHeight ?? snapshot?.scrollHeight ?? 0;
+      snapshot.textareaIntrinsicScrollHeight ?? snapshot.scrollHeight;
     pendingMeasurements.set(textarea, {
       blockSize: formatTextareaBlockSize({ scrollHeight, snapshot }),
-      hasReceivedSnapshot: isDefined(snapshot),
+      hasReceivedSnapshot: true,
     });
 
     return scrollHeight;

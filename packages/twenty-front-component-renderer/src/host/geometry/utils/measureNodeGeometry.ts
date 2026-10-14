@@ -1,11 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
-import { measureTextareaIntrinsicScrollHeight } from '@/host/geometry/utils/measureTextareaIntrinsicScrollHeight';
 import { measureComputedLayoutStyle } from '@/host/geometry/utils/measureComputedLayoutStyle';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 type MeasureNodeGeometryInput = {
   node: Element;
   resolveRemoteElementId?: (node: Element) => string | null;
+  measureTextareaIntrinsicScrollHeight?: (node: Element) => number | undefined;
   rootContainerOrigin: {
     x: number;
     y: number;
@@ -16,6 +16,7 @@ export const measureNodeGeometry = ({
   node,
   rootContainerOrigin,
   resolveRemoteElementId,
+  measureTextareaIntrinsicScrollHeight,
 }: MeasureNodeGeometryInput): ElementGeometrySnapshot => {
   const { x, y, width, height } = node.getBoundingClientRect();
 
@@ -51,6 +52,6 @@ export const measureNodeGeometry = ({
     scrollTop: node.scrollTop,
     scrollLeft: node.scrollLeft,
     computedStyle: measureComputedLayoutStyle(node),
-    textareaIntrinsicScrollHeight: measureTextareaIntrinsicScrollHeight(node),
+    textareaIntrinsicScrollHeight: measureTextareaIntrinsicScrollHeight?.(node),
   };
 };

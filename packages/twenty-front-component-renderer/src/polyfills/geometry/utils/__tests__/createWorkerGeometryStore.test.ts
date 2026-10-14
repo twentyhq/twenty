@@ -249,6 +249,37 @@ describe('createWorkerGeometryStore', () => {
     expect(store.resolveElementSnapshot(element)).toBeNull();
   });
 
+  it('should keep the previous computed style when a batch omits an unchanged one', () => {
+    const { store, rootElement } = createRootedStore();
+    const element = createHostElement(rootElement);
+
+    store.resolveElementSnapshot(element);
+    store.applyGeometryBatch({
+      viewport: createViewportGeometrySnapshotFixture({
+        computedStyle: { direction: 'rtl' },
+      }),
+      elements: {
+        '0': createElementGeometrySnapshotFixture({
+          width: 1,
+          computedStyle: { display: 'flex' },
+        }),
+      },
+    });
+    store.applyGeometryBatch({
+      viewport: createViewportGeometrySnapshotFixture({ innerWidth: 900 }),
+      elements: { '0': createElementGeometrySnapshotFixture({ width: 2 }) },
+    });
+
+    expect(store.readObservedElementSnapshot(element)).toMatchObject({
+      width: 2,
+      computedStyle: { display: 'flex' },
+    });
+    expect(store.getViewportSnapshot()).toMatchObject({
+      innerWidth: 900,
+      computedStyle: { direction: 'rtl' },
+    });
+  });
+
   it('should replace the viewport snapshot on each batch that carries one', () => {
     const { store } = createRootedStore();
 

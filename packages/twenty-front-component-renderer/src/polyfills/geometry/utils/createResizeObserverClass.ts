@@ -56,6 +56,8 @@ export const createResizeObserverClass = ({
     };
   }
 
+  geometryStore.subscribeToGeometryUpdates(scheduleActiveObserverDeliveries);
+
   const readObservationSnapshot = ({
     target,
     observation,
@@ -82,7 +84,6 @@ export const createResizeObserverClass = ({
     #callback: ResizeObserverCallback;
     #observations = new Map<WeakRef<Element>, Observation>();
     #targetRefs = new WeakMap<Element, WeakRef<Element>>();
-    #unsubscribe: (() => void) | null = null;
     #hasScheduledDelivery = false;
 
     constructor(callback: ResizeObserverCallback) {
@@ -98,8 +99,6 @@ export const createResizeObserverClass = ({
         return;
       }
 
-      this.#unsubscribe?.();
-      this.#unsubscribe = null;
       activeObserverSchedules.delete(this.#scheduleDelivery);
     };
 
@@ -206,9 +205,6 @@ export const createResizeObserverClass = ({
       });
       geometryReader?.read();
       activeObserverSchedules.add(this.#scheduleDelivery);
-      this.#unsubscribe ??= geometryStore.subscribeToGeometryUpdates(
-        this.#scheduleDelivery,
-      );
       this.#scheduleDelivery();
     }
 

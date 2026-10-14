@@ -2,7 +2,9 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { waitForAnimationFrames } from '@/__stories__/shared/test-utils/waitForAnimationFrames';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
 
 export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -19,6 +21,27 @@ export const overflowingListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   ).toBeVisible();
   await expect(
     canvas.queryByRole('button', { name: 'Measured Delta' }),
+  ).toBeNull();
+
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Fit one measured item' }),
+  );
+  await waitFor(() =>
+    expect(
+      canvas
+        .getByRole('group', { name: 'Measured list' })
+        .getBoundingClientRect().width,
+    ).toBe(208),
+  );
+  await waitForAnimationFrames(GEOMETRY_IDLE_FRAME_THRESHOLD * 2);
+  await expect(
+    canvas.getByRole('button', { name: /Show all measured items$/ }),
+  ).toHaveTextContent('+3');
+  await expect(
+    canvas.getByRole('button', { name: 'Measured Alpha' }),
+  ).toBeVisible();
+  await expect(
+    canvas.queryByRole('button', { name: 'Measured Bravo' }),
   ).toBeNull();
 
   await userEvent.click(

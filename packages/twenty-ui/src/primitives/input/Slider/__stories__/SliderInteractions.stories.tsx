@@ -1,6 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { clearAllMocks, expect, fn, userEvent, within } from 'storybook/test';
+import {
+  clearAllMocks,
+  expect,
+  fn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 
 import { Field } from '@ui/primitives/input/Field/Field';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -31,6 +38,46 @@ const ControlledSliderExample = (props: SliderRootProps<number>) => {
       </button>
     </div>
   );
+};
+
+const ResizableSliderExample = (props: SliderRootProps<number>) => {
+  const [width, setWidth] = useState(80);
+
+  return (
+    <div style={{ width }}>
+      <Slider.Root {...props}>
+        <Slider.Control data-testid="slider-control">
+          <Slider.Track>
+            <Slider.Indicator />
+            <Slider.Thumb data-testid="slider-thumb" aria-label="Volume" />
+          </Slider.Track>
+        </Slider.Control>
+      </Slider.Root>
+      <button type="button" onClick={() => setWidth(400)}>
+        Widen volume
+      </button>
+    </div>
+  );
+};
+
+const expectThumbAtValue = ({
+  control,
+  thumb,
+  value,
+}: {
+  control: HTMLElement;
+  thumb: HTMLElement;
+  value: number;
+}) => {
+  const controlBounds = control.getBoundingClientRect();
+  const thumbBounds = thumb.getBoundingClientRect();
+  const thumbCenter = thumbBounds.left + thumbBounds.width / 2;
+  const expectedThumbCenter =
+    controlBounds.left +
+    thumbBounds.width / 2 +
+    ((controlBounds.width - thumbBounds.width) * value) / 100;
+
+  expect(Math.abs(thumbCenter - expectedThumbCenter)).toBeLessThanOrEqual(1);
 };
 
 const FormSliderExample = () => {
@@ -219,6 +266,28 @@ export const CanceledChange: Story = {
     await userEvent.keyboard('{ArrowRight}');
     await expect(args.onValueChange).toHaveBeenCalled();
     await expect(slider).toHaveValue('40');
+    await expect(args.onValueCommitted).not.toHaveBeenCalled();
+  },
+};
+
+export const ResizedControl: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 400 } },
+  render: (args) => <ResizableSliderExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const slider = canvas.getByRole('slider', { name: 'Volume' });
+    const control = canvas.getByTestId('slider-control');
+    const thumb = canvas.getByTestId('slider-thumb');
+
+    await waitFor(() => expectThumbAtValue({ control, thumb, value: 40 }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Widen volume' }));
+    await waitFor(() =>
+      expect(control.getBoundingClientRect().width).toBeGreaterThan(300),
+    );
+    await waitFor(() => expectThumbAtValue({ control, thumb, value: 40 }));
+    await expect(slider).toHaveValue('40');
+    await expect(args.onValueChange).not.toHaveBeenCalled();
     await expect(args.onValueCommitted).not.toHaveBeenCalled();
   },
 };

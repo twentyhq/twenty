@@ -200,7 +200,6 @@ export const FrontComponentWorkerEffect = ({
       isCancelled = true;
       imageLoadingHost.dispose();
       fileInputHost.dispose();
-      pointerCaptureController.reset();
       hostFocusController.reset();
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);

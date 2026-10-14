@@ -133,6 +133,47 @@ describe('installPointerCapturePolyfill', () => {
     expect(element.hasPointerCapture(1)).toBe(false);
   });
 
+  it('should clear capture after the gesture end even when a worker ancestor stops it from bubbling', async () => {
+    const { documentTarget, element, polyfillWindow } = createCaptureFixture();
+    const wrapper = documentTarget.createElement('div');
+
+    documentTarget.body.append(wrapper);
+    wrapper.append(element);
+    wrapper.addEventListener('pointerup', (event) => event.stopPropagation());
+    element.setPointerCapture(1);
+    element.dispatchEvent(
+      createPointerEvent({ polyfillWindow, type: 'pointerup', pointerId: 1 }),
+    );
+    await Promise.resolve();
+
+    expect(element.hasPointerCapture(1)).toBe(false);
+  });
+
+  it('should keep separate captures for several pointers of one element', () => {
+    const { connection, element, remoteElementId } = createCaptureFixture();
+
+    element.setPointerCapture(1);
+    element.setPointerCapture(2);
+
+    expect(element.hasPointerCapture(1)).toBe(true);
+    expect(element.hasPointerCapture(2)).toBe(true);
+    expect(connection.call.mock.calls).toEqual([
+      [remoteElementId, 'setPointerCapture', 1, 1],
+      [remoteElementId, 'setPointerCapture', 2, 2],
+    ]);
+
+    element.releasePointerCapture(2);
+
+    expect(element.hasPointerCapture(1)).toBe(true);
+    expect(element.hasPointerCapture(2)).toBe(false);
+    expect(connection.call).toHaveBeenLastCalledWith(
+      remoteElementId,
+      'releasePointerCapture',
+      2,
+      2,
+    );
+  });
+
   it('should clear capture when the host reports a capture loss and keep delivering the gesture', () => {
     const { documentTarget, element, remoteElementId, workerPointerCapture } =
       createCaptureFixture();

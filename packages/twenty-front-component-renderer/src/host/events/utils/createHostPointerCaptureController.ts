@@ -8,7 +8,6 @@ import { type PointerCaptureRequest } from '@/types/PointerCaptureRequest';
 
 type PointerCaptureSession = {
   element: Element;
-  pointerId: number;
   workerCaptureToken: number | null;
   end: () => void;
 };
@@ -18,19 +17,19 @@ export const createHostPointerCaptureController = ({
 }: {
   geometryTracker: GeometryTracker;
 }): HostPointerCaptureController => {
-  const sessionsByElement = new Map<Element, PointerCaptureSession>();
+  const sessionsByPointerId = new Map<number, PointerCaptureSession>();
   let transport: HostPointerCaptureTransport | null = null;
 
   const findSession = ({
     remoteElementId,
     pointerId,
   }: PointerCaptureRequest): PointerCaptureSession | undefined => {
+    const session = sessionsByPointerId.get(pointerId);
     const element = geometryTracker.getRegisteredNode(remoteElementId);
-    const session = isDefined(element)
-      ? sessionsByElement.get(element)
-      : undefined;
 
-    return session?.pointerId === pointerId ? session : undefined;
+    return isDefined(element) && session?.element === element
+      ? session
+      : undefined;
   };
 
   const startPointerCapture = ({
@@ -40,7 +39,7 @@ export const createHostPointerCaptureController = ({
     element: HTMLElement;
     pointerId: number;
   }) => {
-    sessionsByElement.get(element)?.end();
+    sessionsByPointerId.get(pointerId)?.end();
 
     const remoteElementId =
       geometryTracker.findRemoteElementIdContainingNode(element);
@@ -56,15 +55,14 @@ export const createHostPointerCaptureController = ({
       forwardEvent: (eventData) =>
         transport?.pushCapturedPointerEvent({ remoteElementId, eventData }),
       onEnd: () => {
-        if (sessionsByElement.get(element)?.end === endSession) {
-          sessionsByElement.delete(element);
+        if (sessionsByPointerId.get(pointerId)?.end === endSession) {
+          sessionsByPointerId.delete(pointerId);
         }
       },
     });
 
-    sessionsByElement.set(element, {
+    sessionsByPointerId.set(pointerId, {
       element,
-      pointerId,
       workerCaptureToken: null,
       end: endSession,
     });
@@ -106,10 +104,10 @@ export const createHostPointerCaptureController = ({
       transport = nextTransport;
     },
     reset: () => {
-      for (const session of [...sessionsByElement.values()]) {
+      for (const session of [...sessionsByPointerId.values()]) {
         session.end();
       }
-      sessionsByElement.clear();
+      sessionsByPointerId.clear();
     },
   };
 };

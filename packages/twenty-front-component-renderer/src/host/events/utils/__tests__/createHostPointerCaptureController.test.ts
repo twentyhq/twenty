@@ -42,16 +42,37 @@ const startCapturedGesture = ({
 
   controller.startPointerCapture({ element, pointerId });
 
-  const findDocumentListener = (eventType: string) =>
-    addDocumentListener.mock.calls.find(
+  const findListener = ({
+    addListener,
+    eventType,
+  }: {
+    addListener: typeof addDocumentListener | typeof addElementListener;
+    eventType: string;
+  }) =>
+    addListener.mock.calls.find(
       ([listenedEventType]) => listenedEventType === eventType,
     )![1] as (event: PointerEvent) => void;
   const capturedGestureListeners = {
-    handlePointerMove: findDocumentListener('pointermove'),
-    handlePointerUp: findDocumentListener('pointerup'),
-    handleCaptureLoss: addElementListener.mock.calls.find(
-      ([listenedEventType]) => listenedEventType === 'lostpointercapture',
-    )![1] as (event: PointerEvent) => void,
+    handlePointerMove: findListener({
+      addListener: addDocumentListener,
+      eventType: 'pointermove',
+    }),
+    handlePointerUp: findListener({
+      addListener: addDocumentListener,
+      eventType: 'pointerup',
+    }),
+    handleCapturingElementPointerMove: findListener({
+      addListener: addElementListener,
+      eventType: 'pointermove',
+    }),
+    handleCapturingElementPointerUp: findListener({
+      addListener: addElementListener,
+      eventType: 'pointerup',
+    }),
+    handleCaptureLoss: findListener({
+      addListener: addElementListener,
+      eventType: 'lostpointercapture',
+    }),
   };
 
   addDocumentListener.mockRestore();
@@ -143,8 +164,107 @@ describe('createHostPointerCaptureController', () => {
           },
         },
       ],
+      [
+        {
+          remoteElementId: 'owned',
+          eventData: {
+            type: 'lostpointercapture',
+            bubbles: true,
+            pointerId: 1,
+            clientX: 90,
+            buttons: 0,
+          },
+        },
+      ],
     ]);
     expect(removeDocumentListener).toHaveBeenCalledTimes(3);
+  });
+
+  it('should not report a capture release when the element no longer holds the pointer at the gesture end', () => {
+    const { controller, element, transport } = createCaptureFixture();
+    const { handlePointerUp } = startCapturedGesture({ controller, element });
+
+    element.hasPointerCapture.mockReturnValue(false);
+    handlePointerUp(createNativePointerEvent({ type: 'pointerup' }));
+
+    expect(transport.pushCapturedPointerEvent.mock.calls).toEqual([
+      [
+        {
+          remoteElementId: 'owned',
+          eventData: { type: 'pointerup', bubbles: true, pointerId: 1 },
+        },
+      ],
+    ]);
+  });
+
+  it('should forward captured events at the capturing element before host ancestors handle them', () => {
+    const { controller, element, transport } = createCaptureFixture();
+    const {
+      handleCapturingElementPointerMove,
+      handleCapturingElementPointerUp,
+      handlePointerUp,
+    } = startCapturedGesture({ controller, element });
+    const child = document.createElement('span');
+    const pointerUp = createNativePointerEvent({
+      type: 'pointerup',
+      target: element,
+      clientX: 70,
+    });
+
+    element.append(child);
+    handleCapturingElementPointerMove(
+      createNativePointerEvent({ target: child, clientX: 20 }),
+    );
+    handleCapturingElementPointerMove(
+      createNativePointerEvent({ target: element, clientX: 40 }),
+    );
+    handleCapturingElementPointerUp(pointerUp);
+    handlePointerUp(pointerUp);
+
+    expect(
+      transport.pushCapturedPointerEvent.mock.calls.map(
+        ([{ eventData }]) => `${eventData.type}:${eventData.clientX}`,
+      ),
+    ).toEqual(['pointermove:40', 'pointerup:70', 'lostpointercapture:70']);
+  });
+
+  it('should keep independent capture sessions for several pointers of one element', () => {
+    const { controller, element, transport } = createCaptureFixture();
+    const firstPointer = startCapturedGesture({ controller, element });
+    const secondPointer = startCapturedGesture({
+      controller,
+      element,
+      pointerId: 2,
+    });
+
+    controller.acceptWorkerPointerCapture({
+      remoteElementId: 'owned',
+      pointerId: 1,
+      captureToken: 1,
+    });
+    controller.acceptWorkerPointerCapture({
+      remoteElementId: 'owned',
+      pointerId: 2,
+      captureToken: 2,
+    });
+    firstPointer.handlePointerUp(
+      createNativePointerEvent({ type: 'pointerup', clientX: 10 }),
+    );
+    secondPointer.handlePointerMove(
+      createNativePointerEvent({ pointerId: 2, clientX: 30 }),
+    );
+
+    expect(transport.pushPointerCaptureRefusal).not.toHaveBeenCalled();
+    expect(
+      transport.pushCapturedPointerEvent.mock.calls.map(
+        ([{ eventData }]) =>
+          `${eventData.pointerId}:${eventData.type}:${eventData.clientX}`,
+      ),
+    ).toEqual([
+      '1:pointerup:10',
+      '1:lostpointercapture:10',
+      '2:pointermove:30',
+    ]);
   });
 
   it('should forward a quick release before the worker acknowledges the capture and refuse that late acknowledgement', () => {

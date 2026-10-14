@@ -12,9 +12,7 @@ export const measureItemWidths = ({
   }
 
   items.setAttribute('data-measuring', '');
-  const naturalItemWidths = itemElements.map((item) =>
-    Math.max(item.clientWidth, item.scrollWidth),
-  );
+  const naturalItemWidths = itemElements.map((item) => item.clientWidth);
   items.removeAttribute('data-measuring');
 
   return naturalItemWidths;

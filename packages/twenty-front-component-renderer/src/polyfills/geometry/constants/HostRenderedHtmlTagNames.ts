@@ -1,5 +1,5 @@
-import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
+import { HTML_TAG_NAME_BY_REMOTE_ELEMENT_TAG_NAME } from '@/polyfills/selectors/constants/HtmlTagNameByRemoteElementTagName';
 
 export const HOST_RENDERED_HTML_TAG_NAMES: ReadonlySet<string> = new Set(
-  Object.keys(HTML_TAG_TO_CUSTOM_ELEMENT_TAG),
+  HTML_TAG_NAME_BY_REMOTE_ELEMENT_TAG_NAME.values(),
 );

@@ -45,6 +45,7 @@ export const createCapturedPointerEventForwarder = ({
 
     hasEnded = true;
     for (const eventType of CAPTURED_POINTER_EVENT_TYPES) {
+      element.removeEventListener(eventType, handleCapturingElementEvent);
       documentTarget.removeEventListener(eventType, handlePointerEvent);
     }
     element.removeEventListener('lostpointercapture', handleCaptureLoss);
@@ -52,7 +53,7 @@ export const createCapturedPointerEventForwarder = ({
   };
 
   const handlePointerEvent = (event: PointerEvent) => {
-    if (!event.isTrusted || event.pointerId !== pointerId) {
+    if (hasEnded || !event.isTrusted || event.pointerId !== pointerId) {
       return;
     }
 
@@ -61,14 +62,28 @@ export const createCapturedPointerEventForwarder = ({
       return;
     }
 
+    const serializedEvent = serializeCapturedPointerEvent(event);
+
     forwardCapturedPointerEventOnce({
       nativeHostEvent: event,
       eventOwner,
-      forwardEvent: () => forwardEvent(serializeCapturedPointerEvent(event)),
+      forwardEvent: () => forwardEvent(serializedEvent),
     });
 
-    if (POINTER_GESTURE_END_EVENT_TYPES.has(event.type)) {
-      end();
+    if (!POINTER_GESTURE_END_EVENT_TYPES.has(event.type)) {
+      return;
+    }
+
+    if (element.hasPointerCapture(pointerId)) {
+      forwardEvent({ ...serializedEvent, type: 'lostpointercapture' });
+    }
+
+    end();
+  };
+
+  const handleCapturingElementEvent = (event: PointerEvent) => {
+    if (event.target === element) {
+      handlePointerEvent(event);
     }
   };
 
@@ -81,6 +96,7 @@ export const createCapturedPointerEventForwarder = ({
   };
 
   for (const eventType of CAPTURED_POINTER_EVENT_TYPES) {
+    element.addEventListener(eventType, handleCapturingElementEvent);
     documentTarget.addEventListener(eventType, handlePointerEvent);
   }
   element.addEventListener('lostpointercapture', handleCaptureLoss);

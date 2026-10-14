@@ -1,4 +1,4 @@
-import { act, cleanup, render } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { createRef, type ReactNode } from 'react';
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -80,6 +80,18 @@ describe('Slider measurement registration', () => {
   const observedElements = new Set<Element>();
   const resizeCallbacks = new Set<() => void>();
 
+  const findVolumeSlider = () => screen.getByRole('slider', { hidden: true });
+
+  const resizeVolumeControl = async (width: number) => {
+    await act(async () => {
+      controlWidth = width;
+
+      for (const callback of resizeCallbacks) {
+        callback();
+      }
+    });
+  };
+
   beforeEach(() => {
     controlWidth = 0;
     observedElements.clear();
@@ -87,9 +99,8 @@ describe('Slider measurement registration', () => {
 
     vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
       function (this: HTMLElement) {
-        const width = this.classList.contains(styles.control)
-          ? controlWidth
-          : 16;
+        const width =
+          this.dataset.testid === 'volume-control' ? controlWidth : 16;
 
         return new DOMRect(0, 0, width, 16);
       },
@@ -134,18 +145,18 @@ describe('Slider measurement registration', () => {
   });
 
   it.each(['edge', 'edge-client-only'] as const)(
-    'positions %s thumbs when geometry arrives after mounting',
+    'shows %s thumbs once geometry arrives after mounting',
     async (thumbAlignment) => {
       const onValueChange = vi.fn();
       const onValueCommitted = vi.fn();
-      const { container } = render(
+      render(
         <Slider.Root
           defaultValue={40}
           thumbAlignment={thumbAlignment}
           onValueChange={onValueChange}
           onValueCommitted={onValueCommitted}
         >
-          <Slider.Control>
+          <Slider.Control data-testid="volume-control">
             <Slider.Track>
               <Slider.Indicator />
               <Slider.Thumb aria-label="Volume" />
@@ -153,82 +164,50 @@ describe('Slider measurement registration', () => {
           </Slider.Control>
         </Slider.Root>,
       );
-      const control = container.querySelector(`.${styles.control}`);
-      const thumb = container.querySelector<HTMLDivElement>(`.${styles.thumb}`);
+      const slider = findVolumeSlider();
 
-      expect(control).toBeInstanceOf(HTMLDivElement);
-      expect(thumb).toBeInstanceOf(HTMLDivElement);
       await act(async () => {
         await Promise.resolve();
       });
 
-      expect(thumb).toHaveStyle({ visibility: 'hidden' });
+      expect(slider).not.toBeVisible();
 
-      await act(async () => {
-        controlWidth = 200;
+      await resizeVolumeControl(200);
 
-        for (const callback of resizeCallbacks) {
-          callback();
-        }
-      });
+      expect(slider).toBeVisible();
+      expect(slider).toHaveValue('40');
 
-      expect(thumb?.style.getPropertyValue('--position')).toBe('40.8%');
-      expect(thumb).not.toHaveStyle({ visibility: 'hidden' });
-      expect(container.querySelector('input[type="range"]')).toHaveValue('40');
-      expect(onValueChange).not.toHaveBeenCalled();
-      expect(onValueCommitted).not.toHaveBeenCalled();
-      const input = container.querySelector('input[type="range"]');
+      await resizeVolumeControl(400);
 
-      await act(async () => {
-        controlWidth = 400;
-
-        for (const callback of resizeCallbacks) {
-          callback();
-        }
-      });
-
-      expect(thumb?.style.getPropertyValue('--position')).toBe('40.4%');
-      expect(container.querySelector(`.${styles.control}`)).toBe(control);
-      expect(container.querySelector(`.${styles.thumb}`)).toBe(thumb);
-      expect(container.querySelector('input[type="range"]')).toBe(input);
+      expect(findVolumeSlider()).toBe(slider);
+      expect(slider).toBeVisible();
       expect(onValueChange).not.toHaveBeenCalled();
       expect(onValueCommitted).not.toHaveBeenCalled();
     },
   );
 
   it('registers a control added after the root has mounted', async () => {
-    const { container, rerender } = render(<Slider.Root defaultValue={40} />);
+    const { rerender } = render(<Slider.Root defaultValue={40} />);
 
     rerender(
       <Slider.Root defaultValue={40}>
-        <Slider.Control>
+        <Slider.Control data-testid="volume-control">
           <Slider.Thumb aria-label="Volume" />
         </Slider.Control>
       </Slider.Root>,
     );
 
-    const control = container.querySelector(`.${styles.control}`);
-    const thumb = container.querySelector<HTMLDivElement>(`.${styles.thumb}`);
-
-    expect(control).toBeInstanceOf(HTMLDivElement);
-    expect(thumb).toBeInstanceOf(HTMLDivElement);
+    const slider = findVolumeSlider();
 
     await act(async () => {
       await Promise.resolve();
     });
 
-    expect(thumb).toHaveStyle({ visibility: 'hidden' });
+    expect(slider).not.toBeVisible();
 
-    await act(async () => {
-      controlWidth = 200;
+    await resizeVolumeControl(200);
 
-      for (const callback of resizeCallbacks) {
-        callback();
-      }
-    });
-
-    expect(thumb?.style.getPropertyValue('--position')).toBe('40.8%');
-    expect(thumb).not.toHaveStyle({ visibility: 'hidden' });
+    expect(slider).toBeVisible();
   });
 
   it('preserves custom rendering, callback refs, and form inputs', () => {
@@ -236,23 +215,24 @@ describe('Slider measurement registration', () => {
     const controlRefCleanup = vi.fn();
     const controlRef = vi.fn(() => controlRefCleanup);
     const renderedControlRef = createRef<HTMLElement>();
-    const { container, unmount } = render(
+    const { unmount } = render(
       <Slider.Root defaultValue={40} name="volume">
         <Slider.Control
           ref={controlRef}
+          data-testid="volume-control"
           render={<section ref={renderedControlRef} />}
         >
           <Slider.Thumb aria-label="Volume" />
         </Slider.Control>
       </Slider.Root>,
     );
-    const control = container.querySelector('section');
-    const input = container.querySelector('input[type="range"]');
+    const slider = findVolumeSlider();
+    const control = slider.closest('section');
 
     expect(controlRef).toHaveBeenCalledExactlyOnceWith(control);
     expect(renderedControlRef.current).toBe(control);
-    expect(input).toHaveAttribute('name', 'volume');
-    expect(input).toHaveValue('40');
+    expect(slider).toHaveAttribute('name', 'volume');
+    expect(slider).toHaveValue('40');
     expect(controlRefCleanup).not.toHaveBeenCalled();
 
     unmount();

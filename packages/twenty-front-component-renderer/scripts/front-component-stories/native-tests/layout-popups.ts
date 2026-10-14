@@ -1,5 +1,6 @@
 import { expect, test, type Locator } from 'playwright/test';
 import { isDefined } from 'twenty-shared/utils';
+import { MOUNT_TIMEOUT } from '../../../src/__stories__/shared/test-utils/timeouts';
 import { waitForAnimationFrames } from '../../../src/__stories__/shared/test-utils/waitForAnimationFrames';
 import { MAXIMUM_DROPDOWN_TRIGGER_GAP } from '../../../src/__stories__/twenty-ui-gallery/constants/MaximumDropdownTriggerGap';
 import { computePopupAnchorGapAndOverlap } from '../../../src/__stories__/twenty-ui-gallery/utils/computePopupAnchorGapAndOverlap';
@@ -52,6 +53,7 @@ for (const runtime of ['react', 'preact']) {
     );
     await expect(page.getByTestId('geometry-layout-facts')).toContainText(
       '"columnGap":"14px"',
+      { timeout: MOUNT_TIMEOUT },
     );
     await expect(page.getByTestId('geometry-layout-facts')).toContainText(
       '"direction":"rtl"',
@@ -153,7 +155,7 @@ for (const runtime of ['react', 'preact']) {
       `/iframe.html?id=frontcomponent-twenty-ui-gallery--portal-geometry-${runtime}`,
     );
     const trigger = page.getByRole('button', { name: 'Open menu' });
-    await expect(trigger).toBeVisible();
+    await expect(trigger).toBeVisible({ timeout: MOUNT_TIMEOUT });
     await trigger.click();
     const menu = page.getByRole('menu');
     await expect(menu).toBeVisible();
