@@ -13,6 +13,8 @@ import { FieldRecordFormWidgetOnUpdateSideEffectHandlerService } from 'src/engin
 import { FieldRecordPageViewFieldOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-page-view-field-on-create-side-effect-handler.service';
 import { FieldSearchFieldMetadataOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-search-field-metadata-on-update-side-effect-handler.service';
 import { FieldSystemViewFieldsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-system-view-fields-on-delete-side-effect-handler.service';
+import { FieldMorphRelationHeadOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-morph-relation-head-on-create-side-effect-handler.service';
+import { FieldMorphRelationHeadOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-morph-relation-head-on-delete-side-effect-handler.service';
 import { FieldUniqueBackingIndexOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-unique-backing-index-on-create-side-effect-handler.service';
 import { FieldUniqueBackingIndexOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-unique-backing-index-on-delete-side-effect-handler.service';
 import { FieldUniqueBackingIndexOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-unique-backing-index-on-update-side-effect-handler.service';
@@ -39,6 +41,8 @@ import { ObjectValidationRulesOnDeleteSideEffectHandlerService } from 'src/engin
     WorkflowVersionOnCreateSideEffectHandlerService,
     WorkflowVersionOnDeleteSideEffectHandlerService,
     WorkflowVersionDependenciesOnDeleteSideEffectHandlerService,
+    FieldMorphRelationHeadOnCreateSideEffectHandlerService,
+    FieldMorphRelationHeadOnDeleteSideEffectHandlerService,
     FieldUniqueBackingIndexOnCreateSideEffectHandlerService,
     FieldUniqueBackingIndexOnUpdateSideEffectHandlerService,
     FieldUniqueBackingIndexOnDeleteSideEffectHandlerService,

@@ -21,6 +21,7 @@ const GET_ROLES_QUERY = `
       canBeAssignedToUsers
       canBeAssignedToAgents
       canBeAssignedToApiKeys
+      applicationId
       workspaceMembers {
         __typename
         id

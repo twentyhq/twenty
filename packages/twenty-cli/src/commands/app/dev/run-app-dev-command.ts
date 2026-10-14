@@ -33,6 +33,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
   const { output, emit } = createDevOutput(context);
   const generateClient = createDevClientGenerator({ appPath: project.path });
   let watcher: Awaited<ReturnType<typeof watchAppInputs>>;
+  let hasWarnedAboutNode = false;
 
   await runDevLoop<BuiltDevSnapshot>({
     signal: context.signal,
@@ -75,6 +76,12 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           appPath: project.path,
           signal,
           updateWatchInputs: watcher.update,
+          warn: (warning) => {
+            if (!hasWarnedAboutNode) {
+              hasWarnedAboutNode = true;
+              output.warn(warning);
+            }
+          },
         });
 
         try {

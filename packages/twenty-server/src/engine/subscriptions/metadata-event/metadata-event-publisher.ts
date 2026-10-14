@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { WorkflowVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
+import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -36,6 +38,7 @@ export class MetadataEventPublisher {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async publish(metadataEventBatch: MetadataEventBatch): Promise<void> {
@@ -157,7 +160,7 @@ export class MetadataEventPublisher {
   ): Promise<MetadataEventBatch> {
     switch (metadataEventBatch.metadataName) {
       case 'fieldMetadata':
-        return this.enrichFieldMetadataEventsWithRelations(
+        return this.prepareFieldMetadataEvents(
           metadataEventBatch as MetadataEventBatch<'fieldMetadata'>,
         );
       case 'navigationMenuItem':
@@ -169,7 +172,7 @@ export class MetadataEventPublisher {
     }
   }
 
-  private async enrichFieldMetadataEventsWithRelations(
+  private async prepareFieldMetadataEvents(
     metadataEventBatch: MetadataEventBatch<'fieldMetadata'>,
   ): Promise<MetadataEventBatch<'fieldMetadata'>> {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -179,8 +182,20 @@ export class MetadataEventPublisher {
           flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
         },
       );
+    const isMorphRelationHeadEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
+        metadataEventBatch.workspaceId,
+      );
 
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
+    const eventsWithoutMorphRelationDuplicates =
+      filterMorphRelationDuplicateFieldMetadataEvents({
+        events: metadataEventBatch.events,
+        isMorphRelationHeadEnabled,
+        flatFieldMetadataMaps,
+      });
+
+    const enrichedEvents = eventsWithoutMorphRelationDuplicates.map((event) => {
       const enrichedProperties = { ...event.properties };
 
       if (
@@ -191,6 +206,7 @@ export class MetadataEventPublisher {
           record: enrichedProperties.after as Record<string, unknown>,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          isMorphRelationHeadEnabled,
         }) as typeof enrichedProperties.after;
       }
 
