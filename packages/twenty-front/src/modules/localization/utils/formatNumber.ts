@@ -68,6 +68,26 @@ const getLocaleForFormat = (format?: NumberFormat): string => {
   );
 };
 
+const numberFormatterByKey = new Map<string, Intl.NumberFormat>();
+
+const getNumberFormatter = (locale: string, maximumFractionDigits: number) => {
+  const key = `${locale}-${maximumFractionDigits}`;
+  const cachedFormatter = numberFormatterByKey.get(key);
+
+  if (isDefined(cachedFormatter)) {
+    return cachedFormatter;
+  }
+
+  const formatter = new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits,
+  });
+
+  numberFormatterByKey.set(key, formatter);
+
+  return formatter;
+};
+
 export const formatNumber = (
   value: number,
   opts?: FormatNumberOptions,
@@ -89,15 +109,10 @@ export const formatNumber = (
     const divisor = getAbbreviationDivisor(roundedAbsoluteValue);
 
     return (
-      (value / divisor).toLocaleString(locale, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: options.decimals,
-      }) + ABBREVIATION_SUFFIX_BY_THRESHOLD[divisor]
+      getNumberFormatter(locale, options.decimals).format(value / divisor) +
+      ABBREVIATION_SUFFIX_BY_THRESHOLD[divisor]
     );
   }
 
-  return value.toLocaleString(locale, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: options.decimals,
-  });
+  return getNumberFormatter(locale, options.decimals).format(value);
 };

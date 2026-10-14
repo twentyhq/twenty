@@ -1,9 +1,10 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { getSystemTimeZone } from '@/ui/input/components/internal/date/utils/getSystemTimeZone';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useUserTimezone = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const systemTimeZone = getSystemTimeZone();
 
   const userTimezone =
     currentWorkspaceMember?.timeZone !== 'system'

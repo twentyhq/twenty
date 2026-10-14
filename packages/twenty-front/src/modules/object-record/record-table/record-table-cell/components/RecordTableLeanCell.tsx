@@ -7,6 +7,8 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldFocusStaticUnfocusedProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
+import { RatingFieldStaticDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RatingFieldStaticDisplay';
+import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { RECORD_TABLE_CELL_DISPLAY_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellDisplayClassName';
@@ -139,6 +141,7 @@ export const RecordTableLeanCell = ({
       recordId,
       fieldDefinition,
       isReadOnly,
+      isNavigating: false,
     });
   };
 
@@ -184,9 +187,14 @@ export const RecordTableLeanCell = ({
                 isForbidden: !objectPermissions.canReadObjectRecords,
               }}
             >
-              <FieldFocusStaticUnfocusedProvider>
-                <FieldDisplay />
-              </FieldFocusStaticUnfocusedProvider>
+              {isFieldRating(fieldDefinition) &&
+              objectPermissions.canReadObjectRecords ? (
+                <RatingFieldStaticDisplay />
+              ) : (
+                <FieldFocusStaticUnfocusedProvider>
+                  <FieldDisplay />
+                </FieldFocusStaticUnfocusedProvider>
+              )}
             </FieldContext.Provider>
           </div>
         </div>
