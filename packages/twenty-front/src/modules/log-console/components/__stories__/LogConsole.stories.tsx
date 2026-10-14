@@ -753,11 +753,14 @@ export const FullScreen: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByRole('button', { name: 'Command Menu' });
-    const closeButton = await canvas.findByRole('button', { name: 'Close' });
-    const { x, y, width, height } = closeButton.getBoundingClientRect();
+    const exitFullScreenButton = await canvas.findByRole('button', {
+      name: 'Exit full screen',
+    });
+    const { x, y, width, height } =
+      exitFullScreenButton.getBoundingClientRect();
 
     expect(
-      closeButton.contains(
+      exitFullScreenButton.contains(
         document.elementFromPoint(x + width / 2, y + height / 2),
       ),
     ).toBe(true);
