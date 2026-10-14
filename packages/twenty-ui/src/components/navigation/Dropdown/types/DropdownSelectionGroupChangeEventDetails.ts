@@ -1,6 +1,7 @@
-import { type BaseUIChangeEventDetails } from '@base-ui/react/internals/createBaseUIEventDetails';
-
-export type DropdownSelectionGroupChangeEventDetails = Pick<
-  BaseUIChangeEventDetails<'item-press'>,
-  'reason' | 'event' | 'trigger' | 'cancel' | 'isCanceled'
->;
+export type DropdownSelectionGroupChangeEventDetails = {
+  reason: 'item-press';
+  event: MouseEvent | KeyboardEvent | PointerEvent;
+  trigger: Element | undefined;
+  cancel: () => void;
+  isCanceled: boolean;
+};
