@@ -46,5 +46,5 @@ export const useLogConsoleTabs = () => {
     },
   ];
 
-  return tabs.filter((tab) => tab.hide !== true);
+  return tabs.filter((tab) => !tab.hide);
 };

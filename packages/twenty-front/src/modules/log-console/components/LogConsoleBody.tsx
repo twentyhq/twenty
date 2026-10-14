@@ -96,7 +96,7 @@ const StyledDetailPanelWrapper = styled.div<{
   overflow: hidden;
   position: relative;
   transition: ${({ isResizing }) =>
-    getLogConsoleTransition(isResizing, ['width'])};
+    getLogConsoleTransition({ isResizing, properties: ['width'] })};
   width: ${({ isOpen, isResizing, detailPanelWidth }) =>
     !isOpen
       ? '0px'

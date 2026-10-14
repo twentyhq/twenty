@@ -60,7 +60,7 @@ const StyledSpacer = styled.div<{
   flex: none;
   height: ${({ spacerHeight }) => spacerHeight};
   transition: ${({ isResizing }) =>
-    getLogConsoleTransition(isResizing, ['height'])};
+    getLogConsoleTransition({ isResizing, properties: ['height'] })};
 
   @media (prefers-reduced-motion: no-preference) {
     &[data-animate-entrance='true'] {
@@ -110,11 +110,10 @@ const StyledPanel = styled.div<{
   position: absolute;
   right: 0;
   transition: ${({ isResizing }) =>
-    getLogConsoleTransition(isResizing, [
-      'height',
-      'border-top-width',
-      'opacity',
-    ])};
+    getLogConsoleTransition({
+      isResizing,
+      properties: ['height', 'border-top-width', 'opacity'],
+    })};
   z-index: ${RootStackingContextZIndices.LogConsole};
 
   @media (prefers-reduced-motion: no-preference) {
