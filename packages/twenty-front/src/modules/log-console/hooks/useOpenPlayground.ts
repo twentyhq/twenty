@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useOpenLogConsoleTab } from '@/log-console/hooks/useOpenLogConsoleTab';
@@ -35,28 +34,18 @@ export const useOpenPlayground = () => {
     },
   );
 
-  return useCallback(
-    async (type: PlaygroundTypes, schema: PlaygroundSchemas) => {
-      if (
-        !isPlaygroundApiKeyFresh(playgroundApiKey, TOKEN_FRESHNESS_BUFFER_MS)
-      ) {
-        const { data } = await generatePlaygroundToken();
-        const mintedToken = data?.generatePlaygroundToken;
-        if (!isDefined(mintedToken)) return;
-        setPlaygroundApiKey(mintedToken);
-      }
+  return async (type: PlaygroundTypes, schema: PlaygroundSchemas) => {
+    if (!isPlaygroundApiKeyFresh(playgroundApiKey, TOKEN_FRESHNESS_BUFFER_MS)) {
+      const { data } = await generatePlaygroundToken();
+      const mintedToken = data?.generatePlaygroundToken;
+      if (!isDefined(mintedToken)) return;
+      setPlaygroundApiKey(mintedToken);
+    }
 
-      openLogConsoleTab({
-        tabId: 'apis',
-        view: { type: 'playground', playgroundType: type, schema },
-        isFullScreen: true,
-      });
-    },
-    [
-      playgroundApiKey,
-      generatePlaygroundToken,
-      openLogConsoleTab,
-      setPlaygroundApiKey,
-    ],
-  );
+    openLogConsoleTab({
+      tabId: 'apis',
+      view: { type: 'playground', playgroundType: type, schema },
+      isFullScreen: true,
+    });
+  };
 };

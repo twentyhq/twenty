@@ -25,7 +25,6 @@ import { useLogConsoleTabs } from '@/log-console/hooks/useLogConsoleTabs';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
-import { type LogConsoleTabId } from '@/log-console/types/LogConsoleTabId';
 import { getLogConsoleTransition } from '@/log-console/utils/getLogConsoleTransition';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -286,7 +285,7 @@ export const LogConsole = () => {
   const panelHeight =
     !isExiting && displayedLayout.isFullScreen ? '100%' : spacerHeight;
 
-  const currentTabId: LogConsoleTabId =
+  const currentTabId =
     tabs.find((tab) => tab.id === activeTabId)?.id ?? tabs[0].id;
 
   const openLogConsole = () => {

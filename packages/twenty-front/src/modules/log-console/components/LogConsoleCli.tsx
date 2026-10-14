@@ -6,6 +6,7 @@ import { CommandBlock } from 'twenty-ui/components/data-display';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUpRight, IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -29,9 +30,6 @@ const BUILD_APP_COMMANDS = [
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledSections = styled.div`
@@ -97,7 +95,9 @@ export const LogConsoleCli = () => {
         }
       >
         <StyledDescription>
-          {t`Work with this workspace from your terminal with npx twenty.`}
+          <OverflowingTextWithTooltip
+            text={t`Work with this workspace from your terminal with npx twenty.`}
+          />
         </StyledDescription>
       </LogConsoleToolbarLayout>
       <ScrollWrapper componentInstanceId="log-console-cli">

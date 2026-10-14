@@ -5,8 +5,10 @@ import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDispl
 import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
 import { type LogConsoleApisView } from '@/log-console/types/LogConsoleApisView';
 import { type LogConsoleResourceView } from '@/log-console/types/LogConsoleResourceView';
+import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -28,12 +30,17 @@ export const useOpenLogConsoleTab = () => {
   const setLogConsoleWebhooksView = useSetAtomState(
     logConsoleWebhooksViewState,
   );
-  const setIsAdvancedModeEnabled = useSetAtomState(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const { setAdvancedMode } = useSetAdvancedMode();
 
   const openLogConsoleTab = ({
     isFullScreen = false,
     ...tab
   }: OpenLogConsoleTabArgs) => {
+    if (!isAdvancedModeEnabled) {
+      setAdvancedMode(true);
+    }
+
     if (tab.tabId === 'apis') {
       setLogConsoleApisView(tab.view);
     } else {
@@ -43,7 +50,6 @@ export const useOpenLogConsoleTab = () => {
     setActiveTabId(tab.tabId);
     setIsLogConsoleFullScreen(isFullScreen);
     setLogConsoleDisplayMode('open');
-    setIsAdvancedModeEnabled(true);
   };
 
   return { openLogConsoleTab };

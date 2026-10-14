@@ -932,23 +932,19 @@ const createSettingsRouteElements = ({
       />
       <Route
         path={SettingsPath.NewApiKey}
-        element={<LogConsoleSettingsRedirectEffect view="new" />}
+        element={<LogConsoleSettingsRedirectEffect isNew />}
       />
       <Route
         path={SettingsPath.ApiKeyDetail}
-        element={<LogConsoleSettingsRedirectEffect view="detail" />}
+        element={<LogConsoleSettingsRedirectEffect />}
       />
       <Route
         path={SettingsPath.NewWebhook}
-        element={
-          <LogConsoleSettingsRedirectEffect tabId="webhooks" view="new" />
-        }
+        element={<LogConsoleSettingsRedirectEffect tabId="webhooks" isNew />}
       />
       <Route
         path={SettingsPath.WebhookDetail}
-        element={
-          <LogConsoleSettingsRedirectEffect tabId="webhooks" view="detail" />
-        }
+        element={<LogConsoleSettingsRedirectEffect tabId="webhooks" />}
       />
     </Route>
 

@@ -777,6 +777,8 @@ export const ClickHouseMissing: Story = {
 };
 
 const openLogConsoleTab = (tabId: LogConsoleTabId) => {
+  jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
+  jotaiStore.set(logConsoleWebhooksViewState.atom, { type: 'list' });
   jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
   jotaiStore.set(
     activeTabIdComponentState.atomFamily({
@@ -788,7 +790,6 @@ const openLogConsoleTab = (tabId: LogConsoleTabId) => {
 
 export const ApiKeysTab: Story = {
   beforeEach: () => {
-    jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
     openLogConsoleTab('apis');
   },
   play: async ({ canvasElement }) => {
@@ -807,7 +808,6 @@ export const ApiKeysTab: Story = {
 
 export const ApiKeyDetail: Story = {
   beforeEach: () => {
-    jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
     openLogConsoleTab('apis');
   },
   play: async ({ canvasElement }) => {
@@ -832,7 +832,6 @@ export const ApiKeyDetail: Story = {
 
 export const NewApiKey: Story = {
   beforeEach: () => {
-    jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
     openLogConsoleTab('apis');
   },
   play: async ({ canvasElement }) => {
@@ -848,7 +847,6 @@ export const NewApiKey: Story = {
 
 export const ApiDocumentationMenu: Story = {
   beforeEach: () => {
-    jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
     openLogConsoleTab('apis');
   },
   play: async ({ canvasElement }) => {
@@ -871,7 +869,6 @@ export const ApiDocumentationMenu: Story = {
 
 export const WebhooksTab: Story = {
   beforeEach: () => {
-    jotaiStore.set(logConsoleWebhooksViewState.atom, { type: 'list' });
     openLogConsoleTab('webhooks');
   },
   play: async ({ canvasElement }) => {

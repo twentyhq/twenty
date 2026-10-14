@@ -1,4 +1,5 @@
 import { LogConsoleDetailPanelLayout } from '@/log-console/components/LogConsoleDetailPanelLayout';
+import { useCreateApiKeyWithToken } from '@/log-console/hooks/useCreateApiKeyWithToken';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -17,7 +18,6 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -27,11 +27,8 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
   AssignRoleToApiKeyDocument,
-  CreateApiKeyDocument,
-  GenerateApiKeyTokenDocument,
   GetApiKeyDocument,
   GetApiKeyRolesDocument,
-  GetApiKeysDocument,
   RevokeApiKeyDocument,
 } from '~/generated-metadata/graphql';
 
@@ -68,16 +65,15 @@ export const LogConsoleApiKeyDetail = ({
   const setLogConsoleApisView = useSetAtomState(logConsoleApisViewState);
   const goBackToList = () => setLogConsoleApisView({ type: 'list' });
 
-  const jotaiStore = useStore();
-
   const apiKeyToken = useAtomFamilyStateValue(apiKeyTokenFamilyState, apiKeyId);
 
-  const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
-  const [createApiKey] = useMutation(CreateApiKeyDocument, {
-    refetchQueries: [GetApiKeysDocument],
-  });
+  const { createApiKeyWithToken } = useCreateApiKeyWithToken();
   const [revokeApiKey] = useMutation(RevokeApiKeyDocument, {
-    refetchQueries: [GetApiKeysDocument],
+    update: (cache) => {
+      cache.evict({
+        id: cache.identify({ __typename: 'ApiKey', id: apiKeyId }),
+      });
+    },
   });
   const [assignRoleToApiKey] = useMutation(AssignRoleToApiKeyDocument);
 
@@ -157,52 +153,6 @@ export const LogConsoleApiKeyDetail = ({
     }
   };
 
-  const createIntegration = async (
-    name: string,
-    newExpiresAt: string | null,
-  ) => {
-    const roleIdToUse = selectedRoleId;
-
-    if (!roleIdToUse) {
-      enqueueToast({
-        status: 'error',
-        children: t`A role must be selected for the API key`,
-      });
-      return;
-    }
-
-    if (!isDefined(roleIdToUse)) {
-      throw new Error('Role not selected - this should never happen');
-    }
-
-    const { data: newApiKeyData } = await createApiKey({
-      variables: {
-        input: {
-          name: name,
-          expiresAt: newExpiresAt ?? '',
-          roleId: roleIdToUse,
-        },
-      },
-    });
-
-    const newApiKey = newApiKeyData?.createApiKey;
-
-    if (!newApiKey) {
-      return;
-    }
-
-    const tokenData = await generateOneApiKeyToken({
-      variables: {
-        apiKeyId: newApiKey.id,
-        expiresAt: newApiKey?.expiresAt,
-      },
-    });
-    return {
-      id: newApiKey.id,
-      token: tokenData.data?.generateApiKeyToken.token,
-    };
-  };
-
   const regenerateApiKey = async () => {
     setIsLoading(true);
     try {
@@ -214,19 +164,24 @@ export const LogConsoleApiKeyDetail = ({
           });
           return;
         }
-        const newExpiresAt = computeNewExpirationDate(
-          apiKey.expiresAt,
-          apiKey.createdAt,
-        );
-        const newApiKey = await createIntegration(apiKeyName, newExpiresAt);
+        if (!isNonEmptyString(selectedRoleId)) {
+          enqueueToast({
+            status: 'error',
+            children: t`A role must be selected for the API key`,
+          });
+          return;
+        }
+
+        const newApiKeyId = await createApiKeyWithToken({
+          name: apiKeyName,
+          expiresAt:
+            computeNewExpirationDate(apiKey.expiresAt, apiKey.createdAt) ?? '',
+          roleId: selectedRoleId,
+        });
         await deleteIntegration(false);
 
-        if (isNonEmptyString(newApiKey?.token)) {
-          jotaiStore.set(
-            apiKeyTokenFamilyState.atomFamily(newApiKey.id),
-            newApiKey.token,
-          );
-          setLogConsoleApisView({ type: 'detail', id: newApiKey.id });
+        if (isDefined(newApiKeyId)) {
+          setLogConsoleApisView({ type: 'detail', id: newApiKeyId });
         }
       }
     } catch {

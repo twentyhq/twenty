@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { lazy } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft } from 'twenty-ui/icon';
@@ -11,11 +12,21 @@ import { LOG_CONSOLE_API_DOCUMENTATION_SCHEMAS } from '@/log-console/constants/L
 import { LOG_CONSOLE_API_DOCUMENTATION_TYPES } from '@/log-console/constants/LogConsoleApiDocumentationTypes';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
-import { GraphQLPlayground } from '@/settings/mcp-and-apis/components/GraphQLPlayground';
-import { RestPlayground } from '@/settings/mcp-and-apis/components/RestPlayground';
 import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/mcp-and-apis/types/PlaygroundTypes';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
+const GraphQLPlayground = lazy(() =>
+  import('@/settings/mcp-and-apis/components/GraphQLPlayground').then(
+    (module) => ({ default: module.GraphQLPlayground }),
+  ),
+);
+
+const RestPlayground = lazy(() =>
+  import('@/settings/mcp-and-apis/components/RestPlayground').then(
+    (module) => ({ default: module.RestPlayground }),
+  ),
+);
 
 const StyledTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};

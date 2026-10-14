@@ -1,45 +1,32 @@
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { IconPlus, IconWebhook } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useTheme } from 'twenty-ui/theme';
 
-import { LogConsoleListLayout } from '@/log-console/components/LogConsoleListLayout';
 import {
-  type LogConsoleListTableColumn,
-  LogConsoleListTable,
-} from '@/log-console/components/LogConsoleListTable';
+  type LogConsoleResourceListColumn,
+  LogConsoleResourceList,
+} from '@/log-console/components/LogConsoleResourceList';
 import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebhooksViewState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import {
   GetWebhooksDocument,
   type GetWebhooksQuery,
 } from '~/generated-metadata/graphql';
-import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type WebhookListItem = GetWebhooksQuery['webhooks'][number];
 
 export const LogConsoleWebhooks = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const [searchValue, setSearchValue] = useState('');
   const [logConsoleWebhooksView, setLogConsoleWebhooksView] = useAtomState(
     logConsoleWebhooksViewState,
   );
   const { data: webhooksData } = useQuery(GetWebhooksDocument);
 
-  const filteredWebhooks = filterBySearchQuery({
-    items: webhooksData?.webhooks ?? [],
-    searchQuery: searchValue,
-    getSearchableValues: (webhook) => [
-      webhook.targetUrl,
-      webhook.description ?? '',
-    ],
-  });
-
-  const columns: LogConsoleListTableColumn<WebhookListItem>[] = [
+  const columns: LogConsoleResourceListColumn<WebhookListItem>[] = [
     {
       label: t`Endpoint`,
       width: '5fr',
@@ -70,10 +57,23 @@ export const LogConsoleWebhooks = () => {
   ];
 
   return (
-    <LogConsoleListLayout
+    <LogConsoleResourceList
+      columns={columns}
+      items={webhooksData?.webhooks ?? []}
+      selectedItemId={
+        logConsoleWebhooksView.type === 'detail'
+          ? logConsoleWebhooksView.id
+          : undefined
+      }
+      onItemClick={(webhook) =>
+        setLogConsoleWebhooksView({ type: 'detail', id: webhook.id })
+      }
+      emptyLabel={t`No webhooks found`}
+      getSearchableValues={(webhook) => [
+        webhook.targetUrl,
+        webhook.description ?? '',
+      ]}
       searchPlaceholder={t`Search webhooks`}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
       scrollWrapperInstanceId="log-console-webhooks"
       actions={
         <Button
@@ -82,21 +82,6 @@ export const LogConsoleWebhooks = () => {
           onClick={() => setLogConsoleWebhooksView({ type: 'new' })}
         >{t`New webhook`}</Button>
       }
-    >
-      <LogConsoleListTable
-        columns={columns}
-        items={filteredWebhooks}
-        getItemId={(webhook) => webhook.id}
-        selectedItemId={
-          logConsoleWebhooksView.type === 'detail'
-            ? logConsoleWebhooksView.id
-            : undefined
-        }
-        onItemClick={(webhook) =>
-          setLogConsoleWebhooksView({ type: 'detail', id: webhook.id })
-        }
-        emptyLabel={t`No webhooks found`}
-      />
-    </LogConsoleListLayout>
+    />
   );
 };

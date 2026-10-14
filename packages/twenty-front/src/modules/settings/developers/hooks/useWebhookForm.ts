@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
 import {
   createWebhookCreateInput,
@@ -28,7 +27,6 @@ import {
 
 type UseWebhookFormProps = {
   webhookId?: string;
-  mode: WebhookFormMode;
   onCreated: (webhookId: string) => void;
   onDeleted: () => void;
 };
@@ -42,13 +40,12 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
 
 export const useWebhookForm = ({
   webhookId,
-  mode,
   onCreated,
   onDeleted,
 }: UseWebhookFormProps) => {
   const { enqueueToast } = useToast();
 
-  const isCreationMode = mode === WebhookFormMode.Create;
+  const isCreationMode = !isDefined(webhookId);
 
   const [createWebhook] = useMutation(CreateWebhookDocument, {
     refetchQueries: [GetWebhooksDocument],
@@ -69,7 +66,7 @@ export const useWebhookForm = ({
     error,
     data: webhookData,
   } = useQuery(GetWebhookDocument, {
-    skip: isCreationMode || !webhookId,
+    skip: isCreationMode,
     variables: {
       id: webhookId || '',
     },

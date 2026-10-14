@@ -6,7 +6,6 @@ import { logConsoleWebhooksViewState } from '@/log-console/states/logConsoleWebh
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -55,7 +54,6 @@ export const LogConsoleWebhookForm = ({
     error,
   } = useWebhookForm({
     webhookId,
-    mode: isDefined(webhookId) ? WebhookFormMode.Edit : WebhookFormMode.Create,
     onCreated: (createdWebhookId) =>
       setLogConsoleWebhooksView({ type: 'detail', id: createdWebhookId }),
     onDeleted: goBackToList,

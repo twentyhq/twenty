@@ -8,12 +8,12 @@ import { type LogConsoleResourceView } from '@/log-console/types/LogConsoleResou
 
 type LogConsoleSettingsRedirectEffectProps = {
   tabId?: 'apis' | 'webhooks';
-  view?: 'new' | 'detail';
+  isNew?: boolean;
 };
 
 export const LogConsoleSettingsRedirectEffect = ({
   tabId = 'apis',
-  view,
+  isNew = false,
 }: LogConsoleSettingsRedirectEffectProps) => {
   const { hash } = useLocation();
   const navigate = useNavigate();
@@ -29,17 +29,16 @@ export const LogConsoleSettingsRedirectEffect = ({
     }
 
     const resourceId = apiKeyId ?? webhookId;
-    const resourceView: LogConsoleResourceView =
-      view === 'detail' && isDefined(resourceId)
-        ? { type: 'detail', id: resourceId }
-        : { type: view === 'new' ? 'new' : 'list' };
+    const resourceView: LogConsoleResourceView = isDefined(resourceId)
+      ? { type: 'detail', id: resourceId }
+      : { type: isNew ? 'new' : 'list' };
 
     openLogConsoleTab({
       tabId: hash === '#webhooks' ? 'webhooks' : tabId,
       view: resourceView,
     });
     navigate(AppPath.Index, { replace: true });
-  }, [apiKeyId, hash, navigate, openLogConsoleTab, tabId, view, webhookId]);
+  }, [apiKeyId, hash, isNew, navigate, openLogConsoleTab, tabId, webhookId]);
 
   return null;
 };

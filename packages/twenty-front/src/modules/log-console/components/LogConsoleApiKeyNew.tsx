@@ -2,26 +2,20 @@ import { addDays } from 'date-fns';
 import { useState } from 'react';
 
 import { LogConsoleDetailPanelLayout } from '@/log-console/components/LogConsoleDetailPanelLayout';
+import { useCreateApiKeyWithToken } from '@/log-console/hooks/useCreateApiKeyWithToken';
 import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
-import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useStore } from 'jotai';
-import { Key } from 'ts-key-enum';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  CreateApiKeyDocument,
-  GenerateApiKeyTokenDocument,
-  GetApiKeyRolesDocument,
-  GetApiKeysDocument,
-} from '~/generated-metadata/graphql';
+import { GetApiKeyRolesDocument } from '~/generated-metadata/graphql';
 import { Section } from 'twenty-ui/components/layout';
 import { IconKey } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
@@ -29,7 +23,7 @@ import { useTheme } from 'twenty-ui/theme';
 export const LogConsoleApiKeyNew = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
+  const { createApiKeyWithToken } = useCreateApiKeyWithToken();
   const setLogConsoleApisView = useSetAtomState(logConsoleApisViewState);
   const { data: rolesData, loading: rolesLoading } = useQuery(
     GetApiKeyRolesDocument,
@@ -51,58 +45,26 @@ export const LogConsoleApiKeyNew = () => {
     roles.find((role) => role.canBeAssignedToApiKeys)?.id ||
     '';
 
-  const [createApiKey] = useMutation(CreateApiKeyDocument, {
-    refetchQueries: [GetApiKeysDocument],
-    awaitRefetchQueries: true,
-  });
-
-  const jotaiStore = useStore();
+  const canSave = isNonEmptyString(formValues.name) && isNonEmptyString(roleId);
 
   const handleSave = async () => {
-    if (!formValues.name) return;
-
-    const expiresAt = addDays(
-      new Date(),
-      formValues.expirationDate ?? 30,
-    ).toISOString();
-
-    if (!roleId) {
+    if (!canSave) {
       return;
     }
 
-    const { data: newApiKeyData } = await createApiKey({
-      variables: {
-        input: {
-          name: formValues.name.trim(),
-          expiresAt,
-          roleId,
-        },
-      },
+    const newApiKeyId = await createApiKeyWithToken({
+      name: formValues.name.trim(),
+      expiresAt: addDays(
+        new Date(),
+        formValues.expirationDate ?? 30,
+      ).toISOString(),
+      roleId,
     });
 
-    const newApiKey = newApiKeyData?.createApiKey;
-
-    if (!newApiKey) {
-      return;
-    }
-
-    const tokenData = await generateOneApiKeyToken({
-      variables: {
-        apiKeyId: newApiKey.id,
-        expiresAt: expiresAt,
-      },
-    });
-
-    if (isDefined(tokenData.data?.generateApiKeyToken)) {
-      jotaiStore.set(
-        apiKeyTokenFamilyState.atomFamily(newApiKey.id),
-        tokenData.data.generateApiKeyToken.token,
-      );
-      setLogConsoleApisView({ type: 'detail', id: newApiKey.id });
+    if (isDefined(newApiKeyId)) {
+      setLogConsoleApisView({ type: 'detail', id: newApiKeyId });
     }
   };
-
-  const canSave = !!formValues.name && !!roleId;
 
   const goBackToList = () => setLogConsoleApisView({ type: 'list' });
 
@@ -132,14 +94,7 @@ export const LogConsoleApiKeyNew = () => {
               instanceId="api-key-new-name"
               placeholder={t`E.g. backoffice integration`}
               value={formValues.name}
-              onKeyDown={(e) => {
-                if (e.nativeEvent.isComposing || e.keyCode === 229) {
-                  return;
-                }
-                if (e.key === Key.Enter) {
-                  handleSave();
-                }
-              }}
+              onInputEnter={handleSave}
               onChange={(value) => {
                 setFormValues((prevState) => ({
                   ...prevState,

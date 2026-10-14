@@ -4,7 +4,6 @@ import { GraphQLError } from 'graphql';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWebhook';
 import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWebhook';
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
@@ -134,7 +133,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Create,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
           }),
@@ -156,7 +154,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Create,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
           }),
@@ -208,7 +205,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Create,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
           }),
@@ -246,7 +242,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Create,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
           }),
@@ -289,7 +284,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Edit,
             webhookId,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
@@ -313,7 +307,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Edit,
             webhookId,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
@@ -369,7 +362,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Edit,
             webhookId,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
@@ -404,7 +396,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Create,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
           }),
@@ -423,7 +414,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Create,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
           }),
@@ -463,7 +453,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Edit,
             webhookId,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
@@ -490,7 +479,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Create,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
           }),
@@ -525,7 +513,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Edit,
             webhookId,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
@@ -553,7 +540,6 @@ describe('useWebhookForm', () => {
       const { result } = renderHook(
         () =>
           useWebhookForm({
-            mode: WebhookFormMode.Create,
             onCreated: mockOnCreated,
             onDeleted: mockOnDeleted,
           }),
