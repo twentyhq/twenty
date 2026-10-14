@@ -1003,7 +1003,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'User credits each user can spend on AI per period of the AI user credit limit default, before workspace credits (in microCredits). No user credits when unset. USAGE_LIMIT_DEFAULTS_BY_PLAN can set it per billing plan',
+      'User credits each user can spend on AI chat and web search per period of the AI user credit limit default, before workspace credits (in microCredits). No user credits when unset. USAGE_LIMIT_DEFAULTS_BY_PLAN can set it per billing plan',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()

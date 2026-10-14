@@ -74,17 +74,10 @@ describe('buildQuotaDefinitions', () => {
     ).toEqual([]);
   });
 
-  it('lists the AI user credit default as an operator-only scope', () => {
+  it('lists no operator-only scope for a default over several operations, since no usage limit can override it', () => {
     expect(
       findQuotaDefinition(UsageResourceType.AI)?.operatorOnlyScopes,
-    ).toEqual([
-      {
-        operationType: UsageOperationType.ALL,
-        spenderType: 'userWorkspace',
-        unit: UsageUnit.USER_CREDIT,
-        periodUnit: 'week',
-      },
-    ]);
+    ).toEqual([]);
   });
 
   it('offers credits and runs on code execution, with no every-operation entry', () => {

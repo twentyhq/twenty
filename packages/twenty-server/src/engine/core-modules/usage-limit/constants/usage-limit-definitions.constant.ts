@@ -81,7 +81,10 @@ export const USAGE_LIMIT_DEFINITIONS = {
       defaults: [
         {
           resourceType: UsageResourceType.AI,
-          operationType: UsageOperationType.ALL,
+          operationType: [
+            UsageOperationType.AI_CHAT_TOKEN,
+            UsageOperationType.WEB_SEARCH,
+          ],
           limitKind: 'quota',
           spenderType: 'userWorkspace',
           spenderId: '',
@@ -90,7 +93,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           periodUnit: 'week',
           periodCount: 1,
           limitValueConfigVariable: 'AI_USER_CREDITS_LIMIT',
-          isOverridable: true,
+          isOverridable: false,
         },
       ],
     },
