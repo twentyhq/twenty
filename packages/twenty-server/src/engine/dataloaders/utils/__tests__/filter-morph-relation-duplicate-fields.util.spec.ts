@@ -114,4 +114,40 @@ describe('filterMorphRelationDuplicateFields', () => {
       }),
     ).toEqual([]);
   });
+
+  it('should keep only the head of each morph relation when the head flag is on', () => {
+    const head = makeMorphField({
+      id: 'head',
+      universalIdentifier: 'morph-1',
+      morphId: 'morph-1',
+    });
+    const target = makeMorphField({
+      id: 'a',
+      universalIdentifier: 'target-a',
+      morphId: 'morph-1',
+    });
+    const text = makeTextField('t1');
+
+    expect(
+      filterMorphRelationDuplicateFields({
+        flatFieldMetadatas: [target, text, head],
+        isMorphRelationHeadEnabled: true,
+      }),
+    ).toEqual([text, head]);
+  });
+
+  it('should drop a morph relation without a head when the head flag is on', () => {
+    const target = makeMorphField({
+      id: 'a',
+      universalIdentifier: 'target-a',
+      morphId: 'morph-1',
+    });
+
+    expect(
+      filterMorphRelationDuplicateFields({
+        flatFieldMetadatas: [target],
+        isMorphRelationHeadEnabled: true,
+      }),
+    ).toEqual([]);
+  });
 });
