@@ -47,7 +47,6 @@ export const computeWhereConditionParts = ({
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
 
-  // Millisecond cursors predate full-precision values; keep comparing them on millisecond buckets
   const isMillisecondDateTimeCursorValue =
     isDateTimeField &&
     !(

@@ -21,6 +21,8 @@ import {
   type GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
+import { buildCursorValueSelects } from 'src/engine/api/utils/build-cursor-value-selects.util';
+import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -142,31 +144,18 @@ export class GraphqlQueryParser {
     return parseResult.orderBy;
   }
 
-  public addRelationOrderColumnsToBuilder(
-    // oxlint-disable-next-line typescript/no-explicit-any
+  public addCursorColumnsToBuilder(
     queryBuilder: WorkspaceSelectQueryBuilder,
-    parsedOrderBy: Record<string, OrderByClause>,
+    orderByLeaves: OrderByLeaf[],
     objectNameSingular: string,
     columnsToSelect: Record<string, boolean>,
   ): void {
-    // Must run after setFindOptions, which clears addSelect; the underscore alias keeps DISTINCT working
-    for (const orderByKey of Object.keys(parsedOrderBy)) {
-      const parts = orderByKey.split('.');
-
-      if (parts.length === 2) {
-        const [alias, column] = parts;
-
-        // Relation columns are never in columnsToSelect
-        const isMainEntity = alias === objectNameSingular;
-        const isAlreadySelected = isMainEntity && columnsToSelect[column];
-
-        if (!isAlreadySelected) {
-          queryBuilder.addSelect(
-            `"${alias}"."${column}"`,
-            `${alias}_${column}`,
-          );
-        }
-      }
+    for (const { expression, alias } of buildCursorValueSelects({
+      orderByLeaves,
+      objectNameSingular,
+      columnsToSelect,
+    })) {
+      queryBuilder.addSelect(expression, alias);
     }
   }
 
