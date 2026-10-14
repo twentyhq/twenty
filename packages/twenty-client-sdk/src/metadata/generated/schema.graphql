@@ -290,6 +290,7 @@ type AppConnection {
   accessToken: String!
   authFailedAt: String
   authFailedReason: String
+  externalAccountId: String
   handle: String!
   id: ID!
   name: String!

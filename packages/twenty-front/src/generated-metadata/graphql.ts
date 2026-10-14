@@ -330,6 +330,7 @@ export type AppConnection = {
   accessToken: Scalars['String']['output'];
   authFailedAt?: Maybe<Scalars['String']['output']>;
   authFailedReason?: Maybe<Scalars['String']['output']>;
+  externalAccountId?: Maybe<Scalars['String']['output']>;
   handle: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
