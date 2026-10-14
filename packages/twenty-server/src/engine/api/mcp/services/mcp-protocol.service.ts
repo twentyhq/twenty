@@ -398,6 +398,14 @@ export class McpProtocolService {
         return null;
       }
 
+      // No tool runs without a workspace member, so a user still onboarding is refused upfront
+      if (authContext.type === 'pendingActivationUser') {
+        throw new HttpException(
+          'Finish signing up before using MCP',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
       if (method === 'initialize') {
         const { roleId, rolePermissionConfig } = await this.resolveCallerRoles({
           workspaceId: workspace.id,
@@ -448,16 +456,11 @@ export class McpProtocolService {
         agentId,
       });
 
-      // A context rebuilt from the IDs would drop what the token carries, such as its agent restriction.
-      // A user still onboarding has no workspace member yet, so tools keep refusing them by rebuilding.
-      const toolAuthContext =
-        authContext.type === 'pendingActivationUser' ? undefined : authContext;
-
       const { toolSet, toolContext } = await Sentry.startSpan(
         { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
         () =>
           this.buildMcpToolSet(workspace, roleId, rolePermissionConfig, {
-            authContext: toolAuthContext,
+            authContext,
             application,
             userId,
             userWorkspaceId,
