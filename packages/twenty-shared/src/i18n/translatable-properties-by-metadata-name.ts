@@ -20,3 +20,13 @@ export type TranslatableMetadataName =
 
 export type TranslatablePropertyName<T extends TranslatableMetadataName> =
   (typeof TRANSLATABLE_PROPERTIES_BY_METADATA_NAME)[T][number];
+
+// Select option labels sit in nested `options` arrays, not flat properties; each owner shares its label context (standard fieldMetadata options are authored under it)
+export const TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER = {
+  fieldMetadata: 'fieldMetadata.label',
+  applicationVariable: 'applicationVariable.label',
+  serverVariable: 'serverVariable.label',
+} as const;
+
+export type TranslatableOptionLabelOwner =
+  keyof typeof TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER;

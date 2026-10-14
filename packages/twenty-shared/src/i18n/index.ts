@@ -32,5 +32,9 @@ export {
 export type {
   TranslatableMetadataName,
   TranslatablePropertyName,
+  TranslatableOptionLabelOwner,
 } from './translatable-properties-by-metadata-name';
-export { TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from './translatable-properties-by-metadata-name';
+export {
+  TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
+  TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER,
+} from './translatable-properties-by-metadata-name';

@@ -15,12 +15,14 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type TranslatableApplicationConfig } from '@/sdk/define/application/application-config';
 import { normalizeApplicationAssets } from '@/sdk/define/application/utils/normalize-application-assets';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
-export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
+export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
+  config,
+) => {
   const errors = [];
   const warnings = [];
 

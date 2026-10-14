@@ -1,4 +1,4 @@
-import { defineObject, FieldType } from 'twenty-sdk/define';
+import { defineObject, FieldType, msg } from 'twenty-sdk/define';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -70,7 +70,7 @@ export default defineObject({
         {
           id: '452b9d40-889c-4342-9697-98319394db04',
           value: PostCardStatus.SENT,
-          label: 'Sent',
+          label: msg('Sent'),
           position: 1,
           color: 'orange',
         },

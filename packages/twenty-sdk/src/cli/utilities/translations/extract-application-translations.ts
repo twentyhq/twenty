@@ -29,9 +29,11 @@ type ExtractApplicationTranslationsResult = {
 
 const collectSourceDescriptors = async ({
   manifest,
+  optionLabelMessages,
   frontComponentSourcePaths,
 }: {
   manifest: Manifest;
+  optionLabelMessages: MessageDescriptor[];
   frontComponentSourcePaths: string[];
 }): Promise<MessageDescriptor[]> => {
   const frontComponentDescriptors = await collectFrontComponentStrings(
@@ -42,6 +44,7 @@ const collectSourceDescriptors = async ({
 
   for (const descriptor of [
     ...collectTranslatableStrings(manifest),
+    ...optionLabelMessages,
     ...frontComponentDescriptors,
   ]) {
     descriptorByKey.set(
@@ -56,16 +59,19 @@ const collectSourceDescriptors = async ({
 export const extractApplicationTranslations = async ({
   appPath,
   manifest,
+  optionLabelMessages = [],
   frontComponentSourcePaths = [],
   scaffoldLocale,
 }: {
   appPath: string;
   manifest: Manifest;
+  optionLabelMessages?: MessageDescriptor[];
   frontComponentSourcePaths?: string[];
   scaffoldLocale?: AppLocale;
 }): Promise<ExtractApplicationTranslationsResult> => {
   const descriptors = await collectSourceDescriptors({
     manifest,
+    optionLabelMessages,
     frontComponentSourcePaths,
   });
 

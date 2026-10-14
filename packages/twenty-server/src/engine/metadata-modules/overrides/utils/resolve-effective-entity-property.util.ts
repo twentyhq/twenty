@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   getFieldOptionLabelTranslationProperty,
-  getMetadataLabelContext,
+  TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
@@ -194,7 +194,7 @@ export const resolveEffectiveFieldMetadataOptionLabel = ({
 
   return translateStandardLabel({
     sourceValue: option.label,
-    context: getMetadataLabelContext('fieldMetadata', 'label'),
+    context: TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata,
     isStandardApp: i18nContext.isStandardApp,
     applicationCatalog: i18nContext.applicationCatalog,
     i18nInstance: i18nContext.i18nInstance,

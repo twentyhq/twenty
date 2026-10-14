@@ -9,26 +9,39 @@ import {
 } from '@/app/source/extract-define-entity';
 import { extractManifestFromFile } from '@/app/source/extract-manifest-from-file';
 import { addMissingFieldOptionIds } from '@/app/manifest/utils/add-missing-field-option-ids';
+import {
+  serializeApplicationOptionLabels,
+  serializeFieldOptionLabels,
+  serializeObjectOptionLabels,
+} from '@/app/manifest/utils/serialize-option-labels';
 import { fromRoleConfigToRoleManifest } from '@/app/manifest/utils/from-role-config-to-role-manifest';
 import { extractFrontComponentSharedDependencies } from '@/app/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/validate-conditional-availability-usage';
 import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/app/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
-import { type ApplicationConfig } from '@/app/manifest/types/application-config.type';
+import {
+  type ApplicationConfig,
+  type TranslatableApplicationConfig,
+} from '@/app/manifest/types/application-config.type';
 import { type LogicFunctionConfig } from '@/app/manifest/types/logic-function-config.type';
 import { type CommandMenuItemConfig } from '@/app/manifest/types/command-menu-item-config.type';
 import { type FrontComponentConfig } from '@/app/manifest/types/front-component-config.type';
 import { type IndexConfig } from '@/app/manifest/types/index-config.type';
 import { type PostInstallLogicFunctionConfig } from '@/app/manifest/types/post-install-logic-function-config.type';
 import { type PreInstallLogicFunctionConfig } from '@/app/manifest/types/pre-install-logic-function-config.type';
-import { type ObjectConfig } from '@/app/manifest/types/object-config.type';
+import {
+  type ObjectConfig,
+  type TranslatableObjectConfig,
+} from '@/app/manifest/types/object-config.type';
 import { type PageLayoutConfig } from '@/app/manifest/types/page-layout-config.type';
 import { type PageLayoutTabConfig } from '@/app/manifest/types/page-layout-tab-config.type';
 import { type RoleConfig } from '@/app/manifest/types/role-config.type';
 import { type TimelineActivityTypeConfig } from '@/app/manifest/types/timeline-activity-type-config.type';
 import { type SettingsMenuItemConfig } from '@/app/manifest/types/settings-menu-item-config.type';
 import { type ViewConfig } from '@/app/manifest/types/view-config.type';
+import { type TranslatableFieldManifest } from '@/app/manifest/types/translatable-option-labels.type';
+import { type MessageDescriptor } from '@/app/translations/message';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -93,6 +106,7 @@ export const buildManifest = async (
   filePaths: EntityFilePaths;
   errors: string[];
   warnings: string[];
+  optionLabelMessages: MessageDescriptor[];
 }> => {
   const filePaths = await loadSources(appPath);
   const readmeContent = await loadReadme(appPath);
@@ -153,6 +167,7 @@ export const buildManifest = async (
   const commandMenuItemsFilePaths: string[] = [];
   const timelineActivityTypesFilePaths: string[] = [];
   const settingsMenuItemsFilePaths: string[] = [];
+  const optionLabelMessages: MessageDescriptor[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -172,24 +187,35 @@ export const buildManifest = async (
 
     switch (entity) {
       case 'application': {
-        const extract = await extractManifestFromFile<ApplicationConfig>({
-          appPath,
-          filePath,
-        });
+        const extract =
+          await extractManifestFromFile<TranslatableApplicationConfig>({
+            appPath,
+            filePath,
+          });
 
-        applicationConfig = extract.config;
+        applicationConfig = serializeApplicationOptionLabels({
+          applicationConfig: extract.config,
+          optionLabelMessages,
+        });
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         applicationFilePaths.push(relativePath);
         break;
       }
       case 'objects': {
-        const extract = await extractManifestFromFile<ObjectConfig>({
-          appPath,
-          filePath,
-        });
+        const extract = await extractManifestFromFile<TranslatableObjectConfig>(
+          {
+            appPath,
+            filePath,
+          },
+        );
 
-        objectConfigs.push(extract.config);
+        objectConfigs.push(
+          serializeObjectOptionLabels({
+            objectConfig: extract.config,
+            optionLabelMessages,
+          }),
+        );
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -197,11 +223,17 @@ export const buildManifest = async (
         break;
       }
       case 'fields': {
-        const extract = await extractManifestFromFile<FieldManifest>({
-          appPath,
-          filePath,
-        });
-        const fieldConfig = addMissingFieldOptionIds(extract.config);
+        const extract =
+          await extractManifestFromFile<TranslatableFieldManifest>({
+            appPath,
+            filePath,
+          });
+        const fieldConfig = addMissingFieldOptionIds(
+          serializeFieldOptionLabels<FieldManifest>({
+            field: extract.config,
+            optionLabelMessages,
+          }),
+        );
         fields.push(fieldConfig);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -728,5 +760,11 @@ export const buildManifest = async (
     settingsMenuItems: settingsMenuItemsFilePaths,
   };
 
-  return { manifest, filePaths: entityFilePaths, errors, warnings };
+  return {
+    manifest,
+    filePaths: entityFilePaths,
+    errors,
+    warnings,
+    optionLabelMessages,
+  };
 };

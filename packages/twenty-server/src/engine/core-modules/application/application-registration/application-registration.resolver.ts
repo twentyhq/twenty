@@ -10,6 +10,7 @@ import {
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -49,6 +50,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -365,9 +367,10 @@ export class ApplicationRegistrationResolver {
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ApplicationRegistrationVariableDTO[]> {
     return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValues(
-      { applicationRegistrationId, workspaceId },
+      { applicationRegistrationId, workspaceId, locale },
     );
   }
 

@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   generateMessageId,
   getMetadataLabelContext,
+  TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
@@ -97,7 +98,7 @@ describe('standard metadata labels reach the catalog under their context', () =>
   });
 
   it('fieldMetadata options', () => {
-    const context = getMetadataLabelContext('fieldMetadata', 'label');
+    const context = TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata;
     const missing = Object.values(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     )

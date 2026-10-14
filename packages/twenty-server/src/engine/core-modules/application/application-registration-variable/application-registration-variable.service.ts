@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ServerVariables } from 'twenty-shared/application';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Not, type EntityManager, type Repository } from 'typeorm';
@@ -15,6 +16,8 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
+import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
+import { translateApplicationVariableOptionLabels } from 'src/engine/core-modules/application/application-translation/utils/translate-application-variable-option-labels.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplicationRegistrationOrThrow } from 'src/engine/core-modules/application/utils/can-caller-reach-application-registration-or-throw.util';
 import { findEngineInjectedEnvVariableNames } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/find-engine-injected-env-variable-names.util';
@@ -36,14 +39,17 @@ export class ApplicationRegistrationVariableService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly encryptionService: SecretEncryptionService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
   ) {}
 
   async findVariablesWithObfuscatedValues({
     applicationRegistrationId,
     workspaceId,
+    locale,
   }: {
     applicationRegistrationId: string;
     workspaceId: string;
+    locale?: keyof typeof APP_LOCALES;
   }): Promise<ApplicationRegistrationVariableDTO[]> {
     await this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId,
@@ -52,18 +58,33 @@ export class ApplicationRegistrationVariableService {
 
     return this.findVariablesWithObfuscatedValuesGlobal(
       applicationRegistrationId,
+      locale,
     );
   }
 
   async findVariablesWithObfuscatedValuesGlobal(
     applicationRegistrationId: string,
+    locale?: keyof typeof APP_LOCALES,
   ): Promise<ApplicationRegistrationVariableDTO[]> {
-    const variables = await this.variableRepository.find({
-      where: { applicationRegistrationId },
-      order: { key: 'ASC' },
-    });
+    const [variables, applicationCatalog] = await Promise.all([
+      this.variableRepository.find({
+        where: { applicationRegistrationId },
+        order: { key: 'ASC' },
+      }),
+      this.applicationTranslationCacheService.getCatalog({
+        applicationRegistrationId,
+        locale: locale ?? SOURCE_LOCALE,
+      }),
+    ]);
 
-    return variables.map((variable) => this.toObfuscatedDTO(variable));
+    return variables.map((variable) => ({
+      ...this.toObfuscatedDTO(variable),
+      options: translateApplicationVariableOptionLabels({
+        owner: 'serverVariable',
+        options: variable.options,
+        applicationCatalog,
+      }),
+    }));
   }
 
   async updateVariable({

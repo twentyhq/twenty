@@ -1,4 +1,4 @@
-import { defineApplication, FieldType } from 'twenty-sdk/define';
+import { defineApplication, FieldType, msg } from 'twenty-sdk/define';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './src/roles/default-function.role';
 
 export default defineApplication({
@@ -54,7 +54,7 @@ export default defineApplication({
       description: 'Default shipping region',
       type: FieldType.SELECT,
       options: [
-        { label: 'Europe', value: 'eu' },
+        { label: msg('Europe'), value: 'eu' },
         { label: 'United States', value: 'us' },
         { label: 'Asia-Pacific', value: 'apac' },
       ],
@@ -106,7 +106,7 @@ export default defineApplication({
       type: FieldType.SELECT,
       options: [
         { label: 'Standard', value: 'standard' },
-        { label: 'Express', value: 'express' },
+        { label: msg('Express'), value: 'express' },
       ],
       isSecret: false,
       isRequired: true,
@@ -124,7 +124,8 @@ export default defineApplication({
       isRequired: false,
     },
     POSTCARD_SANDBOX_MODE: {
-      description: 'Send postcards through the provider sandbox instead of production',
+      description:
+        'Send postcards through the provider sandbox instead of production',
       type: FieldType.BOOLEAN,
       isSecret: false,
       isRequired: false,

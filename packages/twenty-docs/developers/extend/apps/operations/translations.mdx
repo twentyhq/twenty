@@ -11,9 +11,9 @@ any locale left untranslated falls back to it.
 Your app has two kinds of translatable text, and both flow through the same
 `locales/` catalog:
 
-- **Manifest labels** — object and field names, select and multi-select
-  option labels, view titles, menu items, and other strings declared in your
-  app's metadata.
+- **Manifest labels** — object and field names, view titles, menu items, and
+  other strings declared in your app's metadata, plus the select and
+  multi-select option labels you mark with `msg()`.
 - **Front-component strings** — the UI text your React front components render.
 
 You mark the translatable strings, extract them into per-locale catalogs,
@@ -82,8 +82,33 @@ context: `"<context>": { "<message>": "<translation>" }`. Manifest labels are
 contextual by construction — each one carries the metadata role it plays
 (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), so
 the same word can translate differently as an object name and as a view name.
-Select and multi-select option labels share the `fieldMetadata.label` context
-with field names.
+
+## Marking option labels
+
+Select and multi-select options — on fields, application variables and server
+variables — are translated only when their label is wrapped in `msg()` from
+`twenty-sdk/define`. Plain labels stay as written, so names that should never
+change, like brands or products, stay out of your catalogs:
+
+```ts
+import { defineField, FieldType, msg } from 'twenty-sdk/define';
+
+export default defineField({
+  // ...
+  type: FieldType.SELECT,
+  options: [
+    { value: 'WEEK', label: msg('Week'), position: 0, color: 'blue' },
+    { value: 'ACME', label: 'Acme', position: 1, color: 'green' },
+  ],
+});
+```
+
+The same goes for `options` in `applicationVariables` and `serverVariables` of
+`defineApplication()`. The build stores the plain label, so wrapping an
+existing label changes neither its option id nor what the server receives.
+Marked labels are extracted under their owner's context: `fieldMetadata.label`
+for fields (shared with field names), `applicationVariable.label` for
+application variables and `serverVariable.label` for server variables.
 
 ## Extracting and translating
 
@@ -94,8 +119,8 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extraction collects both your manifest labels and the `t()`/`msg()`/`Trans`
-strings from your front-component source into `locales/<locale>.json`, keyed by
+Extraction collects your manifest labels, the option labels you marked with
+`msg()`, and the `t()`/`msg()`/`Trans` strings from your front-component source into `locales/<locale>.json`, keyed by
 source string. Fill in the translations:
 
 ```json

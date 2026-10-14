@@ -1,4 +1,10 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
+import {
+  type ApplicationManifest,
+  type ApplicationVariable,
+  type ServerVariables,
+} from 'twenty-shared/application';
+
+import { type WithTranslatableOptionLabels } from '@/sdk/define/common/types/translatable-option-labels.type';
 
 export type ApplicationConfig = Omit<
   ApplicationManifest,
@@ -15,4 +21,19 @@ export type ApplicationConfig = Omit<
    * @deprecated Use `defineApplicationRole()` in your role file instead.
    */
   defaultRoleUniversalIdentifier?: string;
+};
+
+// Apps may wrap variable option labels in msg(); the build serializes them back into ApplicationConfig
+export type TranslatableApplicationConfig = Omit<
+  ApplicationConfig,
+  'applicationVariables' | 'serverVariables'
+> & {
+  applicationVariables?: Record<
+    string,
+    WithTranslatableOptionLabels<ApplicationVariable>
+  >;
+  serverVariables?: Record<
+    string,
+    WithTranslatableOptionLabels<ServerVariables[string]>
+  >;
 };

@@ -1,11 +1,9 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { type FieldManifest, type Manifest } from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 import {
   getMetadataLabelContext,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
-import { isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { type MessageDescriptor } from '@/sdk/front-component/translations/message';
 
@@ -28,28 +26,6 @@ export const collectTranslatableStrings = (
 ): MessageDescriptor[] => {
   // One string can label several roles, each its own catalog entry, so dedupe per (context, message)
   const descriptorByKey = new Map<string, MessageDescriptor>();
-
-  const addFieldOptionStrings = ({
-    type,
-    options,
-  }: Pick<FieldManifest, 'type' | 'options'>) => {
-    if (!isFieldMetadataSelectKind(type)) {
-      return;
-    }
-
-    const context = getMetadataLabelContext('fieldMetadata', 'label');
-
-    for (const { label } of options ?? []) {
-      if (!isNonEmptyString(label)) {
-        continue;
-      }
-
-      descriptorByKey.set(JSON.stringify([context, label]), {
-        message: label,
-        context,
-      });
-    }
-  };
 
   const addEntityStrings = (
     entity: unknown,
@@ -91,14 +67,9 @@ export const collectTranslatableStrings = (
     }
   }
 
-  for (const field of manifest.fields ?? []) {
-    addFieldOptionStrings(field);
-  }
-
   for (const objectManifest of manifest.objects ?? []) {
     for (const field of objectManifest.fields ?? []) {
       addEntityStrings(field, 'fieldMetadata');
-      addFieldOptionStrings(field);
     }
   }
 

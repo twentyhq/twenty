@@ -1,10 +1,10 @@
-import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type TranslatableApplicationConfig } from '@/sdk/define/application/application-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
-import { type ObjectConfig } from '@/sdk/define/objects/object-config';
+import { type TranslatableObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
@@ -14,10 +14,10 @@ import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions
 import { type UninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/uninstall-logic-function-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
+import { type TranslatableFieldManifest } from '@/sdk/define/common/types/translatable-option-labels.type';
 import {
   type AgentManifest,
   type ConnectionProviderManifest,
-  type FieldManifest,
   type NavigationMenuItemManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
@@ -32,9 +32,9 @@ export type ValidationResult<T> = {
 };
 
 export type DefinableEntity =
-  | ApplicationConfig
-  | ObjectConfig
-  | FieldManifest
+  | TranslatableApplicationConfig
+  | TranslatableObjectConfig
+  | TranslatableFieldManifest
   | FrontComponentConfig
   | IndexConfig
   | LogicFunctionConfig

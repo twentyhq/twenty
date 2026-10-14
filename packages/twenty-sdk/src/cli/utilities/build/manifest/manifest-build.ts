@@ -7,6 +7,11 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
+import {
+  serializeApplicationOptionLabels,
+  serializeFieldOptionLabels,
+  serializeObjectOptionLabels,
+} from '@/cli/utilities/build/manifest/utils/serialize-option-labels';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
@@ -14,20 +19,28 @@ import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/mani
 import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
-import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import {
+  type ApplicationConfig,
+  type TranslatableApplicationConfig,
+} from '@/sdk/define/application/application-config';
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
-import { type ObjectConfig } from '@/sdk/define/objects/object-config';
+import {
+  type ObjectConfig,
+  type TranslatableObjectConfig,
+} from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
+import { type TranslatableFieldManifest } from '@/sdk/define/common/types/translatable-option-labels.type';
+import { type MessageDescriptor } from '@/sdk/front-component/translations/message';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -100,6 +113,7 @@ export const buildManifest = async (
   filePaths: EntityFilePaths;
   errors: string[];
   warnings: string[];
+  optionLabelMessages: MessageDescriptor[];
 }> => {
   const filePaths = await loadSources(appPath);
   const readmeContent = await loadReadme(appPath);
@@ -160,6 +174,7 @@ export const buildManifest = async (
   const commandMenuItemsFilePaths: string[] = [];
   const timelineActivityTypesFilePaths: string[] = [];
   const settingsMenuItemsFilePaths: string[] = [];
+  const optionLabelMessages: MessageDescriptor[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -179,24 +194,35 @@ export const buildManifest = async (
 
     switch (entity) {
       case ManifestEntityKey.Application: {
-        const extract = await extractManifestFromFile<ApplicationConfig>({
-          appPath,
-          filePath,
-        });
+        const extract =
+          await extractManifestFromFile<TranslatableApplicationConfig>({
+            appPath,
+            filePath,
+          });
 
-        applicationConfig = extract.config;
+        applicationConfig = serializeApplicationOptionLabels({
+          applicationConfig: extract.config,
+          optionLabelMessages,
+        });
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         applicationFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Objects: {
-        const extract = await extractManifestFromFile<ObjectConfig>({
-          appPath,
-          filePath,
-        });
+        const extract = await extractManifestFromFile<TranslatableObjectConfig>(
+          {
+            appPath,
+            filePath,
+          },
+        );
 
-        objectConfigs.push(extract.config);
+        objectConfigs.push(
+          serializeObjectOptionLabels({
+            objectConfig: extract.config,
+            optionLabelMessages,
+          }),
+        );
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -204,11 +230,17 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Fields: {
-        const extract = await extractManifestFromFile<FieldManifest>({
-          appPath,
-          filePath,
-        });
-        const fieldConfig = addMissingFieldOptionIds(extract.config);
+        const extract =
+          await extractManifestFromFile<TranslatableFieldManifest>({
+            appPath,
+            filePath,
+          });
+        const fieldConfig = addMissingFieldOptionIds(
+          serializeFieldOptionLabels<FieldManifest>({
+            field: extract.config,
+            optionLabelMessages,
+          }),
+        );
         fields.push(fieldConfig);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -790,5 +822,11 @@ export const buildManifest = async (
     settingsMenuItems: settingsMenuItemsFilePaths,
   };
 
-  return { manifest, filePaths: entityFilePaths, errors, warnings };
+  return {
+    manifest,
+    filePaths: entityFilePaths,
+    errors,
+    warnings,
+    optionLabelMessages,
+  };
 };

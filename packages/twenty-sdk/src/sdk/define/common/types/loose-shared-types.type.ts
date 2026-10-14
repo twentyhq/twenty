@@ -1,9 +1,10 @@
 import type * as SharedApplication from 'twenty-shared/application';
 import type * as SharedTypes from 'twenty-shared/types';
 
-import { type ApplicationConfig as StrictApplicationConfig } from '@/sdk/define/application/application-config';
+import { type TranslatableApplicationConfig } from '@/sdk/define/application/application-config';
 import { type CommandMenuItemConfig as StrictCommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+import { type TranslatableObjectFieldManifest } from '@/sdk/define/common/types/translatable-option-labels.type';
 import { type FrontComponentConfig as StrictFrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type SettingsFrontComponentConfig as StrictSettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
 import { type IndexConfig as StrictIndexConfig } from '@/sdk/define/indexes/index-config';
@@ -17,7 +18,7 @@ import { type TimelineActivityTypeConfig as StrictTimelineActivityTypeConfig } f
 import { type ViewConfig as StrictViewConfig } from '@/sdk/define/views/view-config';
 
 // What apps write; code building the manifest and the server keep the strict types
-export type ApplicationConfig = LooseEnumValues<StrictApplicationConfig>;
+export type ApplicationConfig = LooseEnumValues<TranslatableApplicationConfig>;
 export type CommandMenuItemConfig =
   LooseEnumValues<StrictCommandMenuItemConfig>;
 export type CommandMenuItemManifest =
@@ -35,7 +36,7 @@ export type MessageChannelVisibility =
 export type MessageParticipantRole =
   LooseEnumValues<SharedTypes.MessageParticipantRole>;
 export type ObjectFieldManifest =
-  LooseEnumValues<SharedApplication.ObjectFieldManifest>;
+  LooseEnumValues<TranslatableObjectFieldManifest>;
 export type PageLayoutConfig = LooseEnumValues<StrictPageLayoutConfig>;
 export type PageLayoutManifest =
   LooseEnumValues<SharedApplication.PageLayoutManifest>;

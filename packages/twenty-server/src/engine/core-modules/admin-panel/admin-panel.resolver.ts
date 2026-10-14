@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import GraphQLJSON from 'graphql-type-json';
 import { AI_MODEL_TIERS } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -89,6 +90,7 @@ import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/us
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -754,9 +756,11 @@ export class AdminPanelResolver {
   @Query(() => [ApplicationRegistrationVariableDTO])
   async findAdminApplicationRegistrationVariables(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ApplicationRegistrationVariableDTO[]> {
     return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValuesGlobal(
       applicationRegistrationId,
+      locale,
     );
   }
 
