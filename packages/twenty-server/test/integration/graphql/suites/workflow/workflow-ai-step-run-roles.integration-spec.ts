@@ -8,6 +8,7 @@ import {
   deleteCoreWorkflows,
   runCoreWorkflowVersion,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import { waitForWorkflowCompletion } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
@@ -212,19 +213,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
-    for (let attempt = 0; attempt < 150; attempt++) {
-      const [run] = await global.testDataSource.query(
-        `SELECT status FROM "${schema}"."workflowRun" WHERE id = $1`,
-        [workflowRunId],
-      );
-
-      if (['COMPLETED', 'FAILED'].includes(run?.status)) {
-        return run.status;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-
-    throw new Error(`Workflow run ${workflowRunId} did not finish`);
+    return (await waitForWorkflowCompletion(workflowRunId))?.status;
   };
 
   beforeAll(async () => {

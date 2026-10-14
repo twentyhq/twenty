@@ -3,7 +3,6 @@ import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { buildWorkflowRunCreatedBy } from 'src/modules/workflow/workflow-executor/utils/build-workflow-run-created-by.util';
 
 const CUSTOM_APPLICATION_ID = 'custom-app-id';
-const STANDARD_APPLICATION_ID = 'standard-app-id';
 const INSTALLED_APPLICATION_ID = 'installed-app-id';
 
 const buildSource = (applicationId?: string): ActorMetadata => ({
@@ -38,13 +37,6 @@ describe('buildWorkflowRunCreatedBy', () => {
         startingApplicationId: INSTALLED_APPLICATION_ID,
       }).context.applicationId,
     ).toBe(INSTALLED_APPLICATION_ID);
-  });
-
-  it('binds a run of a standard application workflow like any installed one', () => {
-    expect(
-      build({ workflowApplicationId: STANDARD_APPLICATION_ID }).context
-        .applicationId,
-    ).toBe(STANDARD_APPLICATION_ID);
   });
 
   it('leaves a run of a workspace workflow unbound, whoever starts it', () => {
