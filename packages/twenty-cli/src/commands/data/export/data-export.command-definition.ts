@@ -40,7 +40,7 @@ export const DATA_EXPORT_COMMAND_DEFINITION: TargetCommandDefinition = {
     'twenty data export people --output people.csv --format ndjson',
   ],
   outputModes: ['human', 'json', 'ndjson'],
-  writes: false,
+  writes: true,
   needsProject: false,
   needsTarget: true,
   requiredPermissions: ['EXPORT_CSV'],

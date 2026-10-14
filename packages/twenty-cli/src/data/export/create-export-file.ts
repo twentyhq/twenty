@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
-import { link, lstat, open, rename, rm } from 'node:fs/promises';
+import { link, lstat, open, rename, rm, unlink } from 'node:fs/promises';
 import { resolve } from 'node:path';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
@@ -50,11 +52,36 @@ export const createExportFile = async ({
       throw error;
     }),
   );
-  if (existing && (!force || !existing.isFile())) {
+  if (isDefined(existing) && (!force || !existing.isFile())) {
     throw conflict();
   }
   const temporaryPath = `${outputPath}.${randomUUID()}.tmp`;
   const file = await runFileOperation(() => open(temporaryPath, 'wx', 0o600));
+  const cleanup = async () => {
+    await file.close().catch(() => undefined);
+    await rm(temporaryPath, { force: true }).catch(() => undefined);
+  };
+  if (!force) {
+    const probePath = `${temporaryPath}.probe`;
+    try {
+      await link(temporaryPath, probePath);
+    } catch (error) {
+      await cleanup();
+      throw new CliError({
+        code: 'FILE_WRITE_FAILED',
+        message: `Could not prepare a non-overwriting export to ${outputPath}.`,
+        hint: 'The output directory must support hard links. Choose a writable directory on a filesystem that supports them, or use --force to allow replacing the destination file.',
+        cause: error,
+      });
+    }
+    try {
+      await runFileOperation(() => unlink(probePath));
+    } catch (error) {
+      await rm(probePath, { force: true }).catch(() => undefined);
+      await cleanup();
+      throw error;
+    }
+  }
   return {
     outputPath,
     save: async (body: ReadableStream<Uint8Array>) => {
@@ -90,9 +117,6 @@ export const createExportFile = async ({
       }
       return bytes;
     },
-    cleanup: async () => {
-      await file.close().catch(() => undefined);
-      await rm(temporaryPath, { force: true }).catch(() => undefined);
-    },
+    cleanup,
   };
 };

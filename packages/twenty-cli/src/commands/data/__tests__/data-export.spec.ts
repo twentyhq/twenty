@@ -20,6 +20,7 @@ import {
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
 import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
+import * as configPath from '@/config/get-config-path';
 
 vi.mock('node:fs/promises', async (importOriginal) => {
   const original = await importOriginal<typeof fileSystem>();
@@ -166,6 +167,8 @@ const assertNoTemporaryFiles = async () =>
   ).toEqual([]);
 
 beforeEach(async () => {
+  vi.mocked(fileSystem.link).mockReset();
+  vi.mocked(fileSystem.rm).mockReset();
   directory = await mkdtemp(join(tmpdir(), 'twenty-export-test-'));
   outputPath = join(directory, 'companies.csv');
   vi.stubEnv('TWENTY_API_URL', server.url);
@@ -233,6 +236,45 @@ describe('twenty data export', () => {
       'Bearer fixture-export-key',
     );
     expect(result.stdout + result.stderr).not.toContain('private.signed.token');
+    await assertNoTemporaryFiles();
+  });
+
+  it('uses a saved browser session for both the subscription and the download', async () => {
+    const accessToken = [
+      Buffer.from(JSON.stringify({ alg: 'none' })).toString('base64url'),
+      Buffer.from(
+        JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 }),
+      ).toString('base64url'),
+      'fixture-signature',
+    ].join('.');
+    const path = join(directory, 'config.json');
+    await writeFile(
+      path,
+      JSON.stringify({
+        version: 1,
+        defaultRemote: 'test',
+        remotes: {
+          test: { apiUrl: server.url, twentyCLIAccessToken: accessToken },
+        },
+      }),
+    );
+    vi.spyOn(configPath, 'getConfigPath').mockReturnValue(path);
+    vi.stubEnv('TWENTY_API_URL', '');
+    vi.stubEnv('TWENTY_API_KEY', '');
+
+    const result = await run('--format', 'json');
+
+    expect(result.exitCode).toBe(0);
+    expect(await readFile(outputPath, 'utf8')).toBe(CSV);
+    const subscription = server.requests.find((request) =>
+      request.body.includes('subscription ExportRecords'),
+    );
+    expect(subscription?.headers.authorization).toBe(`Bearer ${accessToken}`);
+    expect(server.requests.at(-1)).toMatchObject({
+      method: 'GET',
+      headers: { authorization: `Bearer ${accessToken}` },
+    });
+    expect(result.stdout + result.stderr).not.toContain(accessToken);
     await assertNoTemporaryFiles();
   });
 
@@ -364,12 +406,43 @@ describe('twenty data export', () => {
     await assertNoTemporaryFiles();
   });
 
+  it('rejects a filesystem without hard links before requesting an export', async () => {
+    vi.mocked(fileSystem.link).mockRejectedValueOnce(
+      Object.assign(new Error('hard links unsupported'), { code: 'ENOTSUP' }),
+    );
+    const result = await run('--format', 'json');
+    expect(parseSingleJsonLine(result.stdout)).toMatchObject({
+      ok: false,
+      error: {
+        code: 'FILE_WRITE_FAILED',
+        hint: expect.stringContaining('--force'),
+      },
+    });
+    expect(server.requests).toHaveLength(0);
+    expect(await readdir(directory)).toEqual([]);
+  });
+
+  it('can export with --force when hard links are unsupported', async () => {
+    vi.mocked(fileSystem.link).mockRejectedValue(
+      Object.assign(new Error('hard links unsupported'), { code: 'ENOTSUP' }),
+    );
+    const result = await run('--force', '--format', 'json');
+    expect(result.exitCode).toBe(0);
+    expect(await readFile(outputPath, 'utf8')).toBe(CSV);
+    expect(fileSystem.link).not.toHaveBeenCalled();
+    await assertNoTemporaryFiles();
+  });
+
   it.each(['EROFS', 'EDQUOT', 'EIO'])(
     'reports %s during file commit as a file error',
     async (code) => {
-      vi.mocked(fileSystem.link).mockRejectedValueOnce(
-        Object.assign(new Error('disk failure'), { code }),
-      );
+      const original =
+        await vi.importActual<typeof fileSystem>('node:fs/promises');
+      vi.mocked(fileSystem.link)
+        .mockImplementationOnce(original.link)
+        .mockRejectedValueOnce(
+          Object.assign(new Error('disk failure'), { code }),
+        );
       const result = await run('--format', 'json');
       expect(parseSingleJsonLine(result.stdout)).toMatchObject({
         ok: false,

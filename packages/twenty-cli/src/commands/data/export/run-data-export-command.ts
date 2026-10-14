@@ -46,24 +46,12 @@ export const runDataExportCommand: CommandRun<TargetCommandContext> = async ({
   if (fieldNames?.some((field) => field.length === 0)) {
     throw invalidInput('--fields cannot contain empty names.');
   }
-  let filter: ReturnType<typeof parseExportFilter> | undefined;
-  let orderBy: ReturnType<typeof parseExportOrderBy> | undefined;
-  try {
-    const expression = readStringOption(options, 'filter');
-    const order = readStringOption(options, 'orderBy');
-    if (isDefined(expression)) {
-      filter = parseExportFilter(expression);
-    }
-    if (isDefined(order)) {
-      orderBy = parseExportOrderBy(order);
-    }
-  } catch (error) {
-    throw invalidInput(
-      error instanceof Error
-        ? error.message
-        : 'Invalid export filter or order.',
-    );
-  }
+  const expression = readStringOption(options, 'filter');
+  const order = readStringOption(options, 'orderBy');
+  const filter = isDefined(expression)
+    ? parseExportFilter(expression)
+    : undefined;
+  const orderBy = isDefined(order) ? parseExportOrderBy(order) : undefined;
   const file = await createExportFile({
     path,
     force: readBooleanOption(options, 'force'),

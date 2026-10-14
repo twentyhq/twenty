@@ -1,3 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 
@@ -33,9 +36,11 @@ const splitPredicates = (expression: string) => {
   let parentheses = 0;
   let brackets = 0;
   let quote = '';
+  let isValue = false;
+  let isArrayValue = false;
   for (let index = 0; index < expression.length; index++) {
     const character = expression[index];
-    if (quote) {
+    if (isNonEmptyString(quote)) {
       if (character === quote) {
         quote = '';
       }
@@ -50,15 +55,27 @@ const splitPredicates = (expression: string) => {
     }
     if (character === '(') {
       parentheses++;
+      isValue = false;
     }
     if (character === ')') {
       parentheses--;
+      isValue = false;
     }
-    if (character === '[') {
+    if (character === ':' && expression[index - 1] === ']') {
+      isValue = true;
+      isArrayValue = /\[(in|containsAny)\]$/.test(expression.slice(0, index));
+    }
+    if (
+      character === '[' &&
+      (!isValue || (isArrayValue && expression[index - 1] === ':'))
+    ) {
       brackets++;
     }
-    if (character === ']') {
+    if (character === ']' && (!isValue || brackets > 0)) {
       brackets--;
+    }
+    if (character === ',' && brackets === 0) {
+      isValue = false;
     }
     if (parentheses < 0 || brackets < 0) {
       throw invalidFilter();
@@ -68,7 +85,7 @@ const splitPredicates = (expression: string) => {
       start = index + 1;
     }
   }
-  if (parentheses !== 0 || brackets !== 0 || quote) {
+  if (parentheses !== 0 || brackets !== 0 || isNonEmptyString(quote)) {
     throw invalidFilter();
   }
   parts.push(expression.slice(start));
@@ -81,14 +98,20 @@ const unquote = (value: string) =>
     ? value.slice(1, -1)
     : value;
 
-const parsePredicate = (expression: string, depth: number): Filter => {
+const parsePredicate = ({
+  expression,
+  depth,
+}: {
+  expression: string;
+  depth: number;
+}): Filter => {
   if (depth > 50) {
     throw invalidFilter();
   }
   const conjunction = /^(and|or|not)\((.+)\)$/.exec(expression);
-  if (conjunction) {
+  if (isDefined(conjunction)) {
     const predicates = splitPredicates(conjunction[2]).map((part) =>
-      parsePredicate(part, depth + 1),
+      parsePredicate({ expression: part, depth: depth + 1 }),
     );
     if (conjunction[1] === 'not') {
       if (predicates.length !== 1) {
@@ -99,7 +122,7 @@ const parsePredicate = (expression: string, depth: number): Filter => {
     return { [conjunction[1]]: predicates };
   }
   const condition = /^([^\[\]]+)\[([^\[\]]+)\]:(.+)$/.exec(expression);
-  if (!condition || !COMPARATORS.includes(condition[2])) {
+  if (!isDefined(condition) || !COMPARATORS.includes(condition[2])) {
     throw invalidFilter();
   }
   const [, field, comparator, text] = condition;
@@ -127,6 +150,10 @@ const parsePredicate = (expression: string, depth: number): Filter => {
 export const parseExportFilter = (expression: string): Filter => {
   const predicates = splitPredicates(expression);
   return predicates.length === 1 && /^(and|or|not)\(/.test(expression)
-    ? parsePredicate(expression, 0)
-    : { and: predicates.map((part) => parsePredicate(part, 0)) };
+    ? parsePredicate({ expression, depth: 0 })
+    : {
+        and: predicates.map((part) =>
+          parsePredicate({ expression: part, depth: 0 }),
+        ),
+      };
 };

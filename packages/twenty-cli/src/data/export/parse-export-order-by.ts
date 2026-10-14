@@ -1,4 +1,5 @@
 import { OrderByDirection } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
@@ -8,11 +9,10 @@ type OrderBy = { [key: string]: OrderByDirection | OrderBy };
 export const parseExportOrderBy = (expression: string): OrderBy[] => {
   const orderBy = expression.split(',').map((item) => {
     const match = /^([^\[\]]+)(?:\[([^\[\]]+)\])?$/.exec(item);
-    const direction = match?.[2] ?? OrderByDirection.AscNullsFirst;
-    if (
-      !match ||
-      !Object.values(OrderByDirection).some((allowed) => allowed === direction)
-    ) {
+    const direction = Object.values(OrderByDirection).find(
+      (allowed) => allowed === (match?.[2] ?? OrderByDirection.AscNullsFirst),
+    );
+    if (!isDefined(match) || !isDefined(direction)) {
       throw new CliError({
         code: 'USAGE',
         exitCode: EXIT_CODE.USAGE,
@@ -20,13 +20,10 @@ export const parseExportOrderBy = (expression: string): OrderBy[] => {
         hint: 'Use field[direction], for example employees[DescNullsLast].',
       });
     }
-    const fields = match[1].split('.');
-    return fields
-      .reverse()
-      .reduce<OrderBy | OrderByDirection>(
-        (value, field) => ({ [field]: value }),
-        direction as OrderByDirection,
-      ) as OrderBy;
+    const [field, ...parents] = match[1].split('.').reverse();
+    return parents.reduce<OrderBy>((value, parent) => ({ [parent]: value }), {
+      [field]: direction,
+    });
   });
   return orderBy.some((item) => Object.hasOwn(item, 'id'))
     ? orderBy
