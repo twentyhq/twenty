@@ -9,6 +9,7 @@ export type OverflowingTextWithTooltipProps = Omit<
   'children'
 > &
   TextTruncationProps & {
+    withTooltip?: boolean;
     isTooltipMultiline?: boolean;
     tooltipDelay?: number;
     tooltipPlace?: TooltipSide;

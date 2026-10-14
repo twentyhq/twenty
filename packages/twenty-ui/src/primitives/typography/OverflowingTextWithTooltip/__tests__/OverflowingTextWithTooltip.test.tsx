@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { createRef } from 'react';
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
-import styles from '../../OverflowingText/OverflowingText.module.scss';
+import styles from '../internal/OverflowingText.module.scss';
 
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 

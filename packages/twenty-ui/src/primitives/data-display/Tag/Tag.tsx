@@ -4,7 +4,6 @@ import { isBoolean, isString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
-import { OverflowingText } from '@ui/primitives/typography/OverflowingText/OverflowingText';
 import { themeCssVariables } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -65,22 +64,14 @@ export const Tag = ({
             )}
           <span className={styles.content}>
             {isString(children) && truncate ? (
-              withTooltip ? (
-                <OverflowingTextWithTooltip
-                  text={children}
-                  render={<span />}
-                  className={styles.overflowingText}
-                  measureOverflowOnOpen={measureOverflowOnOpen}
-                  initialPointerPosition={initialPointerPosition}
-                />
-              ) : (
-                <OverflowingText
-                  render={<span />}
-                  className={styles.overflowingText}
-                >
-                  {children}
-                </OverflowingText>
-              )
+              <OverflowingTextWithTooltip
+                text={children}
+                render={<span />}
+                className={styles.overflowingText}
+                withTooltip={withTooltip}
+                measureOverflowOnOpen={measureOverflowOnOpen}
+                initialPointerPosition={initialPointerPosition}
+              />
             ) : (
               children
             )}

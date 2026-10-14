@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type OverflowingTextProps } from './types/OverflowingTextProps';
+import { type TextProps } from '@ui/primitives/typography/Text/types/TextProps';
 
 import styles from './OverflowingText.module.scss';
 
@@ -13,7 +13,7 @@ export const OverflowingText = ({
   dir = 'auto',
   className,
   ...props
-}: OverflowingTextProps) => {
+}: TextProps) => {
   const isMultiline = isDefined(lineClamp);
 
   return (

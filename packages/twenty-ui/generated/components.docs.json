@@ -1838,41 +1838,6 @@
     ]
   },
   {
-    "name": "OverflowingText",
-    "entryPoint": "twenty-ui/primitives/typography",
-    "slug": "typography/overflowing-text",
-    "props": [
-      {
-        "name": "dir",
-        "type": "string",
-        "required": false,
-        "defaultValue": "auto",
-        "description": "Text direction. Defaults to auto."
-      },
-      {
-        "name": "lineClamp",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Positive integer limiting visible lines while preserving whitespace and line breaks. Cannot be combined with `truncate`."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Replaces the default div. Native props, styles, handlers and ref target the displayed text."
-      },
-      {
-        "name": "truncate",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
-      }
-    ]
-  },
-  {
     "name": "OverflowingTextWithTooltip",
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/overflowing-text-with-tooltip",
@@ -1960,6 +1925,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
+      },
+      {
+        "name": "withTooltip",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Enables tooltip behavior. Set false for plain truncated text with the same layout. Defaults to true."
       }
     ]
   },

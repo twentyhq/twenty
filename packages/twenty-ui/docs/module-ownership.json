@@ -22,7 +22,6 @@
     "ListItem",
     "Loader",
     "NumberField",
-    "OverflowingText",
     "OverflowingTextWithTooltip",
     "Popover",
     "Progress",

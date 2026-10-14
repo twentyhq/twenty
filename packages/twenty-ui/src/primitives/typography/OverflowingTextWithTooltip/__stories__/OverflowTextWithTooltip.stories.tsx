@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { createRef } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Text } from '@ui/primitives/typography/Text/Text';
@@ -7,6 +8,8 @@ import { ComponentDecorator } from '@ui/testing';
 
 import { OverflowingTextWithTooltip } from '../OverflowingTextWithTooltip';
 import { OverflowingTextMountedUnderPointer } from './components/OverflowingTextMountedUnderPointer';
+
+const WITHOUT_TOOLTIP_REF = createRef<HTMLDivElement>();
 
 const longText =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tellus diam, rhoncus nec consequat quis, dapibus quis massa. Praesent tincidunt augue at ex bibendum, non finibus augue faucibus. In at gravida orci. Nulla facilisi. Proin ut augue ut nisi pellentesque tristique. Proin sodales libero id turpis tincidunt posuere. Sed euismod, nunc at aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nunc. Donec euismod, nunc quis aliquam ultricies, nunc nisl aliquet nunc.';
@@ -298,6 +301,59 @@ export const ExplicitLink: Story = {
       expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
     );
     await expect(link).toHaveFocus();
+  },
+};
+
+export const WithoutTooltip: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    ...ExplicitLink.args,
+    withTooltip: false,
+    alwaysShowTooltip: true,
+    measureOverflowOnOpen: true,
+    tooltipDelay: 500,
+    isFocusable: true,
+    title: 'Documentation details',
+  },
+  render: (args) => (
+    <OverflowingTextMountedUnderPointer {...args} ref={WITHOUT_TOOLTIP_REF} />
+  ),
+  play: async ({ canvasElement }) => {
+    if (!Reflect.has(globalThis, '__vitest_browser__')) {
+      return;
+    }
+
+    const { page } = await import('vitest/browser');
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const source = canvas.getByTestId('portal-source');
+
+    await page.elementLocator(source).hover();
+
+    const link = await canvas.findByRole('link', {
+      name: 'Typography documentation',
+    });
+
+    await expect(WITHOUT_TOOLTIP_REF.current).toBe(link);
+    await expect(link).toHaveAttribute(
+      'href',
+      'https://twenty.com/developers/long-documentation-path',
+    );
+    await expect(link).toHaveAttribute('title', 'Documentation details');
+    await expect(link.scrollWidth).toBeGreaterThan(link.clientWidth);
+    await expect(getComputedStyle(link).textOverflow).toBe('ellipsis');
+    await expect(
+      body.findByRole('tooltip', {}, { timeout: 1000 }),
+    ).rejects.toThrow();
+
+    await page.elementLocator(link).hover();
+    await userEvent.tab();
+    await expect(link).toHaveFocus();
+    await expect(
+      body.findByRole('tooltip', {}, { timeout: 1000 }),
+    ).rejects.toThrow();
+
+    await page.elementLocator(source).unhover();
   },
 };
 

@@ -4,7 +4,6 @@ import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
-import { OverflowingText } from '@ui/primitives/typography/OverflowingText/OverflowingText';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Chip.module.scss';
@@ -65,29 +64,21 @@ export const Chip = ({
       children: (
         <>
           {startElement}
-          {hasContent &&
-            (withTooltip ? (
-              <OverflowingTextWithTooltip
-                {...textProps}
-                render={<span />}
-                style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
-                truncate={truncate}
-                tooltipDelay={tooltipDelay}
-                isTooltipMultiline={isTooltipMultiline}
-                tooltipPlace={tooltipPlace}
-                alwaysShowTooltip={alwaysShowTooltip}
-                measureOverflowOnOpen={measureOverflowOnOpen}
-                initialPointerPosition={initialPointerPosition}
-              />
-            ) : (
-              <OverflowingText
-                render={<span />}
-                style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
-                truncate={truncate}
-              >
-                {children}
-              </OverflowingText>
-            ))}
+          {hasContent && (
+            <OverflowingTextWithTooltip
+              {...textProps}
+              render={<span />}
+              style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
+              truncate={truncate}
+              withTooltip={withTooltip}
+              tooltipDelay={tooltipDelay}
+              isTooltipMultiline={isTooltipMultiline}
+              tooltipPlace={tooltipPlace}
+              alwaysShowTooltip={alwaysShowTooltip}
+              measureOverflowOnOpen={measureOverflowOnOpen}
+              initialPointerPosition={initialPointerPosition}
+            />
+          )}
           {isDefined(endElement) && endElement !== false && (
             <>
               {endElementDivider && (

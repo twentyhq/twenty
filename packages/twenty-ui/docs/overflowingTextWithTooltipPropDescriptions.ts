@@ -1,6 +1,8 @@
 import { type OverflowingTextWithTooltipProps } from '../src/primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps';
 
 export const OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS = {
+  withTooltip:
+    'Enables tooltip behavior. Set false for plain truncated text with the same layout. Defaults to true.',
   text: 'Caller-owned text or React content. Non-string content requires `tooltipContent`. URLs stay plain text.',
   tooltipContent:
     'Plain text displayed in the tooltip. Defaults to nonempty string `text`.',

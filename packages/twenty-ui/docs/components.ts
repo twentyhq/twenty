@@ -67,7 +67,6 @@ import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescri
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
-import { OVERFLOWING_TEXT_PROP_DESCRIPTIONS } from './overflowingTextPropDescriptions';
 import { BADGE_PROP_DESCRIPTIONS } from './badgePropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
 import { RESIZE_HANDLE_PROP_DESCRIPTIONS } from './resizeHandlePropDescriptions';
@@ -255,20 +254,13 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
   },
   {
-    name: 'OverflowingText',
-    source: 'primitives/typography/OverflowingText/OverflowingText.tsx',
-    entryPoint: 'twenty-ui/primitives/typography',
-    slug: 'typography/overflowing-text',
-    propDescriptions: OVERFLOWING_TEXT_PROP_DESCRIPTIONS,
-    propDefaults: { truncate: 'true', dir: 'auto' },
-  },
-  {
     name: 'OverflowingTextWithTooltip',
     source:
       'primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip.tsx',
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/overflowing-text-with-tooltip',
     propDescriptions: OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS,
+    propDefaults: { withTooltip: 'true' },
   },
   {
     name: 'LightIconButton',

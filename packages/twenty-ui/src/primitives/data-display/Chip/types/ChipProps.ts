@@ -10,6 +10,7 @@ export type ChipProps = Omit<useRender.ComponentProps<'div'>, 'color'> &
   Pick<
     OverflowingTextWithTooltipProps,
     | 'truncate'
+    | 'withTooltip'
     | 'tooltipContent'
     | 'tooltipDelay'
     | 'tooltipPlace'
@@ -18,7 +19,6 @@ export type ChipProps = Omit<useRender.ComponentProps<'div'>, 'color'> &
     | 'measureOverflowOnOpen'
     | 'initialPointerPosition'
   > & {
-    withTooltip?: boolean;
     size?: ChipSize;
     variant?: ChipVariant;
     color?: 'primary' | 'secondary';

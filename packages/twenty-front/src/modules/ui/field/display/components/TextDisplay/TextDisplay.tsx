@@ -3,10 +3,7 @@ import { clsx } from 'clsx';
 import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  OverflowingTextWithTooltip,
-  OverflowingText,
-} from 'twenty-ui/primitives/typography';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
 import { FieldDisplayTooltipContext } from '@/ui/field/display/contexts/FieldDisplayTooltipContext';
 
@@ -38,20 +35,17 @@ export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => {
 
   return (
     <div className={clsx(styles.container, fixHeight && styles.fixHeight)}>
-      {withTooltip ? (
-        <OverflowingTextWithTooltip
-          text={linkifiedText}
-          tooltipContent={text}
-          lineClamp={displayedMaxRows}
-          isTooltipMultiline={true}
-          measureOverflowOnOpen={measureOverflowOnOpen}
-          initialPointerPosition={getInitialPointerPosition?.()}
-        />
-      ) : (
-        <OverflowingText lineClamp={displayedMaxRows}>
-          {linkifiedText}
-        </OverflowingText>
-      )}
+      <OverflowingTextWithTooltip
+        text={linkifiedText}
+        tooltipContent={text}
+        lineClamp={displayedMaxRows}
+        isTooltipMultiline={true}
+        withTooltip={withTooltip}
+        measureOverflowOnOpen={measureOverflowOnOpen}
+        initialPointerPosition={
+          withTooltip ? getInitialPointerPosition?.() : undefined
+        }
+      />
     </div>
   );
 };
