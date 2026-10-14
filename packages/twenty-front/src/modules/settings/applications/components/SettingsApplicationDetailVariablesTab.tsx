@@ -4,8 +4,8 @@ import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
-import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
-import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';
+import { SettingsApplicationVariableInput } from '@/settings/applications/components/SettingsApplicationVariableInput';
+import { SettingsApplicationVariableLabelRow } from '@/settings/applications/components/SettingsApplicationVariableLabelRow';
 
 const StyledContainer = styled.div`
   display: flex;

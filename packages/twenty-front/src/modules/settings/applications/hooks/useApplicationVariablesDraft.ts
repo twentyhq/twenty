@@ -7,7 +7,7 @@ import {
   type ApplicationVariable,
   type ApplicationVariableScope,
 } from '~/generated-metadata/graphql';
-import { applicationVariablesDraftFamilyState } from '~/pages/settings/applications/states/applicationVariablesDraftFamilyState';
+import { applicationVariablesDraftFamilyState } from '@/settings/applications/states/applicationVariablesDraftFamilyState';
 
 export const useApplicationVariablesDraft = <
   DraftableApplicationVariable extends Pick<

@@ -21,9 +21,9 @@ import {
   ApplicationVariableScope,
   UpdateMyUserApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
-import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
-import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
-import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
+import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useApplicationVariablesDraft';
+import { SettingsApplicationCustomSettingsSection } from '@/settings/applications/components/SettingsApplicationCustomSettingsSection';
+import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/components/SettingsApplicationDetailVariablesTab';
 
 const VARIABLES_TAB_ID = 'variables';
 

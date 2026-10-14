@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { ApplicationVariableScope } from '~/generated-metadata/graphql';
-import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
+import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useApplicationVariablesDraft';
 
 const KEY = 'API_KEY';
 const OTHER_KEY = 'REGION';
