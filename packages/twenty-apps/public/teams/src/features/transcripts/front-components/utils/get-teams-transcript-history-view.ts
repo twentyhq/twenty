@@ -53,7 +53,10 @@ export const getTeamsTranscriptHistoryView = ({
         alreadyImportedCount: state.alreadyImportedCount,
         deletedCount: state.deletedCount,
         toImportCount,
-        importEstimate: getImportEstimate(state.pageCount),
+        // Only a page that imports a transcript waits before the next one.
+        importEstimate: getImportEstimate(
+          Math.min(state.pageCount, toImportCount),
+        ),
       };
     case 'importing':
     case 'imported':
