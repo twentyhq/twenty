@@ -1,4 +1,4 @@
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import {
   StyledSettingsCardContent,
   StyledSettingsCardDescription,
@@ -77,7 +77,7 @@ export const SettingsOptionCardContentSelect = ({
         </StyledSelectText>
         <StyledSelectContainer>{children}</StyledSelectContainer>
       </StyledSelectRow>
-      {divider && <Separator />}
+      {divider && <SettingsCardSeparator />}
     </>
   );
 };

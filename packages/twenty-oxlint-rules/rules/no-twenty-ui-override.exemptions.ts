@@ -11,6 +11,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx',
+    reason: 'Separator spacing inside the sign-in form',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx',
     reason: 'Separator spacing inside the sign-in form',
   },
@@ -33,6 +38,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx',
     reason: 'LightButton pinned to the corner of the fullscreen dialog',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsForm.tsx',
+    reason: 'Section.Root laid out as the padded column of bulk edit fields',
   },
   {
     filePath:

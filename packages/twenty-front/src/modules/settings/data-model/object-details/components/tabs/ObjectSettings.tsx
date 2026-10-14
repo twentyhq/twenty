@@ -50,12 +50,6 @@ const StyledContentContainer = styled.div`
   gap: ${themeCssVariables.spacing[8]};
 `;
 
-const StyledFormSectionContainer = styled.div`
-  > * {
-    padding-left: 0 !important;
-  }
-`;
-
 const StyledLinkCardsContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -150,128 +144,116 @@ export const ObjectSettings = ({
 
   return (
     <StyledContentContainer>
-      <StyledFormSectionContainer>
-        <Section.Root>
-          <Section.Header
-            title={t`About`}
-            description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
-          />
-          <SettingsUpdateDataModelObjectAboutForm
-            objectMetadataItem={objectMetadataItem}
-            formConfig={aboutFormConfig}
-          />
-        </Section.Root>
-      </StyledFormSectionContainer>
-      <StyledFormSectionContainer>
-        <Section.Root>
-          <Section.Header
-            title={t`Options`}
-            description={t`Choose the fields that will identify your records`}
-          />
-          <SettingsDataModelObjectSettingsFormCard
-            objectMetadataItem={objectMetadataItem}
-          />
-        </Section.Root>
-      </StyledFormSectionContainer>
+      <Section.Root>
+        <Section.Header
+          title={t`About`}
+          description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
+        />
+        <SettingsUpdateDataModelObjectAboutForm
+          objectMetadataItem={objectMetadataItem}
+          formConfig={aboutFormConfig}
+        />
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
+          title={t`Options`}
+          description={t`Choose the fields that will identify your records`}
+        />
+        <SettingsDataModelObjectSettingsFormCard
+          objectMetadataItem={objectMetadataItem}
+        />
+      </Section.Root>
       {isRecordCreationFormEnabled &&
         !objectMetadataItem.isRemote &&
         !objectMetadataItem.isSystem && (
-          <StyledFormSectionContainer>
-            <Section.Root>
-              <Section.Header
-                title={t`Validation rules`}
-                description={t`Block records that break your rules, like an opportunity marked Won with no amount. Checked on every save.`}
-                actions={<OrganizationAdornment />}
-              />
-              {hasValidationRulesEntitlement ? (
-                <SettingsObjectValidationRulesSection
-                  objectMetadataItem={objectMetadataItem}
-                  isReadOnly={isReadOnly}
-                />
-              ) : (
-                <SettingsEnterpriseFeatureGateCard
-                  title={t`Organization feature`}
-                  description={t`Upgrade to Organization to set validation rules.`}
-                  buttonTitle={t`Activate`}
-                />
-              )}
-            </Section.Root>
-          </StyledFormSectionContainer>
-        )}
-      {isRecordLevelSharingEnabled &&
-        isShareableObjectMetadataItem(objectMetadataItem) && (
-          <StyledFormSectionContainer>
-            <Section.Root>
-              <Section.Header
-                title={t`Record sharing`}
-                description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
-              />
-              <ObjectSharingReachPicker
+          <Section.Root>
+            <Section.Header
+              title={t`Validation rules`}
+              description={t`Block records that break your rules, like an opportunity marked Won with no amount. Checked on every save.`}
+              actions={<OrganizationAdornment />}
+            />
+            {hasValidationRulesEntitlement ? (
+              <SettingsObjectValidationRulesSection
                 objectMetadataItem={objectMetadataItem}
                 isReadOnly={isReadOnly}
               />
-            </Section.Root>
-          </StyledFormSectionContainer>
+            ) : (
+              <SettingsEnterpriseFeatureGateCard
+                title={t`Organization feature`}
+                description={t`Upgrade to Organization to set validation rules.`}
+                buttonTitle={t`Activate`}
+              />
+            )}
+          </Section.Root>
         )}
-      <StyledFormSectionContainer>
-        <Section.Root>
-          <Section.Header
-            title={t`Advanced`}
-            description={t`Settings most workspaces never need to change`}
-          />
-          <StyledLinkCardsContainer>
-            <SettingsTranslationsCard
-              objectNamePlural={objectMetadataItem.namePlural}
-              disabled={hasUnsavedAboutEdits}
-            />
-            <UndecoratedLink
-              to={getSettingsPath(SettingsPath.ObjectSearch, {
-                objectNamePlural: objectMetadataItem.namePlural,
-              })}
-            >
-              <SettingsCard
-                Icon={<IconSearch size={theme.icon.size.md} />}
-                title={t`Configure search`}
-              />
-            </UndecoratedLink>
-            <UndecoratedLink
-              to={getSettingsPath(SettingsPath.ObjectIndexes, {
-                objectNamePlural: objectMetadataItem.namePlural,
-              })}
-            >
-              <SettingsCard
-                Icon={<IconBolt size={theme.icon.size.md} />}
-                title={t`Manage indexes`}
-              />
-            </UndecoratedLink>
-          </StyledLinkCardsContainer>
-        </Section.Root>
-      </StyledFormSectionContainer>
-      {!isReadOnly && (
-        <StyledFormSectionContainer>
+      {isRecordLevelSharingEnabled &&
+        isShareableObjectMetadataItem(objectMetadataItem) && (
           <Section.Root>
             <Section.Header
-              title={t`Danger zone`}
-              description={t`Deactivate object`}
+              title={t`Record sharing`}
+              description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
             />
-            <StyledDangerButtonsContainer>
-              <Button
-                startIcon={<IconArchive />}
-                size="sm"
-                onClick={handleDisable}
-              >{t`Deactivate`}</Button>
-              {getIsMetadataItemCustom(objectMetadataItem) && (
-                <Button
-                  startIcon={<IconTrash />}
-                  size="sm"
-                  onClick={handleDelete}
-                  variant="outline"
-                  color="danger"
-                >{t`Delete`}</Button>
-              )}
-            </StyledDangerButtonsContainer>
+            <ObjectSharingReachPicker
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isReadOnly}
+            />
           </Section.Root>
-        </StyledFormSectionContainer>
+        )}
+      <Section.Root>
+        <Section.Header
+          title={t`Advanced`}
+          description={t`Settings most workspaces never need to change`}
+        />
+        <StyledLinkCardsContainer>
+          <SettingsTranslationsCard
+            objectNamePlural={objectMetadataItem.namePlural}
+            disabled={hasUnsavedAboutEdits}
+          />
+          <UndecoratedLink
+            to={getSettingsPath(SettingsPath.ObjectSearch, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
+          >
+            <SettingsCard
+              Icon={<IconSearch size={theme.icon.size.md} />}
+              title={t`Configure search`}
+            />
+          </UndecoratedLink>
+          <UndecoratedLink
+            to={getSettingsPath(SettingsPath.ObjectIndexes, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
+          >
+            <SettingsCard
+              Icon={<IconBolt size={theme.icon.size.md} />}
+              title={t`Manage indexes`}
+            />
+          </UndecoratedLink>
+        </StyledLinkCardsContainer>
+      </Section.Root>
+      {!isReadOnly && (
+        <Section.Root>
+          <Section.Header
+            title={t`Danger zone`}
+            description={t`Deactivate object`}
+          />
+          <StyledDangerButtonsContainer>
+            <Button
+              startIcon={<IconArchive />}
+              size="sm"
+              onClick={handleDisable}
+            >{t`Deactivate`}</Button>
+            {getIsMetadataItemCustom(objectMetadataItem) && (
+              <Button
+                startIcon={<IconTrash />}
+                size="sm"
+                onClick={handleDelete}
+                variant="outline"
+                color="danger"
+              >{t`Delete`}</Button>
+            )}
+          </StyledDangerButtonsContainer>
+        </Section.Root>
       )}
       <ConfirmationDialog
         dialogId={DELETE_OBJECT_MODAL_ID}
