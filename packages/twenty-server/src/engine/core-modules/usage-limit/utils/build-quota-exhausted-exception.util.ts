@@ -9,7 +9,7 @@ import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/e
 export const buildQuotaExhaustedException = (
   exhaustedScope: ExhaustedScope,
 ): UsageLimitException => {
-  if (exhaustedScope.exhaustedKind === 'allowance') {
+  if (exhaustedScope.exhaustedKind === 'workspaceAllowance') {
     return new UsageLimitException(
       'Credit allowance exhausted for this billing period',
       UsageLimitExceptionCode.QUOTA_EXHAUSTED,
@@ -20,9 +20,9 @@ export const buildQuotaExhaustedException = (
     );
   }
 
-  if (exhaustedScope.exhaustedKind === 'memberAllowance') {
+  if (exhaustedScope.exhaustedKind === 'userAllowance') {
     return new UsageLimitException(
-      'Member credits allowance exhausted for this period',
+      'User credits allowance exhausted for this period',
       UsageLimitExceptionCode.QUOTA_EXHAUSTED,
       {
         userFriendlyMessage: msg`Your AI credits for this period are used up.`,

@@ -66,29 +66,29 @@ describe('buildUsageEventEnvelopes', () => {
     );
   });
 
-  it('leaves the member share column out for a zero or missing share', () => {
+  it('leaves the user share column out for a zero or missing share', () => {
     const [envelopeWithoutShare, envelopeWithZeroShare] =
       buildUsageEventEnvelopes('ws-1', [
         usageEvent(),
-        usageEvent({ memberCreditsUsedMicro: 0 }),
+        usageEvent({ userCreditsUsedMicro: 0 }),
       ]);
 
     expect(
       JSON.parse(JSON.stringify(envelopeWithoutShare.row)),
-    ).not.toHaveProperty('memberCreditsUsedMicro');
+    ).not.toHaveProperty('userCreditsUsedMicro');
     expect(JSON.stringify(envelopeWithZeroShare.row)).toBe(
       JSON.stringify(envelopeWithoutShare.row),
     );
   });
 
-  it('writes a positive member share next to the total cost', () => {
+  it('writes a positive user share next to the total cost', () => {
     const [envelope] = buildUsageEventEnvelopes('ws-1', [
-      usageEvent({ memberCreditsUsedMicro: 2500 }),
+      usageEvent({ userCreditsUsedMicro: 2500 }),
     ]);
 
     expect(JSON.parse(JSON.stringify(envelope.row))).toMatchObject({
       creditsUsedMicro: 7500,
-      memberCreditsUsedMicro: 2500,
+      userCreditsUsedMicro: 2500,
     });
   });
 });

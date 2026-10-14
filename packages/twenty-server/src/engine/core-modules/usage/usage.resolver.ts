@@ -124,8 +124,8 @@ export class UsageResolver {
       usageByUser: resolvedUsageByUser.map((item) => ({
         ...item,
         creditsUsed: toDisplayCredits(item.creditsUsed),
-        memberCreditsUsed: isDefined(item.memberCreditsUsed)
-          ? toDisplayCredits(item.memberCreditsUsed)
+        userCreditsUsed: isDefined(item.userCreditsUsed)
+          ? toDisplayCredits(item.userCreditsUsed)
           : null,
       })),
       usageByOperationType: usageByOperationType.map((item) => ({

@@ -1,0 +1,34 @@
+import { subtractUserCredits } from 'src/engine/core-modules/usage-limit/utils/subtract-user-credits.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
+
+const buildEvent = (creditsUsedMicro: number): RecordUsageInput => ({
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  unit: UsageUnit.TOKEN,
+  quantity: 10,
+  creditsUsedMicro,
+  spenders: { userWorkspaceId: 'user-workspace-1' },
+});
+
+describe('subtractUserCredits', () => {
+  it('leaves the workspace credits remainder on each event, in order', () => {
+    expect(
+      subtractUserCredits({
+        events: [buildEvent(300), buildEvent(500)],
+        userCreditsUsedMicro: 600,
+      }).map(({ creditsUsedMicro }) => creditsUsedMicro),
+    ).toEqual([0, 200]);
+  });
+
+  it('keeps every event whole when the member paid nothing', () => {
+    expect(
+      subtractUserCredits({
+        events: [buildEvent(300)],
+        userCreditsUsedMicro: 0,
+      }).map(({ creditsUsedMicro }) => creditsUsedMicro),
+    ).toEqual([300]);
+  });
+});

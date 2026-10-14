@@ -258,7 +258,7 @@ describe('StreamAgentChatJob', () => {
             stream: chatStream,
             modelConfig,
             getStopReason: () => null,
-            getMemberAllowancePeriodEnd: () => null,
+            getUserAllowancePeriodEnd: () => null,
             getStreamError: () => chatStream.streamError,
           }),
     };
@@ -360,8 +360,8 @@ describe('StreamAgentChatJob', () => {
       {
         findUsageAdmission: jest.fn().mockResolvedValue({
           refusal: null,
-          hasMemberCounter: false,
-          isMemberAllowanceAvailable: null,
+          hasUserAllowanceCounter: false,
+          isUserAllowanceAvailable: null,
           isWorkspaceAllowanceAvailable: null,
         }),
       } as never,

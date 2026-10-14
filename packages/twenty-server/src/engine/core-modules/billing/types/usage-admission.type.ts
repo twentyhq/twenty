@@ -2,7 +2,7 @@ import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-r
 
 export type UsageAdmission = {
   refusal: UsageRefusal | null;
-  hasMemberCounter: boolean;
-  isMemberAllowanceAvailable: boolean | null;
+  hasUserAllowanceCounter: boolean;
+  isUserAllowanceAvailable: boolean | null;
   isWorkspaceAllowanceAvailable: boolean | null;
 };

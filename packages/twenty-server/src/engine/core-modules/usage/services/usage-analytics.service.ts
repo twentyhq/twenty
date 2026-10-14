@@ -16,7 +16,7 @@ import { type BillingPeriodCreditsUsed } from 'src/engine/core-modules/usage/typ
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
-import { addMemberCreditsUsedToUsageBreakdown } from 'src/engine/core-modules/usage/utils/add-member-credits-used-to-usage-breakdown.util';
+import { addUserCreditsUsedToUsageBreakdown } from 'src/engine/core-modules/usage/utils/add-user-credits-used-to-usage-breakdown.util';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
 import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build-usage-scope-filter.util';
@@ -28,7 +28,7 @@ export type UsageBreakdownItem = {
   key: string;
   label?: string;
   creditsUsed: number;
-  memberCreditsUsed?: number | null;
+  userCreditsUsed?: number | null;
 };
 
 export type UsageApplicationBreakdownItem = {
@@ -50,7 +50,7 @@ type SumRowMicro = {
   total: string | number | null;
 };
 
-type MemberCreditsByKeyRowMicro = {
+type UserCreditsByKeyRowMicro = {
   key: string;
   total: string | number;
 };
@@ -176,7 +176,7 @@ export class UsageAnalyticsService {
     };
   }
 
-  async getWorkspaceFundedCreditsUsedMicroForBillingPeriod({
+  async getWorkspaceCreditsUsedMicroForBillingPeriod({
     workspaceId,
     periodStart,
     periodEnd,
@@ -185,9 +185,9 @@ export class UsageAnalyticsService {
     periodStart: Date;
     periodEnd: Date;
   }): Promise<BillingPeriodCreditsUsed> {
-    const [creditsUsedMicro, memberCreditsUsedMicro] = await Promise.all([
+    const [creditsUsedMicro, userCreditsUsedMicro] = await Promise.all([
       this.getCreditsUsedMicroForBillingPeriod({ workspaceId, periodStart }),
-      this.getMemberCreditsUsedMicroForBillingPeriod({
+      this.getUserCreditsUsedMicroForBillingPeriod({
         workspaceId,
         periodStart,
         periodEnd,
@@ -195,9 +195,8 @@ export class UsageAnalyticsService {
     ]);
 
     return {
-      workspaceFundedCreditsUsedMicro:
-        creditsUsedMicro - memberCreditsUsedMicro,
-      memberCreditsUsedMicro,
+      workspaceCreditsUsedMicro: creditsUsedMicro - userCreditsUsedMicro,
+      userCreditsUsedMicro,
     };
   }
 
@@ -221,7 +220,7 @@ export class UsageAnalyticsService {
     return Number(rows[0]?.total ?? 0);
   }
 
-  private async getMemberCreditsUsedMicroForBillingPeriod({
+  private async getUserCreditsUsedMicroForBillingPeriod({
     workspaceId,
     periodStart,
     periodEnd,
@@ -232,7 +231,7 @@ export class UsageAnalyticsService {
   }): Promise<number> {
     // No projection holds this sum, so the period window bounds the primary-key scan.
     const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
-      `SELECT sum(memberCreditsUsedMicro) AS total
+      `SELECT sum(userCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          ${buildUsagePeriodClause('billing')}`,
@@ -246,7 +245,7 @@ export class UsageAnalyticsService {
     return Number(rows[0]?.total ?? 0);
   }
 
-  async getMemberCreditsUsedMicroForScope({
+  async getUserCreditsUsedMicroForScope({
     workspaceId,
     resourceType,
     operationType,
@@ -267,7 +266,7 @@ export class UsageAnalyticsService {
         : 'AND operationType = {operationType:String}';
 
     const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
-      `SELECT sum(memberCreditsUsedMicro) AS total
+      `SELECT sum(userCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND resourceType = {resourceType:String}
@@ -285,7 +284,7 @@ export class UsageAnalyticsService {
     return Number(rows[0]?.total ?? 0);
   }
 
-  async getMemberCreditsUsedMicroForMemberPeriod({
+  async getUserCreditsUsedMicroForUserWorkspace({
     workspaceId,
     userWorkspaceId,
     periodStart,
@@ -297,7 +296,7 @@ export class UsageAnalyticsService {
     periodEnd: Date;
   }): Promise<number> {
     const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
-      `SELECT sum(memberCreditsUsedMicro) AS total
+      `SELECT sum(userCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND timestamp >= {periodStart:DateTime64(3)}
@@ -352,18 +351,18 @@ export class UsageAnalyticsService {
   }
 
   async getUsageByUser(params: PeriodParams): Promise<UsageBreakdownItem[]> {
-    const [items, memberCreditsUsedMicroByKey] = await Promise.all([
+    const [items, userCreditsUsedMicroByKey] = await Promise.all([
       this.queryBreakdown({
         ...params,
         groupByField: 'userWorkspaceId',
         extraWhere: "AND userWorkspaceId != ''",
       }),
-      this.findMemberCreditsUsedMicroByUser(params),
+      this.findUserCreditsUsedMicroByUser(params),
     ]);
 
-    return addMemberCreditsUsedToUsageBreakdown({
+    return addUserCreditsUsedToUsageBreakdown({
       items,
-      memberCreditsUsedMicroByKey,
+      userCreditsUsedMicroByKey,
     });
   }
 
@@ -513,8 +512,8 @@ export class UsageAnalyticsService {
     return this.queryTimeSeries(params);
   }
 
-  // selectOrThrow: select swallows a failed read into [], which would show every member share as 0.
-  private async findMemberCreditsUsedMicroByUser({
+  // selectOrThrow: select swallows a failed read into [], which would show every user share as 0.
+  private async findUserCreditsUsedMicroByUser({
     workspaceId,
     periodStart,
     periodEnd,
@@ -524,8 +523,8 @@ export class UsageAnalyticsService {
 
     try {
       const rows =
-        await this.clickHouseService.selectOrThrow<MemberCreditsByKeyRowMicro>(
-          `SELECT userWorkspaceId AS key, sum(memberCreditsUsedMicro) AS total
+        await this.clickHouseService.selectOrThrow<UserCreditsByKeyRowMicro>(
+          `SELECT userWorkspaceId AS key, sum(userCreditsUsedMicro) AS total
            FROM usageEvent
            WHERE workspaceId = {workspaceId:String}
              AND timestamp >= {periodStart:String}
@@ -544,7 +543,7 @@ export class UsageAnalyticsService {
       return new Map(rows.map((row) => [row.key, Number(row.total)]));
     } catch (error) {
       this.logger.error(
-        `Could not read member credits used by user for workspace ${workspaceId}`,
+        `Could not read user credits used by user for workspace ${workspaceId}`,
         error,
       );
 

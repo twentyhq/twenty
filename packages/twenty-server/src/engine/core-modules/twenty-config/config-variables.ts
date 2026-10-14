@@ -1003,12 +1003,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Credits each member spends per UTC week, Monday to Monday, on their own AI chats and chat web searches, instead of the workspace credits and workspace credit limits (in microCredits). No member credits when unset. USAGE_LIMIT_DEFAULTS_BY_PLAN can set it per billing plan',
+      'Credits each member spends per UTC week, Monday to Monday, on their own AI chats and chat web searches, instead of the workspace credits and workspace credit limits (in microCredits). No user credits when unset. USAGE_LIMIT_DEFAULTS_BY_PLAN can set it per billing plan',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
-  MEMBER_CREDITS_WEEKLY_LIMIT?: number;
+  USER_CREDITS_WEEKLY_LIMIT?: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,

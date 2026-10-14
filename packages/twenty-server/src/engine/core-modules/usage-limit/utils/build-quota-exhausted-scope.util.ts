@@ -31,11 +31,11 @@ export const buildQuotaExhaustedScope = ({
         retryAfterMs,
         isDefault: counter.isDefault,
       };
-    case 'allowance':
+    case 'workspaceAllowance':
       return {
         resourceType,
         limitKind: 'quota',
-        exhaustedKind: 'allowance',
+        exhaustedKind: 'workspaceAllowance',
         spenderType: 'workspace',
         spenderId: null,
         operationType: UsageOperationType.ALL,
@@ -46,11 +46,11 @@ export const buildQuotaExhaustedScope = ({
         periodUnit: null,
         retryAfterMs,
       };
-    case 'memberAllowance':
+    case 'userAllowance':
       return {
         resourceType,
         limitKind: 'quota',
-        exhaustedKind: 'memberAllowance',
+        exhaustedKind: 'userAllowance',
         spenderType: 'userWorkspace',
         spenderId: counter.userWorkspaceId,
         operationType: UsageOperationType.ALL,

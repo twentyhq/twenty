@@ -32,7 +32,7 @@ import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/me
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { clampMemberCreditsUsedMicro } from 'src/engine/core-modules/usage/utils/clamp-member-credits-used-micro.util';
+import { clampUserCreditsUsedMicro } from 'src/engine/core-modules/usage/utils/clamp-user-credits-used-micro.util';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
@@ -113,7 +113,7 @@ import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/g
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
 import { createTurnUsageRecorder } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-usage-recorder.util';
-import { findMemberCreditsSpillNoticeRenewsAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-member-credits-spill-notice-renews-at.util';
+import { findUserCreditsSpillNoticeRenewsAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-user-credits-spill-notice-renews-at.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -130,15 +130,15 @@ export type ChatExecutionOptions = {
   modelId?: string;
   abortSignal: AbortSignal;
   conversationSizeTokens: number;
-  isMemberAllowanceAvailableAtAdmission: boolean | null;
-  onMemberCreditsExhausted: (renewsAt: Date) => void;
+  isUserAllowanceAvailableAtAdmission: boolean | null;
+  onUserCreditsExhausted: (renewsAt: Date) => void;
 };
 
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
   getStopReason: () => StepDebitResult['stopReason'];
-  getMemberAllowancePeriodEnd: () => Date | null;
+  getUserAllowancePeriodEnd: () => Date | null;
   getStreamError: () => unknown;
 };
 
@@ -178,8 +178,8 @@ export class ChatExecutionService {
     modelId,
     abortSignal,
     conversationSizeTokens,
-    isMemberAllowanceAvailableAtAdmission,
-    onMemberCreditsExhausted,
+    isUserAllowanceAvailableAtAdmission,
+    onUserCreditsExhausted,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const getAuthorization = createTurnAuthorizer({
       authorize: () =>
@@ -470,8 +470,8 @@ export class ChatExecutionService {
     const modelMessages = pruningResult.messages;
 
     let stopReason: StepDebitResult['stopReason'] = null;
-    let memberAllowancePeriodEnd: Date | null = null;
-    let hasNotifiedMemberCreditsExhausted = false;
+    let userAllowancePeriodEnd: Date | null = null;
+    let hasNotifiedUserCreditsExhausted = false;
     const streamStartedAt = performance.now();
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
@@ -480,10 +480,10 @@ export class ChatExecutionService {
 
     const emitTurnUsageEvent = async ({
       steps,
-      memberCreditsUsedMicro,
+      userCreditsUsedMicro,
     }: {
       steps: StepResult<ToolSet>[];
-      memberCreditsUsedMicro: number;
+      userCreditsUsedMicro: number;
     }) => {
       const usage = steps.reduce(
         (totals, step) => ({
@@ -513,8 +513,8 @@ export class ChatExecutionService {
         UsageOperationType.AI_CHAT_TOKEN,
         null,
         userWorkspaceId,
-        clampMemberCreditsUsedMicro({
-          memberCreditsUsedMicro,
+        clampUserCreditsUsedMicro({
+          userCreditsUsedMicro,
           creditsUsedMicro,
         }),
       );
@@ -661,19 +661,20 @@ export class ChatExecutionService {
         );
 
         stopReason ??= stepDebit.stopReason;
-        memberAllowancePeriodEnd =
-          stepDebit.memberAllowancePeriodEnd ?? memberAllowancePeriodEnd;
+        userAllowancePeriodEnd =
+          stepDebit.userAllowancePeriodEnd ?? userAllowancePeriodEnd;
 
-        const memberCreditsSpillRenewsAt = findMemberCreditsSpillNoticeRenewsAt(
-          { stepDebit, isMemberAllowanceAvailableAtAdmission },
-        );
+        const userCreditsSpillRenewsAt = findUserCreditsSpillNoticeRenewsAt({
+          stepDebit,
+          isUserAllowanceAvailableAtAdmission,
+        });
 
         if (
-          isDefined(memberCreditsSpillRenewsAt) &&
-          !hasNotifiedMemberCreditsExhausted
+          isDefined(userCreditsSpillRenewsAt) &&
+          !hasNotifiedUserCreditsExhausted
         ) {
-          hasNotifiedMemberCreditsExhausted = true;
-          onMemberCreditsExhausted(memberCreditsSpillRenewsAt);
+          hasNotifiedUserCreditsExhausted = true;
+          onUserCreditsExhausted(userCreditsSpillRenewsAt);
         }
 
         this.logger.log(
@@ -782,7 +783,7 @@ export class ChatExecutionService {
       stream,
       modelConfig,
       getStopReason: () => stopReason,
-      getMemberAllowancePeriodEnd: () => memberAllowancePeriodEnd,
+      getUserAllowancePeriodEnd: () => userAllowancePeriodEnd,
       getStreamError: () => lastUnderlyingStreamError,
     };
   }

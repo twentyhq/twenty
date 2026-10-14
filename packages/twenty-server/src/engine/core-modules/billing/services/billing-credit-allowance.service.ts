@@ -8,7 +8,7 @@ import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constan
 import { type FlatBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type CreditAllowance } from 'src/engine/core-modules/usage-limit/types/credit-allowance.type';
-import { type MemberCreditsFallbackMode } from 'src/engine/core-modules/usage-limit/types/member-credits-fallback-mode.type';
+import { type UserCreditsFallbackMode } from 'src/engine/core-modules/usage-limit/types/user-credits-fallback-mode.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -64,13 +64,13 @@ export class BillingCreditAllowanceService {
     return subscription?.planKey ?? null;
   }
 
-  async getMemberCreditsFallback(
+  async getUserCreditsFallback(
     workspaceId: string,
-  ): Promise<MemberCreditsFallbackMode> {
+  ): Promise<UserCreditsFallbackMode> {
     const subscription = await this.findCurrentBillingSubscription(workspaceId);
 
     // Undefined, despite the type, on entries cached by a previous release
-    return subscription?.memberCreditsFallback ?? 'WORKSPACE_CREDITS';
+    return subscription?.userCreditsFallback ?? 'WORKSPACE_CREDITS';
   }
 
   private async findCurrentBillingSubscription(

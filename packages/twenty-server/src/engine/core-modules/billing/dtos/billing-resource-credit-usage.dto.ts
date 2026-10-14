@@ -17,7 +17,7 @@ export class BillingResourceCreditUsageDTO {
   usedCredits: number;
 
   @Field(() => Float)
-  memberCreditsUsed: number;
+  userCreditsUsed: number;
 
   @Field(() => Float)
   grantedCredits: number;

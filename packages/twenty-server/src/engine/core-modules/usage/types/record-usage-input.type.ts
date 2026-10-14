@@ -4,7 +4,7 @@ import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event
 
 export type RecordUsageInput = Omit<
   UsageEvent,
-  'periodStart' | 'creditsUsedMicro' | 'memberCreditsUsedMicro'
+  'periodStart' | 'creditsUsedMicro' | 'userCreditsUsedMicro'
 > & {
   creditsUsedMicro?: number;
 };

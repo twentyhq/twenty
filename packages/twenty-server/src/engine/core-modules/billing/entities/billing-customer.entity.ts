@@ -15,7 +15,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { MemberCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-member-credits-fallback.enum';
+import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
@@ -46,17 +46,17 @@ export class BillingCustomerEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'boolean' })
   hasPaymentMethod: boolean | null;
 
-  @Field(() => MemberCreditsFallback)
+  @Field(() => UserCreditsFallback)
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.47.0_AddMemberCreditsFallbackToBillingCustomerFastInstanceCommand_1791909304141',
+      '2.47.0_AddUserCreditsFallbackToBillingCustomerFastInstanceCommand_1791909304141',
   })
   @Column({
     type: 'varchar',
     nullable: false,
-    default: MemberCreditsFallback.WORKSPACE_CREDITS,
+    default: UserCreditsFallback.WORKSPACE_CREDITS,
   })
-  memberCreditsFallback: MemberCreditsFallback;
+  userCreditsFallback: UserCreditsFallback;
 
   @OneToMany(
     () => BillingSubscriptionEntity,

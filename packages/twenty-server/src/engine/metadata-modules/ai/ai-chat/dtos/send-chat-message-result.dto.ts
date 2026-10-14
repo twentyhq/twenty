@@ -20,7 +20,7 @@ export class SendChatMessageResultDTO {
   mentionedParticipantWorkspaceMemberIds?: string[];
 
   // false when the member's own credits alone admitted the send, null when
-  // member credits took no part
+  // user credits took no part
   @Field(() => Boolean, { nullable: true })
   isWorkspaceAllowanceAvailable?: boolean | null;
 }

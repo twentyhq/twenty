@@ -14,5 +14,5 @@ export class UsageBreakdownItemDTO {
   creditsUsed: number;
 
   @Field(() => Float, { nullable: true })
-  memberCreditsUsed?: number | null;
+  userCreditsUsed?: number | null;
 }

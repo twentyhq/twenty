@@ -206,21 +206,21 @@ export class StreamAgentChatJob {
         );
       }
 
-      const memberCreditsAdmission =
+      const userCreditsAdmission =
         await this.usageQuotaAdmissionService.findUsageAdmission({
           workspaceId: data.workspaceId,
           resourceType: UsageResourceType.AI,
           operationType: UsageOperationType.AI_CHAT_TOKEN,
           spenders: { userWorkspaceId: data.userWorkspaceId },
-          requireMemberCounter: true,
+          requireUserAllowanceCounter: true,
         });
 
       if (
-        memberCreditsAdmission.hasMemberCounter &&
+        userCreditsAdmission.hasUserAllowanceCounter &&
         (await this.refuseTurnWithoutCredits({
           data,
           workspaceMemberId: authorization.authContext.workspaceMemberId,
-          refusal: memberCreditsAdmission.refusal,
+          refusal: userCreditsAdmission.refusal,
           turnModelId,
         }))
       ) {
@@ -260,8 +260,8 @@ export class StreamAgentChatJob {
         titlePromise,
         abortSignal: abortController.signal,
         turnModelId,
-        isMemberAllowanceAvailableAtAdmission:
-          memberCreditsAdmission.isMemberAllowanceAvailable,
+        isUserAllowanceAvailableAtAdmission:
+          userCreditsAdmission.isUserAllowanceAvailable,
       });
     } catch (error) {
       this.logger.error(
@@ -364,12 +364,12 @@ export class StreamAgentChatJob {
     };
 
     switch (exhaustedScope.exhaustedKind) {
-      case 'memberAllowance':
+      case 'userAllowance':
         await this.eventPublisherService.publish({
           threadId: data.threadId,
           workspaceId: data.workspaceId,
           event: {
-            type: 'member-credits-exhausted',
+            type: 'user-credits-exhausted',
             workspaceMemberId,
             isFallingBackToWorkspaceCredits: false,
             renewsAt: new Date(
@@ -382,16 +382,16 @@ export class StreamAgentChatJob {
           ...streamClaim,
           error: new AiException(
             'Your AI credits for this period are used up.',
-            AiExceptionCode.MEMBER_CREDITS_EXHAUSTED,
+            AiExceptionCode.USER_CREDITS_EXHAUSTED,
           ),
         });
 
         this.recordTurnOutcome(
-          { kind: 'failed', failurePhase: 'member_credits_exhausted' },
+          { kind: 'failed', failurePhase: 'user_credits_exhausted' },
           turnModelId,
         );
         break;
-      case 'allowance':
+      case 'workspaceAllowance':
         await this.streamRecoveryService.releaseStreamClaim({
           ...streamClaim,
           turnError: AGENT_TURN_CREDITS_EXHAUSTED_ERROR,
@@ -480,7 +480,7 @@ export class StreamAgentChatJob {
     titlePromise,
     abortSignal,
     turnModelId,
-    isMemberAllowanceAvailableAtAdmission,
+    isUserAllowanceAvailableAtAdmission,
   }: {
     workspace: WorkspaceEntity;
     data: StreamAgentChatJobData;
@@ -490,7 +490,7 @@ export class StreamAgentChatJob {
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
     turnModelId: string;
-    isMemberAllowanceAvailableAtAdmission: boolean | null;
+    isUserAllowanceAvailableAtAdmission: boolean | null;
   }): Promise<void> {
     const assistantMessageId = uuidv5(
       data.streamId,
@@ -510,7 +510,7 @@ export class StreamAgentChatJob {
       let streamError: unknown;
       let streamFinishError: unknown;
       let getStopReason: () => StepDebitResult['stopReason'] = () => null;
-      let getMemberAllowancePeriodEnd: () => Date | null = () => null;
+      let getUserAllowancePeriodEnd: () => Date | null = () => null;
 
       let persistChain: Promise<void> = Promise.resolve();
       let lastCheckpointAt = 0;
@@ -570,13 +570,13 @@ export class StreamAgentChatJob {
             });
           };
 
-          const onMemberCreditsExhausted = (renewsAt: Date) => {
+          const onUserCreditsExhausted = (renewsAt: Date) => {
             void this.eventPublisherService
               .publish({
                 threadId: data.threadId,
                 workspaceId: data.workspaceId,
                 event: {
-                  type: 'member-credits-exhausted',
+                  type: 'user-credits-exhausted',
                   workspaceMemberId:
                     authorization.authContext.workspaceMemberId,
                   isFallingBackToWorkspaceCredits: true,
@@ -585,7 +585,7 @@ export class StreamAgentChatJob {
               })
               .catch((error: unknown) =>
                 this.logger.warn(
-                  `Could not publish the member credits notice for stream ${data.streamId}: ${formatErrorWithCause(error)}`,
+                  `Could not publish the user credits notice for stream ${data.streamId}: ${formatErrorWithCause(error)}`,
                 ),
               );
           };
@@ -605,14 +605,13 @@ export class StreamAgentChatJob {
             onCompaction,
             abortSignal,
             conversationSizeTokens: data.conversationSizeTokens,
-            isMemberAllowanceAvailableAtAdmission,
-            onMemberCreditsExhausted,
+            isUserAllowanceAvailableAtAdmission,
+            onUserCreditsExhausted,
           });
           const { stream, modelConfig, getStreamError } = chatExecution;
 
           getStopReason = chatExecution.getStopReason;
-          getMemberAllowancePeriodEnd =
-            chatExecution.getMemberAllowancePeriodEnd;
+          getUserAllowancePeriodEnd = chatExecution.getUserAllowancePeriodEnd;
 
           const titleWritePromise = titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
@@ -644,8 +643,8 @@ export class StreamAgentChatJob {
                     responseMessage,
                     isAborted,
                     streamError,
-                    outOfCredits: getStopReason() === 'allowance',
-                    outOfMemberCredits: getStopReason() === 'memberAllowance',
+                    outOfCredits: getStopReason() === 'workspaceAllowance',
+                    outOfUserCredits: getStopReason() === 'userAllowance',
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
                     workspaceMemberId:
@@ -743,11 +742,11 @@ export class StreamAgentChatJob {
             reject(streamError);
           } else if (streamFinishError) {
             reject(streamFinishError);
-          } else if (getStopReason() === 'memberAllowance') {
-            await this.publishMemberCreditsStop({
+          } else if (getStopReason() === 'userAllowance') {
+            await this.publishUserCreditsStop({
               data,
               workspaceMemberId: authorization.authContext.workspaceMemberId,
-              renewsAt: getMemberAllowancePeriodEnd(),
+              renewsAt: getUserAllowancePeriodEnd(),
             });
             await this.eventPublisherService.publish({
               threadId: data.threadId,
@@ -758,7 +757,7 @@ export class StreamAgentChatJob {
               },
             });
             resolve();
-          } else if (getStopReason() === 'allowance') {
+          } else if (getStopReason() === 'workspaceAllowance') {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
               workspaceId: data.workspaceId,
@@ -783,7 +782,7 @@ export class StreamAgentChatJob {
     });
   }
 
-  private async publishMemberCreditsStop({
+  private async publishUserCreditsStop({
     data,
     workspaceMemberId,
     renewsAt,
@@ -793,7 +792,7 @@ export class StreamAgentChatJob {
     renewsAt: Date | null;
   }): Promise<void> {
     this.metricsService.incrementCounterBy({
-      key: MetricsKeys.UsageLimitQuotaMemberAllowanceRefused,
+      key: MetricsKeys.UsageLimitQuotaUserAllowanceRefused,
       amount: 1,
       attributes: { fallback: 'STOP', phase: 'stream' },
     });
@@ -806,7 +805,7 @@ export class StreamAgentChatJob {
       threadId: data.threadId,
       workspaceId: data.workspaceId,
       event: {
-        type: 'member-credits-exhausted',
+        type: 'user-credits-exhausted',
         workspaceMemberId,
         isFallingBackToWorkspaceCredits: false,
         renewsAt: renewsAt.toISOString(),
@@ -875,7 +874,7 @@ export class StreamAgentChatJob {
     isAborted,
     streamError,
     outOfCredits,
-    outOfMemberCredits,
+    outOfUserCredits,
     threadId,
     workspaceId,
     workspaceMemberId,
@@ -890,7 +889,7 @@ export class StreamAgentChatJob {
     isAborted: boolean;
     streamError: unknown;
     outOfCredits: boolean;
-    outOfMemberCredits: boolean;
+    outOfUserCredits: boolean;
     threadId: string;
     workspaceId: string;
     workspaceMemberId: string;
@@ -919,7 +918,7 @@ export class StreamAgentChatJob {
         isAborted,
         streamError,
         outOfCredits,
-        outOfMemberCredits,
+        outOfUserCredits,
         hasText,
         threadId,
         workspaceId,
@@ -939,7 +938,7 @@ export class StreamAgentChatJob {
       isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0,
       outOfCredits,
-      outOfMemberCredits,
+      outOfUserCredits,
     });
 
     if (responseMessage.parts.length === 0) {
@@ -1087,7 +1086,7 @@ export class StreamAgentChatJob {
     isAborted,
     streamError,
     outOfCredits,
-    outOfMemberCredits,
+    outOfUserCredits,
     hasText,
     threadId,
     workspaceId,
@@ -1098,7 +1097,7 @@ export class StreamAgentChatJob {
     isAborted: boolean;
     streamError: unknown;
     outOfCredits: boolean;
-    outOfMemberCredits: boolean;
+    outOfUserCredits: boolean;
     hasText: boolean;
     threadId: string;
     workspaceId: string;
@@ -1109,8 +1108,8 @@ export class StreamAgentChatJob {
       ? 'user-cancelled'
       : streamError
         ? 'stream-error'
-        : outOfMemberCredits
-          ? 'member-credits-exhausted'
+        : outOfUserCredits
+          ? 'user-credits-exhausted'
           : outOfCredits
             ? 'credits-exhausted'
             : 'empty-completion';

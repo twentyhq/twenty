@@ -30,36 +30,36 @@ describe('buildQuotaExhaustedException', () => {
   });
 
   it('overrides the generic user friendly message when the credit allowance is exhausted', () => {
-    const allowanceException = buildQuotaExhaustedException(
-      buildExhaustedScope({ exhaustedKind: 'allowance' }),
+    const workspaceAllowanceException = buildQuotaExhaustedException(
+      buildExhaustedScope({ exhaustedKind: 'workspaceAllowance' }),
     );
 
-    expect(allowanceException.message).toBe(
+    expect(workspaceAllowanceException.message).toBe(
       'Credit allowance exhausted for this billing period',
     );
-    expect(allowanceException.userFriendlyMessage).not.toEqual(
+    expect(workspaceAllowanceException.userFriendlyMessage).not.toEqual(
       buildQuotaExhaustedException(buildExhaustedScope()).userFriendlyMessage,
     );
   });
 
-  it('tells the member their own AI credits are used up when the member allowance is exhausted', () => {
-    const memberAllowanceException = buildQuotaExhaustedException(
+  it('tells the member their own AI credits are used up when the user allowance is exhausted', () => {
+    const userAllowanceException = buildQuotaExhaustedException(
       buildExhaustedScope({
         resourceType: UsageResourceType.AI,
-        exhaustedKind: 'memberAllowance',
+        exhaustedKind: 'userAllowance',
         operationType: UsageOperationType.ALL,
         periodCount: null,
         periodUnit: null,
       }),
     );
 
-    expect(memberAllowanceException.message).toBe(
-      'Member credits allowance exhausted for this period',
+    expect(userAllowanceException.message).toBe(
+      'User credits allowance exhausted for this period',
     );
-    expect(memberAllowanceException.code).toBe(
+    expect(userAllowanceException.code).toBe(
       UsageLimitExceptionCode.QUOTA_EXHAUSTED,
     );
-    expect(memberAllowanceException.userFriendlyMessage.message).toBe(
+    expect(userAllowanceException.userFriendlyMessage.message).toBe(
       'Your AI credits for this period are used up.',
     );
   });

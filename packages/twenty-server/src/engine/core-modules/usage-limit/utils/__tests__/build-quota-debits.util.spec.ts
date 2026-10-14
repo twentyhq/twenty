@@ -1,6 +1,6 @@
-import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
+import { type WorkspaceAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/workspace-allowance-quota-counter.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
-import { type MemberAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/member-allowance-quota-counter.type';
+import { type UserAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/user-allowance-quota-counter.type';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -10,18 +10,18 @@ import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/recor
 const PERIOD_START = new Date('2026-08-01T00:00:00.000Z');
 const PERIOD_END = new Date('2026-09-01T00:00:00.000Z');
 
-const allowanceCounter: AllowanceQuotaCounter = {
-  kind: 'allowance',
-  key: 'allowance',
+const workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter = {
+  kind: 'workspaceAllowance',
+  key: 'workspaceAllowance',
   limitValue: 1_000_000,
   unit: UsageUnit.CREDIT,
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
 };
 
-const memberAllowanceCounter: MemberAllowanceQuotaCounter = {
-  kind: 'memberAllowance',
-  key: 'member-allowance',
+const userAllowanceCounter: UserAllowanceQuotaCounter = {
+  kind: 'userAllowance',
+  key: 'user-allowance',
   limitValue: 1_000,
   unit: UsageUnit.CREDIT,
   userWorkspaceId: 'user-workspace-1',
@@ -76,25 +76,25 @@ describe('buildQuotaDebits', () => {
   it('debits the allowance with the credits of every event', () => {
     expect(
       buildQuotaDebits({
-        counters: [allowanceCounter],
+        counters: [workspaceAllowanceCounter],
         events: [logicFunctionEvent, workflowEvent],
       }),
-    ).toEqual([{ counter: allowanceCounter, amount: 400 }]);
+    ).toEqual([{ counter: workspaceAllowanceCounter, amount: 400 }]);
   });
 
-  it('never debits a member allowance counter', () => {
+  it('never debits a user allowance counter', () => {
     expect(
       buildQuotaDebits({
-        counters: [memberAllowanceCounter, allowanceCounter],
+        counters: [userAllowanceCounter, workspaceAllowanceCounter],
         events: [logicFunctionEvent],
       }),
-    ).toEqual([{ counter: allowanceCounter, amount: 100 }]);
+    ).toEqual([{ counter: workspaceAllowanceCounter, amount: 100 }]);
   });
 
   it('drops a counter the events consume nothing of', () => {
     expect(
       buildQuotaDebits({
-        counters: [allowanceCounter],
+        counters: [workspaceAllowanceCounter],
         events: [{ ...logicFunctionEvent, creditsUsedMicro: 0 }],
       }),
     ).toEqual([]);

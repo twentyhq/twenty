@@ -3,13 +3,13 @@ export const createTurnUsageRecorder = <TStep>({
 }: {
   recordTurn: ({
     steps,
-    memberCreditsUsedMicro,
+    userCreditsUsedMicro,
   }: {
     steps: TStep[];
-    memberCreditsUsedMicro: number;
+    userCreditsUsedMicro: number;
   }) => Promise<void>;
 }): {
-  trackStepDebit: <TStepDebitResult extends { memberCreditsUsedMicro: number }>(
+  trackStepDebit: <TStepDebitResult extends { userCreditsUsedMicro: number }>(
     step: TStep,
     debitPromise: Promise<TStepDebitResult>,
   ) => Promise<TStepDebitResult>;
@@ -17,13 +17,13 @@ export const createTurnUsageRecorder = <TStep>({
 } => {
   const debitedSteps: TStep[] = [];
   const pendingStepDebits: Promise<unknown>[] = [];
-  let memberCreditsUsedMicro = 0;
+  let userCreditsUsedMicro = 0;
   let isRecorded = false;
 
   return {
     trackStepDebit: (step, debitPromise) => {
       const accumulatedDebitPromise = debitPromise.then((stepDebitResult) => {
-        memberCreditsUsedMicro += stepDebitResult.memberCreditsUsedMicro;
+        userCreditsUsedMicro += stepDebitResult.userCreditsUsedMicro;
 
         return stepDebitResult;
       });
@@ -46,7 +46,7 @@ export const createTurnUsageRecorder = <TStep>({
         return;
       }
 
-      await recordTurn({ steps: [...debitedSteps], memberCreditsUsedMicro });
+      await recordTurn({ steps: [...debitedSteps], userCreditsUsedMicro });
     },
   };
 };

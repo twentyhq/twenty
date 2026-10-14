@@ -21,7 +21,7 @@ import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
-import { BillingUpdateMemberCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-member-credits-fallback.input';
+import { BillingUpdateUserCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -421,13 +421,13 @@ export class BillingResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
-  async updateMemberCreditsFallback(
+  async updateUserCreditsFallback(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args() { memberCreditsFallback }: BillingUpdateMemberCreditsFallbackInput,
+    @Args() { userCreditsFallback }: BillingUpdateUserCreditsFallbackInput,
   ): Promise<BillingCustomerEntity> {
-    return this.billingService.updateMemberCreditsFallbackOrThrow({
+    return this.billingService.updateUserCreditsFallbackOrThrow({
       workspaceId: workspace.id,
-      memberCreditsFallback,
+      userCreditsFallback,
     });
   }
 
@@ -526,7 +526,7 @@ export class BillingResolver {
     return usageData.map((item) => ({
       ...item,
       usedCredits: toDisplayCredits(item.usedCredits),
-      memberCreditsUsed: toDisplayCredits(item.memberCreditsUsed),
+      userCreditsUsed: toDisplayCredits(item.userCreditsUsed),
       grantedCredits: toDisplayCredits(item.grantedCredits),
       rolloverCredits: toDisplayCredits(item.rolloverCredits),
       totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),

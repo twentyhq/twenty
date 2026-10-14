@@ -5,13 +5,13 @@ export const classifyAgentChatTurnOutcome = ({
   isAborted,
   isAwaitingUserAnswer,
   outOfCredits,
-  outOfMemberCredits,
+  outOfUserCredits,
 }: {
   hasText: boolean;
   isAborted: boolean;
   isAwaitingUserAnswer: boolean;
   outOfCredits: boolean;
-  outOfMemberCredits: boolean;
+  outOfUserCredits: boolean;
 }): AgentChatTurnOutcome => {
   // stopWhen ends the stream on a question, so this is a completed turn, not an abandoned one
   if (isAwaitingUserAnswer) {
@@ -26,8 +26,8 @@ export const classifyAgentChatTurnOutcome = ({
     return { kind: 'completed', outcome: 'answered' };
   }
 
-  if (outOfMemberCredits) {
-    return { kind: 'failed', failurePhase: 'member_credits_exhausted' };
+  if (outOfUserCredits) {
+    return { kind: 'failed', failurePhase: 'user_credits_exhausted' };
   }
 
   return {

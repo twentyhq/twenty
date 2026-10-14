@@ -58,9 +58,9 @@ export class UsageQuotaAdmissionService {
     operationType,
     spenders,
     cost,
-    requireMemberCounter,
+    requireUserAllowanceCounter,
   }: UsageQuotaScope & {
-    requireMemberCounter?: boolean;
+    requireUserAllowanceCounter?: boolean;
   }): Promise<UsageAdmission> {
     const subscriptionInactiveReason =
       await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
@@ -71,27 +71,27 @@ export class UsageQuotaAdmissionService {
           kind: 'subscriptionInactive',
           reason: subscriptionInactiveReason,
         },
-        hasMemberCounter: false,
-        isMemberAllowanceAvailable: null,
+        hasUserAllowanceCounter: false,
+        isUserAllowanceAvailable: null,
         isWorkspaceAllowanceAvailable: null,
       };
     }
 
-    const { exhaustedScope, ...memberAdmission } =
+    const { exhaustedScope, ...userAllowanceAdmission } =
       await this.usageLimitQuotaService.findAdmission({
         workspaceId,
         resourceType,
         operationType,
         spenders,
         cost,
-        requireMemberCounter,
+        requireUserAllowanceCounter,
       });
 
     return {
       refusal: isDefined(exhaustedScope)
         ? { kind: 'quotaExhausted', exhaustedScope }
         : null,
-      ...memberAdmission,
+      ...userAllowanceAdmission,
     };
   }
 
@@ -106,7 +106,9 @@ export class UsageQuotaAdmissionService {
     }
 
     const remainingMicro =
-      await this.usageLimitQuotaService.getAllowanceRemainingMicro(workspaceId);
+      await this.usageLimitQuotaService.getWorkspaceAllowanceRemainingMicro(
+        workspaceId,
+      );
 
     if (isDefined(remainingMicro) && remainingMicro <= 0) {
       return { hasAvailableCredits: false, reason: 'NO_CREDITS' };

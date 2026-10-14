@@ -45,7 +45,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
           response,
           403,
         );
-      case AiExceptionCode.MEMBER_CREDITS_EXHAUSTED:
+      case AiExceptionCode.USER_CREDITS_EXHAUSTED:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

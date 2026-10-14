@@ -24,5 +24,5 @@ export class AdminPanelWorkspaceUsageDTO {
   remainingCredits: number;
 
   @Field(() => Float, { nullable: true })
-  memberCreditsUsed: number | null;
+  userCreditsUsed: number | null;
 }

@@ -166,22 +166,22 @@ export interface AggregateChartConfiguration {
 
 export type AggregateOperations = 'AVG' | 'COUNT' | 'COUNT_EMPTY' | 'COUNT_FALSE' | 'COUNT_NOT_EMPTY' | 'COUNT_TRUE' | 'COUNT_UNIQUE_VALUES' | 'MAX' | 'MIN' | 'PERCENTAGE_EMPTY' | 'PERCENTAGE_NOT_EMPTY' | 'SUM'
 
-export interface AiChatMemberCredits {
-    consumedValue?: Scalars['BigInt']
-    fallback: MemberCreditsFallback
-    isUsingWorkspaceCredits: Scalars['Boolean']
-    limitValue: Scalars['BigInt']
-    periodEnd: Scalars['DateTime']
-    __typename: 'AiChatMemberCredits'
-}
-
 export interface AiChatUsage {
     consumedValue?: Scalars['BigInt']
     kind: Scalars['String']
     limitValue: Scalars['BigInt']
-    memberCredits?: AiChatMemberCredits
     periodEnd?: Scalars['DateTime']
+    userCredits?: AiChatUserCredits
     __typename: 'AiChatUsage'
+}
+
+export interface AiChatUserCredits {
+    consumedValue?: Scalars['BigInt']
+    fallback: UserCreditsFallback
+    isUsingWorkspaceCredits: Scalars['Boolean']
+    limitValue: Scalars['BigInt']
+    periodEnd: Scalars['DateTime']
+    __typename: 'AiChatUserCredits'
 }
 
 export type AiModelTier = 'balanced' | 'extraFast' | 'extraSmart' | 'fast' | 'smart'
@@ -661,7 +661,7 @@ export interface Billing {
 export interface BillingCustomer {
     hasPaymentMethod?: Scalars['Boolean']
     id: Scalars['UUID']
-    memberCreditsFallback: MemberCreditsFallback
+    userCreditsFallback: UserCreditsFallback
     __typename: 'BillingCustomer'
 }
 
@@ -772,7 +772,6 @@ export interface BillingProductMetadata {
 
 export interface BillingResourceCreditUsage {
     grantedCredits: Scalars['Float']
-    memberCreditsUsed: Scalars['Float']
     periodEnd: Scalars['DateTime']
     periodStart: Scalars['DateTime']
     productKey: BillingProductKey
@@ -780,6 +779,7 @@ export interface BillingResourceCreditUsage {
     totalGrantedCredits: Scalars['Float']
     unitPriceCents: Scalars['Float']
     usedCredits: Scalars['Float']
+    userCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
 }
 
@@ -1856,8 +1856,6 @@ export interface MarketplaceAppRoleObjectPermission {
     __typename: 'MarketplaceAppRoleObjectPermission'
 }
 
-export type MemberCreditsFallback = 'STOP' | 'WORKSPACE_CREDITS'
-
 export interface MessageCampaignBodyConfiguration {
     configurationType: WidgetConfigurationType
     __typename: 'MessageCampaignBodyConfiguration'
@@ -2236,7 +2234,6 @@ export interface Mutation {
     updateManyNavigationMenuItems: NavigationMenuItem[]
     updateManyObjects: Object[]
     updateManyViewGroups: ViewGroup[]
-    updateMemberCreditsFallback: BillingCustomer
     updateMessageChannel: MessageChannel
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
@@ -2257,6 +2254,7 @@ export interface Mutation {
     updateTimelineActivityType: TimelineActivityType
     updateUnsubscribeTopic: UnsubscribeTopic
     updateUsageLimit: UsageLimit
+    updateUserCreditsFallback: BillingCustomer
     updateUserEmail: Scalars['Boolean']
     updateValidationRule: ValidationRule
     updateView: View
@@ -3378,7 +3376,7 @@ export interface UsageBreakdownItem {
     creditsUsed: Scalars['Float']
     key: Scalars['String']
     label?: Scalars['String']
-    memberCreditsUsed?: Scalars['Float']
+    userCreditsUsed?: Scalars['Float']
     __typename: 'UsageBreakdownItem'
 }
 
@@ -3514,6 +3512,8 @@ export interface UserApplicationVariableValue {
     value: Scalars['String']
     __typename: 'UserApplicationVariableValue'
 }
+
+export type UserCreditsFallback = 'STOP' | 'WORKSPACE_CREDITS'
 
 export interface UserSession {
     authProvider: Scalars['String']
@@ -4116,21 +4116,21 @@ export interface AggregateChartConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AiChatMemberCreditsGenqlSelection{
-    consumedValue?: boolean | number
-    fallback?: boolean | number
-    isUsingWorkspaceCredits?: boolean | number
-    limitValue?: boolean | number
-    periodEnd?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface AiChatUsageGenqlSelection{
     consumedValue?: boolean | number
     kind?: boolean | number
     limitValue?: boolean | number
-    memberCredits?: AiChatMemberCreditsGenqlSelection
+    periodEnd?: boolean | number
+    userCredits?: AiChatUserCreditsGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AiChatUserCreditsGenqlSelection{
+    consumedValue?: boolean | number
+    fallback?: boolean | number
+    isUsingWorkspaceCredits?: boolean | number
+    limitValue?: boolean | number
     periodEnd?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -4636,7 +4636,7 @@ export interface BillingGenqlSelection{
 export interface BillingCustomerGenqlSelection{
     hasPaymentMethod?: boolean | number
     id?: boolean | number
-    memberCreditsFallback?: boolean | number
+    userCreditsFallback?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4758,7 +4758,6 @@ export interface BillingProductMetadataGenqlSelection{
 
 export interface BillingResourceCreditUsageGenqlSelection{
     grantedCredits?: boolean | number
-    memberCreditsUsed?: boolean | number
     periodEnd?: boolean | number
     periodStart?: boolean | number
     productKey?: boolean | number
@@ -4766,6 +4765,7 @@ export interface BillingResourceCreditUsageGenqlSelection{
     totalGrantedCredits?: boolean | number
     unitPriceCents?: boolean | number
     usedCredits?: boolean | number
+    userCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6447,7 +6447,6 @@ export interface MutationGenqlSelection{
     updateManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {inputs: UpdateOneNavigationMenuItemInput[]} })
     updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
     updateManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: UpdateViewGroupInput[]} })
-    updateMemberCreditsFallback?: (BillingCustomerGenqlSelection & { __args: {memberCreditsFallback: MemberCreditsFallback} })
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
@@ -6468,6 +6467,7 @@ export interface MutationGenqlSelection{
     updateTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {input: UpdateTimelineActivityTypeInput} })
     updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
     updateUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpdateUsageLimitInput} })
+    updateUserCreditsFallback?: (BillingCustomerGenqlSelection & { __args: {userCreditsFallback: UserCreditsFallback} })
     updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
     updateValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: UpdateValidationRuleInput} })
     updateView?: (ViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
@@ -7938,7 +7938,7 @@ export interface UsageBreakdownItemGenqlSelection{
     creditsUsed?: boolean | number
     key?: boolean | number
     label?: boolean | number
-    memberCreditsUsed?: boolean | number
+    userCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8615,18 +8615,18 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const AiChatMemberCredits_possibleTypes: string[] = ['AiChatMemberCredits']
-    export const isAiChatMemberCredits = (obj?: { __typename?: any } | null): obj is AiChatMemberCredits => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatMemberCredits"')
-      return AiChatMemberCredits_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const AiChatUsage_possibleTypes: string[] = ['AiChatUsage']
     export const isAiChatUsage = (obj?: { __typename?: any } | null): obj is AiChatUsage => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUsage"')
       return AiChatUsage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AiChatUserCredits_possibleTypes: string[] = ['AiChatUserCredits']
+    export const isAiChatUserCredits = (obj?: { __typename?: any } | null): obj is AiChatUserCredits => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUserCredits"')
+      return AiChatUserCredits_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11634,11 +11634,6 @@ export const enumLogicFunctionExecutionStatus = {
    SUCCESS: 'SUCCESS' as const
 }
 
-export const enumMemberCreditsFallback = {
-   STOP: 'STOP' as const,
-   WORKSPACE_CREDITS: 'WORKSPACE_CREDITS' as const
-}
-
 export const enumMessageChannelContactAutoCreationPolicy = {
    NONE: 'NONE' as const,
    SENT: 'SENT' as const,
@@ -11988,6 +11983,11 @@ export const enumUsageUnit = {
    REQUEST: 'REQUEST' as const,
    SEAT: 'SEAT' as const,
    TOKEN: 'TOKEN' as const
+}
+
+export const enumUserCreditsFallback = {
+   STOP: 'STOP' as const,
+   WORKSPACE_CREDITS: 'WORKSPACE_CREDITS' as const
 }
 
 export const enumViewCalendarLayout = {

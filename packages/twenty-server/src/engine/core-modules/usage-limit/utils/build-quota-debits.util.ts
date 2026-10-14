@@ -2,7 +2,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaDebit } from 'src/engine/core-modules/usage-limit/types/quota-debit.type';
-import { computeAllowanceDebitAmount } from 'src/engine/core-modules/usage-limit/utils/compute-allowance-debit-amount.util';
+import { computeWorkspaceAllowanceDebitAmount } from 'src/engine/core-modules/usage-limit/utils/compute-workspace-allowance-debit-amount.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { fromRecordUsageInputToUsageConsumptionRow } from 'src/engine/core-modules/usage/utils/from-record-usage-input-to-usage-consumption-row.util';
@@ -29,13 +29,13 @@ export const buildQuotaDebits = ({
           ? [{ counter, amount }]
           : [];
       }
-      case 'allowance': {
-        const amount = computeAllowanceDebitAmount({ events });
+      case 'workspaceAllowance': {
+        const amount = computeWorkspaceAllowanceDebitAmount({ events });
 
         return amount > 0 ? [{ counter, amount }] : [];
       }
-      // A member counter is debited only by the member-first script, which decides the split with the allowance
-      case 'memberAllowance':
+      // A user allowance counter is debited only by the user-allowance-first script, which decides the split with the allowance
+      case 'userAllowance':
         return [];
       default:
         return assertUnreachable(counter);

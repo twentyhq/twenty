@@ -1,4 +1,4 @@
 export type BillingPeriodCreditsUsed = {
-  workspaceFundedCreditsUsedMicro: number;
-  memberCreditsUsedMicro: number;
+  workspaceCreditsUsedMicro: number;
+  userCreditsUsedMicro: number;
 };

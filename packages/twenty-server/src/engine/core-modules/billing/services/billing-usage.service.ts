@@ -125,7 +125,7 @@ export class BillingUsageService {
     const [billingPeriodCreditsUsed, rolloverCredits] = await Promise.all([
       // Fails open: an unreadable usage total must never block a paying workspace
       this.usageAnalyticsService
-        .getWorkspaceFundedCreditsUsedMicroForBillingPeriod({
+        .getWorkspaceCreditsUsedMicroForBillingPeriod({
           workspaceId,
           periodStart,
           periodEnd,
@@ -150,9 +150,8 @@ export class BillingUsageService {
       productKey: item.productKey,
       periodStart,
       periodEnd,
-      usedCredits:
-        billingPeriodCreditsUsed?.workspaceFundedCreditsUsedMicro ?? 0,
-      memberCreditsUsed: billingPeriodCreditsUsed?.memberCreditsUsedMicro ?? 0,
+      usedCredits: billingPeriodCreditsUsed?.workspaceCreditsUsedMicro ?? 0,
+      userCreditsUsed: billingPeriodCreditsUsed?.userCreditsUsedMicro ?? 0,
       grantedCredits,
       rolloverCredits,
       totalGrantedCredits: grantedCredits + rolloverCredits,
@@ -203,7 +202,7 @@ export class BillingUsageService {
     to: Date;
   }): Promise<number | null> {
     const rows = await this.clickHouseService.select<UsageSumRow>(
-      `SELECT sum(creditsUsedMicro) - sum(memberCreditsUsedMicro) AS total
+      `SELECT sum(creditsUsedMicro) - sum(userCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND timestamp >= {from:DateTime64(3)} AND timestamp < {to:DateTime64(3)}`,

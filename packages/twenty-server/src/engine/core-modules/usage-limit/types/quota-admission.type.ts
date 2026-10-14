@@ -2,7 +2,7 @@ import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/e
 
 export type QuotaAdmission = {
   exhaustedScope: ExhaustedScope | null;
-  hasMemberCounter: boolean;
-  isMemberAllowanceAvailable: boolean | null;
+  hasUserAllowanceCounter: boolean;
+  isUserAllowanceAvailable: boolean | null;
   isWorkspaceAllowanceAvailable: boolean | null;
 };

@@ -120,9 +120,7 @@ export class AiBillingService {
     operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
-  ): Promise<
-    Pick<QuotaDebitResult, 'exhaustedKind' | 'memberCreditsUsedMicro'>
-  > {
+  ): Promise<Pick<QuotaDebitResult, 'exhaustedKind' | 'userCreditsUsedMicro'>> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -166,9 +164,9 @@ export class AiBillingService {
 
     const {
       exhaustedKind,
-      memberCreditsUsedMicro,
-      isMemberAllowanceExhausted,
-      memberAllowancePeriodEnd,
+      userCreditsUsedMicro,
+      isUserAllowanceExhausted,
+      userAllowancePeriodEnd,
     } = await this.usageLimitQuotaService.debitAheadOfRecord({
       workspaceId,
       event: this.buildAiTokenUsageEvent({
@@ -186,9 +184,9 @@ export class AiBillingService {
     return {
       hasNoMoreAvailableCredits: isDefined(stopReason),
       stopReason,
-      memberCreditsUsedMicro,
-      isMemberAllowanceExhausted,
-      memberAllowancePeriodEnd,
+      userCreditsUsedMicro,
+      isUserAllowanceExhausted,
+      userAllowancePeriodEnd,
     };
   }
 
@@ -196,11 +194,9 @@ export class AiBillingService {
     nativeWebSearchCallCount: number,
     workspaceId: string,
     spenders: UsageSpenders,
-  ): Promise<
-    Pick<QuotaDebitResult, 'exhaustedKind' | 'memberCreditsUsedMicro'>
-  > {
+  ): Promise<Pick<QuotaDebitResult, 'exhaustedKind' | 'userCreditsUsedMicro'>> {
     if (nativeWebSearchCallCount <= 0) {
-      return { exhaustedKind: null, memberCreditsUsedMicro: 0 };
+      return { exhaustedKind: null, userCreditsUsedMicro: 0 };
     }
 
     const costInDollars =
@@ -234,7 +230,7 @@ export class AiBillingService {
     operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
-    memberCreditsUsedMicro = 0,
+    userCreditsUsedMicro = 0,
   ): Promise<void> {
     await this.usageRecorderService.record(workspaceId, [
       {
@@ -245,7 +241,7 @@ export class AiBillingService {
           operationType,
           spenders: { userWorkspaceId, agentId },
         }),
-        memberCreditsUsedMicro,
+        userCreditsUsedMicro,
       },
     ]);
   }

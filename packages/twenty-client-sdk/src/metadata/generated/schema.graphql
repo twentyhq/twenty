@@ -186,20 +186,20 @@ enum AggregateOperations {
   SUM
 }
 
-type AiChatMemberCredits {
-  consumedValue: BigInt
-  fallback: MemberCreditsFallback!
-  isUsingWorkspaceCredits: Boolean!
-  limitValue: BigInt!
-  periodEnd: DateTime!
-}
-
 type AiChatUsage {
   consumedValue: BigInt
   kind: String!
   limitValue: BigInt!
-  memberCredits: AiChatMemberCredits
   periodEnd: DateTime
+  userCredits: AiChatUserCredits
+}
+
+type AiChatUserCredits {
+  consumedValue: BigInt
+  fallback: UserCreditsFallback!
+  isUsingWorkspaceCredits: Boolean!
+  limitValue: BigInt!
+  periodEnd: DateTime!
 }
 
 enum AiModelTier {
@@ -746,7 +746,7 @@ type Billing {
 type BillingCustomer {
   hasPaymentMethod: Boolean
   id: UUID!
-  memberCreditsFallback: MemberCreditsFallback!
+  userCreditsFallback: UserCreditsFallback!
 }
 
 type BillingEndTrialPeriod {
@@ -868,7 +868,6 @@ type BillingProductMetadata {
 
 type BillingResourceCreditUsage {
   grantedCredits: Float!
-  memberCreditsUsed: Float!
   periodEnd: DateTime!
   periodStart: DateTime!
   productKey: BillingProductKey!
@@ -876,6 +875,7 @@ type BillingResourceCreditUsage {
   totalGrantedCredits: Float!
   unitPriceCents: Float!
   usedCredits: Float!
+  userCreditsUsed: Float!
 }
 
 type BillingSession {
@@ -2738,11 +2738,6 @@ type MarketplaceAppRoleObjectPermission {
   universalIdentifier: String!
 }
 
-enum MemberCreditsFallback {
-  STOP
-  WORKSPACE_CREDITS
-}
-
 type MessageCampaignBodyConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -3195,7 +3190,6 @@ type Mutation {
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
-  updateMemberCreditsFallback(memberCreditsFallback: MemberCreditsFallback!): BillingCustomer!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
@@ -3216,6 +3210,7 @@ type Mutation {
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
+  updateUserCreditsFallback(userCreditsFallback: UserCreditsFallback!): BillingCustomer!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
   updateValidationRule(input: UpdateValidationRuleInput!): ValidationRule!
   updateView(id: String!, input: UpdateViewInput!): View!
@@ -5294,7 +5289,7 @@ type UsageBreakdownItem {
   creditsUsed: Float!
   key: String!
   label: String
-  memberCreditsUsed: Float
+  userCreditsUsed: Float
 }
 
 type UsageLimit {
@@ -5463,6 +5458,11 @@ type UserApplicationVariableValue {
   options: JSON
   type: String!
   value: String!
+}
+
+enum UserCreditsFallback {
+  STOP
+  WORKSPACE_CREDITS
 }
 
 type UserSession {

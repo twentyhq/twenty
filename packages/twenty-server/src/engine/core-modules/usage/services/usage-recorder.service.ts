@@ -9,7 +9,7 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { clampMemberCreditsUsedMicro } from 'src/engine/core-modules/usage/utils/clamp-member-credits-used-micro.util';
+import { clampUserCreditsUsedMicro } from 'src/engine/core-modules/usage/utils/clamp-user-credits-used-micro.util';
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -166,38 +166,36 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
         `Refusing to record ${creditsUsedMicro} creditsUsedMicro on a ${input.operationType} usage event; recording 0 instead`,
       );
 
-      return this.withClampedMemberCreditsUsedMicro({
+      return this.withClampedUserCreditsUsedMicro({
         ...input,
         creditsUsedMicro: 0,
       });
     }
 
-    return this.withClampedMemberCreditsUsedMicro({
+    return this.withClampedUserCreditsUsedMicro({
       ...input,
       creditsUsedMicro,
     });
   }
 
-  // Bounded by the recorded total, not the requested one, so workspace-funded credits (total - member) never go negative
-  private withClampedMemberCreditsUsedMicro(
-    usageEvent: UsageEvent,
-  ): UsageEvent {
-    if (!isDefined(usageEvent.memberCreditsUsedMicro)) {
+  // Bounded by the recorded total, not the requested one, so workspace credits (total - user credits) never go negative
+  private withClampedUserCreditsUsedMicro(usageEvent: UsageEvent): UsageEvent {
+    if (!isDefined(usageEvent.userCreditsUsedMicro)) {
       return usageEvent;
     }
 
-    const memberCreditsUsedMicro = clampMemberCreditsUsedMicro({
-      memberCreditsUsedMicro: usageEvent.memberCreditsUsedMicro,
+    const userCreditsUsedMicro = clampUserCreditsUsedMicro({
+      userCreditsUsedMicro: usageEvent.userCreditsUsedMicro,
       creditsUsedMicro: usageEvent.creditsUsedMicro,
     });
 
-    if (memberCreditsUsedMicro !== usageEvent.memberCreditsUsedMicro) {
+    if (userCreditsUsedMicro !== usageEvent.userCreditsUsedMicro) {
       this.logger.error(
-        `Clamping ${usageEvent.memberCreditsUsedMicro} memberCreditsUsedMicro to ${memberCreditsUsedMicro} on a ${usageEvent.operationType} usage event of ${usageEvent.creditsUsedMicro} creditsUsedMicro`,
+        `Clamping ${usageEvent.userCreditsUsedMicro} userCreditsUsedMicro to ${userCreditsUsedMicro} on a ${usageEvent.operationType} usage event of ${usageEvent.creditsUsedMicro} creditsUsedMicro`,
       );
     }
 
-    return { ...usageEvent, memberCreditsUsedMicro };
+    return { ...usageEvent, userCreditsUsedMicro };
   }
 
   private async getBillingPeriodStart(

@@ -1,6 +1,6 @@
-import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
+import { type WorkspaceAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/workspace-allowance-quota-counter.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
-import { type MemberAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/member-allowance-quota-counter.type';
+import { type UserAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/user-allowance-quota-counter.type';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -28,8 +28,8 @@ const buildLimitCounter = (
   ...overrides,
 });
 
-const allowanceCounter: AllowanceQuotaCounter = {
-  kind: 'allowance',
+const workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter = {
+  kind: 'workspaceAllowance',
   key: 'allowance-key',
   limitValue: 2_000_000,
   unit: UsageUnit.CREDIT,
@@ -39,9 +39,9 @@ const allowanceCounter: AllowanceQuotaCounter = {
 
 const SLICE_END = new Date('2026-08-25T00:00:00.000Z');
 
-const memberAllowanceCounter: MemberAllowanceQuotaCounter = {
-  kind: 'memberAllowance',
-  key: 'member-allowance-key',
+const userAllowanceCounter: UserAllowanceQuotaCounter = {
+  kind: 'userAllowance',
+  key: 'user-allowance-key',
   limitValue: 3_000_000,
   unit: UsageUnit.CREDIT,
   userWorkspaceId: 'user-workspace-1',
@@ -95,12 +95,12 @@ describe('buildQuotaExhaustedScope', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
-        counter: allowanceCounter,
+        counter: workspaceAllowanceCounter,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
       limitKind: 'quota',
-      exhaustedKind: 'allowance',
+      exhaustedKind: 'workspaceAllowance',
       spenderType: 'workspace',
       spenderId: null,
       operationType: UsageOperationType.ALL,
@@ -113,16 +113,16 @@ describe('buildQuotaExhaustedScope', () => {
     });
   });
 
-  it('scopes an exhausted member allowance counter to the member until the week ends', () => {
+  it('scopes an exhausted user allowance counter to the member until the week ends', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
-        counter: memberAllowanceCounter,
+        counter: userAllowanceCounter,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
       limitKind: 'quota',
-      exhaustedKind: 'memberAllowance',
+      exhaustedKind: 'userAllowance',
       spenderType: 'userWorkspace',
       spenderId: 'user-workspace-1',
       operationType: UsageOperationType.ALL,

@@ -12,7 +12,7 @@ import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constan
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { type MemberCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-member-credits-fallback.enum';
+import { type UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -66,17 +66,17 @@ export class BillingService {
     });
   }
 
-  async updateMemberCreditsFallbackOrThrow({
+  async updateUserCreditsFallbackOrThrow({
     workspaceId,
-    memberCreditsFallback,
+    userCreditsFallback,
   }: {
     workspaceId: string;
-    memberCreditsFallback: MemberCreditsFallback;
+    userCreditsFallback: UserCreditsFallback;
   }): Promise<BillingCustomerEntity> {
     const { affected } = await this.billingCustomerRepository.update(
       workspaceId,
       {},
-      { memberCreditsFallback },
+      { userCreditsFallback },
     );
 
     if (affected === 0) {

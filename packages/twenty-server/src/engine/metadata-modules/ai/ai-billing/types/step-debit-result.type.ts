@@ -3,7 +3,7 @@ import { type ExhaustedKind } from 'src/engine/core-modules/usage-limit/types/ex
 export type StepDebitResult = {
   hasNoMoreAvailableCredits: boolean;
   stopReason: Exclude<ExhaustedKind, 'limit'> | null;
-  memberCreditsUsedMicro: number;
-  isMemberAllowanceExhausted: boolean;
-  memberAllowancePeriodEnd: Date | null;
+  userCreditsUsedMicro: number;
+  isUserAllowanceExhausted: boolean;
+  userAllowancePeriodEnd: Date | null;
 };

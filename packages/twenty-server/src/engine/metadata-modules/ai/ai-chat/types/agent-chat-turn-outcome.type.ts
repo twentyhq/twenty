@@ -7,7 +7,7 @@ export type AgentChatTurnOutcome =
       failurePhase:
         | 'no_text'
         | 'credits_exhausted'
-        | 'member_credits_exhausted'
+        | 'user_credits_exhausted'
         | 'execution';
       errorCode?: string;
     };

@@ -287,7 +287,7 @@ export class AdminPanelBillingService {
         rolloverCredits,
         totalGrantedCredits,
         remainingCredits: totalGrantedCredits - usedCredits,
-        memberCreditsUsed: toDisplayCredits(usage.memberCreditsUsed),
+        userCreditsUsed: toDisplayCredits(usage.userCreditsUsed),
       };
     } catch (error) {
       this.logger.warn(

@@ -216,27 +216,27 @@ export const debitInFlightCredits = async (
 export const readAllowanceConsumedMicro = async (
   workspaceId: string,
 ): Promise<number> => {
-  const allowanceUsage =
-    await getUsageLimitQuotaService().getAllowanceUsage(workspaceId);
+  const workspaceAllowanceUsage =
+    await getUsageLimitQuotaService().getWorkspaceAllowanceUsage(workspaceId);
 
-  if (!isDefined(allowanceUsage?.consumedValue)) {
+  if (!isDefined(workspaceAllowanceUsage?.consumedValue)) {
     throw new Error(`No allowance consumption for workspace ${workspaceId}`);
   }
 
-  return allowanceUsage.consumedValue;
+  return workspaceAllowanceUsage.consumedValue;
 };
 
 export const readAllowanceLimitMicro = async (
   workspaceId: string,
 ): Promise<number> => {
-  const allowanceUsage =
-    await getUsageLimitQuotaService().getAllowanceUsage(workspaceId);
+  const workspaceAllowanceUsage =
+    await getUsageLimitQuotaService().getWorkspaceAllowanceUsage(workspaceId);
 
-  if (!isDefined(allowanceUsage)) {
+  if (!isDefined(workspaceAllowanceUsage)) {
     throw new Error(`No allowance for workspace ${workspaceId}`);
   }
 
-  return allowanceUsage.limitValue;
+  return workspaceAllowanceUsage.limitValue;
 };
 
 export const resetBillingCreditState = async (

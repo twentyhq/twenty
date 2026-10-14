@@ -216,13 +216,13 @@ export type AdminPanelWorkspaceSubscriptionItem = {
 export type AdminPanelWorkspaceUsage = {
   __typename?: 'AdminPanelWorkspaceUsage';
   grantedCredits: Scalars['Float']['output'];
-  memberCreditsUsed?: Maybe<Scalars['Float']['output']>;
   periodEnd: Scalars['DateTime']['output'];
   periodStart: Scalars['DateTime']['output'];
   remainingCredits: Scalars['Float']['output'];
   rolloverCredits: Scalars['Float']['output'];
   totalGrantedCredits: Scalars['Float']['output'];
   usedCredits: Scalars['Float']['output'];
+  userCreditsUsed?: Maybe<Scalars['Float']['output']>;
 };
 
 export type AdminPanelWorkspaceUsageLimits = {
@@ -1054,7 +1054,7 @@ export type UsageBreakdownItem = {
   creditsUsed: Scalars['Float']['output'];
   key: Scalars['String']['output'];
   label?: Maybe<Scalars['String']['output']>;
-  memberCreditsUsed?: Maybe<Scalars['Float']['output']>;
+  userCreditsUsed?: Maybe<Scalars['Float']['output']>;
 };
 
 export enum UsageOperationType {

@@ -7,7 +7,7 @@ export type AgentChatSubscriptionEvent =
   | { type: 'stream-error'; code: string; message: string }
   | { type: 'credits-exhausted' }
   | {
-      type: 'member-credits-exhausted';
+      type: 'user-credits-exhausted';
       workspaceMemberId: string;
       isFallingBackToWorkspaceCredits: boolean;
       renewsAt: string;
