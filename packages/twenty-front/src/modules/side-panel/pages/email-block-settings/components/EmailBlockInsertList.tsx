@@ -17,6 +17,7 @@ import { v4 } from 'uuid';
 
 import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
 import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
 import { ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS } from '@/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems';
 import { type AdvancedTextEditorBlockInsertionItem } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
@@ -47,7 +48,11 @@ type EmailBlockInsertListProps = {
 export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
   const { i18n, t } = useLingui();
   const imageFileInputRef = useRef<HTMLInputElement>(null);
-  const { variables } = useCampaignEmailEditorVariables();
+  const { listVariablesWithExistingFallback } =
+    useCampaignEmailEditorVariables();
+  const variablesWithExistingFallback = useLiveEditorState(editor, () =>
+    listVariablesWithExistingFallback(),
+  );
   const { uploadEmailImage } = useUploadEmailImage();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
@@ -156,22 +161,23 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
         themeCssVariables.color.orange9,
       )}
 
-      {isNonEmptyArray(variables) && (
+      {isNonEmptyArray(variablesWithExistingFallback) && (
         <>
           <SidePanelWorkflowSelectStepTitle>
             {t`Variables`}
           </SidePanelWorkflowSelectStepTitle>
-          {variables.map(({ label, value }) =>
-            renderDraggableItem({
-              id: value,
-              Icon: IconVariable,
-              iconColor: themeCssVariables.color.blue9,
-              label,
-              content: {
-                type: TIPTAP_NODE_TYPES.VARIABLE_TAG,
-                attrs: { variable: value },
-              },
-            }),
+          {variablesWithExistingFallback.map(
+            ({ label, name, rawTemplateVariable }) =>
+              renderDraggableItem({
+                id: name,
+                Icon: IconVariable,
+                iconColor: themeCssVariables.color.blue9,
+                label,
+                content: {
+                  type: TIPTAP_NODE_TYPES.VARIABLE_TAG,
+                  attrs: { variable: rawTemplateVariable },
+                },
+              }),
           )}
         </>
       )}

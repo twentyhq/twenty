@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useId } from 'react';
 import {
   CoreObjectNameSingular,
   MessageChannelType,
@@ -16,28 +15,16 @@ import {
   CampaignEnvelopeRow,
 } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
+import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { Select } from '@/ui/input/components/Select';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-
-const StyledSubjectInput = styled.input`
-  background: transparent;
-  border: none;
-  color: ${themeCssVariables.font.color.primary};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  outline: none;
-  padding: 0;
-  width: 100%;
-`;
+import { TemplateVariableListPicker } from '@/ui/input/components/TemplateVariableListPicker';
+import { TemplateVariableListPickerContext } from '@/ui/input/contexts/TemplateVariableListPickerContext';
 
 const StyledWarningContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
@@ -53,33 +40,10 @@ export const CampaignDetailsFields = ({
   width,
 }: CampaignDetailsFieldsProps) => {
   const detailsState = useCampaignDetailsState({ campaign });
-  const instanceId = useId();
-  const subjectFocusId = `campaign-subject-input-${instanceId}`;
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
-  useRemoveFocusItemFromFocusStackOnUnmount({
-    focusId: subjectFocusId,
-    isEnabled: true,
-  });
-
-  const handleSubjectFocus = () =>
-    pushFocusItemToFocusStack({
-      focusId: subjectFocusId,
-      component: {
-        type: FocusComponentType.FORM_FIELD_INPUT,
-        instanceId: subjectFocusId,
-      },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
-
-  const handleSubjectBlur = () =>
-    removeFocusItemFromFocusStackById({ focusId: subjectFocusId });
-
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
+  const { variables, formatTemplateVariableWithExistingFallback } =
+    useCampaignEmailEditorVariables();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
   });
@@ -161,15 +125,22 @@ export const CampaignDetailsFields = ({
         </CampaignEnvelopeRow>
       )}
       <CampaignEnvelopeRow label={t`Subject`}>
-        <StyledSubjectInput
-          key={`subject-${detailsState.draftResyncKey}`}
-          type="text"
-          aria-label={t`Subject`}
-          defaultValue={detailsState.subject}
-          onChange={(event) => detailsState.setSubject(event.target.value)}
-          onFocus={handleSubjectFocus}
-          onBlur={handleSubjectBlur}
-        />
+        <TemplateVariableListPickerContext.Provider
+          value={{
+            variables,
+            formatTemplateVariable: formatTemplateVariableWithExistingFallback,
+          }}
+        >
+          <FormTextFieldInput
+            key={`subject-${detailsState.draftResyncKey}`}
+            ariaLabel={t`Subject`}
+            placeholder={t`Enter email subject`}
+            defaultValue={detailsState.subject}
+            onChange={detailsState.setSubject}
+            VariablePicker={TemplateVariableListPicker}
+            enableTemplateVariableFallback
+          />
+        </TemplateVariableListPickerContext.Provider>
       </CampaignEnvelopeRow>
     </CampaignEnvelopeBox>
   );
