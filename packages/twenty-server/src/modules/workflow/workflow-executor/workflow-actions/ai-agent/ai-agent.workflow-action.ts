@@ -154,7 +154,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       }),
       spec: buildWorkflowAgentRunSpec({
         step,
-        agentId: agent.id,
         isApplicationBound: isDefined(application),
       }),
       agent,
