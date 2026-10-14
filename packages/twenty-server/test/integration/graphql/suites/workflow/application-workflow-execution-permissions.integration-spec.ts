@@ -8,7 +8,6 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
@@ -17,7 +16,6 @@ import {
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -368,12 +366,6 @@ const countRecordsByName = async (
 
 describe('application workflow execution permissions', () => {
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_ID,
       name: 'Application workflow permissions',
@@ -425,11 +417,6 @@ describe('application workflow execution permissions', () => {
     });
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: OTHER_APP_ID,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: false,
-      expectToFail: false,
     });
   });
 

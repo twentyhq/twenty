@@ -28,10 +28,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Direct REST metadata responses`,
     description: msg`Return metadata directly instead of wrapping it in the legacy response envelope.`,
   },
-  [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
-    label: msg`Application workflows`,
-    description: msg`Allow applications to install workflows and start new workflow runs.`,
-  },
   [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: {
     label: msg`Initial object views`,
     description: msg`Use a dedicated initial view for each object in navigation and the view picker.`,
