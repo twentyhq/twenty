@@ -200,7 +200,7 @@ const SidePanelRecordCreationFormSettings = ({
                             : undefined
                         }
                         isIconDisplayedOnHoverOnly={false}
-                        gripMode="always"
+                        gripMode="onHover"
                         onClick={() => handleToggleVisibility(recordFormField)}
                         iconButtons={
                           <LightIconButton
