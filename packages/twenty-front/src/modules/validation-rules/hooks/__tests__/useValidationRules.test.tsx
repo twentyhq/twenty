@@ -63,10 +63,10 @@ const buildValidationRulesMock = (validationRules: ValidationRule[]) => ({
 
 const renderUseValidationRules = ({
   mocks,
-  isValidationRulesEnabled = true,
+  isRecordCreationFormEnabled = true,
 }: {
   mocks: ReturnType<typeof buildValidationRulesMock>[];
-  isValidationRulesEnabled?: boolean;
+  isRecordCreationFormEnabled?: boolean;
 }) => {
   resetJotaiStore();
   jotaiStore.set(currentWorkspaceState.atom, {
@@ -74,7 +74,7 @@ const renderUseValidationRules = ({
     featureFlags: [
       {
         key: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-        value: isValidationRulesEnabled,
+        value: isRecordCreationFormEnabled,
       },
     ],
   });
@@ -217,7 +217,7 @@ describe('useValidationRules', () => {
 
     const { result } = renderUseValidationRules({
       mocks: [validationRulesMock],
-      isValidationRulesEnabled: false,
+      isRecordCreationFormEnabled: false,
     });
 
     act(() => {

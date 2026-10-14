@@ -102,7 +102,7 @@ export const ObjectSettings = ({
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
-  const isValidationRulesEnabled = useIsFeatureEnabled(
+  const isRecordCreationFormEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
@@ -179,7 +179,7 @@ export const ObjectSettings = ({
           />
         </Section.Root>
       </StyledFormSectionContainer>
-      {isValidationRulesEnabled &&
+      {isRecordCreationFormEnabled &&
         !objectMetadataItem.isRemote &&
         !objectMetadataItem.isSystem && (
           <StyledFormSectionContainer>

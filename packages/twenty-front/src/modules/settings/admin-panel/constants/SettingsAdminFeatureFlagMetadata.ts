@@ -50,7 +50,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records.`,
+    description: msg`Use a dedicated form when creating records, and enable validation rules.`,
   },
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
     label: msg`Logs console`,
