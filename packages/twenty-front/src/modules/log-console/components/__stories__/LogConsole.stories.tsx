@@ -53,6 +53,7 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import {
   mockedEventLogApplications,
+  mockedEventLogInstalledApplications,
   mockedEventLogLiveApplicationLogs,
   mockedEventLogLogicFunctions,
   mockedEventLogRecordsByTable,
@@ -68,6 +69,10 @@ import { sleep } from '~/utils/sleep';
 
 const WORKSPACE_WITH_AUDIT_LOGS = {
   ...mockCurrentWorkspace,
+  installedApplications: [
+    ...mockCurrentWorkspace.installedApplications,
+    ...mockedEventLogInstalledApplications,
+  ],
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
 
