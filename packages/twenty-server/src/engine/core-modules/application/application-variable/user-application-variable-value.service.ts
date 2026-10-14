@@ -22,7 +22,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
-import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -170,24 +169,28 @@ export class UserApplicationVariableValueService {
       ]);
 
     return Object.fromEntries(
-      applicationIds.map((applicationId) => [
-        applicationId,
-        toUserApplicationVariableValues({
-          flatUserApplicationVariables: findFlatEntitiesByApplicationId({
-            flatEntityMaps: flatApplicationVariableMaps,
-            applicationId,
-          }).filter(({ scope }) => scope === 'USER'),
-          userApplicationVariableValueMaps,
-          userWorkspaceId,
-          shouldMaskSecret: true,
-          getDisplayValue: ({ value, isSecret }) =>
-            this.applicationVariableService.getDisplayValue({
-              value,
-              workspaceId,
-              isSecret,
-            }),
-        }),
-      ]),
+      await Promise.all(
+        applicationIds.map(async (applicationId) => [
+          applicationId,
+          toUserApplicationVariableValues({
+            flatUserApplicationVariables:
+              await this.findFlatUserApplicationVariables({
+                workspaceId,
+                applicationId,
+                flatApplicationVariableMaps,
+              }),
+            userApplicationVariableValueMaps,
+            userWorkspaceId,
+            shouldMaskSecret: true,
+            getDisplayValue: ({ value, isSecret }) =>
+              this.applicationVariableService.getDisplayValue({
+                value,
+                workspaceId,
+                isSecret,
+              }),
+          }),
+        ]),
+      ),
     );
   }
 
