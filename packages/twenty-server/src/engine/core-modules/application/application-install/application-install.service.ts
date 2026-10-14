@@ -407,8 +407,6 @@ export class ApplicationInstallService {
         resolvedPackage.manifest.application.logoUrl ??
         null;
 
-      // Clients load logoUrl as soon as the application is broadcast and never
-      // retry a url that failed, so the logo is only set once its file exists
       if (application.logo !== logo || application.logoFileId !== logoFileId) {
         await this.applicationService.update(application.id, {
           logo,
