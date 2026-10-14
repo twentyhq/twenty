@@ -434,6 +434,22 @@ Failures in reconciliation report `error.details.outcome`: `unchanged` after an 
 
 The current export contains metadata and translations, not application source assets or dependency files. Logic-function/front-component code and unsupported metadata are not regenerated. An export with nonempty `files` is refused before writing. Package files, dependency pins and the installed generated client are left alone; pull never installs dependencies. Each export response is limited to 16 MiB. See the [pull implementation](../src/app/pull/README.md) for reconciliation and compatibility details.
 
+## Install a registered app
+
+```bash
+twenty app install --remote dev
+twenty app install --path ./apps/billing --json
+twenty app install --universal-identifier <id> --remote staging --json
+```
+
+`app install` installs a package already registered on the target server. It builds the local app only to find its universal identifier; `--universal-identifier` skips the build and works without a local project. Identifiers are sent in lowercase. It requires `APPLICATIONS` permission.
+
+The server selects the registered package and version. Local source changes are not uploaded. For a private package, run `app publish --private` first; publishing to npm alone does not create a server registration. Installation can run app hooks and update an existing installation. Use `app apply` to sync local source instead.
+
+The command waits up to ten minutes for its server installation job to complete, then verifies that the app is installed. JSON returns `application`, `installed: true` and `jobId`. Failed jobs return `INSTALL_FAILED`; missing or mismatched job status is an error, not a successful installation.
+
+Errors include `details.phase`, `details.outcome`, the universal identifier and the job identifier when available. Ctrl+C or a timeout stops waiting but does not cancel the server job. An installation may have partly run; check the app in workspace settings before retrying. The command requires the server's `triggerInstallApplication` and `findInstallApplicationJobStatus` APIs, including lookup by `jobId`.
+
 ## Uninstall an app
 
 ```bash
