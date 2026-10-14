@@ -15,6 +15,7 @@ import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouse
 import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
@@ -83,6 +84,7 @@ const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
   jotaiStore.set(isClickHouseConfiguredState.atom, true);
   jotaiStore.set(isAdvancedModeEnabledState.atom, false);
   jotaiStore.set(logConsoleDisplayModeState.atom, 'closed');
+  jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
 
   render(
     <I18nProvider i18n={i18n}>
@@ -254,6 +256,32 @@ describe('LogConsole', () => {
     );
 
     expect(screen.getByText('Log results')).toBeInTheDocument();
+  });
+
+  it('reopens on the last selected log source', () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleActiveSourceIdState.atom, 'app-logs');
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    });
+
+    expect(screen.getByRole('tab', { name: 'App logs' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+  });
+
+  it('remembers the log source selected by the user', async () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    });
+
+    await userEvent.click(screen.getByRole('tab', { name: 'App logs' }));
+
+    expect(jotaiStore.get(logConsoleActiveSourceIdState.atom)).toBe('app-logs');
   });
 
   it('stays hidden when the logs feature flag is off', async () => {

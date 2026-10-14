@@ -30,6 +30,7 @@ import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
@@ -275,6 +276,9 @@ export const LogConsole = () => {
     activeTabIdComponentState,
     LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
   );
+  const [logConsoleActiveSourceId, setLogConsoleActiveSourceId] = useAtomState(
+    logConsoleActiveSourceIdState,
+  );
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
@@ -398,8 +402,12 @@ export const LogConsole = () => {
     ...LOG_CONSOLE_SOURCES.filter(isSourceLocked),
   ];
 
+  // The tab list only syncs its active tab after mounting, so fall back to the
+  // saved source to avoid loading the first source's logs after a reload.
   const activeSource =
-    sources.find((source) => source.id === activeTabId) ?? sources[0];
+    sources.find(
+      (source) => source.id === (activeTabId ?? logConsoleActiveSourceId),
+    ) ?? sources[0];
 
   const tabs = sources.map((source) => ({
     id: source.id,
@@ -519,10 +527,11 @@ export const LogConsole = () => {
   };
 
   const changeSource = (sourceId: string) => {
-    const filterFields =
-      sources.find((source) => source.id === sourceId)?.filterFields ?? [];
+    const selectedSource = sources.find((source) => source.id === sourceId);
+    const filterFields = selectedSource?.filterFields ?? [];
 
     closeSelectedLog();
+    setLogConsoleActiveSourceId(selectedSource?.id ?? null);
     setLogConsoleFilters((filters) =>
       filters.filter((filter) =>
         filterFields.some(
@@ -613,6 +622,7 @@ export const LogConsole = () => {
             tabs={tabs}
             behaveAsLinks={false}
             componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}
+            defaultActiveTabId={activeSource.id}
             onClickTab={openLogConsole}
             onChangeTab={changeSource}
             rightComponent={
