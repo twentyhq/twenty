@@ -205,7 +205,8 @@ export const usePageLayoutHeaderInfo = ({
       });
     }
 
-    case SidePanelPages.DashboardRecordTableSettings: {
+    case SidePanelPages.DashboardRecordTableSettings:
+    case SidePanelPages.DashboardViewWidgetSettings: {
       if (!isDefined(widgetInEditMode)) {
         return null;
       }

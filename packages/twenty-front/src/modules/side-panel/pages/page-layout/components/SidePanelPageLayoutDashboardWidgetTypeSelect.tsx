@@ -9,6 +9,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
+import { useViewWidgetSelectableViews } from '@/page-layout/widgets/view/hooks/useViewWidgetSelectableViews';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -84,6 +85,9 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     [...readableObjectMetadataItems].sort((first, second) =>
       first.labelPlural.localeCompare(second.labelPlural),
     )[0];
+
+  const { selectableViews: firstAvailableObjectSelectableViews } =
+    useViewWidgetSelectableViews(firstAvailableObjectMetadataItem?.id);
 
   const { data: frontComponentsData } = useQuery<{
     frontComponents: FrontComponent[];
@@ -226,6 +230,37 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     });
   };
 
+  const handleNavigateToViewWidgetSettings = () => {
+    if (
+      isExistingWidgetMissingOrDifferentType(
+        existingWidget?.type,
+        WidgetType.VIEW,
+      )
+    ) {
+      if (isDefined(pageLayoutEditingWidgetId)) {
+        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
+      }
+
+      const newViewWidget = createPageLayoutWidget({
+        type: WidgetType.VIEW,
+        title: firstAvailableObjectMetadataItem?.labelPlural ?? t`Saved view`,
+        configuration: {
+          __typename: 'ViewConfiguration',
+          configurationType: WidgetConfigurationType.VIEW,
+          viewId: firstAvailableObjectSelectableViews[0]?.id,
+        },
+        objectMetadataId: firstAvailableObjectMetadataItem?.id,
+      });
+
+      setPageLayoutEditingWidgetId(newViewWidget.id);
+    }
+
+    navigatePageLayoutSidePanel({
+      sidePanelPage: SidePanelPages.DashboardViewWidgetSettings,
+      focusTitleInput: false,
+    });
+  };
+
   const handleCreateFrontComponentWidget = (frontComponent: FrontComponent) => {
     if (
       isExistingWidgetMissingOrDifferentType(
@@ -255,6 +290,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const selectableItemIds = [
     'chart',
     'record-table',
+    'saved-view',
     'iframe',
     'rich-text',
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
@@ -283,6 +319,17 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
             label={t`View`}
             id="record-table"
             onClick={handleNavigateToRecordTableSettings}
+          />
+        </SelectableListItem>
+        <SelectableListItem
+          itemId="saved-view"
+          onEnter={handleNavigateToViewWidgetSettings}
+        >
+          <CommandMenuItem
+            Icon={IconTable}
+            label={t`Saved view`}
+            id="saved-view"
+            onClick={handleNavigateToViewWidgetSettings}
           />
         </SelectableListItem>
         <SelectableListItem

@@ -23,6 +23,7 @@ import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
 import { SidePanelDashboardIframeSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings';
 import { SidePanelDashboardRecordTableSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings';
+import { SidePanelDashboardViewWidgetSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardViewWidgetSettings';
 import { SidePanelRecordPageFieldSettings } from '@/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings';
 import { SidePanelRecordPageFieldsSettings } from '@/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings';
 import { SidePanelPageLayoutDashboardWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect';
@@ -80,6 +81,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [
     SidePanelPages.DashboardRecordTableSettings,
     <SidePanelDashboardRecordTableSettings />,
+  ],
+  [
+    SidePanelPages.DashboardViewWidgetSettings,
+    <SidePanelDashboardViewWidgetSettings />,
   ],
   [
     SidePanelPages.RecordPageFieldsSettings,

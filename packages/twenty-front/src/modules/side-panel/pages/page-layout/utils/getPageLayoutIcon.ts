@@ -30,6 +30,7 @@ export const getPageLayoutIcon = (page: PageLayoutSidePanelPage) => {
     case SidePanelPages.RecordPageFieldSettings:
       return IconListSearch;
     case SidePanelPages.DashboardRecordTableSettings:
+    case SidePanelPages.DashboardViewWidgetSettings:
       return IconTable;
     case SidePanelPages.PageLayoutRecordPageWidgetTypeSelect:
       return IconPlus;

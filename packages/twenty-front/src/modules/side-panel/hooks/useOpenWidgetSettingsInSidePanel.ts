@@ -112,6 +112,16 @@ export const useOpenWidgetSettingsInSidePanel = (
         return;
       }
 
+      if (widgetType === WidgetType.VIEW && isDashboardPageLayout) {
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.DashboardViewWidgetSettings,
+          pageTitle: t`Edit Saved View`,
+          resetNavigationStack: true,
+        });
+        setPageLayoutEditingWidgetId(widgetId);
+        return;
+      }
+
       if (widgetType === WidgetType.STANDALONE_RICH_TEXT) {
         if (isDashboardPageLayout) {
           closeSidePanelMenu();
