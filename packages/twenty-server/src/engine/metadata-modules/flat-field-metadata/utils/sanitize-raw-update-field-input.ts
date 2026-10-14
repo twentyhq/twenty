@@ -1,3 +1,4 @@
+import { APP_LOCALES } from 'twenty-shared/translations';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -17,12 +18,14 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatFieldMetadataOptionLabelTranslationProperties } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-flat-field-metadata-option-label-translation-properties.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/overrides/utils/find-invalid-translation-override-properties.util';
 import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/overrides/utils/merge-translations-into-overrides.util';
+import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/overrides/types/translation-override-entry.type';
 
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
@@ -105,10 +108,24 @@ export const sanitizeRawUpdateFieldInput = ({
       });
   }
 
-  const translationEntries = rawUpdateFieldInput.translations ?? [];
+  const rawTranslationEntries = rawUpdateFieldInput.translations ?? [];
+  const existingOptionLabelTranslationProperties =
+    getFlatFieldMetadataOptionLabelTranslationProperties({
+      type: existingFlatFieldMetadata.type,
+      options: existingFlatFieldMetadata.options,
+    });
+  const optionLabelTranslationProperties = isDefined(
+    updatedEditableFieldProperties.options,
+  )
+    ? getFlatFieldMetadataOptionLabelTranslationProperties({
+        type: existingFlatFieldMetadata.type,
+        options: updatedEditableFieldProperties.options,
+      })
+    : existingOptionLabelTranslationProperties;
   const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
-    translationEntries,
+    rawTranslationEntries,
     'fieldMetadata',
+    optionLabelTranslationProperties,
   );
 
   if (invalidTranslationProperties.length > 0) {
@@ -117,6 +134,21 @@ export const sanitizeRawUpdateFieldInput = ({
       FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
     );
   }
+
+  const removedOptionLabelTranslationEntries: TranslationOverrideEntry[] =
+    existingOptionLabelTranslationProperties
+      .filter(
+        (property) => !optionLabelTranslationProperties.includes(property),
+      )
+      .flatMap((property) =>
+        (Object.keys(APP_LOCALES) as (keyof typeof APP_LOCALES)[]).map(
+          (locale) => ({ locale, property, value: null }),
+        ),
+      );
+  const translationEntries = [
+    ...rawTranslationEntries,
+    ...removedOptionLabelTranslationEntries,
+  ];
 
   if (!isStandardField || isSystemBuild) {
     return {

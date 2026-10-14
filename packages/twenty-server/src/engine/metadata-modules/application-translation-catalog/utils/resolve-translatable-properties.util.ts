@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import { resolveEffectiveEntityPropertyByName } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import { resolveEffectiveFieldMetadataRecordOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-record-options.util';
 
 export const resolveTranslatableProperties = ({
   metadataName,
@@ -14,8 +15,8 @@ export const resolveTranslatableProperties = ({
   // indexed by registry property name: callers range from TypeORM classes to plain DTOs, some without an overrides column
   entity: Record<string, unknown>;
   i18nContext: EffectiveEntityI18nContext;
-}): Record<string, string> =>
-  Object.fromEntries(
+}): Record<string, unknown> => ({
+  ...Object.fromEntries(
     (ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] ?? [])
       .map((property) => {
         const baseValue = entity[property];
@@ -34,4 +35,11 @@ export const resolveTranslatableProperties = ({
           : undefined;
       })
       .filter(isDefined),
-  );
+  ),
+  ...(metadataName === 'fieldMetadata'
+    ? resolveEffectiveFieldMetadataRecordOptions({
+        record: entity,
+        i18nContext,
+      })
+    : {}),
+});

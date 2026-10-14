@@ -11,8 +11,9 @@ any locale left untranslated falls back to it.
 Your app has two kinds of translatable text, and both flow through the same
 `locales/` catalog:
 
-- **Manifest labels** — object and field names, view titles, menu items, and
-  other strings declared in your app's metadata.
+- **Manifest labels** — object and field names, select and multi-select
+  option labels, view titles, menu items, and other strings declared in your
+  app's metadata.
 - **Front-component strings** — the UI text your React front components render.
 
 You mark the translatable strings, extract them into per-locale catalogs,
@@ -81,6 +82,8 @@ context: `"<context>": { "<message>": "<translation>" }`. Manifest labels are
 contextual by construction — each one carries the metadata role it plays
 (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), so
 the same word can translate differently as an object name and as a view name.
+Select and multi-select option labels share the `fieldMetadata.label` context
+with field names.
 
 ## Extracting and translating
 

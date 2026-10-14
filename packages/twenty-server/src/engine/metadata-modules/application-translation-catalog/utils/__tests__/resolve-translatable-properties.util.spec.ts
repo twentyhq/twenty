@@ -83,4 +83,26 @@ describe('resolveTranslatableProperties', () => {
       }),
     ).toEqual({});
   });
+
+  it('resolves field option labels', () => {
+    expect(
+      resolveTranslatableProperties({
+        metadataName: 'fieldMetadata',
+        entity: {
+          type: 'MULTI_SELECT',
+          label: 'Roles',
+          options: [{ id: 'buyer-option-id', value: 'BUYER', label: 'Buyer' }],
+          overrides: {
+            translations: {
+              'fr-FR': { 'options.buyer-option-id.label': 'Acheteur' },
+            },
+          },
+        },
+        i18nContext,
+      }),
+    ).toEqual({
+      label: 'Roles',
+      options: [{ id: 'buyer-option-id', value: 'BUYER', label: 'Acheteur' }],
+    });
+  });
 });

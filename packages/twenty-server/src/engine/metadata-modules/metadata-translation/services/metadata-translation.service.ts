@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { getFieldOptionLabelTranslationProperty } from 'twenty-shared/i18n';
 import { APP_LOCALES } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -16,21 +17,24 @@ import {
   MetadataTranslationProvenance,
 } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation.dto';
 import { type MetadataTranslationsInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translations.input';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import {
   readOverrideTranslation,
   resolveEffectiveEntityPropertyByName,
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
+import { resolveEffectiveFieldMetadataOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-options.util';
 
 type TranslatableFlatEntity = FlatObjectMetadata | FlatFieldMetadata;
 
 type TranslatableEntity = {
-  metadataName: 'objectMetadata' | 'fieldMetadata';
   recordId: string;
   objectMetadataId: string | null;
   applicationId: string | undefined;
-  entity: TranslatableFlatEntity;
-};
+} & (
+  | { metadataName: 'objectMetadata'; entity: FlatObjectMetadata }
+  | { metadataName: 'fieldMetadata'; entity: FlatFieldMetadata }
+);
 
 const readStringProperty = (
   entity: TranslatableFlatEntity,
@@ -151,9 +155,79 @@ export class MetadataTranslationService {
           }),
         });
       }
+
+      if (translatableEntity.metadataName === 'fieldMetadata') {
+        translations.push(
+          ...this.buildFieldOptionLabelTranslations({
+            flatFieldMetadata: translatableEntity.entity,
+            objectMetadataId,
+            locale,
+            i18nContext: getI18nContext(applicationId),
+          }),
+        );
+      }
     }
 
     return translations;
+  }
+
+  private buildFieldOptionLabelTranslations({
+    flatFieldMetadata,
+    objectMetadataId,
+    locale,
+    i18nContext,
+  }: {
+    flatFieldMetadata: FlatFieldMetadata;
+    objectMetadataId: string | null;
+    locale: keyof typeof APP_LOCALES;
+    i18nContext: EffectiveEntityI18nContext;
+  }): MetadataTranslationDTO[] {
+    if (!isFieldMetadataSelectKind(flatFieldMetadata.type)) {
+      return [];
+    }
+
+    const options = flatFieldMetadata.options ?? [];
+    const effectiveOptions =
+      resolveEffectiveFieldMetadataOptions({
+        fieldMetadataType: flatFieldMetadata.type,
+        options,
+        overrides: flatFieldMetadata.overrides,
+        i18nContext,
+      }) ?? [];
+
+    return options.flatMap((option, index) => {
+      const value = effectiveOptions[index]?.label;
+
+      if (!isDefined(option.id) || !isDefined(value)) {
+        return [];
+      }
+
+      const property = getFieldOptionLabelTranslationProperty(option.id);
+
+      return [
+        {
+          metadataName: 'fieldMetadata',
+          recordId: flatFieldMetadata.id,
+          objectMetadataId,
+          property,
+          locale,
+          sourceValue: option.label,
+          canonicalValue: option.label,
+          value,
+          provenance: resolveProvenance({
+            workspaceTranslation: readOverrideTranslation({
+              metadataName: 'fieldMetadata',
+              overrides: flatFieldMetadata.overrides,
+              locale,
+              property,
+              authorContext: i18nContext,
+            }),
+            value,
+            canonicalValue: option.label,
+          }),
+        },
+      ];
+    });
   }
 
   private async findTranslatableEntity({

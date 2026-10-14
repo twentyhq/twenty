@@ -207,8 +207,9 @@ export class FieldMetadataController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
-    return this.handleUpdate({ id, update, workspaceId });
+    return this.handleUpdate({ id, update, workspaceId, locale });
   }
 
   @Put(':id')
@@ -216,8 +217,9 @@ export class FieldMetadataController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
-    return this.handleUpdate({ id, update, workspaceId });
+    return this.handleUpdate({ id, update, workspaceId, locale });
   }
 
   @Delete(':id')
@@ -241,14 +243,17 @@ export class FieldMetadataController {
     id,
     update,
     workspaceId,
+    locale,
   }: {
     id: string;
     update: UpdateFieldInput;
     workspaceId: string;
+    locale: keyof typeof APP_LOCALES | undefined;
   }) {
     const flatField = await this.fieldMetadataService.updateOneField({
       updateFieldInput: { ...update, id },
       workspaceId,
+      locale,
     });
 
     const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);

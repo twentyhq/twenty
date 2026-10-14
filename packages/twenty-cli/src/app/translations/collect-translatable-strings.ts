@@ -4,6 +4,8 @@ import {
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { type MessageDescriptor } from '@/app/translations/message';
 
@@ -32,6 +34,33 @@ export const collectTranslatableStrings = (
   // deduplicated per (context, message) rather than per message.
   const descriptorByKey = new Map<string, MessageDescriptor>();
 
+  const addFieldOptionStrings = ({
+    type,
+    options,
+  }: Record<string, unknown>) => {
+    if (
+      !isFieldMetadataSelectKind(type as FieldMetadataType) ||
+      !Array.isArray(options)
+    ) {
+      return;
+    }
+
+    const context = getMetadataLabelContext('fieldMetadata', 'label');
+
+    for (const option of options) {
+      const label = (option as { label?: unknown } | null)?.label;
+
+      if (typeof label !== 'string' || label.length === 0) {
+        continue;
+      }
+
+      descriptorByKey.set(JSON.stringify([context, label]), {
+        message: label,
+        context,
+      });
+    }
+  };
+
   const addEntityStrings = (
     entity: unknown,
     metadataName: TranslatableMetadataName,
@@ -55,6 +84,10 @@ export const collectTranslatableStrings = (
         message: value,
         context,
       });
+    }
+
+    if (metadataName === 'fieldMetadata') {
+      addFieldOptionStrings(entity as Record<string, unknown>);
     }
   };
 

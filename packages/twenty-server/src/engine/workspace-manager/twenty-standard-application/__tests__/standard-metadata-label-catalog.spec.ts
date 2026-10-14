@@ -5,7 +5,7 @@ import {
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { messages } from 'src/engine/core-modules/i18n/locales/generated/en';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -92,6 +92,30 @@ describe('standard metadata labels reach the catalog under their context', () =>
         }
       }
     }
+
+    expect(missing).toEqual([]);
+  });
+
+  it('fieldMetadata options', () => {
+    const context = getMetadataLabelContext('fieldMetadata', 'label');
+    const missing = Object.values(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter((flatFieldMetadata) =>
+        isFieldMetadataSelectKind(flatFieldMetadata.type),
+      )
+      .flatMap((flatFieldMetadata) => flatFieldMetadata.options ?? [])
+      .map(({ label }) => label)
+      .filter((label) => {
+        const messageId = generateMessageId(label, context);
+
+        return (
+          !(messageId in messages) &&
+          !AUTHORED_STANDARD_METADATA_MESSAGE_IDS.has(messageId)
+        );
+      })
+      .map((label) => `(${context}) ${label}`);
 
     expect(missing).toEqual([]);
   });

@@ -145,4 +145,27 @@ describe('resolveMetadataEventRecord', () => {
     expect(resolved.position).toBe(3);
     expect(resolved).not.toHaveProperty('overrides');
   });
+
+  it('should translate field option labels', () => {
+    const resolved = resolveMetadataEventRecord({
+      metadataName: 'fieldMetadata',
+      record: {
+        type: 'SELECT',
+        label: 'Budget period',
+        options: [
+          { id: 'week-option-id', value: 'WEEK', label: 'Неделя', position: 0 },
+        ],
+        overrides: {
+          translations: {
+            'fr-FR': { 'options.week-option-id.label': 'Semaine' },
+          },
+        },
+      },
+      i18nContext: buildI18nContext({ locale: 'fr-FR', isStandardApp: false }),
+    });
+
+    expect(resolved.options).toEqual([
+      { id: 'week-option-id', value: 'WEEK', label: 'Semaine', position: 0 },
+    ]);
+  });
 });

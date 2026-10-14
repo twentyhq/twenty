@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { type APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -13,6 +15,8 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
@@ -21,6 +25,7 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
+import { restoreSourceFieldMetadataOptionLabels } from 'src/engine/metadata-modules/overrides/utils/restore-source-field-metadata-option-labels.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
@@ -38,6 +43,7 @@ export class FieldMetadataService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async findManyWithinWorkspace({
@@ -210,11 +216,13 @@ export class FieldMetadataService {
     workspaceId,
     isSystemBuild = false,
     ownerFlatApplication,
+    locale,
   }: {
     updateFieldInput: Omit<UpdateFieldInput, 'workspaceId'>;
     workspaceId: string;
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
+    locale?: keyof typeof APP_LOCALES;
   }): Promise<FlatFieldMetadata> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -246,11 +254,23 @@ export class FieldMetadataService {
       },
     );
 
+    const updateFieldInputWithSourceOptionLabels = isSystemBuild
+      ? updateFieldInput
+      : await this.restoreSourceOptionLabels({
+          updateFieldInput,
+          flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+          locale,
+          workspaceId,
+        });
+
     const inputTranspilationResult = fromUpdateFieldInputToFlatFieldMetadata({
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      updateFieldInput: { ...updateFieldInput, workspaceId },
+      updateFieldInput: {
+        ...updateFieldInputWithSourceOptionLabels,
+        workspaceId,
+      },
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
@@ -473,5 +493,50 @@ export class FieldMetadataService {
         flatEntityMaps: recomputedFlatFieldMetadataMaps,
       },
     );
+  }
+
+  private async restoreSourceOptionLabels({
+    updateFieldInput,
+    flatFieldMetadataMaps,
+    locale,
+    workspaceId,
+  }: {
+    updateFieldInput: Omit<UpdateFieldInput, 'workspaceId'>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    locale: keyof typeof APP_LOCALES | undefined;
+    workspaceId: string;
+  }): Promise<Omit<UpdateFieldInput, 'workspaceId'>> {
+    const existingFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: updateFieldInput.id,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (
+      !isDefined(updateFieldInput.options) ||
+      !isDefined(existingFlatFieldMetadata) ||
+      !isFieldMetadataSelectKind(existingFlatFieldMetadata.type)
+    ) {
+      return updateFieldInput;
+    }
+
+    const getI18nContext =
+      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+        {
+          applicationIds: [existingFlatFieldMetadata.applicationId],
+          locale,
+          workspaceId,
+        },
+      );
+
+    return {
+      ...updateFieldInput,
+      options: restoreSourceFieldMetadataOptionLabels({
+        fieldMetadataType: existingFlatFieldMetadata.type,
+        updatedOptions: updateFieldInput.options,
+        existingOptions: existingFlatFieldMetadata.options,
+        overrides: existingFlatFieldMetadata.overrides,
+        i18nContext: getI18nContext(existingFlatFieldMetadata.applicationId),
+      }),
+    };
   }
 }

@@ -4,9 +4,12 @@ import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/overr
 export const findInvalidTranslationOverrideProperties = (
   translationEntries: TranslationOverrideEntry[],
   metadataName: keyof typeof ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
+  additionalTranslatableProperties: readonly string[] = [],
 ): string[] => {
-  const translatableProperties: readonly string[] =
-    ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] ?? [];
+  const translatableProperties: readonly string[] = [
+    ...(ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] ?? []),
+    ...additionalTranslatableProperties,
+  ];
 
   return [
     ...new Set(

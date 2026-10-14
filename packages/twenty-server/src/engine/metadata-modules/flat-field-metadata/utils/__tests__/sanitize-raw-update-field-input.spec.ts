@@ -93,4 +93,127 @@ describe('sanitizeRawUpdateFieldInput', () => {
       }),
     ).toEqual(ratingOptions);
   });
+
+  describe('option label translations', () => {
+    const WEEK_OPTION_ID = '9a1c1f5e-0b7e-4c43-8f3a-1b8f0f0c0a01';
+    const MONTH_OPTION_ID = '9a1c1f5e-0b7e-4c43-8f3a-1b8f0f0c0a02';
+    const weekLabelProperty = `options.${WEEK_OPTION_ID}.label`;
+    const monthLabelProperty = `options.${MONTH_OPTION_ID}.label`;
+    const existingOptions = [
+      {
+        id: WEEK_OPTION_ID,
+        label: 'Неделя',
+        value: 'WEEK',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        id: MONTH_OPTION_ID,
+        label: 'Месяц',
+        value: 'MONTH',
+        position: 1,
+        color: 'green',
+      },
+    ] as FieldMetadataComplexOption[];
+
+    const sanitizeTranslationsUpdate = ({
+      type = FieldMetadataType.SELECT,
+      rawUpdateFieldInput,
+      overrides = null,
+    }: {
+      type?: FieldMetadataType;
+      rawUpdateFieldInput: Partial<UpdateFieldInput>;
+      overrides?: unknown;
+    }) =>
+      sanitizeRawUpdateFieldInput({
+        existingFlatFieldMetadata: getFlatFieldMetadataMock({
+          id: FIELD_ID,
+          type,
+          options: existingOptions,
+          overrides,
+          universalIdentifier: 'ab0e6d76-67d8-466f-918a-4b8a8d044131',
+          objectMetadataId: '6450cd8f-c202-498f-8be4-65e1b1c93e32',
+          applicationUniversalIdentifier:
+            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        } as Parameters<typeof getFlatFieldMetadataMock>[0]),
+        rawUpdateFieldInput: {
+          id: FIELD_ID,
+          ...rawUpdateFieldInput,
+        } as UpdateFieldInput,
+        isSystemBuild: false,
+        workspaceCustomApplicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+    it('stores a translation of an existing option label', () => {
+      expect(
+        sanitizeTranslationsUpdate({
+          rawUpdateFieldInput: {
+            translations: [
+              { locale: 'en', property: weekLabelProperty, value: 'Week' },
+            ],
+          },
+        }).overrides,
+      ).toEqual({
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+          translations: { en: { [weekLabelProperty]: 'Week' } },
+        },
+      });
+    });
+
+    it('rejects a translation of an unknown option', () => {
+      expect(() =>
+        sanitizeTranslationsUpdate({
+          rawUpdateFieldInput: {
+            translations: [
+              {
+                locale: 'en',
+                property: 'options.unknown-option-id.label',
+                value: 'Week',
+              },
+            ],
+          },
+        }),
+      ).toThrow('Cannot translate field metadata properties');
+    });
+
+    it('rejects option label translations on non-select fields', () => {
+      expect(() =>
+        sanitizeTranslationsUpdate({
+          type: FieldMetadataType.RATING,
+          rawUpdateFieldInput: {
+            translations: [
+              { locale: 'en', property: weekLabelProperty, value: 'Week' },
+            ],
+          },
+        }),
+      ).toThrow('Cannot translate field metadata properties');
+    });
+
+    it('drops translations of removed options', () => {
+      expect(
+        sanitizeTranslationsUpdate({
+          rawUpdateFieldInput: { options: [existingOptions[0]] },
+          overrides: {
+            [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              translations: {
+                en: {
+                  label: 'Budget period',
+                  [weekLabelProperty]: 'Week',
+                  [monthLabelProperty]: 'Month',
+                },
+                'fr-FR': { [monthLabelProperty]: 'Mois' },
+              },
+            },
+          },
+        }).overrides,
+      ).toEqual({
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+          translations: {
+            en: { label: 'Budget period', [weekLabelProperty]: 'Week' },
+          },
+        },
+      });
+    });
+  });
 });

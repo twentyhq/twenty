@@ -8,8 +8,9 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
+import { GraphQLJSON } from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -48,6 +49,7 @@ import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagina
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import { resolveEffectiveFieldMetadataOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-options.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -58,6 +60,11 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 type FieldMetadataStandardOverrideParent = Pick<
   FieldMetadataDTO,
   'label' | 'description' | 'icon' | 'overrides' | 'applicationId'
+>;
+
+type FieldMetadataOptionsParent = Pick<
+  FieldMetadataDTO,
+  'type' | 'options' | 'overrides' | 'applicationId'
 >;
 
 @UseGuards(
@@ -255,6 +262,32 @@ export class FieldMetadataResolver {
     );
   }
 
+  @ResolveField(() => GraphQLJSON, { nullable: true })
+  async options(
+    @Parent() fieldMetadata: FieldMetadataOptionsParent,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<FieldMetadataDTO['options']> {
+    if (!isFieldMetadataSelectKind(fieldMetadata.type)) {
+      return fieldMetadata.options;
+    }
+
+    return resolveEffectiveFieldMetadataOptions({
+      fieldMetadataType: fieldMetadata.type,
+      options: fieldMetadata.options,
+      overrides: fieldMetadata.overrides,
+      i18nContext:
+        await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+          {
+            applicationId: fieldMetadata.applicationId ?? undefined,
+            loaders: context.loaders,
+            locale: context.req.locale,
+            workspaceId,
+          },
+        ),
+    });
+  }
+
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
@@ -278,11 +311,13 @@ export class FieldMetadataResolver {
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Context() context: I18nContext,
   ) {
     try {
       const flatFieldMetadata = await this.fieldMetadataService.updateOneField({
         updateFieldInput: { ...input.update, id: input.id },
         workspaceId,
+        locale: context.req.locale,
       });
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);

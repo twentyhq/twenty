@@ -1,7 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type TranslatableMetadataName } from 'twenty-shared/i18n';
+import {
+  getFieldOptionLabelTranslationProperty,
+  getMetadataLabelContext,
+  type TranslatableMetadataName,
+} from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type FieldMetadataDefaultOption } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
@@ -163,3 +168,35 @@ export const resolveEffectiveEntityPropertyByName = ({
     property,
     i18nContext,
   });
+
+export const resolveEffectiveFieldMetadataOptionLabel = ({
+  option,
+  overrides,
+  i18nContext,
+}: {
+  option: Pick<FieldMetadataDefaultOption, 'id' | 'label'>;
+  overrides: unknown;
+  i18nContext: EffectiveEntityI18nContext;
+}): string => {
+  const workspaceTranslation = isDefined(option.id)
+    ? readOverrideTranslation({
+        metadataName: 'fieldMetadata',
+        overrides,
+        locale: i18nContext.locale ?? SOURCE_LOCALE,
+        property: getFieldOptionLabelTranslationProperty(option.id),
+        authorContext: i18nContext,
+      })
+    : undefined;
+
+  if (isDefined(workspaceTranslation)) {
+    return workspaceTranslation;
+  }
+
+  return translateStandardLabel({
+    sourceValue: option.label,
+    context: getMetadataLabelContext('fieldMetadata', 'label'),
+    isStandardApp: i18nContext.isStandardApp,
+    applicationCatalog: i18nContext.applicationCatalog,
+    i18nInstance: i18nContext.i18nInstance,
+  });
+};

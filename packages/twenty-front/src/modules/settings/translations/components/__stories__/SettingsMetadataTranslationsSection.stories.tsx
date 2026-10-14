@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { SettingsMetadataTranslationsSection } from '@/settings/translations/components/SettingsMetadataTranslationsSection';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -75,5 +75,62 @@ export const Default: Story = {
     await canvas.findByText('Languages');
     await canvas.findByText('Entreprises');
     await canvas.findByTitle('Reset to default');
+  },
+};
+
+const makeOptionLabelTranslationRow = ({
+  locale,
+  value,
+  provenance,
+}: {
+  locale: string;
+  value: string;
+  provenance: string;
+}) => ({
+  metadataName: 'fieldMetadata',
+  recordId: 'field-metadata-id',
+  objectMetadataId: 'object-metadata-id',
+  property: 'options.week-option-id.label',
+  locale,
+  sourceValue: 'Неделя',
+  canonicalValue: 'Неделя',
+  value,
+  provenance,
+});
+
+export const FieldWithOptions: Story = {
+  args: {
+    input: { fieldMetadataId: 'field-metadata-id' },
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MetadataTranslations', () => {
+          return HttpResponse.json({
+            data: {
+              metadataTranslations: [
+                makeOptionLabelTranslationRow({
+                  locale: 'en',
+                  value: 'Week',
+                  provenance: 'WORKSPACE',
+                }),
+                makeOptionLabelTranslationRow({
+                  locale: 'fr-FR',
+                  value: 'Неделя',
+                  provenance: 'INHERITED',
+                }),
+              ],
+            },
+          });
+        }),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Options');
+    await canvas.findByText('Week');
+    expect(await canvas.findAllByText('Неделя')).toHaveLength(2);
   },
 };

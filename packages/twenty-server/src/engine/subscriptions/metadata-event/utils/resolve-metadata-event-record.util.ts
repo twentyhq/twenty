@@ -5,6 +5,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import { resolveEffectiveEntityPropertyByName } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import { resolveEffectiveFieldMetadataRecordOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-record-options.util';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 import { isTranslatableMetadataName } from 'src/engine/subscriptions/metadata-event/utils/is-translatable-metadata-name.util';
 
@@ -69,6 +70,13 @@ export const resolveMetadataEventRecord = ({
     if (isNonEmptyString(effectiveValue)) {
       resolved[property] = effectiveValue;
     }
+  }
+
+  if (metadataName === 'fieldMetadata') {
+    return {
+      ...resolved,
+      ...resolveEffectiveFieldMetadataRecordOptions({ record, i18nContext }),
+    };
   }
 
   return resolved;
