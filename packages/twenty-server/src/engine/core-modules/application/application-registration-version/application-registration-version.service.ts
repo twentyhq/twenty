@@ -104,6 +104,7 @@ export class ApplicationRegistrationVersionService {
   ): Promise<ApplicationRegistrationVersionEntity[]> {
     return this.applicationRegistrationVersionRepository.find({
       where: { applicationRegistrationId },
+      relations: { tarballFile: true },
       order: { publishedAt: 'DESC', createdAt: 'DESC' },
     });
   }
@@ -178,7 +179,7 @@ export class ApplicationRegistrationVersionService {
   async buildArtifactDownloadUrl(
     version: Pick<
       ApplicationRegistrationVersionEntity,
-      'id' | 'sourceType' | 'artifactUrl' | 'tarballFileId'
+      'id' | 'sourceType' | 'artifactUrl' | 'tarballFile'
     >,
   ): Promise<string | null> {
     if (version.sourceType === ApplicationRegistrationSourceType.NPM) {
@@ -189,14 +190,7 @@ export class ApplicationRegistrationVersionService {
         : null;
     }
 
-    if (!isDefined(version.tarballFileId)) {
-      return null;
-    }
-
-    const tarballFile = await this.fileRepository.findOne({
-      select: { id: true, workspaceId: true },
-      where: { id: version.tarballFileId },
-    });
+    const { tarballFile } = version;
 
     if (!isDefined(tarballFile) || !isDefined(tarballFile.workspaceId)) {
       return null;
