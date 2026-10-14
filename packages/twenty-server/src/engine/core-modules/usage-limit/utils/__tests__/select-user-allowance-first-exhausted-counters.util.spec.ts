@@ -90,8 +90,10 @@ const select = ({
 
   return selectUserAllowanceFirstExhaustedCounters({
     exhaustedCounters,
-    userAllowanceCounter,
-    userAllowanceConsumed: toConsumed(userAllowance, USER_ALLOWANCE_LIMIT),
+    userAllowanceCounters: [userAllowanceCounter],
+    userAllowanceConsumedValues: [
+      toConsumed(userAllowance, USER_ALLOWANCE_LIMIT),
+    ],
     workspaceAllowanceConsumed: toConsumed(
       workspaceAllowance,
       WORKSPACE_ALLOWANCE_LIMIT,
@@ -296,8 +298,10 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
           workspaceCreditLimitCounter,
           ...(userAllowance === 'reached' ? [userAllowanceCounter] : []),
         ],
-        userAllowanceCounter,
-        userAllowanceConsumed: toConsumed(userAllowance, USER_ALLOWANCE_LIMIT),
+        userAllowanceCounters: [userAllowanceCounter],
+        userAllowanceConsumedValues: [
+          toConsumed(userAllowance, USER_ALLOWANCE_LIMIT),
+        ],
         workspaceAllowanceConsumed: toConsumed(
           'below',
           WORKSPACE_ALLOWANCE_LIMIT,
@@ -305,6 +309,40 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
       });
 
       expect(toKinds(selection.exhaustedCounters)).toEqual(expectedKinds);
+    },
+  );
+
+  it.each<{
+    fallback: UserCreditsFallbackMode;
+    expectedKinds: QuotaCounter['kind'][];
+  }>([
+    { fallback: 'WORKSPACE_CREDITS', expectedKinds: [] },
+    { fallback: 'STOP', expectedKinds: ['userAllowance'] },
+  ])(
+    'treats the user credits as used up once any window is, in $fallback mode',
+    ({ fallback, expectedKinds }) => {
+      const dayCounter: UserAllowanceQuotaCounter = {
+        ...buildUserAllowanceCounter(fallback),
+        key: 'user-allowance-day-key',
+        periodUnit: 'day',
+      };
+      const weekCounter = buildUserAllowanceCounter(fallback);
+
+      const selection = selectUserAllowanceFirstExhaustedCounters({
+        exhaustedCounters: [dayCounter],
+        userAllowanceCounters: [dayCounter, weekCounter],
+        userAllowanceConsumedValues: [
+          USER_ALLOWANCE_LIMIT,
+          USER_ALLOWANCE_LIMIT - 1,
+        ],
+        workspaceAllowanceConsumed: toConsumed(
+          'below',
+          WORKSPACE_ALLOWANCE_LIMIT,
+        ),
+      });
+
+      expect(toKinds(selection.exhaustedCounters)).toEqual(expectedKinds);
+      expect(selection.hasUserCreditsLeft).toBe(false);
     },
   );
 
@@ -317,8 +355,8 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
     expect(
       selectUserAllowanceFirstExhaustedCounters({
         exhaustedCounters,
-        userAllowanceCounter: null,
-        userAllowanceConsumed: null,
+        userAllowanceCounters: [],
+        userAllowanceConsumedValues: [],
         workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT,
       }),
     ).toEqual({

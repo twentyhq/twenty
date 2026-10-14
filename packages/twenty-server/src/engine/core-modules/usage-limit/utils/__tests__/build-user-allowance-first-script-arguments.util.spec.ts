@@ -5,18 +5,18 @@ describe('buildUserAllowanceFirstScriptArguments', () => {
     expect(
       buildUserAllowanceFirstScriptArguments({
         amount: 300,
-        userAllowanceLimit: 1_000,
+        userAllowanceLimits: [1_000, 5_000],
         isFallbackEnabled: true,
-        warms: [{ value: 900, ttl: 60_000 }, null],
+        warms: [{ value: 900, ttl: 60_000 }, null, null],
       }),
     ).toEqual([
       JSON.stringify({
         amount: 300,
-        userAllowanceLimit: 1_000,
+        userAllowanceLimits: [1_000, 5_000],
         isFallbackEnabled: true,
       }),
-      JSON.stringify([900, false]),
-      JSON.stringify([60_000, false]),
+      JSON.stringify([900, false, false]),
+      JSON.stringify([60_000, false, false]),
     ]);
   });
 
@@ -24,7 +24,7 @@ describe('buildUserAllowanceFirstScriptArguments', () => {
     expect(() =>
       buildUserAllowanceFirstScriptArguments({
         amount: -1,
-        userAllowanceLimit: 1_000,
+        userAllowanceLimits: [1_000],
         isFallbackEnabled: true,
         warms: [null],
       }),
@@ -33,13 +33,13 @@ describe('buildUserAllowanceFirstScriptArguments', () => {
     );
   });
 
-  it('refuses a negative user allowance limit', () => {
+  it('refuses a negative user allowance limit on any window', () => {
     expect(() =>
       buildUserAllowanceFirstScriptArguments({
         amount: 100,
-        userAllowanceLimit: -1,
+        userAllowanceLimits: [1_000, -1],
         isFallbackEnabled: true,
-        warms: [null],
+        warms: [null, null],
       }),
     ).toThrow(
       /^User-allowance-first limit .* is not a non-negative safe integer$/,
@@ -54,7 +54,7 @@ describe('buildUserAllowanceFirstScriptArguments', () => {
     expect(() =>
       buildUserAllowanceFirstScriptArguments({
         amount: 100,
-        userAllowanceLimit: 1_000,
+        userAllowanceLimits: [1_000],
         isFallbackEnabled: true,
         warms: [null, warm],
       }),

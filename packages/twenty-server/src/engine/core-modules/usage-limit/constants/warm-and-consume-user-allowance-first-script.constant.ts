@@ -6,6 +6,8 @@ export const WARM_AND_CONSUME_USER_ALLOWANCE_FIRST_SCRIPT: CacheScript = {
 local args = cjson.decode(ARGV[1])
 local warmValues = cjson.decode(ARGV[2])
 local warmTtls = cjson.decode(ARGV[3])
+local userAllowanceCount = #args.userAllowanceLimits
+local hasWorkspaceAllowance = #KEYS > userAllowanceCount
 
 for i = 1, #KEYS do
   if warmValues[i] then
@@ -13,29 +15,48 @@ for i = 1, #KEYS do
   end
 end
 
-local userAllowanceValue = redis.call('GET', KEYS[1])
-local workspaceAllowanceValue = false
-if #KEYS == 2 then
-  workspaceAllowanceValue = redis.call('GET', KEYS[2])
+local consumedValues = {}
+local isCold = false
+for i = 1, #KEYS do
+  local value = redis.call('GET', KEYS[i])
+  if value then
+    consumedValues[i] = tonumber(value)
+  else
+    consumedValues[i] = false
+    isCold = true
+  end
 end
 
-if (not userAllowanceValue) or (#KEYS == 2 and not workspaceAllowanceValue) then
-  return {
-    userAllowanceValue and tonumber(userAllowanceValue) or false,
-    workspaceAllowanceValue and tonumber(workspaceAllowanceValue) or false,
-    false,
-  }
+local function reply(userShare)
+  local result = { userShare, false }
+  if hasWorkspaceAllowance then
+    result[2] = consumedValues[#KEYS]
+  end
+  for i = 1, userAllowanceCount do
+    result[i + 2] = consumedValues[i]
+  end
+  return result
+end
+
+if isCold then
+  return reply(false)
 end
 
 local userShare = args.amount
 if args.isFallbackEnabled then
-  userShare = math.max(0, math.min(args.amount, args.userAllowanceLimit - tonumber(userAllowanceValue)))
+  for i = 1, userAllowanceCount do
+    userShare = math.min(userShare, args.userAllowanceLimits[i] - consumedValues[i])
+  end
+  userShare = math.max(0, userShare)
 end
 
-local result = { redis.call('INCRBY', KEYS[1], userShare), false, userShare }
-if #KEYS == 2 then
-  result[2] = redis.call('INCRBY', KEYS[2], args.amount - userShare)
+for i = 1, userAllowanceCount do
+  consumedValues[i] = redis.call('INCRBY', KEYS[i], userShare)
 end
-return result
+if hasWorkspaceAllowance then
+  consumedValues[#KEYS] = redis.call('INCRBY', KEYS[#KEYS], args.amount - userShare)
+end
+
+return reply(userShare)
 `,
 };

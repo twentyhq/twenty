@@ -2,7 +2,7 @@ export type UserAllowanceFirstConsumeResult =
   | {
       outcome: 'applied';
       userShare: number;
-      userAllowanceConsumed: number;
+      userAllowanceConsumedValues: number[];
       workspaceAllowanceConsumed: number | null;
       isWorkspaceAllowanceUnmetered: boolean;
     }

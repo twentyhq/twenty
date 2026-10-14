@@ -7,13 +7,13 @@ import { isWorkspaceCreditLimitCounter } from 'src/engine/core-modules/usage-lim
 
 export const selectUserAllowanceFirstExhaustedCounters = ({
   exhaustedCounters,
-  userAllowanceCounter,
-  userAllowanceConsumed,
+  userAllowanceCounters,
+  userAllowanceConsumedValues,
   workspaceAllowanceConsumed,
 }: {
   exhaustedCounters: QuotaCounter[];
-  userAllowanceCounter: UserAllowanceQuotaCounter | null;
-  userAllowanceConsumed: number | null;
+  userAllowanceCounters: UserAllowanceQuotaCounter[];
+  userAllowanceConsumedValues: (number | null)[];
   workspaceAllowanceConsumed: number | null;
 }): Omit<QuotaAdmission, 'exhaustedScope'> & {
   exhaustedCounters: QuotaCounter[];
@@ -21,6 +21,8 @@ export const selectUserAllowanceFirstExhaustedCounters = ({
   const isWorkspaceAllowanceExhausted = exhaustedCounters.some(
     (counter) => counter.kind === 'workspaceAllowance',
   );
+
+  const [userAllowanceCounter] = userAllowanceCounters;
 
   if (!isDefined(userAllowanceCounter)) {
     return {
@@ -31,7 +33,7 @@ export const selectUserAllowanceFirstExhaustedCounters = ({
     };
   }
 
-  const isUserAllowanceRead = isDefined(userAllowanceConsumed);
+  const isUserAllowanceRead = userAllowanceConsumedValues.every(isDefined);
   const isUserAllowanceExhausted = exhaustedCounters.some(
     (counter) => counter.kind === 'userAllowance',
   );

@@ -1,6 +1,5 @@
 import { findUserAllowanceFirstExhaustedKind } from 'src/engine/core-modules/usage-limit/utils/find-user-allowance-first-exhausted-kind.util';
 
-const USER_ALLOWANCE_LIMIT = 1_000;
 const WORKSPACE_ALLOWANCE_LIMIT = 5_000;
 
 type UserAllowanceFirstDebit = Parameters<
@@ -11,8 +10,7 @@ const findKind = (overrides: Partial<UserAllowanceFirstDebit>) =>
   findUserAllowanceFirstExhaustedKind({
     outcome: 'applied',
     fallback: 'WORKSPACE_CREDITS',
-    userAllowanceConsumed: 0,
-    userAllowanceLimitValue: USER_ALLOWANCE_LIMIT,
+    isUserAllowanceExhausted: false,
     workspaceAllowanceConsumed: 0,
     workspaceAllowanceLimitValue: WORKSPACE_ALLOWANCE_LIMIT,
     hasExhaustedLimitCounter: false,
@@ -24,7 +22,7 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
     it('stops on the allowance once both the member and the workspace are exhausted', () => {
       expect(
         findKind({
-          userAllowanceConsumed: USER_ALLOWANCE_LIMIT,
+          isUserAllowanceExhausted: true,
           workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT,
         }),
       ).toBe('workspaceAllowance');
@@ -33,7 +31,7 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
     it('keeps going while the member still has credits, even with the workspace exhausted', () => {
       expect(
         findKind({
-          userAllowanceConsumed: USER_ALLOWANCE_LIMIT - 1,
+          isUserAllowanceExhausted: false,
           workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT,
         }),
       ).toBeNull();
@@ -42,7 +40,7 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
     it('keeps going on workspace credits once the member is exhausted', () => {
       expect(
         findKind({
-          userAllowanceConsumed: USER_ALLOWANCE_LIMIT,
+          isUserAllowanceExhausted: true,
           workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT - 1,
         }),
       ).toBeNull();
@@ -51,7 +49,7 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
     it('keeps going when the allowance went unmetered', () => {
       expect(
         findKind({
-          userAllowanceConsumed: USER_ALLOWANCE_LIMIT,
+          isUserAllowanceExhausted: true,
           workspaceAllowanceConsumed: null,
         }),
       ).toBeNull();
@@ -63,7 +61,7 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
       expect(
         findKind({
           fallback: 'STOP',
-          userAllowanceConsumed: USER_ALLOWANCE_LIMIT + 200,
+          isUserAllowanceExhausted: true,
           workspaceAllowanceConsumed: null,
         }),
       ).toBe('userAllowance');
@@ -73,7 +71,7 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
       expect(
         findKind({
           fallback: 'STOP',
-          userAllowanceConsumed: USER_ALLOWANCE_LIMIT - 1,
+          isUserAllowanceExhausted: false,
           workspaceAllowanceConsumed: null,
         }),
       ).toBeNull();
@@ -85,7 +83,6 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
       expect(
         findKind({
           outcome: 'userAllowanceUnavailable',
-          userAllowanceConsumed: null,
           workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT,
         }),
       ).toBe('workspaceAllowance');
@@ -95,14 +92,12 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
       expect(
         findKind({
           outcome: 'userAllowanceUnavailable',
-          userAllowanceConsumed: null,
           workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT - 1,
         }),
       ).toBeNull();
       expect(
         findKind({
           outcome: 'userAllowanceUnavailable',
-          userAllowanceConsumed: null,
           workspaceAllowanceConsumed: null,
         }),
       ).toBeNull();
@@ -114,7 +109,7 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
       expect(
         findKind({
           outcome: 'unknown',
-          userAllowanceConsumed: USER_ALLOWANCE_LIMIT,
+          isUserAllowanceExhausted: true,
           workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT,
         }),
       ).toBeNull();
@@ -124,7 +119,6 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
       expect(
         findKind({
           outcome: 'unknown',
-          userAllowanceConsumed: null,
           workspaceAllowanceConsumed: null,
           hasExhaustedLimitCounter: true,
         }),
@@ -140,13 +134,13 @@ describe('findUserAllowanceFirstExhaustedKind', () => {
     expect(
       findKind({
         fallback: 'STOP',
-        userAllowanceConsumed: USER_ALLOWANCE_LIMIT,
+        isUserAllowanceExhausted: true,
         hasExhaustedLimitCounter: true,
       }),
     ).toBe('userAllowance');
     expect(
       findKind({
-        userAllowanceConsumed: USER_ALLOWANCE_LIMIT,
+        isUserAllowanceExhausted: true,
         workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT,
         hasExhaustedLimitCounter: true,
       }),

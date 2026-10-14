@@ -4,12 +4,12 @@ import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is
 
 export const buildUserAllowanceFirstScriptArguments = ({
   amount,
-  userAllowanceLimit,
+  userAllowanceLimits,
   isFallbackEnabled,
   warms,
 }: {
   amount: number;
-  userAllowanceLimit: number;
+  userAllowanceLimits: number[];
   isFallbackEnabled: boolean;
   warms: ({ value: number; ttl: number } | null)[];
 }): string[] => {
@@ -19,10 +19,12 @@ export const buildUserAllowanceFirstScriptArguments = ({
     );
   }
 
-  if (!isValidCreditAmountMicro(userAllowanceLimit)) {
-    throw new Error(
-      `User-allowance-first limit ${userAllowanceLimit} is not a non-negative safe integer`,
-    );
+  for (const userAllowanceLimit of userAllowanceLimits) {
+    if (!isValidCreditAmountMicro(userAllowanceLimit)) {
+      throw new Error(
+        `User-allowance-first limit ${userAllowanceLimit} is not a non-negative safe integer`,
+      );
+    }
   }
 
   for (const warm of warms) {
@@ -41,7 +43,7 @@ export const buildUserAllowanceFirstScriptArguments = ({
   }
 
   return [
-    JSON.stringify({ amount, userAllowanceLimit, isFallbackEnabled }),
+    JSON.stringify({ amount, userAllowanceLimits, isFallbackEnabled }),
     JSON.stringify(warms.map((warm) => warm?.value ?? false)),
     JSON.stringify(warms.map((warm) => warm?.ttl ?? false)),
   ];

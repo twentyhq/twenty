@@ -8,39 +8,26 @@ import { isLimitExhausted } from 'src/engine/core-modules/usage-limit/utils/is-l
 type UserAllowanceFirstDebit = {
   outcome: UserAllowanceFirstConsumeResult['outcome'];
   fallback: UserCreditsFallbackMode;
-  userAllowanceConsumed: number | null;
-  userAllowanceLimitValue: number;
+  isUserAllowanceExhausted: boolean;
   workspaceAllowanceConsumed: number | null;
   workspaceAllowanceLimitValue: number | null;
 };
 
-const isConsumedAtLimit = ({
-  consumed,
-  limitValue,
-}: {
-  consumed: number | null;
-  limitValue: number | null;
-}): boolean =>
-  isDefined(consumed) &&
-  isDefined(limitValue) &&
-  isLimitExhausted({ consumed, cost: 0, limitValue });
-
 const findCreditsExhaustedKind = ({
   outcome,
   fallback,
-  userAllowanceConsumed,
-  userAllowanceLimitValue,
+  isUserAllowanceExhausted,
   workspaceAllowanceConsumed,
   workspaceAllowanceLimitValue,
 }: UserAllowanceFirstDebit): ExhaustedKind | null => {
-  const isUserAllowanceExhausted = isConsumedAtLimit({
-    consumed: userAllowanceConsumed,
-    limitValue: userAllowanceLimitValue,
-  });
-  const isWorkspaceAllowanceExhausted = isConsumedAtLimit({
-    consumed: workspaceAllowanceConsumed,
-    limitValue: workspaceAllowanceLimitValue,
-  });
+  const isWorkspaceAllowanceExhausted =
+    isDefined(workspaceAllowanceConsumed) &&
+    isDefined(workspaceAllowanceLimitValue) &&
+    isLimitExhausted({
+      consumed: workspaceAllowanceConsumed,
+      cost: 0,
+      limitValue: workspaceAllowanceLimitValue,
+    });
 
   switch (outcome) {
     case 'applied':

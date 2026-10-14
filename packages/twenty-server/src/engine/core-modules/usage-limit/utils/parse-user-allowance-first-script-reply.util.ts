@@ -1,38 +1,53 @@
+import { isDefined } from 'twenty-shared/utils';
+
 const toNumberOrNull = (value: unknown): number | null =>
   typeof value === 'number' ? value : null;
 
-export const parseUserAllowanceFirstScriptReply = (
-  reply: unknown,
-):
+export const parseUserAllowanceFirstScriptReply = ({
+  reply,
+  userAllowanceCount,
+}: {
+  reply: unknown;
+  userAllowanceCount: number;
+}):
   | {
       userShare: number;
-      userAllowanceConsumed: number;
+      userAllowanceConsumedValues: number[];
       workspaceAllowanceConsumed: number | null;
     }
   | {
       userShare: null;
-      userAllowanceConsumed: number | null;
+      userAllowanceConsumedValues: (number | null)[];
       workspaceAllowanceConsumed: number | null;
     } => {
   if (!Array.isArray(reply)) {
     throw new Error('User-allowance-first script reply is not an array');
   }
 
-  const [userAllowanceConsumed, workspaceAllowanceConsumed, userShare] = [
-    reply[0],
-    reply[1],
-    reply[2],
-  ].map(toNumberOrNull);
+  const userShare = toNumberOrNull(reply[0]);
+  const workspaceAllowanceConsumed = toNumberOrNull(reply[1]);
+  const userAllowanceConsumedValues = Array.from(
+    { length: userAllowanceCount },
+    (_, index) => toNumberOrNull(reply[index + 2]),
+  );
 
   if (userShare === null) {
-    return { userShare, userAllowanceConsumed, workspaceAllowanceConsumed };
+    return {
+      userShare,
+      userAllowanceConsumedValues,
+      workspaceAllowanceConsumed,
+    };
   }
 
-  if (userAllowanceConsumed === null) {
+  if (!userAllowanceConsumedValues.every(isDefined)) {
     throw new Error(
-      'User-allowance-first script reply has a user share without a user allowance counter value',
+      'User-allowance-first script reply has a user share without every user allowance counter value',
     );
   }
 
-  return { userShare, userAllowanceConsumed, workspaceAllowanceConsumed };
+  return {
+    userShare,
+    userAllowanceConsumedValues: userAllowanceConsumedValues.filter(isDefined),
+    workspaceAllowanceConsumed,
+  };
 };
