@@ -12,7 +12,6 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
-import { isFilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/is-filter-operator.util';
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
 import {
   CommonQueryRunnerException,
@@ -85,6 +84,9 @@ export class FilterArgProcessorService {
     fieldIdByName: Record<string, string>,
     fieldIdByJoinColumnName: Record<string, string>,
     depth: number,
+    parentRelationFieldMetadata?: FlatFieldMetadata<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >,
   ): ObjectRecordFilter {
     const transformedFilter: ObjectRecordFilter = {};
 
@@ -100,6 +102,7 @@ export class FilterArgProcessorService {
               fieldIdByName,
               fieldIdByJoinColumnName,
               depth,
+              parentRelationFieldMetadata,
             ),
         );
         continue;
@@ -114,6 +117,7 @@ export class FilterArgProcessorService {
           fieldIdByName,
           fieldIdByJoinColumnName,
           depth,
+          parentRelationFieldMetadata,
         );
         continue;
       }
@@ -144,6 +148,7 @@ export class FilterArgProcessorService {
         flatFieldMetadataMaps,
         fieldIdByName,
         fieldIdByJoinColumnName,
+        parentRelationFieldMetadata,
       );
     }
 
@@ -239,28 +244,6 @@ export class FilterArgProcessorService {
       throwUseJoinColumnInstead(key);
     }
 
-    const {
-      fieldIdByName: targetFieldIdByName,
-      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
-    } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      targetObjectMetadata,
-    );
-
-    const hasOperatorAtTargetFieldPosition = Object.keys(filterValue).some(
-      (filterKey) =>
-        isFilterOperator(filterKey) &&
-        !isDefined(targetFieldIdByName[filterKey]) &&
-        !isDefined(targetFieldIdByJoinColumnName[filterKey]),
-    );
-
-    if (
-      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE &&
-      hasOperatorAtTargetFieldPosition
-    ) {
-      throwUseJoinColumnInstead(key);
-    }
-
     if (depth >= MAX_RELATION_FILTER_DEPTH) {
       throw new CommonQueryRunnerException(
         `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
@@ -271,6 +254,14 @@ export class FilterArgProcessorService {
       );
     }
 
+    const {
+      fieldIdByName: targetFieldIdByName,
+      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
+    } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      targetObjectMetadata,
+    );
+
     return this.validateAndTransformFilter(
       filterValue,
       targetObjectMetadata,
@@ -279,6 +270,7 @@ export class FilterArgProcessorService {
       targetFieldIdByName,
       targetFieldIdByJoinColumnName,
       depth + 1,
+      fieldMetadata,
     );
   }
 
@@ -289,17 +281,25 @@ export class FilterArgProcessorService {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     fieldIdByName: Record<string, string>,
     fieldIdByJoinColumnName: Record<string, string>,
+    parentRelationFieldMetadata?: FlatFieldMetadata<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >,
   ): Record<string, unknown> {
     const fieldMetadataId = fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
 
     if (!isDefined(fieldMetadataId)) {
       const nameSingular = flatObjectMetadata.nameSingular;
-      const operatorHint = isFilterOperator(key)
-        ? ` "${key}" is a filter operator and must be nested under a field: { <fieldName>: { ${key}: <value> } }.`
+      const relationContext = isDefined(parentRelationFieldMetadata)
+        ? ` (filtering through relation "${parentRelationFieldMetadata.name}")`
         : '';
+      const hint =
+        parentRelationFieldMetadata?.settings?.relationType ===
+        RelationType.MANY_TO_ONE
+          ? `To filter by the related record, use "${computeMorphOrRelationFieldJoinColumnName({ name: parentRelationFieldMetadata.name })}".`
+          : 'Filter keys must be field names or and/or/not, with operators nested under a field: { <fieldName>: { <operator>: <value> } }.';
 
       throw new CommonQueryRunnerException(
-        `Object ${flatObjectMetadata.nameSingular} doesn't have any "${key}" field.${operatorHint}`,
+        `Object ${nameSingular} doesn't have any "${key}" field${relationContext}. ${hint}`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
         {
           userFriendlyMessage: msg`Invalid filter : ${nameSingular} object doesn't have any "${key}" field.`,
@@ -362,12 +362,9 @@ export class FilterArgProcessorService {
         const subFieldNames = compositeType.properties.map(
           (property) => property.name,
         );
-        const operatorHint = isFilterOperator(subFieldKey)
-          ? ` Nest the operator under a sub field: { ${fieldMetadata.name}: { <subFieldName>: { ${subFieldKey}: <value> } } }.`
-          : '';
 
         throw new CommonQueryRunnerException(
-          `Sub field "${subFieldKey}" not found for composite type: ${fieldMetadata.type}. Available sub fields: ${subFieldNames.join(', ')}.${operatorHint}`,
+          `Sub field "${subFieldKey}" not found for composite type: ${fieldMetadata.type}. Available sub fields: ${subFieldNames.join(', ')}.`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
           { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
