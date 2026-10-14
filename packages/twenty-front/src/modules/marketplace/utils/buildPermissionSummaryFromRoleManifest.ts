@@ -13,6 +13,7 @@ export type { PermissionSummaryItem } from '@/marketplace/types/PermissionSummar
 
 export type BuildPermissionSummaryOptions = {
   objectLabelsByUniversalIdentifier?: Record<string, string>;
+  appObjectUniversalIdentifiers?: ReadonlySet<string>;
 };
 
 const getRoleAccess = (defaultRole: RoleManifest): RecordAccess => ({
@@ -27,9 +28,18 @@ export const buildPermissionSummaryFromRoleManifest = (
   defaultRole: RoleManifest,
   {
     objectLabelsByUniversalIdentifier = {},
+    appObjectUniversalIdentifiers = new Set(),
   }: BuildPermissionSummaryOptions = {},
 ): PermissionSummaryItem[] => {
   const roleAccess = getRoleAccess(defaultRole);
+
+  const roleWithoutAppObjectPermissions: RoleManifest = {
+    ...defaultRole,
+    objectPermissions: (defaultRole.objectPermissions ?? []).filter(
+      ({ objectUniversalIdentifier }) =>
+        !appObjectUniversalIdentifiers.has(objectUniversalIdentifier),
+    ),
+  };
 
   const allRecordsLabel = getRecordAccessLabel({
     access: roleAccess,
@@ -44,7 +54,7 @@ export const buildPermissionSummaryFromRoleManifest = (
       ? [{ Icon: IconAddressBook, label: allRecordsLabel }]
       : []),
     ...buildObjectRecordsPermissionSummary({
-      defaultRole,
+      defaultRole: roleWithoutAppObjectPermissions,
       roleAccess,
       objectLabelsByUniversalIdentifier,
     }),

@@ -13,6 +13,7 @@ const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-b374-4779-a561-80086cb2e17f';
 const TASK_OBJECT_UNIVERSAL_IDENTIFIER = '20202020-1ba1-48ba-bc83-ef7e5990ed10';
+const APP_OBJECT_UNIVERSAL_IDENTIFIER = 'a1b2c3d4-0000-4000-8000-0000000000a1';
 
 const objectLabelsByUniversalIdentifier = {
   [PERSON_OBJECT_UNIVERSAL_IDENTIFIER]: 'Person',
@@ -238,7 +239,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
 
       expect(item.label).toBe('Read 3 objects');
       expect(item.details).toEqual({
-        title: 'Read 3 object records',
+        title: 'Read 3 object records:',
         items: ['Person', 'Company', '1 other object'],
       });
     });
@@ -257,6 +258,64 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
 
       expect(item.label).toBe('Read 1 object');
       expect(item.details).toBeUndefined();
+    });
+
+    it('leaves out grants on objects the application defines itself', () => {
+      const [item, ...otherItems] = buildPermissionSummaryFromRoleManifest(
+        {
+          ...baseRole,
+          objectPermissions: [
+            {
+              universalIdentifier: 'perm-1',
+              objectUniversalIdentifier: APP_OBJECT_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: true,
+              canDestroyObjectRecords: true,
+            },
+            {
+              universalIdentifier: 'perm-2',
+              objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+            },
+          ],
+        },
+        {
+          objectLabelsByUniversalIdentifier,
+          appObjectUniversalIdentifiers: new Set([
+            APP_OBJECT_UNIVERSAL_IDENTIFIER,
+          ]),
+        },
+      );
+
+      expect(otherItems).toEqual([]);
+      expect(item.label).toBe('Read 1 object');
+      expect(item.details).toEqual({
+        title: 'Read 1 object record:',
+        items: ['Person'],
+      });
+    });
+
+    it('requests nothing when the role only grants access to its own objects', () => {
+      expect(
+        buildPermissionSummaryFromRoleManifest(
+          {
+            ...baseRole,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: APP_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canUpdateObjectRecords: true,
+              },
+            ],
+          },
+          {
+            appObjectUniversalIdentifiers: new Set([
+              APP_OBJECT_UNIVERSAL_IDENTIFIER,
+            ]),
+          },
+        ),
+      ).toEqual([]);
     });
 
     it('falls back to a count when no labels are provided at all', () => {

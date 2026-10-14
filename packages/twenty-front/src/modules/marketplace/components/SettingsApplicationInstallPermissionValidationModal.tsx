@@ -23,7 +23,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 type MarketplaceAppObject = {
   universalIdentifier: string;
-  labelSingular: string;
 };
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
@@ -155,20 +154,29 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   const objectLabelsByUniversalIdentifier = useMemo(
     (): Record<string, string> =>
       Object.fromEntries(
-        [...(appObjects ?? []), ...objectMetadataItems].map(
-          ({ universalIdentifier, labelSingular }) => [
-            universalIdentifier,
-            labelSingular,
-          ],
+        objectMetadataItems.map(({ universalIdentifier, labelSingular }) => [
+          universalIdentifier,
+          labelSingular,
+        ]),
+      ),
+    [objectMetadataItems],
+  );
+
+  const appObjectUniversalIdentifiers = useMemo(
+    () =>
+      new Set(
+        (appObjects ?? []).map(
+          ({ universalIdentifier }) => universalIdentifier,
         ),
       ),
-    [appObjects, objectMetadataItems],
+    [appObjects],
   );
 
   const permissionItems: PermissionSummaryItem[] = useMemo(() => {
     const rolePermissionItems = defaultRole
       ? buildPermissionSummaryFromRoleManifest(defaultRole, {
           objectLabelsByUniversalIdentifier,
+          appObjectUniversalIdentifiers,
         })
       : [];
 
@@ -181,6 +189,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     requestedCapabilities,
     defaultRole,
     objectLabelsByUniversalIdentifier,
+    appObjectUniversalIdentifiers,
     billsCredits,
   ]);
 
@@ -251,7 +260,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                             content={
                               <>
                                 <StyledObjectListTitle>
-                                  {t`${item.details.title}:`}
+                                  {item.details.title}
                                 </StyledObjectListTitle>
                                 <StyledObjectList>
                                   {item.details.items.map((detailItem) => (

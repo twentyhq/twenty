@@ -115,8 +115,8 @@ export const buildObjectRecordsPermissionSummary = ({
         getRecordAccessLabel({
           access,
           target: plural(objectUniversalIdentifiers.length, {
-            one: '# object record',
-            other: '# object records',
+            one: '# object record:',
+            other: '# object records:',
           }),
         }) ?? label;
 
