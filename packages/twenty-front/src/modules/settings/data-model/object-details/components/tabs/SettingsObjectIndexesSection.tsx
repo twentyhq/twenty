@@ -26,6 +26,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsObjectIndexTable } from '@/settings/data-model/object-details/components/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '@/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 type SettingsObjectIndexesSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -166,12 +167,12 @@ export const SettingsObjectIndexesSection = ({
         placeholder={t`Search an index...`}
         value={searchTerm}
         onValueChange={setSearchTerm}
-        filterDropdown={(filterButton) => (
+        actions={
           <DropdownRoot
             dropdownId={HIDE_SYSTEM_INDEXES_DROPDOWN_ID}
             type="panel"
           >
-            <Dropdown.Trigger render={filterButton} />
+            <SettingsSearchFilterTrigger />
             <DropdownContent align="end" sideOffset={8}>
               <Dropdown.Section>
                 <SettingsRow
@@ -184,7 +185,7 @@ export const SettingsObjectIndexesSection = ({
               </Dropdown.Section>
             </DropdownContent>
           </DropdownRoot>
-        )}
+        }
       />
       <SettingsObjectIndexTable
         items={filteredItems}

@@ -1,0 +1,35 @@
+---
+title: OverflowingTextTooltipModeProvider
+description: Choose when OverflowingTextWithTooltip checks truncation for a subtree.
+---
+
+import OverflowingTextTooltipModeProviderReference from '/snippets/ui/generated/typography/overflowing-text-tooltip-mode-provider.mdx';
+
+`OverflowingTextTooltipModeProvider` sets how every [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) inside it handles its tooltip. It renders no DOM element.
+
+## Usage
+
+```tsx
+import {
+  OverflowingTextTooltipModeProvider,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordCell = ({ name }: { name: string }) => (
+  <OverflowingTextTooltipModeProvider mode="disabled">
+    <OverflowingTextWithTooltip text={name} />
+  </OverflowingTextTooltipModeProvider>
+);
+```
+
+## Modes
+
+- `measure-on-hover`, the default without a provider, checks truncation on pointer entry and focus. A label that fits stays out of the way of a parent tooltip.
+- `measure-on-open` checks truncation when the tooltip tries to open. Use it for labels that mount under the pointer, such as a hover overlay, where no pointer entry happens.
+- `disabled` renders only the text, without any tooltip parts. Use it for many labels that a user cannot hover, such as content covered by an overlay.
+
+Nested providers override the mode for their subtree.
+
+## Props
+
+<OverflowingTextTooltipModeProviderReference />

@@ -8,6 +8,6 @@ export const isTeamsTranscriptHistoryStalled = ({
   state: Pick<TeamsTranscriptHistoryState, 'phase' | 'updatedAt'>;
   now: number;
 }): boolean =>
-  state.phase === 'importing' &&
+  (state.phase === 'counting' || state.phase === 'importing') &&
   now - Date.parse(state.updatedAt) >
     TEAMS_TRANSCRIPT_HISTORY_STALL_THRESHOLD_MILLISECONDS;

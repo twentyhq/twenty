@@ -37,15 +37,10 @@ const StyledPillAnchor = styled.div`
 
 const StyledTrigger = styled.button`
   align-items: center;
-  background: none;
-  border: none;
   border-radius: ${themeCssVariables.border.radius.pill};
   color: ${themeCssVariables.font.color.tertiary};
   corner-shape: round;
-  cursor: pointer;
   display: flex;
-  font-family: inherit;
-  padding: 0;
 
   &:hover > span,
   &[data-popup-open] > span {

@@ -265,13 +265,7 @@ export const Select = <TValue extends SelectValue>({
                       }
                     >
                       {isColoredTag ? (
-                        <Tag
-                          color={tagColor}
-                          borderStyle="dashed"
-                          variant="soft"
-                        >
-                          {option.label}
-                        </Tag>
+                        <Tag color={tagColor}>{option.label}</Tag>
                       ) : (
                         option.label
                       )}

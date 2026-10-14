@@ -6,6 +6,7 @@ import {
 } from '~/generated-metadata/graphql';
 import {
   FindAdminApplicationRegistrationVariablesDocument,
+  FindOneAdminApplicationRegistrationDocument,
   UpdateAdminApplicationRegistrationVariableDocument,
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
@@ -110,7 +111,10 @@ export const SettingsApplicationRegistrationConfigTab = ({
     UpdateAdminApplicationRegistrationVariableDocument,
     {
       client: apolloAdminClient,
-      refetchQueries: [FindAdminApplicationRegistrationVariablesDocument],
+      refetchQueries: [
+        FindAdminApplicationRegistrationVariablesDocument,
+        FindOneAdminApplicationRegistrationDocument,
+      ],
     },
   );
 

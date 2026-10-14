@@ -16,6 +16,9 @@ export class AppConnectionObjectDto implements AppConnection {
   @Field()
   handle: string;
 
+  @Field(() => String, { nullable: true })
+  externalAccountId: string | null;
+
   @Field(() => String)
   visibility: 'user' | 'workspace';
 

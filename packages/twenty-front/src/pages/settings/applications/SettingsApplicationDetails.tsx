@@ -61,10 +61,9 @@ import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/c
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
+import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
-import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
@@ -157,11 +156,11 @@ export const SettingsApplicationDetails = () => {
     detail?.latestAvailableVersion ??
     application?.applicationRegistration?.latestAvailableVersion;
 
-  const hasUpdate =
-    isUpgradableApplicationSourceType(sourceType) &&
-    isDefined(latestAvailableVersion) &&
-    isDefined(currentVersion) &&
-    isNewerSemver(latestAvailableVersion, currentVersion);
+  const hasUpdate = hasApplicationUpdate({
+    sourceType,
+    currentVersion,
+    latestAvailableVersion,
+  });
 
   const handleUpgrade = async () => {
     if (!isDefined(latestAvailableVersion)) {

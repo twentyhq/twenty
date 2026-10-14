@@ -32,6 +32,8 @@ const CONNECTED_ACCOUNT_ID = 'connected-account-1';
 
 const STATE_KV_KEY = `teams-transcript-history:${CONNECTED_ACCOUNT_ID}`;
 
+const INITIAL_IMPORT_KV_KEY = `teams-transcript-history-initial-import:${CONNECTED_ACCOUNT_ID}`;
+
 const NOW = Date.parse('2026-09-15T00:00:00.000Z');
 
 const EXISTING_STATE = {
@@ -67,6 +69,7 @@ describe('startTeamsTranscriptHistoryInitialImportOrThrow', () => {
 
     const state = kvStore.get(STATE_KV_KEY) as typeof EXISTING_STATE;
 
+    expect(kvStore.get(INITIAL_IMPORT_KV_KEY)).toBe(true);
     expect(state).toMatchObject({
       windowStart: '2026-08-15T00:00:00.000Z',
       windowEnd: '2026-09-15T00:00:00.000Z',
@@ -80,6 +83,7 @@ describe('startTeamsTranscriptHistoryInitialImportOrThrow', () => {
             payload: {
               connectedAccountId: CONNECTED_ACCOUNT_ID,
               runId: state.runId,
+              chunkIndex: 0,
               pageIndex: 0,
               attempt: 0,
             },
@@ -92,7 +96,12 @@ describe('startTeamsTranscriptHistoryInitialImportOrThrow', () => {
   it.each([
     ['is running', EXISTING_STATE],
     ['finished', { ...EXISTING_STATE, phase: 'imported' }],
+    [
+      'reached the page limit',
+      { ...EXISTING_STATE, phase: 'failed', errorCode: 'page-limit-reached' },
+    ],
   ])('should keep an import that %s', async (_, existingState) => {
+    kvStore.set(INITIAL_IMPORT_KV_KEY, true);
     kvStore.set(STATE_KV_KEY, existingState);
 
     await startInitialImport();
@@ -111,6 +120,7 @@ describe('startTeamsTranscriptHistoryInitialImportOrThrow', () => {
       },
     ],
   ])('should restart an import that %s', async (_, existingState) => {
+    kvStore.set(INITIAL_IMPORT_KV_KEY, true);
     kvStore.set(STATE_KV_KEY, existingState);
 
     await startInitialImport();
@@ -120,6 +130,18 @@ describe('startTeamsTranscriptHistoryInitialImportOrThrow', () => {
       pageCount: 0,
     });
     expect(kvStore.get(STATE_KV_KEY)).not.toMatchObject({ runId: 'run-1' });
+    expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should import the last 31 days even when a count already ran on the connection', async () => {
+    kvStore.set(STATE_KV_KEY, { ...EXISTING_STATE, phase: 'counted' });
+
+    await startInitialImport();
+
+    expect(kvStore.get(STATE_KV_KEY)).toMatchObject({
+      phase: 'importing',
+      pageCount: 0,
+    });
     expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
   });
 
@@ -135,7 +157,7 @@ describe('startTeamsTranscriptHistoryInitialImportOrThrow', () => {
 
     await startInitialImport();
 
-    expect(kvStore.has(STATE_KV_KEY)).toBe(false);
+    expect(kvStore.size).toBe(0);
   });
 
   it('should not import anything while transcripts are off', async () => {

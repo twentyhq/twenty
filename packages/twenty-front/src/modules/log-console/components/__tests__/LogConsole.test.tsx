@@ -19,7 +19,11 @@ import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleAc
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
+import { PageFocusId } from '@/types/PageFocusId';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   jotaiStore,
@@ -57,6 +61,18 @@ jest.mock('@/log-console/components/LogConsoleResults', () => ({
 jest.mock('@/log-console/components/LogConsoleDetailPanel', () => ({
   LogConsoleDetailPanel: () => null,
 }));
+
+const SETTINGS_PAGE_FOCUS_STACK_ITEM: FocusStackItem = {
+  focusId: PageFocusId.Settings,
+  componentInstance: {
+    componentType: FocusComponentType.PAGE,
+    componentInstanceId: PageFocusId.Settings,
+  },
+  globalHotkeysConfig: {
+    enableGlobalHotkeysWithModifiers: false,
+    enableGlobalHotkeysConflictingWithKeyboard: false,
+  },
+};
 
 const DeveloperModeSwitch = () => {
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
@@ -306,6 +322,49 @@ describe('LogConsole', () => {
     await userEvent.click(screen.getByRole('tab', { name: 'App logs' }));
 
     expect(jotaiStore.get(logConsoleActiveSourceIdState.atom)).toBe('app-logs');
+  });
+
+  it('toggles with Mod+J on a page that turns off modifier hotkeys', async () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(focusStackState.atom, [SETTINGS_PAGE_FOCUS_STACK_ITEM]);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    });
+
+    await userEvent.keyboard('{Control>}j{/Control}');
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+
+    await userEvent.keyboard('{Meta>}j{/Meta}');
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
+  });
+
+  it('ignores Mod+J while a dialog turns off modifier hotkeys', async () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(focusStackState.atom, [
+        SETTINGS_PAGE_FOCUS_STACK_ITEM,
+        {
+          focusId: 'dialog',
+          componentInstance: {
+            componentType: FocusComponentType.MODAL,
+            componentInstanceId: 'dialog',
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysWithModifiers: false,
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
+        },
+      ]);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    });
+
+    await userEvent.keyboard('{Control>}j{/Control}');
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
   });
 
   it('stays hidden when the logs feature flag is off', async () => {

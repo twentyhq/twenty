@@ -7,7 +7,7 @@ import { processTeamsTranscriptHistoryPageOrThrow } from 'src/features/transcrip
 
 export const teamsImportTranscriptHistoryHandler = (
   payload: Partial<Record<keyof TeamsTranscriptHistoryJobPayload, unknown>>,
-) => processTeamsTranscriptHistoryPageOrThrow(payload);
+) => processTeamsTranscriptHistoryPageOrThrow({ phase: 'importing', payload });
 
 export default defineLogicFunction({
   universalIdentifier: TEAMS_IMPORT_TRANSCRIPT_HISTORY_UNIVERSAL_IDENTIFIER,

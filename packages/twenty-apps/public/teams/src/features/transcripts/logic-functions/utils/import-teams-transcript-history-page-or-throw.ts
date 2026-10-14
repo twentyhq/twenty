@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_TRANSCRIPT_HISTORY_UPSERT_BATCH_SIZE } from 'src/features/transcripts/logic-functions/constants/teams-transcript-history-upsert-batch-size';
 import { type TeamsOccurrenceTranscript } from 'src/features/transcripts/logic-functions/types/teams-occurrence-transcript.type';
+import { type TeamsTranscriptHistoryPageCounts } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-page-counts.type';
 import { buildTeamsCallRecordingSyncFields } from 'src/features/transcripts/logic-functions/utils/build-teams-call-recording-sync-fields';
 import { chunkIntoBatches } from 'src/features/transcripts/logic-functions/utils/chunk-into-batches';
 import { computeCallRecordingIdForTeamsTranscript } from 'src/features/transcripts/logic-functions/utils/compute-call-recording-id-for-teams-transcript';
@@ -42,13 +43,15 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
   accessToken,
   coreApiClient,
   transcripts,
+  importedSince,
   isRunActive,
 }: {
   accessToken: string;
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   transcripts: TeamsOccurrenceTranscript[];
+  importedSince: string;
   isRunActive: () => Promise<boolean>;
-}): Promise<number> => {
+}): Promise<TeamsTranscriptHistoryPageCounts> => {
   const pageTranscripts = [
     ...new Map(
       transcripts.map((occurrenceTranscript) => {
@@ -60,17 +63,22 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       }),
     ).values(),
   ];
-  const { deletedCallRecordingIds, completedCallRecordingIds } =
-    await findDeletedAndCompletedCallRecordingIdsOrThrow({
-      coreApiClient,
-      callRecordingIds: pageTranscripts.map(
-        ({ callRecordingId }) => callRecordingId,
-      ),
-    });
+  const {
+    deletedCallRecordingIds,
+    completedCallRecordingIds,
+    importedCallRecordingIds,
+  } = await findDeletedAndCompletedCallRecordingIdsOrThrow({
+    coreApiClient,
+    callRecordingIds: pageTranscripts.map(
+      ({ callRecordingId }) => callRecordingId,
+    ),
+    importedSince,
+  });
   const importableTranscripts = pageTranscripts.filter(
     ({ callRecordingId }) =>
       !deletedCallRecordingIds.has(callRecordingId) &&
-      !completedCallRecordingIds.has(callRecordingId),
+      !completedCallRecordingIds.has(callRecordingId) &&
+      !importedCallRecordingIds.has(callRecordingId),
   );
   const calendarEventIds = await findTeamsCalendarEventIdsOrThrow({
     accessToken,
@@ -79,7 +87,10 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       .map(({ calendarReference }) => calendarReference)
       .filter(isDefined),
   });
-  let importedCount = 0;
+  let importedCount = importedCallRecordingIds.size;
+  let skippedCount =
+    deletedCallRecordingIds.size + completedCallRecordingIds.size;
+  let unavailableCount = 0;
 
   for (const transcriptBatch of chunkIntoBatches(
     importableTranscripts,
@@ -107,6 +118,7 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
         : [];
 
       if (!isNonEmptyArray(transcriptEntries)) {
+        unavailableCount += 1;
         continue;
       }
 
@@ -137,6 +149,8 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
         !callRecordingIdsBeforeWrite.completedCallRecordingIds.has(id),
     );
 
+    skippedCount += callRecordings.length - upsertableCallRecordings.length;
+
     if (upsertableCallRecordings.length === 0) {
       continue;
     }
@@ -154,5 +168,12 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
     importedCount += upsertableCallRecordings.length;
   }
 
-  return importedCount;
+  return {
+    transcriptCount: 0,
+    alreadyImportedCount: 0,
+    deletedCount: 0,
+    importedCount,
+    skippedCount,
+    unavailableCount,
+  };
 };
