@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   createCoreWorkflow,
   deleteCoreWorkflows,
+  linkCoreWorkflowToLegacyWorkspaceIds,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
@@ -91,7 +92,9 @@ describe('coreWorkflow (e2e)', () => {
     });
 
     coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
-    workspaceWorkflowId = createdCoreWorkflow.workspaceWorkflowId;
+    ({ workspaceWorkflowId } = await linkCoreWorkflowToLegacyWorkspaceIds({
+      coreWorkflowId,
+    }));
   });
 
   afterAll(async () => {

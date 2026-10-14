@@ -24,7 +24,7 @@
 </ParamField>
 
 <ParamField body="gripMode" type="&quot;always&quot; | &quot;never&quot; | &quot;onHover&quot;" default="never">
-  Grip visibility: never, always, or onHover. onHover swaps LeftIcon for the grip on hover and shows no grip without LeftIcon. Does not implement dragging.
+  Grip visibility: never, always, or onHover. always and onHover render a single leading content (LeftComponent when set, otherwise LeftIcon); onHover swaps it for the grip on hover and shows no grip without leading content. Does not implement dragging.
 </ParamField>
 
 <ParamField body="iconButtons" type="ReactNode">
@@ -45,6 +45,10 @@
 
 <ParamField body="isTooltipOpen" type="boolean">
   Accepted for compatibility; currently has no effect.
+</ParamField>
+
+<ParamField body="LeftComponent" type="ReactNode">
+  Custom leading content.
 </ParamField>
 
 <ParamField body="LeftIcon" type="IconComponent">

@@ -172,7 +172,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'success',
+        status: 'success',
         children: 'Webhook https://test.com/webhook created successfully',
       });
     });
@@ -218,7 +218,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'An error occurred.',
       });
     });
@@ -256,7 +256,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'success',
+        status: 'success',
         children: 'Webhook https://test.com/webhook created successfully',
       });
     });
@@ -315,7 +315,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'success',
+        status: 'success',
         children: 'Webhook https://updated.com/webhook updated successfully',
       });
     });
@@ -369,7 +369,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'An error occurred.',
       });
     });
@@ -444,7 +444,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'success',
+        status: 'success',
         children: 'Webhook deleted successfully',
       });
     });
@@ -460,7 +460,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'Webhook ID is required for deletion',
       });
     });
@@ -498,7 +498,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'An error occurred.',
       });
     });

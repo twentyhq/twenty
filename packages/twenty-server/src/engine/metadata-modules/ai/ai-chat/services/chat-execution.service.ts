@@ -428,7 +428,7 @@ export class ChatExecutionService {
     const systemMessage: SystemModelMessage = {
       role: 'system',
       content: systemPrompt,
-      providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
+      providerOptions: getCacheProviderOptions(modelConfig),
     };
 
     const sanitizedMessages = this.sanitizeMessagePartsForModel(
@@ -573,7 +573,7 @@ export class ChatExecutionService {
         return {
           messages: injectCacheBreakpoint(
             messages.map(sortKeysDeeply),
-            registeredModel.sdkPackage,
+            modelConfig,
           ),
         };
       },

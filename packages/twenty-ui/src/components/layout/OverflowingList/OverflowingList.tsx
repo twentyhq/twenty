@@ -59,6 +59,8 @@ export const OverflowingList = ({
     isDefined(maxInlineCount) && Number.isFinite(maxInlineCount)
       ? Math.min(children.length, Math.max(0, Math.floor(maxInlineCount)))
       : children.length;
+  const isMeasurementEnabled =
+    (showOverflowCount ?? (isHovered || hasFocus)) || isOpen;
   const {
     containerRef,
     itemsRef,
@@ -154,7 +156,9 @@ export const OverflowingList = ({
   );
   const mergedPopupRef = useMergedRefs(setPopup, popupProps?.ref);
   const displayedItemCount =
-    showOverflowCount === false ? inlineItemCount : visibleItemCount;
+    isMeasurementEnabled && showOverflowCount !== false
+      ? visibleItemCount
+      : inlineItemCount;
   const hiddenItemCount = children.length - visibleItemCount;
 
   const closeUnavailableOverflow = useStableCallback(() => {
@@ -304,7 +308,7 @@ export const OverflowingList = ({
         itemCount={children.length}
         inlineItemCount={inlineItemCount}
         reserveCountSpace={isCountVisible}
-        isMeasurementEnabled={showOverflowCount !== false || isOpen}
+        isMeasurementEnabled={isMeasurementEnabled}
         isOpen={isOpen}
         onLayoutChange={updateLayout}
         onOverflowUnavailable={closeUnavailableOverflow}
