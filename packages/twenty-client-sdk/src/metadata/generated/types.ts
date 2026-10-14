@@ -110,13 +110,13 @@ export default {
         617,
         618,
         623,
-        624,
-        627,
-        632,
+        625,
+        628,
         633,
         634,
-        637,
-        638
+        635,
+        638,
+        639
     ],
     "types": {
         "ActivateWorkspaceInput": {
@@ -1439,7 +1439,7 @@ export default {
                 435
             ],
             "workspaceUrls": [
-                639
+                640
             ],
             "__typename": [
                 1
@@ -4683,7 +4683,7 @@ export default {
                 272
             ],
             "workspace": [
-                636
+                637
             ],
             "__typename": [
                 1
@@ -4942,7 +4942,7 @@ export default {
                 65
             ],
             "workspace": [
-                640
+                641
             ],
             "__typename": [
                 1
@@ -7174,7 +7174,7 @@ export default {
                 }
             ],
             "enrichWorkspaceCompany": [
-                625
+                626
             ],
             "executeOneLogicFunction": [
                 303,
@@ -7896,7 +7896,7 @@ export default {
                 106
             ],
             "syncApplication": [
-                635,
+                636,
                 {
                     "dryRun": [
                         4
@@ -8479,7 +8479,7 @@ export default {
                 }
             ],
             "updateWorkspaceMemberRole": [
-                630,
+                631,
                 {
                     "roleId": [
                         493,
@@ -9669,7 +9669,7 @@ export default {
                 1
             ],
             "workspaceUrls": [
-                639
+                640
             ],
             "__typename": [
                 1
@@ -9872,7 +9872,7 @@ export default {
                 }
             ],
             "checkWorkspaceInviteHashIsValid": [
-                629,
+                630,
                 {
                     "inviteHash": [
                         1,
@@ -10117,6 +10117,9 @@ export default {
                     ]
                 }
             ],
+            "findWorkspaceAiStats": [
+                624
+            ],
             "findWorkspaceFromInviteHash": [
                 622,
                 {
@@ -10127,7 +10130,7 @@ export default {
                 }
             ],
             "findWorkspaceInvitations": [
-                628
+                629
             ],
             "frontComponent": [
                 262,
@@ -10464,7 +10467,7 @@ export default {
                 }
             ],
             "getWorkspaceCreationDefaults": [
-                626
+                627
             ],
             "githubClaimAuthorizationUrl": [
                 1,
@@ -10554,7 +10557,7 @@ export default {
                 }
             ],
             "myUserApplicationVariables": [
-                631
+                632
             ],
             "navigationMenuItem": [
                 346,
@@ -11052,7 +11055,7 @@ export default {
                 493
             ],
             "workspaceMembers": [
-                630
+                631
             ],
             "__typename": [
                 1
@@ -11474,7 +11477,7 @@ export default {
                 1
             ],
             "result": [
-                628
+                629
             ],
             "success": [
                 4
@@ -11660,7 +11663,7 @@ export default {
                 65
             ],
             "workspace": [
-                640
+                641
             ],
             "__typename": [
                 1
@@ -11734,7 +11737,7 @@ export default {
         },
         "StartWorkspaceSetupChatResult": {
             "outcome": [
-                638
+                639
             ],
             "thread": [
                 9
@@ -13376,7 +13379,7 @@ export default {
                 11
             ],
             "workspaceDiscoverability": [
-                627
+                628
             ],
             "__typename": [
                 1
@@ -13993,10 +13996,10 @@ export default {
                 591
             ],
             "workspaceMember": [
-                630
+                631
             ],
             "workspaceMembers": [
-                630
+                631
             ],
             "workspaces": [
                 591
@@ -14195,7 +14198,7 @@ export default {
                 65
             ],
             "workspaceUrls": [
-                639
+                640
             ],
             "__typename": [
                 1
@@ -14897,19 +14900,33 @@ export default {
                 1
             ],
             "workspaceDiscoverability": [
-                627
+                628
             ],
             "workspaceMembersCount": [
                 11
             ],
             "workspaceUrls": [
-                639
+                640
             ],
             "__typename": [
                 1
             ]
         },
         "WorkspaceActivationStatus": {},
+        "WorkspaceAiStats": {
+            "conversationsCount": [
+                8
+            ],
+            "skillsCount": [
+                8
+            ],
+            "toolsCount": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "WorkspaceCompanyEnrichmentOutcome": {},
         "WorkspaceCompanyEnrichmentResult": {
             "enrichment": [
@@ -14919,13 +14936,13 @@ export default {
                 4
             ],
             "outcome": [
-                624
+                625
             ],
             "personEnrichment": [
                 289
             ],
             "personOutcome": [
-                637
+                638
             ],
             "__typename": [
                 1
@@ -14979,7 +14996,7 @@ export default {
                 1
             ],
             "dateFormat": [
-                632
+                633
             ],
             "id": [
                 493
@@ -14991,7 +15008,7 @@ export default {
                 265
             ],
             "numberFormat": [
-                633
+                634
             ],
             "openRecordIn": [
                 368
@@ -15000,7 +15017,7 @@ export default {
                 420
             ],
             "timeFormat": [
-                634
+                635
             ],
             "timeZone": [
                 1
@@ -15078,7 +15095,7 @@ export default {
                 493
             ],
             "workspaceUrls": [
-                639
+                640
             ],
             "__typename": [
                 1

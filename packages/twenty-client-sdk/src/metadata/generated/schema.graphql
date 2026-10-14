@@ -3812,6 +3812,7 @@ type Query {
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
   findUpgradeApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findWorkspaceAiStats: WorkspaceAiStats!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   frontComponent(id: UUID!): FrontComponent
@@ -5875,6 +5876,12 @@ enum WorkspaceActivationStatus {
   ONGOING_CREATION
   PENDING_CREATION
   SUSPENDED
+}
+
+type WorkspaceAiStats {
+  conversationsCount: Int!
+  skillsCount: Int!
+  toolsCount: Int!
 }
 
 enum WorkspaceCompanyEnrichmentOutcome {

@@ -5380,6 +5380,7 @@ export type Query = {
   findOneLogicFunction: LogicFunction;
   findUninstallApplicationJobStatus?: Maybe<JobStatus>;
   findUpgradeApplicationJobStatus?: Maybe<JobStatus>;
+  findWorkspaceAiStats: WorkspaceAiStats;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
@@ -8012,6 +8013,13 @@ export enum WorkspaceActivationStatus {
   PENDING_CREATION = 'PENDING_CREATION',
   SUSPENDED = 'SUSPENDED'
 }
+
+export type WorkspaceAiStats = {
+  __typename?: 'WorkspaceAiStats';
+  conversationsCount: Scalars['Int']['output'];
+  skillsCount: Scalars['Int']['output'];
+  toolsCount: Scalars['Int']['output'];
+};
 
 export enum WorkspaceCompanyEnrichmentOutcome {
   matched = 'matched',
