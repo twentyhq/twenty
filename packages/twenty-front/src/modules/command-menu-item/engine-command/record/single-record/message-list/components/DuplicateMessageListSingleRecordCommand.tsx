@@ -29,7 +29,7 @@ export const DuplicateMessageListSingleRecordCommand = () => {
       const memberCount = result.memberCount;
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`List duplicated with ${plural(memberCount, {
           one: '# member',
           other: '# members',

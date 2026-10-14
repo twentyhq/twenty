@@ -307,13 +307,13 @@ export const ResourceCreditPriceSelector = ({
         },
       );
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Resource credits updated.`,
       });
       setSelectedPriceId(undefined);
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update resource credits.`,
       });
 

@@ -108,10 +108,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const { application } = executionContext;
 
     if (isDefined(agent)) {
-      await this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+      this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
         {
           application,
-          workspaceId,
           targetApplicationId: agent.applicationId,
           targetLabel: `Agent "${agent.name}"`,
         },

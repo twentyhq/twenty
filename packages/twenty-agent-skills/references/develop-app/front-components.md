@@ -25,6 +25,8 @@ export default defineFrontComponent({
 });
 ```
 
+Set `widgetAvailability` to offer a non-headless component in a widget picker while a page layout is edited. It is a single object, because a component is built either for record pages or for dashboards: `{ pageLayoutType: PageLayoutType.RECORD_PAGE }` offers it on every record page, adding `objectUniversalIdentifiers` (non-empty) narrows it to those objects' record pages, and `{ pageLayoutType: PageLayoutType.DASHBOARD }` offers it on dashboards. Omitted, the component is offered in no widget picker, which is right for components opened only from a command, a settings menu item or a timeline row. `widgetAvailability` never limits where a component is displayed: commands, settings menu items and the app's own page layouts render it whatever its value.
+
 Do not import or call `react-dom/client` in the component source. The SDK renderer mounts front components.
 
 ## Runtime Imports

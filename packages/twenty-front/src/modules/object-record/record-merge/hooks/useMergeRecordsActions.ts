@@ -49,7 +49,7 @@ export const useMergeRecordsActions = ({
       const recordCount = selectedRecords.length;
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Successfully merged ${recordCount} records`,
       });
       closeSidePanelMenu();
@@ -60,7 +60,7 @@ export const useMergeRecordsActions = ({
       });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message

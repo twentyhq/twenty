@@ -16,7 +16,7 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { IconEyeOff } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
@@ -25,6 +25,10 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/components/SettingsApplicationDetailAbout';
+import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
+import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
+import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
+import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
@@ -60,18 +64,32 @@ export const SettingsAvailableApplicationDetails = () => {
     FindOneApplicationByUniversalIdentifierDocument,
     {
       variables: { universalIdentifier: availableApplicationId },
-      skip: !availableApplicationId,
+      skip: !isUuidFormat(availableApplicationId),
     },
   );
 
-  const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
+  const {
+    data: detailData,
+    error: detailError,
+    loading: isDetailLoading,
+    refetch: refetchDetail,
+  } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: availableApplicationId },
-    skip: !availableApplicationId,
+    skip: !isUuidFormat(availableApplicationId),
   });
 
   const application = applicationData?.findOneApplication;
 
   const detail = detailData?.findMarketplaceAppDetail;
+
+  const detailLookupStatus = getApplicationLookupStatus({
+    identifier: availableApplicationId,
+    isLoading: isDetailLoading,
+    error: detailError,
+    result: detail,
+  });
+  const isNotFound = detailLookupStatus === 'not-found';
+  const isUnavailable = detailLookupStatus === 'unavailable';
 
   const displayName = detail?.name ?? t`Application details`;
 
@@ -85,8 +103,64 @@ export const SettingsAvailableApplicationDetails = () => {
       : undefined;
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
+  const isNotVetted = isDefined(detail) && !detail.isVetted;
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
+
+  const renderContent = () => {
+    if (isUnavailable) {
+      return (
+        <SettingsApplicationLoadErrorBanner
+          onRetry={() => refetchDetail().catch(() => undefined)}
+        />
+      );
+    }
+
+    if (isNotFound) {
+      return (
+        <SettingsApplicationNotFound
+          message={t`This application is not available on the marketplace. It may have been removed or the link is incorrect.`}
+          linkTo={getSettingsPath(
+            SettingsPath.Applications,
+            undefined,
+            undefined,
+            'marketplace',
+          )}
+          linkLabel={t`Browse the marketplace`}
+          LinkIcon={IconShoppingBag}
+        />
+      );
+    }
+
+    if (!isDefined(detail)) {
+      return <SettingsSectionSkeletonLoader />;
+    }
+
+    return (
+      <SettingsApplicationDetailAbout
+        applicationId={application?.id}
+        logoUrl={detail.logoUrl}
+        displayName={displayName}
+        description={detail.description ?? undefined}
+        aboutDescription={detail.aboutDescription ?? undefined}
+        pricingDescription={detail.pricingDescription ?? undefined}
+        billsCredits={detail.billsCredits}
+        screenshots={detail.galleryImages}
+        author={detail.author ?? undefined}
+        version={currentVersion ?? latestAvailableVersion ?? undefined}
+        installCount={detail.installCount}
+        category={detail.category ?? undefined}
+        developerLinks={{
+          websiteUrl: detail.websiteUrl ?? undefined,
+          termsUrl: detail.termsUrl ?? undefined,
+          emailSupport: detail.emailSupport ?? undefined,
+          issueReportUrl: detail.issueReportUrl ?? undefined,
+          sourcePackageUrl,
+        }}
+        onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
+      />
+    );
+  };
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
@@ -134,32 +208,13 @@ export const SettingsAvailableApplicationDetails = () => {
               icon={<IconEyeOff aria-hidden="true" />}
             >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
           )}
-          {isDefined(detail) ? (
-            <SettingsApplicationDetailAbout
-              applicationId={application?.id}
-              logoUrl={detail.logoUrl}
-              displayName={displayName}
-              description={detail.description ?? undefined}
-              aboutDescription={detail.aboutDescription ?? undefined}
-              pricingDescription={detail.pricingDescription ?? undefined}
-              billsCredits={detail.billsCredits}
-              screenshots={detail.galleryImages}
-              author={detail.author ?? undefined}
-              version={currentVersion ?? latestAvailableVersion ?? undefined}
-              installCount={detail.installCount}
-              category={detail.category ?? undefined}
-              developerLinks={{
-                websiteUrl: detail.websiteUrl ?? undefined,
-                termsUrl: detail.termsUrl ?? undefined,
-                emailSupport: detail.emailSupport ?? undefined,
-                issueReportUrl: detail.issueReportUrl ?? undefined,
-                sourcePackageUrl,
-              }}
-              onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
-            />
-          ) : (
-            <SettingsSectionSkeletonLoader />
+          {isNotVetted && (
+            <InlineBanner
+              status="warning"
+              icon={<IconAlertTriangle aria-hidden="true" />}
+            >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
           )}
+          {renderContent()}
         </SettingsPageContainer>
       </SettingsPageLayout>
       <SettingsApplicationInstallPermissionValidationModal
@@ -167,8 +222,10 @@ export const SettingsAvailableApplicationDetails = () => {
         appDisplayName={displayName}
         appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
+        appObjects={detail?.objects ?? undefined}
         requestedCapabilities={detail?.requestedCapabilities}
         billsCredits={detail?.billsCredits}
+        isVetted={detail?.isVetted}
         onAuthorize={install}
         isInstalling={isInstalling}
       />

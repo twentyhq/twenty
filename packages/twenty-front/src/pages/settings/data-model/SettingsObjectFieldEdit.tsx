@@ -313,7 +313,7 @@ export const SettingsObjectFieldEdit = () => {
     });
 
     if (deleteResult.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Field deleted` });
+      enqueueToast({ status: 'success', children: t`Field deleted` });
       closeDialog(DELETE_FIELD_MODAL_ID);
       navigateSettings(SettingsPath.ObjectDetail, {
         objectNamePlural,

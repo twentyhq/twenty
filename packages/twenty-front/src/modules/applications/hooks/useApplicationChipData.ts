@@ -3,12 +3,12 @@ import {
   useApplicationAvatarColors,
 } from '@/applications/hooks/useApplicationAvatarColors';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
+import { getCustomApplicationLogoUrl } from '@/applications/utils/getCustomApplicationLogoUrl';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import CustomLogo from '@/applications/assets/custom-logo.webp';
 import StandardLogo from '@/applications/assets/standard-logo.webp';
 
 type UseApplicationChipDataArgs = {
@@ -64,7 +64,7 @@ export const useApplicationChipData = ({
   const logo = isStandard
     ? new URL(StandardLogo, window.location.href).toString()
     : isCustom
-      ? new URL(CustomLogo, window.location.href).toString()
+      ? getCustomApplicationLogoUrl()
       : (application.logoUrl ?? undefined);
 
   return {

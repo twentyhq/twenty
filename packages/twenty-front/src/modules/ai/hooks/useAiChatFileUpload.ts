@@ -42,7 +42,7 @@ export const useAiChatFileUpload = () => {
     } catch {
       const fileName = file.name;
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to upload file: ${fileName}`,
       });
       return null;

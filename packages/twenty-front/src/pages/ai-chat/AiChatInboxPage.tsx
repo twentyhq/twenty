@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useId, useRef } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
@@ -20,11 +21,13 @@ import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
+import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
+import { useRecordSelectionArrowKeyNavigation } from '@/object-record/record-selection/hooks/useRecordSelectionArrowKeyNavigation';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
@@ -33,6 +36,7 @@ import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/Animat
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -84,6 +88,7 @@ const AiChatInboxPageContent = () => {
   const { toggleRecordSelection } = useToggleRecordSelection();
   const threadListContainerRef = useRef<HTMLDivElement>(null);
   const { resetRecordSelection } = useResetRecordSelection();
+  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
 
   // Rows hold a menu and a rename input, which a link cannot contain
   const selectThread = (nextThreadId: string | null) =>
@@ -120,6 +125,13 @@ const AiChatInboxPageContent = () => {
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
 
+  const { navigateWithArrowKey } = useRecordSelectionArrowKeyNavigation({
+    selectableItemsContainerRef: threadListContainerRef,
+    activeRecordId: selectedThreadId,
+    onActiveRecordChange: selectThread,
+    onEndReached: fetchMoreAgentChatThreads,
+  });
+
   const handleThreadCheckboxClick = (
     { id }: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
@@ -144,6 +156,20 @@ const AiChatInboxPageContent = () => {
 
   const openThreadIds =
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
+
+  useGlobalHotkeys({
+    keys: [
+      Key.ArrowUp,
+      Key.ArrowDown,
+      ...(isListShown
+        ? [`${Key.Shift}+${Key.ArrowUp}`, `${Key.Shift}+${Key.ArrowDown}`]
+        : []),
+    ],
+    callback: navigateWithArrowKey,
+    containsModifier: false,
+    dependencies: [navigateWithArrowKey],
+    options: { enableOnContentEditable: false, enableOnFormTags: false },
+  });
 
   return (
     <StyledInbox>

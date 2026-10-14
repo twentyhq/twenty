@@ -31,7 +31,7 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
         updateOneRecordInput: toUpdateOneRecordInput(nextDraft),
       }).catch(() =>
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to save the campaign`,
         }),
       );

@@ -11,9 +11,7 @@ type SelectDisplayProps = {
 };
 
 const StyledSelectTag = styled(Tag)`
-  && {
-    min-width: fit-content;
-  }
+  min-width: fit-content;
 `;
 
 export const SelectDisplay = ({ color, label, Icon }: SelectDisplayProps) => (

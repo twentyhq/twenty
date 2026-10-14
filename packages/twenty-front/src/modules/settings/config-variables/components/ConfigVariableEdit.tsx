@@ -71,11 +71,11 @@ export const ConfigVariableEdit = ({
       setIsSubmitting(true);
       await onSave?.();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Variable ${title} updated`,
       });
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error updating variable` });
+      enqueueToast({ status: 'error', children: t`Error updating variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
@@ -87,11 +87,11 @@ export const ConfigVariableEdit = ({
       setIsSubmitting(true);
       await onConfirmReset?.();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Variable ${title} reset`,
       });
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error resetting variable` });
+      enqueueToast({ status: 'error', children: t`Error resetting variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);

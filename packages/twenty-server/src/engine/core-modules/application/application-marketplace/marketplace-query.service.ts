@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isUUID } from 'class-validator';
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
@@ -21,6 +22,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 
 @Injectable()
@@ -73,10 +75,11 @@ export class MarketplaceQueryService {
   async findRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
-    const registration =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        universalIdentifier,
-      );
+    const registration = isUUID(universalIdentifier)
+      ? await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+          universalIdentifier,
+        )
+      : null;
 
     if (!isDefined(registration)) {
       throw new ApplicationRegistrationException(
@@ -116,9 +119,9 @@ export class MarketplaceQueryService {
         registration.manifest?.application?.description ??
         undefined,
       author:
-        registration.author ??
-        registration.manifest?.application?.author ??
-        undefined,
+        getApplicationAuthorDisplayName(
+          registration.author ?? registration.manifest?.application?.author,
+        ) ?? undefined,
       category:
         registration.category ??
         registration.manifest?.application?.category ??
@@ -166,6 +169,13 @@ export class MarketplaceQueryService {
             }),
           )
         : undefined,
+      objects: manifest?.objects?.map(
+        ({ universalIdentifier, labelSingular, labelPlural }) => ({
+          universalIdentifier,
+          labelSingular,
+          labelPlural,
+        }),
+      ),
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
       ),
