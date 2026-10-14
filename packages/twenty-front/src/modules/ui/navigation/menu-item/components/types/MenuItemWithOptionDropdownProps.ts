@@ -13,6 +13,7 @@ export type MenuItemWithOptionDropdownProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
+  LeftComponent?: ReactNode;
   RightIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;

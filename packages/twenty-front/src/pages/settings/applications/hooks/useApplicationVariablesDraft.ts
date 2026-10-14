@@ -87,7 +87,7 @@ export const useApplicationVariablesDraft = ({
       );
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to save the app settings.`,
       });
     } finally {

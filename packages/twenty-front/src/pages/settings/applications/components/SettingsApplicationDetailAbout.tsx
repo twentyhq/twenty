@@ -146,16 +146,19 @@ export const SettingsApplicationDetailAbout = ({
 
   const descriptionSummary = getApplicationDescriptionSummary(description);
 
+  const trimmedAboutDescription = aboutDescription?.trim();
+  const trimmedDescription = description?.trim();
+
   // The sidebar already shows the first paragraph of the description
   const getMarkdownText = () => {
-    if (isNonEmptyString(aboutDescription)) {
-      return aboutDescription;
+    if (isNonEmptyString(trimmedAboutDescription)) {
+      return trimmedAboutDescription;
     }
 
-    if (isNonEmptyString(description)) {
-      return description.trim() === descriptionSummary
+    if (isNonEmptyString(trimmedDescription)) {
+      return trimmedDescription === descriptionSummary
         ? undefined
-        : description;
+        : trimmedDescription;
     }
 
     return t`No description available for this application`;

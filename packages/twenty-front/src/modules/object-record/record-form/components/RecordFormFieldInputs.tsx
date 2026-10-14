@@ -8,18 +8,13 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { styled } from '@linaria/react';
 import { type JsonValue } from 'type-fest';
+import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldList = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledFieldViolation = styled.div`
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.xs};
-  margin-top: ${themeCssVariables.spacing[0.5]};
 `;
 
 type RecordFormFieldInputsProps = {
@@ -47,7 +42,7 @@ export const RecordFormFieldInputs = ({
       const gqlFieldName = getFieldMetadataItemGqlFieldName(fieldMetadataItem);
 
       return (
-        <div key={fieldMetadataItem.id}>
+        <Field.Root key={fieldMetadataItem.id}>
           <FormFieldInput
             field={formatFieldMetadataItemAsFieldDefinition({
               field: fieldMetadataItem,
@@ -63,11 +58,11 @@ export const RecordFormFieldInputs = ({
             validationRuleViolationsByFieldMetadataId[fieldMetadataItem.id] ??
             []
           ).map((violation) => (
-            <StyledFieldViolation key={violation.ruleId} role="alert">
+            <Field.Error key={violation.ruleId} match role="alert">
               {violation.message}
-            </StyledFieldViolation>
+            </Field.Error>
           ))}
-        </div>
+        </Field.Root>
       );
     })}
   </StyledFieldList>

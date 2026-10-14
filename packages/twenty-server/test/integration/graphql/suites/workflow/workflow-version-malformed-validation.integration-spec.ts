@@ -3,7 +3,8 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
-  findCoreWorkflowVersion,
+  deleteLegacyWorkspaceWorkflowRecords,
+  linkCoreWorkflowToLegacyWorkspaceIds,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -34,7 +35,8 @@ const updateStepResponse = (
 describe('Workflow version malformed validation (e2e)', () => {
   let coreWorkflowId: string;
   let coreWorkflowVersionId: string;
-  let workspaceWorkflowVersionId: string | null;
+  let workspaceWorkflowId: string;
+  let workspaceWorkflowVersionId: string;
   let createRecordStep: {
     id: string;
     settings: { input: Record<string, unknown> };
@@ -74,15 +76,18 @@ describe('Workflow version malformed validation (e2e)', () => {
       position: { x: 400, y: 0 },
     });
 
-    const coreWorkflowVersion = await findCoreWorkflowVersion({
-      coreWorkflowVersionId,
+    const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
+      coreWorkflowId,
+      withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowVersionId = coreWorkflowVersion.workspaceWorkflowVersionId;
+    workspaceWorkflowId = legacyIds.workspaceWorkflowId;
+    workspaceWorkflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
   });
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
+    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
   });
 
   const sendEmailStepWithBody = (body: string) => ({
@@ -183,7 +188,7 @@ describe('Workflow version malformed validation (e2e)', () => {
     const operation = updateOneOperationFactory({
       objectMetadataSingularName: 'workflowVersion',
       gqlFields: 'id',
-      recordId: workspaceWorkflowVersionId!,
+      recordId: workspaceWorkflowVersionId,
       data: { steps: [] },
     });
 

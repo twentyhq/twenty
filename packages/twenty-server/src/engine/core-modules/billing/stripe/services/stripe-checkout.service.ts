@@ -202,11 +202,11 @@ export class StripeCheckoutService {
     }
 
     const stripeCustomer =
-      await this.stripeCustomerService.createStripeCustomer(
-        user.email,
-        workspace.id,
-        workspace.displayName,
-      );
+      await this.stripeCustomerService.createStripeCustomer({
+        userEmail: user.email,
+        workspaceId: workspace.id,
+        customerName: workspace.displayName,
+      });
 
     return stripeCustomer.id;
   }

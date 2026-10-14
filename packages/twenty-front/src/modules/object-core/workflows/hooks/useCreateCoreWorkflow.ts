@@ -53,7 +53,7 @@ export const useCreateCoreWorkflow = () => {
     } catch (error) {
       logError(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to create workflow`,
       });
 
@@ -64,7 +64,7 @@ export const useCreateCoreWorkflow = () => {
 
     if (!isDefined(coreWorkflowId)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to create workflow`,
       });
 

@@ -44,7 +44,7 @@ export const useHandleCheckoutSession = ({
       });
       if (!data?.checkoutSession.url) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Checkout session error. Please retry or contact Twenty team`,
         });
         return;
@@ -59,7 +59,7 @@ export const useHandleCheckoutSession = ({
 
       enqueueToast(
         toastOptions ?? {
-          variant: 'error',
+          status: 'error',
           children: t`Checkout session error. Please retry or contact Twenty team`,
         },
       );

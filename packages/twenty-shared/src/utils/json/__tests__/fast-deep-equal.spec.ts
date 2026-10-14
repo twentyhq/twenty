@@ -294,4 +294,24 @@ describe('fastDeepEqual', () => {
       expect(fastDeepEqual(workflowState1, workflowState2)).toBe(false);
     });
   });
+
+  describe('objects with method names as keys', () => {
+    it('compares JSON values with toString and valueOf keys without calling them', () => {
+      expect(
+        fastDeepEqual(
+          { toString: 'foo', valueOf: 'bar' },
+          { toString: 'foo', valueOf: 'bar' },
+        ),
+      ).toBe(true);
+      expect(fastDeepEqual({ toString: 'foo' }, { toString: 'baz' })).toBe(
+        false,
+      );
+      expect(fastDeepEqual({ valueOf: 1 }, { valueOf: 2 })).toBe(false);
+    });
+
+    it('still compares dates by value', () => {
+      expect(fastDeepEqual(new Date(1), new Date(1))).toBe(true);
+      expect(fastDeepEqual(new Date(1), new Date(2))).toBe(false);
+    });
+  });
 });

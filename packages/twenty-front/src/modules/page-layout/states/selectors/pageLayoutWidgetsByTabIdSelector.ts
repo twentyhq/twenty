@@ -1,5 +1,6 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatPageLayoutWidget } from '@/metadata-store/types/FlatPageLayoutWidget';
+import { addTypenamesToFlatPageLayoutWidget } from '@/metadata-store/utils/addTypenamesToFlatPageLayoutWidget';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,7 +14,8 @@ export const pageLayoutWidgetsByTabIdSelector = createAtomSelector<
 
     const widgetsByTabId = new Map<string, FlatPageLayoutWidget[]>();
 
-    for (const widget of allFlatWidgets) {
+    for (const flatWidget of allFlatWidgets) {
+      const widget = addTypenamesToFlatPageLayoutWidget(flatWidget);
       const existing = widgetsByTabId.get(widget.pageLayoutTabId);
 
       if (isDefined(existing)) {

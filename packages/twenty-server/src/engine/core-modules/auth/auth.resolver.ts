@@ -710,7 +710,11 @@ export class AuthResolver {
 
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: fullUser },
-      { displayName: input?.displayName, subdomain: input?.subdomain },
+      {
+        displayName: input?.displayName,
+        subdomain: input?.subdomain,
+        partner: input?.partner,
+      },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(

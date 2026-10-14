@@ -13,9 +13,11 @@ import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions'
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
+import { STACK_ICON_PROP_DESCRIPTIONS } from './stackIconPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
+import { TOAST_PROP_DESCRIPTIONS } from './toastPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
@@ -672,6 +674,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/feedback/Toast/Toast.tsx',
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/toast',
+    propDescriptions: TOAST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Text',
@@ -803,6 +806,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/code-editor',
     slug: 'components/code-editor/code-editor',
     propDescriptions: CODE_EDITOR_PROP_DESCRIPTIONS,
+    propDefaults: { theme: 'Twenty theme', saveViewState: 'true' },
   },
   {
     name: 'CodeEditorHeader',
@@ -873,6 +877,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/data-display',
     slug: 'components/data-display/tinted-icon-tile',
     propDescriptions: TINTED_ICON_TILE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'StackIcon',
+    source: 'components/data-display/StackIcon/StackIcon.tsx',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/stack-icon',
+    propDescriptions: STACK_ICON_PROP_DESCRIPTIONS,
   },
   {
     name: 'Callout',

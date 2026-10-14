@@ -54,7 +54,7 @@ export const useCoreAgentSave = ({
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to save role permissions: ${errorMessage}`,
         });
       }

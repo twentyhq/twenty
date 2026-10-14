@@ -115,7 +115,7 @@ export const SettingsObjectNewIndex = () => {
     });
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Index created` });
+      enqueueToast({ status: 'success', children: t`Index created` });
       navigate(SettingsPath.ObjectDetail, { objectNamePlural });
     }
   };

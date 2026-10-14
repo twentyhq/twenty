@@ -1,4 +1,5 @@
 import { useRender } from '@base-ui/react/use-render';
+import { isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type FocusEvent, type MouseEvent, useState } from 'react';
 
@@ -11,20 +12,24 @@ import {
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Separator } from '@ui/primitives/layout/Separator/Separator';
 import { useTheme } from '@ui/theme';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Toast.module.scss';
+import { ToastCountdownEffect } from './internal/components/ToastCountdownEffect';
+import { ToastFocusEffect } from './internal/components/ToastFocusEffect';
 import { ToastProgress } from './internal/components/ToastProgress';
+import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
-import { type ToastVariant } from './types/ToastVariant';
+import { type ToastStatus } from './types/ToastStatus';
 
 const TOAST_ICONS = {
-  default: IconAlertTriangle,
+  neutral: IconAlertTriangle,
   error: IconAlertTriangle,
   success: IconSquareRoundedCheck,
   info: IconInfoCircle,
   warning: IconAlertTriangle,
-} satisfies Record<ToastVariant, typeof IconAlertTriangle>;
+} satisfies Record<ToastStatus, typeof IconAlertTriangle>;
 
 export const Toast = ({
   children,
@@ -38,7 +43,7 @@ export const Toast = ({
   onClose,
   cancelLabel = 'Cancel',
   closeLabel = 'Close',
-  variant = 'default',
+  status = 'neutral',
   role = 'status',
   className,
   onMouseEnter,
@@ -52,11 +57,29 @@ export const Toast = ({
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const Icon = TOAST_ICONS[variant];
+  const [toastElement, setToastElement] = useState<HTMLDivElement | null>(null);
 
-  return useRender({
+  const isPaused = isHovered || isFocused;
+  const { countdown, clock } = useToastCountdown({
+    duration,
+    isPaused,
+  });
+  const Icon = TOAST_ICONS[status];
+  const toastColors = theme.snackBar[status === 'neutral' ? 'default' : status];
+  const toastIcon = isUndefined(icon) ? (
+    <Icon
+      aria-label={iconLabel}
+      aria-hidden={!isDefined(iconLabel)}
+      color={toastColors.color}
+      size={theme.icon.size.md}
+    />
+  ) : (
+    icon
+  );
+
+  const element = useRender({
     render,
-    ref,
+    ref: [ref ?? null, setToastElement],
     props: {
       role,
       'aria-live': role === 'alert' ? 'assertive' : 'polite',
@@ -89,27 +112,21 @@ export const Toast = ({
         <>
           <div className={styles.progress} aria-hidden>
             <ToastProgress
-              barColor={theme.snackBar[variant].backgroundColor}
+              barColor={toastColors.backgroundColor}
               progress={progress}
-              duration={duration}
-              isPaused={isHovered || isFocused}
-              onClose={onClose}
+              duration={countdown.duration}
+              remainingDuration={countdown.remainingDuration}
+              revision={countdown.revision}
+              isPaused={countdown.isPaused}
             />
           </div>
           <div className={styles.header}>
-            <div className={styles.icon}>
-              {icon ?? (
-                <Icon
-                  aria-label={iconLabel}
-                  aria-hidden={!isDefined(iconLabel)}
-                  color={theme.snackBar[variant].color}
-                  size={theme.icon.size.md}
-                />
-              )}
-            </div>
+            {isRenderableSlot(toastIcon) && (
+              <div className={styles.icon}>{toastIcon}</div>
+            )}
             <div className={styles.message}>{children}</div>
             <div className={styles.actions}>
-              {isDefined(onCancel) && (
+              {isDefined(onCancel) && isRenderableSlot(cancelLabel) && (
                 <Button
                   onClick={onCancel}
                   size="sm"
@@ -127,15 +144,15 @@ export const Toast = ({
                   className={styles.closeButton}
                   variant="ghost"
                   size="sm"
-                  onClick={onClose}
+                  onClick={clock.close}
                 />
               )}
             </div>
           </div>
-          {isDefined(description) && (
+          {isRenderableSlot(description) && (
             <div className={styles.description}>{description}</div>
           )}
-          {isDefined(action) && (
+          {isRenderableSlot(action) && (
             <div className={styles.footer}>
               <Separator />
               <div className={styles.footerAction}>{action}</div>
@@ -145,4 +162,22 @@ export const Toast = ({
       ),
     },
   });
+
+  return (
+    <>
+      {element}
+      <ToastFocusEffect
+        element={toastElement}
+        isFocused={isFocused}
+        onFocusChange={setIsFocused}
+      />
+      <ToastCountdownEffect
+        clock={clock}
+        duration={duration}
+        progress={progress}
+        isPaused={isPaused}
+        onClose={onClose}
+      />
+    </>
+  );
 };

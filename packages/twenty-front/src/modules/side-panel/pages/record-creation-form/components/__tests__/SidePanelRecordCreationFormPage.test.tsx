@@ -470,7 +470,7 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error', children: 'Network error' }),
+      expect.objectContaining({ status: 'error', children: 'Network error' }),
     );
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
@@ -494,25 +494,28 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
 
-  it('opens the form configuration for members allowed to edit layouts', async () => {
+  it('opens the form configuration from the options menu for members allowed to edit layouts', async () => {
     const user = userEvent.setup();
 
     renderPage();
 
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Edit form' }),
+    );
 
     expect(openRecordCreationFormSettingsInSidePanel).toHaveBeenCalledWith(
       COMPANY_OBJECT,
     );
   });
 
-  it('hides the edit button from members without the layouts permission', () => {
+  it('hides the options menu from members without the layouts permission', () => {
     mockHasPermissionFlag.mockReturnValue(false);
 
     renderPage();
 
     expect(
-      screen.queryByRole('button', { name: 'Edit' }),
+      screen.queryByRole('button', { name: 'Options' }),
     ).not.toBeInTheDocument();
   });
 });

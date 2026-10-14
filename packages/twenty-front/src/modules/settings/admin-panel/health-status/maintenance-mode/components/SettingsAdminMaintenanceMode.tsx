@@ -97,7 +97,7 @@ export const SettingsAdminMaintenanceMode = () => {
         });
       } catch (error: unknown) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             error instanceof Error
               ? error.message

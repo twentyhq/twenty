@@ -38,7 +38,7 @@ export const SpreadsheetImportStepper = ({
 
   const handleError = useCallback(
     (description: string) => {
-      enqueueToast({ variant: 'error', children: description });
+      enqueueToast({ status: 'error', children: description });
     },
     [enqueueToast],
   );

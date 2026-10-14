@@ -1,4 +1,4 @@
-import { GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME } from '@/side-panel/pages/page-layout/constants/GraphConfigurationTypeToConfigTypename';
+import { WIDGET_CONFIGURATION_TYPENAME_BY_CONFIGURATION_TYPE } from '@/page-layout/constants/WidgetConfigurationTypenameByConfigurationType';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { convertAggregateOperationForDateField } from '@/side-panel/pages/page-layout/utils/convertAggregateOperationForDateField';
@@ -80,7 +80,9 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
 
       let configToUpdate = {
         __typename:
-          GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME[newConfigurationType],
+          WIDGET_CONFIGURATION_TYPENAME_BY_CONFIGURATION_TYPE[
+            newConfigurationType
+          ],
         configurationType: newConfigurationType,
       } as Partial<ChartConfiguration>;
 

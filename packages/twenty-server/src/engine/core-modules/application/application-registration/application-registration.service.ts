@@ -45,6 +45,7 @@ import {
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
+import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { sortApplicationRegistrationsForAdmin } from 'src/engine/core-modules/application/application-registration/utils/sort-application-registrations-for-admin.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -97,6 +98,7 @@ export type ApplicationRegistrationCatalogCard = {
   author: string | null;
   category: string | null;
   logoUrl: string | null;
+  requiredServerVersionRange: string | null;
 };
 
 @Injectable()
@@ -1042,6 +1044,7 @@ export class ApplicationRegistrationService {
         'description',
         'author',
         'category',
+        'manifest',
       ],
       where: {
         isListed: true,
@@ -1056,10 +1059,12 @@ export class ApplicationRegistrationService {
       sourcePackage: registration.sourcePackage,
       isVetted: registration.isVetted,
       description: registration.description,
-      author: registration.author,
+      author: getApplicationAuthorDisplayName(registration.author),
       category: registration.category,
       logoUrl:
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
+      requiredServerVersionRange:
+        registration.manifest?.application?.requiredServerVersionRange ?? null,
     }));
   }
 
@@ -1238,7 +1243,7 @@ export class ApplicationRegistrationService {
       logoUrl:
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       description: registration.description,
-      author: registration.author,
+      author: getApplicationAuthorDisplayName(registration.author),
       isOwned: isDefined(registration.ownerWorkspaceId),
     };
   }

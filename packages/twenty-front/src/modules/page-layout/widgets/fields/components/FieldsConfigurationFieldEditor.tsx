@@ -1,3 +1,4 @@
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
 import { t } from '@lingui/core/macro';
@@ -22,7 +23,12 @@ export const FieldsConfigurationFieldEditor = ({
 
   return (
     <MenuItemDraggable
-      LeftIcon={FieldIcon}
+      LeftComponent={
+        <ApplicationStackIcon
+          Icon={FieldIcon}
+          applicationId={fieldMetadata.applicationId}
+        />
+      }
       text={fieldMetadata.label}
       gripMode="onHover"
       withIconContainer

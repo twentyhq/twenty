@@ -290,6 +290,7 @@ ${mapObjectMetadataToGraphQLQuery({
     name
     context {
       provider
+      applicationId
     }
 }`;
   }

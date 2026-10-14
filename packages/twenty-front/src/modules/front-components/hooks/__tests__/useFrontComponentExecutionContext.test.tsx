@@ -1063,7 +1063,7 @@ describe('useFrontComponentExecutionContext', () => {
 
         expect(mockEnqueueToast).toHaveBeenCalledWith({
           children: `${variant} message`,
-          variant,
+          status: variant,
           duration: 3000,
           description: 'details',
           dedupeKey: 'key-1',
