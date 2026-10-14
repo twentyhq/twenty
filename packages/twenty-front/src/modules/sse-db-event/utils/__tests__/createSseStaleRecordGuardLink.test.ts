@@ -93,10 +93,13 @@ const setup = ({
   return { client };
 };
 
-const queryWorkflowRun = async (
-  client: ApolloClient,
-  query: typeof FIND_ONE_WORKFLOW_RUN,
-) => {
+const queryWorkflowRun = async ({
+  client,
+  query,
+}: {
+  client: ApolloClient;
+  query: typeof FIND_ONE_WORKFLOW_RUN;
+}) => {
   const { data } = await client.query<{
     workflowRun: Record<string, unknown>;
   }>({
@@ -122,7 +125,8 @@ describe('createSseStaleRecordGuardLink', () => {
     });
 
     expect(
-      (await queryWorkflowRun(client, FIND_ONE_WORKFLOW_RUN))?.status,
+      (await queryWorkflowRun({ client, query: FIND_ONE_WORKFLOW_RUN }))
+        ?.status,
     ).toBe('COMPLETED');
     expect(
       client.cache.readFragment<{ status: string }>({
@@ -146,7 +150,8 @@ describe('createSseStaleRecordGuardLink', () => {
     });
 
     expect(
-      (await queryWorkflowRun(client, FIND_ONE_WORKFLOW_RUN))?.status,
+      (await queryWorkflowRun({ client, query: FIND_ONE_WORKFLOW_RUN }))
+        ?.status,
     ).toBe('RUNNING');
   });
 
@@ -164,7 +169,8 @@ describe('createSseStaleRecordGuardLink', () => {
       .mockReturnValue(Date.now() + SSE_APPLIED_RECORD_VERSION_TTL_IN_MS + 1);
 
     expect(
-      (await queryWorkflowRun(client, FIND_ONE_WORKFLOW_RUN))?.status,
+      (await queryWorkflowRun({ client, query: FIND_ONE_WORKFLOW_RUN }))
+        ?.status,
     ).toBe('RUNNING');
   });
 
@@ -175,8 +181,12 @@ describe('createSseStaleRecordGuardLink', () => {
     });
 
     expect(
-      (await queryWorkflowRun(client, FIND_ONE_WORKFLOW_RUN_STEP_LOGS))
-        ?.stepLogs,
+      (
+        await queryWorkflowRun({
+          client,
+          query: FIND_ONE_WORKFLOW_RUN_STEP_LOGS,
+        })
+      )?.stepLogs,
     ).toEqual({ 'step-1': 'completed' });
   });
 
@@ -186,8 +196,12 @@ describe('createSseStaleRecordGuardLink', () => {
     });
 
     expect(
-      (await queryWorkflowRun(client, FIND_ONE_WORKFLOW_RUN_STEP_LOGS))
-        ?.stepLogs,
+      (
+        await queryWorkflowRun({
+          client,
+          query: FIND_ONE_WORKFLOW_RUN_STEP_LOGS,
+        })
+      )?.stepLogs,
     ).toEqual({ 'step-1': 'running' });
   });
 });

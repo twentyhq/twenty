@@ -13,6 +13,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
 import { sseAppliedRecordVersionsByCacheIdState } from '@/sse-db-event/states/sseAppliedRecordVersionsByCacheIdState';
+import { type SseAppliedRecord } from '@/sse-db-event/types/SseAppliedRecord';
 import { addSseAppliedRecordVersions } from '@/sse-db-event/utils/addSseAppliedRecordVersions';
 import { pickPlainFieldsFromRecord } from '@/sse-db-event/utils/pickPlainFieldsFromRecord';
 import { captureMessage } from '@sentry/react';
@@ -53,10 +54,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
 
-      const appliedRecords: {
-        cacheId: string;
-        record: Record<string, unknown>;
-      }[] = [];
+      const appliedRecords: SseAppliedRecord[] = [];
 
       for (const updateEvent of updateEvents) {
         const recordFromEvent = updateEvent.properties.after;
