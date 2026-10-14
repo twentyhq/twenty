@@ -12,7 +12,9 @@ export const getDeveloperModeDisplayedFrame = ({
   label: string;
   sequence: DeveloperModeTypingSequence | null;
 }): DeveloperModeTypingFrame | null => {
-  const sequenceFrame = isDefined(sequence)
+  const isSequenceRunning =
+    isDefined(sequence) && sequence.index < sequence.frames.length - 1;
+  const sequenceFrame = isSequenceRunning
     ? sequence.frames[sequence.index]
     : null;
 

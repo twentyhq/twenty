@@ -61,4 +61,31 @@ describe('getDeveloperModeDisplayedFrame', () => {
       }),
     ).toBeNull();
   });
+
+  it('shows the current label once a sequence has finished, even if the label changed since', () => {
+    const finishedSequence = { ...buildSequence('enter'), index: 1 };
+
+    expect(
+      getDeveloperModeDisplayedFrame({
+        isEnabled: true,
+        label: 'Développeur',
+        sequence: finishedSequence,
+      }),
+    ).toEqual({
+      text: 'Développeur',
+      codeFontStart: 0,
+      codeFontEnd: 11,
+      delayAfterMs: 0,
+    });
+  });
+
+  it('shows the plain label once the sequence that turns developer mode off has finished', () => {
+    expect(
+      getDeveloperModeDisplayedFrame({
+        isEnabled: false,
+        label: 'Dev',
+        sequence: { ...buildSequence('exit'), index: 1 },
+      }),
+    ).toBeNull();
+  });
 });
