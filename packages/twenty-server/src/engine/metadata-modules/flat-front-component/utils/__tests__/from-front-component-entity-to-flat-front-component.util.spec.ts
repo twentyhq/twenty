@@ -66,6 +66,7 @@ describe('fromFrontComponentEntityToFlatFrontComponent', () => {
   it('falls back to the column default before its upgrade step has run', () => {
     const flatFrontComponent = convert(buildFrontComponentEntity());
 
+    expect(flatFrontComponent.widgetAvailability).toEqual([]);
     expect(flatFrontComponent.universalWidgetAvailability).toEqual([]);
   });
 });

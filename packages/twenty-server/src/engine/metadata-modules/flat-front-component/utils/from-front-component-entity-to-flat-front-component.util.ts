@@ -30,18 +30,20 @@ export const fromFrontComponentEntityToFlatFrontComponent = (
       ...args,
     });
 
-  const universalWidgetAvailability = isDefined(
-    frontComponentEntity.widgetAvailability,
-  )
-    ? fromFrontComponentWidgetAvailabilityToUniversalWidgetAvailability({
-        widgetAvailability: frontComponentEntity.widgetAvailability,
-        objectMetadataUniversalIdentifierById,
-      })
+  // The column is not selected until its upgrade step has run, so fall back
+  // to its database default instead of exposing a missing non-nullable field
+  const widgetAvailability = isDefined(frontComponentEntity.widgetAvailability)
+    ? frontComponentEntity.widgetAvailability
     : [];
 
   return {
     ...frontComponentScalarEntity,
     ...relationUniversalIdentifiers,
-    universalWidgetAvailability,
+    widgetAvailability,
+    universalWidgetAvailability:
+      fromFrontComponentWidgetAvailabilityToUniversalWidgetAvailability({
+        widgetAvailability,
+        objectMetadataUniversalIdentifierById,
+      }),
   };
 };
