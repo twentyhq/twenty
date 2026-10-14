@@ -312,4 +312,41 @@ describe('useTrackedQueueJob', () => {
 
     expect(fetchJobStatus).not.toHaveBeenCalled();
   });
+
+  it('stops tracking a job the server no longer knows after the event stream reconnects', async () => {
+    const onQueueJobSettled = jest.fn();
+    const fetchJobStatus = jest.fn().mockResolvedValue(null);
+
+    const { result } = renderHook(() =>
+      useTrackedQueueJob<string>({ onQueueJobSettled, fetchJobStatus }),
+    );
+
+    act(() => {
+      result.current.trackJob({ jobId: FIRST_JOB_ID, context: CONTEXT });
+    });
+
+    await dispatchEventStreamReconnected();
+
+    expect(result.current.activeJobId).toBeUndefined();
+    expect(onQueueJobSettled).not.toHaveBeenCalled();
+  });
+
+  it('keeps tracking a job when its status cannot be fetched after the event stream reconnects', async () => {
+    const fetchJobStatus = jest.fn().mockRejectedValue(new Error('Network'));
+
+    const { result } = renderHook(() =>
+      useTrackedQueueJob<string>({
+        onQueueJobSettled: jest.fn(),
+        fetchJobStatus,
+      }),
+    );
+
+    act(() => {
+      result.current.trackJob({ jobId: FIRST_JOB_ID, context: CONTEXT });
+    });
+
+    await dispatchEventStreamReconnected();
+
+    expect(result.current.activeJobId).toBe(FIRST_JOB_ID);
+  });
 });

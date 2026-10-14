@@ -5,6 +5,7 @@ import { useListenToQueueJob } from '@/queue-job/hooks/useListenToQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
+import { isNull } from '@sniptt/guards';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -48,6 +49,16 @@ export const useTrackedQueueJob = <TContext>({
     ? (progressByJobId[activeJob.jobId] ?? activeJob.progress)
     : undefined;
 
+  const stopTrackingJob = useCallback((jobId: string) => {
+    setSettledJobIds((currentSettledJobIds) => [
+      ...currentSettledJobIds,
+      jobId,
+    ]);
+    setTriggeredJob((currentTriggeredJob) =>
+      currentTriggeredJob?.jobId === jobId ? undefined : currentTriggeredJob,
+    );
+  }, []);
+
   const handleQueueJobEvent = useCallback(
     (jobStatus: TrackedJobStatus) => {
       if (!isDefined(activeJobId) || !isDefined(activeJobContext)) {
@@ -67,18 +78,10 @@ export const useTrackedQueueJob = <TContext>({
         return;
       }
 
-      setSettledJobIds((currentSettledJobIds) => [
-        ...currentSettledJobIds,
-        jobStatus.jobId,
-      ]);
-      setTriggeredJob((currentTriggeredJob) =>
-        currentTriggeredJob?.jobId === jobStatus.jobId
-          ? undefined
-          : currentTriggeredJob,
-      );
+      stopTrackingJob(jobStatus.jobId);
       void onQueueJobSettled(jobStatus, activeJobContext);
     },
-    [activeJobContext, activeJobId, onQueueJobSettled],
+    [activeJobContext, activeJobId, onQueueJobSettled, stopTrackingJob],
   );
 
   useListenToQueueJob({
@@ -95,10 +98,14 @@ export const useTrackedQueueJob = <TContext>({
       return;
     }
 
-    const jobStatus = await fetchJobStatus(
-      activeJobId,
-      activeJobContext,
-    ).catch(() => undefined);
+    const jobStatus = await fetchJobStatus(activeJobId, activeJobContext).catch(
+      () => undefined,
+    );
+
+    if (isNull(jobStatus)) {
+      stopTrackingJob(activeJobId);
+      return;
+    }
 
     if (isDefined(jobStatus)) {
       dispatchBrowserEvent<TrackedJobStatus>(
@@ -106,7 +113,7 @@ export const useTrackedQueueJob = <TContext>({
         jobStatus,
       );
     }
-  }, [activeJobContext, activeJobId, fetchJobStatus]);
+  }, [activeJobContext, activeJobId, fetchJobStatus, stopTrackingJob]);
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
