@@ -175,7 +175,7 @@ export const useCreateOneRecord = <
 
         await refetchAggregateQueries({
           objectMetadataNamePlural: objectMetadataItem.namePlural,
-        }).catch(() => undefined);
+        });
 
         throw error;
       });
