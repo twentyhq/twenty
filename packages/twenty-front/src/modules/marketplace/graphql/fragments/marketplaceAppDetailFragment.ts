@@ -25,6 +25,9 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     defaultRoleUniversalIdentifier
     requestedCapabilities
     billsCredits
+    objects {
+      universalIdentifier
+    }
     roles {
       universalIdentifier
       label

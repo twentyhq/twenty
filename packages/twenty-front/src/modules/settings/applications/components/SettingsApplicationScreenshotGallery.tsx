@@ -3,6 +3,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationScreenshotGalleryProps = {
@@ -72,18 +73,44 @@ const StyledThumbnailImage = styled.img`
 `;
 
 export const SettingsApplicationScreenshotGallery = ({
-  screenshots,
+  screenshots: allScreenshots,
   displayName,
 }: SettingsApplicationScreenshotGalleryProps) => {
-  const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
+  const [selectedScreenshot, setSelectedScreenshot] = useState<
+    string | undefined
+  >(undefined);
+  const [failedScreenshots, setFailedScreenshots] = useState<string[]>([]);
   const { openDialog, closeDialog } = useDialog();
   const lightboxModalId = useId();
+
+  const screenshots = Array.from(new Set(allScreenshots)).filter(
+    (screenshot) => !failedScreenshots.includes(screenshot),
+  );
+
+  const markScreenshotAsFailed = (screenshot: string) =>
+    setFailedScreenshots((previousFailedScreenshots) =>
+      previousFailedScreenshots.includes(screenshot)
+        ? previousFailedScreenshots
+        : [...previousFailedScreenshots, screenshot],
+    );
 
   if (screenshots.length === 0) {
     return null;
   }
 
-  const safeIndex = Math.min(selectedScreenshotIndex, screenshots.length - 1);
+  const safeIndex = Math.max(
+    isDefined(selectedScreenshot) ? screenshots.indexOf(selectedScreenshot) : 0,
+    0,
+  );
+
+  const selectScreenshotAt = (index: number) =>
+    setSelectedScreenshot(screenshots[index]);
+
+  const getScreenshotAltText = (index: number) => {
+    const screenshotNumber = index + 1;
+
+    return t`${displayName} screenshot ${screenshotNumber}`;
+  };
 
   return (
     <StyledGalleryContainer>
@@ -94,21 +121,25 @@ export const SettingsApplicationScreenshotGallery = ({
       >
         <StyledHeroImage
           src={screenshots[safeIndex]}
-          alt={`${displayName} screenshot ${safeIndex + 1}`}
+          alt={getScreenshotAltText(safeIndex)}
+          onError={() => markScreenshotAsFailed(screenshots[safeIndex])}
         />
       </StyledHeroButton>
       {screenshots.length > 1 && (
         <StyledThumbnails>
           {screenshots.map((screenshot, index) => (
             <StyledThumbnail
-              key={index}
+              key={screenshot}
               type="button"
               isSelected={index === safeIndex}
-              onClick={() => setSelectedScreenshotIndex(index)}
+              aria-pressed={index === safeIndex}
+              aria-label={getScreenshotAltText(index)}
+              onClick={() => setSelectedScreenshot(screenshot)}
             >
               <StyledThumbnailImage
                 src={screenshot}
-                alt={`${displayName} thumbnail ${index + 1}`}
+                alt=""
+                onError={() => markScreenshotAsFailed(screenshot)}
               />
             </StyledThumbnail>
           ))}
@@ -119,7 +150,7 @@ export const SettingsApplicationScreenshotGallery = ({
         screenshots={screenshots}
         displayName={displayName}
         selectedIndex={safeIndex}
-        onSelectedIndexChange={setSelectedScreenshotIndex}
+        onSelectedIndexChange={selectScreenshotAt}
         onClose={() => closeDialog(lightboxModalId)}
       />
     </StyledGalleryContainer>

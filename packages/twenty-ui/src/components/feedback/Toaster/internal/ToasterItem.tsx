@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 
 import { Toast } from '@ui/components/feedback/Toast/Toast';
+import { ToastTimingContext } from '@ui/components/feedback/Toast/internal/contexts/ToastTimingContext';
 import { type ToastEntry } from '@ui/components/feedback/Toast/internal/types/ToastEntry';
 
 import styles from '../Toaster.module.scss';
@@ -18,7 +19,7 @@ export const ToasterItem = ({
   getToastProps,
   onClose,
 }: ToasterItemProps) => {
-  const { notification, status } = toastEntry;
+  const { notification, status, durationRevision = 0 } = toastEntry;
   const { id, ...toastProps } = notification;
   const elementRef = useRef<HTMLDivElement>(null);
 
@@ -31,12 +32,16 @@ export const ToasterItem = ({
         inert={status === 'closing'}
       >
         <div className={styles.itemContent}>
-          <Toast
-            {...toastProps}
-            {...getToastProps?.(notification)}
-            id={id}
-            onClose={() => onClose(id)}
-          />
+          <ToastTimingContext.Provider
+            value={{ durationRevision, isActive: status === 'visible' }}
+          >
+            <Toast
+              {...toastProps}
+              {...getToastProps?.(notification)}
+              id={id}
+              onClose={() => onClose(id)}
+            />
+          </ToastTimingContext.Provider>
         </div>
       </div>
       <ToasterItemExitEffect elementRef={elementRef} toastEntry={toastEntry} />
