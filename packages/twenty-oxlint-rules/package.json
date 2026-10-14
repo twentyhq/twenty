@@ -4,7 +4,6 @@
   "type": "module",
   "devDependencies": {
     "@oxlint/plugins": "^1.51.0",
-    "@sniptt/guards": "^0.2.0",
     "twenty-shared": "workspace:*"
   }
 }

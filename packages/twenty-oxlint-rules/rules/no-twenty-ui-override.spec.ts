@@ -1,9 +1,8 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { RuleTester } from 'oxlint/plugins-dev';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray, isNonEmptyString } from 'twenty-shared/utils';
 import { describe, expect, it } from 'vitest';
 
 import { TWENTY_UI_OVERRIDE_EXEMPTIONS } from './no-twenty-ui-override.exemptions';
@@ -84,6 +83,19 @@ ruleTester.run(RULE_NAME, rule, {
         const Example = () => <div style={{ '--parallax-x': '4px' }} />;
 
         element.style.setProperty('--parallax-y', '8px');
+
+        const { '--tw-button-color': buttonColor } = computedVariables;
+      `,
+      filename: FRONT_FILENAME,
+    },
+    {
+      code: `
+        import { styled } from '@linaria/react';
+
+        const StyledContainer = styled.div\`
+          /* --tw-button-size: 40px; [data-skeleton] */
+          content: '[data-active]';
+        \`;
       `,
       filename: FRONT_FILENAME,
     },
@@ -318,6 +330,25 @@ ruleTester.run(RULE_NAME, rule, {
         },
         { messageId: 'doubleAmpersandSelector' },
         { messageId: 'importantDeclaration' },
+      ],
+    },
+    {
+      code: `
+        import { styled } from '@linaria/react';
+        import { Tag } from 'twenty-ui/primitives/data-display';
+
+        const StyledTag = styled(Tag)\`
+          /* no && or !important needed since the cascade layer */
+          content: '!important';
+          flex-shrink: 0;
+        \`;
+      `,
+      filename: FRONT_FILENAME,
+      errors: [
+        {
+          messageId: 'styledTwentyUiComponent',
+          data: { componentName: 'Tag' },
+        },
       ],
     },
   ],

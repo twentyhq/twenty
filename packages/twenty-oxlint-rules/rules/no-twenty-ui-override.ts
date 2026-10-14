@@ -1,7 +1,11 @@
 import { defineRule } from '@oxlint/plugins';
-import { isString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { getCalledMethodName } from '../utils/getCalledMethodName';
+import { getRootIdentifierName } from '../utils/getRootIdentifierName';
+import { getStaticStringValue } from '../utils/getStaticStringValue';
+import { isLinariaTag } from '../utils/isLinariaTag';
+import { maskCssCommentsAndQuotedValues } from '../utils/maskCssCommentsAndQuotedValues';
 import { TWENTY_UI_OVERRIDE_EXEMPTIONS } from './no-twenty-ui-override.exemptions';
 
 export const RULE_NAME = 'no-twenty-ui-override';
@@ -53,59 +57,6 @@ const isExemptFile = (filename: string): boolean =>
   TWENTY_UI_OVERRIDE_EXEMPTIONS.some(({ filePath }) =>
     filename.endsWith(`/${filePath}`),
   );
-
-const isLinariaTag = (tag: any): boolean => {
-  if (tag?.type === 'Identifier') {
-    return tag.name === 'css' || tag.name === 'styled';
-  }
-
-  if (tag?.type === 'MemberExpression') {
-    return isLinariaTag(tag.object);
-  }
-
-  if (tag?.type === 'CallExpression') {
-    return isLinariaTag(tag.callee);
-  }
-
-  return false;
-};
-
-const getRootIdentifierName = (node: any): string | undefined => {
-  if (node?.type === 'Identifier' || node?.type === 'JSXIdentifier') {
-    return node.name;
-  }
-
-  if (
-    node?.type === 'MemberExpression' ||
-    node?.type === 'JSXMemberExpression'
-  ) {
-    return getRootIdentifierName(node.object);
-  }
-
-  return undefined;
-};
-
-const getStaticStringValue = (node: any): string | undefined => {
-  if (node?.type === 'Literal' && isString(node.value)) {
-    return node.value;
-  }
-
-  if (node?.type === 'TemplateLiteral' && !isNonEmptyArray(node.expressions)) {
-    return node.quasis[0].value.cooked;
-  }
-
-  return undefined;
-};
-
-const getCalledMethodName = (callee: any): string | undefined => {
-  if (callee?.type !== 'MemberExpression' || callee.computed) {
-    return undefined;
-  }
-
-  return callee.property?.type === 'Identifier'
-    ? callee.property.name
-    : undefined;
-};
 
 export const rule = defineRule({
   meta: {
@@ -168,57 +119,53 @@ export const rule = defineRule({
       });
     };
 
+    const reportTextMatches = ({
+      text,
+      startOffset,
+      regex,
+      messageId,
+      getData,
+    }: {
+      text: string;
+      startOffset: number;
+      regex: RegExp;
+      messageId: string;
+      getData?: (matchedText: string) => Record<string, string>;
+    }) => {
+      for (const match of text.matchAll(regex)) {
+        reportSourceRange({
+          startOffset: startOffset + match.index,
+          length: match[0].length,
+          messageId,
+          data: getData?.(match[0]),
+        });
+      }
+    };
+
     const reportPrivateAttributeSelectors = ({
-      node,
+      text,
+      startOffset,
       allowOnStyledElement,
     }: {
-      node: any;
+      text: string;
+      startOffset: number;
       allowOnStyledElement: boolean;
     }) => {
-      const nodeStartOffset = node.range[0];
-      const nodeText = sourceCode.getText(node);
-
-      for (const match of nodeText.matchAll(PRIVATE_ATTRIBUTE_SELECTOR_REGEX)) {
-        const selectorTextBeforeAttribute = nodeText.slice(0, match.index);
-
+      for (const match of text.matchAll(PRIVATE_ATTRIBUTE_SELECTOR_REGEX)) {
         if (
           allowOnStyledElement &&
           SELECTOR_TEXT_ENDING_ON_STYLED_ELEMENT_REGEX.test(
-            selectorTextBeforeAttribute,
+            text.slice(0, match.index),
           )
         ) {
           continue;
         }
 
         reportSourceRange({
-          startOffset: nodeStartOffset + match.index,
+          startOffset: startOffset + match.index,
           length: match[0].length,
           messageId: 'privateTwentyUiAttribute',
           data: { attributeName: match[0] },
-        });
-      }
-    };
-
-    const reportTemplateElementMatches = ({
-      templateElement,
-      regex,
-      messageId,
-      getData,
-    }: {
-      templateElement: any;
-      regex: RegExp;
-      messageId: string;
-      getData?: (matchedText: string) => Record<string, string>;
-    }) => {
-      const templateElementStartOffset = templateElement.range[0];
-      const templateElementText = sourceCode.getText(templateElement);
-
-      for (const match of templateElementText.matchAll(regex)) {
-        reportSourceRange({
-          startOffset: templateElementStartOffset + match.index,
-          length: match[0].length,
-          messageId,
-          data: getData?.(match[0]),
         });
       }
     };
@@ -262,7 +209,8 @@ export const rule = defineRule({
         }
 
         reportPrivateAttributeSelectors({
-          node: selectorArgument,
+          text: sourceCode.getText(selectorArgument),
+          startOffset: selectorArgument.range[0],
           allowOnStyledElement: false,
         });
       }
@@ -314,13 +262,17 @@ export const rule = defineRule({
         reportElementQueryCall(callExpression);
         reportPrivateCssVariableSetPropertyCall(callExpression);
       },
-      Property: (property: any) => {
-        const propertyName = getStaticStringValue(property.key);
+      ObjectExpression: (objectExpression: any) => {
+        for (const property of objectExpression.properties) {
+          const propertyName = getStaticStringValue(property.key);
 
-        if (
-          isDefined(propertyName) &&
-          PRIVATE_CSS_VARIABLE_NAME_REGEX.test(propertyName)
-        ) {
+          if (
+            !isDefined(propertyName) ||
+            !PRIVATE_CSS_VARIABLE_NAME_REGEX.test(propertyName)
+          ) {
+            continue;
+          }
+
           context.report({
             node: property.key,
             messageId: 'privateCssVariableWrite',
@@ -338,15 +290,22 @@ export const rule = defineRule({
         const isTwentyUiComponentTemplate = isStyledTwentyUiComponentCall(tag);
 
         for (const templateElement of quasi.quasis) {
-          reportTemplateElementMatches({
-            templateElement,
+          const text = maskCssCommentsAndQuotedValues(
+            sourceCode.getText(templateElement),
+          );
+          const startOffset = templateElement.range[0];
+
+          reportTextMatches({
+            text,
+            startOffset,
             regex: PRIVATE_CSS_VARIABLE_DECLARATION_REGEX,
             messageId: 'privateCssVariableWrite',
             getData: (variableName) => ({ variableName }),
           });
 
           reportPrivateAttributeSelectors({
-            node: templateElement,
+            text,
+            startOffset,
             allowOnStyledElement: true,
           });
 
@@ -354,14 +313,16 @@ export const rule = defineRule({
             continue;
           }
 
-          reportTemplateElementMatches({
-            templateElement,
+          reportTextMatches({
+            text,
+            startOffset,
             regex: DOUBLE_AMPERSAND_REGEX,
             messageId: 'doubleAmpersandSelector',
           });
 
-          reportTemplateElementMatches({
-            templateElement,
+          reportTextMatches({
+            text,
+            startOffset,
             regex: IMPORTANT_REGEX,
             messageId: 'importantDeclaration',
           });
