@@ -12,6 +12,7 @@ import { DropdownSelectionContext } from './DropdownSelectionContext';
 import { createDropdownSelectionEventDetails } from './createDropdownSelectionEventDetails';
 import { getDropdownOptionItemRole } from './getDropdownOptionItemRole';
 import { isDropdownOptionItemSelected } from './isDropdownOptionItemSelected';
+import { dropdownItemActivation } from './dropdownItemActivation';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
@@ -112,7 +113,10 @@ export const DropdownOptionItem = ({
         }
 
         const eventDetails = createDropdownSelectionEventDetails({
-          event: event.nativeEvent,
+          event: dropdownItemActivation.getEvent({
+            item: event.currentTarget,
+            event: event.nativeEvent,
+          }),
           trigger: event.currentTarget,
         });
 

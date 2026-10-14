@@ -7,6 +7,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 import { DropdownSelectionGroupsExample } from '@/__stories__/twenty-ui-gallery/dropdown-selection-groups-example';
+import { DropdownSelectionEventsExample } from '@/__stories__/twenty-ui-gallery/dropdown-selection-events-example';
 
 const ASSIGNEES = ['Ada Lovelace', 'Grace Hopper'];
 
@@ -109,6 +110,7 @@ const DropdownExample = () => {
         Actions: {actionCount}
       </Text>
       <DropdownSelectionGroupsExample />
+      <DropdownSelectionEventsExample />
     </TwentyUiGalleryCard>
   );
 };
