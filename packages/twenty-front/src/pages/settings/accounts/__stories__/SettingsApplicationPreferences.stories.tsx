@@ -132,7 +132,15 @@ export const MissingRequiredValueShowsBannerUntilSaved: Story = {
       ),
     ).toBeVisible();
 
-    await userEvent.type(canvas.getByPlaceholderText('Value'), 'fr');
+    const meetingLanguageRow = canvas
+      .getByText('Meeting language')
+      .closest<HTMLElement>('div:has(input)');
+
+    if (!isDefined(meetingLanguageRow)) {
+      throw new Error('Missing the Meeting language row');
+    }
+
+    await userEvent.type(within(meetingLanguageRow).getByRole('textbox'), 'fr');
 
     const saveButton = canvas.getByRole('button', { name: 'Save settings' });
 
