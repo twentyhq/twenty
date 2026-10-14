@@ -1,3 +1,4 @@
+import { APP_PUBLISH_COMMAND_DEFINITION } from '@/commands/app/publish/app-publish.command-definition';
 import { APP_DEV_COMMAND_DEFINITION } from '@/commands/app/dev/app-dev.command-definition';
 import { APP_ADD_COMMAND_DEFINITION } from '@/commands/app/add/app-add.command-definition';
 import { APP_EXEC_COMMAND_DEFINITION } from '@/commands/app/exec/app-exec.command-definition';
@@ -41,6 +42,7 @@ export const COMMAND_CATALOG: CommandDefinition[] = [
   APP_INIT_COMMAND_DEFINITION,
   APP_PLAN_COMMAND_DEFINITION,
   APP_PULL_COMMAND_DEFINITION,
+  APP_PUBLISH_COMMAND_DEFINITION,
   APP_TYPECHECK_COMMAND_DEFINITION,
   APP_UNINSTALL_COMMAND_DEFINITION,
   AUTH_LOGIN_COMMAND_DEFINITION,
