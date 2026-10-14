@@ -153,7 +153,7 @@ describe('useSaveDraftRoleToDB', () => {
     expect(onSuccess).not.toHaveBeenCalled();
   });
 
-  it('should call onSuccess once with the role id when updating a role', async () => {
+  it('should send only the changed fields and call onSuccess once when updating a role', async () => {
     const onSuccess = jest.fn();
 
     const { result } = renderUseSaveDraftRoleToDB({
@@ -174,7 +174,7 @@ describe('useSaveDraftRoleToDB', () => {
         variables: {
           updateRoleInput: {
             id: ROLE_ID,
-            update: { label: 'Sales team', ...ROLE_BASIC_FIELDS_INPUT },
+            update: { label: 'Sales team' },
           },
         },
       }),
