@@ -1,3 +1,4 @@
+import { myApplicationPreferences } from 'test/integration/metadata/suites/application/utils/my-application-preferences.util';
 import { myUserApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-user-application-variables.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
