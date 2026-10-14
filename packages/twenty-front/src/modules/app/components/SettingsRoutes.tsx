@@ -18,22 +18,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const SettingsGraphQLPlayground = lazy(() =>
-  import('~/pages/settings/developers/playground/SettingsGraphQLPlayground').then(
-    (module) => ({
-      default: module.SettingsGraphQLPlayground,
-    }),
-  ),
-);
-
-const SettingsRestPlayground = lazy(() =>
-  import('~/pages/settings/developers/playground/SettingsRestPlayground').then(
-    (module) => ({
-      default: module.SettingsRestPlayground,
-    }),
-  ),
-);
-
 const SettingsAccountsConfiguration = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsConfiguration').then(
     (module) => ({
@@ -953,11 +937,11 @@ const createSettingsRouteElements = ({
       />
       <Route
         path={`${SettingsPath.GraphQLPlayground}`}
-        element={<SettingsGraphQLPlayground />}
+        element={<SettingsApiWebhooksRedirectEffect />}
       />
       <Route
         path={`${SettingsPath.RestPlayground}/*`}
-        element={<SettingsRestPlayground />}
+        element={<SettingsApiWebhooksRedirectEffect />}
       />
       <Route
         path={SettingsPath.NewApiKey}

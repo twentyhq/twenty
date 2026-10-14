@@ -1,5 +1,4 @@
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
-import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { styled } from '@linaria/react';
 
 const StyledNavigationDrawerWrapper = styled.div`
@@ -10,16 +9,8 @@ const StyledNavigationDrawerWrapper = styled.div`
   }
 `;
 
-export const DefaultLayoutNavigationDrawer = () => {
-  const showFullscreen = useShowFullscreen();
-
-  if (showFullscreen) {
-    return null;
-  }
-
-  return (
-    <StyledNavigationDrawerWrapper>
-      <AppNavigationDrawer />
-    </StyledNavigationDrawerWrapper>
-  );
-};
+export const DefaultLayoutNavigationDrawer = () => (
+  <StyledNavigationDrawerWrapper>
+    <AppNavigationDrawer />
+  </StyledNavigationDrawerWrapper>
+);

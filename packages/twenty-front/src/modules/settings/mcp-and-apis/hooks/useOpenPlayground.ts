@@ -1,25 +1,24 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useOpenLogConsoleTab } from '@/log-console/hooks/useOpenLogConsoleTab';
 import {
   isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
 } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
-import { PlaygroundTypes } from '@/settings/mcp-and-apis/types/PlaygroundTypes';
+import { type PlaygroundTypes } from '@/settings/mcp-and-apis/types/PlaygroundTypes';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useToast } from 'twenty-ui/components/feedback';
 import { GeneratePlaygroundTokenDocument } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 // Re-mint when less than this remains so the user never lands on a token about to expire.
 const TOKEN_FRESHNESS_BUFFER_MS = 5 * 60 * 1000;
 
 export const useOpenPlayground = () => {
-  const navigateSettings = useNavigateSettings();
+  const { openLogConsoleTab } = useOpenLogConsoleTab();
   const [playgroundApiKey, setPlaygroundApiKey] = useAtomState(
     playgroundApiKeyState,
   );
@@ -47,16 +46,16 @@ export const useOpenPlayground = () => {
         setPlaygroundApiKey(mintedToken);
       }
 
-      const path =
-        type === PlaygroundTypes.GRAPHQL
-          ? SettingsPath.GraphQLPlayground
-          : SettingsPath.RestPlayground;
-      navigateSettings(path, { schema });
+      openLogConsoleTab({
+        tabId: 'apis',
+        view: { type: 'playground', playgroundType: type, schema },
+        isFullScreen: true,
+      });
     },
     [
       playgroundApiKey,
       generatePlaygroundToken,
-      navigateSettings,
+      openLogConsoleTab,
       setPlaygroundApiKey,
     ],
   );

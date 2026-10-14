@@ -13,7 +13,7 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
-import { logConsoleApiKeysViewState } from '@/log-console/states/logConsoleApiKeysViewState';
+import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
@@ -773,7 +773,7 @@ export const ClickHouseMissing: Story = {
 export const ApiKeysTab: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-    jotaiStore.set(logConsoleApiKeysViewState.atom, { type: 'list' });
+    jotaiStore.set(logConsoleApisViewState.atom, { type: 'list' });
     jotaiStore.set(
       activeTabIdComponentState.atomFamily({
         instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,

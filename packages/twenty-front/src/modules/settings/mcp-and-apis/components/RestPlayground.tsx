@@ -9,8 +9,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useState, lazy, Suspense } from 'react';
 import { styled } from '@linaria/react';
 
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useThemeColorScheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -93,11 +91,6 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
               hideClientButton: true,
               hideDarkModeToggle: true,
               hideModels: schema === 'metadata',
-              pathRouting: {
-                basePath: getSettingsPath(SettingsPath.RestPlayground, {
-                  schema,
-                }),
-              },
             }}
           />
         </Suspense>

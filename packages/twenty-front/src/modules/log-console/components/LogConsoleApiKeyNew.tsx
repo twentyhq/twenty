@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
 import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
-import { logConsoleApiKeysViewState } from '@/log-console/states/logConsoleApiKeysViewState';
+import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
@@ -28,7 +28,7 @@ import { Section } from 'twenty-ui/components/layout';
 export const LogConsoleApiKeyNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
-  const setLogConsoleApiKeysView = useSetAtomState(logConsoleApiKeysViewState);
+  const setLogConsoleApisView = useSetAtomState(logConsoleApisViewState);
   const { data: rolesData, loading: rolesLoading } = useQuery(
     GetApiKeyRolesDocument,
   );
@@ -116,7 +116,7 @@ export const LogConsoleApiKeyNew = () => {
         newApiKey.id,
         tokenData.data.generateApiKeyToken.token,
       );
-      setLogConsoleApiKeysView({ type: 'detail', id: newApiKey.id });
+      setLogConsoleApisView({ type: 'detail', id: newApiKey.id });
     }
   };
 
@@ -130,11 +130,11 @@ export const LogConsoleApiKeyNew = () => {
     <>
       <LogConsoleSubPageHeader
         title={t`New key`}
-        onBack={() => setLogConsoleApiKeysView({ type: 'list' })}
+        onBack={() => setLogConsoleApisView({ type: 'list' })}
         actions={
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
-            onCancel={() => setLogConsoleApiKeysView({ type: 'list' })}
+            onCancel={() => setLogConsoleApisView({ type: 'list' })}
             onSave={handleSave}
           />
         }

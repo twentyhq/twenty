@@ -1,6 +1,6 @@
 import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
 import { LogConsoleSubPageHeader } from '@/log-console/components/LogConsoleSubPageHeader';
-import { logConsoleApiKeysViewState } from '@/log-console/states/logConsoleApiKeysViewState';
+import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
@@ -64,8 +64,8 @@ export const LogConsoleApiKeyDetail = ({
   const { openDialog } = useDialog();
   const [isLoading, setIsLoading] = useState(false);
 
-  const setLogConsoleApiKeysView = useSetAtomState(logConsoleApiKeysViewState);
-  const goBackToList = () => setLogConsoleApiKeysView({ type: 'list' });
+  const setLogConsoleApisView = useSetAtomState(logConsoleApisViewState);
+  const goBackToList = () => setLogConsoleApisView({ type: 'list' });
 
   const jotaiStore = useStore();
 
@@ -225,7 +225,7 @@ export const LogConsoleApiKeyDetail = ({
 
         if (isNonEmptyString(newApiKey?.token)) {
           setApiKeyTokenCallback(newApiKey.id, newApiKey.token);
-          setLogConsoleApiKeysView({ type: 'detail', id: newApiKey.id });
+          setLogConsoleApisView({ type: 'detail', id: newApiKey.id });
         }
       }
     } catch {

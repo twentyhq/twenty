@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { lazy, Suspense } from 'react';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -7,25 +8,41 @@ import { LogConsoleApiKeyDetail } from '@/log-console/components/LogConsoleApiKe
 import { LogConsoleApiKeyNew } from '@/log-console/components/LogConsoleApiKeyNew';
 import { LogConsolePageContainer } from '@/log-console/components/LogConsolePageContainer';
 import { StyledLogConsoleButtonContainer } from '@/log-console/components/StyledLogConsoleButtonContainer';
-import { logConsoleApiKeysViewState } from '@/log-console/states/logConsoleApiKeysViewState';
+import { logConsoleApisViewState } from '@/log-console/states/logConsoleApisViewState';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { PlaygroundSetupForm } from '@/settings/mcp-and-apis/components/PlaygroundSetupForm';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
+const LogConsoleApiPlayground = lazy(() =>
+  import('@/log-console/components/LogConsoleApiPlayground').then((module) => ({
+    default: module.LogConsoleApiPlayground,
+  })),
+);
+
 export const LogConsoleApiKeys = () => {
   const { t } = useLingui();
-  const [logConsoleApiKeysView, setLogConsoleApiKeysView] = useAtomState(
-    logConsoleApiKeysViewState,
+  const [logConsoleApisView, setLogConsoleApisView] = useAtomState(
+    logConsoleApisViewState,
   );
 
-  switch (logConsoleApiKeysView.type) {
+  switch (logConsoleApisView.type) {
     case 'new':
       return <LogConsoleApiKeyNew />;
+    case 'playground':
+      return (
+        <Suspense fallback={<SettingsSkeletonLoader />}>
+          <LogConsoleApiPlayground
+            playgroundType={logConsoleApisView.playgroundType}
+            schema={logConsoleApisView.schema}
+          />
+        </Suspense>
+      );
     case 'detail':
       return (
         <LogConsoleApiKeyDetail
-          key={logConsoleApiKeysView.id}
-          apiKeyId={logConsoleApiKeysView.id}
+          key={logConsoleApisView.id}
+          apiKeyId={logConsoleApisView.id}
         />
       );
     case 'list':
@@ -45,7 +62,7 @@ export const LogConsoleApiKeys = () => {
             />
             <SettingsApiKeysTable
               onApiKeyClick={(apiKeyId) =>
-                setLogConsoleApiKeysView({ type: 'detail', id: apiKeyId })
+                setLogConsoleApisView({ type: 'detail', id: apiKeyId })
               }
             />
             <StyledLogConsoleButtonContainer>
@@ -53,7 +70,7 @@ export const LogConsoleApiKeys = () => {
                 startIcon={<IconPlus />}
                 size="sm"
                 variant="outline"
-                onClick={() => setLogConsoleApiKeysView({ type: 'new' })}
+                onClick={() => setLogConsoleApisView({ type: 'new' })}
               >{t`Create API key`}</Button>
             </StyledLogConsoleButtonContainer>
           </Section.Root>
