@@ -2690,7 +2690,6 @@ type MarketplaceAppDetail {
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
   name: String!
   objects: [MarketplaceAppObject!]
-  permissionFlags: [MarketplaceAppPermissionFlag!]
   pricingDescription: String
   requestedCapabilities: [String!]!
   roles: [MarketplaceAppRole!]
@@ -2705,12 +2704,6 @@ type MarketplaceAppDetail {
 type MarketplaceAppObject {
   labelPlural: String!
   labelSingular: String!
-  universalIdentifier: String!
-}
-
-type MarketplaceAppPermissionFlag {
-  icon: String
-  label: String!
   universalIdentifier: String!
 }
 

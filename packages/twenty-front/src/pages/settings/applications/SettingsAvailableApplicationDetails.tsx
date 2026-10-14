@@ -223,7 +223,6 @@ export const SettingsAvailableApplicationDetails = () => {
         appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
         appObjects={detail?.objects ?? undefined}
-        appPermissionFlags={detail?.permissionFlags ?? undefined}
         requestedCapabilities={detail?.requestedCapabilities}
         billsCredits={detail?.billsCredits}
         isVetted={detail?.isVetted}

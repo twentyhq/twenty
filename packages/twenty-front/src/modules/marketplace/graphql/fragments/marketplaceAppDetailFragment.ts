@@ -29,11 +29,6 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
       universalIdentifier
       labelSingular
     }
-    permissionFlags {
-      universalIdentifier
-      label
-      icon
-    }
     roles {
       universalIdentifier
       label

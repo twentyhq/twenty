@@ -18,18 +18,12 @@ import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
-import { IconAlertTriangle, IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type MarketplaceAppObject = {
   universalIdentifier: string;
   labelSingular: string;
-};
-
-type MarketplaceAppPermissionFlag = {
-  universalIdentifier: string;
-  label: string;
-  icon?: string | null;
 };
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
@@ -38,7 +32,6 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   appLogoUrl?: string;
   defaultRole?: RoleManifest;
   appObjects?: MarketplaceAppObject[];
-  appPermissionFlags?: MarketplaceAppPermissionFlag[];
   requestedCapabilities?: string[];
   billsCredits?: boolean;
   isVetted?: boolean;
@@ -149,7 +142,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   appLogoUrl,
   defaultRole,
   appObjects,
-  appPermissionFlags,
   requestedCapabilities = [],
   billsCredits = false,
   isVetted = false,
@@ -159,20 +151,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   const { closeDialog } = useDialog();
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { getIcon } = useIcons();
-
-  const appPermissionFlagsByUniversalIdentifier = useMemo(
-    () =>
-      new Map(
-        (appPermissionFlags ?? []).map(
-          ({ universalIdentifier, label, icon }) => [
-            universalIdentifier,
-            { Icon: getIcon(icon, 'IconLock'), label },
-          ],
-        ),
-      ),
-    [appPermissionFlags, getIcon],
-  );
 
   const objectLabelsByUniversalIdentifier = useMemo(
     (): Record<string, string> =>
@@ -191,7 +169,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     const rolePermissionItems = defaultRole
       ? buildPermissionSummaryFromRoleManifest(defaultRole, {
           objectLabelsByUniversalIdentifier,
-          appPermissionFlagsByUniversalIdentifier,
         })
       : [];
 
@@ -204,7 +181,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     requestedCapabilities,
     defaultRole,
     objectLabelsByUniversalIdentifier,
-    appPermissionFlagsByUniversalIdentifier,
     billsCredits,
   ]);
 
