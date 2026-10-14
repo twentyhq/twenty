@@ -6,7 +6,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { IDENTIFY_ACCOUNT_TIMEOUT_MS } from 'src/engine/core-modules/application/connection-provider/constants/identify-account-timeout-ms.constant';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
@@ -25,7 +24,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CustomException } from 'src/utils/custom-exception';
-import { withDeadline } from 'src/utils/with-deadline';
 
 type ConnectionLifecycleHook = 'identifyAccount' | 'onConnect' | 'onDisconnect';
 
@@ -210,20 +208,11 @@ export class ConnectionProviderLifecycleHookService {
     payload: IdentifyAccountPayload;
   }): Promise<LogicFunctionExecuteResult> {
     try {
-      // The executor has no per-call timeout override, so the cap is applied here.
-      return await withDeadline({
-        promise: this.logicFunctionExecutorService.execute({
-          logicFunctionId,
-          workspaceId,
-          payload,
-          shouldEnforceUsageLimits: true,
-        }),
-        timeoutMs: IDENTIFY_ACCOUNT_TIMEOUT_MS,
-        createTimeoutError: () =>
-          new ConnectionProviderException(
-            `identifyAccount logic function of connection provider ${provider.id} did not complete within ${IDENTIFY_ACCOUNT_TIMEOUT_MS}ms`,
-            ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
-          ),
+      return await this.logicFunctionExecutorService.execute({
+        logicFunctionId,
+        workspaceId,
+        payload,
+        shouldEnforceUsageLimits: true,
       });
     } catch (error) {
       if (error instanceof CustomException) {

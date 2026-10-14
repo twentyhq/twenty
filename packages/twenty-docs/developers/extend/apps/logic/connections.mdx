@@ -108,6 +108,10 @@ When a user clicks **Reconnect**, nothing stops them from authorizing a differen
 Set `identifyAccountLogicFunction` to a logic function in the same app that returns a stable id for the account behind the freshly issued token:
 
 ```ts src/connection-providers/slack-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+import { SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
 export default defineConnectionProvider({
   universalIdentifier: '...',
   name: 'slack',
@@ -117,12 +121,12 @@ export default defineConnectionProvider({
     /* ... */
   },
   identifyAccountLogicFunction: {
-    universalIdentifier: '1eb8dc55-383e-439b-8f72-879e6e81d229',
+    universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   },
 });
 ```
 
-**When it runs.** Synchronously inside the OAuth callback, right after the authorization code is exchanged for tokens and **before** anything is saved. The user is waiting on the redirect, so Twenty caps the call at 10 seconds whatever the function's own `timeoutSeconds`; keep it to a single request to the provider's "who am I" endpoint. The on-connect hook, if any, still runs afterwards, once the connection is saved.
+**When it runs.** Synchronously inside the OAuth callback, right after the authorization code is exchanged for tokens and **before** anything is saved. The user is waiting on the redirect, so when the app is installed or synced Twenty caps the function's `timeoutSeconds` at 10, whatever the manifest declares; keep it to a single request to the provider's "who am I" endpoint. The on-connect hook, if any, still runs afterwards, once the connection is saved.
 
 **Payload.** The handler receives the provisional access token. It has not been persisted yet, so `getConnection` cannot return it; use it directly and do not log it.
 
@@ -152,14 +156,46 @@ type IdentifyAccountResult = {
 
 Twenty does not deduplicate on `externalAccountId`: connecting the same upstream account twice through **Add connection** creates two connections. The id is exposed on `listConnections` and `getConnection`, so an app that wants one connection per upstream account can detect duplicates itself (for instance in its on-connect hook).
 
-**The `buildIdentifyAccountHandler` helper.** Most providers expose a single endpoint that describes the current token. Instead of writing the request by hand, describe it and let the SDK build the handler:
+**Writing the function.** Most providers expose a single endpoint that describes the current token. For Slack that is `auth.test`, which returns the workspace (`team_id`, `team`) and the user behind the token:
 
 ```ts src/logic-functions/slack-identify-account.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
+import type {
+  IdentifyAccountPayload,
+  IdentifyAccountResult,
+} from 'twenty-sdk/logic-function';
+
+import { SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineLogicFunction({
+  universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'slack-identify-account',
+  timeoutSeconds: 10,
+  handler: async ({
+    accessToken,
+  }: IdentifyAccountPayload): Promise<IdentifyAccountResult> => {
+    const response = await fetch('https://slack.com/api/auth.test', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const { ok, error, team_id, team } = await response.json();
+
+    if (!ok) {
+      throw new Error(`auth.test failed: ${error}`);
+    }
+
+    return { externalAccountId: team_id, handle: team };
+  },
+});
+```
+
+**The `buildIdentifyAccountHandler` shorthand.** When the provider's endpoint is a plain request whose response carries the id and the handle at fixed paths, the SDK can build that handler from a description:
+
+```ts
 import { buildIdentifyAccountHandler } from 'twenty-sdk/logic-function';
 
 export default defineLogicFunction({
-  universalIdentifier: '1eb8dc55-383e-439b-8f72-879e6e81d229',
+  universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'slack-identify-account',
   timeoutSeconds: 10,
   handler: buildIdentifyAccountHandler({
@@ -171,7 +207,7 @@ export default defineLogicFunction({
 });
 ```
 
-The handler calls `endpoint` with `Authorization: Bearer <accessToken>` (plus any `headers` and `body` you pass; `method` defaults to `GET`), parses the JSON response and reads `externalAccountIdPath` and `handlePath` as dot paths (`'team.id'`). It throws when the response is not 2xx or when the id path is missing or empty, and leaves the handle out when `handlePath` does not resolve to a non-empty string. Numeric ids are converted to strings.
+It does exactly what the hand-written version above does: calls `endpoint` with `Authorization: Bearer <accessToken>` (plus any `headers` and `body` you pass; `method` defaults to `GET`), parses the JSON response and reads `externalAccountIdPath` and `handlePath` as dot paths (`'team.id'`). It throws when the response is not 2xx or when the id path is missing or empty, leaves the handle out when `handlePath` does not resolve to a non-empty string, and converts numeric ids to strings. Write the handler yourself whenever the provider needs more than that (a GraphQL query, two calls, a computed id).
 
 Identification ships with Twenty 2.47.0. If your app relies on it, declare `"engines": { "twenty": ">=2.47.0" }` in its `package.json`.
 
