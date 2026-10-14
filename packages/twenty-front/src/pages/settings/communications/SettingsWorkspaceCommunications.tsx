@@ -15,6 +15,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import {
   IconBrandWhatsapp,
+  IconForbid,
   IconMail,
   IconMailX,
   IconPhone,
@@ -92,17 +93,43 @@ export const SettingsWorkspaceCommunications = () => {
         </Section.Root>
         <SettingsWorkspaceEmailGroupSection />
         <SettingsWorkspaceEmailSyncSection />
+        <Section.Root>
+          <Section.Header
+            title={t`Blocklist`}
+            description={t`Exclude the following people and domains from the email and calendar sync of every workspace member`}
+          />
+          <StyledCardsColumn>
+            <SettingsCard
+              Icon={
+                <IconForbid
+                  size={theme.icon.size.lg}
+                  stroke={theme.icon.stroke.md}
+                />
+              }
+              title={t`Manage blocklist`}
+              onClick={() => navigateSettings(SettingsPath.WorkspaceBlocklist)}
+            />
+          </StyledCardsColumn>
+        </Section.Root>
         {isMessageCampaignFeatureEnabled && (
           <Section.Root>
             <Section.Header
-              title={t`Campaigns`}
-              description={t`Engagement tracking and opt-outs for campaigns this workspace sends`}
+              title={t`Tracking`}
+              description={t`Measure engagement on the campaigns this workspace sends`}
+            />
+            <Card.Root rounded>
+              <OpenTrackingSwitch divider />
+              <ClickTrackingSwitch />
+            </Card.Root>
+          </Section.Root>
+        )}
+        {isMessageCampaignFeatureEnabled && (
+          <Section.Root>
+            <Section.Header
+              title={t`Unsubscribe`}
+              description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
             />
             <StyledCardsColumn>
-              <Card.Root rounded>
-                <OpenTrackingSwitch divider />
-                <ClickTrackingSwitch />
-              </Card.Root>
               <SettingsCard
                 Icon={
                   <IconMailX
@@ -110,8 +137,7 @@ export const SettingsWorkspaceCommunications = () => {
                     stroke={theme.icon.stroke.md}
                   />
                 }
-                title={t`Unsubscribe`}
-                description={t`Opt-outs, topics, and the page recipients see`}
+                title={t`Manage unsubscribe`}
                 onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
               />
             </StyledCardsColumn>
