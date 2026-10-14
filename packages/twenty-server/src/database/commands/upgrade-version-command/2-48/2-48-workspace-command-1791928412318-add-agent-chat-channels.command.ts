@@ -34,9 +34,9 @@ const CHANNEL_UNIVERSAL_IDENTIFIERS = Object.values(
   STANDARD_AGENT_CHAT_CHANNEL,
 ).map(({ universalIdentifier }) => universalIdentifier);
 
-@RegisteredWorkspaceCommand('2.47.0', 1791928412318)
+@RegisteredWorkspaceCommand('2.48.0', 1791928412318)
 @Command({
-  name: 'upgrade:2-47:add-agent-chat-channels',
+  name: 'upgrade:2-48:add-agent-chat-channels',
   description: 'Give chat threads a channel and create the General channel',
 })
 export class AddAgentChatChannelsCommand extends ProvisionedWorkspaceCommandRunner {

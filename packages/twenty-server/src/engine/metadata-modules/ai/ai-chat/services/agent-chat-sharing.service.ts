@@ -54,9 +54,9 @@ export class AgentChatSharingService {
     private readonly channelGrantService: AgentChatChannelGrantService,
   ) {}
 
-  // Fence for the 2.47 cross-upgrade window: until the 2.47 channels command
+  // Fence for the 2.48 cross-upgrade window: until the 2.48 channels command
   // has reached a workspace, its chats have no channel column. Remove once
-  // 2.47 leaves the window.
+  // 2.48 leaves the window.
   async hasChannels(workspaceId: string): Promise<boolean> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
