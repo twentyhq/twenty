@@ -62,6 +62,29 @@ export const useInstallMarketplaceApp = ({
         }
       : undefined;
 
+  const storeInstalledApplication = useCallback(
+    (
+      installedApplication: NonNullable<
+        FindOneApplicationByUniversalIdentifierQuery['findOneApplication']
+      >,
+    ) => {
+      setCurrentWorkspace((currentWorkspace) =>
+        isDefined(currentWorkspace)
+          ? {
+              ...currentWorkspace,
+              installedApplications: [
+                ...currentWorkspace.installedApplications.filter(
+                  (application) => application.id !== installedApplication.id,
+                ),
+                installedApplication,
+              ],
+            }
+          : currentWorkspace,
+      );
+    },
+    [setCurrentWorkspace],
+  );
+
   const handleInstallJobSettled = useCallback(
     async (jobStatus: TrackedJobStatus, trackedUniversalIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
@@ -100,19 +123,7 @@ export const useInstallMarketplaceApp = ({
         return;
       }
 
-      setCurrentWorkspace((currentWorkspace) =>
-        isDefined(currentWorkspace)
-          ? {
-              ...currentWorkspace,
-              installedApplications: [
-                ...currentWorkspace.installedApplications.filter(
-                  (application) => application.id !== installedApplication.id,
-                ),
-                installedApplication,
-              ],
-            }
-          : currentWorkspace,
-      );
+      storeInstalledApplication(installedApplication);
 
       enqueueToast({
         status: 'success',
@@ -120,7 +131,27 @@ export const useInstallMarketplaceApp = ({
       });
       onCompleted?.(installedApplication);
     },
-    [enqueueToast, findInstalledApplication, onCompleted, setCurrentWorkspace],
+    [
+      enqueueToast,
+      findInstalledApplication,
+      onCompleted,
+      storeInstalledApplication,
+    ],
+  );
+
+  const handleInstallJobLost = useCallback(
+    async (trackedUniversalIdentifier: string) => {
+      const result = await findInstalledApplication({
+        variables: { universalIdentifier: trackedUniversalIdentifier },
+      }).catch(() => undefined);
+
+      const installedApplication = result?.data?.findOneApplication;
+
+      if (isDefined(installedApplication)) {
+        storeInstalledApplication(installedApplication);
+      }
+    },
+    [findInstalledApplication, storeInstalledApplication],
   );
 
   const fetchInstallJobStatus = useCallback(
@@ -137,6 +168,7 @@ export const useInstallMarketplaceApp = ({
   const { activeJobId, activeJobProgress, trackJob } = useTrackedQueueJob({
     runningJob,
     onQueueJobSettled: handleInstallJobSettled,
+    onQueueJobLost: handleInstallJobLost,
     fetchJobStatus: fetchInstallJobStatus,
   });
 

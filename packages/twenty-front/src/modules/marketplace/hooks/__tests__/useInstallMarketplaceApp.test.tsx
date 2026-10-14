@@ -9,6 +9,7 @@ import { QUEUE_JOB_BROWSER_EVENT_NAME } from '@/queue-job/constants/QueueJobBrow
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import {
   FindInstallApplicationJobStatusDocument,
+  FindOneApplicationByUniversalIdentifierDocument,
   JobState,
   type JobStatus,
   TriggerInstallApplicationDocument,
@@ -180,5 +181,56 @@ describe('useInstallMarketplaceApp', () => {
       status: 'error',
       children: 'Manifest validation failed',
     });
+  });
+
+  it('reloads the application when its installation job is gone after the event stream reconnects', async () => {
+    const findInstalledApplicationResult = jest.fn(() => ({
+      data: {
+        findOneApplication: {
+          __typename: 'Application',
+          id: 'application-id',
+          universalIdentifier: UNIVERSAL_IDENTIFIER,
+          name: 'Application',
+          logoUrl: null,
+          version: '1.0.0',
+          createdAt: '2026-10-14T00:00:00.000Z',
+        },
+      },
+    }));
+
+    const { result } = renderHook(
+      () =>
+        useInstallMarketplaceApp({
+          universalIdentifier: UNIVERSAL_IDENTIFIER,
+        }),
+      {
+        wrapper: buildWrapper([
+          buildJobStatusMock(null),
+          triggerInstallMock,
+          buildJobStatusMock(null, JOB_ID),
+          {
+            request: {
+              query: FindOneApplicationByUniversalIdentifierDocument,
+              variables: { universalIdentifier: UNIVERSAL_IDENTIFIER },
+            },
+            result: findInstalledApplicationResult,
+          },
+        ]),
+      },
+    );
+
+    await act(async () => {
+      await result.current.install();
+    });
+
+    act(() => {
+      dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
+    });
+
+    await waitFor(() => expect(result.current.isInstalling).toBe(false));
+    await waitFor(() =>
+      expect(findInstalledApplicationResult).toHaveBeenCalled(),
+    );
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 });

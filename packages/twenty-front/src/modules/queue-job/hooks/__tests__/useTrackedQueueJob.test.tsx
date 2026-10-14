@@ -315,10 +315,15 @@ describe('useTrackedQueueJob', () => {
 
   it('stops tracking a job the server no longer knows after the event stream reconnects', async () => {
     const onQueueJobSettled = jest.fn();
+    const onQueueJobLost = jest.fn();
     const fetchJobStatus = jest.fn().mockResolvedValue(null);
 
     const { result } = renderHook(() =>
-      useTrackedQueueJob<string>({ onQueueJobSettled, fetchJobStatus }),
+      useTrackedQueueJob<string>({
+        onQueueJobSettled,
+        onQueueJobLost,
+        fetchJobStatus,
+      }),
     );
 
     act(() => {
@@ -329,6 +334,32 @@ describe('useTrackedQueueJob', () => {
 
     expect(result.current.activeJobId).toBeUndefined();
     expect(onQueueJobSettled).not.toHaveBeenCalled();
+    expect(onQueueJobLost).toHaveBeenCalledWith(CONTEXT);
+  });
+
+  it('settles a job once when two terminal statuses arrive before a render', () => {
+    const onQueueJobSettled = jest.fn();
+
+    const { result } = renderHook(() =>
+      useTrackedQueueJob<string>({ onQueueJobSettled }),
+    );
+
+    act(() => {
+      result.current.trackJob({ jobId: FIRST_JOB_ID, context: CONTEXT });
+    });
+
+    act(() => {
+      dispatchBrowserEvent<JobStatus>(
+        QUEUE_JOB_BROWSER_EVENT_NAME,
+        buildJobStatus(FIRST_JOB_ID, JobState.COMPLETED),
+      );
+      dispatchBrowserEvent<JobStatus>(
+        QUEUE_JOB_BROWSER_EVENT_NAME,
+        buildJobStatus(FIRST_JOB_ID, JobState.COMPLETED),
+      );
+    });
+
+    expect(onQueueJobSettled).toHaveBeenCalledTimes(1);
   });
 
   it('keeps tracking a job when its status cannot be fetched after the event stream reconnects', async () => {
