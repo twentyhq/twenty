@@ -73,7 +73,7 @@ const renderUseValidationRules = ({
     ...mockCurrentWorkspace,
     featureFlags: [
       {
-        key: FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+        key: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
         value: isValidationRulesEnabled,
       },
     ],

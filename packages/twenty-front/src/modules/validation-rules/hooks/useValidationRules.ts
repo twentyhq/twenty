@@ -19,7 +19,7 @@ export const useValidationRules = ({
   objectMetadataId: string;
 }) => {
   const isValidationRulesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
 
   const skip = !isValidationRulesEnabled || !isNonEmptyString(objectMetadataId);

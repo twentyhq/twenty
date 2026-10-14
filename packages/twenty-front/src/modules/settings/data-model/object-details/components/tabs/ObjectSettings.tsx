@@ -103,7 +103,7 @@ export const ObjectSettings = ({
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
   const isValidationRulesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(

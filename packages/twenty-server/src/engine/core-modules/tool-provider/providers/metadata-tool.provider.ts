@@ -70,7 +70,7 @@ export class MetadataToolProvider implements ToolProvider {
   private async buildToolSet(context: ToolProviderContext): Promise<ToolSet> {
     const isValidationRulesEnabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+        FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
         context.workspaceId,
       );
 
