@@ -95,15 +95,17 @@ export class AppBillingController {
       return { hasAvailableCredits: true };
     }
 
-    return {
-      hasAvailableCredits: false,
-      reason:
-        usageRefusal.kind === 'subscriptionInactive'
-          ? CREDIT_UNAVAILABLE_REASON_BY_SUBSCRIPTION_INACTIVE_REASON[
-              usageRefusal.reason
-            ]
-          : 'no-credits',
-    };
+    if (usageRefusal.kind === 'subscriptionInactive') {
+      return {
+        hasAvailableCredits: false,
+        reason:
+          CREDIT_UNAVAILABLE_REASON_BY_SUBSCRIPTION_INACTIVE_REASON[
+            usageRefusal.reason
+          ],
+      };
+    }
+
+    return { hasAvailableCredits: false, reason: 'no-credits' };
   }
 
   @Post('charge')
