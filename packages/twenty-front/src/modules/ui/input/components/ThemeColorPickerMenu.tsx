@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useId, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   Dropdown,
   DEFAULT_COLOR_LABELS,
@@ -17,6 +18,7 @@ export const ThemeColorPickerMenu = ({
   selectedColor,
   onSelectColor,
 }: ThemeColorPickerMenuProps) => {
+  const selectionGroupId = useId();
   const [searchValue, setSearchValue] = useState('');
   const query = searchValue.trim().toLowerCase();
   const filteredColorNames = isNonEmptyString(query)
@@ -36,18 +38,32 @@ export const ThemeColorPickerMenu = ({
         onValueChange={setSearchValue}
       />
       <Dropdown.Separator />
-      <Dropdown.Section scrollable>
-        {filteredColorNames.map((colorName) => (
-          <Dropdown.OptionItem
-            key={colorName}
-            selected={colorName === selectedColor}
-            onSelect={() => onSelectColor(colorName)}
-            startIcon={<ColorSample colorName={colorName} />}
-          >
-            {DEFAULT_COLOR_LABELS[colorName]}
-          </Dropdown.OptionItem>
-        ))}
-      </Dropdown.Section>
+      <Dropdown.SelectionGroup
+        id={selectionGroupId}
+        aria-label={t`Colors`}
+        value={selectedColor}
+        onValueChange={(selectedColorName) => {
+          const colorName = MAIN_COLOR_NAMES.find(
+            (colorName) => colorName === selectedColorName,
+          );
+
+          if (isDefined(colorName)) {
+            onSelectColor(colorName);
+          }
+        }}
+      >
+        <Dropdown.Section scrollable>
+          {filteredColorNames.map((colorName) => (
+            <Dropdown.OptionItem
+              key={colorName}
+              value={colorName}
+              startIcon={<ColorSample colorName={colorName} />}
+            >
+              {DEFAULT_COLOR_LABELS[colorName]}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.Section>
+      </Dropdown.SelectionGroup>
     </>
   );
 };

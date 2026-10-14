@@ -1,6 +1,7 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -66,18 +67,32 @@ export const DropdownMenuInnerSelect = ({
         alignOffset={-8}
         aria-label={ariaLabel}
       >
-        <Dropdown.Section>
-          {options.map((selectOption) => (
-            <Dropdown.OptionItem
-              key={`dropdown-menu-inner-select-item-${selectOption.value}`}
-              onSelect={() => onChange(selectOption)}
-              disabled={selectOption.disabled}
-              selected={selectOption.value === selectedOption.value}
-            >
-              {selectOption.label}
-            </Dropdown.OptionItem>
-          ))}
-        </Dropdown.Section>
+        <Dropdown.SelectionGroup
+          id={`${dropdownId}-selection`}
+          aria-label={ariaLabel}
+          value={selectedOption.value}
+          onValueChange={(selectedValue) => {
+            const option = options.find(
+              (option) => option.value === selectedValue,
+            );
+
+            if (isDefined(option)) {
+              onChange(option);
+            }
+          }}
+        >
+          <Dropdown.Section>
+            {options.map((selectOption) => (
+              <Dropdown.OptionItem
+                key={`dropdown-menu-inner-select-item-${selectOption.value}`}
+                value={selectOption.value}
+                disabled={selectOption.disabled}
+              >
+                {selectOption.label}
+              </Dropdown.OptionItem>
+            ))}
+          </Dropdown.Section>
+        </Dropdown.SelectionGroup>
       </DropdownContent>
     </DropdownRoot>
   );
