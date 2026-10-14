@@ -62,10 +62,6 @@ const toCreditsUsedAmounts = (
   userCreditsUsed: Number(row.userCreditsUsedMicro),
 });
 
-type SumRowMicro = {
-  total: string | number | null;
-};
-
 type TimeSeriesRowMicro = CreditsUsedRowMicro & {
   date: string;
 };
@@ -192,40 +188,17 @@ export class UsageAnalyticsService {
   async getCreditsUsedMicroForBillingPeriod({
     workspaceId,
     periodStart,
-    periodEnd,
   }: {
     workspaceId: string;
     periodStart: Date;
-    periodEnd: Date;
   }): Promise<CreditsUsed> {
-    const [totalCreditsUsedMicro, userCreditsUsedMicro] = await Promise.all([
-      this.getTotalCreditsUsedMicroForBillingPeriod({
-        workspaceId,
-        periodStart,
-      }),
-      this.getUserCreditsUsedMicroForBillingPeriod({
-        workspaceId,
-        periodStart,
-        periodEnd,
-      }),
-    ]);
-
-    return {
-      workspaceCreditsUsedMicro: totalCreditsUsedMicro - userCreditsUsedMicro,
-      userCreditsUsedMicro,
-    };
-  }
-
-  private async getTotalCreditsUsedMicroForBillingPeriod({
-    workspaceId,
-    periodStart,
-  }: {
-    workspaceId: string;
-    periodStart: Date;
-  }): Promise<number> {
     // The grouping only exists to match the billing_by_workspace_period projection; it still returns one row.
-    const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
-      `SELECT sum(creditsUsedMicro) AS total
+    const rows = await this.clickHouseService.selectOrThrow<{
+      totalCreditsUsedMicro: string | number | null;
+      userCreditsUsedMicro: string | number | null;
+    }>(
+      `SELECT sum(creditsUsedMicro) AS totalCreditsUsedMicro,
+              sum(userCreditsUsedMicro) AS userCreditsUsedMicro
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND periodStart = {periodStart:DateTime64(3)}
@@ -233,31 +206,13 @@ export class UsageAnalyticsService {
       { workspaceId, periodStart: formatDateTimeForClickHouse(periodStart) },
     );
 
-    return Number(rows[0]?.total ?? 0);
-  }
+    const totalCreditsUsedMicro = Number(rows[0]?.totalCreditsUsedMicro ?? 0);
+    const userCreditsUsedMicro = Number(rows[0]?.userCreditsUsedMicro ?? 0);
 
-  private async getUserCreditsUsedMicroForBillingPeriod({
-    workspaceId,
-    periodStart,
-    periodEnd,
-  }: {
-    workspaceId: string;
-    periodStart: Date;
-    periodEnd: Date;
-  }): Promise<number> {
-    const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
-      `SELECT sum(userCreditsUsedMicro) AS total
-       FROM usageEvent
-       WHERE workspaceId = {workspaceId:String}
-         ${buildUsagePeriodClause('billing')}`,
-      {
-        workspaceId,
-        periodStart: formatDateTimeForClickHouse(periodStart),
-        periodEnd: formatDateTimeForClickHouse(periodEnd),
-      },
-    );
-
-    return Number(rows[0]?.total ?? 0);
+    return {
+      workspaceCreditsUsedMicro: totalCreditsUsedMicro - userCreditsUsedMicro,
+      userCreditsUsedMicro,
+    };
   }
 
   async getAdminAiUsageByWorkspace(params: {
