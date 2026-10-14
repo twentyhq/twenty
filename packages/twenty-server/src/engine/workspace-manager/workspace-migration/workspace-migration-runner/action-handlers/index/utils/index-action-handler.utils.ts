@@ -1,5 +1,5 @@
 import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -38,6 +38,13 @@ export const computeFlatIndexFieldColumnNames = ({
       if (!isDefined(flatFieldMetadata)) {
         throw new FlatEntityMapsException(
           'Index field related field metadata not found',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      if (isMorphRelationHead(flatFieldMetadata)) {
+        throw new FlatEntityMapsException(
+          'Cannot index a relation field that has no join column',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
