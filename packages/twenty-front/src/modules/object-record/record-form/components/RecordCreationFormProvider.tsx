@@ -81,7 +81,26 @@ export const RecordCreationFormProvider = ({
         ),
       );
 
-      const clearIsSettling = () =>
+      try {
+        const createdRecord =
+          await pendingRecordCreation.createRecord(draftRecord);
+
+        if (!shouldKeepOpen) {
+          removePageFromSidePanelHistory(requestId);
+
+          pendingRecordCreation.resolve(createdRecord);
+
+          setPendingRecordCreations((previousPendingRecordCreations) =>
+            previousPendingRecordCreations.filter(
+              (candidate) => candidate.requestId !== requestId,
+            ),
+          );
+        }
+
+        return {};
+      } catch (error) {
+        return { error };
+      } finally {
         setPendingRecordCreations((previousPendingRecordCreations) =>
           previousPendingRecordCreations.map((candidate) =>
             candidate.requestId === requestId
@@ -89,34 +108,7 @@ export const RecordCreationFormProvider = ({
               : candidate,
           ),
         );
-
-      let createdRecord: ObjectRecord;
-
-      try {
-        createdRecord = await pendingRecordCreation.createRecord(draftRecord);
-      } catch (error) {
-        clearIsSettling();
-
-        return { error };
       }
-
-      if (shouldKeepOpen) {
-        clearIsSettling();
-
-        return {};
-      }
-
-      removePageFromSidePanelHistory(requestId);
-
-      pendingRecordCreation.resolve(createdRecord);
-
-      setPendingRecordCreations((previousPendingRecordCreations) =>
-        previousPendingRecordCreations.filter(
-          (candidate) => candidate.requestId !== requestId,
-        ),
-      );
-
-      return {};
     },
     [pendingRecordCreations, removePageFromSidePanelHistory],
   );

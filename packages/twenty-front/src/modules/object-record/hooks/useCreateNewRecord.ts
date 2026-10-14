@@ -80,7 +80,7 @@ export const useCreateNewRecord = ({
     [buildRecordInputFromRLSPredicates, buildRecordInput, createOneRecord],
   );
 
-  const createAndRegisterRecord = useCallback(
+  const createAndStoreRecord = useCallback(
     async (recordInput?: Partial<ObjectRecord>) => {
       const createdRecord = await createRecord(recordInput);
 
@@ -105,10 +105,10 @@ export const useCreateNewRecord = ({
             },
             createRecord: (draftRecord) => {
               submittedRecordInput = { ...recordInput, ...draftRecord };
-              return createAndRegisterRecord(submittedRecordInput);
+              return createAndStoreRecord(submittedRecordInput);
             },
           })
-        : await createAndRegisterRecord(recordInput);
+        : await createAndStoreRecord(recordInput);
 
       if (!isDefined(createdRecord)) {
         return;
@@ -163,7 +163,7 @@ export const useCreateNewRecord = ({
     [
       buildRecordInputFromRLSPredicates,
       buildRecordInput,
-      createAndRegisterRecord,
+      createAndStoreRecord,
       store,
       navigate,
       objectMetadataItem,
