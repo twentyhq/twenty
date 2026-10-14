@@ -4799,7 +4799,7 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
 export type MyConnectedAccountsFilterInput = {
   /** Keeps only the app connections with this visibility; accounts from other providers are not affected */
   appConnectionVisibility?: InputMaybe<Scalars['String']['input']>;
-  /** true keeps the accounts the caller owns, false keeps the workspace-shared accounts of other members, omitted keeps both */
+  /** true keeps only the accounts the caller owns; false, null or omitted also keeps the workspace-shared accounts of other members */
   ownedByCaller?: InputMaybe<Scalars['Boolean']['input']>;
 };
 

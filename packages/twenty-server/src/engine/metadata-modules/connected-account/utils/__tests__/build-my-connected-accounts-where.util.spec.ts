@@ -32,19 +32,23 @@ describe('buildMyConnectedAccountsWhere', () => {
     ]);
   });
 
-  it('matches only other members workspace-shared accounts when ownedByCaller is false', () => {
+  it.each([
+    ['a null filter', null],
+    [
+      'explicit null fields',
+      { ownedByCaller: null, appConnectionVisibility: null },
+    ],
+    ['ownedByCaller false', { ownedByCaller: false }],
+  ])('matches like no filter with %s', (_, filter) => {
     expect(
       buildMyConnectedAccountsWhere({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
-        filter: { ownedByCaller: false },
+        filter,
       }),
     ).toEqual([
-      {
-        workspaceId: WORKSPACE_ID,
-        visibility: 'workspace',
-        userWorkspaceId: Not(USER_WORKSPACE_ID),
-      },
+      { workspaceId: WORKSPACE_ID, visibility: 'workspace' },
+      { workspaceId: WORKSPACE_ID, userWorkspaceId: USER_WORKSPACE_ID },
     ]);
   });
 
@@ -125,6 +129,28 @@ describe('buildMyConnectedAccountsWhere', () => {
         userWorkspaceId: USER_WORKSPACE_ID,
         provider: ConnectedAccountProvider.APP,
         visibility: 'user',
+      },
+    ]);
+  });
+
+  it('matches the caller own accounts with only their workspace-shared app connections', () => {
+    expect(
+      buildMyConnectedAccountsWhere({
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+        filter: { ownedByCaller: true, appConnectionVisibility: 'workspace' },
+      }),
+    ).toEqual([
+      {
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+        provider: Not(ConnectedAccountProvider.APP),
+      },
+      {
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+        provider: ConnectedAccountProvider.APP,
+        visibility: 'workspace',
       },
     ]);
   });

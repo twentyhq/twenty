@@ -6533,7 +6533,7 @@ export interface MutationGenqlSelection{
 export interface MyConnectedAccountsFilterInput {
 /** Keeps only the app connections with this visibility; accounts from other providers are not affected */
 appConnectionVisibility?: (Scalars['String'] | null),
-/** true keeps the accounts the caller owns, false keeps the workspace-shared accounts of other members, omitted keeps both */
+/** true keeps only the accounts the caller owns; false, null or omitted also keeps the workspace-shared accounts of other members */
 ownedByCaller?: (Scalars['Boolean'] | null)}
 
 export interface NativeModelCapabilitiesGenqlSelection{

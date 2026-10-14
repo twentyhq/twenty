@@ -3259,7 +3259,7 @@ input MyConnectedAccountsFilterInput {
   appConnectionVisibility: String
 
   """
-  true keeps the accounts the caller owns, false keeps the workspace-shared accounts of other members, omitted keeps both
+  true keeps only the accounts the caller owns; false, null or omitted also keeps the workspace-shared accounts of other members
   """
   ownedByCaller: Boolean
 }
