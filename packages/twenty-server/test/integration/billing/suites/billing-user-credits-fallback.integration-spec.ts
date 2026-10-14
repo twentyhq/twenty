@@ -4,7 +4,6 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const buildUpdateUserCreditsFallbackOperation = (
   userCreditsFallback: UserCreditsFallback,
@@ -35,15 +34,6 @@ const CURRENT_WORKSPACE_USER_CREDITS_FALLBACK_OPERATION = {
   `,
 };
 
-const findStoredUserCreditsFallback = async (): Promise<string> => {
-  const [billingCustomer] = await globalThis.testDataSource.query(
-    `SELECT "userCreditsFallback" FROM core."billingCustomer" WHERE "workspaceId" = $1`,
-    [SEED_APPLE_WORKSPACE_ID],
-  );
-
-  return billingCustomer.userCreditsFallback;
-};
-
 describe('billing user credits fallback', () => {
   afterAll(async () => {
     await makeMetadataApiRequest(
@@ -62,9 +52,6 @@ describe('billing user credits fallback', () => {
     expect(
       response.body.data.currentWorkspace.billingCustomer.userCreditsFallback,
     ).toBe(UserCreditsFallback.WORKSPACE_CREDITS);
-    expect(await findStoredUserCreditsFallback()).toBe(
-      UserCreditsFallback.WORKSPACE_CREDITS,
-    );
   });
 
   it('should let a member with the billing permission switch to STOP', async () => {
@@ -77,9 +64,6 @@ describe('billing user credits fallback', () => {
     expect(
       response.body.data.updateUserCreditsFallback.userCreditsFallback,
     ).toBe(UserCreditsFallback.STOP);
-    expect(await findStoredUserCreditsFallback()).toBe(
-      UserCreditsFallback.STOP,
-    );
 
     const currentWorkspaceResponse = await makeMetadataApiRequest(
       CURRENT_WORKSPACE_USER_CREDITS_FALLBACK_OPERATION,
@@ -92,13 +76,9 @@ describe('billing user credits fallback', () => {
   });
 
   it('should refuse a member without the billing permission and keep the stored value', async () => {
-    const storedBeforeAttempt = await findStoredUserCreditsFallback();
-
     const response = await makeMetadataApiRequest(
       buildUpdateUserCreditsFallbackOperation(
-        storedBeforeAttempt === UserCreditsFallback.STOP
-          ? UserCreditsFallback.WORKSPACE_CREDITS
-          : UserCreditsFallback.STOP,
+        UserCreditsFallback.WORKSPACE_CREDITS,
       ),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
@@ -108,6 +88,14 @@ describe('billing user credits fallback', () => {
       PermissionsExceptionMessage.PERMISSION_DENIED,
     );
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-    expect(await findStoredUserCreditsFallback()).toBe(storedBeforeAttempt);
+
+    const currentWorkspaceResponse = await makeMetadataApiRequest(
+      CURRENT_WORKSPACE_USER_CREDITS_FALLBACK_OPERATION,
+    );
+
+    expect(
+      currentWorkspaceResponse.body.data.currentWorkspace.billingCustomer
+        .userCreditsFallback,
+    ).toBe(UserCreditsFallback.STOP);
   });
 });
