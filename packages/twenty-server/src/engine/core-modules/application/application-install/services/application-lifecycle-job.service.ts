@@ -289,8 +289,6 @@ export class ApplicationLifecycleJobService {
       return null;
     }
 
-    // A requested job is read whatever its state, so a client that missed its
-    // terminal event while its event stream was down can still settle it
     const jobId = requestedJobId ?? (await this.findInFlightJobId(jobIdPrefix));
 
     if (!isDefined(jobId)) {

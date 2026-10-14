@@ -86,8 +86,6 @@ export const useTrackedQueueJob = <TContext>({
     onQueueJobEvent: handleQueueJobEvent,
   });
 
-  // Job events published while the event stream was down are lost, so the
-  // active job may have settled unseen
   const resyncActiveJob = useCallback(async () => {
     if (
       !isDefined(fetchJobStatus) ||
@@ -97,18 +95,16 @@ export const useTrackedQueueJob = <TContext>({
       return;
     }
 
-    try {
-      const jobStatus = await fetchJobStatus(activeJobId, activeJobContext);
+    const jobStatus = await fetchJobStatus(
+      activeJobId,
+      activeJobContext,
+    ).catch(() => undefined);
 
-      // Replayed as a live event so a job that settled meanwhile is ignored
-      if (isDefined(jobStatus)) {
-        dispatchBrowserEvent<TrackedJobStatus>(
-          QUEUE_JOB_BROWSER_EVENT_NAME,
-          jobStatus,
-        );
-      }
-    } catch {
-      // The next reconnection retries
+    if (isDefined(jobStatus)) {
+      dispatchBrowserEvent<TrackedJobStatus>(
+        QUEUE_JOB_BROWSER_EVENT_NAME,
+        jobStatus,
+      );
     }
   }, [activeJobContext, activeJobId, fetchJobStatus]);
 
