@@ -8,7 +8,7 @@ import { CoreObjectSystemFilterChip } from '@/object-core/components/CoreObjectS
 import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
 import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
-import { coreWorkflowsIncludeSystemState } from '@/object-core/workflows/states/coreWorkflowsIncludeSystemState';
+import { shouldShowSystemCoreWorkflowsState } from '@/object-core/workflows/states/shouldShowSystemCoreWorkflowsState';
 import { getCoreWorkflowFilterChipLabel } from '@/object-core/workflows/utils/getCoreWorkflowFilterChipLabel';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { MAX_CORE_WORKFLOW_FILTER_RULES } from 'twenty-shared/constants';
@@ -32,8 +32,8 @@ export const CoreWorkflowsFilterBar = () => {
 
   const [coreWorkflowsFilterSettings, setCoreWorkflowsFilterSettings] =
     useAtomState(coreWorkflowsFilterSettingsState);
-  const [coreWorkflowsIncludeSystem, setCoreWorkflowsIncludeSystem] =
-    useAtomState(coreWorkflowsIncludeSystemState);
+  const [shouldShowSystemCoreWorkflows, setShouldShowSystemCoreWorkflows] =
+    useAtomState(shouldShowSystemCoreWorkflowsState);
   const { userTimezone } = useUserTimezone();
 
   const appliedStepFilters = (coreWorkflowsFilterSettings.stepFilters ?? [])
@@ -42,9 +42,9 @@ export const CoreWorkflowsFilterBar = () => {
 
   return (
     <StyledContainer>
-      {!coreWorkflowsIncludeSystem && (
+      {!shouldShowSystemCoreWorkflows && (
         <CoreObjectSystemFilterChip
-          onRemove={() => setCoreWorkflowsIncludeSystem(true)}
+          onRemove={() => setShouldShowSystemCoreWorkflows(true)}
         />
       )}
       {appliedStepFilters.map((stepFilter) => (

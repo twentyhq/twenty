@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
-import { coreAgentsIncludeSystemState } from '@/object-core/agents/states/coreAgentsIncludeSystemState';
+import { shouldShowSystemCoreAgentsState } from '@/object-core/agents/states/shouldShowSystemCoreAgentsState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
@@ -28,8 +28,8 @@ export const useCoreAgents = ({
 }: {
   tableId?: string;
 } = {}) => {
-  const coreAgentsIncludeSystem = useAtomStateValue(
-    coreAgentsIncludeSystemState,
+  const shouldShowSystemCoreAgents = useAtomStateValue(
+    shouldShowSystemCoreAgentsState,
   );
 
   // Workflow steps and the agent page create and delete agents without touching this query's cache
@@ -40,9 +40,9 @@ export const useCoreAgents = ({
   const listedAgents = useMemo(
     () =>
       (data?.findManyAgents ?? []).filter(
-        (agent) => !agent.isSystem || coreAgentsIncludeSystem,
+        (agent) => !agent.isSystem || shouldShowSystemCoreAgents,
       ),
-    [data?.findManyAgents, coreAgentsIncludeSystem],
+    [data?.findManyAgents, shouldShowSystemCoreAgents],
   );
 
   const hasSystemAgents = (data?.findManyAgents ?? []).some(

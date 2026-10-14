@@ -27,8 +27,8 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import AppsCoverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import AppsCoverLight from '~/pages/settings/applications/assets/cover-light.png';
-import { SettingsApplicationsClaimErrorTabEffect } from '~/pages/settings/applications/components/SettingsApplicationsClaimErrorTabEffect';
-import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab';
+import { SettingsDevelopersClaimErrorTabEffect } from '~/pages/settings/developers/components/SettingsDevelopersClaimErrorTabEffect';
+import { SettingsDevelopersAppsTab } from '~/pages/settings/developers/tabs/SettingsDevelopersAppsTab';
 
 type TabKey =
   (typeof SETTINGS_DEVELOPERS_TABS.TABS_IDS)[keyof typeof SETTINGS_DEVELOPERS_TABS.TABS_IDS];
@@ -106,7 +106,7 @@ export const SettingsDevelopers = () => {
         { children: t`Developers` },
       ]}
     >
-      <SettingsApplicationsClaimErrorTabEffect
+      <SettingsDevelopersClaimErrorTabEffect
         tabListId={SETTINGS_DEVELOPERS_TABS.COMPONENT_INSTANCE_ID}
         appsTabId={SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS}
       />
@@ -185,7 +185,7 @@ export const SettingsDevelopers = () => {
           </StyledTabContent>
         )}
 
-        {isAppsTab && <SettingsApplicationsDeveloperTab />}
+        {isAppsTab && <SettingsDevelopersAppsTab />}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

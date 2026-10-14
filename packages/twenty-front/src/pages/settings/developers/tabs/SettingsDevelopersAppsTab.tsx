@@ -46,7 +46,7 @@ const StyledTableRowsContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
-export const SettingsApplicationsDeveloperTab = () => {
+export const SettingsDevelopersAppsTab = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

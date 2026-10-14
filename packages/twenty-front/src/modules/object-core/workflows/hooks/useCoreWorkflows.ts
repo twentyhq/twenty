@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
-import { coreWorkflowsIncludeSystemState } from '@/object-core/workflows/states/coreWorkflowsIncludeSystemState';
+import { shouldShowSystemCoreWorkflowsState } from '@/object-core/workflows/states/shouldShowSystemCoreWorkflowsState';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -87,8 +87,8 @@ export const useCoreWorkflows = ({
     coreWorkflowsFilterSettingsState,
   );
 
-  const coreWorkflowsIncludeSystem = useAtomStateValue(
-    coreWorkflowsIncludeSystemState,
+  const shouldShowSystemCoreWorkflows = useAtomStateValue(
+    shouldShowSystemCoreWorkflowsState,
   );
 
   const { userTimezone } = useUserTimezone();
@@ -110,7 +110,7 @@ export const useCoreWorkflows = ({
         orderBy,
         orderByDirection,
         filter,
-        includeSystem: coreWorkflowsIncludeSystem,
+        includeSystem: shouldShowSystemCoreWorkflows,
       },
     },
   );

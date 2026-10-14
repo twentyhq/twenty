@@ -24,8 +24,7 @@ const DEVELOPERS_SETTINGS_VALUES: DevelopersSettingsCommandMenuItemValues = {
   path: '/settings/developers',
 };
 
-// Only values still matching the former standard ones are replaced, so
-// workspace customizations survive the rename.
+// Values a workspace customized are kept
 export const buildDevelopersSettingsCommandMenuItemUpdates = ({
   flatCommandMenuItemByUniversalIdentifier,
   now,

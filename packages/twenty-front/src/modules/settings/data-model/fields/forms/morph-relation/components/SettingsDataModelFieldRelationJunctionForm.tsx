@@ -109,8 +109,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
     ({ value }) => value === selectedJunctionTargetFieldId,
   );
 
-  // Junction objects only point to other records, so targets owning
-  // one-to-many relations are not offered as junctions
   const isJunctionLikeObject = junctionObjectMetadataItem.fields.every(
     (field) =>
       field.isSystem === true ||

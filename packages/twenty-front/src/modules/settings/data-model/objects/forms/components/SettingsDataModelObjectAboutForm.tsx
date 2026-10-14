@@ -278,7 +278,7 @@ export const SettingsDataModelObjectAboutForm = ({
                     disabled={disableEdition}
                     onChange={(value) => {
                       onChange(value);
-                      if (value === true) {
+                      if (value) {
                         fillNamesFromLabels(labelSingular, labelPlural);
                       }
                       onNewDirtyField?.();

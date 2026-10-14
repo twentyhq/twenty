@@ -4,7 +4,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useCoreAgents } from '@/object-core/agents/hooks/useCoreAgents';
-import { coreAgentsIncludeSystemState } from '@/object-core/agents/states/coreAgentsIncludeSystemState';
+import { shouldShowSystemCoreAgentsState } from '@/object-core/agents/states/shouldShowSystemCoreAgentsState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -71,7 +71,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 const renderCoreAgents = (includeSystem: boolean) => {
   resetJotaiStore();
-  jotaiStore.set(coreAgentsIncludeSystemState.atom, includeSystem);
+  jotaiStore.set(shouldShowSystemCoreAgentsState.atom, includeSystem);
 
   return renderHook(() => useCoreAgents({ tableId: 'core-agents-test' }), {
     wrapper: Wrapper,

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CLAIM_ERROR_CODE_SEARCH_PARAM } from '~/pages/settings/applications/components/SettingsClaimApplicationSection';
 
-type SettingsApplicationsClaimErrorTabEffectProps = {
+type SettingsDevelopersClaimErrorTabEffectProps = {
   tabListId: string;
   appsTabId: string;
 };
@@ -12,10 +12,10 @@ type SettingsApplicationsClaimErrorTabEffectProps = {
 // The GitHub claim callback returns here with a claim error code, but the URL
 // hash that selects the apps tab can be dropped on the way back, so select it
 // from the query param instead.
-export const SettingsApplicationsClaimErrorTabEffect = ({
+export const SettingsDevelopersClaimErrorTabEffect = ({
   tabListId,
   appsTabId,
-}: SettingsApplicationsClaimErrorTabEffectProps) => {
+}: SettingsDevelopersClaimErrorTabEffectProps) => {
   const [searchParams] = useSearchParams();
   const hasClaimError = searchParams.has(CLAIM_ERROR_CODE_SEARCH_PARAM);
 

@@ -10,7 +10,7 @@ import {
   useCoreAgents,
 } from '@/object-core/agents/hooks/useCoreAgents';
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
-import { coreAgentsIncludeSystemState } from '@/object-core/agents/states/coreAgentsIncludeSystemState';
+import { shouldShowSystemCoreAgentsState } from '@/object-core/agents/states/shouldShowSystemCoreAgentsState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { CoreObjectIndexPageLayout } from '@/object-core/components/CoreObjectIndexPageLayout';
@@ -32,9 +32,8 @@ export const AgentCoreIndexPage = () => {
   const { coreAgents, hasSystemAgents, isInitialLoading, error } =
     useCoreAgents({ tableId });
 
-  const [coreAgentsIncludeSystem, setCoreAgentsIncludeSystem] = useAtomState(
-    coreAgentsIncludeSystemState,
-  );
+  const [shouldShowSystemCoreAgents, setShouldShowSystemCoreAgents] =
+    useAtomState(shouldShowSystemCoreAgentsState);
 
   const { createCoreAgent, canCreateCoreAgent, isCreatingCoreAgent } =
     useCreateCoreAgent();
@@ -51,9 +50,9 @@ export const AgentCoreIndexPage = () => {
       }
       actionButton={
         <>
-          {hasSystemAgents && !coreAgentsIncludeSystem && (
+          {hasSystemAgents && !shouldShowSystemCoreAgents && (
             <CoreObjectSystemFilterChip
-              onRemove={() => setCoreAgentsIncludeSystem(true)}
+              onRemove={() => setShouldShowSystemCoreAgents(true)}
             />
           )}
           <SidePanelToggleButton />

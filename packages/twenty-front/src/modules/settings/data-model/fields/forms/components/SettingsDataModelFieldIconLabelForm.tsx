@@ -178,7 +178,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                   disabled={readonly}
                   onChange={(value) => {
                     onChange(value);
-                    if (value === true) {
+                    if (value) {
                       fillNameFromLabel(label);
                     }
                   }}
