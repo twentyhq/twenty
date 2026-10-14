@@ -35,6 +35,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { type ManifestMessageRequestContext } from 'src/engine/metadata-modules/application-translation-catalog/types/manifest-message-request-context.type';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
@@ -43,8 +44,6 @@ import { FrontComponentService } from 'src/engine/metadata-modules/front-compone
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @UseGuards(
@@ -81,18 +80,14 @@ export class FrontComponentResolver {
   @ResolveField(() => String)
   async name(
     @Parent() frontComponent: Pick<FrontComponentDTO, 'name' | 'applicationId'>,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'frontComponent',
       property: 'name',
       sourceValue: frontComponent.name,
       applicationId: frontComponent.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 
@@ -102,18 +97,14 @@ export class FrontComponentResolver {
       FrontComponentDTO,
       'description' | 'applicationId'
     >,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string | undefined> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'frontComponent',
       property: 'description',
       sourceValue: frontComponent.description,
       applicationId: frontComponent.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 
@@ -136,7 +127,7 @@ export class FrontComponentResolver {
   @ResolveField(() => String, { nullable: true })
   async applicationName(
     @Parent() frontComponent: FrontComponentDTO,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @Context() context: ManifestMessageRequestContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | undefined> {
     const { flatApplicationMaps } =
@@ -149,9 +140,7 @@ export class FrontComponentResolver {
       property: 'displayName',
       sourceValue: flatApplicationMaps.byId[frontComponent.applicationId]?.name,
       applicationId: frontComponent.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace.id,
+      context,
     });
   }
 

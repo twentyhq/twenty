@@ -20,6 +20,7 @@ import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/applicati
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { type ManifestMessageRequestContext } from 'src/engine/metadata-modules/application-translation-catalog/types/manifest-message-request-context.type';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { resolveRegistrationIdByApplicationId } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-registration-id-by-application-id.util';
 import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
@@ -216,18 +217,16 @@ export class ApplicationTranslationCatalogService {
     property,
     sourceValue,
     applicationId,
-    loaders,
-    locale,
-    workspaceId,
+    context,
   }: {
     entity: TEntity;
     property: MessageTranslatableManifestProperty<TEntity>;
     sourceValue: TSourceValue;
     applicationId: string | undefined;
-    loaders?: IDataloaders;
-    locale: keyof typeof APP_LOCALES | undefined;
-    workspaceId: string | undefined;
+    context: ManifestMessageRequestContext;
   }): Promise<TSourceValue | string> {
+    const workspaceId = context.req.workspace?.id;
+
     if (!isNonEmptyString(sourceValue) || !isDefined(workspaceId)) {
       return sourceValue;
     }
@@ -238,8 +237,8 @@ export class ApplicationTranslationCatalogService {
       sourceValue,
       i18nContext: await this.buildEffectiveEntityI18nContext({
         applicationId,
-        loaders,
-        locale,
+        loaders: context.loaders,
+        locale: context.req.locale,
         workspaceId,
       }),
     });

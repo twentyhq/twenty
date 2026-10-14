@@ -32,6 +32,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { type ManifestMessageRequestContext } from 'src/engine/metadata-modules/application-translation-catalog/types/manifest-message-request-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
@@ -53,8 +54,6 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @UseGuards(
@@ -92,18 +91,14 @@ export class LogicFunctionResolver {
   @ResolveField(() => String)
   async name(
     @Parent() logicFunction: Pick<LogicFunctionDTO, 'name' | 'applicationId'>,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'logicFunction',
       property: 'name',
       sourceValue: logicFunction.name,
       applicationId: logicFunction.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 
@@ -113,18 +108,14 @@ export class LogicFunctionResolver {
       LogicFunctionDTO,
       'description' | 'applicationId'
     >,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string | undefined> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'logicFunction',
       property: 'description',
       sourceValue: logicFunction.description,
       applicationId: logicFunction.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 

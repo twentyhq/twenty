@@ -5,7 +5,7 @@ import { isValidLocale } from 'twenty-shared/utils';
 import { CoreEntityCache } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { type MarketplaceAppCatalogEntry } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-app-catalog-entry.type';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
@@ -45,7 +45,7 @@ const compareCatalogCards = (
 @Injectable()
 @CoreEntityCache('marketplaceCatalog')
 export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvider<
-  Record<string, MarketplaceAppDTO>
+  Record<string, MarketplaceAppCatalogEntry>
 > {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
@@ -56,7 +56,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
     super();
   }
 
-  async computeForCache(): Promise<Record<string, MarketplaceAppDTO>> {
+  async computeForCache(): Promise<Record<string, MarketplaceAppCatalogEntry>> {
     const registrations =
       await this.applicationRegistrationService.findManyListedCatalogCards();
 
@@ -84,10 +84,10 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
     return configuredRegistrations
       .filter((_registration, index) => serverCompatibilities[index].compatible)
       .sort(compareCatalogCards)
-      .reduce<Record<string, MarketplaceAppDTO>>(
+      .reduce<Record<string, MarketplaceAppCatalogEntry>>(
         (accumulator, registration) => {
           accumulator[registration.universalIdentifier] =
-            this.toMarketplaceAppDTO(registration);
+            this.toMarketplaceAppCatalogEntry(registration);
 
           return accumulator;
         },
@@ -95,9 +95,9 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       );
   }
 
-  private toMarketplaceAppDTO(
+  private toMarketplaceAppCatalogEntry(
     catalogCard: ApplicationRegistrationCatalogCard,
-  ): MarketplaceAppDTO {
+  ): MarketplaceAppCatalogEntry {
     return {
       id: catalogCard.universalIdentifier,
       name: catalogCard.name,
@@ -115,7 +115,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
     name,
     description,
     translations,
-  }: ApplicationRegistrationCatalogCard): MarketplaceAppDTO['translatedTextsByLocale'] {
+  }: ApplicationRegistrationCatalogCard): MarketplaceAppCatalogEntry['translatedTextsByLocale'] {
     return Object.fromEntries(
       Object.entries(translations ?? {}).flatMap(
         ([locale, applicationCatalog]) => {

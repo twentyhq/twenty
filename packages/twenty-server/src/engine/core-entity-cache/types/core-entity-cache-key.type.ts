@@ -1,4 +1,4 @@
-import { type MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { type MarketplaceAppCatalogEntry } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-app-catalog-entry.type';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { type FlatUser } from 'src/engine/core-modules/user/types/flat-user.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -8,7 +8,7 @@ export type CoreEntityCacheDataMap = {
   user: FlatUser;
   userWorkspaceEntity: FlatUserWorkspace;
   signingKeyPublicKey: string;
-  marketplaceCatalog: Record<string, MarketplaceAppDTO>;
+  marketplaceCatalog: Record<string, MarketplaceAppCatalogEntry>;
 };
 
 export type CoreEntityCacheKeyName = keyof CoreEntityCacheDataMap;

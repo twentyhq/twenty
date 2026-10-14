@@ -1,7 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { type APP_LOCALES } from 'twenty-shared/translations';
-
 import {
   IsBoolean,
   IsNotEmpty,
@@ -48,11 +46,4 @@ export class MarketplaceAppDTO {
   @IsBoolean()
   @Field(() => Boolean)
   isVetted: boolean;
-
-  translatedTextsByLocale?: Partial<
-    Record<
-      keyof typeof APP_LOCALES,
-      Pick<MarketplaceAppDTO, 'name' | 'description'>
-    >
-  >;
 }

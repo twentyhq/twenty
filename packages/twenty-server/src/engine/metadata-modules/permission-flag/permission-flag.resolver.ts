@@ -9,10 +9,9 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { type ManifestMessageRequestContext } from 'src/engine/metadata-modules/application-translation-catalog/types/manifest-message-request-context.type';
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @MetadataResolver(() => PermissionFlagDTO)
@@ -43,18 +42,14 @@ export class PermissionFlagResolver {
       PermissionFlagDTO,
       'label' | 'applicationId'
     >,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'permissionFlag',
       property: 'label',
       sourceValue: permissionFlag.label,
       applicationId: permissionFlag.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 
@@ -64,18 +59,14 @@ export class PermissionFlagResolver {
       PermissionFlagDTO,
       'description' | 'applicationId'
     >,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string | null> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'permissionFlag',
       property: 'description',
       sourceValue: permissionFlag.description,
       applicationId: permissionFlag.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 

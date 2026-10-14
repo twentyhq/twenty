@@ -21,6 +21,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { type ManifestMessageRequestContext } from 'src/engine/metadata-modules/application-translation-catalog/types/manifest-message-request-context.type';
 import { CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/create-skill.input';
 import { SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
@@ -29,8 +30,6 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 // Reads only need the AI flag so the chat composer can list skills; mutations need AI_SETTINGS
@@ -63,36 +62,28 @@ export class SkillResolver {
   @ResolveField(() => String)
   async label(
     @Parent() skill: Pick<SkillDTO, 'label' | 'applicationId'>,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'skill',
       property: 'label',
       sourceValue: skill.label,
       applicationId: skill.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 
   @ResolveField(() => String, { nullable: true })
   async description(
     @Parent() skill: Pick<SkillDTO, 'description' | 'applicationId'>,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string | undefined> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'skill',
       property: 'description',
       sourceValue: skill.description,
       applicationId: skill.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 

@@ -14,7 +14,6 @@ import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicatio
 import { UpdateApplicationVariableEntityInput } from 'src/engine/core-modules/application/application-variable/dtos/update-application-variable.input';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { resolveTargetApplicationOrThrow } from 'src/engine/core-modules/application/utils/resolve-target-application-or-throw.util';
-import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -22,8 +21,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { type ManifestMessageRequestContext } from 'src/engine/metadata-modules/application-translation-catalog/types/manifest-message-request-context.type';
 import { resolveEffectiveManifestMessage } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 
 @UseGuards(
@@ -64,18 +63,14 @@ export class ApplicationVariableEntityResolver {
       ApplicationVariableEntity,
       'label' | 'applicationId'
     >,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'applicationVariable',
       property: 'label',
       sourceValue: applicationVariable.label,
       applicationId: applicationVariable.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 
@@ -86,18 +81,14 @@ export class ApplicationVariableEntityResolver {
       ApplicationVariableEntity,
       'description' | 'applicationId'
     >,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
+    @Context() context: ManifestMessageRequestContext,
   ): Promise<string> {
     return this.applicationTranslationCatalogService.resolveManifestMessage({
       entity: 'applicationVariable',
       property: 'description',
       sourceValue: applicationVariable.description,
       applicationId: applicationVariable.applicationId,
-      loaders: context.loaders,
-      locale: context.req.locale,
-      workspaceId: workspace?.id,
+      context,
     });
   }
 
@@ -108,7 +99,7 @@ export class ApplicationVariableEntityResolver {
       ApplicationVariableEntity,
       'options' | 'applicationId'
     >,
-    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @Context() context: ManifestMessageRequestContext,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationVariableOption[] | null | undefined> {
     if (!isNonEmptyArray(applicationVariable.options)) {
