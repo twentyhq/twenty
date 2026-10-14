@@ -14,15 +14,21 @@ const isRelationValue = (value: unknown) =>
   (isGraphqlObject(value) && (isDefined(value.id) || isDefined(value.edges))) ||
   (Array.isArray(value) && value.some(isGraphqlObject));
 
-const isForeignKeyOfSelectedRelation = (
-  node: Record<string, unknown>,
-  fieldName: string,
-) => fieldName.endsWith('Id') && fieldName.slice(0, -'Id'.length) in node;
+const isForeignKeyOfSelectedRelation = ({
+  node,
+  fieldName,
+}: {
+  node: Record<string, unknown>;
+  fieldName: string;
+}) => fieldName.endsWith('Id') && fieldName.slice(0, -'Id'.length) in node;
 
-const patchFieldsWithNewerRecord = (
-  node: Record<string, unknown>,
-  newerRecord: ObjectRecord,
-) => {
+const patchFieldsWithNewerRecord = ({
+  node,
+  newerRecord,
+}: {
+  node: Record<string, unknown>;
+  newerRecord: ObjectRecord;
+}) => {
   const patchedNode: Record<string, unknown> = { ...node };
 
   for (const [fieldName, responseValue] of Object.entries(node)) {
@@ -30,7 +36,7 @@ const patchFieldsWithNewerRecord = (
       fieldName === '__typename' ||
       fieldName === 'id' ||
       !(fieldName in newerRecord) ||
-      isForeignKeyOfSelectedRelation(node, fieldName)
+      isForeignKeyOfSelectedRelation({ node, fieldName })
     ) {
       continue;
     }
@@ -65,14 +71,20 @@ const patchFieldsWithNewerRecord = (
   return patchedNode;
 };
 
-const patchNestedValues = (
-  node: Record<string, unknown>,
-  findNewerRecord: FindNewerRecord,
-) => {
+const patchNestedValues = ({
+  node,
+  findNewerRecord,
+}: {
+  node: Record<string, unknown>;
+  findNewerRecord: FindNewerRecord;
+}) => {
   let patchedNode = node;
 
   for (const [fieldName, fieldValue] of Object.entries(node)) {
-    const patchedFieldValue = patchValue(fieldValue, findNewerRecord);
+    const patchedFieldValue = patchValue({
+      value: fieldValue,
+      findNewerRecord,
+    });
 
     if (patchedFieldValue === fieldValue) {
       continue;
@@ -88,12 +100,17 @@ const patchNestedValues = (
   return patchedNode;
 };
 
-const patchValue = (
-  value: unknown,
-  findNewerRecord: FindNewerRecord,
-): unknown => {
+const patchValue = ({
+  value,
+  findNewerRecord,
+}: {
+  value: unknown;
+  findNewerRecord: FindNewerRecord;
+}): unknown => {
   if (Array.isArray(value)) {
-    const patchedItems = value.map((item) => patchValue(item, findNewerRecord));
+    const patchedItems = value.map((item) =>
+      patchValue({ value: item, findNewerRecord }),
+    );
 
     return patchedItems.some((item, index) => item !== value[index])
       ? patchedItems
@@ -112,15 +129,18 @@ const patchValue = (
         })
       : undefined;
 
-  return patchNestedValues(
-    isDefined(newerRecord)
-      ? patchFieldsWithNewerRecord(value, newerRecord)
+  return patchNestedValues({
+    node: isDefined(newerRecord)
+      ? patchFieldsWithNewerRecord({ node: value, newerRecord })
       : value,
     findNewerRecord,
-  );
+  });
 };
 
-export const patchStaleRecordNodes = (
-  data: Record<string, unknown>,
-  findNewerRecord: FindNewerRecord,
-) => patchNestedValues(data, findNewerRecord);
+export const patchStaleRecordNodes = ({
+  data,
+  findNewerRecord,
+}: {
+  data: Record<string, unknown>;
+  findNewerRecord: FindNewerRecord;
+}) => patchNestedValues({ node: data, findNewerRecord });

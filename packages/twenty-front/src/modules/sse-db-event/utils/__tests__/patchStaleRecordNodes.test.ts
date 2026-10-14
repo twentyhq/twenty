@@ -4,6 +4,7 @@ const STALE_UPDATED_AT = '2026-10-13T10:00:01.000Z';
 const SSE_UPDATED_AT = '2026-10-13T10:00:02.000Z';
 
 const SSE_WORKFLOW_RUN = {
+  __typename: 'WorkflowRun',
   id: 'run-1',
   status: 'COMPLETED',
   updatedAt: SSE_UPDATED_AT,
@@ -46,7 +47,7 @@ describe('patchStaleRecordNodes', () => {
   it('should replace stale fields with the values applied from SSE', () => {
     const data = { workflowRun: buildWorkflowRunNode(STALE_UPDATED_AT) };
 
-    const patchedData = patchStaleRecordNodes(data, findNewerRecord);
+    const patchedData = patchStaleRecordNodes({ data, findNewerRecord });
 
     expect(patchedData.workflowRun).toEqual({
       ...data.workflowRun,
@@ -66,7 +67,7 @@ describe('patchStaleRecordNodes', () => {
   it('should leave relations and their foreign keys untouched', () => {
     const data = { workflowRun: buildWorkflowRunNode(STALE_UPDATED_AT) };
 
-    const patchedData = patchStaleRecordNodes(data, findNewerRecord);
+    const patchedData = patchStaleRecordNodes({ data, findNewerRecord });
 
     expect(patchedData.workflowRun).toMatchObject({
       workflowId: 'workflow-1',
@@ -88,7 +89,7 @@ describe('patchStaleRecordNodes', () => {
       },
     };
 
-    const patchedData = patchStaleRecordNodes(data, findNewerRecord);
+    const patchedData = patchStaleRecordNodes({ data, findNewerRecord });
 
     expect(patchedData.workflowRuns).toMatchObject({
       edges: [{ cursor: 'cursor-1', node: { status: 'COMPLETED' } }],
@@ -98,6 +99,6 @@ describe('patchStaleRecordNodes', () => {
   it('should return the same data when no record is stale', () => {
     const data = { workflowRun: buildWorkflowRunNode(SSE_UPDATED_AT) };
 
-    expect(patchStaleRecordNodes(data, findNewerRecord)).toBe(data);
+    expect(patchStaleRecordNodes({ data, findNewerRecord })).toBe(data);
   });
 });

@@ -19,10 +19,10 @@ export const sseStaleRecordGuardLink = new ApolloLink((operation, forward) =>
         return result;
       }
 
-      const patchedData = patchStaleRecordNodes(
-        result.data,
-        findNewerSseAppliedRecord,
-      );
+      const patchedData = patchStaleRecordNodes({
+        data: result.data,
+        findNewerRecord: findNewerSseAppliedRecord,
+      });
 
       return patchedData === result.data
         ? result

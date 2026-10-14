@@ -61,7 +61,12 @@ describe('sseStaleRecordGuardLink', () => {
   beforeEach(() => {
     registerSseAppliedRecordVersion({
       cacheId: 'WorkflowRun:run-1',
-      record: { id: 'run-1', status: 'COMPLETED', updatedAt: COMPLETED_AT },
+      record: {
+        __typename: 'WorkflowRun',
+        id: 'run-1',
+        status: 'COMPLETED',
+        updatedAt: COMPLETED_AT,
+      },
     });
   });
 

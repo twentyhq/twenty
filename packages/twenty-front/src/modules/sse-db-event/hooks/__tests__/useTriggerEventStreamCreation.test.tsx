@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { type Client, type Sink } from 'graphql-sse';
+import { type Client } from 'graphql-sse';
 import { createStore, Provider } from 'jotai';
 import { createElement, type ReactNode } from 'react';
 
@@ -38,11 +38,11 @@ jest.mock(
 );
 
 const buildSseClientCompletingAfterDispose = () => {
-  const sinks: Sink[] = [];
+  const completeSubscriptionCallbacks: (() => void)[] = [];
 
   const sseClient: Client = {
     subscribe: (_request, sink) => {
-      sinks.push(sink as Sink);
+      completeSubscriptionCallbacks.push(() => sink.complete());
 
       return () => {
         void Promise.resolve().then(() => sink.complete());
@@ -52,12 +52,13 @@ const buildSseClientCompletingAfterDispose = () => {
     dispose: jest.fn(),
   };
 
-  return { sseClient, sinks };
+  return { sseClient, completeSubscriptionCallbacks };
 };
 
 const setup = () => {
   const store = createStore();
-  const { sseClient, sinks } = buildSseClientCompletingAfterDispose();
+  const { sseClient, completeSubscriptionCallbacks } =
+    buildSseClientCompletingAfterDispose();
 
   store.set(sseClientState.atom, sseClient);
 
@@ -72,12 +73,12 @@ const setup = () => {
     { wrapper },
   );
 
-  return { store, sinks, result };
+  return { store, completeSubscriptionCallbacks, result };
 };
 
 describe('useTriggerEventStreamCreation', () => {
   it('should let a new stream be created after destroying a live one', async () => {
-    const { store, sinks, result } = setup();
+    const { store, completeSubscriptionCallbacks, result } = setup();
 
     act(() => {
       result.current.triggerEventStreamCreation();
@@ -97,7 +98,7 @@ describe('useTriggerEventStreamCreation', () => {
       result.current.triggerEventStreamCreation();
     });
 
-    expect(sinks).toHaveLength(2);
+    expect(completeSubscriptionCallbacks).toHaveLength(2);
     expect(store.get(sseEventStreamIdState.atom)).not.toBe(firstEventStreamId);
   });
 
@@ -123,14 +124,14 @@ describe('useTriggerEventStreamCreation', () => {
   });
 
   it('should request a destroy when the current stream completes', () => {
-    const { store, sinks, result } = setup();
+    const { store, completeSubscriptionCallbacks, result } = setup();
 
     act(() => {
       result.current.triggerEventStreamCreation();
     });
 
     act(() => {
-      sinks[0].complete();
+      completeSubscriptionCallbacks[0]();
     });
 
     expect(store.get(shouldDestroyEventStreamState.atom)).toBe(true);
