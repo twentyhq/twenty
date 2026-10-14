@@ -34,7 +34,6 @@ export const buildQuotaDebits = ({
 
         return amount > 0 ? [{ counter, amount }] : [];
       }
-      // A user allowance counter is debited only by the user-allowance-first script, which decides the split with the allowance
       case 'userAllowance':
         return [];
       default:

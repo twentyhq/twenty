@@ -75,7 +75,6 @@ export class AiChatUsageService {
     return selectAiChatUsage({ limits: enforcedLimits, consumptionById });
   }
 
-  // A user credits failure must not hide the workspace or limit usage
   private async findUserCredits({
     workspaceId,
     userWorkspaceId,

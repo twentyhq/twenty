@@ -229,7 +229,6 @@ export class UsageAnalyticsService {
     periodStart: Date;
     periodEnd: Date;
   }): Promise<number> {
-    // No projection holds this sum, so the period window bounds the primary-key scan.
     const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
       `SELECT sum(userCreditsUsedMicro) AS total
        FROM usageEvent
@@ -512,7 +511,6 @@ export class UsageAnalyticsService {
     return this.queryTimeSeries(params);
   }
 
-  // selectOrThrow: select swallows a failed read into [], which would show every user share as 0.
   private async findUserCreditsUsedMicroByUser({
     workspaceId,
     periodStart,

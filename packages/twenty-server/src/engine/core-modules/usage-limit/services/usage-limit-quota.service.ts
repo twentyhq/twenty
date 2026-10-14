@@ -81,7 +81,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 type QuotaEnforcement = {
   operation: 'assert' | 'consume';
   resourceType: UsageResourceType;
-  // User allowance path only: workspace-path sites also count limit degradations, so a counter kind there would mislabel them
   counterKind?: UserAllowanceQuotaCounter['kind'];
   creditsUsedMicro?: number;
 };
@@ -472,7 +471,6 @@ export class UsageLimitQuotaService {
         : []),
     ];
 
-    // Separate reads: one shared warm would let a failed user allowance read blind a cold workspace allowance or limit, and the reverse
     const [{ consumedValues, isDegraded }, userAllowanceConsumed] =
       await Promise.all([
         this.readCountersAdmittingOnFailure({ workspaceId, counters }),
@@ -758,7 +756,6 @@ export class UsageLimitQuotaService {
       userAllowanceFirstConsume,
     });
 
-    // User credits never reach a workspace credit limit, the user allowance counter replaces it
     const workspaceCreditLimitDebits = buildQuotaDebits({
       counters: limitCounters.filter(isWorkspaceCreditLimitCounter),
       events: subtractUserCredits({ events, userCreditsUsedMicro }),
@@ -867,7 +864,6 @@ export class UsageLimitQuotaService {
           userCreditsUsedMicro: 0,
         };
       }
-      // No re-route to the allowance: the script may have run, so a re-route could debit twice
       case 'unknown':
         this.countAdmitOnFailure({
           operation: 'consume',
@@ -1070,7 +1066,6 @@ export class UsageLimitQuotaService {
 
     const { reply: secondReply } = secondAttempt;
 
-    // Still cold only when a key expired between the two runs, and nothing was applied
     if (secondReply.userShare === null) {
       return { outcome: 'userAllowanceUnavailable' };
     }
@@ -1468,7 +1463,6 @@ export class UsageLimitQuotaService {
     return this.buildUserAllowanceCounter({ workspaceId, userWorkspaceId });
   }
 
-  // Never throws: a user credits failure leaves the charge on the workspace
   private async buildUserAllowanceCounter({
     workspaceId,
     userWorkspaceId,

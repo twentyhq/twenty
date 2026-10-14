@@ -339,7 +339,6 @@ export class StreamAgentChatJob {
     }
   }
 
-  // A refused turn returns instead of throwing, so the queue does not retry it
   private async refuseTurnWithoutCredits({
     data,
     workspaceMemberId,
@@ -351,7 +350,6 @@ export class StreamAgentChatJob {
     refusal: UsageRefusal | null;
     turnModelId: string;
   }): Promise<boolean> {
-    // limits and an inactive subscription are only gated by the request pre-flight
     if (refusal?.kind !== 'quotaExhausted') {
       return false;
     }

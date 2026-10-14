@@ -69,7 +69,6 @@ export class BillingCreditAllowanceService {
   ): Promise<UserCreditsFallbackMode> {
     const subscription = await this.findCurrentBillingSubscription(workspaceId);
 
-    // Undefined, despite the type, on entries cached by a previous release
     return subscription?.userCreditsFallback ?? 'WORKSPACE_CREDITS';
   }
 

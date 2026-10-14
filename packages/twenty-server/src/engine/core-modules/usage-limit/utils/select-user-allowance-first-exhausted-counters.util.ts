@@ -35,7 +35,6 @@ export const selectUserAllowanceFirstExhaustedCounters = ({
     (counter) => counter.kind === 'workspaceAllowance',
   );
 
-  // An unreadable user allowance counter gates the operation like a workspace credits one, the way its debit would be funded
   const isPaidWithWorkspaceCredits =
     !isUserAllowanceRead ||
     (userAllowanceCounter.fallback === 'WORKSPACE_CREDITS' &&

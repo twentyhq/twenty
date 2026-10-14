@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 
-// A user allowance stop is never a spill: STOP mode reports it as the 'userAllowance' stop reason
 export const findUserCreditsSpillNoticeRenewsAt = ({
   stepDebit,
   isUserAllowanceAvailableAtAdmission,

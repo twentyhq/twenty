@@ -19,8 +19,6 @@ export class SendChatMessageResultDTO {
   @Field(() => [UUIDScalarType], { nullable: true })
   mentionedParticipantWorkspaceMemberIds?: string[];
 
-  // false when the member's own credits alone admitted the send, null when
-  // user credits took no part
   @Field(() => Boolean, { nullable: true })
   isWorkspaceAllowanceAvailable?: boolean | null;
 }

@@ -53,7 +53,6 @@ const findCreditsExhaustedKind = ({
         : null;
     case 'userAllowanceUnavailable':
       return isWorkspaceAllowanceExhausted ? 'workspaceAllowance' : null;
-    // The script may have run or not, so no counter value can be trusted
     case 'unknown':
       return null;
     default:

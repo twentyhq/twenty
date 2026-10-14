@@ -178,7 +178,6 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  // Bounded by the recorded total, not the requested one, so workspace credits (total - user credits) never go negative
   private withClampedUserCreditsUsedMicro(usageEvent: UsageEvent): UsageEvent {
     if (!isDefined(usageEvent.userCreditsUsedMicro)) {
       return usageEvent;

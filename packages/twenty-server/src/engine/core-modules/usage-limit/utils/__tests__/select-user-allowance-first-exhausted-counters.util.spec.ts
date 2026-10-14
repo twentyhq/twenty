@@ -65,7 +65,6 @@ const toConsumed = (state: CounterState, limitValue: number): number | null => {
   }
 };
 
-// Mirrors findExhaustedCounters: an unreadable counter is never exhausted
 const select = ({
   fallback,
   userAllowance,

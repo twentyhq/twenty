@@ -178,7 +178,6 @@ export class AiBillingService {
       }),
     });
 
-    // A reached limit is enforced at the next admission, never mid-stream
     const stopReason = exhaustedKind === 'limit' ? null : exhaustedKind;
 
     return {
