@@ -1915,6 +1915,27 @@
     ]
   },
   {
+    "name": "OverflowingTextTooltipModeProvider",
+    "entryPoint": "twenty-ui/primitives/typography",
+    "slug": "typography/overflowing-text-tooltip-mode-provider",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Content whose OverflowingTextWithTooltip instances use the mode."
+      },
+      {
+        "name": "mode",
+        "type": "\"disabled\" | \"measure-on-hover\" | \"measure-on-open\"",
+        "required": true,
+        "defaultValue": null,
+        "description": "`measure-on-hover` checks truncation on pointer entry and focus. `measure-on-open` checks it when the tooltip tries to open. `disabled` renders only the text."
+      }
+    ]
+  },
+  {
     "name": "LightIconButton",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/light-icon-button",
