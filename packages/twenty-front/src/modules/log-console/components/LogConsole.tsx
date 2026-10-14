@@ -402,8 +402,6 @@ export const LogConsole = () => {
     ...LOG_CONSOLE_SOURCES.filter(isSourceLocked),
   ];
 
-  // The tab list only syncs its active tab after mounting, so fall back to the
-  // saved source to avoid loading the first source's logs after a reload.
   const activeSource =
     sources.find(
       (source) => source.id === (activeTabId ?? logConsoleActiveSourceId),
