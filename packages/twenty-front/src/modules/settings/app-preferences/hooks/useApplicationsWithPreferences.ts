@@ -21,8 +21,9 @@ export const useApplicationsWithPreferences = () => {
       installedApplications: currentWorkspace?.installedApplications ?? [],
     }),
     loading,
-    // A failed background refetch keeps the previous list, still worth showing
-    error: isDefined(data) ? undefined : error,
+    // A failed refetch keeps the previous list, so an error can come with data
+    hasLoadedApplicationsWithPreferences: isDefined(data),
+    error,
     refetch,
   };
 };

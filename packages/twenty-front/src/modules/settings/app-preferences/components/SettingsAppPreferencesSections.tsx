@@ -7,8 +7,11 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const SettingsAppPreferencesSections = () => {
   const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
-  const { applicationsWithPreferences, error } =
-    useApplicationsWithPreferences();
+  const {
+    applicationsWithPreferences,
+    hasLoadedApplicationsWithPreferences,
+    error,
+  } = useApplicationsWithPreferences();
 
   const hasNativeAccountApps = isNonEmptyArray(enabledNativeAccountApps);
 
@@ -17,7 +20,9 @@ export const SettingsAppPreferencesSections = () => {
       <SettingsAccountGroupsSection />
       {(hasNativeAccountApps ||
         isNonEmptyArray(applicationsWithPreferences) ||
-        isDefined(error)) && <SettingsAppPreferencesAppsSection />}
+        (isDefined(error) && !hasLoadedApplicationsWithPreferences)) && (
+        <SettingsAppPreferencesAppsSection />
+      )}
       {/* The blocklist otherwise lives on the native apps' pages */}
       {!hasNativeAccountApps && <SettingsAccountsBlocklistSection />}
     </>
