@@ -93,13 +93,18 @@ export class DatabaseToolProvider implements ToolProvider {
       FlatObjectPermission
     >();
 
-    if (requireExplicitObjectGrants) {
+    const explicitGrantsRoleId =
+      'intersectionOf' in context.rolePermissionConfig
+        ? context.rolePermissionConfig.intersectionOf.agentRoleId
+        : undefined;
+
+    if (requireExplicitObjectGrants && isDefined(explicitGrantsRoleId)) {
       for (const flatObjectPermission of Object.values(
         flatObjectPermissionMaps.byUniversalIdentifier,
       )) {
         if (
           isDefined(flatObjectPermission) &&
-          flatObjectPermission.roleId === context.roleId
+          flatObjectPermission.roleId === explicitGrantsRoleId
         ) {
           explicitPermissionByObjectId.set(
             flatObjectPermission.objectMetadataId,

@@ -10,9 +10,11 @@ import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/me
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const roleId = 'role-id';
+const userRoleId = 'user-role-id';
 const workspaceId = 'workspace-id';
 
 const allObjectPermissions: ObjectPermissions = {
@@ -47,6 +49,8 @@ type GenerateDescriptorsTestOptions = {
   requireExplicitObjectGrants?: boolean;
   explicitPermissionRows?: ExplicitPermissionRow[];
   composedObjectPermissions?: Partial<ObjectPermissions>;
+  explicitPermissionRowsRoleId?: string;
+  rolePermissionConfig?: RolePermissionConfig;
 };
 
 describe('DatabaseToolProvider', () => {
@@ -73,24 +77,30 @@ describe('DatabaseToolProvider', () => {
         canSoftDeleteObjectRecords: true,
       }));
 
+    const composedObjectPermissionsByObjectId = Object.fromEntries(
+      objects.map((object) => [
+        object.id,
+        {
+          ...allObjectPermissions,
+          ...options?.composedObjectPermissions,
+        },
+      ]),
+    );
+
     const workspaceCacheService = {
       getOrRecompute: jest.fn().mockResolvedValue({
         rolesPermissions: {
-          [roleId]: Object.fromEntries(
-            objects.map((object) => [
-              object.id,
-              {
-                ...allObjectPermissions,
-                ...options?.composedObjectPermissions,
-              },
-            ]),
-          ),
+          [roleId]: composedObjectPermissionsByObjectId,
+          [userRoleId]: composedObjectPermissionsByObjectId,
         },
         flatObjectPermissionMaps: {
           byUniversalIdentifier: Object.fromEntries(
             explicitPermissionRows.map((row, index) => [
               `object-permission-${index}`,
-              { roleId, ...row },
+              {
+                roleId: options?.explicitPermissionRowsRoleId ?? roleId,
+                ...row,
+              },
             ]),
           ),
         },
@@ -137,7 +147,9 @@ describe('DatabaseToolProvider', () => {
       {
         workspaceId,
         roleId,
-        rolePermissionConfig: { intersectionOf: { agentRoleId: roleId } },
+        rolePermissionConfig: options?.rolePermissionConfig ?? {
+          intersectionOf: { agentRoleId: roleId },
+        },
         requireExplicitObjectGrants: options?.requireExplicitObjectGrants,
       },
       { includeSchemas: false },
@@ -383,6 +395,32 @@ describe('DatabaseToolProvider', () => {
       expect(descriptorNames).toContain('find_many_people');
       expect(descriptorNames).not.toContain('create_one_person');
       expect(descriptorNames).not.toContain('delete_one_person');
+    });
+
+    it('ignores explicit rows of the other roles in the config', async () => {
+      const descriptorNames = await generateDescriptorNames([personObject], {
+        requireExplicitObjectGrants: true,
+        explicitPermissionRowsRoleId: userRoleId,
+        rolePermissionConfig: {
+          intersectionOf: {
+            agentRoleId: roleId,
+            userWorkspaceRoleId: userRoleId,
+          },
+        },
+      });
+
+      expect(descriptorNames).toEqual([]);
+    });
+
+    it('emits no tools when the config has no agent role', async () => {
+      const descriptorNames = await generateDescriptorNames([personObject], {
+        requireExplicitObjectGrants: true,
+        rolePermissionConfig: {
+          intersectionOf: { userWorkspaceRoleId: roleId },
+        },
+      });
+
+      expect(descriptorNames).toEqual([]);
     });
 
     it('keeps composed permissions when the flag is not set even without explicit rows', async () => {
