@@ -409,7 +409,7 @@ describe('User application variable values should succeed', () => {
         key: defaultApplication.variableKey,
         value: '',
       },
-      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       expectToFail: false,
     });
 
@@ -424,10 +424,23 @@ describe('User application variable values should succeed', () => {
     expect(data.myUserApplicationVariables).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
           variables: [{ key: defaultApplication.variableKey, value: 'true' }],
         }),
       ]),
     );
+
+    const storedJaneValues: { value: string }[] =
+      await global.testDataSource.query(
+        `SELECT "userValue"."value"
+           FROM "core"."userApplicationVariableValue" "userValue"
+           JOIN "core"."applicationVariable" "variable"
+             ON "variable"."id" = "userValue"."applicationVariableId"
+          WHERE "variable"."applicationId" = $1
+            AND "userValue"."userWorkspaceId" = $2`,
+        [defaultApplication.id, USER_WORKSPACE_DATA_SEED_IDS.JANE],
+      );
+
+    expect(storedJaneValues).toHaveLength(0);
   });
 });
