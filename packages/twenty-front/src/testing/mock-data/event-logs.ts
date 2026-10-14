@@ -1,9 +1,11 @@
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import {
   type EventLogRecord,
   EventLogTable,
 } from '~/generated-metadata/graphql';
+import { workspaceLogoUrl } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 type MockedLogicFunction = {
@@ -47,6 +49,17 @@ export const mockedEventLogApplications: Pick<
     name: 'Company Enrichment',
   },
 ];
+
+export const mockedEventLogInstalledApplications: CurrentWorkspace['installedApplications'] =
+  [
+    {
+      id: ENRICH_COMPANY_FROM_DOMAIN.applicationId,
+      name: 'Company Enrichment',
+      universalIdentifier: '5b0e7c2a-8f4d-4a91-b3e6-1d2c9f7a4e80',
+      logoUrl: workspaceLogoUrl,
+      createdAt: '2026-09-01T00:00:00.000Z',
+    },
+  ];
 
 const SYNC_STRIPE_INVOICES_EXECUTION_ID =
   '88637fa4-e95f-4901-85f1-4227b6e3a1c2';

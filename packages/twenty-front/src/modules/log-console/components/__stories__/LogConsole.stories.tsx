@@ -50,6 +50,7 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import {
   mockedEventLogApplications,
+  mockedEventLogInstalledApplications,
   mockedEventLogLiveApplicationLogs,
   mockedEventLogLogicFunctions,
   mockedEventLogRecordsByTable,
@@ -65,6 +66,10 @@ import { sleep } from '~/utils/sleep';
 
 const WORKSPACE_WITH_LOGS_CONSOLE = {
   ...mockCurrentWorkspace,
+  installedApplications: [
+    ...mockCurrentWorkspace.installedApplications,
+    ...mockedEventLogInstalledApplications,
+  ],
   featureFlags: [
     { key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED, value: true },
   ],
