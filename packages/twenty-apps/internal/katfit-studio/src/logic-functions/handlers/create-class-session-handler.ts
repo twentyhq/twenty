@@ -1,9 +1,12 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { SESSION_FORMAT_OPTIONS } from 'src/constants/select-options';
+import { createRegularBooking } from 'src/logic-functions/handlers/create-regular-booking-handler';
+import { recordPastAttendance } from 'src/logic-functions/handlers/record-past-attendance-handler';
+import { recordBookingEvent } from 'src/logic-functions/utils/booking-event';
 
 export type CreateClassSessionInput = {
-  name: string;
+  name?: string;
   sessionFormat: string;
   startsAt: string;
   durationMinutes: number;
@@ -11,6 +14,8 @@ export type CreateClassSessionInput = {
   status: 'PLANNED' | 'CONFIRMED' | 'COMPLETED';
   pastConfirmed?: boolean;
   idempotencyKey: string;
+  participants?: Array<{ personId: string; membershipId: string }>;
+  attendanceReason?: string;
 };
 type Session = {
   id: string;
@@ -20,6 +25,7 @@ type Session = {
   endsAt: string;
   capacity: number;
   status: string;
+  creationRequest?: string | null;
 };
 type CreateClassSessionResult =
   | { success: true; classSessionId: string; duplicate: boolean }
@@ -37,6 +43,7 @@ const fields = {
   endsAt: true,
   capacity: true,
   status: true,
+  creationRequest: true,
 };
 
 export const createClassSession = async (
@@ -46,10 +53,54 @@ export const createClassSession = async (
 ): Promise<CreateClassSessionResult> => {
   const input = {
     ...raw,
-    name: String(raw.name ?? '').trim(),
+    name:
+      String(raw.name ?? '').trim() ||
+      SESSION_FORMAT_OPTIONS.find(
+        (option) => option.value === raw.sessionFormat,
+      )?.label ||
+      '',
     idempotencyKey: String(raw.idempotencyKey ?? '').trim(),
   };
   const start = new Date(input.startsAt);
+  const participants = input.participants ?? [];
+  if (
+    !Array.isArray(participants) ||
+    participants.length > input.capacity ||
+    participants.some(
+      (participant) => !participant?.personId || !participant.membershipId,
+    ) ||
+    new Set(participants.map((participant) => participant.personId)).size !==
+      participants.length
+  )
+    return fail(
+      'INVALID_PARTICIPANTS',
+      'Проверьте участников: дубли и превышение вместимости недопустимы.',
+    );
+  if (
+    input.sessionFormat === 'PERSONAL_EQUIPMENT' &&
+    (input.capacity !== 1 || participants.length > 1)
+  )
+    return fail(
+      'PERSONAL_CAPACITY',
+      'Персональная тренировка рассчитана на одного клиента.',
+    );
+  if (
+    participants.length &&
+    (input.sessionFormat === 'SPLIT_EQUIPMENT' || input.status === 'CONFIRMED')
+  )
+    return fail(
+      'PARTICIPANTS_NOT_SUPPORTED',
+      'Сплит назначается отдельной командой; фактические посещения текущей тренировки оформляются после её окончания.',
+    );
+  if (
+    participants.length &&
+    input.status === 'COMPLETED' &&
+    !input.attendanceReason?.trim()
+  )
+    return fail(
+      'ATTENDANCE_REASON_REQUIRED',
+      'Укажите основание для внесения прошедших посещений.',
+    );
   if (
     !input.name ||
     input.name.length > 200 ||
@@ -90,6 +141,11 @@ export const createClassSession = async (
       'Подтвердите, что прошедшая тренировка состоялась.',
     );
   const recordingKey = `session-create:${input.idempotencyKey}`;
+  const creationRequest = JSON.stringify({
+    status: input.status,
+    participants,
+    attendanceReason: input.attendanceReason?.trim() ?? '',
+  });
   const query = (await client.query({
     classSessions: {
       __args: { filter: { recordingKey: { eq: recordingKey } }, first: 1 },
@@ -100,6 +156,18 @@ export const createClassSession = async (
   };
   let session = query.classSessions?.edges?.[0]?.node;
   const duplicate = Boolean(session);
+  if (session?.creationRequest && session.creationRequest !== creationRequest)
+    return fail(
+      'IDEMPOTENCY_CONFLICT',
+      'Ключ создания уже связан с другими участниками или параметрами.',
+      409,
+    );
+  if (session && !session.creationRequest && participants.length)
+    return fail(
+      'IDEMPOTENCY_CONFLICT',
+      'Исходная тренировка создана без списка участников. Добавьте их через карточку.',
+      409,
+    );
   if (
     session &&
     (session.name !== input.name ||
@@ -114,6 +182,72 @@ export const createClassSession = async (
       409,
     );
   if (!session) {
+    for (const participant of participants) {
+      const result = (await client.query({
+        studioMemberships: {
+          __args: {
+            filter: { id: { eq: participant.membershipId } },
+            first: 1,
+          },
+          edges: {
+            node: {
+              id: true,
+              person: { id: true },
+              status: true,
+              visitsAvailable: true,
+              activatedAt: true,
+              expiresOn: true,
+              product: {
+                category: true,
+                sessionFormat: true,
+                durationMinutes: true,
+              },
+            },
+          },
+        },
+      } as never)) as unknown as {
+        studioMemberships?: {
+          edges?: Array<{
+            node: {
+              person: { id: string } | null;
+              status: string;
+              visitsAvailable: number;
+              activatedAt: string | null;
+              expiresOn: string | null;
+              product: {
+                category: string;
+                sessionFormat: string;
+                durationMinutes: number;
+              } | null;
+            };
+          }>;
+        };
+      };
+      const membership = result.studioMemberships?.edges?.[0]?.node;
+      const category =
+        input.sessionFormat === 'PERSONAL_EQUIPMENT'
+          ? 'PERSONAL'
+          : 'GROUP_PACKAGE';
+      if (
+        !membership ||
+        membership.person?.id !== participant.personId ||
+        membership.status !== 'ACTIVE' ||
+        membership.visitsAvailable < 1 ||
+        !membership.activatedAt ||
+        new Date(membership.activatedAt) > start ||
+        (membership.expiresOn &&
+          membership.expiresOn < startsAt.slice(0, 10)) ||
+        membership.product?.category !== category ||
+        membership.product.sessionFormat !== input.sessionFormat ||
+        (input.status === 'COMPLETED' &&
+          membership.product.durationMinutes !== input.durationMinutes)
+      )
+        return fail(
+          'PARTICIPANT_PACKAGE_UNAVAILABLE',
+          'У участника нет подходящего доступного пакета на дату тренировки.',
+          409,
+        );
+    }
     if (
       (input.status === 'PLANNED' && start <= now) ||
       (input.status === 'COMPLETED' && new Date(endsAt) > now) ||
@@ -137,6 +271,7 @@ export const createClassSession = async (
             bookedCount: 0,
             attendedCount: 0,
             recordingKey,
+            creationRequest,
           },
         },
         ...fields,
@@ -184,8 +319,15 @@ export const createClassSession = async (
     throw new Error('Событие создания требует сверки журнала.');
   if (
     (event &&
-      (JSON.parse(event.details) as { status: string }).status !==
-        input.status) ||
+      ((JSON.parse(event.details) as { status: string }).status !==
+        input.status ||
+        JSON.stringify(
+          (JSON.parse(event.details) as { participants?: typeof participants })
+            .participants ?? [],
+        ) !== JSON.stringify(participants) ||
+        ((JSON.parse(event.details) as { attendanceReason?: string })
+          .attendanceReason ?? '') !==
+          (input.attendanceReason?.trim() ?? ''))) ||
     (!event && session.status !== input.status)
   )
     return fail(
@@ -212,6 +354,8 @@ export const createClassSession = async (
               endsAt,
               status: input.status,
               capacity: input.capacity,
+              participants,
+              attendanceReason: input.attendanceReason?.trim() ?? '',
             }),
           },
         },
@@ -222,6 +366,70 @@ export const createClassSession = async (
       throw new Error(
         'Журнал создания не подтверждён. Повторите с прежним ключом.',
       );
+  }
+  const attendanceInputs = participants.map((participant) => ({
+    ...participant,
+    startsAt,
+    endsAt,
+    existingClassSessionId: session.id,
+    reason: input.attendanceReason?.trim() ?? '',
+    source: 'ADMIN' as const,
+    idempotencyKey: `${input.idempotencyKey}:participant:${participant.personId}`,
+  }));
+  if (input.status === 'COMPLETED') {
+    for (const attendance of attendanceInputs) {
+      const preview = await recordPastAttendance(
+        { ...attendance, previewOnly: true },
+        { userWorkspaceId: null },
+        client,
+      );
+      if (!preview.success)
+        return fail(
+          preview.code,
+          `Тренировка сохранена. ${preview.message} Повторите весь запрос с прежним ключом после проверки CRM.`,
+          preview.status,
+        );
+    }
+  }
+  for (const [index, participant] of participants.entries()) {
+    if (input.status === 'PLANNED') {
+      const booking = await createRegularBooking(
+        {
+          ...participant,
+          classSessionId: session.id,
+          idempotencyKey: attendanceInputs[index].idempotencyKey,
+        },
+        client,
+      );
+      if (!booking.success)
+        return fail(
+          booking.code,
+          `Тренировка сохранена, добавление участников не завершено. ${booking.message} Повторите прежний запрос.`,
+          booking.status,
+        );
+    } else {
+      const attendance = await recordPastAttendance(
+        attendanceInputs[index],
+        { userWorkspaceId: null },
+        client,
+      );
+      if (!attendance.success || !('bookingId' in attendance))
+        return fail(
+          'ATTENDANCE_INCOMPLETE',
+          'Внесение посещений не завершено. Проверьте CRM и повторите прежний запрос.',
+          409,
+        );
+      await recordBookingEvent(
+        {
+          bookingId: attendance.bookingId,
+          classSessionId: session.id,
+          membershipId: participant.membershipId,
+          eventType: 'BOOKING_CREATED',
+          idempotencyKey: attendanceInputs[index].idempotencyKey,
+        },
+        client,
+      );
+    }
   }
   return { success: true, classSessionId: session.id, duplicate };
 };

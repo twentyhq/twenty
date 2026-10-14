@@ -69,6 +69,12 @@ const input: CreateClassSessionInput = {
   idempotencyKey: 'create-key',
 };
 
+test('generates the canonical format label when no name is supplied', async () => {
+  const client = new FakeClient();
+  assert.ok((await createClassSession({ ...input, name: undefined }, client.asClient(), now)).success);
+  assert.equal(client.records.classSessions[0].name, 'Группа на реформере');
+});
+
 test('creates a future session and one required event, without visits or payments', async () => {
   const client = new FakeClient();
   assert.ok((await createClassSession(input, client.asClient(), now)).success);

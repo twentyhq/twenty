@@ -33,5 +33,6 @@ export default defineObject({
     { universalIdentifier: '66cb5ea8-721e-4c92-8dc6-7ca5caf648c6', type: FieldType.TEXT, name: 'studioCancellationReason', label: 'Причина отмены', icon: 'IconNote', isNullable: true },
     { universalIdentifier: '49cc8fa6-6591-4e23-a538-ab494d601bfd', type: FieldType.DATE_TIME, name: 'completionLockedAt', label: 'Закрыто', icon: 'IconLock', isNullable: true },
     { universalIdentifier: '57c8b238-d981-4bb1-a7f4-713ad61e6c03', type: FieldType.TEXT, name: 'recordingKey', label: 'Ключ внесения', icon: 'IconKey', isNullable: true },
+    { universalIdentifier: '63a2073b-e68c-41df-b2ab-f1c6c43cd754', type: FieldType.TEXT, name: 'creationRequest', label: 'Исходный запрос создания', icon: 'IconCode', isNullable: true },
   ],
 });

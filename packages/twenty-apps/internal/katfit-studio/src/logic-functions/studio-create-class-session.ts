@@ -10,7 +10,7 @@ export default defineLogicFunction({
   universalIdentifier: '269c7084-8c71-4c24-8692-8b689473a224',
   name: 'studio-create-class-session',
   description:
-    'Create a future or historical class session and persist its audit event without consuming visits',
+    'Create a future or historical session with optional package-backed participants and required audit events',
   timeoutSeconds: 30,
   handler: async (payload: RoutePayload<CreateClassSessionInput>) => {
     try {
@@ -26,7 +26,7 @@ export default defineLogicFunction({
           success: false,
           code: 'SESSION_CREATE_UNCONFIRMED',
           message:
-            'Результат создания или запись журнала не подтверждены. Проверьте CRM и повторите с прежним ключом.',
+          'Создание тренировки, добавление участников или журнал не подтверждены. Проверьте CRM и повторите с прежним ключом.',
         },
         { status: 500 },
       );
