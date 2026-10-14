@@ -5,15 +5,10 @@ import { readSnapshotFile } from '@/app/deployment/read-snapshot-file';
 import { resolveSnapshotDirectory } from '@/app/deployment/resolve-snapshot-directory';
 import { parseNpmPackOutputOrThrow } from '@/app/publish/parse-npm-pack-output-or-throw';
 import { runNpmCommand } from '@/app/publish/run-npm-command';
+import { type PackedApp } from '@/app/publish/types/packed-app.type';
 import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { type Output } from '@/output/types/output.type';
-
-export type PackedApp = {
-  path: string;
-  name: string;
-  version: string;
-};
 
 export const withPackedApp = async <TResult>({
   appPath,
