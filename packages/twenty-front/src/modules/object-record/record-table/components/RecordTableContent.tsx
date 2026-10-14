@@ -7,6 +7,7 @@ import {
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
+import { RecordTableColumnWidthStyle } from '@/object-record/record-table/components/RecordTableColumnWidthStyle';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
@@ -139,6 +140,9 @@ export const RecordTableContent = ({
         onMouseMove={handleDelegatedMouseMove}
         onMouseLeave={handleMouseLeave}
       >
+        <RecordTableColumnWidthStyle
+          scopeId={getRecordTableHtmlId(recordTableId)}
+        />
         <RecordTableHeader />
         {hasRecordGroups ? (
           <RecordTableRecordGroupsBody />

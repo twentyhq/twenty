@@ -32,23 +32,10 @@ import { RecordTableFieldsCells } from '@/object-record/record-table/record-tabl
 import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
+import { RecordTableColumnWidthStyle } from '@/object-record/record-table/components/RecordTableColumnWidthStyle';
+import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-
-const MAX_COLUMNS = 100;
-
-const cloneColumnFieldWidthRules = Array.from(
-  { length: MAX_COLUMNS },
-  (_, i) => {
-    const className = getRecordTableColumnFieldWidthClassName(i);
-    const cssVar = `var(--record-table-column-field-${i})`;
-    return `div.${className} {
-    width: ${cssVar};
-    min-width: ${cssVar};
-    max-width: ${cssVar};
-  }`;
-  },
-).join('\n');
 
 // The overlay portals outside the table, so its column width variables and sticky rules are redeclared.
 const StyledRowDragOverlayCSSBridge = styled.div`
@@ -105,8 +92,6 @@ const StyledRowDragOverlayCSSBridge = styled.div`
     width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
 
-  ${cloneColumnFieldWidthRules}
-
   div.${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
     max-width: var(
       ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
@@ -131,7 +116,9 @@ export const RecordTableRowDragOverlayContent = ({
 }) => {
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
+
+  const rowDragOverlayHtmlId = `${getRecordTableHtmlId(recordTableId)}-row-drag-overlay`;
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
@@ -173,7 +160,11 @@ export const RecordTableRowDragOverlayContent = ({
   const recordId = sourceData.recordId;
 
   return (
-    <StyledRowDragOverlayCSSBridge style={columnWidthStyles}>
+    <StyledRowDragOverlayCSSBridge
+      id={rowDragOverlayHtmlId}
+      style={columnWidthStyles}
+    >
+      <RecordTableColumnWidthStyle scopeId={rowDragOverlayHtmlId} />
       <StyledRowClipContainer
         style={
           isDefined(visibleTableWidth)
