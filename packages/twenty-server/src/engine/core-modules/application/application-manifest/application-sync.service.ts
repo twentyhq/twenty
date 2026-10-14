@@ -33,6 +33,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { assertManifestUniversalIdentifiersAreLowercase } from 'src/engine/core-modules/application/utils/assert-manifest-universal-identifiers-are-lowercase.util';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -84,6 +85,8 @@ export class ApplicationSyncService {
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
   }> {
+    assertManifestUniversalIdentifiersAreLowercase(manifest);
+
     // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
       findReservedVariableNamesInApplicationManifest(manifest.application);

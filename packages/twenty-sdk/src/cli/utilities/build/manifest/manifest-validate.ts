@@ -3,6 +3,7 @@ import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import {
   MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
+  findNonLowercaseUniversalIdentifiers,
   type Manifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
@@ -273,6 +274,15 @@ export const manifestValidate = (manifest: Manifest) => {
   if (invalidUniversalIdentifiers.length > 0) {
     errors.push(
       `Invalid universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
+    );
+  }
+
+  const nonLowercaseUniversalIdentifiers =
+    findNonLowercaseUniversalIdentifiers(manifest);
+
+  if (nonLowercaseUniversalIdentifiers.length > 0) {
+    errors.push(
+      `Universal identifiers must be lowercase: ${nonLowercaseUniversalIdentifiers.join(', ')}`,
     );
   }
 

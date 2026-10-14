@@ -669,6 +669,29 @@ describe('manifestValidate', () => {
       );
     });
 
+    it('should fail with uppercase universal identifiers or references', () => {
+      const uppercaseObjectUniversalIdentifier =
+        validField.objectUniversalIdentifier.toUpperCase();
+      const uppercaseFieldUniversalIdentifier =
+        validField.universalIdentifier.toUpperCase();
+
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [
+          {
+            ...validField,
+            universalIdentifier: uppercaseFieldUniversalIdentifier,
+            objectUniversalIdentifier: uppercaseObjectUniversalIdentifier,
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain(
+        `Universal identifiers must be lowercase: ${uppercaseObjectUniversalIdentifier}, ${uppercaseFieldUniversalIdentifier}`,
+      );
+    });
+
     it('should not report duplicate version errors for the same identifier', () => {
       const v1Uuid = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 

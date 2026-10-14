@@ -23,6 +23,7 @@ import { resolvePackageContentDir } from 'src/engine/core-modules/application/ap
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { assertManifestUniversalIdentifiersAreLowercase } from 'src/engine/core-modules/application/utils/assert-manifest-universal-identifiers-are-lowercase.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -92,13 +93,19 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     const manifestUniversalIdentifier =
       resolvedPackage.manifest.application.universalIdentifier;
 
-    if (manifestUniversalIdentifier !== appRegistration.universalIdentifier) {
+    try {
+      assertManifestUniversalIdentifiersAreLowercase(resolvedPackage.manifest);
+
+      if (manifestUniversalIdentifier !== appRegistration.universalIdentifier) {
+        throw new ApplicationException(
+          `Resolved package declares application ${manifestUniversalIdentifier} but registration is for ${appRegistration.universalIdentifier}`,
+          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+        );
+      }
+    } catch (error) {
       await this.cleanupExtractedDir(resolvedPackage.cleanupDir);
 
-      throw new ApplicationException(
-        `Resolved package declares application ${manifestUniversalIdentifier} but registration is for ${appRegistration.universalIdentifier}`,
-        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
-      );
+      throw error;
     }
 
     return resolvedPackage;

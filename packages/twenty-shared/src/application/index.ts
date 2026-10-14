@@ -263,6 +263,7 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export { findNonLowercaseUniversalIdentifiers } from './utils/findNonLowercaseUniversalIdentifiers';
 export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,

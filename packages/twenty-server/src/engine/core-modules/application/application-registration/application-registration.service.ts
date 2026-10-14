@@ -6,7 +6,10 @@ import crypto from 'crypto';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  findNonLowercaseUniversalIdentifiers,
+  type Manifest,
+} from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
@@ -817,20 +820,26 @@ export class ApplicationRegistrationService {
   }
 
   async upsertFromCatalog(
-    rawParams: UpsertApplicationRegistrationFromCatalogParams,
+    params: UpsertApplicationRegistrationFromCatalogParams,
   ): Promise<ApplicationRegistrationEntity | null> {
-    if (!isValidUuid(rawParams.universalIdentifier)) {
+    if (!isValidUuid(params.universalIdentifier)) {
       this.logger.warn(
-        `Skipping catalog entry from package ${rawParams.sourcePackage}: universal identifier ${rawParams.universalIdentifier} is not a valid UUID`,
+        `Skipping catalog entry from package ${params.sourcePackage}: universal identifier ${params.universalIdentifier} is not a valid UUID`,
       );
 
       return null;
     }
 
-    const params = {
-      ...rawParams,
-      universalIdentifier: rawParams.universalIdentifier.toLowerCase(),
-    };
+    const nonLowercaseUniversalIdentifiers =
+      findNonLowercaseUniversalIdentifiers(params);
+
+    if (nonLowercaseUniversalIdentifiers.length > 0) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: universal identifiers must be lowercase: ${nonLowercaseUniversalIdentifiers.join(', ')}`,
+      );
+
+      return null;
+    }
 
     const existing =
       await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(

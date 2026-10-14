@@ -239,6 +239,23 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     expect(updateFromManifestSpy).not.toHaveBeenCalled();
   });
 
+  it('should skip catalog entries with uppercase universal identifiers', async () => {
+    const uppercaseUniversalIdentifier =
+      catalogParams.universalIdentifier.toUpperCase();
+
+    const result = await service.upsertFromCatalog({
+      ...catalogParams,
+      universalIdentifier: uppercaseUniversalIdentifier,
+      manifest: {
+        application: { universalIdentifier: uppercaseUniversalIdentifier },
+      } as unknown as Manifest,
+    });
+
+    expect(result).toBeNull();
+    expect(applicationRegistrationRepository.findOne).not.toHaveBeenCalled();
+    expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
+  });
+
   it('should create new catalog registrations as listed', async () => {
     applicationRegistrationRepository.findOne.mockResolvedValue(null);
 
