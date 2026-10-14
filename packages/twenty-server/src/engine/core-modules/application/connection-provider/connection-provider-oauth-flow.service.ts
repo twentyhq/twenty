@@ -82,34 +82,12 @@ export class ConnectionProviderOAuthFlowService {
 
     assertOAuthProvider(connectionProvider);
 
-    let reconnectTarget: ConnectedAccountEntity | null = null;
-
-    if (isDefined(args.reconnectingConnectedAccountId)) {
-      reconnectTarget = await this.connectedAccountRepository.findOne({
-        where: buildConnectedAccountUsableByCallerWhere({
-          baseWhere: {
-            id: args.reconnectingConnectedAccountId,
-            workspaceId,
-            connectionProviderId: connectionProvider.id,
-          },
-          userWorkspaceId,
-        }),
-      });
-
-      if (!isDefined(reconnectTarget)) {
-        throw new ConnectionProviderException(
-          `Cannot reconnect connectedAccount ${args.reconnectingConnectedAccountId}: not found in this workspace for the requested provider, or not usable by this member.`,
-          ConnectionProviderExceptionCode.FORBIDDEN,
-        );
-      }
-    }
-
-    await this.appConnectionAccessService.validateCallerCanManageConnection({
-      isWorkspaceShared:
-        args.visibility === 'workspace' ||
-        reconnectTarget?.visibility === 'workspace',
+    await this.validateCallerCanManageRequestedConnection({
+      connectionProviderId: connectionProvider.id,
       workspaceId,
       userWorkspaceId,
+      visibility: args.visibility,
+      reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
     });
 
     const { clientId } =
@@ -167,6 +145,16 @@ export class ConnectionProviderOAuthFlowService {
     });
 
     assertOAuthProvider(provider);
+
+    // The member's role may have changed while they were on the provider's consent screen
+    await this.validateCallerCanManageRequestedConnection({
+      connectionProviderId: provider.id,
+      workspaceId: statePayload.workspaceId,
+      userWorkspaceId: statePayload.userWorkspaceId,
+      visibility: statePayload.visibility,
+      reconnectingConnectedAccountId:
+        statePayload.reconnectingConnectedAccountId,
+    });
 
     const { clientId, clientSecret } =
       await this.oauthProviderService.getClientCredentials(provider);
@@ -228,6 +216,62 @@ export class ConnectionProviderOAuthFlowService {
       applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
+  }
+
+  private async validateCallerCanManageRequestedConnection({
+    connectionProviderId,
+    workspaceId,
+    userWorkspaceId,
+    visibility,
+    reconnectingConnectedAccountId,
+  }: {
+    connectionProviderId: string;
+    workspaceId: string;
+    userWorkspaceId: string;
+    visibility: 'user' | 'workspace';
+    reconnectingConnectedAccountId: string | null;
+  }): Promise<void> {
+    let reconnectTarget: ConnectedAccountEntity | null = null;
+
+    if (isDefined(reconnectingConnectedAccountId)) {
+      reconnectTarget = await this.connectedAccountRepository.findOne({
+        where: buildConnectedAccountUsableByCallerWhere({
+          baseWhere: {
+            id: reconnectingConnectedAccountId,
+            workspaceId,
+            connectionProviderId,
+          },
+          userWorkspaceId,
+        }),
+      });
+
+      if (!isDefined(reconnectTarget)) {
+        throw new ConnectionProviderException(
+          `Cannot reconnect connectedAccount ${reconnectingConnectedAccountId}: not found in this workspace for the requested provider, or not usable by this member.`,
+          ConnectionProviderExceptionCode.FORBIDDEN,
+        );
+      }
+    }
+
+    if (
+      visibility === 'workspace' ||
+      reconnectTarget?.visibility === 'workspace'
+    ) {
+      await this.appConnectionAccessService.validateCallerCanManageConnection({
+        isWorkspaceShared: true,
+        workspaceId,
+        userWorkspaceId,
+      });
+    }
+
+    // Checked on the resulting visibility so reconnecting a shared row as 'user' cannot skip it
+    if (visibility === 'user') {
+      await this.appConnectionAccessService.validateCallerCanManageConnection({
+        isWorkspaceShared: false,
+        workspaceId,
+        userWorkspaceId,
+      });
+    }
   }
 
   private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {

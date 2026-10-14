@@ -365,6 +365,8 @@ When a user clicks "Add connection," they're prompted to pick a visibility:
 - **Just for me** — the credential is private to the connecting user. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
 - **Workspace shared** — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
 
+Adding or reconnecting a **Just for me** connection requires `CONNECTED_ACCOUNTS`, and adding or reconnecting a **Workspace shared** one requires `APPLICATIONS`.
+
 Use the right one for each handler:
 
 ```ts
