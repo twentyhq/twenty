@@ -41,6 +41,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/navigation/components/MobileNavigationBar.tsx',
+    reason:
+      'IconButton sized as a 40px touch target with the current page fill',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsPasswordController.tsx',
     reason: 'Button placement in its parent column',
   },
