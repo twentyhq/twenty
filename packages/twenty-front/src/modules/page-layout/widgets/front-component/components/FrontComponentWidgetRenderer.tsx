@@ -55,25 +55,28 @@ export const FrontComponentWidgetRenderer = ({
   const selectedRecordIds = isDefined(targetRecordIdentifier?.id)
     ? [targetRecordIdentifier.id]
     : undefined;
+  const isFullPageApp =
+    isSoloStandaloneFrontComponent({
+      pageLayoutType: layoutType,
+      presentation,
+      widgetType: widget.type,
+    }) && !isPageLayoutInEditMode;
+  const loadingFallback = isFullPageApp ? null : (
+    <FrontComponentSkeletonLoader />
+  );
 
   return (
     <StyledContainer
-      isBorderless={
-        isSoloStandaloneFrontComponent({
-          pageLayoutType: layoutType,
-          presentation,
-          widgetType: widget.type,
-        }) && !isPageLayoutInEditMode
-      }
+      isBorderless={isFullPageApp}
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}
     >
-      <Suspense fallback={<FrontComponentSkeletonLoader />}>
+      <Suspense fallback={loadingFallback}>
         <FrontComponentRenderer
           frontComponentId={frontComponentId}
           selectedRecordIds={selectedRecordIds}
           objectNameSingular={targetRecordIdentifier?.targetObjectNameSingular}
-          loadingFallback={<FrontComponentSkeletonLoader />}
+          loadingFallback={loadingFallback}
         />
       </Suspense>
     </StyledContainer>

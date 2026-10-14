@@ -368,10 +368,19 @@ export const StandaloneFrontComponentLoading: Story = {
     presentation: 'solo',
   }),
   play: async ({ canvasElement }) => {
-    await expectLoadingFrontComponentFrame(canvasElement, {
-      outerFrame: false,
-      innerFrame: false,
-    });
+    const card = await within(canvasElement).findByTestId(
+      WIDGET_ID_FRONT_COMPONENT,
+    );
+
+    expect(card.querySelector('[aria-busy="true"]')).toBeNull();
+
+    for (const element of [card, ...card.querySelectorAll('*')]) {
+      const style = getComputedStyle(element);
+
+      expect(style.borderWidth).toBe('0px');
+      expect(style.borderRadius).toBe('0px');
+      expect(style.padding).toBe('0px');
+    }
   },
 };
 

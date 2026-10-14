@@ -62,7 +62,7 @@ export const WidgetCardShell = ({
   onMouseLeave,
 }: WidgetCardShellProps) => {
   const theme = useTheme();
-  const { layoutMode } = usePageLayoutContentContext();
+  const { layoutMode, presentation } = usePageLayoutContentContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
@@ -75,7 +75,11 @@ export const WidgetCardShell = ({
     isEditable,
     variant,
   })
-    ? getWidgetContentPadding(widget.type)
+    ? getWidgetContentPadding({
+        pageLayoutType: currentPageLayout.type,
+        presentation,
+        widgetType: widget.type,
+      })
     : 'default';
 
   const dataTestId =
