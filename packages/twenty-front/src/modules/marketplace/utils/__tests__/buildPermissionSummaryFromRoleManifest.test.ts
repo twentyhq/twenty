@@ -33,7 +33,7 @@ const getDetails = (
   options?: Parameters<typeof buildPermissionSummaryFromRoleManifest>[1],
 ) =>
   buildPermissionSummaryFromRoleManifest(role, options).map(
-    ({ details }) => details,
+    ({ details }) => details?.items,
   );
 
 describe('buildPermissionSummaryFromRoleManifest', () => {
@@ -237,7 +237,10 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       );
 
       expect(item.label).toBe('Read 3 objects');
-      expect(item.details).toEqual(['Person', 'Company', '1 other object']);
+      expect(item.details).toEqual({
+        title: 'Read 3 object records',
+        items: ['Person', 'Company', '1 other object'],
+      });
     });
 
     it('has no details when no object label is resolved', () => {

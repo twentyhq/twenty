@@ -121,13 +121,14 @@ const StyledPermissionLabel = styled.span`
   }
 `;
 
+const StyledObjectListTitle = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledObjectList = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  list-style: none;
+  list-style: disc;
   margin: 0;
-  padding: 0;
+  padding-left: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledNoPermissionText = styled.div`
@@ -248,11 +249,16 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                         {isDefined(item.details) ? (
                           <Tooltip
                             content={
-                              <StyledObjectList>
-                                {item.details.map((detail) => (
-                                  <li key={detail}>{detail}</li>
-                                ))}
-                              </StyledObjectList>
+                              <>
+                                <StyledObjectListTitle>
+                                  {t`${item.details.title}:`}
+                                </StyledObjectListTitle>
+                                <StyledObjectList>
+                                  {item.details.items.map((detailItem) => (
+                                    <li key={detailItem}>{detailItem}</li>
+                                  ))}
+                                </StyledObjectList>
+                              </>
                             }
                             arrow
                             side="top"

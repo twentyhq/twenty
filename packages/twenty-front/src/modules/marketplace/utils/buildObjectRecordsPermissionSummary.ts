@@ -111,7 +111,16 @@ export const buildObjectRecordsPermissionSummary = ({
       const unresolvedCount =
         objectUniversalIdentifiers.length - resolvedLabels.length;
 
-      const details = [
+      const detailsTitle =
+        getRecordAccessLabel({
+          access,
+          target: plural(objectUniversalIdentifiers.length, {
+            one: '# object record',
+            other: '# object records',
+          }),
+        }) ?? label;
+
+      const detailsItems = [
         ...resolvedLabels,
         ...(unresolvedCount > 0
           ? [
@@ -123,6 +132,12 @@ export const buildObjectRecordsPermissionSummary = ({
           : []),
       ];
 
-      return [{ Icon: IconAddressBook, label, details }];
+      return [
+        {
+          Icon: IconAddressBook,
+          label,
+          details: { title: detailsTitle, items: detailsItems },
+        },
+      ];
     },
   );
