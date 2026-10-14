@@ -1196,6 +1196,42 @@ describe('Usage quota consumption', () => {
         },
         EXECUTION_TIMEOUT_MS,
       );
+
+      it(
+        'debits the warm workspace allowance in full when the user credits window cannot warm',
+        async () => {
+          const userWorkspaceId = generateUserWorkspaceId();
+          const allowanceConsumed = await readWorkspaceAllowanceConsumed();
+          const clickHouseReadSpy = jest
+            .spyOn(
+              getAppProviderByClassName<UsageAnalyticsService>(
+                'UsageAnalyticsService',
+              ),
+              'getConsumptionRowsForAllScopes',
+            )
+            .mockRejectedValue(new Error('ClickHouse is unreachable'));
+
+          try {
+            expect(
+              await chargeChatTokens({
+                userWorkspaceId,
+                creditsUsedMicro: 600,
+              }),
+            ).toEqual({ exhaustedKind: null });
+          } finally {
+            clickHouseReadSpy.mockRestore();
+          }
+
+          expect(await readWorkspaceAllowanceConsumed()).toBe(
+            allowanceConsumed + 600,
+          );
+
+          await waitForUserCreditsRows(userWorkspaceId, [
+            { creditsUsedMicro: 600, userCreditsUsedMicro: 0 },
+          ]);
+        },
+        EXECUTION_TIMEOUT_MS,
+      );
     },
   );
 });
