@@ -342,3 +342,32 @@ export const WithoutTruncation: Story = {
     await expect(getComputedStyle(chip).overflow).not.toBe('hidden');
   },
 };
+
+export const WithoutTooltip: Story = {
+  ...TruncationAndTooltip,
+  args: {
+    ...TruncationAndTooltip.args,
+    withTooltip: false,
+    alwaysShowTooltip: true,
+  },
+  play: async ({ canvasElement }) => {
+    const content = within(canvasElement).getByText(
+      'Quarterly customer research findings.pdf',
+    ).parentElement;
+
+    if (!isDefined(content)) {
+      throw new Error('Chip content must have a text container');
+    }
+
+    await expect(content.scrollWidth).toBeGreaterThan(content.clientWidth);
+    await expect(getComputedStyle(content).textOverflow).toBe('ellipsis');
+    await userEvent.hover(content);
+    await expect(
+      within(canvasElement.ownerDocument.body).findByRole(
+        'tooltip',
+        {},
+        { timeout: 100 },
+      ),
+    ).rejects.toThrow();
+  },
+};

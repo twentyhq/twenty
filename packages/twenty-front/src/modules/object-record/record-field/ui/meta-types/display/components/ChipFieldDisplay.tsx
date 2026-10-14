@@ -1,8 +1,14 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useChipFieldDisplay';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-export const ChipFieldDisplay = () => {
+type ChipFieldDisplayProps = FieldDisplayTooltipProps;
+
+export const ChipFieldDisplay = ({
+  withTooltip,
+  measureOverflowOnOpen,
+}: ChipFieldDisplayProps) => {
   const {
     recordStore: recordValue,
     objectNameSingular,
@@ -27,6 +33,8 @@ export const ChipFieldDisplay = () => {
       forceDisableClick={disableChipClick}
       triggerEvent={triggerEvent}
       onClick={onRecordChipClick}
+      withTooltip={withTooltip}
+      measureOverflowOnOpen={measureOverflowOnOpen}
     />
   );
 };

@@ -15,7 +15,9 @@ export type ChipProps = Omit<useRender.ComponentProps<'div'>, 'color'> &
     | 'tooltipPlace'
     | 'isTooltipMultiline'
     | 'alwaysShowTooltip'
+    | 'measureOverflowOnOpen'
   > & {
+    withTooltip?: boolean;
     size?: ChipSize;
     variant?: ChipVariant;
     color?: 'primary' | 'secondary';

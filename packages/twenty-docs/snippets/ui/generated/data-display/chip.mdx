@@ -43,6 +43,10 @@
   Maximum chip width in pixels, used to constrain the content.
 </ParamField>
 
+<ParamField body="measureOverflowOnOpen" type="boolean" default="false">
+  Checks truncation when the tooltip tries to open, including labels that mount under the pointer.
+</ParamField>
+
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
   Replaces the default div. Compose a native button or link explicitly; that owner supplies disabled and native interaction behavior.
 </ParamField>
@@ -81,4 +85,8 @@
 
 <ParamField body="weight" type="&quot;medium&quot; | &quot;regular&quot;" default="regular">
   Font weight of the content.
+</ParamField>
+
+<ParamField body="withTooltip" type="boolean" default="true">
+  Enables the label tooltip. Set to false to render only the text while preserving truncation.
 </ParamField>

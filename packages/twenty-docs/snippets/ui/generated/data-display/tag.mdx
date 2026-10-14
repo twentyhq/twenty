@@ -19,6 +19,10 @@
   Theme color for the tag, or `transparent` for an unfilled label.
 </ParamField>
 
+<ParamField body="measureOverflowOnOpen" type="boolean" default="false">
+  Checks truncation when the tooltip tries to open, including labels that mount under the pointer.
+</ParamField>
+
 <ParamField body="onClick" type="MouseEventHandler&lt;HTMLSpanElement&gt;">
   Native click handler. Does not change the default span or add keyboard activation.
 </ParamField>
@@ -41,4 +45,8 @@
 
 <ParamField body="weight" type="&quot;medium&quot; | &quot;regular&quot;" default="regular">
   Font weight of the label.
+</ParamField>
+
+<ParamField body="withTooltip" type="boolean" default="true">
+  Enables the label tooltip. Set to false to preserve truncation without mounting a tooltip.
 </ParamField>

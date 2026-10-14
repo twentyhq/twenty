@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -58,6 +58,49 @@ export const SingleLineNotOverflowing: Story = {
     const canvas = within(canvasElement);
     const tooltip = await canvas.findByTestId('overflow-text');
     await userEvent.hover(tooltip);
+  },
+};
+
+export const MeasureOverflowOnOpen: Story = {
+  args: {
+    text: longText,
+    measureOverflowOnOpen: true,
+    tooltipDelay: 0,
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    const text = within(canvasElement).getByTestId('overflow-text');
+    const body = within(canvasElement.ownerDocument.body);
+
+    await expect(text.scrollWidth).toBeGreaterThan(text.clientWidth);
+    await fireEvent.mouseEnter(text);
+
+    await expect(await body.findByRole('tooltip')).toHaveTextContent(longText);
+
+    await fireEvent.mouseLeave(text);
+    await waitFor(() =>
+      expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const MeasureOverflowOnOpenWithFittingText: Story = {
+  args: {
+    text: 'Short',
+    measureOverflowOnOpen: true,
+    tooltipDelay: 0,
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    const text = within(canvasElement).getByTestId('overflow-text');
+    const body = within(canvasElement.ownerDocument.body);
+
+    await expect(text.scrollWidth).toBeLessThanOrEqual(text.clientWidth);
+    await fireEvent.mouseEnter(text);
+
+    await expect(
+      body.findByRole('tooltip', {}, { timeout: 100 }),
+    ).rejects.toThrow();
   },
 };
 

@@ -13,6 +13,7 @@ export type OverflowingTextWithTooltipProps = Omit<
     tooltipDelay?: number;
     tooltipPlace?: TooltipSide;
     alwaysShowTooltip?: boolean;
+    measureOverflowOnOpen?: boolean;
     isFocusable?: boolean;
   } & (
     | {

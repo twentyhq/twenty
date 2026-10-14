@@ -2,8 +2,14 @@ import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFiel
 import { useActorFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useActorFieldDisplay';
 import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-export const ActorFieldDisplay = () => {
+type ActorFieldDisplayProps = FieldDisplayTooltipProps;
+
+export const ActorFieldDisplay = ({
+  withTooltip,
+  measureOverflowOnOpen,
+}: ActorFieldDisplayProps) => {
   const actorFieldDisplay = useActorFieldDisplay();
 
   const displayActorField = !useIsFieldEmpty();
@@ -20,6 +26,8 @@ export const ActorFieldDisplay = () => {
       avatarUrl={avatarUrl}
       workspaceMemberId={fieldValue.workspaceMemberId}
       context={fieldValue.context}
+      withTooltip={withTooltip}
+      measureOverflowOnOpen={measureOverflowOnOpen}
     />
   ) : null;
 };

@@ -14,8 +14,14 @@ import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/jun
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-export const RelationFromManyFieldDisplay = () => {
+type RelationFromManyFieldDisplayProps = FieldDisplayTooltipProps;
+
+export const RelationFromManyFieldDisplay = ({
+  withTooltip,
+  measureOverflowOnOpen,
+}: RelationFromManyFieldDisplayProps) => {
   const { t } = useLingui();
 
   const { fieldValue, fieldDefinition, generateRecordChipData } =
@@ -101,6 +107,8 @@ export const RelationFromManyFieldDisplay = () => {
             record={record}
             forceDisableClick={disableChipClick}
             triggerEvent={triggerEvent}
+            withTooltip={withTooltip}
+            measureOverflowOnOpen={measureOverflowOnOpen}
           />
         ))}
       </OverflowingList>
@@ -122,6 +130,8 @@ export const RelationFromManyFieldDisplay = () => {
             record={record}
             forceDisableClick={disableChipClick}
             triggerEvent={triggerEvent}
+            withTooltip={withTooltip}
+            measureOverflowOnOpen={measureOverflowOnOpen}
           />
         );
       })}

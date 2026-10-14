@@ -22,6 +22,7 @@ export const OverflowingTextWithTooltip = memo(
     tooltipDelay = 500,
     tooltipPlace = 'bottom',
     alwaysShowTooltip = false,
+    measureOverflowOnOpen = false,
     isFocusable = false,
     render,
     ref,
@@ -90,7 +91,8 @@ export const OverflowingTextWithTooltip = memo(
           handleOpenChange(open);
         }}
         disabled={
-          !isDefined(tooltipText) || (!isTitleOverflowing && !alwaysShowTooltip)
+          !isDefined(tooltipText) ||
+          (!measureOverflowOnOpen && !isTitleOverflowing && !alwaysShowTooltip)
         }
       >
         <Tooltip.Trigger

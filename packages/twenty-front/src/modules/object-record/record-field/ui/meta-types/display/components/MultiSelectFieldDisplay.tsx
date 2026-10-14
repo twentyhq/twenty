@@ -4,8 +4,14 @@ import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-export const MultiSelectFieldDisplay = () => {
+type MultiSelectFieldDisplayProps = FieldDisplayTooltipProps;
+
+export const MultiSelectFieldDisplay = ({
+  withTooltip,
+  measureOverflowOnOpen,
+}: MultiSelectFieldDisplayProps) => {
   const { t } = useLingui();
 
   const { fieldValue, fieldDefinition } = useMultiSelectFieldDisplay();
@@ -26,7 +32,12 @@ export const MultiSelectFieldDisplay = () => {
       showOverflowCount={isFocused}
     >
       {selectedOptions.map((selectedOption, index) => (
-        <Tag key={index} color={selectedOption.color}>
+        <Tag
+          key={index}
+          color={selectedOption.color}
+          withTooltip={withTooltip}
+          measureOverflowOnOpen={measureOverflowOnOpen}
+        >
           {selectedOption.label}
         </Tag>
       ))}

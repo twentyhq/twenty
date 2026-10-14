@@ -3,16 +3,26 @@ import { type FieldArrayValue } from '@/object-record/record-field/ui/types/Fiel
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { t } from '@lingui/core/macro';
 import { Chip } from 'twenty-ui/primitives/data-display';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-type ArrayDisplayProps = {
+type ArrayDisplayProps = FieldDisplayTooltipProps & {
   value: FieldArrayValue;
 };
 
-export const ArrayDisplay = ({ value }: ArrayDisplayProps) => {
+export const ArrayDisplay = ({
+  value,
+  withTooltip,
+  measureOverflowOnOpen,
+}: ArrayDisplayProps) => {
   return (
     <OverflowingList overflowLabel={t`Show all items`}>
       {value?.map((item, index) => (
-        <Chip key={`${item}-${index}`} variant="soft">
+        <Chip
+          key={`${item}-${index}`}
+          variant="soft"
+          withTooltip={withTooltip}
+          measureOverflowOnOpen={measureOverflowOnOpen}
+        >
           {getChipLabel(item).content}
         </Chip>
       ))}

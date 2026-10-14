@@ -87,7 +87,7 @@ export const RecordTableCellHoveredPortalContent = () => {
           </RecordTableCellEditMode>
         ) : (
           <RecordTableCellDisplayMode>
-            <FieldDisplay />
+            <FieldDisplay measureOverflowOnOpen />
           </RecordTableCellDisplayMode>
         )}
       </FieldFocusStaticFocusedProvider>

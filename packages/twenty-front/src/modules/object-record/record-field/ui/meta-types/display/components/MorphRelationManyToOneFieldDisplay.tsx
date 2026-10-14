@@ -5,8 +5,14 @@ import { useMorphRelationToOneFieldDisplay } from '@/object-record/record-field/
 import { useContext } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-export const MorphRelationManyToOneFieldDisplay = () => {
+type MorphRelationManyToOneFieldDisplayProps = FieldDisplayTooltipProps;
+
+export const MorphRelationManyToOneFieldDisplay = ({
+  withTooltip,
+  measureOverflowOnOpen,
+}: MorphRelationManyToOneFieldDisplayProps) => {
   const { morphFieldValuesWithObjectName, foreignKeyFieldValue } =
     useMorphRelationToOneFieldDisplay();
 
@@ -33,6 +39,8 @@ export const MorphRelationManyToOneFieldDisplay = () => {
         isWorkspaceMemberFieldMetadataRelation || disableChipClick
       }
       triggerEvent={triggerEvent}
+      withTooltip={withTooltip}
+      measureOverflowOnOpen={measureOverflowOnOpen}
     />
   );
 };

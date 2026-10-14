@@ -8,14 +8,19 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { GetCoreWorkflowDocument } from '~/generated/graphql';
 
-type CoreWorkflowChipProps = {
+type CoreWorkflowChipProps = FieldDisplayTooltipProps & {
   coreRecordId: string;
 };
 
-export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
+export const CoreWorkflowChip = ({
+  coreRecordId,
+  withTooltip,
+  measureOverflowOnOpen,
+}: CoreWorkflowChipProps) => {
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
   const apolloCoreClient = useApolloCoreClient();
@@ -45,6 +50,8 @@ export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
   if (disableChipClick) {
     return (
       <Chip
+        withTooltip={withTooltip}
+        measureOverflowOnOpen={measureOverflowOnOpen}
         variant="ghost"
         startElement={avatar}
         style={{ paddingInlineStart: 0 }}
@@ -56,6 +63,8 @@ export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
 
   return (
     <LinkChip
+      withTooltip={withTooltip}
+      measureOverflowOnOpen={measureOverflowOnOpen}
       to={getAppPath(AppPath.WorkflowCoreShowPage, {
         coreWorkflowId: coreRecordId,
       })}

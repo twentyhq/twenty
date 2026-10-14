@@ -5,13 +5,16 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { type CoreRecordReferenceField } from '@/object-record/record-field/ui/types/CoreRecordReferenceField';
 import { getCoreRecordIdFieldDefinition } from '@/object-record/record-field/ui/utils/getCoreRecordIdFieldDefinition';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-type CoreRecordReferenceFieldDisplayProps = {
+type CoreRecordReferenceFieldDisplayProps = FieldDisplayTooltipProps & {
   coreRecordReferenceField: CoreRecordReferenceField;
 };
 
 export const CoreRecordReferenceFieldDisplay = ({
   coreRecordReferenceField,
+  withTooltip,
+  measureOverflowOnOpen,
 }: CoreRecordReferenceFieldDisplayProps) => {
   const { recordId } = useContext(FieldContext);
 
@@ -31,5 +34,11 @@ export const CoreRecordReferenceFieldDisplay = ({
 
   const { CoreRecordDisplay } = coreRecordReferenceField;
 
-  return <CoreRecordDisplay coreRecordId={coreRecordId} />;
+  return (
+    <CoreRecordDisplay
+      coreRecordId={coreRecordId}
+      withTooltip={withTooltip}
+      measureOverflowOnOpen={measureOverflowOnOpen}
+    />
+  );
 };

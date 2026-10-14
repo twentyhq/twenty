@@ -1871,6 +1871,13 @@
         "description": "Positive integer limiting visible lines, matching Text. Cannot be combined with `truncate`."
       },
       {
+        "name": "measureOverflowOnOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keeps hover listeners active before pointer entry and measures overflow when opening. Useful for text mounted beneath the pointer. Defaults to false."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
@@ -10404,6 +10411,13 @@
         "description": "Maximum chip width in pixels, used to constrain the content."
       },
       {
+        "name": "measureOverflowOnOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Checks truncation when the tooltip tries to open, including labels that mount under the pointer."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
@@ -10472,6 +10486,13 @@
         "required": false,
         "defaultValue": "regular",
         "description": "Font weight of the content."
+      },
+      {
+        "name": "withTooltip",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Enables the label tooltip. Set to false to render only the text while preserving truncation."
       }
     ]
   },
@@ -10493,6 +10514,13 @@
         "required": true,
         "defaultValue": null,
         "description": "Theme color for the tag, or `transparent` for an unfilled label."
+      },
+      {
+        "name": "measureOverflowOnOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Checks truncation when the tooltip tries to open, including labels that mount under the pointer."
       },
       {
         "name": "onClick",
@@ -10535,6 +10563,13 @@
         "required": false,
         "defaultValue": "regular",
         "description": "Font weight of the label."
+      },
+      {
+        "name": "withTooltip",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Enables the label tooltip. Set to false to preserve truncation without mounting a tooltip."
       }
     ]
   },

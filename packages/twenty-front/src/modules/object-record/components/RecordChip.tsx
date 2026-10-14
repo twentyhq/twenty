@@ -5,6 +5,7 @@ import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useRe
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { type TriggerEventType } from '@/ui/navigation/types/TriggerEventType';
 import { type MouseEvent } from 'react';
@@ -13,7 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type RecordChipProps = {
+type RecordChipProps = FieldDisplayTooltipProps & {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
@@ -43,6 +44,8 @@ export const RecordChip = ({
   isIconHidden = false,
   triggerEvent = 'MOUSE_DOWN',
   onClick,
+  withTooltip,
+  measureOverflowOnOpen,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -74,6 +77,8 @@ export const RecordChip = ({
   ) {
     return (
       <Chip
+        withTooltip={withTooltip}
+        measureOverflowOnOpen={measureOverflowOnOpen}
         weight={isBold ? 'medium' : 'regular'}
         size={size}
         maxWidth={maxWidth}
@@ -98,6 +103,8 @@ export const RecordChip = ({
 
   return (
     <LinkChip
+      withTooltip={withTooltip}
+      measureOverflowOnOpen={measureOverflowOnOpen}
       size={size}
       maxWidth={maxWidth}
       weight={isBold ? 'medium' : 'regular'}

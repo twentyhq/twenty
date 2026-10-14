@@ -17,6 +17,10 @@ export const CHIP_PROP_DESCRIPTIONS = {
     'Adds a divider before `endElement` when that slot has content.',
   maxWidth: 'Maximum chip width in pixels, used to constrain the content.',
   truncate: 'Truncates overflowing content with an ellipsis. Defaults to true.',
+  withTooltip:
+    'Enables the label tooltip. Set to false to render only the text while preserving truncation.',
+  measureOverflowOnOpen:
+    'Checks truncation when the tooltip tries to open, including labels that mount under the pointer.',
   tooltipContent:
     'Tooltip text. Defaults to string children. Supply text explicitly for node content.',
   tooltipPlace: 'Position of the content tooltip.',

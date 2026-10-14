@@ -4,8 +4,14 @@ import { filesFieldUploadState } from '@/object-record/record-field/ui/states/fi
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { FilesDisplay } from '@/ui/field/display/components/FilesDisplay';
 import { useContext } from 'react';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 
-export const FilesFieldDisplay = () => {
+type FilesFieldDisplayProps = FieldDisplayTooltipProps;
+
+export const FilesFieldDisplay = ({
+  withTooltip,
+  measureOverflowOnOpen,
+}: FilesFieldDisplayProps) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { fieldValue, disableChipClick } = useFilesFieldDisplay();
 
@@ -23,6 +29,8 @@ export const FilesFieldDisplay = () => {
       forceDisableClick={disableChipClick}
       isUploadWindowOpen={isUploadWindowOpen}
       isFileUploading={isFileUploading}
+      withTooltip={withTooltip}
+      measureOverflowOnOpen={measureOverflowOnOpen}
     />
   );
 };

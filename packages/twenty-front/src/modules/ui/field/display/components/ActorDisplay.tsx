@@ -4,13 +4,15 @@ import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getActorSourceIcon } from '@/ui/field/display/utils/getActorSourceIcon';
+import { type FieldDisplayTooltipProps } from '@/ui/field/display/types/FieldDisplayTooltipProps';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type ActorDisplayProps = Partial<FieldActorValue> & {
-  avatarUrl?: string | null;
-};
+type ActorDisplayProps = Partial<FieldActorValue> &
+  FieldDisplayTooltipProps & {
+    avatarUrl?: string | null;
+  };
 
 export const ActorDisplay = ({
   name,
@@ -18,12 +20,16 @@ export const ActorDisplay = ({
   workspaceMemberId,
   avatarUrl,
   context,
+  withTooltip,
+  measureOverflowOnOpen,
 }: ActorDisplayProps) => {
   const LeftIcon = getActorSourceIcon({ source, context });
 
   return (
     <Chip
       variant="ghost"
+      withTooltip={withTooltip}
+      measureOverflowOnOpen={measureOverflowOnOpen}
       startElement={
         source === 'APPLICATION' && isDefined(context?.applicationId) ? (
           <AppChip

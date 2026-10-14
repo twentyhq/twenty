@@ -27,6 +27,10 @@
   Positive integer limiting visible lines, matching Text. Cannot be combined with `truncate`.
 </ParamField>
 
+<ParamField body="measureOverflowOnOpen" type="boolean">
+  Keeps hover listeners active before pointer entry and measures overflow when opening. Useful for text mounted beneath the pointer. Defaults to false.
+</ParamField>
+
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
   Replaces the default div. Native props, styles, handlers and ref target the displayed text, not the popup.
 </ParamField>

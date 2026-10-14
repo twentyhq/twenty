@@ -12,4 +12,6 @@ export type TagProps = Omit<
     color: TagColor;
     startIcon?: ReactNode;
     borderStyle?: 'solid' | 'dashed';
+    withTooltip?: boolean;
+    measureOverflowOnOpen?: boolean;
   };

@@ -128,6 +128,30 @@ export const FullLabel: Story = {
   },
 };
 
+export const WithoutTooltip: Story = {
+  ...WithLongText,
+  args: {
+    ...WithLongText.args,
+    withTooltip: false,
+  },
+  play: async ({ canvasElement }) => {
+    const text = within(canvasElement).getByText(
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+    );
+
+    await expect(getComputedStyle(text).textOverflow).toBe('ellipsis');
+    await expect(text.scrollWidth).toBeGreaterThan(text.clientWidth);
+    await userEvent.hover(text);
+    await expect(
+      within(canvasElement.ownerDocument.body).findByRole(
+        'tooltip',
+        {},
+        { timeout: 700 },
+      ),
+    ).rejects.toThrow();
+  },
+};
+
 export const Catalog: CatalogStory<Story, typeof Tag> = {
   argTypes: {
     color: { control: false },
