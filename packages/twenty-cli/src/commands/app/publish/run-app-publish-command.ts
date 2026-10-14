@@ -86,7 +86,7 @@ export const runAppPublishCommand: CommandRun = async (context) => {
       diagnostics,
     },
     human: formatSuccessLine(
-      `Published ${published.name}@${published.version} to ${target?.apiUrl ?? 'npm'}${isPrivate ? ' (not installed)' : ''}`,
+      `Published ${published.name}@${published.version} to ${target?.apiUrl ?? 'npm'}${isPrivate ? '. Existing installations may upgrade automatically.' : ''}`,
     ),
   };
 };

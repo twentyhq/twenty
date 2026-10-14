@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { openAsBlob } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { basename } from 'node:path';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { putUploadFile } from '@/app/deployment/put-upload-file';
 import { withPhaseDetails } from '@/app/deployment/with-phase-details';
@@ -135,7 +135,7 @@ export const publishAppToServer = async ({
       hint: failure.hint,
       details: {
         ...failure.details,
-        ...(fileId ? { fileId } : {}),
+        ...(isDefined(fileId) ? { fileId } : {}),
         registry: toPublicTarget(target),
       },
     });
