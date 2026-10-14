@@ -3,6 +3,8 @@ import { IconArrowUpRight } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { useOpenLogConsoleTab } from '@/log-console/hooks/useOpenLogConsoleTab';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type LogConsoleOpenWebhookButtonProps = {
   webhookId: string;
@@ -13,6 +15,13 @@ export const LogConsoleOpenWebhookButton = ({
 }: LogConsoleOpenWebhookButtonProps) => {
   const { t } = useLingui();
   const { openLogConsoleTab } = useOpenLogConsoleTab();
+  const hasApiKeysAndWebhooksPermission = useHasPermissionFlag(
+    PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+  );
+
+  if (!hasApiKeysAndWebhooksPermission) {
+    return null;
+  }
 
   return (
     <Button
