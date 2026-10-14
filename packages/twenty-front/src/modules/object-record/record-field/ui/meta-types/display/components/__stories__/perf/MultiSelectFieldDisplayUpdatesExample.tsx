@@ -3,18 +3,24 @@ import { useContext, useState } from 'react';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { MultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MultiSelectFieldDisplay';
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMultiSelectMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Button } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const MultiSelectFieldDisplayUpdatesExample = () => {
   const fieldContext = useContext(FieldContext);
   const { isFocused, setIsFocused } = useFieldFocus();
-  const fieldDefinition =
-    fieldContext.fieldDefinition as FieldDefinition<FieldMultiSelectMetadata>;
+  const { fieldDefinition } = fieldContext;
+
+  assertFieldMetadata(
+    FieldMetadataType.MULTI_SELECT,
+    isFieldMultiSelect,
+    fieldDefinition,
+  );
   const [options, setOptions] = useState(fieldDefinition.metadata.options);
 
   const setFieldValue = (values: string[]) => {

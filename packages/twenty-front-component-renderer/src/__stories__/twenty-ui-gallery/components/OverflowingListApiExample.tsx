@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { useRef, useState } from 'react';
 import { OverflowingList } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
@@ -54,10 +55,15 @@ export const OverflowingListApiExample = () => {
           popupProps={{
             ref: popupRef,
             render: <section data-native-popup="section" />,
-            onClick: (event) =>
-              setLastPopupClick(
-                `${event.nativeEvent.type}:${(event.target as HTMLElement).textContent}`,
-              ),
+            onClick: (event) => {
+              const targetText =
+                'textContent' in event.target &&
+                isString(event.target.textContent)
+                  ? event.target.textContent
+                  : '';
+
+              setLastPopupClick(`${event.nativeEvent.type}:${targetText}`);
+            },
           }}
         >
           {['Controlled Alpha', 'Controlled Bravo', 'Controlled Charlie'].map(
