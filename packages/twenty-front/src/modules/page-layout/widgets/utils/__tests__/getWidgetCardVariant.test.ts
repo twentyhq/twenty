@@ -1,5 +1,5 @@
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
-import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 describe('getWidgetCardVariant', () => {
   describe('page layout variants', () => {
@@ -11,8 +11,6 @@ describe('getWidgetCardVariant', () => {
         getWidgetCardVariant({
           isSideColumnContext: false,
           pageLayoutType,
-          presentation: 'stack',
-          widgetType: WidgetType.FRONT_COMPONENT,
         }),
       ).toBe('framed');
     });
@@ -26,8 +24,6 @@ describe('getWidgetCardVariant', () => {
         getWidgetCardVariant({
           isSideColumnContext: false,
           pageLayoutType,
-          presentation: 'stack',
-          widgetType: WidgetType.FRONT_COMPONENT,
         }),
       ).toBe('flush');
     });
@@ -38,8 +34,6 @@ describe('getWidgetCardVariant', () => {
       getWidgetCardVariant({
         isSideColumnContext: true,
         pageLayoutType: PageLayoutType.DASHBOARD,
-        presentation: 'stack',
-        widgetType: WidgetType.FRONT_COMPONENT,
       }),
     ).toBe('flush');
   });

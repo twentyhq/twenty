@@ -9,7 +9,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { StyledWidgetContentFrame } from '@/page-layout/widgets/components/WidgetContentFrame';
-import { isSoloStandaloneFrontComponent } from '@/page-layout/widgets/utils/isSoloStandaloneFrontComponent';
+import { useIsFullPageFrontComponent } from '@/page-layout/widgets/hooks/useIsFullPageFrontComponent';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 
@@ -40,7 +40,8 @@ export const FrontComponentWidgetRenderer = ({
 }: FrontComponentWidgetRendererProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { presentation } = usePageLayoutContentContext();
-  const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const isFullPageFrontComponent = useIsFullPageFrontComponent(widget.type);
 
   const configuration = widget.configuration;
 
@@ -55,19 +56,13 @@ export const FrontComponentWidgetRenderer = ({
   const selectedRecordIds = isDefined(targetRecordIdentifier?.id)
     ? [targetRecordIdentifier.id]
     : undefined;
-  const isFullPageApp =
-    isSoloStandaloneFrontComponent({
-      pageLayoutType: layoutType,
-      presentation,
-      widgetType: widget.type,
-    }) && !isPageLayoutInEditMode;
-  const loadingFallback = isFullPageApp ? null : (
+  const loadingFallback = isFullPageFrontComponent ? null : (
     <FrontComponentSkeletonLoader />
   );
 
   return (
     <StyledContainer
-      isBorderless={isFullPageApp}
+      isBorderless={isFullPageFrontComponent}
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}
     >

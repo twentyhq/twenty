@@ -4,6 +4,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
+import { useIsFullPageFrontComponent } from '@/page-layout/widgets/hooks/useIsFullPageFrontComponent';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
@@ -62,8 +63,9 @@ export const WidgetCardShell = ({
   onMouseLeave,
 }: WidgetCardShellProps) => {
   const theme = useTheme();
-  const { layoutMode, presentation } = usePageLayoutContentContext();
+  const { layoutMode } = usePageLayoutContentContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const isFullPageFrontComponent = useIsFullPageFrontComponent(widget.type);
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
   const isFixedHeightIframe =
@@ -71,16 +73,11 @@ export const WidgetCardShell = ({
     isVerticalList &&
     widget.type === WidgetType.IFRAME &&
     !isViewportFillingWidget(widget);
-  const contentPadding = isWidgetCardFlushInViewMode({
-    isEditable,
-    variant,
-  })
-    ? getWidgetContentPadding({
-        pageLayoutType: currentPageLayout.type,
-        presentation,
-        widgetType: widget.type,
-      })
-    : 'default';
+  const contentPadding = isFullPageFrontComponent
+    ? 'none'
+    : isWidgetCardFlushInViewMode({ isEditable, variant })
+      ? getWidgetContentPadding(widget.type)
+      : 'default';
 
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;

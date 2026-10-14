@@ -7,6 +7,7 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { useIsFullPageFrontComponent } from '@/page-layout/widgets/hooks/useIsFullPageFrontComponent';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
@@ -47,6 +48,8 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const { presentation } = usePageLayoutContentContext();
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+
+  const isFullPageFrontComponent = useIsFullPageFrontComponent(widget.type);
 
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||
@@ -90,12 +93,12 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     setWidgetCardHovered(false);
   };
 
-  const variant = getWidgetCardVariant({
-    isSideColumnContext,
-    pageLayoutType: currentPageLayout.type,
-    presentation,
-    widgetType: widget.type,
-  });
+  const variant = isFullPageFrontComponent
+    ? 'flush'
+    : getWidgetCardVariant({
+        isSideColumnContext,
+        pageLayoutType: currentPageLayout.type,
+      });
 
   return {
     isPageLayoutInEditMode,
