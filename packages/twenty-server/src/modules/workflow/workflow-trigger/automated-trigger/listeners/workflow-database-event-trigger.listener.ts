@@ -86,11 +86,12 @@ export class WorkflowDatabaseEventTriggerListener {
       return;
     }
 
-    const clonedPayload = structuredClone(payload);
+    const enrichedPayload = structuredClone(payload);
 
-    await this.enrichCreatedEvent(clonedPayload);
+    await this.enrichCreatedEvent(enrichedPayload);
     await this.handleEvent({
-      payload: clonedPayload,
+      payload,
+      enrichedPayload,
       action: DatabaseEventAction.CREATED,
     });
   }
@@ -103,12 +104,13 @@ export class WorkflowDatabaseEventTriggerListener {
       return;
     }
 
-    const clonedPayload = structuredClone(payload);
+    const enrichedPayload = structuredClone(payload);
 
-    await this.enrichUpdatedEvent(clonedPayload);
+    await this.enrichUpdatedEvent(enrichedPayload);
 
     await this.handleEvent({
-      payload: clonedPayload,
+      payload,
+      enrichedPayload,
       action: DatabaseEventAction.UPDATED,
     });
   }
@@ -121,11 +123,12 @@ export class WorkflowDatabaseEventTriggerListener {
       return;
     }
 
-    const clonedPayload = structuredClone(payload);
+    const enrichedPayload = structuredClone(payload);
 
-    await this.enrichDeletedEvent(clonedPayload);
+    await this.enrichDeletedEvent(enrichedPayload);
     await this.handleEvent({
-      payload: clonedPayload,
+      payload,
+      enrichedPayload,
       action: DatabaseEventAction.DELETED,
     });
   }
@@ -138,11 +141,12 @@ export class WorkflowDatabaseEventTriggerListener {
       return;
     }
 
-    const clonedPayload = structuredClone(payload);
+    const enrichedPayload = structuredClone(payload);
 
-    await this.enrichDestroyedEvent(clonedPayload);
+    await this.enrichDestroyedEvent(enrichedPayload);
     await this.handleEvent({
-      payload: clonedPayload,
+      payload,
+      enrichedPayload,
       action: DatabaseEventAction.DESTROYED,
     });
   }
@@ -155,10 +159,9 @@ export class WorkflowDatabaseEventTriggerListener {
       return;
     }
 
-    const clonedPayload = structuredClone(payload);
-
     await this.handleEvent({
-      payload: clonedPayload,
+      payload,
+      enrichedPayload: structuredClone(payload),
       action: DatabaseEventAction.UPSERTED,
     });
   }
@@ -351,9 +354,11 @@ export class WorkflowDatabaseEventTriggerListener {
 
   private async handleEvent({
     payload,
+    enrichedPayload,
     action,
   }: {
     payload: WorkspaceEventBatch<ObjectRecordEvent>;
+    enrichedPayload: WorkspaceEventBatch<ObjectRecordEvent>;
     action: DatabaseEventAction;
   }) {
     const workspaceId = payload.workspaceId;
@@ -379,7 +384,12 @@ export class WorkflowDatabaseEventTriggerListener {
       if (!admittedEventsByApplicationId.has(installedApplication?.id)) {
         admittedEventsByApplicationId.set(
           installedApplication?.id,
-          await this.resolveAdmittedEvents({ payload, installedApplication }),
+          await this.resolveAdmittedEvents({
+            payload: isDefined(installedApplication)
+              ? payload
+              : enrichedPayload,
+            installedApplication,
+          }),
         );
       }
 

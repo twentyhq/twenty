@@ -3,16 +3,20 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import type { ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
+  FieldMetadataType,
   MetadataReadability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
+  RelationType,
 } from 'twenty-shared/types';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -28,6 +32,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let messageQueueService: jest.Mocked<MessageQueueService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let recordShareStorageService: jest.Mocked<RecordShareStorageService>;
+  let workflowCommonWorkspaceService: {
+    getWorkflowById: jest.Mock;
+    getObjectMetadataInfo: jest.Mock;
+  };
 
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
@@ -172,6 +180,15 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     } as unknown as jest.Mocked<RecordShareStorageService>;
 
+    workflowCommonWorkspaceService = {
+      getWorkflowById: jest.fn(),
+      getObjectMetadataInfo: jest.fn().mockResolvedValue({
+        flatObjectMetadata: createMockFlatObjectMetadata({}),
+        flatObjectMetadataMaps: { byId: {}, byName: {} },
+        flatFieldMetadataMaps: { byId: {}, byName: {} },
+      }),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowDatabaseEventTriggerListener,
@@ -199,14 +216,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         },
         {
           provide: WorkflowCommonWorkspaceService,
-          useValue: {
-            getWorkflowById: jest.fn(),
-            getObjectMetadataInfo: jest.fn().mockResolvedValue({
-              flatObjectMetadata: createMockFlatObjectMetadata({}),
-              flatObjectMetadataMaps: { byId: {}, byName: {} },
-              flatFieldMetadataMaps: { byId: {}, byName: {} },
-            }),
-          },
+          useValue: workflowCommonWorkspaceService,
         },
       ],
     }).compile();
@@ -398,6 +408,87 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         },
         { retryLimit: 3 },
       );
+    });
+
+    describe('with a record related to a company', () => {
+      const company = { id: 'company-id', name: 'Acme' };
+      const createdRecord = {
+        id: 'test-record',
+        field1: 'new',
+        companyId: company.id,
+      };
+      const createPayload: WorkspaceEventBatch<any> = {
+        ...mockPayload,
+        name: 'createEvent',
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: { after: createdRecord },
+          },
+        ],
+      };
+      const createListener = {
+        type: AutomatedTriggerType.DATABASE_EVENT,
+        workflowId,
+        settings: { eventName: 'createEvent' },
+      };
+
+      const enqueuedRecord = () =>
+        messageQueueService.add.mock.calls[0]?.[1]?.payload?.properties?.after;
+
+      beforeEach(() => {
+        const companyField = getFlatFieldMetadataMock({
+          id: 'company-field-id',
+          universalIdentifier: 'company-field-id',
+          objectMetadataId: 'test-object-metadata',
+          type: FieldMetadataType.RELATION,
+          name: 'company',
+          settings: {
+            relationType: RelationType.MANY_TO_ONE,
+            joinColumnName: 'companyId',
+          },
+          relationTargetObjectMetadataId: 'company-object-id',
+        });
+
+        workflowCommonWorkspaceService.getObjectMetadataInfo.mockResolvedValue({
+          flatObjectMetadata: createMockFlatObjectMetadata({
+            fieldIds: [companyField.id],
+          }),
+          flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: {
+              id: 'company-object-id',
+              universalIdentifier: 'company-object-id',
+              nameSingular: 'company',
+            } as never,
+            flatEntityMaps: createEmptyFlatEntityMaps(),
+          }),
+          flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: companyField,
+            flatEntityMaps: createEmptyFlatEntityMaps(),
+          }),
+        });
+        workspaceOrmManager.getRepository.mockReturnValue({
+          find: jest.fn().mockResolvedValue([company]),
+        } as never);
+      });
+
+      it('should give a workspace workflow the related company', async () => {
+        setTriggerMap([createListener]);
+
+        await listener.handleObjectRecordCreateEvent(createPayload);
+
+        expect(enqueuedRecord()).toEqual({ ...createdRecord, company });
+      });
+
+      it('should not give an application workflow the related company', async () => {
+        setTriggerMap([createListener], {
+          installedApplicationRole: { canReadObjectRecords: true },
+        });
+
+        await listener.handleObjectRecordCreateEvent(createPayload);
+
+        expect(enqueuedRecord()).toEqual(createdRecord);
+      });
     });
 
     it('should handle delete events correctly', async () => {
