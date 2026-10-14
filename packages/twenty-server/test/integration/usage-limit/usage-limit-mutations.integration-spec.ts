@@ -177,32 +177,14 @@ describe('Usage limit mutations', () => {
       );
     });
 
-    it('creates a credit quota over all usage and lists it with its consumption', async () => {
-      const usageLimitId = await createUsageLimit({
-        resourceType: UsageResourceType.ALL,
-        operationType: UsageOperationType.ALL,
-      });
-
-      const quotas = await findQuotasWithConsumption();
-
-      expect(quotas).toContainEqual(
-        expect.objectContaining({
-          id: usageLimitId,
-          limitValue: 1_000_000,
-          spenderType: 'workspace',
-        }),
-      );
-    });
-
-    it('refuses a quota over all usage scoped to a member', async () => {
+    it('refuses a quota over all usage for the workspace', async () => {
       const response = await createUsageLimitRequest({
         resourceType: UsageResourceType.ALL,
         operationType: UsageOperationType.ALL,
-        spenderType: 'userWorkspace',
       });
 
       expect(response.body.errors?.[0]?.message).toBe(
-        'ALL quota limits cannot be scoped to userWorkspace',
+        'ALL quota limits cannot be scoped to workspace',
       );
     });
   });

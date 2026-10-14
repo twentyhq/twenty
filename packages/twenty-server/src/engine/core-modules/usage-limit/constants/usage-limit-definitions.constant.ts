@@ -12,7 +12,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           allowedUnits: [UsageUnit.CREDIT],
         },
       ],
-      allowedSpenderTypes: ['workspace', 'application'],
+      allowedSpenderTypes: ['application'],
       defaults: [],
     },
   },

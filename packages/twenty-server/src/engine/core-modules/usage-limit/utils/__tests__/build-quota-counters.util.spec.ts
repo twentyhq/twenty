@@ -124,19 +124,31 @@ describe('buildQuotaCounters', () => {
   });
 
   it('ranks an every-resource limit after the resource and every-operation ones', () => {
-    const counters = buildCounters({
+    const applicationLimit = {
+      spenderType: 'application',
+      spenderId: 'app-1',
+    } as const;
+
+    const counters = buildQuotaCounters({
       limits: [
         buildLimit({
+          ...applicationLimit,
           id: 'every-resource',
           resourceType: UsageResourceType.ALL,
           operationType: UsageOperationType.ALL,
         }),
         buildLimit({
+          ...applicationLimit,
           id: 'every-operation',
           operationType: UsageOperationType.ALL,
         }),
-        buildLimit({ id: 'chat' }),
+        buildLimit({ ...applicationLimit, id: 'chat' }),
       ],
+      quotaLimitDefaults: [],
+      usageSpenders: { applicationId: 'app-1' },
+      workspaceId: 'workspace-1',
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      periodByUnit: { month: MONTH_PERIOD },
     });
 
     expect(
@@ -149,7 +161,9 @@ describe('buildQuotaCounters', () => {
       [UsageResourceType.AI, UsageOperationType.ALL],
       [UsageResourceType.ALL, UsageOperationType.ALL],
     ]);
-    expect(counters[2].key).toContain(':quota-consumed:ALL:ALL:workspace:');
+    expect(counters[2].key).toContain(
+      ':quota-consumed:ALL:ALL:application:app-1:',
+    );
   });
 
   it('ranks a named user counter before workspace counters', () => {

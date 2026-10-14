@@ -1,5 +1,4 @@
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
-import { findLimitsForResource } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-resource.util';
 import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
@@ -14,10 +13,9 @@ export const findAiChatCreditLimits = ({
   usageLimits: UsageLimits;
   userWorkspaceId: string;
 }): FlatUsageLimit[] => {
-  const creditQuotas = findLimitsForResource({
-    usageLimits,
-    resourceType: UsageResourceType.AI,
-  }).filter(
+  const creditQuotas = (
+    usageLimits.byResourceType[UsageResourceType.AI] ?? []
+  ).filter(
     (limit) => limit.limitKind === 'quota' && limit.unit === UsageUnit.CREDIT,
   );
 

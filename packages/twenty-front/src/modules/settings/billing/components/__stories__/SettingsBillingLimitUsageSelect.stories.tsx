@@ -22,7 +22,7 @@ const DEFINITIONS = {
           allowedUnits: [UsageUnit.CREDIT],
         },
       ],
-      allowedSpenderTypes: ['workspace', 'application'],
+      allowedSpenderTypes: ['application'],
       operatorOnlyScopes: [],
     },
     {

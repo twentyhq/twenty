@@ -75,6 +75,8 @@ describe('buildQuotaExhaustedScope', () => {
         counter: buildLimitCounter({
           resourceType: UsageResourceType.ALL,
           operationType: UsageOperationType.ALL,
+          spenderType: 'application',
+          spenderId: 'application-1',
         }),
       }),
     ).toMatchObject({

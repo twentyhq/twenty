@@ -25,9 +25,7 @@ describe('buildQuotaDefinitions', () => {
   });
 
   it('carries the allow lists a form needs to offer a scope', () => {
-    const quota = buildQuotaDefinitions().find(
-      (definition) => definition.limitKind === 'quota',
-    );
+    const quota = findQuotaDefinition(UsageResourceType.AI);
 
     expect(quota?.allowedOperations.length).toBeGreaterThan(0);
     expect(quota?.allowedSpenderTypes).toContain('workspace');
@@ -75,7 +73,7 @@ describe('buildQuotaDefinitions', () => {
     ).toEqual([]);
   });
 
-  it('offers every resource as one credit scope for the workspace or an application', () => {
+  it('offers every resource as one credit scope for an application', () => {
     const allResources = findQuotaDefinition(UsageResourceType.ALL);
 
     expect(allResources?.allowedOperations).toEqual([
@@ -84,10 +82,7 @@ describe('buildQuotaDefinitions', () => {
         allowedUnits: [UsageUnit.CREDIT],
       },
     ]);
-    expect(allResources?.allowedSpenderTypes).toEqual([
-      'workspace',
-      'application',
-    ]);
+    expect(allResources?.allowedSpenderTypes).toEqual(['application']);
   });
 
   it('offers credits and runs on code execution, with no every-operation entry', () => {
