@@ -79,7 +79,9 @@ export const FileEditor = () => (
 
 ## Native integration
 
-`ref` points to the outer Twenty group div, which uses `display: contents` by default. Use `containerProps` for that div's native attributes, event handlers, class and style. Monaco React's `wrapperProps` targets its section, and `className` targets the editor-container div inside that section. A native section ref may be supplied through `wrapperProps`; use `onMount` for the Monaco editor instance.
+`ref` points to the outer Twenty group div, which uses `display: contents` by default. This keeps the Monaco section in the parent's sizing and flex layout. The outer div has no measurable layout box.
+
+Use `containerProps` for the outer div's native attributes, event handlers, class and style. Background, border, padding and dimensions require overriding its `display`. Prefer Monaco React's `wrapperProps` section for layout styles and a measurable native ref. `className` targets the editor-container div inside that section; use `onMount` for the Monaco editor instance.
 
 The Monaco React section contains its own loading content until the editor is ready. During initial bundled Monaco configuration or `isLoading`, Twenty renders a separate loader without `wrapperProps` or `className`. The outer `containerProps` and `ref` remain available in these states.
 

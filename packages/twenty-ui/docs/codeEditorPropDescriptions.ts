@@ -27,10 +27,10 @@ export const CODE_EDITOR_PROP_DESCRIPTIONS = {
     'Keeps the current model when the editor unmounts. Defaults to false. The caller owns disposal of retained models.',
   className: 'Class applied to the Monaco editor-container div.',
   wrapperProps:
-    'Native props passed unchanged to the Monaco React section around the editor and Monaco React loading content. Not applied to the separate Twenty loader during initial Monaco configuration or `isLoading`. Native styles can override the section sizing.',
+    'Native props passed unchanged to the Monaco React section around the editor and Monaco React loading content. Use this section for layout styles and a measurable native ref. Not applied to the separate Twenty loader during initial Monaco configuration or `isLoading`. Native styles can override the section sizing.',
   containerProps:
-    'Native props, className and style for the outer Twenty group div, which uses display: contents by default. Its keyboard handler runs before focused editor keystrokes stop propagating.',
-  ref: 'Ref to the outer Twenty div. Use onMount for the Monaco editor instance.',
+    "Native props, className and style for the outer Twenty group div. Its default `display: contents` preserves the Monaco section's parent sizing and flex layout without creating a layout box. Background, border, padding and dimensions require overriding `display`. Prefer `wrapperProps` for section layout styles. Its keyboard handler runs before focused editor keystrokes stop propagating.",
+  ref: 'Ref to the outer Twenty group div, which has no measurable layout box with its default `display: contents`. Use `wrapperProps` for a measurable section ref or `onMount` for the Monaco editor instance.',
   beforeMount:
     'Called with Monaco before editor creation, after the Twenty theme has been defined. Use it to register custom themes or languages.',
   onMount:
