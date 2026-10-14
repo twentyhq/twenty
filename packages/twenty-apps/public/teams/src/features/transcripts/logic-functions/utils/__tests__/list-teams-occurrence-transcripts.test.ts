@@ -47,7 +47,7 @@ describe('listTeamsOccurrenceTranscripts', () => {
       { id: 'other-week', createdDateTime: '2026-09-15T10:05:00Z' },
     ]);
 
-    const transcripts = await listTeamsOccurrenceTranscripts({
+    const { transcripts } = await listTeamsOccurrenceTranscripts({
       accessToken: 'token',
       occurrences: WEEKLY_SYNC_OCCURRENCES,
     });
@@ -77,17 +77,19 @@ describe('listTeamsOccurrenceTranscripts', () => {
       return [{ id: 'standup', createdDateTime: '2026-09-02T09:05:00Z' }];
     });
 
-    const transcripts = await listTeamsOccurrenceTranscripts({
-      accessToken: 'token',
-      occurrences: [
-        ...WEEKLY_SYNC_OCCURRENCES,
-        buildOccurrence('standup', '2026-09-02T09:00:00.000Z'),
-      ],
-    });
+    const { transcripts, unavailableMeetingCount } =
+      await listTeamsOccurrenceTranscripts({
+        accessToken: 'token',
+        occurrences: [
+          ...WEEKLY_SYNC_OCCURRENCES,
+          buildOccurrence('standup', '2026-09-02T09:00:00.000Z'),
+        ],
+      });
 
     expect(transcripts.map(({ transcript }) => transcript.id)).toEqual([
       'standup',
     ]);
+    expect(unavailableMeetingCount).toBe(1);
   });
 
   it('should fail when Microsoft Graph fails for another reason', async () => {

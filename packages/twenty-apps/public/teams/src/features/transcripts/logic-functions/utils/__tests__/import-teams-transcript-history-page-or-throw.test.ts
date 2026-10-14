@@ -22,6 +22,8 @@ vi.mock(
   }),
 );
 
+const RUN_STARTED_AT = '2026-09-15T00:00:00.000Z';
+
 const TRANSCRIPT_CONTENT = [
   'WEBVTT',
   '',
@@ -42,6 +44,7 @@ const buildTranscript = (transcriptId: string) => ({
 type CallRecordingRow = {
   id: string;
   status: string;
+  createdAt: string;
   deletedAt: string | null;
 };
 
@@ -98,7 +101,12 @@ const buildCoreApiClient = (rows: CallRecordingRow[]) => {
         };
       }) => {
         for (const { id, status } of request.createCallRecordings.__args.data) {
-          rowsById.set(id, { id, status, deletedAt: null });
+          rowsById.set(id, {
+            id,
+            status,
+            createdAt: '2026-09-15T00:02:00.000Z',
+            deletedAt: null,
+          });
         }
 
         return {};
@@ -125,11 +133,29 @@ const getWrittenTranscriptIds = (
 const buildRow = (
   transcriptId: string,
   status: string,
-  deletedAt: string | null = null,
+  {
+    createdAt = '2026-08-01T00:00:00.000Z',
+    deletedAt = null,
+  }: { createdAt?: string; deletedAt?: string | null } = {},
 ): CallRecordingRow => ({
   id: computeCallRecordingIdForTeamsTranscript(transcriptId),
   status,
+  createdAt,
   deletedAt,
+});
+
+const toPageCounts = (
+  counts: Partial<
+    Record<'importedCount' | 'skippedCount' | 'unavailableCount', number>
+  >,
+) => ({
+  transcriptCount: 0,
+  alreadyImportedCount: 0,
+  deletedCount: 0,
+  importedCount: 0,
+  skippedCount: 0,
+  unavailableCount: 0,
+  ...counts,
 });
 
 describe('importTeamsTranscriptHistoryPageOrThrow', () => {
@@ -142,7 +168,9 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
     const transcriptIds = ['completed', 'deleted', 'processing', 'new'];
     const coreApiClient = buildCoreApiClient([
       buildRow('completed', 'COMPLETED'),
-      buildRow('deleted', 'COMPLETED', '2026-09-02T00:00:00.000Z'),
+      buildRow('deleted', 'COMPLETED', {
+        deletedAt: '2026-09-02T00:00:00.000Z',
+      }),
       buildRow('processing', 'PROCESSING'),
     ]);
 
@@ -151,9 +179,10 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
+        importedSince: RUN_STARTED_AT,
         isRunActive: async () => true,
       }),
-    ).resolves.toBe(2);
+    ).resolves.toEqual(toPageCounts({ importedCount: 2, skippedCount: 2 }));
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
       'processing',
       'new',
@@ -170,11 +199,9 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
     downloadMeetingTranscriptContentMock.mockImplementation(async () => {
       coreApiClient.rowsById.set(
         computeCallRecordingIdForTeamsTranscript('deleted-during-import'),
-        buildRow(
-          'deleted-during-import',
-          'PROCESSING',
-          '2026-09-15T00:01:00.000Z',
-        ),
+        buildRow('deleted-during-import', 'PROCESSING', {
+          deletedAt: '2026-09-15T00:01:00.000Z',
+        }),
       );
 
       return TRANSCRIPT_CONTENT;
@@ -185,9 +212,32 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
+        importedSince: RUN_STARTED_AT,
         isRunActive: async () => true,
       }),
-    ).resolves.toBe(1);
+    ).resolves.toEqual(toPageCounts({ importedCount: 1, skippedCount: 1 }));
+    expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
+      'new',
+    ]);
+  });
+
+  it('should count recordings a failed attempt of the page already wrote as imported', async () => {
+    const transcriptIds = ['written-by-failed-attempt', 'new'];
+    const coreApiClient = buildCoreApiClient([
+      buildRow('written-by-failed-attempt', 'COMPLETED', {
+        createdAt: RUN_STARTED_AT,
+      }),
+    ]);
+
+    await expect(
+      importTeamsTranscriptHistoryPageOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        transcripts: transcriptIds.map(buildTranscript),
+        importedSince: RUN_STARTED_AT,
+        isRunActive: async () => true,
+      }),
+    ).resolves.toEqual(toPageCounts({ importedCount: 2 }));
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
       'new',
     ]);
@@ -212,9 +262,10 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
+        importedSince: RUN_STARTED_AT,
         isRunActive: async () => true,
       }),
-    ).resolves.toBe(1);
+    ).resolves.toEqual(toPageCounts({ importedCount: 1, unavailableCount: 2 }));
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
       'new',
     ]);
@@ -234,6 +285,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient: buildCoreApiClient([]),
         transcripts: [buildTranscript('new')],
+        importedSince: RUN_STARTED_AT,
         isRunActive: async () => true,
       }),
     ).rejects.toThrow('503');
@@ -251,9 +303,10 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         accessToken: 'token',
         coreApiClient,
         transcripts: transcriptIds.map(buildTranscript),
+        importedSince: RUN_STARTED_AT,
         isRunActive: async () => true,
       }),
-    ).resolves.toBe(11);
+    ).resolves.toEqual(toPageCounts({ importedCount: 11 }));
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(2);
     expect(coreApiClient.rowsById.size).toBe(11);
   });
@@ -272,9 +325,10 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         transcripts: Array.from({ length: 11 }, (_, index) =>
           buildTranscript(`new-${index}`),
         ),
+        importedSince: RUN_STARTED_AT,
         isRunActive,
       }),
-    ).resolves.toBe(10);
+    ).resolves.toEqual(toPageCounts({ importedCount: 10 }));
     expect(coreApiClient.mutation).toHaveBeenCalledTimes(1);
   });
 });
