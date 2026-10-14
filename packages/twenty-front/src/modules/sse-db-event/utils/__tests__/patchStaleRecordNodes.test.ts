@@ -108,6 +108,7 @@ describe('patchStaleRecordNodes', () => {
       findNewerRecord: findNewerStepLogs,
     });
 
+    expect(findNewerStepLogs).toHaveBeenCalledTimes(1);
     expect(findNewerStepLogs).toHaveBeenCalledWith({
       cacheId: 'WorkflowRun:run-1',
       updatedAt: undefined,
