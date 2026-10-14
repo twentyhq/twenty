@@ -259,45 +259,43 @@ export class UsageAnalyticsService {
 
   async getUserCreditsUsedMicroForScope({
     workspaceId,
-    userWorkspaceId,
     resourceType,
     operationType,
+    spenderType,
+    spenderId,
     periodStart,
     periodEnd,
     periodAnchor,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
     resourceType: UsageResourceType;
     operationType: UsageOperationType;
+    spenderType: SpenderType;
+    spenderId: string | null;
     periodStart: Date;
     periodEnd: Date;
     periodAnchor: UsagePeriodAnchor;
   }): Promise<number> {
-    const userWorkspaceClause = isNonEmptyString(userWorkspaceId)
-      ? 'AND userWorkspaceId = {userWorkspaceId:String}'
-      : '';
-
-    const operationTypeClause =
-      operationType === UsageOperationType.ALL
-        ? ''
-        : 'AND operationType = {operationType:String}';
+    const scopeFilter = buildUsageScopeFilter({
+      operationType,
+      unit: null,
+      spenderType,
+      spenderId,
+    });
 
     const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
       `SELECT sum(userCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND resourceType = {resourceType:String}
-         ${operationTypeClause}
-         ${userWorkspaceClause}
-         ${buildUsagePeriodClause(periodAnchor)}`,
+         ${buildUsagePeriodClause(periodAnchor)}
+         ${scopeFilter.clause}`,
       {
         workspaceId,
-        userWorkspaceId,
         resourceType,
-        operationType,
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
+        ...scopeFilter.params,
       },
     );
 

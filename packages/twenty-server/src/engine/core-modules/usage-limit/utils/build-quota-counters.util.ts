@@ -68,9 +68,27 @@ export const buildQuotaCounters = ({
     .flatMap((quotaLimitDefault) => {
       const period = periodByUnit[quotaLimitDefault.periodUnit];
 
-      return isDefined(period)
-        ? [buildQuotaDefaultCounter({ workspaceId, quotaLimitDefault, period })]
-        : [];
+      if (!isDefined(period)) {
+        return [];
+      }
+
+      const spenderIds = quotaLimitDefault.isPerSpender
+        ? spenders
+            .filter(
+              (spender) =>
+                spender.spenderType === quotaLimitDefault.spenderType,
+            )
+            .map((spender) => spender.spenderId)
+        : [quotaLimitDefault.spenderId];
+
+      return spenderIds.map((spenderId) =>
+        buildQuotaDefaultCounter({
+          workspaceId,
+          quotaLimitDefault,
+          spenderId,
+          period,
+        }),
+      );
     });
 
   return [...limitCounters, ...defaultCounters].sort(

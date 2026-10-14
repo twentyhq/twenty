@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import uniqBy from 'lodash.uniqby';
 import {
   assertUnreachable,
@@ -42,7 +41,6 @@ import { buildWorkspaceAllowanceCounterKey } from 'src/engine/core-modules/usage
 import { buildConsumeScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-consume-script-arguments.util';
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
-import { buildUserAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-user-allowance-counter-key.util';
 import { buildUserAllowanceFirstScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-user-allowance-first-script-arguments.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
@@ -93,11 +91,6 @@ type QuotaConsumeArgs = {
 type QuotaConsumeResult = {
   consumedValues: (number | null)[];
   isDegraded: boolean;
-};
-
-type CreditCounters = {
-  workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter | null;
-  userAllowanceCounter: UserAllowanceQuotaCounter | null;
 };
 
 type CreditCounterEvent = Pick<
@@ -316,11 +309,19 @@ export class UsageLimitQuotaService {
     periodEnd: Date;
     fallback: UserCreditsFallbackMode;
   } | null> {
+    const events = [
+      { resourceType, operationType, spenders: { userWorkspaceId } },
+    ];
+
+    const { userCreditCounters } = await this.buildQuotaCountersForEvents({
+      workspaceId,
+      events,
+    });
+
     const userAllowanceCounter = await this.buildUserAllowanceCounter({
       workspaceId,
-      userWorkspaceId,
-      resourceType,
-      operationType,
+      events,
+      userCreditCounters,
     });
 
     if (!isDefined(userAllowanceCounter)) {
@@ -445,28 +446,25 @@ export class UsageLimitQuotaService {
     enforcement: QuotaEnforcement;
   }): Promise<QuotaAdmission> {
     const { workspaceId, resourceType, operationType, spenders } = args;
-
-    const creditCountersBuild = this.buildCreditCountersAdmittingOnFailure({
-      workspaceId,
-      events: [{ resourceType, operationType, spenders }],
-    });
-
-    if (requireUserAllowanceCounter) {
-      const { userAllowanceCounter } = await creditCountersBuild;
-
-      if (!isDefined(userAllowanceCounter)) {
-        return QUOTA_ADMISSION_WITHOUT_USER_ALLOWANCE_COUNTER;
-      }
-    }
+    const events = [{ resourceType, operationType, spenders }];
 
     const [
-      limitCounters,
-      {
-        workspaceAllowanceCounter,
-        userAllowanceCounter,
-        isWorkspaceAllowanceSkipped,
-      },
-    ] = await Promise.all([this.buildLimitCounters(args), creditCountersBuild]);
+      { limitCounters, userCreditCounters },
+      { workspaceAllowanceCounter, isWorkspaceAllowanceSkipped },
+    ] = await Promise.all([
+      this.buildQuotaCountersForEvents({ workspaceId, events }),
+      this.buildWorkspaceAllowanceCounterAdmittingOnFailure(workspaceId),
+    ]);
+
+    const userAllowanceCounter = await this.buildUserAllowanceCounter({
+      workspaceId,
+      events,
+      userCreditCounters,
+    });
+
+    if (requireUserAllowanceCounter && !isDefined(userAllowanceCounter)) {
+      return QUOTA_ADMISSION_WITHOUT_USER_ALLOWANCE_COUNTER;
+    }
 
     const counters: QuotaCounter[] = [
       ...limitCounters,
@@ -587,19 +585,18 @@ export class UsageLimitQuotaService {
   }): Promise<QuotaDebitResult> {
     try {
       const [
-        limitCounters,
-        {
-          workspaceAllowanceCounter,
-          userAllowanceCounter,
-          isWorkspaceAllowanceSkipped,
-        },
+        { limitCounters, userCreditCounters },
+        { workspaceAllowanceCounter, isWorkspaceAllowanceSkipped },
       ] = await Promise.all([
-        this.buildLimitCountersForEvents({ workspaceId, events }),
-        this.buildCreditCountersAdmittingOnFailure({
-          workspaceId,
-          events,
-        }),
+        this.buildQuotaCountersForEvents({ workspaceId, events }),
+        this.buildWorkspaceAllowanceCounterAdmittingOnFailure(workspaceId),
       ]);
+
+      const userAllowanceCounter = await this.buildUserAllowanceCounter({
+        workspaceId,
+        events,
+        userCreditCounters,
+      });
 
       const amount = computeWorkspaceAllowanceDebitAmount({ events });
 
@@ -1113,13 +1110,16 @@ export class UsageLimitQuotaService {
     }
   }
 
-  private async buildLimitCountersForEvents({
+  private async buildQuotaCountersForEvents({
     workspaceId,
     events,
   }: {
     workspaceId: string;
-    events: RecordUsageInput[];
-  }): Promise<LimitQuotaCounter[]> {
+    events: CreditCounterEvent[];
+  }): Promise<{
+    limitCounters: LimitQuotaCounter[];
+    userCreditCounters: (LimitQuotaCounter | null)[];
+  }> {
     const scopeEvents = uniqBy(events, (event) =>
       JSON.stringify([
         event.resourceType,
@@ -1128,9 +1128,9 @@ export class UsageLimitQuotaService {
       ]),
     );
 
-    const counters = await Promise.all(
+    const countersByScopeEvent = await Promise.all(
       scopeEvents.map(({ resourceType, operationType, spenders }) =>
-        this.buildLimitCounters({
+        this.buildQuotaCountersForScope({
           workspaceId,
           resourceType,
           operationType,
@@ -1139,7 +1139,19 @@ export class UsageLimitQuotaService {
       ),
     );
 
-    return uniqBy(counters.flat(), (counter) => counter.key);
+    return {
+      limitCounters: uniqBy(
+        countersByScopeEvent
+          .flat()
+          .filter((counter) => counter.unit !== UsageUnit.USER_CREDIT),
+        (counter) => counter.key,
+      ),
+      userCreditCounters: countersByScopeEvent.map(
+        (counters) =>
+          counters.find((counter) => counter.unit === UsageUnit.USER_CREDIT) ??
+          null,
+      ),
+    };
   }
 
   private countConsumeAdmittedOnFailure({
@@ -1228,16 +1240,6 @@ export class UsageLimitQuotaService {
     }
   }
 
-  private async buildLimitCounters(
-    args: QuotaConsumeArgs,
-  ): Promise<LimitQuotaCounter[]> {
-    const quotaCounters = await this.buildQuotaCountersForScope(args);
-
-    return quotaCounters.filter(
-      (counter) => counter.unit !== UsageUnit.USER_CREDIT,
-    );
-  }
-
   private async buildQuotaCountersForScope({
     workspaceId,
     resourceType,
@@ -1323,23 +1325,16 @@ export class UsageLimitQuotaService {
     return quotaLimitDefaults.flat();
   }
 
-  private async buildCreditCountersAdmittingOnFailure({
-    workspaceId,
-    events,
-  }: {
-    workspaceId: string;
-    events: CreditCounterEvent[];
-  }): Promise<CreditCounters & { isWorkspaceAllowanceSkipped: boolean }> {
+  private async buildWorkspaceAllowanceCounterAdmittingOnFailure(
+    workspaceId: string,
+  ): Promise<{
+    workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter | null;
+    isWorkspaceAllowanceSkipped: boolean;
+  }> {
     try {
-      const [workspaceAllowanceCounter, userAllowanceCounter] =
-        await Promise.all([
-          this.buildWorkspaceAllowanceCounter(workspaceId),
-          this.buildUserAllowanceCounterForEvents({ workspaceId, events }),
-        ]);
-
       return {
-        workspaceAllowanceCounter,
-        userAllowanceCounter,
+        workspaceAllowanceCounter:
+          await this.buildWorkspaceAllowanceCounter(workspaceId),
         isWorkspaceAllowanceSkipped: false,
       };
     } catch (error) {
@@ -1353,7 +1348,6 @@ export class UsageLimitQuotaService {
 
       return {
         workspaceAllowanceCounter: null,
-        userAllowanceCounter: null,
         isWorkspaceAllowanceSkipped: true,
       };
     }
@@ -1392,105 +1386,37 @@ export class UsageLimitQuotaService {
     };
   }
 
-  private async buildUserAllowanceCounterForEvents({
+  private async buildUserAllowanceCounter({
     workspaceId,
     events,
+    userCreditCounters,
   }: {
     workspaceId: string;
     events: CreditCounterEvent[];
+    userCreditCounters: (LimitQuotaCounter | null)[];
   }): Promise<UserAllowanceQuotaCounter | null> {
-    const userWorkspaceIds = new Set(
-      events.map((event) => event.spenders?.userWorkspaceId),
-    );
-    const [userWorkspaceId] = userWorkspaceIds;
+    const [userCreditCounter] = userCreditCounters;
 
     if (
-      userWorkspaceIds.size !== 1 ||
-      !isNonEmptyString(userWorkspaceId) ||
-      !events.every(isUserCreditsEligibleEvent)
+      !events.every(isUserCreditsEligibleEvent) ||
+      !isDefined(userCreditCounter) ||
+      !userCreditCounters.every(
+        (counter) => counter?.key === userCreditCounter.key,
+      ) ||
+      !isValidCreditAmountMicro(userCreditCounter.limitValue) ||
+      userCreditCounter.limitValue === 0
     ) {
       return null;
     }
 
-    const userAllowanceCounters = await Promise.all(
-      uniqBy(events, (event) =>
-        JSON.stringify([event.resourceType, event.operationType]),
-      ).map(({ resourceType, operationType }) =>
-        this.buildUserAllowanceCounter({
-          workspaceId,
-          userWorkspaceId,
-          resourceType,
-          operationType,
-        }),
-      ),
-    );
-
-    const [userAllowanceCounter] = userAllowanceCounters;
-
-    return isDefined(userAllowanceCounter) &&
-      userAllowanceCounters.every(
-        (counter) => counter?.key === userAllowanceCounter.key,
-      )
-      ? userAllowanceCounter
-      : null;
-  }
-
-  private async buildUserAllowanceCounter({
-    workspaceId,
-    userWorkspaceId,
-    resourceType,
-    operationType,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    resourceType: UsageResourceType;
-    operationType: UsageOperationType;
-  }): Promise<UserAllowanceQuotaCounter | null> {
     try {
-      const [userCreditLimitCounter] = (
-        await this.buildQuotaCountersForScope({
-          workspaceId,
-          resourceType,
-          operationType,
-          spenders: { userWorkspaceId },
-        })
-      ).filter(
-        (counter) =>
-          counter.unit === UsageUnit.USER_CREDIT &&
-          counter.spenderType === 'userWorkspace',
-      );
-
-      if (
-        !isDefined(userCreditLimitCounter) ||
-        !isValidCreditAmountMicro(userCreditLimitCounter.limitValue) ||
-        userCreditLimitCounter.limitValue === 0
-      ) {
-        return null;
-      }
-
-      const fallback =
-        await this.billingCreditAllowanceService.getUserCreditsFallback(
-          workspaceId,
-        );
-
       return {
+        ...userCreditCounter,
         kind: 'userAllowance',
-        key: buildUserAllowanceCounterKey({
-          workspaceId,
-          userWorkspaceId,
-          resourceType: userCreditLimitCounter.resourceType,
-          operationType: userCreditLimitCounter.operationType,
-          periodStart: userCreditLimitCounter.periodStart,
-        }),
-        limitValue: userCreditLimitCounter.limitValue,
-        unit: UsageUnit.USER_CREDIT,
-        resourceType: userCreditLimitCounter.resourceType,
-        operationType: userCreditLimitCounter.operationType,
-        periodUnit: userCreditLimitCounter.periodUnit,
-        userWorkspaceId,
-        periodStart: userCreditLimitCounter.periodStart,
-        periodEnd: userCreditLimitCounter.periodEnd,
-        fallback,
+        fallback:
+          await this.billingCreditAllowanceService.getUserCreditsFallback(
+            workspaceId,
+          ),
       };
     } catch (error) {
       this.logger.error(
@@ -1681,9 +1607,10 @@ export class UsageLimitQuotaService {
           case 'userAllowance':
             return this.usageAnalyticsService.getUserCreditsUsedMicroForScope({
               workspaceId,
-              userWorkspaceId: counter.userWorkspaceId,
               resourceType: counter.resourceType,
               operationType: counter.operationType,
+              spenderType: counter.spenderType,
+              spenderId: counter.spenderId,
               periodStart: counter.periodStart,
               periodEnd: counter.periodEnd,
               periodAnchor: getPeriodAnchor(counter.periodUnit),
@@ -1709,6 +1636,8 @@ export class UsageLimitQuotaService {
                       workspaceId,
                       resourceType: counter.resourceType,
                       operationType: counter.operationType,
+                      spenderType: counter.spenderType,
+                      spenderId: counter.spenderId,
                       periodStart: counter.periodStart,
                       periodEnd: counter.periodEnd,
                       periodAnchor: getPeriodAnchor(counter.periodUnit),

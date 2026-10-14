@@ -39,6 +39,7 @@ const buildDefault = (
   limitKind: 'quota',
   spenderType: 'workspace',
   spenderId: '',
+  isPerSpender: false,
   unit: UsageUnit.CREDIT,
   periodUnit: 'month',
   periodCount: 1,
@@ -241,5 +242,36 @@ describe('buildQuotaCounters', () => {
       expect.objectContaining({ isDefault: true, periodUnit: 'month' }),
     ]);
     expect(new Set(counters.map((counter) => counter.key)).size).toBe(2);
+  });
+
+  it('gives each spender its own counter for a per-spender default', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [
+        buildDefault({ spenderType: 'userWorkspace', isPerSpender: true }),
+      ],
+    });
+
+    expect(counters).toEqual([
+      expect.objectContaining({
+        isDefault: true,
+        spenderType: 'userWorkspace',
+        spenderId: 'user-1',
+        key: `{workspace-1}:quota-consumed:AI:AI_CHAT_TOKEN:userWorkspace:user-1:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
+      }),
+    ]);
+  });
+
+  it('shares one counter across spenders for a default that is not per spender', () => {
+    const counters = buildCounters({
+      quotaLimitDefaults: [buildDefault({ spenderType: 'userWorkspace' })],
+    });
+
+    expect(counters).toEqual([
+      expect.objectContaining({
+        spenderType: 'userWorkspace',
+        spenderId: null,
+        key: `{workspace-1}:quota-consumed:AI:AI_CHAT_TOKEN:userWorkspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
+      }),
+    ]);
   });
 });

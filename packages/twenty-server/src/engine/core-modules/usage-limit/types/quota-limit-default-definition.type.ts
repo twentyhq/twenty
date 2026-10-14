@@ -13,6 +13,7 @@ export type QuotaLimitDefaultDefinition<
   limitKind: 'quota';
   spenderType: SpenderType;
   spenderId: '';
+  isPerSpender: boolean;
   unit: UsageUnit;
   periodUnit: AnchoredPeriodUnit;
   periodCount: 1;
