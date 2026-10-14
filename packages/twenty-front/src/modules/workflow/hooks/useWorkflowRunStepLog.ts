@@ -16,7 +16,7 @@ export const useWorkflowRunStepLog = ({
   >({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
     objectRecordId: workflowRunId,
-    recordGqlFields: { id: true, stepLogs: true, updatedAt: true },
+    recordGqlFields: { id: true, stepLogs: true },
     skip,
   });
 

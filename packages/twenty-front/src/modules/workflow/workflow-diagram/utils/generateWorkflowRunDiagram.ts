@@ -11,6 +11,7 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
+import { getNodeIterationCount } from '@/workflow/workflow-diagram/workflow-nodes/utils/getNodeIterationCount';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
@@ -79,6 +80,7 @@ export const generateWorkflowRunDiagram = ({
           data: {
             ...node.data,
             runStatus: StepStatus.NOT_STARTED,
+            iterationCount: 0,
           },
         };
       }
@@ -86,6 +88,10 @@ export const generateWorkflowRunDiagram = ({
       const nodeData = {
         ...node.data,
         runStatus: stepInfo.status,
+        iterationCount:
+          node.data.nodeType === 'action'
+            ? getNodeIterationCount({ stepInfo })
+            : 0,
       };
 
       if (
