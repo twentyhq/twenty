@@ -1840,6 +1840,7 @@ export interface MarketplaceAppDetail {
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: Scalars['JSON']
     name: Scalars['String']
+    objects?: MarketplaceAppObject[]
     pricingDescription?: Scalars['String']
     requestedCapabilities: Scalars['String'][]
     roles?: MarketplaceAppRole[]
@@ -1851,6 +1852,13 @@ export interface MarketplaceAppDetail {
     universalIdentifier: Scalars['String']
     websiteUrl?: Scalars['String']
     __typename: 'MarketplaceAppDetail'
+}
+
+export interface MarketplaceAppObject {
+    labelPlural: Scalars['String']
+    labelSingular: Scalars['String']
+    universalIdentifier: Scalars['String']
+    __typename: 'MarketplaceAppObject'
 }
 
 export interface MarketplaceAppRole {
@@ -6113,6 +6121,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
     name?: boolean | number
+    objects?: MarketplaceAppObjectGenqlSelection
     pricingDescription?: boolean | number
     requestedCapabilities?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
@@ -6123,6 +6132,14 @@ export interface MarketplaceAppDetailGenqlSelection{
     termsUrl?: boolean | number
     universalIdentifier?: boolean | number
     websiteUrl?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MarketplaceAppObjectGenqlSelection{
+    labelPlural?: boolean | number
+    labelSingular?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10027,6 +10044,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isMarketplaceAppDetail = (obj?: { __typename?: any } | null): obj is MarketplaceAppDetail => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppDetail"')
       return MarketplaceAppDetail_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MarketplaceAppObject_possibleTypes: string[] = ['MarketplaceAppObject']
+    export const isMarketplaceAppObject = (obj?: { __typename?: any } | null): obj is MarketplaceAppObject => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppObject"')
+      return MarketplaceAppObject_possibleTypes.includes(obj.__typename)
     }
     
 
