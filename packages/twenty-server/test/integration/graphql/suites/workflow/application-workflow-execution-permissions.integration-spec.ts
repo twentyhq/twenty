@@ -9,7 +9,6 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
@@ -535,39 +534,21 @@ describe('application workflow execution permissions', () => {
     expect(ownApplicationRun.status).toBe('COMPLETED');
   }, 120000);
 
-  it('keeps the application bound when its token starts a workspace workflow', async () => {
-    const { status, stepStatus } = await runWorkflowActionStep({
-      name: `${RUN_PREFIX} workspace workflow started by the application`,
-      stepType: 'CREATE_RECORD',
-      input: {
-        objectName: 'opportunity',
-        objectRecord: { name: NESTED_OPPORTUNITY_NAME },
-      },
-      runToken: await buildJaneTokenThroughApplication(APP_ID),
-    });
-
-    expect(status).toBe('FAILED');
-    expect(stepStatus).toBe('FAILED');
+  it('refuses an application token starting a workspace workflow', async () => {
+    await expect(
+      runWorkflowActionStep({
+        name: `${RUN_PREFIX} workspace workflow started by the application`,
+        stepType: 'CREATE_RECORD',
+        input: {
+          objectName: 'opportunity',
+          objectRecord: { name: NESTED_OPPORTUNITY_NAME },
+        },
+        runToken: await buildJaneTokenThroughApplication(APP_ID),
+      }),
+    ).rejects.toThrow('cannot start a workflow owned by another application');
     expect(
       await countRecordsByName('opportunity', NESTED_OPPORTUNITY_NAME),
     ).toBe(0);
-  }, 120000);
-
-  it('refuses email steps when an application token starts a workspace workflow', async () => {
-    const { status, stepStatus, stepError } = await runWorkflowActionStep({
-      name: `${RUN_PREFIX} workspace email workflow started by the application`,
-      stepType: 'SEND_EMAIL',
-      input: {
-        recipients: { to: 'recipient@example.com' },
-        subject: 'Application workflow permissions',
-        body: JSON.stringify(buildEmailDocument('Should never be sent')),
-      },
-      runToken: await buildJaneTokenThroughApplication(APP_ID),
-    });
-
-    expect(status).toBe('FAILED');
-    expect(stepStatus).toBe('FAILED');
-    expect(stepError).toContain('Applications cannot use SEND_EMAIL steps');
   }, 120000);
 
   it('only lets the values of a form step change on an application workflow run', async () => {

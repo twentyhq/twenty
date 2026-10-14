@@ -3,6 +3,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   isFieldMetadataSelectKind,
+  isMorphRelationHead,
   isValidLocale,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -57,7 +58,11 @@ export const sanitizeRawUpdateFieldInput = ({
     ],
   );
 
-  if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
+  if (
+    existingFlatFieldMetadata.isSystemSideEffect === true &&
+    !isMorphRelationHead(existingFlatFieldMetadata) &&
+    !isSystemBuild
+  ) {
     const forbiddenUpdatedProperties = [
       ...Object.keys(updatedEditableFieldProperties),
       ...(isDefined(rawUpdateFieldInput.morphRelationsUpdatePayload)

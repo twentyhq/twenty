@@ -44,9 +44,11 @@ export const RecordCreationFormProvider = ({
     async ({
       requestId,
       draftRecord,
+      shouldKeepOpen = false,
     }: {
       requestId: string;
       draftRecord: Partial<ObjectRecord> | null;
+      shouldKeepOpen?: boolean;
     }) => {
       const pendingRecordCreation = pendingRecordCreations.find(
         (candidate) => candidate.requestId === requestId,
@@ -79,11 +81,26 @@ export const RecordCreationFormProvider = ({
         ),
       );
 
-      let createdRecord: ObjectRecord;
-
       try {
-        createdRecord = await pendingRecordCreation.createRecord(draftRecord);
+        const createdRecord =
+          await pendingRecordCreation.createRecord(draftRecord);
+
+        if (!shouldKeepOpen) {
+          removePageFromSidePanelHistory(requestId);
+
+          pendingRecordCreation.resolve(createdRecord);
+
+          setPendingRecordCreations((previousPendingRecordCreations) =>
+            previousPendingRecordCreations.filter(
+              (candidate) => candidate.requestId !== requestId,
+            ),
+          );
+        }
+
+        return {};
       } catch (error) {
+        return { error };
+      } finally {
         setPendingRecordCreations((previousPendingRecordCreations) =>
           previousPendingRecordCreations.map((candidate) =>
             candidate.requestId === requestId
@@ -91,21 +108,7 @@ export const RecordCreationFormProvider = ({
               : candidate,
           ),
         );
-
-        return { error };
       }
-
-      removePageFromSidePanelHistory(requestId);
-
-      pendingRecordCreation.resolve(createdRecord);
-
-      setPendingRecordCreations((previousPendingRecordCreations) =>
-        previousPendingRecordCreations.filter(
-          (candidate) => candidate.requestId !== requestId,
-        ),
-      );
-
-      return {};
     },
     [pendingRecordCreations, removePageFromSidePanelHistory],
   );

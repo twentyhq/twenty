@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
@@ -44,6 +46,7 @@ export class FieldMetadataService {
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async findManyWithinWorkspace({
@@ -484,11 +487,26 @@ export class FieldMetadataService {
         },
       );
 
+    const isMorphRelationHeadEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
+        workspaceId,
+      );
+
     return findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
       {
         universalIdentifiers: allTranspiledTranspilationInputs.map(
-          ({ result: { flatFieldMetadatas } }) =>
-            flatFieldMetadatas[0].universalIdentifier,
+          ({
+            result: {
+              flatFieldMetadatas: [firstCreatedFlatFieldMetadata],
+            },
+          }) =>
+            isMorphRelationHeadEnabled &&
+            firstCreatedFlatFieldMetadata.type ===
+              FieldMetadataType.MORPH_RELATION &&
+            isDefined(firstCreatedFlatFieldMetadata.morphId)
+              ? firstCreatedFlatFieldMetadata.morphId
+              : firstCreatedFlatFieldMetadata.universalIdentifier,
         ),
         flatEntityMaps: recomputedFlatFieldMetadataMaps,
       },

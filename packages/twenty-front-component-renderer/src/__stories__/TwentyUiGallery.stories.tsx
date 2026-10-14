@@ -5,6 +5,7 @@ import { phoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/ph
 import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
+import { overflowingListApiTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListApiTest';
 import { overflowingListEventIsolationTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListEventIsolationTest';
 import { overflowingListGeometryTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListGeometryTest';
 import { overflowingListPopupTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListPopupTest';
@@ -692,6 +693,18 @@ export const InlineBannerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-inline-banner',
   runtime: 'preact',
   play: inlineBannerTest,
+});
+
+export const OverflowingListApiReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-overflowing-list-api',
+  runtime: 'react',
+  play: overflowingListApiTest,
+});
+
+export const OverflowingListApiPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-overflowing-list-api',
+  runtime: 'preact',
+  play: overflowingListApiTest,
 });
 
 export const OverflowingListPopupReact: Story = createGalleryStory({

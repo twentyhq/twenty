@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { type ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -154,7 +156,7 @@ export type RowLevelPermissionsByRoleIdLoaderPayload = {
   roleId: string;
 };
 
-export type IsConfiguredLoaderPayload = {
+export type ApplicationRegistrationConfigurationIssuesLoaderPayload = {
   applicationRegistrationId: string;
 };
 
@@ -183,6 +185,7 @@ export class DataloaderService {
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -207,7 +210,8 @@ export class DataloaderService {
     const viewGroupsByViewIdLoader = this.createViewGroupsByViewIdLoader();
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
-    const isConfiguredLoader = this.createIsConfiguredLoader();
+    const applicationRegistrationConfigurationIssuesLoader =
+      this.createApplicationRegistrationConfigurationIssuesLoader();
     const applicationRegistrationInstallCountLoader =
       this.createApplicationRegistrationInstallCountLoader();
     const applicationAuthorIdentifiersLoader =
@@ -238,7 +242,7 @@ export class DataloaderService {
       viewSortsByViewIdLoader,
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
-      isConfiguredLoader,
+      applicationRegistrationConfigurationIssuesLoader,
       applicationRegistrationInstallCountLoader,
       applicationAuthorIdentifiersLoader,
       applicationTranslationCatalogLoader,
@@ -259,6 +263,11 @@ export class DataloaderService {
               workspaceId,
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
+          );
+        const isMorphRelationHeadEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
+            workspaceId,
           );
 
         return dataLoaderParams.map(({ fieldMetadataId }) => {
@@ -281,6 +290,7 @@ export class DataloaderService {
             sourceFlatFieldMetadata,
             flatFieldMetadataMaps,
             flatObjectMetadataMaps,
+            isMorphRelationHeadEnabled,
           });
         });
       },
@@ -429,6 +439,11 @@ export class DataloaderService {
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
+        const isMorphRelationHeadEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
+            workspaceId,
+          );
 
         const objectFlatFieldMetadatasList = objectMetadataIds.map(
           (objectMetadataId) => {
@@ -468,9 +483,10 @@ export class DataloaderService {
               );
 
             const filteredFieldMetadataEntities =
-              filterMorphRelationDuplicateFields(
-                overriddenFieldMetadataEntities,
-              );
+              filterMorphRelationDuplicateFields({
+                flatFieldMetadatas: overriddenFieldMetadataEntities,
+                isMorphRelationHeadEnabled,
+              });
 
             const filteredFieldMetadataEntitiesWithMorphRenamed =
               filteredFieldMetadataEntities.map((flatFieldMetadata) => {
@@ -478,7 +494,8 @@ export class DataloaderService {
                   isFlatFieldMetadataOfType(
                     flatFieldMetadata,
                     FieldMetadataType.MORPH_RELATION,
-                  )
+                  ) &&
+                  !isMorphRelationHead(flatFieldMetadata)
                 ) {
                   const relationTargetObjectMetadata =
                     findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -883,18 +900,24 @@ export class DataloaderService {
     });
   }
 
-  private createIsConfiguredLoader() {
-    return new DataLoader<IsConfiguredLoaderPayload, boolean>(
-      async (params: IsConfiguredLoaderPayload[]) => {
-        const ids = params.map((p) => p.applicationRegistrationId);
-
-        const resultMap =
-          await this.applicationRegistrationVariableService.isConfiguredBatch(
-            ids,
+  private createApplicationRegistrationConfigurationIssuesLoader() {
+    return new DataLoader<
+      ApplicationRegistrationConfigurationIssuesLoaderPayload,
+      ApplicationRegistrationConfigurationIssue[]
+    >(
+      async (
+        params: ApplicationRegistrationConfigurationIssuesLoaderPayload[],
+      ) => {
+        const configurationIssuesByRegistrationId =
+          await this.applicationRegistrationVariableService.findConfigurationIssuesBatch(
+            params.map((param) => param.applicationRegistrationId),
           );
 
         return params.map(
-          (p) => resultMap.get(p.applicationRegistrationId) ?? true,
+          (param) =>
+            configurationIssuesByRegistrationId.get(
+              param.applicationRegistrationId,
+            ) ?? [],
         );
       },
     );

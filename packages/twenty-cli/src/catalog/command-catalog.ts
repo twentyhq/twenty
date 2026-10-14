@@ -1,6 +1,7 @@
 import { APP_DEV_COMMAND_DEFINITION } from '@/commands/app/dev/app-dev.command-definition';
 import { APP_ADD_COMMAND_DEFINITION } from '@/commands/app/add/app-add.command-definition';
 import { APP_EXEC_COMMAND_DEFINITION } from '@/commands/app/exec/app-exec.command-definition';
+import { APP_GENERATE_CLIENT_COMMAND_DEFINITION } from '@/commands/app/generate-client/app-generate-client.command-definition';
 import { APP_LOGS_COMMAND_DEFINITION } from '@/commands/app/function-logs/app-logs.command-definition';
 import { type CommandDefinition } from '@/catalog/types/command-definition.type';
 import { APP_APPLY_COMMAND_DEFINITION } from '@/commands/app/apply/app-apply.command-definition';
@@ -38,6 +39,7 @@ export const COMMAND_CATALOG: CommandDefinition[] = [
   APP_EXEC_COMMAND_DEFINITION,
   APP_LOGS_COMMAND_DEFINITION,
   APP_BUILD_COMMAND_DEFINITION,
+  APP_GENERATE_CLIENT_COMMAND_DEFINITION,
   APP_INIT_COMMAND_DEFINITION,
   APP_PLAN_COMMAND_DEFINITION,
   APP_PULL_COMMAND_DEFINITION,

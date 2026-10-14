@@ -50,6 +50,13 @@ export class ConnectionProviderEntity
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
+      '2.48.0_AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand_1791975194413',
+  })
+  identifyAccountLogicFunctionUniversalIdentifier: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
       '2.24.0_AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand_1784712843602',
   })
   onConnectLogicFunctionUniversalIdentifier: string | null;
