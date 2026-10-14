@@ -24,12 +24,14 @@ const buildUserApplicationVariable = ({
   value = '',
   isSecret = false,
   isDeprecated = false,
+  isRequired = false,
 }: {
   key: string;
   label: string;
   value?: string;
   isSecret?: boolean;
   isDeprecated?: boolean;
+  isRequired?: boolean;
 }) => ({
   __typename: 'UserApplicationVariableValue',
   key,
@@ -38,7 +40,7 @@ const buildUserApplicationVariable = ({
   description: '',
   isSecret,
   isDeprecated,
-  isRequired: false,
+  isRequired,
   type: 'TEXT',
   options: null,
 });
@@ -101,6 +103,12 @@ const buildApplicationPreferences = () => [
         key: 'OLD_FLAG',
         label: 'Old flag',
         isDeprecated: true,
+      }),
+      buildUserApplicationVariable({
+        key: 'MEETING_LANGUAGE',
+        label: 'Meeting language',
+        value: savedValueByKey.get('MEETING_LANGUAGE'),
+        isRequired: true,
       }),
     ],
   },

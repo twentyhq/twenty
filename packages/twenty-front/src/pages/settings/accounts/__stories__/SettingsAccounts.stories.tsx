@@ -349,6 +349,28 @@ export const AppPreferencesListInstalledApps: Story = {
   },
 };
 
+export const AppPreferencesListFlagsMissingConfiguration: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByText('Fathom', undefined, {
+      timeout: 3000,
+    });
+
+    expect(
+      getTableRow(canvasElement, 'Fathom').getByText('Missing configuration'),
+    ).toBeVisible();
+    expect(
+      getTableRow(canvasElement, 'Granola').queryByText(
+        'Missing configuration',
+      ),
+    ).not.toBeInTheDocument();
+  },
+};
+
 export const AppPreferencesListLoadErrorOffersRetry: Story = {
   ...accountGroupsStory,
   beforeEach: async () => {

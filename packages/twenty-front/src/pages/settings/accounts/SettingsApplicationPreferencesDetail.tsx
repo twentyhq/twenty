@@ -13,8 +13,13 @@ import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { IconDeviceFloppy, IconVariable, useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import {
@@ -24,6 +29,7 @@ import {
 import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useApplicationVariablesDraft';
 import { SettingsApplicationCustomSettingsSection } from '@/settings/applications/components/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/components/SettingsApplicationDetailVariablesTab';
+import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 
 const VARIABLES_TAB_ID = 'variables';
 
@@ -33,12 +39,18 @@ type SettingsApplicationPreferencesDetailProps = {
 };
 
 export const SettingsApplicationPreferencesDetail = ({
-  applicationWithPreferences: { application, settingsMenuItems, variables },
+  applicationWithPreferences: {
+    application,
+    settingsMenuItems,
+    variables,
+    missingRequiredVariables,
+  },
   refetchApplicationsWithPreferences,
 }: SettingsApplicationPreferencesDetailProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const navigate = useNavigate();
 
   const [updateMyUserApplicationVariable] = useMutation(
     UpdateMyUserApplicationVariableDocument,
@@ -93,6 +105,10 @@ export const SettingsApplicationPreferencesDetail = ({
     currentWorkspace,
   });
 
+  const configurationTabId = hasVariablesTab
+    ? VARIABLES_TAB_ID
+    : settingsMenuItems.at(0)?.universalIdentifier;
+
   const activeSettingsMenuItem = settingsMenuItems.find(
     (settingsMenuItem) => settingsMenuItem.universalIdentifier === activeTabId,
   );
@@ -136,6 +152,22 @@ export const SettingsApplicationPreferencesDetail = ({
         }
       >
         <SettingsPageContainer overflow="visible">
+          {isNonEmptyArray(missingRequiredVariables) &&
+            isDefined(configurationTabId) && (
+              <SettingsApplicationMissingConfigurationBanner
+                missingApplicationVariables={missingRequiredVariables}
+                onConfigure={() =>
+                  navigate(
+                    getSettingsPath(
+                      SettingsPath.ApplicationPreferences,
+                      { applicationId: application.id },
+                      undefined,
+                      configurationTabId,
+                    ),
+                  )
+                }
+              />
+            )}
           {activeTabId === VARIABLES_TAB_ID && (
             <SettingsApplicationDetailVariablesTab
               applicationVariables={draftApplicationVariables}

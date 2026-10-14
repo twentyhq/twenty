@@ -120,6 +120,42 @@ export const ClearedValueFallsBackToTheDefault: Story = {
   },
 };
 
+export const MissingRequiredValueShowsBannerUntilSaved: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Missing configuration: Meeting language',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+
+    await userEvent.type(canvas.getByPlaceholderText('Value'), 'fr');
+
+    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(
+        canvas.queryByText('Missing configuration: Meeting language'),
+      ).not.toBeInTheDocument(),
+    );
+    expect(updateMyUserApplicationVariable.mock.calls).toEqual([
+      [
+        {
+          applicationUniversalIdentifier: FATHOM_APPLICATION_ID,
+          key: 'MEETING_LANGUAGE',
+          value: 'fr',
+        },
+      ],
+    ]);
+  },
+};
+
 export const SavedSecretIsReplacedNotAppended: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
