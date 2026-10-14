@@ -531,7 +531,9 @@ export class BillingResolver {
       userCreditsUsed: toDisplayCredits(item.userCreditsUsedMicro),
       grantedCredits: toDisplayCredits(item.workspaceCreditsGrantedMicro),
       rolloverCredits: toDisplayCredits(item.workspaceCreditsRolledOverMicro),
-      totalGrantedCredits: toDisplayCredits(item.workspaceCreditsTotalMicro),
+      totalGrantedCredits: toDisplayCredits(
+        item.workspaceCreditsTotalGrantedMicro,
+      ),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     }));
   }

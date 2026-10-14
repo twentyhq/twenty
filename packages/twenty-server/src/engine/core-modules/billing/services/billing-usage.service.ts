@@ -153,7 +153,7 @@ export class BillingUsageService {
       workspaceCreditsUsedMicro: creditsUsed?.workspaceCreditsUsedMicro ?? 0,
       workspaceCreditsGrantedMicro,
       workspaceCreditsRolledOverMicro,
-      workspaceCreditsTotalMicro:
+      workspaceCreditsTotalGrantedMicro:
         workspaceCreditsGrantedMicro + workspaceCreditsRolledOverMicro,
       userCreditsUsedMicro: creditsUsed?.userCreditsUsedMicro ?? 0,
       unitPriceCents: item.unitPriceCents,

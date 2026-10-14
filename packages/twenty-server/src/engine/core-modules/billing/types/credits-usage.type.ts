@@ -9,7 +9,7 @@ export type CreditsUsage = {
   workspaceCreditsUsedMicro: number;
   workspaceCreditsGrantedMicro: number;
   workspaceCreditsRolledOverMicro: number;
-  workspaceCreditsTotalMicro: number;
+  workspaceCreditsTotalGrantedMicro: number;
   userCreditsUsedMicro: number;
   unitPriceCents: number;
 };

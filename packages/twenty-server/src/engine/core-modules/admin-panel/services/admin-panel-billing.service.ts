@@ -277,8 +277,8 @@ export class AdminPanelBillingService {
       const workspaceCreditsUsed = toDisplayCredits(
         usage.workspaceCreditsUsedMicro,
       );
-      const workspaceCreditsTotal = toDisplayCredits(
-        usage.workspaceCreditsTotalMicro,
+      const workspaceCreditsTotalGranted = toDisplayCredits(
+        usage.workspaceCreditsTotalGrantedMicro,
       );
 
       return {
@@ -289,8 +289,8 @@ export class AdminPanelBillingService {
         rolloverCredits: toDisplayCredits(
           usage.workspaceCreditsRolledOverMicro,
         ),
-        totalGrantedCredits: workspaceCreditsTotal,
-        remainingCredits: workspaceCreditsTotal - workspaceCreditsUsed,
+        totalGrantedCredits: workspaceCreditsTotalGranted,
+        remainingCredits: workspaceCreditsTotalGranted - workspaceCreditsUsed,
         userCreditsUsed: toDisplayCredits(usage.userCreditsUsedMicro),
       };
     } catch (error) {
