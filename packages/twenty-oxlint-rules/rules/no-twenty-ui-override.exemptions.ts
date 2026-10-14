@@ -61,6 +61,16 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/spreadsheet-import/components/SpreadSheetImportModalWrapper.tsx',
+    reason: 'Dialog.Popup keeps the xl height across import steps',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/spreadsheet-import/components/SpreadsheetImportStepBody.tsx',
+    reason: 'Dialog.Body laid out as a full-height import step',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/ui/feedback/skeleton/components/SkeletonLine.tsx',
     reason: 'Forwards the caller className and style to Skeleton',
   },
