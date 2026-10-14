@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { type OverflowingListLayout } from './OverflowingListLayout';
+import { type OverflowingListLayout } from './types/OverflowingListLayout';
 
 export const useOverflowingListLayout = ({
   itemCount,

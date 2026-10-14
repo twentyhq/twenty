@@ -4,7 +4,7 @@ import { type RefObject, memo, useLayoutEffect, useRef } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { measureOverflowingListLayout } from './measureOverflowingListLayout';
-import { type OverflowingListLayout } from './OverflowingListLayout';
+import { type OverflowingListLayout } from './types/OverflowingListLayout';
 
 const FALLBACK_MEASUREMENT_INTERVAL_MS = 100;
 

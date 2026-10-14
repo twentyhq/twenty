@@ -1,6 +1,6 @@
 import { getVisibleItemCount } from './getVisibleItemCount';
 import { measureItemWidths } from './measureItemWidths';
-import { type OverflowingListLayout } from './OverflowingListLayout';
+import { type OverflowingListLayout } from './types/OverflowingListLayout';
 
 export const measureOverflowingListLayout = ({
   container,
