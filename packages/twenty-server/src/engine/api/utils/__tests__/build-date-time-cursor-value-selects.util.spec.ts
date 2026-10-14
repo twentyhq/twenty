@@ -1,38 +1,26 @@
-import {
-  FieldMetadataType,
-  type ObjectRecord,
-  OrderByDirection,
-} from 'twenty-shared/types';
+import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
 
 import { buildDateTimeCursorValueSelects } from 'src/engine/api/utils/build-date-time-cursor-value-selects.util';
 import { buildOrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
-const buildFieldMetadata = (
-  name: string,
-  type: FieldMetadataType,
-): OrmFlatFieldMetadata => ({ name, type }) as OrmFlatFieldMetadata;
-
 const buildScalarLeaf = (
   name: string,
   type: FieldMetadataType,
-): OrderByLeaf => ({
+): OrderByLeaf<Pick<OrmFlatFieldMetadata, 'type'>> => ({
   kind: 'scalar',
   path: [name],
   direction: OrderByDirection.AscNullsLast,
-  fieldMetadata: buildFieldMetadata(name, type),
+  fieldMetadata: { type },
 });
 
-const companyCreatedAtLeaf: OrderByLeaf = {
+const companyCreatedAtLeaf: OrderByLeaf<Pick<OrmFlatFieldMetadata, 'type'>> = {
   kind: 'relation',
   path: ['company', 'createdAt'],
   direction: OrderByDirection.AscNullsLast,
-  fieldMetadata: buildFieldMetadata('company', FieldMetadataType.RELATION),
-  targetFieldMetadata: buildFieldMetadata(
-    'createdAt',
-    FieldMetadataType.DATE_TIME,
-  ),
+  fieldMetadata: { type: FieldMetadataType.RELATION },
+  targetFieldMetadata: { type: FieldMetadataType.DATE_TIME },
 };
 
 describe('buildDateTimeCursorValueSelects', () => {
@@ -73,7 +61,7 @@ describe('buildDateTimeCursorValueSelects', () => {
         orderByLeaves: [
           buildScalarLeaf(fieldName, FieldMetadataType.DATE_TIME),
         ],
-        records: [{ id: 'record-1' }] as ObjectRecord[],
+        records: [{ id: 'record-1' }],
         rawRows: [
           {
             [`${objectNameSingular}_id`]: 'record-1',

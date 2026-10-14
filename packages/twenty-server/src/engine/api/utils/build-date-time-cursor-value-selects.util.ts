@@ -7,6 +7,7 @@ import {
   checkIfLeafCanCarryCursorValue,
   type OrderByLeaf,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { quoteColumn } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 
 type DateTimeCursorValueSelect = {
@@ -19,7 +20,7 @@ export const buildDateTimeCursorValueSelects = ({
   orderByLeaves,
   objectNameSingular,
 }: {
-  orderByLeaves: OrderByLeaf[];
+  orderByLeaves: OrderByLeaf<Pick<OrmFlatFieldMetadata, 'type'>>[];
   objectNameSingular: string;
 }): DateTimeCursorValueSelect[] =>
   orderByLeaves.filter(checkIfLeafCanCarryCursorValue).flatMap((leaf) => {

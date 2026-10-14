@@ -115,7 +115,10 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':
-      if (isDateTimeField) {
+    case 'gtStrict':
+      if (
+        operator === 'gt' ? isDateTimeField : isMillisecondDateTimeCursorValue
+      ) {
         return {
           sql: `${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond'`,
           params: { [`${key}${paramSuffix}`]: value },
@@ -178,18 +181,6 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}`,
-        params: { [`${key}${paramSuffix}`]: value },
-      };
-    case 'gtStrict':
-      if (isMillisecondDateTimeCursorValue) {
-        return {
-          sql: `${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond'`,
-          params: { [`${key}${paramSuffix}`]: value },
-        };
-      }
-
-      return {
-        sql: `${fieldReference} > :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'like':

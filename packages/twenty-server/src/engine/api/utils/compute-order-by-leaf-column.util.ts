@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 export type OrderByLeafColumn = {
   tableAlias: string;
@@ -12,7 +13,7 @@ export type OrderByLeafColumn = {
 
 // ORDER BY, hidden column selection and the cursor raw-row alias all derive from this so they cannot drift apart
 export const computeOrderByLeafColumn = (
-  leaf: OrderByLeaf,
+  leaf: OrderByLeaf<Pick<OrmFlatFieldMetadata, 'type'>>,
   objectNameSingular: string,
 ): OrderByLeafColumn | null => {
   switch (leaf.kind) {

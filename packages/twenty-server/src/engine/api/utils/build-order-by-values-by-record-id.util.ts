@@ -7,6 +7,7 @@ import {
   checkIfLeafCanCarryCursorValue,
   type OrderByLeaf,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 export type OrderByValuesByRecordId = Record<string, Record<string, unknown>>;
 
@@ -17,8 +18,8 @@ export const buildOrderByValuesByRecordId = ({
   rawRows,
   objectNameSingular,
 }: {
-  orderByLeaves: OrderByLeaf[];
-  records: ObjectRecord[];
+  orderByLeaves: OrderByLeaf<Pick<OrmFlatFieldMetadata, 'type'>>[];
+  records: Pick<ObjectRecord, 'id'>[];
   rawRows: Record<string, unknown>[];
   objectNameSingular: string;
 }): OrderByValuesByRecordId => {
