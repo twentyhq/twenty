@@ -14,9 +14,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -31,6 +30,7 @@ import {
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   IconAlertTriangle,
+  IconApps,
   IconDeviceFloppy,
   IconSettings,
   IconVariable,
@@ -38,6 +38,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import {
+  ApplicationRegistrationSourceType,
   ApplicationVariableScope,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
@@ -48,6 +49,8 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
 import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
+import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
+import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
@@ -57,6 +60,8 @@ import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applicatio
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
+import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
+import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
@@ -70,19 +75,28 @@ export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
   const { getIcon } = useIcons();
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    APPLICATION_DETAIL_ID,
-  );
-
-  const { data, refetch } = useQuery(FindOneApplicationDocument, {
+  const {
+    data,
+    error: applicationError,
+    loading: isApplicationLoading,
+    refetch,
+  } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
-    skip: !applicationId,
+    skip: !isUuidFormat(applicationId),
   });
 
   useRefetchOnApplicationOperation({ applicationId, refetch });
 
   const application = data?.findOneApplication;
+
+  const applicationLookupStatus = getApplicationLookupStatus({
+    identifier: applicationId,
+    isLoading: isApplicationLoading,
+    error: applicationError,
+    result: application,
+  });
+  const isNotFound = applicationLookupStatus === 'not-found';
+  const isUnavailable = applicationLookupStatus === 'unavailable';
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
@@ -105,6 +119,10 @@ export const SettingsApplicationDetails = () => {
     isApplicationStoppedData?.isApplicationStopped === true;
 
   const detail = detailData?.findMarketplaceAppDetail;
+
+  const isMarketplaceApplication =
+    detail?.sourceType === ApplicationRegistrationSourceType.NPM;
+
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isStandardApplication = isTwentyStandardApplication(application);
   const isCustomApplication = isWorkspaceCustomApplication(
@@ -227,6 +245,11 @@ export const SettingsApplicationDetails = () => {
     })),
   ];
 
+  const activeTabId = useSettingsActiveTabId(
+    APPLICATION_DETAIL_ID,
+    tabs.map((tab) => tab.id),
+  );
+
   const configurationTabId = hasVariablesTab
     ? VARIABLES_TAB_ID
     : workspaceSettingsMenuItems.at(0)?.universalIdentifier;
@@ -260,6 +283,30 @@ export const SettingsApplicationDetails = () => {
     : undefined;
 
   const renderActiveTabContent = () => {
+    if (isUnavailable) {
+      return (
+        <SettingsApplicationLoadErrorBanner
+          onRetry={() => refetch().catch(() => undefined)}
+        />
+      );
+    }
+
+    if (isNotFound) {
+      return (
+        <SettingsApplicationNotFound
+          message={t`This application is not installed on this workspace. It may have been uninstalled or the link is incorrect.`}
+          linkTo={getSettingsPath(
+            SettingsPath.Applications,
+            undefined,
+            undefined,
+            'installed',
+          )}
+          linkLabel={t`See installed applications`}
+          LinkIcon={IconApps}
+        />
+      );
+    }
+
     if (!isDefined(application)) {
       return <SettingsSectionSkeletonLoader />;
     }
@@ -273,6 +320,7 @@ export const SettingsApplicationDetails = () => {
             description={getApplicationDescriptionSummary(description)}
             coverImageUrl={getCoverImageUrl()}
             marketplaceUniversalIdentifier={detail?.universalIdentifier}
+            isMarketplaceApplication={isMarketplaceApplication}
             hasUpdate={hasUpdate}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
             onUpgrade={handleUpgrade}
@@ -352,11 +400,13 @@ export const SettingsApplicationDetails = () => {
           ) : undefined
         }
         secondaryBar={
-          <SettingsTabBar
-            aria-label={t`Application details`}
-            tabs={tabs}
-            componentInstanceId={APPLICATION_DETAIL_ID}
-          />
+          isNotFound || isUnavailable ? undefined : (
+            <SettingsTabBar
+              aria-label={t`Application details`}
+              tabs={tabs}
+              componentInstanceId={APPLICATION_DETAIL_ID}
+            />
+          )
         }
       >
         <SettingsPageContainer overflow="visible">

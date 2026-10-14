@@ -36,9 +36,7 @@ jobs:
         .yarn/**
   cli-package-test:
     needs: changed-files-check
-    if: >-
-      !cancelled() &&
-      (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
@@ -52,9 +50,7 @@ jobs:
         run: npx nx run twenty-cli:test:package
   cli-test:
     needs: changed-files-check
-    if: >-
-      !cancelled() &&
-      (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:

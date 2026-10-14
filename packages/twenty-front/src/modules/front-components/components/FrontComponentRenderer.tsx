@@ -159,7 +159,7 @@ const FrontComponentRendererContent = ({
       }
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to load front component: ${error.message}`,
       });
     },

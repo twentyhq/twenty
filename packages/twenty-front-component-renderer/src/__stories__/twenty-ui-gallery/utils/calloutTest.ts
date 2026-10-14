@@ -7,6 +7,11 @@ import { bannerTest } from '@/__stories__/twenty-ui-gallery/utils/bannerTest';
 export const calloutTest: TwentyUiGalleryPlayFunction = async (context) => {
   await bannerTest(context);
   const canvas = within(context.canvasElement);
+  const progress = canvas.getByRole('progressbar', { name: 'Progress' });
+  expect(progress).toHaveAttribute('aria-valuenow', '50');
+  expect(progress).toHaveAttribute('aria-valuemin', '0');
+  expect(progress).toHaveAttribute('aria-valuemax', '100');
+  expect(progress).toHaveAttribute('aria-valuetext', '50%');
   const callout = canvas.getByRole('region', { name: 'Import notice' });
   await waitFor(() =>
     expect(callout).toHaveAttribute('data-ref-tag', 'HTML-SECTION'),

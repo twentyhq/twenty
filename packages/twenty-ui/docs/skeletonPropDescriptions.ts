@@ -1,6 +1,8 @@
 export const SKELETON_PROP_DESCRIPTIONS = {
   animated:
     'Animate the highlight by default. Reduced-motion preferences always disable animation.',
+  layout:
+    '`inline` sizes and aligns the placeholder like a line of text. `block` renders a block without a text node, which is cheaper when many placeholders are rendered and alignment with text is not needed.',
   width:
     'Placeholder width in pixels or a CSS length. Defaults to the available width.',
   height:

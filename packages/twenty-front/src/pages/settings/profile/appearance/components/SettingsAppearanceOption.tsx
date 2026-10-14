@@ -20,15 +20,12 @@ const StyledChoice = styled.label`
 
 const StyledRadio = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
+  display: block;
   position: relative;
-
-  && {
-    display: block;
-    width: 100%;
-  }
+  width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    &&:focus-visible {
+    &:focus-visible {
       outline-offset: -2px;
     }
   }

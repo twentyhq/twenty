@@ -1,8 +1,10 @@
-import { Context, Parent, ResolveField } from '@nestjs/graphql';
+import { Context, Int, Parent, ResolveField } from '@nestjs/graphql';
 
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { type AdminApplicationRegistrationListItem } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
+import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 
 @AdminResolver(() => ApplicationRegistrationEntity)
@@ -13,12 +15,41 @@ export class AdminPanelApplicationRegistrationResolver {
 
   @ResolveField(() => Boolean)
   async isConfigured(
-    @Parent() registration: ApplicationRegistrationEntity,
+    @Parent()
+    registration:
+      | ApplicationRegistrationEntity
+      | AdminApplicationRegistrationListItem,
     @Context() context: { loaders: IDataloaders },
   ): Promise<boolean> {
+    if ('isConfigured' in registration) {
+      return registration.isConfigured;
+    }
+
     return context.loaders.isConfiguredLoader.load({
       applicationRegistrationId: registration.id,
     });
+  }
+
+  @ResolveField(() => Int)
+  async installCount(
+    @Parent()
+    registration:
+      | ApplicationRegistrationEntity
+      | AdminApplicationRegistrationListItem,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<number> {
+    if ('installCount' in registration) {
+      return registration.installCount;
+    }
+
+    return context.loaders.applicationRegistrationInstallCountLoader.load({
+      applicationRegistrationId: registration.id,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  author(@Parent() registration: ApplicationRegistrationEntity): string | null {
+    return getApplicationAuthorDisplayName(registration.author);
   }
 
   @ResolveField(() => String, { nullable: true })

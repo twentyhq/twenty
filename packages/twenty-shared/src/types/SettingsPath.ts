@@ -95,7 +95,6 @@ export enum SettingsPath {
   AdminPanelWorkspaceDetail = 'admin-panel/workspaces/:workspaceId',
   AdminPanelApplicationRegistrationDetail = 'admin-panel/applications/registrations/:applicationRegistrationId',
   AdminPanelWorkspaceChatThread = 'admin-panel/workspaces/:workspaceId/threads/:threadId',
-  AdminPanelChats = 'admin-panel/chats',
 
   Roles = 'members/roles',
   RoleCreate = 'members/roles/create',

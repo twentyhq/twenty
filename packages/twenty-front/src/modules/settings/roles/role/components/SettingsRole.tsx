@@ -116,7 +116,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const handleSave = async () => {
     if (isDefined(dirtyFields.label) && dirtyFields.label === '') {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Role name cannot be empty`,
       });
       return;

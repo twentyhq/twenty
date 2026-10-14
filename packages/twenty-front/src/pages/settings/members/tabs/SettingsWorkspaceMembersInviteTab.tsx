@@ -93,7 +93,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
     if (isDefined(result.error)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error deleting invitation`,
         duration: 2000,
       });
@@ -104,7 +104,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
     const result = await resendInvitation({ appTokenId });
     if (isDefined(result.error)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error resending invitation`,
         duration: 2000,
       });

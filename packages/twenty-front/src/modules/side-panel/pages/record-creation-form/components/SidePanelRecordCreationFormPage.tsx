@@ -2,6 +2,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { SidePanelOptionsDropdown } from '@/side-panel/components/SidePanelOptionsDropdown';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -29,16 +30,22 @@ import { getValidationRuleViolationsFromError } from '@/validation-rules/utils/g
 import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/groupValidationRuleViolationsByField';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
+import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
-import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconEdit,
+  IconPlus,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -46,14 +53,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-`;
-
-const StyledValidationRuleError = styled.div`
-  background: ${themeCssVariables.background.danger};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledValidationRuleErrors = styled.div`
@@ -128,6 +127,7 @@ const SidePanelRecordCreationForm = ({
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const optionsDropdownId = useId();
   const [draftValidationRuleViolations, setDraftValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
   const [serverValidationRuleViolations, setServerValidationRuleViolations] =
@@ -351,9 +351,9 @@ const SidePanelRecordCreationForm = ({
       {recordViolations.length > 0 && (
         <StyledValidationRuleErrors>
           {recordViolations.map((violation) => (
-            <StyledValidationRuleError key={violation.ruleId} role="alert">
+            <InlineBanner key={violation.ruleId} status="error" role="alert">
               {violation.message}
-            </StyledValidationRuleError>
+            </InlineBanner>
           ))}
         </StyledValidationRuleErrors>
       )}
@@ -361,15 +361,19 @@ const SidePanelRecordCreationForm = ({
         actions={[
           ...(hasLayoutsPermission
             ? [
-                <Button
-                  key="edit-form"
-                  size="sm"
-                  onClick={() =>
-                    openRecordCreationFormSettingsInSidePanel(
-                      objectMetadataItem,
-                    )
-                  }
-                >{t`Edit`}</Button>,
+                <SidePanelOptionsDropdown
+                  key="options"
+                  dropdownId={optionsDropdownId}
+                >
+                  <Dropdown.ActionItem
+                    startIcon={<IconEdit />}
+                    onClick={() =>
+                      openRecordCreationFormSettingsInSidePanel(
+                        objectMetadataItem,
+                      )
+                    }
+                  >{t`Edit form`}</Dropdown.ActionItem>
+                </SidePanelOptionsDropdown>,
               ]
             : []),
           <Button
