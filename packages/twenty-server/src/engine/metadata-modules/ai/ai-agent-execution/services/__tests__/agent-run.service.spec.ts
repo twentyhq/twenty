@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, NotFoundException } from '@nestjs/common';
 
 import {
   ApiKeyException,
@@ -17,7 +17,7 @@ const AGENT = {
   id: 'agent-id',
   label: 'Slack Assistant',
   applicationId: APPLICATION.id,
-  universalIdentifier: 'slack-assistant',
+  universalIdentifier: '20202020-c7ab-4065-b822-0ca1d5de60a9',
 };
 const RUN_AS_USER_WORKSPACE_ID = 'user-workspace-id';
 const RUN_AS_ACTOR = {
@@ -71,6 +71,8 @@ const buildService = () => {
     }),
   };
 
+  const agentRepository = { findOne: jest.fn().mockResolvedValue(AGENT) };
+
   const service = new AgentRunService(
     agentActorContextService as never,
     agentRunnerService as never,
@@ -78,11 +80,12 @@ const buildService = () => {
     apiKeyRoleService as never,
     apiKeyService as never,
     { findById: jest.fn().mockResolvedValue(APPLICATION) } as never,
-    { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
+    agentRepository as never,
   );
 
   return {
     service,
+    agentRepository,
     agentRunnerService,
     agentActorContextService,
     apiKeyRoleService,
@@ -456,6 +459,19 @@ describe('AgentRunService', () => {
       ).rejects.toMatchObject({ code });
     },
   );
+
+  it('reports an agent universal identifier that is not a UUID as not found', async () => {
+    const { service, agentRepository, agentRunnerService } = buildService();
+
+    await expect(
+      run(service, {
+        agentUniversalIdentifier: 'slack-assistant',
+        input: userInput('Hello'),
+      }),
+    ).rejects.toThrow(NotFoundException);
+    expect(agentRepository.findOne).not.toHaveBeenCalled();
+    expect(agentRunnerService.run).not.toHaveBeenCalled();
+  });
 
   it('refuses a caller without a member, application or API key', async () => {
     const { service, agentRunnerService } = buildService();
