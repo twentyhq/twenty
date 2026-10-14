@@ -118,6 +118,7 @@ export const subscribeGraphql = async ({
         return;
       }
       if (message.event !== 'next') {
+        assertSuccessfulResponse();
         throw invalidStream(
           'The server returned an unsupported GraphQL stream event.',
         );
@@ -126,9 +127,11 @@ export const subscribeGraphql = async ({
       try {
         payload = JSON.parse(message.data);
       } catch {
+        assertSuccessfulResponse();
         throw invalidStream('The log stream contains invalid JSON.');
       }
       if (!isPlainObject(payload)) {
+        assertSuccessfulResponse();
         throw invalidStream(
           'The log stream contains an invalid GraphQL result.',
         );

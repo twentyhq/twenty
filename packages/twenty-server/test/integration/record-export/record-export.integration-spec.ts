@@ -1,4 +1,4 @@
-import { type Request } from 'express';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
@@ -506,8 +506,8 @@ describe('record export lifecycle (integration)', () => {
             application: isDefined(applicationId)
               ? { id: applicationId }
               : undefined,
-            headers: { authorization: `Bearer ${cliToken}` },
-          } as Request,
+          },
+          requestTokenHash: payload.requestTokenHash,
         }),
       ).toThrow('This export belongs to another session');
     }
@@ -569,6 +569,64 @@ describe('record export lifecycle (integration)', () => {
     await expect(nextExport(events)).rejects.toThrow();
   });
 
+  it.each(['user', 'apiKey', 'oauth'] as const)(
+    'keeps a completed %s export after an application setting changes',
+    async (principal) => {
+      const token =
+        principal === 'oauth'
+          ? cliToken
+          : principal === 'apiKey'
+            ? (await createApiKey()).token
+            : APPLE_JANE_ADMIN_ACCESS_TOKEN;
+      const ready = await exportToCompletion(input, token);
+      const { flatApplicationMaps } = await applicationCache().getOrRecompute(
+        SEED_APPLE_WORKSPACE_ID,
+        ['flatApplicationMaps'],
+      );
+      const application = flatApplicationMaps.byId[cliApplicationId];
+      if (!isDefined(application)) {
+        throw new Error('CLI application not found');
+      }
+      const applications =
+        getAppProviderByClassName<ApplicationService>('ApplicationService');
+      await applications.update(cliApplicationId, {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        autoUpgrade: !application.autoUpgrade,
+      });
+      await download(ready).expect(200);
+    },
+  );
+
+  it('keeps an OAuth export after another application changes its role', async () => {
+    const { flatApplicationMaps } = await applicationCache().getOrRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatApplicationMaps'],
+    );
+    const otherApplication = Object.values(flatApplicationMaps.byId).find(
+      (application) =>
+        application?.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+    if (!isDefined(otherApplication)) {
+      throw new Error('Standard application not found');
+    }
+    const ready = await exportToCompletion(input, cliToken);
+    const applications =
+      getAppProviderByClassName<ApplicationService>('ApplicationService');
+    try {
+      await applications.update(otherApplication.id, {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        defaultRoleId: roleId,
+      });
+      await download(ready).expect(200);
+    } finally {
+      await applications.update(otherApplication.id, {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        defaultRoleId: otherApplication.defaultRoleId,
+      });
+    }
+  });
+
   it('invalidates an OAuth export when its application role changes', async () => {
     const ready = await exportToCompletion(input, cliToken);
     await setApplicationRole(roleId);
@@ -585,6 +643,9 @@ describe('record export lifecycle (integration)', () => {
     await applicationCache().invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
       'flatApplicationMaps',
     ]);
+    await expect(exports.assertPermissionsUnchanged(payload)).rejects.toThrow(
+      'Access permissions have changed.',
+    );
     await expect(exports.resolveRequester(payload)).rejects.toThrow(
       /permission/i,
     );

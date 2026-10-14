@@ -1,6 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { startTestServer } from '@/__tests__/utils/start-test-server';
+import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { subscribeGraphql } from '@/transport/graphql/subscribe-graphql';
 
 vi.mock('@/transport/constants/request-timeout-milliseconds.constant', () => ({
@@ -10,6 +11,27 @@ vi.mock('@/transport/constants/request-timeout-milliseconds.constant', () => ({
 afterEach(() => vi.unstubAllEnvs());
 
 it.each([
+  {
+    status: 401,
+    contentType: 'text/event-stream',
+    body: 'event: next\ndata: {invalid\n\n',
+    code: 'AUTH_REQUIRED',
+    message: undefined,
+  },
+  {
+    status: 403,
+    contentType: 'text/event-stream',
+    body: 'event: next\ndata: null\n\n',
+    code: 'PERMISSION_DENIED',
+    message: 'Access denied.',
+  },
+  {
+    status: 403,
+    contentType: 'text/event-stream',
+    body: 'event: unsupported\ndata: {}\n\n',
+    code: 'PERMISSION_DENIED',
+    message: 'Access denied.',
+  },
   {
     status: 500,
     contentType: 'text/event-stream',
@@ -77,7 +99,14 @@ it.each([
           onConnected,
           onData,
         }),
-      ).rejects.toMatchObject({ code, message, details: { status } });
+      ).rejects.toMatchObject({
+        code,
+        message: message ?? `${server.url} rejected the credentials.`,
+        details: { status },
+        ...([401, 403].includes(status)
+          ? { exitCode: EXIT_CODE.AUTHENTICATION }
+          : {}),
+      });
       expect(onData).not.toHaveBeenCalled();
       expect(onConnected).not.toHaveBeenCalled();
       expect(server.requests).toHaveLength(1);
