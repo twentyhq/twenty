@@ -1,3 +1,5 @@
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID } from '@/settings/admin-panel/apps/constants/ClaimApplicationRegistrationOwnershipModalId';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
@@ -24,15 +26,13 @@ import {
   FindManyApplicationRegistrationsDocument,
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
+import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
 const TRANSFER_OWNERSHIP_MODAL_ID =
   'transfer-application-registration-ownership-modal';
-
-const CLAIM_OWNERSHIP_MODAL_ID =
-  'claim-application-registration-ownership-modal';
 
 const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
 
@@ -60,6 +60,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
   const { openDialog, closeDialog } = useDialog();
+  const apolloAdminClient = useApolloAdminClient();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isTransferring, setIsTransferring] = useState(false);
@@ -177,11 +178,14 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       await claimOwnership({
         variables: { applicationRegistrationId },
       });
+      await apolloAdminClient.refetchQueries({
+        include: [FindOneAdminApplicationRegistrationDocument],
+      });
       enqueueToast({
         status: 'success',
         children: t`Ownership claimed successfully`,
       });
-      closeDialog(CLAIM_OWNERSHIP_MODAL_ID);
+      closeDialog(CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID);
     } catch {
       enqueueToast({
         status: 'error',
@@ -227,7 +231,11 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
             ? fromAdmin && (
                 <Button
                   startIcon={<IconUserPlus />}
-                  onClick={() => openDialog(CLAIM_OWNERSHIP_MODAL_ID)}
+                  onClick={() =>
+                    openDialog(
+                      CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID,
+                    )
+                  }
                   variant="outline"
                 >{t`Claim ownership`}</Button>
               )
@@ -259,7 +267,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       />
 
       <ConfirmationDialog
-        dialogId={CLAIM_OWNERSHIP_MODAL_ID}
+        dialogId={CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID}
         title={t`Claim ownership`}
         subtitle={
           <Trans>
