@@ -21,13 +21,13 @@ describe('consolidateUsageByApplication', () => {
         {
           applicationId: 'app-1',
           operation: 'recordMeeting',
-          workspaceCreditsUsed: 500,
+          creditsUsed: 500,
           userCreditsUsed: 0,
         },
         {
           applicationId: 'app-1',
           operation: 'summarizeMeeting',
-          workspaceCreditsUsed: 300,
+          creditsUsed: 300,
           userCreditsUsed: 0,
         },
       ],
@@ -55,13 +55,13 @@ describe('consolidateUsageByApplication', () => {
       {
         key: 'Call Recorder · Meeting recording',
         label: 'Call Recorder · Meeting recording',
-        workspaceCreditsUsed: 500,
+        creditsUsed: 500,
         userCreditsUsed: 0,
       },
       {
         key: 'Call Recorder · Meeting summary',
         label: 'Call Recorder · Meeting summary',
-        workspaceCreditsUsed: 300,
+        creditsUsed: 300,
         userCreditsUsed: 0,
       },
     ]);
@@ -73,13 +73,13 @@ describe('consolidateUsageByApplication', () => {
         {
           applicationId: 'app-1',
           operation: 'seat',
-          workspaceCreditsUsed: 50,
+          creditsUsed: 50,
           userCreditsUsed: 0,
         },
         {
           applicationId: 'app-1',
           operation: 'platformFee',
-          workspaceCreditsUsed: 20,
+          creditsUsed: 20,
           userCreditsUsed: 0,
         },
       ],
@@ -110,13 +110,13 @@ describe('consolidateUsageByApplication', () => {
       {
         key: 'Call Recorder · Per member',
         label: 'Call Recorder · Per member',
-        workspaceCreditsUsed: 50,
+        creditsUsed: 50,
         userCreditsUsed: 0,
       },
       {
         key: 'Call Recorder · Platform fee',
         label: 'Call Recorder · Platform fee',
-        workspaceCreditsUsed: 20,
+        creditsUsed: 20,
         userCreditsUsed: 0,
       },
     ]);
@@ -128,19 +128,19 @@ describe('consolidateUsageByApplication', () => {
         {
           applicationId: 'app-1',
           operation: 'pdl/person',
-          workspaceCreditsUsed: 100,
+          creditsUsed: 100,
           userCreditsUsed: 0,
         },
         {
           applicationId: 'app-1',
           operation: 'pdl/company',
-          workspaceCreditsUsed: 70,
+          creditsUsed: 70,
           userCreditsUsed: 0,
         },
         {
           applicationId: 'app-1',
           operation: '',
-          workspaceCreditsUsed: 40,
+          creditsUsed: 40,
           userCreditsUsed: 0,
         },
       ],
@@ -153,7 +153,7 @@ describe('consolidateUsageByApplication', () => {
       {
         key: 'People Data Labs',
         label: 'People Data Labs',
-        workspaceCreditsUsed: 210,
+        creditsUsed: 210,
         userCreditsUsed: 0,
       },
     ]);
@@ -165,7 +165,7 @@ describe('consolidateUsageByApplication', () => {
         {
           applicationId: 'app-1',
           operation: '',
-          workspaceCreditsUsed: 120,
+          creditsUsed: 120,
           userCreditsUsed: 0,
         },
       ],
@@ -183,7 +183,7 @@ describe('consolidateUsageByApplication', () => {
       {
         key: 'Retired App',
         label: 'Retired App',
-        workspaceCreditsUsed: 120,
+        creditsUsed: 120,
         userCreditsUsed: 0,
       },
     ]);
@@ -195,7 +195,7 @@ describe('consolidateUsageByApplication', () => {
         {
           applicationId: 'app-gone',
           operation: '',
-          workspaceCreditsUsed: 90,
+          creditsUsed: 90,
           userCreditsUsed: 0,
         },
       ],
@@ -206,7 +206,7 @@ describe('consolidateUsageByApplication', () => {
       {
         key: 'app-gone',
         label: 'app-gone',
-        workspaceCreditsUsed: 90,
+        creditsUsed: 90,
         userCreditsUsed: 0,
       },
     ]);
@@ -218,14 +218,14 @@ describe('consolidateUsageByApplication', () => {
         {
           applicationId: 'app-1',
           operation: '',
-          workspaceCreditsUsed: 60,
-          userCreditsUsed: 0,
+          creditsUsed: 60,
+          userCreditsUsed: 20,
         },
         {
           applicationId: 'app-2',
           operation: '',
-          workspaceCreditsUsed: 25,
-          userCreditsUsed: 0,
+          creditsUsed: 25,
+          userCreditsUsed: 5,
         },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
@@ -238,8 +238,8 @@ describe('consolidateUsageByApplication', () => {
       {
         key: 'Enricher',
         label: 'Enricher',
-        workspaceCreditsUsed: 85,
-        userCreditsUsed: 0,
+        creditsUsed: 85,
+        userCreditsUsed: 25,
       },
     ]);
   });
@@ -250,19 +250,19 @@ describe('consolidateUsageByApplication', () => {
         {
           applicationId: 'app-1',
           operation: '',
-          workspaceCreditsUsed: 10,
+          creditsUsed: 10,
           userCreditsUsed: 0,
         },
         {
           applicationId: 'app-2',
           operation: '',
-          workspaceCreditsUsed: 400,
+          creditsUsed: 400,
           userCreditsUsed: 0,
         },
         {
           applicationId: 'app-1',
           operation: 'undeclared',
-          workspaceCreditsUsed: 50,
+          creditsUsed: 50,
           userCreditsUsed: 0,
         },
       ],
@@ -276,13 +276,13 @@ describe('consolidateUsageByApplication', () => {
       {
         key: 'Large',
         label: 'Large',
-        workspaceCreditsUsed: 400,
+        creditsUsed: 400,
         userCreditsUsed: 0,
       },
       {
         key: 'Small',
         label: 'Small',
-        workspaceCreditsUsed: 60,
+        creditsUsed: 60,
         userCreditsUsed: 0,
       },
     ]);
@@ -295,7 +295,7 @@ describe('consolidateUsageByApplication', () => {
         {
           applicationId: 'app-1',
           operation: 'recordMeeting',
-          workspaceCreditsUsed: 75,
+          creditsUsed: 75,
           userCreditsUsed: 0,
         },
       ],
@@ -308,7 +308,7 @@ describe('consolidateUsageByApplication', () => {
       {
         key: 'Call Recorder',
         label: 'Call Recorder',
-        workspaceCreditsUsed: 75,
+        creditsUsed: 75,
         userCreditsUsed: 0,
       },
     ]);

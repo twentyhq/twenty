@@ -6,9 +6,8 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 
 export const fromUsageTimeSeriesPointToUsageTimeSeriesDTO = ({
   date,
-  workspaceCreditsUsed,
-  userCreditsUsed,
+  creditsUsed,
 }: UsageTimeSeriesPoint): UsageTimeSeriesDTO => ({
   date,
-  creditsUsed: toDisplayCredits(workspaceCreditsUsed + userCreditsUsed),
+  creditsUsed: toDisplayCredits(creditsUsed),
 });

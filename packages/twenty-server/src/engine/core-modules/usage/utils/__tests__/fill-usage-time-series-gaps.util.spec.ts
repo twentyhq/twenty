@@ -9,73 +9,71 @@ describe('fillUsageTimeSeriesGaps', () => {
     });
 
     expect(result).toEqual([
-      { date: '2026-04-20', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-21', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-22', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-23', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-20', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-21', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-22', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-23', creditsUsed: 0, userCreditsUsed: 0 },
     ]);
   });
 
   it('should fill internal gaps with zero while preserving real values', () => {
     const result = fillUsageTimeSeriesGaps({
       rows: [
-        { date: '2026-04-20', workspaceCreditsUsed: 100, userCreditsUsed: 0 },
-        { date: '2026-04-22', workspaceCreditsUsed: 250, userCreditsUsed: 0 },
+        { date: '2026-04-20', creditsUsed: 100, userCreditsUsed: 0 },
+        { date: '2026-04-22', creditsUsed: 250, userCreditsUsed: 0 },
       ],
       periodStart: new Date('2026-04-20T00:00:00.000Z'),
       periodEnd: new Date('2026-04-23T23:59:59.999Z'),
     });
 
     expect(result).toEqual([
-      { date: '2026-04-20', workspaceCreditsUsed: 100, userCreditsUsed: 0 },
-      { date: '2026-04-21', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-22', workspaceCreditsUsed: 250, userCreditsUsed: 0 },
-      { date: '2026-04-23', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-20', creditsUsed: 100, userCreditsUsed: 0 },
+      { date: '2026-04-21', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-22', creditsUsed: 250, userCreditsUsed: 0 },
+      { date: '2026-04-23', creditsUsed: 0, userCreditsUsed: 0 },
     ]);
   });
 
   it('should pad trailing dates with zero when data stops before period end (Félix bug)', () => {
     const result = fillUsageTimeSeriesGaps({
       rows: [
-        { date: '2026-04-15', workspaceCreditsUsed: 50, userCreditsUsed: 0 },
-        { date: '2026-04-16', workspaceCreditsUsed: 75, userCreditsUsed: 0 },
+        { date: '2026-04-15', creditsUsed: 50, userCreditsUsed: 0 },
+        { date: '2026-04-16', creditsUsed: 75, userCreditsUsed: 0 },
       ],
       periodStart: new Date('2026-04-15T00:00:00.000Z'),
       periodEnd: new Date('2026-04-20T23:59:59.999Z'),
     });
 
     expect(result).toEqual([
-      { date: '2026-04-15', workspaceCreditsUsed: 50, userCreditsUsed: 0 },
-      { date: '2026-04-16', workspaceCreditsUsed: 75, userCreditsUsed: 0 },
-      { date: '2026-04-17', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-18', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-19', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-20', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-15', creditsUsed: 50, userCreditsUsed: 0 },
+      { date: '2026-04-16', creditsUsed: 75, userCreditsUsed: 0 },
+      { date: '2026-04-17', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-18', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-19', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-20', creditsUsed: 0, userCreditsUsed: 0 },
     ]);
   });
 
   it('should pad leading dates with zero when data starts after period start', () => {
     const result = fillUsageTimeSeriesGaps({
-      rows: [
-        { date: '2026-04-22', workspaceCreditsUsed: 99, userCreditsUsed: 0 },
-      ],
+      rows: [{ date: '2026-04-22', creditsUsed: 99, userCreditsUsed: 0 }],
       periodStart: new Date('2026-04-20T00:00:00.000Z'),
       periodEnd: new Date('2026-04-23T23:59:59.999Z'),
     });
 
     expect(result).toEqual([
-      { date: '2026-04-20', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-21', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-22', workspaceCreditsUsed: 99, userCreditsUsed: 0 },
-      { date: '2026-04-23', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-20', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-21', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-22', creditsUsed: 99, userCreditsUsed: 0 },
+      { date: '2026-04-23', creditsUsed: 0, userCreditsUsed: 0 },
     ]);
   });
 
   it('should return data unchanged when every day in period is already present', () => {
     const rows = [
-      { date: '2026-04-20', workspaceCreditsUsed: 1, userCreditsUsed: 0 },
-      { date: '2026-04-21', workspaceCreditsUsed: 2, userCreditsUsed: 0 },
-      { date: '2026-04-22', workspaceCreditsUsed: 3, userCreditsUsed: 0 },
+      { date: '2026-04-20', creditsUsed: 1, userCreditsUsed: 0 },
+      { date: '2026-04-21', creditsUsed: 2, userCreditsUsed: 0 },
+      { date: '2026-04-22', creditsUsed: 3, userCreditsUsed: 0 },
     ];
 
     const result = fillUsageTimeSeriesGaps({
@@ -89,15 +87,13 @@ describe('fillUsageTimeSeriesGaps', () => {
 
   it('should return a single entry when period spans one day', () => {
     const result = fillUsageTimeSeriesGaps({
-      rows: [
-        { date: '2026-04-23', workspaceCreditsUsed: 42, userCreditsUsed: 0 },
-      ],
+      rows: [{ date: '2026-04-23', creditsUsed: 42, userCreditsUsed: 0 }],
       periodStart: new Date('2026-04-23T00:00:00.000Z'),
       periodEnd: new Date('2026-04-23T23:59:59.999Z'),
     });
 
     expect(result).toEqual([
-      { date: '2026-04-23', workspaceCreditsUsed: 42, userCreditsUsed: 0 },
+      { date: '2026-04-23', creditsUsed: 42, userCreditsUsed: 0 },
     ]);
   });
 
@@ -113,24 +109,22 @@ describe('fillUsageTimeSeriesGaps', () => {
 
   it('should treat periodEnd as exclusive to match SQL `timestamp < periodEnd` semantics', () => {
     const result = fillUsageTimeSeriesGaps({
-      rows: [
-        { date: '2026-04-23', workspaceCreditsUsed: 10, userCreditsUsed: 0 },
-      ],
+      rows: [{ date: '2026-04-23', creditsUsed: 10, userCreditsUsed: 0 }],
       periodStart: new Date('2026-04-22T00:00:00.000Z'),
       periodEnd: new Date('2026-04-24T00:00:00.000Z'),
     });
 
     expect(result).toEqual([
-      { date: '2026-04-22', workspaceCreditsUsed: 0, userCreditsUsed: 0 },
-      { date: '2026-04-23', workspaceCreditsUsed: 10, userCreditsUsed: 0 },
+      { date: '2026-04-22', creditsUsed: 0, userCreditsUsed: 0 },
+      { date: '2026-04-23', creditsUsed: 10, userCreditsUsed: 0 },
     ]);
   });
 
   it('should return dates in ascending order', () => {
     const result = fillUsageTimeSeriesGaps({
       rows: [
-        { date: '2026-04-22', workspaceCreditsUsed: 5, userCreditsUsed: 0 },
-        { date: '2026-04-20', workspaceCreditsUsed: 1, userCreditsUsed: 0 },
+        { date: '2026-04-22', creditsUsed: 5, userCreditsUsed: 0 },
+        { date: '2026-04-20', creditsUsed: 1, userCreditsUsed: 0 },
       ],
       periodStart: new Date('2026-04-20T00:00:00.000Z'),
       periodEnd: new Date('2026-04-23T23:59:59.999Z'),

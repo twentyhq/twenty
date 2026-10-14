@@ -7,11 +7,11 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 export const fromUsageBreakdownItemToUsageBreakdownItemDTO = ({
   key,
   label,
-  workspaceCreditsUsed,
+  creditsUsed,
   userCreditsUsed,
 }: UsageBreakdownItem): UsageBreakdownItemDTO => ({
   key,
   label,
-  creditsUsed: toDisplayCredits(workspaceCreditsUsed + userCreditsUsed),
+  creditsUsed: toDisplayCredits(creditsUsed),
   userCreditsUsed: toDisplayCredits(userCreditsUsed),
 });

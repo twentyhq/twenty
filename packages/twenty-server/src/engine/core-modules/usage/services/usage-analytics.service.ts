@@ -2,7 +2,7 @@
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -24,7 +24,7 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
 
 type CreditsUsedAmounts = {
-  workspaceCreditsUsed: number;
+  creditsUsed: number;
   userCreditsUsed: number;
 };
 
@@ -43,22 +43,20 @@ export type UsageTimeSeriesPoint = CreditsUsedAmounts & {
 };
 
 type CreditsUsedRowMicro = {
-  workspaceCreditsUsedMicro: string | number;
+  creditsUsedMicro: string | number;
   userCreditsUsedMicro: string | number;
 };
 
 type BreakdownRowMicro<TColumn extends string> = Record<TColumn, string> &
   CreditsUsedRowMicro;
 
-const CREDITS_USED_SELECT = `sum(creditsUsedMicro) - sum(userCreditsUsedMicro) AS workspaceCreditsUsedMicro,
+const CREDITS_USED_SELECT = `sum(creditsUsedMicro) AS creditsUsedMicro,
         sum(userCreditsUsedMicro) AS userCreditsUsedMicro`;
-
-const CREDITS_USED_ORDER = `workspaceCreditsUsedMicro + userCreditsUsedMicro DESC`;
 
 const toCreditsUsedAmounts = (
   row: CreditsUsedRowMicro,
 ): CreditsUsedAmounts => ({
-  workspaceCreditsUsed: Number(row.workspaceCreditsUsedMicro),
+  creditsUsed: Number(row.creditsUsedMicro),
   userCreditsUsed: Number(row.userCreditsUsedMicro),
 });
 
@@ -90,8 +88,6 @@ const DECLARED_OPERATION_KEY_SEPARATOR = ':';
 
 @Injectable()
 export class UsageAnalyticsService {
-  private readonly logger = new Logger(UsageAnalyticsService.name);
-
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
   async getConsumptionRowsForAllScopes({
@@ -233,7 +229,7 @@ export class UsageAnalyticsService {
         AND timestamp < {periodEnd:String}
         AND operationType IN ({operationTypes:Array(String)})
       GROUP BY workspaceId
-      ORDER BY ${CREDITS_USED_ORDER}
+      ORDER BY creditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
@@ -248,7 +244,7 @@ export class UsageAnalyticsService {
 
     return rows.map((row) => ({
       key: row.key,
-      workspaceCreditsUsed: convert(Number(row.workspaceCreditsUsedMicro)),
+      creditsUsed: convert(Number(row.creditsUsedMicro)),
       userCreditsUsed: convert(Number(row.userCreditsUsedMicro)),
     }));
   }
@@ -330,7 +326,7 @@ export class UsageAnalyticsService {
         ${hasOperationTypes ? 'AND operationType IN ({operationTypes:Array(String)})' : ''}
         ${isNonEmptyString(userWorkspaceId) ? 'AND userWorkspaceId = {userWorkspaceId:String}' : ''}
       GROUP BY resourceId, operation
-      ORDER BY ${CREDITS_USED_ORDER}
+      ORDER BY creditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
@@ -444,7 +440,7 @@ export class UsageAnalyticsService {
         ${opTypeFilter}
         ${extraWhere}
       GROUP BY ${groupByField}
-      ORDER BY ${CREDITS_USED_ORDER}
+      ORDER BY creditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
