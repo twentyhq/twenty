@@ -23,6 +23,8 @@ const onOpenChange = fn();
 const onSearchChange = fn();
 
 const reviewerIdRevision = createStoryState(0);
+const disabledReviewerIndex = createStoryState<number | undefined>(undefined);
+const rankedPeople = createStoryState(PEOPLE);
 
 const SearchablePicker = ({
   multiple = false,
@@ -114,6 +116,7 @@ const OwnerPicker = () => {
 
 const ReviewerPicker = () => {
   const revision = reviewerIdRevision.useValue();
+  const disabledIndex = disabledReviewerIndex.useValue();
 
   return (
     <Dropdown.Root type="picker">
@@ -124,7 +127,33 @@ const ReviewerPicker = () => {
             key={person}
             id={`reviewer-${index}-${revision}`}
             selected={false}
+            disabled={index === disabledIndex}
           >
+            {person}
+          </Dropdown.OptionItem>
+        ))}
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+
+const RankedPicker = () => {
+  const [search, setSearch] = useState('');
+  const results = rankedPeople
+    .useValue()
+    .filter((person) => person.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Ranked people</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Choose a ranked person">
+        <Dropdown.Search
+          aria-label="Search people"
+          value={search}
+          onValueChange={setSearch}
+        />
+        {results.map((person) => (
+          <Dropdown.OptionItem key={person} selected={false}>
             {person}
           </Dropdown.OptionItem>
         ))}
@@ -174,6 +203,8 @@ const meta: Meta = {
     }
 
     reviewerIdRevision.set(0);
+    disabledReviewerIndex.set(undefined);
+    rankedPeople.set(PEOPLE);
   },
 };
 
@@ -871,6 +902,22 @@ export const CommandWithTrailingAction: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Views' }),
+    );
+    const reopenedItem = await body.findByRole('button', {
+      name: 'Open overview',
+    });
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
+    const row = reopenedItem.parentElement as HTMLElement;
+
+    expect(row).toHaveAttribute('role', 'none');
+    await userEvent.click(row);
+    expect(onSelectOption).toHaveBeenCalledTimes(2);
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
   },
 };
 
@@ -994,6 +1041,80 @@ export const RowIdChangeKeepsOneTabStop: Story = {
 
     await waitFor(() => expect(grace).toHaveAttribute('id', 'reviewer-1-1'));
     await waitFor(() => expect(getTabStops()).toEqual([ada]));
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const HighlightAndTabStopFollowReorder: Story = {
+  render: () => <RankedPicker />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const search = await openPicker({
+      canvasElement,
+      triggerName: 'Ranked people',
+    });
+
+    await userEvent.type(search, 'a');
+    const ada = body.getByRole('button', { name: 'Ada Lovelace' });
+    const margaret = body.getByRole('button', { name: 'Margaret Hamilton' });
+
+    await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'));
+    expect(ada).toHaveAttribute('tabindex', '0');
+
+    rankedPeople.set(['Margaret Hamilton', 'Ada Lovelace', 'Grace Hopper']);
+
+    await waitFor(() => expect(margaret).toHaveAttribute('data-highlighted'));
+    expect(body.getByRole('button', { name: 'Margaret Hamilton' })).toBe(
+      margaret,
+    );
+    expect(search).toHaveAttribute('aria-activedescendant', margaret.id);
+    expect(margaret).toHaveAttribute('tabindex', '0');
+    expect(ada).toHaveAttribute('tabindex', '-1');
+    await userEvent.keyboard('{ArrowDown}');
+    expect(margaret).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(ada).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const DisabledRowLeavesNavigationWhileOpen: Story = {
+  render: () => <ReviewerPicker />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Reviewers' }),
+    );
+    const dialog = await body.findByRole('dialog', {
+      name: 'Choose reviewers',
+    });
+    const ada = within(dialog).getByRole('button', { name: 'Ada Lovelace' });
+    const grace = within(dialog).getByRole('button', { name: 'Grace Hopper' });
+    const margaret = within(dialog).getByRole('button', {
+      name: 'Margaret Hamilton',
+    });
+
+    await waitFor(() => expect(ada).toHaveFocus());
+
+    disabledReviewerIndex.set(1);
+
+    await waitFor(() => expect(grace).toBeDisabled());
+    expect(grace).toHaveAttribute('tabindex', '-1');
+    await userEvent.keyboard('{ArrowDown}');
+    expect(margaret).toHaveFocus();
+
+    disabledReviewerIndex.set(undefined);
+
+    await waitFor(() => expect(grace).toBeEnabled());
+    await userEvent.keyboard('{ArrowUp}');
+    expect(grace).toHaveFocus();
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),

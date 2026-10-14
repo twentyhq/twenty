@@ -1,12 +1,31 @@
-import { getDropdownItems } from '../internal/getDropdownItems';
+import { createDropdownRowRegistry } from '../internal/createDropdownRowRegistry';
+import { getEnabledDropdownRows } from '../internal/getEnabledDropdownRows';
 import { getNextDropdownItem } from '../internal/getNextDropdownItem';
+import { registerDropdownRow } from '../internal/registerDropdownRow';
 
 const createCell = (label: string) => {
   const cell = document.createElement('button');
-  cell.dataset.dropdownItem = '';
   cell.textContent = label;
 
   return cell;
+};
+
+const getEnabledItems = (rowElements: HTMLButtonElement[]) => {
+  const rowRegistry = createDropdownRowRegistry();
+
+  for (const element of [...rowElements].reverse()) {
+    registerDropdownRow({
+      rowRegistry,
+      registration: {
+        id: element.textContent ?? '',
+        kind: 'option',
+        disabled: element.disabled,
+        elementRef: { current: element },
+      },
+    });
+  }
+
+  return getEnabledDropdownRows(rowRegistry).map((row) => row.element);
 };
 
 const createGrid = ({
@@ -19,12 +38,13 @@ const createGrid = ({
   columns?: string;
 } = {}) => {
   const content = document.createElement('div');
-  content.dataset.dropdownContent = '';
   const search = document.createElement('input');
   const section = document.createElement('div');
   section.dataset.dropdownColumns = columns;
   content.append(search, section);
+  document.body.append(content);
   const cells: HTMLButtonElement[] = [];
+  const actions: HTMLButtonElement[] = [];
 
   for (let index = 0; index < count; index++) {
     const cell = createCell(`Icon ${index + 1}`);
@@ -32,6 +52,14 @@ const createGrid = ({
     section.append(cell);
     cells.push(cell);
   }
+
+  const appendAction = () => {
+    const action = createCell('Action');
+    content.append(action);
+    actions.push(action);
+
+    return action;
+  };
 
   const navigate = ({
     key,
@@ -42,7 +70,7 @@ const createGrid = ({
     from: number;
     isRightToLeft?: boolean;
   }) => {
-    const items = getDropdownItems(content);
+    const items = getEnabledItems([...cells, ...actions]);
 
     return getNextDropdownItem({
       key,
@@ -54,10 +82,14 @@ const createGrid = ({
     });
   };
 
-  return { cells, content, search, navigate };
+  return { cells, search, navigate, appendAction };
 };
 
 describe('Dropdown grid navigation', () => {
+  afterEach(() => {
+    document.body.replaceChildren();
+  });
+
   it('moves across columns and between rows', () => {
     const { cells, navigate } = createGrid();
 
@@ -89,10 +121,9 @@ describe('Dropdown grid navigation', () => {
   });
 
   it('moves to the nearest enabled cell of the next row when the column has none left', () => {
-    const { cells, content, navigate } = createGrid({ disabledIndex: 7 });
-    const action = document.createElement('button');
-    action.dataset.dropdownItem = '';
-    content.append(action);
+    const { cells, navigate, appendAction } = createGrid({ disabledIndex: 7 });
+
+    appendAction();
 
     expect(navigate({ key: 'ArrowDown', from: 4 })).toBe(cells[6]);
     expect(navigate({ key: 'ArrowDown', from: 5 })).toBe(cells[6]);
@@ -126,17 +157,14 @@ describe('Dropdown grid navigation', () => {
   });
 
   it('moves to the next section when leaving the final grid row', () => {
-    const { content, navigate } = createGrid();
-    const action = document.createElement('button');
-    action.dataset.dropdownItem = '';
-    content.append(action);
+    const { navigate, appendAction } = createGrid();
+    const action = appendAction();
 
     expect(navigate({ key: 'ArrowDown', from: 6 })).toBe(action);
   });
 
   it('places a nested section in a single cell and leaves its items to linear navigation', () => {
     const content = document.createElement('div');
-    content.dataset.dropdownContent = '';
     const section = document.createElement('div');
     section.dataset.dropdownColumns = '3';
     const first = createCell('A');
@@ -149,7 +177,15 @@ describe('Dropdown grid navigation', () => {
     nestedSection.append(nestedFirst, nestedSecond);
     section.append(first, second, nestedSection, fourth, fifth);
     content.append(section);
-    const items = getDropdownItems(content);
+    document.body.append(content);
+    const items = getEnabledItems([
+      first,
+      second,
+      nestedFirst,
+      nestedSecond,
+      fourth,
+      fifth,
+    ]);
     const navigate = (key: string, from: HTMLElement) =>
       getNextDropdownItem({
         key,

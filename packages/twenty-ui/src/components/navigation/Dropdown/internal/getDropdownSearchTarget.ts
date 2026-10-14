@@ -2,21 +2,25 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { getDropdownItems } from './getDropdownItems';
-import { getDropdownSearch } from './getDropdownSearch';
+import { type DropdownType } from '../types/DropdownType';
+import { type DropdownRow } from './DropdownRow';
 
-export const getDropdownSearchTarget = (content: HTMLElement) => {
-  if (content.dataset.type === 'panel') {
+export const getDropdownSearchTarget = ({
+  enabledRows,
+  search,
+  type,
+}: {
+  enabledRows: DropdownRow[];
+  search: HTMLInputElement | null;
+  type: DropdownType;
+}) => {
+  if (
+    type === 'panel' ||
+    !isDefined(search) ||
+    !isNonEmptyString(search.value.trim())
+  ) {
     return undefined;
   }
 
-  const search = getDropdownSearch(content);
-
-  if (!isDefined(search) || !isNonEmptyString(search.value.trim())) {
-    return undefined;
-  }
-
-  return getDropdownItems(content).find((item) =>
-    item.hasAttribute('data-dropdown-option-item'),
-  );
+  return enabledRows.find((row) => row.kind === 'option');
 };

@@ -1,13 +1,11 @@
 import { clsx } from 'clsx';
-import { type ReactNode } from 'react';
+import { type ReactNode, type RefObject } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
 import listItemStyles from '@ui/primitives/navigation/ListItem/ListItem.module.scss';
 import { type ListItemProps } from '@ui/primitives/navigation/ListItem/types/ListItemProps';
 
 import styles from '../Dropdown.module.scss';
-
-const DROPDOWN_ITEM_SELECTOR = '[data-dropdown-item]';
 
 type DropdownItemWithActionsProps = Pick<
   ListItemProps,
@@ -20,6 +18,7 @@ type DropdownItemWithActionsProps = Pick<
   | 'disabled'
   | 'hasSubmenu'
 > & {
+  primaryRef: RefObject<HTMLElement | null>;
   children: ReactNode;
 };
 
@@ -32,6 +31,7 @@ export const DropdownItemWithActions = ({
   indicator = 'none',
   disabled = false,
   hasSubmenu = false,
+  primaryRef,
   children,
 }: DropdownItemWithActionsProps) => (
   <div
@@ -48,9 +48,7 @@ export const DropdownItemWithActions = ({
         return;
       }
 
-      event.currentTarget
-        .querySelector<HTMLElement>(DROPDOWN_ITEM_SELECTOR)
-        ?.click();
+      primaryRef.current?.click();
     }}
   >
     {children}

@@ -4,43 +4,50 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
+import { type DropdownRowRegistry } from './DropdownRowRegistry';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
-import { getDropdownItems } from './getDropdownItems';
+import { getDropdownPageType } from './getDropdownPageType';
+import { getDropdownRows } from './getDropdownRows';
 import { getDropdownSearch } from './getDropdownSearch';
+import { getEnabledDropdownRows } from './getEnabledDropdownRows';
 
 export const getDropdownFocusTarget = ({
   content,
+  rowRegistry,
+  pageId,
+  type,
   target,
   edge = 'first',
-  type,
 }: {
   content: HTMLElement;
+  rowRegistry: DropdownRowRegistry;
+  pageId?: string;
+  type: DropdownType;
   target?: DropdownFocusTarget;
   edge?: 'first' | 'last';
-  type?: DropdownType;
 }) => {
   const previousTrigger = isDefined(target?.id)
-    ? content.ownerDocument.getElementById(target.id)
-    : null;
+    ? getDropdownRows(rowRegistry).find((row) => row.id === target.id)
+    : undefined;
 
-  if (isDefined(previousTrigger) && content.contains(previousTrigger)) {
-    return previousTrigger;
+  if (isDefined(previousTrigger)) {
+    return previousTrigger.element;
   }
 
-  const items = getDropdownItems(content);
+  const enabledRows = getEnabledDropdownRows(rowRegistry);
   const pageTriggers = isDefined(target)
-    ? items.filter((item) => item.dataset.dropdownPage === target.page)
+    ? enabledRows.filter((row) => row.page === target.page)
     : [];
 
   const [firstPageTrigger] = pageTriggers;
 
   if (pageTriggers.length === 1 && isDefined(firstPageTrigger)) {
-    return firstPageTrigger;
+    return firstPageTrigger.element;
   }
 
   const matchingPageTriggers = isNonEmptyString(target?.label)
     ? pageTriggers.filter(
-        (item) => getDropdownItemLabel(item) === target?.label,
+        (row) => getDropdownItemLabel(row.element) === target?.label,
       )
     : [];
 
@@ -50,42 +57,42 @@ export const getDropdownFocusTarget = ({
     matchingPageTriggers.length === 1 &&
     isDefined(firstMatchingPageTrigger)
   ) {
-    return firstMatchingPageTrigger;
+    return firstMatchingPageTrigger.element;
   }
 
-  const pageTrigger = isDefined(target) ? items[target.index] : undefined;
+  const pageTrigger = isDefined(target) ? enabledRows[target.index] : undefined;
 
   if (isDefined(pageTrigger)) {
-    return pageTrigger;
+    return pageTrigger.element;
   }
 
   const firstFormControl = content.querySelector<HTMLElement>(
     'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
   );
 
-  const activePage = Array.from(
-    content.querySelectorAll<HTMLElement>('[data-dropdown-page-type]'),
-  ).find((page) => page.closest('[data-dropdown-content]') === content);
-  const resolvedType =
-    activePage?.dataset.dropdownPageType ?? type ?? content.dataset.type;
+  const resolvedType = getDropdownPageType({ rowRegistry, pageId }) ?? type;
 
   if (resolvedType === 'panel') {
     return firstFormControl ?? content;
   }
 
-  const search = getDropdownSearch(content);
+  const search = getDropdownSearch(rowRegistry);
 
   if (isDefined(search)) {
     return search;
   }
 
   if (edge === 'last') {
-    return items[items.length - 1] ?? firstFormControl ?? content;
+    return (
+      enabledRows[enabledRows.length - 1]?.element ??
+      firstFormControl ??
+      content
+    );
   }
 
   return (
-    items.find((item) => !item.hasAttribute('data-dropdown-back')) ??
-    items[0] ??
+    (enabledRows.find((row) => row.kind !== 'back') ?? enabledRows[0])
+      ?.element ??
     firstFormControl ??
     content
   );

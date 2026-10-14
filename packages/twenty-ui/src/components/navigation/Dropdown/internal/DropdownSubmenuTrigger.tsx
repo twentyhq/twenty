@@ -9,9 +9,10 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTriggerProps';
 import { DropdownItemOwner } from './DropdownItemOwner';
 import { getNativeDisabled } from './getNativeDisabled';
+import { DropdownRowRegistrationEffect } from './DropdownRowRegistrationEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
-import { useDropdownItemFocus } from './useDropdownItemFocus';
+import { useDropdownRow } from './useDropdownRow';
 import { useRegisterDropdownLabelElement } from './useRegisterDropdownLabelElement';
 
 export const DropdownSubmenuTrigger = ({
@@ -39,6 +40,10 @@ export const DropdownSubmenuTrigger = ({
     rootType,
     parentType,
     open,
+    pageId,
+    rowRegistry,
+    contentRef,
+    submenuTriggerRef,
     setOpen,
     setFocusOnOpen,
     registerTrigger,
@@ -46,80 +51,95 @@ export const DropdownSubmenuTrigger = ({
   const triggerType = open ? type : rootType;
   const generatedId = useId();
   const itemId = id ?? generatedId;
-  const itemFocus = useDropdownItemFocus({
+  const row = useDropdownRow({
     id: itemId,
+    kind: 'submenu-trigger',
     disabled,
-    isSubmenuTrigger: true,
   });
   const registerTriggerElement =
     useRegisterDropdownLabelElement(registerTrigger);
-  const mergedRef = useMergedRefs(ref, registerTriggerElement);
+  const mergedRef = useMergedRefs(
+    ref,
+    registerTriggerElement,
+    submenuTriggerRef,
+  );
 
   return (
-    <Popover.Trigger
-      {...props}
-      ref={mergedRef}
-      id={itemId}
-      disabled={disabled}
-      nativeButton={nativeButton}
-      openOnHover={openOnHover}
-      role={parentType === 'menu' ? 'menuitem' : undefined}
-      aria-haspopup={triggerType === 'menu' ? 'menu' : 'dialog'}
-      tabIndex={itemFocus.tabIndex}
-      data-dropdown-item=""
-      onKeyDown={(event) => {
-        onKeyDown?.(event);
+    <>
+      <Popover.Trigger
+        {...props}
+        ref={mergedRef}
+        id={itemId}
+        disabled={disabled}
+        nativeButton={nativeButton}
+        openOnHover={openOnHover}
+        role={parentType === 'menu' ? 'menuitem' : undefined}
+        aria-haspopup={triggerType === 'menu' ? 'menu' : 'dialog'}
+        tabIndex={row.tabIndex}
+        data-dropdown-item=""
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
 
-        if (event.defaultPrevented || disabled) {
-          return;
-        }
-
-        const isRightToLeft = direction === 'rtl';
-        const forwardKey = isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
-
-        if (event.key === forwardKey) {
-          event.preventDefault();
-          event.stopPropagation();
-          setFocusOnOpen(true);
-          const contentId = event.currentTarget.getAttribute('aria-controls');
-          const content = isDefined(contentId)
-            ? event.currentTarget.ownerDocument.getElementById(contentId)
-            : null;
-
-          if (open && isDefined(content)) {
-            getDropdownFocusTarget({ content, type }).focus();
+          if (event.defaultPrevented || disabled) {
             return;
           }
 
-          setOpen(true);
-        }
-      }}
-      render={(renderProps) => {
-        const nativeDisabled = getNativeDisabled({
-          nativeButton,
-          renderProps,
-        });
+          const isRightToLeft = direction === 'rtl';
+          const forwardKey = isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
 
-        return (
-          <ListItem
-            {...renderProps}
-            render={
-              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+          if (event.key === forwardKey) {
+            event.preventDefault();
+            event.stopPropagation();
+            setFocusOnOpen(true);
+            const submenuContent = contentRef.current;
+
+            if (open && isDefined(submenuContent)) {
+              getDropdownFocusTarget({
+                content: submenuContent,
+                rowRegistry,
+                pageId,
+                type,
+              }).focus();
+              return;
             }
-            disabled={disabled}
-            color={color}
-            startIcon={startIcon}
-            endIcon={endIcon}
-            description={description}
-            descriptionPlacement={descriptionPlacement}
-            shortcut={shortcut}
-            shortcutJoinLabel={shortcutJoinLabel}
-            hasSubmenu={hasSubmenu}
-          >
-            {children}
-          </ListItem>
-        );
-      }}
-    />
+
+            setOpen(true);
+          }
+        }}
+        render={(renderProps) => {
+          const nativeDisabled = getNativeDisabled({
+            nativeButton,
+            renderProps,
+          });
+
+          return (
+            <ListItem
+              {...renderProps}
+              render={
+                <DropdownItemOwner render={render} disabled={nativeDisabled} />
+              }
+              disabled={disabled}
+              color={color}
+              startIcon={startIcon}
+              endIcon={endIcon}
+              description={description}
+              descriptionPlacement={descriptionPlacement}
+              shortcut={shortcut}
+              shortcutJoinLabel={shortcutJoinLabel}
+              hasSubmenu={hasSubmenu}
+            >
+              {children}
+            </ListItem>
+          );
+        }}
+      />
+      <DropdownRowRegistrationEffect
+        elementRef={submenuTriggerRef}
+        id={itemId}
+        kind="submenu-trigger"
+        disabled={disabled}
+        ariaDisabled={props['aria-disabled']}
+      />
+    </>
   );
 };

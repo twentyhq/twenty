@@ -63,6 +63,11 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
     'Assignee: Unassigned',
   );
+  await userEvent.click(page.getByRole('button', { name: 'Rank last first' }));
+  await userEvent.type(search, 'e');
+  await waitFor(() => expect(grace).toHaveAttribute('data-highlighted'));
+  expect(search).toHaveAttribute('aria-activedescendant', grace.id);
+  expect(ada).not.toHaveAttribute('data-highlighted');
   const option = await page.findByText('Ada Lovelace');
   await waitFor(() => expect(option).toBeVisible());
   await userEvent.click(option);

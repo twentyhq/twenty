@@ -11,7 +11,7 @@ import { type DropdownType } from '../types/DropdownType';
 import { createStoryState } from './createStoryState';
 import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
-type FilterAction = { label: string; page?: string };
+type FilterAction = { label: string; page?: string; id?: string };
 
 const DEFAULT_FILTER_ACTIONS: FilterAction[] = [
   { label: 'People', page: 'people' },
@@ -34,8 +34,8 @@ const FilterPages = ({ keepMounted }: { keepMounted?: boolean }) => {
       <Dropdown.Trigger>Filters</Dropdown.Trigger>
       <Dropdown.Content aria-label="Filters" keepMounted={keepMounted}>
         <Dropdown.Page id="root">
-          {filterActions.useValue().map(({ label, page }) => (
-            <Dropdown.ActionItem key={label} page={page}>
+          {filterActions.useValue().map(({ label, page, id }) => (
+            <Dropdown.ActionItem key={label} id={id} page={page}>
               {label}
             </Dropdown.ActionItem>
           ))}
@@ -672,6 +672,40 @@ export const MovedAndRenamedDestination: Story = {
     );
     await waitFor(() =>
       expect(body.getByRole('menuitem', { name: 'All people' })).toHaveFocus(),
+    );
+  },
+};
+
+export const ConsumerIdRestoresTrigger: Story = {
+  render: () => <FilterPages />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    filterActions.set([
+      { label: 'People', page: 'people', id: 'people-filter' },
+      { label: 'Clear filters' },
+    ]);
+    await openFilters(canvasElement);
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'People' }),
+    );
+    await body.findByRole('searchbox', { name: 'Search people' });
+
+    filterActions.set([
+      { label: 'Clear filters' },
+      { label: 'Recent people', page: 'people' },
+      { label: 'Everyone', page: 'people', id: 'people-filter' },
+    ]);
+    await userEvent.click(
+      body.getByRole('button', { name: 'Back to filters' }),
+    );
+
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'Everyone' })).toHaveFocus(),
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );
   },
 };
