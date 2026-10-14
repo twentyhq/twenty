@@ -1,5 +1,8 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+
 export const dropdownSelectionGroupsTest = async ({
   canvasElement,
 }: {
@@ -7,6 +10,7 @@ export const dropdownSelectionGroupsTest = async ({
 }) => {
   const canvas = within(canvasElement);
   const page = within(canvasElement.ownerDocument.body);
+  await expectFrontComponentMounted(canvas);
   const trigger = canvas.getByRole('button', { name: 'Edit preferences' });
   await userEvent.click(trigger);
   await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
@@ -129,4 +133,5 @@ export const dropdownSelectionGroupsTest = async ({
   await waitFor(() =>
     expect(trigger).toHaveAttribute('aria-expanded', 'false'),
   );
+  expect(errorHandler).not.toHaveBeenCalled();
 };

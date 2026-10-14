@@ -21,15 +21,25 @@ const controlledOwner = createStoryState<string | null>(null);
 const controlledWatchers = createStoryState<string[]>([]);
 const visiblePeople = createStoryState(['ada', 'grace']);
 const defaultOwner = createStoryState<string | null>('ada');
+const POPUP_OPEN_TIMEOUT = 5000;
 
 const openPicker = async (canvasElement: HTMLElement) => {
   await userEvent.click(
     within(canvasElement).getByRole('button', { name: 'Choose people' }),
   );
 
-  return within(canvasElement.ownerDocument.body).findByRole('dialog', {
-    name: 'People',
+  const picker = await within(canvasElement.ownerDocument.body).findByRole(
+    'dialog',
+    {
+      name: 'People',
+    },
+  );
+
+  await waitFor(() => expect(picker).toBeVisible(), {
+    timeout: POPUP_OPEN_TIMEOUT,
   });
+
+  return picker;
 };
 
 const OwnerOptions = () => (

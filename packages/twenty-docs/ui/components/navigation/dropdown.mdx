@@ -162,7 +162,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 >
   <Dropdown.OptionItem value="ada">Ada Lovelace</Dropdown.OptionItem>
   <Dropdown.OptionItem value="grace">Grace Hopper</Dropdown.OptionItem>
-</Dropdown.SelectionGroup>
+</Dropdown.SelectionGroup>;
 ```
 
 Search receives focus when the picker opens. Without search, the first enabled selected option receives focus, or the first enabled row when no selected option is present. While `Search` holds text, the first enabled `OptionItem` is highlighted and Enter activates it. Action rows are never picked this way. With an empty search, Enter does nothing; ArrowDown moves focus into the results. When rows are pinned above matches, such as the current value or a "none" row, render them only when they match the search text. The popup stays open when no option matches. Filtering remains caller-owned.

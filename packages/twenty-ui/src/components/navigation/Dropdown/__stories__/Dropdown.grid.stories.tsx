@@ -25,8 +25,10 @@ export default meta;
 type Story = StoryObj;
 
 export const IconGrid: Story = {
+  tags: ['!dev'],
   render: () => <DropdownIconGridExample onSelect={onSelect} />,
   play: async ({ canvasElement }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
     const body = within(canvasElement.ownerDocument.body);
     const trigger = within(canvasElement).getByRole('button', {
       name: 'Choose icon',
@@ -36,9 +38,27 @@ export const IconGrid: Story = {
     const popup = await body.findByRole('dialog', { name: 'Choose icon' });
     const search = within(popup).getByRole('searchbox');
     const group = within(popup).getByRole('group', { name: 'Icons' });
+    const first = within(popup).getByRole('option', { name: 'Calendar 1' });
+    const second = within(popup).getByRole('option', { name: 'Calendar 2' });
+    const getBackgroundColor = (element: HTMLElement) =>
+      element.ownerDocument.defaultView?.getComputedStyle(element)
+        .backgroundColor;
 
     await waitFor(() => expect(search).toHaveFocus());
     expect(group).toHaveStyle({ display: 'grid' });
+    const selectedBackgroundColor = getBackgroundColor(first);
+    const idleBackgroundColor = getBackgroundColor(second);
+
+    expect(selectedBackgroundColor).toBeDefined();
+    expect(selectedBackgroundColor).not.toBe(idleBackgroundColor);
+    await trustedUserEvent.hover(second);
+    await waitFor(() =>
+      expect(getBackgroundColor(second)).not.toBe(idleBackgroundColor),
+    );
+    expect(getBackgroundColor(second)).not.toBe(selectedBackgroundColor);
+    expect(getBackgroundColor(first)).toBe(selectedBackgroundColor);
+    expect(onSelect).not.toHaveBeenCalled();
+    await trustedUserEvent.unhover(second);
     expect(
       within(popup).getByRole('option', { name: 'Calendar 1' }),
     ).toHaveAttribute('data-color', 'accent');
@@ -64,7 +84,14 @@ export const IconGrid: Story = {
         .getByRole('option', { name: 'Calendar 1' })
         .getBoundingClientRect().top,
     );
-    await userEvent.keyboard('{ArrowDown}{ArrowRight}{ArrowDown}');
+    await userEvent.keyboard('{ArrowDown}{ArrowRight}');
+    expect(second).toHaveFocus();
+    expect(getBackgroundColor(second)).not.toBe(selectedBackgroundColor);
+    expect(getBackgroundColor(first)).toBe(selectedBackgroundColor);
+    expect(first).toHaveAttribute('aria-selected', 'true');
+    expect(second).toHaveAttribute('aria-selected', 'false');
+    expect(onSelect).not.toHaveBeenCalled();
+    await userEvent.keyboard('{ArrowDown}');
     expect(
       within(popup).getByRole('option', { name: 'Calendar 8' }),
     ).toHaveFocus();
@@ -127,6 +154,8 @@ export const IconGridRtl: Story = {
     expect(
       within(reopened).getByRole('option', { name: 'Calendar 1' }),
     ).toHaveAttribute('data-color', 'neutral');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(reopened).not.toBeInTheDocument());
   },
 };
 
