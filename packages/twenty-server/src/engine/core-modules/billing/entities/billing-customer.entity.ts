@@ -12,7 +12,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_MEMBER_CREDITS_FALLBACK_TO_BILLING_CUSTOMER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/add-member-credits-fallback-to-billing-customer-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -50,7 +49,7 @@ export class BillingCustomerEntity extends WorkspaceRelatedEntity {
   @Field(() => MemberCreditsFallback)
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      ADD_MEMBER_CREDITS_FALLBACK_TO_BILLING_CUSTOMER_UPGRADE_COMMAND_NAME,
+      '2.47.0_AddMemberCreditsFallbackToBillingCustomerFastInstanceCommand_1791909304141',
   })
   @Column({
     type: 'varchar',
