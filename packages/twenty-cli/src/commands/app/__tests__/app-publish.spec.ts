@@ -1,3 +1,5 @@
+import { readGraphqlRequest } from '@/__tests__/utils/read-graphql-request';
+import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 import execa from 'execa';
 import { build as bundle } from 'esbuild';
 import { createHash } from 'node:crypto';
@@ -328,5 +330,209 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
         }),
       ]),
     );
+  });
+  describe('private server registry', () => {
+    let server: Awaited<ReturnType<typeof startTestServer>>;
+    let failure: string | undefined;
+    const fileId = '8ba383ca-7d8a-47b1-b41c-02c172d4d0dd';
+    const registration = {
+      id: 'registration-id',
+      name: 'Billing',
+      universalIdentifier: 'test-app',
+    };
+
+    beforeEach(async () => {
+      failure = undefined;
+      server = await startTestServer((request, response) => {
+        if (request.method === 'PUT') {
+          response.writeHead(
+            failure === 'upload' ? 503 : failure === 'redirect' ? 302 : 200,
+            failure === 'redirect'
+              ? { location: `${server.url}/must-not-follow` }
+              : {},
+          );
+          response.end();
+          return;
+        }
+        const { query } = readGraphqlRequest(request);
+        if (query.includes('createFileUpload')) {
+          if (failure === 'reserve') {
+            sendJson(response, 403, { message: 'Permission denied' });
+            return;
+          }
+          sendJson(response, 200, {
+            data: {
+              createFileUpload:
+                failure === 'invalid-target'
+                  ? { fileId }
+                  : {
+                      fileId,
+                      uploadUrl: `${server.url}/tarball`,
+                      contentType: 'application/gzip',
+                    },
+            },
+          });
+          return;
+        }
+        if (query.includes('completeAppTarballUpload')) {
+          if (failure === 'hold-complete') return;
+          if (failure === 'complete') {
+            sendJson(response, 200, {
+              data: null,
+              errors: [
+                {
+                  message: 'Version already exists',
+                  extensions: { code: 'BAD_USER_INPUT' },
+                },
+              ],
+            });
+            return;
+          }
+          sendJson(response, 200, {
+            data: {
+              completeAppTarballUpload:
+                failure === 'invalid-complete' ? null : registration,
+            },
+          });
+          return;
+        }
+        sendJson(response, 500, { message: 'Unexpected operation' });
+      });
+      vi.stubEnv('TWENTY_API_URL', server.url);
+      vi.stubEnv('TWENTY_API_KEY', 'test-api-key');
+    });
+
+    afterEach(async () => server.close());
+
+    it('packs, uploads bytes without credentials, then registers without installing or publishing to npm', async () => {
+      const result = await runPublish(['--private']);
+      expect(result.exitCode).toBe(0);
+      expect(result.envelope.data).toMatchObject({
+        target: 'private',
+        registry: { apiUrl: server.url },
+        registration,
+        fileId,
+        installed: false,
+      });
+      expect(server.requests).toHaveLength(3);
+      expect(readGraphqlRequest(server.requests[0]).arguments).toEqual({
+        filename: 'test-billing-1.2.3.tgz',
+        size: Buffer.byteLength('packed bytes'),
+        fileFolder: 'AppTarball',
+      });
+      expect(server.requests[0].headers.authorization).toBe(
+        'Bearer test-api-key',
+      );
+      expect(server.requests[1]).toMatchObject({
+        method: 'PUT',
+        path: '/tarball',
+        body: 'packed bytes',
+      });
+      expect(server.requests[1].headers.authorization).toBeUndefined();
+      expect(server.requests[1].headers['content-type']).toBe(
+        'application/gzip',
+      );
+      expect(readGraphqlRequest(server.requests[2]).arguments).toEqual({
+        fileId,
+      });
+      expect(server.requests[2].headers.authorization).toBe(
+        'Bearer test-api-key',
+      );
+      const invocations = await readInvocations();
+      expect(invocations).toHaveLength(1);
+      expect(invocations[0].args[0]).toBe('pack');
+      await expect(access(invocations[0].args.at(-1))).rejects.toThrow();
+    });
+
+    it('refuses npm-only flags before building or contacting the target', async () => {
+      const result = await runPublish(['--private', '--tag', 'beta']);
+      expect(result.exitCode).toBe(2);
+      expect(result.envelope.error.code).toBe('INVALID_INPUT');
+      expect(runAppBuild).not.toHaveBeenCalled();
+      expect(server.requests).toEqual([]);
+    });
+
+    it('requires a private target before building or packing', async () => {
+      vi.stubEnv('TWENTY_API_KEY', '');
+      const result = await runPublish(['--private']);
+      expect(result.exitCode).not.toBe(0);
+      expect(runAppBuild).not.toHaveBeenCalled();
+      expect(await readInvocations()).toEqual([]);
+      expect(server.requests).toEqual([]);
+    });
+
+    it('does not request an upload when packing fails', async () => {
+      vi.stubEnv('PUBLISH_TEST_FAIL', 'pack');
+      const result = await runPublish(['--private']);
+      expect(result.exitCode).toBe(1);
+      expect(result.envelope.error.code).toBe('PUBLISH_FAILED');
+      expect(server.requests).toEqual([]);
+    });
+
+    it.each(['reserve', 'invalid-target', 'upload', 'redirect'])(
+      'does not register when %s fails',
+      async (reason) => {
+        failure = reason;
+        const result = await runPublish(['--private']);
+        expect(result.exitCode).not.toBe(0);
+        expect(result.envelope.error.details.outcome).toBe('not-published');
+        expect(server.requests).toHaveLength(
+          reason === 'reserve' || reason === 'invalid-target' ? 1 : 2,
+        );
+        expect(
+          server.requests.some(
+            (request) =>
+              request.method === 'POST' &&
+              readGraphqlRequest(request).query.includes(
+                'completeAppTarballUpload',
+              ),
+          ),
+        ).toBe(false);
+        const invocations = await readInvocations();
+        await expect(access(invocations[0].args.at(-1))).rejects.toThrow();
+      },
+    );
+
+    it.each(['complete', 'invalid-complete'])(
+      'reports ambiguous registration failure for %s with the file ID',
+      async (reason) => {
+        failure = reason;
+        const result = await runPublish(['--private']);
+        expect(result.exitCode).toBe(1);
+        expect(result.envelope.error.details).toMatchObject({
+          phase: 'register',
+          outcome: 'unknown',
+          completedPhases: ['prepare-upload', 'upload'],
+          fileId,
+        });
+        expect(server.requests).toHaveLength(3);
+        expect(result.envelope.error.hint).toContain(
+          'Check the server registry',
+        );
+        const invocations = await readInvocations();
+        await expect(access(invocations[0].args.at(-1))).rejects.toThrow();
+      },
+    );
+
+    it('cancels a pending registration and preserves the uncertain outcome', async () => {
+      failure = 'hold-complete';
+      const controller = new AbortController();
+      const pending = runAppPublishCommand({
+        command: 'app publish',
+        arguments: [],
+        options: { path: appPath, private: true },
+        outputMode: 'json',
+        output: createOutput({ mode: 'json', command: 'app publish' }),
+        signal: controller.signal,
+      }).catch((error: unknown) => error);
+      await expect.poll(() => server.requests.length).toBe(3);
+      controller.abort();
+      expect(await pending).toMatchObject({
+        code: 'CANCELLED',
+        details: { phase: 'register', outcome: 'unknown', fileId },
+      });
+      const invocations = await readInvocations();
+      await expect(access(invocations[0].args.at(-1))).rejects.toThrow();
+    });
   });
 });

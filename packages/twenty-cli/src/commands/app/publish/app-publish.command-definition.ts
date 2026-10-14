@@ -2,8 +2,13 @@ import { type LocalCommandDefinition } from '@/catalog/types/command-definition.
 
 export const APP_PUBLISH_COMMAND_DEFINITION: LocalCommandDefinition = {
   path: ['app', 'publish'],
-  description: 'Build and publish the app package to npm',
+  description: 'Build and publish the app to npm or a private Twenty registry',
   options: [
+    {
+      flags: '--private',
+      description:
+        'Publish to a Twenty server registry using --remote or the active target',
+    },
     {
       flags: '--path <directory>',
       description:
@@ -16,6 +21,7 @@ export const APP_PUBLISH_COMMAND_DEFINITION: LocalCommandDefinition = {
   ],
   examples: [
     'twenty app publish',
+    'twenty app publish --private --remote dev',
     'twenty app publish --path ./apps/billing --tag beta --json',
   ],
   outputModes: ['human', 'json'],
