@@ -56,13 +56,18 @@ export const buildSlackConversationMessages = ({
     };
   });
 
+  // a reply that was only the footer is empty once stripped, and runAgent refuses empty turns
+  const nonEmptyAgentMessages = agentMessages.filter((message) =>
+    isNonEmptyString(message.content.trim()),
+  );
+
   // trimming the window can leave an assistant turn first, which providers
   // reject: a conversation has to open on a user turn
-  const firstUserTurnIndex = agentMessages.findIndex(
+  const firstUserTurnIndex = nonEmptyAgentMessages.findIndex(
     (message) => message.role === 'user',
   );
 
   return firstUserTurnIndex === -1
     ? []
-    : agentMessages.slice(firstUserTurnIndex);
+    : nonEmptyAgentMessages.slice(firstUserTurnIndex);
 };

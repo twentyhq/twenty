@@ -150,14 +150,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       );
     }
 
-    // the resolver has no validation pipe, and Postgres rejects a non-UUID on the uuid column
-    const agent = z.guid().safeParse(input.agentUniversalIdentifier).success
-      ? await this.agentRepository.findOne(workspace.id, {
-          where: {
-            universalIdentifier: input.agentUniversalIdentifier,
-          },
-        })
-      : null;
+    const agent = await this.agentRepository.findOne(workspace.id, {
+      where: {
+        universalIdentifier: input.agentUniversalIdentifier,
+      },
+    });
 
     if (!agent) {
       throw new NotFoundException(
