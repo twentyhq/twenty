@@ -6,7 +6,10 @@ import { type Plugin } from 'graphql-yoga';
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
+import {
+  type DirectExecutionResult,
+  type DirectExecutionService,
+} from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/classify-top-level-fields.util';
 import { captureExecutedRootResolvers } from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
 import { extractTopLevelFieldsSafely } from 'src/engine/api/graphql/utils/extract-top-level-fields-safely.util';
@@ -41,7 +44,7 @@ export function useDirectExecution(
           return;
         }
 
-        const result = {
+        const result: DirectExecutionResult = {
           errors: [
             new AuthenticationError('Authentication required', {
               subCode: AuthExceptionCode.UNAUTHENTICATED,

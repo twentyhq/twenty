@@ -9,6 +9,8 @@ export const isDevelopmentToolingRequest = (
   request: Pick<Request, 'body' | 'query'>,
 ): boolean => {
   const query = request.body?.query ?? request.query?.query;
+  const operationName =
+    request.body?.operationName ?? request.query?.operationName;
 
   if (!isNonEmptyString(query)) {
     return true;
@@ -16,7 +18,10 @@ export const isDevelopmentToolingRequest = (
 
   try {
     const { hasIntrospectionFields, hasCoreFields } = classifyTopLevelFields(
-      extractTopLevelFieldsSafely(parse(query), request.body?.operationName),
+      extractTopLevelFieldsSafely(
+        parse(query),
+        isNonEmptyString(operationName) ? operationName : undefined,
+      ),
       new Set(),
     );
 
