@@ -260,7 +260,7 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).not.toContain('does not have permission');
   });
 
-  it('refuses a guest without the Connected accounts permission to reconnect their own private connection', async () => {
+  it('refuses a guest without the User Apps permission to reconnect their own private connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_PHIL_ID,
       asGuest: true,
@@ -269,7 +269,7 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).toContain('does not have permission');
   });
 
-  describe('with the Applications permission and without the Connected accounts permission', () => {
+  describe('with the Workspace Apps permission and without the User Apps permission', () => {
     let memberRoleId: string;
     let applicationsOnlyRoleId: string;
 
