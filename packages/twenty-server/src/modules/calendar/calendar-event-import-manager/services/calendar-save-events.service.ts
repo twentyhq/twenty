@@ -66,6 +66,14 @@ export class CalendarSaveEventsService {
       async () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
+            await this.calendarEventSharingService.lockCalendarEventSharingKeys(
+              {
+                transactionScope,
+                provider: connectedAccount.provider,
+                fetchedCalendarEvents,
+              },
+            );
+
             const calendarEventRepository =
               transactionScope.getRepository<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
@@ -93,20 +101,6 @@ export class CalendarSaveEventsService {
               ),
             );
 
-            const newFetchedCalendarEvents = fetchedCalendarEvents.filter(
-              (fetchedCalendarEvent) =>
-                !existingEventExternalIds.has(fetchedCalendarEvent.id),
-            );
-
-            await this.calendarEventSharingService.lockCalendarEventSharingKeys(
-              {
-                transactionScope,
-                provider: connectedAccount.provider,
-                otherCalendarChannels,
-                fetchedCalendarEvents: newFetchedCalendarEvents,
-              },
-            );
-
             const calendarEventIdToLinkByEventExternalId =
               isCalendarEventSharingEnabled
                 ? await this.calendarEventSharingService.findCalendarEventIdsToLink(
@@ -114,7 +108,12 @@ export class CalendarSaveEventsService {
                       transactionScope,
                       provider: connectedAccount.provider,
                       otherCalendarChannels,
-                      fetchedCalendarEvents: newFetchedCalendarEvents,
+                      fetchedCalendarEvents: fetchedCalendarEvents.filter(
+                        (fetchedCalendarEvent) =>
+                          !existingEventExternalIds.has(
+                            fetchedCalendarEvent.id,
+                          ),
+                      ),
                     },
                   )
                 : new Map<string, string>();
@@ -131,7 +130,6 @@ export class CalendarSaveEventsService {
                 {
                   transactionScope,
                   calendarChannelId: calendarChannel.id,
-                  otherCalendarChannels,
                   calendarEventIds: storedCalendarEventIds,
                 },
               );
