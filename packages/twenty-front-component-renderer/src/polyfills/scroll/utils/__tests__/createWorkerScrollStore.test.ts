@@ -533,6 +533,62 @@ describe('createWorkerScrollStore', () => {
     ]);
   });
 
+  it('should send a write echoing an acknowledged position while the element has no geometry snapshot', () => {
+    const { scrollStore, snapshotByElement, scrollContainer } =
+      createScrollStoreEnvironment();
+    snapshotByElement.delete(scrollContainer);
+
+    scrollStore.requestScroll({
+      element: scrollContainer,
+      request: { method: 'scrollTo', top: 120 },
+    });
+    readLatestScrollUpdateHandler(scrollContainer)({
+      scrollCommandSequence: 1,
+      scrollPositions: [
+        { remoteElementId: 'scroll-container', scrollTop: 120, scrollLeft: 0 },
+      ],
+    });
+    const readScrollTop = scrollStore.readScrollOffset({
+      element: scrollContainer,
+      axis: 'top',
+    });
+    scrollStore.requestScroll({
+      element: scrollContainer,
+      request: { method: 'scrollTo', top: readScrollTop },
+    });
+
+    expect(readScrollTop).toBe(120);
+    expect(readSentScrollQueues(scrollContainer)).toEqual([
+      [{ sequence: 1, request: { method: 'scrollTo', top: 120 } }],
+      [],
+      [{ sequence: 2, request: { method: 'scrollTo', top: 120 } }],
+    ]);
+  });
+
+  it('should elide a write echoing a pending write on an element without a geometry snapshot', () => {
+    const { scrollStore, snapshotByElement, scrollContainer } =
+      createScrollStoreEnvironment();
+    snapshotByElement.delete(scrollContainer);
+
+    scrollStore.requestScroll({
+      element: scrollContainer,
+      request: { method: 'scrollTo', top: 40 },
+    });
+    const readScrollTop = scrollStore.readScrollOffset({
+      element: scrollContainer,
+      axis: 'top',
+    });
+    scrollStore.requestScroll({
+      element: scrollContainer,
+      request: { method: 'scrollTo', top: readScrollTop },
+    });
+
+    expect(readScrollTop).toBe(40);
+    expect(readSentScrollQueues(scrollContainer)).toEqual([
+      [{ sequence: 1, request: { method: 'scrollTo', top: 40 } }],
+    ]);
+  });
+
   it('should send a restore of the last read offset while a descendant reveal is pending', () => {
     const { scrollStore, scrollContainer, scrolledItem } =
       createScrollStoreEnvironment();

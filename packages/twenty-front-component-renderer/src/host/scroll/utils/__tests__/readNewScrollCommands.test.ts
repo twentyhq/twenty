@@ -78,7 +78,7 @@ describe('readNewScrollCommands', () => {
     ]);
   });
 
-  it('should keep the acknowledged native edit sequence and the raw request of a command', () => {
+  it('should keep only the sequence and the raw request of a command', () => {
     const request = { method: 'scrollBy', top: 'not validated here' };
 
     const [newScrollCommand] = readNewScrollCommands({
@@ -93,26 +93,7 @@ describe('readNewScrollCommands', () => {
       appliedSequence: 0,
     });
 
-    expect(newScrollCommand).toStrictEqual({
-      sequence: 1,
-      acknowledgedNativeEditSequence: 7,
-      request,
-    });
+    expect(newScrollCommand).toStrictEqual({ sequence: 1, request });
     expect(newScrollCommand.request).toBe(request);
-  });
-
-  it('should keep a malformed acknowledged native edit sequence as is', () => {
-    const [newScrollCommand] = readNewScrollCommands({
-      scrollCommands: [
-        {
-          sequence: 1,
-          acknowledgedNativeEditSequence: 'stale',
-          request: SCROLL_TO_TOP_REQUEST,
-        },
-      ],
-      appliedSequence: 0,
-    });
-
-    expect(newScrollCommand.acknowledgedNativeEditSequence).toBe('stale');
   });
 });
