@@ -1,6 +1,5 @@
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
@@ -14,12 +13,10 @@ import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 type SendMessageButtonProps = {
-  onSend: () => void;
   isDisabled?: boolean;
 };
 
 export const SendMessageButton = ({
-  onSend,
   isDisabled = false,
 }: SendMessageButtonProps) => {
   const agentChatInputIsEmpty = useAtomStateValue(
@@ -38,26 +35,15 @@ export const SendMessageButton = ({
     { threadId: currentAiChatThread },
   );
 
-  const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
-  const { cancelAllUploads } = useAiChatFileUpload();
-
-  // Send refuses to run while attachments are uploading, so stop is the one
-  // thing left to press then, and it cancels the uploads.
-  const hasUploadsInFlight = agentChatSelectedFiles.length > 0;
+  const handleSendClick = () => {
+    dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
+  };
 
   const handleStopClick = () => {
-    if (hasUploadsInFlight) {
-      cancelAllUploads();
-    }
-
     dispatchBrowserEvent(AGENT_CHAT_STOP_EVENT_NAME);
   };
 
-  if (
-    agentChatIsStreaming ||
-    agentChatIsAwaitingFirstChunk ||
-    hasUploadsInFlight
-  ) {
+  if (agentChatIsStreaming || agentChatIsAwaitingFirstChunk) {
     return (
       <IconButton
         variant="solid"
@@ -79,7 +65,7 @@ export const SendMessageButton = ({
       shape="round"
       aria-label={t`Send message`}
       size="sm"
-      onClick={onSend}
+      onClick={handleSendClick}
       disabled={isDisabled || agentChatInputIsEmpty || agentChatIsLoading}
     >
       <IconArrowUp />

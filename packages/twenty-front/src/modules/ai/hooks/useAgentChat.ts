@@ -118,6 +118,10 @@ export const useAgentChat = () => {
       [threadId]: '',
     }));
 
+    dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+      content: '',
+    });
+
     const browsingContext = getBrowsingContext();
     const lastSentBrowsingContextAtom =
       agentChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
