@@ -55,7 +55,6 @@ import { findBindingUserAllowance } from 'src/engine/core-modules/usage-limit/ut
 import { findUserAllowanceFirstExhaustedKind } from 'src/engine/core-modules/usage-limit/utils/find-user-allowance-first-exhausted-kind.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
-import { isUserCreditsEligibleEvent } from 'src/engine/core-modules/usage-limit/utils/is-user-credits-eligible-event.util';
 import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
 import { isWorkspaceCreditLimitCounter } from 'src/engine/core-modules/usage-limit/utils/is-workspace-credit-limit-counter.util';
 import { parseUserAllowanceFirstScriptReply } from 'src/engine/core-modules/usage-limit/utils/parse-user-allowance-first-script-reply.util';
@@ -327,7 +326,6 @@ export class UsageLimitQuotaService {
 
     const userAllowanceCounters = await this.buildUserAllowanceCounters({
       workspaceId,
-      events,
       userCreditCounters,
     });
 
@@ -468,7 +466,6 @@ export class UsageLimitQuotaService {
 
     const userAllowanceCounters = await this.buildUserAllowanceCounters({
       workspaceId,
-      events,
       userCreditCounters,
     });
 
@@ -604,7 +601,6 @@ export class UsageLimitQuotaService {
 
       const userAllowanceCounters = await this.buildUserAllowanceCounters({
         workspaceId,
-        events,
         userCreditCounters,
       });
 
@@ -1429,18 +1425,15 @@ export class UsageLimitQuotaService {
 
   private async buildUserAllowanceCounters({
     workspaceId,
-    events,
     userCreditCounters,
   }: {
     workspaceId: string;
-    events: CreditCounterEvent[];
     userCreditCounters: LimitQuotaCounter[][];
   }): Promise<UserAllowanceQuotaCounter[]> {
     const [scopeUserCreditCounters = []] = userCreditCounters;
     const scopeKeys = buildCounterKeySignature(scopeUserCreditCounters);
 
     if (
-      !events.every(isUserCreditsEligibleEvent) ||
       scopeUserCreditCounters.length === 0 ||
       !userCreditCounters.every(
         (counters) => buildCounterKeySignature(counters) === scopeKeys,
