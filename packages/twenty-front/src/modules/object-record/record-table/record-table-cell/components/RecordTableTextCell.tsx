@@ -77,8 +77,8 @@ const textClassName = css`
   font-weight: inherit;
   height: auto;
   max-width: 100%;
-  overflow-wrap: break-word;
   overflow: hidden;
+  overflow-wrap: break-word;
   text-decoration: inherit;
   white-space: pre-wrap;
 `;
@@ -114,8 +114,8 @@ export const RecordTableTextCell = ({
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
-  const text: string = record?.[fieldDefinition.metadata.fieldName] ?? '';
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const text: string = recordStore?.[fieldDefinition.metadata.fieldName] ?? '';
 
   const isReadOnly =
     isRecordTableCellsNonEditable ||
