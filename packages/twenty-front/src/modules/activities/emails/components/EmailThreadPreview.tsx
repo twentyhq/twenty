@@ -145,6 +145,9 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
     isSubjectVisible && isNonEmptyString(thread.subject)
       ? thread.subject
       : t`Email thread`;
+  const draftTag = thread.lastMessageIsDraft ? (
+    <Tag color="orange">{t`Draft`}</Tag>
+  ) : null;
 
   return (
     <ActivityRow
@@ -197,18 +200,22 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        {thread.lastMessageIsDraft && <Tag color="orange">{t`Draft`}</Tag>}
         {visibility === MessageChannelVisibility.METADATA && (
-          <EmailThreadNotShared visibility={visibility} />
+          <>
+            {draftTag}
+            <EmailThreadNotShared visibility={visibility} />
+          </>
         )}
         {visibility === MessageChannelVisibility.SUBJECT && (
           <>
+            {draftTag}
             <StyledSubject>{thread.subject}</StyledSubject>
             <EmailThreadNotShared visibility={visibility} />
           </>
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <>
+            {draftTag}
             <StyledSubject>{thread.subject}</StyledSubject>
             <StyledBody>{thread.lastMessageBody}</StyledBody>
           </>
