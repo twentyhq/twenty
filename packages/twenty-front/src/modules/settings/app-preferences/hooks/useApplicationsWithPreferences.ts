@@ -6,8 +6,7 @@ import { MyApplicationPreferencesDocument } from '~/generated-metadata/graphql';
 
 export const useApplicationsWithPreferences = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  // An app installed or upgraded during the session changes this list, so the
-  // cached result is only shown until the refreshed one arrives.
+  // Installs and upgrades during the session change this list
   const { data, loading, refetch } = useQuery(
     MyApplicationPreferencesDocument,
     {
