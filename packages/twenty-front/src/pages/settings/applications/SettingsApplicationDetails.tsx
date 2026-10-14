@@ -55,6 +55,7 @@ import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applicat
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
+import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { getWorkspaceSettingsMenuItems } from '~/pages/settings/applications/utils/getWorkspaceSettingsMenuItems';
@@ -77,7 +78,7 @@ export const SettingsApplicationDetails = () => {
     refetch,
   } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
-    skip: !applicationId,
+    skip: !isUuidFormat(applicationId),
   });
 
   useRefetchOnApplicationOperation({ applicationId, refetch });
@@ -115,10 +116,8 @@ export const SettingsApplicationDetails = () => {
 
   const detail = detailData?.findMarketplaceAppDetail;
 
-  const marketplaceUniversalIdentifier =
-    detail?.sourceType === ApplicationRegistrationSourceType.NPM
-      ? detail.universalIdentifier
-      : undefined;
+  const isMarketplaceApplication =
+    detail?.sourceType === ApplicationRegistrationSourceType.NPM;
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isStandardApplication = isTwentyStandardApplication(application);
@@ -302,7 +301,8 @@ export const SettingsApplicationDetails = () => {
             displayName={displayName}
             description={getApplicationDescriptionSummary(description)}
             coverImageUrl={getCoverImageUrl()}
-            marketplaceUniversalIdentifier={marketplaceUniversalIdentifier}
+            marketplaceUniversalIdentifier={detail?.universalIdentifier}
+            isMarketplaceApplication={isMarketplaceApplication}
             hasUpdate={hasUpdate}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
             onUpgrade={handleUpgrade}

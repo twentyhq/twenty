@@ -28,6 +28,7 @@ import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/co
 import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
+import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
@@ -63,7 +64,7 @@ export const SettingsAvailableApplicationDetails = () => {
     FindOneApplicationByUniversalIdentifierDocument,
     {
       variables: { universalIdentifier: availableApplicationId },
-      skip: !availableApplicationId,
+      skip: !isUuidFormat(availableApplicationId),
     },
   );
 
@@ -74,7 +75,7 @@ export const SettingsAvailableApplicationDetails = () => {
     refetch: refetchDetail,
   } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: availableApplicationId },
-    skip: !availableApplicationId,
+    skip: !isUuidFormat(availableApplicationId),
   });
 
   const application = applicationData?.findOneApplication;
@@ -119,7 +120,12 @@ export const SettingsAvailableApplicationDetails = () => {
       return (
         <SettingsApplicationNotFound
           message={t`This application is not available on the marketplace. It may have been removed or the link is incorrect.`}
-          linkTo={getSettingsPath(SettingsPath.Applications)}
+          linkTo={getSettingsPath(
+            SettingsPath.Applications,
+            undefined,
+            undefined,
+            'marketplace',
+          )}
           linkLabel={t`Browse the marketplace`}
           LinkIcon={IconShoppingBag}
         />

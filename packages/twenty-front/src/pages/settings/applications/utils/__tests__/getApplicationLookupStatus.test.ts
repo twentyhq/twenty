@@ -28,6 +28,26 @@ describe('getApplicationLookupStatus', () => {
     );
   });
 
+  it('is not found for a malformed identifier, whatever the query returns', () => {
+    expect(
+      getApplicationLookupStatus({
+        ...baseArgs,
+        identifier: 'not-a-uuid',
+        isLoading: true,
+      }),
+    ).toBe('not-found');
+  });
+
+  it('accepts a UUID v7 identifier', () => {
+    expect(
+      getApplicationLookupStatus({
+        ...baseArgs,
+        identifier: '0198fe12-3456-7000-8000-000000000000',
+        result: { id: 'app' },
+      }),
+    ).toBe('found');
+  });
+
   it('is loading while the query runs', () => {
     expect(getApplicationLookupStatus({ ...baseArgs, isLoading: true })).toBe(
       'loading',
@@ -78,10 +98,10 @@ describe('getApplicationLookupStatus', () => {
     ).toBe('not-found');
   });
 
-  it('is not found when the server rejects a malformed identifier', () => {
+  it('is unavailable when the server rejects the request', () => {
     expect(
       getApplicationLookupStatus({ ...baseArgs, error: buildServerError(400) }),
-    ).toBe('not-found');
+    ).toBe('unavailable');
   });
 
   it('is unavailable on a server failure', () => {
