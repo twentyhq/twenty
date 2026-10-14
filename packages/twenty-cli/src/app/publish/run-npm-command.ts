@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import execa from 'execa';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -42,8 +43,12 @@ export const runNpmCommand = async ({
     }
 
     if (!canInteract && isDefined(onOutput)) {
-      if (result.stdout) onOutput(result.stdout);
-      if (result.stderr) onOutput(result.stderr);
+      if (isNonEmptyString(result.stdout)) {
+        onOutput(result.stdout);
+      }
+      if (isNonEmptyString(result.stderr)) {
+        onOutput(result.stderr);
+      }
     }
 
     if (result.failed) {
