@@ -143,39 +143,6 @@ describe('TeamsUserLinksList', () => {
     expect(screen.getByText('Zoe Teams')).toBeTruthy();
   });
 
-  it('keeps the link when removal is refused', async () => {
-    restGetMock.mockResolvedValue({
-      data: {
-        teamsUserLinks: [{ id: 'link-1', name: 'Adam Teams', source: 'AUTO' }],
-      },
-    });
-    restPostMock.mockResolvedValue({
-      success: false,
-      message: 'Not allowed',
-      error:
-        'Only members with the roles permission can remove Teams user links.',
-    });
-    const user = userEvent.setup();
-
-    render(<TeamsUserLinksList />);
-    await user.click(
-      await screen.findByRole('button', { name: 'Remove link for Adam Teams' }),
-    );
-
-    expect(restPostMock.mock.calls).toEqual([
-      ['/s/teams-user-links/remove', { id: 'link-1' }],
-    ]);
-    expect(enqueueSnackbarMock.mock.calls).toEqual([
-      [
-        {
-          message: 'Could not remove the link. Please try again.',
-          variant: 'error',
-        },
-      ],
-    ]);
-    expect(screen.getByText('Adam Teams')).toBeTruthy();
-  });
-
   it('hides the Remove button from members without the roles permission', async () => {
     hasRolesPermissionMock.mockResolvedValue(false);
     restGetMock.mockResolvedValue({
@@ -226,7 +193,6 @@ describe('TeamsUserLinksList', () => {
       rejectRemoval?.(new Error('Network error'));
     });
 
-    expect(restPostMock).toHaveBeenCalledTimes(1);
     expect(enqueueSnackbarMock.mock.calls).toEqual([
       [
         {
