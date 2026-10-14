@@ -266,28 +266,50 @@ const meta: Meta<typeof WidgetRenderer> = {
 export default meta;
 type Story = StoryObj<typeof WidgetRenderer>;
 
-const renderLoadingFrontComponent = ({
+const FRONT_COMPONENT_WIDGET: PageLayoutWidget = {
+  ...makeWidget(WIDGET_ID_FRONT_COMPONENT, 0, TAB_ID_OVERVIEW),
+  type: WidgetType.FRONT_COMPONENT,
+  title: 'App',
+  configuration: {
+    __typename: 'FrontComponentConfiguration',
+    configurationType: WidgetConfigurationType.FRONT_COMPONENT,
+    frontComponentId: FRONT_COMPONENT_ID,
+  },
+};
+
+const NUMBER_CHART_WIDGET: PageLayoutWidget = {
+  ...makeWidget(WIDGET_ID_NUMBER_CHART, 0, TAB_ID_OVERVIEW),
+  type: WidgetType.GRAPH,
+  title: 'Sales Pipeline',
+  objectMetadataId: companyObjectMetadataItem.id,
+  configuration: {
+    __typename: 'AggregateChartConfiguration',
+    configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+    aggregateOperation: AggregateOperations.COUNT,
+    aggregateFieldMetadataId: idField.id,
+    displayDataLabel: true,
+  },
+};
+
+const renderWidgetOnPage = ({
+  widget,
   pageLayoutType,
   presentation,
   isInEditMode = false,
 }: {
+  widget: PageLayoutWidget;
   pageLayoutType: PageLayoutType;
   presentation: TabPresentation;
   isInEditMode?: boolean;
 }): Story['render'] => {
   return () => {
-    const widget: PageLayoutWidget = {
-      ...makeWidget(WIDGET_ID_FRONT_COMPONENT, 0, TAB_ID_OVERVIEW),
-      type: WidgetType.FRONT_COMPONENT,
-      title: 'App',
-      configuration: {
-        __typename: 'FrontComponentConfiguration',
-        configurationType: WidgetConfigurationType.FRONT_COMPONENT,
-        frontComponentId: FRONT_COMPONENT_ID,
-      },
-    };
     const pageLayoutData = createPageLayoutWithWidget(widget, pageLayoutType);
 
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
+      getTestEnrichedObjectMetadataItemsMock(),
+    );
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -363,7 +385,8 @@ const expectLoadingFrontComponentFrame = async (
 };
 
 export const StandaloneFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent({
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
     pageLayoutType: PageLayoutType.STANDALONE_PAGE,
     presentation: 'solo',
   }),
@@ -385,7 +408,8 @@ export const StandaloneFrontComponentLoading: Story = {
 };
 
 export const StackedFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent({
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
     pageLayoutType: PageLayoutType.STANDALONE_PAGE,
     presentation: 'stack',
   }),
@@ -398,7 +422,8 @@ export const StackedFrontComponentLoading: Story = {
 };
 
 export const DashboardFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent({
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
     pageLayoutType: PageLayoutType.DASHBOARD,
     presentation: 'solo',
   }),
@@ -406,7 +431,8 @@ export const DashboardFrontComponentLoading: Story = {
 };
 
 export const EditingFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent({
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
     pageLayoutType: PageLayoutType.DASHBOARD,
     presentation: 'solo',
     isInEditMode: true,
@@ -415,7 +441,8 @@ export const EditingFrontComponentLoading: Story = {
 };
 
 export const RecordFrontComponentLoading: Story = {
-  render: renderLoadingFrontComponent({
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
     pageLayoutType: PageLayoutType.RECORD_PAGE,
     presentation: 'solo',
   }),
@@ -424,6 +451,22 @@ export const RecordFrontComponentLoading: Story = {
       outerFrame: false,
       innerFrame: true,
     });
+  },
+};
+
+export const StandaloneChart: Story = {
+  render: renderWidgetOnPage({
+    widget: NUMBER_CHART_WIDGET,
+    pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+    presentation: 'solo',
+  }),
+  play: async ({ canvasElement }) => {
+    const card = await within(canvasElement).findByTestId(
+      WIDGET_ID_NUMBER_CHART,
+    );
+
+    expect(getComputedStyle(card).borderWidth).toBe('0px');
+    expect(getComputedStyle(card).borderRadius).toBe('0px');
   },
 };
 

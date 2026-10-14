@@ -7,7 +7,7 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { useIsFullPageFrontComponent } from '@/page-layout/widgets/hooks/useIsFullPageFrontComponent';
+import { useIsFullPageWidget } from '@/page-layout/widgets/hooks/useIsFullPageWidget';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
@@ -49,7 +49,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const isFullPageFrontComponent = useIsFullPageFrontComponent(widget.type);
+  const isFullPageWidget = useIsFullPageWidget();
 
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||
@@ -93,7 +93,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     setWidgetCardHovered(false);
   };
 
-  const variant = isFullPageFrontComponent
+  const variant = isFullPageWidget
     ? 'flush'
     : getWidgetCardVariant({
         isSideColumnContext,

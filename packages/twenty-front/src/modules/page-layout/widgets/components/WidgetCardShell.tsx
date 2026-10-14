@@ -4,7 +4,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
-import { useIsFullPageFrontComponent } from '@/page-layout/widgets/hooks/useIsFullPageFrontComponent';
+import { useIsFullPageWidget } from '@/page-layout/widgets/hooks/useIsFullPageWidget';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
@@ -65,7 +65,7 @@ export const WidgetCardShell = ({
   const theme = useTheme();
   const { layoutMode } = usePageLayoutContentContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-  const isFullPageFrontComponent = useIsFullPageFrontComponent(widget.type);
+  const isFullPageWidget = useIsFullPageWidget();
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
   const isFixedHeightIframe =
@@ -73,11 +73,12 @@ export const WidgetCardShell = ({
     isVerticalList &&
     widget.type === WidgetType.IFRAME &&
     !isViewportFillingWidget(widget);
-  const contentPadding = isFullPageFrontComponent
-    ? 'none'
-    : isWidgetCardFlushInViewMode({ isEditable, variant })
-      ? getWidgetContentPadding(widget.type)
-      : 'default';
+  const contentPadding =
+    isFullPageWidget && widget.type === WidgetType.FRONT_COMPONENT
+      ? 'none'
+      : isWidgetCardFlushInViewMode({ isEditable, variant })
+        ? getWidgetContentPadding(widget.type)
+        : 'default';
 
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;

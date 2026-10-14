@@ -32,6 +32,10 @@ jest.mock('@/front-components/components/FrontComponentSkeletonLoader', () => ({
   FrontComponentSkeletonLoader: () => <div data-testid="skeleton" />,
 }));
 
+jest.mock('@/page-layout/widgets/hooks/useIsFullPageWidget', () => ({
+  useIsFullPageWidget: () => false,
+}));
+
 const FRONT_COMPONENT_WIDGET = {
   id: 'widget-id',
   configuration: {
