@@ -10,7 +10,11 @@ export const computeWorkflowManifestOutputSchema = ({
   references,
 }: {
   step: WorkflowStepManifest;
-  references: WorkflowManifestReferences;
+  references: Pick<
+    WorkflowManifestReferences,
+    | 'logicFunctionOutputSchemaByUniversalIdentifier'
+    | 'agentOutputSchemaByUniversalIdentifier'
+  >;
 }): Record<string, unknown> => {
   if (
     isDefined(step.outputSchema) &&

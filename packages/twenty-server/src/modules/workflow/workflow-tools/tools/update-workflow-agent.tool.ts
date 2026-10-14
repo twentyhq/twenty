@@ -39,7 +39,6 @@ const updateAgentSchema = z.object({
     ),
 });
 
-// the output format belongs to the steps calling the agent, so it is written to each draft step that uses it
 const setAiAgentStepsResponseFormat = async (
   deps: Pick<
     WorkflowToolDependencies,
