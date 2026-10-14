@@ -16,6 +16,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx',
+    reason: 'Popover.Popup sized and spaced for the recording sessions list',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/log-console/components/LogConsoleDetailPanel.tsx',
     reason: 'Card.Root laid out as a padded error message block',
   },

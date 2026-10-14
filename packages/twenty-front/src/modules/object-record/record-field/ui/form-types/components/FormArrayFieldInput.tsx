@@ -14,11 +14,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -65,7 +63,7 @@ const StyledDisplayModeContainer = styled.div`
   width: 100%;
 
   &:hover,
-  &[data-open='true'] {
+  &[data-popup-open] {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
@@ -129,10 +127,6 @@ export const FormArrayFieldInput = ({
   const isAddingNewItem = itemToEditIndex === -1;
 
   const dropdownId = `dropdown-${instanceId}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
 
   const accessibleLabel = isNonEmptyString(label) ? label : t`Items`;
 
@@ -383,9 +377,7 @@ export const FormArrayFieldInput = ({
             ) : (
               <DropdownRoot dropdownId={dropdownId} type="panel">
                 <Dropdown.Trigger
-                  render={
-                    <StyledDisplayModeContainer data-open={isDropdownOpen} />
-                  }
+                  render={<StyledDisplayModeContainer />}
                   nativeButton={false}
                   aria-label={accessibleLabel}
                 >
