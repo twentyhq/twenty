@@ -4,11 +4,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { SearchInput } from 'twenty-ui/components/input';
+import { IconButton, SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
+import { IconFilter, IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
@@ -84,12 +84,18 @@ export const SettingsAgentToolsTab = () => {
           placeholder={t`Search a tool...`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot
               dropdownId="settings-tools-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger render={filterButton} />
+              <Dropdown.Trigger
+                render={
+                  <IconButton aria-label={t`Filter`}>
+                    <IconFilter />
+                  </IconButton>
+                }
+              />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -115,7 +121,7 @@ export const SettingsAgentToolsTab = () => {
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchContainer>
       <SettingsAgentToolsTable

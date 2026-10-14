@@ -13480,6 +13480,13 @@
     "slug": "components/input/search-input",
     "props": [
       {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controls rendered after the search field, such as a filter Dropdown. Set their size and accessible names on the controls."
+      },
+      {
         "name": "aria-label",
         "type": "string",
         "required": false,
@@ -13519,21 +13526,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Disables the text input. Configure filter popup controls separately."
-      },
-      {
-        "name": "filterButtonAriaLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": "Filter",
-        "description": "Accessible label for the optional filter button."
-      },
-      {
-        "name": "filterDropdown",
-        "type": "((filterButton: ReactElement<unknown, string | JSXElementConstructor<any>>) => ReactNode)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Renders a filter popup around the supplied filter button."
+        "description": "Disables the text input. Controls in actions keep their own state."
       },
       {
         "name": "id",
@@ -13582,7 +13575,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Visual size of the input group and optional filter button."
+        "description": "Visual size of the input group."
       },
       {
         "name": "style",

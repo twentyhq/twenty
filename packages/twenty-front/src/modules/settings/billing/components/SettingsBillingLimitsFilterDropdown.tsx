@@ -1,8 +1,13 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCoins, IconList, IconTrash, IconUsers } from 'twenty-ui/icon';
+import {
+  IconCoins,
+  IconFilter,
+  IconList,
+  IconTrash,
+  IconUsers,
+} from 'twenty-ui/icon';
 
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitResourceTypeLabels';
@@ -12,13 +17,13 @@ import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel'
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 
 const FILTER_DROPDOWN_ID = 'settings-billing-limits-filter';
 
 type SettingsBillingLimitsFilterDropdownProps = {
-  filterButton: ReactElement;
   resourceTypes: UsageResourceType[];
   spenderTypes: string[];
   selectedResourceType: UsageResourceType | null;
@@ -28,7 +33,6 @@ type SettingsBillingLimitsFilterDropdownProps = {
 };
 
 export const SettingsBillingLimitsFilterDropdown = ({
-  filterButton,
   resourceTypes,
   spenderTypes,
   selectedResourceType,
@@ -157,7 +161,13 @@ export const SettingsBillingLimitsFilterDropdown = ({
 
   return (
     <DropdownRoot dropdownId={FILTER_DROPDOWN_ID} type="picker">
-      <Dropdown.Trigger render={filterButton} />
+      <Dropdown.Trigger
+        render={
+          <IconButton aria-label={t`Filter limits`}>
+            <IconFilter />
+          </IconButton>
+        }
+      />
       <DropdownContent align="end" sideOffset={8}>
         <Dropdown.Page id="root">{renderMenuContent()}</Dropdown.Page>
         <Dropdown.Page id="usage">{renderUsageContent()}</Dropdown.Page>
