@@ -19,7 +19,7 @@ export class FieldMorphRelationHeadOnCreateSideEffectHandlerService extends Meta
     metadataName: 'fieldMetadata',
     name: 'fieldMorphRelationHeadOnCreate',
     description:
-      'When a morph relation target is created and its morph relation has no head yet, create the head: an engine-owned MORPH_RELATION field whose universal identifier is the morphId, with no relation target and no column. Only the first target of the batch (by universal identifier) emits it, so a morph field created with several targets gets one head. Noop when the head already exists or is created in the same batch, and for engine-emitted targets (such as the reverse relations objectSystemRelationsOnCreate adds to standard morph fields), which only ever join an existing morph relation. twenty-standard declares its heads itself and does not run through this handler.',
+      'When a morph relation target is created and its morph relation has no head yet, create the head: an engine-owned MORPH_RELATION field whose universal identifier is the morphId, with no relation target and no column. The first target of a batch emits it and the others see it in the pending operations, so a morph field created with several targets gets one head. Noop when the head already exists or is created in the same batch, and for engine-emitted targets (such as the reverse relations objectSystemRelationsOnCreate adds to standard morph fields), which only ever join an existing morph relation. twenty-standard declares its heads itself and does not run through this handler.',
   },
 ) {
   buildSideEffects({
@@ -48,20 +48,6 @@ export class FieldMorphRelationHeadOnCreateSideEffectHandlerService extends Meta
       );
 
     if (headAlreadyExists) {
-      return { status: 'noop' };
-    }
-
-    const firstTargetInBatch = Object.values(fieldsToCreate)
-      .filter(isDefined)
-      .filter(
-        (field) =>
-          field.type === FieldMetadataType.MORPH_RELATION &&
-          field.morphId === target.morphId,
-      )
-      .map((field) => field.universalIdentifier)
-      .sort()[0];
-
-    if (firstTargetInBatch !== target.universalIdentifier) {
       return { status: 'noop' };
     }
 
