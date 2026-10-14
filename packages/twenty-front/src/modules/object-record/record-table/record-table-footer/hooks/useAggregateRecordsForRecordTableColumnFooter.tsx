@@ -1,3 +1,7 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
+import { resolveRecordFieldRelationTraversal } from '@/object-record/record-field/utils/relation-traversal/resolveRecordFieldRelationTraversal';
+import { buildAggregateFieldPath } from '@/object-record/utils/splitAggregateFieldPath';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
@@ -24,17 +28,16 @@ import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import {
   computeRecordGqlOperationFilter,
-  findById,
   isDefined,
   isFieldMetadataDateKind,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
-export const useAggregateRecordsForRecordTableColumnFooter = (
-  aggregateFieldMetadataId: string,
-) => {
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+export const useAggregateRecordsForRecordTableColumnFooter = () => {
+  const { objectMetadataItem, visibleRecordFields } =
+    useRecordTableContextOrThrow();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
   const { numberFormat, formatNumber } = useNumberFormat();
@@ -62,13 +65,34 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     recordFilters: currentRecordFilters,
   });
 
-  const { viewFieldId } = useContext(
+  const { viewFieldId, recordFieldKey, fieldMetadataId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
   );
 
-  const fieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === aggregateFieldMetadataId,
+  const recordField = visibleRecordFields.find(
+    (visibleRecordField) =>
+      getRecordFieldKey(visibleRecordField) === recordFieldKey,
   );
+
+  // A column through a relation aggregates the target field of the related object.
+  const relationTraversal = isDefined(recordField)
+    ? resolveRecordFieldRelationTraversal({
+        recordField,
+        sourceObjectMetadataItem: objectMetadataItem,
+        objectMetadataItems,
+      })
+    : null;
+
+  const fieldMetadataItem =
+    relationTraversal?.targetFieldMetadataItem ??
+    objectMetadataItem.fields.find((field) => field.id === fieldMetadataId);
+
+  const aggregateFieldPath = isDefined(relationTraversal)
+    ? buildAggregateFieldPath({
+        relationFieldName: relationTraversal.relationFieldMetadataItem.name,
+        targetFieldName: relationTraversal.targetFieldMetadataItem.name,
+      })
+    : fieldMetadataItem?.name;
 
   // TODO: This shouldn't be set with impossible values,
   // see problem with view id not being set early enoughby Effect component in context store,
@@ -95,12 +119,10 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       )
     : viewFieldAggregateOperation;
 
-  const fieldName = fieldMetadataItem?.name;
-
   const recordGqlFieldsAggregate =
-    isDefined(aggregateOperationForViewField) && isDefined(fieldName)
+    isDefined(aggregateOperationForViewField) && isDefined(aggregateFieldPath)
       ? {
-          [fieldName]: [aggregateOperationForViewField],
+          [aggregateFieldPath]: [aggregateOperationForViewField],
         }
       : {};
 
@@ -127,11 +149,9 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
-  const aggregateFieldMetadataItem = objectMetadataItem.fields.find(
-    findById(aggregateFieldMetadataId),
-  );
+  const aggregateFieldMetadataItem = fieldMetadataItem;
 
-  if (!isDefined(aggregateFieldMetadataItem)) {
+  if (!isDefined(aggregateFieldMetadataItem) || !isDefined(aggregateFieldPath)) {
     const totalCountAggregateValue =
       data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
         AggregateOperations.COUNT
@@ -155,7 +175,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   }
 
   const aggregateRawValue =
-    data[aggregateFieldMetadataItem.name]?.[aggregateOperationForViewField];
+    data[aggregateFieldPath]?.[aggregateOperationForViewField];
 
   const aggregateDisplayValue =
     transformAggregateRawValueIntoAggregateDisplayValue({

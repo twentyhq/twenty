@@ -5,6 +5,7 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterWithDropdown';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -62,7 +63,13 @@ const AggregateExample = () => {
               }}
             >
               <RecordTableColumnAggregateFooterCellContext.Provider
-                value={{ fieldMetadataId: field.id, viewFieldId: viewField.id }}
+                value={{
+                  fieldMetadataId: field.id,
+                  recordFieldKey: getRecordFieldKey({
+                    fieldMetadataItemId: field.id,
+                  }),
+                  viewFieldId: viewField.id,
+                }}
               >
                 <ScrollWrapper componentInstanceId={INSTANCE_ID} autoHeight>
                   <RecordTableColumnFooterWithDropdown isFirstCell />

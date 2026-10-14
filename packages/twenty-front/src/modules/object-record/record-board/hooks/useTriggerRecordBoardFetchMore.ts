@@ -14,7 +14,7 @@ import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useUpsertRecordsWithTraversedRelationsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsWithTraversedRelationsInStore';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -45,7 +45,8 @@ export const useTriggerRecordBoardFetchMore = () => {
 
   const { combinedFilters } = useRecordIndexGroupCommonQueryVariables();
 
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } =
+    useUpsertRecordsWithTraversedRelationsInStore();
 
   const recordBoardCurrentGroupByQueryOffsetCallbackState =
     useAtomComponentStateCallbackState(

@@ -1,8 +1,10 @@
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { isSameRecordSortTarget } from '@/object-record/record-sort/utils/isSameRecordSortTarget';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -33,23 +35,34 @@ export const useHandleToggleColumnSort = ({
   const store = useStore();
 
   const handleToggleColumnSort = useCallback(
-    (fieldMetadataId: string) => {
+    (
+      recordField: Pick<
+        RecordField,
+        'fieldMetadataItemId' | 'relationTargetFieldMetadataItemId'
+      >,
+    ) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
-          columnDefinition.fieldMetadataId === fieldMetadataId,
+          columnDefinition.fieldMetadataId === recordField.fieldMetadataItemId,
       );
 
       if (!isDefined(correspondingColumnDefinition)) return;
 
+      const sortTarget = {
+        fieldMetadataId: recordField.fieldMetadataItemId,
+        relationTargetFieldMetadataId:
+          recordField.relationTargetFieldMetadataItemId ?? null,
+      };
+
       const currentRecordSorts = store.get(currentRecordSortsCallbackState);
 
-      const existingSort = currentRecordSorts.find(
-        (sort) => sort.fieldMetadataId === fieldMetadataId,
+      const existingSort = currentRecordSorts.find((sort) =>
+        isSameRecordSortTarget(sort, sortTarget),
       );
 
       const newSort: RecordSort = {
         id: existingSort?.id ?? v4(),
-        fieldMetadataId,
+        ...sortTarget,
         direction: existingSort
           ? existingSort.direction === ViewSortDirection.ASC
             ? ViewSortDirection.DESC

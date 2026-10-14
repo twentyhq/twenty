@@ -142,6 +142,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
         sourceFlatFieldMetadata.universalIdentifier,
       viewUniversalIdentifier: recordPageViewUniversalIdentifier,
       viewFieldGroupUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
       isVisible: true,
       size: DEFAULT_VIEW_FIELD_SIZE,
       position:

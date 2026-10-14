@@ -58,7 +58,9 @@ import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-module
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
+import { buildTraversedRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-traversed-record-export-columns.util';
 import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
+import { resolveTraversedRecordExportFields } from 'src/engine/core-modules/record-export/utils/resolve-traversed-record-export-fields.util';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -66,6 +68,7 @@ import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-us
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -612,29 +615,65 @@ export class RecordExportWorkspaceService {
 
       return field;
     });
+    const rawTraversedFields = resolveTraversedRecordExportFields({
+      traversedFields: parameters.traversedFields ?? [],
+      objectMetadataId: flatObjectMetadata.id,
+      flatFieldMetadataMaps,
+    });
     const getI18nContext =
       await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
         {
-          applicationIds: rawFields.map((field) => field.applicationId),
+          applicationIds: [
+            ...rawFields,
+            ...rawTraversedFields.flatMap(({ relationField, targetField }) => [
+              relationField,
+              targetField,
+            ]),
+          ].map((field) => field.applicationId),
           locale: getRecordExportLocale(authContext),
           workspaceId: authContext.workspace.id,
         },
       );
-    const fields = rawFields.map((field) =>
+    const translateField = <TField extends FlatFieldMetadata>(
+      field: TField,
+    ): TField =>
       resolveEffectiveTranslatedFlatEntity({
         metadataName: 'fieldMetadata',
         flatEntity: field,
         i18nContext: getI18nContext(field.applicationId),
-      }),
-    );
+      });
+    const fields = rawFields.map(translateField);
     if (fields.some((field) => !field.isActive)) {
       throw new BadRequestException(t`An export field is no longer available.`);
     }
-    const columns = buildRecordExportColumns(fields);
+    const columns = [
+      ...buildRecordExportColumns(fields),
+      ...rawTraversedFields.flatMap(({ relationField, targetField }) =>
+        buildTraversedRecordExportColumns({
+          relationField: translateField(relationField),
+          targetField: translateField(targetField),
+        }),
+      ),
+    ];
     const node: CommonSelectedFields = {};
 
     for (const column of columns) {
-      if (isDefined(column.subFieldName)) {
+      if (isDefined(column.relationFieldName)) {
+        const nested = node[column.relationFieldName];
+        const existing = typeof nested === 'object' ? nested : {};
+        const existingField = existing[column.fieldName];
+
+        node[column.relationFieldName] = {
+          ...existing,
+          id: true,
+          [column.fieldName]: isDefined(column.subFieldName)
+            ? {
+                ...(typeof existingField === 'object' ? existingField : {}),
+                [column.subFieldName]: true,
+              }
+            : true,
+        };
+      } else if (isDefined(column.subFieldName)) {
         const nested = node[column.fieldName];
         node[column.fieldName] = {
           ...(typeof nested === 'object' ? nested : {}),

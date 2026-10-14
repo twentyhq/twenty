@@ -15,7 +15,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useViewFieldAggregateOperation = () => {
-  const { fieldMetadataId } = useContext(
+  const { viewFieldId } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );
   const { currentView } = useGetCurrentViewOnly();
@@ -41,7 +41,7 @@ export const useViewFieldAggregateOperation = () => {
     : currentView;
 
   const currentViewField = currentViewForAggregateOperation?.viewFields?.find(
-    (viewField) => viewField.fieldMetadataId === fieldMetadataId,
+    (viewField) => viewField.id === viewFieldId,
   );
 
   const { performViewFieldApiUpdate } = usePerformViewFieldApiPersist();

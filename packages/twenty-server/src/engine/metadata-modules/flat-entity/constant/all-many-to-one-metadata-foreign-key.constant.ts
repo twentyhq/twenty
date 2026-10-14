@@ -120,6 +120,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     view: {
       foreignKey: 'viewId',
     },
+    relationTargetFieldMetadata: {
+      foreignKey: 'relationTargetFieldMetadataId',
+    },
     viewFieldGroup: {
       foreignKey: 'viewFieldGroupId',
     },
@@ -308,6 +311,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     view: {
       foreignKey: 'viewId',
+    },
+    relationTargetFieldMetadata: {
+      foreignKey: 'relationTargetFieldMetadataId',
     },
   },
   connectionProvider: {

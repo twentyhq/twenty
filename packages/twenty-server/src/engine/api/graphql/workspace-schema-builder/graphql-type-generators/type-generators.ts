@@ -19,6 +19,7 @@ import { RelationConnectGqlInputTypeGenerator } from 'src/engine/api/graphql/wor
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
 import { CompositeFieldMetadataUpdateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/update-input/composite-field-metadata-update-gql-input-type.generator';
 import { ObjectMetadataUpdateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/update-input/object-metadata-update-gql-input-type.generator';
+import { AggregationGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/aggregation-gql-object-type.generator';
 import { AggregationObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/aggregation-type.generator';
 import { CompositeFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/composite-field-metadata-gql-object-type.generator';
 import { ConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/connection-gql-object-type.generator';
@@ -81,6 +82,8 @@ export const instantiateTypeGenerators = (
       relationFieldMetadataGqlInputTypeGenerator,
       typeMapperService,
     );
+
+  const aggregationObjectTypeGenerator = new AggregationObjectTypeGenerator();
 
   const rootTypeGenerator = new RootTypeGenerator(
     gqlTypesStorage,
@@ -146,8 +149,12 @@ export const instantiateTypeGenerators = (
         ),
       ),
     edgeGqlObjectTypeGenerator: new EdgeGqlObjectTypeGenerator(gqlTypesStorage),
+    aggregationGqlObjectTypeGenerator: new AggregationGqlObjectTypeGenerator(
+      aggregationObjectTypeGenerator,
+      gqlTypesStorage,
+    ),
     connectionGqlObjectTypeGenerator: new ConnectionGqlObjectTypeGenerator(
-      new AggregationObjectTypeGenerator(),
+      aggregationObjectTypeGenerator,
       gqlTypesStorage,
     ),
     groupByConnectionGqlObjectTypeGenerator:

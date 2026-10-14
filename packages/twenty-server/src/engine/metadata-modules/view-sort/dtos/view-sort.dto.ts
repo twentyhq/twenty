@@ -13,6 +13,9 @@ export class ViewSortDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string | null;
+
   @Field(() => ViewSortDirection, {
     nullable: false,
     defaultValue: ViewSortDirection.ASC,

@@ -13,14 +13,13 @@ export const RecordListFieldTooltip = ({
   children,
 }: RecordListFieldTooltipProps) => {
   const { getIcon } = useIcons();
-  const { fieldDefinitionByFieldMetadataItemId } =
-    useRecordIndexContextOrThrow();
+  const { fieldDefinitionByRecordFieldKey } = useRecordIndexContextOrThrow();
 
   return (
     <Tooltip.Root<string>>
       {({ payload }) => {
         const fieldDefinition = isDefined(payload)
-          ? fieldDefinitionByFieldMetadataItemId[payload]
+          ? fieldDefinitionByRecordFieldKey[payload]
           : undefined;
         const FieldIcon = isDefined(fieldDefinition)
           ? getIcon(fieldDefinition.iconName)

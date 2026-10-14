@@ -1,6 +1,7 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
@@ -21,7 +22,10 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
       recordFieldToMove,
       targetRecordField,
     }: {
-      recordFieldToMove: Pick<RecordField, 'id' | 'fieldMetadataItemId'>;
+      recordFieldToMove: Pick<
+        RecordField,
+        'id' | 'fieldMetadataItemId' | 'relationTargetFieldMetadataItemId'
+      >;
       targetRecordField: Pick<RecordField, 'id'>;
     }) => {
       const newPosition = computeNewPositionOfDraggedRecord({
@@ -31,7 +35,7 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
         isDroppedAfterList: false,
       });
 
-      return updateRecordField(recordFieldToMove.fieldMetadataItemId, {
+      return updateRecordField(getRecordFieldKey(recordFieldToMove), {
         position: newPosition,
       });
     },

@@ -17,6 +17,11 @@ export class CreateViewSortInput {
   fieldMetadataId: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string;
+
+  @IsOptional()
   @IsEnum(ViewSortDirection)
   @Field(() => ViewSortDirection, {
     nullable: true,

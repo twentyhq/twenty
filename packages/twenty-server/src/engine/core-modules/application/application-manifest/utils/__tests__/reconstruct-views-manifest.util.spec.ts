@@ -220,6 +220,7 @@ const buildFlatViewField = ({
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
   fieldMetadataId: `${viewFieldManifest.fieldMetadataUniversalIdentifier}-id`,
+  relationTargetFieldMetadataId: null,
   viewId: `${viewUniversalIdentifier}-id`,
   viewFieldGroupId: null,
   overrides: null,
@@ -330,6 +331,7 @@ const buildFlatViewSort = ({
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
   fieldMetadataId: `${viewSortManifest.fieldMetadataUniversalIdentifier}-id`,
+  relationTargetFieldMetadataId: null,
   viewId: `${viewUniversalIdentifier}-id`,
 });
 

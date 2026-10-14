@@ -1,4 +1,5 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 
@@ -11,7 +12,7 @@ import { recordTableWidthComponentState } from '@/object-record/record-table/sta
 
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
-import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { resizedRecordFieldKeyComponentState } from '@/object-record/record-table/states/resizedRecordFieldKeyComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
@@ -28,11 +29,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useStore } from 'jotai';
 import { useCallback, useContext, useState } from 'react';
-import {
-  findById,
-  findByProperty,
-  throwIfNotDefined,
-} from 'twenty-shared/utils';
+import { findById, throwIfNotDefined } from 'twenty-shared/utils';
 
 export const useResizeTableHeader = () => {
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
@@ -52,11 +49,12 @@ export const useResizeTableHeader = () => {
     number | null
   >(null);
 
-  const [resizedFieldMetadataId, setResizedFieldMetadataId] =
-    useAtomComponentState(resizedFieldMetadataIdComponentState);
+  const [resizedRecordFieldKey, setResizedRecordFieldKey] =
+    useAtomComponentState(resizedRecordFieldKeyComponentState);
 
   const recordField = visibleRecordFields.find(
-    findByProperty('fieldMetadataItemId', resizedFieldMetadataId),
+    (visibleRecordField) =>
+      getRecordFieldKey(visibleRecordField) === resizedRecordFieldKey,
   );
 
   const { resetRecordSelection } = useResetRecordSelection();
@@ -169,7 +167,7 @@ export const useResizeTableHeader = () => {
   const handleResizeHandlerEnd = useCallback(async () => {
     throwIfNotDefined(recordField, 'recordField');
 
-    if (!resizedFieldMetadataId) return;
+    if (!resizedRecordFieldKey) return;
 
     const currentResizeFieldOffset = store.get(resizeFieldOffset);
 
@@ -182,10 +180,10 @@ export const useResizeTableHeader = () => {
 
     store.set(resizeFieldOffset, 0);
     setInitialPointerPositionX(null);
-    setResizedFieldMetadataId(null);
+    setResizedRecordFieldKey(null);
 
     if (nextWidth !== recordField.size) {
-      const updatedRecordField = updateRecordField(resizedFieldMetadataId, {
+      const updatedRecordField = updateRecordField(resizedRecordFieldKey, {
         size: nextWidth,
       });
 
@@ -206,10 +204,10 @@ export const useResizeTableHeader = () => {
     setDragSelectionStartEnabled(true);
   }, [
     saveRecordFields,
-    resizedFieldMetadataId,
+    resizedRecordFieldKey,
     resizeFieldOffset,
     store,
-    setResizedFieldMetadataId,
+    setResizedRecordFieldKey,
     updateRecordField,
     setDragSelectionStartEnabled,
     recordField,
@@ -217,7 +215,7 @@ export const useResizeTableHeader = () => {
   ]);
 
   useTrackPointer({
-    shouldTrackPointer: resizedFieldMetadataId !== null,
+    shouldTrackPointer: resizedRecordFieldKey !== null,
     onMouseDown: handleResizeHandlerStart,
     onMouseMove: handleResizeHandlerMove,
     onMouseUp: handleResizeHandlerEnd,

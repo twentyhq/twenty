@@ -10,7 +10,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useUpsertRecordsWithTraversedRelationsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsWithTraversedRelationsInStore';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -57,7 +57,8 @@ export const useTriggerRecordBoardInitialQuery = () => {
   const queryIdentifier = useRecordBoardQueryIdentifier();
 
   const { setRecordIdsForColumn } = useSetRecordIdsForColumn();
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } =
+    useUpsertRecordsWithTraversedRelationsInStore();
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 

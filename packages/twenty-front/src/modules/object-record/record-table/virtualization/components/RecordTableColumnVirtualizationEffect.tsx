@@ -1,11 +1,12 @@
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
-import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { resizedRecordFieldKeyComponentState } from '@/object-record/record-table/states/resizedRecordFieldKeyComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { RECORD_TABLE_COLUMN_VIRTUALIZATION_OVERSCAN_WIDTH } from '@/object-record/record-table/virtualization/constants/RecordTableColumnVirtualizationOverscanWidth';
 import { recordTableRenderedColumnRangeComponentState } from '@/object-record/record-table/virtualization/states/recordTableRenderedColumnRangeComponentState';
@@ -24,8 +25,8 @@ export const RecordTableColumnVirtualizationEffect = () => {
     recordTableWidthComponentState,
   );
 
-  const resizedFieldMetadataId = useAtomComponentStateValue(
-    resizedFieldMetadataIdComponentState,
+  const resizedRecordFieldKey = useAtomComponentStateValue(
+    resizedRecordFieldKeyComponentState,
   );
 
   const resizeFieldOffset = useAtomComponentStateValue(
@@ -61,7 +62,7 @@ export const RecordTableColumnVirtualizationEffect = () => {
           return { size: firstColumnWidthOverride };
         }
 
-        return recordField.fieldMetadataItemId === resizedFieldMetadataId
+        return getRecordFieldKey(recordField) === resizedRecordFieldKey
           ? { size: recordField.size + resizeFieldOffset }
           : recordField;
       },
@@ -121,7 +122,7 @@ export const RecordTableColumnVirtualizationEffect = () => {
     store,
     visibleRecordFields,
     recordTableWidth,
-    resizedFieldMetadataId,
+    resizedRecordFieldKey,
     resizeFieldOffset,
     firstColumnWidthOverride,
     isRecordTableDragColumnHidden,

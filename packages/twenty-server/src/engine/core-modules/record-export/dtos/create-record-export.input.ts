@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayUnique,
@@ -7,6 +8,7 @@ import {
   IsObject,
   IsOptional,
   IsUUID,
+  ValidateNested,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
@@ -15,6 +17,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { TraversedRecordExportFieldInput } from 'src/engine/core-modules/record-export/dtos/traversed-record-export-field.input';
 
 @InputType()
 export class CreateRecordExportInput {
@@ -28,6 +31,14 @@ export class CreateRecordExportInput {
   @ArrayUnique()
   @IsUUID(undefined, { each: true })
   fieldMetadataIds: string[];
+
+  @Field(() => [TraversedRecordExportFieldInput], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(100)
+  @ValidateNested({ each: true })
+  @Type(() => TraversedRecordExportFieldInput)
+  traversedFields?: TraversedRecordExportFieldInput[];
 
   @Field(() => GraphQLJSON, { nullable: true })
   @IsOptional()

@@ -246,6 +246,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         sourceFlatFieldMetadata.universalIdentifier,
       viewUniversalIdentifier: indexViewUniversalIdentifier,
       viewFieldGroupUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
       isVisible: true,
       size: DEFAULT_VIEW_FIELD_SIZE,
       position,

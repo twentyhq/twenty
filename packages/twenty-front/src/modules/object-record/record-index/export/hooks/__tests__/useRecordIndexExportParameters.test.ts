@@ -91,6 +91,7 @@ describe('useRecordIndexExportParameters', () => {
       filter: { city: { eq: 'Paris' } },
       orderBy: [{ city: 'AscNullsFirst' }],
       fieldMetadataIds: [city.id, name.id],
+      traversedFields: [],
     });
   });
 

@@ -98,9 +98,14 @@ export class GqlTypeGenerator {
         fields,
       );
       generators.edgeGqlObjectTypeGenerator.buildAndStore(flatObjectMetadata);
+      generators.aggregationGqlObjectTypeGenerator.buildAndStore(
+        flatObjectMetadata,
+        fields,
+      );
       generators.connectionGqlObjectTypeGenerator.buildAndStore(
         flatObjectMetadata,
         fields,
+        context,
       );
       generators.groupByConnectionGqlObjectTypeGenerator.buildAndStore(
         flatObjectMetadata,

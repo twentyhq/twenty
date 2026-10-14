@@ -6,7 +6,17 @@ import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getSubfieldsForAggregateOperation } from 'src/engine/twenty-orm/utils/get-subfields-for-aggregate-operation.util';
+
+// Set when the aggregated field belongs to the target of a many-to-one relation of the queried object
+export type AggregationFieldThroughRelation = {
+  relationFieldName: string;
+  relationFieldMetadata: OrmFlatFieldMetadata<FieldMetadataType.RELATION>;
+  targetObjectMetadata: FlatObjectMetadata;
+  targetFieldMetadata: OrmFlatFieldMetadata;
+  targetAggregationName: string;
+};
 
 export type AggregationField = {
   type: GraphQLScalarType;
@@ -16,6 +26,7 @@ export type AggregationField = {
   fromSubFields?: string[];
   subFieldForNumericOperation?: string;
   aggregateOperation: AggregateOperations;
+  throughRelation?: AggregationFieldThroughRelation;
 };
 
 export const getAvailableAggregationsFromObjectFields = (

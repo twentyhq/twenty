@@ -63,12 +63,16 @@ export const useSaveCurrentViewFields = () => {
               isVisible: viewFieldToCreateOrUpdate.isVisible,
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
+              relationTargetFieldMetadataId:
+                viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
               viewId: currentViewId,
             };
             const existingField = currentViewFields.find(
               (currentViewField) =>
                 currentViewField.fieldMetadataId ===
-                createViewFieldInput.fieldMetadataId,
+                  createViewFieldInput.fieldMetadataId &&
+                (currentViewField.relationTargetFieldMetadataId ?? null) ===
+                  (createViewFieldInput.relationTargetFieldMetadataId ?? null),
             );
 
             if (!isDefined(existingField)) {

@@ -70,6 +70,41 @@ describe('formatRecordExportRow', () => {
       }),
     ).toBe('-1.234567,EUR\n');
   });
+  it('reads traversed columns from the related record and leaves them empty when it is missing', () => {
+    const columns: RecordExportColumn[] = [
+      {
+        ...column('employees', FieldMetadataType.NUMBER),
+        relationFieldName: 'company',
+      },
+      {
+        ...column('arr', FieldMetadataType.CURRENCY, 'amountMicros'),
+        relationFieldName: 'company',
+      },
+      {
+        ...column('foundedAt', FieldMetadataType.DATE),
+        relationFieldName: 'company',
+      },
+    ];
+
+    expect(
+      formatRecordExportRow({
+        columns,
+        record: {
+          company: {
+            id: 'company-id',
+            employees: 42,
+            arr: { amountMicros: '2500000', currencyCode: 'USD' },
+            foundedAt: new Date('1999-12-31T00:00:00.000Z'),
+          },
+        },
+      }),
+    ).toBe('42,2.5,1999-12-31\n');
+    expect(formatRecordExportRow({ columns, record: { company: null } })).toBe(
+      ',,\n',
+    );
+    expect(formatRecordExportRow({ columns, record: {} })).toBe(',,\n');
+  });
+
   it('serializes native database dates without introducing JSON quotes into CSV cells', () => {
     expect(
       formatRecordExportRow({

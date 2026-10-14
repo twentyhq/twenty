@@ -122,6 +122,8 @@ export const useSaveRecordTableWidgetViews = () => {
               ...(hasViewSettingsChanges ? { view: draftViewSettings } : {}),
               viewFields: normalizedWidgetViewDraft.viewFields.map((field) => ({
                 fieldMetadataId: field.fieldMetadataId,
+                relationTargetFieldMetadataId:
+                  field.relationTargetFieldMetadataId ?? undefined,
                 isVisible: field.isVisible,
                 position: field.position,
                 size: field.size,
@@ -152,6 +154,8 @@ export const useSaveRecordTableWidgetViews = () => {
               viewSorts: widgetViewDraft.viewSorts.map((sort) => ({
                 id: sort.id,
                 fieldMetadataId: sort.fieldMetadataId,
+                relationTargetFieldMetadataId:
+                  sort.relationTargetFieldMetadataId ?? undefined,
                 direction: sort.direction,
               })),
             },

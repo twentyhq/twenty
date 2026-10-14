@@ -8,6 +8,7 @@ import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/rec
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -64,11 +65,14 @@ export const RecordTableAggregateFooter = ({
     <StyledAggregateFooterContainer>
       <StyledPlaceholderDragAndDropFooterCell />
       {visibleRecordFields.map((recordField, index) => {
+        const recordFieldKey = getRecordFieldKey(recordField);
+
         return (
           <RecordTableColumnAggregateFooterCellContext.Provider
-            key={`${recordField.fieldMetadataItemId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
+            key={`${recordFieldKey}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
             value={{
               viewFieldId: recordField.id || '',
+              recordFieldKey,
               fieldMetadataId: recordField.fieldMetadataItemId,
             }}
           >

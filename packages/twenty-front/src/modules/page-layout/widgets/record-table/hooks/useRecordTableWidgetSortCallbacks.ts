@@ -46,6 +46,8 @@ export const useRecordTableWidgetSortCallbacks = ({
           viewSorts: currentRecordSorts.map((recordSort) => ({
             id: recordSort.id,
             fieldMetadataId: recordSort.fieldMetadataId,
+            relationTargetFieldMetadataId:
+              recordSort.relationTargetFieldMetadataId ?? null,
             direction: recordSort.direction,
             viewId,
           })),

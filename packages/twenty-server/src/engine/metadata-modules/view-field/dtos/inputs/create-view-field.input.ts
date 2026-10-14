@@ -22,6 +22,11 @@ export class CreateViewFieldInput {
   @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;
 
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string;
+
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;

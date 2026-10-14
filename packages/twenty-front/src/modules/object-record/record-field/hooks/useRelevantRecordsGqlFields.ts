@@ -4,6 +4,9 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
+import { generateTraversedRecordGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateTraversedRecordGqlFields';
+import { mergeRecordGqlFields } from '@/object-record/graphql/record-gql-fields/utils/mergeRecordGqlFields';
+import { resolveRecordFieldRelationTraversal } from '@/object-record/record-field/utils/relation-traversal/resolveRecordFieldRelationTraversal';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
@@ -71,12 +74,25 @@ export const useRelevantRecordsGqlFields = ({
     ...additionalFieldMetadataItems,
   ].filter(filterDuplicatesById);
 
-  const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
-    objectMetadataItems,
-    sourceObjectMetadataItem: objectMetadataItem,
-    fields: fieldMetadataItemsToUse,
-    depth: 1,
-  });
+  const relationTraversals = visibleRecordFields
+    .map((recordField) =>
+      resolveRecordFieldRelationTraversal({
+        recordField,
+        sourceObjectMetadataItem: objectMetadataItem,
+        objectMetadataItems,
+      }),
+    )
+    .filter(isDefined);
+
+  const allDepthOneGqlFields = mergeRecordGqlFields(
+    generateDepthRecordGqlFieldsFromFields({
+      objectMetadataItems,
+      sourceObjectMetadataItem: objectMetadataItem,
+      fields: fieldMetadataItemsToUse,
+      depth: 1,
+    }),
+    generateTraversedRecordGqlFields(relationTraversals),
+  );
 
   const coreRecordReferenceFieldsRecordGqlFields =
     getCoreRecordReferenceFieldsRecordGqlFields({

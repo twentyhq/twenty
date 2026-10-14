@@ -36,9 +36,11 @@ export const SettingsDataModelLabelIdentifierPreviewContextWrapper = ({
           recordIndexId: '',
           viewBarInstanceId: '',
           recordFieldByFieldMetadataItemId: {},
+          recordFieldByRecordFieldKey: {},
           labelIdentifierFieldMetadataItem,
           fieldMetadataItemByFieldMetadataItemId: {},
           fieldDefinitionByFieldMetadataItemId: {},
+          fieldDefinitionByRecordFieldKey: {},
         }}
       >
         {children}

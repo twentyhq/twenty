@@ -307,6 +307,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
               flatFieldMetadata.universalIdentifier,
             viewUniversalIdentifier: indexViewUniversalIdentifier,
             viewFieldGroupUniversalIdentifier: null,
+            relationTargetFieldMetadataUniversalIdentifier: null,
             isVisible: true,
             size: DEFAULT_VIEW_FIELD_SIZE,
             position,

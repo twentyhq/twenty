@@ -8,6 +8,7 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableHeaderLabelIdentifierCellPlusButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton';
 import { getVisibleFieldWithLowestPosition } from '@/object-record/record-table/record-table-header/utils/getVisibleFieldWithLowestPosition';
@@ -17,7 +18,7 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { resizedRecordFieldKeyComponentState } from '@/object-record/record-table/states/resizedRecordFieldKeyComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -75,11 +76,11 @@ export const RecordTableHeaderFirstCell = () => {
     hasRecordGroupsComponentSelector,
   );
 
-  const resizedFieldMetadataId = useAtomComponentStateValue(
-    resizedFieldMetadataIdComponentState,
+  const resizedRecordFieldKey = useAtomComponentStateValue(
+    resizedRecordFieldKeyComponentState,
   );
 
-  const isResizingAnyColumn = isDefined(resizedFieldMetadataId);
+  const isResizingAnyColumn = isDefined(resizedRecordFieldKey);
 
   const shouldDisplayBorderBottom =
     hasRecordGroups ||
@@ -93,7 +94,7 @@ export const RecordTableHeaderFirstCell = () => {
   return (
     <RecordTableHeaderCellContainer
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(0))}
-      key={recordField.fieldMetadataItemId}
+      key={getRecordFieldKey(recordField)}
       onMouseEnter={() => setIconIsVisible(true)}
       onMouseLeave={() => setIconIsVisible(false)}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}

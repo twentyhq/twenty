@@ -1,4 +1,5 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
@@ -30,7 +31,7 @@ export const RecordTableCellWrapper = ({
         recordField,
         cellPosition: currentTableCellPosition,
       }}
-      key={recordField.fieldMetadataItemId}
+      key={getRecordFieldKey(recordField)}
     >
       <RecordTableCellFieldContextWrapper recordField={recordField}>
         {children}

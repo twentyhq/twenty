@@ -18,9 +18,11 @@ export const JestRecordIndexContextProviderWrapper = ({
 }: JestRecordIndexContextProviderWrapperProps) => {
   const {
     fieldDefinitionByFieldMetadataItemId,
+    fieldDefinitionByRecordFieldKey,
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
     recordFieldByFieldMetadataItemId,
+    recordFieldByRecordFieldKey,
   } = useRecordIndexFieldMetadataDerivedStates(objectMetadataItem);
 
   return (
@@ -45,7 +47,9 @@ export const JestRecordIndexContextProviderWrapper = ({
               viewBarInstanceId: RECORD_INDEX_ID,
               labelIdentifierFieldMetadataItem,
               recordFieldByFieldMetadataItemId,
+              recordFieldByRecordFieldKey,
               fieldDefinitionByFieldMetadataItemId,
+              fieldDefinitionByRecordFieldKey,
               fieldMetadataItemByFieldMetadataItemId,
             }}
           >

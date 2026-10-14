@@ -38,6 +38,24 @@ export const turnSortsIntoOrderBy = (
           ? 'AscNullsLast'
           : 'DescNullsLast';
 
+      if (isDefined(sort.relationTargetFieldMetadataId)) {
+        const targetField = objectMetadataItems
+          .flatMap((objectMetadataItemToSearch) => objectMetadataItemToSearch.fields)
+          .find((field) => field.id === sort.relationTargetFieldMetadataId);
+
+        if (!isDefined(targetField)) {
+          return undefined;
+        }
+
+        return getOrderByForFieldMetadataType({
+          field: targetField,
+          orderByDirection: direction,
+          primaryCompositeSubField: sort.subFieldName,
+        }).map((targetOrderBy) => ({
+          [correspondingField.name]: targetOrderBy,
+        }));
+      }
+
       if (correspondingField.type === FieldMetadataType.RELATION) {
         const relatedObjectName =
           correspondingField.relation?.targetObjectMetadata?.nameSingular;

@@ -19,9 +19,14 @@ export type RecordIndexContextValue = {
   recordIndexId: string;
   viewBarInstanceId: string;
   recordFieldByFieldMetadataItemId: Record<string, RecordField>;
+  recordFieldByRecordFieldKey: Record<string, RecordField>;
   labelIdentifierFieldMetadataItem: FieldMetadataItem | undefined;
   fieldMetadataItemByFieldMetadataItemId: Record<string, FieldMetadataItem>;
   fieldDefinitionByFieldMetadataItemId: Record<
+    string,
+    ColumnDefinition<FieldMetadata>
+  >;
+  fieldDefinitionByRecordFieldKey: Record<
     string,
     ColumnDefinition<FieldMetadata>
   >;

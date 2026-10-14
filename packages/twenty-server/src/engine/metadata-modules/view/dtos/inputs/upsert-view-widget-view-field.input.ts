@@ -32,6 +32,15 @@ export class UpsertViewWidgetViewFieldInput {
   })
   fieldMetadataId?: string;
 
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    description:
+      'The field metadata id on the related object when the column traverses the many-to-one relation held in fieldMetadataId.',
+  })
+  relationTargetFieldMetadataId?: string;
+
   @IsBoolean()
   @Field()
   isVisible: boolean;

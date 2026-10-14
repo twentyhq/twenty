@@ -231,6 +231,7 @@ export class FieldMetadataService {
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatViewSortMaps: existingFlatViewSortMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -242,6 +243,7 @@ export class FieldMetadataService {
           'flatViewGroupMaps',
           'flatViewMaps',
           'flatViewFieldMaps',
+          'flatViewSortMaps',
         ],
       },
     );
@@ -255,6 +257,7 @@ export class FieldMetadataService {
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatViewSortMaps: existingFlatViewSortMaps,
       flatApplication: resolvedOwnerFlatApplication,
       isSystemBuild,
       workspaceCustomApplicationUniversalIdentifier:
@@ -295,6 +298,7 @@ export class FieldMetadataService {
       flatViewFiltersToDelete,
       flatViewFiltersToUpdate,
       flatViewFieldsToDelete,
+      flatViewSortsToDelete,
       flatViewsToUpdate,
       flatViewsToDelete,
     } = inputTranspilationResult.result;
@@ -331,6 +335,11 @@ export class FieldMetadataService {
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatViewFieldsToDelete,
+              flatEntityToUpdate: [],
+            },
+            viewSort: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: flatViewSortsToDelete,
               flatEntityToUpdate: [],
             },
           },

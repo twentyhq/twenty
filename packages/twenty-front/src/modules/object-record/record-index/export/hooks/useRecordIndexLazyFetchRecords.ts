@@ -1,5 +1,6 @@
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type RecordIndexExportColumn } from '@/object-record/record-index/export/types/RecordIndexExportColumn';
+import { buildRecordIndexExportColumnsFromRecordFields } from '@/object-record/record-index/export/utils/buildRecordIndexExportColumnsFromRecordFields';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -13,7 +14,6 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -31,10 +31,7 @@ export type UseRecordDataOptions = {
   recordIndexId: string;
   callback: (
     rows: ObjectRecord[],
-    columns: Pick<
-      ColumnDefinition<FieldMetadata>,
-      'label' | 'type' | 'metadata'
-    >[],
+    columns: RecordIndexExportColumn[],
   ) => void | Promise<void>;
   viewType?: ViewType;
 };
@@ -114,31 +111,14 @@ export const useRecordIndexLazyFetchRecords = ({
     recordIndexId,
   );
 
-  const finalColumns: Pick<
-    ColumnDefinition<FieldMetadata>,
-    'label' | 'type' | 'metadata'
-  >[] = [
-    ...visibleRecordFields
-      .map((field: RecordField) => {
-        const fieldMetadataItem = objectMetadataItem.fields.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === field.fieldMetadataItemId,
-        );
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-        if (!fieldMetadataItem) {
-          return null;
-        }
-
-        return {
-          label: fieldMetadataItem.label,
-          type: fieldMetadataItem.type,
-          metadata: {
-            fieldName: fieldMetadataItem.name,
-            relationType: fieldMetadataItem.relation?.type,
-          },
-        };
-      })
-      .filter(isDefined),
+  const finalColumns: RecordIndexExportColumn[] = [
+    ...buildRecordIndexExportColumnsFromRecordFields({
+      recordFields: visibleRecordFields,
+      objectMetadataItem,
+      objectMetadataItems,
+    }),
     ...(hiddenKanbanFieldColumn && viewType === ViewType.KANBAN
       ? [hiddenKanbanFieldColumn]
       : []),

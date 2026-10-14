@@ -105,6 +105,7 @@ describe('resolveManyToOneRelationIdsToUniversalIdentifiers', () => {
       expect(result).toEqual({
         applicationUniversalIdentifier: 'app-ui-1',
         fieldMetadataUniversalIdentifier: 'field-ui-1',
+        relationTargetFieldMetadataUniversalIdentifier: null,
         viewUniversalIdentifier: 'view-ui-1',
         viewFieldGroupUniversalIdentifier: 'view-field-group-ui-1',
       });
@@ -197,6 +198,7 @@ describe('resolveManyToOneRelationIdsToUniversalIdentifiers', () => {
       expect(result).toEqual({
         applicationUniversalIdentifier: 'app-ui-1',
         fieldMetadataUniversalIdentifier: 'field-ui-1',
+        relationTargetFieldMetadataUniversalIdentifier: null,
         viewUniversalIdentifier: 'view-ui-1',
         viewFieldGroupUniversalIdentifier: null,
       });

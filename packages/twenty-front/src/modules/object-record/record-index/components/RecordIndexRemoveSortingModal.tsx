@@ -14,15 +14,11 @@ export const RecordIndexRemoveSortingModal = () => {
     currentRecordSortsComponentState,
   );
 
-  const fieldMetadataIds = currentRecordSorts.map(
-    (viewSort) => viewSort.fieldMetadataId,
-  );
-
   const { removeRecordSort } = useRemoveRecordSort();
 
   const handleRemoveClick = () => {
-    fieldMetadataIds.forEach((id) => {
-      removeRecordSort(id);
+    currentRecordSorts.forEach((recordSort) => {
+      removeRecordSort(recordSort);
     });
   };
 

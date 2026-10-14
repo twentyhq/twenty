@@ -98,9 +98,11 @@ export const WorkflowEditActionFindRecords = ({
 
   const {
     fieldDefinitionByFieldMetadataItemId,
+    fieldDefinitionByRecordFieldKey,
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
     recordFieldByFieldMetadataItemId,
+    recordFieldByRecordFieldKey,
   } = useRecordIndexFieldMetadataDerivedStates(
     selectedObjectMetadataItem,
     instanceId,
@@ -193,7 +195,9 @@ export const WorkflowEditActionFindRecords = ({
                 objectPermissionsByObjectMetadataId,
                 labelIdentifierFieldMetadataItem,
                 recordFieldByFieldMetadataItemId,
+                recordFieldByRecordFieldKey,
                 fieldDefinitionByFieldMetadataItemId,
+                fieldDefinitionByRecordFieldKey,
                 fieldMetadataItemByFieldMetadataItemId,
               }}
             >

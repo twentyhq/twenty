@@ -1,6 +1,8 @@
 import {
   FieldMetadataType,
+  OrderByDirection,
   ViewFilterOperand,
+  ViewSortDirection,
   ViewVisibility,
 } from 'twenty-shared/types';
 
@@ -76,5 +78,93 @@ describe('ViewQueryParamsService', () => {
     });
 
     expect(result.filter).toEqual({ stage: { in: ['QUALIFIED', 'NEW'] } });
+  });
+
+  it('nests the order by under the relation field for a traversed sort', async () => {
+    const relationField = {
+      id: 'relation-field-id',
+      universalIdentifier: 'relation-field-universal-identifier',
+      name: 'company',
+      type: FieldMetadataType.RELATION,
+    };
+    const targetField = {
+      id: 'target-field-id',
+      universalIdentifier: 'target-field-universal-identifier',
+      name: 'employees',
+      type: FieldMetadataType.NUMBER,
+    };
+    const ownField = {
+      id: 'own-field-id',
+      universalIdentifier: 'own-field-universal-identifier',
+      name: 'name',
+      type: FieldMetadataType.TEXT,
+    };
+    const object = {
+      id: 'object-id',
+      universalIdentifier: 'object-universal-identifier',
+      nameSingular: 'opportunity',
+    };
+    const viewService = {
+      findByIdWithRelations: jest.fn().mockResolvedValue({
+        objectMetadataId: object.id,
+        visibility: ViewVisibility.WORKSPACE,
+        viewFilters: [],
+        viewSorts: [
+          {
+            id: 'traversed-sort-id',
+            fieldMetadataId: relationField.id,
+            relationTargetFieldMetadataId: targetField.id,
+            direction: ViewSortDirection.DESC,
+          },
+          {
+            id: 'own-sort-id',
+            fieldMetadataId: ownField.id,
+            relationTargetFieldMetadataId: null,
+            direction: ViewSortDirection.ASC,
+          },
+          {
+            id: 'dangling-sort-id',
+            fieldMetadataId: relationField.id,
+            relationTargetFieldMetadataId: 'missing-field-id',
+            direction: ViewSortDirection.ASC,
+          },
+        ],
+      }),
+    };
+    const flatEntityMapsCacheService = {
+      getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+        flatObjectMetadataMaps: {
+          universalIdentifierById: { [object.id]: object.universalIdentifier },
+          byUniversalIdentifier: { [object.universalIdentifier]: object },
+        },
+        flatFieldMetadataMaps: {
+          universalIdentifierById: {
+            [relationField.id]: relationField.universalIdentifier,
+            [targetField.id]: targetField.universalIdentifier,
+            [ownField.id]: ownField.universalIdentifier,
+          },
+          byUniversalIdentifier: {
+            [relationField.universalIdentifier]: relationField,
+            [targetField.universalIdentifier]: targetField,
+            [ownField.universalIdentifier]: ownField,
+          },
+        },
+      }),
+    };
+    const service = new ViewQueryParamsService(
+      viewService as unknown as ViewService,
+      flatEntityMapsCacheService as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService,
+      {} as WorkspaceOrmManager,
+    );
+
+    const result = await service.resolveViewToQueryParams({
+      viewId: 'view-id',
+      workspaceId: 'workspace-id',
+    });
+
+    expect(result.orderBy).toEqual([
+      { company: { employees: OrderByDirection.DescNullsLast } },
+      { name: OrderByDirection.AscNullsFirst },
+    ]);
   });
 });

@@ -15,6 +15,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { formatAggregatedFieldsValues } from 'src/engine/api/graphql/graphql-query-runner/utils/format-aggregated-fields-values.util';
 import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
@@ -124,7 +125,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     selectedAggregatedFields,
     objectRecordsAggregatedValues,
   }: {
-    selectedAggregatedFields: Record<string, AggregationField[]>;
+    selectedAggregatedFields: Record<string, AggregationField>;
     // oxlint-disable-next-line typescript/no-explicit-any
     objectRecordsAggregatedValues: Record<string, any>;
   }) => {
@@ -132,23 +133,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       return {};
     }
 
-    return Object.entries(selectedAggregatedFields).reduce(
-      (acc, [aggregatedFieldName]) => {
-        const aggregatedFieldValue =
-          objectRecordsAggregatedValues[aggregatedFieldName];
-
-        if (!isDefined(aggregatedFieldValue)) {
-          return acc;
-        }
-
-        return {
-          ...acc,
-          [aggregatedFieldName]:
-            objectRecordsAggregatedValues[aggregatedFieldName],
-        };
-      },
-      {},
-    );
+    return formatAggregatedFieldsValues({
+      selectedAggregatedFields,
+      aggregatedValues: objectRecordsAggregatedValues,
+    });
   };
 
   // oxlint-disable-next-line typescript/no-explicit-any

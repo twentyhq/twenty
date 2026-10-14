@@ -8,7 +8,7 @@ import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-tab
 import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
-import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
+import { resizedRecordFieldKeyComponentState } from '@/object-record/record-table/states/resizedRecordFieldKeyComponentState';
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
@@ -21,8 +21,8 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableColumnWidthEffect = () => {
-  const [resizedFieldMetadataId] = useAtomComponentState(
-    resizedFieldMetadataIdComponentState,
+  const [resizedRecordFieldKey] = useAtomComponentState(
+    resizedRecordFieldKeyComponentState,
   );
 
   const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
@@ -41,7 +41,7 @@ export const RecordTableColumnWidthEffect = () => {
     useIsRecordTableCheckboxColumnHidden();
 
   useEffect(() => {
-    if (isDefined(resizedFieldMetadataId)) {
+    if (isDefined(resizedRecordFieldKey)) {
       return;
     }
 
@@ -108,7 +108,7 @@ export const RecordTableColumnWidthEffect = () => {
       );
     }
   }, [
-    resizedFieldMetadataId,
+    resizedRecordFieldKey,
     visibleRecordFields,
     recordTableWidth,
     firstColumnWidthOverride,

@@ -7,5 +7,7 @@ export const mapRecordSortToViewSort = (recordSort: RecordSort): ViewSort => {
     fieldMetadataId: recordSort.fieldMetadataId,
     direction: recordSort.direction,
     subFieldName: recordSort.subFieldName ?? null,
+    relationTargetFieldMetadataId:
+      recordSort.relationTargetFieldMetadataId ?? null,
   };
 };

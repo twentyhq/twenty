@@ -2,10 +2,10 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { type Nullable } from 'twenty-shared/types';
 
-export const resizedFieldMetadataIdComponentState = createAtomComponentState<
+export const resizedRecordFieldKeyComponentState = createAtomComponentState<
   Nullable<string>
 >({
-  key: 'resizedFieldMetadataIdComponentState',
+  key: 'resizedRecordFieldKeyComponentState',
   defaultValue: null,
   componentInstanceContext: RecordTableComponentInstanceContext,
 });

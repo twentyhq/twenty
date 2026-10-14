@@ -1,11 +1,13 @@
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardCardBodyTraversedField } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyTraversedField';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import {
   FieldContext,
   type RecordUpdateHook,
@@ -31,7 +33,7 @@ export const RecordBoardCardBody = () => {
   const {
     labelIdentifierFieldMetadataItem,
     fieldMetadataItemByFieldMetadataItemId,
-    fieldDefinitionByFieldMetadataItemId,
+    fieldDefinitionByRecordFieldKey,
     objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
 
@@ -66,8 +68,19 @@ export const RecordBoardCardBody = () => {
   return (
     <RecordCardBodyContainer>
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
+        if (isDefined(recordField.relationTargetFieldMetadataItemId)) {
+          return (
+            <RecordBoardCardBodyTraversedField
+              key={getRecordFieldKey(recordField)}
+              recordField={recordField}
+              rowRecordId={recordId}
+              onMouseEnter={() => handleMouseEnter(index)}
+            />
+          );
+        }
+
         const correspondingFieldDefinition =
-          fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+          fieldDefinitionByRecordFieldKey[getRecordFieldKey(recordField)];
         const fieldMetadataItem =
           fieldMetadataItemByFieldMetadataItemId[
             recordField.fieldMetadataItemId
@@ -81,7 +94,7 @@ export const RecordBoardCardBody = () => {
         }
 
         return (
-          <StopPropagationContainer key={recordField.fieldMetadataItemId}>
+          <StopPropagationContainer key={getRecordFieldKey(recordField)}>
             <FieldContext.Provider
               value={{
                 recordId,

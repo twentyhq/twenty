@@ -1,5 +1,6 @@
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type RecordIndexExportColumn } from '@/object-record/record-index/export/types/RecordIndexExportColumn';
+import { buildRecordIndexExportColumnsFromRecordFields } from '@/object-record/record-index/export/utils/buildRecordIndexExportColumnsFromRecordFields';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -10,7 +11,6 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -95,31 +95,14 @@ export const useRecordIndexExportParameters = ({
     recordIndexId,
   );
 
-  const finalColumns: Pick<
-    ColumnDefinition<FieldMetadata>,
-    'label' | 'type' | 'metadata'
-  >[] = [
-    ...visibleRecordFields
-      .map((field: RecordField) => {
-        const fieldMetadataItem = objectMetadataItem.fields.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === field.fieldMetadataItemId,
-        );
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-        if (!isDefined(fieldMetadataItem)) {
-          return null;
-        }
-
-        return {
-          label: fieldMetadataItem.label,
-          type: fieldMetadataItem.type,
-          metadata: {
-            fieldName: fieldMetadataItem.name,
-            relationType: fieldMetadataItem.relation?.type,
-          },
-        };
-      })
-      .filter(isDefined),
+  const finalColumns: RecordIndexExportColumn[] = [
+    ...buildRecordIndexExportColumnsFromRecordFields({
+      recordFields: visibleRecordFields,
+      objectMetadataItem,
+      objectMetadataItems,
+    }),
     ...(hiddenKanbanFieldColumn && viewType === ViewType.KANBAN
       ? [hiddenKanbanFieldColumn]
       : []),
@@ -130,6 +113,7 @@ export const useRecordIndexExportParameters = ({
     filter: queryFilter,
     orderBy: findManyRecordsParams.orderBy,
     fieldMetadataIds: finalColumns
+      .filter((column) => !isDefined(column.relationTraversal))
       .map(
         (column) =>
           objectMetadataItem.fields.find(
@@ -137,5 +121,16 @@ export const useRecordIndexExportParameters = ({
           )?.id,
       )
       .filter(isDefined),
+    traversedFields: visibleRecordFields.flatMap((recordField) =>
+      isDefined(recordField.relationTargetFieldMetadataItemId)
+        ? [
+            {
+              fieldMetadataId: recordField.fieldMetadataItemId,
+              relationTargetFieldMetadataId:
+                recordField.relationTargetFieldMetadataItemId,
+            },
+          ]
+        : [],
+    ),
   };
 };

@@ -13,6 +13,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFlatViewRelationTargetField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-relation-target-field.util';
 import { validateLabelIdentifierFieldMetadataIdFlatViewField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util';
 
 @Injectable()
@@ -97,6 +98,9 @@ export class FlatViewFieldValidatorService {
 
     if (
       flatView.type !== ViewType.FIELDS_WIDGET &&
+      !isDefined(
+        updatedFlatViewField.relationTargetFieldMetadataUniversalIdentifier,
+      ) &&
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         updatedFlatViewField.fieldMetadataUniversalIdentifier
     ) {
@@ -232,15 +236,38 @@ export class FlatViewFieldValidatorService {
         flatViewField.viewUniversalIdentifier ===
           flatViewFieldToValidate.viewUniversalIdentifier &&
         flatViewField.fieldMetadataUniversalIdentifier ===
-          flatViewFieldToValidate.fieldMetadataUniversalIdentifier,
+          flatViewFieldToValidate.fieldMetadataUniversalIdentifier &&
+        (flatViewField.relationTargetFieldMetadataUniversalIdentifier ??
+          null) ===
+          (flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier ??
+            null),
     );
 
     if (equivalentExistingFlatViewFieldExists) {
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field with same fieldMetadataUniversalIdentifier and viewUniversalIdentifier already exists`,
+        message: t`View field with same fieldMetadataUniversalIdentifier, relationTargetFieldMetadataUniversalIdentifier and viewUniversalIdentifier already exists`,
         userFriendlyMessage: msg`View field already exists`,
       });
+    }
+
+    if (
+      isDefined(flatFieldMetadata) &&
+      isDefined(
+        flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
+      )
+    ) {
+      const { errors: relationTargetErrors } =
+        validateFlatViewRelationTargetField({
+          sourceFlatFieldMetadata: flatFieldMetadata,
+          relationTargetFieldMetadataUniversalIdentifier:
+            flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
+          flatView,
+          flatFieldMetadataMaps,
+          errorCode: ViewExceptionCode.INVALID_VIEW_DATA,
+        });
+
+      validationResult.errors.push(...relationTargetErrors);
     }
 
     const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
@@ -258,10 +285,25 @@ export class FlatViewFieldValidatorService {
       return validationResult;
     }
 
+    const isTraversedViewField = isDefined(
+      flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
+    );
+    const isLabelIdentifierViewField =
+      flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
+      flatViewFieldToValidate.fieldMetadataUniversalIdentifier;
+
+    if (isTraversedViewField && isLabelIdentifierViewField) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Label identifier field cannot be traversed`,
+        userFriendlyMessage: msg`Label identifier field cannot be traversed`,
+      });
+    }
+
     if (
       flatView.type !== ViewType.FIELDS_WIDGET &&
-      flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
-        flatViewFieldToValidate.fieldMetadataUniversalIdentifier
+      !isTraversedViewField &&
+      isLabelIdentifierViewField
     ) {
       validationResult.errors.push(
         ...validateLabelIdentifierFieldMetadataIdFlatViewField({
@@ -273,8 +315,11 @@ export class FlatViewFieldValidatorService {
       flatView.type !== ViewType.FIELDS_WIDGET &&
       otherFlatViewFields.some(
         (flatViewField) =>
+          !isDefined(
+            flatViewField.relationTargetFieldMetadataUniversalIdentifier,
+          ) &&
           flatViewField.fieldMetadataUniversalIdentifier ===
-          flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+            flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
       ) &&
       isViewFieldInLowestPosition({
         flatViewField: flatViewFieldToValidate,

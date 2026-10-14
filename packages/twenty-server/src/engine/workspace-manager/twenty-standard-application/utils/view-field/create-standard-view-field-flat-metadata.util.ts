@@ -126,6 +126,8 @@ export const createStandardViewFieldFlatMetadata = <
     fieldMetadataId:
       standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
     fieldMetadataUniversalIdentifier: fieldDefinition.universalIdentifier,
+    relationTargetFieldMetadataId: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
     viewFieldGroupId,
     viewFieldGroupUniversalIdentifier,
     position,

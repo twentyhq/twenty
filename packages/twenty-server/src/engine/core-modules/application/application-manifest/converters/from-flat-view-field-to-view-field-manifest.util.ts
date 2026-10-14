@@ -17,6 +17,12 @@ export const fromFlatViewFieldToViewFieldManifest = ({
   ...(isDefined(flatViewField.aggregateOperation)
     ? { aggregateOperation: flatViewField.aggregateOperation }
     : {}),
+  ...(isDefined(flatViewField.relationTargetFieldMetadataUniversalIdentifier)
+    ? {
+        relationTargetFieldMetadataUniversalIdentifier:
+          flatViewField.relationTargetFieldMetadataUniversalIdentifier,
+      }
+    : {}),
   ...(isDefined(flatViewField.viewFieldGroupUniversalIdentifier)
     ? {
         viewFieldGroupUniversalIdentifier:

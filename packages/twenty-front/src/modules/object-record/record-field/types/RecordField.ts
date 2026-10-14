@@ -7,4 +7,5 @@ export type RecordField = {
   isVisible: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
+  relationTargetFieldMetadataItemId?: string | null;
 };

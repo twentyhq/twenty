@@ -10,11 +10,13 @@ const APP_UID = '11111111-1111-4111-8111-111111111111';
 const VIEW_UID = '22222222-2222-4222-8222-222222222222';
 const VIEW_SORT_UID = '33333333-3333-4333-8333-333333333333';
 const FIELD_UID = '44444444-4444-4444-8444-444444444444';
+const RELATION_TARGET_FIELD_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-03T10:00:00.000Z';
 
 const VIEW_SORT_MANIFEST: Required<ViewSortManifest> = {
   universalIdentifier: VIEW_SORT_UID,
   fieldMetadataUniversalIdentifier: FIELD_UID,
+  relationTargetFieldMetadataUniversalIdentifier: RELATION_TARGET_FIELD_UID,
   direction: ViewSortDirection.DESC,
   subFieldName: 'amountMicros',
 };
@@ -51,6 +53,7 @@ describe('fromFlatViewSortToViewSortManifest', () => {
       applicationUniversalIdentifier: APP_UID,
       viewUniversalIdentifier: VIEW_UID,
       fieldMetadataUniversalIdentifier: FIELD_UID,
+      relationTargetFieldMetadataUniversalIdentifier: null,
       direction: ViewSortDirection.ASC,
       subFieldName: null,
       createdAt: NOW,

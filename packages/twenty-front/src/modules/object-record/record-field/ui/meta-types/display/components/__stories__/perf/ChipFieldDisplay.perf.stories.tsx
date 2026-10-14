@@ -28,9 +28,11 @@ const meta: Meta = {
 
       const {
         fieldDefinitionByFieldMetadataItemId,
+        fieldDefinitionByRecordFieldKey,
         fieldMetadataItemByFieldMetadataItemId,
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
+        recordFieldByRecordFieldKey,
       } = useRecordIndexFieldMetadataDerivedStates(
         companyObjectMetadataItem,
         instanceId,
@@ -53,9 +55,11 @@ const meta: Meta = {
               recordIndexId: instanceId,
               viewBarInstanceId: instanceId,
               fieldDefinitionByFieldMetadataItemId,
+              fieldDefinitionByRecordFieldKey,
               fieldMetadataItemByFieldMetadataItemId,
               labelIdentifierFieldMetadataItem,
               recordFieldByFieldMetadataItemId,
+              recordFieldByRecordFieldKey,
             }}
           >
             <Story />

@@ -22,6 +22,12 @@ const CreateViewSortInputSchema = z.object({
     .describe(
       'ID of the field to sort by. Use get_field_metadata to find field IDs.',
     ),
+  relationTargetFieldMetadataId: z
+    .uuid()
+    .optional()
+    .describe(
+      'When fieldMetadataId is a many-to-one relation, the ID of a field on the related object to sort by through that relation.',
+    ),
   direction: z
     .enum(VIEW_SORT_DIRECTION_OPTIONS)
     .default(ViewSortDirection.ASC)
@@ -68,6 +74,7 @@ export class ViewSortToolsFactory {
             id: sort.id,
             viewId: sort.viewId,
             fieldMetadataId: sort.fieldMetadataId,
+            relationTargetFieldMetadataId: sort.relationTargetFieldMetadataId,
             direction: sort.direction,
           }));
         },
@@ -84,12 +91,15 @@ export class ViewSortToolsFactory {
         execute: async (parameters: {
           viewId: string;
           fieldMetadataId: string;
+          relationTargetFieldMetadataId?: string;
           direction: ViewSortDirection;
         }) => {
           const sort = await this.viewSortService.createOne({
             createViewSortInput: {
               viewId: parameters.viewId,
               fieldMetadataId: parameters.fieldMetadataId,
+              relationTargetFieldMetadataId:
+                parameters.relationTargetFieldMetadataId,
               direction: parameters.direction,
             },
             workspaceId,
@@ -99,6 +109,7 @@ export class ViewSortToolsFactory {
             id: sort.id,
             viewId: sort.viewId,
             fieldMetadataId: sort.fieldMetadataId,
+            relationTargetFieldMetadataId: sort.relationTargetFieldMetadataId,
             direction: sort.direction,
           };
         },
@@ -111,6 +122,7 @@ export class ViewSortToolsFactory {
           sorts: Array<{
             viewId: string;
             fieldMetadataId: string;
+            relationTargetFieldMetadataId?: string;
             direction: ViewSortDirection;
           }>;
         }) => {
@@ -121,6 +133,8 @@ export class ViewSortToolsFactory {
               createViewSortInput: {
                 viewId: sortInput.viewId,
                 fieldMetadataId: sortInput.fieldMetadataId,
+                relationTargetFieldMetadataId:
+                  sortInput.relationTargetFieldMetadataId,
                 direction: sortInput.direction,
               },
               workspaceId,
@@ -130,6 +144,7 @@ export class ViewSortToolsFactory {
               id: sort.id,
               viewId: sort.viewId,
               fieldMetadataId: sort.fieldMetadataId,
+              relationTargetFieldMetadataId: sort.relationTargetFieldMetadataId,
               direction: sort.direction,
             });
           }

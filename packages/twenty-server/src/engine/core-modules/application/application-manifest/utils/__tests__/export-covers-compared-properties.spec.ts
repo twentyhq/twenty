@@ -142,6 +142,7 @@ const VIEW_FIELD_GROUP_MANIFEST: ViewFieldGroupManifest = {
 const VIEW_SORT_MANIFEST: ViewSortManifest = {
   universalIdentifier: VIEW_SORT_UID,
   fieldMetadataUniversalIdentifier: FIELD_UID,
+  relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
   direction: ViewSortDirection.DESC,
   subFieldName: 'primaryLinkUrl',
 };

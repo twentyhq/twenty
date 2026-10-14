@@ -36,6 +36,7 @@ export const computeSystemViewFieldsToCreate = ({
     ),
   }).map<UniversalFlatViewField>((field, index) => ({
     fieldMetadataUniversalIdentifier: field.universalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier: null,
     viewUniversalIdentifier,
     viewFieldGroupUniversalIdentifier: null,
     createdAt,

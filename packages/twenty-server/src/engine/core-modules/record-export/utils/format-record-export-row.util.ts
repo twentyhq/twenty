@@ -18,7 +18,10 @@ export const formatRecordExportRow = ({
 }): string =>
   columns
     .map((column) => {
-      let value = record[column.fieldName];
+      const source = isDefined(column.relationFieldName)
+        ? record[column.relationFieldName]
+        : record;
+      let value = isPlainObject(source) ? source[column.fieldName] : undefined;
 
       if (isDefined(column.subFieldName)) {
         value = isPlainObject(value) ? value[column.subFieldName] : undefined;

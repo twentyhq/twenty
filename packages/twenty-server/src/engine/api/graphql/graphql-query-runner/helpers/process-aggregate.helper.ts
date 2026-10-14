@@ -1,7 +1,12 @@
 import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
+import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
+import {
+  type AggregationField,
+  type AggregationFieldThroughRelation,
+} from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
@@ -21,9 +26,17 @@ export class ProcessAggregateHelper {
     for (const [aggregatedFieldName, aggregatedField] of Object.entries(
       selectedAggregatedFields,
     )) {
+      const tableAlias = isDefined(aggregatedField?.throughRelation)
+        ? this.joinThroughRelation({
+            queryBuilder,
+            rootAlias: objectMetadataNameSingular,
+            throughRelation: aggregatedField.throughRelation,
+          })
+        : objectMetadataNameSingular;
+
       const aggregateExpression = this.getAggregateExpression(
         aggregatedField,
-        objectMetadataNameSingular,
+        tableAlias,
       );
 
       if (!isDefined(aggregateExpression)) {
@@ -34,9 +47,40 @@ export class ProcessAggregateHelper {
     }
   };
 
+  // Same join and read checks as filtering or ordering through the relation; returns the alias the expression must read from
+  private static joinThroughRelation = ({
+    queryBuilder,
+    rootAlias,
+    throughRelation,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    rootAlias: string;
+    throughRelation: AggregationFieldThroughRelation;
+  }): string => {
+    assertFieldIsReadableOrThrow({
+      objectsPermissions: queryBuilder.objectRecordsPermissions,
+      objectMetadataId: throughRelation.relationFieldMetadata.objectMetadataId,
+      fieldMetadataId: throughRelation.relationFieldMetadata.id,
+    });
+
+    assertFieldIsReadableOrThrow({
+      objectsPermissions: queryBuilder.objectRecordsPermissions,
+      objectMetadataId: throughRelation.targetObjectMetadata.id,
+      fieldMetadataId: throughRelation.targetFieldMetadata.id,
+    });
+
+    addRelationJoinAliasToQueryBuilder({
+      queryBuilder,
+      parentAlias: rootAlias,
+      relationName: throughRelation.relationFieldName,
+    });
+
+    return throughRelation.relationFieldName;
+  };
+
   public static getAggregateExpression = (
     aggregatedField: AggregationField,
-    objectMetadataNameSingular: string,
+    tableAlias: string,
   ): string | undefined => {
     if (
       !isDefined(aggregatedField?.fromField) ||
@@ -68,7 +112,7 @@ export class ProcessAggregateHelper {
     }
 
     const concatenatedColumns = columnNames
-      .map((col) => `"${objectMetadataNameSingular}"."${col}"`)
+      .map((col) => `"${tableAlias}"."${col}"`)
       .join(',');
 
     const columnExpression = `NULLIF(CONCAT(${concatenatedColumns}), '')`;
@@ -90,7 +134,7 @@ export class ProcessAggregateHelper {
       case AggregateOperations.COUNT_FALSE:
         return `CASE WHEN COUNT(*) = 0 THEN NULL ELSE COUNT(CASE WHEN ${columnExpression}::boolean = FALSE THEN 1 ELSE NULL END) END`;
       default: {
-        const numericColumn = `"${objectMetadataNameSingular}"."${columnNameForNumericOperation}"`;
+        const numericColumn = `"${tableAlias}"."${columnNameForNumericOperation}"`;
 
         const numericExpression =
           aggregatedField.fromFieldType === FieldMetadataType.RATING

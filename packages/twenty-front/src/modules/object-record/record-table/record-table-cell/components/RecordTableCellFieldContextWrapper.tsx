@@ -1,3 +1,6 @@
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
+import { RecordTableCellFieldContextTraversed } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextTraversed';
+import { isDefined } from 'twenty-shared/utils';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -27,18 +30,31 @@ export const RecordTableCellFieldContextWrapper = ({
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
+  const isTraversed = isDefined(recordField.relationTargetFieldMetadataItemId);
+
   const instanceId = getRecordFieldInputInstanceId({
     recordId,
-    fieldName: fieldMetadataItem.name,
+    // Two columns through the same relation must not share an input instance.
+    fieldName: isTraversed
+      ? getRecordFieldKey(recordField)
+      : fieldMetadataItem.name,
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
   });
 
   const isLabelIdentifier =
+    !isTraversed &&
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
-      {isLabelIdentifier ? (
+      {isTraversed ? (
+        <RecordTableCellFieldContextTraversed
+          key={instanceId}
+          recordField={recordField}
+        >
+          {children}
+        </RecordTableCellFieldContextTraversed>
+      ) : isLabelIdentifier ? (
         <RecordTableCellFieldContextLabelIdentifier key={instanceId}>
           {children}
         </RecordTableCellFieldContextLabelIdentifier>

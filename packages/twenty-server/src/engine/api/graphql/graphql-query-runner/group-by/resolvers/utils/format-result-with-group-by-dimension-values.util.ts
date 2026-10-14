@@ -7,6 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
+import { formatAggregatedFieldsValues } from 'src/engine/api/graphql/graphql-query-runner/utils/format-aggregated-fields-values.util';
+import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -15,7 +17,7 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 export const formatResultWithGroupByDimensionValues = async ({
   groupsResult,
   groupByDefinitions,
-  aggregateFieldNames,
+  selectedAggregatedFields,
   recordsResult,
   flatObjectMetadata,
   flatObjectMetadataMaps,
@@ -24,7 +26,7 @@ export const formatResultWithGroupByDimensionValues = async ({
 }: {
   groupsResult: Record<string, unknown>[];
   groupByDefinitions: GroupByDefinition[];
-  aggregateFieldNames: string[];
+  selectedAggregatedFields: Record<string, AggregationField>;
   processRecord?: (record: ObjectRecord) => Promise<ObjectRecord>;
   recordsResult?: Array<Record<string, unknown>>;
   flatObjectMetadata?: FlatObjectMetadata;
@@ -83,16 +85,10 @@ export const formatResultWithGroupByDimensionValues = async ({
       );
     }
 
-    const aggregateValues = aggregateFieldNames.reduce(
-      (acc, fieldName) => {
-        if (fieldName in group) {
-          acc[fieldName] = group[fieldName];
-        }
-
-        return acc;
-      },
-      {} as Record<string, unknown>,
-    );
+    const aggregateValues = formatAggregatedFieldsValues({
+      selectedAggregatedFields,
+      aggregatedValues: group,
+    });
 
     const groupKey = createGroupKey(group, groupByDefinitions);
     const records = recordsByGroupKey.get(groupKey) || [];

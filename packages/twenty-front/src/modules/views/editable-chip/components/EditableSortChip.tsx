@@ -1,6 +1,7 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
 import { useSortSubFieldChoicesForField } from '@/object-metadata/hooks/useSortSubFieldChoicesForField';
+import { getTraversedFieldLabel } from '@/object-record/record-field/utils/getTraversedFieldLabel';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
@@ -26,8 +27,27 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     recordSort.fieldMetadataId,
   );
 
+  const { fieldMetadataItem: relationTargetFieldMetadataItem } =
+    useFieldMetadataItemByIdOrThrow(
+      recordSort.relationTargetFieldMetadataId ?? recordSort.fieldMetadataId,
+    );
+
+  // A sort through a relation applies to the target field of the related object.
+  const sortedFieldMetadataItem = isDefined(
+    recordSort.relationTargetFieldMetadataId,
+  )
+    ? relationTargetFieldMetadataItem
+    : fieldMetadataItem;
+
+  const label = isDefined(recordSort.relationTargetFieldMetadataId)
+    ? getTraversedFieldLabel({
+        relationFieldLabel: fieldMetadataItem.label,
+        targetFieldLabel: relationTargetFieldMetadataItem.label,
+      })
+    : fieldMetadataItem.label;
+
   const subFieldChoices = useSortSubFieldChoicesForField({
-    fieldMetadataItem,
+    fieldMetadataItem: sortedFieldMetadataItem,
     primaryCompositeSubField: recordSort.subFieldName,
   });
 
@@ -46,7 +66,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   };
 
   const handleRemove = () => {
-    removeRecordSort(recordSort.fieldMetadataId);
+    removeRecordSort(recordSort);
   };
 
   const handleSubFieldSelect = (value: string) => {
@@ -61,9 +81,9 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   if (!isDefined(subFieldChoices)) {
     return (
       <SortOrFilterChip
-        key={recordSort.fieldMetadataId}
+        key={recordSort.id}
         testId={recordSort.fieldMetadataId}
-        labelValue={fieldMetadataItem.label}
+        labelValue={label}
         Icon={Icon}
         onRemove={handleRemove}
         onClick={toggleDirection}
@@ -76,9 +96,9 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     <DropdownRoot dropdownId={dropdownId} type="picker">
       <Dropdown.Trigger render={<div />} nativeButton={false}>
         <SortOrFilterChip
-          key={recordSort.fieldMetadataId}
+          key={recordSort.id}
           testId={recordSort.fieldMetadataId}
-          labelValue={fieldMetadataItem.label}
+          labelValue={label}
           labelSubField={subFieldChoices.selectedLabel}
           Icon={Icon}
           onRemove={handleRemove}

@@ -22,6 +22,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { mockPerformance } from '@/object-record/record-table/components/__stories__/perf/mock';
 import { RecordTableBodyContextValueProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
@@ -125,6 +126,13 @@ const meta: Meta = {
         ]),
       );
 
+      const recordFieldByRecordFieldKey = Object.fromEntries(
+        currentRecordFields.map((recordField) => [
+          getRecordFieldKey(recordField),
+          recordField,
+        ]),
+      );
+
       const fieldDefinitionByFieldMetadataItemId = Object.fromEntries(
         fieldMetadataItems.map((fieldMetadataItem) => [
           fieldMetadataItem.id,
@@ -138,6 +146,13 @@ const meta: Meta = {
             labelWidth:
               recordFieldByFieldMetadataItemId[fieldMetadataItem.id]?.size ?? 0,
           }),
+        ]),
+      );
+
+      const fieldDefinitionByRecordFieldKey = Object.fromEntries(
+        currentRecordFields.map((recordField) => [
+          getRecordFieldKey(recordField),
+          fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId],
         ]),
       );
 
@@ -161,9 +176,11 @@ const meta: Meta = {
             recordIndexId: 'recordIndexId',
             viewBarInstanceId: 'recordIndexId',
             fieldDefinitionByFieldMetadataItemId,
+            fieldDefinitionByRecordFieldKey,
             fieldMetadataItemByFieldMetadataItemId,
             labelIdentifierFieldMetadataItem,
             recordFieldByFieldMetadataItemId,
+            recordFieldByRecordFieldKey,
           }}
         >
           <RecordComponentInstanceContextsWrapper componentInstanceId="recordTableId">

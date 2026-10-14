@@ -249,8 +249,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           input: {
             id: viewSort.id,
             fieldMetadataId: viewSort.fieldMetadataId,
+            relationTargetFieldMetadataId:
+              viewSort.relationTargetFieldMetadataId ?? null,
             viewId: newViewId,
             direction: viewSort.direction,
+            subFieldName: viewSort.subFieldName ?? null,
           },
         }));
 

@@ -1,4 +1,5 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -17,7 +18,7 @@ export const RecordTableColumnHeadWithDropdown = ({
 }: RecordTableColumnHeadWithDropdownProps) => (
   <DropdownRoot
     type="menu"
-    dropdownId={recordField.fieldMetadataItemId + '-header'}
+    dropdownId={getRecordFieldKey(recordField) + '-header'}
   >
     <Dropdown.Trigger nativeButton={false} render={<div />}>
       <RecordTableColumnHead recordField={recordField} />

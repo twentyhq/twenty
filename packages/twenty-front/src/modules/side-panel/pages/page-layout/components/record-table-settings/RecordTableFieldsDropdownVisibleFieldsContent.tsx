@@ -1,10 +1,13 @@
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
-import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getRecordFieldLabelAndIcon } from '@/object-record/record-field/utils/getRecordFieldLabelAndIcon';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
@@ -44,8 +47,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
 
   const { getIcon } = useIcons();
 
-  const { getFieldMetadataItemByIdOrThrow } =
-    useGetFieldMetadataItemByIdOrThrow();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { reorderVisibleRecordFields } =
     useReorderVisibleRecordFields(recordIndexId);
@@ -65,11 +67,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
   );
 
   const draggableRecordFields = visibleRecordFields
-    .filter(
-      (recordField) =>
-        nonDraggableRecordField?.fieldMetadataItemId !==
-        recordField.fieldMetadataItemId,
-    )
+    .filter((recordField) => recordField !== nonDraggableRecordField)
     .toSorted(sortByProperty('position'));
 
   const handleDragEnd = (result: DraggableListDropResult) => {
@@ -85,8 +83,8 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
     onFieldUpdated?.(updatedField.id, { position: updatedField.position });
   };
 
-  const handleHideField = (fieldMetadataId: string) => {
-    const updatedField = updateRecordField(fieldMetadataId, {
+  const handleHideField = (recordField: RecordField) => {
+    const updatedField = updateRecordField(getRecordFieldKey(recordField), {
       isVisible: false,
     });
 
@@ -118,34 +116,39 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
             draggableItems={
               <>
                 {draggableRecordFields.map((recordField, index) => {
-                  const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
-                    recordField.fieldMetadataItemId,
-                  );
+                  const labelAndIcon = getRecordFieldLabelAndIcon({
+                    recordField,
+                    objectMetadataItem,
+                    objectMetadataItems,
+                  });
+                  const recordFieldKey = getRecordFieldKey(recordField);
+
+                  if (!isDefined(labelAndIcon)) {
+                    return null;
+                  }
 
                   return (
                     <DraggableItem
-                      key={recordField.fieldMetadataItemId}
-                      draggableId={recordField.fieldMetadataItemId}
+                      key={recordFieldKey}
+                      draggableId={recordFieldKey}
                       index={index}
                       itemComponent={
                         <MenuItemDraggable
                           LeftComponent={
                             <ApplicationStackIcon
-                              Icon={getIcon(fieldMetadataItem.icon)}
-                              applicationId={fieldMetadataItem.applicationId}
+                              Icon={getIcon(labelAndIcon.icon)}
+                              applicationId={labelAndIcon.applicationId}
                             />
                           }
                           iconButtons={
                             <LightIconButton
                               aria-label={t`Hide field`}
-                              onClick={() =>
-                                handleHideField(recordField.fieldMetadataItemId)
-                              }
+                              onClick={() => handleHideField(recordField)}
                             >
                               <IconEyeOff />
                             </LightIconButton>
                           }
-                          text={fieldMetadataItem.label}
+                          text={labelAndIcon.label}
                           gripMode="always"
                         />
                       }

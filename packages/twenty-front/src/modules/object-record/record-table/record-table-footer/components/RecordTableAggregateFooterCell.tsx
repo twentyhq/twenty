@@ -8,6 +8,7 @@ import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/r
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterWithDropdown';
@@ -18,7 +19,7 @@ import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { findByProperty, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 const FIRST_COLUMN_WIDTH_CSS_VAR = `var(${getRecordTableColumnFieldWidthCSSVariableName(0)})`;
 
@@ -90,7 +91,7 @@ export const RecordTableAggregateFooterCell = ({
 }) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const { fieldMetadataId, viewFieldId } = useContext(
+  const { recordFieldKey, viewFieldId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
   );
 
@@ -108,7 +109,8 @@ export const RecordTableAggregateFooterCell = ({
     !isRecordTableColumnResizable;
 
   const recordField = visibleRecordFields.find(
-    findByProperty('fieldMetadataItemId', fieldMetadataId),
+    (visibleRecordField) =>
+      getRecordFieldKey(visibleRecordField) === recordFieldKey,
   );
 
   const isFirstCell = columnIndex === 0;
@@ -133,8 +135,7 @@ export const RecordTableAggregateFooterCell = ({
         {isFooterReadOnly ? (
           hasAggregateOperationForViewField ? (
             <RecordTableColumnAggregateFooterValue
-              fieldMetadataId={fieldMetadataId}
-              dropdownId={`${fieldMetadataId}-footer-readonly`}
+              dropdownId={`${recordFieldKey}-footer-readonly`}
             />
           ) : null
         ) : (

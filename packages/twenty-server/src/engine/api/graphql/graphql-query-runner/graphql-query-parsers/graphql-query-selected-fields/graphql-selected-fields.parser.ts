@@ -44,7 +44,10 @@ export class GraphqlQuerySelectedFieldsParser {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );
-    this.aggregateParser = new GraphqlQuerySelectedFieldsAggregateParser();
+    this.aggregateParser = new GraphqlQuerySelectedFieldsAggregateParser(
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
   }
 
   parse(
@@ -72,18 +75,19 @@ export class GraphqlQuerySelectedFieldsParser {
       return accumulator;
     }
 
-    this.aggregateParser.parse(
-      graphqlSelectedFields,
-      flatObjectMetadata,
-      this.flatFieldMetadataMaps,
-      accumulator,
-    );
+    const { relationFieldNamesSelectedAsAggregations } =
+      this.aggregateParser.parse(
+        graphqlSelectedFields,
+        flatObjectMetadata,
+        accumulator,
+      );
 
     this.parseRecordFields(
       graphqlSelectedFields,
       flatObjectMetadata,
       accumulator,
       isFromOneToManyRelation,
+      relationFieldNamesSelectedAsAggregations,
     );
 
     return accumulator;
@@ -95,6 +99,7 @@ export class GraphqlQuerySelectedFieldsParser {
     flatObjectMetadata: FlatObjectMetadata,
     accumulator: GraphqlQuerySelectedFieldsResult,
     isFromOneToManyRelation?: boolean,
+    relationFieldNamesSelectedAsAggregations: string[] = [],
   ): void {
     for (const fieldMetadataId of flatObjectMetadata.fieldIds) {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -111,6 +116,12 @@ export class GraphqlQuerySelectedFieldsParser {
 
         if (isDefined(graphqlSelectedFields[joinColumnName])) {
           accumulator.select[joinColumnName] = true;
+        }
+
+        if (
+          relationFieldNamesSelectedAsAggregations.includes(fieldMetadata.name)
+        ) {
+          continue;
         }
 
         const graphqlSelectedFieldValue =
@@ -212,7 +223,6 @@ export class GraphqlQuerySelectedFieldsParser {
     this.aggregateParser.parse(
       graphqlSelectedFields,
       flatObjectMetadata,
-      this.flatFieldMetadataMaps,
       accumulator,
     );
 

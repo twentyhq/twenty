@@ -1,9 +1,9 @@
+import { isSameRecordSortTarget } from '@/object-record/record-sort/utils/isSameRecordSortTarget';
 import { type ViewSort } from '@/views/types/ViewSort';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 const isSameSortTarget = (sortA: ViewSort, sortB: ViewSort): boolean =>
-  sortA.fieldMetadataId === sortB.fieldMetadataId &&
-  sortA.direction === sortB.direction;
+  isSameRecordSortTarget(sortA, sortB) && sortA.direction === sortB.direction;
 
 export const getViewSortsToDelete = (
   currentViewSorts: ViewSort[],

@@ -34,6 +34,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
         'id',
         'viewId',
         'viewFieldGroupId',
+        'relationTargetFieldMetadataId',
       ],
     );
 
@@ -44,9 +45,16 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     fieldMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     viewFieldGroupUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'viewField',
-    foreignKeyValues: { fieldMetadataId, viewId, viewFieldGroupId },
+    foreignKeyValues: {
+      fieldMetadataId,
+      viewId,
+      viewFieldGroupId,
+      relationTargetFieldMetadataId:
+        createViewFieldInput.relationTargetFieldMetadataId,
+    },
     flatEntityMaps: {
       flatFieldMetadataMaps,
       flatViewMaps,
@@ -57,6 +65,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
   return {
     id: viewFieldId,
     fieldMetadataUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     createdAt,
     updatedAt: createdAt,

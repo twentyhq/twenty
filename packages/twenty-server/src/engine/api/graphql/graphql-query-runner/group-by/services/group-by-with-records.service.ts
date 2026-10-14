@@ -134,7 +134,7 @@ export class GroupByWithRecordsService {
       groupsResult,
       recordsResult,
       groupByDefinitions,
-      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
+      selectedAggregatedFields: selectedFieldsResult.aggregate,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

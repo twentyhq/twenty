@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
-import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -38,17 +38,18 @@ export const RecordTableColumnHead = ({
 }: RecordTableColumnHeadProps) => {
   const theme = useTheme();
 
-  const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
-    fieldMetadataItemByIdSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
-  );
+  const {
+    fieldDefinitionByRecordFieldKey,
+    fieldMetadataItemByFieldMetadataItemId,
+  } = useRecordIndexContextOrThrow();
+
+  const fieldDefinition =
+    fieldDefinitionByRecordFieldKey[getRecordFieldKey(recordField)];
+  const fieldMetadataItem =
+    fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
   const { getIcon } = useIcons();
-  const Icon = getIcon(
-    correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
-  );
-  const fieldMetadataItem =
-    correspondingFieldMetadataItem.foundFieldMetadataItem;
+  const Icon = getIcon(fieldDefinition?.iconName);
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
@@ -56,7 +57,7 @@ export const RecordTableColumnHead = ({
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <FieldDescriptionTooltip
-        label={fieldMetadataItem?.label}
+        label={fieldDefinition?.label}
         description={fieldMetadataItem?.description}
       />
     </StyledTitle>

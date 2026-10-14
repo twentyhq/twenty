@@ -7,9 +7,8 @@ import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpda
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
@@ -96,7 +95,10 @@ export const useObjectOptionsForBoard = ({
       recordFieldToMove,
       targetRecordField,
     }: {
-      recordFieldToMove: Pick<RecordField, 'id' | 'fieldMetadataItemId'>;
+      recordFieldToMove: Pick<
+        RecordField,
+        'id' | 'fieldMetadataItemId' | 'relationTargetFieldMetadataItemId'
+      >;
       targetRecordField: Pick<RecordField, 'id'>;
     }) => {
       const updatedRecordField = reorderVisibleRecordFields({
@@ -141,22 +143,25 @@ export const useObjectOptionsForBoard = ({
 
   // TODO: overly complex; extract to a unit-tested util.
   const handleBoardFieldVisibilityChange = useCallback(
-    async (
-      updatedFieldDefinition: Pick<
-        ColumnDefinition<FieldMetadata>,
-        'fieldMetadataId' | 'isVisible'
-      >,
-    ) => {
+    async ({
+      recordField,
+      isVisible,
+    }: {
+      recordField: Pick<
+        RecordField,
+        'fieldMetadataItemId' | 'relationTargetFieldMetadataItemId'
+      >;
+      isVisible: boolean;
+    }) => {
       const lastPosition = currentRecordFields.toSorted(
         sortByProperty('position', 'desc'),
       )[0].position;
 
-      const shouldShowFieldMetadataItem =
-        updatedFieldDefinition.isVisible === true;
+      const shouldShowFieldMetadataItem = isVisible === true;
+      const recordFieldKey = getRecordFieldKey(recordField);
       const corresponingRecordField = currentRecordFields.find(
         (recordFieldToFind) =>
-          recordFieldToFind.fieldMetadataItemId ===
-          updatedFieldDefinition.fieldMetadataId,
+          getRecordFieldKey(recordFieldToFind) === recordFieldKey,
       );
 
       const noExistingRecordField = !isDefined(corresponingRecordField);
@@ -164,7 +169,9 @@ export const useObjectOptionsForBoard = ({
       if (noExistingRecordField) {
         const recordFieldToUpsert: RecordField = {
           id: v4(),
-          fieldMetadataItemId: updatedFieldDefinition.fieldMetadataId,
+          fieldMetadataItemId: recordField.fieldMetadataItemId,
+          relationTargetFieldMetadataItemId:
+            recordField.relationTargetFieldMetadataItemId,
           size: 100,
           isVisible: shouldShowFieldMetadataItem,
           position: lastPosition + 1,
@@ -176,10 +183,7 @@ export const useObjectOptionsForBoard = ({
 
         const correspondingAvailableColumnDefinition =
           availableColumnDefinitions.find(
-            findByProperty(
-              'fieldMetadataId',
-              updatedFieldDefinition.fieldMetadataId,
-            ),
+            findByProperty('fieldMetadataId', recordField.fieldMetadataItemId),
           );
 
         const modifiedRecordIndexFieldDefinitions = produce(
@@ -193,7 +197,7 @@ export const useObjectOptionsForBoard = ({
 
             draftRecordIndexFieldDefinitions.push({
               ...correspondingAvailableColumnDefinition,
-              fieldMetadataId: updatedFieldDefinition.fieldMetadataId,
+              fieldMetadataId: recordField.fieldMetadataItemId,
               isVisible: shouldShowFieldMetadataItem,
             });
           },
@@ -202,7 +206,7 @@ export const useObjectOptionsForBoard = ({
         // TODO: remove after refactor
         setRecordIndexFieldDefinitions(modifiedRecordIndexFieldDefinitions);
       } else {
-        updateRecordField(updatedFieldDefinition.fieldMetadataId, {
+        updateRecordField(recordFieldKey, {
           isVisible: shouldShowFieldMetadataItem,
         });
 

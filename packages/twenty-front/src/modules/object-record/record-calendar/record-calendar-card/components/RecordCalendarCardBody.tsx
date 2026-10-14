@@ -6,6 +6,7 @@ import { recordCalendarCardHoverPositionComponentState } from '@/object-record/r
 import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import {
   FieldContext,
   type RecordUpdateHook,
@@ -53,7 +54,7 @@ export const RecordCalendarCardBody = ({
   const {
     labelIdentifierFieldMetadataItem,
     fieldMetadataItemByFieldMetadataItemId,
-    fieldDefinitionByFieldMetadataItemId,
+    fieldDefinitionByRecordFieldKey,
     objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
 
@@ -80,7 +81,7 @@ export const RecordCalendarCardBody = ({
     >
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
-          fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+          fieldDefinitionByRecordFieldKey[getRecordFieldKey(recordField)];
         const fieldMetadataItem =
           fieldMetadataItemByFieldMetadataItemId[
             recordField.fieldMetadataItemId
@@ -94,7 +95,7 @@ export const RecordCalendarCardBody = ({
         }
 
         return (
-          <StopPropagationContainer key={recordField.fieldMetadataItemId}>
+          <StopPropagationContainer key={getRecordFieldKey(recordField)}>
             <FieldContext.Provider
               value={{
                 recordId,

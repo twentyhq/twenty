@@ -1,10 +1,16 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { type RecordGqlFields } from 'twenty-shared/types';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
+import { mergeRecordGqlFields } from '@/object-record/graphql/record-gql-fields/utils/mergeRecordGqlFields';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
+import {
+  buildAggregateFieldPath,
+  splitAggregateFieldPath,
+} from '@/object-record/utils/splitAggregateFieldPath';
 import { useMemo } from 'react';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export type GqlFieldToFieldMap = {
@@ -25,6 +31,8 @@ export const useAggregateRecordsQuery = ({
     objectNameSingular,
   });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const availableAggregations = useMemo(
     () =>
       getAvailableAggregationsFromObjectFields(
@@ -34,27 +42,68 @@ export const useAggregateRecordsQuery = ({
   );
 
   const { recordGqlFields, gqlFieldToFieldMap } = useMemo(() => {
-    const fields: RecordGqlFields = {};
+    let fields: RecordGqlFields = {};
     const fieldMap: GqlFieldToFieldMap = {};
 
     Object.entries(recordGqlFieldsAggregate).forEach(
-      ([fieldName, aggregateOperations]) => {
+      ([aggregateFieldPath, aggregateOperations]) => {
+        const { relationFieldName, fieldName } =
+          splitAggregateFieldPath(aggregateFieldPath);
+
+        const targetObjectMetadataItem = isDefined(relationFieldName)
+          ? objectMetadataItems.find(
+              (objectMetadataItemToFind) =>
+                objectMetadataItemToFind.id ===
+                objectMetadataItem.fields.find(
+                  (field) => field.name === relationFieldName,
+                )?.relation?.targetObjectMetadata.id,
+            )
+          : undefined;
+
+        const aggregationsForPath = isDefined(relationFieldName)
+          ? isDefined(targetObjectMetadataItem)
+            ? getAvailableAggregationsFromObjectFields(
+                targetObjectMetadataItem.readableFields,
+              )
+            : {}
+          : availableAggregations;
+
         aggregateOperations.forEach((aggregateOperation) => {
           const fieldToQuery =
-            availableAggregations[fieldName]?.[aggregateOperation];
+            aggregationsForPath[fieldName]?.[aggregateOperation];
 
           if (!isDefined(fieldToQuery)) {
             return;
           }
+
+          if (isDefined(relationFieldName)) {
+            fieldMap[
+              buildAggregateFieldPath({
+                relationFieldName,
+                targetFieldName: fieldToQuery,
+              })
+            ] = [aggregateFieldPath, aggregateOperation];
+
+            fields = mergeRecordGqlFields(fields, {
+              [relationFieldName]: { [fieldToQuery]: true },
+            });
+            return;
+          }
+
           fieldMap[fieldToQuery] = [fieldName, aggregateOperation];
 
-          fields[fieldToQuery] = true;
+          fields = mergeRecordGqlFields(fields, { [fieldToQuery]: true });
         });
       },
     );
 
     return { recordGqlFields: fields, gqlFieldToFieldMap: fieldMap };
-  }, [availableAggregations, recordGqlFieldsAggregate]);
+  }, [
+    availableAggregations,
+    objectMetadataItem.fields,
+    objectMetadataItems,
+    recordGqlFieldsAggregate,
+  ]);
 
   const aggregateQuery = useMemo(
     () =>

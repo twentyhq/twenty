@@ -29,6 +29,9 @@ export class ViewFieldDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string | null;
+
   @Field({ nullable: false, defaultValue: true })
   isVisible: boolean;
 

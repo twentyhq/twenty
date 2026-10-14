@@ -72,6 +72,8 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         fieldMetadataId: updatedLabelIdentifierFieldMetadataId,
         fieldMetadataUniversalIdentifier:
           updatedLabelIdentifierFieldMetadata.universalIdentifier,
+        relationTargetFieldMetadataId: null,
+        relationTargetFieldMetadataUniversalIdentifier: null,
         position: lowestViewFieldPosition - 1,
         isVisible: true,
         isActive: true,

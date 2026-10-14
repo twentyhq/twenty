@@ -22,6 +22,8 @@ import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/inter
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
+import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
+import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { getCompositeSubFieldObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-composite-sub-field-gql-types.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -36,6 +38,7 @@ import {
   getNodeTypename,
   isDefined,
   isEmptyObject,
+  isPlainObject,
   pascalCase,
 } from 'twenty-shared/utils';
 
@@ -340,10 +343,51 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
     const rawAggregateValue =
       (connection as unknown as Record<string, unknown>)[key] ?? null;
 
-    formatted[key] =
-      isNonEmptyString(rawAggregateValue) && isFinite(Number(rawAggregateValue))
-        ? Number(rawAggregateValue)
-        : rawAggregateValue;
+    const hasNestedFields = isDefined(subFields) && !isEmptyObject(subFields);
+
+    if (hasNestedFields && isPlainObject(rawAggregateValue)) {
+      const relationInfo = findRelationInfo(objectNameSingular, key, context);
+
+      formatted[key] =
+        backfillNullValuesAndComputeTypeNameForAggregationThroughRelation(
+          rawAggregateValue,
+          subFields as Record<string, object>,
+          relationInfo?.targetObjectNameSingular,
+        );
+      continue;
+    }
+
+    formatted[key] = formatAggregateValue(rawAggregateValue);
+  }
+
+  return formatted;
+};
+
+// Aggregates come back from Postgres as numeric strings
+const formatAggregateValue = (rawAggregateValue: unknown): unknown =>
+  isNonEmptyString(rawAggregateValue) && isFinite(Number(rawAggregateValue))
+    ? Number(rawAggregateValue)
+    : rawAggregateValue;
+
+const backfillNullValuesAndComputeTypeNameForAggregationThroughRelation = (
+  aggregatedValues: Record<string, unknown>,
+  selectedFields: Record<string, object>,
+  targetObjectNameSingular: string | undefined,
+): Record<string, unknown> => {
+  const formatted: Record<string, unknown> = {};
+
+  for (const key of Object.keys(selectedFields)) {
+    if (key === '__typename') {
+      formatted.__typename = isDefined(targetObjectNameSingular)
+        ? computeObjectMetadataObjectTypeKey(
+            targetObjectNameSingular,
+            ObjectTypeDefinitionKind.Aggregation,
+          )
+        : null;
+      continue;
+    }
+
+    formatted[key] = formatAggregateValue(aggregatedValues[key] ?? null);
   }
 
   return formatted;

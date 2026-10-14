@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
@@ -21,16 +22,16 @@ export const useMoveRecordField = (recordTableId?: string) => {
   const moveRecordField = useCallback(
     async ({
       direction,
-      fieldMetadataItemIdToMove,
+      recordFieldKeyToMove,
     }: {
       direction: 'before' | 'after';
-      fieldMetadataItemIdToMove: string;
+      recordFieldKeyToMove: string;
     }) => {
       const visibleRecordFieldsValue = store.get(visibleRecordFields);
 
       const indexOfRecordFieldToMove = visibleRecordFieldsValue.findIndex(
         (recordField) =>
-          recordField.fieldMetadataItemId === fieldMetadataItemIdToMove,
+          getRecordFieldKey(recordField) === recordFieldKeyToMove,
       );
 
       if (indexOfRecordFieldToMove === -1) {
@@ -56,11 +57,11 @@ export const useMoveRecordField = (recordTableId?: string) => {
       const targetRecordFieldNewPosition = currentRecordField.position;
       const currentRecordFieldNewPosition = targetRecordField.position;
 
-      updateRecordField(targetRecordField.fieldMetadataItemId, {
+      updateRecordField(getRecordFieldKey(targetRecordField), {
         position: targetRecordFieldNewPosition,
       });
 
-      updateRecordField(currentRecordField.fieldMetadataItemId, {
+      updateRecordField(getRecordFieldKey(currentRecordField), {
         position: currentRecordFieldNewPosition,
       });
 

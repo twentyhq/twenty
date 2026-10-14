@@ -20,6 +20,7 @@ export type ViewManifestFilterValue =
 
 export type ViewFieldManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
+  relationTargetFieldMetadataUniversalIdentifier?: string;
   isVisible?: boolean;
   size?: number;
   position: number;
@@ -61,6 +62,7 @@ export type ViewFieldGroupManifest = SyncableEntityOptions & {
 
 export type ViewSortManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
+  relationTargetFieldMetadataUniversalIdentifier?: string;
   direction: ViewSortDirection;
   subFieldName?: string;
 };

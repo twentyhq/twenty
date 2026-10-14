@@ -9,7 +9,8 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { buildAggregateFieldPath } from '@/object-record/utils/splitAggregateFieldPath';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 export type AggregateRecordsData = {
   [fieldName: string]: {
@@ -59,15 +60,33 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
   const formattedData: AggregateRecordsData = {};
 
   if (!isEmpty(data)) {
+    const assignAggregateResult = (gqlField: string, result: unknown) => {
+      if (isDefined(gqlFieldToFieldMap[gqlField])) {
+        const [fieldName, aggregateOperation] = gqlFieldToFieldMap[gqlField];
+        formattedData[fieldName] = {
+          ...(formattedData[fieldName] ?? {}),
+          [aggregateOperation]: result as string | number | undefined,
+        };
+      }
+    };
+
     Object.entries(data?.[objectMetadataItem.namePlural] ?? {})?.forEach(
       ([gqlField, result]) => {
-        if (isDefined(gqlFieldToFieldMap[gqlField])) {
-          const [fieldName, aggregateOperation] = gqlFieldToFieldMap[gqlField];
-          formattedData[fieldName] = {
-            ...(formattedData[fieldName] ?? {}),
-            [aggregateOperation]: result,
-          };
+        // Aggregates through a relation come back nested under the relation name.
+        if (isPlainObject(result)) {
+          Object.entries(result).forEach(([nestedGqlField, nestedResult]) => {
+            assignAggregateResult(
+              buildAggregateFieldPath({
+                relationFieldName: gqlField,
+                targetFieldName: nestedGqlField,
+              }),
+              nestedResult,
+            );
+          });
+          return;
         }
+
+        assignAggregateResult(gqlField, result);
       },
     );
   }

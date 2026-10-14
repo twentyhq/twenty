@@ -21,6 +21,7 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
     flatViewFieldMaps: createEmptyFlatEntityMaps(),
     flatViewFilterMaps: createEmptyFlatEntityMaps(),
     flatViewGroupMaps: createEmptyFlatEntityMaps(),
+    flatViewSortMaps: createEmptyFlatEntityMaps(),
   });
 
   it('clears an optional calendar end field without deleting the view', () => {

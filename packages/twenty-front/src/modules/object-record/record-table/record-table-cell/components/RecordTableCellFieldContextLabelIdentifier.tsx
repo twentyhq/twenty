@@ -1,6 +1,7 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -21,7 +22,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   const {
     objectPermissionsByObjectMetadataId,
     fieldMetadataItemByFieldMetadataItemId,
-    fieldDefinitionByFieldMetadataItemId,
+    fieldDefinitionByRecordFieldKey,
   } = useRecordIndexContextOrThrow();
   const { recordId, isRecordReadOnly, rowIndex } =
     useRecordTableRowContextOrThrow();
@@ -44,11 +45,11 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   const updateRecord = useContext(RecordTableUpdateContext);
 
   const fieldDefinition =
-    fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+    fieldDefinitionByRecordFieldKey[getRecordFieldKey(recordField)];
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-  if (!isDefined(fieldMetadataItem)) {
+  if (!isDefined(fieldMetadataItem) || !isDefined(fieldDefinition)) {
     return null;
   }
 

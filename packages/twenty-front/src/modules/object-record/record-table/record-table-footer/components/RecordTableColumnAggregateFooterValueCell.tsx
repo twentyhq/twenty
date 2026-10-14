@@ -63,7 +63,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
   );
 
   const theme = useTheme();
-  const { viewFieldId, fieldMetadataId } = useContext(
+  const { viewFieldId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
   );
 
@@ -90,7 +90,6 @@ export const RecordTableColumnAggregateFooterValueCell = ({
         (isFirstCell && !hasRecordGroups) ? (
           <>
             <RecordTableColumnAggregateFooterValue
-              fieldMetadataId={fieldMetadataId}
               dropdownId={dropdownId}
             />
             {!hasAggregateOperationForViewField && (

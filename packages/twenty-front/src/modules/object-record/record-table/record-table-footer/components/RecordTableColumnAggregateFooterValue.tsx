@@ -45,15 +45,13 @@ const StyledValue = styled.div`
 
 export const RecordTableColumnAggregateFooterValue = ({
   dropdownId,
-  fieldMetadataId,
 }: {
   dropdownId: string;
-  fieldMetadataId: string;
 }) => {
   const sanitizedId = `tooltip-${dropdownId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
 
   const { aggregateValue, aggregateLabel, isLoading } =
-    useAggregateRecordsForRecordTableColumnFooter(fieldMetadataId);
+    useAggregateRecordsForRecordTableColumnFooter();
 
   return (
     <>

@@ -1,3 +1,4 @@
+import { type RecordIndexExportColumn } from '@/object-record/record-index/export/types/RecordIndexExportColumn';
 import { json2csv } from 'json-2-csv';
 import { useMemo } from 'react';
 
@@ -17,15 +18,13 @@ import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
 import {
   formatValueForCSV,
   isDefined,
+  isPlainObject,
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type GenerateExportOptions = {
-  columns: Pick<
-    ColumnDefinition<FieldMetadata>,
-    'label' | 'type' | 'metadata'
-  >[];
+  columns: RecordIndexExportColumn[];
   rows: Record<string, any>[];
 };
 
@@ -35,6 +34,29 @@ type ExportProgress = {
   exportedRecordCount?: number;
   totalRecordCount?: number;
   displayType: 'percentage' | 'number';
+};
+
+const getValueAtPath = (row: Record<string, any>, path: string): unknown =>
+  path.split('.').reduce<unknown>(
+    (value, key) => (isPlainObject(value) ? value[key] : undefined),
+    row,
+  );
+
+const sanitizeExportValue = (value: unknown): unknown => {
+  if (typeof value === 'string') {
+    return sanitizeValueForCSVExport(value);
+  }
+
+  if (isPlainObject(value)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([nestedKey, nestedValue]) => [
+        nestedKey,
+        sanitizeExportValue(nestedValue),
+      ]),
+    );
+  }
+
+  return value;
 };
 
 export const generateCsv: GenerateExport = ({
@@ -63,15 +85,27 @@ export const generateCsv: GenerateExport = ({
 
   const keys = columnsToExportWithIdColumn.flatMap((col) => {
     const headerLabel = `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`;
+    // A column through a relation reads its value from the nested related record.
+    const fieldPathPrefix = isDefined(col.relationTraversal)
+      ? `${col.relationTraversal.relationFieldName}.`
+      : '';
     const column = {
-      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
+      field: `${fieldPathPrefix}${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
       title: formatValueForCSV(sanitizeValueForCSVExport(headerLabel)),
     };
 
     const columnType = col.type;
     if (!isCompositeFieldType(columnType)) return [column];
 
-    const nestedFieldsWithoutTypename = Object.keys(rows[0][column.field])
+    const firstCompositeValue = rows
+      .map((row) => getValueAtPath(row, column.field))
+      .find(isPlainObject);
+
+    const compositeSubFieldKeys = isDefined(firstCompositeValue)
+      ? Object.keys(firstCompositeValue)
+      : Object.keys(COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType]);
+
+    const nestedFieldsWithoutTypename = compositeSubFieldKeys
       .filter((key) => key !== '__typename')
       .map((key) => {
         const subFieldLabel = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType][key];
@@ -90,21 +124,7 @@ export const generateCsv: GenerateExport = ({
     const sanitizedRow: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(row)) {
-      if (typeof value === 'string') {
-        sanitizedRow[key] = sanitizeValueForCSVExport(value);
-      } else if (isDefined(value) && typeof value === 'object') {
-        sanitizedRow[key] = {};
-        for (const [nestedKey, nestedValue] of Object.entries(value)) {
-          if (typeof nestedValue === 'string') {
-            sanitizedRow[key][nestedKey] =
-              sanitizeValueForCSVExport(nestedValue);
-          } else {
-            sanitizedRow[key][nestedKey] = nestedValue;
-          }
-        }
-      } else {
-        sanitizedRow[key] = value;
-      }
+      sanitizedRow[key] = sanitizeExportValue(value);
     }
 
     return sanitizedRow;
@@ -173,10 +193,7 @@ export const useRecordIndexExportRecords = ({
     () =>
       (
         records: ObjectRecord[],
-        columns: Pick<
-          ColumnDefinition<FieldMetadata>,
-          'label' | 'type' | 'metadata'
-        >[],
+        columns: RecordIndexExportColumn[],
       ) => {
         const recordsProcessedForExport = processRecordsForCSVExport(records);
 

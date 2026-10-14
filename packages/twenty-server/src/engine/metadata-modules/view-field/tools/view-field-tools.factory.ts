@@ -23,6 +23,12 @@ const CreateViewFieldInputSchema = z.object({
     .describe(
       'The ID of the field metadata to add. Use get_field_metadata to find available fields.',
     ),
+  relationTargetFieldMetadataId: z
+    .uuid()
+    .optional()
+    .describe(
+      'When fieldMetadataId is a many-to-one relation, the ID of a field on the related object to display through that relation (for example Company > Employees on an Opportunities view).',
+    ),
   isVisible: z
     .boolean()
     .optional()
@@ -141,6 +147,8 @@ export class ViewFieldToolsFactory {
               return {
                 id: viewField.id,
                 fieldMetadataId: viewField.fieldMetadataId,
+                relationTargetFieldMetadataId:
+                  viewField.relationTargetFieldMetadataId,
                 fieldName: fieldName ?? null,
                 viewId: viewField.viewId,
                 isVisible: viewField.isVisible,
@@ -167,6 +175,7 @@ export class ViewFieldToolsFactory {
         execute: async (parameters: {
           viewId: string;
           fieldMetadataId: string;
+          relationTargetFieldMetadataId?: string;
           isVisible?: boolean;
           size?: number;
           position?: number;
@@ -176,6 +185,8 @@ export class ViewFieldToolsFactory {
             createViewFieldInput: {
               viewId: parameters.viewId,
               fieldMetadataId: parameters.fieldMetadataId,
+              relationTargetFieldMetadataId:
+                parameters.relationTargetFieldMetadataId,
               isVisible: parameters.isVisible ?? true,
               size: parameters.size ?? 150,
               position: parameters.position ?? 0,
@@ -188,6 +199,8 @@ export class ViewFieldToolsFactory {
           return {
             id: viewField.id,
             fieldMetadataId: viewField.fieldMetadataId,
+            relationTargetFieldMetadataId:
+              viewField.relationTargetFieldMetadataId,
             viewId: viewField.viewId,
             isVisible: viewField.isVisible,
             size: viewField.size,
@@ -258,6 +271,7 @@ export class ViewFieldToolsFactory {
           viewFields: Array<{
             viewId: string;
             fieldMetadataId: string;
+            relationTargetFieldMetadataId?: string;
             isVisible?: boolean;
             size?: number;
             position?: number;
@@ -268,6 +282,8 @@ export class ViewFieldToolsFactory {
             createViewFieldInputs: parameters.viewFields.map((viewField) => ({
               viewId: viewField.viewId,
               fieldMetadataId: viewField.fieldMetadataId,
+              relationTargetFieldMetadataId:
+                viewField.relationTargetFieldMetadataId,
               isVisible: viewField.isVisible ?? true,
               size: viewField.size ?? 150,
               position: viewField.position ?? 0,

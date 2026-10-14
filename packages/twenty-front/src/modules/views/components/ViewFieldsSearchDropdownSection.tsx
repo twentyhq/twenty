@@ -1,10 +1,14 @@
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getTraversableRelationFieldMetadataItems } from '@/object-record/record-field/utils/relation-traversal/getTraversableRelationFieldMetadataItems';
+import { getTraversedFieldCandidates } from '@/object-record/record-field/utils/relation-traversal/getTraversedFieldCandidates';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { ViewType } from '@/views/types/ViewType';
@@ -46,12 +50,14 @@ export const ViewFieldsSearchDropdownSection = ({
     objectMetadataItem,
   });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
-  const visibleFieldIds = new Set(
-    visibleRecordFields.map((recordField) => recordField.fieldMetadataItemId),
+  const visibleRecordFieldKeys = new Set(
+    visibleRecordFields.map(getRecordFieldKey),
   );
 
   const fieldMetadataItemLabelIdentifier =
@@ -65,11 +71,24 @@ export const ViewFieldsSearchDropdownSection = ({
     },
   );
 
+  const filteredTraversedCandidates = getTraversableRelationFieldMetadataItems(
+    { objectMetadataItem, objectMetadataItems },
+  )
+    .flatMap(getTraversedFieldCandidates)
+    .filter((candidate) =>
+      candidate.label.toLowerCase().includes(searchInput.toLowerCase()),
+    );
+
+  const hasResults =
+    filteredFields.length > 0 || filteredTraversedCandidates.length > 0;
+
   return (
     <DropdownMenuItemsContainer>
-      {filteredFields.length > 0 ? (
+      {hasResults ? (
         filteredFields.map((fieldMetadataItem) => {
-          const isVisible = visibleFieldIds.has(fieldMetadataItem.id);
+          const isVisible = visibleRecordFieldKeys.has(
+            getRecordFieldKey({ fieldMetadataItemId: fieldMetadataItem.id }),
+          );
           const isLabelIdentifier =
             fieldMetadataItem.id === fieldMetadataItemLabelIdentifier?.id;
 
@@ -88,7 +107,9 @@ export const ViewFieldsSearchDropdownSection = ({
                     aria-label={isVisible ? t`Hide field` : t`Show field`}
                     onClick={() =>
                       handleChangeFieldVisibility({
-                        fieldMetadataId: fieldMetadataItem.id,
+                        recordField: {
+                          fieldMetadataItemId: fieldMetadataItem.id,
+                        },
                         isVisible: !isVisible,
                       })
                     }
@@ -105,6 +126,38 @@ export const ViewFieldsSearchDropdownSection = ({
       ) : (
         <ListItem disabled>{t`No results`}</ListItem>
       )}
+      {filteredTraversedCandidates.map((candidate) => {
+        const isVisible = visibleRecordFieldKeys.has(
+          getRecordFieldKey(candidate.recordField),
+        );
+
+        return (
+          <ListItem
+            key={getRecordFieldKey(candidate.recordField)}
+            startIcon={
+              <ApplicationStackIcon
+                Icon={getIcon(candidate.targetFieldMetadataItem.icon)}
+                applicationId={candidate.targetFieldMetadataItem.applicationId}
+              />
+            }
+            actions={
+              <LightIconButton
+                aria-label={isVisible ? t`Hide field` : t`Show field`}
+                onClick={() =>
+                  handleChangeFieldVisibility({
+                    recordField: candidate.recordField,
+                    isVisible: !isVisible,
+                  })
+                }
+              >
+                {isVisible ? <IconEyeOff /> : <IconEye />}
+              </LightIconButton>
+            }
+          >
+            {candidate.label}
+          </ListItem>
+        );
+      })}
     </DropdownMenuItemsContainer>
   );
 };

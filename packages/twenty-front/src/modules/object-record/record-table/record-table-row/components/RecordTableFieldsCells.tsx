@@ -1,4 +1,5 @@
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { useRecordTableColumnVirtualizationItemsContextOrThrow } from '@/object-record/record-table/contexts/RecordTableColumnVirtualizationItemsContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -78,7 +79,7 @@ export const RecordTableFieldsCells = () => {
 
         return (
           <RecordTableFieldCell
-            key={recordField.fieldMetadataItemId}
+            key={getRecordFieldKey(recordField)}
             recordField={recordField}
             recordFieldIndex={columnIndex}
             isSelected={isSelected}

@@ -4,12 +4,14 @@ import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metad
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -36,18 +38,22 @@ export const RecordTableColumnHeadDropdownMenu = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
+  const recordFieldKey = getRecordFieldKey(recordField);
+
   const secondVisibleRecordField = visibleRecordFields[1];
   const canMove = isLabelIdentifier !== true;
   const canMoveLeft =
-    recordField.fieldMetadataItemId !==
-      secondVisibleRecordField?.fieldMetadataItemId && canMove;
+    isDefined(secondVisibleRecordField) &&
+    recordFieldKey !== getRecordFieldKey(secondVisibleRecordField) &&
+    canMove;
 
   const lastVisibleRecordField =
     visibleRecordFields[visibleRecordFields.length - 1];
 
   const canMoveRight =
-    recordField.fieldMetadataItemId !==
-      lastVisibleRecordField?.fieldMetadataItemId && canMove;
+    isDefined(lastVisibleRecordField) &&
+    recordFieldKey !== getRecordFieldKey(lastVisibleRecordField) &&
+    canMove;
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
@@ -61,18 +67,18 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const handleColumnMoveLeft = () => {
     if (!canMoveLeft) return;
 
-    moveTableColumn('left', recordField.fieldMetadataItemId);
+    moveTableColumn('left', recordFieldKey);
   };
 
   const handleColumnMoveRight = () => {
     if (!canMoveRight) return;
 
-    moveTableColumn('right', recordField.fieldMetadataItemId);
+    moveTableColumn('right', recordFieldKey);
   };
 
   const handleColumnVisibility = async () => {
     await changeRecordFieldVisibility({
-      fieldMetadataId: recordField.fieldMetadataItemId,
+      recordField,
       isVisible: false,
     });
   };
@@ -82,19 +88,24 @@ export const RecordTableColumnHeadDropdownMenu = ({
   });
 
   const handleSortClick = () => {
-    handleToggleColumnSort(recordField.fieldMetadataItemId);
+    handleToggleColumnSort(recordField);
   };
 
   const { openRecordFilterChipFromTableHeader } =
     useOpenRecordFilterChipFromTableHeader();
 
   const handleFilterClick = () => {
-    openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
+    openRecordFilterChipFromTableHeader(recordField);
   };
 
+  // A column through a relation filters and sorts on the target field.
   const { isFilterable, isSortable } = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
+    {
+      fieldMetadataItemId:
+        recordField.relationTargetFieldMetadataItemId ??
+        recordField.fieldMetadataItemId,
+    },
   );
 
   const showSeparator =

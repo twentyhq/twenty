@@ -58,9 +58,11 @@ export const RecordIndexContainerGater = memo(() => {
 
   const {
     fieldDefinitionByFieldMetadataItemId,
+    fieldDefinitionByRecordFieldKey,
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
     recordFieldByFieldMetadataItemId,
+    recordFieldByRecordFieldKey,
   } = useRecordIndexFieldMetadataDerivedStates(
     objectMetadataItem,
     recordIndexId,
@@ -91,9 +93,11 @@ export const RecordIndexContainerGater = memo(() => {
         onIndexRecordsLoaded: handleIndexRecordsLoaded,
         indexIdentifierUrl,
         recordFieldByFieldMetadataItemId,
+        recordFieldByRecordFieldKey,
         labelIdentifierFieldMetadataItem,
         fieldMetadataItemByFieldMetadataItemId,
         fieldDefinitionByFieldMetadataItemId,
+        fieldDefinitionByRecordFieldKey,
       }}
     >
       <ViewComponentInstanceContext.Provider

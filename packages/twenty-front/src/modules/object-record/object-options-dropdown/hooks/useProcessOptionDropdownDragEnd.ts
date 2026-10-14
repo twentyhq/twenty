@@ -16,7 +16,10 @@ export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
       recordFieldToMove,
       targetRecordField,
     }: {
-      recordFieldToMove: Pick<RecordField, 'id' | 'fieldMetadataItemId'>;
+      recordFieldToMove: Pick<
+        RecordField,
+        'id' | 'fieldMetadataItemId' | 'relationTargetFieldMetadataItemId'
+      >;
       targetRecordField: Pick<RecordField, 'id'>;
     }) => {
       const updatedRecordField = reorderVisibleRecordFields({

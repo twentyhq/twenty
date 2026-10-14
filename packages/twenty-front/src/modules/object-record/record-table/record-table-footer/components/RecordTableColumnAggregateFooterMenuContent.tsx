@@ -1,5 +1,4 @@
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/NonStandardAggregateOperationsOptions';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
@@ -12,20 +11,17 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
-  const { fieldMetadataId, dropdownId, fieldMetadataType } = useContext(
+  const { dropdownId, fieldMetadataType } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );
   const { closeDropdown } = useCloseDropdown();
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const availableAggregateOperation = useMemo(
     () =>
       getAvailableAggregateOperationsForFieldMetadataType({
-        fieldMetadataType: objectMetadataItem.fields.find(
-          (field) => field.id === fieldMetadataId,
-        )?.type,
+        fieldMetadataType,
       }),
-    [fieldMetadataId, objectMetadataItem.fields],
+    [fieldMetadataType],
   );
 
   const fieldIsDateKind = isFieldMetadataDateKind(fieldMetadataType);
@@ -37,9 +33,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
       ),
     );
 
-  const fieldIsRelation =
-    objectMetadataItem.fields.find((field) => field.id === fieldMetadataId)
-      ?.type === FieldMetadataType.RELATION;
+  const fieldIsRelation = fieldMetadataType === FieldMetadataType.RELATION;
 
   const {
     updateViewFieldAggregateOperation,

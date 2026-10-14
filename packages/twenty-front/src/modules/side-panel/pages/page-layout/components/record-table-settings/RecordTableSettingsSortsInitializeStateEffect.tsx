@@ -39,6 +39,8 @@ export const RecordTableSettingsSortsInitializeStateEffect = ({
       (viewSort) => ({
         id: viewSort.id,
         fieldMetadataId: viewSort.fieldMetadataId,
+        relationTargetFieldMetadataId:
+          viewSort.relationTargetFieldMetadataId ?? null,
         direction: viewSort.direction as ViewSortDirection,
       }),
     );

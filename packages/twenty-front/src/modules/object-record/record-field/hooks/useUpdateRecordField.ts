@@ -1,9 +1,10 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useStore } from 'jotai';
 
 export const useUpdateRecordField = (
   recordFieldComponentInstanceId?: string,
@@ -16,7 +17,7 @@ export const useUpdateRecordField = (
 
   const updateRecordField = useCallback(
     (
-      fieldMetadataItemId: string,
+      recordFieldKey: string,
       partialRecordField: Partial<
         Pick<RecordField, 'isVisible' | 'size' | 'position'>
       >,
@@ -25,12 +26,12 @@ export const useUpdateRecordField = (
 
       const foundRecordFieldInCurrentRecordFields = existingRecordFields.find(
         (existingRecordField) =>
-          existingRecordField.fieldMetadataItemId === fieldMetadataItemId,
+          getRecordFieldKey(existingRecordField) === recordFieldKey,
       );
 
       if (!isDefined(foundRecordFieldInCurrentRecordFields)) {
         throw new Error(
-          `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
+          `Cannot find record field to update with key : ${recordFieldKey}`,
         );
       }
 
@@ -39,7 +40,7 @@ export const useUpdateRecordField = (
 
         const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
           (existingRecordField) =>
-            existingRecordField.fieldMetadataItemId === fieldMetadataItemId,
+            getRecordFieldKey(existingRecordField) === recordFieldKey,
         );
 
         newCurrentRecordFields[indexOfRecordFieldToUpdate] = {

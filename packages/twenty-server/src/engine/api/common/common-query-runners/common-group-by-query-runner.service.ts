@@ -360,7 +360,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     return formatResultWithGroupByDimensionValues({
       groupsResult: result,
       groupByDefinitions,
-      aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
+      selectedAggregatedFields: selectedFieldsResult.aggregate,
     });
   }
 

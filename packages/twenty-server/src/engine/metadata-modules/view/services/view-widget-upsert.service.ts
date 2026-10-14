@@ -478,7 +478,10 @@ export class ViewWidgetUpsertService {
         inputField.fieldMetadataId,
       )
         ? existingViewFields.find(
-            (f) => f.fieldMetadataId === inputField.fieldMetadataId,
+            (f) =>
+              f.fieldMetadataId === inputField.fieldMetadataId &&
+              f.relationTargetFieldMetadataId ===
+                (inputField.relationTargetFieldMetadataId ?? null),
           )
         : undefined;
 
@@ -566,18 +569,23 @@ export class ViewWidgetUpsertService {
         continue;
       }
 
-      const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
-        resolveEntityRelationUniversalIdentifiers({
-          metadataName: 'viewField',
-          foreignKeyValues: {
-            fieldMetadataId: inputField.fieldMetadataId,
-            viewId,
-          },
-          flatEntityMaps: {
-            flatFieldMetadataMaps,
-            flatViewMaps,
-          },
-        });
+      const {
+        fieldMetadataUniversalIdentifier,
+        viewUniversalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier,
+      } = resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'viewField',
+        foreignKeyValues: {
+          fieldMetadataId: inputField.fieldMetadataId,
+          viewId,
+          relationTargetFieldMetadataId:
+            inputField.relationTargetFieldMetadataId,
+        },
+        flatEntityMaps: {
+          flatFieldMetadataMaps,
+          flatViewMaps,
+        },
+      });
 
       fieldsToCreate.push({
         id: v4(),
@@ -587,6 +595,9 @@ export class ViewWidgetUpsertService {
         applicationUniversalIdentifier,
         fieldMetadataId: inputField.fieldMetadataId,
         fieldMetadataUniversalIdentifier,
+        relationTargetFieldMetadataId:
+          inputField.relationTargetFieldMetadataId ?? null,
+        relationTargetFieldMetadataUniversalIdentifier,
         viewId,
         viewUniversalIdentifier,
         viewFieldGroupId: null,
@@ -932,18 +943,23 @@ export class ViewWidgetUpsertService {
       if (!isDefined(existingSort)) {
         const sortId = inputSort.id ?? v4();
 
-        const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
-          resolveEntityRelationUniversalIdentifiers({
-            metadataName: 'viewSort',
-            foreignKeyValues: {
-              fieldMetadataId: inputSort.fieldMetadataId,
-              viewId,
-            },
-            flatEntityMaps: {
-              flatFieldMetadataMaps,
-              flatViewMaps,
-            },
-          });
+        const {
+          fieldMetadataUniversalIdentifier,
+          viewUniversalIdentifier,
+          relationTargetFieldMetadataUniversalIdentifier,
+        } = resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'viewSort',
+          foreignKeyValues: {
+            fieldMetadataId: inputSort.fieldMetadataId,
+            viewId,
+            relationTargetFieldMetadataId:
+              inputSort.relationTargetFieldMetadataId,
+          },
+          flatEntityMaps: {
+            flatFieldMetadataMaps,
+            flatViewMaps,
+          },
+        });
 
         sortsToCreate.push({
           id: sortId,
@@ -953,6 +969,9 @@ export class ViewWidgetUpsertService {
           applicationUniversalIdentifier,
           fieldMetadataId: inputSort.fieldMetadataId,
           fieldMetadataUniversalIdentifier,
+          relationTargetFieldMetadataId:
+            inputSort.relationTargetFieldMetadataId ?? null,
+          relationTargetFieldMetadataUniversalIdentifier,
           viewId,
           viewUniversalIdentifier,
           direction: inputSort.direction ?? ViewSortDirection.ASC,
@@ -963,24 +982,33 @@ export class ViewWidgetUpsertService {
       } else {
         const hasChanged =
           existingSort.fieldMetadataId !== inputSort.fieldMetadataId ||
+          existingSort.relationTargetFieldMetadataId !==
+            (inputSort.relationTargetFieldMetadataId ?? null) ||
           existingSort.direction !== inputSort.direction;
 
         if (hasChanged) {
-          const { fieldMetadataUniversalIdentifier } =
-            resolveEntityRelationUniversalIdentifiers({
-              metadataName: 'viewSort',
-              foreignKeyValues: {
-                fieldMetadataId: inputSort.fieldMetadataId,
-              },
-              flatEntityMaps: {
-                flatFieldMetadataMaps,
-              },
-            });
+          const {
+            fieldMetadataUniversalIdentifier,
+            relationTargetFieldMetadataUniversalIdentifier,
+          } = resolveEntityRelationUniversalIdentifiers({
+            metadataName: 'viewSort',
+            foreignKeyValues: {
+              fieldMetadataId: inputSort.fieldMetadataId,
+              relationTargetFieldMetadataId:
+                inputSort.relationTargetFieldMetadataId,
+            },
+            flatEntityMaps: {
+              flatFieldMetadataMaps,
+            },
+          });
 
           sortsToUpdate.push({
             ...existingSort,
             fieldMetadataId: inputSort.fieldMetadataId,
             fieldMetadataUniversalIdentifier,
+            relationTargetFieldMetadataId:
+              inputSort.relationTargetFieldMetadataId ?? null,
+            relationTargetFieldMetadataUniversalIdentifier,
             direction: inputSort.direction ?? existingSort.direction,
             updatedAt: now,
           });

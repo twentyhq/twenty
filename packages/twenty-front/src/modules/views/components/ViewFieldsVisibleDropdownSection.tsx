@@ -1,11 +1,13 @@
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
-import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
+import { getRecordFieldLabelAndIcon } from '@/object-record/record-field/utils/getRecordFieldLabelAndIcon';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
@@ -35,8 +37,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
       viewBarId: recordIndexId,
     });
 
-  const { getFieldMetadataItemByIdOrThrow } =
-    useGetFieldMetadataItemByIdOrThrow();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const handleReorderFields =
     viewType === ViewType.KANBAN
@@ -68,9 +69,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
 
   const draggableRecordFields = visibleRecordFields
     .filter(
-      (recordFieldToFilter) =>
-        nonDraggableRecordField?.fieldMetadataItemId !==
-        recordFieldToFilter.fieldMetadataItemId,
+      (recordFieldToFilter) => recordFieldToFilter !== nonDraggableRecordField,
     )
     .toSorted(sortByProperty('position'));
 
@@ -108,22 +107,29 @@ export const ViewFieldsVisibleDropdownSection = () => {
             draggableItems={
               <>
                 {draggableRecordFields.map((recordField, index) => {
-                  const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
-                    recordField.fieldMetadataItemId,
-                  );
+                  const labelAndIcon = getRecordFieldLabelAndIcon({
+                    recordField,
+                    objectMetadataItem,
+                    objectMetadataItems,
+                  });
+                  const recordFieldKey = getRecordFieldKey(recordField);
+
+                  if (!isDefined(labelAndIcon)) {
+                    return null;
+                  }
 
                   return (
                     <DraggableItem
-                      key={recordField.fieldMetadataItemId}
-                      draggableId={recordField.fieldMetadataItemId}
+                      key={recordFieldKey}
+                      draggableId={recordFieldKey}
                       index={index}
                       itemComponent={
                         <MenuItemDraggable
-                          key={recordField.fieldMetadataItemId}
+                          key={recordFieldKey}
                           LeftComponent={
                             <ApplicationStackIcon
-                              Icon={getIcon(fieldMetadataItem.icon)}
-                              applicationId={fieldMetadataItem.applicationId}
+                              Icon={getIcon(labelAndIcon.icon)}
+                              applicationId={labelAndIcon.applicationId}
                             />
                           }
                           iconButtons={
@@ -131,8 +137,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                               aria-label={t`Hide field`}
                               onClick={() => {
                                 handleChangeFieldVisibility({
-                                  fieldMetadataId:
-                                    recordField.fieldMetadataItemId,
+                                  recordField,
                                   isVisible: false,
                                 });
                               }}
@@ -140,7 +145,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                               <IconEyeOff />
                             </LightIconButton>
                           }
-                          text={fieldMetadataItem.label}
+                          text={labelAndIcon.label}
                           gripMode="always"
                         />
                       }

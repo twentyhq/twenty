@@ -22,7 +22,7 @@ exports[`View Sort creation should fail when the view already has a sort on the 
           "errors": [
             {
               "code": "INVALID_VIEW_SORT_DATA",
-              "message": "View sort with same fieldMetadataId and viewId already exists",
+              "message": "View sort with same fieldMetadataId, relationTargetFieldMetadataId and viewId already exists",
               "userFriendlyMessage": "View sort already exists",
             },
           ],

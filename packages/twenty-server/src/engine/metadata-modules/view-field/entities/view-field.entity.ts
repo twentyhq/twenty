@@ -18,6 +18,7 @@ import {
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { ADD_RELATION_TARGET_FIELD_METADATA_ID_TO_VIEW_FIELD_AND_VIEW_SORT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-48/add-relation-target-field-metadata-id-to-view-field-and-view-sort-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
@@ -38,11 +39,25 @@ export type ViewFieldOverrides = {
 @Index('IDX_VIEW_FIELD_FIELD_METADATA_ID', ['fieldMetadataId'])
 @Index('IDX_VIEW_FIELD_VIEW_FIELD_GROUP_ID', ['viewFieldGroupId'])
 @Index(
+  'IDX_VIEW_FIELD_RELATION_TARGET_FIELD_METADATA_ID',
+  ['relationTargetFieldMetadataId'],
+  { where: '"relationTargetFieldMetadataId" IS NOT NULL' },
+)
+@Index(
   'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
   ['fieldMetadataId', 'viewId'],
   {
     unique: true,
-    where: '"deletedAt" IS NULL',
+    where: '"deletedAt" IS NULL AND "relationTargetFieldMetadataId" IS NULL',
+  },
+)
+@Index(
+  'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_RELATION_TARGET_UNIQUE',
+  ['fieldMetadataId', 'viewId', 'relationTargetFieldMetadataId'],
+  {
+    unique: true,
+    where:
+      '"deletedAt" IS NULL AND "relationTargetFieldMetadataId" IS NOT NULL',
   },
 )
 export class ViewFieldEntity
@@ -60,6 +75,22 @@ export class ViewFieldEntity
   })
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
+
+  // Set when the column shows a field of the record reached through the
+  // many-to-one relation held in fieldMetadataId
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_RELATION_TARGET_FIELD_METADATA_ID_TO_VIEW_FIELD_AND_VIEW_SORT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid', default: null })
+  relationTargetFieldMetadataId: string | null;
+
+  @ManyToOne(() => FieldMetadataEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'relationTargetFieldMetadataId' })
+  relationTargetFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: false, default: true })
   isVisible: boolean;

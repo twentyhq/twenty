@@ -1,3 +1,4 @@
+import { isSameRecordSortTarget } from '@/object-record/record-sort/utils/isSameRecordSortTarget';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -16,8 +17,7 @@ export const useUpsertRecordSort = () => {
       const existingRecordSorts = store.get(currentRecordSorts) as RecordSort[];
 
       const hasFoundRecordSortInCurrentRecordSorts = existingRecordSorts.some(
-        (existingSort) =>
-          existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
+        (existingSort) => isSameRecordSortTarget(existingSort, recordSortToSet),
       );
 
       if (!hasFoundRecordSortInCurrentRecordSorts) {
@@ -31,7 +31,7 @@ export const useUpsertRecordSort = () => {
 
           const indexOfSortToUpdate = newCurrentRecordSorts.findIndex(
             (existingSort) =>
-              existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
+              isSameRecordSortTarget(existingSort, recordSortToSet),
           );
 
           if (indexOfSortToUpdate < 0) {

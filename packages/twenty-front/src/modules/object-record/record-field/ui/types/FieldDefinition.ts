@@ -1,6 +1,7 @@
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { type IconComponent } from 'twenty-ui/icon';
+import { type FieldDefinitionRelationTraversal } from '@/object-record/record-field/ui/types/FieldDefinitionRelationTraversal';
 import { type FieldMetadata } from './FieldMetadata';
 
 export type FieldDefinition<T extends FieldMetadata> = {
@@ -14,4 +15,5 @@ export type FieldDefinition<T extends FieldMetadata> = {
   defaultValue?: any;
   editButtonIcon?: IconComponent;
   isUIEditable?: boolean;
+  relationTraversal?: FieldDefinitionRelationTraversal;
 };

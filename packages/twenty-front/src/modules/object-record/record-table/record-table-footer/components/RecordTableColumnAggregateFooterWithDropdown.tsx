@@ -1,3 +1,7 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
+import { resolveRecordFieldRelationTraversal } from '@/object-record/record-field/utils/relation-traversal/resolveRecordFieldRelationTraversal';
+import { isDefined } from 'twenty-shared/utils';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterDropdownContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent';
@@ -18,15 +22,32 @@ export const RecordTableColumnFooterWithDropdown = ({
   currentRecordGroupId,
   isFirstCell,
 }: RecordTableColumnFooterWithDropdownProps) => {
-  const { fieldMetadataId } = useContext(
+  const { fieldMetadataId, recordFieldKey, viewFieldId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
   );
 
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, visibleRecordFields } =
+    useRecordTableContextOrThrow();
 
-  const fieldMetadata = objectMetadataItem.fields.find(
-    (field) => field.id === fieldMetadataId,
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const recordField = visibleRecordFields.find(
+    (visibleRecordField) =>
+      getRecordFieldKey(visibleRecordField) === recordFieldKey,
   );
+
+  // A column through a relation aggregates the target field of the related object.
+  const relationTraversal = isDefined(recordField)
+    ? resolveRecordFieldRelationTraversal({
+        recordField,
+        sourceObjectMetadataItem: objectMetadataItem,
+        objectMetadataItems,
+      })
+    : null;
+
+  const fieldMetadata =
+    relationTraversal?.targetFieldMetadataItem ??
+    objectMetadataItem.fields.find((field) => field.id === fieldMetadataId);
 
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
     useToggleScrollWrapper();
@@ -42,8 +63,8 @@ export const RecordTableColumnFooterWithDropdown = ({
   }, [toggleScrollXWrapper, toggleScrollYWrapper]);
 
   const dropdownId = currentRecordGroupId
-    ? `${fieldMetadataId}-footer-${currentRecordGroupId}`
-    : `${fieldMetadataId}-footer`;
+    ? `${recordFieldKey}-footer-${currentRecordGroupId}`
+    : `${recordFieldKey}-footer`;
 
   return (
     <DropdownRoot
@@ -67,7 +88,8 @@ export const RecordTableColumnFooterWithDropdown = ({
         <RecordTableColumnAggregateFooterDropdownContext.Provider
           value={{
             dropdownId,
-            fieldMetadataId,
+            viewFieldId,
+            fieldMetadataId: fieldMetadata?.id ?? fieldMetadataId,
             fieldMetadataType: fieldMetadata?.type,
           }}
         >

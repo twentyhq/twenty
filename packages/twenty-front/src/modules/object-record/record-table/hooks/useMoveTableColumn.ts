@@ -14,12 +14,12 @@ export const useMoveTableColumn = ({ recordTableId }: useRecordTableProps) => {
   const { moveRecordField } = useMoveRecordField(recordTableId);
 
   const moveTableColumn = useCallback(
-    async (direction: 'left' | 'right', fieldMetadataItemId: string) => {
+    async (direction: 'left' | 'right', recordFieldKey: string) => {
       unfocusRecordTableCell();
 
       await moveRecordField({
         direction: direction === 'left' ? 'before' : 'after',
-        fieldMetadataItemIdToMove: fieldMetadataItemId,
+        recordFieldKeyToMove: recordFieldKey,
       });
     },
     [unfocusRecordTableCell, moveRecordField],

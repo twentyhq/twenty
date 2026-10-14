@@ -88,9 +88,11 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       const {
         fieldDefinitionByFieldMetadataItemId,
+        fieldDefinitionByRecordFieldKey,
         fieldMetadataItemByFieldMetadataItemId,
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
+        recordFieldByRecordFieldKey,
       } = useRecordIndexFieldMetadataDerivedStates(
         companyObjectMetadataItem,
         instanceId,
@@ -113,7 +115,9 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
             viewBarInstanceId: instanceId,
             labelIdentifierFieldMetadataItem,
             recordFieldByFieldMetadataItemId,
+            recordFieldByRecordFieldKey,
             fieldDefinitionByFieldMetadataItemId,
+            fieldDefinitionByRecordFieldKey,
             fieldMetadataItemByFieldMetadataItemId,
           }}
         >

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { useLazyFindManyRecordsWithOffset } from '@/object-record/hooks/useLazyFindManyRecordsWithOffset';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useUpsertRecordsWithTraversedRelationsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsWithTraversedRelationsInStore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
@@ -25,7 +25,8 @@ export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { upsertRecordsInStore } =
+    useUpsertRecordsWithTraversedRelationsInStore();
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
 

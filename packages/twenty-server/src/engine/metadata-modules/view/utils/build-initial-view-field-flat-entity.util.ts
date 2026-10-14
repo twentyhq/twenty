@@ -26,6 +26,7 @@ export const buildInitialViewFieldFlatEntity = ({
   createdAt: string;
 }): UniversalFlatViewField => ({
   fieldMetadataUniversalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier: null,
   viewUniversalIdentifier: initialViewUniversalIdentifier,
   viewFieldGroupUniversalIdentifier: null,
   createdAt,

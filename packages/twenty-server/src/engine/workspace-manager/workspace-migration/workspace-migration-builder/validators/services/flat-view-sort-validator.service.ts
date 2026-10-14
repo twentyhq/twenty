@@ -12,6 +12,7 @@ import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manage
 import { ViewSortDirection } from 'twenty-shared/types';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { validateFlatViewRelationTargetField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-relation-target-field.util';
 
 @Injectable()
 export class FlatViewSortValidatorService {
@@ -91,15 +92,38 @@ export class FlatViewSortValidatorService {
         flatViewSort.viewUniversalIdentifier ===
           flatViewSortToValidate.viewUniversalIdentifier &&
         flatViewSort.fieldMetadataUniversalIdentifier ===
-          flatViewSortToValidate.fieldMetadataUniversalIdentifier,
+          flatViewSortToValidate.fieldMetadataUniversalIdentifier &&
+        (flatViewSort.relationTargetFieldMetadataUniversalIdentifier ??
+          null) ===
+          (flatViewSortToValidate.relationTargetFieldMetadataUniversalIdentifier ??
+            null),
     );
 
     if (equivalentExistingFlatViewSortExists) {
       validationResult.errors.push({
         code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
-        message: t`View sort with same fieldMetadataId and viewId already exists`,
+        message: t`View sort with same fieldMetadataId, relationTargetFieldMetadataId and viewId already exists`,
         userFriendlyMessage: msg`View sort already exists`,
       });
+    }
+
+    if (
+      isDefined(flatFieldMetadata) &&
+      isDefined(
+        flatViewSortToValidate.relationTargetFieldMetadataUniversalIdentifier,
+      )
+    ) {
+      const { errors: relationTargetErrors } =
+        validateFlatViewRelationTargetField({
+          sourceFlatFieldMetadata: flatFieldMetadata,
+          relationTargetFieldMetadataUniversalIdentifier:
+            flatViewSortToValidate.relationTargetFieldMetadataUniversalIdentifier,
+          flatView,
+          flatFieldMetadataMaps,
+          errorCode: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
+        });
+
+      validationResult.errors.push(...relationTargetErrors);
     }
 
     if (
@@ -124,6 +148,7 @@ export class FlatViewSortValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewSortMaps: optimisticFlatViewSortMaps,
       flatViewMaps,
+      flatFieldMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewSort
@@ -188,6 +213,40 @@ export class FlatViewSortValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (
+      isDefined(
+        updatedFlatViewSort.relationTargetFieldMetadataUniversalIdentifier,
+      )
+    ) {
+      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          updatedFlatViewSort.fieldMetadataUniversalIdentifier,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(flatFieldMetadata)) {
+        validationResult.errors.push({
+          code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
+          message: t`Field metadata not found`,
+          userFriendlyMessage: msg`Field metadata not found`,
+        });
+
+        return validationResult;
+      }
+
+      const { errors: relationTargetErrors } =
+        validateFlatViewRelationTargetField({
+          sourceFlatFieldMetadata: flatFieldMetadata,
+          relationTargetFieldMetadataUniversalIdentifier:
+            updatedFlatViewSort.relationTargetFieldMetadataUniversalIdentifier,
+          flatView,
+          flatFieldMetadataMaps,
+          errorCode: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
+        });
+
+      validationResult.errors.push(...relationTargetErrors);
     }
 
     return validationResult;

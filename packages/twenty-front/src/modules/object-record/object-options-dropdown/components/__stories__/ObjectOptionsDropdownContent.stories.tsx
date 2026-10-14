@@ -96,9 +96,11 @@ const createContentDecorator =
 
     const {
       fieldDefinitionByFieldMetadataItemId,
+      fieldDefinitionByRecordFieldKey,
       fieldMetadataItemByFieldMetadataItemId,
       labelIdentifierFieldMetadataItem,
       recordFieldByFieldMetadataItemId,
+      recordFieldByRecordFieldKey,
     } = useRecordIndexFieldMetadataDerivedStates(
       companyObjectMetadataItem,
       instanceId,
@@ -116,9 +118,11 @@ const createContentDecorator =
           recordIndexId: instanceId,
           viewBarInstanceId: instanceId,
           fieldDefinitionByFieldMetadataItemId,
+          fieldDefinitionByRecordFieldKey,
           fieldMetadataItemByFieldMetadataItemId,
           labelIdentifierFieldMetadataItem,
           recordFieldByFieldMetadataItemId,
+          recordFieldByRecordFieldKey,
         }}
       >
         <DropdownComponentInstanceContext.Provider

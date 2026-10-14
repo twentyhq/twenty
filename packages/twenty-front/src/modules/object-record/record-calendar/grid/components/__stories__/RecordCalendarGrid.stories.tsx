@@ -86,9 +86,11 @@ const meta: Meta<typeof RecordCalendarGrid> = {
 
       const {
         fieldDefinitionByFieldMetadataItemId,
+        fieldDefinitionByRecordFieldKey,
         fieldMetadataItemByFieldMetadataItemId,
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
+        recordFieldByRecordFieldKey,
       } = useRecordIndexFieldMetadataDerivedStates(
         companyObjectMetadataItem,
         instanceId,
@@ -111,7 +113,9 @@ const meta: Meta<typeof RecordCalendarGrid> = {
             viewBarInstanceId: instanceId,
             labelIdentifierFieldMetadataItem,
             recordFieldByFieldMetadataItemId,
+            recordFieldByRecordFieldKey,
             fieldDefinitionByFieldMetadataItemId,
+            fieldDefinitionByRecordFieldKey,
             fieldMetadataItemByFieldMetadataItemId,
           }}
         >

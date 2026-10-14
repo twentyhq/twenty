@@ -31,6 +31,7 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
     sorts: view.viewSorts.map((sort) => ({
       id: sort.id,
       fieldMetadataId: sort.fieldMetadataId,
+      relationTargetFieldMetadataId: sort.relationTargetFieldMetadataId ?? null,
       direction: sort.direction,
     })),
     layout: {

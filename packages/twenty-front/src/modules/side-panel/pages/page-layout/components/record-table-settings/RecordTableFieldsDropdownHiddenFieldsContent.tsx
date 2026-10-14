@@ -1,9 +1,18 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getRecordFieldLabelAndIcon } from '@/object-record/record-field/utils/getRecordFieldLabelAndIcon';
+import {
+  getTraversableRelationFieldMetadataItems,
+  type TraversableRelationFieldMetadataItem,
+} from '@/object-record/record-field/utils/relation-traversal/getTraversableRelationFieldMetadataItems';
+import { getTraversedFieldCandidates } from '@/object-record/record-field/utils/relation-traversal/getTraversedFieldCandidates';
+import { useState } from 'react';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -54,22 +63,64 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
     objectMetadataItem,
   });
 
-  const visibleFieldMetadataItemIds = currentRecordFields
-    .filter((recordField) => recordField.isVisible)
-    .map((recordField) => recordField.fieldMetadataItemId);
-
-  const hiddenFieldMetadataItems = activeFieldMetadataItems.filter(
-    (fieldMetadataItem) =>
-      !visibleFieldMetadataItemIds.includes(fieldMetadataItem.id),
+  const visibleRecordFieldKeys = new Set(
+    currentRecordFields
+      .filter((recordField) => recordField.isVisible)
+      .map(getRecordFieldKey),
   );
 
-  const handleShowField = (fieldMetadataId: string) => {
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const [selectedTraversableRelation, setSelectedTraversableRelation] =
+    useState<TraversableRelationFieldMetadataItem | null>(null);
+
+  const isRecordFieldVisible = (
+    recordField: Pick<
+      RecordField,
+      'fieldMetadataItemId' | 'relationTargetFieldMetadataItemId'
+    >,
+  ) => visibleRecordFieldKeys.has(getRecordFieldKey(recordField));
+
+  const traversableRelationByFieldMetadataId = new Map(
+    getTraversableRelationFieldMetadataItems({
+      objectMetadataItem,
+      objectMetadataItems,
+    }).map((traversableRelation) => [
+      traversableRelation.relationFieldMetadataItem.id,
+      traversableRelation,
+    ]),
+  );
+
+  // A relation stays listed while visible so its target fields remain reachable.
+  const hiddenFieldMetadataItems = activeFieldMetadataItems.filter(
+    (fieldMetadataItem) =>
+      traversableRelationByFieldMetadataId.has(fieldMetadataItem.id) ||
+      !visibleRecordFieldKeys.has(
+        getRecordFieldKey({ fieldMetadataItemId: fieldMetadataItem.id }),
+      ),
+  );
+
+  const hiddenTraversedRecordFields = currentRecordFields.filter(
+    (recordField) =>
+      isDefined(recordField.relationTargetFieldMetadataItemId) &&
+      !recordField.isVisible,
+  );
+
+  const handleShowField = (
+    recordField: Pick<
+      RecordField,
+      'fieldMetadataItemId' | 'relationTargetFieldMetadataItemId'
+    >,
+  ) => {
+    const recordFieldKey = getRecordFieldKey(recordField);
     const existingRecordField = currentRecordFields.find(
-      (recordField) => recordField.fieldMetadataItemId === fieldMetadataId,
+      (recordFieldToFind) =>
+        getRecordFieldKey(recordFieldToFind) === recordFieldKey,
     );
 
     if (isDefined(existingRecordField)) {
-      updateRecordField(fieldMetadataId, { isVisible: true });
+      updateRecordField(recordFieldKey, { isVisible: true });
       onFieldUpdated?.(existingRecordField.id, { isVisible: true });
     } else {
       const lastPosition =
@@ -78,7 +129,9 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
 
       const newRecordField: RecordField = {
         id: v4(),
-        fieldMetadataItemId: fieldMetadataId,
+        fieldMetadataItemId: recordField.fieldMetadataItemId,
+        relationTargetFieldMetadataItemId:
+          recordField.relationTargetFieldMetadataItemId,
         size: 100,
         isVisible: true,
         position: lastPosition + 1,
@@ -101,26 +154,135 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
       >
         {t`Hidden Fields`}
       </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
-        {hiddenFieldMetadataItems.map((fieldMetadataItem) => (
+      {isDefined(selectedTraversableRelation) ? (
+        <DropdownMenuItemsContainer>
           <ListItem
-            key={fieldMetadataItem.id}
-            startIcon={
-              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
-            }
-            actions={
-              <LightIconButton
-                aria-label={t`Show field`}
-                onClick={() => handleShowField(fieldMetadataItem.id)}
-              >
-                <IconEye />
-              </LightIconButton>
-            }
+            startIcon={<IconChevronLeft />}
+            onClick={() => setSelectedTraversableRelation(null)}
+            aria-label={t`${selectedTraversableRelation.relationFieldMetadataItem.label}, back to fields`}
           >
-            {fieldMetadataItem.label}
+            {selectedTraversableRelation.relationFieldMetadataItem.label}
           </ListItem>
-        ))}
-      </DropdownMenuItemsContainer>
+          {!isRecordFieldVisible({
+            fieldMetadataItemId:
+              selectedTraversableRelation.relationFieldMetadataItem.id,
+          }) && (
+            <ListItem
+              startIcon={
+                <SelectOptionIcon
+                  Icon={getIcon(
+                    selectedTraversableRelation.relationFieldMetadataItem.icon,
+                  )}
+                />
+              }
+              actions={
+                <LightIconButton
+                  aria-label={t`Show field`}
+                  onClick={() =>
+                    handleShowField({
+                      fieldMetadataItemId:
+                        selectedTraversableRelation.relationFieldMetadataItem
+                          .id,
+                    })
+                  }
+                >
+                  <IconEye />
+                </LightIconButton>
+              }
+            >
+              {selectedTraversableRelation.relationFieldMetadataItem.label}
+            </ListItem>
+          )}
+          {getTraversedFieldCandidates(selectedTraversableRelation)
+            .filter((candidate) => !isRecordFieldVisible(candidate.recordField))
+            .map((candidate) => (
+              <ListItem
+                key={candidate.targetFieldMetadataItem.id}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={getIcon(candidate.targetFieldMetadataItem.icon)}
+                  />
+                }
+                actions={
+                  <LightIconButton
+                    aria-label={t`Show field`}
+                    onClick={() => handleShowField(candidate.recordField)}
+                  >
+                    <IconEye />
+                  </LightIconButton>
+                }
+              >
+                {candidate.targetFieldMetadataItem.label}
+              </ListItem>
+            ))}
+        </DropdownMenuItemsContainer>
+      ) : (
+        <DropdownMenuItemsContainer>
+          {hiddenFieldMetadataItems.map((fieldMetadataItem) => {
+            const traversableRelation =
+              traversableRelationByFieldMetadataId.get(fieldMetadataItem.id);
+
+            return (
+              <ListItem
+                key={fieldMetadataItem.id}
+                startIcon={
+                  <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+                }
+                hasSubmenu={isDefined(traversableRelation)}
+                onClick={
+                  isDefined(traversableRelation)
+                    ? () => setSelectedTraversableRelation(traversableRelation)
+                    : undefined
+                }
+                actions={
+                  isDefined(traversableRelation) ? undefined : (
+                    <LightIconButton
+                      aria-label={t`Show field`}
+                      onClick={() =>
+                        handleShowField({
+                          fieldMetadataItemId: fieldMetadataItem.id,
+                        })
+                      }
+                    >
+                      <IconEye />
+                    </LightIconButton>
+                  )
+                }
+              >
+                {fieldMetadataItem.label}
+              </ListItem>
+            );
+          })}
+          {hiddenTraversedRecordFields.map((recordField) => {
+            const labelAndIcon = getRecordFieldLabelAndIcon({
+              recordField,
+              objectMetadataItem,
+              objectMetadataItems,
+            });
+
+            if (!isDefined(labelAndIcon)) {
+              return null;
+            }
+
+            return (
+              <ListItem
+                key={getRecordFieldKey(recordField)}
+                startIcon={<SelectOptionIcon Icon={getIcon(labelAndIcon.icon)} />}
+                actions={
+                  <LightIconButton
+                    aria-label={t`Show field`}
+                    onClick={() => handleShowField(recordField)}
+                  >
+                    <IconEye />
+                  </LightIconButton>
+                }
+              >
+                {labelAndIcon.label}
+              </ListItem>
+            );
+          })}
+        </DropdownMenuItemsContainer>
+      )}
     </LegacyDropdownContent>
   );
 };

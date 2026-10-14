@@ -147,11 +147,24 @@ export class ViewQueryParamsService {
 
         if (!field) return null;
 
+        const direction =
+          sort.direction === ViewSortDirection.DESC
+            ? OrderByDirection.DescNullsLast
+            : OrderByDirection.AscNullsFirst;
+
+        if (!isDefined(sort.relationTargetFieldMetadataId)) {
+          return { [field.name]: direction };
+        }
+
+        const relationTargetField = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: sort.relationTargetFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        if (!isDefined(relationTargetField)) return null;
+
         return {
-          [field.name]:
-            sort.direction === ViewSortDirection.DESC
-              ? OrderByDirection.DescNullsLast
-              : OrderByDirection.AscNullsFirst,
+          [field.name]: { [relationTargetField.name]: direction },
         };
       })
       .filter(isDefined);

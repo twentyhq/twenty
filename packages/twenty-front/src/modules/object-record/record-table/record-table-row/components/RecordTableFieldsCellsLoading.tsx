@@ -1,4 +1,5 @@
 import { useRecordTableColumnVirtualizationItemsContextOrThrow } from '@/object-record/record-table/contexts/RecordTableColumnVirtualizationItemsContext';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 import { RecordTableColumnSpacer } from '@/object-record/record-table/virtualization/components/RecordTableColumnSpacer';
@@ -38,7 +39,7 @@ export const RecordTableFieldsCellsLoading = ({
 
         return (
           <RecordTableCellLoading
-            key={visibleRecordFields[columnIndex].fieldMetadataItemId}
+            key={getRecordFieldKey(visibleRecordFields[columnIndex])}
             recordFieldIndex={columnIndex}
             isSelected={isSelected}
           />

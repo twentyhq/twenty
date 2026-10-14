@@ -243,7 +243,7 @@ export const ViewBarDetails = ({
             )}
             {currentRecordSorts.map((recordSort) => (
               <EditableSortChip
-                key={recordSort.fieldMetadataId}
+                key={recordSort.id}
                 recordSort={recordSort}
               />
             ))}

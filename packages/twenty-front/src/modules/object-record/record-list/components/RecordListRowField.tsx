@@ -1,4 +1,5 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -37,7 +38,7 @@ export const RecordListRowField = ({
 }: RecordListRowFieldProps) => {
   return (
     <Tooltip.Trigger
-      payload={recordField.fieldMetadataItemId}
+      payload={getRecordFieldKey(recordField)}
       delay={TooltipDelay.shortDelay}
       render={<StyledFieldContainer style={{ maxWidth }} />}
     >

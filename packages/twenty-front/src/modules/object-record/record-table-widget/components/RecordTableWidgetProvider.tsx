@@ -70,9 +70,11 @@ export const RecordTableWidgetProvider = ({
 
   const {
     fieldDefinitionByFieldMetadataItemId,
+    fieldDefinitionByRecordFieldKey,
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
     recordFieldByFieldMetadataItemId,
+    recordFieldByRecordFieldKey,
   } = useRecordIndexFieldMetadataDerivedStates(
     objectMetadataItem,
     recordIndexId,
@@ -160,9 +162,11 @@ export const RecordTableWidgetProvider = ({
             onIndexRecordsLoaded: handleIndexRecordsLoaded,
             indexIdentifierUrl,
             recordFieldByFieldMetadataItemId,
+            recordFieldByRecordFieldKey,
             labelIdentifierFieldMetadataItem,
             fieldMetadataItemByFieldMetadataItemId,
             fieldDefinitionByFieldMetadataItemId,
+            fieldDefinitionByRecordFieldKey,
             recordLimit,
           }}
         >

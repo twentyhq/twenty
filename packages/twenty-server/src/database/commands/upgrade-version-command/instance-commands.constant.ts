@@ -242,6 +242,7 @@ import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/up
 import { SetWorkspaceEventLogRetentionDefaultFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791790299002-set-workspace-event-log-retention-default';
 import { AddWidgetAvailabilityToFrontComponentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791898075681-add-widget-availability-to-front-component';
 import { AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1791975194413-add-identify-account-logic-function-and-external-account-id';
+import { AddRelationTargetFieldMetadataIdToViewFieldAndViewSortFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1791993113066-add-relation-target-field-metadata-id-to-view-field-and-view-sort';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -486,4 +487,5 @@ export const INSTANCE_COMMANDS = [
   SetWorkspaceEventLogRetentionDefaultFastInstanceCommand,
   AddWidgetAvailabilityToFrontComponentFastInstanceCommand,
   AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFieldAndViewSortFastInstanceCommand,
 ];

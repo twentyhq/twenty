@@ -18,6 +18,8 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
     applicationUniversalIdentifier,
     fieldMetadataUniversalIdentifier:
       viewFieldManifest.fieldMetadataUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier:
+      viewFieldManifest.relationTargetFieldMetadataUniversalIdentifier ?? null,
     viewUniversalIdentifier,
     viewFieldGroupUniversalIdentifier:
       viewFieldManifest.viewFieldGroupUniversalIdentifier ?? null,

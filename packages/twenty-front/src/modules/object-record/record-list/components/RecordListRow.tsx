@@ -1,6 +1,7 @@
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import { getFieldValueSourceDefinition } from '@/object-record/record-field/ui/utils/getFieldValueSourceDefinition';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
@@ -83,10 +84,8 @@ type RecordListRowProps = {
 
 export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   const { objectNameSingular } = useRecordIndexContextOrThrow();
-  const {
-    labelIdentifierFieldMetadataItem,
-    fieldDefinitionByFieldMetadataItemId,
-  } = useRecordIndexContextOrThrow();
+  const { labelIdentifierFieldMetadataItem, fieldDefinitionByRecordFieldKey } =
+    useRecordIndexContextOrThrow();
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
@@ -124,7 +123,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   const nonEmptyRecordFields = visibleRecordFieldsExceptLabelIdentifier.flatMap(
     (recordField) => {
       const fieldDefinition =
-        fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+        fieldDefinitionByRecordFieldKey[getRecordFieldKey(recordField)];
 
       if (!isDefined(fieldDefinition)) {
         return [];
@@ -227,7 +226,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
         <StyledFieldsContainer>
           {displayedRecordFields.map(({ recordField, fieldDefinition }) => (
             <RecordListRowField
-              key={recordField.fieldMetadataItemId}
+              key={getRecordFieldKey(recordField)}
               recordId={recordId}
               recordField={recordField}
               fieldDefinition={fieldDefinition}

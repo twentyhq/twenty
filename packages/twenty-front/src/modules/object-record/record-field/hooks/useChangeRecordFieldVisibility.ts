@@ -2,6 +2,7 @@ import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpda
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { getRecordFieldKey } from '@/object-record/record-field/utils/getRecordFieldKey';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
@@ -27,10 +28,13 @@ export const useChangeRecordFieldVisibility = (
   const { saveViewFields } = useSaveCurrentViewFields();
 
   const changeRecordFieldVisibility = async ({
-    fieldMetadataId,
+    recordField,
     isVisible,
   }: {
-    fieldMetadataId: string;
+    recordField: Pick<
+      RecordField,
+      'fieldMetadataItemId' | 'relationTargetFieldMetadataItemId'
+    >;
     isVisible: boolean;
   }) => {
     const lastPosition =
@@ -38,9 +42,10 @@ export const useChangeRecordFieldVisibility = (
         ?.position ?? 0;
 
     const shouldShowFieldMetadataItem = isVisible === true;
+    const recordFieldKey = getRecordFieldKey(recordField);
     const correspondingRecordField = currentRecordFields.find(
       (recordFieldToFind) =>
-        recordFieldToFind.fieldMetadataItemId === fieldMetadataId,
+        getRecordFieldKey(recordFieldToFind) === recordFieldKey,
     );
 
     const noExistingRecordField = !isDefined(correspondingRecordField);
@@ -48,7 +53,9 @@ export const useChangeRecordFieldVisibility = (
     if (noExistingRecordField) {
       const recordFieldToUpsert: RecordField = {
         id: v4(),
-        fieldMetadataItemId: fieldMetadataId,
+        fieldMetadataItemId: recordField.fieldMetadataItemId,
+        relationTargetFieldMetadataItemId:
+          recordField.relationTargetFieldMetadataItemId,
         size: 100,
         isVisible: shouldShowFieldMetadataItem,
         position: lastPosition + 1,
@@ -58,7 +65,7 @@ export const useChangeRecordFieldVisibility = (
 
       await saveViewFields([mapRecordFieldToViewField(recordFieldToUpsert)]);
     } else {
-      updateRecordField(fieldMetadataId, {
+      updateRecordField(recordFieldKey, {
         isVisible: shouldShowFieldMetadataItem,
       });
 

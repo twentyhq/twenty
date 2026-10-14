@@ -13,6 +13,7 @@ export type ViewField = {
   size: number;
   aggregateOperation?: AggregateOperations | null;
   viewFieldGroupId?: string | null;
+  relationTargetFieldMetadataId?: string | null;
   definition?:
     | ColumnDefinition<FieldMetadata>
     | RecordBoardFieldDefinition<FieldMetadata>;
