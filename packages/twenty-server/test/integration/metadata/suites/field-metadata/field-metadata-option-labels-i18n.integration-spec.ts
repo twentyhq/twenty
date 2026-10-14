@@ -64,9 +64,10 @@ const findFieldOptions = async (
 const findOptionLabels = async (fieldMetadataId: string) =>
   (await findFieldOptions(fieldMetadataId)).map(({ label }) => label);
 
-const findMetadataTranslations = async (
-  fieldMetadataId: string,
-): Promise<MetadataTranslationRow[]> => {
+const findMetadataTranslations = async (input: {
+  fieldMetadataId: string;
+  locale?: string;
+}): Promise<MetadataTranslationRow[]> => {
   const response = await makeMetadataApiRequest({
     query: gql`
       query MetadataTranslations($input: MetadataTranslationsInput!) {
@@ -78,7 +79,7 @@ const findMetadataTranslations = async (
         }
       }
     `,
-    variables: { input: { fieldMetadataId } },
+    variables: { input },
   });
 
   expect(response.body.errors).toBeUndefined();
@@ -245,18 +246,27 @@ describe('field metadata option labels i18n', () => {
     ).toEqual(['Week', 'Month']);
   });
 
-  it('should list option label translations', async () => {
-    const englishWeekTranslation = (
-      await findMetadataTranslations(fieldMetadataId)
-    ).find(
-      ({ property, locale }) =>
-        property === `options.${weekOptionId}.label` && locale === 'en',
-    );
-
-    expect(englishWeekTranslation).toMatchObject({
-      value: 'Week',
-      provenance: 'WORKSPACE',
+  it('should list option label translations for a requested locale', async () => {
+    const englishTranslations = await findMetadataTranslations({
+      fieldMetadataId,
+      locale: 'en',
     });
+
+    expect(
+      englishTranslations.find(
+        ({ property }) => property === `options.${weekOptionId}.label`,
+      ),
+    ).toMatchObject({ locale: 'en', value: 'Week', provenance: 'WORKSPACE' });
+
+    const allLocaleTranslations = await findMetadataTranslations({
+      fieldMetadataId,
+    });
+
+    expect(
+      allLocaleTranslations.some(({ property }) =>
+        property.startsWith('options.'),
+      ),
+    ).toBe(false);
   });
 
   it('should keep source labels when translated options are saved back', async () => {

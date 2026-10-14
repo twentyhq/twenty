@@ -24,12 +24,16 @@ export const buildMetadataTranslationsTable = ({
     ...uniqueProperties.filter((property) => property === DESCRIPTION_PROPERTY),
   ];
 
+  const translationByLocaleAndProperty = new Map(
+    metadataTranslations.map((translation) => [
+      JSON.stringify([translation.locale, translation.property]),
+      translation,
+    ]),
+  );
+
   const languageRows = localeOptions.flatMap(({ value: locale, label }) => {
     const translations = properties.map((property) =>
-      metadataTranslations.find(
-        (translation) =>
-          translation.property === property && translation.locale === locale,
-      ),
+      translationByLocaleAndProperty.get(JSON.stringify([locale, property])),
     );
 
     return translations.some(isDefined)

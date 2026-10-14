@@ -156,7 +156,10 @@ export class MetadataTranslationService {
         });
       }
 
-      if (translatableEntity.metadataName === 'fieldMetadata') {
+      if (
+        translatableEntity.metadataName === 'fieldMetadata' &&
+        isDefined(input.locale)
+      ) {
         translations.push(
           ...this.buildFieldOptionLabelTranslations({
             flatFieldMetadata: translatableEntity.entity,

@@ -1,11 +1,16 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsMetadataOptionTranslationsSection } from '@/settings/translations/components/SettingsMetadataOptionTranslationsSection';
 import { SettingsMetadataTranslationsSection } from '@/settings/translations/components/SettingsMetadataTranslationsSection';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isFieldMetadataSelectKind,
+} from 'twenty-shared/utils';
 
 export const SettingsObjectTranslations = () => {
   const { t } = useLingui();
@@ -66,6 +71,12 @@ export const SettingsObjectTranslations = () => {
               : { objectMetadataId: objectMetadataItem.id }
           }
         />
+        {isDefined(fieldMetadataItem) &&
+          isFieldMetadataSelectKind(fieldMetadataItem.type) && (
+            <SettingsMetadataOptionTranslationsSection
+              fieldMetadataId={fieldMetadataItem.id}
+            />
+          )}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );
