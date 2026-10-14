@@ -87,7 +87,7 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
   },
 };
 
-export const SettingsTabNextToVariablesTab: Story = {
+export const SettingsTabReplacesVariablesTab: Story = {
   args: {
     routeParams: { ':applicationId': GRANOLA_APPLICATION_ID },
   },
@@ -95,29 +95,21 @@ export const SettingsTabNextToVariablesTab: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
+      await canvas.findByRole('link', { name: 'My notes' }, { timeout: 3000 }),
     ).toBeVisible();
-    expect(canvas.getByRole('link', { name: 'My notes' })).toBeVisible();
     expect(canvas.queryByText('Team notes')).not.toBeInTheDocument();
-    expect(canvas.getByText('Language')).toBeVisible();
-    expect(canvas.getByDisplayValue('en')).toBeVisible();
     expect(
-      canvas.getByRole('button', { name: 'Save settings' }),
-    ).toBeDisabled();
-    expect(findOneFrontComponent).not.toHaveBeenCalled();
-
-    await userEvent.click(canvas.getByRole('link', { name: 'My notes' }));
-
-    await waitFor(
-      () =>
-        expect(findOneFrontComponent).toHaveBeenCalledWith(
-          GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
-        ),
-      { timeout: 3000 },
-    );
+      canvas.queryByRole('link', { name: 'Variables' }),
+    ).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('button', { name: 'Save settings' }),
     ).not.toBeInTheDocument();
+
+    await waitFor(() =>
+      expect(findOneFrontComponent).toHaveBeenCalledWith(
+        GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
+      ),
+    );
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
   },
 };

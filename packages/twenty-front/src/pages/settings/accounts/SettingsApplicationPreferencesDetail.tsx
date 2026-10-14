@@ -4,6 +4,7 @@ import { getApplicationDisplayName } from '@/applications/utils/getApplicationDi
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
+import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
@@ -13,11 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  getSettingsPath,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconDeviceFloppy, IconVariable, useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import {
@@ -68,9 +65,10 @@ export const SettingsApplicationPreferencesDetail = ({
     refetchApplicationVariables: refetchApplicationsWithPreferences,
   });
 
-  // Unlike workspace variables, an app's own settings tab cannot save user
-  // variables, since updateMyUserApplicationVariable refuses application tokens
-  const hasVariablesTab = isNonEmptyArray(variables);
+  const hasVariablesTab = hasApplicationVariablesTab({
+    settingsMenuItems,
+    displayedApplicationVariables: variables,
+  });
 
   const tabs: SingleTabProps[] = [
     ...(hasVariablesTab
