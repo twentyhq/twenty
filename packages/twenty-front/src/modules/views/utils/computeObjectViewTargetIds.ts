@@ -16,7 +16,6 @@ export const computeObjectViewTargetIds = <
 }): {
   firstSelectableViewId?: string;
   indexViewId?: string;
-  firstAvailableViewId?: string;
 } => {
   const selectableViewsOnObject = views
     .filter(
@@ -33,6 +32,5 @@ export const computeObjectViewTargetIds = <
     indexViewId: selectableViewsOnObject.find(
       (view) => view.key === ViewKey.INDEX,
     )?.id,
-    firstAvailableViewId: selectableViewsOnObject[0]?.id,
   };
 };

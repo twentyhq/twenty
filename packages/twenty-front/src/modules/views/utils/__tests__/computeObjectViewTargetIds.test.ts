@@ -34,7 +34,6 @@ describe('computeObjectViewTargetIds', () => {
 
     expect(result.firstSelectableViewId).toBe('view-first-selectable');
     expect(result.indexViewId).toBe('view-index');
-    expect(result.firstAvailableViewId).toBe('view-index');
   });
 
   it('should ignore fields widget views', () => {
@@ -53,7 +52,6 @@ describe('computeObjectViewTargetIds', () => {
     });
 
     expect(result.indexViewId).toBeUndefined();
-    expect(result.firstAvailableViewId).toBeUndefined();
   });
 
   it('should never resolve a widget view, whatever its type', () => {
@@ -63,6 +61,5 @@ describe('computeObjectViewTargetIds', () => {
     });
 
     expect(result.firstSelectableViewId).toBe('view-first-selectable');
-    expect(result.firstAvailableViewId).toBe('view-index');
   });
 });

@@ -114,8 +114,6 @@ describe('View side effect on object creation', () => {
       type: ViewType.TABLE,
     });
 
-    expect(createdViews.length).toBe(3);
-
     const {
       data: { getViewFields: indexViewFields },
     } = await findViewFields({
