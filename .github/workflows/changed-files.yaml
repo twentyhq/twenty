@@ -18,7 +18,7 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
-      any_changed: ${{ steps.changed-files.outputs.any_changed }}
+      any_changed: ${{ steps.filter-changed-files.outputs.any_changed }}
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -29,3 +29,16 @@ jobs:
         uses: tj-actions/changed-files@48d8f15b2aaa3d255ca5af3eba4870f807ce6b3c # v45.0.9
         with:
           files: ${{ inputs.files }}
+          json: true
+          escape_json: false
+          safe_output: false
+      - name: Ignore package version-only changes
+        id: filter-changed-files
+        env:
+          ANY_CHANGED: ${{ steps.changed-files.outputs.any_modified }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_modified_files }}
+          MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
+        run: node .github/scripts/filter-version-only-changes.mjs

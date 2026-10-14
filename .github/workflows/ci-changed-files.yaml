@@ -1,0 +1,27 @@
+name: CI Changed Files
+
+on:
+  pull_request:
+    paths:
+      - .github/scripts/filter-version-only-changes.mjs
+      - .github/scripts/__tests__/filter-version-only-changes.test.mjs
+      - .github/workflows/changed-files.yaml
+      - .github/workflows/ci-changed-files.yaml
+  push:
+    branches: [main]
+    paths:
+      - .github/scripts/filter-version-only-changes.mjs
+      - .github/scripts/__tests__/filter-version-only-changes.test.mjs
+      - .github/workflows/changed-files.yaml
+      - .github/workflows/ci-changed-files.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - run: node --test .github/scripts/__tests__/filter-version-only-changes.test.mjs
