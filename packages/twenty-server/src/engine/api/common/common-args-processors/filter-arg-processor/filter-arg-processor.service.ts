@@ -42,6 +42,36 @@ function throwUseJoinColumnInstead(key: string): never {
   );
 }
 
+const computeParentRelationHints = ({
+  parentRelationFieldMetadata,
+}: {
+  parentRelationFieldMetadata?: FlatFieldMetadata<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >;
+}): { relationContext: string; joinColumnHint: string } => {
+  if (!isDefined(parentRelationFieldMetadata)) {
+    return { relationContext: '', joinColumnHint: '' };
+  }
+
+  const relationContext = ` (filtering through relation "${parentRelationFieldMetadata.name}")`;
+
+  if (
+    parentRelationFieldMetadata.settings?.relationType !==
+    RelationType.MANY_TO_ONE
+  ) {
+    return { relationContext, joinColumnHint: '' };
+  }
+
+  const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+    name: parentRelationFieldMetadata.name,
+  });
+
+  return {
+    relationContext,
+    joinColumnHint: ` To filter by the related record id instead, use "${joinColumnName}".`,
+  };
+};
+
 @Injectable()
 export class FilterArgProcessorService {
   process<T extends ObjectRecordFilter | undefined>({
@@ -306,14 +336,9 @@ export class FilterArgProcessorService {
 
     if (!isDefined(fieldMetadataId)) {
       const nameSingular = flatObjectMetadata.nameSingular;
-      const relationContext = isDefined(parentRelationFieldMetadata)
-        ? ` (filtering through relation "${parentRelationFieldMetadata.name}")`
-        : '';
-      const joinColumnHint =
-        parentRelationFieldMetadata?.settings?.relationType ===
-        RelationType.MANY_TO_ONE
-          ? ` To filter by the related record id instead, use "${computeMorphOrRelationFieldJoinColumnName({ name: parentRelationFieldMetadata.name })}".`
-          : '';
+      const { relationContext, joinColumnHint } = computeParentRelationHints({
+        parentRelationFieldMetadata,
+      });
 
       throw new CommonQueryRunnerException(
         `Object ${nameSingular} doesn't have any "${key}" field${relationContext}. Filter keys must be field names or and/or/not, with operators nested under a field: { <fieldName>: { <operator>: <value> } }.${joinColumnHint}`,
