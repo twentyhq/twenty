@@ -1,10 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { USAGE_SPENDER_COLUMN_BY_SPENDER_TYPE } from 'src/engine/core-modules/usage-limit/constants/usage-spender-column-by-spender-type.constant';
 
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
+import { computeRowConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-row-consumed.util';
 import { isOperationInScope } from 'src/engine/core-modules/usage-limit/utils/is-operation-in-scope.util';
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 
@@ -42,17 +42,6 @@ const rowMatchesScope = (
   );
 };
 
-const computeRowConsumed = (
-  row: UsageConsumptionRow,
-  unit: UsageUnit,
-): number => {
-  if (unit === UsageUnit.CREDIT) {
-    return Number(row.creditsUsedMicro);
-  }
-
-  return row.unit === unit ? Number(row.quantity) : 0;
-};
-
 export const computeQuotaConsumed = ({
   rows,
   scope,
@@ -62,4 +51,4 @@ export const computeQuotaConsumed = ({
 }): number =>
   rows
     .filter((row) => rowMatchesScope(row, scope))
-    .reduce((total, row) => total + computeRowConsumed(row, scope.unit), 0);
+    .reduce((total, row) => total + computeRowConsumed({ row, scope }), 0);

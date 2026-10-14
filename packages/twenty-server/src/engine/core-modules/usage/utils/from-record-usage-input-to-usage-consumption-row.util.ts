@@ -22,5 +22,7 @@ export const fromRecordUsageInputToUsageConsumptionRow = ({
   creditsUsedMicro: isValidCreditAmountMicro(creditsUsedMicro)
     ? creditsUsedMicro
     : 0,
+  // debits charge the full cost; the consume script takes the user share out of it
+  userCreditsUsedMicro: 0,
   quantity,
 });

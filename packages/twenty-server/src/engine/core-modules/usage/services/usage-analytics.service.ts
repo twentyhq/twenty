@@ -22,7 +22,6 @@ import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
-import { type QuotaOperationTypes } from 'src/engine/core-modules/usage-limit/types/quota-operation-types.type';
 
 type CreditsUsedAmounts = {
   workspaceCreditsUsed: number;
@@ -119,6 +118,7 @@ export class UsageAnalyticsService {
       `SELECT operationType, unit, userWorkspaceId, apiKeyId, applicationId,
               agentId, workflowId, logicFunctionId,
               sum(creditsUsedMicro) AS creditsUsedMicro,
+              sum(userCreditsUsedMicro) AS userCreditsUsedMicro,
               sum(quantity) AS quantity
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
@@ -157,7 +157,7 @@ export class UsageAnalyticsService {
     periodAnchor: UsagePeriodAnchor;
   }): Promise<UsageConsumptionTotals> {
     const scopeFilter = buildUsageScopeFilter({
-      operationTypes: [operationType],
+      operationType,
       unit,
       spenderType,
       spenderId,
@@ -166,6 +166,7 @@ export class UsageAnalyticsService {
     const rows =
       await this.clickHouseService.selectOrThrow<UsageConsumptionTotals>(
         `SELECT sum(creditsUsedMicro) AS creditsUsedMicro,
+                sum(userCreditsUsedMicro) AS userCreditsUsedMicro,
                 sum(quantity) AS quantity
          FROM usageEvent
          WHERE workspaceId = {workspaceId:String}
@@ -183,6 +184,7 @@ export class UsageAnalyticsService {
 
     return {
       creditsUsedMicro: rows[0]?.creditsUsedMicro ?? 0,
+      userCreditsUsedMicro: rows[0]?.userCreditsUsedMicro ?? 0,
       quantity: rows[0]?.quantity ?? 0,
     };
   }
@@ -252,51 +254,6 @@ export class UsageAnalyticsService {
         workspaceId,
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
-      },
-    );
-
-    return Number(rows[0]?.total ?? 0);
-  }
-
-  async getUserCreditsUsedMicroForScope({
-    workspaceId,
-    resourceType,
-    operationTypes,
-    spenderType,
-    spenderId,
-    periodStart,
-    periodEnd,
-    periodAnchor,
-  }: {
-    workspaceId: string;
-    resourceType: UsageResourceType;
-    operationTypes: QuotaOperationTypes;
-    spenderType: SpenderType;
-    spenderId: string | null;
-    periodStart: Date;
-    periodEnd: Date;
-    periodAnchor: UsagePeriodAnchor;
-  }): Promise<number> {
-    const scopeFilter = buildUsageScopeFilter({
-      operationTypes,
-      unit: null,
-      spenderType,
-      spenderId,
-    });
-
-    const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
-      `SELECT sum(userCreditsUsedMicro) AS total
-       FROM usageEvent
-       WHERE workspaceId = {workspaceId:String}
-         AND resourceType = {resourceType:String}
-         ${buildUsagePeriodClause(periodAnchor)}
-         ${scopeFilter.clause}`,
-      {
-        workspaceId,
-        resourceType,
-        periodStart: formatDateTimeForClickHouse(periodStart),
-        periodEnd: formatDateTimeForClickHouse(periodEnd),
-        ...scopeFilter.params,
       },
     );
 

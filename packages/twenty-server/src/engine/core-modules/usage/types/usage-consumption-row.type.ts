@@ -8,5 +8,6 @@ export type UsageConsumptionRow = {
   workflowId: string;
   logicFunctionId: string;
   creditsUsedMicro: string | number;
+  userCreditsUsedMicro: string | number;
   quantity: string | number;
 };

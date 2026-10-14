@@ -17,6 +17,7 @@ const buildRow = (
   workflowId: '',
   logicFunctionId: '',
   creditsUsedMicro: '100',
+  userCreditsUsedMicro: '0',
   quantity: '10',
   ...overrides,
 });
@@ -226,5 +227,50 @@ describe('computeQuotaConsumed', () => {
         }),
       }),
     ).toBe(140);
+  });
+
+  describe('when user credits paid part of the credits', () => {
+    const rowsWithUserCredits = [
+      buildRow({ creditsUsedMicro: '100', userCreditsUsedMicro: '60' }),
+      buildRow({
+        userWorkspaceId: 'user-2',
+        creditsUsedMicro: '40',
+        userCreditsUsedMicro: '40',
+      }),
+    ];
+
+    it('counts only the workspace credits on a workspace-wide credit counter', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: rowsWithUserCredits,
+          scope: buildCounter({}),
+        }),
+      ).toBe(40);
+    });
+
+    it('counts every credit on a credit counter of one user', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: rowsWithUserCredits,
+          scope: buildCounter({
+            spenderType: 'userWorkspace',
+            spenderId: 'user-1',
+          }),
+        }),
+      ).toBe(100);
+    });
+
+    it('counts only the user credits on a user credit counter', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: rowsWithUserCredits,
+          scope: buildCounter({
+            unit: UsageUnit.USER_CREDIT,
+            spenderType: 'userWorkspace',
+            spenderId: 'user-1',
+          }),
+        }),
+      ).toBe(60);
+    });
   });
 });

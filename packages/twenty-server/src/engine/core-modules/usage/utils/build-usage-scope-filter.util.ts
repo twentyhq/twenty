@@ -4,35 +4,29 @@ import { USAGE_SPENDER_COLUMN_BY_SPENDER_TYPE } from 'src/engine/core-modules/us
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type QuotaOperationTypes } from 'src/engine/core-modules/usage-limit/types/quota-operation-types.type';
 
 export type UsageScopeFilter = {
   clause: string;
-  params: Record<string, string | string[]>;
+  params: Record<string, string>;
 };
 
 export const buildUsageScopeFilter = ({
-  operationTypes,
+  operationType,
   unit,
   spenderType,
   spenderId,
 }: {
-  operationTypes: QuotaOperationTypes;
+  operationType: UsageOperationType;
   unit: UsageUnit | null;
   spenderType: SpenderType;
   spenderId: string | null;
 }): UsageScopeFilter => {
   const clauses: string[] = [];
-  const params: Record<string, string | string[]> = {};
+  const params: Record<string, string> = {};
 
-  if (!operationTypes.includes(UsageOperationType.ALL)) {
-    if (operationTypes.length === 1) {
-      clauses.push('AND operationType = {operationType:String}');
-      params.operationType = operationTypes[0];
-    } else {
-      clauses.push('AND operationType IN ({operationTypes:Array(String)})');
-      params.operationTypes = operationTypes;
-    }
+  if (operationType !== UsageOperationType.ALL) {
+    clauses.push('AND operationType = {operationType:String}');
+    params.operationType = operationType;
   }
 
   if (isDefined(unit)) {

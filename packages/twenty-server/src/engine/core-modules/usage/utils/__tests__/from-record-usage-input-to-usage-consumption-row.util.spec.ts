@@ -32,6 +32,7 @@ describe('fromRecordUsageInputToUsageConsumptionRow', () => {
       workflowId: WORKFLOW_ID,
       logicFunctionId: '',
       creditsUsedMicro: 100,
+      userCreditsUsedMicro: 0,
       quantity: 1,
     });
   });

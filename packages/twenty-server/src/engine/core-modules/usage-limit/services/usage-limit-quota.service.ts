@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import uniqBy from 'lodash.uniqby';
-import {
-  assertUnreachable,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
@@ -50,7 +46,6 @@ import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
-import { isWorkspaceCreditLimitCounter } from 'src/engine/core-modules/usage-limit/utils/is-workspace-credit-limit-counter.util';
 import { splitUserCreditsAcrossEvents } from 'src/engine/core-modules/usage-limit/utils/split-user-credits-across-events.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -996,56 +991,19 @@ export class UsageLimitQuotaService {
 
     return Promise.all(
       counters.map(async (counter) => {
-        switch (counter.kind) {
-          case 'workspaceAllowance':
-            return this.getWorkspaceCreditsUsedMicro({
-              workspaceId,
-              counter,
-            });
-          case 'userAllowance':
-            return this.usageAnalyticsService.getUserCreditsUsedMicroForScope({
-              workspaceId,
-              resourceType: counter.resourceType,
-              operationTypes: counter.operationTypes,
-              spenderType: counter.spenderType,
-              spenderId: counter.spenderId,
-              periodStart: counter.periodStart,
-              periodEnd: counter.periodEnd,
-              periodAnchor: getPeriodAnchor(counter.periodUnit),
-            });
-          case 'limit': {
-            const periodGroupKey = buildPeriodGroupKey(counter);
-
-            const rowsRead =
-              rowsReadsByPeriodGroup.get(periodGroupKey) ??
-              this.fetchConsumptionRows({ workspaceId, counter });
-
-            rowsReadsByPeriodGroup.set(periodGroupKey, rowsRead);
-
-            const consumed = computeQuotaConsumed({
-              rows: await rowsRead,
-              scope: counter,
-            });
-
-            return isWorkspaceCreditLimitCounter(counter)
-              ? consumed -
-                  (await this.usageAnalyticsService.getUserCreditsUsedMicroForScope(
-                    {
-                      workspaceId,
-                      resourceType: counter.resourceType,
-                      operationTypes: counter.operationTypes,
-                      spenderType: counter.spenderType,
-                      spenderId: counter.spenderId,
-                      periodStart: counter.periodStart,
-                      periodEnd: counter.periodEnd,
-                      periodAnchor: getPeriodAnchor(counter.periodUnit),
-                    },
-                  ))
-              : consumed;
-          }
-          default:
-            return assertUnreachable(counter);
+        if (counter.kind === 'workspaceAllowance') {
+          return this.getWorkspaceCreditsUsedMicro({ workspaceId, counter });
         }
+
+        const periodGroupKey = buildPeriodGroupKey(counter);
+
+        const rowsRead =
+          rowsReadsByPeriodGroup.get(periodGroupKey) ??
+          this.fetchConsumptionRows({ workspaceId, counter });
+
+        rowsReadsByPeriodGroup.set(periodGroupKey, rowsRead);
+
+        return computeQuotaConsumed({ rows: await rowsRead, scope: counter });
       }),
     );
   }
@@ -1072,7 +1030,7 @@ export class UsageLimitQuotaService {
     counter,
   }: {
     workspaceId: string;
-    counter: LimitQuotaCounter;
+    counter: LimitQuotaCounter | UserAllowanceQuotaCounter;
   }): Promise<UsageConsumptionRow[]> {
     return this.usageAnalyticsService.getConsumptionRowsForAllScopes({
       workspaceId,
