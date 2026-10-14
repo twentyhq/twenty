@@ -212,6 +212,16 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
+    const identifyAccountLogicFunctionUniversalIdentifiers = new Set(
+      (manifest.connectionProviders ?? [])
+        .map(
+          (connectionProviderManifest) =>
+            connectionProviderManifest.identifyAccountLogicFunction
+              ?.universalIdentifier,
+        )
+        .filter(isDefined),
+    );
+
     for (const logicFunctionManifest of manifest.logicFunctions) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
@@ -221,6 +231,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             applicationSourceType,
             existingFlatLogicFunctionMaps:
               fromAllFlatEntityMaps.flatLogicFunctionMaps,
+            identifyAccountLogicFunctionUniversalIdentifiers,
             now,
           }),
         universalFlatEntityMapsToMutate:
