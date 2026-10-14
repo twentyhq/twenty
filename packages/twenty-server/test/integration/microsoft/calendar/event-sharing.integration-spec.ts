@@ -186,6 +186,41 @@ describe('Microsoft calendar event sharing (integration)', () => {
     expect(await findCalendarEventIds([eventId, otherEventId])).toHaveLength(1);
   }, 120000);
 
+  it('drops an attendee that the only copy no longer lists', async () => {
+    const { iCalUId, eventId } = buildEventIds();
+    const removedGuestHandle = `removed-guest-${randomUUID()}@example.com`;
+
+    microsoft.serveCalendarEvents(
+      [
+        microsoftCalendarEvent({
+          id: eventId,
+          iCalUId,
+          attendees: [attendee(HANDLE), attendee(removedGuestHandle)],
+        }),
+      ],
+      { deltaToken: deltaToken() },
+    );
+
+    await runCalendarSync(channel.calendarChannelId);
+
+    microsoft.serveCalendarEvents(
+      [
+        microsoftCalendarEvent({
+          id: eventId,
+          iCalUId,
+          attendees: [attendee(HANDLE)],
+        }),
+      ],
+      { deltaToken: deltaToken() },
+    );
+
+    await runCalendarSync(channel.calendarChannelId);
+
+    const [calendarEventId] = await findCalendarEventIds([eventId]);
+
+    expect(await findParticipantHandles(calendarEventId)).toEqual([HANDLE]);
+  }, 120000);
+
   it('keeps the attendees that a guest copy does not list', async () => {
     const { iCalUId, eventId, otherEventId } = buildEventIds();
     const guestHandle = `guest-${randomUUID()}@example.com`;
@@ -224,6 +259,70 @@ describe('Microsoft calendar event sharing (integration)', () => {
     expect(await findParticipantHandles(calendarEventId)).toEqual(
       [HANDLE, OTHER_HANDLE, guestHandle].sort(),
     );
+  }, 120000);
+
+  it('lets a guest copy change the fields and its own answer but not another attendee answer when the organizer does not sync', async () => {
+    const { iCalUId, eventId, otherEventId } = buildEventIds();
+    const guestHandle = `guest-${randomUUID()}@example.com`;
+    const organizer = {
+      emailAddress: { address: `organizer-${randomUUID()}@example.com` },
+    };
+    const firstTitle = `First title ${randomUUID()}`;
+    const guestTitle = `Guest title ${randomUUID()}`;
+
+    microsoft.serveCalendarEvents(
+      [
+        microsoftCalendarEvent({
+          id: eventId,
+          iCalUId,
+          subject: firstTitle,
+          organizer,
+          attendees: [
+            attendee(HANDLE),
+            attendee(OTHER_HANDLE, 'notResponded'),
+            attendee(guestHandle),
+          ],
+        }),
+      ],
+      { deltaToken: deltaToken() },
+    );
+
+    await runCalendarSync(channel.calendarChannelId);
+
+    microsoft.serveCalendarEvents(
+      [
+        microsoftCalendarEvent({
+          id: otherEventId,
+          iCalUId,
+          subject: guestTitle,
+          organizer,
+          attendees: [
+            attendee(HANDLE, 'declined'),
+            attendee(OTHER_HANDLE),
+            attendee(guestHandle, 'declined'),
+          ],
+        }),
+      ],
+      { deltaToken: deltaToken() },
+    );
+
+    await runCalendarSync(otherChannel.calendarChannelId);
+
+    const [calendarEventId] = await findCalendarEventIds([
+      eventId,
+      otherEventId,
+    ]);
+
+    expect(
+      await findImportedCalendarEventTitles([firstTitle, guestTitle]),
+    ).toEqual([guestTitle]);
+    expect(
+      await findParticipantResponseStatusByHandle(calendarEventId),
+    ).toEqual({
+      [HANDLE]: 'ACCEPTED',
+      [OTHER_HANDLE]: 'ACCEPTED',
+      [guestHandle]: 'ACCEPTED',
+    });
   }, 120000);
 
   it('lets the organizer copy record another attendee answer but keeps the attendees it does not list', async () => {

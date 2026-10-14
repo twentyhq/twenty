@@ -49,12 +49,18 @@ export class CalendarEventSharingService {
   public async lockCalendarEventSharingKeys({
     transactionScope,
     provider,
+    otherCalendarChannels,
     fetchedCalendarEvents,
   }: {
     transactionScope: WorkspaceTransactionScope;
     provider: ConnectedAccountProvider;
+    otherCalendarChannels: CalendarChannelEntity[];
     fetchedCalendarEvents: FetchedCalendarEvent[];
   }): Promise<void> {
+    if (otherCalendarChannels.length === 0) {
+      return;
+    }
+
     const lockNames = [
       ...new Set(
         fetchedCalendarEvents
@@ -222,13 +228,15 @@ export class CalendarEventSharingService {
   public async findOtherChannelIdsByCalendarEventId({
     transactionScope,
     calendarChannelId,
+    otherCalendarChannels,
     calendarEventIds,
   }: {
     transactionScope: WorkspaceTransactionScope;
     calendarChannelId: string;
+    otherCalendarChannels: CalendarChannelEntity[];
     calendarEventIds: string[];
   }): Promise<Map<string, string[]>> {
-    if (calendarEventIds.length === 0) {
+    if (calendarEventIds.length === 0 || otherCalendarChannels.length === 0) {
       return new Map();
     }
 

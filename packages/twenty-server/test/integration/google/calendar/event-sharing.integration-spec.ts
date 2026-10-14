@@ -155,6 +155,34 @@ describe('Google calendar event sharing (integration)', () => {
     expect(await findCalendarEventIds([sharedExternalId])).toHaveLength(1);
   }, 120000);
 
+  it('drops an attendee that the only copy no longer lists', async () => {
+    const externalId = `google-calendar-event-${randomUUID()}`;
+    const removedGuestHandle = `removed-guest-${randomUUID()}@example.com`;
+
+    google.serveCalendarEvents(
+      [
+        googleCalendarEvent({
+          id: externalId,
+          attendees: [attendee(HANDLE), attendee(removedGuestHandle)],
+        }),
+      ],
+      { nextSyncToken: syncToken() },
+    );
+
+    await runCalendarSync(channel.calendarChannelId);
+
+    google.serveCalendarEvents(
+      [googleCalendarEvent({ id: externalId, attendees: [attendee(HANDLE)] })],
+      { nextSyncToken: syncToken() },
+    );
+
+    await runCalendarSync(channel.calendarChannelId);
+
+    const [calendarEventId] = await findCalendarEventIds([externalId]);
+
+    expect(await findParticipantHandles(calendarEventId)).toEqual([HANDLE]);
+  }, 120000);
+
   it('keeps the attendees that a guest copy does not list', async () => {
     const sharedExternalId = `google-calendar-event-${randomUUID()}`;
     const guestHandle = `guest-${randomUUID()}@example.com`;
@@ -188,6 +216,63 @@ describe('Google calendar event sharing (integration)', () => {
     expect(await findParticipantHandles(calendarEventId)).toEqual(
       [HANDLE, OTHER_HANDLE, guestHandle].sort(),
     );
+  }, 120000);
+
+  it('lets a guest copy change the fields and its own answer but not another attendee answer when the organizer does not sync', async () => {
+    const sharedExternalId = `google-calendar-event-${randomUUID()}`;
+    const guestHandle = `guest-${randomUUID()}@example.com`;
+    const organizer = { email: `organizer-${randomUUID()}@example.com` };
+    const firstTitle = `First title ${randomUUID()}`;
+    const guestTitle = `Guest title ${randomUUID()}`;
+
+    google.serveCalendarEvents(
+      [
+        googleCalendarEvent({
+          id: sharedExternalId,
+          summary: firstTitle,
+          organizer,
+          attendees: [
+            attendee(HANDLE),
+            attendee(OTHER_HANDLE, 'needsAction'),
+            attendee(guestHandle),
+          ],
+        }),
+      ],
+      { nextSyncToken: syncToken() },
+    );
+
+    await runCalendarSync(channel.calendarChannelId);
+
+    google.serveCalendarEvents(
+      [
+        googleCalendarEvent({
+          id: sharedExternalId,
+          summary: guestTitle,
+          organizer,
+          attendees: [
+            attendee(HANDLE, 'declined'),
+            attendee(OTHER_HANDLE),
+            attendee(guestHandle, 'declined'),
+          ],
+        }),
+      ],
+      { nextSyncToken: syncToken() },
+    );
+
+    await runCalendarSync(otherChannel.calendarChannelId);
+
+    const [calendarEventId] = await findCalendarEventIds([sharedExternalId]);
+
+    expect(
+      await findImportedCalendarEventTitles([firstTitle, guestTitle]),
+    ).toEqual([guestTitle]);
+    expect(
+      await findParticipantResponseStatusByHandle(calendarEventId),
+    ).toEqual({
+      [HANDLE]: 'ACCEPTED',
+      [OTHER_HANDLE]: 'ACCEPTED',
+      [guestHandle]: 'ACCEPTED',
+    });
   }, 120000);
 
   it('lets the organizer copy record another attendee answer but keeps the attendees it does not list', async () => {
