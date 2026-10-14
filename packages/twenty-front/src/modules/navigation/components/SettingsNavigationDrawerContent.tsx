@@ -1,5 +1,6 @@
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
+import { DeveloperModeSwitch } from '@/navigation/components/DeveloperModeSwitch';
 import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
@@ -16,8 +17,10 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledAdvancedSwitchFixedContent = styled.div<{ isMobile: boolean }>`
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   flex-shrink: 0;
   margin-top: auto;
+  padding-top: ${themeCssVariables.spacing[2]};
   padding-bottom: ${({ isMobile }) =>
     isMobile ? MOBILE_NAVIGATION_BAR_CLEARANCE : '0'};
   padding-left: ${({ isMobile }) =>
@@ -48,15 +51,21 @@ export const SettingsNavigationDrawerContent = () => {
 
       <StyledAdvancedSwitchFixedContent isMobile={isMobile}>
         <NavigationDrawerSection>
-          <AdvancedSettingsSwitch
-            className={advancedSettingsSwitchClassName}
-            isAdvancedModeEnabled={isAdvancedModeEnabled}
-            setIsAdvancedModeEnabled={setAdvancedMode}
-            label={
-              isLogsSettingsSectionEnabled ? t`Developer mode` : t`Advanced`
-            }
-            isCompact={!isNavigationDrawerExpanded}
-          />
+          {isLogsSettingsSectionEnabled ? (
+            <DeveloperModeSwitch
+              isEnabled={isAdvancedModeEnabled}
+              onEnabledChange={setAdvancedMode}
+              isCompact={!isNavigationDrawerExpanded}
+            />
+          ) : (
+            <AdvancedSettingsSwitch
+              className={advancedSettingsSwitchClassName}
+              isAdvancedModeEnabled={isAdvancedModeEnabled}
+              setIsAdvancedModeEnabled={setAdvancedMode}
+              label={t`Advanced`}
+              isCompact={!isNavigationDrawerExpanded}
+            />
+          )}
         </NavigationDrawerSection>
       </StyledAdvancedSwitchFixedContent>
     </>
