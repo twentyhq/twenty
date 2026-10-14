@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import uniqBy from 'lodash.uniqby';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -27,6 +27,7 @@ import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type QuotaCounterEvent } from 'src/engine/core-modules/usage-limit/types/quota-counter-event.type';
+import { type UserAllowance } from 'src/engine/core-modules/usage-limit/types/user-allowance.type';
 
 type QuotaCounterScope = {
   workspaceId: string;
@@ -34,6 +35,10 @@ type QuotaCounterScope = {
   operationType: UsageOperationType;
   spenders: UsageSpenders;
 };
+
+const toUserAllowanceCounter = (
+  counter: LimitQuotaCounter,
+): UserAllowanceQuotaCounter => ({ ...counter, kind: 'userAllowance' });
 
 const buildCounterKeySignature = (counters: LimitQuotaCounter[]): string =>
   counters
@@ -157,18 +162,18 @@ export class UsageQuotaCounterBuilderService {
     };
   }
 
-  async buildUserAllowanceCounters({
+  async buildUserAllowance({
     workspaceId,
     userCreditCounters,
   }: {
     workspaceId: string;
     userCreditCounters: LimitQuotaCounter[][];
-  }): Promise<UserAllowanceQuotaCounter[]> {
+  }): Promise<UserAllowance | null> {
     const [scopeUserCreditCounters = []] = userCreditCounters;
     const scopeKeys = buildCounterKeySignature(scopeUserCreditCounters);
 
     if (
-      scopeUserCreditCounters.length === 0 ||
+      !isNonEmptyArray(scopeUserCreditCounters) ||
       !userCreditCounters.every(
         (counters) => buildCounterKeySignature(counters) === scopeKeys,
       ) ||
@@ -178,7 +183,7 @@ export class UsageQuotaCounterBuilderService {
           counter.limitValue > 0,
       )
     ) {
-      return [];
+      return null;
     }
 
     try {
@@ -187,17 +192,21 @@ export class UsageQuotaCounterBuilderService {
           workspaceId,
         );
 
-      return scopeUserCreditCounters.map((counter) => ({
-        ...counter,
-        kind: 'userAllowance',
+      const [firstCounter, ...otherCounters] = scopeUserCreditCounters;
+
+      return {
+        counters: [
+          toUserAllowanceCounter(firstCounter),
+          ...otherCounters.map(toUserAllowanceCounter),
+        ],
         fallback,
-      }));
+      };
     } catch (error) {
       this.logger.error(
         `User credits unavailable for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
 
-      return [];
+      return null;
     }
   }
 

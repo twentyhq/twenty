@@ -4,6 +4,7 @@ import { USAGE_SPENDER_COLUMN_BY_SPENDER_TYPE } from 'src/engine/core-modules/us
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type QuotaOperationTypes } from 'src/engine/core-modules/usage-limit/types/quota-operation-types.type';
 
 export type UsageScopeFilter = {
   clause: string;
@@ -16,7 +17,7 @@ export const buildUsageScopeFilter = ({
   spenderType,
   spenderId,
 }: {
-  operationTypes: UsageOperationType[];
+  operationTypes: QuotaOperationTypes;
   unit: UsageUnit | null;
   spenderType: SpenderType;
   spenderId: string | null;

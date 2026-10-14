@@ -22,6 +22,7 @@ import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
+import { type QuotaOperationTypes } from 'src/engine/core-modules/usage-limit/types/quota-operation-types.type';
 
 type CreditsUsedAmounts = {
   workspaceCreditsUsed: number;
@@ -269,7 +270,7 @@ export class UsageAnalyticsService {
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-    operationTypes: UsageOperationType[];
+    operationTypes: QuotaOperationTypes;
     spenderType: SpenderType;
     spenderId: string | null;
     periodStart: Date;

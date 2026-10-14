@@ -37,6 +37,7 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type QuotaEnforcement } from 'src/engine/core-modules/usage-limit/types/quota-enforcement.type';
+import { type UserAllowance } from 'src/engine/core-modules/usage-limit/types/user-allowance.type';
 
 type QuotaConsumeResult = {
   consumedValues: (number | null)[];
@@ -141,16 +142,16 @@ export class UsageQuotaCounterStoreService {
 
   async consumeUserAllowanceFirst({
     workspaceId,
-    userAllowanceCounters,
+    userAllowance,
     workspaceAllowanceCounter,
     amount,
   }: {
     workspaceId: string;
-    userAllowanceCounters: UserAllowanceQuotaCounter[];
+    userAllowance: UserAllowance;
     workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter | null;
     amount: number;
   }): Promise<UserAllowanceFirstConsumeResult> {
-    const [{ fallback }] = userAllowanceCounters;
+    const { counters: userAllowanceCounters, fallback } = userAllowance;
     const scriptWorkspaceAllowanceCounter =
       fallback === 'WORKSPACE_CREDITS' ? workspaceAllowanceCounter : null;
     const counters = isDefined(scriptWorkspaceAllowanceCounter)
@@ -160,7 +161,7 @@ export class UsageQuotaCounterStoreService {
     const firstAttempt = await this.attemptUserAllowanceFirstScript({
       workspaceId,
       counters,
-      userAllowanceCounters,
+      userAllowance,
       amount,
       warms: counters.map(() => null),
     });
@@ -238,7 +239,7 @@ export class UsageQuotaCounterStoreService {
     const secondAttempt = await this.attemptUserAllowanceFirstScript({
       workspaceId,
       counters: warmedCounters,
-      userAllowanceCounters,
+      userAllowance,
       amount,
       warms: warmedCounters.map(
         (counter) => warmByKey.get(counter.key) ?? null,
@@ -387,17 +388,17 @@ export class UsageQuotaCounterStoreService {
   private async attemptUserAllowanceFirstScript({
     workspaceId,
     counters,
-    userAllowanceCounters,
+    userAllowance,
     amount,
     warms,
   }: {
     workspaceId: string;
     counters: (UserAllowanceQuotaCounter | WorkspaceAllowanceQuotaCounter)[];
-    userAllowanceCounters: UserAllowanceQuotaCounter[];
+    userAllowance: UserAllowance;
     amount: number;
     warms: ({ value: number; ttl: number } | null)[];
   }): Promise<UserAllowanceFirstScriptAttempt> {
-    const [{ fallback }] = userAllowanceCounters;
+    const { counters: userAllowanceCounters, fallback } = userAllowance;
 
     let scriptArguments: string[];
 

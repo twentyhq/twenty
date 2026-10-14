@@ -30,7 +30,7 @@ describe('buildQuotaCounterKey', () => {
     );
   });
 
-  it.each([
+  it.each<[string, Partial<CounterIdentity>]>([
     ['operationTypes', { operationTypes: [UsageOperationType.WEB_SEARCH] }],
     ['unit', { unit: UsageUnit.TOKEN }],
     ['spenderId', { spenderId: 'user-1' }],

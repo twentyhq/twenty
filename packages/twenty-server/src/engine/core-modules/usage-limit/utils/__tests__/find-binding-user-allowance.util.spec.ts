@@ -24,7 +24,6 @@ const buildUserAllowanceCounter = ({
   spenderType: 'userWorkspace',
   spenderId: 'user-workspace-1',
   operationTypes: [UsageOperationType.ALL],
-  fallback: 'WORKSPACE_CREDITS',
 });
 
 const dayCounter = buildUserAllowanceCounter({

@@ -36,4 +36,19 @@ describe('getUsageLimitDefaultOperationTypes', () => {
       UsageOperationType.WEB_SEARCH,
     ]);
   });
+
+  it('declares distinct operations on every default, with ALL only on its own', () => {
+    const operationTypesByDefault = Object.values(UsageResourceType)
+      .flatMap((resourceType) => findUsageLimitDefaults({ resourceType }))
+      .map(getUsageLimitDefaultOperationTypes);
+
+    expect(
+      operationTypesByDefault.filter(
+        (operationTypes) =>
+          new Set(operationTypes).size !== operationTypes.length ||
+          (operationTypes.includes(UsageOperationType.ALL) &&
+            operationTypes.length > 1),
+      ),
+    ).toEqual([]);
+  });
 });

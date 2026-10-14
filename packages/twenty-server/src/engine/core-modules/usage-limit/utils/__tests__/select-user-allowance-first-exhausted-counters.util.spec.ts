@@ -41,9 +41,7 @@ const workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter = {
   periodEnd: PERIOD_END,
 };
 
-const buildUserAllowanceCounter = (
-  fallback: UserCreditsFallbackMode,
-): UserAllowanceQuotaCounter => ({
+const buildUserAllowanceCounter = (): UserAllowanceQuotaCounter => ({
   kind: 'userAllowance',
   key: 'user-allowance-key',
   limitValue: USER_ALLOWANCE_LIMIT,
@@ -56,7 +54,6 @@ const buildUserAllowanceCounter = (
   spenderId: 'user-workspace-1',
   periodStart: PERIOD_START,
   periodEnd: new Date('2026-08-20T00:00:00.000Z'),
-  fallback,
 });
 
 const toConsumed = (state: CounterState, limitValue: number): number | null => {
@@ -81,7 +78,7 @@ const select = ({
   workspaceAllowance: CounterState;
   isLimitExhausted?: boolean;
 }) => {
-  const userAllowanceCounter = buildUserAllowanceCounter(fallback);
+  const userAllowanceCounter = buildUserAllowanceCounter();
   const exhaustedCounters: QuotaCounter[] = [
     ...(isLimitExhausted ? [limitCounter] : []),
     ...(workspaceAllowance === 'reached' ? [workspaceAllowanceCounter] : []),
@@ -90,7 +87,7 @@ const select = ({
 
   return selectUserAllowanceFirstExhaustedCounters({
     exhaustedCounters,
-    userAllowanceCounters: [userAllowanceCounter],
+    userAllowance: { counters: [userAllowanceCounter], fallback },
     userAllowanceConsumedValues: [
       toConsumed(userAllowance, USER_ALLOWANCE_LIMIT),
     ],
@@ -285,7 +282,7 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
   ])(
     'gates on an exhausted workspace credit limit only once the workspace pays, in $fallback mode with the userAllowance $userAllowance',
     ({ fallback, userAllowance, expectedKinds }) => {
-      const userAllowanceCounter = buildUserAllowanceCounter(fallback);
+      const userAllowanceCounter = buildUserAllowanceCounter();
       const workspaceCreditLimitCounter: LimitQuotaCounter = {
         ...limitCounter,
         key: 'workspace-credit-limit-key',
@@ -298,7 +295,7 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
           workspaceCreditLimitCounter,
           ...(userAllowance === 'reached' ? [userAllowanceCounter] : []),
         ],
-        userAllowanceCounters: [userAllowanceCounter],
+        userAllowance: { counters: [userAllowanceCounter], fallback },
         userAllowanceConsumedValues: [
           toConsumed(userAllowance, USER_ALLOWANCE_LIMIT),
         ],
@@ -322,15 +319,15 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
     'treats the user credits as used up once any window is, in $fallback mode',
     ({ fallback, expectedKinds }) => {
       const dayCounter: UserAllowanceQuotaCounter = {
-        ...buildUserAllowanceCounter(fallback),
+        ...buildUserAllowanceCounter(),
         key: 'user-allowance-day-key',
         periodUnit: 'day',
       };
-      const weekCounter = buildUserAllowanceCounter(fallback);
+      const weekCounter = buildUserAllowanceCounter();
 
       const selection = selectUserAllowanceFirstExhaustedCounters({
         exhaustedCounters: [dayCounter],
-        userAllowanceCounters: [dayCounter, weekCounter],
+        userAllowance: { counters: [dayCounter, weekCounter], fallback },
         userAllowanceConsumedValues: [
           USER_ALLOWANCE_LIMIT,
           USER_ALLOWANCE_LIMIT - 1,
@@ -355,7 +352,7 @@ describe('selectUserAllowanceFirstExhaustedCounters', () => {
     expect(
       selectUserAllowanceFirstExhaustedCounters({
         exhaustedCounters,
-        userAllowanceCounters: [],
+        userAllowance: null,
         userAllowanceConsumedValues: [],
         workspaceAllowanceConsumed: WORKSPACE_ALLOWANCE_LIMIT,
       }),

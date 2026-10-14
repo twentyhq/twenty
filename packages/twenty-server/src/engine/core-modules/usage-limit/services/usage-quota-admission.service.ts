@@ -214,15 +214,17 @@ export class UsageQuotaAdmissionService {
       ),
     ]);
 
-    const userAllowanceCounters =
-      await this.usageQuotaCounterBuilderService.buildUserAllowanceCounters({
+    const userAllowance =
+      await this.usageQuotaCounterBuilderService.buildUserAllowance({
         workspaceId,
         userCreditCounters,
       });
 
-    if (requireUserAllowanceCounter && userAllowanceCounters.length === 0) {
+    if (requireUserAllowanceCounter && !isDefined(userAllowance)) {
       return QUOTA_ADMISSION_WITHOUT_USER_ALLOWANCE_COUNTER;
     }
+
+    const userAllowanceCounters = userAllowance?.counters ?? [];
 
     const counters: QuotaCounter[] = [
       ...limitCounters,
@@ -259,7 +261,7 @@ export class UsageQuotaAdmissionService {
           consumedValues: [...consumedValues, ...userAllowanceConsumedValues],
           cost,
         }),
-        userAllowanceCounters,
+        userAllowance,
         userAllowanceConsumedValues,
         workspaceAllowanceConsumed: isDefined(workspaceAllowanceCounter)
           ? (consumedValues[counters.indexOf(workspaceAllowanceCounter)] ??

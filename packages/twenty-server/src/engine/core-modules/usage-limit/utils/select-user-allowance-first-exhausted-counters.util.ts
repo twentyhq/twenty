@@ -1,18 +1,18 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { type UserAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/user-allowance-quota-counter.type';
 import { type QuotaAdmission } from 'src/engine/core-modules/usage-limit/types/quota-admission.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { isWorkspaceCreditLimitCounter } from 'src/engine/core-modules/usage-limit/utils/is-workspace-credit-limit-counter.util';
+import { type UserAllowance } from 'src/engine/core-modules/usage-limit/types/user-allowance.type';
 
 export const selectUserAllowanceFirstExhaustedCounters = ({
   exhaustedCounters,
-  userAllowanceCounters,
+  userAllowance,
   userAllowanceConsumedValues,
   workspaceAllowanceConsumed,
 }: {
   exhaustedCounters: QuotaCounter[];
-  userAllowanceCounters: UserAllowanceQuotaCounter[];
+  userAllowance: UserAllowance | null;
   userAllowanceConsumedValues: (number | null)[];
   workspaceAllowanceConsumed: number | null;
 }): Omit<QuotaAdmission, 'exhaustedScope'> & {
@@ -22,9 +22,7 @@ export const selectUserAllowanceFirstExhaustedCounters = ({
     (counter) => counter.kind === 'workspaceAllowance',
   );
 
-  const [userAllowanceCounter] = userAllowanceCounters;
-
-  if (!isDefined(userAllowanceCounter)) {
+  if (!isDefined(userAllowance)) {
     return {
       exhaustedCounters,
       hasUserAllowanceCounter: false,
@@ -40,7 +38,7 @@ export const selectUserAllowanceFirstExhaustedCounters = ({
 
   const isPaidWithWorkspaceCredits =
     !isUserAllowanceRead ||
-    (userAllowanceCounter.fallback === 'WORKSPACE_CREDITS' &&
+    (userAllowance.fallback === 'WORKSPACE_CREDITS' &&
       isUserAllowanceExhausted);
 
   const selectedExhaustedCounters = exhaustedCounters.filter((counter) => {
@@ -52,7 +50,7 @@ export const selectUserAllowanceFirstExhaustedCounters = ({
       case 'workspaceAllowance':
         return isPaidWithWorkspaceCredits;
       case 'userAllowance':
-        return userAllowanceCounter.fallback === 'STOP';
+        return userAllowance.fallback === 'STOP';
       default:
         return assertUnreachable(counter);
     }

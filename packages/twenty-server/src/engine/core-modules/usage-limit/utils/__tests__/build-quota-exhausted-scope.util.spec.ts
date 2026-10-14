@@ -52,7 +52,6 @@ const userAllowanceCounter: UserAllowanceQuotaCounter = {
   spenderId: 'user-workspace-1',
   periodStart: new Date('2026-07-25T00:00:00.000Z'),
   periodEnd: USER_ALLOWANCE_PERIOD_END,
-  fallback: 'STOP',
 };
 
 describe('buildQuotaExhaustedScope', () => {

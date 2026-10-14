@@ -179,20 +179,24 @@ export class UsageQuotaConsumptionService {
         events,
       });
 
-    const userAllowanceCounters =
-      await this.usageQuotaCounterBuilderService.buildUserAllowanceCounters({
+    const userAllowance =
+      await this.usageQuotaCounterBuilderService.buildUserAllowance({
         workspaceId,
         userCreditCounters,
       });
 
+    if (!isDefined(userAllowance)) {
+      return null;
+    }
+
     const { consumedValues } =
       await this.usageQuotaCounterStoreService.readCountersAdmittingOnFailure({
         workspaceId,
-        counters: userAllowanceCounters,
+        counters: userAllowance.counters,
       });
 
     const bindingUserAllowance = findBindingUserAllowance({
-      userAllowanceCounters,
+      userAllowanceCounters: userAllowance.counters,
       userAllowanceConsumedValues: consumedValues,
     });
 
@@ -204,7 +208,7 @@ export class UsageQuotaConsumptionService {
       limitValue: bindingUserAllowance.counter.limitValue,
       consumedValue: bindingUserAllowance.consumedValue,
       periodEnd: bindingUserAllowance.counter.periodEnd,
-      fallback: bindingUserAllowance.counter.fallback,
+      fallback: userAllowance.fallback,
     };
   }
 

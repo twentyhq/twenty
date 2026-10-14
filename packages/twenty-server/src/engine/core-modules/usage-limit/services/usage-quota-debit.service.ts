@@ -23,6 +23,7 @@ import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/recor
 import { fromRecordUsageInputToUsageConsumptionRow } from 'src/engine/core-modules/usage/utils/from-record-usage-input-to-usage-consumption-row.util';
 import { UsageQuotaCounterBuilderService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter-builder.service';
 import { UsageQuotaCounterStoreService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter-store.service';
+import { type UserAllowance } from 'src/engine/core-modules/usage-limit/types/user-allowance.type';
 
 @Injectable()
 export class UsageQuotaDebitService {
@@ -95,21 +96,21 @@ export class UsageQuotaDebitService {
         ),
       ]);
 
-      const userAllowanceCounters =
-        await this.usageQuotaCounterBuilderService.buildUserAllowanceCounters({
+      const userAllowance =
+        await this.usageQuotaCounterBuilderService.buildUserAllowance({
           workspaceId,
           userCreditCounters,
         });
 
       const amount = computeWorkspaceAllowanceDebitAmount({ events });
 
-      if (userAllowanceCounters.length > 0 && amount > 0) {
+      if (isDefined(userAllowance) && amount > 0) {
         return await this.debitUserAllowanceFirst({
           workspaceId,
           events,
           limitCounters,
           workspaceAllowanceCounter,
-          userAllowanceCounters,
+          userAllowance,
           amount,
         });
       }
@@ -203,17 +204,17 @@ export class UsageQuotaDebitService {
     events,
     limitCounters,
     workspaceAllowanceCounter,
-    userAllowanceCounters,
+    userAllowance,
     amount,
   }: {
     workspaceId: string;
     events: RecordUsageInput[];
     limitCounters: LimitQuotaCounter[];
     workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter | null;
-    userAllowanceCounters: UserAllowanceQuotaCounter[];
+    userAllowance: UserAllowance;
     amount: number;
   }): Promise<QuotaDebitResult> {
-    const [{ fallback }] = userAllowanceCounters;
+    const { counters: userAllowanceCounters, fallback } = userAllowance;
 
     const limitDebits = buildQuotaDebits({
       counters: limitCounters.filter(
@@ -230,7 +231,7 @@ export class UsageQuotaDebitService {
       }),
       this.usageQuotaCounterStoreService.consumeUserAllowanceFirst({
         workspaceId,
-        userAllowanceCounters,
+        userAllowance,
         workspaceAllowanceCounter,
         amount,
       }),

@@ -32,7 +32,6 @@ const userAllowanceCounter: UserAllowanceQuotaCounter = {
   spenderId: 'user-workspace-1',
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
-  fallback: 'WORKSPACE_CREDITS',
 };
 
 const buildLimitCounter = (unit: UsageUnit): LimitQuotaCounter => ({
