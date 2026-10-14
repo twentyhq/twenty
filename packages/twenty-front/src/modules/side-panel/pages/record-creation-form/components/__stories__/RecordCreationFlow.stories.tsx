@@ -481,7 +481,7 @@ export const SubmitWithControlEnter: Story = {
     submitCompany(canvasElement, '{Control>}{Enter}{/Control}'),
 };
 
-export const CreateAnotherWithCommandShiftEnter: Story = {
+export const CreateAnotherWithOptionEnter: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
@@ -491,7 +491,7 @@ export const CreateAnotherWithCommandShiftEnter: Story = {
     await userEvent.click(nameInput);
     await userEvent.clear(nameInput);
     await userEvent.type(nameInput, 'Acme');
-    await userEvent.keyboard('{Meta>}{Shift>}{Enter}{/Shift}{/Meta}');
+    await userEvent.keyboard('{Alt>}{Enter}{/Alt}');
     await waitFor(() => expect(createCompanyRequest).toHaveBeenCalledTimes(1));
     await expect(createCompanyRequest).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'Acme', position: 'first' }),
@@ -518,6 +518,7 @@ export const IgnoreNonSubmitKeys: Story = {
     const input = await canvas.findByRole('textbox');
     await userEvent.click(input);
     await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard('{Meta>}{Shift>}{Enter}{/Shift}{/Meta}');
     await userEvent.keyboard('{Control>}{Alt>}{Enter}{/Alt}{/Control}');
     fireEvent.keyDown(input, {
       key: 'Enter',

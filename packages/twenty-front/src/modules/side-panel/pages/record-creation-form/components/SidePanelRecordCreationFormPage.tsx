@@ -4,7 +4,6 @@ import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { SidePanelOptionsDropdown } from '@/side-panel/components/SidePanelOptionsDropdown';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -307,12 +306,11 @@ const SidePanelRecordCreationForm = ({
     keys: [
       `${Key.Meta}+${Key.Enter}`,
       `${Key.Control}+${Key.Enter}`,
-      `${Key.Meta}+${Key.Shift}+${Key.Enter}`,
-      `${Key.Control}+${Key.Shift}+${Key.Enter}`,
+      `${Key.Alt}+${Key.Enter}`,
     ],
     focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
     callback: (keyboardEvent) =>
-      keyboardEvent.shiftKey ? handleCreateAnotherClick() : handleCreateClick(),
+      keyboardEvent.altKey ? handleCreateAnotherClick() : handleCreateClick(),
     dependencies: [currentFocusId, handleCreateClick, handleCreateAnotherClick],
   });
 
@@ -392,11 +390,10 @@ const SidePanelRecordCreationForm = ({
           <SidePanelOptionsDropdown
             key="options"
             dropdownId={optionsDropdownId}
-            width={GenericDropdownContentWidth.Large}
           >
             <Dropdown.ActionItem
               startIcon={<IconPlus />}
-              shortcut={['Mod', 'Shift', 'Enter']}
+              shortcut={['Alt', 'Enter']}
               disabled={isSubmitting}
               onClick={handleCreateAnotherClick}
             >{t`Create another`}</Dropdown.ActionItem>
