@@ -6,7 +6,6 @@ import { googleCalendarEvent } from 'test/integration/google/mocks/google-calend
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
-import { findCalendarEventAssociationChannelIds } from 'test/integration/utils/find-calendar-event-association-channel-ids.util';
 import {
   findCreatedPeopleEmails,
   findImportedCalendarEventTitles,
@@ -27,22 +26,33 @@ const runCalendarSync = async (calendarChannelId: string): Promise<void> => {
   await runCalendarChannelEventsImport(calendarChannelId);
 };
 
-const findCalendarEventIdsByExternalId = async (
-  eventExternalId: string,
-): Promise<string[]> => {
-  const associations = await findRecordNodesByFilter<{
+const findAssociations = async (eventExternalIds: string[]) =>
+  findRecordNodesByFilter<{
     calendarEventId: string;
+    calendarChannelId: string;
   }>(
     'calendarChannelEventAssociation',
     'calendarChannelEventAssociations',
-    'calendarEventId',
-    { eventExternalId: { eq: eventExternalId } },
+    'calendarEventId calendarChannelId',
+    { eventExternalId: { in: eventExternalIds } },
   );
 
-  return [
-    ...new Set(associations.map(({ calendarEventId }) => calendarEventId)),
-  ];
-};
+const findAssociationChannelIds = async (
+  eventExternalIds: string[],
+): Promise<string[]> =>
+  (await findAssociations(eventExternalIds))
+    .map(({ calendarChannelId }) => calendarChannelId)
+    .sort();
+
+const findCalendarEventIds = async (
+  eventExternalIds: string[],
+): Promise<string[]> => [
+  ...new Set(
+    (await findAssociations(eventExternalIds)).map(
+      ({ calendarEventId }) => calendarEventId,
+    ),
+  ),
+];
 
 const findParticipantHandles = async (
   calendarEventId: string,
@@ -119,14 +129,10 @@ describe('Google calendar event sharing (integration)', () => {
     await runCalendarSync(channel.calendarChannelId);
     await runCalendarSync(otherChannel.calendarChannelId);
 
-    expect(
-      await findCalendarEventAssociationChannelIds(sharedExternalId),
-    ).toEqual(
+    expect(await findAssociationChannelIds([sharedExternalId])).toEqual(
       [channel.calendarChannelId, otherChannel.calendarChannelId].sort(),
     );
-    expect(
-      await findCalendarEventIdsByExternalId(sharedExternalId),
-    ).toHaveLength(1);
+    expect(await findCalendarEventIds([sharedExternalId])).toHaveLength(1);
     expect(await findImportedCalendarEventTitles([sharedTitle])).toEqual([
       sharedTitle,
     ]);
@@ -143,14 +149,10 @@ describe('Google calendar event sharing (integration)', () => {
     await runCalendarSync(channel.calendarChannelId);
     await runCalendarChannelWebhookSync(otherChannel.calendarChannelId);
 
-    expect(
-      await findCalendarEventAssociationChannelIds(sharedExternalId),
-    ).toEqual(
+    expect(await findAssociationChannelIds([sharedExternalId])).toEqual(
       [channel.calendarChannelId, otherChannel.calendarChannelId].sort(),
     );
-    expect(
-      await findCalendarEventIdsByExternalId(sharedExternalId),
-    ).toHaveLength(1);
+    expect(await findCalendarEventIds([sharedExternalId])).toHaveLength(1);
   }, 120000);
 
   it('keeps the attendees that a guest copy does not list', async () => {
@@ -181,8 +183,7 @@ describe('Google calendar event sharing (integration)', () => {
 
     await runCalendarSync(otherChannel.calendarChannelId);
 
-    const [calendarEventId] =
-      await findCalendarEventIdsByExternalId(sharedExternalId);
+    const [calendarEventId] = await findCalendarEventIds([sharedExternalId]);
 
     expect(await findParticipantHandles(calendarEventId)).toEqual(
       [HANDLE, OTHER_HANDLE, guestHandle].sort(),
@@ -228,8 +229,7 @@ describe('Google calendar event sharing (integration)', () => {
 
     await runCalendarSync(otherChannel.calendarChannelId);
 
-    const [calendarEventId] =
-      await findCalendarEventIdsByExternalId(sharedExternalId);
+    const [calendarEventId] = await findCalendarEventIds([sharedExternalId]);
 
     expect(
       await findParticipantResponseStatusByHandle(calendarEventId),
@@ -278,8 +278,7 @@ describe('Google calendar event sharing (integration)', () => {
 
     await runCalendarSync(channel.calendarChannelId);
 
-    const [calendarEventId] =
-      await findCalendarEventIdsByExternalId(sharedExternalId);
+    const [calendarEventId] = await findCalendarEventIds([sharedExternalId]);
 
     expect(
       await findImportedCalendarEventTitles([organizerTitle, guestTitle]),
@@ -348,8 +347,7 @@ describe('Google calendar event sharing (integration)', () => {
       });
     }
 
-    const [calendarEventId] =
-      await findCalendarEventIdsByExternalId(sharedExternalId);
+    const [calendarEventId] = await findCalendarEventIds([sharedExternalId]);
 
     expect(await findParticipantHandles(calendarEventId)).toEqual(
       [HANDLE, OTHER_HANDLE, guestHandle].sort(),
@@ -427,10 +425,12 @@ describe('Google calendar event sharing (integration)', () => {
 
     await runCalendarSync(otherChannel.calendarChannelId);
 
-    const [firstCalendarEventId] =
-      await findCalendarEventIdsByExternalId(firstOccurrenceId);
-    const [secondCalendarEventId] =
-      await findCalendarEventIdsByExternalId(secondOccurrenceId);
+    const [firstCalendarEventId] = await findCalendarEventIds([
+      firstOccurrenceId,
+    ]);
+    const [secondCalendarEventId] = await findCalendarEventIds([
+      secondOccurrenceId,
+    ]);
 
     expect(firstCalendarEventId).not.toBe(secondCalendarEventId);
   }, 120000);
