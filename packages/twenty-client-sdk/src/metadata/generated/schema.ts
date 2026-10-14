@@ -2984,6 +2984,7 @@ export interface RichTextBody {
 export interface Role {
     agents: Agent[]
     apiKeys: ApiKeyForRole[]
+    applicationId: Scalars['UUID']
     canAccessAllTools: Scalars['Boolean']
     canBeAssignedToAgents: Scalars['Boolean']
     canBeAssignedToApiKeys: Scalars['Boolean']
@@ -7271,6 +7272,7 @@ export interface RichTextBodyGenqlSelection{
 export interface RoleGenqlSelection{
     agents?: AgentGenqlSelection
     apiKeys?: ApiKeyForRoleGenqlSelection
+    applicationId?: boolean | number
     canAccessAllTools?: boolean | number
     canBeAssignedToAgents?: boolean | number
     canBeAssignedToApiKeys?: boolean | number
