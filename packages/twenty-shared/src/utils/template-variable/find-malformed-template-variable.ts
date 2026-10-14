@@ -1,17 +1,11 @@
-import { isDefined } from '@/utils/validation/isDefined';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/constants/CaptureAllVariableTagInnerRegex';
-
-import { parseTemplateVariableWithFallback } from './parse-template-variable-with-fallback';
+import { replaceTemplateVariables } from './replace-template-variables';
 
 export const findMalformedTemplateVariable = (
   template: string,
 ): string | undefined => {
-  const templateWithoutValidVariables = template.replace(
-    CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
-    (rawTemplateVariable) =>
-      isDefined(parseTemplateVariableWithFallback(rawTemplateVariable))
-        ? ''
-        : rawTemplateVariable,
+  const templateWithoutValidVariables = replaceTemplateVariables(
+    template,
+    () => '',
   );
   const malformedStartIndex = templateWithoutValidVariables.indexOf('{{');
 

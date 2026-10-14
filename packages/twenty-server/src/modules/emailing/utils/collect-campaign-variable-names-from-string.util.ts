@@ -3,8 +3,8 @@ import {
   findMalformedTemplateVariable,
   isDefined,
   parseTemplateVariableWithFallback,
+  TEMPLATE_VARIABLE_PATTERN,
 } from 'twenty-shared/utils';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 
 import {
   EmailingDomainException,
@@ -35,7 +35,7 @@ export const collectCampaignVariableNamesFromString = (
   }
 
   for (const [rawTemplateVariable] of value.matchAll(
-    CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+    TEMPLATE_VARIABLE_PATTERN,
   )) {
     const campaignVariable =
       parseTemplateVariableWithFallback(rawTemplateVariable);

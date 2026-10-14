@@ -242,6 +242,8 @@ export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFro
 export { findMalformedTemplateVariable } from './template-variable/find-malformed-template-variable';
 export { formatTemplateVariableWithFallback } from './template-variable/format-template-variable-with-fallback';
 export { parseTemplateVariableWithFallback } from './template-variable/parse-template-variable-with-fallback';
+export { replaceTemplateVariables } from './template-variable/replace-template-variables';
+export { TEMPLATE_VARIABLE_PATTERN } from './template-variable/template-variable-pattern';
 export type { TemplateVariableWithFallback } from './template-variable/template-variable-with-fallback';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
