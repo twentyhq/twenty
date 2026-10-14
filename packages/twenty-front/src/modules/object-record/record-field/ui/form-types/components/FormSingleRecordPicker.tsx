@@ -16,7 +16,6 @@ import { Field } from 'twenty-ui/primitives/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
@@ -126,16 +125,9 @@ export const FormSingleRecordPicker = ({
 
   const componentId = useId();
   const dropdownId = `form-record-picker-${componentId}`;
-  const dropdownTriggerId = `${dropdownId}-trigger`;
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
-  const { openDropdown } = useOpenDropdown();
-
-  const closeDropdownAndFocusTrigger = () => {
-    closeDropdown(dropdownId);
-    document.getElementById(dropdownTriggerId)?.focus();
-  };
 
   const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
@@ -155,7 +147,7 @@ export const FormSingleRecordPicker = ({
       } else {
         onChange(null);
       }
-      closeDropdownAndFocusTrigger();
+      closeDropdown(dropdownId);
 
       return;
     }
@@ -167,7 +159,7 @@ export const FormSingleRecordPicker = ({
     } else {
       onChange(selectedMorphItem.recordId);
     }
-    closeDropdownAndFocusTrigger();
+    closeDropdown(dropdownId);
   };
 
   const handleCreateRecord = async (searchInput?: string) => {
@@ -188,19 +180,6 @@ export const FormSingleRecordPicker = ({
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
-
-  const handleTriggerKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    const isOpenKey = event.key === 'Enter' || event.key === ' ';
-    const hasModifier =
-      event.metaKey || event.ctrlKey || event.altKey || event.shiftKey;
-
-    if (event.target !== event.currentTarget || !isOpenKey || hasModifier) {
-      return;
-    }
-
-    event.preventDefault();
-    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
-  };
 
   const handleOpenDropdown = () => {
     if (defaultValue === null) {
@@ -247,11 +226,7 @@ export const FormSingleRecordPicker = ({
                 y: parseInt(theme.spacing[1], 10),
               }}
               clickableComponent={
-                <StyledFormSelectContainerWrapper
-                  id={dropdownTriggerId}
-                  tabIndex={0}
-                  onKeyDown={handleTriggerKeyDown}
-                >
+                <StyledFormSelectContainerWrapper>
                   <FormFieldInputInnerContainer
                     formFieldInputInstanceId={componentId}
                     hasRightElement={isDefined(VariablePicker) && !disabled}
