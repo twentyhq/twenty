@@ -67,16 +67,44 @@ describe('getTeamsTranscriptHistoryView', () => {
     });
     expect(
       getTeamsTranscriptHistoryView({
-        state: { ...STATE, phase: 'counted', pageCount: 59 },
+        state: {
+          ...STATE,
+          phase: 'counted',
+          transcriptCount: 100,
+          pageCount: 59,
+        },
         isStalled: false,
       }),
     ).toMatchObject({ importEstimate: { unit: 'minute', count: 59 } });
     expect(
       getTeamsTranscriptHistoryView({
-        state: { ...STATE, phase: 'counted', pageCount: 61 },
+        state: {
+          ...STATE,
+          phase: 'counted',
+          transcriptCount: 100,
+          pageCount: 61,
+        },
         isStalled: false,
       }),
     ).toMatchObject({ importEstimate: { unit: 'hour', count: 2 } });
+  });
+
+  it('should only count the pages that can import a transcript in the estimate', () => {
+    expect(
+      getTeamsTranscriptHistoryView({
+        state: {
+          ...STATE,
+          phase: 'counted',
+          transcriptCount: 12,
+          alreadyImportedCount: 7,
+          pageCount: 40,
+        },
+        isStalled: false,
+      }),
+    ).toMatchObject({
+      toImportCount: 5,
+      importEstimate: { unit: 'minute', count: 5 },
+    });
   });
 
   it('should report the count progress while counting', () => {
