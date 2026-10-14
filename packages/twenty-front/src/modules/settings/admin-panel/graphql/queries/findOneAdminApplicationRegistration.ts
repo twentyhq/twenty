@@ -6,6 +6,7 @@ export const FIND_ONE_ADMIN_APPLICATION_REGISTRATION = gql`
   query FindOneAdminApplicationRegistration($id: String!) {
     findOneAdminApplicationRegistration(id: $id) {
       ...ApplicationRegistrationFragment
+      configurationIssues
     }
   }
   ${APPLICATION_REGISTRATION_FRAGMENT}

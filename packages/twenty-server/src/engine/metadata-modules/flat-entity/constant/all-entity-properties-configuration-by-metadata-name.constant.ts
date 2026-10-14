@@ -1778,6 +1778,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    widgetAvailability: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalWidgetAvailability',
+    },
     usesSdkClient: {
       toCompare: true,
       toStringify: false,
@@ -1910,6 +1915,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     oauthConfig: {
       toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+    },
+    identifyAccountLogicFunctionUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
       universalProperty: undefined,
     },
     onConnectLogicFunctionUniversalIdentifier: {

@@ -59,6 +59,9 @@
       }
     </script>
     <style>
+      /* react-data-grid declares its layer when it loads; keep it below twenty-ui. */
+      @layer rdg, twenty-ui;
+
       :root {
         /* THEME_DARK.background.secondary */
         --theme-dark-background-secondary: #1b1b1b;

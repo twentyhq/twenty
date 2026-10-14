@@ -30,7 +30,9 @@ import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
+import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
+import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -61,6 +63,7 @@ export class ServerRouteTriggerService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly serverRouteAuthorizationHeaderService: ServerRouteAuthorizationHeaderService,
   ) {}
 
   async handle({
@@ -103,11 +106,26 @@ export class ServerRouteTriggerService {
       );
     }
 
+    const forwardedRequestHeaders =
+      resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
+
+    const isAuthorizationHeaderForwardable =
+      forwardedRequestHeaders.some(
+        (headerName) =>
+          headerName.toLowerCase() ===
+          SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
+      ) &&
+      (await this.serverRouteAuthorizationHeaderService.isForwardable(
+        request.headers[SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME],
+      ));
+
     const event = buildLogicFunctionEvent({
       request,
       pathParameters: {},
-      forwardedRequestHeaders:
-        resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [],
+      forwardedRequestHeaders,
+      forwardableCredentialHeaderName: isAuthorizationHeaderForwardable
+        ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME
+        : undefined,
       userWorkspaceId: null,
     });
 

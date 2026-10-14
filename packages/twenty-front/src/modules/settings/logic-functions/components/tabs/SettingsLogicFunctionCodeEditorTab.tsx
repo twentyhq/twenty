@@ -1,13 +1,12 @@
-import {
-  type File,
-  SettingsLogicFunctionCodeEditor,
-} from '@/settings/logic-functions/components/SettingsLogicFunctionCodeEditor';
+import { SettingsLogicFunctionCodeEditor } from '@/settings/logic-functions/components/SettingsLogicFunctionCodeEditor';
+import { type SettingsLogicFunctionCodeEditorFile } from '@/settings/logic-functions/types/SettingsLogicFunctionCodeEditorFile';
 import { SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/logic-functions/constants/SettingsLogicFunctionTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { IconPlayerPlay } from 'twenty-ui/icon';
@@ -26,7 +25,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   isTesting = false,
   applicationVariableKeys,
 }: {
-  files: File[];
+  files: SettingsLogicFunctionCodeEditorFile[];
   handleExecute: () => void;
   onChange: (value: string) => void;
   isTesting?: boolean;
@@ -70,7 +69,13 @@ export const SettingsLogicFunctionCodeEditorTab = ({
         <SettingsLogicFunctionCodeEditor
           files={files}
           currentFilePath={activeTabId}
-          onChange={(newCodeValue: string) => onChange(newCodeValue)}
+          onChange={(newCodeValue) => {
+            if (!isDefined(newCodeValue)) {
+              return;
+            }
+
+            onChange(newCodeValue);
+          }}
           applicationVariableKeys={applicationVariableKeys}
         />
       )}

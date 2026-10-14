@@ -299,6 +299,7 @@ type AppConnection {
   accessToken: String!
   authFailedAt: String
   authFailedReason: String
+  externalAccountId: String
   handle: String!
   id: ID!
   name: String!
@@ -2098,7 +2099,6 @@ enum FeatureFlagKey {
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-  IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
@@ -2106,7 +2106,6 @@ enum FeatureFlagKey {
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
-  IS_VALIDATION_RULES_ENABLED
 }
 
 type Field {
@@ -2331,12 +2330,18 @@ type FrontComponent {
   universalIdentifier: UUID
   updatedAt: DateTime!
   usesSdkClient: Boolean!
+  widgetAvailability: [FrontComponentWidgetAvailability!]!
 }
 
 type FrontComponentConfiguration {
   configurationType: WidgetConfigurationType!
   frontComponentId: UUID!
   headerCommandMenuItemUniversalIdentifiers: [UUID!]
+}
+
+type FrontComponentWidgetAvailability {
+  objectMetadataId: UUID
+  pageLayoutType: PageLayoutType!
 }
 
 type FullName {
@@ -2694,6 +2699,7 @@ type MarketplaceAppDetail {
   logoUrl: String
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
   name: String!
+  objects: [MarketplaceAppObject!]
   pricingDescription: String
   requestedCapabilities: [String!]!
   roles: [MarketplaceAppRole!]
@@ -2703,6 +2709,12 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
+}
+
+type MarketplaceAppObject {
+  labelPlural: String!
+  labelSingular: String!
+  universalIdentifier: String!
 }
 
 type MarketplaceAppRole {

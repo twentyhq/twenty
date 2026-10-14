@@ -40,12 +40,10 @@ export const buildWorkflowAgentRunExecutionContext = ({
       : null,
   rolePermissionConfig: executionContext.rolePermissionConfig,
   usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+  agentRunRoleIds: getAgentRunRoleIdsFromRolePermissionConfig(
+    executionContext.rolePermissionConfig,
+  ),
   ...(isDefined(executionContext.application)
-    ? {
-        application: executionContext.application,
-        agentRunRoleIds: getAgentRunRoleIdsFromRolePermissionConfig(
-          executionContext.rolePermissionConfig,
-        ),
-      }
+    ? { application: executionContext.application }
     : {}),
 });
