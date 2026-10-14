@@ -24,32 +24,24 @@ type SettingsCardProps = {
 const StyledCardWrapper = styled.div<{
   disabled?: boolean;
 }>`
-  color: ${({ disabled }) =>
-    disabled
-      ? themeCssVariables.font.color.extraLight
-      : themeCssVariables.font.color.tertiary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'default')};
   width: 100%;
-
-  > div {
-    color: inherit;
-  }
 `;
 
 const StyledCardContentContainer = styled.div`
-  > div {
-    display: flex;
-    flex-direction: column;
-    gap: ${themeCssVariables.spacing[2]};
-    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
-    position: relative;
-  }
-
   a:hover & > div,
   > div:has(> button:not(:disabled):hover) {
     background-color: ${themeCssVariables.background.quaternary};
     cursor: pointer;
   }
+`;
+
+const StyledCardContent = styled(Card.Content)`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
+  position: relative;
 `;
 
 const StyledCardAction = styled.button`
@@ -82,7 +74,11 @@ const StyledIconChevronRightContainer = styled.span`
   display: flex;
 `;
 
-const StyledDescription = styled.div`
+const StyledDescription = styled.div<{ disabled?: boolean }>`
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.tertiary};
   line-height: ${themeCssVariables.text.lineHeight.lg};
   padding-bottom: ${themeCssVariables.spacing[2]};
   padding-left: ${themeCssVariables.spacing[7]};
@@ -96,7 +92,7 @@ const StyledIconContainer = styled.div<{
   color: ${({ disabled, iconColor }) =>
     disabled
       ? themeCssVariables.font.color.extraLight
-      : (iconColor ?? 'inherit')};
+      : (iconColor ?? themeCssVariables.font.color.tertiary)};
   display: flex;
   height: 24px;
   justify-content: center;
@@ -120,7 +116,7 @@ export const SettingsCard = ({
     <StyledCardWrapper disabled={disabled} className={className}>
       <Card.Root rounded={true} fullWidth>
         <StyledCardContentContainer>
-          <Card.Content>
+          <StyledCardContent>
             {isDefined(onClick) && (
               <StyledCardAction
                 className={CARD_ACTION_CLASS_NAME}
@@ -144,9 +140,11 @@ export const SettingsCard = ({
               </StyledIconChevronRightContainer>
             </StyledHeader>
             {description && (
-              <StyledDescription>{description}</StyledDescription>
+              <StyledDescription disabled={disabled}>
+                {description}
+              </StyledDescription>
             )}
-          </Card.Content>
+          </StyledCardContent>
         </StyledCardContentContainer>
       </Card.Root>
     </StyledCardWrapper>

@@ -7,6 +7,9 @@ import {
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
+import { RecordTableColumnVirtualizationItemsProvider } from '@/object-record/record-table/virtualization/components/RecordTableColumnVirtualizationItemsProvider';
+import { RecordTableColumnVirtualizationEffect } from '@/object-record/record-table/virtualization/components/RecordTableColumnVirtualizationEffect';
+import { RecordTableColumnWidthStyle } from '@/object-record/record-table/components/RecordTableColumnWidthStyle';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
@@ -139,13 +142,19 @@ export const RecordTableContent = ({
         onMouseMove={handleDelegatedMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <RecordTableHeader />
-        {hasRecordGroups ? (
-          <RecordTableRecordGroupsBody />
-        ) : (
-          <RecordTableNoRecordGroupBody />
-        )}
+        <RecordTableColumnWidthStyle
+          scopeId={getRecordTableHtmlId(recordTableId)}
+        />
+        <RecordTableColumnVirtualizationItemsProvider>
+          <RecordTableHeader />
+          {hasRecordGroups ? (
+            <RecordTableRecordGroupsBody />
+          ) : (
+            <RecordTableNoRecordGroupBody />
+          )}
+        </RecordTableColumnVirtualizationItemsProvider>
         <RecordTableScrollAndZIndexEffect />
+        <RecordTableColumnVirtualizationEffect />
         <RecordTableColumnWidthEffect />
         <RecordTableWidthEffect />
       </RecordTableStyleWrapper>

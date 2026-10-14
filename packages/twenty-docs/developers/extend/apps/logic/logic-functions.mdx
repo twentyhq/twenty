@@ -338,6 +338,8 @@ const handler = async (event: RoutePayload) => {
 **Signature verification is your responsibility — verify in the resolver.** The platform does not verify request signatures. The resolver is the recommended place to do it: it runs first, with access to `event.rawBody` and the headers you listed in `forwardedRequestHeaders`, and a thrown error (or any non-matching `workspaceId`) stops the dispatch before the target is invoked. If you instead push verification down into the target, the target must be careful not to lose `rawBody` and headers — i.e. the resolver must not return a `payload`. Always verify **before** any side effect and use a constant-time comparison.
 </Warning>
 
+**Bearer tokens.** Some providers, such as Microsoft Bot Framework, sign each request with a JWT in the `Authorization` header instead of a signature header. A server route can list `authorization` in `forwardedRequestHeaders` to receive it, and the resolver verifies it like any other signature. The platform removes the header if it carries a token issued by Twenty, so a server route never receives a Twenty session. `cookie` and `proxy-authorization` are never forwarded, and HTTP routes cannot forward any of these three headers.
+
 For request signatures, most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
 
 | Provider | Headers to forward | Signed string | Digest |

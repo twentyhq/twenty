@@ -322,16 +322,12 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     renderPage();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
 
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(screen.queryByLabelText('Secret')).not.toBeInTheDocument();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Collapse hidden fields' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
 
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
@@ -341,19 +337,16 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     renderPage();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
     await user.type(screen.getByLabelText('Nickname'), 'Apple');
-    await user.click(
-      screen.getByRole('button', { name: 'Collapse hidden fields' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
     expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: { nickname: 'Apple' },
+      shouldKeepOpen: false,
     });
   });
 
@@ -363,9 +356,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     const { unmount } = renderPage();
 
     await user.type(screen.getByLabelText('Name'), 'Apple');
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
     await user.type(screen.getByLabelText('Nickname'), 'Big Apple');
 
     unmount();
@@ -424,6 +415,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: {},
+      shouldKeepOpen: false,
     });
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(
@@ -490,29 +482,62 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: {},
+      shouldKeepOpen: false,
     });
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
 
-  it('opens the form configuration for members allowed to edit layouts', async () => {
+  it('opens the form configuration from the options menu for members allowed to edit layouts', async () => {
     const user = userEvent.setup();
 
     renderPage();
 
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Edit form' }),
+    );
 
     expect(openRecordCreationFormSettingsInSidePanel).toHaveBeenCalledWith(
       COMPANY_OBJECT,
     );
   });
 
-  it('hides the edit button from members without the layouts permission', () => {
+  it('leaves the form configuration out of the options menu for members without the layouts permission', async () => {
+    const user = userEvent.setup();
+
     mockHasPermissionFlag.mockReturnValue(false);
 
     renderPage();
 
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+
     expect(
-      screen.queryByRole('button', { name: 'Edit' }),
+      await screen.findByRole('menuitem', { name: /Create another/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('menuitem', { name: 'Edit form' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('creates another record from the options menu and keeps an empty form open', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.type(screen.getByLabelText('Name'), 'Apple');
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: /Create another/ }),
+    );
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: { name: 'Apple' },
+      shouldKeepOpen: true,
+    });
+    expect(await screen.findByLabelText('Name')).toHaveValue('');
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'success' }),
+    );
   });
 });

@@ -47,7 +47,11 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
     });
   }
 
-  const identity = await readAppIdentity({ appPath: project.path, signal });
+  const identity = await readAppIdentity({
+    appPath: project.path,
+    signal,
+    warn: output.warn,
+  });
 
   const universalIdentifier = (
     explicitIdentifier ?? identity.application?.universalIdentifier

@@ -9,4 +9,5 @@ export enum PageFocusId {
   RecordShowPage = 'record-show-page',
   RecordIndex = 'record-index',
   PageLayoutPage = 'page-layout-page',
+  AiChatInbox = 'ai-chat-inbox',
 }

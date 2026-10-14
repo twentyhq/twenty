@@ -23,7 +23,7 @@ export const useGetSecondaryFieldButton = () => {
 
   const isEmailField = isFieldEmails(fieldDefinition);
 
-  const { openEmail } = useOpenEmailInAppOrFallback({ skip: !isEmailField });
+  const { openEmail } = useOpenEmailInAppOrFallback();
 
   const fieldValue = useRecordFieldValue<
     FieldPhonesValue | FieldEmailsValue | FieldLinksValue | undefined

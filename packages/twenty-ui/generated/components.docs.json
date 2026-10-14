@@ -926,6 +926,13 @@
         "description": "Animated highlight color. Defaults to the theme lighter transparent background."
       },
       {
+        "name": "layout",
+        "type": "\"block\" | \"inline\"",
+        "required": false,
+        "defaultValue": "inline",
+        "description": "`inline` sizes and aligns the placeholder like a line of text. `block` renders a block without a text node, which is cheaper when many placeholders are rendered and alignment with text is not needed."
+      },
+      {
         "name": "ref",
         "type": "Ref<HTMLSpanElement>",
         "required": false,
@@ -1904,6 +1911,27 @@
         "required": false,
         "defaultValue": null,
         "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
+      }
+    ]
+  },
+  {
+    "name": "OverflowingTextTooltipModeProvider",
+    "entryPoint": "twenty-ui/primitives/typography",
+    "slug": "typography/overflowing-text-tooltip-mode-provider",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Content whose OverflowingTextWithTooltip instances use the mode."
+      },
+      {
+        "name": "mode",
+        "type": "\"disabled\" | \"measure-on-hover\" | \"measure-on-open\"",
+        "required": true,
+        "defaultValue": null,
+        "description": "`measure-on-hover` checks truncation on pointer entry and focus. `measure-on-open` checks it when the tooltip tries to open. `disabled` renders only the text."
       }
     ]
   },
@@ -9880,7 +9908,7 @@
         "type": "number",
         "required": false,
         "defaultValue": "6000",
-        "description": "Milliseconds before onClose is called. The countdown pauses while the pointer is over the toast or keyboard focus is inside it."
+        "description": "Milliseconds before onClose is called, defaulting to 6000. Zero keeps the toast open. Changes restart the countdown; live updateToast duration patches restart it even when unchanged. Hover and keyboard focus pause it until both leave."
       },
       {
         "name": "icon",
@@ -9908,14 +9936,14 @@
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the close button is clicked or the countdown completes. Providing it shows the close button."
+        "description": "For standalone Toast, called once per mount by the close button or expiry. For provider notifications, called once on close, expiry, closeToast, or limit eviction, after dismissal and before exit cleanup. Provider teardown does not call it."
       },
       {
         "name": "progress",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Completion percentage. Providing it disables the countdown."
+        "description": "Completion percentage. Providing it disables the countdown. Removing it starts a fresh duration."
       },
       {
         "name": "ref",
@@ -12038,18 +12066,60 @@
         "description": "Grows the editor to fit its content instead of using `height`. Ignored when `resizable` is set."
       },
       {
+        "name": "beforeMount",
+        "type": "BeforeMount",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with Monaco before editor creation, after the Twenty theme has been defined. Use it to register custom themes or languages."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the Monaco editor-container div."
+      },
+      {
+        "name": "containerProps",
+        "type": "Omit<Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, \"ref\">, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native props, className and style for the outer Twenty group div. Its default `display: contents` preserves the Monaco section's parent sizing and flex layout without creating a layout box. Background, border, padding and dimensions require overriding `display`. Prefer `wrapperProps` for section layout styles. Its keyboard handler runs before focused editor keystrokes stop propagating."
+      },
+      {
         "name": "contentPadding",
         "type": "\"comfortable\" | \"default\"",
         "required": false,
         "defaultValue": "default",
-        "description": "`default` pads the top and bottom of the content. `comfortable` also widens the gap between line numbers and code."
+        "description": "`default` supplies top and bottom padding. `comfortable` also widens the gap between line numbers and code. Explicit Monaco options override these defaults."
+      },
+      {
+        "name": "defaultLanguage",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial Monaco language for a newly created model."
+      },
+      {
+        "name": "defaultPath",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial model URI, used when `path` is omitted."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial content for a model created by Monaco React."
       },
       {
         "name": "height",
         "type": "string | number",
         "required": false,
         "defaultValue": "450",
-        "description": "Editor height in pixels or as a CSS length. With `resizable`, a numeric height sets the initial height."
+        "description": "Editor height in pixels or as a CSS length, defaulting to 450px. Resizing starts from this rendered height and resets when this prop changes. Auto-height uses it until content is measured."
       },
       {
         "name": "isLoading",
@@ -12059,6 +12129,13 @@
         "description": "Shows a loader at the editor height instead of the editor. A loader also shows while Monaco loads."
       },
       {
+        "name": "keepCurrentModel",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps the current model when the editor unmounts. Defaults to false. The caller owns disposal of retained models."
+      },
+      {
         "name": "language",
         "type": "string",
         "required": false,
@@ -12066,18 +12143,32 @@
         "description": "Monaco language identifier for highlighting and language services, such as `json` or `typescript`."
       },
       {
-        "name": "onChange",
-        "type": "((value: string) => void)",
+        "name": "line",
+        "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the full content whenever it changes."
+        "description": "Line revealed when the editor mounts or this prop changes."
+      },
+      {
+        "name": "loading",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": "<Loader />",
+        "description": "Content shown while Monaco loads or `isLoading` is true. Defaults to the Twenty Loader."
+      },
+      {
+        "name": "onChange",
+        "type": "OnChange",
+        "required": false,
+        "defaultValue": null,
+        "description": "Monaco React callback with the full content (string or undefined) and the original IModelContentChangedEvent."
       },
       {
         "name": "onMount",
         "type": "OnMount",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the editor is ready, with the editor instance and the Monaco namespace. The Twenty theme is already applied."
+        "description": "Called when the editor is ready, with the editor instance and the Monaco namespace. The selected theme is already applied."
       },
       {
         "name": "onValidate",
@@ -12091,14 +12182,35 @@
         "type": "IStandaloneEditorConstructionOptions",
         "required": false,
         "defaultValue": null,
-        "description": "Monaco editor options merged over the Twenty defaults. `padding` is ignored; use `contentPadding` instead."
+        "description": "Monaco editor options merged over Twenty defaults. Explicit values, including padding, replace the corresponding defaults. The `theme` prop takes precedence over `options.theme`."
+      },
+      {
+        "name": "overrideServices",
+        "type": "IEditorOverrideServices",
+        "required": false,
+        "defaultValue": null,
+        "description": "Monaco services passed through when the editor is created."
+      },
+      {
+        "name": "path",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "URI of the current model. Changing it selects or creates a model using Monaco React behavior."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the outer Twenty group div, which has no measurable layout box with its default `display: contents`. Use `wrapperProps` for a measurable section ref or `onMount` for the Monaco editor instance."
       },
       {
         "name": "resizable",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Adds a handle below the editor to drag its height."
+        "description": "Adds a height resize handle after Monaco mounts, bounded from 50px to 500px. Takes precedence over autoHeight. A changed height prop resets the resized height within these bounds."
       },
       {
         "name": "resizeLabel",
@@ -12108,11 +12220,25 @@
         "description": "Accessible name of the resize handle. Pass a localized label when `resizable` is enabled."
       },
       {
+        "name": "saveViewState",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Preserves Monaco React view state between model changes. Defaults to true."
+      },
+      {
         "name": "setMarkers",
         "type": "((value: string) => IMarkerData[])",
         "required": false,
         "defaultValue": null,
-        "description": "Returns custom validation markers for the content. Runs when the editor mounts and after every change, replacing the previous custom markers."
+        "description": "Returns custom validation markers for the current model content. Runs on mount, model selection and content changes, including controlled updates."
+      },
+      {
+        "name": "theme",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Twenty theme",
+        "description": "Monaco theme name. Takes precedence over `options.theme`, which takes precedence over the Twenty theme. Define custom themes in `beforeMount`."
       },
       {
         "name": "transparentBackground",
@@ -12134,6 +12260,20 @@
         "required": false,
         "defaultValue": "default",
         "description": "Border treatment: `default` draws a rounded border, `with-header` attaches the editor below a `CodeEditorHeader`, and `borderless` removes the border."
+      },
+      {
+        "name": "width",
+        "type": "string | number",
+        "required": false,
+        "defaultValue": "100%",
+        "description": "Width of the Monaco React section, in pixels or as a CSS length."
+      },
+      {
+        "name": "wrapperProps",
+        "type": "object",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native props passed unchanged to the Monaco React section around the editor and Monaco React loading content. Use this section for layout styles and a measurable native ref. Not applied to the separate Twenty loader during initial Monaco configuration or `isLoading`. Native styles can override the section sizing."
       }
     ]
   },
@@ -13092,14 +13232,14 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": "Application content and a Toaster sharing this notification store."
+        "description": "Application content and any Toasters sharing this provider’s independent notification store and lifecycle."
       },
       {
         "name": "limit",
         "type": "number",
         "required": false,
         "defaultValue": "3",
-        "description": "Maximum number of visible toasts, read once when the provider mounts. Must be a positive integer. Adding a toast above the limit dismisses the oldest visible notifications."
+        "description": "Reactive maximum number of visible toasts, defaulting to three. Must be a positive integer. Lowering it or adding above it dismisses the oldest visible notifications and calls their onClose once. Surviving IDs, order, and countdowns are preserved."
       }
     ]
   },
@@ -13113,14 +13253,14 @@
         "type": "HTMLElement | null",
         "required": false,
         "defaultValue": null,
-        "description": "Portal destination. Omit to use the theme container or document.body; null defers rendering."
+        "description": "Portal destination. Omit to use the theme container or document.body; null defers rendering. The provider retains visible notifications and pauses their countdowns while no Toaster is rendered."
       },
       {
         "name": "getToastProps",
         "type": "((toast: ToastNotification) => Partial<Omit<ToastProps, \"ref\" | \"id\" | \"onClose\">>)",
         "required": false,
         "defaultValue": null,
-        "description": "Customizes each notification’s Toast props. The toaster owns id, ref, and dismissal."
+        "description": "Adapts notification content and presentation. The provider owns id, dismissal, and the shared countdown. Set timing through enqueueToast or updateToast; duration and progress overrides must match across Toasters sharing a provider."
       },
       {
         "name": "render",

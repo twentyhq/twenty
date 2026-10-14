@@ -32,10 +32,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Application workflows`,
     description: msg`Allow applications to install workflows and start new workflow runs.`,
   },
-  [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: {
-    label: msg`Initial object views`,
-    description: msg`Use a dedicated initial view for each object in navigation and the view picker.`,
-  },
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
@@ -50,15 +46,11 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records.`,
+    description: msg`Use a dedicated form when creating records, and enable validation rules.`,
   },
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
     label: msg`Logs console`,
     description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
-  },
-  [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: {
-    label: msg`Validation rules`,
-    description: msg`Let admins add conditions a record must meet to be saved, checked on every write.`,
   },
   [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
     label: msg`Skip unchanged calendar records`,

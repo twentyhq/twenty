@@ -9,19 +9,21 @@ import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constan
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TeamsSettings } from 'src/front-components/components/TeamsSettings';
 
-const { featureFlags, variables, queryMock, mutationMock } = vi.hoisted(() => {
-  const variables: Record<string, string | undefined> = {};
+const { featureFlags, variables, queryMock, mutationMock, restGetMock } =
+  vi.hoisted(() => {
+    const variables: Record<string, string | undefined> = {};
 
-  return {
-    featureFlags: {
-      IS_CHAT_ASSISTANT_ENABLED: false,
-      IS_TRANSCRIPT_IMPORT_ENABLED: false,
-    },
-    variables,
-    queryMock: vi.fn(),
-    mutationMock: vi.fn(),
-  };
-});
+    return {
+      featureFlags: {
+        IS_CHAT_ASSISTANT_ENABLED: false,
+        IS_TRANSCRIPT_IMPORT_ENABLED: false,
+      },
+      variables,
+      queryMock: vi.fn(),
+      mutationMock: vi.fn(),
+      restGetMock: vi.fn(),
+    };
+  });
 
 const APPLICATION_QUERY = {
   findOneApplication: {
@@ -39,12 +41,28 @@ vi.mock('twenty-sdk/front-component', () => ({
   useTranslate: () => ({ t: (message: string) => message }),
 }));
 
+vi.mock(
+  'src/features/transcripts/front-components/TranscriptImportHistorySection',
+  () => ({ TranscriptImportHistorySection: () => null }),
+);
+
 vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: class {
     query = queryMock;
     mutation = mutationMock;
   },
 }));
+
+vi.mock('twenty-client-sdk/rest', () => ({
+  RestApiClient: class {
+    get = restGetMock;
+  },
+}));
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/current-user-has-roles-permission',
+  () => ({ currentUserHasRolesPermission: async () => false }),
+);
 
 describe('TeamsSettings', () => {
   beforeEach(() => {
@@ -57,6 +75,7 @@ describe('TeamsSettings', () => {
       findOneApplication: { id: 'teams-application' },
     });
     mutationMock.mockResolvedValue({ updateOneApplicationVariable: true });
+    restGetMock.mockResolvedValue({ data: { teamsUserLinks: [] } });
   });
 
   afterEach(cleanup);
@@ -134,6 +153,22 @@ describe('TeamsSettings', () => {
       expect(mutationMock).not.toHaveBeenCalled();
     },
   );
+
+  it('shows linked Teams accounts only while chat is enabled', async () => {
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
+    const user = userEvent.setup();
+
+    render(<TeamsSettings />);
+
+    expect(screen.queryByText('Linked Teams accounts')).toBeNull();
+
+    await user.click(screen.getByRole('switch', { name: 'Enable chat' }));
+
+    expect(
+      await screen.findByText('No Teams account is linked yet.'),
+    ).toBeTruthy();
+    expect(restGetMock).toHaveBeenCalledTimes(1);
+  });
 
   it('saves the selected feature without changing the other preference', async () => {
     featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
