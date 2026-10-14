@@ -120,6 +120,7 @@ describe('ApplicationInstallService', () => {
       resolvedPackage,
     );
     fileStorageService.writeFile.mockResolvedValue({ id: LOGO_FILE_ID });
+    applicationService.update.mockResolvedValue(undefined);
   });
 
   afterEach(async () => {
@@ -135,32 +136,43 @@ describe('ApplicationInstallService', () => {
       version: null,
     });
 
+    let isLogoFileStored = false;
+    const isLogoFileStoredWhenLogoIsSet: boolean[] = [];
+
+    fileStorageService.writeFile.mockImplementation(
+      async ({ fileFolder, resourcePath }) => {
+        await Promise.resolve();
+
+        if (
+          fileFolder === FileFolder.PublicAsset &&
+          resourcePath === LOGO_PATH
+        ) {
+          isLogoFileStored = true;
+        }
+
+        return { id: LOGO_FILE_ID };
+      },
+    );
+    applicationService.update.mockImplementation(
+      async (_applicationId, data) => {
+        if ('logo' in data) {
+          isLogoFileStoredWhenLogoIsSet.push(isLogoFileStored);
+        }
+      },
+    );
+
     await install();
 
+    expect(applicationService.create).toHaveBeenCalledTimes(1);
     expect(applicationService.create).toHaveBeenCalledWith(
       expect.not.objectContaining({ logo: expect.anything() }),
     );
-
-    const logoUpdateCallIndex = applicationService.update.mock.calls.findIndex(
-      ([, data]) => data.logo === LOGO_PATH,
-    );
-
-    expect(applicationService.update.mock.calls[logoUpdateCallIndex]).toEqual([
-      APPLICATION_ID,
-      { logo: LOGO_PATH, logoFileId: LOGO_FILE_ID, workspaceId: WORKSPACE_ID },
-    ]);
-
-    const logoWriteCallIndex =
-      fileStorageService.writeFile.mock.calls.findIndex(
-        ([{ fileFolder, resourcePath }]) =>
-          fileFolder === FileFolder.PublicAsset && resourcePath === LOGO_PATH,
-      );
-
-    expect(
-      fileStorageService.writeFile.mock.invocationCallOrder[logoWriteCallIndex],
-    ).toBeLessThan(
-      applicationService.update.mock.invocationCallOrder[logoUpdateCallIndex],
-    );
+    expect(applicationService.update).toHaveBeenCalledWith(APPLICATION_ID, {
+      logo: LOGO_PATH,
+      logoFileId: LOGO_FILE_ID,
+      workspaceId: WORKSPACE_ID,
+    });
+    expect(isLogoFileStoredWhenLogoIsSet).toEqual([true]);
   });
 
   it('does not update an upgraded application whose logo is unchanged', async () => {

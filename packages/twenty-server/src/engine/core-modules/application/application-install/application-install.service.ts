@@ -395,17 +395,17 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
-      const logoFileId = await this.importLogoFile({
-        extractedDir: resolvedPackage.extractedDir,
-        manifest: resolvedPackage.manifest,
-        applicationUniversalIdentifier: universalIdentifier,
-        workspaceId: params.workspaceId,
-      });
-
       const logo =
         resolvedPackage.manifest.application.logo ??
         resolvedPackage.manifest.application.logoUrl ??
         null;
+
+      const logoFileId = await this.importLogoFile({
+        extractedDir: resolvedPackage.extractedDir,
+        logo,
+        applicationUniversalIdentifier: universalIdentifier,
+        workspaceId: params.workspaceId,
+      });
 
       if (application.logo !== logo || application.logoFileId !== logoFileId) {
         await this.applicationService.update(application.id, {
@@ -800,17 +800,15 @@ export class ApplicationInstallService {
 
   private async importLogoFile({
     extractedDir,
-    manifest,
+    logo,
     applicationUniversalIdentifier,
     workspaceId,
   }: {
     extractedDir: string;
-    manifest: Manifest;
+    logo: string | null;
     applicationUniversalIdentifier: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const logo = manifest.application.logo ?? manifest.application.logoUrl;
-
     if (
       !isDefined(logo) ||
       logo.startsWith('http://') ||
