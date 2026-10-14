@@ -364,10 +364,6 @@ export class ApplicationInstallService {
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
       grantedCapabilities,
-      logo:
-        resolvedPackage.manifest.application.logo ??
-        resolvedPackage.manifest.application.logoUrl ??
-        null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
@@ -418,16 +414,22 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
+      const logo =
+        resolvedPackage.manifest.application.logo ??
+        resolvedPackage.manifest.application.logoUrl ??
+        null;
+
       const logoFileId = await this.importLogoFile({
         extractedDir: resolvedPackage.extractedDir,
-        manifest: resolvedPackage.manifest,
+        logo,
         applicationUniversalIdentifier: universalIdentifier,
         workspaceId: params.workspaceId,
       });
 
-      if (application.logoFileId !== logoFileId) {
+      if (application.logo !== logo || application.logoFileId !== logoFileId) {
         await this.applicationService.update(application.id, {
-          logoFileId: logoFileId ?? null,
+          logo,
+          logoFileId,
           workspaceId: params.workspaceId,
         });
       }
@@ -817,17 +819,15 @@ export class ApplicationInstallService {
 
   private async importLogoFile({
     extractedDir,
-    manifest,
+    logo,
     applicationUniversalIdentifier,
     workspaceId,
   }: {
     extractedDir: string;
-    manifest: Manifest;
+    logo: string | null;
     applicationUniversalIdentifier: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const logo = manifest.application.logo ?? manifest.application.logoUrl;
-
     if (
       !isDefined(logo) ||
       logo.startsWith('http://') ||
@@ -875,7 +875,6 @@ export class ApplicationInstallService {
     universalIdentifier,
     name,
     grantedCapabilities,
-    logo,
     workspaceId,
     applicationRegistrationId,
     sourceType,
@@ -884,7 +883,6 @@ export class ApplicationInstallService {
     universalIdentifier: string;
     name: string;
     grantedCapabilities: ApplicationCapability[];
-    logo: string | null;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
@@ -897,7 +895,6 @@ export class ApplicationInstallService {
       universalIdentifier,
       name,
       grantedCapabilities,
-      logo,
       sourcePath: universalIdentifier,
       sourceType,
       applicationRegistrationId,

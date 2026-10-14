@@ -208,6 +208,44 @@ describe('JwtAuthStrategy', () => {
       );
     });
 
+    it.each([
+      { offsetMilliseconds: -1, isAllowed: false },
+      { offsetMilliseconds: 0, isAllowed: true },
+      { offsetMilliseconds: 1, isAllowed: true },
+    ])(
+      'validates cached API-key expiry at offset $offsetMilliseconds ms',
+      async ({ offsetMilliseconds, isAllowed }) => {
+        const payload: JwtPayload = {
+          ...jwt,
+          type: JwtTokenTypeEnum.API_KEY,
+          workspaceId: 'workspace-id',
+        };
+        const workspace = new WorkspaceEntity();
+
+        workspace.id = 'workspace-id';
+        workspaceStore[payload.sub] = workspace;
+        apiKeyStore[workspace.id] = {
+          [jwt.jti]: {
+            id: 'api-key-id',
+            revokedAt: null,
+            expiresAt: new Date(Date.now() + offsetMilliseconds).toISOString(),
+          },
+        };
+
+        strategy = createStrategy();
+
+        if (isAllowed) {
+          await expect(strategy.validate(payload)).resolves.toMatchObject({
+            apiKey: { id: 'api-key-id' },
+          });
+        } else {
+          await expect(strategy.validate(payload)).rejects.toThrow(
+            'This API Key is expired',
+          );
+        }
+      },
+    );
+
     it('should be truthy if type is API_KEY and API_KEY is not revoked', async () => {
       const payload = {
         ...jwt,

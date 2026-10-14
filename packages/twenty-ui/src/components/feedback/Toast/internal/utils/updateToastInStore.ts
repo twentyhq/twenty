@@ -15,9 +15,17 @@ export const updateToastInStore = ({
     (toast) => toast.notification.id === id && isToastVisible(toast),
   );
 
-  if (!isDefined(toastToUpdate) || !isNonEmptyArray(Object.keys(changes))) {
+  const changedFields = Object.keys(changes);
+
+  if (!isDefined(toastToUpdate) || !isNonEmptyArray(changedFields)) {
     return;
   }
+
+  const shouldRestartCountdown =
+    changedFields.includes('duration') ||
+    (isDefined(toastToUpdate.notification.progress) &&
+      changedFields.includes('progress') &&
+      !isDefined(changes.progress));
 
   store.set(
     'toasts',
@@ -26,6 +34,9 @@ export const updateToastInStore = ({
         ? {
             ...toast,
             notification: { ...toast.notification, ...changes, id },
+            ...(shouldRestartCountdown
+              ? { durationRevision: (toast.durationRevision ?? 0) + 1 }
+              : {}),
           }
         : toast,
     ),

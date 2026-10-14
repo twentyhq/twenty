@@ -2,6 +2,11 @@
   animation: toastCountdown var(--toast-countdown-duration) linear forwards;
   background-color: var(--toast-countdown-color);
   height: 100%;
+  width: var(--toast-countdown-width);
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
 
   &[data-paused] {
     animation-play-state: paused;
@@ -10,7 +15,7 @@
 
 @keyframes toastCountdown {
   from {
-    width: 100%;
+    width: var(--toast-countdown-width);
   }
 
   to {

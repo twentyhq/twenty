@@ -26,7 +26,6 @@ import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/u
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm/utils/resolve-object-records-permissions.util';
 
 const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
@@ -204,9 +203,12 @@ export class WorkspaceDataSource {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
+    const repositoryRolePermissionConfig: RolePermissionConfig =
+      rolePermissionConfig ?? { intersectionOf: {} };
+
     const { objectRecordsPermissions, shouldBypassPermissionChecks } =
       resolveObjectRecordsPermissions({
-        rolePermissionConfig,
+        rolePermissionConfig: repositoryRolePermissionConfig,
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
       });
 
@@ -217,9 +219,7 @@ export class WorkspaceDataSource {
       authContext: this.authContext,
       executor,
       objectRecordsPermissions,
-      roleIds: isDefined(rolePermissionConfig)
-        ? getRoleIdsFromRolePermissionConfig(rolePermissionConfig)
-        : [],
+      rolePermissionConfig: repositoryRolePermissionConfig,
       shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
