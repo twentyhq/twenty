@@ -17,6 +17,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -36,6 +37,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     getWorkflowById: jest.Mock;
     getObjectMetadataInfo: jest.Mock;
   };
+  let findRelatedRecords: jest.Mock;
 
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
@@ -155,8 +157,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     }) as FlatObjectMetadata;
 
   beforeEach(async () => {
+    findRelatedRecords = jest.fn();
     workspaceOrmManager = {
-      getRepository: jest.fn().mockReturnValue({ find: jest.fn() }),
+      getRepository: jest.fn().mockReturnValue({ find: findRelatedRecords }),
       executeInWorkspaceContext: jest
         .fn()
         .mockImplementation((fn: () => any, _authContext?: any) => fn()),
@@ -433,8 +436,23 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         settings: { eventName: 'createEvent' },
       };
 
-      const enqueuedRecord = () =>
-        messageQueueService.add.mock.calls[0]?.[1]?.payload?.properties?.after;
+      const expectEnqueuedRecord = (record: object) => {
+        expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+        expect(messageQueueService.add).toHaveBeenCalledWith(
+          WorkflowTriggerJob.name,
+          {
+            workspaceId,
+            workflowId,
+            coreWorkflowVersionId: `core-version-${workflowId}`,
+            workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
+            payload: {
+              ...createPayload.events[0],
+              properties: { after: record },
+            },
+          },
+          { retryLimit: 3 },
+        );
+      };
 
       beforeEach(() => {
         const companyField = getFlatFieldMetadataMock({
@@ -455,11 +473,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
             fieldIds: [companyField.id],
           }),
           flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
-            flatEntity: {
+            flatEntity: getFlatObjectMetadataMock({
               id: 'company-object-id',
               universalIdentifier: 'company-object-id',
               nameSingular: 'company',
-            } as never,
+            }),
             flatEntityMaps: createEmptyFlatEntityMaps(),
           }),
           flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
@@ -467,9 +485,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
             flatEntityMaps: createEmptyFlatEntityMaps(),
           }),
         });
-        workspaceOrmManager.getRepository.mockReturnValue({
-          find: jest.fn().mockResolvedValue([company]),
-        } as never);
+        findRelatedRecords.mockResolvedValue([company]);
       });
 
       it('should give a workspace workflow the related company', async () => {
@@ -477,7 +493,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
         await listener.handleObjectRecordCreateEvent(createPayload);
 
-        expect(enqueuedRecord()).toEqual({ ...createdRecord, company });
+        expectEnqueuedRecord({ ...createdRecord, company });
       });
 
       it('should not give an application workflow the related company', async () => {
@@ -487,7 +503,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
         await listener.handleObjectRecordCreateEvent(createPayload);
 
-        expect(enqueuedRecord()).toEqual(createdRecord);
+        expectEnqueuedRecord(createdRecord);
       });
     });
 

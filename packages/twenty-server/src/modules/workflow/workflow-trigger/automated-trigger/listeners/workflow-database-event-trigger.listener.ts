@@ -161,7 +161,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
     await this.handleEvent({
       payload,
-      enrichedPayload: structuredClone(payload),
       action: DatabaseEventAction.UPSERTED,
     });
   }
@@ -354,11 +353,11 @@ export class WorkflowDatabaseEventTriggerListener {
 
   private async handleEvent({
     payload,
-    enrichedPayload,
+    enrichedPayload = payload,
     action,
   }: {
     payload: WorkspaceEventBatch<ObjectRecordEvent>;
-    enrichedPayload: WorkspaceEventBatch<ObjectRecordEvent>;
+    enrichedPayload?: WorkspaceEventBatch<ObjectRecordEvent>;
     action: DatabaseEventAction;
   }) {
     const workspaceId = payload.workspaceId;
