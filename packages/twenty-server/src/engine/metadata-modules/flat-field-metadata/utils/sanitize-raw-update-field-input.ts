@@ -3,6 +3,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   isFieldMetadataSelectKind,
+  isValidLocale,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -134,16 +135,15 @@ export const sanitizeRawUpdateFieldInput = ({
     );
   }
 
+  const removedOptionLabelTranslationProperties =
+    existingOptionLabelTranslationProperties.filter(
+      (property) => !optionLabelTranslationProperties.includes(property),
+    );
+  const appLocales = Object.keys(APP_LOCALES).filter(isValidLocale);
   const removedOptionLabelTranslationEntries: TranslationOverrideEntry[] =
-    existingOptionLabelTranslationProperties
-      .filter(
-        (property) => !optionLabelTranslationProperties.includes(property),
-      )
-      .flatMap((property) =>
-        (Object.keys(APP_LOCALES) as (keyof typeof APP_LOCALES)[]).map(
-          (locale) => ({ locale, property, value: null }),
-        ),
-      );
+    removedOptionLabelTranslationProperties.flatMap((property) =>
+      appLocales.map((locale) => ({ locale, property, value: null })),
+    );
   const translationEntries = [
     ...rawTranslationEntries,
     ...removedOptionLabelTranslationEntries,
