@@ -414,23 +414,10 @@ export class ApplicationSyncService {
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationUninstallStep>;
   }): Promise<WorkspaceMigration> {
     if (shouldRunUninstallHook) {
-      const runUninstallHook = () =>
-        this.applicationUninstallService.runUninstallHookBestEffort({
-          application,
-          workspaceId,
-        });
-      const uninstallLogicFunction = application.logicFunctions.find(
-        (logicFunction) =>
-          logicFunction.id === application.uninstallLogicFunctionId,
-      );
-
-      await (isDefined(uninstallLogicFunction)
-        ? progressReporter.reportStepProgressDuring({
-            step: 'UNINSTALL_HOOK',
-            expectedDurationMs: uninstallLogicFunction.timeoutSeconds * 1_000,
-            run: runUninstallHook,
-          })
-        : runUninstallHook());
+      await this.applicationUninstallService.runUninstallHookBestEffort({
+        application,
+        workspaceId,
+      });
     }
 
     await progressReporter.reportStepCompleted('UNINSTALL_HOOK');
