@@ -258,7 +258,6 @@ describe('StreamAgentChatJob', () => {
             stream: chatStream,
             modelConfig,
             getStopReason: () => null,
-            getUserAllowancePeriodEnd: () => null,
             getStreamError: () => chatStream.streamError,
           }),
     };

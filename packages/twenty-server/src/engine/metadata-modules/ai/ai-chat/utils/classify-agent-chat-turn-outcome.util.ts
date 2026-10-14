@@ -1,17 +1,16 @@
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
 
 export const classifyAgentChatTurnOutcome = ({
   hasText,
   isAborted,
   isAwaitingUserAnswer,
-  outOfCredits,
-  outOfUserCredits,
+  stopReason,
 }: {
   hasText: boolean;
   isAborted: boolean;
   isAwaitingUserAnswer: boolean;
-  outOfCredits: boolean;
-  outOfUserCredits: boolean;
+  stopReason: StepDebitResult['stopReason'];
 }): AgentChatTurnOutcome => {
   // stopWhen ends the stream on a question, so this is a completed turn, not an abandoned one
   if (isAwaitingUserAnswer) {
@@ -26,13 +25,14 @@ export const classifyAgentChatTurnOutcome = ({
     return { kind: 'completed', outcome: 'answered' };
   }
 
-  if (outOfUserCredits) {
+  if (stopReason === 'userAllowance') {
     return { kind: 'failed', failurePhase: 'user_credits_exhausted' };
   }
 
   return {
     kind: 'failed',
-    failurePhase: outOfCredits ? 'credits_exhausted' : 'no_text',
+    failurePhase:
+      stopReason === 'workspaceAllowance' ? 'credits_exhausted' : 'no_text',
   };
 };
 

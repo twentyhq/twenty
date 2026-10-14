@@ -111,8 +111,6 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
-import { createTurnUsageRecorder } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-usage-recorder.util';
-import { findUserCreditsSpillNoticeRenewsAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-user-credits-spill-notice-renews-at.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -129,15 +127,16 @@ export type ChatExecutionOptions = {
   modelId?: string;
   abortSignal: AbortSignal;
   conversationSizeTokens: number;
-  hadUserCreditsAtTurnStart: boolean;
-  onUserCreditsExhausted: (renewsAt: Date) => void;
+  onUserCreditsExhausted: (notice: {
+    renewsAt: Date;
+    isFallingBackToWorkspaceCredits: boolean;
+  }) => Promise<void>;
 };
 
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
   getStopReason: () => StepDebitResult['stopReason'];
-  getUserAllowancePeriodEnd: () => Date | null;
   getStreamError: () => unknown;
 };
 
@@ -177,7 +176,6 @@ export class ChatExecutionService {
     modelId,
     abortSignal,
     conversationSizeTokens,
-    hadUserCreditsAtTurnStart,
     onUserCreditsExhausted,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const getAuthorization = createTurnAuthorizer({
@@ -469,21 +467,14 @@ export class ChatExecutionService {
     const modelMessages = pruningResult.messages;
 
     let stopReason: StepDebitResult['stopReason'] = null;
-    let userAllowancePeriodEnd: Date | null = null;
-    let hasNotifiedUserCreditsExhausted = false;
+    let turnUserCreditsUsedMicro = 0;
     const streamStartedAt = performance.now();
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
     let stepIndex = 0;
     let lastUnderlyingStreamError: unknown;
 
-    const emitTurnUsageEvent = async ({
-      steps,
-      userCreditsUsedMicro,
-    }: {
-      steps: StepResult<ToolSet>[];
-      userCreditsUsedMicro: number;
-    }) => {
+    const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce(
         (totals, step) => ({
           inputTokens: totals.inputTokens + (step.usage.inputTokens ?? 0),
@@ -513,7 +504,7 @@ export class ChatExecutionService {
         null,
         userWorkspaceId,
         // per-step rounding can make the summed user share exceed the turn total
-        Math.min(userCreditsUsedMicro, creditsUsedMicro),
+        Math.min(turnUserCreditsUsedMicro, creditsUsedMicro),
       );
 
       void this.aiBillingService.billNativeWebSearchUsage(
@@ -552,10 +543,6 @@ export class ChatExecutionService {
         bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
       });
     };
-
-    const turnUsageRecorder = createTurnUsageRecorder({
-      recordTurn: emitTurnUsageEvent,
-    });
 
     const stream = streamText({
       model: registeredModel.model,
@@ -641,9 +628,8 @@ export class ChatExecutionService {
           bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
         });
 
-        const stepDebit = await turnUsageRecorder.trackStepDebit(
-          step,
-          this.aiBillingService.decrementAndCheckAvailableCredits({
+        const stepDebit =
+          await this.aiBillingService.decrementAndCheckAvailableCredits({
             modelId: registeredModel.modelId,
             billingInput: {
               usage: step.usage,
@@ -654,24 +640,21 @@ export class ChatExecutionService {
             workspaceId: workspace.id,
             operationType: UsageOperationType.AI_CHAT_TOKEN,
             spenders: { userWorkspaceId },
-          }),
-        );
+          });
 
         stopReason ??= stepDebit.stopReason;
-        userAllowancePeriodEnd =
-          stepDebit.userAllowanceExhaustedUntil ?? userAllowancePeriodEnd;
+        turnUserCreditsUsedMicro += stepDebit.userCreditsUsedMicro;
 
-        const userCreditsSpillRenewsAt = findUserCreditsSpillNoticeRenewsAt({
-          stepDebit,
-          hadUserCreditsAtTurnStart,
-        });
-
+        // only the step that crosses a window both pays a user share and leaves it exhausted
         if (
-          isDefined(userCreditsSpillRenewsAt) &&
-          !hasNotifiedUserCreditsExhausted
+          isDefined(stepDebit.userAllowanceExhaustedUntil) &&
+          stepDebit.userCreditsUsedMicro > 0
         ) {
-          hasNotifiedUserCreditsExhausted = true;
-          onUserCreditsExhausted(userCreditsSpillRenewsAt);
+          await onUserCreditsExhausted({
+            renewsAt: stepDebit.userAllowanceExhaustedUntil,
+            isFallingBackToWorkspaceCredits:
+              stepDebit.stopReason !== 'userAllowance',
+          });
         }
 
         this.logger.log(
@@ -720,8 +703,8 @@ export class ChatExecutionService {
           });
         }
       },
-      onAbort: async () => {
-        await turnUsageRecorder.recordOnce();
+      onAbort: async ({ steps }) => {
+        await emitTurnUsageEvent(steps);
       },
       repairToolCall: async ({
         toolCall,
@@ -748,16 +731,10 @@ export class ChatExecutionService {
     });
 
     Promise.all([stream.usage, stream.steps])
-      .then(async () => {
-        await turnUsageRecorder.recordOnce();
+      .then(async ([, steps]) => {
+        await emitTurnUsageEvent(steps);
       })
-      .catch(async (error) => {
-        await turnUsageRecorder
-          .recordOnce()
-          .catch((recordError) =>
-            this.exceptionHandlerService.captureExceptions([recordError]),
-          );
-
+      .catch((error) => {
         if (error?.name === 'AbortError') {
           return;
         }
@@ -780,7 +757,6 @@ export class ChatExecutionService {
       stream,
       modelConfig,
       getStopReason: () => stopReason,
-      getUserAllowancePeriodEnd: () => userAllowancePeriodEnd,
       getStreamError: () => lastUnderlyingStreamError,
     };
   }
