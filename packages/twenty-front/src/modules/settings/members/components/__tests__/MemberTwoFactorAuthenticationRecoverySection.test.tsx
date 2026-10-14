@@ -137,6 +137,6 @@ it('shows a pending code and revokes it', async () => {
   );
   expect(revoke).toHaveBeenCalledTimes(1);
   expect(enqueueToast).toHaveBeenCalledWith(
-    expect.objectContaining({ variant: 'success' }),
+    expect.objectContaining({ status: 'success' }),
   );
 });

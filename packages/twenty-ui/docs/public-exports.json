@@ -40,6 +40,7 @@
       "getIconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonTree": "components/data-display/JsonTree/JsonTree",
       "MetricRow": "components/data-display/MetricRow/MetricRow",
+      "StackIcon": "components/data-display/StackIcon/StackIcon",
       "TintedIconTile": "components/data-display/TintedIconTile/TintedIconTile"
     },
     "types": {
@@ -52,6 +53,7 @@
       "JsonTreeProps": "components/data-display/JsonTree/types/JsonTreeProps",
       "MetricRowProps": "components/data-display/MetricRow/types/MetricRowProps",
       "ShouldExpandNodeInitiallyProps": "components/data-display/JsonTree/types/ShouldExpandNodeInitiallyProps",
+      "StackIconProps": "components/data-display/StackIcon/types/StackIconProps",
       "TintedIconTileProps": "components/data-display/TintedIconTile/types/TintedIconTileProps"
     }
   },
@@ -79,7 +81,8 @@
       "ToastOptions": "components/feedback/Toast/types/ToastOptions",
       "ToastProps": "components/feedback/Toast/types/ToastProps",
       "ToastProviderProps": "components/feedback/Toast/types/ToastProviderProps",
-      "ToastVariant": "components/feedback/Toast/types/ToastVariant"
+      "ToastStatus": "components/feedback/Toast/types/ToastStatus",
+      "ToastUpdate": "components/feedback/Toast/types/ToastUpdate"
     }
   },
   "components/input": {
@@ -1153,12 +1156,14 @@
     "values": {
       "formatShortcut": "primitives/typography/Shortcut/formatShortcut",
       "Heading": "primitives/typography/Heading/Heading",
+      "OverflowingTextTooltipModeProvider": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextTooltipModeProvider",
       "OverflowingTextWithTooltip": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip",
       "Shortcut": "primitives/typography/Shortcut/Shortcut",
       "Text": "primitives/typography/Text/Text"
     },
     "types": {
       "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "OverflowingTextTooltipMode": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextTooltipMode",
       "OverflowingTextWithTooltipProps": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps",
       "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
       "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",

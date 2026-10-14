@@ -64,14 +64,18 @@ describe('validateLogicFunctionForwardedRequestHeaders', () => {
     );
   });
 
-  it('should return an error when a server route forwards a credential header', () => {
+  it('should return an error when a server route forwards cookie or proxy-authorization', () => {
     const errors = validateLogicFunctionForwardedRequestHeaders({
-      serverRouteTriggerSettings: buildServerRouteTriggerSettings(['cookie']),
+      serverRouteTriggerSettings: buildServerRouteTriggerSettings([
+        'authorization',
+        'cookie',
+        'proxy-authorization',
+      ]),
     });
 
     expect(errors).toHaveLength(1);
     expect(errors[0].message).toBe(
-      'forwardedRequestHeaders cannot include credential headers: cookie',
+      'forwardedRequestHeaders cannot include credential headers: cookie, proxy-authorization',
     );
   });
 

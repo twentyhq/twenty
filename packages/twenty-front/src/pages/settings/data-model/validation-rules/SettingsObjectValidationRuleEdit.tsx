@@ -10,8 +10,8 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { NotFound } from '~/pages/not-found/NotFound';
 
 export const SettingsObjectValidationRuleEdit = () => {
-  const isValidationRulesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+  const isRecordCreationFormEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const { objectNamePlural = '', validationRuleId = '' } = useParams();
@@ -26,7 +26,7 @@ export const SettingsObjectValidationRuleEdit = () => {
   });
 
   if (
-    !isValidationRulesEnabled ||
+    !isRecordCreationFormEnabled ||
     !hasValidationRulesEntitlement ||
     !isDefined(objectMetadataItem)
   ) {

@@ -102,8 +102,8 @@ export const ObjectSettings = ({
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
-  const isValidationRulesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+  const isRecordCreationFormEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
@@ -130,7 +130,7 @@ export const ObjectSettings = ({
     const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Object deleted` });
+      enqueueToast({ status: 'success', children: t`Object deleted` });
       closeDialog(DELETE_OBJECT_MODAL_ID);
       navigate(SettingsPath.Objects);
       return;
@@ -179,7 +179,7 @@ export const ObjectSettings = ({
           />
         </Section.Root>
       </StyledFormSectionContainer>
-      {isValidationRulesEnabled &&
+      {isRecordCreationFormEnabled &&
         !objectMetadataItem.isRemote &&
         !objectMetadataItem.isSystem && (
           <StyledFormSectionContainer>

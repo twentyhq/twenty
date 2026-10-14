@@ -46,7 +46,7 @@ export const useSettingsAiModelsActions = () => {
     } catch {
       setCurrentWorkspace(previousWorkspace);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update model settings`,
       });
     }

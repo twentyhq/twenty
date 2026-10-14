@@ -84,7 +84,7 @@ describe('useUninstallApplication', () => {
 
     await waitFor(() => expect(result.current.isUninstalling).toBe(false));
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'success',
+      status: 'success',
       children: 'Application successfully uninstalled.',
     });
     expect(onCompleted).toHaveBeenCalledTimes(1);
@@ -117,7 +117,7 @@ describe('useUninstallApplication', () => {
 
     await waitFor(() => expect(result.current.isUninstalling).toBe(false));
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'This application cannot be uninstalled.',
     });
   });

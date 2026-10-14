@@ -120,12 +120,12 @@ export const SettingsAdminApps = () => {
     try {
       await syncMarketplaceCatalog();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Marketplace catalog synchronization started.`,
       });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to synchronize the marketplace catalog.`,
       });
     }

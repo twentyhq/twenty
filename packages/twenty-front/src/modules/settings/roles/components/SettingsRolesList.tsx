@@ -1,3 +1,4 @@
+import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -10,10 +11,12 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import {
+  IconApps,
   IconFilter,
   IconKey,
   IconLego,
@@ -56,18 +59,37 @@ export const SettingsRolesList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAgentRoles, setShowAgentRoles] = useState(false);
   const [showApiKeyRoles, setShowApiKeyRoles] = useState(false);
+  const [showApplicationRoles, setShowApplicationRoles] = useState(false);
 
   const settingsAllRoles = useSettingsAllRoles();
+  const installedApplications = useInstalledApplications();
 
-  const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) =>
-    sortByAscString(a.label, b.label),
+  const installedApplicationByDefaultRoleId = new Map(
+    installedApplications
+      .filter((application) => isDefined(application.defaultRoleId))
+      .map((application) => [application.defaultRoleId, application]),
   );
 
+  const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) => {
+    const applicationNameA =
+      installedApplicationByDefaultRoleId.get(a.id)?.name ?? '';
+    const applicationNameB =
+      installedApplicationByDefaultRoleId.get(b.id)?.name ?? '';
+
+    return (
+      sortByAscString(applicationNameA, applicationNameB) ||
+      sortByAscString(a.label, b.label)
+    );
+  });
+
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
-    const matchesType =
-      role.canBeAssignedToUsers ||
-      (showAgentRoles && role.canBeAssignedToAgents) ||
-      (showApiKeyRoles && role.canBeAssignedToApiKeys);
+    const isApplicationRole = installedApplicationByDefaultRoleId.has(role.id);
+
+    const matchesType = isApplicationRole
+      ? showApplicationRoles
+      : role.canBeAssignedToUsers ||
+        (showAgentRoles && role.canBeAssignedToAgents) ||
+        (showApiKeyRoles && role.canBeAssignedToApiKeys);
 
     const matchesSearch = role.label
       ?.toLowerCase()
@@ -116,6 +138,13 @@ export const SettingsRolesList = () => {
                 onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
                 checked={showApiKeyRoles}
               >{t`API key roles`}</SettingsRow>
+              <SettingsRow
+                startElement={<IconApps />}
+                onCheckedChange={() =>
+                  setShowApplicationRoles(!showApplicationRoles)
+                }
+                checked={showApplicationRoles}
+              >{t`Application roles`}</SettingsRow>
             </Dropdown.Section>
           </DropdownContent>
         </DropdownRoot>
@@ -130,7 +159,11 @@ export const SettingsRolesList = () => {
             </TableCell>
           ) : (
             filteredRoles.map((role) => (
-              <SettingsRolesTableRow key={role.id} role={role} />
+              <SettingsRolesTableRow
+                key={role.id}
+                role={role}
+                application={installedApplicationByDefaultRoleId.get(role.id)}
+              />
             ))
           )}
         </StyledTableRows>

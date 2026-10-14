@@ -65,28 +65,26 @@ const StyledNavigationBar = styled.nav`
 `;
 
 const navigationButtonClassName = css`
-  && {
-    --tw-button-size: ${themeCssVariables.spacing[10]};
-    --tw-icon-button-icon-size: ${themeCssVariables.icon.size.lg};
+  --tw-button-size: ${themeCssVariables.spacing[10]};
+  --tw-icon-button-icon-size: ${themeCssVariables.icon.size.lg};
 
-    border: none;
-    color: ${themeCssVariables.grayScale.gray10};
-    transition: background-color
-      calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
+  border: none;
+  color: ${themeCssVariables.grayScale.gray10};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
 
-    &[aria-pressed='true'] {
-      background: ${themeCssVariables.background.transparent.medium};
+  &[aria-pressed='true'] {
+    background: ${themeCssVariables.background.transparent.medium};
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: ${themeCssVariables.background.transparent.light};
     }
+  }
 
-    @media (hover: hover) {
-      &:hover {
-        background: ${themeCssVariables.background.transparent.light};
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      transition: none;
-    }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 `;
 

@@ -1810,23 +1810,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "allMessageCampaigns": {
         "universalIdentifier": "8094a87e-310b-58e7-9c05-a76c59ac6535",
         "viewFields": {
-          "bouncedCount": {
-            "universalIdentifier": "3c273c7f-b577-5213-8597-198dac6fdae1",
-          },
-          "clickRate": {
-            "universalIdentifier": "acd9117a-eb71-5981-9c7a-812ff09f3fab",
-          },
-          "complainedCount": {
-            "universalIdentifier": "30317d2b-5212-56be-a5fe-0ab15722dde3",
-          },
           "createdAt": {
             "universalIdentifier": "88484379-8afd-5f7c-ab3c-7d937bb7ed13",
-          },
-          "deliveredCount": {
-            "universalIdentifier": "5b202e1b-0267-5c56-a039-2434d9eeb35b",
-          },
-          "failedCount": {
-            "universalIdentifier": "2f44ac38-194f-56a7-bd94-a292db4bc210",
           },
           "fromAddress": {
             "universalIdentifier": "2ebb7a5d-e03d-5c6e-955f-4efb99fffb46",
@@ -1837,9 +1822,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "name": {
             "universalIdentifier": "5a224d5d-9ae7-53c8-ad6d-720bb62a087b",
           },
-          "openRate": {
-            "universalIdentifier": "df8ae84e-6b78-5808-a513-0faf34c4d36c",
-          },
           "recipients": {
             "universalIdentifier": "40f278c1-2716-5324-8035-c14ea62a4eb7",
           },
@@ -1849,23 +1831,43 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "sentAt": {
             "universalIdentifier": "a9389297-3927-5364-8c9d-4bcb8039020e",
           },
-          "sentCount": {
-            "universalIdentifier": "e55b655a-038e-5257-ab2c-f2966900d2de",
-          },
-          "skippedCount": {
-            "universalIdentifier": "9ab64cf1-133e-56a4-8eda-e33a4bc8aba9",
-          },
           "status": {
             "universalIdentifier": "68714967-d906-5082-af8c-2791705ce682",
           },
           "subject": {
             "universalIdentifier": "2a4fe259-612f-5d10-a451-a047e605917c",
           },
-          "uniqueClickCount": {
-            "universalIdentifier": "7c6f0f1b-f685-511b-a6ce-8f80e3c584c0",
+        },
+      },
+      "messageCampaignList": {
+        "universalIdentifier": "99ca5417-e5e0-4fd4-8e64-67acd7b21e25",
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "27548f0a-5ed4-4412-b23a-718b99eb697e",
           },
-          "uniqueOpenCount": {
-            "universalIdentifier": "830373d0-31dc-598d-9827-0390a6d0c472",
+          "fromAddress": {
+            "universalIdentifier": "b9798ecc-de06-4717-8b42-057181437dbc",
+          },
+          "list": {
+            "universalIdentifier": "8e28bc70-eaa0-4768-bb13-606571e65ac8",
+          },
+          "name": {
+            "universalIdentifier": "fcda0c3b-7ee3-40dd-b280-da3ff4da5452",
+          },
+          "recipients": {
+            "universalIdentifier": "e065a2d1-1352-4869-b527-58e3c37557c0",
+          },
+          "scheduledAt": {
+            "universalIdentifier": "caba5417-964d-416c-a5a9-b64ef71e5964",
+          },
+          "sentAt": {
+            "universalIdentifier": "9d546249-b029-4b01-8389-65a88ae583c8",
+          },
+          "status": {
+            "universalIdentifier": "ff29b192-5a52-42a1-8a1e-1a03d26f5464",
+          },
+          "subject": {
+            "universalIdentifier": "700087d2-bd10-4ab9-b8a9-b0710146927c",
           },
         },
       },
