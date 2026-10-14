@@ -13,7 +13,7 @@ import {
   APPLICATION_REGISTRATION_VERSIONS_FILES_PATH,
 } from 'src/engine/core-modules/application/application-registration-version/constants/application-registration-version-artifact-route.constant';
 import { assertSriIntegrityMatches } from 'src/engine/core-modules/application/application-registration-version/utils/assert-sri-integrity-matches.util';
-import { computeSupportedSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { computeSupportedSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-supported-sri-integrity.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationException,

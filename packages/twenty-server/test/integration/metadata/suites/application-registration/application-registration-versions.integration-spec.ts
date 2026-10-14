@@ -198,6 +198,17 @@ describe('Application registration versions', () => {
     }
   });
 
+  it('refuses an npm version recorded without its package name', async () => {
+    await expect(
+      ds.query(
+        `INSERT INTO core."applicationRegistrationVersion"
+           ("applicationRegistrationId", version, "sourceType")
+         VALUES ($1, '2.0.0', 'npm')`,
+        [applicationRegistrationId],
+      ),
+    ).rejects.toThrow('CHK_APP_REG_VERSION_NPM_HAS_SOURCE_PACKAGE');
+  });
+
   it('deletes every retained tarball with the registration', async () => {
     const tarballFileIds = (await findVersions()).map(
       ({ tarballFileId }) => tarballFileId,

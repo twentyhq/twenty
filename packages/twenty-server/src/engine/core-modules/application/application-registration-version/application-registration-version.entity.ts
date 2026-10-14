@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -33,6 +34,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
   'version',
 ])
 @Index('IDX_APP_REG_VERSION_TARBALL_FILE_ID', ['tarballFileId'])
+@Check(
+  'CHK_APP_REG_VERSION_NPM_HAS_SOURCE_PACKAGE',
+  `"sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL`,
+)
 export class ApplicationRegistrationVersionEntity {
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

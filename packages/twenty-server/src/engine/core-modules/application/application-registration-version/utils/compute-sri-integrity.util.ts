@@ -1,19 +1,8 @@
 import { createHash } from 'crypto';
 
-import {
-  type SriAlgorithm,
-  SUPPORTED_SRI_ALGORITHMS,
-} from 'src/engine/core-modules/application/application-registration-version/utils/parse-sri-integrity.util';
-
-export const SRI_ALGORITHM: SriAlgorithm = 'sha512';
-
-export const toSriString = ({
-  digest,
-  algorithm = SRI_ALGORITHM,
-}: {
-  digest: Buffer;
-  algorithm?: SriAlgorithm;
-}): string => `${algorithm}-${digest.toString('base64')}`;
+import { SRI_ALGORITHM } from 'src/engine/core-modules/application/application-registration-version/constants/sri-algorithm.constant';
+import { type SriAlgorithm } from 'src/engine/core-modules/application/application-registration-version/utils/parse-sri-integrity.util';
+import { toSriString } from 'src/engine/core-modules/application/application-registration-version/utils/to-sri-string.util';
 
 export const computeSriIntegrity = ({
   source,
@@ -26,8 +15,3 @@ export const computeSriIntegrity = ({
     digest: createHash(algorithm).update(source).digest(),
     algorithm,
   });
-
-export const computeSupportedSriIntegrity = (source: Buffer): string =>
-  SUPPORTED_SRI_ALGORITHMS.map((algorithm) =>
-    computeSriIntegrity({ source, algorithm }),
-  ).join(' ');

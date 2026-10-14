@@ -1,8 +1,6 @@
 import { assertSriIntegrityMatches } from 'src/engine/core-modules/application/application-registration-version/utils/assert-sri-integrity-matches.util';
-import {
-  computeSriIntegrity,
-  computeSupportedSriIntegrity,
-} from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { computeSupportedSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-supported-sri-integrity.util';
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
 
 describe('assertSriIntegrityMatches', () => {

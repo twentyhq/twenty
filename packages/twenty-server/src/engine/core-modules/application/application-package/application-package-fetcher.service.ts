@@ -23,10 +23,8 @@ import { readJsonFileOrThrow } from 'src/engine/core-modules/application/applica
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { registryVersionDistSchema } from 'src/engine/core-modules/application/application-package/zod-schemas/registry-version-dist.zod-schema';
 import { assertSriIntegrityMatches } from 'src/engine/core-modules/application/application-registration-version/utils/assert-sri-integrity-matches.util';
-import {
-  computeSriIntegrity,
-  computeSupportedSriIntegrity,
-} from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
+import { computeSupportedSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-supported-sri-integrity.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
