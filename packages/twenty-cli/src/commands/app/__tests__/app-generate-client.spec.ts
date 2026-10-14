@@ -46,6 +46,14 @@ const server = await startTestServer((_request, response) =>
 const run = (...options: string[]) =>
   runCliForTest(['app', 'generate-client', '--path', appPath, ...options]);
 
+const expectIdentityReadOnce = () => {
+  expect(readAppIdentity).toHaveBeenCalledTimes(1);
+  expect(readAppIdentity).toHaveBeenCalledWith({
+    appPath,
+    signal: expect.any(AbortSignal),
+  });
+};
+
 beforeAll(async () => {
   workerDirectory = await mkdtemp(
     join(tmpdir(), 'twenty-generate-client-worker-'),
@@ -84,13 +92,15 @@ beforeEach(async () => {
     `,
   );
   schemaResponse = { data: { applicationCoreGraphqlSchema: SCHEMA } };
-  vi.mocked(readAppIdentity).mockResolvedValue({
-    application: {
-      universalIdentifier: UNIVERSAL_IDENTIFIER.toUpperCase(),
-      displayName: 'Generate App',
-    },
-    diagnostics: [],
-  });
+  vi.mocked(readAppIdentity)
+    .mockReset()
+    .mockResolvedValue({
+      application: {
+        universalIdentifier: UNIVERSAL_IDENTIFIER.toUpperCase(),
+        displayName: 'Generate App',
+      },
+      diagnostics: [],
+    });
   vi.stubEnv('TWENTY_API_URL', server.url);
   vi.stubEnv('TWENTY_API_KEY', 'generate-test-key');
   vi.stubEnv('TWENTY_REMOTE', '');
@@ -124,6 +134,7 @@ describe('app generate-client', () => {
     expect(
       JSON.parse(await readFile(join(appPath, 'generated.json'), 'utf8')),
     ).toEqual({ appPath, schema: SCHEMA });
+    expectIdentityReadOnce();
   });
 
   it('confirms the generated client in human output', async () => {
@@ -133,6 +144,7 @@ describe('app generate-client', () => {
     expect(stdout).toContain(
       `Generated the typed API client for Generate App from ${server.url}`,
     );
+    expectIdentityReadOnce();
   });
 
   it('refuses an app without its own twenty-client-sdk before contacting the workspace', async () => {
@@ -149,6 +161,7 @@ describe('app generate-client', () => {
       hint: expect.stringContaining('yarn add twenty-client-sdk'),
     });
     expect(server.requests).toEqual([]);
+    expect(readAppIdentity).not.toHaveBeenCalled();
   });
 
   it('asks to apply an app that is not installed in the workspace', async () => {
@@ -170,6 +183,7 @@ describe('app generate-client', () => {
       hint: expect.stringContaining('twenty app apply'),
     });
     expect(existsSync(join(appPath, 'generated.json'))).toBe(false);
+    expectIdentityReadOnce();
   });
 
   it('rejects a project without an application definition', async () => {
@@ -185,5 +199,6 @@ describe('app generate-client', () => {
       code: 'INVALID_INPUT',
     });
     expect(server.requests).toEqual([]);
+    expectIdentityReadOnce();
   });
 });
