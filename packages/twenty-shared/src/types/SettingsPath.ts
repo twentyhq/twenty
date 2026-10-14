@@ -28,6 +28,8 @@ export enum SettingsPath {
   ObjectValidationRuleEdit = 'objects/:objectNamePlural/validation-rules/:validationRuleId',
   ObjectFieldEdit = 'objects/:objectNamePlural/:fieldName',
   ObjectTranslations = 'objects/:objectNamePlural/object-translations',
+  ObjectSearch = 'objects/:objectNamePlural/object-search',
+  ObjectIndexes = 'objects/:objectNamePlural/object-indexes',
   ObjectFieldTranslations = 'objects/:objectNamePlural/:fieldName/translations',
   NewObject = 'objects/new',
   Layout = 'layout',

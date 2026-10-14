@@ -6,11 +6,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
-import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
-import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
@@ -21,6 +20,7 @@ import {
 import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -29,12 +29,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
-import { isEmptyObject } from 'twenty-shared/utils';
+import { getSettingsPath, isEmptyObject } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconArchive, IconTrash } from 'twenty-ui/icon';
+import { IconArchive, IconBolt, IconSearch, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -56,6 +56,12 @@ const StyledFormSectionContainer = styled.div`
   }
 `;
 
+const StyledLinkCardsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledDangerButtonsContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -69,6 +75,7 @@ export const ObjectSettings = ({
   setIsDeleting,
 }: ObjectSettingsProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const navigate = useNavigateSettings();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -166,18 +173,6 @@ export const ObjectSettings = ({
           />
         </Section.Root>
       </StyledFormSectionContainer>
-      <StyledFormSectionContainer>
-        <Section.Root>
-          <Section.Header
-            title={t`Translations`}
-            description={t`What each language displays for this object's labels`}
-          />
-          <SettingsTranslationsCard
-            objectNamePlural={objectMetadataItem.namePlural}
-            disabled={hasUnsavedAboutEdits}
-          />
-        </Section.Root>
-      </StyledFormSectionContainer>
       {isRecordCreationFormEnabled &&
         !objectMetadataItem.isRemote &&
         !objectMetadataItem.isSystem && (
@@ -221,25 +216,35 @@ export const ObjectSettings = ({
       <StyledFormSectionContainer>
         <Section.Root>
           <Section.Header
-            title={t`Search`}
-            description={t`Configure how this object appears in search results`}
+            title={t`Advanced`}
+            description={t`Settings most workspaces never need to change`}
           />
-          <SettingsObjectSearchSection
-            objectMetadataItem={objectMetadataItem}
-            isReadOnly={isReadOnly}
-          />
-        </Section.Root>
-      </StyledFormSectionContainer>
-      <StyledFormSectionContainer>
-        <Section.Root>
-          <Section.Header
-            title={t`Indexes`}
-            description={t`Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent.`}
-          />
-          <SettingsObjectIndexesSection
-            objectMetadataItem={objectMetadataItem}
-            isReadOnly={isReadOnly}
-          />
+          <StyledLinkCardsContainer>
+            <SettingsTranslationsCard
+              objectNamePlural={objectMetadataItem.namePlural}
+              disabled={hasUnsavedAboutEdits}
+            />
+            <UndecoratedLink
+              to={getSettingsPath(SettingsPath.ObjectSearch, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              <SettingsCard
+                Icon={<IconSearch size={theme.icon.size.md} />}
+                title={t`Configure search`}
+              />
+            </UndecoratedLink>
+            <UndecoratedLink
+              to={getSettingsPath(SettingsPath.ObjectIndexes, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              <SettingsCard
+                Icon={<IconBolt size={theme.icon.size.md} />}
+                title={t`Manage indexes`}
+              />
+            </UndecoratedLink>
+          </StyledLinkCardsContainer>
         </Section.Root>
       </StyledFormSectionContainer>
       {!isReadOnly && (

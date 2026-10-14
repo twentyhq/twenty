@@ -562,6 +562,20 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
+const SettingsObjectSearch = lazy(() =>
+  import('~/pages/settings/data-model/SettingsObjectSearch').then((module) => ({
+    default: module.SettingsObjectSearch,
+  })),
+);
+
+const SettingsObjectIndexes = lazy(() =>
+  import('~/pages/settings/data-model/SettingsObjectIndexes').then(
+    (module) => ({
+      default: module.SettingsObjectIndexes,
+    }),
+  ),
+);
+
 const SettingsObjectTranslations = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectTranslations').then(
     (module) => ({
@@ -986,6 +1000,16 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectTranslations}
         element={<SettingsObjectTranslations />}
+        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+      <Route
+        path={SettingsPath.ObjectSearch}
+        element={<SettingsObjectSearch />}
+        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+      <Route
+        path={SettingsPath.ObjectIndexes}
+        element={<SettingsObjectIndexes />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
       <Route
