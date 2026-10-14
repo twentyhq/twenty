@@ -250,14 +250,13 @@ export class AgentChatResolver {
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
   }): Promise<SendChatMessageResultDTO> {
-    const { thread, hasWorkspaceCreditsLeft } =
-      await this.turnPreflightService.assertCanStartChatTurn({
-        threadId,
-        modelId,
-        userWorkspaceId,
-        workspaceMemberId,
-        workspace,
-      });
+    const thread = await this.turnPreflightService.assertCanStartChatTurn({
+      threadId,
+      modelId,
+      userWorkspaceId,
+      workspaceMemberId,
+      workspace,
+    });
 
     if (isDefined(thread.deletedAt)) {
       await this.agentChatService.restoreThread({
@@ -286,11 +285,7 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
-      return {
-        messageId: queuedMessage.id,
-        queued: true,
-        hasWorkspaceCreditsLeft,
-      };
+      return { messageId: queuedMessage.id, queued: true };
     }
 
     const result = await this.agentChatStreamingService.streamAgentChat({
@@ -312,11 +307,7 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
-      return {
-        messageId: result.messageId,
-        queued: true,
-        hasWorkspaceCreditsLeft,
-      };
+      return { messageId: result.messageId, queued: true };
     }
 
     tagAiChatStreamScope({
@@ -330,7 +321,6 @@ export class AgentChatResolver {
       messageId: result.messageId,
       queued: false,
       streamId: result.streamId,
-      hasWorkspaceCreditsLeft,
     };
   }
 
@@ -343,14 +333,13 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    const { hasWorkspaceCreditsLeft } =
-      await this.turnPreflightService.assertCanStartChatTurn({
-        threadId,
-        modelId,
-        userWorkspaceId,
-        workspaceMemberId,
-        workspace,
-      });
+    await this.turnPreflightService.assertCanStartChatTurn({
+      threadId,
+      modelId,
+      userWorkspaceId,
+      workspaceMemberId,
+      workspace,
+    });
 
     const result = await this.agentChatStreamingService.retryLastFailedTurn({
       threadId,
@@ -371,7 +360,6 @@ export class AgentChatResolver {
       messageId: result.messageId,
       queued: false,
       streamId: result.streamId,
-      hasWorkspaceCreditsLeft,
     };
   }
 

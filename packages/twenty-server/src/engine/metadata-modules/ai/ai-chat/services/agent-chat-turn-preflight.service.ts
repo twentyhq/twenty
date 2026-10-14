@@ -4,7 +4,6 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import {
@@ -32,10 +31,7 @@ export class AgentChatTurnPreflightService {
     userWorkspaceId: string;
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
-  }): Promise<{
-    thread: AgentChatThreadWorkspaceEntity;
-    hasWorkspaceCreditsLeft: boolean;
-  }> {
+  }) {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
@@ -59,6 +55,6 @@ export class AgentChatTurnPreflightService {
       spenders: { userWorkspaceId },
     });
 
-    return { thread, hasWorkspaceCreditsLeft: true };
+    return thread;
   }
 }

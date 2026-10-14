@@ -41,7 +41,6 @@ import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-li
 import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit/utils/compute-credit-allowance-micro.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { filterExhaustedCountersByPayer } from 'src/engine/core-modules/usage-limit/utils/filter-exhausted-counters-by-payer.util';
-import { findBindingUserAllowance } from 'src/engine/core-modules/usage-limit/utils/find-binding-user-allowance.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
@@ -260,59 +259,6 @@ export class UsageLimitQuotaService {
     } catch (error) {
       return this.admitOnFailure({ error, workspaceId, admitted: null });
     }
-  }
-
-  async getUserAllowanceUsage({
-    workspaceId,
-    userWorkspaceId,
-    resourceType,
-    operationType,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    resourceType: UsageResourceType;
-    operationType: UsageOperationType;
-  }): Promise<{
-    limitValue: number;
-    consumedValue: number | null;
-    periodEnd: Date;
-    fallback: UserCreditsFallback;
-  } | null> {
-    const [quotaCounters, fallback] = await Promise.all([
-      this.buildQuotaCountersForScope({
-        workspaceId,
-        resourceType,
-        operationType,
-        spenders: { userWorkspaceId },
-      }),
-      this.billingCreditAllowanceService.getUserCreditsFallback(workspaceId),
-    ]);
-
-    const userAllowanceCounters = quotaCounters.filter(
-      (counter): counter is UserAllowanceQuotaCounter =>
-        counter.kind === 'userAllowance',
-    );
-
-    const { consumedValues } = await this.readCountersAdmittingOnFailure({
-      workspaceId,
-      counters: userAllowanceCounters,
-    });
-
-    const bindingUserAllowance = findBindingUserAllowance({
-      userAllowanceCounters,
-      userAllowanceConsumedValues: consumedValues,
-    });
-
-    if (!isDefined(bindingUserAllowance)) {
-      return null;
-    }
-
-    return {
-      limitValue: bindingUserAllowance.counter.limitValue,
-      consumedValue: bindingUserAllowance.consumedValue,
-      periodEnd: bindingUserAllowance.counter.periodEnd,
-      fallback,
-    };
   }
 
   async readLimitConsumptions({
