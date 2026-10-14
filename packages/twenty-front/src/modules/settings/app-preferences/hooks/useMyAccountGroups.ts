@@ -1,7 +1,6 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { APP_PREFERENCES_CONNECTED_ACCOUNTS_FILTER } from '@/settings/app-preferences/constants/AppPreferencesConnectedAccountsFilter';
 import { groupConnectedAccountsByNativeAccount } from '@/settings/app-preferences/utils/groupConnectedAccountsByNativeAccount';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 const ACCOUNT_GROUP_PROVIDERS: ReadonlySet<ConnectedAccountProvider> = new Set([
@@ -12,18 +11,13 @@ const ACCOUNT_GROUP_PROVIDERS: ReadonlySet<ConnectedAccountProvider> = new Set([
 ]);
 
 export const useMyAccountGroups = () => {
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { accounts, loading } = useMyConnectedAccounts({
     providers: ACCOUNT_GROUP_PROVIDERS,
+    filter: APP_PREFERENCES_CONNECTED_ACCOUNTS_FILTER,
   });
 
   return {
-    groups: groupConnectedAccountsByNativeAccount(
-      accounts.filter(
-        (account) =>
-          account.userWorkspaceId === currentWorkspaceMember?.userWorkspaceId,
-      ),
-    ),
+    groups: groupConnectedAccountsByNativeAccount(accounts),
     loading,
   };
 };

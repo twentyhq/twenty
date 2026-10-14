@@ -6530,6 +6530,12 @@ export interface MutationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MyConnectedAccountsFilterInput {
+/** Keeps only the app connections with this visibility; accounts from other providers are not affected */
+appConnectionVisibility?: (Scalars['String'] | null),
+/** true keeps only the accounts the caller owns; false, null or omitted also keeps the workspace-shared accounts of other members */
+ownedByCaller?: (Scalars['Boolean'] | null)}
+
 export interface NativeModelCapabilitiesGenqlSelection{
     twitterSearch?: boolean | number
     webSearch?: boolean | number
@@ -7100,7 +7106,7 @@ export interface QueryGenqlSelection{
     mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
     myApplicationPreferences?: ApplicationPreferencesGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
-    myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
+    myConnectedAccounts?: (ConnectedAccountPublicDTOGenqlSelection & { __args?: {filter?: (MyConnectedAccountsFilterInput | null)} })
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myUserApplicationVariables?: WorkspaceMemberApplicationVariablesGenqlSelection

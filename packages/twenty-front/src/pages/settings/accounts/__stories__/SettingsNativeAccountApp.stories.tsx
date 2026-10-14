@@ -10,7 +10,7 @@ import {
 import { SettingsNativeAccountApp } from '~/pages/settings/accounts/SettingsNativeAccountApp';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
-  CONNECTED_ACCOUNTS,
+  APP_PREFERENCES_CONNECTED_ACCOUNTS,
   MICROSOFT_ACCOUNT_ID,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
@@ -133,7 +133,7 @@ export const OutlookWithoutAccountOffersMicrosoftOnly: Story = {
         graphql.query('MyConnectedAccounts', () =>
           HttpResponse.json({
             data: {
-              myConnectedAccounts: CONNECTED_ACCOUNTS.filter(
+              myConnectedAccounts: APP_PREFERENCES_CONNECTED_ACCOUNTS.filter(
                 (account) => account.id !== MICROSOFT_ACCOUNT_ID,
               ),
             },

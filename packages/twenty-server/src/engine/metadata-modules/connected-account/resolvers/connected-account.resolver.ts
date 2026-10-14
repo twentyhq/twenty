@@ -1,4 +1,9 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import {
+  UseGuards,
+  UseInterceptors,
+  UseFilters,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -21,10 +26,12 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { ApplicationConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/application-connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
+import { MyConnectedAccountsFilterInput } from 'src/engine/metadata-modules/connected-account/dtos/my-connected-accounts-filter.input';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -49,15 +56,22 @@ export class ConnectedAccountResolver {
 
   @Query(() => [ConnectedAccountPublicDTO])
   @UseGuards(NoPermissionGuard)
+  @UsePipes(ResolverValidationPipe)
   @AllowSuspendedWorkspace()
   async myConnectedAccounts(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('filter', {
+      type: () => MyConnectedAccountsFilterInput,
+      nullable: true,
+    })
+    filter?: MyConnectedAccountsFilterInput,
   ): Promise<ConnectedAccountPublicDTO[]> {
     const accounts =
       await this.connectedAccountMetadataService.findUsableByCaller({
         userWorkspaceId,
         workspaceId: workspace.id,
+        filter: filter ?? {},
       });
 
     return accounts.map((account) => buildPublicConnectedAccount(account));

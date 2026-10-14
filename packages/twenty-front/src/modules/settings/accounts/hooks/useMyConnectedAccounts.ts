@@ -5,6 +5,7 @@ import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChan
 import { useApolloClient, useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { type MyConnectedAccountsFilterInput } from '~/generated-metadata/graphql';
 
 type CoreConnectedAccount = Omit<
   ConnectedAccount,
@@ -24,8 +25,10 @@ const EMAIL_AND_CALENDAR_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
 // page by filtering to the email/calendar provider set.
 export const useMyConnectedAccounts = ({
   providers = EMAIL_AND_CALENDAR_PROVIDERS,
+  filter,
 }: {
   providers?: ReadonlySet<ConnectedAccountProvider>;
+  filter?: MyConnectedAccountsFilterInput;
 } = {}) => {
   const apolloClient = useApolloClient();
 
@@ -33,6 +36,7 @@ export const useMyConnectedAccounts = ({
     myConnectedAccounts: CoreConnectedAccount[];
   }>(GET_MY_CONNECTED_ACCOUNTS, {
     client: apolloClient,
+    variables: { filter },
   });
 
   const { channels: messageChannels, loading: messageChannelsLoading } =

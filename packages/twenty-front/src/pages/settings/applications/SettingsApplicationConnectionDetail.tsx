@@ -13,6 +13,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { APP_PREFERENCES_CONNECTED_ACCOUNTS_FILTER } from '@/settings/app-preferences/constants/AppPreferencesConnectedAccountsFilter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
@@ -107,6 +108,10 @@ export const SettingsApplicationConnectionDetail = () => {
           variables: { applicationId },
         },
         { query: GET_MY_CONNECTED_ACCOUNTS },
+        {
+          query: GET_MY_CONNECTED_ACCOUNTS,
+          variables: { filter: APP_PREFERENCES_CONNECTED_ACCOUNTS_FILTER },
+        },
       ],
     },
   );

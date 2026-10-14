@@ -17,13 +17,15 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
+import { APP_PREFERENCES_CONNECTED_ACCOUNTS_FILTER } from '@/settings/app-preferences/constants/AppPreferencesConnectedAccountsFilter';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
-  CONNECTED_ACCOUNTS,
+  APP_PREFERENCES_CONNECTED_ACCOUNTS,
   FATHOM_APPLICATION_ID,
   GOOGLE_ACCOUNT_ID,
   MICROSOFT_ACCOUNT_ID,
   deleteConnectedAccount,
+  myConnectedAccountsQuery,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import {
@@ -123,8 +125,26 @@ export const AccountsGroupedByEmail: Story = {
       canvas.queryByRole('link', { name: 'notes@apple.dev' }),
     ).not.toBeInTheDocument();
 
-    expect(canvas.getByText('sales@apple.dev')).toBeVisible();
     expect(canvas.queryByText('support@apple.dev')).not.toBeInTheDocument();
+  },
+};
+
+export const WorkspaceSharedAppConnectionsStayOff: Story = {
+  ...accountGroupsStory,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Used by', undefined, { timeout: 3000 });
+
+    expect(myConnectedAccountsQuery).toHaveBeenCalledWith({
+      filter: APP_PREFERENCES_CONNECTED_ACCOUNTS_FILTER,
+    });
+    expect(canvas.queryByText('sales@apple.dev')).not.toBeInTheDocument();
+    expect(
+      getTableRow(canvasElement, 'tim@apple.dev').queryByRole('img', {
+        name: 'Granola',
+      }),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -229,7 +249,7 @@ export const AppsWithoutAccountShowMissingAccount: Story = {
         graphql.query('MyConnectedAccounts', () =>
           HttpResponse.json({
             data: {
-              myConnectedAccounts: CONNECTED_ACCOUNTS.filter(
+              myConnectedAccounts: APP_PREFERENCES_CONNECTED_ACCOUNTS.filter(
                 (account) =>
                   account.id !== GOOGLE_ACCOUNT_ID &&
                   account.id !== MICROSOFT_ACCOUNT_ID,
