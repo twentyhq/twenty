@@ -58,16 +58,19 @@ export class ApplicationRegistrationVariableService {
       ownerWorkspaceId: workspaceId,
     });
 
-    return this.findVariablesWithObfuscatedValuesGlobal(
+    return this.findVariablesWithObfuscatedValuesGlobal({
       applicationRegistrationId,
       locale,
-    );
+    });
   }
 
-  async findVariablesWithObfuscatedValuesGlobal(
-    applicationRegistrationId: string,
-    locale?: keyof typeof APP_LOCALES,
-  ): Promise<ApplicationRegistrationVariableDTO[]> {
+  async findVariablesWithObfuscatedValuesGlobal({
+    applicationRegistrationId,
+    locale,
+  }: {
+    applicationRegistrationId: string;
+    locale?: keyof typeof APP_LOCALES;
+  }): Promise<ApplicationRegistrationVariableDTO[]> {
     const safeLocale = locale ?? SOURCE_LOCALE;
     const [variables, applicationCatalog] = await Promise.all([
       this.variableRepository.find({

@@ -1,0 +1,72 @@
+import { findNestedTranslatablePropertyContext } from '@/i18n/find-nested-translatable-property-context';
+import {
+  buildTranslatablePropertyPath,
+  listTranslatablePropertyPathValues,
+  matchTranslatablePropertyPath,
+} from '@/i18n/translatable-property-path';
+
+describe('translatable property paths', () => {
+  const optionId = '9a1c1f5e-0b7e-4c43-8f3a-1b8f0f0c0a01';
+
+  it('builds a stored key by filling item ids into the pattern', () => {
+    expect(
+      buildTranslatablePropertyPath({
+        pattern: 'options.*.label',
+        itemIds: [optionId],
+      }),
+    ).toBe(`options.${optionId}.label`);
+  });
+
+  it('matches a stored key and returns its item ids', () => {
+    expect(
+      matchTranslatablePropertyPath({
+        pattern: 'options.*.label',
+        property: `options.${optionId}.label`,
+      }),
+    ).toEqual([optionId]);
+  });
+
+  it.each([
+    'label',
+    'options.label',
+    `options.${optionId}.color`,
+    'options..label',
+  ])('does not match %s', (property) => {
+    expect(
+      matchTranslatablePropertyPath({ pattern: 'options.*.label', property }),
+    ).toBeUndefined();
+  });
+
+  it('lists the keys and values a pattern reaches through items keyed by id', () => {
+    expect(
+      listTranslatablePropertyPathValues({
+        pattern: 'options.*.label',
+        value: {
+          options: [
+            { id: optionId, label: 'Week' },
+            { label: 'Without id' },
+            { id: 'month', label: 'Month' },
+          ],
+        },
+      }),
+    ).toEqual([
+      { property: `options.${optionId}.label`, value: 'Week' },
+      { property: 'options.month.label', value: 'Month' },
+    ]);
+  });
+
+  it('finds the catalog context of a nested translatable property', () => {
+    expect(
+      findNestedTranslatablePropertyContext({
+        metadataName: 'fieldMetadata',
+        property: `options.${optionId}.label`,
+      }),
+    ).toBe('fieldMetadata.label');
+    expect(
+      findNestedTranslatablePropertyContext({
+        metadataName: 'objectMetadata',
+        property: `options.${optionId}.label`,
+      }),
+    ).toBeUndefined();
+  });
+});

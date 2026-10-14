@@ -18,7 +18,6 @@ export type WithTranslatableOptionLabels<TEntity> = TEntity extends {
     }
   : TEntity;
 
-// Only select options are displayed through their label
 export type WithTranslatableFieldOptionLabels<TField> = TField extends {
   type: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
 }

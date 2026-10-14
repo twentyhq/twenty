@@ -14,7 +14,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { getOptionIdFromFieldOptionLabelTranslationProperty } from 'twenty-shared/i18n';
+import {
+  FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
+  matchTranslatablePropertyPath,
+} from 'twenty-shared/i18n';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -45,7 +48,12 @@ export const SettingsMetadataOptionTranslationsSection = ({
   const optionLabelTranslations = metadataTranslations.filter(
     ({ property, locale: translationLocale }) =>
       translationLocale === locale &&
-      isDefined(getOptionIdFromFieldOptionLabelTranslationProperty(property)),
+      isDefined(
+        matchTranslatablePropertyPath({
+          pattern: FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
+          property,
+        }),
+      ),
   );
 
   const showSkeleton = loading && !isNonEmptyArray(optionLabelTranslations);

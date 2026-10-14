@@ -26,7 +26,6 @@ import {
 } from '@/app/manifest/types/object-config.type';
 import { type MessageDescriptor } from '@/app/translations/message';
 
-// msg() marks the labels to translate: the server only reads strings, so the marker is dropped and its message recorded for extraction
 const serializeOptionLabels = <
   TOption extends { label: TranslatableOptionLabel },
 >({

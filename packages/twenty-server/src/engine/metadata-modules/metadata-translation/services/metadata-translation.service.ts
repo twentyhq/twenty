@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-import { getFieldOptionLabelTranslationProperty } from 'twenty-shared/i18n';
+import { isNonEmptyString, isString } from '@sniptt/guards';
+import {
+  listTranslatablePropertyPathValues,
+  NESTED_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
+} from 'twenty-shared/i18n';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 
@@ -63,7 +66,6 @@ const resolveProvenance = ({
   return MetadataTranslationProvenance.INHERITED;
 };
 
-// Option rows grow with the option count, so they are only listed for a single locale
 const getSourceValueByProperty = ({
   translatableEntity,
   isLocaleScoped,
@@ -86,11 +88,15 @@ const getSourceValueByProperty = ({
 
   return [
     ...propertySourceValues,
-    ...(translatableEntity.entity.options ?? []).flatMap(
-      ({ id, label }): [string, string][] =>
-        isDefined(id)
-          ? [[getFieldOptionLabelTranslationProperty(id), label]]
-          : [],
+    ...Object.keys(
+      NESTED_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata,
+    ).flatMap((pattern) =>
+      listTranslatablePropertyPathValues({
+        pattern,
+        value: translatableEntity.entity,
+      }).flatMap(({ property, value }): [string, string][] =>
+        isString(value) ? [[property, value]] : [],
+      ),
     ),
   ];
 };

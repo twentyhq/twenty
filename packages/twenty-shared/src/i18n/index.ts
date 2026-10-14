@@ -9,11 +9,7 @@
 
 export type { LocaleMessagesMap } from './create-i18n-instance-factory';
 export { createI18nInstanceFactory } from './create-i18n-instance-factory';
-export type { FieldOptionLabelTranslationProperty } from './field-option-label-translation-property';
-export {
-  getFieldOptionLabelTranslationProperty,
-  getOptionIdFromFieldOptionLabelTranslationProperty,
-} from './field-option-label-translation-property';
+export { findNestedTranslatablePropertyContext } from './find-nested-translatable-property-context';
 export { generateMessageId } from './generate-message-id';
 export { getMetadataLabelContext } from './get-metadata-label-context';
 export { interpolateMessagePlaceholders } from './interpolate-message-placeholders';
@@ -37,4 +33,12 @@ export type {
 export {
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER,
+  FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
+  NESTED_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
 } from './translatable-properties-by-metadata-name';
+export type { TranslatablePropertyPath } from './translatable-property-path';
+export {
+  buildTranslatablePropertyPath,
+  matchTranslatablePropertyPath,
+  listTranslatablePropertyPathValues,
+} from './translatable-property-path';

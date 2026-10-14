@@ -1,7 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  getFieldOptionLabelTranslationProperty,
-  getOptionIdFromFieldOptionLabelTranslationProperty,
+  buildTranslatablePropertyPath,
+  FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
+  findNestedTranslatablePropertyContext,
   TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER,
   type TranslatableMetadataName,
   type TranslatableOptionLabelOwner,
@@ -62,11 +63,13 @@ const resolveEffectiveProperty = ({
   const translatableProperties: readonly string[] =
     ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] ?? [];
 
-  const isFieldOptionLabel =
-    metadataName === 'fieldMetadata' &&
-    isDefined(getOptionIdFromFieldOptionLabelTranslationProperty(property));
+  const nestedPropertyContext = findNestedTranslatablePropertyContext({
+    metadataName,
+    property,
+  });
   const isTranslatable =
-    isFieldOptionLabel || translatableProperties.includes(property);
+    isDefined(nestedPropertyContext) ||
+    translatableProperties.includes(property);
 
   const overrideValue = readAuthoredOverrideProperty({
     metadataName,
@@ -113,9 +116,7 @@ const resolveEffectiveProperty = ({
 
   return translateStandardLabel({
     sourceValue: safeBaseValue,
-    context: isFieldOptionLabel
-      ? TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata
-      : `${metadataName}.${property}`,
+    context: nestedPropertyContext ?? `${metadataName}.${property}`,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
@@ -191,7 +192,10 @@ export const resolveEffectiveFieldMetadataOptionLabel = ({
         metadataName: 'fieldMetadata',
         baseValue: option.label,
         overrides,
-        property: getFieldOptionLabelTranslationProperty(option.id),
+        property: buildTranslatablePropertyPath({
+          pattern: FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
+          itemIds: [option.id],
+        }),
         i18nContext,
       })
     : translateStandardLabel({

@@ -20,7 +20,6 @@ export type ApplicationConfig = Omit<
   defaultRoleUniversalIdentifier?: string;
 };
 
-// Apps may wrap variable option labels in msg(); the build serializes them back into ApplicationConfig
 export type TranslatableApplicationConfig = Omit<
   ApplicationConfig,
   'applicationVariables' | 'serverVariables'

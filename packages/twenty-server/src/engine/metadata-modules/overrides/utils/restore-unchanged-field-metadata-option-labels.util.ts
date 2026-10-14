@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { getFieldOptionLabelTranslationProperty } from 'twenty-shared/i18n';
+import {
+  buildTranslatablePropertyPath,
+  FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
+} from 'twenty-shared/i18n';
 import { type FieldMetadataDefaultOption } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,8 +15,6 @@ type FieldMetadataOptionWithLabel = Pick<
   'id' | 'label'
 >;
 
-// Options are saved as a whole array holding the labels the editor was shown, so an option sent back with its
-// displayed label is untouched: it keeps its canonical label instead of turning a translation into a rename
 export const restoreUnchangedFieldMetadataOptionLabels = <
   TOption extends FieldMetadataOptionWithLabel,
 >({
@@ -36,7 +37,12 @@ export const restoreUnchangedFieldMetadataOptionLabels = <
       const overrideLabel = readAuthoredOverrideProperty({
         metadataName: 'fieldMetadata',
         overrides,
-        path: [getFieldOptionLabelTranslationProperty(existingOption.id)],
+        path: [
+          buildTranslatablePropertyPath({
+            pattern: FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
+            itemIds: [existingOption.id],
+          }),
+        ],
         authorContext: i18nContext,
       });
 

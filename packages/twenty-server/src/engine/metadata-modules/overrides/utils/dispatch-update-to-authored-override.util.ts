@@ -16,7 +16,6 @@ type DispatchUpdateToAuthoredOverrideArgs<TProperties extends object> = {
   existingOverrides: unknown;
   authorUniversalIdentifier: string;
   authorContext: OverrideAuthorContext;
-  // Keyed per record for field option labels, which the static entity configuration cannot list
   overridableProperties?: readonly string[];
 };
 

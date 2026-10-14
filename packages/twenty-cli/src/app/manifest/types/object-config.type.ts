@@ -8,7 +8,6 @@ export type ObjectConfig = Omit<
   labelIdentifierFieldMetadataUniversalIdentifier?: string;
 };
 
-// Apps may wrap select option labels in msg(); the build serializes them back into ObjectConfig
 export type TranslatableObjectConfig = Omit<ObjectConfig, 'fields'> & {
   fields: TranslatableObjectFieldManifest[];
 };

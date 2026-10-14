@@ -759,8 +759,7 @@ export class AdminPanelResolver {
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ApplicationRegistrationVariableDTO[]> {
     return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValuesGlobal(
-      applicationRegistrationId,
-      locale,
+      { applicationRegistrationId, locale },
     );
   }
 

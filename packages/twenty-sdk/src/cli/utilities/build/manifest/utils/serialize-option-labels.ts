@@ -26,7 +26,6 @@ import {
 } from '@/sdk/define/objects/object-config';
 import { type MessageDescriptor } from '@/sdk/front-component/translations/message';
 
-// msg() marks the labels to translate: the server only reads strings, so the marker is dropped and its message recorded for extraction
 const serializeOptionLabels = <
   TOption extends { label: TranslatableOptionLabel },
 >({
