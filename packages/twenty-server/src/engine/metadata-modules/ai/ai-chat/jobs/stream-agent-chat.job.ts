@@ -788,12 +788,6 @@ export class StreamAgentChatJob {
     workspaceMemberId: string;
     renewsAt: Date | null;
   }): Promise<void> {
-    this.metricsService.incrementCounterBy({
-      key: MetricsKeys.UsageLimitQuotaUserAllowanceRefused,
-      amount: 1,
-      attributes: { fallback: 'STOP', phase: 'stream' },
-    });
-
     if (!isDefined(renewsAt)) {
       return;
     }

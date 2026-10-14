@@ -12,7 +12,6 @@ import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/s
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { USER_ALLOWANCE_STOP_OVERSHOOT_MICRO_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/user-allowance-stop-overshoot-micro-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -523,20 +522,6 @@ export class UsageLimitQuotaService {
       exhaustedScopes[0] ??
       null;
 
-    if (
-      isDefined(userAllowanceCounter) &&
-      exhaustedScope?.exhaustedKind === 'userAllowance'
-    ) {
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.UsageLimitQuotaUserAllowanceRefused,
-        amount: 1,
-        attributes: {
-          fallback: userAllowanceCounter.fallback,
-          phase: requireUserAllowanceCounter ? 'worker' : 'preflight',
-        },
-      });
-    }
-
     return { exhaustedScope, ...userAllowanceAdmission };
   }
 
@@ -835,13 +820,6 @@ export class UsageLimitQuotaService {
           });
         }
 
-        this.countUserCreditsApplied({
-          events,
-          userAllowanceCounter,
-          userShare,
-          userAllowanceConsumed,
-        });
-
         return {
           userAllowanceConsumed,
           workspaceAllowanceConsumed,
@@ -1132,47 +1110,6 @@ export class UsageLimitQuotaService {
       );
 
       return { outcome: 'unknown' };
-    }
-  }
-
-  private countUserCreditsApplied({
-    events,
-    userAllowanceCounter,
-    userShare,
-    userAllowanceConsumed,
-  }: {
-    events: RecordUsageInput[];
-    userAllowanceCounter: UserAllowanceQuotaCounter;
-    userShare: number;
-    userAllowanceConsumed: number;
-  }): void {
-    for (const { operationType, userCreditsUsedMicro } of apportionUserCredits({
-      events,
-      userCreditsUsedMicro: userShare,
-    })) {
-      if (userCreditsUsedMicro > 0) {
-        this.metricsService.incrementCounterBy({
-          key: MetricsKeys.UsageLimitQuotaUserCreditsUsedMicro,
-          amount: userCreditsUsedMicro,
-          attributes: {
-            operationType,
-            fallback: userAllowanceCounter.fallback,
-          },
-        });
-      }
-    }
-
-    const isStopModeCrossing =
-      userAllowanceCounter.fallback === 'STOP' &&
-      userAllowanceConsumed - userShare < userAllowanceCounter.limitValue &&
-      userAllowanceConsumed >= userAllowanceCounter.limitValue;
-
-    if (isStopModeCrossing) {
-      this.metricsService.recordHistogram({
-        key: MetricsKeys.UsageLimitQuotaUserAllowanceStopOvershootMicro,
-        value: userAllowanceConsumed - userAllowanceCounter.limitValue,
-        bucketBoundaries: USER_ALLOWANCE_STOP_OVERSHOOT_MICRO_BUCKET_BOUNDARIES,
-      });
     }
   }
 
