@@ -18,6 +18,7 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { resolveRegistrationIdByApplicationId } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-registration-id-by-application-id.util';
 import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
+import { resolveEffectiveFieldMetadataRecordOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-record-options.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
@@ -256,14 +257,24 @@ export class ApplicationTranslationCatalogService {
       workspaceId,
     });
 
-    return entities.map((entity) => ({
-      ...entity,
-      ...resolveTranslatableProperties({
-        metadataName,
-        entity,
-        i18nContext: getI18nContext(entity.applicationId ?? undefined),
-      }),
-    }));
+    return entities.map((entity) => {
+      const i18nContext = getI18nContext(entity.applicationId ?? undefined);
+
+      return {
+        ...entity,
+        ...resolveTranslatableProperties({
+          metadataName,
+          entity,
+          i18nContext,
+        }),
+        ...(metadataName === 'fieldMetadata'
+          ? resolveEffectiveFieldMetadataRecordOptions({
+              record: entity,
+              i18nContext,
+            })
+          : {}),
+      };
+    });
   }
 
   private async findWorkspaceCustomApplicationIdOrThrow(

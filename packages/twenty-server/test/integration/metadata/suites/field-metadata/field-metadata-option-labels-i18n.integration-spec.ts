@@ -1,4 +1,7 @@
 import gql from 'graphql-tag';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { extractMetadataItemPayload } from 'test/integration/rest/utils/metadata-rest-api.util';
+import { assertRestApiSuccessfulResponse } from 'test/integration/rest/utils/rest-test-assertions.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -221,6 +224,25 @@ describe('field metadata option labels i18n', () => {
       'Неделя',
       'Месяц',
     ]);
+  });
+
+  it('should resolve option label translations on the REST metadata API', async () => {
+    await updateWorkspaceMemberLocale('en');
+
+    const response = await makeRestApiRequest({
+      method: 'get',
+      path: `/metadata/fields/${fieldMetadataId}`,
+      bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    assertRestApiSuccessfulResponse(response);
+
+    expect(
+      extractMetadataItemPayload<{ options: FieldMetadataComplexOption[] }>(
+        response.body,
+        'field',
+      ).options.map(({ label }) => label),
+    ).toEqual(['Week', 'Month']);
   });
 
   it('should list option label translations', async () => {
