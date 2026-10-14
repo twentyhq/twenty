@@ -1,9 +1,9 @@
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
-import { type SettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
+import { type TranslatableSettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
 
 export const defineSettingsFrontComponent: DefineEntity<
-  SettingsFrontComponentConfig
+  TranslatableSettingsFrontComponentConfig
 > = (config) => {
   const errors = [];
 

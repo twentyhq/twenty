@@ -11,7 +11,7 @@ export type BuildAndValidateManifestSuccess = {
   manifest: Manifest;
   filePaths: EntityFilePaths;
   warnings: string[];
-  optionLabelMessages: MessageDescriptor[];
+  manifestMessages: MessageDescriptor[];
 };
 
 export type BuildAndValidateManifestFailure = {
@@ -67,6 +67,6 @@ export const buildAndValidateManifest = async (
       ...validation.warnings,
       ...packageJsonWarnings,
     ],
-    optionLabelMessages: result.optionLabelMessages,
+    manifestMessages: result.manifestMessages,
   };
 };

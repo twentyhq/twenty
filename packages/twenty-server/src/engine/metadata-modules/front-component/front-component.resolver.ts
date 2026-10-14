@@ -1,6 +1,7 @@
 import { Inject, UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import {
   Args,
+  Context,
   Info,
   Mutation,
   Parent,
@@ -42,6 +43,9 @@ import { FrontComponentService } from 'src/engine/metadata-modules/front-compone
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -71,7 +75,47 @@ export class FrontComponentResolver {
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
+
+  @ResolveField(() => String)
+  async name(
+    @Parent() frontComponent: Pick<FrontComponentDTO, 'name' | 'applicationId'>,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'frontComponent',
+      property: 'name',
+      sourceValue: frontComponent.name,
+      applicationId: frontComponent.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async description(
+    @Parent() frontComponent: Pick<
+      FrontComponentDTO,
+      'description' | 'applicationId'
+    >,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string | undefined> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'frontComponent',
+      property: 'description',
+      sourceValue: frontComponent.description,
+      applicationId: frontComponent.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
 
   @ResolveField(() => String, { nullable: true })
   async frontComponentSharedDependenciesChecksum(
@@ -92,6 +136,7 @@ export class FrontComponentResolver {
   @ResolveField(() => String, { nullable: true })
   async applicationName(
     @Parent() frontComponent: FrontComponentDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | undefined> {
     const { flatApplicationMaps } =
@@ -99,7 +144,15 @@ export class FrontComponentResolver {
         'flatApplicationMaps',
       ]);
 
-    return flatApplicationMaps.byId[frontComponent.applicationId]?.name;
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'application',
+      property: 'displayName',
+      sourceValue: flatApplicationMaps.byId[frontComponent.applicationId]?.name,
+      applicationId: frontComponent.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField(() => [String], { nullable: true })

@@ -18,6 +18,7 @@ import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modul
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     ApplicationModule,
     FlatAgentModule,
+    ApplicationTranslationCatalogModule,
   ],
   providers: [
     RoleService,

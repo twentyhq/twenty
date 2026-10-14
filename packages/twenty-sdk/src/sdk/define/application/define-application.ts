@@ -19,6 +19,7 @@ import { type TranslatableApplicationConfig } from '@/sdk/define/application/app
 import { normalizeApplicationAssets } from '@/sdk/define/application/utils/normalize-application-assets';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+import { isNonEmptyTranslatableText } from '@/sdk/define/common/utils/is-non-empty-translatable-text';
 
 export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
   config,
@@ -30,7 +31,7 @@ export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
     errors.push('Application must have a universalIdentifier');
   }
 
-  if (!config.displayName || config.displayName.length === 0) {
+  if (!isNonEmptyTranslatableText(config.displayName)) {
     errors.push('Application must have a non empty display name');
   }
 
@@ -83,7 +84,7 @@ export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
       );
     }
 
-    if (!isNonEmptyString(billableOperation.label)) {
+    if (!isNonEmptyTranslatableText(billableOperation.label)) {
       errors.push(
         `Billable operation "${operationName}" must have a non empty label`,
       );
@@ -132,7 +133,7 @@ export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
       );
     }
 
-    if (!isNonEmptyString(recurringCharge.label)) {
+    if (!isNonEmptyTranslatableText(recurringCharge.label)) {
       errors.push(
         `Recurring charge "${chargeName}" must have a non empty label`,
       );

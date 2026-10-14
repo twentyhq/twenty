@@ -12,8 +12,9 @@ Your app has two kinds of translatable text, and both flow through the same
 `locales/` catalog:
 
 - **Manifest labels** — object and field names, view titles, menu items, and
-  other strings declared in your app's metadata, plus the select and
-  multi-select option labels you mark with `msg()`.
+  other strings declared in your app's metadata, plus every other manifest
+  text you mark with `msg()` (option labels, descriptions, role and skill
+  labels…).
 - **Front-component strings** — the UI text your React front components render.
 
 You mark the translatable strings, extract them into per-locale catalogs,
@@ -83,11 +84,12 @@ contextual by construction — each one carries the metadata role it plays
 (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), so
 the same word can translate differently as an object name and as a view name.
 
-## Marking option labels
+## Marking texts with `msg()`
 
-Select and multi-select options — on fields, application variables and server
-variables — are translated only when their label is wrapped in `msg()` from
-`twenty-sdk/define`. Plain labels stay as written, so names that should never
+Object, field, view, page layout, command menu, navigation menu, timeline
+activity type and settings menu labels are always extracted. Every other text
+of your manifest is translated only when it is wrapped in `msg()` from
+`twenty-sdk/define`. Plain values stay as written, so names that should never
 change, like brands or products, stay out of your catalogs:
 
 ```ts
@@ -103,12 +105,25 @@ export default defineField({
 });
 ```
 
-The same goes for `options` in `applicationVariables` and `serverVariables` of
-`defineApplication()`. The build stores the plain label, so wrapping an
-existing label changes neither its option id nor what the server receives.
-Marked labels are extracted under their owner's context: `fieldMetadata.label`
-for fields (shared with field names), `applicationVariable.label` for
-application variables and `serverVariable.label` for server variables.
+The build stores the plain text, so wrapping an existing value changes neither
+what the server receives nor any identifier derived from it. Each marked text is
+extracted under its own catalog context:
+
+| Where | Properties | Context |
+| --- | --- | --- |
+| `defineField()`, object `fields` | select option `label` | `fieldMetadata.label` (shared with field names) |
+| `defineApplication()` | `displayName`, `description`, `billing.description`, billing `recurring` and `operations` `label` | `application.<property>` |
+| `applicationVariables` | `label`, `description`, option `label` | `applicationVariable.<property>`, options under `applicationVariable.label` |
+| `serverVariables` | `description`, option `label` | `serverVariable.<property>`, options under `serverVariable.label` |
+| `defineRole()`, `defineApplicationRole()` | `label`, `description` | `role.<property>` |
+| `defineSkill()`, `defineAgent()` | `label`, `description` | `skill.<property>`, `agent.<property>` |
+| `defineLogicFunction()` and lifecycle functions | `name`, `description` | `logicFunction.<property>` |
+| `defineFrontComponent()`, `defineSettingsFrontComponent()` | `name`, `description` | `frontComponent.<property>` |
+| `definePermissionFlag()` | `label`, `description` | `permissionFlag.<property>` |
+| `defineConnectionProvider()` | `displayName` | `connectionProvider.displayName` |
+
+The full list lives in `MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES` from
+`twenty-shared/i18n`.
 
 ## Extracting and translating
 
@@ -119,7 +134,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extraction collects your manifest labels, the option labels you marked with
+Extraction collects your manifest labels, the manifest texts you marked with
 `msg()`, and the `t()`/`msg()`/`Trans` strings from your front-component source into `locales/<locale>.json`, keyed by
 source string. Fill in the translations:
 

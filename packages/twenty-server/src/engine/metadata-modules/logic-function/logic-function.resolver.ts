@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
+  Context,
   Mutation,
   Parent,
   Query,
@@ -52,6 +53,9 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -82,7 +86,47 @@ export class LogicFunctionResolver {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
+
+  @ResolveField(() => String)
+  async name(
+    @Parent() logicFunction: Pick<LogicFunctionDTO, 'name' | 'applicationId'>,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'logicFunction',
+      property: 'name',
+      sourceValue: logicFunction.name,
+      applicationId: logicFunction.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async description(
+    @Parent() logicFunction: Pick<
+      LogicFunctionDTO,
+      'description' | 'applicationId'
+    >,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string | undefined> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'logicFunction',
+      property: 'description',
+      sourceValue: logicFunction.description,
+      applicationId: logicFunction.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
 
   @Query(() => LogicFunctionDTO)
   @UseGuards(ApplicationTargetGuard)

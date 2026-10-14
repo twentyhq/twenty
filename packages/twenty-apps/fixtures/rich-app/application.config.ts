@@ -4,7 +4,7 @@ import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './src/roles/default-function.
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'Rich App',
-  description: 'A simple rich app',
+  description: msg('A simple rich app'),
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
       universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
@@ -51,7 +51,7 @@ export default defineApplication({
     },
     DEFAULT_REGION: {
       universalIdentifier: '76c5c321-b6b6-46eb-b4fc-f9f04bb04227',
-      description: 'Default shipping region',
+      description: msg('Default shipping region'),
       type: FieldType.SELECT,
       options: [
         { label: msg('Europe'), value: 'eu' },
@@ -124,8 +124,9 @@ export default defineApplication({
       isRequired: false,
     },
     POSTCARD_SANDBOX_MODE: {
-      description:
+      description: msg(
         'Send postcards through the provider sandbox instead of production',
+      ),
       type: FieldType.BOOLEAN,
       isSecret: false,
       isRequired: false,

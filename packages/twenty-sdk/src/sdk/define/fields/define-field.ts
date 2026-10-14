@@ -2,7 +2,7 @@ import { getFieldDefaultValueWarnings } from '@/sdk/define/fields/get-field-defa
 import { validateFields } from '@/sdk/define/fields/validate-fields';
 
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
-import { type TranslatableFieldManifest } from '@/sdk/define/common/types/translatable-option-labels.type';
+import { type TranslatableFieldManifest } from '@/sdk/define/common/types/translatable-text.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
 export const defineField: DefineEntity<TranslatableFieldManifest> = (

@@ -9,6 +9,7 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ApplicationModule,
     PermissionsModule,
     FlatSkillModule,
+    ApplicationTranslationCatalogModule,
   ],
   providers: [SkillService, SkillResolver],
   exports: [SkillService],

@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Parent, Query, ResolveField } from '@nestjs/graphql';
+import { Context, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,6 +19,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -28,6 +29,8 @@ import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-tar
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
@@ -53,6 +56,7 @@ export class ApplicationResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -98,6 +102,42 @@ export class ApplicationResolver {
     return this.applicationStopService.isApplicationStopped(
       applicationUniversalIdentifier,
     );
+  }
+
+  @ResolveField(() => String)
+  async name(
+    @Parent() application: Pick<ApplicationDTO, 'id' | 'name'>,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'application',
+      property: 'displayName',
+      sourceValue: application.name,
+      applicationId: application.id,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async description(
+    @Parent() application: Pick<ApplicationDTO, 'id' | 'description'>,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string | undefined> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'application',
+      property: 'description',
+      sourceValue: application.description,
+      applicationId: application.id,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
   }
 
   // Resolves the display url of the logo bundled in the installed

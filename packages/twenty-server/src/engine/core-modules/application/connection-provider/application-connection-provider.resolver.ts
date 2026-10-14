@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Parent, Query, ResolveField } from '@nestjs/graphql';
+import { Context, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -14,6 +14,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -34,7 +37,29 @@ export class ApplicationConnectionProviderResolver {
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
+
+  @ResolveField(() => String)
+  async displayName(
+    @Parent() connectionProvider: Pick<
+      ApplicationConnectionProviderDTO,
+      'displayName' | 'applicationId'
+    >,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'connectionProvider',
+      property: 'displayName',
+      sourceValue: connectionProvider.displayName,
+      applicationId: connectionProvider.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
 
   @Query(() => [ApplicationConnectionProviderDTO])
   @UseGuards(NoPermissionGuard, ApplicationTargetGuard)

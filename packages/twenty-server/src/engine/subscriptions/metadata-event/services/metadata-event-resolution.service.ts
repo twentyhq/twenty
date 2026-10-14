@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isMessageTranslatableManifestEntity } from 'twenty-shared/i18n';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -37,8 +38,10 @@ export class MetadataEventResolutionService {
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
   }): Promise<EventStreamMetadataEvent[]> {
-    const translatableEvents = metadataEvents.filter((metadataEvent) =>
-      isTranslatableMetadataName(metadataEvent.metadataName),
+    const translatableEvents = metadataEvents.filter(
+      ({ metadataName }) =>
+        isTranslatableMetadataName(metadataName) ||
+        isMessageTranslatableManifestEntity(metadataName),
     );
 
     const carriesOverrides = metadataEvents.some((metadataEvent) =>

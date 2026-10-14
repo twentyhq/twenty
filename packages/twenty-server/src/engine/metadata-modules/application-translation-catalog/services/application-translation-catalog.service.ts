@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type TranslatableMetadataName } from 'twenty-shared/i18n';
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  type MessageTranslatableManifestEntity,
+  type MessageTranslatableManifestProperty,
+  type TranslatableMetadataName,
+} from 'twenty-shared/i18n';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -21,6 +26,7 @@ import { resolveTranslatableProperties } from 'src/engine/metadata-modules/appli
 import { resolveEffectiveFieldMetadataRecordOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-record-options.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
+import { resolveEffectiveManifestMessage } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 import { getWorkspaceCustomApplicationUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/overrides/utils/get-workspace-custom-application-universal-identifier-or-throw.util';
 
@@ -175,6 +181,68 @@ export class ApplicationTranslationCatalogService {
     });
 
     return getI18nContext(applicationId);
+  }
+
+  async buildRegistrationI18nContext({
+    applicationRegistrationId,
+    locale,
+  }: {
+    applicationRegistrationId: string;
+    locale: keyof typeof APP_LOCALES | undefined;
+  }): Promise<
+    Pick<
+      EffectiveEntityI18nContext,
+      'isStandardApp' | 'applicationCatalog' | 'i18nInstance'
+    >
+  > {
+    const safeLocale = locale ?? SOURCE_LOCALE;
+
+    return {
+      isStandardApp: false,
+      applicationCatalog:
+        await this.applicationTranslationCacheService.getCatalog({
+          applicationRegistrationId,
+          locale: safeLocale,
+        }),
+      i18nInstance: this.i18nService.getI18nInstance(safeLocale),
+    };
+  }
+
+  async resolveManifestMessage<
+    TEntity extends MessageTranslatableManifestEntity,
+    TSourceValue extends string | null | undefined,
+  >({
+    entity,
+    property,
+    sourceValue,
+    applicationId,
+    loaders,
+    locale,
+    workspaceId,
+  }: {
+    entity: TEntity;
+    property: MessageTranslatableManifestProperty<TEntity>;
+    sourceValue: TSourceValue;
+    applicationId: string | undefined;
+    loaders?: IDataloaders;
+    locale: keyof typeof APP_LOCALES | undefined;
+    workspaceId: string | undefined;
+  }): Promise<TSourceValue | string> {
+    if (!isNonEmptyString(sourceValue) || !isDefined(workspaceId)) {
+      return sourceValue;
+    }
+
+    return resolveEffectiveManifestMessage({
+      entity,
+      property,
+      sourceValue,
+      i18nContext: await this.buildEffectiveEntityI18nContext({
+        applicationId,
+        loaders,
+        locale,
+        workspaceId,
+      }),
+    });
   }
 
   async getI18nContextByApplicationId({

@@ -71,6 +71,8 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { resolveEffectiveManifestMessage } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => ApplicationRegistrationEntity)
@@ -91,6 +93,7 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -647,6 +650,22 @@ export class ApplicationRegistrationResolver {
       applicationRegistrationId,
       targetWorkspaceSubdomain,
       currentOwnerWorkspaceId: workspaceId,
+    });
+  }
+
+  @ResolveField(() => String)
+  async name(
+    @Parent() registration: ApplicationRegistrationEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
+  ): Promise<string> {
+    return resolveEffectiveManifestMessage({
+      entity: 'application',
+      property: 'displayName',
+      sourceValue: registration.name,
+      i18nContext:
+        await this.applicationTranslationCatalogService.buildRegistrationI18nContext(
+          { applicationRegistrationId: registration.id, locale },
+        ),
     });
   }
 

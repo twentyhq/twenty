@@ -12,6 +12,7 @@ import { UsageResolver } from 'src/engine/core-modules/usage/usage.resolver';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
     WorkspaceCacheModule,
+    ApplicationTranslationCatalogModule,
   ],
   providers: [UsageResolver, UsageRecorderService, UsageEventListener],
   exports: [UsageAnalyticsModule, UsageRecorderService],

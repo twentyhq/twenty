@@ -1,12 +1,12 @@
 import { HTTPMethod } from 'twenty-shared/types';
 
-import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
+import { type TranslatableLogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 
-export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
-  config,
-) => {
+export const defineLogicFunction: DefineEntity<
+  TranslatableLogicFunctionConfig
+> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {

@@ -1,10 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'twenty-shared/i18n';
+import {
+  isMessageTranslatableManifestEntity,
+  TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
+} from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
-import { resolveEffectiveEntityPropertyByName } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import {
+  resolveEffectiveEntityPropertyByName,
+  resolveEffectiveManifestMessages,
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { resolveEffectiveFieldMetadataRecordOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-record-options.util';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 import { isTranslatableMetadataName } from 'src/engine/subscriptions/metadata-event/utils/is-translatable-metadata-name.util';
@@ -55,7 +61,13 @@ export const resolveMetadataEventRecord = ({
   }
 
   if (!translatable) {
-    return resolved;
+    return isMessageTranslatableManifestEntity(metadataName)
+      ? resolveEffectiveManifestMessages({
+          entity: metadataName,
+          value: resolved,
+          i18nContext,
+        })
+      : resolved;
   }
 
   for (const property of translatableProperties) {

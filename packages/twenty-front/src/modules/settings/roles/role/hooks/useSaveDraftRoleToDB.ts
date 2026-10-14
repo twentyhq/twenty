@@ -186,22 +186,20 @@ export const useSaveDraftRoleToDB = ({
           updateRoleInput: {
             id: roleId,
             update: {
-              label: settingsDraftRole.label,
-              description: settingsDraftRole.description,
-              icon: settingsDraftRole.icon,
-              canUpdateAllSettings: settingsDraftRole.canUpdateAllSettings,
-              canAccessAllTools: settingsDraftRole.canAccessAllTools,
-              canReadAllObjectRecords:
-                settingsDraftRole.canReadAllObjectRecords,
-              canUpdateAllObjectRecords:
-                settingsDraftRole.canUpdateAllObjectRecords,
+              label: dirtyFields.label,
+              description: dirtyFields.description,
+              icon: dirtyFields.icon,
+              canUpdateAllSettings: dirtyFields.canUpdateAllSettings,
+              canAccessAllTools: dirtyFields.canAccessAllTools,
+              canReadAllObjectRecords: dirtyFields.canReadAllObjectRecords,
+              canUpdateAllObjectRecords: dirtyFields.canUpdateAllObjectRecords,
               canSoftDeleteAllObjectRecords:
-                settingsDraftRole.canSoftDeleteAllObjectRecords,
+                dirtyFields.canSoftDeleteAllObjectRecords,
               canDestroyAllObjectRecords:
-                settingsDraftRole.canDestroyAllObjectRecords,
-              canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
-              canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
-              canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
+                dirtyFields.canDestroyAllObjectRecords,
+              canBeAssignedToUsers: dirtyFields.canBeAssignedToUsers,
+              canBeAssignedToAgents: dirtyFields.canBeAssignedToAgents,
+              canBeAssignedToApiKeys: dirtyFields.canBeAssignedToApiKeys,
             },
           },
         },

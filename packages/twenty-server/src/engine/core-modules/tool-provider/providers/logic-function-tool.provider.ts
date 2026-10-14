@@ -15,9 +15,11 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
+import { resolveEffectiveManifestMessage } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 
 @Injectable()
 export class LogicFunctionToolProvider implements ToolProvider {
@@ -25,6 +27,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
@@ -90,6 +93,17 @@ export class LogicFunctionToolProvider implements ToolProvider {
         }),
     );
 
+    const getI18nContext =
+      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+        {
+          applicationIds: logicFunctionsWithSchema.map(
+            ({ applicationId }) => applicationId,
+          ),
+          locale: context.locale,
+          workspaceId: context.workspaceId,
+        },
+      );
+
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
     for (const logicFunction of logicFunctionsWithSchema) {
@@ -97,7 +111,12 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
       const base: ToolIndexEntry = {
         name: toolName,
-        label: logicFunction.name,
+        label: resolveEffectiveManifestMessage({
+          entity: 'logicFunction',
+          property: 'name',
+          sourceValue: logicFunction.name,
+          i18nContext: getI18nContext(logicFunction.applicationId),
+        }),
         description:
           logicFunction.description ||
           `Execute the ${logicFunction.name} logic function`,

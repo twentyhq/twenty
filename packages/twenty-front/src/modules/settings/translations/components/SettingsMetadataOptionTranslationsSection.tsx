@@ -1,7 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
-import { MetadataOptionTranslationsTableRow } from '@/settings/translations/components/MetadataOptionTranslationsTableRow';
+import { MetadataTranslationsTableRow } from '@/settings/translations/components/MetadataTranslationsTableRow';
 import { useMetadataTranslations } from '@/settings/translations/hooks/useMetadataTranslations';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
@@ -93,10 +93,11 @@ export const SettingsMetadataOptionTranslationsSection = ({
                   />
                 ))
               : optionLabelTranslations.map((translation) => (
-                  <MetadataOptionTranslationsTableRow
+                  <MetadataTranslationsTableRow
                     key={translation.property}
                     gridTemplateColumns={GRID_TEMPLATE_COLUMNS}
-                    translation={translation}
+                    localeLabel={translation.canonicalValue}
+                    translations={[translation]}
                     onSaveTranslationRows={saveTranslationRows}
                   />
                 ))}

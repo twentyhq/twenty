@@ -67,7 +67,7 @@ export class AppTranslationsExtractCommand {
       await extractApplicationTranslations({
         appPath,
         manifest: manifestResult.manifest,
-        optionLabelMessages: manifestResult.optionLabelMessages,
+        manifestMessages: manifestResult.manifestMessages,
         frontComponentSourcePaths,
         scaffoldLocale,
       });

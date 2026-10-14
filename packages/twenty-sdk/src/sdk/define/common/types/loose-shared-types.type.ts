@@ -4,15 +4,15 @@ import type * as SharedTypes from 'twenty-shared/types';
 import { type TranslatableApplicationConfig } from '@/sdk/define/application/application-config';
 import { type CommandMenuItemConfig as StrictCommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
-import { type TranslatableObjectFieldManifest } from '@/sdk/define/common/types/translatable-option-labels.type';
-import { type FrontComponentConfig as StrictFrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
-import { type SettingsFrontComponentConfig as StrictSettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
+import { type TranslatableObjectFieldManifest } from '@/sdk/define/common/types/translatable-text.type';
+import { type TranslatableFrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type TranslatableSettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
 import { type IndexConfig as StrictIndexConfig } from '@/sdk/define/indexes/index-config';
-import { type HealthCheckLogicFunctionConfig as StrictHealthCheckLogicFunctionConfig } from '@/sdk/define/logic-functions/health-check-logic-function-config';
-import { type LogicFunctionConfig as StrictLogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
+import { type TranslatableHealthCheckLogicFunctionConfig } from '@/sdk/define/logic-functions/health-check-logic-function-config';
+import { type TranslatableLogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type PageLayoutConfig as StrictPageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig as StrictPageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
-import { type PermissionFlagConfig as StrictPermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
+import { type TranslatablePermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
 import { type SettingsMenuItemConfig as StrictSettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
 import { type TimelineActivityTypeConfig as StrictTimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type ViewConfig as StrictViewConfig } from '@/sdk/define/views/view-config';
@@ -23,14 +23,16 @@ export type CommandMenuItemConfig =
   LooseEnumValues<StrictCommandMenuItemConfig>;
 export type CommandMenuItemManifest =
   LooseEnumValues<SharedApplication.CommandMenuItemManifest>;
-export type FrontComponentConfig = LooseEnumValues<StrictFrontComponentConfig>;
+export type FrontComponentConfig =
+  LooseEnumValues<TranslatableFrontComponentConfig>;
 export type HealthCheckLogicFunctionConfig =
-  LooseEnumValues<StrictHealthCheckLogicFunctionConfig>;
+  LooseEnumValues<TranslatableHealthCheckLogicFunctionConfig>;
 export type IndexConfig = LooseEnumValues<StrictIndexConfig>;
 export type IndexFieldManifest =
   LooseEnumValues<SharedApplication.IndexFieldManifest>;
 export type IndexManifest = LooseEnumValues<SharedApplication.IndexManifest>;
-export type LogicFunctionConfig = LooseEnumValues<StrictLogicFunctionConfig>;
+export type LogicFunctionConfig =
+  LooseEnumValues<TranslatableLogicFunctionConfig>;
 export type MessageChannelVisibility =
   LooseEnumValues<SharedTypes.MessageChannelVisibility>;
 export type MessageParticipantRole =
@@ -57,7 +59,8 @@ export type PageLayoutWidgetUniversalConfiguration =
   LooseEnumValues<SharedTypes.PageLayoutWidgetUniversalConfiguration>;
 export type PageLayoutWidgetVerticalListPosition =
   LooseEnumValues<SharedTypes.PageLayoutWidgetVerticalListPosition>;
-export type PermissionFlagConfig = LooseEnumValues<StrictPermissionFlagConfig>;
+export type PermissionFlagConfig =
+  LooseEnumValues<TranslatablePermissionFlagConfig>;
 export type PermissionFlagManifest =
   LooseEnumValues<SharedApplication.PermissionFlagManifest>;
 export type RowLevelPermissionPredicateGroupManifest =
@@ -67,7 +70,7 @@ export type RowLevelPermissionPredicateManifest =
 export type SendInboxMessageInput =
   LooseEnumValues<SharedApplication.SendInboxMessageInput>;
 export type SettingsFrontComponentConfig =
-  LooseEnumValues<StrictSettingsFrontComponentConfig>;
+  LooseEnumValues<TranslatableSettingsFrontComponentConfig>;
 export type SettingsMenuItemConfig =
   LooseEnumValues<StrictSettingsMenuItemConfig>;
 export type SettingsMenuItemManifest =

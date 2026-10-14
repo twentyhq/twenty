@@ -6,6 +6,8 @@ import {
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 import { type LogicFunctionHttpResponse } from 'twenty-shared/types';
 
+import { type WithTranslatableProperties } from '@/sdk/define/common/types/translatable-text.type';
+
 // TPayload defaults to any so handlers declaring a concrete payload type stay assignable
 export type LogicFunctionHandler<TPayload = any> = (
   payload: TPayload,
@@ -43,3 +45,8 @@ export type LogicFunctionConfig = LogicFunctionConfigBase &
         handler: ServerRouteResolverHandler;
       }
   );
+
+export type TranslatableLogicFunctionConfig = WithTranslatableProperties<
+  LogicFunctionConfig,
+  'name' | 'description'
+>;

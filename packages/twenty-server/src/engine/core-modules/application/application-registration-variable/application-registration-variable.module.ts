@@ -7,12 +7,12 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
-import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
 @Module({
   imports: [
     ApplicationRegistrationLookupModule,
-    ApplicationTranslationModule,
+    ApplicationTranslationCatalogModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationVariableEntity,
       ApplicationRegistrationEntity,

@@ -1,7 +1,9 @@
 import { findNestedTranslatablePropertyContext } from '@/i18n/find-nested-translatable-property-context';
+import { mapMessageTranslatableManifestValues } from '@/i18n/map-message-translatable-manifest-values';
 import {
   buildTranslatablePropertyPath,
   listTranslatablePropertyPathValues,
+  mapTranslatablePropertyPathValues,
   matchTranslatablePropertyPath,
 } from '@/i18n/translatable-property-path';
 
@@ -68,5 +70,50 @@ describe('translatable property paths', () => {
         property: `options.${optionId}.label`,
       }),
     ).toBeUndefined();
+  });
+
+  it('maps every value a pattern reaches through array items and record values', () => {
+    expect(
+      mapTranslatablePropertyPathValues({
+        pattern: 'operations.*.label',
+        value: {
+          operations: {
+            print: { label: 'Print', amount: 1 },
+            mail: { amount: 2 },
+          },
+        },
+        mapValue: (value) => `${value}!`,
+      }),
+    ).toEqual({
+      operations: {
+        print: { label: 'Print!', amount: 1 },
+        mail: { amount: 2 },
+      },
+    });
+    expect(
+      mapTranslatablePropertyPathValues({
+        pattern: 'options.*.label',
+        value: { options: [{ label: 'Week' }, { label: 'Month' }] },
+        mapValue: (value) => `${value}!`,
+      }),
+    ).toEqual({ options: [{ label: 'Week!' }, { label: 'Month!' }] });
+  });
+
+  it('maps the translatable values of a manifest entity with their catalog context', () => {
+    expect(
+      mapMessageTranslatableManifestValues({
+        entity: 'applicationVariable',
+        value: {
+          description: 'Default shipping region',
+          options: [{ label: 'Europe', value: 'eu' }],
+          value: { label: 'not translatable' },
+        },
+        mapValue: ({ value, context }) => `${value} [${context}]`,
+      }),
+    ).toEqual({
+      description: 'Default shipping region [applicationVariable.description]',
+      options: [{ label: 'Europe [applicationVariable.label]', value: 'eu' }],
+      value: { label: 'not translatable' },
+    });
   });
 });

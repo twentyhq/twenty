@@ -1,11 +1,13 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
   buildTranslatablePropertyPath,
   FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
   findNestedTranslatablePropertyContext,
-  TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER,
+  mapMessageTranslatableManifestValues,
+  MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES,
+  type MessageTranslatableManifestEntity,
+  type MessageTranslatableManifestProperty,
   type TranslatableMetadataName,
-  type TranslatableOptionLabelOwner,
 } from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -200,35 +202,65 @@ export const resolveEffectiveFieldMetadataOptionLabel = ({
       })
     : translateStandardLabel({
         sourceValue: option.label,
-        context: TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata,
+        context:
+          MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES.fieldMetadata[
+            FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN
+          ],
         isStandardApp: i18nContext.isStandardApp,
         applicationCatalog: i18nContext.applicationCatalog,
         i18nInstance: i18nContext.i18nInstance,
       });
 
-export const resolveEffectiveApplicationVariableOptions = <
-  TOption extends { label: string },
+type ManifestMessageI18nContext = Pick<
+  EffectiveEntityI18nContext,
+  'isStandardApp' | 'applicationCatalog' | 'i18nInstance'
+>;
+
+export const resolveEffectiveManifestMessage = <
+  TEntity extends MessageTranslatableManifestEntity,
 >({
-  owner,
-  options,
+  entity,
+  property,
+  sourceValue,
   i18nContext,
 }: {
-  owner: Exclude<TranslatableOptionLabelOwner, 'fieldMetadata'>;
-  options: TOption[] | null | undefined;
-  i18nContext: Pick<
-    EffectiveEntityI18nContext,
-    'isStandardApp' | 'applicationCatalog' | 'i18nInstance'
-  >;
-}): TOption[] | null | undefined =>
-  isDefined(options)
-    ? options.map((option) => ({
-        ...option,
-        label: translateStandardLabel({
-          sourceValue: option.label,
-          context: TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER[owner],
-          isStandardApp: i18nContext.isStandardApp,
-          applicationCatalog: i18nContext.applicationCatalog,
-          i18nInstance: i18nContext.i18nInstance,
-        }),
-      }))
-    : options;
+  entity: TEntity;
+  property: MessageTranslatableManifestProperty<TEntity>;
+  sourceValue: string;
+  i18nContext: ManifestMessageI18nContext;
+}): string => {
+  const contextByProperty: Record<string, string> =
+    MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES[entity];
+
+  return translateStandardLabel({
+    sourceValue,
+    context: contextByProperty[property],
+    isStandardApp: i18nContext.isStandardApp,
+    applicationCatalog: i18nContext.applicationCatalog,
+    i18nInstance: i18nContext.i18nInstance,
+  });
+};
+
+export const resolveEffectiveManifestMessages = <TValue>({
+  entity,
+  value,
+  i18nContext,
+}: {
+  entity: MessageTranslatableManifestEntity;
+  value: TValue;
+  i18nContext: ManifestMessageI18nContext;
+}): TValue =>
+  mapMessageTranslatableManifestValues({
+    entity,
+    value,
+    mapValue: ({ value: sourceValue, context }) =>
+      isString(sourceValue)
+        ? translateStandardLabel({
+            sourceValue,
+            context,
+            isStandardApp: i18nContext.isStandardApp,
+            applicationCatalog: i18nContext.applicationCatalog,
+            i18nInstance: i18nContext.i18nInstance,
+          })
+        : sourceValue,
+  });

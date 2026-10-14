@@ -6,6 +6,7 @@ import {
   getObjectPermissionUniversalIdentifier,
   type RoleManifest,
 } from 'twenty-shared/application';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -24,6 +25,11 @@ import {
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import {
+  resolveEffectiveManifestMessage,
+  resolveEffectiveManifestMessages,
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 
 @Injectable()
 export class MarketplaceQueryService {
@@ -32,14 +38,17 @@ export class MarketplaceQueryService {
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async findManyMarketplaceApps({
     universalIdentifiers,
     isVetted,
+    locale,
   }: {
     universalIdentifiers?: string[];
     isVetted?: boolean;
+    locale?: keyof typeof APP_LOCALES;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -56,20 +65,25 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
-    if (!isDefined(isVetted)) {
-      return apps;
-    }
-
-    return apps.filter((app) => app.isVetted === isVetted);
+    return apps
+      .filter((app) => !isDefined(isVetted) || app.isVetted === isVetted)
+      .map(({ translatedTextsByLocale, ...app }) => ({
+        ...app,
+        ...(isDefined(locale) ? translatedTextsByLocale?.[locale] : undefined),
+      }));
   }
 
-  async findMarketplaceAppDetail(
-    universalIdentifier: string,
-  ): Promise<MarketplaceAppDetailDTO> {
+  async findMarketplaceAppDetail({
+    universalIdentifier,
+    locale,
+  }: {
+    universalIdentifier: string;
+    locale?: keyof typeof APP_LOCALES;
+  }): Promise<MarketplaceAppDetailDTO> {
     const registration =
       await this.findRegistrationByUniversalIdentifier(universalIdentifier);
 
-    return this.toMarketplaceAppDetailDTO(registration);
+    return this.toMarketplaceAppDetailDTO({ registration, locale });
   }
 
   async findRegistrationByUniversalIdentifier(
@@ -91,14 +105,29 @@ export class MarketplaceQueryService {
     return registration;
   }
 
-  private async toMarketplaceAppDetailDTO(
-    registration: ApplicationRegistrationEntity,
-  ): Promise<MarketplaceAppDetailDTO> {
+  private async toMarketplaceAppDetailDTO({
+    registration,
+    locale,
+  }: {
+    registration: ApplicationRegistrationEntity;
+    locale?: keyof typeof APP_LOCALES;
+  }): Promise<MarketplaceAppDetailDTO> {
     const galleryImageUrls =
       this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
         registration,
       );
     const manifest = registration.manifest;
+    const safeLocale = locale ?? SOURCE_LOCALE;
+    const i18nContext = {
+      isStandardApp: false,
+      applicationCatalog: manifest?.translations?.[safeLocale],
+      i18nInstance: this.i18nService.getI18nInstance(safeLocale),
+    };
+    const description =
+      registration.description ?? manifest?.application?.description;
+    const pricingDescription =
+      registration.pricingDescription ??
+      manifest?.application?.billing?.description;
 
     const installCount =
       await this.applicationService.countInstalledWorkspacesForApplication(
@@ -108,16 +137,25 @@ export class MarketplaceQueryService {
     return {
       id: registration.id,
       universalIdentifier: registration.universalIdentifier,
-      name: registration.name,
+      name: resolveEffectiveManifestMessage({
+        entity: 'application',
+        property: 'displayName',
+        sourceValue: registration.name,
+        i18nContext,
+      }),
       sourceType: registration.sourceType,
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
       isVetted: registration.isVetted,
-      description:
-        registration.description ??
-        registration.manifest?.application?.description ??
-        undefined,
+      description: isDefined(description)
+        ? resolveEffectiveManifestMessage({
+            entity: 'application',
+            property: 'description',
+            sourceValue: description,
+            i18nContext,
+          })
+        : undefined,
       author:
         getApplicationAuthorDisplayName(
           registration.author ?? registration.manifest?.application?.author,
@@ -138,10 +176,14 @@ export class MarketplaceQueryService {
         registration.aboutDescription ??
         registration.manifest?.application?.aboutDescription ??
         undefined,
-      pricingDescription:
-        registration.pricingDescription ??
-        registration.manifest?.application?.billing?.description ??
-        undefined,
+      pricingDescription: isDefined(pricingDescription)
+        ? resolveEffectiveManifestMessage({
+            entity: 'application',
+            property: 'billing.description',
+            sourceValue: pricingDescription,
+            i18nContext,
+          })
+        : undefined,
       termsUrl:
         registration.termsUrl ??
         registration.manifest?.application?.termsUrl ??
@@ -162,7 +204,11 @@ export class MarketplaceQueryService {
       roles: isDefined(manifest)
         ? manifest.roles?.map((role) =>
             this.toMarketplaceAppRoleDTO({
-              role,
+              role: resolveEffectiveManifestMessages({
+                entity: 'role',
+                value: role,
+                i18nContext,
+              }),
               applicationUniversalIdentifier:
                 manifest.application?.universalIdentifier ??
                 registration.universalIdentifier,

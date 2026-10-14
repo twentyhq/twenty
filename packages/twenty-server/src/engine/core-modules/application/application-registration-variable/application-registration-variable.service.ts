@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ServerVariables } from 'twenty-shared/application';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Not, type EntityManager, type Repository } from 'typeorm';
@@ -18,14 +18,13 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
-import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplicationRegistrationOrThrow } from 'src/engine/core-modules/application/utils/can-caller-reach-application-registration-or-throw.util';
 import { findEngineInjectedEnvVariableNames } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/find-engine-injected-env-variable-names.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { resolveEffectiveApplicationVariableOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { resolveEffectiveManifestMessages } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
 @Injectable()
@@ -42,8 +41,7 @@ export class ApplicationRegistrationVariableService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly encryptionService: SecretEncryptionService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
-    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async findVariablesWithObfuscatedValues({
@@ -73,31 +71,24 @@ export class ApplicationRegistrationVariableService {
     applicationRegistrationId: string;
     locale?: keyof typeof APP_LOCALES;
   }): Promise<ApplicationRegistrationVariableDTO[]> {
-    const safeLocale = locale ?? SOURCE_LOCALE;
-    const [variables, applicationCatalog] = await Promise.all([
+    const [variables, i18nContext] = await Promise.all([
       this.variableRepository.find({
         where: { applicationRegistrationId },
         order: { key: 'ASC' },
       }),
-      this.applicationTranslationCacheService.getCatalog({
+      this.applicationTranslationCatalogService.buildRegistrationI18nContext({
         applicationRegistrationId,
-        locale: safeLocale,
+        locale,
       }),
     ]);
-    const i18nContext = {
-      isStandardApp: false,
-      applicationCatalog,
-      i18nInstance: this.i18nService.getI18nInstance(safeLocale),
-    };
 
-    return variables.map((variable) => ({
-      ...this.toObfuscatedDTO(variable),
-      options: resolveEffectiveApplicationVariableOptions({
-        owner: 'serverVariable',
-        options: variable.options,
+    return variables.map((variable) =>
+      resolveEffectiveManifestMessages({
+        entity: 'serverVariable',
+        value: this.toObfuscatedDTO(variable),
         i18nContext,
       }),
-    }));
+    );
   }
 
   async updateVariable({

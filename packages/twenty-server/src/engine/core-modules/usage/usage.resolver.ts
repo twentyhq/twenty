@@ -5,10 +5,12 @@ import { Args, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { resolveEffectiveFlatApplication } from 'src/engine/core-modules/application/utils/resolve-effective-flat-application.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageAnalyticsInput } from 'src/engine/core-modules/usage/dtos/inputs/usage-analytics.input';
@@ -22,8 +24,10 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @MetadataResolver()
@@ -35,6 +39,7 @@ export class UsageResolver {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @Query(() => UsageAnalyticsDTO)
@@ -54,6 +59,7 @@ export class UsageResolver {
   )
   async getUsageAnalytics(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @Args('input', { nullable: true }) input?: UsageAnalyticsInput,
   ): Promise<UsageAnalyticsDTO> {
     const defaultPeriodEnd = new Date();
@@ -115,9 +121,43 @@ export class UsageResolver {
       (ids) => this.resolveUserNames(ids, workspace.id),
     );
 
+    const usageApplicationIds = [
+      ...new Set(usageByApplication.map(({ applicationId }) => applicationId)),
+    ];
+    const getI18nContext =
+      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+        {
+          applicationIds: usageApplicationIds,
+          locale,
+          workspaceId: workspace.id,
+        },
+      );
+
     const resolvedUsageByApplication = consolidateUsageByApplication({
       items: usageByApplication,
-      flatApplicationMaps,
+      flatApplicationMaps: {
+        ...flatApplicationMaps,
+        byId: {
+          ...flatApplicationMaps.byId,
+          ...Object.fromEntries(
+            usageApplicationIds.flatMap((applicationId) => {
+              const flatApplication = flatApplicationMaps.byId[applicationId];
+
+              return isDefined(flatApplication)
+                ? [
+                    [
+                      applicationId,
+                      resolveEffectiveFlatApplication({
+                        flatApplication,
+                        i18nContext: getI18nContext(applicationId),
+                      }),
+                    ],
+                  ]
+                : [];
+            }),
+          ),
+        },
+      },
     });
 
     const result: UsageAnalyticsDTO = {

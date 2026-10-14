@@ -6,7 +6,10 @@ import crypto from 'crypto';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type Manifest,
+  type TranslationsManifest,
+} from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
@@ -99,6 +102,7 @@ export type ApplicationRegistrationCatalogCard = {
   category: string | null;
   logoUrl: string | null;
   requiredServerVersionRange: string | null;
+  translations: TranslationsManifest | null;
 };
 
 @Injectable()
@@ -1065,6 +1069,7 @@ export class ApplicationRegistrationService {
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       requiredServerVersionRange:
         registration.manifest?.application?.requiredServerVersionRange ?? null,
+      translations: registration.manifest?.translations ?? null,
     }));
   }
 

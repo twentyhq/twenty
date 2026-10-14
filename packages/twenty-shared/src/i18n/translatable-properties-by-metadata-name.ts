@@ -21,23 +21,67 @@ export type TranslatableMetadataName =
 export type TranslatablePropertyName<T extends TranslatableMetadataName> =
   (typeof TRANSLATABLE_PROPERTIES_BY_METADATA_NAME)[T][number];
 
-export const TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER = {
-  fieldMetadata: 'fieldMetadata.label',
-  applicationVariable: 'applicationVariable.label',
-  serverVariable: 'serverVariable.label',
-} as const;
-
-export type TranslatableOptionLabelOwner =
-  keyof typeof TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER;
-
 export const FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN =
   'options.*.label';
 
-export const NESTED_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
+export const MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES = {
   fieldMetadata: {
-    [FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN]:
-      TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata,
+    [FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN]: 'fieldMetadata.label',
   },
+  application: {
+    displayName: 'application.displayName',
+    description: 'application.description',
+    'billing.description': 'application.billing.description',
+    'billing.recurring.*.label': 'application.billing.recurring.label',
+    'billing.operations.*.label': 'application.billing.operations.label',
+  },
+  applicationVariable: {
+    label: 'applicationVariable.label',
+    description: 'applicationVariable.description',
+    'options.*.label': 'applicationVariable.label',
+  },
+  serverVariable: {
+    description: 'serverVariable.description',
+    'options.*.label': 'serverVariable.label',
+  },
+  role: {
+    label: 'role.label',
+    description: 'role.description',
+  },
+  skill: {
+    label: 'skill.label',
+    description: 'skill.description',
+  },
+  agent: {
+    label: 'agent.label',
+    description: 'agent.description',
+  },
+  logicFunction: {
+    name: 'logicFunction.name',
+    description: 'logicFunction.description',
+  },
+  frontComponent: {
+    name: 'frontComponent.name',
+    description: 'frontComponent.description',
+  },
+  permissionFlag: {
+    label: 'permissionFlag.label',
+    description: 'permissionFlag.description',
+  },
+  connectionProvider: {
+    displayName: 'connectionProvider.displayName',
+  },
+} as const satisfies Record<string, Record<string, string>>;
+
+export type MessageTranslatableManifestEntity =
+  keyof typeof MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES;
+
+export type MessageTranslatableManifestProperty<
+  TEntity extends MessageTranslatableManifestEntity,
+> = keyof (typeof MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES)[TEntity] & string;
+
+export const NESTED_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
+  fieldMetadata: MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES.fieldMetadata,
 } as const satisfies Partial<
   Record<TranslatableMetadataName, Record<string, string>>
 >;

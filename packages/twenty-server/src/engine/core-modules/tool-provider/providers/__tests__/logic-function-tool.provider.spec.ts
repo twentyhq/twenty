@@ -2,6 +2,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { type ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -61,7 +62,18 @@ const generateDescriptors = async (
     }),
   } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService;
 
-  const provider = new LogicFunctionToolProvider(flatEntityMapsCacheService);
+  const applicationTranslationCatalogService = {
+    getI18nContextByApplicationId: jest.fn().mockResolvedValue(() => ({
+      isStandardApp: false,
+      applicationCatalog: undefined,
+      i18nInstance: { _: (messageId: string) => messageId },
+    })),
+  } as unknown as ApplicationTranslationCatalogService;
+
+  const provider = new LogicFunctionToolProvider(
+    flatEntityMapsCacheService,
+    applicationTranslationCatalogService,
+  );
 
   return (await provider.generateDescriptors(
     {

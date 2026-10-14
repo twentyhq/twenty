@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isValidLocale } from 'twenty-shared/utils';
+
 import { CoreEntityCache } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
@@ -10,6 +12,8 @@ import {
   type ApplicationRegistrationCatalogCard,
   ApplicationRegistrationService,
 } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { resolveEffectiveManifestMessage } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 
 const VETTED_POSITION_BY_UNIVERSAL_IDENTIFIER = new Map(
   MARKETPLACE_VETTED_APPLICATIONS.map(({ universalIdentifier, position }) => [
@@ -47,6 +51,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
+    private readonly i18nService: I18nService,
   ) {
     super();
   }
@@ -102,6 +107,49 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
       isVetted: catalogCard.isVetted,
+      translatedTextsByLocale: this.buildTranslatedTextsByLocale(catalogCard),
     };
+  }
+
+  private buildTranslatedTextsByLocale({
+    name,
+    description,
+    translations,
+  }: ApplicationRegistrationCatalogCard): MarketplaceAppDTO['translatedTextsByLocale'] {
+    return Object.fromEntries(
+      Object.entries(translations ?? {}).flatMap(
+        ([locale, applicationCatalog]) => {
+          if (!isValidLocale(locale)) {
+            return [];
+          }
+
+          const i18nContext = {
+            isStandardApp: false,
+            applicationCatalog,
+            i18nInstance: this.i18nService.getI18nInstance(locale),
+          };
+
+          return [
+            [
+              locale,
+              {
+                name: resolveEffectiveManifestMessage({
+                  entity: 'application',
+                  property: 'displayName',
+                  sourceValue: name,
+                  i18nContext,
+                }),
+                description: resolveEffectiveManifestMessage({
+                  entity: 'application',
+                  property: 'description',
+                  sourceValue: description ?? '',
+                  i18nContext,
+                }),
+              },
+            ],
+          ];
+        },
+      ),
+    );
   }
 }

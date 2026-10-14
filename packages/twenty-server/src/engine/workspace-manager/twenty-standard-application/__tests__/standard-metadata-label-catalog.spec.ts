@@ -1,8 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
   generateMessageId,
   getMetadataLabelContext,
-  TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER,
+  MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
@@ -98,7 +99,10 @@ describe('standard metadata labels reach the catalog under their context', () =>
   });
 
   it('fieldMetadata options', () => {
-    const context = TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata;
+    const context =
+      MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES.fieldMetadata[
+        FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN
+      ];
     const missing = Object.values(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     )

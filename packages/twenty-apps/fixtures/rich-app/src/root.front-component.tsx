@@ -1,4 +1,4 @@
-import { defineFrontComponent } from 'twenty-sdk/define';
+import { defineFrontComponent, msg } from 'twenty-sdk/define';
 
 export const RootComponent = () => {
   return (
@@ -11,6 +11,6 @@ export const RootComponent = () => {
 export default defineFrontComponent({
   universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000001',
   name: 'root-component',
-  description: 'A root-level front component',
+  description: msg('A root-level front component'),
   component: RootComponent,
 });

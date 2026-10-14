@@ -6,6 +6,8 @@ import {
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 import { type LogicFunctionHttpResponse } from 'twenty-shared/types';
 
+import { type WithTranslatableProperties } from '@/app/manifest/types/translatable-text.type';
+
 export type LogicFunctionHandler<TPayload = never> = (
   payload: TPayload,
   context: LogicFunctionExecutionContext,
@@ -44,3 +46,8 @@ export type LogicFunctionConfig = LogicFunctionConfigBase &
         handler: ServerRouteResolverHandler;
       }
   );
+
+export type TranslatableLogicFunctionConfig = WithTranslatableProperties<
+  LogicFunctionConfig,
+  'name' | 'description'
+>;

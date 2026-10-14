@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { type APP_LOCALES } from 'twenty-shared/translations';
+
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
@@ -16,6 +18,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 
 @MetadataResolver()
 @UseFilters(
@@ -51,20 +54,24 @@ export class MarketplaceResolver {
       type: () => [String],
       nullable: true,
     })
-    universalIdentifiers?: string[],
+    universalIdentifiers: string[] | undefined,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<MarketplaceAppDTO[]> {
     return this.marketplaceQueryService.findManyMarketplaceApps({
       universalIdentifiers,
+      locale,
     });
   }
 
   @Query(() => MarketplaceAppDetailDTO)
   async findMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<MarketplaceAppDetailDTO> {
-    return this.marketplaceQueryService.findMarketplaceAppDetail(
+    return this.marketplaceQueryService.findMarketplaceAppDetail({
       universalIdentifier,
-    );
+      locale,
+    });
   }
 
   @Mutation(() => Boolean)

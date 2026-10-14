@@ -1,5 +1,12 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -27,6 +34,9 @@ import { UpdateAgentInput } from './dtos/update-agent.input';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -46,13 +56,50 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
 )
-@MetadataResolver()
+@MetadataResolver(() => AgentDTO)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class AgentResolver {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
+
+  @ResolveField(() => String)
+  async label(
+    @Parent() agent: Pick<AgentDTO, 'label' | 'applicationId'>,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'agent',
+      property: 'label',
+      sourceValue: agent.label,
+      applicationId: agent.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async description(
+    @Parent() agent: Pick<AgentDTO, 'description' | 'applicationId'>,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string | undefined> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'agent',
+      property: 'description',
+      sourceValue: agent.description,
+      applicationId: agent.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
 
   @Query(() => [AgentDTO])
   async findManyAgents(

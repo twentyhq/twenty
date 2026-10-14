@@ -1,10 +1,16 @@
 import {
+  type ApplicationBilling,
   type ApplicationManifest,
   type ApplicationVariable,
+  type BillableOperationManifest,
+  type RecurringCharge,
   type ServerVariables,
 } from 'twenty-shared/application';
 
-import { type WithTranslatableOptionLabels } from '@/sdk/define/common/types/translatable-option-labels.type';
+import {
+  type WithTranslatableOptionLabels,
+  type WithTranslatableProperties,
+} from '@/sdk/define/common/types/translatable-text.type';
 
 export type ApplicationConfig = Omit<
   ApplicationManifest,
@@ -23,16 +29,36 @@ export type ApplicationConfig = Omit<
   defaultRoleUniversalIdentifier?: string;
 };
 
+type TranslatableApplicationBilling = Omit<
+  WithTranslatableProperties<ApplicationBilling, 'description'>,
+  'recurring' | 'operations'
+> & {
+  recurring?: Partial<
+    Record<string, WithTranslatableProperties<RecurringCharge, 'label'>>
+  >;
+  operations?: Partial<
+    Record<
+      string,
+      WithTranslatableProperties<BillableOperationManifest, 'label'>
+    >
+  >;
+};
+
 export type TranslatableApplicationConfig = Omit<
-  ApplicationConfig,
-  'applicationVariables' | 'serverVariables'
+  WithTranslatableProperties<ApplicationConfig, 'displayName' | 'description'>,
+  'applicationVariables' | 'serverVariables' | 'billing'
 > & {
   applicationVariables?: Record<
     string,
-    WithTranslatableOptionLabels<ApplicationVariable>
+    WithTranslatableOptionLabels<
+      WithTranslatableProperties<ApplicationVariable, 'label' | 'description'>
+    >
   >;
   serverVariables?: Record<
     string,
-    WithTranslatableOptionLabels<ServerVariables[string]>
+    WithTranslatableOptionLabels<
+      WithTranslatableProperties<ServerVariables[string], 'description'>
+    >
   >;
+  billing?: TranslatableApplicationBilling;
 };

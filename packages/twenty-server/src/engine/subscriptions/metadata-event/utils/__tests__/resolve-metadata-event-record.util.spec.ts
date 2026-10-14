@@ -32,6 +32,22 @@ describe('resolveMetadataEventRecord', () => {
     expect(resolved.shortLabel).toMatch(/^translated:/);
   });
 
+  it('should translate the msg() translatable texts of an application entity', () => {
+    const resolved = resolveMetadataEventRecord({
+      metadataName: 'role',
+      record: {
+        label: 'Postcard sender',
+        description: 'Sends postcards',
+        icon: 'IconMail',
+      },
+      i18nContext: buildI18nContext(),
+    });
+
+    expect(resolved.label).toMatch(/^translated:/);
+    expect(resolved.description).toMatch(/^translated:/);
+    expect(resolved.icon).toBe('IconMail');
+  });
+
   it('should leave non-translatable properties untouched', () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'commandMenuItem',

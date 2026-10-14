@@ -114,3 +114,69 @@ export const listTranslatablePropertyPathValues = ({
     value,
     pathSegments: [],
   });
+
+const mapPathValues = ({
+  segments,
+  value,
+  mapValue,
+}: {
+  segments: string[];
+  value: unknown;
+  mapValue: (value: unknown) => unknown;
+}): unknown => {
+  const [segment, ...remainingSegments] = segments;
+
+  if (!isDefined(segment)) {
+    return mapValue(value);
+  }
+
+  if (segment === ITEM_ID_WILDCARD) {
+    if (Array.isArray(value)) {
+      return value.map((item) =>
+        mapPathValues({ segments: remainingSegments, value: item, mapValue }),
+      );
+    }
+
+    return isPlainObject(value)
+      ? Object.fromEntries(
+          Object.entries(value).map(([key, item]) => [
+            key,
+            mapPathValues({
+              segments: remainingSegments,
+              value: item,
+              mapValue,
+            }),
+          ]),
+        )
+      : value;
+  }
+
+  return isPlainObject(value) && isDefined(value[segment])
+    ? {
+        ...value,
+        [segment]: mapPathValues({
+          segments: remainingSegments,
+          value: value[segment],
+          mapValue,
+        }),
+      }
+    : value;
+};
+
+export const mapTranslatablePropertyPathValues = <
+  TValue,
+  TMappedValue = TValue,
+>({
+  pattern,
+  value,
+  mapValue,
+}: {
+  pattern: string;
+  value: TValue;
+  mapValue: (value: unknown) => unknown;
+}): TMappedValue =>
+  mapPathValues({
+    segments: pattern.split(PATH_SEPARATOR),
+    value,
+    mapValue,
+  }) as TMappedValue;

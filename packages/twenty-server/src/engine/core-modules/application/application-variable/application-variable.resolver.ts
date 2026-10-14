@@ -24,7 +24,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { resolveEffectiveApplicationVariableOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import { resolveEffectiveManifestMessage } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -57,6 +57,50 @@ export class ApplicationVariableEntityResolver {
     return this.applicationVariableService.getDisplayValue(applicationVariable);
   }
 
+  @ResolveField(() => String)
+  async label(
+    @Parent()
+    applicationVariable: Pick<
+      ApplicationVariableEntity,
+      'label' | 'applicationId'
+    >,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'applicationVariable',
+      property: 'label',
+      sourceValue: applicationVariable.label,
+      applicationId: applicationVariable.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
+
+  @ResolveField(() => String)
+  async description(
+    @Parent()
+    applicationVariable: Pick<
+      ApplicationVariableEntity,
+      'description' | 'applicationId'
+    >,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'applicationVariable',
+      property: 'description',
+      sourceValue: applicationVariable.description,
+      applicationId: applicationVariable.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
+
   @ResolveField(() => GraphQLJSON, { nullable: true })
   async options(
     @Parent()
@@ -71,19 +115,25 @@ export class ApplicationVariableEntityResolver {
       return applicationVariable.options;
     }
 
-    return resolveEffectiveApplicationVariableOptions({
-      owner: 'applicationVariable',
-      options: applicationVariable.options,
-      i18nContext:
-        await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
-          {
-            applicationId: applicationVariable.applicationId,
-            loaders: context.loaders,
-            locale: context.req.locale,
-            workspaceId,
-          },
-        ),
-    });
+    const i18nContext =
+      await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+        {
+          applicationId: applicationVariable.applicationId,
+          loaders: context.loaders,
+          locale: context.req.locale,
+          workspaceId,
+        },
+      );
+
+    return applicationVariable.options.map((option) => ({
+      ...option,
+      label: resolveEffectiveManifestMessage({
+        entity: 'applicationVariable',
+        property: 'options.*.label',
+        sourceValue: option.label,
+        i18nContext,
+      }),
+    }));
   }
 
   @Mutation(() => Boolean)

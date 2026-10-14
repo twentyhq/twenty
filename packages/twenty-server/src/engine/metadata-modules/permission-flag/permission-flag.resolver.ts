@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Query } from '@nestjs/graphql';
+import { Context, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -11,6 +11,9 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @MetadataResolver(() => PermissionFlagDTO)
 @UseGuards(
@@ -29,7 +32,52 @@ import { PermissionFlagService } from 'src/engine/metadata-modules/permission-fl
 )
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class PermissionFlagResolver {
-  constructor(private readonly permissionFlagService: PermissionFlagService) {}
+  constructor(
+    private readonly permissionFlagService: PermissionFlagService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
+  ) {}
+
+  @ResolveField(() => String)
+  async label(
+    @Parent() permissionFlag: Pick<
+      PermissionFlagDTO,
+      'label' | 'applicationId'
+    >,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'permissionFlag',
+      property: 'label',
+      sourceValue: permissionFlag.label,
+      applicationId: permissionFlag.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async description(
+    @Parent() permissionFlag: Pick<
+      PermissionFlagDTO,
+      'description' | 'applicationId'
+    >,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<string | null> {
+    return this.applicationTranslationCatalogService.resolveManifestMessage({
+      entity: 'permissionFlag',
+      property: 'description',
+      sourceValue: permissionFlag.description,
+      applicationId: permissionFlag.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace?.id,
+    });
+  }
 
   @Query(() => [PermissionFlagDTO])
   async getPermissionFlags(
