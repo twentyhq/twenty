@@ -5,7 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { RECORD_TABLE_CELL_DISPLAY_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellDisplayClassName';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
@@ -15,6 +15,7 @@ import { getRecordTableCellId } from '@/object-record/record-table/utils/getReco
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { LinkifiedText } from '@/ui/field/display/components/LinkifiedText/LinkifiedText';
 import { linkifyText } from '@/ui/field/display/components/LinkifiedText/linkifyText';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const cellClassName = css`
   background: ${themeCssVariables.background.primary};
@@ -66,21 +67,6 @@ const displayClassName = css`
   width: 100%;
 `;
 
-const innerClassName = css`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
-`;
-
-const textContainerClassName = css`
-  align-items: center;
-  display: flex;
-  height: 20px;
-`;
-
 const textClassName = css`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -128,12 +114,8 @@ export const RecordTableTextCell = ({
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-  const text =
-    useRecordFieldValue<string>(
-      recordId,
-      fieldDefinition.metadata.fieldName,
-      fieldDefinition,
-    ) ?? '';
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const text: string = record?.[fieldDefinition.metadata.fieldName] ?? '';
 
   const isReadOnly =
     isRecordTableCellsNonEditable ||
@@ -165,7 +147,9 @@ export const RecordTableTextCell = ({
     openRecordContextMenu({ event, recordId });
   };
 
-  const hasLink = linkifyText(text).some((part) => part.type === 'link');
+  const hasLink =
+    text.includes('http') &&
+    linkifyText(text).some((part) => part.type === 'link');
 
   return (
     <div
@@ -190,12 +174,8 @@ export const RecordTableTextCell = ({
           onClick={handleClick}
           onContextMenu={handleContextMenu}
         >
-          <div className={innerClassName}>
-            <div className={textContainerClassName}>
-              <div className={textClassName} dir="auto">
-                {hasLink ? <LinkifiedText text={text} /> : text}
-              </div>
-            </div>
+          <div className={textClassName} dir="auto">
+            {hasLink ? <LinkifiedText text={text} /> : text}
           </div>
         </div>
       </div>
