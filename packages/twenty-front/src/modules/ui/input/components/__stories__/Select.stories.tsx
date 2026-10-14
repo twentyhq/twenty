@@ -95,6 +95,42 @@ export const WithNullOption: Story = {
   },
 };
 
+export const FirstOptionWithoutValue: Story = {
+  args: { value: undefined, onChange: fn(), onBlur: fn() },
+  play: async ({ canvasElement, args }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Option A',
+    });
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(trigger);
+    const firstOption = await body.findByRole('option', {
+      name: 'Option A',
+      selected: false,
+    });
+    await userEvent.click(firstOption);
+    expect(args.onChange).toHaveBeenCalledOnce();
+    expect(args.onChange).toHaveBeenCalledWith('a');
+    expect(args.onBlur).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    const selectedOption = await body.findByRole('option', {
+      name: 'Option A',
+      selected: true,
+    });
+    await waitFor(() => expect(selectedOption).toHaveFocus());
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const FirstOptionWithUnmatchedValue: Story = {
+  args: { value: 'missing', onChange: fn(), onBlur: fn() },
+  play: FirstOptionWithoutValue.play,
+};
+
 export const TypedOptionValues: Story = {
   args: {
     value: 1,
