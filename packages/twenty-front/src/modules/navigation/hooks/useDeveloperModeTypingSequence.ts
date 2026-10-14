@@ -17,6 +17,15 @@ export const useDeveloperModeTypingSequence = (isEnabled: boolean) => {
   const [previousPhraseIndex, setPreviousPhraseIndex] = useState<number | null>(
     null,
   );
+  const [previousIsEnabled, setPreviousIsEnabled] = useState(isEnabled);
+
+  if (isEnabled !== previousIsEnabled) {
+    setPreviousIsEnabled(isEnabled);
+
+    if (sequence?.direction !== (isEnabled ? 'enter' : 'exit')) {
+      setSequence(null);
+    }
+  }
 
   const label = t`Developer mode`;
   const isEntering =
