@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type UsageAdmission } from 'src/engine/core-modules/billing/types/usage-admission.type';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
-import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
 import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -45,19 +44,16 @@ export class AiBillingService {
     workspaceId,
     operationType,
     spenders,
-    memberCreditsPayer,
   }: {
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-    memberCreditsPayer?: MemberCreditsPayer;
   }): Promise<Pick<UsageAdmission, 'isWorkspaceAllowanceAvailable'>> {
     return this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
       spenders,
-      memberCreditsPayer,
     });
   }
 
@@ -124,7 +120,6 @@ export class AiBillingService {
     operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
-    memberCreditsPayer?: MemberCreditsPayer,
   ): Promise<
     Pick<QuotaDebitResult, 'exhaustedKind' | 'memberCreditsUsedMicro'>
   > {
@@ -146,7 +141,6 @@ export class AiBillingService {
           spenders: { userWorkspaceId, agentId },
         }),
       ],
-      memberCreditsPayer,
     });
   }
 
@@ -156,14 +150,12 @@ export class AiBillingService {
     workspaceId,
     operationType,
     spenders,
-    memberCreditsPayer,
   }: {
     modelId: ModelId;
     billingInput: BillingUsageInput;
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-    memberCreditsPayer?: MemberCreditsPayer;
   }): Promise<StepDebitResult> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
@@ -186,7 +178,6 @@ export class AiBillingService {
         operationType,
         spenders,
       }),
-      memberCreditsPayer,
     });
 
     // A reached limit is enforced at the next admission, never mid-stream
@@ -204,8 +195,7 @@ export class AiBillingService {
   async billNativeWebSearchUsage(
     nativeWebSearchCallCount: number,
     workspaceId: string,
-    userWorkspaceId?: string | null,
-    memberCreditsPayer?: MemberCreditsPayer,
+    spenders: UsageSpenders,
   ): Promise<
     Pick<QuotaDebitResult, 'exhaustedKind' | 'memberCreditsUsedMicro'>
   > {
@@ -230,10 +220,9 @@ export class AiBillingService {
           creditsUsedMicro,
           quantity: nativeWebSearchCallCount,
           unit: UsageUnit.INVOCATION,
-          spenders: { userWorkspaceId },
+          spenders,
         },
       ],
-      memberCreditsPayer,
     });
   }
 

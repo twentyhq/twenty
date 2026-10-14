@@ -16,6 +16,4 @@ export type StreamAgentChatJobData = {
   // Absent only on jobs queued before sender attribution was deployed.
   messageId?: string;
   conversationSizeTokens: number;
-  // Absent on queue drains: impersonation is not persisted on queued messages
-  isSenderImpersonated?: boolean;
 };

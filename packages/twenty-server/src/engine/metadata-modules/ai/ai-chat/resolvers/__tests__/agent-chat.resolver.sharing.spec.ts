@@ -125,7 +125,6 @@ const buildResolver = () => {
           .fn()
           .mockResolvedValue({ isWorkspaceAllowanceAvailable: null }),
       } as never,
-      { isWorkspaceCreatorUserWorkspace: jest.fn() } as never,
     ),
     threadLifecycle,
     { findLatestTurnError: jest.fn().mockResolvedValue(null) } as never,

@@ -1003,12 +1003,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Amount of AI credits each member gets for their own chats during the free trial, when the plan carries member credits (in microCredits, 0 disables them)',
+      'Credits each member spends per UTC week, Monday to Monday, on their own AI chats and chat web searches, instead of the workspace credits and workspace credit limits (in microCredits). No member credits when unset. USAGE_LIMIT_DEFAULTS_BY_PLAN can set it per billing plan',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_MEMBER_CREDITS_FOR_TRIAL_PERIOD = 0;
+  @IsOptional()
+  MEMBER_CREDITS_WEEKLY_LIMIT?: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,

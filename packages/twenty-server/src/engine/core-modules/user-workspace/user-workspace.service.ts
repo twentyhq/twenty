@@ -86,33 +86,13 @@ export class UserWorkspaceService {
     userId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const earliestUserWorkspace =
-      await this.findEarliestUserWorkspace(workspaceId);
-
-    return earliestUserWorkspace?.userId === userId;
-  }
-
-  async isWorkspaceCreatorUserWorkspace({
-    userWorkspaceId,
-    workspaceId,
-  }: {
-    userWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const earliestUserWorkspace =
-      await this.findEarliestUserWorkspace(workspaceId);
-
-    return earliestUserWorkspace?.id === userWorkspaceId;
-  }
-
-  private async findEarliestUserWorkspace(
-    workspaceId: string,
-  ): Promise<UserWorkspaceEntity | null> {
-    return this.userWorkspaceRepository.findOne({
+    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
       where: { workspaceId },
       order: { createdAt: 'ASC' },
       withDeleted: true,
     });
+
+    return earliestUserWorkspace?.userId === userId;
   }
 
   async updateUserWorkspaceLocaleForUserWorkspace({

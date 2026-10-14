@@ -49,7 +49,6 @@ type AnswerToolCallArgs = {
   userWorkspaceId: string;
   workspaceMemberId: string;
   workspace: WorkspaceEntity;
-  isSenderImpersonated: boolean;
 };
 
 type AnswerToolCallOutcome = {
@@ -371,7 +370,6 @@ export class ToolCallAnswerService {
         streamId,
         modelId: args.modelId,
         messageId: answerMessage.id,
-        isSenderImpersonated: args.isSenderImpersonated,
       });
 
       return { streamId, turnId: answerMessage.turnId };
@@ -435,7 +433,6 @@ export class ToolCallAnswerService {
     userWorkspaceId,
     workspaceMemberId,
     workspace,
-    isSenderImpersonated,
     isStartingChatTurn,
   }: AnswerToolCallArgs & {
     messageId: string;
@@ -454,14 +451,6 @@ export class ToolCallAnswerService {
         userWorkspaceId,
         workspaceMemberId,
         workspace,
-        memberCreditsPayer:
-          await this.turnPreflightService.findRequestMemberCreditsPayer({
-            threadId,
-            workspaceId: workspace.id,
-            userWorkspaceId,
-            workspaceMemberId,
-            isSenderImpersonated,
-          }),
       });
     } else {
       await this.threadService.getWritableThread({

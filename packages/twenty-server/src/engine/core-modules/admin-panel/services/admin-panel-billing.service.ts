@@ -287,14 +287,7 @@ export class AdminPanelBillingService {
         rolloverCredits,
         totalGrantedCredits,
         remainingCredits: totalGrantedCredits - usedCredits,
-        memberCreditsAmount: isDefined(usage.memberCreditsAmount)
-          ? toDisplayCredits(usage.memberCreditsAmount)
-          : null,
-        memberCreditsSliceEnd: usage.memberCreditsSliceEnd,
         memberCreditsUsed: toDisplayCredits(usage.memberCreditsUsed),
-        memberCreditsUsedInSlice: isDefined(usage.memberCreditsUsedInSlice)
-          ? toDisplayCredits(usage.memberCreditsUsedInSlice)
-          : null,
       };
     } catch (error) {
       this.logger.warn(

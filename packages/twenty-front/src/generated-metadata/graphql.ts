@@ -939,7 +939,6 @@ export enum BillingProductKey {
 export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
   isLegacy?: Maybe<Scalars['String']['output']>;
-  memberCreditAmount?: Maybe<Scalars['String']['output']>;
   planKey: BillingPlanKey;
   priceUsageBased: BillingUsageType;
   productKey: BillingProductKey;
@@ -948,10 +947,7 @@ export type BillingProductMetadata = {
 export type BillingResourceCreditUsage = {
   __typename?: 'BillingResourceCreditUsage';
   grantedCredits: Scalars['Float']['output'];
-  memberCreditsAmount?: Maybe<Scalars['Float']['output']>;
-  memberCreditsSliceEnd?: Maybe<Scalars['DateTime']['output']>;
   memberCreditsUsed: Scalars['Float']['output'];
-  memberCreditsUsedInSlice?: Maybe<Scalars['Float']['output']>;
   periodEnd: Scalars['DateTime']['output'];
   periodStart: Scalars['DateTime']['output'];
   productKey: BillingProductKey;
@@ -2224,7 +2220,6 @@ export enum FeatureFlagKey {
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_LOGS_SETTINGS_SECTION_ENABLED = 'IS_LOGS_SETTINGS_SECTION_ENABLED',
-  IS_MEMBER_CREDITS_ENABLED = 'IS_MEMBER_CREDITS_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',

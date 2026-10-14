@@ -7,7 +7,6 @@ import {
   generateText,
 } from 'ai';
 
-import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
@@ -28,13 +27,11 @@ export class AgentTitleGenerationService {
     messageContent: string,
     workspaceId: string,
     userWorkspaceId: string | null,
-    memberCreditsPayer?: MemberCreditsPayer,
   ): Promise<string> {
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
-      memberCreditsPayer,
     });
 
     const defaultModel =
@@ -82,7 +79,6 @@ export class AgentTitleGenerationService {
           UsageOperationType.AI_CHAT_TOKEN,
           null,
           userWorkspaceId,
-          memberCreditsPayer,
         );
       }
     }

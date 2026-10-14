@@ -246,54 +246,68 @@ export class UsageAnalyticsService {
     return Number(rows[0]?.total ?? 0);
   }
 
-  async getMemberCreditsUsedMicroForWorkspaceSlice({
+  async getMemberCreditsUsedMicroForScope({
     workspaceId,
-    sliceStart,
-    sliceEnd,
+    resourceType,
+    operationType,
+    periodStart,
+    periodEnd,
+    periodAnchor,
   }: {
     workspaceId: string;
-    sliceStart: Date;
-    sliceEnd: Date;
+    resourceType: UsageResourceType;
+    operationType: UsageOperationType;
+    periodStart: Date;
+    periodEnd: Date;
+    periodAnchor: UsagePeriodAnchor;
   }): Promise<number> {
+    const operationTypeClause =
+      operationType === UsageOperationType.ALL
+        ? ''
+        : 'AND operationType = {operationType:String}';
+
     const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
       `SELECT sum(memberCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
-         AND timestamp >= {sliceStart:DateTime64(3)}
-         AND timestamp < {sliceEnd:DateTime64(3)}`,
+         AND resourceType = {resourceType:String}
+         ${operationTypeClause}
+         ${buildUsagePeriodClause(periodAnchor)}`,
       {
         workspaceId,
-        sliceStart: formatDateTimeForClickHouse(sliceStart),
-        sliceEnd: formatDateTimeForClickHouse(sliceEnd),
+        resourceType,
+        operationType,
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
       },
     );
 
     return Number(rows[0]?.total ?? 0);
   }
 
-  async getMemberCreditsUsedMicroForSlice({
+  async getMemberCreditsUsedMicroForMemberPeriod({
     workspaceId,
     userWorkspaceId,
-    sliceStart,
-    sliceEnd,
+    periodStart,
+    periodEnd,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    sliceStart: Date;
-    sliceEnd: Date;
+    periodStart: Date;
+    periodEnd: Date;
   }): Promise<number> {
     const rows = await this.clickHouseService.selectOrThrow<SumRowMicro>(
       `SELECT sum(memberCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
-         AND timestamp >= {sliceStart:DateTime64(3)}
-         AND timestamp < {sliceEnd:DateTime64(3)}
+         AND timestamp >= {periodStart:DateTime64(3)}
+         AND timestamp < {periodEnd:DateTime64(3)}
          AND userWorkspaceId = {userWorkspaceId:String}`,
       {
         workspaceId,
         userWorkspaceId,
-        sliceStart: formatDateTimeForClickHouse(sliceStart),
-        sliceEnd: formatDateTimeForClickHouse(sliceEnd),
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
       },
     );
 

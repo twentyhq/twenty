@@ -3,12 +3,21 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { getAnchorDayOfMonth } from 'src/engine/core-modules/billing/utils/get-anchor-day-of-month.util';
 import { shiftUtcMonths } from 'src/engine/core-modules/billing/utils/shift-utc-months.util';
 
 // Must cover the longest accepted validity on the shortest interval (13 monthly periods for a year);
 // exceeding it returns a date short of the one asked for, so raise both together
 const MAX_PERIODS_AHEAD = 24;
+
+// Stripe clamps the anchor day to short months, so the later day of the two boundaries recovers it
+// A Feb 29 yearly anchor reads as 28 between leap years; the low reading avoids buying a whole extra period
+const resolveAnchorDayOfMonth = ({
+  periodStart,
+  periodEnd,
+}: {
+  periodStart: Date;
+  periodEnd: Date;
+}): number => Math.max(periodStart.getUTCDate(), periodEnd.getUTCDate());
 
 const projectPeriodEnd = ({
   periodStart,
@@ -52,7 +61,7 @@ export const alignGrantExpiryToPeriodEnd = ({
     return currentPeriodEnd;
   }
 
-  const anchorDayOfMonth = getAnchorDayOfMonth({
+  const anchorDayOfMonth = resolveAnchorDayOfMonth({
     periodStart: currentPeriodStart,
     periodEnd: currentPeriodEnd,
   });

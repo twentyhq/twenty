@@ -24,14 +24,5 @@ export class AdminPanelWorkspaceUsageDTO {
   remainingCredits: number;
 
   @Field(() => Float, { nullable: true })
-  memberCreditsAmount: number | null;
-
-  @Field(() => Date, { nullable: true })
-  memberCreditsSliceEnd: Date | null;
-
-  @Field(() => Float, { nullable: true })
   memberCreditsUsed: number | null;
-
-  @Field(() => Float, { nullable: true })
-  memberCreditsUsedInSlice: number | null;
 }

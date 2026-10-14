@@ -113,7 +113,7 @@ describe('buildQuotaExhaustedScope', () => {
     });
   });
 
-  it('scopes an exhausted member allowance counter to the member until the slice ends', () => {
+  it('scopes an exhausted member allowance counter to the member until the week ends', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,

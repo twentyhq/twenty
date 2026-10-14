@@ -31,7 +31,6 @@ import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-mo
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { clampMemberCreditsUsedMicro } from 'src/engine/core-modules/usage/utils/clamp-member-credits-used-micro.util';
 
@@ -131,7 +130,6 @@ export type ChatExecutionOptions = {
   modelId?: string;
   abortSignal: AbortSignal;
   conversationSizeTokens: number;
-  memberCreditsPayer: MemberCreditsPayer | null;
   isMemberAllowanceAvailableAtAdmission: boolean | null;
   onMemberCreditsExhausted: (renewsAt: Date) => void;
 };
@@ -180,7 +178,6 @@ export class ChatExecutionService {
     modelId,
     abortSignal,
     conversationSizeTokens,
-    memberCreditsPayer,
     isMemberAllowanceAvailableAtAdmission,
     onMemberCreditsExhausted,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
@@ -525,8 +522,7 @@ export class ChatExecutionService {
       void this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
-        userWorkspaceId,
-        memberCreditsPayer ?? undefined,
+        { userWorkspaceId },
       );
 
       const modelAttr = { model: registeredModel.modelId };
@@ -661,7 +657,6 @@ export class ChatExecutionService {
             workspaceId: workspace.id,
             operationType: UsageOperationType.AI_CHAT_TOKEN,
             spenders: { userWorkspaceId },
-            memberCreditsPayer: memberCreditsPayer ?? undefined,
           }),
         );
 
@@ -749,7 +744,6 @@ export class ChatExecutionService {
             userWorkspaceId,
             agentId: null,
             operationType: UsageOperationType.AI_CHAT_TOKEN,
-            memberCreditsPayer: memberCreditsPayer ?? undefined,
           },
         });
       },

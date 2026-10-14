@@ -3,6 +3,7 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type MemberAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/member-allowance-quota-counter.type';
 import { type QuotaAdmission } from 'src/engine/core-modules/usage-limit/types/quota-admission.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
+import { isWorkspaceCreditLimitCounter } from 'src/engine/core-modules/usage-limit/utils/is-workspace-credit-limit-counter.util';
 
 export const selectMemberFirstExhaustedCounters = ({
   exhaustedCounters,
@@ -35,15 +36,18 @@ export const selectMemberFirstExhaustedCounters = ({
   );
 
   // An unreadable member counter gates the operation like a workspace-funded one, the way its debit would be funded
+  const isWorkspaceFunded =
+    !isMemberRead ||
+    (memberCounter.fallback === 'WORKSPACE_CREDITS' && isMemberExhausted);
+
   const selectedExhaustedCounters = exhaustedCounters.filter((counter) => {
     switch (counter.kind) {
       case 'limit':
-        return true;
+        return isWorkspaceCreditLimitCounter(counter)
+          ? isWorkspaceFunded
+          : true;
       case 'allowance':
-        return (
-          !isMemberRead ||
-          (memberCounter.fallback === 'WORKSPACE_CREDITS' && isMemberExhausted)
-        );
+        return isWorkspaceFunded;
       case 'memberAllowance':
         return memberCounter.fallback === 'STOP';
       default:

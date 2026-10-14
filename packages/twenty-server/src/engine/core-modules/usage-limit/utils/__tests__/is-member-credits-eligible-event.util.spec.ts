@@ -4,7 +4,7 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
-const PAYER = { userWorkspaceId: 'user-workspace-1' };
+const USER_WORKSPACE_ID = 'user-workspace-1';
 
 type EligibilityEvent = Pick<
   RecordUsageInput,
@@ -16,19 +16,19 @@ const buildEvent = (
 ): EligibilityEvent => ({
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.AI_CHAT_TOKEN,
-  spenders: { userWorkspaceId: PAYER.userWorkspaceId },
+  spenders: { userWorkspaceId: USER_WORKSPACE_ID },
   ...overrides,
 });
 
 const isEligible = (event: EligibilityEvent) =>
-  isMemberCreditsEligibleEvent({ event, payer: PAYER });
+  isMemberCreditsEligibleEvent(event);
 
 describe('isMemberCreditsEligibleEvent', () => {
-  it('accepts a chat token charge of the payer', () => {
+  it('accepts a chat token charge of a member', () => {
     expect(isEligible(buildEvent())).toBe(true);
   });
 
-  it('accepts a native web search charge of the payer', () => {
+  it('accepts a native web search charge of a member', () => {
     expect(
       isEligible(buildEvent({ operationType: UsageOperationType.WEB_SEARCH })),
     ).toBe(true);
@@ -39,7 +39,7 @@ describe('isMemberCreditsEligibleEvent', () => {
       isEligible(
         buildEvent({
           spenders: {
-            userWorkspaceId: PAYER.userWorkspaceId,
+            userWorkspaceId: USER_WORKSPACE_ID,
             apiKeyId: '',
             applicationId: null,
             agentId: null,
@@ -63,23 +63,12 @@ describe('isMemberCreditsEligibleEvent', () => {
     ).toBe(false);
   });
 
-  it('rejects a charge of another member', () => {
-    expect(
-      isEligible(
-        buildEvent({ spenders: { userWorkspaceId: 'user-workspace-2' } }),
-      ),
-    ).toBe(false);
-  });
-
   it('rejects a charge that names no member', () => {
     expect(isEligible(buildEvent({ spenders: {} }))).toBe(false);
     expect(isEligible(buildEvent({ spenders: undefined }))).toBe(false);
-    expect(
-      isMemberCreditsEligibleEvent({
-        event: buildEvent({ spenders: { userWorkspaceId: '' } }),
-        payer: { userWorkspaceId: '' },
-      }),
-    ).toBe(false);
+    expect(isEligible(buildEvent({ spenders: { userWorkspaceId: '' } }))).toBe(
+      false,
+    );
   });
 
   it.each<keyof UsageSpenders>([
@@ -93,7 +82,7 @@ describe('isMemberCreditsEligibleEvent', () => {
       isEligible(
         buildEvent({
           spenders: {
-            userWorkspaceId: PAYER.userWorkspaceId,
+            userWorkspaceId: USER_WORKSPACE_ID,
             [spenderColumn]: 'spender-1',
           },
         }),

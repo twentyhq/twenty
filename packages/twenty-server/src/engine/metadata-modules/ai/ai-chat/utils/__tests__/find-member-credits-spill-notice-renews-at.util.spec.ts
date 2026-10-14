@@ -9,7 +9,7 @@ const crossingStepDebit = {
 };
 
 describe('findMemberCreditsSpillNoticeRenewsAt', () => {
-  it('gives the slice end when a spill mode step takes a member who had credits at admission to M', () => {
+  it('gives the week end when a spill mode step takes a member who had credits at admission to M', () => {
     expect(
       findMemberCreditsSpillNoticeRenewsAt({
         stepDebit: crossingStepDebit,
@@ -54,7 +54,7 @@ describe('findMemberCreditsSpillNoticeRenewsAt', () => {
     ).toBeNull();
   });
 
-  it('gives nothing when the debit carries no slice end', () => {
+  it('gives nothing when the debit carries no period end', () => {
     expect(
       findMemberCreditsSpillNoticeRenewsAt({
         stepDebit: { ...crossingStepDebit, memberAllowancePeriodEnd: null },

@@ -67,8 +67,6 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
         subscription.billingSubscriptionItems.find(
           isBaseProductSubscriptionItem,
         )?.billingProduct?.metadata.planKey ?? null,
-      memberCreditsAmountMicro:
-        this.billingUsageService.findMemberCreditsAmountMicro(subscription),
       memberCreditsFallback:
         billingCustomer?.memberCreditsFallback ??
         MemberCreditsFallback.WORKSPACE_CREDITS,

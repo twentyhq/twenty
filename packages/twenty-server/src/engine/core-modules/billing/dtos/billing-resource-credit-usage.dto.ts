@@ -19,15 +19,6 @@ export class BillingResourceCreditUsageDTO {
   @Field(() => Float)
   memberCreditsUsed: number;
 
-  @Field(() => Float, { nullable: true })
-  memberCreditsAmount: number | null;
-
-  @Field(() => Float, { nullable: true })
-  memberCreditsUsedInSlice: number | null;
-
-  @Field(() => Date, { nullable: true })
-  memberCreditsSliceEnd: Date | null;
-
   @Field(() => Float)
   grantedCredits: number;
 

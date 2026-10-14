@@ -724,7 +724,7 @@ export class AgentAsyncExecutorService {
       void this.aiBillingService.billNativeWebSearchUsage(
         nativeWebSearchCallCount,
         workspaceId,
-        userWorkspaceId,
+        { userWorkspaceId, agentId: agent?.id },
       );
     }
   }

@@ -12,7 +12,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
-import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
@@ -34,7 +33,6 @@ type RepairToolCallBillingContext = {
   userWorkspaceId: string | null;
   agentId: string | null;
   operationType: UsageOperationType;
-  memberCreditsPayer?: MemberCreditsPayer;
 };
 
 export const repairToolCall = async ({
@@ -128,7 +126,6 @@ export const repairToolCall = async ({
           billingContext.operationType,
           billingContext.agentId,
           billingContext.userWorkspaceId,
-          billingContext.memberCreditsPayer,
         )
         .catch((error: unknown) =>
           logger.error(

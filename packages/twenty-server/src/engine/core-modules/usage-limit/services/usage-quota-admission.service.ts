@@ -10,7 +10,6 @@ import { type UsageAdmission } from 'src/engine/core-modules/billing/types/usage
 import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { buildUsageRefusalException } from 'src/engine/core-modules/billing/utils/build-usage-refusal-exception.util';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
-import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -22,7 +21,6 @@ type UsageQuotaScope = {
   operationType: UsageOperationType;
   spenders: UsageSpenders;
   cost?: QuotaCost;
-  memberCreditsPayer?: MemberCreditsPayer;
 };
 
 @Injectable()
@@ -60,7 +58,6 @@ export class UsageQuotaAdmissionService {
     operationType,
     spenders,
     cost,
-    memberCreditsPayer,
     requireMemberCounter,
   }: UsageQuotaScope & {
     requireMemberCounter?: boolean;
@@ -87,7 +84,6 @@ export class UsageQuotaAdmissionService {
         operationType,
         spenders,
         cost,
-        memberCreditsPayer,
         requireMemberCounter,
       });
 

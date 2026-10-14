@@ -33,8 +33,6 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
-import { getSenderApplicationIdFromAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-sender-application-id-from-auth-context.util';
-import { type MemberCreditsPayer } from 'src/engine/core-modules/usage-limit/types/member-credits-payer.type';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
@@ -64,12 +62,17 @@ export class AgentChatService {
     workspaceId: string;
     userWorkspaceId?: string;
   }) {
+    const context = workspaceAuthContextStorage.getStore();
+    const applicationId =
+      isDefined(context) &&
+      isUserAuthContext(context) &&
+      context.workspace.id === workspaceId &&
+      context.userWorkspaceId === userWorkspaceId
+        ? context.application?.id
+        : undefined;
     return {
       senderUserWorkspaceId: userWorkspaceId ?? null,
-      senderApplicationId: getSenderApplicationIdFromAuthContext({
-        workspaceId,
-        userWorkspaceId,
-      }),
+      senderApplicationId: applicationId ?? null,
     };
   }
 
@@ -650,13 +653,11 @@ export class AgentChatService {
     messageContent,
     workspaceId,
     userWorkspaceId,
-    memberCreditsPayer,
   }: {
     threadId: string;
     messageContent: string;
     workspaceId: string;
     userWorkspaceId: string;
-    memberCreditsPayer?: MemberCreditsPayer;
   }): Promise<string | null> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
@@ -670,7 +671,6 @@ export class AgentChatService {
       messageContent,
       workspaceId,
       userWorkspaceId,
-      memberCreditsPayer,
     );
 
     await this.threadRepository.update(

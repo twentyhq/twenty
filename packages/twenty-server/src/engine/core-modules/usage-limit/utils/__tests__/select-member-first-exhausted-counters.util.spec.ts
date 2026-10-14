@@ -242,6 +242,49 @@ describe('selectMemberFirstExhaustedCounters', () => {
     expect(selection.isMemberAllowanceAvailable).toBe(true);
   });
 
+  it.each<{
+    fallback: MemberCreditsFallbackMode;
+    member: CounterState;
+    expectedKinds: QuotaCounter['kind'][];
+  }>([
+    { fallback: 'WORKSPACE_CREDITS', member: 'below', expectedKinds: [] },
+    {
+      fallback: 'WORKSPACE_CREDITS',
+      member: 'reached',
+      expectedKinds: ['limit'],
+    },
+    {
+      fallback: 'WORKSPACE_CREDITS',
+      member: 'unreadable',
+      expectedKinds: ['limit'],
+    },
+    { fallback: 'STOP', member: 'below', expectedKinds: [] },
+    { fallback: 'STOP', member: 'reached', expectedKinds: ['memberAllowance'] },
+  ])(
+    'gates on an exhausted workspace credit limit only once the workspace pays, in $fallback mode with the member $member',
+    ({ fallback, member, expectedKinds }) => {
+      const memberCounter = buildMemberCounter(fallback);
+      const workspaceCreditLimitCounter: LimitQuotaCounter = {
+        ...limitCounter,
+        key: 'workspace-credit-limit-key',
+        spenderType: 'workspace',
+        spenderId: null,
+      };
+
+      const selection = selectMemberFirstExhaustedCounters({
+        exhaustedCounters: [
+          workspaceCreditLimitCounter,
+          ...(member === 'reached' ? [memberCounter] : []),
+        ],
+        memberCounter,
+        memberConsumed: toConsumed(member, MEMBER_LIMIT),
+        allowanceConsumed: toConsumed('below', ALLOWANCE_LIMIT),
+      });
+
+      expect(toKinds(selection.exhaustedCounters)).toEqual(expectedKinds);
+    },
+  );
+
   it('keeps every exhausted counter and reports no flags without a member counter', () => {
     const exhaustedCounters: QuotaCounter[] = [limitCounter, allowanceCounter];
 

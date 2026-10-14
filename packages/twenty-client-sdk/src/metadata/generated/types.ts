@@ -1878,9 +1878,6 @@ export default {
             "isLegacy": [
                 1
             ],
-            "memberCreditAmount": [
-                1
-            ],
             "planKey": [
                 91
             ],
@@ -1898,16 +1895,7 @@ export default {
             "grantedCredits": [
                 11
             ],
-            "memberCreditsAmount": [
-                11
-            ],
-            "memberCreditsSliceEnd": [
-                188
-            ],
             "memberCreditsUsed": [
-                11
-            ],
-            "memberCreditsUsedInSlice": [
                 11
             ],
             "periodEnd": [
