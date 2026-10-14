@@ -10,6 +10,7 @@ import { generateApplicationTokenPair } from 'test/integration/utils/generate-ap
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 describe('User application variable values should succeed', () => {
@@ -19,6 +20,7 @@ describe('User application variable values should succeed', () => {
   let applicationToken: string;
   let defaultApplicationToken: string;
   let janeApplicationToken: string;
+  let jonyApplicationToken: string;
 
   beforeAll(async () => {
     application = await setupApplicationWithVariable({
@@ -42,6 +44,7 @@ describe('User application variable values should succeed', () => {
       applicationTokenPair,
       janeApplicationTokenPair,
       defaultApplicationTokenPair,
+      jonyApplicationTokenPair,
     ] = await Promise.all([
       generateApplicationTokenPair({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -54,6 +57,12 @@ describe('User application variable values should succeed', () => {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         applicationId: defaultApplication.id,
       }),
+      generateApplicationTokenPair({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId: application.id,
+        userId: USER_DATA_SEED_IDS.JONY,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      }),
     ]);
 
     applicationToken = applicationTokenPair.applicationAccessToken.token;
@@ -61,6 +70,8 @@ describe('User application variable values should succeed', () => {
       defaultApplicationTokenPair.applicationAccessToken.token;
     janeApplicationToken =
       janeApplicationTokenPair.applicationAccessToken.token;
+    jonyApplicationToken =
+      jonyApplicationTokenPair.applicationAccessToken.token;
   }, 120000);
 
   afterAll(async () => {
@@ -324,5 +335,34 @@ describe('User application variable values should succeed', () => {
         }),
       ]),
     );
+  });
+
+  it('should let an application token act for a member when both their roles grant the connected accounts permission', async () => {
+    const { data: updateData } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: application.universalIdentifier,
+        key: application.variableKey,
+        value: 'jony-from-app',
+      },
+      token: jonyApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(updateData.updateMyUserApplicationVariable).toBe(true);
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: applicationToken,
+      expectToFail: false,
+    });
+
+    const jonyValues = data.myUserApplicationVariables.find(
+      ({ userWorkspaceId }) =>
+        userWorkspaceId === USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    );
+
+    expect(jonyValues?.variables).toEqual([
+      { key: application.variableKey, value: 'jony-from-app' },
+    ]);
   });
 });
