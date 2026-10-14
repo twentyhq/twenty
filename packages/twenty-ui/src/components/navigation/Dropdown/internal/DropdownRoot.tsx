@@ -33,6 +33,8 @@ export const DropdownRoot = ({
 }: DropdownRootProps & { isSubmenu?: boolean }) => {
   const parent = useContext(DropdownContext);
   const selectionState = useDropdownSelections();
+  const { selections, initializeSelection, updateSelection } =
+    isSubmenu && isDefined(parent) ? parent : selectionState;
   const openNestedRootCountRef = useRef(0);
   const registerOpenNestedRoot = useCallback(() => {
     openNestedRootCountRef.current += 1;
@@ -236,7 +238,9 @@ export const DropdownRoot = ({
           rootType: type,
           open,
           multiple,
-          ...selectionState,
+          selections,
+          initializeSelection,
+          updateSelection,
           isSubmenu,
           parentType: parent?.type,
           rowFocus: {
