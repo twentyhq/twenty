@@ -45,7 +45,11 @@ describe('formatResult', () => {
     jest.clearAllMocks();
   });
 
-  it('formats precise date strings as Dates without changing the raw values', () => {
+  it.each([
+    '2026-01-01T00:00:00.123900Z',
+    '2026-01-01 00:00:00.1239+00',
+    '2026-01-01 05:30:00.1239+05:30',
+  ])('formats %s as a Date without changing the raw value', (createdAt) => {
     const dateField = getFlatFieldMetadataMock({
       universalIdentifier: '20202020-3c25-4d02-bf25-6aeccf7ea419',
       objectMetadataId: '20202020-4c25-4d02-bf25-6aeccf7ea419',
@@ -57,10 +61,7 @@ describe('formatResult', () => {
       universalIdentifier: dateField.objectMetadataUniversalIdentifier,
       fieldIds: [dateField.id],
     });
-    const rawRecords = [
-      { createdAt: '2026-01-01T00:00:00.123900Z' },
-      { createdAt: null },
-    ];
+    const rawRecords = [{ createdAt }, { createdAt: null }];
 
     const records = formatResult(
       rawRecords,
@@ -73,7 +74,7 @@ describe('formatResult', () => {
       { createdAt: new Date('2026-01-01T00:00:00.123Z') },
       { createdAt: null },
     ]);
-    expect(rawRecords[0].createdAt).toBe('2026-01-01T00:00:00.123900Z');
+    expect(rawRecords[0].createdAt).toBe(createdAt);
   });
 
   it('reuses derived field metadata per object type within one invocation', () => {

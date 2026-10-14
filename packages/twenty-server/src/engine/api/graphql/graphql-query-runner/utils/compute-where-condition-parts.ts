@@ -13,8 +13,8 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 
-const MICROSECOND_DATE_TIME_PATTERN =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$/;
+const PRECISE_DATE_TIME_PATTERN =
+  /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}\.\d{6}Z| \d{2}:\d{2}:\d{2}(?:\.\d{1,6})?[+-]\d{2}(?::\d{2}){0,2})$/;
 
 type WhereConditionParts = {
   sql: string;
@@ -51,7 +51,7 @@ export const computeWhereConditionParts = ({
 
   const isMillisecondDateTimeValue =
     isDateTimeField &&
-    !(isString(value) && MICROSECOND_DATE_TIME_PATTERN.test(value));
+    !(isString(value) && PRECISE_DATE_TIME_PATTERN.test(value));
 
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(

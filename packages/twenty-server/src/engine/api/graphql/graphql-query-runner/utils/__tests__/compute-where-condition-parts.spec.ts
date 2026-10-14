@@ -132,6 +132,33 @@ describe('computeWhereConditionParts', () => {
 
     it.each([
       {
+        description: 'should compare gt exactly for a raw Postgres timestamp',
+        operator: 'gt',
+        value: '2020-01-01 00:00:00.1239+00',
+        expectedSql: `"person"."createdAt" > :createdAt0000000000`,
+      },
+      {
+        description:
+          'should compare gt exactly when Postgres omits fractional seconds',
+        operator: 'gt',
+        value: '2020-01-01 00:00:00+00',
+        expectedSql: `"person"."createdAt" > :createdAt0000000000`,
+      },
+      {
+        description:
+          'should compare gt exactly when Postgres trims fractional zeros',
+        operator: 'gt',
+        value: '2020-01-01 00:00:00.123+00',
+        expectedSql: `"person"."createdAt" > :createdAt0000000000`,
+      },
+      {
+        description:
+          'should compare eqStrict exactly for a raw Postgres timestamp with an offset',
+        operator: 'eqStrict',
+        value: '2020-01-01 05:30:00.1239+05:30',
+        expectedSql: `"person"."createdAt" = :createdAt0000000000`,
+      },
+      {
         description: 'should compare gt exactly for a microsecond cursor value',
         operator: 'gt',
         value: microsecondValue,

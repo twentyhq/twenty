@@ -1,9 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'class-validator';
-import {
-  FieldMetadataType,
-  type OrderByWithGroupBy,
-} from 'twenty-shared/types';
+import { type OrderByWithGroupBy } from 'twenty-shared/types';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import {
@@ -28,7 +25,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 
 export class GraphqlQueryParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -163,19 +159,11 @@ export class GraphqlQueryParser {
         // Relation columns are never in columnsToSelect
         const isMainEntity = alias === objectNameSingular;
         const isAlreadySelected = isMainEntity && columnsToSelect[column];
-        const tableShape = isMainEntity
-          ? queryBuilder.tableShape
-          : queryBuilder.getJoinedTableShape(alias);
-        const isDateTime =
-          tableShape?.columnShapeByColumnName[column]?.fieldMetadataType ===
-          FieldMetadataType.DATE_TIME;
 
-        if (!isAlreadySelected || isDateTime) {
+        if (!isAlreadySelected) {
           queryBuilder.addSelect(
-            isDateTime
-              ? `to_char("${alias}"."${column}" AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`
-              : `"${alias}"."${column}"`,
-            buildColumnResultAlias(alias, column),
+            `"${alias}"."${column}"`,
+            `${alias}_${column}`,
           );
         }
       }

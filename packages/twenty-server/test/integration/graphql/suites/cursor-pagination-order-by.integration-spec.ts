@@ -601,6 +601,10 @@ describe('Cursor pagination ordered by a DATE_TIME field with rows sharing a mil
       createdAt: '2020-01-01T00:00:00.123900Z',
     },
     {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      createdAt: '2020-01-01T00:00:00.124000Z',
+    },
+    {
       id: '99999999-9999-4999-8999-999999999999',
       createdAt: '2020-01-01T00:00:00.124500Z',
     },
@@ -645,6 +649,7 @@ describe('Cursor pagination ordered by a DATE_TIME field with rows sharing a mil
       '2020-01-01T00:00:00.123Z',
       '2020-01-01T00:00:00.123Z',
       '2020-01-01T00:00:00.123Z',
+      '2020-01-01T00:00:00.124Z',
       '2020-01-01T00:00:00.124Z',
     ]);
   });

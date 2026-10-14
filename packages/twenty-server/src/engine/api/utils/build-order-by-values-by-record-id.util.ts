@@ -6,7 +6,6 @@ import {
   checkIfLeafCanCarryCursorValue,
   type OrderByLeaf,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
-import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 
 export type OrderByValuesByRecordId = Record<string, Record<string, unknown>>;
 
@@ -61,9 +60,7 @@ export const buildOrderByValuesByRecordId = ({
       }
 
       const rawValue =
-        rawRow[
-          buildColumnResultAlias(leafColumn.tableAlias, leafColumn.columnName)
-        ];
+        rawRow[`${leafColumn.tableAlias}_${leafColumn.columnName}`];
 
       let container = orderByValues;
 

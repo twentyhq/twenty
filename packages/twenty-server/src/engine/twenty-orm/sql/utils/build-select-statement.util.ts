@@ -241,11 +241,11 @@ export const buildProjection = (
       ? selectedColumnNames
       : state.tableShape.columnNames);
 
-  const expressionByResultAlias = new Map<string, string>(
-    mainAliasColumnNames.map((columnName) => [
-      buildColumnResultAlias(state.alias, columnName),
-      quoteColumn(state.alias, columnName),
-    ]),
+  const expressions = mainAliasColumnNames.map(
+    (columnName) =>
+      `${quoteColumn(state.alias, columnName)} AS ${escapeIdentifier(
+        buildColumnResultAlias(state.alias, columnName),
+      )}`,
   );
 
   const projectedMainColumnNames = new Set(mainAliasColumnNames);
@@ -259,35 +259,34 @@ export const buildProjection = (
     }
 
     projectedMainColumnNames.add(columnSelection.columnName);
-    expressionByResultAlias.set(
-      buildColumnResultAlias(state.alias, columnSelection.columnName),
-      quoteColumn(state.alias, columnSelection.columnName),
+    expressions.push(
+      `${quoteColumn(state.alias, columnSelection.columnName)} AS ${escapeIdentifier(
+        buildColumnResultAlias(state.alias, columnSelection.columnName),
+      )}`,
     );
   }
 
   for (const joinedProjection of collectJoinedColumnProjections(state)) {
-    expressionByResultAlias.set(
-      joinedProjection.resultAlias,
-      quoteColumn(joinedProjection.joinAlias, joinedProjection.columnName),
+    expressions.push(
+      `${quoteColumn(
+        joinedProjection.joinAlias,
+        joinedProjection.columnName,
+      )} AS ${escapeIdentifier(joinedProjection.resultAlias)}`,
     );
   }
 
   const aliases = collectStatementAliases(state);
 
   for (const extraSelect of state.extraSelectClauses) {
-    expressionByResultAlias.set(
-      extraSelect.alias,
-      quoteQualifiedAliasReferences(extraSelect.expression, aliases),
+    expressions.push(
+      `${quoteQualifiedAliasReferences(
+        extraSelect.expression,
+        aliases,
+      )} AS ${escapeIdentifier(extraSelect.alias)}`,
     );
   }
 
-  return {
-    expressions: [...expressionByResultAlias].map(
-      ([resultAlias, expression]) =>
-        `${expression} AS ${escapeIdentifier(resultAlias)}`,
-    ),
-    mainAliasColumnNames,
-  };
+  return { expressions, mainAliasColumnNames };
 };
 
 const renderUserWhereExpression = (whereClauses: WhereClause[]): string =>

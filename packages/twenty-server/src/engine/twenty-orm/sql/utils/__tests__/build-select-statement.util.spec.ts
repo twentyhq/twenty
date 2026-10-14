@@ -58,25 +58,6 @@ const OR_CHAIN_WHERE_CLAUSES: SelectStatementState['whereClauses'] = [
 const ROW_ACCESS_CONDITION = '"person"."ownerId" = :ownerId';
 
 describe('buildSelectStatement', () => {
-  it('should replace a selected column with an expression using the same result alias', () => {
-    const sql = buildSelectStatement(
-      buildState({
-        findOptions: { select: { id: true, deletedAt: true } },
-        extraSelectClauses: [
-          {
-            expression: `to_char("person"."deletedAt" AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`,
-            alias: 'person_deletedAt',
-          },
-        ],
-        includeDeleted: true,
-      }),
-    );
-
-    expect(sql).toBe(
-      `SELECT "person"."id" AS "person_id", to_char("person"."deletedAt" AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS "person_deletedAt" FROM "${SCHEMA_NAME}"."person" AS "person"`,
-    );
-  });
-
   it('should keep row access conditions outside a user OR chain', () => {
     const sql = buildSelectStatement(
       buildState({
