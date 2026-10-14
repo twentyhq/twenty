@@ -3,12 +3,13 @@ import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { createCodeEditorChangeHandler } from '@/ui/input/utils/createCodeEditorChangeHandler';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -224,17 +225,13 @@ export const ConfigVariableDatabaseInput = ({
             options={{
               readOnly: disabled === true,
             }}
-            onChange={(text) => {
-              if (!isDefined(text)) {
-                return;
-              }
-
+            onChange={createCodeEditorChangeHandler((text) => {
               try {
                 onChange(JSON.parse(text) as Record<string, unknown>);
               } catch {
                 onChange(text as unknown as ConfigVariableValue);
               }
-            }}
+            })}
           />
         </StyledJsonEditorContainer>
       );
