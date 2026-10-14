@@ -3242,7 +3242,7 @@ export default {
         },
         "CreateNavigationMenuItemInput": {
             "agentChatChannelId": [
-                499
+                500
             ],
             "color": [
                 1
@@ -8907,7 +8907,7 @@ export default {
         },
         "NavigationMenuItem": {
             "agentChatChannelId": [
-                499
+                500
             ],
             "applicationId": [
                 500
