@@ -283,7 +283,9 @@ export const LogConsoleDetailPanel = () => {
         {source.renderDetailContent?.(entry)}
         <Section.Root>
           <Section.Header title={t`Details`} />
-          <StyledLogConsoleFieldsCard>
+          <StyledLogConsoleFieldsCard
+            backgroundColor={themeCssVariables.background.secondary}
+          >
             {detailItems.map(({ Icon, label, value }) => (
               <BillingFieldRow key={label} Icon={Icon} label={label}>
                 {value}

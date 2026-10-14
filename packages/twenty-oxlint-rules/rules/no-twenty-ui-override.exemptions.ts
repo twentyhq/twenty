@@ -2,7 +2,7 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   {
     filePath:
       'packages/twenty-front/src/modules/activities/calendar/components/CalendarDayCardContent.tsx',
-    reason: 'Card.Content animation for calendar days that have ended',
+    reason: 'Card.Content day row layout and the animation for ended days',
   },
   {
     filePath:
@@ -26,6 +26,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/log-console/components/StyledLogConsoleFieldsCard.tsx',
+    reason: 'Card.Root laid out as a padded column of log fields',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx',
     reason: 'LightButton pinned to the corner of the fullscreen dialog',
   },
@@ -41,6 +46,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/components/SettingsListCard.tsx',
+    reason: 'Card.Footer laid out around the add button',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/components/SettingsOptions/SettingsOptionCardContentSwitch.tsx',
     reason: 'Advanced mode color on the Switch',
   },
@@ -51,8 +61,23 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx',
+    reason: 'Tinted preview Card.Content and unpadded form Card.Content',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/data-model/components/SettingsDataModelPreviewMiniCard.tsx',
+    reason: 'Compact Card.Content with primary text for field previews',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx',
     reason: 'React Flow panel classes on ButtonGroup',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx',
+    reason: 'Tinted preview Card.Content',
   },
   {
     filePath:

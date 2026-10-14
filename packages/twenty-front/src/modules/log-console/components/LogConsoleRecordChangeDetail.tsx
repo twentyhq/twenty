@@ -131,7 +131,9 @@ export const LogConsoleRecordChangeDetail = ({
               }
             />
             {isNonEmptyArray(fieldDiffs) && (
-              <StyledLogConsoleFieldsCard>
+              <StyledLogConsoleFieldsCard
+                backgroundColor={themeCssVariables.background.secondary}
+              >
                 {fieldDiffs.map((fieldDiff) => (
                   <BillingFieldRow
                     key={fieldDiff.key}
