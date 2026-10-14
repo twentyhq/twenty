@@ -37,6 +37,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledIconChevronRightContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -155,12 +156,12 @@ export const SettingsObjectTable = ({
             placeholder={t`Search for an object...`}
             value={searchTerm}
             onValueChange={setSearchTerm}
-            filterDropdown={(filterButton) => (
+            actions={
               <DropdownRoot
                 dropdownId="settings-objects-filter-dropdown"
                 type="panel"
               >
-                <Dropdown.Trigger render={filterButton} />
+                <SettingsSearchFilterTrigger />
                 <DropdownContent
                   side="bottom"
                   align="end"
@@ -185,7 +186,7 @@ export const SettingsObjectTable = ({
                   </Dropdown.Section>
                 </DropdownContent>
               </DropdownRoot>
-            )}
+            }
           />
         </StyledSearchInputContainer>
       )}

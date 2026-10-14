@@ -25,6 +25,7 @@ import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/Set
 import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -124,12 +125,12 @@ export const SettingsAgentSkillsTab = () => {
           placeholder={t`Search a skill...`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot
               dropdownId="settings-skills-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -150,7 +151,7 @@ export const SettingsAgentSkillsTab = () => {
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchContainer>
       <SettingsAgentSkillsTable

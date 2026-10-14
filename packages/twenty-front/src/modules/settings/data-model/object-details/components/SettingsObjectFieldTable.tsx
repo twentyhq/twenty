@@ -31,6 +31,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '@/settings/data-model/object-details/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '@/settings/data-model/types/SettingsObjectDetailTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -170,12 +171,12 @@ export const SettingsObjectFieldTable = ({
           placeholder={t`Search a field...`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot
               dropdownId="settings-fields-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -208,7 +209,7 @@ export const SettingsObjectFieldTable = ({
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchContainer>
       <Table>
