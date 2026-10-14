@@ -54,6 +54,7 @@ import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-susp
     apiKey: true,
     oauthClient: true,
     application: true,
+    isAgentTokenAccepted: true,
   }),
   WorkspaceNotSuspendedGuard,
   NoPermissionGuard,

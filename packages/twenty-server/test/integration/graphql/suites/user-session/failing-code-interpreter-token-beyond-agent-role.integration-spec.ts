@@ -9,6 +9,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createFileUploadMutation } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { upsertContainsRlsPredicate } from 'test/integration/graphql/utils/upsert-contains-rls-predicate.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -150,6 +151,13 @@ const createCompany = async (name: string): Promise<string> => {
 
   return response.body.data.createCompany.id;
 };
+
+const findCompaniesThroughRest = (token: string) =>
+  makeRestApiRequest({
+    method: 'get',
+    path: '/companies?limit=1',
+    bearer: token,
+  });
 
 const findRecordsThroughGraphql = ({
   objectMetadataSingularName,
@@ -329,27 +337,51 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
     ).toBe(true);
   });
 
-  it('should refuse a member run people through GraphQL when the agent role denies them', async () => {
+  it('should let a member run read companies through GraphQL and REST when no agent restricts it', async () => {
     const sandboxToken = await captureSandboxTokenForAgentRun({
       globalTestContext,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      isAgentPassed: false,
     });
 
-    const [peopleResponse, companiesResponse] = await Promise.all([
-      findRecordsThroughGraphql({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        token: sandboxToken,
-      }),
+    const [graphqlResponse, restResponse] = await Promise.all([
       findRecordsThroughGraphql({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
         token: sandboxToken,
       }),
+      findCompaniesThroughRest(sandboxToken),
     ]);
 
-    expect(peopleResponse.body.errors).toBeDefined();
-    expect(companiesResponse.body.errors).toBeUndefined();
+    expect(graphqlResponse.body.errors).toBeUndefined();
+    expect(restResponse.status).toBe(200);
+  });
+
+  it('should refuse a token bound to an agent everywhere but MCP, even for what the agent role allows', async () => {
+    const sandboxToken = await captureSandboxTokenForAgentRun({
+      globalTestContext,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const [graphqlResponse, restResponse, metadataResponse] = await Promise.all(
+      [
+        findRecordsThroughGraphql({
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          token: sandboxToken,
+        }),
+        findCompaniesThroughRest(sandboxToken),
+        createAttachmentFileUpload({ globalTestContext, token: sandboxToken }),
+      ],
+    );
+
+    expect(graphqlResponse.body.errors?.[0]?.extensions?.code).toBe(
+      ErrorCode.FORBIDDEN,
+    );
+    expect(restResponse.status).toBe(403);
+    expect(metadataResponse.body.errors?.[0]?.extensions?.code).toBe(
+      ErrorCode.FORBIDDEN,
+    );
   });
 
   it('should list and run MCP tools within the agent role from the application own run', async () => {
@@ -391,22 +423,6 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
     });
 
     expect(response.body.errors).toBeUndefined();
-  });
-
-  it('should refuse a file upload from the application own run when the agent role lacks the permission', async () => {
-    const sandboxToken = await captureSandboxTokenForAgentRun({
-      globalTestContext,
-      token: globalTestContext.applicationToken,
-    });
-
-    const response = await createAttachmentFileUpload({
-      globalTestContext,
-      token: sandboxToken,
-    });
-
-    expect(response.body.errors?.[0]?.extensions?.code).toBe(
-      ErrorCode.FORBIDDEN,
-    );
   });
 
   it('should let a member run find every company through MCP when no agent restricts it', async () => {

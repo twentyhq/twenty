@@ -12,4 +12,7 @@ export type AuthPrincipalGuardConfig = {
   apiKey: boolean;
   oauthClient: boolean | { withUser: boolean; withoutUser: boolean };
   application: boolean | { withUser: boolean; withoutUser: boolean };
+  // Tokens bound to an agent (the code interpreter's) are refused unless an endpoint opts in,
+  // so new endpoints stay closed to them
+  isAgentTokenAccepted?: boolean;
 };

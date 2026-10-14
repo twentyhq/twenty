@@ -344,6 +344,26 @@ describe('AuthPrincipalGuard', () => {
     },
   );
 
+  it.each(['application.withUser', 'application.withoutUser'] as const)(
+    'should refuse an %s token bound to an agent unless the endpoint accepts agent tokens',
+    (principalVariantName) => {
+      const agentTokenRequest = {
+        ...REQUEST_BY_PRINCIPAL_VARIANT[principalVariantName],
+        agentId: 'agent-id',
+      };
+
+      expect(
+        canActivateOverHttp(ACCEPT_EVERY_PRINCIPAL, agentTokenRequest),
+      ).toBe(false);
+      expect(
+        canActivateOverHttp(
+          { ...ACCEPT_EVERY_PRINCIPAL, isAgentTokenAccepted: true },
+          agentTokenRequest,
+        ),
+      ).toBe(true);
+    },
+  );
+
   it.each([
     {
       name: 'a token type that is not a session',
