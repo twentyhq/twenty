@@ -1,4 +1,4 @@
-export type BillingPeriodCreditsUsed = {
+export type WorkspaceAndUserCreditsUsed = {
   workspaceCreditsUsedMicro: number;
   userCreditsUsedMicro: number;
 };

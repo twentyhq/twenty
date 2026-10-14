@@ -13,7 +13,6 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -22,6 +21,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
+import { type WorkspaceCreditsUsage } from 'src/engine/core-modules/billing/types/workspace-credits-usage.type';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -77,7 +77,7 @@ export class BillingUsageService {
 
   async getResourceCreditProductUsage(
     workspace: WorkspaceEntity,
-  ): Promise<BillingResourceCreditUsageDTO[]> {
+  ): Promise<WorkspaceCreditsUsage[]> {
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId: workspace.id },
@@ -121,27 +121,28 @@ export class BillingUsageService {
     >,
     periodStart: Date,
     periodEnd: Date,
-  ): Promise<BillingResourceCreditUsageDTO> {
-    const [billingPeriodCreditsUsed, rolloverCredits] = await Promise.all([
-      // Fails open: an unreadable usage total must never block a paying workspace
-      this.usageAnalyticsService
-        .getWorkspaceCreditsUsedMicroForBillingPeriod({
-          workspaceId,
-          periodStart,
-          periodEnd,
-        })
-        .catch((error) => {
-          this.logger.error(
-            `Could not read credits used for workspace ${workspaceId}`,
-            error,
-          );
+  ): Promise<WorkspaceCreditsUsage> {
+    const [workspaceAndUserCreditsUsed, workspaceCreditsRolledOverMicro] =
+      await Promise.all([
+        // Fails open: an unreadable usage total must never block a paying workspace
+        this.usageAnalyticsService
+          .getWorkspaceCreditsUsedMicroForBillingPeriod({
+            workspaceId,
+            periodStart,
+            periodEnd,
+          })
+          .catch((error) => {
+            this.logger.error(
+              `Could not read credits used for workspace ${workspaceId}`,
+              error,
+            );
 
-          return null;
-        }),
-      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
-    ]);
+            return null;
+          }),
+        this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
+      ]);
 
-    const grantedCredits =
+    const workspaceCreditsGrantedMicro =
       subscription.status === SubscriptionStatus.Trialing
         ? item.freeTrialQuantity
         : item.creditAmount;
@@ -150,11 +151,14 @@ export class BillingUsageService {
       productKey: item.productKey,
       periodStart,
       periodEnd,
-      usedCredits: billingPeriodCreditsUsed?.workspaceCreditsUsedMicro ?? 0,
-      userCreditsUsed: billingPeriodCreditsUsed?.userCreditsUsedMicro ?? 0,
-      grantedCredits,
-      rolloverCredits,
-      totalGrantedCredits: grantedCredits + rolloverCredits,
+      workspaceCreditsUsedMicro:
+        workspaceAndUserCreditsUsed?.workspaceCreditsUsedMicro ?? 0,
+      workspaceCreditsGrantedMicro,
+      workspaceCreditsRolledOverMicro,
+      workspaceCreditsTotalMicro:
+        workspaceCreditsGrantedMicro + workspaceCreditsRolledOverMicro,
+      userCreditsUsedMicro:
+        workspaceAndUserCreditsUsed?.userCreditsUsedMicro ?? 0,
       unitPriceCents: item.unitPriceCents,
     };
   }
@@ -192,7 +196,7 @@ export class BillingUsageService {
 
   // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period
   // Null on a failed read: select swallows errors into [], while sum() always yields one row
-  async getCreditsUsedBetweenOrNull({
+  async getWorkspaceCreditsUsedMicroBetweenOrNull({
     workspaceId,
     from,
     to,

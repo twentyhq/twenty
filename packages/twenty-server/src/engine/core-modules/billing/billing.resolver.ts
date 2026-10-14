@@ -524,12 +524,14 @@ export class BillingResolver {
       await this.billingUsageService.getResourceCreditProductUsage(workspace);
 
     return usageData.map((item) => ({
-      ...item,
-      usedCredits: toDisplayCredits(item.usedCredits),
-      userCreditsUsed: toDisplayCredits(item.userCreditsUsed),
-      grantedCredits: toDisplayCredits(item.grantedCredits),
-      rolloverCredits: toDisplayCredits(item.rolloverCredits),
-      totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
+      productKey: item.productKey,
+      periodStart: item.periodStart,
+      periodEnd: item.periodEnd,
+      usedCredits: toDisplayCredits(item.workspaceCreditsUsedMicro),
+      userCreditsUsed: toDisplayCredits(item.userCreditsUsedMicro),
+      grantedCredits: toDisplayCredits(item.workspaceCreditsGrantedMicro),
+      rolloverCredits: toDisplayCredits(item.workspaceCreditsRolledOverMicro),
+      totalGrantedCredits: toDisplayCredits(item.workspaceCreditsTotalMicro),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     }));
   }

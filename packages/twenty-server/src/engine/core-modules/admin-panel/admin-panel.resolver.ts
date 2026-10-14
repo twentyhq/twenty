@@ -617,7 +617,7 @@ export class AdminPanelResolver {
     });
 
     if (items.length === 0) {
-      return items;
+      return [];
     }
 
     const workspaceIds = items.map((item) => item.key);
@@ -632,9 +632,11 @@ export class AdminPanelResolver {
         .map((workspace) => [workspace.id, workspace.displayName!]),
     );
 
-    return items.map((item) => ({
-      ...item,
-      label: nameMap.get(item.key),
+    return items.map(({ key, workspaceCreditsUsed, userCreditsUsed }) => ({
+      key,
+      label: nameMap.get(key),
+      creditsUsed: workspaceCreditsUsed + userCreditsUsed,
+      userCreditsUsed,
     }));
   }
 
