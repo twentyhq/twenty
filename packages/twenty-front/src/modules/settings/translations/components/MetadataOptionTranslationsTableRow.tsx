@@ -28,7 +28,7 @@ export const MetadataOptionTranslationsTableRow = ({
   return (
     <TableRow gridTemplateColumns={gridTemplateColumns}>
       <TableCell color={themeCssVariables.font.color.primary} overflow="hidden">
-        <OverflowingTextWithTooltip text={translation.sourceValue} />
+        <OverflowingTextWithTooltip text={translation.canonicalValue} />
       </TableCell>
       <TableCell overflow="hidden">
         <MetadataTranslationValueCell

@@ -4,11 +4,9 @@ import { Args, Context, Mutation, Parent, ResolveField } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { translateApplicationVariableOptionLabels } from 'src/engine/core-modules/application/application-translation/utils/translate-application-variable-option-labels.util';
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
@@ -25,6 +23,8 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { resolveEffectiveApplicationVariableOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -49,6 +49,7 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 export class ApplicationVariableEntityResolver {
   constructor(
     private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @ResolveField(() => String)
@@ -70,15 +71,18 @@ export class ApplicationVariableEntityResolver {
       return applicationVariable.options;
     }
 
-    return translateApplicationVariableOptionLabels({
+    return resolveEffectiveApplicationVariableOptions({
       owner: 'applicationVariable',
       options: applicationVariable.options,
-      applicationCatalog:
-        await context.loaders.applicationTranslationCatalogLoader.load({
-          applicationId: applicationVariable.applicationId,
-          workspaceId,
-          locale: context.req.locale ?? SOURCE_LOCALE,
-        }),
+      i18nContext:
+        await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+          {
+            applicationId: applicationVariable.applicationId,
+            loaders: context.loaders,
+            locale: context.req.locale,
+            workspaceId,
+          },
+        ),
     });
   }
 

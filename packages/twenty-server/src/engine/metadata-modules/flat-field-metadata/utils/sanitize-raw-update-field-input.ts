@@ -22,6 +22,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatFieldMetadataOptionLabelTranslationProperties } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-flat-field-metadata-option-label-translation-properties.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
+import { splitFlatFieldMetadataOptionLabelRenames } from 'src/engine/metadata-modules/flat-field-metadata/utils/split-flat-field-metadata-option-label-renames.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/overrides/utils/find-invalid-translation-override-properties.util';
@@ -179,19 +180,46 @@ export const sanitizeRawUpdateFieldInput = ({
     );
   }
 
+  const optionLabelRenames =
+    isFieldMetadataSelectKind(existingFlatFieldMetadata.type) &&
+    isDefined(updatedEditableFieldProperties.options)
+      ? splitFlatFieldMetadataOptionLabelRenames({
+          options: updatedEditableFieldProperties.options,
+          existingOptions: existingFlatFieldMetadata.options ?? [],
+        })
+      : undefined;
+
   const { overrides, columnProperties } = dispatchUpdateToAuthoredOverride({
     metadataName: 'fieldMetadata',
-    updatedProperties: updatedEditableFieldProperties,
+    updatedProperties: isDefined(optionLabelRenames)
+      ? {
+          ...updatedEditableFieldProperties,
+          options: optionLabelRenames.options,
+        }
+      : updatedEditableFieldProperties,
     existingEntity: existingFlatFieldMetadata,
     existingOverrides: existingFlatFieldMetadata.overrides,
     authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
     authorContext,
   });
 
+  const overridesWithOptionLabels = isDefined(optionLabelRenames)
+    ? dispatchUpdateToAuthoredOverride({
+        metadataName: 'fieldMetadata',
+        updatedProperties: optionLabelRenames.optionLabels,
+        existingEntity: optionLabelRenames.existingOptionLabels,
+        existingOverrides: overrides,
+        authorUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
+        authorContext,
+        overridableProperties: Object.keys(optionLabelRenames.optionLabels),
+      }).overrides
+    : overrides;
+
   return {
     overrides: mergeTranslationsIntoOverrides({
       metadataName: 'fieldMetadata',
-      existingOverrides: overrides,
+      existingOverrides: overridesWithOptionLabels,
       translationEntries,
       authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
       authorContext,

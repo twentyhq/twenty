@@ -12,6 +12,7 @@ import { ApplicationVariableEntityService } from 'src/engine/core-modules/applic
 import { WorkspaceUserApplicationVariableValueMapCacheService } from 'src/engine/core-modules/application/application-variable/workspace-user-application-variable-value-map-cache.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { FlatApplicationVariableModule } from 'src/engine/metadata-modules/flat-application-variable/flat-application-variable.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -32,6 +33,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SecretEncryptionModule,
     FlatApplicationVariableModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ApplicationTranslationCatalogModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(ApplicationVariableEntity),

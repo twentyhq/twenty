@@ -16,6 +16,8 @@ type DispatchUpdateToAuthoredOverrideArgs<TProperties extends object> = {
   existingOverrides: unknown;
   authorUniversalIdentifier: string;
   authorContext: OverrideAuthorContext;
+  // Keyed per record for field option labels, which the static entity configuration cannot list
+  overridableProperties?: readonly string[];
 };
 
 const isEmptyRecord = (record: object): boolean =>
@@ -31,6 +33,9 @@ export const dispatchUpdateToAuthoredOverride = <
   existingOverrides,
   authorUniversalIdentifier,
   authorContext,
+  overridableProperties = ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[
+    metadataName
+  ],
 }: DispatchUpdateToAuthoredOverrideArgs<TProperties>): {
   overrides: AuthoredOverrides<TEntry> | null;
   columnProperties: TProperties;
@@ -39,8 +44,6 @@ export const dispatchUpdateToAuthoredOverride = <
     ...(updatedProperties as unknown as Record<string, unknown>),
   };
   const existingRecord = existingEntity as Record<string, unknown>;
-  const overridableProperties: readonly string[] =
-    ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[metadataName];
 
   const authoredOverrides =
     normalizeAuthoredOverrides<Record<string, unknown>>({

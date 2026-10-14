@@ -1,8 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   getFieldOptionLabelTranslationProperty,
+  getOptionIdFromFieldOptionLabelTranslationProperty,
   TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER,
   type TranslatableMetadataName,
+  type TranslatableOptionLabelOwner,
 } from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -60,7 +62,11 @@ const resolveEffectiveProperty = ({
   const translatableProperties: readonly string[] =
     ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] ?? [];
 
-  const isTranslatable = translatableProperties.includes(property);
+  const isFieldOptionLabel =
+    metadataName === 'fieldMetadata' &&
+    isDefined(getOptionIdFromFieldOptionLabelTranslationProperty(property));
+  const isTranslatable =
+    isFieldOptionLabel || translatableProperties.includes(property);
 
   const overrideValue = readAuthoredOverrideProperty({
     metadataName,
@@ -107,7 +113,9 @@ const resolveEffectiveProperty = ({
 
   return translateStandardLabel({
     sourceValue: safeBaseValue,
-    context: `${metadataName}.${property}`,
+    context: isFieldOptionLabel
+      ? TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata
+      : `${metadataName}.${property}`,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
@@ -177,26 +185,46 @@ export const resolveEffectiveFieldMetadataOptionLabel = ({
   option: Pick<FieldMetadataDefaultOption, 'id' | 'label'>;
   overrides: unknown;
   i18nContext: EffectiveEntityI18nContext;
-}): string => {
-  const workspaceTranslation = isDefined(option.id)
-    ? readOverrideTranslation({
+}): string =>
+  isDefined(option.id)
+    ? resolveEffectiveProperty({
         metadataName: 'fieldMetadata',
+        baseValue: option.label,
         overrides,
-        locale: i18nContext.locale ?? SOURCE_LOCALE,
         property: getFieldOptionLabelTranslationProperty(option.id),
-        authorContext: i18nContext,
+        i18nContext,
       })
-    : undefined;
+    : translateStandardLabel({
+        sourceValue: option.label,
+        context: TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata,
+        isStandardApp: i18nContext.isStandardApp,
+        applicationCatalog: i18nContext.applicationCatalog,
+        i18nInstance: i18nContext.i18nInstance,
+      });
 
-  if (isDefined(workspaceTranslation)) {
-    return workspaceTranslation;
-  }
-
-  return translateStandardLabel({
-    sourceValue: option.label,
-    context: TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER.fieldMetadata,
-    isStandardApp: i18nContext.isStandardApp,
-    applicationCatalog: i18nContext.applicationCatalog,
-    i18nInstance: i18nContext.i18nInstance,
-  });
-};
+export const resolveEffectiveApplicationVariableOptions = <
+  TOption extends { label: string },
+>({
+  owner,
+  options,
+  i18nContext,
+}: {
+  owner: Exclude<TranslatableOptionLabelOwner, 'fieldMetadata'>;
+  options: TOption[] | null | undefined;
+  i18nContext: Pick<
+    EffectiveEntityI18nContext,
+    'isStandardApp' | 'applicationCatalog' | 'i18nInstance'
+  >;
+}): TOption[] | null | undefined =>
+  isDefined(options)
+    ? options.map((option) => ({
+        ...option,
+        label: translateStandardLabel({
+          sourceValue: option.label,
+          context: TRANSLATABLE_OPTION_LABEL_CONTEXT_BY_OWNER[owner],
+          isStandardApp: i18nContext.isStandardApp,
+          applicationCatalog: i18nContext.applicationCatalog,
+          i18nInstance: i18nContext.i18nInstance,
+        }),
+      }))
+    : options;

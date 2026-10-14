@@ -17,13 +17,11 @@ import {
   MetadataTranslationProvenance,
 } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation.dto';
 import { type MetadataTranslationsInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translations.input';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import {
   readOverrideTranslation,
   resolveEffectiveEntityPropertyByName,
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
-import { resolveEffectiveFieldMetadataOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-options.util';
 
 type TranslatableFlatEntity = FlatObjectMetadata | FlatFieldMetadata;
 
@@ -63,6 +61,38 @@ const resolveProvenance = ({
   }
 
   return MetadataTranslationProvenance.INHERITED;
+};
+
+// Option rows grow with the option count, so they are only listed for a single locale
+const getSourceValueByProperty = ({
+  translatableEntity,
+  isLocaleScoped,
+}: {
+  translatableEntity: TranslatableEntity;
+  isLocaleScoped: boolean;
+}): [string, string][] => {
+  const { metadataName, entity } = translatableEntity;
+  const propertySourceValues: [string, string][] = (
+    ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] ?? []
+  ).map((property) => [property, readStringProperty(entity, property)]);
+
+  if (
+    translatableEntity.metadataName !== 'fieldMetadata' ||
+    !isLocaleScoped ||
+    !isFieldMetadataSelectKind(translatableEntity.entity.type)
+  ) {
+    return propertySourceValues;
+  }
+
+  return [
+    ...propertySourceValues,
+    ...(translatableEntity.entity.options ?? []).flatMap(
+      ({ id, label }): [string, string][] =>
+        isDefined(id)
+          ? [[getFieldOptionLabelTranslationProperty(id), label]]
+          : [],
+    ),
+  ];
 };
 
 @Injectable()
@@ -107,15 +137,17 @@ export class MetadataTranslationService {
           },
         );
 
-      for (const property of ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
-        metadataName
-      ] ?? []) {
-        const sourceValue = readStringProperty(entity, property);
+      const i18nContext = getI18nContext(applicationId);
+
+      for (const [property, sourceValue] of getSourceValueByProperty({
+        translatableEntity,
+        isLocaleScoped: isDefined(input.locale),
+      })) {
         const overrideValue = readAuthoredOverrideProperty({
           metadataName,
           overrides,
           path: [property],
-          authorContext: getI18nContext(applicationId),
+          authorContext: i18nContext,
         });
         const canonicalValue = isNonEmptyString(overrideValue)
           ? overrideValue
@@ -130,7 +162,7 @@ export class MetadataTranslationService {
           baseValue: sourceValue,
           overrides,
           property,
-          i18nContext: getI18nContext(applicationId),
+          i18nContext,
         });
 
         translations.push({
@@ -148,89 +180,16 @@ export class MetadataTranslationService {
               overrides,
               locale,
               property,
-              authorContext: getI18nContext(applicationId),
+              authorContext: i18nContext,
             }),
             value,
             canonicalValue,
           }),
         });
       }
-
-      if (
-        translatableEntity.metadataName === 'fieldMetadata' &&
-        isDefined(input.locale)
-      ) {
-        translations.push(
-          ...this.buildFieldOptionLabelTranslations({
-            flatFieldMetadata: translatableEntity.entity,
-            objectMetadataId,
-            locale,
-            i18nContext: getI18nContext(applicationId),
-          }),
-        );
-      }
     }
 
     return translations;
-  }
-
-  private buildFieldOptionLabelTranslations({
-    flatFieldMetadata,
-    objectMetadataId,
-    locale,
-    i18nContext,
-  }: {
-    flatFieldMetadata: FlatFieldMetadata;
-    objectMetadataId: string | null;
-    locale: keyof typeof APP_LOCALES;
-    i18nContext: EffectiveEntityI18nContext;
-  }): MetadataTranslationDTO[] {
-    if (!isFieldMetadataSelectKind(flatFieldMetadata.type)) {
-      return [];
-    }
-
-    const options = flatFieldMetadata.options ?? [];
-    const effectiveOptions =
-      resolveEffectiveFieldMetadataOptions({
-        fieldMetadataType: flatFieldMetadata.type,
-        options,
-        overrides: flatFieldMetadata.overrides,
-        i18nContext,
-      }) ?? [];
-
-    return options.flatMap((option, index) => {
-      const value = effectiveOptions[index]?.label;
-
-      if (!isDefined(option.id) || !isDefined(value)) {
-        return [];
-      }
-
-      const property = getFieldOptionLabelTranslationProperty(option.id);
-
-      return [
-        {
-          metadataName: 'fieldMetadata',
-          recordId: flatFieldMetadata.id,
-          objectMetadataId,
-          property,
-          locale,
-          sourceValue: option.label,
-          canonicalValue: option.label,
-          value,
-          provenance: resolveProvenance({
-            workspaceTranslation: readOverrideTranslation({
-              metadataName: 'fieldMetadata',
-              overrides: flatFieldMetadata.overrides,
-              locale,
-              property,
-              authorContext: i18nContext,
-            }),
-            value,
-            canonicalValue: option.label,
-          }),
-        },
-      ];
-    });
   }
 
   private async findTranslatableEntity({

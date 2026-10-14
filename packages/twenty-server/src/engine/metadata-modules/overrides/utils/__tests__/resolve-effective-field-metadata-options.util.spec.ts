@@ -126,6 +126,42 @@ describe('resolveEffectiveFieldMetadataOptions', () => {
     ).toEqual(['Неделя', 'Monthly']);
   });
 
+  it('prefers a workspace rename of a standard option over its catalog translation', () => {
+    const weekMessageId = generateMessageId('Неделя', 'fieldMetadata.label');
+
+    expect(
+      resolveLabels({
+        overrides: {
+          [CUSTOM]: { [`options.${WEEK_OPTION_ID}.label`]: 'Sprint' },
+        },
+        i18nContext: buildI18nContext({
+          locale: 'fr-FR',
+          isStandardApp: true,
+          i18nInstance: {
+            _: (messageId: string) =>
+              messageId === weekMessageId ? 'Semaine' : messageId,
+          },
+        }),
+      }),
+    ).toEqual(['Sprint', 'Месяц']);
+  });
+
+  it('prefers a workspace translation over a workspace rename, like field labels', () => {
+    expect(
+      resolveLabels({
+        overrides: {
+          [CUSTOM]: {
+            [`options.${WEEK_OPTION_ID}.label`]: 'Sprint',
+            translations: {
+              en: { [`options.${WEEK_OPTION_ID}.label`]: 'Week' },
+            },
+          },
+        },
+        i18nContext: buildI18nContext({ isStandardApp: true }),
+      }),
+    ).toEqual(['Week', 'Месяц']);
+  });
+
   it('leaves options of non-select fields untouched', () => {
     expect(
       resolveLabels({

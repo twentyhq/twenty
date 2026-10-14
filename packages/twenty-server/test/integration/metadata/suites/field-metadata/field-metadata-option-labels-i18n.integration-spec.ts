@@ -18,6 +18,8 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 type MetadataTranslationRow = {
   property: string;
   locale: string;
+  sourceValue: string;
+  canonicalValue: string;
   value: string;
   provenance: string;
 };
@@ -61,6 +63,39 @@ const findFieldOptions = async (
   return response.body.data.field.options;
 };
 
+const findOpportunityStageField = async (): Promise<{
+  id: string;
+  options: FieldMetadataComplexOption[];
+}> => {
+  const response = await makeMetadataApiRequest({
+    query: gql`
+      query OpportunityStageField {
+        objects(paging: { first: 1000 }) {
+          edges {
+            node {
+              nameSingular
+              fieldsList {
+                id
+                name
+                options
+              }
+            }
+          }
+        }
+      }
+    `,
+  });
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.objects.edges
+    .find(
+      ({ node }: { node: { nameSingular: string } }) =>
+        node.nameSingular === 'opportunity',
+    )
+    ?.node.fieldsList.find(({ name }: { name: string }) => name === 'stage');
+};
+
 const findOptionLabels = async (fieldMetadataId: string) =>
   (await findFieldOptions(fieldMetadataId)).map(({ label }) => label);
 
@@ -74,6 +109,8 @@ const findMetadataTranslations = async (input: {
         metadataTranslations(input: $input) {
           property
           locale
+          sourceValue
+          canonicalValue
           value
           provenance
         }
@@ -180,37 +217,10 @@ describe('field metadata option labels i18n', () => {
   it('should translate standard option labels to the member locale', async () => {
     await updateWorkspaceMemberLocale('fr-FR');
 
-    const response = await makeMetadataApiRequest({
-      query: gql`
-        query OpportunityStageOptions {
-          objects(paging: { first: 1000 }) {
-            edges {
-              node {
-                nameSingular
-                fieldsList {
-                  name
-                  options
-                }
-              }
-            }
-          }
-        }
-      `,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-
-    const opportunityStage = response.body.data.objects.edges
-      .find(
-        ({ node }: { node: { nameSingular: string } }) =>
-          node.nameSingular === 'opportunity',
-      )
-      ?.node.fieldsList.find(({ name }: { name: string }) => name === 'stage');
-
     expect(
-      opportunityStage.options.find(
-        ({ value }: { value: string }) => value === 'SCREENING',
-      ).label,
+      (await findOpportunityStageField()).options.find(
+        ({ value }) => value === 'SCREENING',
+      )?.label,
     ).toBe('Présélection');
   });
 
@@ -298,19 +308,19 @@ describe('field metadata option labels i18n', () => {
     ]);
   });
 
-  it('should save an edited translated label as a translation of the member locale', async () => {
-    await updateWorkspaceMemberLocale('en');
+  it('should rename the source label of a custom field option', async () => {
+    await updateWorkspaceMemberLocale('fr-FR');
 
-    const translatedOptions = await findFieldOptions(fieldMetadataId);
+    const shownOptions = await findFieldOptions(fieldMetadataId);
 
     const { errors } = await updateOneFieldMetadata({
       expectToFail: false,
       input: {
         idToUpdate: fieldMetadataId,
         updatePayload: {
-          options: translatedOptions.map((option) =>
-            option.id === weekOptionId
-              ? { ...option, label: 'Weekly' }
+          options: shownOptions.map((option) =>
+            option.id === monthOptionId
+              ? { ...option, label: 'Месяц!' }
               : option,
           ),
         },
@@ -319,16 +329,69 @@ describe('field metadata option labels i18n', () => {
 
     expect(errors).toBeUndefined();
     expect(await findOptionLabels(fieldMetadataId)).toEqual([
-      'Weekly',
-      'Month',
+      'Неделя',
+      'Месяц!',
     ]);
+
+    await updateWorkspaceMemberLocale('en');
+
+    expect(await findOptionLabels(fieldMetadataId)).toEqual(['Week', 'Month']);
+  });
+
+  it('should store a rename of a standard field option as a workspace override', async () => {
+    await updateWorkspaceMemberLocale('en');
+
+    const stageField = await findOpportunityStageField();
+    const renameScreening = (label: string) =>
+      updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: stageField.id,
+          updatePayload: {
+            options: stageField.options.map((option) =>
+              option.value === 'SCREENING' ? { ...option, label } : option,
+            ),
+          },
+        },
+      });
+    const findScreeningLabel = async () =>
+      (await findOpportunityStageField()).options.find(
+        ({ value }) => value === 'SCREENING',
+      )?.label;
+
+    try {
+      expect((await renameScreening('Qualification')).errors).toBeUndefined();
+      expect(await findScreeningLabel()).toBe('Qualification');
+
+      await updateWorkspaceMemberLocale('fr-FR');
+
+      expect(await findScreeningLabel()).toBe('Qualification');
+
+      const screeningOptionId = stageField.options.find(
+        ({ value }) => value === 'SCREENING',
+      )?.id;
+
+      expect(
+        (
+          await findMetadataTranslations({
+            fieldMetadataId: stageField.id,
+            locale: 'fr-FR',
+          })
+        ).find(
+          ({ property }) => property === `options.${screeningOptionId}.label`,
+        ),
+      ).toMatchObject({
+        sourceValue: 'Screening',
+        canonicalValue: 'Qualification',
+      });
+    } finally {
+      await updateWorkspaceMemberLocale('en');
+      await renameScreening('Screening');
+    }
 
     await updateWorkspaceMemberLocale('fr-FR');
 
-    expect(await findOptionLabels(fieldMetadataId)).toEqual([
-      'Неделя',
-      'Месяц',
-    ]);
+    expect(await findScreeningLabel()).toBe('Présélection');
   });
 
   it('should reject translations of unknown options', async () => {

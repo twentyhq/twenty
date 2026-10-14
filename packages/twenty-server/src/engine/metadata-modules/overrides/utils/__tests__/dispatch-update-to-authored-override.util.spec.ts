@@ -131,4 +131,31 @@ describe('dispatchUpdateToAuthoredOverride', () => {
       }).overrides,
     ).toEqual({ [OWNER]: { label: 'Account' } });
   });
+
+  it('dispatches the per-record properties a caller lists, like option labels', () => {
+    expect(
+      dispatchUpdateToAuthoredOverride({
+        metadataName: 'fieldMetadata',
+        updatedProperties: {
+          'options.week.label': 'Sprint',
+          'options.month.label': 'Month',
+        },
+        existingEntity: {
+          'options.week.label': 'Week',
+          'options.month.label': 'Month',
+        },
+        existingOverrides: {
+          [CUSTOM]: { label: 'Société', 'options.month.label': 'Monthly' },
+        },
+        authorUniversalIdentifier: CUSTOM,
+        authorContext,
+        overridableProperties: ['options.week.label', 'options.month.label'],
+      }),
+    ).toEqual({
+      overrides: {
+        [CUSTOM]: { label: 'Société', 'options.week.label': 'Sprint' },
+      },
+      columnProperties: {},
+    });
+  });
 });
