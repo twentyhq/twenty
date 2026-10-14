@@ -50561,6 +50561,7 @@ __metadata:
   resolution: "twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules"
   dependencies:
     "@oxlint/plugins": "npm:^1.51.0"
+    "@sniptt/guards": "npm:^0.2.0"
     twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
