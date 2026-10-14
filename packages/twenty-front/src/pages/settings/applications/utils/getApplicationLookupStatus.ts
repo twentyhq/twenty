@@ -36,12 +36,12 @@ export const getApplicationLookupStatus = <TResult extends object>({
     return 'not-found';
   }
 
-  if (isDefined(error)) {
-    return isNotFoundError(error) ? 'not-found' : 'unavailable';
-  }
-
   if (isDefined(result)) {
     return 'found';
+  }
+
+  if (isDefined(error)) {
+    return isNotFoundError(error) ? 'not-found' : 'unavailable';
   }
 
   return isLoading ? 'loading' : 'not-found';

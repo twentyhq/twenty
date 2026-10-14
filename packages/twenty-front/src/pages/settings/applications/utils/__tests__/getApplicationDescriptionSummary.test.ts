@@ -36,6 +36,14 @@ describe('getApplicationDescriptionSummary', () => {
     ).toBe('Real text');
   });
 
+  it('keeps the text after an image whose URL contains parentheses', () => {
+    expect(
+      getApplicationDescriptionSummary(
+        '![cover](https://example.com/a_(1).png) Intro',
+      ),
+    ).toBe('Intro');
+  });
+
   it('collapses whitespace and keeps non-latin text', () => {
     expect(getApplicationDescriptionSummary('  هذا   وصف\n日本語  ')).toBe(
       'هذا وصف 日本語',

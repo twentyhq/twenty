@@ -3,6 +3,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationScreenshotGalleryProps = {
@@ -75,12 +76,14 @@ export const SettingsApplicationScreenshotGallery = ({
   screenshots: allScreenshots,
   displayName,
 }: SettingsApplicationScreenshotGalleryProps) => {
-  const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
+  const [selectedScreenshot, setSelectedScreenshot] = useState<
+    string | undefined
+  >(undefined);
   const [failedScreenshots, setFailedScreenshots] = useState<string[]>([]);
   const { openDialog, closeDialog } = useDialog();
   const lightboxModalId = useId();
 
-  const screenshots = allScreenshots.filter(
+  const screenshots = Array.from(new Set(allScreenshots)).filter(
     (screenshot) => !failedScreenshots.includes(screenshot),
   );
 
@@ -95,7 +98,13 @@ export const SettingsApplicationScreenshotGallery = ({
     return null;
   }
 
-  const safeIndex = Math.min(selectedScreenshotIndex, screenshots.length - 1);
+  const safeIndex = Math.max(
+    isDefined(selectedScreenshot) ? screenshots.indexOf(selectedScreenshot) : 0,
+    0,
+  );
+
+  const selectScreenshotAt = (index: number) =>
+    setSelectedScreenshot(screenshots[index]);
 
   const getScreenshotAltText = (index: number) => {
     const screenshotNumber = index + 1;
@@ -120,12 +129,12 @@ export const SettingsApplicationScreenshotGallery = ({
         <StyledThumbnails>
           {screenshots.map((screenshot, index) => (
             <StyledThumbnail
-              key={index}
+              key={screenshot}
               type="button"
               isSelected={index === safeIndex}
               aria-pressed={index === safeIndex}
               aria-label={getScreenshotAltText(index)}
-              onClick={() => setSelectedScreenshotIndex(index)}
+              onClick={() => setSelectedScreenshot(screenshot)}
             >
               <StyledThumbnailImage
                 src={screenshot}
@@ -141,7 +150,7 @@ export const SettingsApplicationScreenshotGallery = ({
         screenshots={screenshots}
         displayName={displayName}
         selectedIndex={safeIndex}
-        onSelectedIndexChange={setSelectedScreenshotIndex}
+        onSelectedIndexChange={selectScreenshotAt}
         onClose={() => closeDialog(lightboxModalId)}
       />
     </StyledGalleryContainer>

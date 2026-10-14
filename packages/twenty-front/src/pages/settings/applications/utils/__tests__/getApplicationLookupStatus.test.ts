@@ -40,6 +40,16 @@ describe('getApplicationLookupStatus', () => {
     ).toBe('found');
   });
 
+  it('stays found when a refetch fails after data was loaded', () => {
+    expect(
+      getApplicationLookupStatus({
+        ...baseArgs,
+        result: { id: 'app' },
+        error: buildServerError(503),
+      }),
+    ).toBe('found');
+  });
+
   it('is not found when the query completes without a result', () => {
     expect(getApplicationLookupStatus(baseArgs)).toBe('not-found');
   });

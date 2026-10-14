@@ -143,7 +143,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   appObjects,
   requestedCapabilities = [],
   billsCredits = false,
-  isVetted = true,
+  isVetted = false,
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {

@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { isUUID } from 'class-validator';
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
@@ -74,7 +75,7 @@ export class MarketplaceQueryService {
   async findRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
-    const registration = isValidUuid(universalIdentifier)
+    const registration = isUUID(universalIdentifier)
       ? await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
           universalIdentifier,
         )
