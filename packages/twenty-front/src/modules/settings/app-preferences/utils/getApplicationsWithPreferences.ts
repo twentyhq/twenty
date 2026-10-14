@@ -1,5 +1,6 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
+import { getMissingRequiredApplicationVariables } from '@/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -39,6 +40,8 @@ export const getApplicationsWithPreferences = ({
           application,
           settingsMenuItems: userSettingsMenuItems,
           variables: displayedVariables,
+          missingRequiredVariables:
+            getMissingRequiredApplicationVariables(displayedVariables),
         },
       ];
     },

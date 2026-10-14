@@ -48,8 +48,8 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
-import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
-import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
+import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
@@ -63,7 +63,7 @@ import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
-import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { getMissingRequiredApplicationVariables } from '@/settings/applications/utils/getMissingRequiredApplicationVariables';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
