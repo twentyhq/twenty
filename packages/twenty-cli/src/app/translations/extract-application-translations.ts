@@ -11,6 +11,7 @@ import { ensureDir, pathExists, readJson, writeJson } from '@/app/fs-utils';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
 import { collectFrontComponentStrings } from '@/app/translations/collect-front-component-strings';
 import { collectTranslatableStrings } from '@/app/translations/collect-translatable-strings';
+import { isLocaleCatalog } from '@/app/translations/is-locale-catalog';
 import { LOCALES_DIR } from '@/app/translations/constants';
 import {
   buildLocaleCatalog,
@@ -28,9 +29,7 @@ const readExistingCatalog = async (
     if (
       isPlainObject(catalog) &&
       Object.values(catalog).every(
-        (value) =>
-          isString(value) ||
-          (isPlainObject(value) && Object.values(value).every(isString)),
+        (value) => isString(value) || isLocaleCatalog(value),
       )
     ) {
       return catalog;
