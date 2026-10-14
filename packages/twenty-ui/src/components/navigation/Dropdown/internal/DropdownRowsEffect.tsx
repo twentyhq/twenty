@@ -23,7 +23,9 @@ export const DropdownRowsEffect = ({ content }: DropdownRowsEffectProps) => {
       const rowIds = getDropdownRows(content).map((row) => row.id);
 
       setRowIds((currentRowIds) =>
-        areDropdownRowIdsEqual(currentRowIds, rowIds) ? currentRowIds : rowIds,
+        areDropdownRowIdsEqual({ rowIds: currentRowIds, otherRowIds: rowIds })
+          ? currentRowIds
+          : rowIds,
       );
       setSearchTargetId(getDropdownSearchTarget(content)?.id);
     };
