@@ -182,13 +182,15 @@ describe('Usage quota consumption', () => {
     spenderId: string;
     costMicro: number;
   }) =>
-    getQuotaService().findExhaustedScope({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      resourceType: UsageResourceType.LOGIC_FUNCTION,
-      operationType: UsageOperationType.CODE_EXECUTION,
-      spenders: { logicFunctionId: spenderId },
-      cost: { [UsageUnit.CREDIT]: costMicro },
-    });
+    getQuotaService()
+      .findAdmission({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        resourceType: UsageResourceType.LOGIC_FUNCTION,
+        operationType: UsageOperationType.CODE_EXECUTION,
+        spenders: { logicFunctionId: spenderId },
+        cost: { [UsageUnit.CREDIT]: costMicro },
+      })
+      .then(({ exhaustedScope }) => exhaustedScope);
 
   const countUsageEventRows = async (
     spenderId: string = logicFunctionId,
@@ -740,16 +742,18 @@ describe('Usage quota consumption', () => {
     });
 
     const findEmailRefusal = (invocationCost: number) =>
-      getQuotaService().findExhaustedScope({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
-        spenders: {},
-        cost: {
-          [UsageUnit.CREDIT]: 0,
-          [UsageUnit.INVOCATION]: invocationCost,
-        },
-      });
+      getQuotaService()
+        .findAdmission({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.EMAIL_SEND,
+          spenders: {},
+          cost: {
+            [UsageUnit.CREDIT]: 0,
+            [UsageUnit.INVOCATION]: invocationCost,
+          },
+        })
+        .then(({ exhaustedScope }) => exhaustedScope);
 
     const debitEmailAheadOfRecord = (quantity: number) =>
       getQuotaService().debitAheadOfRecord({
