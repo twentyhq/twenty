@@ -717,20 +717,20 @@ export class AgentAsyncExecutorService {
         (accumulatedUsage.inputTokens ?? 0) +
         (accumulatedUsage.outputTokens ?? 0);
 
-      void this.aiBillingService.emitAiTokenUsageEvent(
+      void this.aiBillingService.emitAiTokenUsageEvent({
         workspaceId,
         creditsUsedMicro,
         totalTokens,
         modelId,
-        usageOperationType,
-        usageSpenders,
-      );
+        operationType: usageOperationType,
+        spenders: usageSpenders,
+      });
 
-      void this.aiBillingService.billNativeWebSearchUsage(
+      void this.aiBillingService.billNativeWebSearchUsage({
         nativeWebSearchCallCount,
         workspaceId,
-        usageSpenders,
-      );
+        spenders: usageSpenders,
+      });
     }
   }
 }

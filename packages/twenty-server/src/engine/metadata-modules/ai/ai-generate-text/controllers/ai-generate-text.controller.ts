@@ -123,17 +123,17 @@ export class AiGenerateTextController {
       };
     } finally {
       if (result) {
-        void this.aiBillingService.calculateAndBillUsage(
-          registeredModel.modelId,
-          {
+        void this.aiBillingService.calculateAndBillUsage({
+          modelId: registeredModel.modelId,
+          billingInput: {
             usage: result.usage,
             cacheCreationTokens:
               result.usage.inputTokenDetails?.cacheWriteTokens ?? 0,
           },
-          workspace.id,
-          UsageOperationType.AI_WORKFLOW_TOKEN,
-          usageSpenders,
-        );
+          workspaceId: workspace.id,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          spenders: usageSpenders,
+        });
       }
     }
   }

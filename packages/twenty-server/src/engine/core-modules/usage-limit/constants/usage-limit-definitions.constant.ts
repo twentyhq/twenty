@@ -12,7 +12,6 @@ export const USAGE_LIMIT_DEFINITIONS = {
           allowedUnits: [UsageUnit.CREDIT],
         },
       ],
-      // Only spenders every credit-charging resource records, so the cap sees all of their spend
       allowedSpenderTypes: ['workspace', 'application'],
       defaults: [],
     },

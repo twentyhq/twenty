@@ -37,12 +37,13 @@ import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-li
 import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit/utils/compute-credit-allowance-micro.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
+import { findLimitsForResource } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-resource.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
@@ -685,10 +686,10 @@ export class UsageLimitQuotaService {
       ['usageLimits'],
     );
 
-    const quotaLimits = [
-      ...(usageLimits.byResourceType[resourceType] ?? []),
-      ...(usageLimits.byResourceType[UsageResourceType.ALL] ?? []),
-    ].filter(isQuotaLimit);
+    const quotaLimits = findLimitsForResource({
+      usageLimits,
+      resourceType,
+    }).filter(isQuotaLimit);
 
     return this.usageLimitEntitlementService.findEnforceableLimits({
       workspaceId,

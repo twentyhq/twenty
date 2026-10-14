@@ -139,7 +139,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
     });
   });
 
-  it('rejects a quota on every resource for a spender some resources do not record', () => {
+  it('rejects a quota on every resource for a member', () => {
     rejects({
       ...validQuotaLimit,
       resourceType: UsageResourceType.ALL,

@@ -108,13 +108,19 @@ export class AiBillingService {
     return breakdown.totalCostInDollars;
   }
 
-  async calculateAndBillUsage(
-    modelId: ModelId,
-    billingInput: BillingUsageInput,
-    workspaceId: string,
-    operationType: UsageOperationType,
-    spenders: UsageSpenders,
-  ): Promise<void> {
+  async calculateAndBillUsage({
+    modelId,
+    billingInput,
+    workspaceId,
+    operationType,
+    spenders,
+  }: {
+    modelId: ModelId;
+    billingInput: BillingUsageInput;
+    workspaceId: string;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<void> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -171,11 +177,15 @@ export class AiBillingService {
     return { hasNoMoreAvailableCredits: exhaustedKind === 'allowance' };
   }
 
-  async billNativeWebSearchUsage(
-    nativeWebSearchCallCount: number,
-    workspaceId: string,
-    spenders: UsageSpenders,
-  ): Promise<void> {
+  async billNativeWebSearchUsage({
+    nativeWebSearchCallCount,
+    workspaceId,
+    spenders,
+  }: {
+    nativeWebSearchCallCount: number;
+    workspaceId: string;
+    spenders: UsageSpenders;
+  }): Promise<void> {
     if (nativeWebSearchCallCount <= 0) {
       return;
     }
@@ -203,14 +213,21 @@ export class AiBillingService {
     });
   }
 
-  async emitAiTokenUsageEvent(
-    workspaceId: string,
-    creditsUsedMicro: number,
-    totalTokens: number,
-    modelId: ModelId,
-    operationType: UsageOperationType,
-    spenders: UsageSpenders,
-  ): Promise<void> {
+  async emitAiTokenUsageEvent({
+    workspaceId,
+    creditsUsedMicro,
+    totalTokens,
+    modelId,
+    operationType,
+    spenders,
+  }: {
+    workspaceId: string;
+    creditsUsedMicro: number;
+    totalTokens: number;
+    modelId: ModelId;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<void> {
     await this.usageRecorderService.record(workspaceId, [
       this.buildAiTokenUsageEvent({
         creditsUsedMicro,

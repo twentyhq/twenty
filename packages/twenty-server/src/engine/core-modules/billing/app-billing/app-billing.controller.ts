@@ -82,9 +82,10 @@ export class AppBillingController {
     );
 
     const creditAvailability =
-      await this.usageQuotaAdmissionService.getCreditAvailability(
-        request.workspace.id,
-      );
+      await this.usageQuotaAdmissionService.getApplicationCreditAvailability({
+        workspaceId: request.workspace.id,
+        applicationId: request.application.id,
+      });
 
     return creditAvailability.hasAvailableCredits
       ? { hasAvailableCredits: true }

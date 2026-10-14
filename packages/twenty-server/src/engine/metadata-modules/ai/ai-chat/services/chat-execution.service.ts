@@ -488,20 +488,20 @@ export class ChatExecutionService {
       );
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
-      await this.aiBillingService.emitAiTokenUsageEvent(
-        workspace.id,
+      await this.aiBillingService.emitAiTokenUsageEvent({
+        workspaceId: workspace.id,
         creditsUsedMicro,
         totalTokens,
-        registeredModel.modelId,
-        UsageOperationType.AI_CHAT_TOKEN,
-        { userWorkspaceId },
-      );
+        modelId: registeredModel.modelId,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        spenders: { userWorkspaceId },
+      });
 
-      void this.aiBillingService.billNativeWebSearchUsage(
-        countNativeWebSearchCallsFromSteps(steps),
-        workspace.id,
-        { userWorkspaceId },
-      );
+      void this.aiBillingService.billNativeWebSearchUsage({
+        nativeWebSearchCallCount: countNativeWebSearchCallsFromSteps(steps),
+        workspaceId: workspace.id,
+        spenders: { userWorkspaceId },
+      });
 
       const modelAttr = { model: registeredModel.modelId };
 

@@ -72,13 +72,13 @@ export class AgentTitleGenerationService {
           ? extractCacheCreationTokensFromSteps(steps)
           : 0;
 
-        void this.aiBillingService.calculateAndBillUsage(
-          defaultModel.modelId,
-          { usage, cacheCreationTokens },
+        void this.aiBillingService.calculateAndBillUsage({
+          modelId: defaultModel.modelId,
+          billingInput: { usage, cacheCreationTokens },
           workspaceId,
-          UsageOperationType.AI_CHAT_TOKEN,
-          { userWorkspaceId },
-        );
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenders: { userWorkspaceId },
+        });
       }
     }
   }

@@ -119,13 +119,13 @@ export const repairToolCall = async ({
         : 0;
 
       void billingContext.aiBillingService
-        .calculateAndBillUsage(
-          billingContext.modelId,
-          { usage, cacheCreationTokens },
-          billingContext.workspaceId,
-          billingContext.operationType,
-          billingContext.spenders,
-        )
+        .calculateAndBillUsage({
+          modelId: billingContext.modelId,
+          billingInput: { usage, cacheCreationTokens },
+          workspaceId: billingContext.workspaceId,
+          operationType: billingContext.operationType,
+          spenders: billingContext.spenders,
+        })
         .catch((error: unknown) =>
           logger.error(
             `Could not bill the repair of tool call ${toolCall.toolCallId} in workspace ${billingContext.workspaceId}`,
