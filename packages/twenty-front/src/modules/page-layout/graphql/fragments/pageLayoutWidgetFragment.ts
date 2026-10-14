@@ -212,6 +212,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       }
       ... on ViewConfiguration {
         configurationType
+        viewId
       }
       ... on RecordTableConfiguration {
         configurationType

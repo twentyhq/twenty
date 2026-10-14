@@ -102,4 +102,8 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
       markdown
     }
   }
+  ... on ViewConfiguration {
+    configurationType
+    viewId
+  }
 `;

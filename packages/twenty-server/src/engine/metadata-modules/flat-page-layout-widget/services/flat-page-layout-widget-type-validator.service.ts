@@ -8,7 +8,6 @@ import {
   type FlatPageLayoutWidgetTypeValidatorForUpdate,
 } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-type-validator.type';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
-import { rejectWidgetType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/reject-widget-type.util';
 import { validateFieldsFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util';
 import { validateFrontComponentFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util';
 import { validateFrontComponentFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-update.util';
@@ -20,8 +19,8 @@ import { validateSimpleRecordPageWidgetForCreation } from 'src/engine/metadata-m
 import { validateSimpleRecordPageWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util';
 import { validateStandaloneRichTextFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util';
 import { validateStandaloneRichTextFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-update.util';
+import { validateViewWidgetViewUniversalIdentifier } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-view-widget-view-universal-identifier.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'twenty-shared/types';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
@@ -45,11 +44,12 @@ export class FlatPageLayoutWidgetTypeValidatorService {
 
   private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_CREATION_HASHMAP: FlatPageLayoutWidgetTypeValidatorForCreation =
     {
-      VIEW: rejectWidgetType(
-        WidgetType.VIEW,
-        'Widget type VIEW is not supported yet.',
-        msg`Widget type VIEW is not supported yet.`,
-      ),
+      VIEW: (args) => [
+        ...validateSimpleRecordPageWidgetForCreation(
+          WidgetConfigurationType.VIEW,
+        )(args),
+        ...validateViewWidgetViewUniversalIdentifier(args.flatEntityToValidate),
+      ],
       IFRAME: validateIframeFlatPageLayoutWidgetForCreation,
       FIELD: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.FIELD,
@@ -120,11 +120,12 @@ export class FlatPageLayoutWidgetTypeValidatorService {
 
   private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP: FlatPageLayoutWidgetTypeValidatorForUpdate =
     {
-      VIEW: rejectWidgetType(
-        WidgetType.VIEW,
-        'Widget type VIEW is not supported yet.',
-        msg`Widget type VIEW is not supported yet.`,
-      ),
+      VIEW: (args) => [
+        ...validateSimpleRecordPageWidgetForUpdate(
+          WidgetConfigurationType.VIEW,
+        )(args),
+        ...validateViewWidgetViewUniversalIdentifier(args.flatEntityToValidate),
+      ],
       IFRAME: validateIframeFlatPageLayoutWidgetForUpdate,
       FIELD: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.FIELD,

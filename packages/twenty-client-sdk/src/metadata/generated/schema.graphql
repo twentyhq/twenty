@@ -5579,6 +5579,7 @@ enum ViewCalendarLayout {
 
 type ViewConfiguration {
   configurationType: WidgetConfigurationType!
+  viewId: String
 }
 
 type ViewField {

@@ -30,6 +30,7 @@ import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modul
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
+import { validateViewConfigurationReferenceOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-view-configuration-reference.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -133,11 +134,15 @@ export class PageLayoutWidgetService {
     widgetTitle?: string | null;
     workspaceId: string;
   }): Promise<void> {
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatObjectMetadataMaps',
+            'flatViewMaps',
+          ],
         },
       );
 
@@ -154,6 +159,12 @@ export class PageLayoutWidgetService {
       widgetObjectMetadataId: objectMetadataId,
       widgetTitle,
       flatFieldMetadataMaps,
+    });
+    validateViewConfigurationReferenceOrThrow({
+      widgetConfiguration: configuration,
+      widgetObjectMetadataId: objectMetadataId,
+      widgetTitle,
+      flatViewMaps,
     });
   }
 

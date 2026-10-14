@@ -14341,6 +14341,9 @@ export default {
             "configurationType": [
                 617
             ],
+            "viewId": [
+                1
+            ],
             "__typename": [
                 1
             ]

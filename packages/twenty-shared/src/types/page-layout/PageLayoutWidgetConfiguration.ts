@@ -88,6 +88,7 @@ export type LineChartConfiguration = BaseChartConfiguration & {
 
 export type ViewConfiguration = {
   configurationType: 'VIEW';
+  viewId: SerializedRelation;
 };
 
 export type RecordTableConfiguration = {

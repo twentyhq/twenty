@@ -21,7 +21,10 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
           rowSpan: DEFAULT_WIDGET_SIZE.default.h,
           columnSpan: DEFAULT_WIDGET_SIZE.default.w,
         },
-        configuration: { configurationType: 'VIEW' },
+        configuration: {
+          configurationType: 'VIEW',
+          viewUniversalIdentifier: '20202020-0000-4000-8000-000000000001',
+        },
       },
       pageLayoutTabUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -48,6 +51,7 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     });
     expect(result.universalConfiguration).toEqual({
       configurationType: 'VIEW',
+      viewUniversalIdentifier: '20202020-0000-4000-8000-000000000001',
     });
   });
 
@@ -104,7 +108,10 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
           rowSpan: 4,
           columnSpan: 6,
         },
-        configuration: { configurationType: 'VIEW' },
+        configuration: {
+          configurationType: 'VIEW',
+          viewUniversalIdentifier: '20202020-0000-4000-8000-000000000001',
+        },
       },
       pageLayoutTabUniversalIdentifier,
       applicationUniversalIdentifier,

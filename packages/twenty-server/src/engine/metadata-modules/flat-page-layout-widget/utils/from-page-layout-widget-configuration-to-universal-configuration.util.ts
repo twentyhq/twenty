@@ -313,6 +313,28 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.VIEW: {
+      const { viewId, configurationType } = configuration;
+
+      const viewUniversalIdentifier: string | null =
+        viewUniversalIdentifierById[viewId] ?? null;
+
+      if (
+        !isDefined(viewUniversalIdentifier) &&
+        shouldThrowOnMissingIdentifier
+      ) {
+        throw new FlatEntityMapsException(
+          `View universal identifier not found for id: ${viewId}`,
+          FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+        );
+      }
+
+      return {
+        configurationType,
+        viewUniversalIdentifier,
+      };
+    }
+
     case WidgetConfigurationType.FRONT_COMPONENT: {
       const {
         frontComponentId,
@@ -415,7 +437,6 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       };
     }
 
-    case WidgetConfigurationType.VIEW:
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.TASKS:
     case WidgetConfigurationType.NOTES:

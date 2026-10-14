@@ -27,6 +27,7 @@ import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/p
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
+import { validateViewConfigurationReferenceOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-view-configuration-reference.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
@@ -570,6 +571,7 @@ export class PageLayoutUpdateService {
         widgetInput,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
+        flatViewMaps,
       });
     }
 
@@ -889,10 +891,12 @@ export class PageLayoutUpdateService {
     widgetInput,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
+    flatViewMaps,
   }: {
     widgetInput: UpdatePageLayoutWidgetWithIdInput;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+    flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
   }): void {
     if (!isDefined(widgetInput.configuration)) {
       return;
@@ -911,6 +915,12 @@ export class PageLayoutUpdateService {
       widgetObjectMetadataId: widgetInput.objectMetadataId,
       widgetTitle: widgetInput.title,
       flatFieldMetadataMaps,
+    });
+    validateViewConfigurationReferenceOrThrow({
+      widgetConfiguration: widgetInput.configuration,
+      widgetObjectMetadataId: widgetInput.objectMetadataId,
+      widgetTitle: widgetInput.title,
+      flatViewMaps,
     });
   }
 

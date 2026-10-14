@@ -3635,6 +3635,7 @@ export type ViewCalendarLayout = 'DAY' | 'MONTH' | 'WEEK'
 
 export interface ViewConfiguration {
     configurationType: WidgetConfigurationType
+    viewId?: Scalars['String']
     __typename: 'ViewConfiguration'
 }
 
@@ -8214,6 +8215,7 @@ export interface ViewGenqlSelection{
 
 export interface ViewConfigurationGenqlSelection{
     configurationType?: boolean | number
+    viewId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
