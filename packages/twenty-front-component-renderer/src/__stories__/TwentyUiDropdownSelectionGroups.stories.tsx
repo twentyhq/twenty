@@ -7,6 +7,7 @@ import {
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import { dropdownSelectionGroupsTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSelectionGroupsTest';
+import { dropdownSelectionEventsTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSelectionEventsTest';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
@@ -28,4 +29,16 @@ export const SelectionGroupsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'preact',
   play: dropdownSelectionGroupsTest,
+});
+
+export const SelectionEventsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'react',
+  play: dropdownSelectionEventsTest,
+});
+
+export const SelectionEventsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'preact',
+  play: dropdownSelectionEventsTest,
 });
