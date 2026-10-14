@@ -222,7 +222,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
-        integrity: computeSriIntegrity(tarballBuffer),
+        integrity: computeSriIntegrity({ source: tarballBuffer }),
         supportedAlgorithmsIntegrity,
         registryTarballUrl: registryArtifact.tarballUrl,
       };
@@ -303,7 +303,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
-        integrity: computeSriIntegrity(tarballBuffer),
+        integrity: computeSriIntegrity({ source: tarballBuffer }),
         supportedAlgorithmsIntegrity:
           computeSupportedSriIntegrity(tarballBuffer),
       };

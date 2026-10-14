@@ -106,7 +106,7 @@ export class ApplicationTarballService {
         extractedTarball,
         ownerWorkspaceId: params.ownerWorkspaceId,
         publisher: {
-          checksum: computeSriIntegrity(params.tarballBuffer),
+          checksum: computeSriIntegrity({ source: params.tarballBuffer }),
           publishedByUserId: params.publishedByUserId,
         },
         storeTarballFile: (appRegistration) =>

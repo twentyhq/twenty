@@ -13,7 +13,7 @@ describe('assertSriIntegrityMatches', () => {
   it('accepts bytes matching the expected fingerprint', () => {
     expect(() =>
       assertSriIntegrityMatches({
-        expected: computeSriIntegrity(content, 'sha256'),
+        expected: computeSriIntegrity({ source: content, algorithm: 'sha256' }),
         actual,
         subject,
       }),
@@ -23,7 +23,10 @@ describe('assertSriIntegrityMatches', () => {
   it('rejects bytes that differ from the expected fingerprint', () => {
     expect(() =>
       assertSriIntegrityMatches({
-        expected: computeSriIntegrity(Buffer.from('tampered'), 'sha256'),
+        expected: computeSriIntegrity({
+          source: Buffer.from('tampered'),
+          algorithm: 'sha256',
+        }),
         actual,
         subject,
       }),

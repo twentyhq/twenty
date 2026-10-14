@@ -230,10 +230,10 @@ describe('npm application install package identity (integration)', () => {
     async (algorithm) => {
       const stub = stubNpmRegistry(
         await buildRegistryPackage({
-          integrity: computeSriIntegrity(
-            Buffer.from('bytes the registry attested'),
+          integrity: computeSriIntegrity({
+            source: Buffer.from('bytes the registry attested'),
             algorithm,
-          ),
+          }),
         }),
       );
 
@@ -261,10 +261,10 @@ describe('npm application install package identity (integration)', () => {
 
       await insertRecordedVersion({
         artifactUrl: registryPackage.tarballUrl,
-        checksum: computeSriIntegrity(
-          Buffer.from('bytes published as this version'),
+        checksum: computeSriIntegrity({
+          source: Buffer.from('bytes published as this version'),
           algorithm,
-        ),
+        }),
       });
 
       try {
@@ -291,9 +291,9 @@ describe('npm application install package identity (integration)', () => {
 
     await insertRecordedVersion({
       artifactUrl: registryPackage.tarballUrl,
-      checksum: computeSriIntegrity(
-        Buffer.from('bytes a concurrent install recorded'),
-      ),
+      checksum: computeSriIntegrity({
+        source: Buffer.from('bytes a concurrent install recorded'),
+      }),
     });
 
     const applicationRegistrationVersionService =
@@ -359,12 +359,12 @@ describe('npm application install package identity (integration)', () => {
     {
       attestation: 'a sha512 integrity',
       attestIntegrity: (tarballBuffer: Buffer): string | null =>
-        computeSriIntegrity(tarballBuffer),
+        computeSriIntegrity({ source: tarballBuffer }),
     },
     {
       attestation: 'only a sha256 integrity',
       attestIntegrity: (tarballBuffer: Buffer): string | null =>
-        computeSriIntegrity(tarballBuffer, 'sha256'),
+        computeSriIntegrity({ source: tarballBuffer, algorithm: 'sha256' }),
     },
     {
       attestation: 'a null integrity',
@@ -413,7 +413,9 @@ describe('npm application install package identity (integration)', () => {
           sourceType: 'npm',
           sourcePackage: PACKAGE_NAME,
           artifactUrl: registryPackage.tarballUrl,
-          checksum: computeSriIntegrity(registryPackage.tarballBuffer),
+          checksum: computeSriIntegrity({
+            source: registryPackage.tarballBuffer,
+          }),
         });
       } finally {
         await uninstallApplication({

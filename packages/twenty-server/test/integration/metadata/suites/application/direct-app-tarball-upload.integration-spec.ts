@@ -207,7 +207,7 @@ describe('Direct app tarball upload', () => {
         version: '1.0.0',
         sourceType: 'tarball',
         tarballFileId: uploadTarget.fileId,
-        checksum: computeSriIntegrity(tarball),
+        checksum: computeSriIntegrity({ source: tarball }),
         publishedByUserId: expect.any(String),
         publishedByWorkspaceId: SEED_APPLE_WORKSPACE_ID,
         reviewState: 'UNREVIEWED',

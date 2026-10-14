@@ -109,7 +109,9 @@ describe('Application registration versions', () => {
         sourceType: 'TARBALL',
         sourcePackage: null,
         artifactUrl: null,
-        checksum: computeSriIntegrity(tarballByVersion[version.version]),
+        checksum: computeSriIntegrity({
+          source: tarballByVersion[version.version],
+        }),
         publishedByUserId: expect.any(String),
         publishedByWorkspaceId: SEED_APPLE_WORKSPACE_ID,
         reviewState: 'UNREVIEWED',

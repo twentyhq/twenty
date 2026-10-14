@@ -2,8 +2,10 @@ import { compareSriIntegrity } from 'src/engine/core-modules/application/applica
 import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 
 describe('compareSriIntegrity', () => {
-  const integrity = computeSriIntegrity(Buffer.from('twenty'));
-  const otherIntegrity = computeSriIntegrity(Buffer.from('tampered'));
+  const integrity = computeSriIntegrity({ source: Buffer.from('twenty') });
+  const otherIntegrity = computeSriIntegrity({
+    source: Buffer.from('tampered'),
+  });
 
   it('matches identical values', () => {
     expect(

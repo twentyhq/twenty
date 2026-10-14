@@ -16,7 +16,7 @@ describe('computeFileSriIntegrity', () => {
 
     try {
       expect(await computeFileSriIntegrity(filePath)).toBe(
-        computeSriIntegrity(content),
+        computeSriIntegrity({ source: content }),
       );
     } finally {
       await fs.rm(filePath, { force: true });

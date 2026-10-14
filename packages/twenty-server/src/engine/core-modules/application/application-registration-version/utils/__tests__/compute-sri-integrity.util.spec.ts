@@ -6,21 +6,24 @@ import {
 
 describe('computeSriIntegrity', () => {
   it('returns the sha512 subresource integrity string of a buffer', () => {
-    expect(computeSriIntegrity(Buffer.from('twenty'))).toBe(
+    expect(computeSriIntegrity({ source: Buffer.from('twenty') })).toBe(
       'sha512-3J0wPT8YOi3xpeIsR9N+Q8IWS0GEriFITzLxVSx0mSloLUDWVPuO20IsOGkvNbGOxNmg8zfSQJJcSklhz6paGg==',
     );
   });
 
   it('changes with the content', () => {
-    expect(computeSriIntegrity(Buffer.from('a'))).not.toBe(
-      computeSriIntegrity(Buffer.from('b')),
+    expect(computeSriIntegrity({ source: Buffer.from('a') })).not.toBe(
+      computeSriIntegrity({ source: Buffer.from('b') }),
     );
   });
 
   it('computes the digest of the requested algorithm', () => {
-    expect(computeSriIntegrity(Buffer.from('twenty'), 'sha256')).toBe(
-      'sha256-fCxN90D3ILDIYZINwnaSxNS12qZdYzClk8kx01+Kxzc=',
-    );
+    expect(
+      computeSriIntegrity({
+        source: Buffer.from('twenty'),
+        algorithm: 'sha256',
+      }),
+    ).toBe('sha256-fCxN90D3ILDIYZINwnaSxNS12qZdYzClk8kx01+Kxzc=');
   });
 });
 
@@ -29,9 +32,9 @@ describe('computeSupportedSriIntegrity', () => {
 
   it('lists a digest for every supported algorithm', () => {
     expect(computeSupportedSriIntegrity(content).split(' ')).toEqual([
-      computeSriIntegrity(content, 'sha512'),
-      computeSriIntegrity(content, 'sha384'),
-      computeSriIntegrity(content, 'sha256'),
+      computeSriIntegrity({ source: content, algorithm: 'sha512' }),
+      computeSriIntegrity({ source: content, algorithm: 'sha384' }),
+      computeSriIntegrity({ source: content, algorithm: 'sha256' }),
     ]);
   });
 
@@ -40,13 +43,16 @@ describe('computeSupportedSriIntegrity', () => {
 
     expect(
       compareSriIntegrity({
-        expected: computeSriIntegrity(content, 'sha256'),
+        expected: computeSriIntegrity({ source: content, algorithm: 'sha256' }),
         actual,
       }),
     ).toBe('match');
     expect(
       compareSriIntegrity({
-        expected: computeSriIntegrity(Buffer.from('tampered'), 'sha384'),
+        expected: computeSriIntegrity({
+          source: Buffer.from('tampered'),
+          algorithm: 'sha384',
+        }),
         actual,
       }),
     ).toBe('mismatch');

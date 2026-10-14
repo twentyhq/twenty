@@ -15,5 +15,5 @@ export const computeFileSriIntegrity = async (
     hash.update(chunk);
   }
 
-  return toSriString(hash.digest());
+  return toSriString({ digest: hash.digest() });
 };

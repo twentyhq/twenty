@@ -117,7 +117,7 @@ describe('Application registration version artifact download (integration)', () 
         VERSION,
         PACKAGE_NAME,
         registryPackage.tarballUrl,
-        computeSriIntegrity(registryPackage.tarballBuffer),
+        computeSriIntegrity({ source: registryPackage.tarballBuffer }),
       ],
     );
 
@@ -183,7 +183,10 @@ describe('Application registration version artifact download (integration)', () 
       );
 
     await setRecordedChecksum(
-      computeSriIntegrity(registryPackage.tarballBuffer, 'sha256'),
+      computeSriIntegrity({
+        source: registryPackage.tarballBuffer,
+        algorithm: 'sha256',
+      }),
     );
 
     activeStub = stubNpmRegistry({
@@ -197,7 +200,7 @@ describe('Application registration version artifact download (integration)', () 
       expect(response.status).toBe(502);
     } finally {
       await setRecordedChecksum(
-        computeSriIntegrity(registryPackage.tarballBuffer),
+        computeSriIntegrity({ source: registryPackage.tarballBuffer }),
       );
     }
   });

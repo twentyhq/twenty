@@ -51,7 +51,7 @@ export const buildNpmRegistryPackage = async ({
         tarball: tarballUrl,
         integrity:
           integrity === undefined
-            ? computeSriIntegrity(tarballBuffer)
+            ? computeSriIntegrity({ source: tarballBuffer })
             : integrity,
       },
     },
