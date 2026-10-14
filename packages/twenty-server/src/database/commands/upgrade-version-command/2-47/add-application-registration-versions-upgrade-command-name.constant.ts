@@ -1,2 +1,2 @@
 export const ADD_APPLICATION_REGISTRATION_VERSIONS_UPGRADE_COMMAND_NAME =
-  '2.47.0_AddApplicationRegistrationVersionsFastInstanceCommand_1791923477683';
+  '2.47.0_AddApplicationRegistrationVersionsFastInstanceCommand_1791943870941';
