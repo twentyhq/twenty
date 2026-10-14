@@ -59,7 +59,9 @@ export const FIND_APPLICATION_REGISTRATION_ANALYTICS = gql`
         version
         activeWorkspaces
         installSucceeded
+        installFailed
         upgradeSucceeded
+        upgradeFailed
         functionExecutions
         functionErrors
         timeSeries {

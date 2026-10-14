@@ -30,10 +30,11 @@ const PERIOD_WHERE_CLAUSE = `
   AND timestamp < {periodEnd:DateTime64(3)}
 `;
 
-// Version publishes carry no workspace, so their empty hash must not count as one
+// Version publishes carry no workspace, and failed installs and upgrades record a target version the workspace never ran
 const ACTIVE_WORKSPACE_WHERE_CLAUSE = `
   ${PERIOD_WHERE_CLAUSE}
   AND workspaceHash != ''
+  AND metric NOT IN ('install.failed', 'upgrade.failed')
 `;
 
 const DAY_EXPRESSION = `formatDateTime(timestamp, '%Y-%m-%d')`;

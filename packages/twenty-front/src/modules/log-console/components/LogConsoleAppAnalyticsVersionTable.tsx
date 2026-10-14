@@ -17,7 +17,9 @@ type LogConsoleAppAnalyticsVersionTableProps = {
     | 'version'
     | 'activeWorkspaces'
     | 'installSucceeded'
+    | 'installFailed'
     | 'upgradeSucceeded'
+    | 'upgradeFailed'
     | 'functionExecutions'
     | 'functionErrors'
   >[];
@@ -32,6 +34,29 @@ export const LogConsoleAppAnalyticsVersionTable = ({
   if (versions.length === 0) {
     return null;
   }
+
+  const formatInstalls = ({
+    installSucceeded,
+    installFailed,
+    upgradeSucceeded,
+    upgradeFailed,
+  }: {
+    installSucceeded: number;
+    installFailed: number;
+    upgradeSucceeded: number;
+    upgradeFailed: number;
+  }) => {
+    const installCount = formatNumber(installSucceeded + upgradeSucceeded);
+    const failedCount = installFailed + upgradeFailed;
+
+    if (failedCount === 0) {
+      return installCount;
+    }
+
+    const formattedFailedCount = formatNumber(failedCount);
+
+    return t`${installCount} (${formattedFailedCount} failed)`;
+  };
 
   const formatErrors = ({
     functionErrors,
@@ -81,11 +106,7 @@ export const LogConsoleAppAnalyticsVersionTable = ({
             <TableCell align="right">
               {formatNumber(version.activeWorkspaces)}
             </TableCell>
-            <TableCell align="right">
-              {formatNumber(
-                version.installSucceeded + version.upgradeSucceeded,
-              )}
-            </TableCell>
+            <TableCell align="right">{formatInstalls(version)}</TableCell>
             <TableCell align="right">
               {formatNumber(version.functionExecutions)}
             </TableCell>

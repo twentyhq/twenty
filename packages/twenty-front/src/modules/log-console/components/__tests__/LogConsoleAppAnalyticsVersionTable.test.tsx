@@ -16,13 +16,15 @@ const renderTable = (
   );
 
 describe('LogConsoleAppAnalyticsVersionTable', () => {
-  it('should show each version with its installs and error rate', () => {
+  it('should show each version with its installs, failures and error rate', () => {
     renderTable([
       {
         version: '1.3.0',
         activeWorkspaces: 4,
         installSucceeded: 2,
+        installFailed: 0,
         upgradeSucceeded: 5,
+        upgradeFailed: 1,
         functionExecutions: 200,
         functionErrors: 3,
       },
@@ -30,7 +32,9 @@ describe('LogConsoleAppAnalyticsVersionTable', () => {
         version: '1.2.0',
         activeWorkspaces: 9,
         installSucceeded: 11,
+        installFailed: 0,
         upgradeSucceeded: 0,
+        upgradeFailed: 0,
         functionExecutions: 0,
         functionErrors: 0,
       },
@@ -38,7 +42,7 @@ describe('LogConsoleAppAnalyticsVersionTable', () => {
 
     expect(screen.getByText('Versions')).toBeInTheDocument();
     expect(screen.getByText('1.3.0')).toBeInTheDocument();
-    expect(screen.getByText('7')).toBeInTheDocument();
+    expect(screen.getByText('7 (1 failed)')).toBeInTheDocument();
     expect(screen.getByText('3 (1.5%)')).toBeInTheDocument();
     expect(screen.getByText('1.2.0')).toBeInTheDocument();
     expect(screen.getByText('11')).toBeInTheDocument();

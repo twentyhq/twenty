@@ -862,7 +862,9 @@ const buildAppAnalyticsVersion = ({
   version,
   activeWorkspaces: Math.max(...dailyActiveWorkspaces),
   installSucceeded,
+  installFailed: 0,
   upgradeSucceeded,
+  upgradeFailed: 0,
   functionExecutions,
   functionErrors,
   timeSeries: ['2026-09-21', '2026-09-22', '2026-09-23'].map((date, index) => ({
