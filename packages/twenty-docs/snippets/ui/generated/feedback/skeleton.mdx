@@ -39,6 +39,10 @@
   Animated highlight color. Defaults to the theme lighter transparent background.
 </ParamField>
 
+<ParamField body="layout" type="&quot;block&quot; | &quot;inline&quot;" default="inline">
+  `inline` sizes and aligns the placeholder like a line of text. `block` renders a block without a text node, which is cheaper when many placeholders are rendered and alignment with text is not needed.
+</ParamField>
+
 <ParamField body="ref" type="Ref&lt;HTMLSpanElement&gt;">
   Ref to the placeholder span, or the element supplied through render.
 </ParamField>

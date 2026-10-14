@@ -21,8 +21,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { isDefined } from 'twenty-shared/utils';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
@@ -103,7 +102,7 @@ export const useSetRecordTableData = ({
 
       const recordIds = records.map((record) => record.id);
 
-      if (!isDeeplyEqual(currentRowIds, recordIds)) {
+      if (!fastDeepEqual(currentRowIds, recordIds)) {
         unfocusRecordTableCell();
         unfocusRecordTableRow();
         setRecordTableHoverPosition(null);
