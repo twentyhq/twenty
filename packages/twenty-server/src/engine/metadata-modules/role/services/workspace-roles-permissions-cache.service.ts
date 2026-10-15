@@ -14,10 +14,11 @@ import {
   type ObjectsPermissionsByRoleId,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
+import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
 import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
 import { type RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -91,30 +92,11 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       ({ value }) => value,
     );
 
-    const morphIdByHeadId = new Map<string, string>();
-    const morphIdByTargetId = new Map<string, string>();
-    const targetIdsByMorphId = new Map<string, string[]>();
-
-    for (const morphRelationFieldMetadata of morphRelationFieldMetadatas) {
-      const { id, morphId } = morphRelationFieldMetadata;
-
-      if (!isDefined(morphId)) {
-        continue;
-      }
-
-      if (isMorphRelationHead(morphRelationFieldMetadata)) {
-        morphIdByHeadId.set(id, morphId);
-        continue;
-      }
-
-      morphIdByTargetId.set(id, morphId);
-      targetIdsByMorphId.set(morphId, [
-        ...(targetIdsByMorphId.get(morphId) ?? []),
-        id,
-      ]);
-    }
-
-    const morphIdsWithHead = new Set(morphIdByHeadId.values());
+    const resolveMorphRelationPermissionFieldIds =
+      buildResolveMorphRelationPermissionFieldIds({
+        morphRelationFieldMetadatas,
+        isMorphRelationHeadEnabled,
+      });
 
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
@@ -233,20 +215,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
               fieldPermission.fieldMetadataId ===
               objectMetadata.labelIdentifierFieldMetadataId;
 
-            const headMorphId = morphIdByHeadId.get(
-              fieldPermission.fieldMetadataId,
-            );
-            const targetMorphId = morphIdByTargetId.get(
-              fieldPermission.fieldMetadataId,
-            );
-            const isHiddenByMorphRelationHeadFlag = isMorphRelationHeadEnabled
-              ? isDefined(targetMorphId) && morphIdsWithHead.has(targetMorphId)
-              : isDefined(headMorphId);
-
             if (
-              !isHiddenByMorphRelationHeadFlag &&
-              (isDefined(fieldPermission.canReadFieldValue) ||
-                isDefined(fieldPermission.canUpdateFieldValue))
+              isDefined(fieldPermission.canReadFieldValue) ||
+              isDefined(fieldPermission.canUpdateFieldValue)
             ) {
               const fieldRestriction = {
                 canRead: isFieldLabelIdentifier
@@ -255,13 +226,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
                 canUpdate: fieldPermission.canUpdateFieldValue,
               };
 
-              restrictedFields[fieldPermission.fieldMetadataId] =
-                fieldRestriction;
-
-              for (const targetId of isDefined(headMorphId)
-                ? (targetIdsByMorphId.get(headMorphId) ?? [])
-                : []) {
-                restrictedFields[targetId] = fieldRestriction;
+              for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
+                fieldPermission.fieldMetadataId,
+              )) {
+                restrictedFields[restrictedFieldId] = fieldRestriction;
               }
             }
           }
