@@ -25,6 +25,8 @@ import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { validateNoNewMorphRelationGroupByOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-no-new-morph-relation-group-by.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
@@ -568,6 +570,10 @@ export class PageLayoutUpdateService {
     for (const widgetInput of widgets) {
       this.validateConfigurationFieldReferences({
         widgetInput,
+        existingConfiguration: findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: widgetInput.id,
+          flatEntityMaps: flatPageLayoutWidgetMaps,
+        })?.configuration,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
       });
@@ -887,10 +893,12 @@ export class PageLayoutUpdateService {
 
   private validateConfigurationFieldReferences({
     widgetInput,
+    existingConfiguration,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
   }: {
     widgetInput: UpdatePageLayoutWidgetWithIdInput;
+    existingConfiguration: AllPageLayoutWidgetConfiguration | undefined;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   }): void {
@@ -904,6 +912,12 @@ export class PageLayoutUpdateService {
       widgetTitle: widgetInput.title,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
+    });
+
+    validateNoNewMorphRelationGroupByOrThrow({
+      configuration: widgetInput.configuration,
+      existingConfiguration,
+      flatFieldMetadataMaps,
     });
 
     validateFieldConfigurationNestedRelationOrThrow({

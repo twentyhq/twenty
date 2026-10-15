@@ -28,6 +28,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
+import { validateNoNewMorphRelationGroupByOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-no-new-morph-relation-group-by.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -124,11 +125,13 @@ export class PageLayoutWidgetService {
 
   private async validateConfigurationFieldReferences({
     configuration,
+    existingConfiguration,
     objectMetadataId,
     widgetTitle,
     workspaceId,
   }: {
     configuration: AllPageLayoutWidgetConfiguration;
+    existingConfiguration?: AllPageLayoutWidgetConfiguration | null;
     objectMetadataId?: string | null;
     widgetTitle?: string | null;
     workspaceId: string;
@@ -147,6 +150,12 @@ export class PageLayoutWidgetService {
       widgetTitle,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
+    });
+
+    validateNoNewMorphRelationGroupByOrThrow({
+      configuration,
+      existingConfiguration,
+      flatFieldMetadataMaps,
     });
 
     validateFieldConfigurationNestedRelationOrThrow({
@@ -411,6 +420,7 @@ export class PageLayoutWidgetService {
       if (isDefined(effectiveConfiguration)) {
         await this.validateConfigurationFieldReferences({
           configuration: effectiveConfiguration,
+          existingConfiguration: existingWidget.configuration,
           objectMetadataId: effectiveObjectMetadataId,
           widgetTitle: effectiveWidgetTitle,
           workspaceId,
