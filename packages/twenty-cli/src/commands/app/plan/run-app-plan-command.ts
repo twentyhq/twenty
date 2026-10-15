@@ -17,9 +17,9 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
   } = await runAppBuild({ context });
   const inferDeletionFromMissingEntities = context.options.delete !== false;
 
-  context.output.progress(
-    'Computing app plan (read-only, nothing will be applied)…',
-  );
+  context.output.progress({
+    message: 'Computing app plan (read-only, nothing will be applied)…',
+  });
 
   const { actions, translationActions } = await fetchAppPlan({
     build,

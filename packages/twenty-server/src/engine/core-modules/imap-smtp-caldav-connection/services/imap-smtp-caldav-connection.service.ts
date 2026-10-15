@@ -16,6 +16,7 @@ import {
   type PlaintextImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { buildImapTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-imap-tls-options.util';
+import { buildMailServerCertificateOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-mail-server-certificate-options.util';
 import { buildSmtpTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-smtp-tls-options.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -51,9 +52,12 @@ export class ImapSmtpCaldavService {
       },
       logger: false,
       disableIMAP4rev2: true,
-      tls: {
-        rejectUnauthorized: false,
-      },
+      tls: buildMailServerCertificateOptions({
+        host: params.host,
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
+          'IMAP_SMTP_ALLOW_SELF_SIGNED',
+        ),
+      }),
     });
 
     // ImapFlow is EventEmitter — missing 'error' listener crashes process on socket timeout.
@@ -123,9 +127,12 @@ export class ImapSmtpCaldavService {
         user: params.username ?? handle,
         pass: params.password,
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
+      tls: buildMailServerCertificateOptions({
+        host: params.host,
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
+          'IMAP_SMTP_ALLOW_SELF_SIGNED',
+        ),
+      }),
     });
 
     try {

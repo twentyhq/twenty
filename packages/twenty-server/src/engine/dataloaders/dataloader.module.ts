@@ -10,6 +10,7 @@ import { IndexMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/fac
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { MorphRelationHeadModule } from 'src/engine/metadata-modules/morph-relation-head/morph-relation-head.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RowLevelPermissionModule,
     WorkspaceCacheModule,
     FeatureFlagModule,
+    MorphRelationHeadModule,
   ],
   providers: [
     DataloaderService,
