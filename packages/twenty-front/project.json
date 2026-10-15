@@ -59,12 +59,17 @@
         "{projectRoot}/src/**/*.{ts,tsx}",
         "{projectRoot}/tsconfig*.json",
         "{workspaceRoot}/tsconfig.base.json",
+        "{projectRoot}/package.json",
+        "{workspaceRoot}/yarn.lock",
         "{projectRoot}/.oxlintrc.json",
+        "{projectRoot}/.oxlintrc.i18n.json",
+        "{projectRoot}/scripts/check-unlocalized-strings.mjs",
+        { "env": "LINGUI_LINT_BASE_SHA" },
         "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false))"
+        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false)) && node scripts/check-unlocalized-strings.mjs"
       },
       "configurations": {
         "fix": {
@@ -90,7 +95,7 @@
       "dependsOn": ["twenty-oxlint-rules:build"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-front --configuration=fix' && false)))"
+        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-front --configuration=fix' && false))) && node scripts/check-unlocalized-strings.mjs"
       },
       "configurations": {
         "fix": {
