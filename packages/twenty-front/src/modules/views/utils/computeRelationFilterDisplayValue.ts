@@ -11,7 +11,10 @@ export const computeRelationFilterDisplayValue = ({
   selectedRecordsByObjectNamePlural,
   isCurrentWorkspaceMemberSelected,
 }: {
-  targetObjectMetadataItems: EnrichedObjectMetadataItem[];
+  targetObjectMetadataItems: Pick<
+    EnrichedObjectMetadataItem,
+    'namePlural' | 'labelPlural' | 'fields' | 'labelIdentifierFieldMetadataId'
+  >[];
   selectedRecordsByObjectNamePlural: Record<string, ObjectRecord[]>;
   isCurrentWorkspaceMemberSelected: boolean;
 }): string => {
