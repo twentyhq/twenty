@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.48.0', 1791981247108)
+@RegisteredInstanceCommand('2.48.0', 1792050703938)
 export class AddApplicationRegistrationVersionsFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE TABLE "core"."applicationRegistrationVersion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "applicationRegistrationId" uuid NOT NULL, "version" text NOT NULL, "sourceType" text NOT NULL, "sourcePackage" text, "tarballFileId" uuid, "artifactUrl" text, "checksum" text, "publishedByUserId" uuid, "publishedByWorkspaceId" uuid, "publishedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "reviewState" text NOT NULL DEFAULT \'UNREVIEWED\', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "IDX_APP_REG_VERSION_APP_REGISTRATION_ID_VERSION_UNIQUE" UNIQUE ("applicationRegistrationId", "version"), CONSTRAINT "PK_bfa9041162e158e878354984852" PRIMARY KEY ("id"))');

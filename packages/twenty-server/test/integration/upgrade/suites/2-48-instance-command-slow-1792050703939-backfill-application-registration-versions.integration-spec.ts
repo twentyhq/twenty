@@ -1,7 +1,7 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { BackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-slow-1791981247109-backfill-application-registration-versions';
+import { BackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-slow-1792050703939-backfill-application-registration-versions';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
@@ -16,7 +16,7 @@ type RegistrationRow = {
   deletedAt?: Date | null;
 };
 
-describe('2-48 slow instance command 1791981247109 - BackfillApplicationRegistrationVersionsSlowInstanceCommand (integration)', () => {
+describe('2-48 slow instance command 1792050703939 - BackfillApplicationRegistrationVersionsSlowInstanceCommand (integration)', () => {
   const command =
     new BackfillApplicationRegistrationVersionsSlowInstanceCommand();
   let queryRunner: QueryRunner;
