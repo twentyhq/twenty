@@ -715,7 +715,6 @@ export class ChatExecutionService {
       },
     });
 
-    // stream.steps also settles on abort, but rejects without the debited steps on stream errors and worker shutdown
     Promise.all([stream.usage, stream.steps])
       .catch((error) => {
         if (error?.name === 'AbortError') {
