@@ -1,6 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { SSE_RESYNC_DEBOUNCE_TIME_IN_MS } from '@/sse-db-event/constants/SseResyncDebounceTimeInMs';
@@ -38,7 +37,6 @@ export const SSEClientEffect = () => {
     (reconnected: boolean) => {
       if (reconnected) {
         store.set(shouldDestroyEventStreamState.atom, true);
-        dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
 
         return;
       }
