@@ -16,16 +16,6 @@ export const buildAgentMessageReactionStandardFlatIndexMetadatas = (
       indexWhereClause: '"deletedAt" IS NULL',
     },
   }),
-  // Rows without a member are the assistant's, which the member index cannot dedupe
-  messageAssistantEmojiUniqueIndex: createStandardIndexFlatMetadata({
-    ...args,
-    context: {
-      indexName: 'messageAssistantEmojiUniqueIndex',
-      relatedFieldNames: ['message', 'emoji'],
-      isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL AND "workspaceMemberId" IS NULL',
-    },
-  }),
   workspaceMemberIndex: createStandardIndexFlatMetadata({
     ...args,
     context: {

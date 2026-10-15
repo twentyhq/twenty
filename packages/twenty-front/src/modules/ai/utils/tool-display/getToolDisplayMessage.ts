@@ -169,7 +169,7 @@ const buildToolDisplayMessage = ({
       });
     }
     case REACT_TO_MESSAGE_TOOL_NAME: {
-      const parsed = ReactToMessageSchema.safeParse(toolInput);
+      const parsed = ReactToMessageSchema.safeParse(input);
       const emoji = parsed.success ? parsed.data.emoji : '';
       const hasFailed =
         isObject(output) && 'success' in output && output.success === false;

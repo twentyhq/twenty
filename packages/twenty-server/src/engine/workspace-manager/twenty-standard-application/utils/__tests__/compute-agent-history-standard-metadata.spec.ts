@@ -206,20 +206,6 @@ describe('agent history workspace metadata', () => {
         { fieldMetadataUniversalIdentifier: fields.emoji.universalIdentifier },
       ],
     });
-    expect(
-      allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
-        indexes.messageAssistantEmojiUniqueIndex.universalIdentifier
-      ],
-    ).toMatchObject({
-      isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL AND "workspaceMemberId" IS NULL',
-      universalFlatIndexFieldMetadatas: [
-        {
-          fieldMetadataUniversalIdentifier: fields.message.universalIdentifier,
-        },
-        { fieldMetadataUniversalIdentifier: fields.emoji.universalIdentifier },
-      ],
-    });
   });
 
   it('retains exact precision for credits and cache token counts', () => {

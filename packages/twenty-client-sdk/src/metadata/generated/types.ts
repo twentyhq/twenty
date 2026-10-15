@@ -437,6 +437,9 @@ export default {
             "emoji": [
                 1
             ],
+            "hasAssistantReacted": [
+                4
+            ],
             "workspaceMemberIds": [
                 494
             ],

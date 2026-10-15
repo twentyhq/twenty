@@ -37,12 +37,28 @@ type AgentMessageReactionSummaryRow = AgentMessageReactionSummary & {
 
 type BuildReactionWriteQuery = (reactionTable: string) => string;
 
-// Without a target, so the member and assistant unique indexes both dedupe
 const buildAddReactionQuery: BuildReactionWriteQuery = (reactionTable) =>
   `WITH inserted AS (
      INSERT INTO ${reactionTable} ("messageId", "workspaceMemberId", emoji)
      VALUES ($1, $2, $3)
-     ON CONFLICT DO NOTHING
+     ON CONFLICT ("messageId", "workspaceMemberId", emoji) WHERE "deletedAt" IS NULL DO NOTHING
+     RETURNING id
+   )
+   SELECT COUNT(*)::int AS "changedCount" FROM inserted`;
+
+// The unique index treats missing members as distinct, so the message lock held
+// by every write is what keeps one assistant reaction per emoji
+const buildAddAssistantReactionQuery: BuildReactionWriteQuery = (
+  reactionTable,
+) =>
+  `WITH inserted AS (
+     INSERT INTO ${reactionTable} ("messageId", "workspaceMemberId", emoji)
+     SELECT $1::uuid, $2::uuid, $3::text
+     WHERE NOT EXISTS (
+       SELECT 1 FROM ${reactionTable}
+       WHERE "messageId" = $1 AND "workspaceMemberId" IS NULL AND emoji = $3
+         AND "deletedAt" IS NULL
+     )
      RETURNING id
    )
    SELECT COUNT(*)::int AS "changedCount" FROM inserted`;
@@ -89,7 +105,7 @@ export class AgentChatMessageReactionService {
     return this.writeReaction({
       ...args,
       workspaceMemberId: null,
-      buildQuery: buildAddReactionQuery,
+      buildQuery: buildAddAssistantReactionQuery,
     });
   }
 

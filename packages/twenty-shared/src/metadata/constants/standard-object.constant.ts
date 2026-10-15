@@ -1551,9 +1551,6 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIndex: {
         universalIdentifier: '565d89ab-2c11-4ebe-aaaf-8dbc4d79a9e5',
       },
-      messageAssistantEmojiUniqueIndex: {
-        universalIdentifier: '76f6fcf5-981d-4c19-b25f-c3e0548e0268',
-      },
     },
   },
   agentMessagePart: {
