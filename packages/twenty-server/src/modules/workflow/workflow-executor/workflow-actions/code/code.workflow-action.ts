@@ -19,7 +19,9 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { isWorkflowCodeAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/guards/is-workflow-code-action.guard';
 import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
 import { buildCodeStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/code/utils/build-code-step-log.util';
+import { isLogicFunctionNotFoundError } from 'src/modules/workflow/workflow-executor/workflow-actions/code/utils/is-logic-function-not-found-error.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class CodeWorkflowAction implements WorkflowAction {
@@ -30,9 +32,26 @@ export class CodeWorkflowAction implements WorkflowAction {
     private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async execute({
+  async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
+    try {
+      return await this.executeCode(input);
+    } catch (error) {
+      if (!isLogicFunctionNotFoundError(error)) {
+        throw error;
+      }
+
+      await this.workspaceCacheService.evictWorkspaceFromLocalCache(
+        input.runInfo.workspaceId,
+      );
+
+      return await this.executeCode(input);
+    }
+  }
+
+  private async executeCode({
     currentStepId,
     steps,
     context,
