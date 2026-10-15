@@ -264,7 +264,6 @@ export class AgentChatResolver {
       workspaceId: workspace.id,
     });
 
-    // Turning the assistant off only exists in the inbox
     const isAssistantReplying =
       shouldAssistantReply ||
       !(await this.featureFlagService.isFeatureEnabled(
