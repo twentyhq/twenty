@@ -11,6 +11,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildMorphRelationHeadFromTarget } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-morph-relation-head-from-target.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
@@ -107,11 +108,19 @@ export const buildMissingMorphRelationHeads = ({
         ]
       : undefined;
 
-    const head: UniversalFlatFieldMetadata | undefined =
-      standardFlatFieldMetadataMaps.byUniversalIdentifier[morphId] ??
-      (isDefined(targetObject)
+    const standardHead =
+      standardFlatFieldMetadataMaps.byUniversalIdentifier[morphId];
+    const head: UniversalFlatFieldMetadata | undefined = isDefined(
+      standardHead,
+    )
+      ? {
+          ...standardHead,
+          isActive: target.isActive,
+          overrides: target.overrides,
+        }
+      : isDefined(targetObject)
         ? omit(buildMorphRelationHeadFromTarget({ target, targetObject }), 'id')
-        : undefined);
+        : undefined;
 
     if (!isDefined(head) || !isDefined(object)) {
       skipped.push({ morphId, reason: 'object or target object not found' });
@@ -119,16 +128,19 @@ export const buildMissingMorphRelationHeads = ({
     }
 
     const headNameKey = `${object.universalIdentifier}:${head.name}`;
+    const buildOptions = {
+      isSystemBuild: true,
+      applicationUniversalIdentifier: head.applicationUniversalIdentifier,
+    };
     const isNameTaken =
       headNamesByObject.has(headNameKey) ||
+      validateFlatFieldMetadataName({ name: head.name, buildOptions }).length >
+        0 ||
       validateFlatFieldMetadataNameAvailability({
         name: head.name,
         universalFlatFieldMetadataMaps: flatFieldMetadataMaps,
         universalFlatObjectMetadata: object,
-        buildOptions: {
-          isSystemBuild: true,
-          applicationUniversalIdentifier: head.applicationUniversalIdentifier,
-        },
+        buildOptions,
       }).length > 0;
 
     if (isNameTaken) {
