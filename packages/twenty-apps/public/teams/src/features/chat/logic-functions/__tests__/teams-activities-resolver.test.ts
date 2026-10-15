@@ -82,8 +82,9 @@ describe('teamsActivitiesResolverHandler', () => {
 
     const result = await resolve(MESSAGE_ACTIVITY);
 
-    expect(result).toBeInstanceOf(Response);
-    expect((result as Response).status).toBe(401);
+    expect(result).toEqual(
+      new Response({ error: 'Unauthorized' }, { status: 401 }),
+    );
     expect(kvGetMock).not.toHaveBeenCalled();
   });
 
@@ -101,7 +102,8 @@ describe('teamsActivitiesResolverHandler', () => {
 
     const result = await resolve(MESSAGE_ACTIVITY);
 
-    expect((result as Response).status).toBe(503);
+    expect(result).toBeInstanceOf(Response);
+    expect(result).toMatchObject({ status: 503 });
     expect(verifyTokenMock).not.toHaveBeenCalled();
   });
 
