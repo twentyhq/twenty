@@ -130,7 +130,15 @@ describe('what an agent turn offers the model (integration)', () => {
 
     expect(calls).toHaveLength(1);
     expect(calls[0].toolNames).toMatchSnapshot();
-    expect(calls[0].systemPrompt).toContain('learn_tools');
+    for (const section of [
+      '## User Context',
+      '## Available Tools',
+      '### Pre-loaded Tools (ready to use now)',
+      '### Tool Catalog by Category',
+      '## Available Skills',
+    ]) {
+      expect(calls[0].systemPrompt).toContain(section);
+    }
     recordSystemPrompt('chat', calls[0].systemPrompt);
 
     await destroyAgentChatThread({ threadId });
@@ -190,7 +198,14 @@ describe('what an agent turn offers the model (integration)', () => {
     expect(response.body.data.runAgent.status).toBe('COMPLETED');
     expect(calls).toHaveLength(1);
     expect(calls[0].toolNames).toMatchSnapshot();
-    expect(calls[0].systemPrompt).toContain('Answer what you are asked');
+    for (const section of [
+      'invoked programmatically',
+      'wait_for_event',
+      'Answer what you are asked',
+      '### Tool Catalog by Category',
+    ]) {
+      expect(calls[0].systemPrompt).toContain(section);
+    }
     recordSystemPrompt('run-agent', calls[0].systemPrompt);
 
     await deleteOneAgent({ expectToFail: false, input: { id: agentId } });

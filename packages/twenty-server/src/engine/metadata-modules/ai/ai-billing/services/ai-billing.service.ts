@@ -227,23 +227,25 @@ export class AiBillingService {
       0,
     );
 
-    await this.usageRecorderService.record(workspaceId, [
-      this.buildAiTokenUsageEvent({
-        creditsUsedMicro: convertDollarsToCreditsMicro(
-          this.calculateStepsCost(modelId, steps),
-        ),
-        totalTokens,
-        modelId,
-        operationType,
-        spenders,
-      }),
+    // a failed token record must not also skip charging for searches already made
+    await Promise.all([
+      this.usageRecorderService.record(workspaceId, [
+        this.buildAiTokenUsageEvent({
+          creditsUsedMicro: convertDollarsToCreditsMicro(
+            this.calculateStepsCost(modelId, steps),
+          ),
+          totalTokens,
+          modelId,
+          operationType,
+          spenders,
+        }),
+      ]),
+      this.billNativeWebSearchUsage(
+        countNativeWebSearchCallsFromSteps(steps),
+        workspaceId,
+        spenders.userWorkspaceId,
+      ),
     ]);
-
-    await this.billNativeWebSearchUsage(
-      countNativeWebSearchCallsFromSteps(steps),
-      workspaceId,
-      spenders.userWorkspaceId,
-    );
   }
 
   private buildAiTokenUsageEvent({

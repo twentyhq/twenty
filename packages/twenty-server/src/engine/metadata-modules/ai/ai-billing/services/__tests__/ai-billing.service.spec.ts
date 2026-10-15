@@ -9,6 +9,7 @@ import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-
 const buildStep = (
   inputTokens: number,
   outputTokens: number,
+  toolNames: string[] = [],
 ): StepResult<ToolSet> =>
   ({
     usage: {
@@ -23,21 +24,23 @@ const buildStep = (
       outputTokenDetails: { textTokens: outputTokens, reasoningTokens: 0 },
     },
     content: [],
-    toolCalls: [],
+    toolCalls: toolNames.map((toolName) => ({ toolName })),
   }) as unknown as StepResult<ToolSet>;
+
+const COST_CONFIG = {
+  getEvaluationModelConfig: () => ({
+    modelId: 'test-model',
+    inputCostPerMillionTokens: 1,
+    outputCostPerMillionTokens: 2,
+  }),
+};
 
 describe('AiBillingService', () => {
   it('records the tokens and cost of the steps a run finished', async () => {
     const usageRecorderService = { record: jest.fn() };
     const service = new AiBillingService(
       usageRecorderService as never,
-      {
-        getEvaluationModelConfig: () => ({
-          modelId: 'test-model',
-          inputCostPerMillionTokens: 1,
-          outputCostPerMillionTokens: 2,
-        }),
-      } as never,
+      COST_CONFIG as never,
       {} as never,
       {} as never,
     );
@@ -62,5 +65,32 @@ describe('AiBillingService', () => {
         resourceContext: 'test-model',
       }),
     ]);
+  });
+
+  it('charges the web searches a run made even when its token usage cannot be recorded', async () => {
+    const usageLimitQuotaService = { charge: jest.fn() };
+    const service = new AiBillingService(
+      {
+        record: jest.fn().mockRejectedValue(new Error('no billing period')),
+      } as never,
+      COST_CONFIG as never,
+      {} as never,
+      usageLimitQuotaService as never,
+    );
+
+    await expect(
+      service.recordStepsUsage({
+        modelId: 'test-model',
+        steps: [buildStep(1_000, 500, ['web_search'])],
+        workspaceId: 'workspace-id',
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        spenders: { userWorkspaceId: 'user-workspace-id' },
+      }),
+    ).rejects.toThrow('no billing period');
+    expect(usageLimitQuotaService.charge).toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [expect.objectContaining({ quantity: 1 })],
+      }),
+    );
   });
 });
