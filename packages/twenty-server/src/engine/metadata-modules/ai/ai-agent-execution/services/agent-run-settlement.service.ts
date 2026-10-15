@@ -1,22 +1,19 @@
-import { Injectable, type OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleDestroy } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import type { Redis } from 'ioredis';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import {
-  RUN_AGENT_SETTLED_RUN_POLL_INTERVAL_MS,
-  RUN_AGENT_SETTLED_RUN_TTL_SECONDS,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-wait.const';
+import { RUN_AGENT_SETTLED_RUN_POLL_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-settled-run-poll-interval-ms.const';
+import { RUN_AGENT_SETTLED_RUN_TTL_SECONDS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-settled-run-ttl-seconds.const';
 import { type SettledAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/settled-agent-run.type';
 
 const getSettledRunKey = (runId: string) => `agent-run-settled:${runId}`;
 
-// How a runAgent call that waits learns how its run, going on in a job, settled. The settlement is
-// stored as well as published, so a call that subscribed late or missed the message still reads it.
-// One subscriber connection per process serves every waiting call
+// stored as well as published, so a call that subscribed late or missed the message still reads it
 @Injectable()
 export class AgentRunSettlementService implements OnModuleDestroy {
+  private readonly logger = new Logger(AgentRunSettlementService.name);
   private subscriber: Redis | null = null;
   private readonly listeners = new Map<
     string,
@@ -85,7 +82,13 @@ export class AgentRunSettlementService implements OnModuleDestroy {
     const payload = await this.redisClientService
       .getClient()
       .get(key)
-      .catch(() => null);
+      .catch((error) => {
+        this.logger.warn(
+          `Could not read ${key}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+
+        return null;
+      });
 
     return isDefined(payload) ? (JSON.parse(payload) as SettledAgentRun) : null;
   }
