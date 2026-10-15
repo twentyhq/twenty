@@ -38,9 +38,6 @@ export default defineApplicationRole({
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
-    // The call recordings widget finds a record's meetings through their
-    // targets; front components only read what both this role and the
-    // viewer's role allow.
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget

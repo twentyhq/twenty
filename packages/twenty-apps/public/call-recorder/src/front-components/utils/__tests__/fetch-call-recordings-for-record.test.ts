@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { describe, expect, it, vi } from 'vitest';
 
-import { CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGETS } from 'src/front-components/constants/call-recordings-widget-max-calendar-event-targets.constant';
+import { CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGET_PAGES } from 'src/front-components/constants/call-recordings-widget-max-calendar-event-target-pages.constant';
 import { fetchCallRecordingsForRecord } from 'src/front-components/utils/fetch-call-recordings-for-record.util';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 
@@ -188,77 +188,67 @@ describe('fetchCallRecordingsForRecord', () => {
     expect(callRecordingQueries[1].__args.after).toBe('next-recording-cursor');
   });
 
-  it('queries batches of meetings in parallel and merges them by displayed date', async () => {
-    const calendarEventIds = Array.from(
-      { length: TWENTY_PAGE_SIZE + 1 },
-      (_, calendarEventIndex) => `calendar-event-${calendarEventIndex}`,
+  it('keeps reading meetings past ones without recordings until enough are found', async () => {
+    const upcomingMeetingIds = Array.from(
+      { length: TWENTY_PAGE_SIZE },
+      (_, calendarEventIndex) => `upcoming-${calendarEventIndex}`,
     );
-    let pendingCallRecordingQueryCount = 0;
-    let maxPendingCallRecordingQueryCount = 0;
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(upcomingMeetingIds, true),
+      )
+      .mockResolvedValueOnce(buildCallRecordingConnection([]))
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(
+          ['past-meeting', 'upcoming-0'],
+          true,
+        ),
+      )
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          { id: 'recording', startedAt: '2026-01-01T10:00:00.000Z' },
+        ]),
+      );
 
-    const query = vi.fn(async (request: QueryRequest) => {
-      if (isCalendarEventTargetQuery(request)) {
-        return buildCalendarEventTargetConnection(calendarEventIds);
+    const callRecordings = await fetchForPerson(query, 1);
+
+    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
+      'recording',
+    ]);
+    expect(query).toHaveBeenCalledTimes(4);
+    expect(query.mock.calls[2][0].calendarEventTargets.__args.after).toBe(
+      'next-target-cursor',
+    );
+    expect(
+      getCallRecordingQueries(query)[1].__args.filter.calendarEventId,
+    ).toEqual({ in: ['past-meeting'] });
+  });
+
+  it('stops reading meetings once the target page cap is reached', async () => {
+    let targetPageIndex = 0;
+    const query = vi.fn((request: QueryRequest) => {
+      if (!isCalendarEventTargetQuery(request)) {
+        return Promise.resolve(buildCallRecordingConnection([]));
       }
 
-      pendingCallRecordingQueryCount += 1;
-      maxPendingCallRecordingQueryCount = Math.max(
-        maxPendingCallRecordingQueryCount,
-        pendingCallRecordingQueryCount,
-      );
-      await Promise.resolve();
-      pendingCallRecordingQueryCount -= 1;
+      targetPageIndex += 1;
 
-      const isFirstBatch =
-        request.callRecordings?.__args.filter.calendarEventId.in.length ===
-        TWENTY_PAGE_SIZE;
-
-      return buildCallRecordingConnection(
-        isFirstBatch
-          ? [
-              {
-                id: 'first-batch-newest',
-                startedAt: '2026-03-01T10:00:00.000Z',
-              },
-              {
-                id: 'first-batch-oldest',
-                startedAt: '2026-01-01T10:00:00.000Z',
-              },
-            ]
-          : [{ id: 'second-batch', startedAt: '2026-02-01T10:00:00.000Z' }],
+      return Promise.resolve(
+        buildCalendarEventTargetConnection(
+          Array.from(
+            { length: TWENTY_PAGE_SIZE },
+            (_, calendarEventIndex) =>
+              `calendar-event-${targetPageIndex}-${calendarEventIndex}`,
+          ),
+          true,
+        ),
       );
     });
 
-    const callRecordings = await fetchForPerson(query, 2);
-
-    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
-      'first-batch-newest',
-      'second-batch',
-    ]);
-    expect(maxPendingCallRecordingQueryCount).toBe(2);
-  });
-
-  it('stops reading meetings once the target cap is reached', async () => {
-    const fullPage = Array.from(
-      { length: TWENTY_PAGE_SIZE },
-      (_, calendarEventIndex) => `calendar-event-${calendarEventIndex}`,
-    );
-    const query = vi.fn((request: QueryRequest) =>
-      Promise.resolve(
-        isCalendarEventTargetQuery(request)
-          ? buildCalendarEventTargetConnection(fullPage, true)
-          : buildCallRecordingConnection([]),
-      ),
-    );
-
-    await fetchForPerson(query);
-
-    const calendarEventTargetQueryCount = query.mock.calls.filter(([request]) =>
-      isCalendarEventTargetQuery(request),
-    ).length;
-
-    expect(calendarEventTargetQueryCount).toBe(
-      CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGETS / TWENTY_PAGE_SIZE,
+    await expect(fetchForPerson(query)).resolves.toEqual([]);
+    expect(targetPageIndex).toBe(
+      CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGET_PAGES,
     );
   });
 

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Mirrors Twenty's ActivityRow: 48px rows with 16px side padding.
 export const StyledCallRecordingRowLayout = styled.div`
   align-items: center;
   box-sizing: border-box;

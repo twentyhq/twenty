@@ -42,10 +42,13 @@ const getMatchedRecordId = ({
   return isNonEmptyString(recordId) ? recordId : undefined;
 };
 
-const toDisplayItem = (
-  participant: CallParticipantNode,
-  areRelationsLoaded: boolean,
-): CallParticipantDisplayItem | undefined => {
+const toDisplayItem = ({
+  participant,
+  areRelationsLoaded,
+}: {
+  participant: CallParticipantNode;
+  areRelationsLoaded: boolean;
+}): CallParticipantDisplayItem | undefined => {
   const isOrganizer = participant.isOrganizer === true;
   const handle = getFirstNonEmptyString([
     stripRestrictedFieldValue(participant.handle ?? undefined),
@@ -147,7 +150,7 @@ export const buildCallParticipantDisplayItems = ({
   let hiddenUnmatchedCount = 0;
 
   for (const participant of participants) {
-    const displayItem = toDisplayItem(participant, areRelationsLoaded);
+    const displayItem = toDisplayItem({ participant, areRelationsLoaded });
 
     if (isUndefined(displayItem)) {
       continue;

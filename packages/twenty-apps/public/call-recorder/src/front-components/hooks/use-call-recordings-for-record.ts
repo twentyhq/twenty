@@ -1,10 +1,13 @@
+import { isUndefined } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CALL_RECORDINGS_WIDGET_MAX_COUNT } from 'src/front-components/constants/call-recordings-widget-max-count.constant';
+import { CALL_RECORDINGS_WIDGET_REFRESH_INTERVAL_MILLISECONDS } from 'src/front-components/constants/call-recordings-widget-refresh-interval-milliseconds.constant';
 import { type CalendarEventTargetFieldName } from 'src/front-components/types/calendar-event-target-field-name.type';
 import { type CallRecordingNode } from 'src/front-components/types/call-recording-node.type';
 import { fetchCallRecordingsForRecord } from 'src/front-components/utils/fetch-call-recordings-for-record.util';
+import { isCallRecordingInProgress } from 'src/front-components/utils/is-call-recording-in-progress.util';
 
 type CallRecordingsForRecordState =
   | { status: 'loading' }
@@ -24,27 +27,46 @@ export const useCallRecordingsForRecord = ({
 
   useEffect(() => {
     let isCancelled = false;
+    let hasLoaded = false;
+    let refreshTimeout: ReturnType<typeof setTimeout> | undefined;
+
+    const loadCallRecordings = () => {
+      fetchCallRecordingsForRecord(new CoreApiClient(), {
+        calendarEventTargetFieldName,
+        recordId,
+        maxCount: CALL_RECORDINGS_WIDGET_MAX_COUNT,
+      })
+        .then((callRecordings) => {
+          if (isCancelled) {
+            return;
+          }
+
+          hasLoaded = true;
+          setState({ status: 'loaded', callRecordings });
+
+          if (callRecordings.some(isCallRecordingInProgress)) {
+            refreshTimeout = setTimeout(
+              loadCallRecordings,
+              CALL_RECORDINGS_WIDGET_REFRESH_INTERVAL_MILLISECONDS,
+            );
+          }
+        })
+        .catch(() => {
+          if (!isCancelled && !hasLoaded) {
+            setState({ status: 'error' });
+          }
+        });
+    };
 
     setState({ status: 'loading' });
-
-    fetchCallRecordingsForRecord(new CoreApiClient(), {
-      calendarEventTargetFieldName,
-      recordId,
-      maxCount: CALL_RECORDINGS_WIDGET_MAX_COUNT,
-    })
-      .then((callRecordings) => {
-        if (!isCancelled) {
-          setState({ status: 'loaded', callRecordings });
-        }
-      })
-      .catch(() => {
-        if (!isCancelled) {
-          setState({ status: 'error' });
-        }
-      });
+    loadCallRecordings();
 
     return () => {
       isCancelled = true;
+
+      if (!isUndefined(refreshTimeout)) {
+        clearTimeout(refreshTimeout);
+      }
     };
   }, [calendarEventTargetFieldName, recordId]);
 

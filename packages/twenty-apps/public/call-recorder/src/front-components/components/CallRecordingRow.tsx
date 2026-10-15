@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
-import { Tag } from 'twenty-ui/data-display';
-import { IconCalendar, IconClock, IconVideo } from 'twenty-ui/icon';
+import { IconCalendar, IconVideo } from 'twenty-ui/icon';
 import { ICON } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { CallRecordingRowMetadata } from 'src/front-components/components/CallRecordingRowMetadata';
+import { CallRecordingRowStatus } from 'src/front-components/components/CallRecordingRowStatus';
 import { StyledCallRecordingRowLayout } from 'src/front-components/components/StyledCallRecordingRowLayout';
 import { type CallRecordingStatusTag } from 'src/front-components/types/call-recording-status-tag.type';
 import { openRecord } from 'src/front-components/utils/open-record.util';
@@ -32,7 +33,6 @@ const StyledRowButton = styled(
   }
 `;
 
-// Mirrors Twenty's FileIcon tile, in the VIDEO file category color.
 const StyledVideoTile = styled.span`
   align-items: center;
   background: ${() => themeCssVariables.color.purple};
@@ -40,8 +40,9 @@ const StyledVideoTile = styled.span`
   color: ${() => themeCssVariables.grayScale.gray1};
   display: flex;
   flex-shrink: 0;
+  height: ${() => themeCssVariables.spacing[6]};
   justify-content: center;
-  padding: 5px;
+  width: ${() => themeCssVariables.spacing[6]};
 `;
 
 const StyledTitle = styled.span`
@@ -59,18 +60,6 @@ const StyledRightContent = styled.span`
   flex-shrink: 0;
   gap: ${() => themeCssVariables.spacing[2]};
   white-space: nowrap;
-`;
-
-const StyledMetadata = styled.span`
-  align-items: center;
-  display: flex;
-  gap: ${() => themeCssVariables.spacing['0.5']};
-`;
-
-const StyledMetadataIconContainer = styled.span`
-  align-items: center;
-  color: ${() => themeCssVariables.font.color.light};
-  display: flex;
 `;
 
 type CallRecordingRowProps = {
@@ -102,25 +91,12 @@ export const CallRecordingRow = ({
       </StyledVideoTile>
       <StyledTitle title={title}>{title}</StyledTitle>
       <StyledRightContent>
-        {!isUndefined(statusTag) ? (
-          <Tag color={statusTag.color} text={statusTag.text} />
-        ) : (
-          !isUndefined(formattedDuration) && (
-            <StyledMetadata>
-              <StyledMetadataIconContainer>
-                <IconClock size={ICON.size.md} />
-              </StyledMetadataIconContainer>
-              {formattedDuration}
-            </StyledMetadata>
-          )
-        )}
+        <CallRecordingRowStatus
+          statusTag={statusTag}
+          formattedDuration={formattedDuration}
+        />
         {!isUndefined(formattedDate) && (
-          <StyledMetadata>
-            <StyledMetadataIconContainer>
-              <IconCalendar size={ICON.size.md} />
-            </StyledMetadataIconContainer>
-            {formattedDate}
-          </StyledMetadata>
+          <CallRecordingRowMetadata Icon={IconCalendar} text={formattedDate} />
         )}
       </StyledRightContent>
     </StyledRowButton>

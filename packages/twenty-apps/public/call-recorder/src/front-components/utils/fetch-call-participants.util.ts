@@ -17,10 +17,13 @@ type CallRecordingCalendarEventNode = {
   calendarEventId?: string | null;
 };
 
-const fetchCallRecordingCalendarEventNode = async (
-  client: CoreApiClient,
-  callRecordingId: string,
-): Promise<CallRecordingCalendarEventNode | undefined> => {
+const fetchCallRecordingCalendarEventNode = async ({
+  client,
+  callRecordingId,
+}: {
+  client: CoreApiClient;
+  callRecordingId: string;
+}): Promise<CallRecordingCalendarEventNode | undefined> => {
   const queryResult = await client.query({
     callRecordings: {
       __args: {
@@ -118,10 +121,10 @@ export const fetchCallParticipants = async (
   client: CoreApiClient,
   { callRecordingId }: { callRecordingId: string },
 ): Promise<CallParticipantsResult> => {
-  const callRecordingNode = await fetchCallRecordingCalendarEventNode(
+  const callRecordingNode = await fetchCallRecordingCalendarEventNode({
     client,
     callRecordingId,
-  );
+  });
 
   if (isUndefined(callRecordingNode)) {
     return { kind: 'callRecordingNotFound' };
