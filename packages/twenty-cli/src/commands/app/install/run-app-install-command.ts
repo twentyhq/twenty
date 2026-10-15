@@ -24,7 +24,9 @@ export const runAppInstallCommand: CommandRun<TargetCommandContext> = async (
     });
   });
 
-  output.progress(`Installing the registered app on ${target.apiUrl}…`);
+  output.progress({
+    message: `Installing the registered app on ${target.apiUrl}…`,
+  });
 
   const result = await installRegisteredApp({
     universalIdentifier,
@@ -32,7 +34,9 @@ export const runAppInstallCommand: CommandRun<TargetCommandContext> = async (
     target,
     signal,
     onQueued: (jobId) =>
-      output.progress(`Waiting for installation ${formatDataValue(jobId)}…`),
+      output.progress({
+        message: `Waiting for installation ${formatDataValue(jobId)}…`,
+      }),
   });
 
   return {

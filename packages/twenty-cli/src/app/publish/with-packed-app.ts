@@ -35,7 +35,7 @@ export const withPackedApp = async <TResult>({
   );
 
   try {
-    output.progress('Packing the built app…');
+    output.progress({ message: 'Packing the built app…' });
     const stdout = await runNpmCommand({
       args: [
         'pack',

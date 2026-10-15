@@ -215,6 +215,23 @@ describe.skipIf(process.platform === 'win32')('app publish', () => {
     await expect(access(invocations[1].args[1])).rejects.toThrow();
   });
 
+  it('forwards npm output as human progress', async () => {
+    const result = await runCliForTest([
+      'app',
+      'publish',
+      '--path',
+      appPath,
+      '--format',
+      'human',
+    ]);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stderr).toContain(
+      'npm output must not corrupt the CLI JSON\n',
+    );
+    expect(result.stderr).not.toContain('[object Object]');
+  });
+
   it.each([true, false])(
     'keeps the SDK provenance opt-out, disabled=%s',
     async (disabled) => {
