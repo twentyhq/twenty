@@ -54,7 +54,7 @@ export class ImapSmtpCaldavService {
       disableIMAP4rev2: true,
       tls: buildMailServerCertificateOptions({
         host: params.host,
-        allowSelfSigned: this.twentyConfigService.get(
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
           'IMAP_SMTP_ALLOW_SELF_SIGNED',
         ),
       }),
@@ -129,7 +129,7 @@ export class ImapSmtpCaldavService {
       },
       tls: buildMailServerCertificateOptions({
         host: params.host,
-        allowSelfSigned: this.twentyConfigService.get(
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
           'IMAP_SMTP_ALLOW_SELF_SIGNED',
         ),
       }),

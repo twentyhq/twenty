@@ -63,7 +63,7 @@ export class SmtpClientProvider {
       },
       tls: buildMailServerCertificateOptions({
         host: smtpParams.host,
-        allowSelfSigned: this.twentyConfigService.get(
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
           'IMAP_SMTP_ALLOW_SELF_SIGNED',
         ),
       }),

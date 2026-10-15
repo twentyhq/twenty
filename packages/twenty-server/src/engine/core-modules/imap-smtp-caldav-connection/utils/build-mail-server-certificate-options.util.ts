@@ -7,13 +7,12 @@ type MailServerCertificateOptions = {
 
 export const buildMailServerCertificateOptions = ({
   host,
-  allowSelfSigned,
+  isSelfSignedCertificateAllowed,
 }: {
   host: string;
-  allowSelfSigned: boolean;
+  isSelfSignedCertificateAllowed: boolean;
 }): MailServerCertificateOptions => ({
-  rejectUnauthorized: !allowSelfSigned,
-  // The socket targets the IP pinned by the SSRF guard, so the certificate
-  // has to be checked against the hostname the account was configured with
+  rejectUnauthorized: !isSelfSignedCertificateAllowed,
+  // Socket connects to the SSRF-pinned IP, so verify the cert against the configured hostname
   ...(isIP(host) === 0 ? { servername: host } : {}),
 });

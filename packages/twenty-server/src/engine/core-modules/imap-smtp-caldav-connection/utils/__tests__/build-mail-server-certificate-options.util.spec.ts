@@ -5,7 +5,7 @@ describe('buildMailServerCertificateOptions', () => {
     expect(
       buildMailServerCertificateOptions({
         host: 'imap.example.com',
-        allowSelfSigned: false,
+        isSelfSignedCertificateAllowed: false,
       }),
     ).toEqual({
       rejectUnauthorized: true,
@@ -17,7 +17,7 @@ describe('buildMailServerCertificateOptions', () => {
     expect(
       buildMailServerCertificateOptions({
         host: 'mail.internal',
-        allowSelfSigned: true,
+        isSelfSignedCertificateAllowed: true,
       }),
     ).toEqual({
       rejectUnauthorized: false,
@@ -29,7 +29,7 @@ describe('buildMailServerCertificateOptions', () => {
     expect(
       buildMailServerCertificateOptions({
         host: '192.168.1.10',
-        allowSelfSigned: false,
+        isSelfSignedCertificateAllowed: false,
       }),
     ).toEqual({ rejectUnauthorized: true });
   });
