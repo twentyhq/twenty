@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveMorphRelationAggregateAsCount } from 'src/modules/dashboard/chart-data/utils/resolve-morph-relation-aggregate-as-count.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -47,7 +48,7 @@ export class LineChartDataService {
   async getLineChartData({
     workspaceId,
     objectMetadataId,
-    configuration,
+    configuration: rawConfiguration,
     authContext,
   }: GetLineChartDataParams): Promise<LineChartDataDTO> {
     try {
@@ -58,6 +59,10 @@ export class LineChartDataService {
             flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
           },
         );
+      const configuration = resolveMorphRelationAggregateAsCount({
+        configuration: rawConfiguration,
+        flatFieldMetadataMaps,
+      });
 
       if (!isDefined(objectMetadataId)) {
         throw new ChartDataException(

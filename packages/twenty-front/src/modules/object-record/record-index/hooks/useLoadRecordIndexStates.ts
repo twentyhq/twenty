@@ -4,6 +4,7 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -26,6 +27,7 @@ import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
@@ -46,7 +48,10 @@ import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
-import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  ViewCalendarLayout,
+} from '~/generated-metadata/graphql';
 
 export const useLoadRecordIndexStates = () => {
   const store = useStore();
@@ -258,18 +263,25 @@ export const useLoadRecordIndexStates = () => {
         recordIndexGroupFieldMetadataItemValue = fieldMetadataItem;
       }
 
-      const recordIndexGroupAggregateFieldMetadataItemValue =
-        objectMetadataItem.fields?.find(
-          (field) => field.id === view.kanbanAggregateOperationFieldMetadataId,
-        );
+      const recordIndexGroupAggregateFieldMetadataItemValue = isDefined(
+        view.kanbanAggregateOperationFieldMetadataId,
+      )
+        ? findFieldMetadataItemByFieldMetadataId({
+            fieldMetadataItems: objectMetadataItem.fields,
+            fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
+          })
+        : undefined;
 
       let convertedAggregateOperation = undefined;
       if (isDefined(view.kanbanAggregateOperation)) {
         convertedAggregateOperation =
-          convertAggregateOperationToExtendedAggregateOperation(
-            view.kanbanAggregateOperation,
-            recordIndexGroupAggregateFieldMetadataItemValue?.type,
-          );
+          recordIndexGroupAggregateFieldMetadataItemValue?.type ===
+          FieldMetadataType.MORPH_RELATION
+            ? AggregateOperations.COUNT
+            : convertAggregateOperationToExtendedAggregateOperation(
+                view.kanbanAggregateOperation,
+                recordIndexGroupAggregateFieldMetadataItemValue?.type,
+              );
       }
 
       const recordIndexId =

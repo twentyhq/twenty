@@ -4,6 +4,7 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { resolveMorphRelationAggregateAsCount } from 'src/modules/dashboard/chart-data/utils/resolve-morph-relation-aggregate-as-count.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -46,7 +47,7 @@ export class BarChartDataService {
   async getBarChartData({
     workspaceId,
     objectMetadataId,
-    configuration,
+    configuration: rawConfiguration,
     authContext,
   }: GetBarChartDataParams): Promise<BarChartDataDTO> {
     try {
@@ -57,6 +58,10 @@ export class BarChartDataService {
             flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
           },
         );
+      const configuration = resolveMorphRelationAggregateAsCount({
+        configuration: rawConfiguration,
+        flatFieldMetadataMaps,
+      });
 
       if (!isDefined(objectMetadataId)) {
         throw new ChartDataException(

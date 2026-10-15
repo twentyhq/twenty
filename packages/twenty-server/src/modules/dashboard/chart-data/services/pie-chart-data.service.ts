@@ -4,6 +4,7 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { resolveMorphRelationAggregateAsCount } from 'src/modules/dashboard/chart-data/utils/resolve-morph-relation-aggregate-as-count.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -43,17 +44,17 @@ export class PieChartDataService {
   async getPieChartData({
     workspaceId,
     objectMetadataId,
-    configuration,
+    configuration: rawConfiguration,
     authContext,
   }: GetPieChartDataParams): Promise<PieChartDataDTO> {
     try {
       if (
-        configuration.configurationType !== WidgetConfigurationType.PIE_CHART
+        rawConfiguration.configurationType !== WidgetConfigurationType.PIE_CHART
       ) {
         throw new ChartDataException(
           generateChartDataExceptionMessage(
             ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
-            `Expected PIE_CHART, got ${configuration.configurationType}`,
+            `Expected PIE_CHART, got ${rawConfiguration.configurationType}`,
           ),
           ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
         );
@@ -66,6 +67,10 @@ export class PieChartDataService {
             flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
           },
         );
+      const configuration = resolveMorphRelationAggregateAsCount({
+        configuration: rawConfiguration,
+        flatFieldMetadataMaps,
+      });
 
       if (!isDefined(objectMetadataId)) {
         throw new ChartDataException(

@@ -14,8 +14,11 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
-import { findById, isDefined } from 'twenty-shared/utils';
-import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  type AggregateChartConfiguration,
+  FieldMetadataType,
+} from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 export const useGraphWidgetAggregateQuery = ({
@@ -31,7 +34,10 @@ export const useGraphWidgetAggregateQuery = ({
       configuration,
     });
 
-  const aggregateOperation = configuration.aggregateOperation;
+  const aggregateOperation =
+    aggregateField.type === FieldMetadataType.MORPH_RELATION
+      ? AggregateOperations.COUNT
+      : configuration.aggregateOperation;
   const ratioConfig = configuration.ratioAggregateConfig;
   const isRatioQuery = isDefined(ratioConfig);
 
@@ -127,9 +133,7 @@ export const useGraphWidgetAggregateQuery = ({
     };
   }
 
-  const aggregateFieldMetadataItem = objectMetadataItem.fields.find(
-    findById(configuration.aggregateFieldMetadataId),
-  );
+  const aggregateFieldMetadataItem = aggregateField;
 
   if (!isDefined(aggregateFieldMetadataItem)) {
     const totalCountValue =

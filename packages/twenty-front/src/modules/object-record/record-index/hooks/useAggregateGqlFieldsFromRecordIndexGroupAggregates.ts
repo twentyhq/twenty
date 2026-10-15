@@ -5,7 +5,10 @@ import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/
 import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { AggregateOperations } from '~/generated-metadata/graphql';
+import {
+  AggregateOperations,
+  FieldMetadataType,
+} from '~/generated-metadata/graphql';
 
 export const useAggregateGqlFieldsFromRecordIndexGroupAggregates = ({
   objectMetadataItem,
@@ -24,7 +27,11 @@ export const useAggregateGqlFieldsFromRecordIndexGroupAggregates = ({
     [objectMetadataItem.readableFields],
   );
 
-  if (recordIndexGroupAggregateOperation === AggregateOperations.COUNT) {
+  if (
+    recordIndexGroupAggregateOperation === AggregateOperations.COUNT ||
+    recordIndexGroupAggregateFieldMetadataItem?.type ===
+      FieldMetadataType.MORPH_RELATION
+  ) {
     return {
       recordAggregateGqlField: 'totalCount',
     };
