@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { IconChevronRight } from 'twenty-ui/icon';
@@ -17,7 +17,7 @@ import {
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
+import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
 
 const StyledTableRowsContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -91,18 +91,12 @@ export const SettingsApplicationsTable = ({
             </SettingsEmptyPlaceholder>
           )}
           {filteredApplications.map((application) => {
-            const isNpmApp =
-              application.applicationRegistration?.sourceType ===
-              ApplicationRegistrationSourceType.NPM;
-
-            const latestVersion =
-              application.applicationRegistration?.latestAvailableVersion;
-
-            const hasUpdate =
-              isNpmApp &&
-              isDefined(latestVersion) &&
-              isDefined(application.version) &&
-              isNewerSemver(latestVersion, application.version);
+            const hasUpdate = hasApplicationUpdate({
+              sourceType: application.applicationRegistration?.sourceType,
+              currentVersion: application.version,
+              latestAvailableVersion:
+                application.applicationRegistration?.latestAvailableVersion,
+            });
 
             return (
               <SettingsApplicationTableRow

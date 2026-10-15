@@ -12,14 +12,6 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-
-  & > :first-child {
-    flex: 1;
-  }
-
-  & > :last-child {
-    flex-shrink: 0;
-  }
 `;
 
 const SIZE_UNIT_OPTIONS: SelectOption<string>[] = ['px', '%', 'em'].map(

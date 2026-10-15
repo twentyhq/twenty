@@ -259,7 +259,7 @@ export abstract class RestApiBaseHandler {
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.workspaceDomainsService
           .buildWorkspaceURL({
             workspace,
-            pathname: getSettingsPath(SettingsPath.ApiWebhooks),
+            pathname: getSettingsPath(SettingsPath.Developers),
           })
           .toString()}`,
       );

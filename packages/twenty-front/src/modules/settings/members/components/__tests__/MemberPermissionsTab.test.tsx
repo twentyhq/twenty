@@ -59,6 +59,7 @@ const PERSISTED_ROLE: RoleWithPartialMembers = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: false,
+  applicationId: 'application-id',
   isEditable: true,
   workspaceMembers: [],
   agents: [],

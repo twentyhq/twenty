@@ -14,8 +14,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -41,9 +39,6 @@ export const useDefaultHomePagePath = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems();
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-  );
 
   const readableNonSystemObjectMetadataItems = useMemo(
     () =>
@@ -58,16 +53,16 @@ export const useDefaultHomePagePath = () => {
 
   const getTargetViewId = useCallback(
     (objectMetadataItemId: string | undefined | null) => {
-      const { firstSelectableViewId, indexViewId, firstAvailableViewId } =
-        computeObjectViewTargetIds({
+      const { firstSelectableViewId, indexViewId } = computeObjectViewTargetIds(
+        {
           views,
           objectMetadataId: objectMetadataItemId ?? undefined,
-          isInitialObjectViewEnabled,
-        });
+        },
+      );
 
-      return firstSelectableViewId ?? indexViewId ?? firstAvailableViewId;
+      return firstSelectableViewId ?? indexViewId;
     },
-    [views, isInitialObjectViewEnabled],
+    [views],
   );
 
   const firstNavigationMenuItemLink = useMemo(
@@ -77,14 +72,12 @@ export const useDefaultHomePagePath = () => {
         objectMetadataItems,
         views,
         objectPermissionsByObjectMetadataId,
-        isInitialObjectViewEnabled,
       }),
     [
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       views,
       navigationMenuItemsInDisplayOrder,
-      isInitialObjectViewEnabled,
     ],
   );
 

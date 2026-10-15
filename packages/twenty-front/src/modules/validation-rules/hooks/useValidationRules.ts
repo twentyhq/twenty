@@ -18,11 +18,12 @@ export const useValidationRules = ({
 }: {
   objectMetadataId: string;
 }) => {
-  const isValidationRulesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+  const isRecordCreationFormEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
 
-  const skip = !isValidationRulesEnabled || !isNonEmptyString(objectMetadataId);
+  const skip =
+    !isRecordCreationFormEnabled || !isNonEmptyString(objectMetadataId);
 
   const { data, loading, refetch } = useQuery(FindManyValidationRulesDocument, {
     variables: { objectMetadataId },

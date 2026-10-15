@@ -26,7 +26,12 @@ describe('filterMorphRelationDuplicateFields', () => {
   it('should return all fields when there are no morph fields', () => {
     const fields = [makeTextField('t1'), makeTextField('t2')];
 
-    expect(filterMorphRelationDuplicateFields(fields)).toEqual(fields);
+    expect(
+      filterMorphRelationDuplicateFields({
+        flatFieldMetadatas: fields,
+        isMorphRelationHeadEnabled: false,
+      }),
+    ).toEqual(fields);
   });
 
   it('should return all fields when morph fields have distinct morphIds', () => {
@@ -34,7 +39,10 @@ describe('filterMorphRelationDuplicateFields', () => {
     const morph2 = makeMorphField({ id: 'b', morphId: 'morph-2' });
     const text = makeTextField('t1');
 
-    const result = filterMorphRelationDuplicateFields([morph1, text, morph2]);
+    const result = filterMorphRelationDuplicateFields({
+      flatFieldMetadatas: [morph1, text, morph2],
+      isMorphRelationHeadEnabled: false,
+    });
 
     expect(result).toHaveLength(3);
     expect(result).toContain(text);
@@ -55,7 +63,10 @@ describe('filterMorphRelationDuplicateFields', () => {
     });
     const text = makeTextField('t1');
 
-    const result = filterMorphRelationDuplicateFields([system, text, standard]);
+    const result = filterMorphRelationDuplicateFields({
+      flatFieldMetadatas: [system, text, standard],
+      isMorphRelationHeadEnabled: false,
+    });
 
     expect(result).toHaveLength(2);
     expect(result).toContain(text);
@@ -85,12 +96,10 @@ describe('filterMorphRelationDuplicateFields', () => {
       isSystem: true,
     });
 
-    const result = filterMorphRelationDuplicateFields([
-      group1Dup,
-      group2Dup,
-      group1Best,
-      group2Best,
-    ]);
+    const result = filterMorphRelationDuplicateFields({
+      flatFieldMetadatas: [group1Dup, group2Dup, group1Best, group2Best],
+      isMorphRelationHeadEnabled: false,
+    });
 
     expect(result).toHaveLength(2);
     expect(result).toContain(group1Best);
@@ -98,6 +107,47 @@ describe('filterMorphRelationDuplicateFields', () => {
   });
 
   it('should return empty array for empty input', () => {
-    expect(filterMorphRelationDuplicateFields([])).toEqual([]);
+    expect(
+      filterMorphRelationDuplicateFields({
+        flatFieldMetadatas: [],
+        isMorphRelationHeadEnabled: false,
+      }),
+    ).toEqual([]);
+  });
+
+  it('should keep only the head of each morph relation when the head flag is on', () => {
+    const head = makeMorphField({
+      id: 'head',
+      universalIdentifier: 'morph-1',
+      morphId: 'morph-1',
+    });
+    const target = makeMorphField({
+      id: 'a',
+      universalIdentifier: 'target-a',
+      morphId: 'morph-1',
+    });
+    const text = makeTextField('t1');
+
+    expect(
+      filterMorphRelationDuplicateFields({
+        flatFieldMetadatas: [target, text, head],
+        isMorphRelationHeadEnabled: true,
+      }),
+    ).toEqual([text, head]);
+  });
+
+  it('should drop a morph relation without a head when the head flag is on', () => {
+    const target = makeMorphField({
+      id: 'a',
+      universalIdentifier: 'target-a',
+      morphId: 'morph-1',
+    });
+
+    expect(
+      filterMorphRelationDuplicateFields({
+        flatFieldMetadatas: [target],
+        isMorphRelationHeadEnabled: true,
+      }),
+    ).toEqual([]);
   });
 });
