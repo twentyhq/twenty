@@ -1,6 +1,9 @@
 import { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from '@/ai/constants/agent-message-reaction-emoji-max-length.const';
 
-const EMOJI_PATTERN = /\p{Extended_Pictographic}/u;
+// Flags are regional indicator pairs and keycaps end with U+20E3, neither is
+// Extended_Pictographic
+const EMOJI_PATTERN =
+  /\p{Extended_Pictographic}|\p{Regional_Indicator}|\u20E3/u;
 const WHITESPACE_PATTERN = /\s/u;
 
 export const isValidAgentMessageReactionEmoji = (emoji: string): boolean =>

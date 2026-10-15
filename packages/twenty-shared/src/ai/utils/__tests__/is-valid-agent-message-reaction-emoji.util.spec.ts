@@ -1,7 +1,7 @@
 import { isValidAgentMessageReactionEmoji } from '../is-valid-agent-message-reaction-emoji.util';
 
 describe('isValidAgentMessageReactionEmoji', () => {
-  it.each(['👍', '❤️', '🎉', '👍🏽', '👨‍👩‍👧‍👦', '🏳️‍🌈'])(
+  it.each(['👍', '❤️', '🎉', '👍🏽', '👨‍👩‍👧‍👦', '🏳️‍🌈', '🇫🇷', '1️⃣'])(
     'should accept "%s"',
     (emoji) => {
       expect(isValidAgentMessageReactionEmoji(emoji)).toBe(true);
