@@ -9,6 +9,7 @@ import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
+import { RecordTableColumnWidthStyle } from '@/object-record/record-table/components/RecordTableColumnWidthStyle';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
@@ -125,6 +126,9 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
         style={columnWidthStyles}
         id={getRecordTableHtmlId(recordTableId)}
       >
+        <RecordTableColumnWidthStyle
+          scopeId={getRecordTableHtmlId(recordTableId)}
+        />
         {/* An empty table has no cells to reveal, so the header would only add
             a horizontal scroll to a screen with nothing to scroll to. */}
         {!isMobile && <RecordTableHeader />}

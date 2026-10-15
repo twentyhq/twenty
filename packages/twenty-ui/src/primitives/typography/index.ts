@@ -9,7 +9,9 @@
 
 export { Heading } from './Heading/Heading';
 export type { HeadingProps } from './Heading/types/HeadingProps';
+export { OverflowingTextTooltipModeProvider } from './OverflowingTextWithTooltip/OverflowingTextTooltipModeProvider';
 export { OverflowingTextWithTooltip } from './OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+export type { OverflowingTextTooltipMode } from './OverflowingTextWithTooltip/types/OverflowingTextTooltipMode';
 export type { OverflowingTextWithTooltipProps } from './OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps';
 export { formatShortcut } from './Shortcut/formatShortcut';
 export { Shortcut } from './Shortcut/Shortcut';

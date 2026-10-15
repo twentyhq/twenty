@@ -1,14 +1,17 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useTranslate } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useTranslate } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useRemoveTeamsUserLink } from 'src/features/chat/front-components/hooks/use-remove-teams-user-link';
 import { useTeamsUserLinks } from 'src/features/chat/front-components/hooks/use-teams-user-links';
 import { TEAMS_USER_LINK_SOURCE } from 'src/features/chat/logic-functions/constants/teams-user-link-source';
 import { type TeamsUserLinkSource } from 'src/features/chat/logic-functions/types/teams-user-link-source.type';
+import { type TeamsUserLinkRecord } from 'src/features/chat/front-components/types/teams-user-link-record.type';
 
 const SOURCE_TAG_COLORS: Record<TeamsUserLinkSource, TagColor> = {
   [TEAMS_USER_LINK_SOURCE.AUTO]: 'green',
@@ -40,7 +43,7 @@ const StyledRow = styled.li`
   font-size: ${() => themeCssVariables.font.size.md};
   gap: ${() => themeCssVariables.spacing[4]};
   align-items: center;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
   padding: ${() => themeCssVariables.spacing[3]}
     ${() => themeCssVariables.spacing[4]};
 
@@ -55,7 +58,30 @@ const StyledSecondaryText = styled.span`
 
 const TeamsUserLinksContent = () => {
   const { t } = useTranslate();
-  const { teamsUserLinks, isLoading, hasLoadError } = useTeamsUserLinks();
+  const {
+    teamsUserLinks,
+    isLoading,
+    hasLoadError,
+    canManageTeamsUserLinks,
+    dropTeamsUserLink,
+  } = useTeamsUserLinks();
+  const { removeTeamsUserLink, removingLinkId } = useRemoveTeamsUserLink();
+
+  const handleRemove = async (teamsUserLink: TeamsUserLinkRecord) => {
+    const isRemoved = await removeTeamsUserLink(teamsUserLink.id);
+
+    if (!isRemoved) {
+      enqueueSnackbar({
+        message: t('Could not remove the link. Please try again.'),
+        variant: 'error',
+      });
+
+      return;
+    }
+
+    dropTeamsUserLink(teamsUserLink.id);
+    enqueueSnackbar({ message: t('Link removed'), variant: 'success' });
+  };
 
   const sourceLabels: Record<TeamsUserLinkSource, string> = {
     [TEAMS_USER_LINK_SOURCE.AUTO]: t('Matched on email'),
@@ -84,29 +110,46 @@ const TeamsUserLinksContent = () => {
 
   return (
     <StyledList>
-      {teamsUserLinks.map((teamsUserLink) => (
-        <StyledRow key={teamsUserLink.id}>
-          <OverflowingTextWithTooltip
-            text={
-              isNonEmptyString(teamsUserLink.name)
-                ? teamsUserLink.name
-                : t('Unnamed Teams account')
-            }
-          />
-          <OverflowingTextWithTooltip
-            text={
-              isNonEmptyString(teamsUserLink.workspaceMemberName)
-                ? teamsUserLink.workspaceMemberName
-                : t('No workspace member')
-            }
-          />
-          {isDefined(teamsUserLink.source) && (
-            <Tag color={SOURCE_TAG_COLORS[teamsUserLink.source]}>
-              {sourceLabels[teamsUserLink.source]}
-            </Tag>
-          )}
-        </StyledRow>
-      ))}
+      {teamsUserLinks.map((teamsUserLink) => {
+        const teamsAccountName = isNonEmptyString(teamsUserLink.name)
+          ? teamsUserLink.name
+          : t('Unnamed Teams account');
+
+        return (
+          <StyledRow key={teamsUserLink.id}>
+            <OverflowingTextWithTooltip text={teamsAccountName} />
+            <OverflowingTextWithTooltip
+              text={
+                isNonEmptyString(teamsUserLink.workspaceMemberName)
+                  ? teamsUserLink.workspaceMemberName
+                  : t('No workspace member')
+              }
+            />
+            <span>
+              {isDefined(teamsUserLink.source) && (
+                <Tag color={SOURCE_TAG_COLORS[teamsUserLink.source]}>
+                  {sourceLabels[teamsUserLink.source]}
+                </Tag>
+              )}
+            </span>
+            {canManageTeamsUserLinks && (
+              <Button
+                variant="ghost"
+                color="danger"
+                size="sm"
+                aria-label={t('Remove link for {name}', {
+                  name: teamsAccountName,
+                })}
+                loading={removingLinkId === teamsUserLink.id}
+                disabled={isDefined(removingLinkId)}
+                onClick={() => handleRemove(teamsUserLink)}
+              >
+                {t('Remove')}
+              </Button>
+            )}
+          </StyledRow>
+        );
+      })}
     </StyledList>
   );
 };

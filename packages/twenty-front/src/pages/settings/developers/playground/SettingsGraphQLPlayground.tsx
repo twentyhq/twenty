@@ -1,5 +1,5 @@
-import { GraphQLPlayground } from '@/settings/mcp-and-apis/components/GraphQLPlayground';
-import { PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
+import { GraphQLPlayground } from '@/settings/developers/components/GraphQLPlayground';
+import { PlaygroundSchemas } from '@/settings/developers/types/PlaygroundSchemas';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
@@ -7,7 +7,7 @@ import { Trans } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 
 export const SettingsGraphQLPlayground = () => {
   const navigateSettings = useNavigateSettings();
@@ -20,11 +20,11 @@ export const SettingsGraphQLPlayground = () => {
 
   const handleExitFullScreen = () => {
     navigateSettings(
-      SettingsPath.ApiWebhooks,
+      SettingsPath.Developers,
       undefined,
       undefined,
       undefined,
-      SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+      SETTINGS_DEVELOPERS_TABS.TABS_IDS.API,
     );
   };
 
@@ -41,12 +41,12 @@ export const SettingsGraphQLPlayground = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: <Trans>MCP & APIs</Trans>,
+          children: <Trans>Developers</Trans>,
           href: getSettingsPath(
-            SettingsPath.ApiWebhooks,
+            SettingsPath.Developers,
             undefined,
             undefined,
-            SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+            SETTINGS_DEVELOPERS_TABS.TABS_IDS.API,
           ),
         },
         { children: <Trans>GraphQL API Playground</Trans> },

@@ -59,6 +59,11 @@ vi.mock('twenty-client-sdk/rest', () => ({
   },
 }));
 
+vi.mock(
+  'src/features/chat/logic-functions/utils/current-user-has-roles-permission',
+  () => ({ currentUserHasRolesPermission: async () => false }),
+);
+
 describe('TeamsSettings', () => {
   beforeEach(() => {
     vi.resetAllMocks();

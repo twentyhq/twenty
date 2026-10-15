@@ -10254,6 +10254,9 @@ export default {
             "findInstallApplicationJobStatus": [
                 300,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"
@@ -10334,6 +10337,9 @@ export default {
             "findUninstallApplicationJobStatus": [
                 300,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"
@@ -10343,6 +10349,9 @@ export default {
             "findUpgradeApplicationJobStatus": [
                 300,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"
@@ -11225,6 +11234,9 @@ export default {
             ],
             "apiKeys": [
                 29
+            ],
+            "applicationId": [
+                493
             ],
             "canAccessAllTools": [
                 4

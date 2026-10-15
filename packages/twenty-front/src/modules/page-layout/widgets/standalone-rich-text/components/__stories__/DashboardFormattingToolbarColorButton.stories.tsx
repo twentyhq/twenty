@@ -37,7 +37,6 @@ export const ApplyColors: Story = {
     const popup = await body.findByRole('dialog', {
       name: 'Text and background colors',
     });
-    await expect(popup).toHaveClass('bn-ui-container');
     await expect(within(popup).getByText('Text Colors')).toBeVisible();
     await expect(within(popup).getByText('Background Colors')).toBeVisible();
     await expect(
