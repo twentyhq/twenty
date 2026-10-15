@@ -57,8 +57,7 @@ export const toUserApplicationVariableValues = ({
       isSecret: flatApplicationVariable.isSecret,
       isRequired: flatApplicationVariable.isRequired,
       isDeprecated: flatApplicationVariable.isDeprecated,
-      // Values stored empty before clearing removed the row must not hide the
-      // default. Secrets have no default, so the fallback never needs masking.
+      // Secrets have no default, so the fallback never needs masking.
       value: isNonEmptyString(displayedUserValue)
         ? displayedUserValue
         : (flatApplicationVariable.defaultValue ?? ''),
