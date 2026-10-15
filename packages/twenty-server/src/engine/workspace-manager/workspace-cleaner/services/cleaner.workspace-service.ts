@@ -307,6 +307,12 @@ export class CleanerWorkspaceService {
           );
 
           if (!dryRun) {
+            if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+              await this.billingSubscriptionService.cancelSubscription(
+                workspace.id,
+              );
+            }
+
             const userWorkspaces = await this.userWorkspaceRepository.find({
               where: {
                 workspaceId: workspace.id,
@@ -318,12 +324,6 @@ export class CleanerWorkspaceService {
               await this.workspaceService.handleRemoveWorkspaceMember(
                 workspace.id,
                 userWorkspace.userId,
-              );
-            }
-
-            if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-              await this.billingSubscriptionService.cancelSubscription(
-                workspace.id,
               );
             }
 
