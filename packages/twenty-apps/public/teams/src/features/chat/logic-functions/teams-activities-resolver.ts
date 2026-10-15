@@ -39,7 +39,6 @@ export const teamsActivitiesResolverHandler = async (
     botAppId: botCredentials.credentials.appId,
     loadKeys: loadTeamsBotConnectorKeysOrThrowUnavailable,
   }).catch((error: unknown) => {
-    // Rethrown as a server error so the Bot Connector retries instead of treating it as a rejected token.
     if (error instanceof TeamsBotConnectorKeysUnavailableError) {
       throw error;
     }
