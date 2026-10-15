@@ -5,7 +5,7 @@ export const SEND_EMAIL_ACTION: {
   type: Extract<WorkflowActionType, 'SEND_EMAIL'>;
   icon: string;
 } = {
-  defaultLabel: 'Send Email',
+  defaultLabel: 'Send Email (untranslated lint check)',
   type: 'SEND_EMAIL',
   icon: 'IconSend',
 };
