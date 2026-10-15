@@ -20,10 +20,25 @@ const INCLUDES_FUNCTION_NAME: ValidationRuleFunctionName = 'includes';
 
 const OTHER_OPERAND: OperandItem = { kind: 'other' };
 
-const findUnknownOptionValueInComparison = (
-  fieldOperand: OperandItem | undefined,
-  valueOperand: OperandItem | undefined,
-): UnknownOptionValue | undefined => {
+const getComparedTextValues = (operand: OperandItem | undefined): string[] => {
+  if (operand?.kind === 'text') {
+    return [operand.value];
+  }
+
+  if (operand?.kind === 'list') {
+    return operand.values;
+  }
+
+  return [];
+};
+
+const findUnknownOptionValueInComparison = ({
+  fieldOperand,
+  valueOperand,
+}: {
+  fieldOperand: OperandItem | undefined;
+  valueOperand: OperandItem | undefined;
+}): UnknownOptionValue | undefined => {
   if (
     fieldOperand?.kind !== 'field' ||
     !isDefined(fieldOperand.field.optionValues)
@@ -31,13 +46,7 @@ const findUnknownOptionValueInComparison = (
     return undefined;
   }
 
-  const comparedValues =
-    valueOperand?.kind === 'text'
-      ? [valueOperand.value]
-      : valueOperand?.kind === 'list'
-        ? valueOperand.values
-        : [];
-
+  const comparedValues = getComparedTextValues(valueOperand);
   const optionValues = fieldOperand.field.optionValues;
   const optionValue = comparedValues.find(
     (comparedValue) => !optionValues.includes(comparedValue),
@@ -48,10 +57,13 @@ const findUnknownOptionValueInComparison = (
     : undefined;
 };
 
-const resolveVariableOperand = (
-  name: string,
-  fields: ValidationRuleFieldDescriptor[],
-): OperandItem => {
+const resolveVariableOperand = ({
+  name,
+  fields,
+}: {
+  name: string;
+  fields: ValidationRuleFieldDescriptor[];
+}): OperandItem => {
   const field = fields.find((candidate) => candidate.name === name);
 
   if (isDefined(field)) {
@@ -61,10 +73,13 @@ const resolveVariableOperand = (
   return { kind: 'function', name };
 };
 
-const resolveMemberOperand = (
-  parentOperand: OperandItem,
-  memberName: string,
-): OperandItem => {
+const resolveMemberOperand = ({
+  parentOperand,
+  memberName,
+}: {
+  parentOperand: OperandItem;
+  memberName: string;
+}): OperandItem => {
   if (parentOperand.kind !== 'field') {
     return OTHER_OPERAND;
   }
@@ -101,7 +116,7 @@ export const findValidationRuleUnknownOptionValue = ({
       case 'IVAR': {
         operandStack.push(
           isString(instruction.value)
-            ? resolveVariableOperand(instruction.value, fields)
+            ? resolveVariableOperand({ name: instruction.value, fields })
             : OTHER_OPERAND,
         );
         break;
@@ -111,7 +126,10 @@ export const findValidationRuleUnknownOptionValue = ({
 
         operandStack.push(
           isString(instruction.value)
-            ? resolveMemberOperand(parentOperand, instruction.value)
+            ? resolveMemberOperand({
+                parentOperand,
+                memberName: instruction.value,
+              })
             : OTHER_OPERAND,
         );
         break;
@@ -128,20 +146,13 @@ export const findValidationRuleUnknownOptionValue = ({
         const elements = popOperands(
           isNumber(instruction.value) ? instruction.value : 0,
         );
-        const isEveryElementText = elements.every(
-          (element) => element.kind === 'text',
-        );
 
-        operandStack.push(
-          isEveryElementText
-            ? {
-                kind: 'list',
-                values: elements.flatMap((element) =>
-                  element.kind === 'text' ? [element.value] : [],
-                ),
-              }
-            : OTHER_OPERAND,
-        );
+        operandStack.push({
+          kind: 'list',
+          values: elements.flatMap((element) =>
+            element.kind === 'text' ? [element.value] : [],
+          ),
+        });
         break;
       }
       case 'IOP2': {
@@ -152,8 +163,14 @@ export const findValidationRuleUnknownOptionValue = ({
           OPTION_COMPARISON_OPERATORS.includes(instruction.value)
         ) {
           const unknownOptionValue =
-            findUnknownOptionValueInComparison(leftOperand, rightOperand) ??
-            findUnknownOptionValueInComparison(rightOperand, leftOperand);
+            findUnknownOptionValueInComparison({
+              fieldOperand: leftOperand,
+              valueOperand: rightOperand,
+            }) ??
+            findUnknownOptionValueInComparison({
+              fieldOperand: rightOperand,
+              valueOperand: leftOperand,
+            });
 
           if (isDefined(unknownOptionValue)) {
             return unknownOptionValue;
@@ -174,10 +191,10 @@ export const findValidationRuleUnknownOptionValue = ({
           functionOperand.name === INCLUDES_FUNCTION_NAME &&
           functionArguments.length === 2
         ) {
-          const unknownOptionValue = findUnknownOptionValueInComparison(
-            functionArguments[0],
-            functionArguments[1],
-          );
+          const unknownOptionValue = findUnknownOptionValueInComparison({
+            fieldOperand: functionArguments[0],
+            valueOperand: functionArguments[1],
+          });
 
           if (isDefined(unknownOptionValue)) {
             return unknownOptionValue;
@@ -190,7 +207,7 @@ export const findValidationRuleUnknownOptionValue = ({
       case 'IEXPR': {
         const unknownOptionValue = Array.isArray(instruction.value)
           ? findValidationRuleUnknownOptionValue({
-              instructions: instruction.value as Instruction[],
+              instructions: instruction.value,
               fields,
             })
           : undefined;

@@ -3,11 +3,11 @@
 import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   isDefined,
-  isValidationRuleReservedName,
   tokenizeValidationRuleExpression,
 } from 'twenty-shared/utils';
 
 import { type ValidationRuleFieldChange } from 'src/engine/metadata-modules/validation-rule/types/validation-rule-field-change.type';
+import { isValidationRuleBindingRenamedToReservedName } from 'src/engine/metadata-modules/validation-rule/utils/is-validation-rule-binding-renamed-to-reserved-name.util';
 
 type ValidationRuleFieldChangeTarget = {
   expression: string;
@@ -69,9 +69,9 @@ const renameFieldsInValidationRule = <
 
     if (
       isDefined(newFieldName) &&
-      isValidationRuleReservedName({
-        name: newFieldName,
-        isMember: path.includes('.'),
+      isValidationRuleBindingRenamedToReservedName({
+        bindingPath: path,
+        newFieldName,
       })
     ) {
       return null;
