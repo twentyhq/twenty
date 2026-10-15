@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { ComponentDecorator } from '@ui/testing';
 
@@ -910,9 +911,14 @@ export const CommandWithTrailingAction: Story = {
       name: 'Open overview',
     });
     await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
-    const row = reopenedItem.parentElement as HTMLElement;
+    const row = reopenedItem.parentElement;
 
     expect(row).toHaveAttribute('role', 'none');
+
+    if (!isDefined(row)) {
+      return;
+    }
+
     await userEvent.click(row);
     expect(onSelectOption).toHaveBeenCalledTimes(2);
     await waitFor(() =>
