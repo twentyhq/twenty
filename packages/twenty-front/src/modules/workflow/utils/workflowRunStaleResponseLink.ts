@@ -130,23 +130,29 @@ const keepNewerCachedWorkflowRuns = ({
 };
 
 export const workflowRunStaleResponseLink = new ApolloLink(
-  (operation, forward) =>
-    operation.operationName?.includes(WORKFLOW_RUN_TYPENAME) !== true
-      ? forward(operation)
-      : forward(operation).pipe(
-          map((result) => {
-            if (!isPlainObject(result.data)) {
-              return result;
-            }
+  (operation, forward) => {
+    if (
+      !isNonEmptyString(operation.operationName) ||
+      !operation.operationName.includes(WORKFLOW_RUN_TYPENAME)
+    ) {
+      return forward(operation);
+    }
 
-            const patchedData = keepNewerCachedWorkflowRunsInFields({
-              node: result.data,
-              cache: operation.client.cache,
-            });
+    return forward(operation).pipe(
+      map((result) => {
+        if (!isPlainObject(result.data)) {
+          return result;
+        }
 
-            return patchedData === result.data
-              ? result
-              : { ...result, data: patchedData };
-          }),
-        ),
+        const patchedData = keepNewerCachedWorkflowRunsInFields({
+          node: result.data,
+          cache: operation.client.cache,
+        });
+
+        return patchedData === result.data
+          ? result
+          : { ...result, data: patchedData };
+      }),
+    );
+  },
 );
