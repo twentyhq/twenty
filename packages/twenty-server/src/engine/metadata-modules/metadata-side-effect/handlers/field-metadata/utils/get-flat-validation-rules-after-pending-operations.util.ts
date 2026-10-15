@@ -2,39 +2,50 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
 
-export const getFlatValidationRulesAfterPendingOperations = ({
-  allFlatEntityOperationRecordByMetadataName,
-  flatValidationRuleByUniversalIdentifier,
-}: {
-  allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
-  flatValidationRuleByUniversalIdentifier: Partial<
-    Record<string, UniversalFlatValidationRule>
-  >;
-}): UniversalFlatValidationRule[] => {
-  const validationRuleOperations =
-    allFlatEntityOperationRecordByMetadataName.validationRule;
-  const deletedFlatObjectMetadatas =
-    allFlatEntityOperationRecordByMetadataName.objectMetadata
-      ?.flatEntityToDelete ?? {};
+type ValidationRuleOfObject = Pick<
+  UniversalFlatValidationRule,
+  'universalIdentifier' | 'objectMetadataUniversalIdentifier'
+>;
 
-  return Object.values(flatValidationRuleByUniversalIdentifier)
+export const getFlatValidationRulesAfterPendingOperations = <
+  TValidationRule extends ValidationRuleOfObject,
+>({
+  flatValidationRuleByUniversalIdentifier,
+  flatValidationRuleToUpdateByUniversalIdentifier = {},
+  flatValidationRuleToDeleteByUniversalIdentifier = {},
+  flatObjectMetadataToDeleteByUniversalIdentifier = {},
+}: {
+  flatValidationRuleByUniversalIdentifier: Partial<
+    Record<string, TValidationRule>
+  >;
+  flatValidationRuleToUpdateByUniversalIdentifier?: Partial<
+    Record<string, TValidationRule>
+  >;
+  flatValidationRuleToDeleteByUniversalIdentifier?: Partial<
+    Record<string, unknown>
+  >;
+  flatObjectMetadataToDeleteByUniversalIdentifier?: Partial<
+    Record<string, unknown>
+  >;
+}): TValidationRule[] =>
+  Object.values(flatValidationRuleByUniversalIdentifier)
     .filter(isDefined)
     .filter(
       ({ universalIdentifier, objectMetadataUniversalIdentifier }) =>
         !isDefined(
-          validationRuleOperations?.flatEntityToDelete[universalIdentifier],
+          flatValidationRuleToDeleteByUniversalIdentifier[universalIdentifier],
         ) &&
         !isDefined(
-          deletedFlatObjectMetadatas[objectMetadataUniversalIdentifier],
+          flatObjectMetadataToDeleteByUniversalIdentifier[
+            objectMetadataUniversalIdentifier
+          ],
         ),
     )
     .map(
       (existingFlatValidationRule) =>
-        validationRuleOperations?.flatEntityToUpdate[
+        flatValidationRuleToUpdateByUniversalIdentifier[
           existingFlatValidationRule.universalIdentifier
         ] ?? existingFlatValidationRule,
     );
-};
