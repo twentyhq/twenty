@@ -25,7 +25,6 @@ export const computeWhereConditionParts = ({
   value,
   fieldMetadataType,
   useDirectTableReference = false,
-  useExactDateTimeComparison = false,
 }: {
   operator: string;
   objectNameSingular: string;
@@ -35,7 +34,6 @@ export const computeWhereConditionParts = ({
   value: any;
   fieldMetadataType: FieldMetadataType;
   useDirectTableReference?: boolean;
-  useExactDateTimeComparison?: boolean;
 }): WhereConditionParts => {
   const paramSuffix = randomBytes(5).toString('hex');
 
@@ -108,7 +106,7 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':
-      if (isDateTimeField && !useExactDateTimeComparison) {
+      if (isDateTimeField) {
         return {
           sql: `${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond'`,
           params: { [`${key}${paramSuffix}`]: value },
@@ -159,6 +157,11 @@ export const computeWhereConditionParts = ({
       return {
         sql: `${fieldReference} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
         params: {},
+      };
+    case 'gtStrict':
+      return {
+        sql: `${fieldReference} > :${key}${paramSuffix}`,
+        params: { [`${key}${paramSuffix}`]: value },
       };
     case 'eqStrict':
       return {

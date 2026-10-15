@@ -132,7 +132,7 @@ describe('computeWhereConditionParts', () => {
       '2020-01-01 00:00:00.1239+00',
       '2020-01-01T00:00:00.123900Z',
       '2020-01-01T00:00:00.123Z',
-    ])('uses explicit comparison context for %s', (value) => {
+    ])('uses exact cursor comparisons for %s', (value) => {
       const condition = {
         objectNameSingular: 'person',
         key: 'createdAt',
@@ -143,8 +143,7 @@ describe('computeWhereConditionParts', () => {
       expect(
         computeWhereConditionParts({
           ...condition,
-          operator: 'gt',
-          useExactDateTimeComparison: true,
+          operator: 'gtStrict',
         }),
       ).toEqual({
         sql: `"person"."createdAt" > :createdAt0000000000`,
