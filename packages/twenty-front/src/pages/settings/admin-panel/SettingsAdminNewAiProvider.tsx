@@ -15,6 +15,7 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { plural } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -76,15 +77,14 @@ export const SettingsAdminNewAiProvider = () => {
     [modelsDevProviders],
   );
 
-  const providerOptions = useMemo(
-    () =>
-      modelsDevProviders.map((provider) => ({
-        value: provider.id,
-        label: `${capitalize(provider.id)} (${provider.modelCount} models)`,
-        Icon: getProviderIcon(provider.id),
-      })),
-    [modelsDevProviders],
-  );
+  const providerOptions = modelsDevProviders.map((provider) => ({
+    value: provider.id,
+    label: `${capitalize(provider.id)} (${plural(provider.modelCount, {
+      one: '# model',
+      other: '# models',
+    })})`,
+    Icon: getProviderIcon(provider.id),
+  }));
 
   const form = useForm<FormValues>({
     mode: 'onSubmit',

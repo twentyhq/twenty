@@ -11,7 +11,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -58,12 +59,18 @@ const PAGE_SIZE = 25;
 
 const SOURCE_TYPE_FILTER_OPTIONS: {
   sourceType: ApplicationRegistrationSourceType;
-  label: string;
+  label: MessageDescriptor;
 }[] = [
-  { sourceType: ApplicationRegistrationSourceType.NPM, label: 'NPM' },
-  { sourceType: ApplicationRegistrationSourceType.TARBALL, label: 'Tarball' },
-  { sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY, label: 'OAuth' },
-  { sourceType: ApplicationRegistrationSourceType.LOCAL, label: 'Local' },
+  { sourceType: ApplicationRegistrationSourceType.NPM, label: msg`NPM` },
+  {
+    sourceType: ApplicationRegistrationSourceType.TARBALL,
+    label: msg`Tarball`,
+  },
+  {
+    sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+    label: msg`OAuth`,
+  },
+  { sourceType: ApplicationRegistrationSourceType.LOCAL, label: msg`Local` },
 ];
 
 export const SettingsAdminApps = () => {
@@ -211,7 +218,7 @@ export const SettingsAdminApps = () => {
                       onCheckedChange={() => toggleSourceTypeFilter(sourceType)}
                       checked={sourceTypeFilters.includes(sourceType)}
                     >
-                      {label}
+                      {t(label)}
                     </SettingsRow>
                   ))}
                 </Dropdown.Section>

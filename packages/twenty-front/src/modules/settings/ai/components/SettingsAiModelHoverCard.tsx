@@ -50,11 +50,11 @@ const formatCost = (
   const parts: string[] = [];
 
   if (isDefined(inputCost)) {
-    parts.push(`$${inputCost} in`);
+    parts.push(t`$${inputCost} in`);
   }
 
   if (isDefined(outputCost)) {
-    parts.push(`$${outputCost} out`);
+    parts.push(t`$${outputCost} out`);
   }
 
   return parts.join(' / ');

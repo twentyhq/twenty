@@ -32,6 +32,8 @@ export const SettingsApplicationRegistrationDistributionTab = ({
     availableApplicationId: registration.universalIdentifier,
   });
 
+  // The command must remain executable when copied into a terminal.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   const publishCommands = ['yarn twenty app:publish'];
 
   return (

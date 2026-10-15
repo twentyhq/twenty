@@ -118,6 +118,7 @@ export const useRecordLevelPermissionFilterActions = ({
     const defaultFieldMetadataItemForRLS = getDefaultFieldMetadataItemForRLS();
 
     if (!isDefined(defaultFieldMetadataItemForRLS)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       throw new Error('Missing default filter definition');
     }
 
@@ -135,6 +136,7 @@ export const useRecordLevelPermissionFilterActions = ({
     const defaultFieldMetadataItemForRLS = getDefaultFieldMetadataItemForRLS();
 
     if (!isDefined(defaultFieldMetadataItemForRLS)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       throw new Error('Missing default field metadata item for filter');
     }
 

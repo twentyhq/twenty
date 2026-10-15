@@ -9,6 +9,7 @@ export const usePlanByPlanKey = () => {
     findOrThrow(
       listPlans(),
       (plan) => plan.planKey === planKey,
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       new Error(`Plan ${planKey} not found`),
     );
 

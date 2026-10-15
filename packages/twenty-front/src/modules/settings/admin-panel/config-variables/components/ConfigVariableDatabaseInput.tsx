@@ -239,6 +239,7 @@ export const ConfigVariableDatabaseInput = ({
       );
 
     default:
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       throw new CustomError(`Unsupported type: ${type}`, 'UNSUPPORTED_TYPE');
   }
 };
