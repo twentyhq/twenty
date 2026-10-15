@@ -1,4 +1,5 @@
 import {
+  assertIsDefinedOrThrow,
   isDefined,
   isMorphRelationHead,
   pickMorphGroupSurvivorOrThrow,
@@ -59,21 +60,22 @@ export const buildResolveMorphRelationPermissionFieldIds = ({
       .map(
         ([, targets]) =>
           pickMorphGroupSurvivorOrThrow(
-            targets.map((target) => ({
-              id: target.id,
-              isSystem: target.isSystem,
-              isActive: resolveEffectiveFlatEntityProperty({
-                metadataName: 'fieldMetadata',
-                flatEntity: {
-                  ...target,
-                  applicationUniversalIdentifier:
-                    applicationUniversalIdentifierById.get(
-                      target.applicationId,
-                    ) ?? '',
-                },
-                property: 'isActive',
-              }),
-            })),
+            targets.map((target) => {
+              const applicationUniversalIdentifier =
+                applicationUniversalIdentifierById.get(target.applicationId);
+
+              assertIsDefinedOrThrow(applicationUniversalIdentifier);
+
+              return {
+                id: target.id,
+                isSystem: target.isSystem,
+                isActive: resolveEffectiveFlatEntityProperty({
+                  metadataName: 'fieldMetadata',
+                  flatEntity: { ...target, applicationUniversalIdentifier },
+                  property: 'isActive',
+                }),
+              };
+            }),
           ).id,
       ),
   );
