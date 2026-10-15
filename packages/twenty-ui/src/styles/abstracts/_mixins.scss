@@ -30,34 +30,3 @@
     @content;
   }
 }
-
-// Body portals resolve to the viewport, whose pixels floating-ui reads unzoomed,
-// so the portal cancels the root zoom from the document origin and the popup
-// restores it. Container portals are left alone: floating-ui already reads the
-// zoom from their positioned ancestor.
-@mixin viewport-positioned {
-  @at-root :global(body) > :global([data-base-ui-portal]):has(> #{&}) {
-    inset-block-start: 0;
-    inset-inline-start: 0;
-    position: absolute;
-    zoom: calc(1 / var(--t-zoom, 1));
-  }
-
-  @at-root :global(body) > :global([data-base-ui-portal]) > #{&} {
-    --tw-unzoomed-anchor-width: calc(var(--anchor-width) / var(--t-zoom, 1));
-    --tw-unzoomed-available-width: calc(
-      var(--available-width) / var(--t-zoom, 1)
-    );
-    --tw-unzoomed-available-height: calc(
-      var(--available-height) / var(--t-zoom, 1)
-    );
-
-    > * {
-      --anchor-width: var(--tw-unzoomed-anchor-width);
-      --available-width: var(--tw-unzoomed-available-width);
-      --available-height: var(--tw-unzoomed-available-height);
-
-      zoom: var(--t-zoom, 1);
-    }
-  }
-}
