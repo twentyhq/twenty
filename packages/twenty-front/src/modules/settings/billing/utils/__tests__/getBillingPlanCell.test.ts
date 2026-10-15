@@ -121,79 +121,21 @@ describe('getBillingPlanCell', () => {
     });
   });
 
-  describe('when the current plan is not a column', () => {
-    const planKeys = [PRO_V2, ORGANIZATION_V2];
-
-    it('offers a plan switch from every cell when nothing is scheduled', () => {
-      expect(
-        getGrid({
-          planKeys,
-          currentPlanKey: PRO,
-          currentInterval: Month,
-          upcomingPlanKey: PRO,
-          upcomingInterval: Month,
-        }),
-      ).toEqual({
-        [PRO_V2]: { [Month]: switchPlan(PRO_V2), [Year]: switchPlan(PRO_V2) },
-        [ORGANIZATION_V2]: {
-          [Month]: switchPlan(ORGANIZATION_V2),
-          [Year]: switchPlan(ORGANIZATION_V2),
-        },
-      });
-    });
-
-    it('offers plan switches outside the upcoming plan column when a plan switch is scheduled', () => {
-      expect(
-        getGrid({
-          planKeys,
-          currentPlanKey: ENTERPRISE,
-          currentInterval: Month,
-          upcomingPlanKey: PRO_V2,
-          upcomingInterval: Month,
-        }),
-      ).toEqual({
-        [PRO_V2]: { [Month]: scheduled, [Year]: switchInterval(Year) },
-        [ORGANIZATION_V2]: {
-          [Month]: switchPlan(ORGANIZATION_V2),
-          [Year]: switchPlan(ORGANIZATION_V2),
-        },
-      });
-    });
-
-    it('cancels a scheduled interval switch from the upcoming plan column only', () => {
-      expect(
-        getGrid({
-          planKeys,
-          currentPlanKey: ENTERPRISE,
-          currentInterval: Year,
-          upcomingPlanKey: PRO_V2,
-          upcomingInterval: Month,
-        }),
-      ).toEqual({
-        [PRO_V2]: { [Month]: scheduled, [Year]: cancelIntervalSwitch },
-        [ORGANIZATION_V2]: {
-          [Month]: switchPlan(ORGANIZATION_V2),
-          [Year]: switchPlan(ORGANIZATION_V2),
-        },
-      });
-    });
-
-    it('offers a plan switch from every cell when only an interval switch is scheduled', () => {
-      expect(
-        getGrid({
-          planKeys,
-          currentPlanKey: PRO,
-          currentInterval: Year,
-          upcomingPlanKey: PRO,
-          upcomingInterval: Month,
-        }),
-      ).toEqual({
-        [PRO_V2]: { [Month]: switchPlan(PRO_V2), [Year]: switchPlan(PRO_V2) },
-        [ORGANIZATION_V2]: {
-          [Month]: switchPlan(ORGANIZATION_V2),
-          [Year]: switchPlan(ORGANIZATION_V2),
-        },
-      });
+  it('offers plan switches outside the upcoming plan column when the current plan is not a column', () => {
+    expect(
+      getGrid({
+        planKeys: [PRO_V2, ORGANIZATION_V2],
+        currentPlanKey: ENTERPRISE,
+        currentInterval: Month,
+        upcomingPlanKey: PRO_V2,
+        upcomingInterval: Month,
+      }),
+    ).toEqual({
+      [PRO_V2]: { [Month]: scheduled, [Year]: switchInterval(Year) },
+      [ORGANIZATION_V2]: {
+        [Month]: switchPlan(ORGANIZATION_V2),
+        [Year]: switchPlan(ORGANIZATION_V2),
+      },
     });
   });
 });

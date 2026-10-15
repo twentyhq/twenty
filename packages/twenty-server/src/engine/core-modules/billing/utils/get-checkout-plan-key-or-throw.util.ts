@@ -9,14 +9,12 @@ import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billi
 
 export const getCheckoutPlanKeyOrThrow = ({
   planKey,
-  sellablePlanKeys = BILLING_SELLABLE_PLAN_KEYS,
 }: {
   planKey?: BillingPlanKey | null;
-  sellablePlanKeys?: BillingPlanKey[];
 }): BillingPlanKey => {
-  const checkoutPlanKey = planKey ?? sellablePlanKeys[0];
+  const checkoutPlanKey = planKey ?? BILLING_SELLABLE_PLAN_KEYS[0];
 
-  if (!sellablePlanKeys.includes(checkoutPlanKey)) {
+  if (!BILLING_SELLABLE_PLAN_KEYS.includes(checkoutPlanKey)) {
     throw new BillingException(
       `Plan ${checkoutPlanKey} is not on sale`,
       BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED,
