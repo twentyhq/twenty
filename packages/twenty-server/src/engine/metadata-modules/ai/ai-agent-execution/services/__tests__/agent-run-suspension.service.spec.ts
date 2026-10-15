@@ -297,7 +297,7 @@ describe('AgentRunSuspensionService', () => {
 
       getWaitingState.mockResolvedValue('NOT_READY');
 
-      await service.deliverOutcome(DELIVERY, 3);
+      await service.deliverOutcome({ ...DELIVERY, attempt: 3 });
 
       expect(onOutcome).not.toHaveBeenCalled();
       expect(messageQueueService.add).toHaveBeenCalledWith(

@@ -1,5 +1,3 @@
-import { type StepResult, type ToolSet } from 'ai';
-
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -10,22 +8,21 @@ const buildStep = (
   inputTokens: number,
   outputTokens: number,
   toolNames: string[] = [],
-): StepResult<ToolSet> =>
-  ({
-    usage: {
-      inputTokens,
-      outputTokens,
-      totalTokens: inputTokens + outputTokens,
-      inputTokenDetails: {
-        noCacheTokens: inputTokens,
-        cacheReadTokens: 0,
-        cacheWriteTokens: 0,
-      },
-      outputTokenDetails: { textTokens: outputTokens, reasoningTokens: 0 },
+) => ({
+  usage: {
+    inputTokens,
+    outputTokens,
+    totalTokens: inputTokens + outputTokens,
+    inputTokenDetails: {
+      noCacheTokens: inputTokens,
+      cacheReadTokens: 0,
+      cacheWriteTokens: 0,
     },
-    content: [],
-    toolCalls: toolNames.map((toolName) => ({ toolName })),
-  }) as unknown as StepResult<ToolSet>;
+    outputTokenDetails: { textTokens: outputTokens, reasoningTokens: 0 },
+  },
+  content: [],
+  toolCalls: toolNames.map((toolName) => ({ toolName })),
+});
 
 const COST_CONFIG = {
   getEvaluationModelConfig: () => ({

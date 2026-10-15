@@ -29,6 +29,7 @@ import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-age
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { AgentStepLoopService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
 import { AgentToolsetService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';
+import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
@@ -83,6 +84,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentRunnerService,
     AgentStepLoopService,
     AgentToolsetService,
+    AgentRunTurnService,
     AgentTurnService,
     // continues suspended runs once answered or woken up, on the server and the worker alike
     AgentRunPendingWakeUpHandlerService,

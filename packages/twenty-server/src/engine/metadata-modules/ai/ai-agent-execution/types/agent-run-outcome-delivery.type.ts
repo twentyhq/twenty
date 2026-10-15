@@ -9,4 +9,6 @@ export type AgentRunOutcomeDelivery = {
   threadId: string;
   outcome: AgentRunCallerOutcome;
   summary: AgentRunSummary | null;
+  // deliveries tried before, while the caller was not ready to take the outcome
+  attempt?: number;
 };

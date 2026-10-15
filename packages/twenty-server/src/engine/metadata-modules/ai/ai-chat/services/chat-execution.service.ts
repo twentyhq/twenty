@@ -15,15 +15,14 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import { type AgentStepLoop } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
-import { AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
+import {
+  type AgentTurn,
+  AgentTurnService,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -78,10 +77,10 @@ export type ChatExecutionOptions = {
   conversationSizeTokens: number;
 };
 
-export type ChatExecutionResult = {
-  stream: AgentStepLoop['stream'];
-  modelConfig: AiModelConfig;
-  hasNoMoreAvailableCredits: () => boolean;
+export type ChatExecutionResult = Pick<
+  AgentTurn,
+  'stream' | 'modelConfig' | 'hasNoMoreAvailableCredits'
+> & {
   getStreamError: () => unknown;
 };
 
@@ -95,7 +94,6 @@ export class ChatExecutionService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly messagePruningService: MessagePruningService,
-    private readonly metricsService: MetricsService,
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly featureFlagService: FeatureFlagService,
@@ -175,8 +173,6 @@ export class ChatExecutionService {
         workspace.id,
       ));
 
-    const streamStartedAt = performance.now();
-    let ttftRecorded = false;
     let lastUnderlyingStreamError: unknown;
 
     const turn = await this.agentTurnService.start({
@@ -305,21 +301,6 @@ export class ChatExecutionService {
       },
       beforeStep: getAuthorization,
       metricsScope: 'chat',
-      onChunk: (chunk) => {
-        if (
-          !ttftRecorded &&
-          (chunk.type === 'text-delta' || chunk.type === 'tool-call')
-        ) {
-          ttftRecorded = true;
-          this.metricsService.recordHistogram({
-            key: MetricsKeys.AiChatTtftMs,
-            value: performance.now() - streamStartedAt,
-            unit: 'ms',
-            attributes: { model: turn.registeredModel.modelId },
-            bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
-          });
-        }
-      },
       onError: (error) => {
         lastUnderlyingStreamError = error;
         this.logger.error(
@@ -328,12 +309,7 @@ export class ChatExecutionService {
       },
     });
 
-    return {
-      stream: turn.stream,
-      modelConfig: turn.modelConfig,
-      hasNoMoreAvailableCredits: turn.hasNoMoreAvailableCredits,
-      getStreamError: () => lastUnderlyingStreamError,
-    };
+    return { ...turn, getStreamError: () => lastUnderlyingStreamError };
   }
 
   private prepareMessages({

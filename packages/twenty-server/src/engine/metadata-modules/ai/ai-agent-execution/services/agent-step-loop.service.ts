@@ -9,7 +9,6 @@ import {
   type StopCondition,
   streamText,
   type SystemModelMessage,
-  type TextStreamPart,
   type ToolSet,
 } from 'ai';
 import { sortKeysDeeply } from 'twenty-shared/utils';
@@ -100,7 +99,6 @@ export type AgentStepLoopInput = {
   streamRetries?: number;
   beforeStep?: () => Promise<unknown>;
   metricsScope: AgentStepLoopMetricsScope;
-  onChunk?: (chunk: TextStreamPart<ToolSet>) => void;
   onError?: (error: unknown) => void;
 };
 
@@ -114,7 +112,6 @@ const sumSteps = (
   read: (usage: StepResult<ToolSet>['usage']) => number | undefined,
 ): number => steps.reduce((total, { usage }) => total + (read(usage) ?? 0), 0);
 
-// a stopped, interrupted or empty run is not an error to report
 const isExpectedLoopEnd = (error: unknown): boolean =>
   (error instanceof Error && error.name === 'AbortError') ||
   (error instanceof AiException &&
@@ -148,7 +145,6 @@ export class AgentStepLoopService {
     streamRetries,
     beforeStep,
     metricsScope,
-    onChunk,
     onError,
   }: AgentStepLoopInput): AgentStepLoop {
     const toolMetricKeys = TOOL_METRIC_KEYS_BY_SCOPE[metricsScope];
@@ -158,6 +154,7 @@ export class AgentStepLoopService {
     let hasNoMoreAvailableCredits = false;
     let stepStartedAt = startedAt;
     let isUsageRecorded = false;
+    let isFirstTokenRecorded = metricsScope !== 'chat';
 
     // credits were taken step by step; the run's usage is recorded once, however it ends
     const recordUsage = async (steps: StepResult<ToolSet>[]) => {
@@ -252,7 +249,23 @@ export class AgentStepLoopService {
           ),
         };
       },
-      onChunk: onChunk ? ({ chunk }) => onChunk(chunk) : undefined,
+      onChunk: ({ chunk }) => {
+        if (
+          isFirstTokenRecorded ||
+          (chunk.type !== 'text-delta' && chunk.type !== 'tool-call')
+        ) {
+          return;
+        }
+
+        isFirstTokenRecorded = true;
+        this.metricsService.recordHistogram({
+          key: MetricsKeys.AiChatTtftMs,
+          value: performance.now() - startedAt,
+          unit: 'ms',
+          attributes: modelAttributes,
+          bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
+        });
+      },
       onError: onError ? ({ error }) => onError(error) : undefined,
       onToolExecutionEnd: (event) => {
         this.metricsService.recordHistogram({
@@ -279,15 +292,24 @@ export class AgentStepLoopService {
           });
         }
 
-        if (
-          await this.chargeStep({
+        const { hasNoMoreAvailableCredits: isExhausted } =
+          await this.aiBillingService.decrementAndCheckAvailableCredits({
             modelId: registeredModel.modelId,
-            billing,
-            step,
-          })
-        ) {
-          hasNoMoreAvailableCredits = true;
-        }
+            billingInput: {
+              usage: step.usage,
+              cacheCreationTokens: extractCacheCreationTokens(
+                step.providerMetadata,
+              ),
+            },
+            workspaceId: billing.workspaceId,
+            operationType: billing.operationType,
+            spenders: {
+              userWorkspaceId: billing.userWorkspaceId,
+              agentId: billing.agentId,
+            },
+          });
+
+        hasNoMoreAvailableCredits ||= isExhausted;
 
         this.logStepTokens({
           step,
@@ -340,36 +362,6 @@ export class AgentStepLoopService {
       stream,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
-  }
-
-  // resolves whether the workspace ran out of credits with this step
-  async chargeStep({
-    modelId,
-    billing,
-    step,
-  }: {
-    modelId: string;
-    billing: AgentStepLoopInput['billing'];
-    step: Pick<StepResult<ToolSet>, 'usage' | 'providerMetadata'>;
-  }): Promise<boolean> {
-    const { hasNoMoreAvailableCredits } =
-      await this.aiBillingService.decrementAndCheckAvailableCredits({
-        modelId,
-        billingInput: {
-          usage: step.usage,
-          cacheCreationTokens: extractCacheCreationTokens(
-            step.providerMetadata,
-          ),
-        },
-        workspaceId: billing.workspaceId,
-        operationType: billing.operationType,
-        spenders: {
-          userWorkspaceId: billing.userWorkspaceId,
-          agentId: billing.agentId,
-        },
-      });
-
-    return hasNoMoreAvailableCredits;
   }
 
   private logStepTokens({

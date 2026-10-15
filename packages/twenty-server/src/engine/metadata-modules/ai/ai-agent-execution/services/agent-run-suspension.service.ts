@@ -22,7 +22,6 @@ import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-ag
 import { type AgentRunOutcomeDelivery } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-outcome-delivery.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
-import { type DeliverAgentRunOutcomeJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/deliver-agent-run-outcome-job-data.type';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -157,11 +156,8 @@ export class AgentRunSuspensionService {
   }
 
   // a workflow step is marked pending only after its executor returns, so an outcome that comes sooner is delivered later
-  async deliverOutcome(
-    delivery: AgentRunOutcomeDelivery,
-    attempt = 0,
-  ): Promise<void> {
-    const { workspaceId, caller } = delivery;
+  async deliverOutcome(delivery: AgentRunOutcomeDelivery): Promise<void> {
+    const { workspaceId, caller, attempt = 0 } = delivery;
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
     if (!isDefined(handler.onOutcome)) {
@@ -205,7 +201,7 @@ export class AgentRunSuspensionService {
       return;
     }
 
-    await this.messageQueueService.add<DeliverAgentRunOutcomeJobData>(
+    await this.messageQueueService.add<AgentRunOutcomeDelivery>(
       DELIVER_AGENT_RUN_OUTCOME_JOB_NAME,
       { ...delivery, attempt: attempt + 1 },
       { delay: AGENT_RUN_OUTCOME_DELIVERY_RETRY_DELAY_MS },

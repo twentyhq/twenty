@@ -39,8 +39,7 @@ export type AgentRegistryAccess =
       excludedToolNames: ReadonlySet<string>;
       preloadedToolNames: string[];
     }
-  // an open-ended agent: a compact catalog, and calls limited to the tools it showed when the turn
-  // started, so a tool added since stays out of reach (recursion guard)
+  // calls stay within the catalog shown when the turn started, so a tool added since is out of reach
   | {
       type: 'catalog';
       toolContext: ToolContext;
@@ -70,9 +69,7 @@ export type AgentToolsetInput = {
 
 export type AgentToolset = {
   tools: ToolSet;
-  // the registry tools the prompt lists, reached through learn_tools and execute_tool
   toolCatalog: ToolIndexEntry[];
-  // the tools sent with the turn, which need no learn_tools round trip
   directToolNames: string[];
   offeredPausingToolNames: string[];
 };
@@ -90,8 +87,6 @@ const buildUnavailableToolOutput = (toolName: string): ToolOutput => ({
   error: `Tool "${toolName}" is not available to this agent.`,
 });
 
-// What an agent can do on a turn: the registry tools it reaches, the model's native tools, and the
-// tools that pause it on a person or a wait. Chat and agent runs differ only in what they ask for here
 @Injectable()
 export class AgentToolsetService {
   constructor(
@@ -137,7 +132,6 @@ export class AgentToolsetService {
             : buildUnavailableToolOutput(toolName),
       });
     };
-    // an agent proposes its own tools; a run without registry tools may only propose emails
     const canPropose =
       canAskHumans && (registryAccess.type !== 'none' || canProposeEmails);
 

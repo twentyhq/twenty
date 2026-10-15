@@ -34,6 +34,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { RUN_AGENT_MAX_WAIT_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-max-wait-ms.const';
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
@@ -249,45 +250,43 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       });
     }
 
+    assertAgentResponseFormatHasOutputFieldsOrThrow(agent.responseFormat);
+
     const runId = randomUUID();
 
-    const startRun = () =>
-      this.agentRunnerService.start({
-        workspaceId: workspace.id,
-        conversation: { threadId, isCreated: !isContinuingConversation },
-        caller: {
-          type: 'AGENT_API_RUN',
-          ref: { ...callerRef, runId, createdBy },
+    await this.agentRunnerService.start({
+      workspaceId: workspace.id,
+      conversation: { threadId, isCreated: !isContinuingConversation },
+      caller: {
+        type: 'AGENT_API_RUN',
+        ref: { ...callerRef, runId, createdBy },
+      },
+      spec: {
+        agentId: agent.id,
+        title: isNonEmptyString(thread?.title) ? thread.title : agent.label,
+        baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+        // kept with the run rather than in its messages, so a run that waits still has them when it goes on
+        instructions: input.additionalInstructions ?? null,
+        // the call returns before anyone could answer, so the run can wait but not ask
+        capabilities: {
+          canAskHumans: false,
         },
-        spec: {
-          agentId: agent.id,
-          title: isNonEmptyString(thread?.title) ? thread.title : agent.label,
-          baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
-          // kept with the run rather than in its messages, so a run that waits still has them when it goes on
-          instructions: input.additionalInstructions ?? null,
-          // the call returns before anyone could answer, so the run can wait but not ask
-          capabilities: {
-            canAskHumans: false,
-          },
-          toolLoadingStrategy: 'lazy',
-        },
-        prompt: {
-          messages,
-          senderUserWorkspaceId: memberUserWorkspaceId,
-          senderApplicationId: callerApplication?.id ?? null,
-        },
-      });
+        toolLoadingStrategy: 'lazy',
+      },
+      prompt: {
+        messages,
+        senderUserWorkspaceId: memberUserWorkspaceId,
+        senderApplicationId: callerApplication?.id ?? null,
+      },
+    });
 
     if (input.waitForCompletion === false) {
-      await startRun();
-
       return this.buildRunAgentResult({ threadId, status: 'RUNNING' });
     }
 
     const settledRun = await this.agentRunSettlementService.waitFor({
       runId,
       timeoutMs: RUN_AGENT_MAX_WAIT_MS,
-      start: startRun,
     });
 
     return this.buildRunAgentResult({

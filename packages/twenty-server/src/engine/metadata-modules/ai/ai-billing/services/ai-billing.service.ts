@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type StepResult, type ToolSet } from 'ai';
-
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -11,6 +9,7 @@ import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usa
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
+import { type BillableStep } from 'src/engine/metadata-modules/ai/ai-billing/types/billable-step.type';
 import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
 import { computeAgentTurnUsageFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
 import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
@@ -63,13 +62,7 @@ export class AiBillingService {
     );
   }
 
-  calculateStepsCost(
-    modelId: ModelId,
-    steps: {
-      usage: BillingTokenUsage;
-      providerMetadata?: Record<string, Record<string, unknown> | undefined>;
-    }[],
-  ): number {
+  calculateStepsCost(modelId: ModelId, steps: BillableStep[]): number {
     const model = this.getCostConfig(modelId);
 
     return steps.reduce(
@@ -87,10 +80,7 @@ export class AiBillingService {
 
   calculateStepsTurnUsage(
     modelId: ModelId,
-    steps: {
-      usage: BillingTokenUsage;
-      providerMetadata?: Record<string, Record<string, unknown> | undefined>;
-    }[],
+    steps: BillableStep[],
   ): AgentTurnUsage {
     return computeAgentTurnUsageFromSteps(this.getCostConfig(modelId), steps);
   }
@@ -216,7 +206,7 @@ export class AiBillingService {
     spenders,
   }: {
     modelId: ModelId;
-    steps: StepResult<ToolSet>[];
+    steps: (BillableStep & { toolCalls: { toolName: string }[] })[];
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;

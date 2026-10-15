@@ -35,13 +35,7 @@ const buildService = () => {
     start: jest.fn().mockResolvedValue(undefined),
   };
   const agentRunSettlementService = {
-    waitFor: jest
-      .fn()
-      .mockImplementation(async ({ start }: { start: () => Promise<void> }) => {
-        await start();
-
-        return COMPLETED_RUN;
-      }),
+    waitFor: jest.fn().mockResolvedValue(COMPLETED_RUN),
     publish: jest.fn().mockResolvedValue(undefined),
   };
   const agentRunSuspensionService = {

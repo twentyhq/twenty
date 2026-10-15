@@ -18,7 +18,7 @@ import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
-import { AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
+import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
@@ -54,7 +54,7 @@ export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
 
   constructor(
-    private readonly agentTurnService: AgentTurnService,
+    private readonly agentRunTurnService: AgentRunTurnService,
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly conversationReaderService: AgentConversationReaderService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
@@ -347,7 +347,7 @@ export class AgentRunnerService {
     try {
       // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
       execution = await withDedicatedAiTrace(() =>
-        this.agentTurnService.runAgentTurn({
+        this.agentRunTurnService.runTurn({
           agent,
           messages: prompt?.messages ?? [],
           priorMessages,

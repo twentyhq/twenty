@@ -3,7 +3,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { DELIVER_AGENT_RUN_OUTCOME_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/deliver-agent-run-outcome-job-name.constant';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
-import { type DeliverAgentRunOutcomeJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/deliver-agent-run-outcome-job-data.type';
+import { type AgentRunOutcomeDelivery } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-outcome-delivery.type';
 
 @Processor(MessageQueue.aiQueue)
 export class DeliverAgentRunOutcomeJob {
@@ -12,7 +12,7 @@ export class DeliverAgentRunOutcomeJob {
   ) {}
 
   @Process(DELIVER_AGENT_RUN_OUTCOME_JOB_NAME)
-  async handle({ attempt, ...delivery }: DeliverAgentRunOutcomeJobData) {
-    await this.agentRunSuspensionService.deliverOutcome(delivery, attempt);
+  async handle(delivery: AgentRunOutcomeDelivery) {
+    await this.agentRunSuspensionService.deliverOutcome(delivery);
   }
 }
