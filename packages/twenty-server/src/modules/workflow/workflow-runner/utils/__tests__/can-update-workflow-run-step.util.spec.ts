@@ -86,6 +86,32 @@ describe('canUpdateWorkflowRunStep', () => {
     ).toBe(true);
   });
 
+  it('lets the values of a form step be filled when the stored step still carries a legacy retry flag', () => {
+    const legacyFormStep = {
+      ...FORM_STEP,
+      settings: {
+        ...FORM_STEP.settings,
+        errorHandlingOptions: {
+          ...ERROR_HANDLING_OPTIONS,
+          retryOnFailure: { value: false },
+        },
+      },
+    } as unknown as WorkflowFormAction;
+
+    expect(
+      canUpdateWorkflowRunStep({
+        workflowRun: { state: { flow: { steps: [legacyFormStep] } } },
+        step: {
+          ...FORM_STEP,
+          settings: {
+            ...FORM_STEP.settings,
+            input: [{ ...FORM_STEP.settings.input[0], value: 'Acme' }],
+          },
+        },
+      }),
+    ).toBe(true);
+  });
+
   it('refuses a change to the fields of a form step', () => {
     const textFieldTurnedIntoRecordPicker: WorkflowFormAction = {
       ...FORM_STEP,

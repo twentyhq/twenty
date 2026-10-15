@@ -27,13 +27,19 @@ export const canUpdateWorkflowRunStep = ({
     return false;
   }
 
-  return isEqual(withoutFormValues(existingStep), withoutFormValues(step));
+  return (
+    isEqual(existingStep.nextStepIds, step.nextStepIds) &&
+    isEqual(
+      getFormFieldDefinitions(existingStep),
+      getFormFieldDefinitions(step),
+    )
+  );
 };
 
-const withoutFormValues = (step: WorkflowFormAction) => ({
-  ...step,
-  settings: {
-    ...step.settings,
-    input: step.settings.input.map((field) => ({ ...field, value: undefined })),
-  },
-});
+const getFormFieldDefinitions = (step: WorkflowFormAction) =>
+  step.settings.input.map(({ id, name, type, settings }) => ({
+    id,
+    name,
+    type,
+    settings,
+  }));
