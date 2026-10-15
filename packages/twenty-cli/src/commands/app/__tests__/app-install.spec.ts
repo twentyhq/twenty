@@ -454,7 +454,12 @@ describe('app install', () => {
       installed: true,
       jobId: JOB_ID,
     });
-    expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
+    const statusArguments = server.requests
+      .map(readGraphqlRequest)
+      .filter(({ query }) => query.includes('findInstallApplicationJobStatus'))
+      .map((request) => request.arguments);
+
+    expect(statusArguments).toContainEqual({
       universalIdentifier: UNIVERSAL_IDENTIFIER,
       jobId: JOB_ID,
     });
