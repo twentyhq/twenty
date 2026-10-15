@@ -31,7 +31,7 @@ export const RecordTableWidget = ({
       <RecordTableWidgetStatesEffect
         recordTableId={recordIndexId}
         isUIEditable={isUIEditable}
-        isPageLayoutInEditMode={
+        isColumnResizable={
           isDefined(recordTableWidgetContext) &&
           canEditRecordTableWidgetViewSettings(recordTableWidgetContext)
         }

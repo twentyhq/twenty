@@ -9,6 +9,7 @@ import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/pag
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delete-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
@@ -16,6 +17,7 @@ import { findOneView } from 'test/integration/metadata/suites/view/utils/find-on
 import {
   FieldMetadataType,
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   ViewCalendarLayout,
   ViewType,
   ViewVisibility,
@@ -96,20 +98,19 @@ describe('VIEW page layout widget referencing an existing view', () => {
   };
 
   const buildViewWidgetInput = (
-    viewId: string | undefined,
+    viewId: string,
     widgetObjectMetadataId = objectMetadataId,
-  ): CreatePageLayoutWidgetInput =>
-    ({
-      title: 'View widget',
-      pageLayoutTabId,
-      type: WidgetType.VIEW,
-      objectMetadataId: widgetObjectMetadataId,
-      position: DEFAULT_GRID_POSITION,
-      configuration: {
-        configurationType: WidgetConfigurationType.VIEW,
-        viewId,
-      },
-    }) as CreatePageLayoutWidgetInput;
+  ): CreatePageLayoutWidgetInput => ({
+    title: 'View widget',
+    pageLayoutTabId,
+    type: WidgetType.VIEW,
+    objectMetadataId: widgetObjectMetadataId,
+    position: DEFAULT_GRID_POSITION,
+    configuration: {
+      configurationType: WidgetConfigurationType.VIEW,
+      viewId,
+    },
+  });
 
   beforeAll(async () => {
     objectMetadataId = await createTestObject('viewWidgetTestObject');
@@ -247,17 +248,20 @@ describe('VIEW page layout widget referencing an existing view', () => {
   );
 
   it.each([
-    ['viewId is missing', () => undefined, 'viewId'],
     [
       'the view does not exist',
       () => '20202020-0000-4000-8000-0000000000aa',
-      'not found',
+      'View universal identifier not found',
     ],
-    ['the view is deleted', () => viewIdsByName.softDeleted, 'not found'],
+    [
+      'the view is deleted',
+      () => viewIdsByName.softDeleted,
+      'View universal identifier not found',
+    ],
     [
       'the view belongs to another object',
       () => viewIdsByName.otherObject,
-      'does not belong to objectMetadataId',
+      'references a view of another object',
     ],
     [
       'the view is owned by a widget',
@@ -279,6 +283,21 @@ describe('VIEW page layout widget referencing an existing view', () => {
     expect(JSON.stringify(errors[0])).toContain(expectedMessage);
   });
 
+  it('should fail when viewId is missing', async () => {
+    const { errors } = await createOnePageLayoutWidget({
+      expectToFail: true,
+      input: {
+        ...buildViewWidgetInput(viewIdsByName.table),
+        configuration: {
+          configurationType: WidgetConfigurationType.VIEW,
+        } as unknown as CreatePageLayoutWidgetInput['configuration'],
+      },
+    });
+
+    expect(errors).toHaveLength(1);
+    expect(JSON.stringify(errors[0])).toContain('viewId');
+  });
+
   it('should fail when the widget object is changed away from the view object', async () => {
     const { data } = await createOnePageLayoutWidget({
       expectToFail: false,
@@ -293,8 +312,68 @@ describe('VIEW page layout widget referencing an existing view', () => {
     });
 
     expect(JSON.stringify(errors?.[0])).toContain(
-      'does not belong to objectMetadataId',
+      'references a view of another object',
     );
+
+    await destroyOnePageLayoutWidget({
+      expectToFail: false,
+      input: { id: widgetId },
+    });
+  });
+
+  it('should keep saving the page layout after the referenced view is destroyed', async () => {
+    const viewId = await createView('destroyedLater', {
+      type: ViewType.TABLE,
+      objectMetadataId,
+    });
+
+    const { data } = await createOnePageLayoutWidget({
+      expectToFail: false,
+      input: buildViewWidgetInput(viewId),
+    });
+
+    const widgetId = data.createPageLayoutWidget.id;
+
+    await destroyOneView({ viewId, expectToFail: false });
+    delete viewIdsByName.destroyedLater;
+
+    const { data: updateData, errors } =
+      await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: false,
+        input: {
+          id: pageLayoutId,
+          name: 'Test Page Layout For View Widgets',
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: null,
+          tabs: [
+            {
+              id: pageLayoutTabId,
+              title: 'Test Tab For View Widgets',
+              position: 0,
+              widgets: [
+                {
+                  id: widgetId,
+                  pageLayoutTabId,
+                  title: 'Renamed view widget',
+                  type: WidgetType.VIEW,
+                  objectMetadataId,
+                  position: { ...DEFAULT_GRID_POSITION, row: 2 },
+                  configuration: {
+                    configurationType: WidgetConfigurationType.VIEW,
+                    viewId,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+    expect(errors).toBeUndefined();
+    expect(
+      updateData.updatePageLayoutWithTabsAndWidgets.tabs?.[0].widgets?.[0]
+        .title,
+    ).toBe('Renamed view widget');
 
     await destroyOnePageLayoutWidget({
       expectToFail: false,

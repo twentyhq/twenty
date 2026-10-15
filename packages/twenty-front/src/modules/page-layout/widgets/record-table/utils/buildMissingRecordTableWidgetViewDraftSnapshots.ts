@@ -30,7 +30,6 @@ export const buildMissingRecordTableWidgetViewDraftSnapshots = ({
       continue;
     }
 
-    // A VIEW widget only references a view it does not own, so it never gets a draft to edit.
     if (widget.type === WidgetType.VIEW) {
       continue;
     }

@@ -105,6 +105,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     frontComponent: true,
     fieldMetadata: true,
     commandMenuItem: true,
+    view: true,
   },
   rowLevelPermissionPredicate: {
     fieldMetadata: true,

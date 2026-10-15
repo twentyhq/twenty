@@ -32,7 +32,7 @@ export const ViewWidgetRenderer = ({ widget }: ViewWidgetRendererProps) => {
       <PageLayoutWidgetStatusDisplay
         tooltipId={`widget-view-unavailable-tooltip-${widget.id}`}
         text={t`View unavailable`}
-        tooltipContent={t`The view shown by this widget was deleted. Select another view in the widget settings.`}
+        tooltipContent={t`The view shown by this widget is no longer available. Select another view in the widget settings.`}
         color="gray"
       />
     );

@@ -13,6 +13,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { ListItemButton, MenuItem } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 
@@ -37,7 +38,7 @@ export const ViewWidgetViewDropdownContent = () => {
     widgetInEditMode?.objectMetadataId,
   );
 
-  const currentViewId = widgetInEditMode
+  const currentViewId = isDefined(widgetInEditMode)
     ? getWidgetConfigurationViewId(widgetInEditMode.configuration)
     : null;
 

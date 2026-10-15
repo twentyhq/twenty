@@ -1,5 +1,5 @@
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
@@ -14,6 +14,7 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -45,7 +46,9 @@ export const SidePanelDashboardViewWidgetSettings = () => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
   const { closeDropdown } = useCloseDropdown();
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectMetadataItemsByIdMap = useAtomStateValue(
+    objectMetadataItemsByIdMapSelector,
+  );
 
   const objectMetadataId = widgetInEditMode?.objectMetadataId;
 
@@ -55,10 +58,9 @@ export const SidePanelDashboardViewWidgetSettings = () => {
 
   const { view } = useViewById(viewId);
 
-  const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItemToFind) =>
-      objectMetadataItemToFind.id === objectMetadataId,
-  );
+  const objectMetadataItem = isDefined(objectMetadataId)
+    ? objectMetadataItemsByIdMap.get(objectMetadataId)
+    : undefined;
 
   if (!isDefined(widgetInEditMode)) {
     return null;
@@ -75,8 +77,8 @@ export const SidePanelDashboardViewWidgetSettings = () => {
       configToUpdate: { viewId: undefined },
     });
 
-    const selectedObjectMetadataItem = objectMetadataItems.find(
-      (item) => item.id === newObjectMetadataItemId,
+    const selectedObjectMetadataItem = objectMetadataItemsByIdMap.get(
+      newObjectMetadataItemId,
     );
 
     if (isDefined(selectedObjectMetadataItem)) {
@@ -93,7 +95,7 @@ export const SidePanelDashboardViewWidgetSettings = () => {
       return view.name;
     }
 
-    return isDefined(viewId) ? t`Deleted view` : t`None`;
+    return isDefined(viewId) ? t`Unavailable view` : t`None`;
   };
 
   return (

@@ -10,14 +10,14 @@ import { useLayoutEffect } from 'react';
 type RecordTableWidgetStatesEffectProps = {
   recordTableId: string;
   isUIEditable?: boolean;
-  isPageLayoutInEditMode?: boolean;
+  isColumnResizable?: boolean;
   isEmptyStateHidden?: boolean;
 };
 
 export const RecordTableWidgetStatesEffect = ({
   recordTableId,
   isUIEditable = false,
-  isPageLayoutInEditMode = false,
+  isColumnResizable = false,
   isEmptyStateHidden = false,
 }: RecordTableWidgetStatesEffectProps) => {
   const store = useStore();
@@ -48,7 +48,7 @@ export const RecordTableWidgetStatesEffect = ({
       isRecordTableColumnResizableComponentState.atomFamily({
         instanceId: recordTableId,
       }),
-      isPageLayoutInEditMode,
+      isColumnResizable,
     );
 
     store.set(
@@ -107,7 +107,7 @@ export const RecordTableWidgetStatesEffect = ({
     store,
     recordTableId,
     isUIEditable,
-    isPageLayoutInEditMode,
+    isColumnResizable,
     isEmptyStateHidden,
   ]);
 

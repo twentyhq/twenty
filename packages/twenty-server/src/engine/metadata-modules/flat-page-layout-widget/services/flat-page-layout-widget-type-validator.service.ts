@@ -19,7 +19,7 @@ import { validateSimpleRecordPageWidgetForCreation } from 'src/engine/metadata-m
 import { validateSimpleRecordPageWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util';
 import { validateStandaloneRichTextFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util';
 import { validateStandaloneRichTextFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-update.util';
-import { validateViewWidgetViewUniversalIdentifier } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-view-widget-view-universal-identifier.util';
+import { validateViewWidgetViewReference } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-view-widget-view-reference.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
@@ -48,7 +48,7 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         ...validateSimpleRecordPageWidgetForCreation(
           WidgetConfigurationType.VIEW,
         )(args),
-        ...validateViewWidgetViewUniversalIdentifier(args.flatEntityToValidate),
+        ...validateViewWidgetViewReference(args),
       ],
       IFRAME: validateIframeFlatPageLayoutWidgetForCreation,
       FIELD: validateSimpleRecordPageWidgetForCreation(
@@ -124,7 +124,7 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         ...validateSimpleRecordPageWidgetForUpdate(
           WidgetConfigurationType.VIEW,
         )(args),
-        ...validateViewWidgetViewUniversalIdentifier(args.flatEntityToValidate),
+        ...validateViewWidgetViewReference(args),
       ],
       IFRAME: validateIframeFlatPageLayoutWidgetForUpdate,
       FIELD: validateSimpleRecordPageWidgetForUpdate(
