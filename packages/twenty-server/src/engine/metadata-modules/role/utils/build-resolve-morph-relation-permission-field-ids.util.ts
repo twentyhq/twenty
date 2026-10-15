@@ -43,16 +43,22 @@ export const buildResolveMorphRelationPermissionFieldIds = ({
     const headMorphId = morphIdByHeadId.get(fieldMetadataId);
     const targetMorphId = morphIdByTargetId.get(fieldMetadataId);
 
-    if (isMorphRelationHeadEnabled) {
-      if (isDefined(targetMorphId) && morphIdsWithHead.has(targetMorphId)) {
-        return [];
-      }
-
-      return isDefined(headMorphId)
-        ? [fieldMetadataId, ...(targetIdsByMorphId.get(headMorphId) ?? [])]
-        : [fieldMetadataId];
+    if (!isMorphRelationHeadEnabled && isDefined(headMorphId)) {
+      return [];
     }
 
-    return isDefined(headMorphId) ? [] : [fieldMetadataId];
+    if (!isMorphRelationHeadEnabled) {
+      return [fieldMetadataId];
+    }
+
+    if (isDefined(targetMorphId) && morphIdsWithHead.has(targetMorphId)) {
+      return [];
+    }
+
+    if (isDefined(headMorphId)) {
+      return [fieldMetadataId, ...(targetIdsByMorphId.get(headMorphId) ?? [])];
+    }
+
+    return [fieldMetadataId];
   };
 };
