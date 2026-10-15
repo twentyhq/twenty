@@ -1,3 +1,5 @@
+import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/utils/findChartGroupByFieldMetadataItem';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
@@ -22,9 +24,10 @@ const shouldHideDateGranularityBasedOnFieldType = (
     return true;
   }
 
-  const field = objectMetadataItem.fields.find(
-    (field) => field.id === fieldMetadataId,
-  );
+  const field = findFieldMetadataItemByFieldMetadataId({
+    fieldMetadataItems: objectMetadataItem.fields,
+    fieldMetadataId,
+  });
 
   if (!isDefined(field)) {
     return true;
@@ -132,14 +135,20 @@ export const shouldHideChartSetting = (
       }
 
       if (isBarOrLineChart) {
-        const primaryField = objectMetadataItem.fields.find(
-          (field) =>
-            field.id === configuration.primaryAxisGroupByFieldMetadataId,
-        );
-        const secondaryField = objectMetadataItem.fields.find(
-          (field) =>
-            field.id === configuration.secondaryAxisGroupByFieldMetadataId,
-        );
+        const primaryField = findChartGroupByFieldMetadataItem({
+          fieldMetadataItems: objectMetadataItem.fields,
+          groupByFieldMetadataId:
+            configuration.primaryAxisGroupByFieldMetadataId,
+        });
+        const secondaryField = isDefined(
+          configuration.secondaryAxisGroupByFieldMetadataId,
+        )
+          ? findChartGroupByFieldMetadataItem({
+              fieldMetadataItems: objectMetadataItem.fields,
+              groupByFieldMetadataId:
+                configuration.secondaryAxisGroupByFieldMetadataId,
+            })
+          : undefined;
         const bothAxesAreArrayFields =
           isDefined(primaryField) &&
           isFieldMetadataArrayKind(primaryField.type) &&
@@ -151,9 +160,10 @@ export const shouldHideChartSetting = (
         }
       }
 
-      const groupByField = objectMetadataItem.fields.find(
-        (field) => field.id === fieldMetadataId,
-      );
+      const groupByField = findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem.fields,
+        fieldMetadataId,
+      });
 
       return (
         !isDefined(groupByField) || !isFieldMetadataArrayKind(groupByField.type)

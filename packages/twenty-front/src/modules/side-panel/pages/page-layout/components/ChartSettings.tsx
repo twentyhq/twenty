@@ -1,3 +1,4 @@
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
@@ -17,7 +18,7 @@ import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/grap
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { assertChartWidgetOrThrow } from '@/side-panel/pages/page-layout/utils/assertChartWidgetOrThrow';
@@ -119,9 +120,12 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       ? configuration.groupByFieldMetadataId
       : null;
 
-  const primaryAxisField = objectMetadataItem?.fields?.find(
-    (field) => field.id === primaryAxisFieldMetadataId,
-  );
+  const primaryAxisField = isDefined(primaryAxisFieldMetadataId)
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: primaryAxisFieldMetadataId,
+      })
+    : undefined;
 
   const isPrimaryAxisDate = isFieldMetadataDateKind(primaryAxisField?.type);
 
