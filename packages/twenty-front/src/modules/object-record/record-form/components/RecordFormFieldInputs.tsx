@@ -51,9 +51,8 @@ export const RecordFormFieldInputs = ({
         {fieldMetadataItems.map((fieldMetadataItem) => {
           const gqlFieldName =
             getFieldMetadataItemGqlFieldName(fieldMetadataItem);
-          const { placeholder } = getRecordFormFieldPlaceholders(
-            fieldMetadataItem.type,
-          );
+          const { placeholder, subFieldPlaceholders } =
+            getRecordFormFieldPlaceholders(fieldMetadataItem.type);
 
           return (
             <Field.Root key={fieldMetadataItem.id}>
@@ -74,6 +73,7 @@ export const RecordFormFieldInputs = ({
                   fieldMetadataItem.type,
                 )}
                 placeholder={placeholder}
+                subFieldPlaceholders={subFieldPlaceholders}
               />
               {(
                 validationRuleViolationsByFieldMetadataId[
