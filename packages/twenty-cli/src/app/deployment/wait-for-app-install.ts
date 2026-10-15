@@ -1,7 +1,7 @@
-import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { setTimeout as delay } from 'node:timers/promises';
 import { MetadataSchema } from 'twenty-client-sdk/metadata';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { APP_INSTALL } from '@/app/deployment/constants/app-install.constant';
 import { CliError } from '@/output/cli-error';
@@ -43,11 +43,7 @@ export const waitForAppInstall = async ({
       !isPlainObject(status) ||
       status.jobId !== jobId ||
       !Object.values(MetadataSchema.enumJobState).includes(status.state) ||
-      !(
-        isUndefined(status.progress) ||
-        isNull(status.progress) ||
-        isProgressPercentage(status.progress)
-      )
+      (isDefined(status.progress) && !isProgressPercentage(status.progress))
     ) {
       throw new CliError({
         code: 'INVALID_RESPONSE',
