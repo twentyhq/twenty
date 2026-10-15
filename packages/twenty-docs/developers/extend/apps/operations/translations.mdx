@@ -88,9 +88,9 @@ the same word can translate differently as an object name and as a view name.
 
 Object, field, view, page layout, command menu, navigation menu, timeline
 activity type and settings menu labels are always extracted. Every other text
-of your manifest is translated only when it is wrapped in `msg()` from
-`twenty-sdk/define`. Plain values stay as written, so names that should never
-change, like brands or products, stay out of your catalogs:
+of your manifest is extracted only when it is wrapped in `msg()` from
+`twenty-sdk/define`, so names you never want to translate, like brands or
+products, stay out of your catalogs:
 
 ```ts
 import { defineField, FieldType, msg } from 'twenty-sdk/define';
@@ -124,6 +124,11 @@ extracted under its own catalog context:
 
 The full list lives in `MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES` from
 `twenty-shared/i18n`.
+
+`msg()` decides what is extracted, not what is translated: translations are
+keyed by text and context, so a plain value with the same text and context as
+an extracted one is translated with it. A plain option label equal to a field
+name, or to a marked option label, shares their translation.
 
 ## Extracting and translating
 

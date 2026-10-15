@@ -93,7 +93,7 @@ Select and multi-select option `value` strings must be uppercase snake case:
 
 For select fields, default values must be quoted string expressions like `"'PLANNED'"`, not plain strings like `'planned'`.
 
-Wrap an option `label` in `msg()` from `twenty-sdk/define` to translate it per member locale (`label: msg('Planned')`). Unwrapped labels stay as written, which suits brand or product names.
+Wrap an option `label` in `msg()` from `twenty-sdk/define` to extract it for translation (`label: msg('Planned')`). An unwrapped label is not extracted, but still shares the translation of an extracted text with the same wording, such as a field name.
 
 ### Relations
 

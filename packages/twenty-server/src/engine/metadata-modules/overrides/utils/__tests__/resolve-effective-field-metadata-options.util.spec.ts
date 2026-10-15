@@ -107,6 +107,19 @@ describe('resolveEffectiveFieldMetadataOptions', () => {
     ).toEqual(['Неделя', 'Month']);
   });
 
+  // Catalog entries are keyed by source text and context, so an option label left unwrapped shares the translation of any extracted text it matches
+  it('translates an unmarked option label sharing its text with an extracted field label', () => {
+    expect(
+      resolveLabels({
+        i18nContext: buildI18nContext({
+          applicationCatalog: {
+            [generateMessageId('Неделя', 'fieldMetadata.label')]: 'Week',
+          },
+        }),
+      }),
+    ).toEqual(['Week', 'Месяц']);
+  });
+
   it('prefers a workspace translation over the application catalog', () => {
     expect(
       resolveLabels({
