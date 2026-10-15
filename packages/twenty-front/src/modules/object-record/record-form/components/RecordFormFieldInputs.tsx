@@ -2,10 +2,9 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
-import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { RecordFormFieldInput } from '@/object-record/record-form/components/RecordFormFieldInput';
 import { RecordFormFieldInputsEffect } from '@/object-record/record-form/components/RecordFormFieldInputsEffect';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
-import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
 import { getRecordFormFieldPlaceholders } from '@/object-record/record-form/utils/getRecordFormFieldPlaceholders';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
@@ -56,7 +55,7 @@ export const RecordFormFieldInputs = ({
 
           return (
             <Field.Root key={fieldMetadataItem.id}>
-              <FormFieldInput
+              <RecordFormFieldInput
                 field={formatFieldMetadataItemAsFieldDefinition({
                   field: fieldMetadataItem,
                   objectMetadataItem,
@@ -69,9 +68,6 @@ export const RecordFormFieldInputs = ({
                 }
                 onChange={(value) => onFieldValueChange(gqlFieldName, value)}
                 onClear={() => onFieldValueClear(gqlFieldName)}
-                settings={getRecordFormFieldInputSettings(
-                  fieldMetadataItem.type,
-                )}
                 placeholder={placeholder}
                 subFieldPlaceholders={subFieldPlaceholders}
               />
