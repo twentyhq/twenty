@@ -30,7 +30,6 @@ export class EmailingDomainGraphqlApiExceptionFilter implements ExceptionFilter 
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
-      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_UNKNOWN_VARIABLES:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS:
