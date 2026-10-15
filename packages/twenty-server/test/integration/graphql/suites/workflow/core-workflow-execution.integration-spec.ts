@@ -662,8 +662,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   const migratePendingRun = async (fixture: Fixture, runId: string) => {
     if (fixture.workflowVersionId) {
       await global.testDataSource.query(
-        `UPDATE "${schema}"."workflowRun" SET "coreWorkflowId" = NULL, "coreWorkflowVersionId" = NULL WHERE id = $1`,
-        [runId],
+        `UPDATE "${schema}"."workflowRun" SET "workflowVersionId" = $2, "coreWorkflowId" = NULL, "coreWorkflowVersionId" = NULL WHERE id = $1`,
+        [runId, fixture.workflowVersionId],
       );
       await backfill();
       expect((await getRun(runId)).coreWorkflowVersionId).toBe(

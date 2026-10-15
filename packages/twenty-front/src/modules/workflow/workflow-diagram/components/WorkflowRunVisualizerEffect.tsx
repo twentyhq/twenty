@@ -36,9 +36,7 @@ export const WorkflowRunVisualizerEffect = ({
   );
 
   const workflowVersionId = workflowRun?.coreWorkflowVersionId ?? undefined;
-  const workflowVersion = useWorkflowVersion(
-    workflowRun?.coreWorkflowVersionId ?? undefined,
-  );
+  const workflowVersion = useWorkflowVersion(workflowVersionId);
   const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
