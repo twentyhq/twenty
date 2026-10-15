@@ -37,6 +37,10 @@
     },
     "lint": {
       "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        "{workspaceRoot}/packages/twenty-front/.oxlintrc.i18n.json"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "command": "node scripts/check-conventions.mjs && npx oxlint -c .oxlintrc.json . && yarn lint:i18n:shared-ui && npx oxfmt --check ."
