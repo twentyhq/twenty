@@ -275,7 +275,7 @@ export const usePersistField = ({
           updateOneRecordInput: {
             [fieldName]: valueToPersist,
           },
-        });
+        }).catch(() => undefined);
 
         store.set(
           recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
