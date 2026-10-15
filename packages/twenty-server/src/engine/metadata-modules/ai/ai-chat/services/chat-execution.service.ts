@@ -24,7 +24,12 @@ import {
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
-import { getAppPath, isDefined, sortKeysDeeply } from 'twenty-shared/utils';
+import {
+  getAppPath,
+  isDefined,
+  isNonEmptyArray,
+  sortKeysDeeply,
+} from 'twenty-shared/utils';
 
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -110,7 +115,6 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
-import { createTurnUsageRecorder } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-usage-recorder.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -467,12 +471,9 @@ export class ChatExecutionService {
     let ttftRecorded = false;
     let stepIndex = 0;
     let lastUnderlyingStreamError: unknown;
+    const endedSteps: StepResult<ToolSet>[] = [];
 
-    const emitTurnUsageEvent = async ({
-      steps,
-    }: {
-      steps: StepResult<ToolSet>[];
-    }) => {
+    const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce(
         (totals, step) => ({
           inputTokens: totals.inputTokens + (step.usage.inputTokens ?? 0),
@@ -539,10 +540,6 @@ export class ChatExecutionService {
         bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
       });
     };
-
-    const turnUsageRecorder = createTurnUsageRecorder({
-      recordTurn: emitTurnUsageEvent,
-    });
 
     const stream = streamText({
       model: registeredModel.model,
@@ -620,6 +617,8 @@ export class ChatExecutionService {
         });
       },
       onStepEnd: async (step) => {
+        endedSteps.push(step);
+
         this.metricsService.recordHistogram({
           key: MetricsKeys.AiChatStepLatencyMs,
           value: performance.now() - stepStartedAt,
@@ -629,21 +628,18 @@ export class ChatExecutionService {
         });
 
         const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await turnUsageRecorder.trackStepDebit(
-            step,
-            this.aiBillingService.decrementAndCheckAvailableCredits({
-              modelId: registeredModel.modelId,
-              billingInput: {
-                usage: step.usage,
-                cacheCreationTokens: extractCacheCreationTokens(
-                  step.providerMetadata,
-                ),
-              },
-              workspaceId: workspace.id,
-              operationType: UsageOperationType.AI_CHAT_TOKEN,
-              spenders: { userWorkspaceId },
-            }),
-          );
+          await this.aiBillingService.decrementAndCheckAvailableCredits({
+            modelId: registeredModel.modelId,
+            billingInput: {
+              usage: step.usage,
+              cacheCreationTokens: extractCacheCreationTokens(
+                step.providerMetadata,
+              ),
+            },
+            workspaceId: workspace.id,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            spenders: { userWorkspaceId },
+          });
 
         if (stepHasNoMoreAvailableCredits) {
           hasNoMoreAvailableCredits = true;
@@ -695,9 +691,6 @@ export class ChatExecutionService {
           });
         }
       },
-      onAbort: async () => {
-        await turnUsageRecorder.recordOnce();
-      },
       repairToolCall: async ({
         toolCall,
         tools: toolsForRepair,
@@ -722,17 +715,9 @@ export class ChatExecutionService {
       },
     });
 
+    // stream.steps also settles on abort, but rejects without the debited steps on stream errors and worker shutdown
     Promise.all([stream.usage, stream.steps])
-      .then(async () => {
-        await turnUsageRecorder.recordOnce();
-      })
-      .catch(async (error) => {
-        await turnUsageRecorder
-          .recordOnce()
-          .catch((recordError) =>
-            this.exceptionHandlerService.captureExceptions([recordError]),
-          );
-
+      .catch((error) => {
         if (error?.name === 'AbortError') {
           return;
         }
@@ -749,7 +734,15 @@ export class ChatExecutionService {
         }
 
         this.exceptionHandlerService.captureExceptions([error]);
-      });
+      })
+      .then(async () => {
+        if (isNonEmptyArray(endedSteps)) {
+          await emitTurnUsageEvent(endedSteps);
+        }
+      })
+      .catch((error) =>
+        this.exceptionHandlerService.captureExceptions([error]),
+      );
 
     return {
       stream,
