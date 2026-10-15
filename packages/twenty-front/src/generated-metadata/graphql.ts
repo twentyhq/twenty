@@ -1952,6 +1952,23 @@ export type EmailingDomain = {
   verifiedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
+export enum EmailingDomainExceptionCode {
+  EMAILING_DOMAIN_ALREADY_REGISTERED = 'EMAILING_DOMAIN_ALREADY_REGISTERED',
+  EMAILING_DOMAIN_NOT_VERIFIED = 'EMAILING_DOMAIN_NOT_VERIFIED',
+  EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY = 'EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY',
+  MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS = 'MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS',
+  MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
+  MESSAGE_CAMPAIGN_NOT_FOUND = 'MESSAGE_CAMPAIGN_NOT_FOUND',
+  MESSAGE_CAMPAIGN_NOT_SENDABLE = 'MESSAGE_CAMPAIGN_NOT_SENDABLE',
+  MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS = 'MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS',
+  MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN = 'MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN',
+  MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE = 'MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE',
+  MESSAGE_CAMPAIGN_SUBSCRIPTION_INACTIVE = 'MESSAGE_CAMPAIGN_SUBSCRIPTION_INACTIVE',
+  MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED = 'MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED',
+  MESSAGE_SUPPRESSION_NOT_FOUND = 'MESSAGE_SUPPRESSION_NOT_FOUND',
+  MESSAGE_SUPPRESSION_NOT_REMOVABLE = 'MESSAGE_SUPPRESSION_NOT_REMOVABLE'
+}
+
 export enum EmailingDomainStatus {
   FAILED = 'FAILED',
   PENDING = 'PENDING',
@@ -2902,6 +2919,12 @@ export type MessageCampaignBodyConfiguration = {
 export type MessageCampaignDetailsConfiguration = {
   __typename?: 'MessageCampaignDetailsConfiguration';
   configurationType: WidgetConfigurationType;
+};
+
+export type MessageCampaignSendBlockerDto = {
+  __typename?: 'MessageCampaignSendBlockerDTO';
+  code: EmailingDomainExceptionCode;
+  message: Scalars['String']['output'];
 };
 
 export type MessageChannel = {
@@ -5261,6 +5284,17 @@ export type PreviewMessageCampaignAudienceInput = {
   unsubscribeTopicId?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type PreviewMessageCampaignSendInput = {
+  campaignId: Scalars['String']['input'];
+  scheduledAt?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type PreviewMessageCampaignSendOutputDto = {
+  __typename?: 'PreviewMessageCampaignSendOutputDTO';
+  audience?: Maybe<CampaignAudiencePreviewDto>;
+  blockers: Array<MessageCampaignSendBlockerDto>;
+};
+
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
   id: Scalars['UUID']['output'];
@@ -5449,6 +5483,7 @@ export type Query = {
   objects: ObjectConnection;
   pieChartData: PieChartData;
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
+  previewMessageCampaignSend: PreviewMessageCampaignSendOutputDto;
   publicMarketplaceAppDetail: MarketplaceAppDetail;
   publicMarketplaceApps: Array<MarketplaceApp>;
   recordPermissions: Array<RecordPermissionsResult>;
@@ -5923,6 +5958,11 @@ export type QueryPieChartDataArgs = {
 
 export type QueryPreviewMessageCampaignAudienceArgs = {
   input: PreviewMessageCampaignAudienceInput;
+};
+
+
+export type QueryPreviewMessageCampaignSendArgs = {
+  input: PreviewMessageCampaignSendInput;
 };
 
 
