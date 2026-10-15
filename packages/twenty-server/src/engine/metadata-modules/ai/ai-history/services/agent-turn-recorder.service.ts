@@ -164,10 +164,6 @@ export class AgentTurnRecorderService {
         threadId,
         turnId,
         usage: execution.turnUsage,
-      }).catch((usageError: unknown) => {
-        this.logger.error(
-          `Failed to record the usage of agent turn ${turnId}: ${usageError instanceof Error ? usageError.message : String(usageError)}`,
-        );
       });
     }
 
@@ -191,7 +187,8 @@ export class AgentTurnRecorderService {
     });
   }
 
-  // Credits were spent whatever became of the turn, so usage is never guarded by a stream claim
+  // Credits were spent whatever became of the turn, so usage is never guarded by a stream claim, and a
+  // failure to count it must not fail a reply already saved
   async recordUsage({
     workspaceId,
     turnId,
@@ -203,10 +200,11 @@ export class AgentTurnRecorderService {
     threadId: string;
     usage: AgentTurnUsage;
   }): Promise<void> {
-    await this.turnRepository.query(workspaceId, async ({ manager, table }) => {
-      // sum in Postgres: JS numbers must never be added to exact NUMERIC totals
-      await manager.query(
-        `WITH turn AS (
+    await this.turnRepository
+      .query(workspaceId, async ({ manager, table }) => {
+        // sum in Postgres: JS numbers must never be added to exact NUMERIC totals
+        await manager.query(
+          `WITH turn AS (
            UPDATE ${table('agentTurn')} SET
              "inputTokens" = COALESCE("inputTokens", 0) + $3,
              "outputTokens" = COALESCE("outputTokens", 0) + $4,
@@ -226,18 +224,23 @@ export class AgentTurnRecorderService {
            "totalInputCredits" = "totalInputCredits" + $7,
            "totalOutputCredits" = "totalOutputCredits" + $8
          WHERE id = $2`,
-        [
-          turnId,
-          threadId,
-          usage.inputTokens,
-          usage.outputTokens,
-          usage.cacheReadTokens,
-          usage.cacheCreationTokens,
-          usage.inputCredits,
-          usage.outputCredits,
-        ],
+          [
+            turnId,
+            threadId,
+            usage.inputTokens,
+            usage.outputTokens,
+            usage.cacheReadTokens,
+            usage.cacheCreationTokens,
+            usage.inputCredits,
+            usage.outputCredits,
+          ],
+        );
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not record the usage of turn ${turnId}: ${error instanceof Error ? error.message : String(error)}`,
+        ),
       );
-    });
   }
 
   // the waiting turn is the one holding the question, whoever ends the wait

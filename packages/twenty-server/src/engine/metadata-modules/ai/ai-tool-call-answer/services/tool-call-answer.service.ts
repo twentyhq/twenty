@@ -160,7 +160,7 @@ export class ToolCallAnswerService {
     const streamId = generateId();
 
     const hasClaimedStream =
-      await this.agentChatStreamingService.tryClaimStream({
+      await this.streamRecoveryService.tryClaimStream({
         threadId,
         workspaceId,
         streamId,

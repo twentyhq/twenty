@@ -15,14 +15,12 @@ import {
   type ExtendedFileUIPart,
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
-  isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In, IsNull, Like } from 'typeorm';
+import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -42,6 +40,7 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -86,7 +85,7 @@ export class AgentChatStreamingService {
     private readonly agentChatService: AgentChatService,
     private readonly threadService: AgentChatThreadService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
-    private readonly fileUrlService: FileUrlService,
+    private readonly conversationReaderService: AgentConversationReaderService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
@@ -96,31 +95,6 @@ export class AgentChatStreamingService {
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
-
-  async tryClaimStream({
-    threadId,
-    workspaceId,
-    streamId,
-    where = {},
-  }: AgentChatStreamClaim & {
-    where?: FindOptionsWhere<AgentChatThreadWorkspaceEntity>;
-  }): Promise<boolean> {
-    await this.streamHeartbeatService.markClaimed(streamId);
-
-    const claim = await this.threadRepository.update(
-      workspaceId,
-      { id: threadId, activeStreamId: IsNull(), ...where },
-      { activeStreamId: streamId },
-    );
-
-    if (!claim.affected) {
-      await this.streamHeartbeatService.clear(streamId);
-
-      return false;
-    }
-
-    return true;
-  }
 
   // a message that lands while a run goes on in the conversation would be read by that run once it
   // goes on after a wait, so it is let in only between runs
@@ -158,7 +132,11 @@ export class AgentChatStreamingService {
 
     const claimed =
       !hasQueuedBacklog &&
-      (await this.tryClaimStream({ threadId, workspaceId, streamId }));
+      (await this.streamRecoveryService.tryClaimStream({
+        threadId,
+        workspaceId,
+        streamId,
+      }));
 
     if (!claimed) {
       const queuedMessage = await this.agentChatService.queueMessage({
@@ -257,7 +235,7 @@ export class AgentChatStreamingService {
     const workspaceId = workspace.id;
     const streamId = generateId();
 
-    const claimed = await this.tryClaimStream({
+    const claimed = await this.streamRecoveryService.tryClaimStream({
       threadId,
       workspaceId,
       streamId,
@@ -353,7 +331,7 @@ export class AgentChatStreamingService {
 
     const streamId = generateId();
 
-    const claimed = await this.tryClaimStream({
+    const claimed = await this.streamRecoveryService.tryClaimStream({
       threadId,
       workspaceId,
       streamId,
@@ -563,7 +541,7 @@ export class AgentChatStreamingService {
 
     const streamId = generateId();
 
-    const claimed = await this.tryClaimStream({
+    const claimed = await this.streamRecoveryService.tryClaimStream({
       threadId,
       workspaceId,
       streamId,
@@ -748,24 +726,10 @@ export class AgentChatStreamingService {
       sentMessages.map(async (message) => ({
         id: message.id,
         role: message.role as 'user' | 'assistant' | 'system',
-        parts: await Promise.all(
-          mapDBPartsToUIMessageParts(message.parts ?? []).map(async (part) => {
-            if (isExtendedFileUIPart(part as Record<string, unknown>)) {
-              const filePart = part as ExtendedFileUIPart;
-
-              return {
-                ...filePart,
-                url: await this.fileUrlService.signFileByIdUrl({
-                  fileId: filePart.fileId,
-                  workspaceId,
-                  fileFolder: FileFolder.AgentChat,
-                }),
-              } as ExtendedFileUIPart;
-            }
-
-            return part;
-          }),
-        ),
+        parts: await this.conversationReaderService.signFileParts({
+          workspaceId,
+          parts: mapDBPartsToUIMessageParts(message.parts ?? []),
+        }),
         metadata: {
           createdAt: new Date(message.createdAt).toISOString(),
           senderWorkspaceMemberId: message.senderWorkspaceMemberId,
