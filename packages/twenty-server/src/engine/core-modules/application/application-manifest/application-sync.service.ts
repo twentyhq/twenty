@@ -19,6 +19,7 @@ import { toApplicationCapabilities } from 'src/engine/core-modules/application/u
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
+import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -83,6 +84,7 @@ export class ApplicationSyncService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
+    translationActions: ApplicationTranslationSyncAction[] | null;
   }> {
     // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
@@ -124,26 +126,41 @@ export class ApplicationSyncService {
       throw enrichApplicationManifestSyncError({ error, manifest });
     }
 
-    if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
-      // Non-critical and self-healing on next sync, so a failure must not abort the install
+    let translationActions: ApplicationTranslationSyncAction[] | null = [];
+    const translationRegistrationId =
+      ownerFlatApplication.applicationRegistrationId ??
+      (dryRun ? applicationRegistrationId : undefined);
+
+    if (isDefined(translationRegistrationId)) {
+      const translationInput = {
+        applicationRegistrationId: translationRegistrationId,
+        translations: manifest.translations,
+      };
+
+      // Translation failures must not discard the successful metadata result.
       try {
-        await this.applicationTranslationSyncService.syncFromManifest({
-          applicationRegistrationId:
-            ownerFlatApplication.applicationRegistrationId,
-          translations: manifest.translations,
-        });
+        translationActions = dryRun
+          ? await this.applicationTranslationSyncService.getSyncActions(
+              translationInput,
+            )
+          : await this.applicationTranslationSyncService.syncFromManifest(
+              translationInput,
+            );
       } catch (error) {
+        translationActions = null;
         this.logger.warn(
-          `Failed to sync application translations for registration ${ownerFlatApplication.applicationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to ${dryRun ? 'preview' : 'sync'} application translations for registration ${translationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
+    } else if (isDefined(manifest.translations)) {
+      translationActions = null;
     }
 
     this.logger.log(
       `Application sync from manifest ${dryRun ? 'plan computed (dry run)' : 'completed'}`,
     );
 
-    return syncResult;
+    return { ...syncResult, translationActions };
   }
 
   private async resolveDryRunOwnerFlatApplication({

@@ -1,10 +1,12 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { formatTranslationSummary } from '@/app/deployment/format-translation-summary';
 import { isDestructiveAppPlanAction } from '@/app/deployment/is-destructive-app-plan-action';
 import {
   type AppPlanAction,
   type AppPlanSummary,
+  type AppTranslationPlanAction,
 } from '@/app/deployment/types/app-plan.type';
 import { formatDataValue } from '@/data/format-data-value';
 import { boldText, colorText, dimText } from '@/output/style';
@@ -178,6 +180,46 @@ const formatUpdateAttributeLines = (
   });
 };
 
+const formatTranslationLines = (
+  action: AppTranslationPlanAction,
+  stream: NodeJS.WriteStream,
+) =>
+  Object.entries(action.diff ?? {})
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([messageId, change]) => {
+      const label = formatDataValue(
+        action.messageLabels?.[messageId] ??
+          `message ${JSON.stringify(messageId)} (source unavailable)`,
+      );
+      if (!isDefined(change.before)) {
+        return colorText(
+          'green',
+          `  + ${label} = ${formatPlanValue(change.after)}`,
+          stream,
+        );
+      }
+      if (!isDefined(change.after)) {
+        return colorText(
+          'red',
+          `  - ${label} = ${formatPlanValue(change.before)}`,
+          stream,
+        );
+      }
+      return `  ${colorText('yellow', '~', stream)} ${label} = ${colorText('red', formatPlanValue(change.before), stream)} ${dimText('->', stream)} ${colorText('green', formatPlanValue(change.after), stream)}`;
+    });
+
+const formatTranslationBlock = (
+  action: AppTranslationPlanAction,
+  stream: NodeJS.WriteStream,
+) =>
+  [
+    boldText(
+      `  # applicationTranslation ${formatPlanValue(action.locale)} ${VERB_BY_TYPE[action.type]}`,
+      stream,
+    ),
+    ...formatTranslationLines(action, stream),
+  ].join('\n');
+
 const formatBlock = (action: AppPlanAction, stream: NodeJS.WriteStream) => {
   const attributeLines =
     action.type === 'update'
@@ -226,16 +268,33 @@ const formatDestructiveWarning = (
 export const formatAppPlanActions = ({
   actions,
   summary,
+  translationActions,
   inferDeletionFromMissingEntities,
   stream = process.stdout,
 }: {
   actions: AppPlanAction[];
   summary: AppPlanSummary;
+  translationActions?: AppTranslationPlanAction[] | null;
   inferDeletionFromMissingEntities: boolean;
   stream?: NodeJS.WriteStream;
 }) => {
-  if (actions.length === 0) {
-    return 'No changes. Twenty metadata matches your manifest.';
+  const hasMetadataDeletions = actions.some(
+    (action) => action.type === 'delete',
+  );
+  const translationWarning =
+    translationActions === null
+      ? ['Translation changes could not be computed. Retry app plan.']
+      : translationActions === undefined
+        ? [
+            'This server does not report translation changes. Upgrade the server to preview translations.',
+          ]
+        : [];
+
+  if (actions.length === 0 && (translationActions?.length ?? 0) === 0) {
+    return [
+      'No changes. Twenty metadata matches your manifest.',
+      ...translationWarning,
+    ].join('\n');
   }
 
   const blocks = sortActions(actions)
@@ -245,10 +304,23 @@ export const formatAppPlanActions = ({
   return [
     boldText('Twenty will perform the following actions:', stream),
     '',
-    blocks.join('\n\n'),
+    ...(blocks.length ? [blocks.join('\n\n'), ''] : []),
+    ...(translationActions?.length
+      ? [
+          'Translations, shared by every workspace that installs this app:',
+          '',
+          ...translationActions.map((action) =>
+            formatTranslationBlock(action, stream),
+          ),
+        ]
+      : []),
+    ...translationWarning,
     '',
     `Plan: ${colorText('green', `${summary.create} to add`, stream)}, ${colorText('yellow', `${summary.update} to change`, stream)}, ${colorText('red', `${summary.delete} to destroy`, stream)}.`,
-    ...(inferDeletionFromMissingEntities && summary.delete > 0
+    ...(translationActions?.length
+      ? [formatTranslationSummary(translationActions)]
+      : []),
+    ...(inferDeletionFromMissingEntities && hasMetadataDeletions
       ? [dimText(NO_DELETE_HINT, stream)]
       : []),
     ...(summary.destructive > 0
@@ -262,12 +334,14 @@ export const formatAppPlan = ({
   apiUrl,
   actions,
   summary,
+  translationActions,
   inferDeletionFromMissingEntities,
 }: {
   applicationName: string;
   apiUrl: string;
   actions: AppPlanAction[];
   summary: AppPlanSummary;
+  translationActions?: AppTranslationPlanAction[] | null;
   inferDeletionFromMissingEntities: boolean;
 }) =>
   [
@@ -275,6 +349,7 @@ export const formatAppPlan = ({
     formatAppPlanActions({
       actions,
       summary,
+      translationActions,
       inferDeletionFromMissingEntities,
     }),
     'Use --json for complete action details.',

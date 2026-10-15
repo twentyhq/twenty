@@ -91,6 +91,7 @@ beforeEach(async () => {
     completedPhases: ['sync', 'pullBase'],
     isRegistrationCreated: false,
     appliedActions: [],
+    translationActions: [],
     acknowledgedUniversalIdentifier: 'id',
     upload: { fileCount: 0, byteCount: 0, hasCreatedTargets: false },
   };

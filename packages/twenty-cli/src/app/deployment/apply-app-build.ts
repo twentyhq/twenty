@@ -8,7 +8,10 @@ import { requireApproval } from '@/app/deployment/require-approval';
 import { resolveSnapshotDirectory } from '@/app/deployment/resolve-snapshot-directory';
 import { syncAppManifest } from '@/app/deployment/sync-app-manifest';
 import { type AppApplyPhase } from '@/app/deployment/types/app-apply-phase.type';
-import { type AppPlanAction } from '@/app/deployment/types/app-plan.type';
+import {
+  type AppPlanAction,
+  type AppTranslationPlanAction,
+} from '@/app/deployment/types/app-plan.type';
 import { type AppUploadProgress } from '@/app/deployment/types/app-upload-progress.type';
 import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { uploadAppFiles } from '@/app/deployment/upload-app-files';
@@ -21,6 +24,7 @@ export type AppApplyResult = {
   completedPhases: AppApplyPhase[];
   isRegistrationCreated: boolean;
   appliedActions: AppPlanAction[] | undefined;
+  translationActions: AppTranslationPlanAction[] | null | undefined;
   acknowledgedUniversalIdentifier: string;
   upload: AppUploadProgress;
 };
@@ -121,11 +125,11 @@ export const applyAppBuild = async ({
 
   const previewOrBootstrap = async () => {
     try {
-      const actions = await preview();
+      const plan = await preview();
 
       completedPhases.push('preview');
 
-      return { actions, isRegistrationCreated: false };
+      return { ...plan, isRegistrationCreated: false };
     } catch (error) {
       if (!isPlanUnavailable(error)) {
         throw fail(error, 'preview');
@@ -151,7 +155,7 @@ export const applyAppBuild = async ({
     output.progress('Computing metadata plan…');
 
     return {
-      actions: await runPhase('preview', preview),
+      ...(await runPhase('preview', preview)),
       isRegistrationCreated: true,
     };
   };
@@ -163,13 +167,15 @@ export const applyAppBuild = async ({
 
   output.progress(`Computing metadata plan on ${target.apiUrl}…`);
 
-  const { actions, isRegistrationCreated } = await previewOrBootstrap();
+  const { actions, translationActions, isRegistrationCreated } =
+    await previewOrBootstrap();
   const summary = getAppPlanSummary(actions);
 
   if (outputMode === 'human') {
     output.progress(
       formatAppPlanActions({
         actions,
+        translationActions,
         summary,
         inferDeletionFromMissingEntities,
         stream: process.stderr,
@@ -212,20 +218,38 @@ export const applyAppBuild = async ({
   );
   output.progress('Synchronizing the app…');
 
-  const { actions: appliedActions, acknowledgedUniversalIdentifier } =
-    await runPhase('sync', () =>
-      syncAppManifest({
-        build,
-        inferDeletionFromMissingEntities,
-        target,
-        signal,
-      }),
-    );
+  const {
+    actions: appliedActions,
+    translationActions: appliedTranslationActions,
+    acknowledgedUniversalIdentifier,
+  } = await runPhase('sync', () =>
+    syncAppManifest({
+      build,
+      inferDeletionFromMissingEntities,
+      target,
+      signal,
+    }),
+  );
+
+  if (appliedTranslationActions === undefined) {
+    output.warn({
+      code: 'TRANSLATION_REPORT_UNSUPPORTED',
+      message:
+        'This server does not report translation changes. Upgrade the server to see translation results.',
+    });
+  } else if (appliedTranslationActions === null) {
+    output.warn({
+      code: 'TRANSLATION_REPORT_UNAVAILABLE',
+      message:
+        'Metadata was applied, but translation sync failed. Retry app apply to synchronize translations.',
+    });
+  }
 
   return {
     completedPhases,
     isRegistrationCreated,
     appliedActions,
+    translationActions: appliedTranslationActions,
     acknowledgedUniversalIdentifier,
     upload,
   };

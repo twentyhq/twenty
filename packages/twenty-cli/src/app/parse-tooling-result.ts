@@ -9,6 +9,9 @@ import {
 } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 
+const isStringRecord = (value: unknown): value is Record<string, string> =>
+  isPlainObject(value) && Object.values(value).every(isString);
+
 const isOptionalString = (value: unknown) =>
   !isDefined(value) || isString(value);
 
@@ -56,7 +59,9 @@ export const parseBuildData = (
     !isString(value.manifestFormat) ||
     !isPlainObject(value.manifest) ||
     !isArray(value.files) ||
-    !value.files.every(isToolingArtifact)
+    !value.files.every(isToolingArtifact) ||
+    (isDefined(value.translationLabels) &&
+      !isStringRecord(value.translationLabels))
   ) {
     return undefined;
   }
@@ -74,6 +79,9 @@ export const parseBuildData = (
       manifestFormat: value.manifestFormat,
       manifest: value.manifest,
       files: value.files,
+      ...(isStringRecord(value.translationLabels)
+        ? { translationLabels: value.translationLabels }
+        : {}),
     },
   };
 };

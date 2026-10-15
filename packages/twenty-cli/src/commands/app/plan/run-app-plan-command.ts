@@ -18,10 +18,10 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
   const inferDeletionFromMissingEntities = context.options.delete !== false;
 
   context.output.progress(
-    'Computing metadata plan (read-only, nothing will be applied)…',
+    'Computing app plan (read-only, nothing will be applied)…',
   );
 
-  const actions = await fetchAppPlan({
+  const { actions, translationActions } = await fetchAppPlan({
     build,
     inferDeletionFromMissingEntities,
     target: context.target,
@@ -38,6 +38,7 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
       plan: true,
       inferDeletionFromMissingEntities,
       actions,
+      translationActions,
       summary,
       diagnostics,
       durationMilliseconds: Math.round(performance.now() - startedAt),
@@ -46,6 +47,7 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
       applicationName: build.application.displayName,
       apiUrl: context.target.apiUrl,
       actions,
+      translationActions,
       summary,
       inferDeletionFromMissingEntities,
     }),

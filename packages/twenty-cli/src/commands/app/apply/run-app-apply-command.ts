@@ -144,6 +144,7 @@ export const runAppApplyCommand: CommandRun<TargetCommandContext> = async (
       registrationCreated: applyResult.isRegistrationCreated,
       completedPhases: applyResult.completedPhases,
       actions: applyResult.appliedActions ?? null,
+      translationActions: applyResult.translationActions,
       summary: summary ?? null,
       upload: {
         fileCount: applyResult.upload.fileCount,
@@ -158,6 +159,7 @@ export const runAppApplyCommand: CommandRun<TargetCommandContext> = async (
       applicationName: build.application.displayName,
       apiUrl: context.target.apiUrl,
       summary,
+      translationActions: applyResult.translationActions,
       upload: applyResult.upload,
       isRegistrationCreated: applyResult.isRegistrationCreated,
       clientGeneration,

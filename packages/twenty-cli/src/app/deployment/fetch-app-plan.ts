@@ -5,7 +5,7 @@ import { parseAppPlan } from '@/app/deployment/parse-app-plan';
 import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
-import { createMetadataClient } from '@/transport/metadata/create-metadata-client';
+import { requestAppSync } from '@/app/deployment/request-app-sync';
 
 export const fetchAppPlan = async ({
   build,
@@ -31,22 +31,18 @@ export const fetchAppPlan = async ({
   }
 
   try {
-    const data = await createMetadataClient({ target, signal }).mutation({
-      __name: 'PreviewApplication',
-      syncApplication: {
-        __args: {
-          manifest: build.manifest,
-          dryRun: true,
-          inferDeletionFromMissingEntities,
-        },
-        applicationUniversalIdentifier: true,
-        actions: true,
-      },
+    const data = await requestAppSync({
+      build,
+      inferDeletionFromMissingEntities,
+      target,
+      signal,
+      dryRun: true,
     });
 
     return parseAppPlan({
       value: data?.syncApplication,
       applicationUniversalIdentifier: build.application.universalIdentifier,
+      translationLabels: build.translationLabels,
     });
   } catch (error) {
     if (

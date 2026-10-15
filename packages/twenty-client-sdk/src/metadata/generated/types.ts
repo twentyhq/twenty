@@ -15087,6 +15087,9 @@ export default {
             "applicationUniversalIdentifier": [
                 1
             ],
+            "translationActions": [
+                289
+            ],
             "__typename": [
                 1
             ]

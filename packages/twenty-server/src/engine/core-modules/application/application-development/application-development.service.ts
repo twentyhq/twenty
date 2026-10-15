@@ -148,19 +148,21 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
-      {
-        universalIdentifier: manifest.application.universalIdentifier,
-        workspaceId,
-      },
-    );
+    const applicationRegistration =
+      await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+        {
+          universalIdentifier: manifest.application.universalIdentifier,
+          workspaceId,
+        },
+      );
 
     if (dryRun === true) {
-      const { workspaceMigration } =
+      const { workspaceMigration, translationActions } =
         await this.applicationSyncService.synchronizeFromManifest({
           workspaceId,
           manifest,
           dryRun: true,
+          applicationRegistrationId: applicationRegistration.id,
           inferDeletionFromMissingEntities:
             shouldInferDeletionFromMissingEntities,
         });
@@ -169,6 +171,7 @@ export class ApplicationDevelopmentService {
         applicationUniversalIdentifier:
           workspaceMigration.applicationUniversalIdentifier,
         actions: workspaceMigration.actions,
+        translationActions,
       };
     }
 
@@ -271,7 +274,7 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    const { workspaceMigration } =
+    const { workspaceMigration, translationActions } =
       await this.applicationManifestApplyService.applyManifestToWorkspace({
         workspaceId,
         manifest,
@@ -290,6 +293,7 @@ export class ApplicationDevelopmentService {
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
       actions: workspaceMigration.actions,
+      translationActions,
     };
   }
 

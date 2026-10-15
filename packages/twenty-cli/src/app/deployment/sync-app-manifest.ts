@@ -6,7 +6,7 @@ import { parseAppPlan } from '@/app/deployment/parse-app-plan';
 import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
-import { createMetadataClient } from '@/transport/metadata/create-metadata-client';
+import { requestAppSync } from '@/app/deployment/request-app-sync';
 
 const withoutResponseContent = (error: unknown) => {
   if (!(error instanceof CliError) || !isPlainObject(error.details)) {
@@ -27,12 +27,18 @@ const withoutResponseContent = (error: unknown) => {
 const readAppliedActions = ({
   value,
   applicationUniversalIdentifier,
+  translationLabels,
 }: {
   value: unknown;
   applicationUniversalIdentifier: string;
+  translationLabels?: Record<string, string>;
 }) => {
   try {
-    return parseAppPlan({ value, applicationUniversalIdentifier });
+    return parseAppPlan({
+      value,
+      applicationUniversalIdentifier,
+      translationLabels,
+    });
   } catch (error) {
     if (error instanceof CliError) {
       return undefined;
@@ -54,18 +60,14 @@ export const syncAppManifest = async ({
   signal: AbortSignal;
 }) => {
   const applicationUniversalIdentifier = build.application.universalIdentifier;
-  const data = await createMetadataClient({ target, signal })
-    .mutation({
-      __name: 'SyncApplication',
-      syncApplication: {
-        __args: { manifest: build.manifest, inferDeletionFromMissingEntities },
-        applicationUniversalIdentifier: true,
-        actions: true,
-      },
-    })
-    .catch((error: unknown) => {
-      throw withoutResponseContent(error);
-    });
+  const data = await requestAppSync({
+    build,
+    inferDeletionFromMissingEntities,
+    target,
+    signal,
+  }).catch((error: unknown) => {
+    throw withoutResponseContent(error);
+  });
   const acknowledgement = data?.syncApplication;
 
   if (
@@ -82,11 +84,15 @@ export const syncAppManifest = async ({
     });
   }
 
+  const plan = readAppliedActions({
+    value: acknowledgement,
+    applicationUniversalIdentifier,
+    translationLabels: build.translationLabels,
+  });
+
   return {
-    actions: readAppliedActions({
-      value: acknowledgement,
-      applicationUniversalIdentifier,
-    }),
+    actions: plan?.actions,
+    translationActions: plan ? plan.translationActions : null,
     acknowledgedUniversalIdentifier:
       acknowledgement.applicationUniversalIdentifier,
   };

@@ -70,6 +70,7 @@ beforeEach(() => {
     isRegistrationCreated: false,
     acknowledgedUniversalIdentifier: 'app-id',
     appliedActions: [],
+    translationActions: [],
     upload: { byteCount: 0, fileCount: 0, hasCreatedTargets: false },
   });
 });
