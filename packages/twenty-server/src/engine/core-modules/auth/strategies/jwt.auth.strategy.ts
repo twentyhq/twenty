@@ -358,6 +358,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     const context: RawAuthContext = { application, workspace };
 
+    if (isDefined(payload.agentId)) {
+      context.agentId = payload.agentId;
+    }
+
     if (payload.userId && payload.userWorkspaceId) {
       const userContext = await this.resolveUserContext({
         userId: payload.userId,

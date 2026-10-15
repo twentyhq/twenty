@@ -207,7 +207,7 @@ export const SettingsAccountsConnectionForm = ({
                   <Select
                     label={t`IMAP Connection security`}
                     options={[
-                      { label: 'None', value: 'NONE' },
+                      { label: t`None`, value: 'NONE' },
                       { label: 'STARTTLS', value: 'STARTTLS' },
                       { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
@@ -304,7 +304,7 @@ export const SettingsAccountsConnectionForm = ({
                   <Select
                     label={t`SMTP Connection security`}
                     options={[
-                      { label: 'None', value: 'NONE' },
+                      { label: t`None`, value: 'NONE' },
                       { label: 'STARTTLS', value: 'STARTTLS' },
                       { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}

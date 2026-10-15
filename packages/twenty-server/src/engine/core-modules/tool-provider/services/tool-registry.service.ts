@@ -513,6 +513,7 @@ export class ToolRegistryService {
       actorContext: context.actorContext,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
+      agentId: context.agentId,
       threadId: context.threadId,
       locale: context.locale,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,

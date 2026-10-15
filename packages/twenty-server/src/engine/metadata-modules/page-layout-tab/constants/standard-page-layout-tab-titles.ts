@@ -16,4 +16,8 @@ export const getStandardPageLayoutTabTitles = () => [
   msg({ message: `Call Recording`, context: 'pageLayoutTab.title' }),
   msg({ message: `Email`, context: 'pageLayoutTab.title' }),
   msg({ message: `Summary`, context: 'pageLayoutTab.title' }),
+  msg({ message: `Fields`, context: 'pageLayoutTab.title' }),
+  msg({ message: `Chat`, context: 'pageLayoutTab.title' }),
+  msg({ message: `Task`, context: 'pageLayoutTab.title' }),
+  msg({ message: `Thread`, context: 'pageLayoutTab.title' }),
 ];

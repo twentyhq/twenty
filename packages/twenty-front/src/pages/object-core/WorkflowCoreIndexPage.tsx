@@ -140,6 +140,7 @@ export const WorkflowCoreIndexPage = () => {
           label={t`New Workflow`}
           onClick={createCoreWorkflow}
           disabled={isCreatingCoreWorkflow}
+          hasCheckboxColumn
         />
       )}
     </CoreObjectIndexPageLayout>

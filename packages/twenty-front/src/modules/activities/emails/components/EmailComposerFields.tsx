@@ -212,6 +212,7 @@ export const EmailComposerFields = ({
                 <Select
                   dropdownId="email-composer-from-account"
                   fullWidth
+                  variant="transparent"
                   value={selectedSenderValue}
                   options={senderOptions}
                   onChange={handleSenderChange}
@@ -291,7 +292,6 @@ export const EmailComposerFields = ({
         <FormAdvancedTextFieldInput
           defaultValue={composerState.initialBody}
           onChange={composerState.setBody}
-          placeholder={t`Type something or press "/" to see commands`}
           profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
           onImageUpload={uploadEmailImage}
         />

@@ -1,3 +1,5 @@
+import { Blockquote } from '@/advanced-text-editor/extensions/blockquote/Blockquote';
+import { EmptyBlockHint } from '@/advanced-text-editor/extensions/empty-block-hint/EmptyBlockHint';
 import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
 import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
@@ -20,11 +22,13 @@ export const buildFullRichTextExtensions = (
   Strike,
   Underline,
   Heading.configure({ levels: [1, 2, 3] }),
-  ListKit,
+  ListKit.configure({ taskItem: false, taskList: false }),
+  Blockquote,
   Link.configure({ openOnClick: false }),
   ResizableImage,
   UploadImageExtension.configure(context),
   SlashCommand,
+  EmptyBlockHint,
 ];
 
 export const buildFullRichTextWithVariableTagExtensions = (
