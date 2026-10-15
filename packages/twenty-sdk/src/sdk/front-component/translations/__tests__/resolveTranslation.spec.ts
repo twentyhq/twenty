@@ -14,7 +14,9 @@ describe('resolveTranslation', () => {
       'fr-FR': { [generateMessageId('Save')]: 'Enregistrer' },
     });
 
-    expect(resolveTranslation('Save', undefined, 'fr-FR')).toBe('Enregistrer');
+    expect(resolveTranslation({ descriptor: 'Save', locale: 'fr-FR' })).toBe(
+      'Enregistrer',
+    );
   });
 
   it('falls back to the source message when the locale is missing', () => {
@@ -22,13 +24,17 @@ describe('resolveTranslation', () => {
       'fr-FR': { [generateMessageId('Save')]: 'Enregistrer' },
     });
 
-    expect(resolveTranslation('Save', undefined, 'de-DE')).toBe('Save');
+    expect(resolveTranslation({ descriptor: 'Save', locale: 'de-DE' })).toBe(
+      'Save',
+    );
   });
 
   it('falls back to the source message when the key is untranslated', () => {
     setFrontComponentTranslations({ 'fr-FR': {} });
 
-    expect(resolveTranslation('Cancel', undefined, 'fr-FR')).toBe('Cancel');
+    expect(resolveTranslation({ descriptor: 'Cancel', locale: 'fr-FR' })).toBe(
+      'Cancel',
+    );
   });
 
   it('resolves context-disambiguated messages independently', () => {
@@ -40,18 +46,16 @@ describe('resolveTranslation', () => {
     });
 
     expect(
-      resolveTranslation(
-        { message: 'Open', context: 'door' },
-        undefined,
-        'fr-FR',
-      ),
+      resolveTranslation({
+        descriptor: { message: 'Open', context: 'door' },
+        locale: 'fr-FR',
+      }),
     ).toBe('Ouvrir');
     expect(
-      resolveTranslation(
-        { message: 'Open', context: 'window' },
-        undefined,
-        'fr-FR',
-      ),
+      resolveTranslation({
+        descriptor: { message: 'Open', context: 'window' },
+        locale: 'fr-FR',
+      }),
     ).toBe('Lever');
   });
 
@@ -64,7 +68,11 @@ describe('resolveTranslation', () => {
     });
 
     expect(
-      resolveTranslation('Saved {count} cards', { count: 5 }, 'fr-FR'),
+      resolveTranslation({
+        descriptor: 'Saved {count} cards',
+        values: { count: 5 },
+        locale: 'fr-FR',
+      }),
     ).toBe('Cartes enregistrées : 5');
   });
 });

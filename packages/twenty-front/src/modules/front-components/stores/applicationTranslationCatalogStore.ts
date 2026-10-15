@@ -1,73 +1,21 @@
-import { isString } from '@sniptt/guards';
 import { type ApolloClient } from '@apollo/client';
+import { isString } from '@sniptt/guards';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import {
+  createApplicationTranslationCatalogStore,
+  type ApplicationTranslationCatalogStore,
+} from '@/front-components/utils/createApplicationTranslationCatalogStore';
 import { GetApplicationTranslationCatalogDocument } from '~/generated-metadata/graphql';
 
-type CatalogSnapshot = {
-  translationCatalog: Record<string, string>;
-  hasSettled: boolean;
-};
+const storesByClient = new WeakMap<
+  ApolloClient,
+  Map<string, ApplicationTranslationCatalogStore>
+>();
 
-type CatalogStore = {
-  getSnapshot: () => CatalogSnapshot;
-  subscribe: (listener: () => void) => () => void;
-  invalidate: () => void;
-};
-
-const storesByClient = new WeakMap<ApolloClient, Map<string, CatalogStore>>();
-
-const createCatalogStore = (
-  load: () => Promise<Record<string, string>>,
-): CatalogStore => {
-  let snapshot: CatalogSnapshot = { translationCatalog: {}, hasSettled: false };
-  const listeners = new Set<() => void>();
-  let isFetching = false;
-  let isScheduled = false;
-  let isDirty = false;
-
-  const refresh = async () => {
-    isScheduled = false;
-    if (isFetching || listeners.size === 0 || !isDirty) return;
-    isFetching = true;
-    isDirty = false;
-    try {
-      const translationCatalog = await load().catch(
-        () => snapshot.translationCatalog,
-      );
-      snapshot = { translationCatalog, hasSettled: true };
-      for (const listener of listeners) listener();
-    } finally {
-      isFetching = false;
-      if (isDirty) schedule();
-    }
-  };
-
-  const schedule = () => {
-    if (isScheduled) return;
-    isScheduled = true;
-    queueMicrotask(() => {
-      void refresh();
-    });
-  };
-  const invalidate = () => {
-    isDirty = true;
-    schedule();
-  };
-
-  return {
-    getSnapshot: () => snapshot,
-    invalidate,
-    subscribe: (listener) => {
-      listeners.add(listener);
-      if (listeners.size === 1) invalidate();
-      return () => {
-        listeners.delete(listener);
-      };
-    },
-  };
-};
+const isCatalog = (value: unknown): value is Record<string, string> =>
+  isPlainObject(value) && Object.values(value).every(isString);
 
 export const getApplicationTranslationCatalogStore = ({
   client,
@@ -79,18 +27,23 @@ export const getApplicationTranslationCatalogStore = ({
   workspaceId: string | undefined;
   applicationId: string;
   locale: AppLocale;
-}): CatalogStore => {
-  let stores = storesByClient.get(client);
-  if (!stores) {
-    stores = new Map();
-    storesByClient.set(client, stores);
-  }
+}): ApplicationTranslationCatalogStore => {
+  const stores =
+    storesByClient.get(client) ??
+    new Map<string, ApplicationTranslationCatalogStore>();
+  storesByClient.set(client, stores);
   const key = JSON.stringify([workspaceId, applicationId, locale]);
-  let store = stores.get(key);
-  if (!store) {
-    // One ordered request stream per catalog, including invalidations received in flight.
-    store = createCatalogStore(async () => {
-      if (locale === SOURCE_LOCALE) return {};
+  const existingStore = stores.get(key);
+  if (isDefined(existingStore)) {
+    return existingStore;
+  }
+
+  // An ordered request stream keeps in-flight invalidations from being lost.
+  const store = createApplicationTranslationCatalogStore({
+    load: async () => {
+      if (locale === SOURCE_LOCALE) {
+        return {};
+      }
       const result = await client.query({
         query: GetApplicationTranslationCatalogDocument,
         variables: { applicationId, locale },
@@ -98,11 +51,14 @@ export const getApplicationTranslationCatalogStore = ({
         context: { queryDeduplication: false },
       });
       const catalog: unknown = result.data?.applicationTranslationCatalog;
-      const isCatalog = (value: unknown): value is Record<string, string> =>
-        isPlainObject(value) && Object.values(value).every(isString);
       return isCatalog(catalog) ? catalog : {};
-    });
-    stores.set(key, store);
-  }
+    },
+    onUnused: () => {
+      if (stores.get(key) === store) {
+        stores.delete(key);
+      }
+    },
+  });
+  stores.set(key, store);
   return store;
 };

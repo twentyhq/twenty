@@ -8,6 +8,12 @@ import {
 } from 'twenty-shared/translations';
 import chunk from 'lodash.chunk';
 import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
+
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -40,6 +46,8 @@ export class ApplicationTranslationCacheService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleApplications)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async getCurrentCatalog({
@@ -53,12 +61,7 @@ export class ApplicationTranslationCacheService {
       return EMPTY_CATALOG;
     }
 
-    // Other server processes can retain an older memoized catalog after apply.
-    const row = await this.applicationTranslationRepository.findOne({
-      where: { applicationRegistrationId, locale },
-      select: { messages: true },
-    });
-    return row?.messages ?? EMPTY_CATALOG;
+    return this.getCatalog({ applicationRegistrationId, locale });
   }
 
   async getCatalog({
@@ -78,16 +81,50 @@ export class ApplicationTranslationCacheService {
   async getCatalogsByLocale(
     applicationRegistrationId: string,
   ): Promise<ApplicationCatalogsByLocale> {
+    const generationKey = `${this.getCacheKey(applicationRegistrationId)}:generation`;
+    const cachedGeneration =
+      await this.cacheStorageService.get<string>(generationKey);
+    const generation = cachedGeneration ?? uuidv4();
+    if (!isDefined(cachedGeneration)) {
+      const initialized = await this.cacheStorageService.setIfAbsent(
+        generationKey,
+        generation,
+        0,
+      );
+      if (!initialized) {
+        return this.getCatalogsByLocale(applicationRegistrationId);
+      }
+    }
+    const cacheKey: CacheKey = `${this.getCacheKey(applicationRegistrationId)}:${generation}`;
     const catalogsByLocale =
       await this.catalogsMemoizer.memoizePromiseAndExecute(
-        this.getCacheKey(applicationRegistrationId),
-        () => this.loadCatalogsByLocale(applicationRegistrationId),
+        cacheKey,
+        async () => {
+          const cachedCatalogs =
+            await this.cacheStorageService.get<ApplicationCatalogsByLocale>(
+              cacheKey,
+            );
+          if (isDefined(cachedCatalogs)) {
+            return cachedCatalogs;
+          }
+          const catalogs = await this.loadCatalogsByLocale(
+            applicationRegistrationId,
+          );
+          await this.cacheStorageService.set(cacheKey, catalogs, CACHE_TTL_MS);
+          return catalogs;
+        },
       );
 
     return catalogsByLocale ?? {};
   }
 
   async invalidate(applicationRegistrationId: string): Promise<void> {
+    // A read started before commit must never populate the next generation.
+    await this.cacheStorageService.set(
+      `${this.getCacheKey(applicationRegistrationId)}:generation`,
+      uuidv4(),
+      0,
+    );
     await this.catalogsMemoizer.clearKeys(
       this.getCacheKey(applicationRegistrationId),
     );
@@ -124,7 +161,7 @@ export class ApplicationTranslationCacheService {
       }
     } catch (error) {
       this.logger.warn(
-        'Failed to broadcast application translation changes',
+        `Failed to broadcast application translation changes for registration ${applicationRegistrationId}`,
         error,
       );
     }

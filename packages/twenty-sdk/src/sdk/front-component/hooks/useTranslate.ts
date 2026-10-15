@@ -31,7 +31,12 @@ export const useTranslate = (): UseTranslateResult => {
 
   const t = useCallback(
     (descriptor: string | MessageDescriptor, values?: TranslationValues) =>
-      resolveTranslation(descriptor, values, locale, translationCatalog),
+      resolveTranslation({
+        descriptor,
+        values,
+        locale,
+        catalog: translationCatalog,
+      }),
     [locale, translationCatalog],
   );
 

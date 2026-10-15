@@ -16,4 +16,5 @@ const getCurrentLocale = (): AppLocale => {
 export const t = (
   descriptor: string | MessageDescriptor,
   values?: TranslationValues,
-): string => resolveTranslation(descriptor, values, getCurrentLocale());
+): string =>
+  resolveTranslation({ descriptor, values, locale: getCurrentLocale() });

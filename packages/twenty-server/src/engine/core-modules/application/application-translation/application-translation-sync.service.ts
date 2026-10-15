@@ -54,9 +54,28 @@ export class ApplicationTranslationSyncService {
       return [];
     }
 
-    let actions: ApplicationTranslationSyncAction[];
+    const actions = await this.persistTranslations({
+      applicationRegistrationId,
+      translations,
+    });
+
+    if (actions.length > 0) {
+      void this.applicationTranslationCacheService.notifyCatalogUpdated(
+        applicationRegistrationId,
+      );
+    }
+    return actions;
+  }
+
+  private async persistTranslations({
+    applicationRegistrationId,
+    translations,
+  }: {
+    applicationRegistrationId: string;
+    translations: TranslationsManifest;
+  }): Promise<ApplicationTranslationSyncAction[]> {
     try {
-      actions = await this.applicationTranslationRepository.manager.transaction(
+      return await this.applicationTranslationRepository.manager.transaction(
         async (manager) => {
           const repository = manager.getRepository(
             ApplicationTranslationEntity,
@@ -91,12 +110,5 @@ export class ApplicationTranslationSyncService {
         applicationRegistrationId,
       );
     }
-
-    if (actions.length > 0) {
-      void this.applicationTranslationCacheService.notifyCatalogUpdated(
-        applicationRegistrationId,
-      );
-    }
-    return actions;
   }
 }

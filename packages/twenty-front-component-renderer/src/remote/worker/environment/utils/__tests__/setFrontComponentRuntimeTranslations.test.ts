@@ -23,8 +23,9 @@ afterEach(() => {
     FRONT_COMPONENT_CONTEXT_KEY,
     FRONT_COMPONENT_LISTENERS_KEY,
     FRONT_COMPONENT_TRANSLATIONS_KEY,
-  ])
-    delete scope[key];
+  ]) {
+    Reflect.deleteProperty(scope, key);
+  }
 });
 
 it('seeds catalogs before notifying mounted component listeners and clears removed messages', () => {

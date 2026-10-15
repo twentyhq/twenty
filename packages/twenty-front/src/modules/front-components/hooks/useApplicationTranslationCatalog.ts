@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client/react';
-import { useEffect, useSyncExternalStore, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -24,7 +24,6 @@ export const useApplicationTranslationCatalog = ({
     applicationId,
     locale,
   });
-  const [hasFinishedInitialWait, setHasFinishedInitialWait] = useState(false);
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
@@ -47,20 +46,17 @@ export const useApplicationTranslationCatalog = ({
   });
 
   const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot);
-  useEffect(() => {
-    if (snapshot.hasSettled) {
-      setHasFinishedInitialWait(true);
-      return;
-    }
-    const timeout = setTimeout(() => setHasFinishedInitialWait(true), 500);
-    return () => clearTimeout(timeout);
-  }, [snapshot.hasSettled]);
+  const [hasFinishedInitialWait, setHasFinishedInitialWait] = useState(false);
+  const isCatalogReady =
+    !snapshot.isWaitingForInitialCatalog || locale === SOURCE_LOCALE;
+
+  // Later locale loads must not unmount an already running component.
+  if (isCatalogReady && !hasFinishedInitialWait) {
+    setHasFinishedInitialWait(true);
+  }
 
   return {
     translationCatalog: snapshot.translationCatalog,
-    isWaitingForInitialCatalog:
-      !hasFinishedInitialWait &&
-      !snapshot.hasSettled &&
-      locale !== SOURCE_LOCALE,
+    isWaitingForInitialCatalog: !hasFinishedInitialWait && !isCatalogReady,
   };
 };

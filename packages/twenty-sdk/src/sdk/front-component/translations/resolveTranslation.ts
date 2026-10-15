@@ -11,12 +11,17 @@ import {
   type TranslationValues,
 } from './message';
 
-export const resolveTranslation = (
-  descriptor: string | MessageDescriptor,
-  values: TranslationValues | undefined,
-  locale: AppLocale,
+export const resolveTranslation = ({
+  descriptor,
+  values,
+  locale,
   catalog = getFrontComponentTranslations()[locale],
-): string => {
+}: {
+  descriptor: string | MessageDescriptor;
+  values?: TranslationValues;
+  locale: AppLocale;
+  catalog?: Record<string, string>;
+}): string => {
   const { message, context } = normalizeMessageDescriptor(descriptor);
 
   const translation = catalog?.[generateMessageId(message, context)];
