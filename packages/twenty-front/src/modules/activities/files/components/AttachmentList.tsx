@@ -170,10 +170,11 @@ export const AttachmentList = ({
               />
             ) : (
               <ActivityList>
-                {attachmentsWithFile.map((attachment) => (
+                {attachmentsWithFile.map((attachment, index) => (
                   <AttachmentRow
                     key={attachment.id}
                     attachment={attachment}
+                    divider={index < attachmentsWithFile.length - 1}
                     onPreview={
                       isAttachmentPreviewEnabled ? handlePreview : undefined
                     }

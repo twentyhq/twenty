@@ -8,10 +8,6 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-
-  & > :last-child {
-    flex: 1;
-  }
 `;
 
 const StyledColorSwatchInput = styled.input`

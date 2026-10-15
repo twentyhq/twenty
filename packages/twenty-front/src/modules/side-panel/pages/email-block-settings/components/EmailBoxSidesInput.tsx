@@ -12,14 +12,11 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-
-  & > :first-child {
-    flex: 1;
-  }
 `;
 
 const StyledSidesGrid = styled.div`
   display: grid;
+  flex: 1;
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: repeat(4, 1fr);
   margin-top: ${themeCssVariables.spacing[1]};
