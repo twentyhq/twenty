@@ -25,6 +25,7 @@ export enum SettingsPath {
   ObjectNewFieldSelect = 'objects/:objectNamePlural/new-field/select',
   ObjectNewFieldConfigure = 'objects/:objectNamePlural/new-field/configure',
   ObjectNewIndex = 'objects/:objectNamePlural/new-index',
+  ObjectValidationRuleNew = 'objects/:objectNamePlural/validation-rules/new',
   ObjectValidationRuleEdit = 'objects/:objectNamePlural/validation-rules/:validationRuleId',
   ObjectFieldEdit = 'objects/:objectNamePlural/:fieldName',
   ObjectTranslations = 'objects/:objectNamePlural/object-translations',

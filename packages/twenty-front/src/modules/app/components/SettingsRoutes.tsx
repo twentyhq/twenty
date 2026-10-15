@@ -546,6 +546,14 @@ const SettingsObjectNewIndex = lazy(() =>
   ),
 );
 
+const SettingsObjectValidationRuleNew = lazy(() =>
+  import('~/pages/settings/data-model/validation-rules/SettingsObjectValidationRuleNew').then(
+    (module) => ({
+      default: module.SettingsObjectValidationRuleNew,
+    }),
+  ),
+);
+
 const SettingsObjectValidationRuleEdit = lazy(() =>
   import('~/pages/settings/data-model/validation-rules/SettingsObjectValidationRuleEdit').then(
     (module) => ({
@@ -985,6 +993,11 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectNewIndex}
         element={<SettingsObjectNewIndex />}
+        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+      <Route
+        path={SettingsPath.ObjectValidationRuleNew}
+        element={<SettingsObjectValidationRuleNew />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
       <Route
