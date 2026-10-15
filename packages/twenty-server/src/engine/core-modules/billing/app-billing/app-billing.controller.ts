@@ -29,6 +29,8 @@ import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -37,13 +39,12 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 const APP_BILLING_CHARGE_THROTTLE_LIMIT = 1000;
 const APP_BILLING_CHARGE_THROTTLE_TTL_MS = 60_000;
 
-const CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON: Record<
-  SubscriptionInactiveReason | 'NO_CREDITS',
+const CREDIT_UNAVAILABLE_REASON_BY_SUBSCRIPTION_INACTIVE_REASON: Record<
+  SubscriptionInactiveReason,
   CreditUnavailableReason
 > = {
   WORKSPACE_SUSPENDED: 'workspace-suspended',
   NO_SUBSCRIPTION: 'no-subscription',
-  NO_CREDITS: 'no-credits',
 };
 
 @Controller(`${ApiPath.App}/billing`)
@@ -81,20 +82,30 @@ export class AppBillingController {
       APP_BILLING_CHARGE_THROTTLE_TTL_MS,
     );
 
-    const creditAvailability =
-      await this.usageQuotaAdmissionService.getCreditAvailability(
-        request.workspace.id,
-      );
+    const usageRefusal = await this.usageQuotaAdmissionService.findUsageRefusal(
+      {
+        workspaceId: request.workspace.id,
+        resourceType: UsageResourceType.APP,
+        operationType: UsageOperationType.ALL,
+        spenders: { applicationId: request.application.id },
+      },
+    );
 
-    return creditAvailability.hasAvailableCredits
-      ? { hasAvailableCredits: true }
-      : {
-          hasAvailableCredits: false,
-          reason:
-            CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON[
-              creditAvailability.reason
-            ],
-        };
+    if (!isDefined(usageRefusal)) {
+      return { hasAvailableCredits: true };
+    }
+
+    if (usageRefusal.kind === 'subscriptionInactive') {
+      return {
+        hasAvailableCredits: false,
+        reason:
+          CREDIT_UNAVAILABLE_REASON_BY_SUBSCRIPTION_INACTIVE_REASON[
+            usageRefusal.reason
+          ],
+      };
+    }
+
+    return { hasAvailableCredits: false, reason: 'no-credits' };
   }
 
   @Post('charge')

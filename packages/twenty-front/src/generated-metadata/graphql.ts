@@ -7507,6 +7507,7 @@ export type UsageQuotaWithConsumption = {
 
 export enum UsageResourceType {
   AI = 'AI',
+  ALL = 'ALL',
   API = 'API',
   APP = 'APP',
   EMAIL = 'EMAIL',

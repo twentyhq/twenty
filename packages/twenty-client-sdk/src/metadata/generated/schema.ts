@@ -3459,7 +3459,7 @@ export interface UsageQuotaWithConsumption {
     __typename: 'UsageQuotaWithConsumption'
 }
 
-export type UsageResourceType = 'AI' | 'API' | 'APP' | 'EMAIL' | 'LOGIC_FUNCTION' | 'RECORD' | 'STORAGE' | 'WEBHOOK' | 'WORKFLOW'
+export type UsageResourceType = 'AI' | 'ALL' | 'API' | 'APP' | 'EMAIL' | 'LOGIC_FUNCTION' | 'RECORD' | 'STORAGE' | 'WEBHOOK' | 'WORKFLOW'
 
 export interface UsageTimeSeries {
     creditsUsed: Scalars['Float']
@@ -11980,6 +11980,7 @@ export const enumUsageOperationType = {
 
 export const enumUsageResourceType = {
    AI: 'AI' as const,
+   ALL: 'ALL' as const,
    API: 'API' as const,
    APP: 'APP' as const,
    EMAIL: 'EMAIL' as const,
