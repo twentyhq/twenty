@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
+import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -113,17 +113,14 @@ export const SettingsValidationRuleEditForm = ({
     }
   };
 
-  const handleToggleActive = async () => {
-    const isActive = !validationRule.isActive;
-
+  const handleDeactivate = async () => {
     try {
       await updateValidationRule({
-        variables: { input: { id: validationRule.id, update: { isActive } } },
+        variables: {
+          input: { id: validationRule.id, update: { isActive: false } },
+        },
       });
-      enqueueToast({
-        status: 'success',
-        children: isActive ? t`Rule activated.` : t`Rule deactivated.`,
-      });
+      enqueueToast({ status: 'success', children: t`Rule deactivated.` });
       navigateToObjectValidationRules();
     } catch (error) {
       enqueueToast({
@@ -179,17 +176,15 @@ export const SettingsValidationRuleEditForm = ({
           }
         />
         <StyledDangerButtons>
-          <Button
-            startIcon={
-              validationRule.isActive ? <IconArchive /> : <IconArchiveOff />
-            }
-            size="sm"
-            variant="outline"
-            disabled={isSaving}
-            onClick={handleToggleActive}
-          >
-            {validationRule.isActive ? t`Deactivate` : t`Activate`}
-          </Button>
+          {validationRule.isActive && (
+            <Button
+              startIcon={<IconArchive />}
+              size="sm"
+              variant="outline"
+              disabled={isSaving}
+              onClick={handleDeactivate}
+            >{t`Deactivate`}</Button>
+          )}
           <Button
             startIcon={<IconTrash />}
             size="sm"
