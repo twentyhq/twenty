@@ -1,4 +1,5 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type RecordIndexExportColumn } from '@/object-record/record-index/export/types/RecordIndexExportColumn';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { CSV_INJECTION_PREVENTION_ZWJ } from 'twenty-shared/constants';
 
@@ -71,6 +72,57 @@ describe('generateCsv', () => {
     expect(csv)
       .toEqual(`\uFEFFId,Foo,Empty,Nested link field / Link URL,Nested link field / Secondary Links,Relation
 1,some field,,https://www.test.com,"[{""label"":""secondary link 1"",""url"":""https://www.test.com""},{""label"":""secondary link 2"",""url"":""https://www.test.com""}]",a relation`);
+  });
+
+  it('reads a column through a relation from the nested related record', () => {
+    const columns: RecordIndexExportColumn[] = [
+      {
+        label: 'Name',
+        type: FieldMetadataType.TEXT,
+        metadata: { fieldName: 'name' },
+      },
+      {
+        label: 'Company › Employees',
+        type: FieldMetadataType.NUMBER,
+        metadata: { fieldName: 'employees' },
+        relationTraversal: {
+          relationFieldMetadataId: 'company-field-id',
+          relationFieldName: 'company',
+          relationFieldLabel: 'Company',
+          relationTargetObjectMetadataId: 'company-object-id',
+        },
+      },
+      {
+        label: 'Company › Annual Revenue',
+        type: FieldMetadataType.CURRENCY,
+        metadata: { fieldName: 'annualRecurringRevenue' },
+        relationTraversal: {
+          relationFieldMetadataId: 'company-field-id',
+          relationFieldName: 'company',
+          relationFieldLabel: 'Company',
+          relationTargetObjectMetadataId: 'company-object-id',
+        },
+      },
+    ];
+    const rows = [
+      {
+        id: '1',
+        name: 'Deal with a company',
+        company: {
+          id: 'c1',
+          employees: 42,
+          annualRecurringRevenue: { amountMicros: 1000, currencyCode: 'USD' },
+        },
+      },
+      { id: '2', name: 'Deal without a company', company: null },
+    ];
+
+    const csv = generateCsv({ columns, rows });
+
+    expect(csv)
+      .toEqual(`\uFEFFId,Name,Company › Employees,Company › Annual Revenue / Amount,Company › Annual Revenue / Currency
+1,Deal with a company,42,1000,USD
+2,Deal without a company,,,`);
   });
 
   it('generates csv with multi-select and array fields as JSON arrays', () => {

@@ -9,6 +9,8 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
       .map((field) => ({
         id: field.id,
         fieldMetadataId: field.fieldMetadataId,
+        relationTargetFieldMetadataId:
+          field.relationTargetFieldMetadataId ?? null,
         isVisible: field.isVisible,
         position: field.position,
         aggregateOperation: field.aggregateOperation,

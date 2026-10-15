@@ -44,6 +44,8 @@ export const useRecordTableWidgetFieldCallbacks = ({
             ...widgetViewDraft.viewFields,
             {
               fieldMetadataId: recordField.fieldMetadataItemId,
+              relationTargetFieldMetadataId:
+                recordField.relationTargetFieldMetadataItemId ?? null,
               position: recordField.position,
               isVisible: recordField.isVisible,
               size: recordField.size,

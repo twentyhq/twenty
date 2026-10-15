@@ -1,3 +1,7 @@
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { generateTraversedRecordGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateTraversedRecordGqlFields';
+import { mergeRecordGqlFields } from '@/object-record/graphql/record-gql-fields/utils/mergeRecordGqlFields';
+import { resolveRecordFieldRelationTraversal } from '@/object-record/record-field/utils/relation-traversal/resolveRecordFieldRelationTraversal';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type RecordIndexExportColumn } from '@/object-record/record-index/export/types/RecordIndexExportColumn';
 import { buildRecordIndexExportColumnsFromRecordFields } from '@/object-record/record-index/export/utils/buildRecordIndexExportColumnsFromRecordFields';
@@ -124,12 +128,33 @@ export const useRecordIndexLazyFetchRecords = ({
       : []),
   ];
 
+  // Columns through a relation need their target fields on top of the default selection.
+  const relationTraversals = visibleRecordFields
+    .map((recordField) =>
+      resolveRecordFieldRelationTraversal({
+        recordField,
+        sourceObjectMetadataItem: objectMetadataItem,
+        objectMetadataItems,
+      }),
+    )
+    .filter(isDefined);
+
+  const recordGqlFields = mergeRecordGqlFields(
+    generateDepthRecordGqlFieldsFromObject({
+      objectMetadataItems,
+      objectMetadataItem,
+      depth: 1,
+    }),
+    generateTraversedRecordGqlFields(relationTraversals),
+  );
+
   const { progress, isDownloading, fetchAllRecords } = useLazyFetchAllRecords({
     ...findManyRecordsParams,
     filter: queryFilter,
     limit: pageSize,
     delayMs,
     maximumRequests,
+    recordGqlFields,
   });
 
   const getTableData = async () => {
