@@ -7,7 +7,6 @@ import {
   jsonSchema,
   type LanguageModelUsage,
   Output,
-  isStepCount,
   type StepResult,
   type ToolSet,
 } from 'ai';
@@ -22,17 +21,12 @@ import {
 import {
   isDefined,
   isNonEmptyArray,
-  sortKeysDeeply,
   tipTapDocumentToMarkdown,
 } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
-import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -43,9 +37,6 @@ import {
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
-import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
-import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
-import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -56,6 +47,7 @@ import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/a
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
+import { AgentStepLoopService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
@@ -64,10 +56,8 @@ import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/meta
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
-import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -139,7 +129,7 @@ export class AgentAsyncExecutorService {
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
     private readonly aiBillingService: AiBillingService,
-    private readonly metricsService: MetricsService,
+    private readonly agentStepLoopService: AgentStepLoopService,
     private readonly runAgentAttachmentService: RunAgentAttachmentService,
     private readonly aiAgentRoleService: AiAgentRoleService,
     @InjectRepository(WorkspaceEntity)
@@ -360,6 +350,8 @@ export class AgentAsyncExecutorService {
     let cacheCreationTokens = 0;
     let nativeWebSearchCallCount = 0;
     let executionSteps: StepResult<ToolSet>[] = [];
+    // the steps a run that failed midway still made, so their usage is recorded
+    let getFinishedSteps: () => StepResult<ToolSet>[] = () => [];
     let resolvedModelId: string | undefined;
 
     try {
@@ -447,43 +439,23 @@ export class AgentAsyncExecutorService {
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
-      let hasNoMoreAvailableCredits = false;
-
-      const decrementCreditsForStep = async (
-        step: Pick<StepResult<ToolSet>, 'usage' | 'providerMetadata'>,
-      ) => {
-        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await this.aiBillingService.decrementAndCheckAvailableCredits({
-            modelId: registeredModel.modelId,
-            billingInput: {
-              usage: step.usage,
-              cacheCreationTokens: extractCacheCreationTokens(
-                step.providerMetadata,
-              ),
-            },
-            workspaceId,
-            operationType: usageOperationType,
-            spenders: { userWorkspaceId, agentId: agent?.id },
-          });
-
-        if (stepHasNoMoreAvailableCredits) {
-          hasNoMoreAvailableCredits = true;
-        }
-      };
-
-      const modalities = this.aiModelRegistryService.getModelConfig(
+      const modelConfig = this.aiModelRegistryService.getModelConfig(
         registeredModel.modelId,
-      )?.modalities;
+      );
 
       const priorModelMessages = await convertToModelMessages(
-        replaceUnsupportedFileParts(priorMessages, modalities, false),
+        replaceUnsupportedFileParts(
+          priorMessages,
+          modelConfig?.modalities,
+          false,
+        ),
       );
 
       const modelMessages =
         await this.runAgentAttachmentService.buildModelMessagesOrThrow({
           messages,
           workspaceId,
-          modalities,
+          modalities: modelConfig?.modalities,
         });
 
       const offeredPausingTools: ToolSet = {
@@ -506,115 +478,68 @@ export class AgentAsyncExecutorService {
       };
       const offeredToolNames = Object.keys(offeredPausingTools);
 
-      const textResponse = await generateText({
-        instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
-        tools: { ...tools, ...offeredPausingTools },
-        model: registeredModel.model,
+      const stepLoop = this.agentStepLoopService.start({
+        registeredModel,
+        modelConfig: modelConfig ?? {
+          sdkPackage: registeredModel.sdkPackage,
+        },
+        systemPrompt: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
         messages: [...priorModelMessages, ...modelMessages],
-        prepareStep: ({ messages }) => ({
-          messages: messages.map(sortKeysDeeply),
-        }),
-        stopWhen: (step) =>
-          isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-          endsOnPausingToolCall({ steps: step.steps, offeredToolNames }) ||
-          hasNoMoreAvailableCredits,
-        providerOptions,
-        ...buildAiTelemetry({
+        tools: { ...tools, ...offeredPausingTools },
+        offeredPausingToolNames: offeredToolNames,
+        billing: {
+          workspaceId,
+          operationType: usageOperationType,
+          userWorkspaceId: userWorkspaceId ?? null,
+          agentId: agent?.id ?? null,
+        },
+        telemetry: {
           functionId: 'agent-execution',
           workspaceId,
           userWorkspaceId,
           agentId: agent?.id,
-        }),
-        onToolExecutionEnd: (event) => {
-          this.metricsService.recordHistogram({
-            key: MetricsKeys.WorkflowAgentToolExecutionDurationMs,
-            value: event.toolExecutionMs,
-            unit: 'ms',
-            attributes: {
-              model: registeredModel.modelId,
-              tool: getToolMetricName(event.toolCall.toolName),
-            },
-            bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
-          });
         },
-        onStepEnd: async (step) => {
-          await decrementCreditsForStep(step);
-
-          for (const part of step.content) {
-            if (part.type !== 'tool-result' && part.type !== 'tool-error') {
-              continue;
-            }
-
-            const succeeded =
-              part.type === 'tool-result' &&
-              isToolOutputSuccessful(part.output);
-
-            const toolAttributes = {
-              model: registeredModel.modelId,
-              tool: getToolMetricName(part.toolName),
-            };
-
-            this.metricsService.incrementCounterBy({
-              key: succeeded
-                ? MetricsKeys.WorkflowAgentToolExecutionSucceeded
-                : MetricsKeys.WorkflowAgentToolExecutionFailed,
-              amount: 1,
-              attributes: toolAttributes,
-            });
-
-            this.metricsService.recordHistogram({
-              key: MetricsKeys.WorkflowAgentToolOutputTokens,
-              value: estimateToolOutputTokens(
-                part.type === 'tool-result' ? part.output : part.error,
-              ),
-              unit: 'token',
-              attributes: toolAttributes,
-              bucketBoundaries: TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES,
-            });
-          }
-        },
-        repairToolCall: async ({
-          toolCall,
-          tools: toolsForRepair,
-          inputSchema,
-          error,
-        }) => {
-          return repairToolCall({
-            toolCall,
-            tools: toolsForRepair,
-            inputSchema,
-            error,
-            model: registeredModel.model,
-            billingContext: {
-              aiBillingService: this.aiBillingService,
-              modelId: registeredModel.modelId,
-              workspaceId,
-              userWorkspaceId: userWorkspaceId ?? null,
-              agentId: agent?.id ?? null,
-              operationType: usageOperationType,
-            },
-          });
-        },
+        providerOptions,
+        metricsScope: 'agent',
       });
 
-      accumulatedUsage = textResponse.usage;
-      cacheCreationTokens = extractCacheCreationTokensFromSteps(
-        textResponse.steps,
-      );
-      nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(
-        textResponse.steps,
-      );
-      executionSteps = textResponse.steps;
+      getFinishedSteps = stepLoop.getFinishedSteps;
+
+      let streamError: unknown;
+
+      for await (const part of stepLoop.stream.stream) {
+        if (part.type === 'error') {
+          streamError ??= part.error;
+        }
+      }
+
+      // a model error fails the run, as it did before steps were streamed
+      if (isDefined(streamError)) {
+        throw streamError;
+      }
+
+      const [text, usage, steps] = await Promise.all([
+        stepLoop.stream.text,
+        stepLoop.stream.usage,
+        stepLoop.stream.steps,
+      ]);
+
+      let hasNoMoreAvailableCredits = stepLoop.hasNoMoreAvailableCredits();
+
+      accumulatedUsage = usage;
+      cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
+      nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(steps);
+      executionSteps = steps;
 
       const agentSchema =
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
           : undefined;
 
-      let result: object = { response: textResponse.text };
+      let result: object = { response: text };
 
       const endsOnPausingTool = endsOnPausingToolCall({
-        steps: textResponse.steps,
+        steps,
         offeredToolNames,
       });
 
@@ -624,7 +549,7 @@ export class AgentAsyncExecutorService {
           model: registeredModel.model,
           prompt: `Based on the following execution results, generate the structured output according to the schema:
 
-                 Execution Results: ${textResponse.text}
+                 Execution Results: ${text}
 
                  Please generate the structured output based on the execution results and context above.`,
           output: Output.object({
@@ -641,14 +566,32 @@ export class AgentAsyncExecutorService {
             userWorkspaceId,
             agentId: agent?.id,
           }),
-          onStepEnd: decrementCreditsForStep,
+          onStepEnd: async (step) => {
+            const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+              await this.aiBillingService.decrementAndCheckAvailableCredits({
+                modelId: registeredModel.modelId,
+                billingInput: {
+                  usage: step.usage,
+                  cacheCreationTokens: extractCacheCreationTokens(
+                    step.providerMetadata,
+                  ),
+                },
+                workspaceId,
+                operationType: usageOperationType,
+                spenders: { userWorkspaceId, agentId: agent?.id },
+              });
+
+            if (stepHasNoMoreAvailableCredits) {
+              hasNoMoreAvailableCredits = true;
+            }
+          },
         });
 
         accumulatedUsage = mergeLanguageModelUsage(
-          textResponse.usage,
+          usage,
           structuredResult.usage,
         );
-        executionSteps = [...textResponse.steps, ...structuredResult.steps];
+        executionSteps = [...steps, ...structuredResult.steps];
 
         if (structuredResult.output == null) {
           throw new AiException(
@@ -687,6 +630,16 @@ export class AgentAsyncExecutorService {
         ),
       };
     } catch (error) {
+      if (executionSteps.length === 0) {
+        executionSteps = getFinishedSteps();
+        accumulatedUsage = executionSteps.reduce(
+          (usage, step) => mergeLanguageModelUsage(usage, step.usage),
+          EMPTY_USAGE,
+        );
+        nativeWebSearchCallCount =
+          countNativeWebSearchCallsFromSteps(executionSteps);
+      }
+
       if (error instanceof AiException) {
         throw error;
       }

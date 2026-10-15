@@ -8,10 +8,7 @@ import {
   convertToModelMessages,
   hasToolCall,
   NoOutputGeneratedError,
-  isStepCount,
   type StepResult,
-  streamText,
-  type SystemModelMessage,
   type ToolSet,
 } from 'ai';
 import {
@@ -24,11 +21,9 @@ import {
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
-import { getAppPath, isDefined, sortKeysDeeply } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
-import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
-import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -48,26 +43,20 @@ import {
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
-import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
-import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
-import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
-import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import {
+  type AgentStepLoop,
+  AgentStepLoopService,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
-import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
-import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
-import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
-import {
-  extractCacheCreationTokens,
-  extractCacheCreationTokensFromSteps,
-} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-excluded-tool-names.const';
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
@@ -90,14 +79,9 @@ import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-cha
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
-import {
-  getCacheProviderOptions,
-  getCallLevelProviderOptions,
-  injectCacheBreakpoint,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
+import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-execution-scope.util';
-import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -129,7 +113,7 @@ export type ChatExecutionOptions = {
 };
 
 export type ChatExecutionResult = {
-  stream: ReturnType<typeof streamText>;
+  stream: AgentStepLoop['stream'];
   modelConfig: AiModelConfig;
   hasNoMoreAvailableCredits: () => boolean;
   getStreamError: () => unknown;
@@ -154,6 +138,7 @@ export class ChatExecutionService {
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly agentStepLoopService: AgentStepLoopService,
   ) {}
 
   async streamChat({
@@ -425,12 +410,6 @@ export class ChatExecutionService {
       `Starting chat execution with model ${registeredModel.modelId}, ${Object.keys(activeTools).length} active tools`,
     );
 
-    const systemMessage: SystemModelMessage = {
-      role: 'system',
-      content: systemPrompt,
-      providerOptions: getCacheProviderOptions(modelConfig),
-    };
-
     const sanitizedMessages = this.sanitizeMessagePartsForModel(
       processedMessages,
       new Set(Object.keys(activeTools)),
@@ -460,11 +439,8 @@ export class ChatExecutionService {
 
     const modelMessages = pruningResult.messages;
 
-    let hasNoMoreAvailableCredits = false;
     const streamStartedAt = performance.now();
-    let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
-    let stepIndex = 0;
     let lastUnderlyingStreamError: unknown;
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
@@ -535,180 +511,68 @@ export class ChatExecutionService {
       });
     };
 
-    const stream = streamText({
-      model: registeredModel.model,
-      instructions: [systemMessage, ...contexts],
-      messages: modelMessages,
-      tools: activeTools,
-      // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.
-      toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
-      abortSignal,
-      stopWhen: (step) =>
-        isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-        endsOnPausingToolCall({ steps: step.steps }) ||
-        hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
-        hasNoMoreAvailableCredits,
-      ...buildAiTelemetry({
-        functionId: isWorkspaceSetupThread
-          ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
-          : AI_CHAT_STREAM_FUNCTION_ID,
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        threadId,
-        turnId,
-        streamId,
-      }),
-      providerOptions: getCallLevelProviderOptions({
-        sdkPackage: registeredModel.sdkPackage,
-        providerOptions: this.aiModelConfigService.getReasoningProviderOptions(
-          registeredModel,
-          { shouldIncludeReasoningSummary: true },
-        ),
-        promptCacheKey: threadId,
-      }),
-      prepareStep: async ({ messages }) => {
-        await getAuthorization();
-        stepStartedAt = performance.now();
-
-        return {
-          messages: injectCacheBreakpoint(
-            messages.map(sortKeysDeeply),
-            modelConfig,
-          ),
-        };
-      },
-      onChunk: ({ chunk }) => {
-        if (
-          !ttftRecorded &&
-          (chunk.type === 'text-delta' || chunk.type === 'tool-call')
-        ) {
-          ttftRecorded = true;
-          this.metricsService.recordHistogram({
-            key: MetricsKeys.AiChatTtftMs,
-            value: performance.now() - streamStartedAt,
-            unit: 'ms',
-            attributes: { model: registeredModel.modelId },
-            bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
-          });
-        }
-      },
-      onError: ({ error }) => {
-        lastUnderlyingStreamError = error;
-        this.logger.error(
-          `Stream ${streamId} emitted an error: ${formatErrorWithCause(error)}`,
-        );
-      },
-      onToolExecutionEnd: (event) => {
-        this.metricsService.recordHistogram({
-          key: MetricsKeys.AiChatToolExecutionDurationMs,
-          value: event.toolExecutionMs,
-          unit: 'ms',
-          attributes: {
-            model: registeredModel.modelId,
-            tool: getToolMetricName(event.toolCall.toolName),
-          },
-          bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
-        });
-      },
-      onStepEnd: async (step) => {
-        this.metricsService.recordHistogram({
-          key: MetricsKeys.AiChatStepLatencyMs,
-          value: performance.now() - stepStartedAt,
-          unit: 'ms',
-          attributes: { model: registeredModel.modelId },
-          bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
-        });
-
-        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await this.aiBillingService.decrementAndCheckAvailableCredits({
-            modelId: registeredModel.modelId,
-            billingInput: {
-              usage: step.usage,
-              cacheCreationTokens: extractCacheCreationTokens(
-                step.providerMetadata,
-              ),
-            },
-            workspaceId: workspace.id,
-            operationType: UsageOperationType.AI_CHAT_TOKEN,
-            spenders: { userWorkspaceId },
-          });
-
-        if (stepHasNoMoreAvailableCredits) {
-          hasNoMoreAvailableCredits = true;
-        }
-
-        this.logger.log(
-          `[AI_CHAT_TOKENS] step #${++stepIndex} — ` +
-            `toolCallIds=[${step.toolCalls.map((toolCall) => toolCall.toolCallId).join(', ')}]: ` +
-            `outputTokens=${step.usage.outputTokens ?? 0}, ` +
-            `reasoningTokens=${step.usage.outputTokenDetails?.reasoningTokens ?? 0}, ` +
-            `inputTokens(fullContext)=${step.usage.inputTokens ?? 0}, ` +
-            `cacheReadTokens=${step.usage.inputTokenDetails?.cacheReadTokens ?? 0}, ` +
-            `cacheWriteTokens=${step.usage.inputTokenDetails?.cacheWriteTokens ?? 0}, ` +
-            `cacheCreationTokens=${extractCacheCreationTokens(step.providerMetadata)}, ` +
-            `totalTokens=${step.usage.totalTokens ?? 0}`,
-        );
-
-        for (const part of step.content) {
-          if (part.type !== 'tool-result' && part.type !== 'tool-error') {
-            continue;
+    const { stream, hasNoMoreAvailableCredits } =
+      this.agentStepLoopService.start({
+        registeredModel,
+        modelConfig,
+        systemPrompt,
+        contextMessages: contexts,
+        messages: modelMessages,
+        tools: activeTools,
+        // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.
+        toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
+        abortSignal,
+        shouldStopAfterStep: hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME),
+        billing: {
+          workspaceId: workspace.id,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          userWorkspaceId,
+          agentId: null,
+        },
+        telemetry: {
+          functionId: isWorkspaceSetupThread
+            ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
+            : AI_CHAT_STREAM_FUNCTION_ID,
+          workspaceId: workspace.id,
+          userWorkspaceId,
+          threadId,
+          turnId,
+          streamId,
+        },
+        providerOptions: getCallLevelProviderOptions({
+          sdkPackage: registeredModel.sdkPackage,
+          providerOptions:
+            this.aiModelConfigService.getReasoningProviderOptions(
+              registeredModel,
+              { shouldIncludeReasoningSummary: true },
+            ),
+          promptCacheKey: threadId,
+        }),
+        beforeStep: getAuthorization,
+        metricsScope: 'chat',
+        onChunk: (chunk) => {
+          if (
+            !ttftRecorded &&
+            (chunk.type === 'text-delta' || chunk.type === 'tool-call')
+          ) {
+            ttftRecorded = true;
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.AiChatTtftMs,
+              value: performance.now() - streamStartedAt,
+              unit: 'ms',
+              attributes: { model: registeredModel.modelId },
+              bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
+            });
           }
-
-          const succeeded =
-            part.type === 'tool-result' && isToolOutputSuccessful(part.output);
-
-          const outputTokens = estimateToolOutputTokens(
-            part.type === 'tool-result' ? part.output : part.error,
+        },
+        onError: (error) => {
+          lastUnderlyingStreamError = error;
+          this.logger.error(
+            `Stream ${streamId} emitted an error: ${formatErrorWithCause(error)}`,
           );
-
-          const executionAttributes = {
-            model: registeredModel.modelId,
-            tool: getToolMetricName(resolveToolName(part)),
-          };
-
-          this.metricsService.incrementCounterBy({
-            key: succeeded
-              ? MetricsKeys.AiChatToolExecutionSucceeded
-              : MetricsKeys.AiChatToolExecutionFailed,
-            amount: 1,
-            attributes: executionAttributes,
-          });
-
-          this.metricsService.recordHistogram({
-            key: MetricsKeys.AiChatToolOutputTokens,
-            value: outputTokens,
-            unit: 'token',
-            attributes: executionAttributes,
-            bucketBoundaries: TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES,
-          });
-        }
-      },
-      onAbort: async ({ steps }) => {
-        await emitTurnUsageEvent(steps);
-      },
-      repairToolCall: async ({
-        toolCall,
-        tools: toolsForRepair,
-        inputSchema,
-        error,
-      }) => {
-        return repairToolCall({
-          toolCall,
-          tools: toolsForRepair,
-          inputSchema,
-          error,
-          model: registeredModel.model,
-          billingContext: {
-            aiBillingService: this.aiBillingService,
-            modelId: registeredModel.modelId,
-            workspaceId: workspace.id,
-            userWorkspaceId,
-            agentId: null,
-            operationType: UsageOperationType.AI_CHAT_TOKEN,
-          },
-        });
-      },
-    });
+        },
+        onAbort: emitTurnUsageEvent,
+      });
 
     Promise.all([stream.usage, stream.steps])
       .then(async ([, steps]) => {
@@ -736,7 +600,7 @@ export class ChatExecutionService {
     return {
       stream,
       modelConfig,
-      hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
+      hasNoMoreAvailableCredits,
       getStreamError: () => lastUnderlyingStreamError,
     };
   }

@@ -1,7 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { type LanguageModelV4CallOptions } from '@ai-sdk/provider';
-import { MockLanguageModelV4 } from 'ai/test';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import {
   createCoreWorkflow,
@@ -24,6 +22,7 @@ import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -62,37 +61,33 @@ type ModelCall = {
 // The model calls the find tool once, then answers, so the test sees the tools the step offers and what they return
 const mockModelCallingFindTool = (): ModelCall[] => {
   const calls: ModelCall[] = [];
-  const model = new MockLanguageModelV4({
-    doGenerate: async (options: LanguageModelV4CallOptions) => {
-      calls.push({
-        offeredToolNames: (options.tools ?? []).map((tool) => tool.name),
-        toolOutputs: options.prompt
-          .filter((message) => message.role === 'tool')
-          .flatMap((message) => message.content)
-          .map((part) => JSON.stringify(part)),
-      });
+  const model = createScriptedLanguageModel((options) => {
+    calls.push({
+      offeredToolNames: (options.tools ?? []).map((tool) => tool.name),
+      toolOutputs: options.prompt
+        .filter((message) => message.role === 'tool')
+        .flatMap((message) => message.content)
+        .map((part) => JSON.stringify(part)),
+    });
 
-      return calls.length === 1
-        ? {
-            content: [
-              {
-                type: 'tool-call',
-                toolCallId: 'find-1',
-                toolName: FIND_TOOL_NAME,
-                input: JSON.stringify({ select: ['id', 'name'] }),
-              },
-            ],
-            finishReason: { unified: 'tool-calls', raw: undefined },
-            usage: USAGE,
-            warnings: [],
-          }
-        : {
-            content: [{ type: 'text', text: 'Done' }],
-            finishReason: { unified: 'stop', raw: undefined },
-            usage: USAGE,
-            warnings: [],
-          };
-    },
+    return calls.length === 1
+      ? {
+          content: [
+            {
+              type: 'tool-call',
+              toolCallId: 'find-1',
+              toolName: FIND_TOOL_NAME,
+              input: JSON.stringify({ select: ['id', 'name'] }),
+            },
+          ],
+          finishReason: { unified: 'tool-calls', raw: undefined },
+          usage: USAGE,
+        }
+      : {
+          content: [{ type: 'text', text: 'Done' }],
+          finishReason: { unified: 'stop', raw: undefined },
+          usage: USAGE,
+        };
   });
   const aiModelRegistryService =
     getAppProviderByClassName<AiModelRegistryService>('AiModelRegistryService');

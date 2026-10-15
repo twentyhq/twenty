@@ -25,6 +25,7 @@ import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { AgentStepLoopService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
@@ -74,6 +75,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentRunResolver,
     AgentRunService,
     AgentRunnerService,
+    AgentStepLoopService,
     // continues suspended runs once answered or woken up, on the server and the worker alike
     AgentRunPendingWakeUpHandlerService,
     ContinueAgentRunJob,
@@ -89,6 +91,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentRunConversationService,
     AgentRunSuspensionService,
     AgentRunnerService,
+    AgentStepLoopService,
   ],
 })
 export class AiAgentExecutionModule {}
