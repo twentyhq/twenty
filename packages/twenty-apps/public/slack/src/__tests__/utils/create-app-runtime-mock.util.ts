@@ -47,11 +47,10 @@ const DEFAULT_AGENT_RESULT: AppRuntimeAgentResult = {
 
 const completeAgentResult = ({
   threadId = randomUUID(),
-  status,
   ...agentResult
 }: AppRuntimeAgentResult): RunAgentResult => ({
   threadId,
-  status: status ?? (agentResult.success ? 'COMPLETED' : 'FAILED'),
+  status: agentResult.success ? 'COMPLETED' : 'FAILED',
   ...agentResult,
 });
 

@@ -11,7 +11,7 @@ export type AppRuntimeAgentResult = Pick<
   RunAgentResult,
   'success' | 'result' | 'error'
 > &
-  Partial<Pick<RunAgentResult, 'threadId' | 'status'>>;
+  Partial<Pick<RunAgentResult, 'threadId'>>;
 
 export type AppRuntimeMock = {
   handlers: RequestHandler[];
