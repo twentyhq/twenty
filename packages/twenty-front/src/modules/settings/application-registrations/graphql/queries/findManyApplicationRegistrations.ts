@@ -7,6 +7,7 @@ export const APPLICATION_REGISTRATION_LIST_ITEM_FRAGMENT = gql`
     name
     sourceType
     logoUrl
+    createdAt
   }
 `;
 

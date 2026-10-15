@@ -441,6 +441,82 @@ export interface ApplicationRegistration {
     __typename: 'ApplicationRegistration'
 }
 
+export interface ApplicationRegistrationAnalytics {
+    creditsChargedByOperation: ApplicationRegistrationAnalyticsBreakdownItem[]
+    functionErrorsByFunction: ApplicationRegistrationAnalyticsBreakdownItem[]
+    functionErrorsByType: ApplicationRegistrationAnalyticsBreakdownItem[]
+    functionExecutionsByFunction: ApplicationRegistrationAnalyticsBreakdownItem[]
+    lifecycleFailuresByErrorCode: ApplicationRegistrationAnalyticsBreakdownItem[]
+    periodEnd: Scalars['DateTime']
+    periodStart: Scalars['DateTime']
+    timeSeries: ApplicationRegistrationAnalyticsTimeSeriesPoint[]
+    totals: ApplicationRegistrationAnalyticsTotals
+    versions: ApplicationRegistrationAnalyticsVersion[]
+    __typename: 'ApplicationRegistrationAnalytics'
+}
+
+export interface ApplicationRegistrationAnalyticsBreakdownItem {
+    key: Scalars['String']
+    value: Scalars['Float']
+    __typename: 'ApplicationRegistrationAnalyticsBreakdownItem'
+}
+
+export interface ApplicationRegistrationAnalyticsTimeSeriesPoint {
+    apiRateLimited: Scalars['Int']
+    creditsCharged: Scalars['Float']
+    date: Scalars['String']
+    functionErrors: Scalars['Int']
+    functionExecutions: Scalars['Int']
+    installFailed: Scalars['Int']
+    installSucceeded: Scalars['Int']
+    jobRateLimited: Scalars['Int']
+    uninstallFailed: Scalars['Int']
+    uninstallSucceeded: Scalars['Int']
+    upgradeFailed: Scalars['Int']
+    upgradeSucceeded: Scalars['Int']
+    __typename: 'ApplicationRegistrationAnalyticsTimeSeriesPoint'
+}
+
+export interface ApplicationRegistrationAnalyticsTotals {
+    activeWorkspaces: Scalars['Int']
+    apiRateLimited: Scalars['Int']
+    creditsCharged: Scalars['Float']
+    functionErrors: Scalars['Int']
+    functionExecutions: Scalars['Int']
+    installFailed: Scalars['Int']
+    installSucceeded: Scalars['Int']
+    jobRateLimited: Scalars['Int']
+    uninstallFailed: Scalars['Int']
+    uninstallSucceeded: Scalars['Int']
+    upgradeFailed: Scalars['Int']
+    upgradeSucceeded: Scalars['Int']
+    __typename: 'ApplicationRegistrationAnalyticsTotals'
+}
+
+export interface ApplicationRegistrationAnalyticsVersion {
+    activeWorkspaces: Scalars['Int']
+    apiRateLimited: Scalars['Int']
+    creditsCharged: Scalars['Float']
+    functionErrors: Scalars['Int']
+    functionExecutions: Scalars['Int']
+    installFailed: Scalars['Int']
+    installSucceeded: Scalars['Int']
+    jobRateLimited: Scalars['Int']
+    timeSeries: ApplicationRegistrationAnalyticsVersionTimeSeriesPoint[]
+    uninstallFailed: Scalars['Int']
+    uninstallSucceeded: Scalars['Int']
+    upgradeFailed: Scalars['Int']
+    upgradeSucceeded: Scalars['Int']
+    version: Scalars['String']
+    __typename: 'ApplicationRegistrationAnalyticsVersion'
+}
+
+export interface ApplicationRegistrationAnalyticsVersionTimeSeriesPoint {
+    activeWorkspaces: Scalars['Int']
+    date: Scalars['String']
+    __typename: 'ApplicationRegistrationAnalyticsVersionTimeSeriesPoint'
+}
+
 export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' | 'TARBALL'
 
 export interface ApplicationRegistrationStats {
@@ -2756,6 +2832,8 @@ export interface Query {
     exportApplication: ApplicationExport
     field: Field
     fields: FieldConnection
+    findApplicationAnalytics: ApplicationRegistrationAnalytics
+    findApplicationRegistrationAnalytics: ApplicationRegistrationAnalytics
     findApplicationRegistrationByClientId?: PublicApplicationRegistration
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
     findApplicationRegistrationStats: ApplicationRegistrationStats
@@ -4246,6 +4324,8 @@ export interface ApplicationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationAnalyticsInput {applicationId: Scalars['UUID'],periodEnd?: (Scalars['DateTime'] | null),periodStart?: (Scalars['DateTime'] | null)}
+
 export interface ApplicationAuthorizationGenqlSelection{
     applicationId?: boolean | number
     applicationName?: boolean | number
@@ -4408,6 +4488,90 @@ export interface ApplicationRegistrationGenqlSelection{
     sourceType?: boolean | number
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationAnalyticsGenqlSelection{
+    creditsChargedByOperation?: ApplicationRegistrationAnalyticsBreakdownItemGenqlSelection
+    functionErrorsByFunction?: ApplicationRegistrationAnalyticsBreakdownItemGenqlSelection
+    functionErrorsByType?: ApplicationRegistrationAnalyticsBreakdownItemGenqlSelection
+    functionExecutionsByFunction?: ApplicationRegistrationAnalyticsBreakdownItemGenqlSelection
+    lifecycleFailuresByErrorCode?: ApplicationRegistrationAnalyticsBreakdownItemGenqlSelection
+    periodEnd?: boolean | number
+    periodStart?: boolean | number
+    timeSeries?: ApplicationRegistrationAnalyticsTimeSeriesPointGenqlSelection
+    totals?: ApplicationRegistrationAnalyticsTotalsGenqlSelection
+    versions?: ApplicationRegistrationAnalyticsVersionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationAnalyticsBreakdownItemGenqlSelection{
+    key?: boolean | number
+    value?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationAnalyticsInput {id: Scalars['UUID'],periodEnd?: (Scalars['DateTime'] | null),periodStart?: (Scalars['DateTime'] | null)}
+
+export interface ApplicationRegistrationAnalyticsTimeSeriesPointGenqlSelection{
+    apiRateLimited?: boolean | number
+    creditsCharged?: boolean | number
+    date?: boolean | number
+    functionErrors?: boolean | number
+    functionExecutions?: boolean | number
+    installFailed?: boolean | number
+    installSucceeded?: boolean | number
+    jobRateLimited?: boolean | number
+    uninstallFailed?: boolean | number
+    uninstallSucceeded?: boolean | number
+    upgradeFailed?: boolean | number
+    upgradeSucceeded?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationAnalyticsTotalsGenqlSelection{
+    activeWorkspaces?: boolean | number
+    apiRateLimited?: boolean | number
+    creditsCharged?: boolean | number
+    functionErrors?: boolean | number
+    functionExecutions?: boolean | number
+    installFailed?: boolean | number
+    installSucceeded?: boolean | number
+    jobRateLimited?: boolean | number
+    uninstallFailed?: boolean | number
+    uninstallSucceeded?: boolean | number
+    upgradeFailed?: boolean | number
+    upgradeSucceeded?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationAnalyticsVersionGenqlSelection{
+    activeWorkspaces?: boolean | number
+    apiRateLimited?: boolean | number
+    creditsCharged?: boolean | number
+    functionErrors?: boolean | number
+    functionExecutions?: boolean | number
+    installFailed?: boolean | number
+    installSucceeded?: boolean | number
+    jobRateLimited?: boolean | number
+    timeSeries?: ApplicationRegistrationAnalyticsVersionTimeSeriesPointGenqlSelection
+    uninstallFailed?: boolean | number
+    uninstallSucceeded?: boolean | number
+    upgradeFailed?: boolean | number
+    upgradeSucceeded?: boolean | number
+    version?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationRegistrationAnalyticsVersionTimeSeriesPointGenqlSelection{
+    activeWorkspaces?: boolean | number
+    date?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7014,6 +7178,8 @@ export interface QueryGenqlSelection{
     filter: FieldFilter, 
     /** Limit or page results. */
     paging: CursorPaging} })
+    findApplicationAnalytics?: (ApplicationRegistrationAnalyticsGenqlSelection & { __args: {input: ApplicationAnalyticsInput} })
+    findApplicationRegistrationAnalytics?: (ApplicationRegistrationAnalyticsGenqlSelection & { __args: {input: ApplicationRegistrationAnalyticsInput} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
@@ -8830,6 +8996,54 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       return ApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
     
+
+
+    const ApplicationRegistrationAnalytics_possibleTypes: string[] = ['ApplicationRegistrationAnalytics']
+    export const isApplicationRegistrationAnalytics = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalytics"')
+      return ApplicationRegistrationAnalytics_possibleTypes.includes(obj.__typename)
+    }
+
+
+
+    const ApplicationRegistrationAnalyticsBreakdownItem_possibleTypes: string[] = ['ApplicationRegistrationAnalyticsBreakdownItem']
+    export const isApplicationRegistrationAnalyticsBreakdownItem = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalyticsBreakdownItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalyticsBreakdownItem"')
+      return ApplicationRegistrationAnalyticsBreakdownItem_possibleTypes.includes(obj.__typename)
+    }
+
+
+
+    const ApplicationRegistrationAnalyticsTimeSeriesPoint_possibleTypes: string[] = ['ApplicationRegistrationAnalyticsTimeSeriesPoint']
+    export const isApplicationRegistrationAnalyticsTimeSeriesPoint = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalyticsTimeSeriesPoint => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalyticsTimeSeriesPoint"')
+      return ApplicationRegistrationAnalyticsTimeSeriesPoint_possibleTypes.includes(obj.__typename)
+    }
+
+
+
+    const ApplicationRegistrationAnalyticsTotals_possibleTypes: string[] = ['ApplicationRegistrationAnalyticsTotals']
+    export const isApplicationRegistrationAnalyticsTotals = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalyticsTotals => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalyticsTotals"')
+      return ApplicationRegistrationAnalyticsTotals_possibleTypes.includes(obj.__typename)
+    }
+
+
+
+    const ApplicationRegistrationAnalyticsVersion_possibleTypes: string[] = ['ApplicationRegistrationAnalyticsVersion']
+    export const isApplicationRegistrationAnalyticsVersion = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalyticsVersion => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalyticsVersion"')
+      return ApplicationRegistrationAnalyticsVersion_possibleTypes.includes(obj.__typename)
+    }
+
+
+
+    const ApplicationRegistrationAnalyticsVersionTimeSeriesPoint_possibleTypes: string[] = ['ApplicationRegistrationAnalyticsVersionTimeSeriesPoint']
+    export const isApplicationRegistrationAnalyticsVersionTimeSeriesPoint = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationAnalyticsVersionTimeSeriesPoint => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationAnalyticsVersionTimeSeriesPoint"')
+      return ApplicationRegistrationAnalyticsVersionTimeSeriesPoint_possibleTypes.includes(obj.__typename)
+    }
+
 
 
     const ApplicationRegistrationStats_possibleTypes: string[] = ['ApplicationRegistrationStats']
