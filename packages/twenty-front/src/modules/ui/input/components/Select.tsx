@@ -128,6 +128,11 @@ export const Select = <TValue extends SelectValue>({
     };
   }, [selectedOption, showContextualTextInControl, showIconInControl]);
 
+  const isShowingEmptyPrompt =
+    isDefined(emptyOption) &&
+    selectedOption === emptyOption &&
+    !isDefined(emptyOption.Icon);
+
   if (!isDefined(controlSelectedOption)) {
     return <></>;
   }
@@ -154,6 +159,7 @@ export const Select = <TValue extends SelectValue>({
         <SelectControl
           renderAsTag={renderAsTag}
           selectedOption={controlSelectedOption}
+          textAccent={isShowingEmptyPrompt ? 'placeholder' : 'default'}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
@@ -173,6 +179,7 @@ export const Select = <TValue extends SelectValue>({
             <SelectControl
               renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}
+              textAccent={isShowingEmptyPrompt ? 'placeholder' : 'default'}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
@@ -265,13 +272,7 @@ export const Select = <TValue extends SelectValue>({
                       }
                     >
                       {isColoredTag ? (
-                        <Tag
-                          color={tagColor}
-                          borderStyle="dashed"
-                          variant="soft"
-                        >
-                          {option.label}
-                        </Tag>
+                        <Tag color={tagColor}>{option.label}</Tag>
                       ) : (
                         option.label
                       )}

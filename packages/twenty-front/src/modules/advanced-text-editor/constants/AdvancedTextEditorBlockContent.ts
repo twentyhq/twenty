@@ -25,6 +25,13 @@ export function createListBlockContent(
   };
 }
 
+export function createBlockquoteBlockContent(): JSONContent {
+  return {
+    type: TIPTAP_NODE_TYPES.BLOCKQUOTE,
+    content: [createParagraphBlockContent()],
+  };
+}
+
 export function createColumnBlockContent(): JSONContent {
   return {
     type: TIPTAP_NODE_TYPES.COLUMN,

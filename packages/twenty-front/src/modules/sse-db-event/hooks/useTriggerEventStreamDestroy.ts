@@ -1,3 +1,4 @@
+import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { disposeFunctionForEventStreamState } from '@/sse-db-event/states/disposeFunctionByEventStreamMapState';
 import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
 import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
@@ -40,6 +41,7 @@ export const useTriggerEventStreamDestroy = () => {
       disposeFunctionForEventStream?.dispose();
 
       store.set(sseEventStreamIdState.atom, null);
+      store.set(activeQueryListenersState.atom, []);
       store.set(sseEventStreamReadyState.atom, false);
       store.set(disposeFunctionForEventStreamState.atom, null);
       store.set(shouldDestroyEventStreamState.atom, false);

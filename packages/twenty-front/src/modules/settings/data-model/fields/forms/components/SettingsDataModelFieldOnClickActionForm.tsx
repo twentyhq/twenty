@@ -85,7 +85,6 @@ export const SettingsDataModelFieldOnClickActionForm = ({
             Icon={IconClick}
             title={t`Action on click`}
             description={description}
-            disabled={disabled}
           >
             <Select<FieldMetadataSettingsOnClickAction>
               dropdownWidth={180}

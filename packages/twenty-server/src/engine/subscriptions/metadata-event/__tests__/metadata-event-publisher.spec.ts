@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
@@ -26,6 +27,7 @@ describe('MetadataEventPublisher', () => {
         },
         { provide: NavigationMenuItemRecordIdentifierService, useValue: {} },
         { provide: I18nService, useValue: {} },
+        { provide: FeatureFlagService, useValue: {} },
       ],
     }).compile();
 

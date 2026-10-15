@@ -113,6 +113,7 @@ type RegistryToolContext = Pick<
   | 'actorContext'
   | 'userId'
   | 'userWorkspaceId'
+  | 'agentId'
 >;
 
 const EMPTY_USAGE: LanguageModelUsage = {
@@ -412,6 +413,7 @@ export class AgentAsyncExecutorService {
           const toolContext: RegistryToolContext = {
             workspaceId: agent.workspaceId,
             roleId: agentRoleId,
+            agentId: agent.id,
             authContext,
             actorContext,
             ...this.resolveUserIdentity(authContext),

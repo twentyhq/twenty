@@ -26,6 +26,7 @@ import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/uti
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
+import { resolveSlackConversationMessages } from 'src/logic-functions/utils/resolve-slack-conversation-messages';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
@@ -86,7 +87,7 @@ export const slackAssistantWorkerHandler = async (
   try {
     const [
       {
-        conversationMessages,
+        conversationThreadMessages,
         sharedFiles,
         requesterName,
         requesterIdentity,
@@ -169,7 +170,7 @@ export const slackAssistantWorkerHandler = async (
 
       await updateSlackAssistantRequest(client, {
         id: record.id,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: denialText,
       });
 
@@ -183,6 +184,14 @@ export const slackAssistantWorkerHandler = async (
         sharedFiles,
         agentDeadlineAtMs,
       });
+
+    const conversationMessages = await resolveSlackConversationMessages({
+      client,
+      slackChannelId,
+      parentMessageTimestamp,
+      conversationThreadMessages,
+      assistantBotUserId,
+    });
 
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
@@ -201,6 +210,10 @@ export const slackAssistantWorkerHandler = async (
     const agentResult = await runSlackAssistantAgentWithDeadline({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId: accessDecision.runAsWorkspaceMemberId,
+      thread: {
+        key: `${slackChannelId}:${parentMessageTimestamp}`,
+        title: buildSlackAssistantRequestName(requestText),
+      },
       messages: buildSlackAssistantMessages({
         requestText: resolvedMentions.requestText,
         requesterName,
@@ -258,6 +271,7 @@ export const slackAssistantWorkerHandler = async (
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,
         errorMessage: buildSlackAnswerDeliveryFailureMessage(deliveryResult),
+        responseText,
       });
     }
 

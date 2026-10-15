@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import {
+  type IdentifiedAccount,
+  type IdentifyAccountPayload,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { parseIdentifyAccountResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-identify-account-result.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import {
@@ -17,18 +23,21 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { CustomException } from 'src/utils/custom-exception';
 
-type ConnectionLifecycleHook = 'onConnect' | 'onDisconnect';
+type ConnectionLifecycleHook = 'identifyAccount' | 'onConnect' | 'onDisconnect';
 
 type ConnectionLifecycleHookProvider = Pick<
   ConnectionProviderEntity,
-  'id' | 'name'
+  'id' | 'name' | 'applicationId'
 >;
 
 const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
   ConnectionLifecycleHook,
   ConnectionProviderExceptionCode
 > = {
+  identifyAccount:
+    ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND,
   onConnect:
     ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
   onDisconnect:
@@ -53,7 +62,10 @@ export class ConnectionProviderLifecycleHookService {
   }: {
     provider: Pick<
       ConnectionProviderEntity,
-      'id' | 'name' | 'onConnectLogicFunctionUniversalIdentifier'
+      | 'id'
+      | 'name'
+      | 'applicationId'
+      | 'onConnectLogicFunctionUniversalIdentifier'
     >;
     workspaceId: string;
     connectedAccountId: string;
@@ -84,6 +96,66 @@ export class ConnectionProviderLifecycleHookService {
         },
       );
     });
+  }
+
+  // Unlike the other hooks, failures propagate: an account core could not identify must not be saved.
+  async runIdentifyAccount({
+    provider,
+    workspaceId,
+    accessToken,
+  }: {
+    provider: Pick<
+      ConnectionProviderEntity,
+      | 'id'
+      | 'name'
+      | 'applicationId'
+      | 'identifyAccountLogicFunctionUniversalIdentifier'
+    >;
+    workspaceId: string;
+    accessToken: string;
+  }): Promise<IdentifiedAccount | null> {
+    const logicFunctionId = await this.resolveLogicFunctionId({
+      hook: 'identifyAccount',
+      logicFunctionUniversalIdentifier:
+        provider.identifyAccountLogicFunctionUniversalIdentifier,
+      provider,
+      workspaceId,
+    });
+
+    if (!isDefined(logicFunctionId)) {
+      return null;
+    }
+
+    const payload: IdentifyAccountPayload = {
+      connectionProviderId: provider.id,
+      connectionProviderName: provider.name,
+      accessToken,
+    };
+
+    const executionResult = await this.executeIdentifyAccount({
+      provider,
+      logicFunctionId,
+      workspaceId,
+      payload,
+    });
+
+    if (isDefined(executionResult.error)) {
+      throw new ConnectionProviderException(
+        `identifyAccount logic function of connection provider ${provider.id} failed: ${executionResult.error.errorMessage}`,
+        ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
+      );
+    }
+
+    const parsedResult = parseIdentifyAccountResult(executionResult.data);
+
+    if (!parsedResult.isValid) {
+      throw new ConnectionProviderException(
+        `identifyAccount logic function of connection provider ${provider.id} returned an invalid result: ${parsedResult.reason}`,
+        ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
+      );
+    }
+
+    return parsedResult.identifiedAccount;
   }
 
   // Runs inline, before the connected account and its token are deleted, so the
@@ -128,6 +200,36 @@ export class ConnectionProviderLifecycleHookService {
         );
       }
     });
+  }
+
+  private async executeIdentifyAccount({
+    provider,
+    logicFunctionId,
+    workspaceId,
+    payload,
+  }: {
+    provider: ConnectionLifecycleHookProvider;
+    logicFunctionId: string;
+    workspaceId: string;
+    payload: IdentifyAccountPayload;
+  }): Promise<LogicFunctionExecuteResult> {
+    try {
+      return await this.logicFunctionExecutorService.execute({
+        logicFunctionId,
+        workspaceId,
+        payload,
+        shouldEnforceUsageLimits: true,
+      });
+    } catch (error) {
+      if (error instanceof CustomException) {
+        throw error;
+      }
+
+      throw new ConnectionProviderException(
+        `identifyAccount logic function of connection provider ${provider.id} could not be executed: ${error instanceof Error ? error.message : String(error)}`,
+        ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
+      );
+    }
   }
 
   // Lifecycle hooks are best effort: a failing hook must never surface to the
@@ -186,10 +288,11 @@ export class ConnectionProviderLifecycleHookService {
 
     if (
       !isDefined(flatLogicFunction) ||
-      isDefined(flatLogicFunction.deletedAt)
+      isDefined(flatLogicFunction.deletedAt) ||
+      flatLogicFunction.applicationId !== provider.applicationId
     ) {
       throw new ConnectionProviderException(
-        `Connection provider ${provider.id} references ${hook} logic function ${logicFunctionUniversalIdentifier}, which was not found in workspace ${workspaceId}.`,
+        `Connection provider ${provider.id} references ${hook} logic function ${logicFunctionUniversalIdentifier}, which was not found in its application.`,
         MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK[hook],
       );
     }

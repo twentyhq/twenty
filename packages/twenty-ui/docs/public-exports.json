@@ -117,7 +117,8 @@
       "PhoneCountryPickerTriggerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerTriggerProps",
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
-      "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps"
+      "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
     }
   },
   "components/layout": {
@@ -650,6 +651,7 @@
       "IconUserPin": "icon/components/TablerIcons",
       "IconUserPlus": "icon/components/TablerIcons",
       "IconUsers": "icon/components/TablerIcons",
+      "IconUsersGroup": "icon/components/TablerIcons",
       "IconVariable": "icon/components/TablerIcons",
       "IconVariablePlus": "icon/components/TablerIcons",
       "IconVersions": "icon/components/TablerIcons",
@@ -1156,12 +1158,14 @@
     "values": {
       "formatShortcut": "primitives/typography/Shortcut/formatShortcut",
       "Heading": "primitives/typography/Heading/Heading",
+      "OverflowingTextTooltipModeProvider": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextTooltipModeProvider",
       "OverflowingTextWithTooltip": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip",
       "Shortcut": "primitives/typography/Shortcut/Shortcut",
       "Text": "primitives/typography/Text/Text"
     },
     "types": {
       "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "OverflowingTextTooltipMode": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextTooltipMode",
       "OverflowingTextWithTooltipProps": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps",
       "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
       "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",

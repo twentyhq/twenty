@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
@@ -12,11 +11,12 @@ import { useLingui } from '@lingui/react/macro';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
-const StyledImportHeader = styled(Dialog.Header)`
+const StyledImportHeader = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  flex-direction: row;
+  display: flex;
+  flex-shrink: 0;
   height: 60px;
   padding: 0 ${themeCssVariables.spacing[30]};
 

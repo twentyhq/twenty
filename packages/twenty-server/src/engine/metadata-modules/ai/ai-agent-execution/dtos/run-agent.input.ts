@@ -21,8 +21,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 @InputType('RunAgentInput')
 export class RunAgentInputDTO {
-  @IsString()
-  @IsNotEmpty()
+  @IsUUID()
   @Field()
   agentUniversalIdentifier: string;
 

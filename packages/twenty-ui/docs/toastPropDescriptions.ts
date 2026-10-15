@@ -18,7 +18,7 @@ export const TOAST_PROP_DESCRIPTIONS = {
   onCancel:
     'Called when the cancel button is clicked. Providing it and renderable cancelLabel content shows the button.',
   onClose:
-    'Called once per mounted toast when the close button is clicked or the countdown completes. Providing it shows the close button.',
+    'For standalone Toast, called once per mount by the close button or expiry. For provider notifications, called once on close, expiry, closeToast, or limit eviction, after dismissal and before exit cleanup. Provider teardown does not call it.',
   cancelLabel:
     'Cancel button content node. Defaults to Cancel. Pass null to hide the control.',
   closeLabel: 'Accessible name of the close button. Defaults to Close.',

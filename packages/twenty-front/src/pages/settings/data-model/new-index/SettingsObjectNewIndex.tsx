@@ -116,7 +116,7 @@ export const SettingsObjectNewIndex = () => {
 
     if (result.status === 'successful') {
       enqueueToast({ status: 'success', children: t`Index created` });
-      navigate(SettingsPath.ObjectDetail, { objectNamePlural });
+      navigate(SettingsPath.ObjectIndexes, { objectNamePlural });
     }
   };
 
@@ -141,6 +141,12 @@ export const SettingsObjectNewIndex = () => {
               objectNamePlural,
             }),
           },
+          {
+            children: t`Indexes`,
+            href: getSettingsPath(SettingsPath.ObjectIndexes, {
+              objectNamePlural,
+            }),
+          },
           { children: t`New Index` },
         ]}
         actionButton={
@@ -149,7 +155,7 @@ export const SettingsObjectNewIndex = () => {
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             onCancel={() =>
-              navigate(SettingsPath.ObjectDetail, { objectNamePlural })
+              navigate(SettingsPath.ObjectIndexes, { objectNamePlural })
             }
             onSave={formConfig.handleSubmit(handleSave)}
           />

@@ -11,6 +11,7 @@ type UserAuthContextInput = {
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
   application?: RawAuthContext['application'];
   viaApplication?: RawAuthContext['application'];
+  agentId?: RawAuthContext['agentId'];
 };
 
 export const buildUserAuthContext = (
@@ -27,5 +28,6 @@ export const buildUserAuthContext = (
     ...(isDefined(input.viaApplication)
       ? { viaApplication: input.viaApplication }
       : {}),
+    ...(isDefined(input.agentId) ? { agentId: input.agentId } : {}),
   };
 };

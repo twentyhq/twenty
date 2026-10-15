@@ -1,5 +1,9 @@
 .positioner {
   z-index: var(--t-last-layer-z-index);
+
+  &[data-anchor-hidden] {
+    visibility: hidden;
+  }
 }
 
 .popup {
