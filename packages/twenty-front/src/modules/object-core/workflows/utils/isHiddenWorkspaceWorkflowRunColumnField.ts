@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflows/utils/isHiddenWorkspaceWorkflowRunRelationField';
 
 export const isHiddenWorkspaceWorkflowRunColumnField = ({
   objectNameSingular,
@@ -7,5 +7,5 @@ export const isHiddenWorkspaceWorkflowRunColumnField = ({
   objectNameSingular: string;
   fieldName: string;
 }) =>
-  objectNameSingular === CoreObjectNameSingular.WorkflowRun &&
-  fieldName === 'workflowVersion';
+  fieldName !== 'workflow' &&
+  isHiddenWorkspaceWorkflowRunRelationField({ objectNameSingular, fieldName });
