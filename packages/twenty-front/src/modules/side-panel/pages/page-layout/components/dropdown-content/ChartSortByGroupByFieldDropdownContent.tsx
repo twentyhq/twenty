@@ -65,14 +65,10 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
-  const secondaryAxisField = isDefined(
-    configuration.secondaryAxisGroupByFieldMetadataId,
-  )
-    ? findFieldMetadataItemByFieldMetadataId({
-        fieldMetadataItems: objectMetadataItem?.fields,
-        fieldMetadataId: configuration.secondaryAxisGroupByFieldMetadataId,
-      })
-    : undefined;
+  const secondaryAxisField = findFieldMetadataItemByFieldMetadataId({
+    fieldMetadataItems: objectMetadataItem?.fields,
+    fieldMetadataId: configuration.secondaryAxisGroupByFieldMetadataId,
+  });
 
   const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
     objectMetadataId: widgetInEditMode.objectMetadataId,

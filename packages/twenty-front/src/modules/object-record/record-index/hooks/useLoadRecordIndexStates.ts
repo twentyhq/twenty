@@ -259,14 +259,11 @@ export const useLoadRecordIndexStates = () => {
         recordIndexGroupFieldMetadataItemValue = fieldMetadataItem;
       }
 
-      const recordIndexGroupAggregateFieldMetadataItemValue = isDefined(
-        view.kanbanAggregateOperationFieldMetadataId,
-      )
-        ? findFieldMetadataItemByFieldMetadataId({
-            fieldMetadataItems: objectMetadataItem.fields,
-            fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
-          })
-        : undefined;
+      const recordIndexGroupAggregateFieldMetadataItemValue =
+        findFieldMetadataItemByFieldMetadataId({
+          fieldMetadataItems: objectMetadataItem.fields,
+          fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
+        });
 
       let convertedAggregateOperation = undefined;
       if (isDefined(view.kanbanAggregateOperation)) {

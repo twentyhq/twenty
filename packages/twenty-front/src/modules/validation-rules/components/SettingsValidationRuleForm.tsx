@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconAddressBook, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -44,12 +43,10 @@ export const SettingsValidationRuleForm = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
-  const errorFieldMetadataItem = isDefined(values.errorFieldMetadataId)
-    ? findFieldMetadataItemByFieldMetadataId({
-        fieldMetadataItems: objectMetadataItem.fields,
-        fieldMetadataId: values.errorFieldMetadataId,
-      })
-    : undefined;
+  const errorFieldMetadataItem = findFieldMetadataItemByFieldMetadataId({
+    fieldMetadataItems: objectMetadataItem.fields,
+    fieldMetadataId: values.errorFieldMetadataId,
+  });
 
   const errorFieldOptions = [
     {

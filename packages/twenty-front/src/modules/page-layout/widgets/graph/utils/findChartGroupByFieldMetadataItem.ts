@@ -9,10 +9,6 @@ export const findChartGroupByFieldMetadataItem = ({
   fieldMetadataItems: FieldMetadataItem[] | undefined;
   groupByFieldMetadataId: string | null | undefined;
 }): FieldMetadataItem | undefined => {
-  if (!isDefined(groupByFieldMetadataId)) {
-    return undefined;
-  }
-
   const fieldMetadataItem = findFieldMetadataItemByFieldMetadataId({
     fieldMetadataItems,
     fieldMetadataId: groupByFieldMetadataId,

@@ -100,12 +100,10 @@ export const ChartSortBySelectionDropdownContent = () => {
       barOrLineChartConfiguration.primaryAxisGroupBySubFieldName;
   }
 
-  const primaryAxisField = isDefined(groupByFieldMetadataId)
-    ? findFieldMetadataItemByFieldMetadataId({
-        fieldMetadataItems: objectMetadataItem?.fields,
-        fieldMetadataId: groupByFieldMetadataId,
-      })
-    : undefined;
+  const primaryAxisField = findFieldMetadataItemByFieldMetadataId({
+    fieldMetadataItems: objectMetadataItem?.fields,
+    fieldMetadataId: groupByFieldMetadataId,
+  });
 
   if (!isDefined(primaryAxisField)) {
     return null;

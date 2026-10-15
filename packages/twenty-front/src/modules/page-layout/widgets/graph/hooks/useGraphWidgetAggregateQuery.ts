@@ -1,7 +1,6 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
-import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { getRecordAggregateDisplayLabel } from '@/object-record/record-index/utils/getRecordndexAggregateDisplayLabel';
 
@@ -90,7 +89,7 @@ export const useGraphWidgetAggregateQuery = ({
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
-  const { numberFormat, formatNumber } = useNumberFormat();
+  const { numberFormat } = useNumberFormat();
 
   if (isRatioQuery) {
     const isRatioLoading = ratioNumeratorLoading || ratioDenominatorLoading;
@@ -127,35 +126,16 @@ export const useGraphWidgetAggregateQuery = ({
     };
   }
 
-  const aggregateFieldMetadataItem = aggregateField;
-
-  if (!isDefined(aggregateFieldMetadataItem)) {
-    const totalCountValue =
-      data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
-        AggregateOperations.COUNT
-      ];
-
-    return {
-      value: isDefined(totalCountValue)
-        ? formatNumber(Number(totalCountValue))
-        : totalCountValue,
-      label: getAggregateOperationLabel(AggregateOperations.COUNT),
-      loading,
-      error,
-    };
-  }
-
-  const aggregateRawValue =
-    data[aggregateFieldMetadataItem.name]?.[aggregateOperation];
+  const aggregateRawValue = data[aggregateField.name]?.[aggregateOperation];
 
   const aggregateDisplayLabel = getRecordAggregateDisplayLabel({
-    aggregateFieldMetadataItem,
+    aggregateFieldMetadataItem: aggregateField,
     aggregateOperation,
   });
 
   const aggregateDisplayValue =
     transformAggregateRawValueIntoAggregateDisplayValue({
-      aggregateFieldMetadataItem: aggregateFieldMetadataItem,
+      aggregateFieldMetadataItem: aggregateField,
       aggregateOperation: extendedAggregateOperation,
       aggregateRawValue: aggregateRawValue,
       dateFormat,

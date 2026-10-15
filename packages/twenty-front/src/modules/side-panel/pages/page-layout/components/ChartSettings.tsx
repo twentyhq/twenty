@@ -18,7 +18,7 @@ import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/grap
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { assertChartWidgetOrThrow } from '@/side-panel/pages/page-layout/utils/assertChartWidgetOrThrow';
@@ -120,12 +120,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       ? configuration.groupByFieldMetadataId
       : null;
 
-  const primaryAxisField = isDefined(primaryAxisFieldMetadataId)
-    ? findFieldMetadataItemByFieldMetadataId({
-        fieldMetadataItems: objectMetadataItem?.fields,
-        fieldMetadataId: primaryAxisFieldMetadataId,
-      })
-    : undefined;
+  const primaryAxisField = findFieldMetadataItemByFieldMetadataId({
+    fieldMetadataItems: objectMetadataItem?.fields,
+    fieldMetadataId: primaryAxisFieldMetadataId,
+  });
 
   const isPrimaryAxisDate = isFieldMetadataDateKind(primaryAxisField?.type);
 
