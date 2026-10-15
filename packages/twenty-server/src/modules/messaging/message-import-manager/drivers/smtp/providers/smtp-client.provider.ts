@@ -9,8 +9,10 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { buildMailServerCertificateOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-mail-server-certificate-options.util';
 import { buildSmtpTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-smtp-tls-options.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
@@ -18,6 +20,7 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 export class SmtpClientProvider {
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
@@ -58,9 +61,12 @@ export class SmtpClientProvider {
         user: smtpParams.username ?? connectedAccount.handle ?? '',
         pass: smtpParams.password,
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
+      tls: buildMailServerCertificateOptions({
+        host: smtpParams.host,
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
+          'IMAP_SMTP_ALLOW_SELF_SIGNED',
+        ),
+      }),
     };
 
     const transporter = createTransport(options);

@@ -1,4 +1,3 @@
-import { SETTINGS_BILLING_COMPARED_PLAN_KEYS } from '@/settings/billing/constants/SettingsBillingComparedPlanKeys';
 import {
   type SettingsBillingPlanComparisonCell,
   type SettingsBillingPlanComparisonRow,
@@ -7,6 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { IconCheck, IconX } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 const StyledFeatureCell = styled.div<{
   hasTopBorder?: boolean;
@@ -120,9 +120,11 @@ const SettingsBillingPlanComparisonCellContent = ({
 
 export const SettingsBillingPlanComparisonTableRow = ({
   hasTopBorder = false,
+  planKeys,
   row,
 }: {
   hasTopBorder?: boolean;
+  planKeys: BillingPlanKey[];
   row: SettingsBillingPlanComparisonRow;
 }) => {
   const { i18n } = useLingui();
@@ -140,7 +142,7 @@ export const SettingsBillingPlanComparisonTableRow = ({
       <StyledFeatureLabelCell hasTopBorder={hasTopBorder} isLabel>
         <StyledCellText>{i18n._(row.featureLabel)}</StyledCellText>
       </StyledFeatureLabelCell>
-      {SETTINGS_BILLING_COMPARED_PLAN_KEYS.map((planKey) => (
+      {planKeys.map((planKey) => (
         <StyledFeatureCell hasTopBorder={hasTopBorder} key={planKey}>
           <SettingsBillingPlanComparisonCellContent cell={row.plans[planKey]} />
         </StyledFeatureCell>
