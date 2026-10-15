@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('VersionDistributionEntry')
 export class VersionDistributionEntryDTO {
@@ -22,4 +22,22 @@ export class ApplicationRegistrationStatsDTO {
 
   @Field(() => [VersionDistributionEntryDTO])
   versionDistribution: VersionDistributionEntryDTO[];
+
+  @Field(() => Int, { nullable: true })
+  onLatestVersion: number | null;
+
+  @Field(() => Int, { nullable: true })
+  updatesAvailable: number | null;
+
+  @Field(() => Int)
+  autoUpdateEnabled: number;
+
+  @Field(() => Int, { nullable: true })
+  workspacesNeedingAttention: number | null;
+
+  @Field(() => Int)
+  healthCheckedWorkspaces: number;
+
+  @Field(() => Float, { nullable: true })
+  totalCreditsConsumed: number | null;
 }

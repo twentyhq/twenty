@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationHealthCheckService } from 'src/engine/core-modules/application/application-health/application-health-check.service';
+import { ApplicationHealthCacheModule } from 'src/engine/core-modules/application/application-health/application-health-cache.module';
 import { ApplicationHealthResolver } from 'src/engine/core-modules/application/application-health/application-health.resolver';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -10,6 +11,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
 
 @Module({
   imports: [
+    ApplicationHealthCacheModule,
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
     ApplicationModule,

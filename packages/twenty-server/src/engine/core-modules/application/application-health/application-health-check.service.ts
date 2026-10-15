@@ -7,6 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
 import { type ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
@@ -22,6 +23,7 @@ export class ApplicationHealthCheckService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly applicationHealthCacheService: ApplicationHealthCacheService,
   ) {}
 
   async run({
@@ -43,10 +45,14 @@ export class ApplicationHealthCheckService {
       return null;
     }
 
-    return await this.executeHealthCheck({
+    const result = await this.executeHealthCheck({
       healthCheckLogicFunctionId,
       workspaceId,
     });
+
+    await this.applicationHealthCacheService.record(application, result.status);
+
+    return result;
   }
 
   private async executeHealthCheck({

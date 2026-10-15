@@ -11,7 +11,6 @@ import {
   type Manifest,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   IsNull,
   type DeepPartial,
@@ -28,6 +27,7 @@ import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/applica
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
+import { ApplicationRegistrationStatsService } from 'src/engine/core-modules/application/application-registration/application-registration-stats.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -132,6 +132,7 @@ export class ApplicationRegistrationService {
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly applicationRegistrationStatsService: ApplicationRegistrationStatsService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -1087,71 +1088,24 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationStatsDTO> {
-    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
-      applicationRegistrationId,
-      ownerWorkspaceId,
-    });
+    const registration =
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+        applicationRegistrationId,
+        ownerWorkspaceId,
+      });
 
-    return this.computeStats(applicationRegistrationId);
+    return this.applicationRegistrationStatsService.computeStats(registration);
   }
 
   // Admin panel views apps across all workspaces, so ownership is not enforced.
   async getStatsGlobal(
     applicationRegistrationId: string,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    await this.findOneByIdGlobal(applicationRegistrationId);
-
-    return this.computeStats(applicationRegistrationId);
-  }
-
-  private async computeStats(
-    applicationRegistrationId: string,
-  ): Promise<ApplicationRegistrationStatsDTO> {
-    const rawVersionDistribution: {
-      version: string;
-      count: number;
-      suspendedCount: number;
-    }[] = await this.applicationRepository
-      .createQueryBuilder('application')
-      .select("COALESCE(application.version, 'unknown')", 'version')
-      .addSelect('COUNT(*)::int', 'count')
-      .addSelect(
-        `COUNT(*) FILTER (WHERE workspace."activationStatus" = :suspendedStatus)::int`,
-        'suspendedCount',
-      )
-      .innerJoin('application.workspace', 'workspace')
-      .where(
-        'application."applicationRegistrationId" = :applicationRegistrationId',
-        { applicationRegistrationId },
-      )
-      .andWhere('application."deletedAt" IS NULL')
-      .andWhere('workspace."deletedAt" IS NULL')
-      .setParameter('suspendedStatus', WorkspaceActivationStatus.SUSPENDED)
-      .groupBy('version')
-      .orderBy('count', 'DESC')
-      .getRawMany();
-
-    const activeInstalls = rawVersionDistribution.reduce(
-      (sum, entry) => sum + entry.count,
-      0,
+    const registration = await this.findOneByIdGlobal(
+      applicationRegistrationId,
     );
 
-    const suspendedInstalls = rawVersionDistribution.reduce(
-      (sum, entry) => sum + entry.suspendedCount,
-      0,
-    );
-
-    const mostInstalledVersion = rawVersionDistribution[0]?.version ?? null;
-
-    return {
-      activeInstalls,
-      suspendedInstalls,
-      mostInstalledVersion,
-      versionDistribution: rawVersionDistribution.map((entry) => ({
-        version: entry.version,
-        count: entry.count,
-      })),
-    };
+    return this.applicationRegistrationStatsService.computeStats(registration);
   }
 
   // Admin panel only, which views apps across all workspaces, so ownership is not enforced

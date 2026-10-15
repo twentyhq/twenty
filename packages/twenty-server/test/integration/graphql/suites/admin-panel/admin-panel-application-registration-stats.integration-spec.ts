@@ -21,6 +21,12 @@ const FIND_STATS = gql`
     findAdminApplicationRegistrationStats(id: $id) {
       activeInstalls
       suspendedInstalls
+      onLatestVersion
+      updatesAvailable
+      autoUpdateEnabled
+      workspacesNeedingAttention
+      healthCheckedWorkspaces
+      totalCreditsConsumed
       mostInstalledVersion
       versionDistribution {
         version
@@ -89,17 +95,19 @@ describe('Admin panel application registration stats and installed workspaces (i
   const insertApplication = async ({
     workspaceId,
     version,
+    autoUpgrade = false,
   }: {
     workspaceId: string;
     version: string;
+    autoUpgrade?: boolean;
   }): Promise<SeededApplication> => {
     const id = randomUUID();
 
     await dataSource.query(
       `INSERT INTO core."application"
         (id, "universalIdentifier", name, version, "sourcePath",
-         "sourceType", "workspaceId", "applicationRegistrationId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+         "sourceType", "workspaceId", "applicationRegistrationId", "autoUpgrade")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         id,
         randomUUID(),
@@ -109,6 +117,7 @@ describe('Admin panel application registration stats and installed workspaces (i
         'local',
         workspaceId,
         applicationRegistrationId,
+        autoUpgrade,
       ],
     );
 
@@ -125,8 +134,8 @@ describe('Admin panel application registration stats and installed workspaces (i
     await dataSource.query(
       `INSERT INTO core."applicationRegistration"
         (id, "universalIdentifier", name, "oAuthClientId",
-         "oAuthRedirectUris", "oAuthScopes", "sourceType")
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+         "oAuthRedirectUris", "oAuthScopes", "sourceType", "latestAvailableVersion")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         applicationRegistrationId,
         randomUUID(),
@@ -135,6 +144,7 @@ describe('Admin panel application registration stats and installed workspaces (i
         [],
         [],
         'local',
+        '2.0.0',
       ],
     );
 
@@ -144,6 +154,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     await insertApplication({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       version: '2.0.0',
+      autoUpgrade: true,
     });
     await insertApplication({
       workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -213,6 +224,11 @@ describe('Admin panel application registration stats and installed workspaces (i
       expect(stats).toBeDefined();
       expect(stats.activeInstalls).toBe(3);
       expect(stats.suspendedInstalls).toBe(0);
+      expect(stats.onLatestVersion).toBe(2);
+      expect(stats.updatesAvailable).toBe(1);
+      expect(stats.autoUpdateEnabled).toBe(1);
+      expect(stats.healthCheckedWorkspaces).toBe(0);
+      expect(stats.workspacesNeedingAttention).toBeNull();
       expect(stats.mostInstalledVersion).toBe('2.0.0');
 
       const distributionByVersion = Object.fromEntries(

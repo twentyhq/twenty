@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { ApplicationHealthCacheModule } from 'src/engine/core-modules/application/application-health/application-health-cache.module';
+import { ApplicationRegistrationStatsService } from 'src/engine/core-modules/application/application-registration/application-registration-stats.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationClaimController } from 'src/engine/core-modules/application/application-registration/application-registration-claim.controller';
@@ -33,6 +36,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 
 @Module({
   imports: [
+    ClickHouseModule,
+    ApplicationHealthCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationEntity,
@@ -58,6 +63,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
   ],
   controllers: [ApplicationRegistrationClaimController],
   providers: [
+    ApplicationRegistrationStatsService,
     ApplicationRegistrationService,
     ApplicationRegistrationClaimService,
     ApplicationRegistrationResolver,
