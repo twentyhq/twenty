@@ -50,6 +50,8 @@ const buildService = ({
       ),
   };
   const onOutcome = jest.fn().mockResolvedValue(undefined);
+  const getWaitingState = jest.fn().mockResolvedValue('WAITING');
+  const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
 
   const service = new AgentRunSuspensionService(
     wakeUpRepository as never,
@@ -58,8 +60,8 @@ const buildService = ({
     threadLifecycleService as never,
     turnRecorderService as never,
     pendingWakeUpService as never,
-    { getHandlerOrThrow: () => ({ onOutcome }) } as never,
-    {} as never,
+    { getHandlerOrThrow: () => ({ onOutcome, getWaitingState }) } as never,
+    messageQueueService as never,
   );
 
   return {
@@ -69,6 +71,8 @@ const buildService = ({
     turnRecorderService,
     pendingWakeUpService,
     onOutcome,
+    getWaitingState,
+    messageQueueService,
   };
 };
 
@@ -271,6 +275,44 @@ describe('AgentRunSuspensionService', () => {
         outcome: { status: 'FAILED', error: 'boom' },
         summary,
       });
+    });
+  });
+
+  describe('deliverOutcome', () => {
+    const DELIVERY = {
+      workspaceId: 'workspace-id',
+      caller: CALLER,
+      threadId: 'thread-id',
+      outcome: { status: 'COMPLETED' as const, result: {} },
+      summary: null,
+    };
+
+    it('delivers the outcome again later to a caller not waiting yet', async () => {
+      const { service, onOutcome, getWaitingState, messageQueueService } =
+        buildService();
+
+      getWaitingState.mockResolvedValue('NOT_READY');
+
+      await service.deliverOutcome(DELIVERY, 3);
+
+      expect(onOutcome).not.toHaveBeenCalled();
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        'DeliverAgentRunOutcomeJob',
+        { ...DELIVERY, attempt: 4 },
+        { delay: 1_000 },
+      );
+    });
+
+    it('drops the outcome of a caller that stopped waiting', async () => {
+      const { service, onOutcome, getWaitingState, messageQueueService } =
+        buildService();
+
+      getWaitingState.mockResolvedValue('GONE');
+
+      await service.deliverOutcome(DELIVERY);
+
+      expect(onOutcome).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
   });
 });

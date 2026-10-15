@@ -5,8 +5,13 @@ import { type AgentRunSummary } from 'twenty-shared/ai';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
+import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-job-name.constant';
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
@@ -19,6 +24,7 @@ import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
+import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -54,9 +60,86 @@ export class AgentRunnerService {
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly pendingWakeUpService: PendingWakeUpService,
+    @InjectMessageQueue(MessageQueue.aiQueue)
+    private readonly messageQueueService: MessageQueueService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
+
+  // The run goes on in a job, so its caller is never held while the agent works: the caller's
+  // handler gets the outcome, as it does for a run that paused and went on later
+  async start(input: RunAgentJobData): Promise<void> {
+    await this.messageQueueService.add<RunAgentJobData>(
+      RUN_AGENT_JOB_NAME,
+      input,
+    );
+  }
+
+  // The run acts as its caller lets it act now, read again like a continued run does, and its
+  // tools see that same actor as the one making the request
+  async runStarted({
+    workspaceId,
+    conversation,
+    caller,
+    spec,
+    prompt,
+  }: RunAgentJobData): Promise<void> {
+    let result: AgentRunnerResult;
+
+    try {
+      const executionContext = await this.callerHandlerRegistry
+        .getHandlerOrThrow(caller.type)
+        .buildExecutionContext({ workspaceId, caller });
+      const agent = await this.findAgentOrThrow({
+        workspaceId,
+        agentId: spec.agentId,
+      });
+
+      result = await workspaceAuthContextStorage.run(
+        executionContext.authContext,
+        () =>
+          this.run({
+            workspaceId,
+            conversation,
+            caller,
+            spec,
+            agent,
+            prompt,
+            executionContext,
+          }),
+      );
+    } catch (error) {
+      this.logger.error(
+        `Agent run in thread ${conversation.threadId} failed`,
+        error instanceof Error ? error.stack : error,
+      );
+
+      await this.agentRunSuspensionService.deliverOutcome({
+        workspaceId,
+        caller,
+        threadId: conversation.threadId,
+        outcome: {
+          status: 'FAILED',
+          error: error instanceof Error ? error.message : String(error),
+        },
+        summary: null,
+      });
+
+      return;
+    }
+
+    if (result.outcome.status === 'SUSPENDED') {
+      return;
+    }
+
+    await this.agentRunSuspensionService.deliverOutcome({
+      workspaceId,
+      caller,
+      threadId: result.threadId,
+      outcome: result.outcome,
+      summary: result.summary,
+    });
+  }
 
   // nothing else writes to the conversation while the run goes on: another run would read it half
   // written, and a run that suspends would read a member's message once it goes on
@@ -141,34 +224,32 @@ export class AgentRunnerService {
         outcome: outcome.type === 'ANSWERED' ? { type: 'CANCELLED' } : outcome,
       });
 
-      const agent = isDefined(runSpec.agentId)
-        ? await this.agentRepository.findOne(workspaceId, {
-            where: { id: runSpec.agentId },
-          })
-        : null;
-
-      if (isDefined(runSpec.agentId) && !isDefined(agent)) {
-        throw new AiException(
-          `Agent with id ${runSpec.agentId} not found`,
-          AiExceptionCode.AGENT_NOT_FOUND,
-        );
-      }
-
-      result = await this.runTurn({
-        input: {
-          workspaceId,
-          conversation: { threadId, isCreated: false },
-          caller,
-          spec: runSpec,
-          agent,
-          prompt: null,
-          executionContext: await handler.buildExecutionContext({
-            workspaceId,
-            caller,
-          }),
-        },
-        suspension,
+      const agent = await this.findAgentOrThrow({
+        workspaceId,
+        agentId: runSpec.agentId,
       });
+
+      const executionContext = await handler.buildExecutionContext({
+        workspaceId,
+        caller,
+      });
+
+      result = await workspaceAuthContextStorage.run(
+        executionContext.authContext,
+        () =>
+          this.runTurn({
+            input: {
+              workspaceId,
+              conversation: { threadId, isCreated: false },
+              caller,
+              spec: runSpec,
+              agent,
+              prompt: null,
+              executionContext,
+            },
+            suspension,
+          }),
+      );
     } catch (error) {
       await this.agentRunSuspensionService.settle({
         workspaceId,
@@ -391,6 +472,15 @@ export class AgentRunnerService {
       )) === true;
 
     if (isSuspended) {
+      // where the run waits is shown to its caller, so a failure to show it must not fail the run
+      await this.tryRecording(
+        `show the caller of thread ${threadId} where its run waits`,
+        async () =>
+          this.callerHandlerRegistry
+            .getHandlerOrThrow(caller.type)
+            .onSuspended?.({ workspaceId, caller, threadId, summary }),
+      );
+
       return { status: 'SUSPENDED' };
     }
 
@@ -427,6 +517,31 @@ export class AgentRunnerService {
       status: 'FAILED',
       error: 'Agent asked a question that could not be recorded.',
     };
+  }
+
+  private async findAgentOrThrow({
+    workspaceId,
+    agentId,
+  }: {
+    workspaceId: string;
+    agentId: string | null;
+  }): Promise<AgentEntity | null> {
+    if (!isDefined(agentId)) {
+      return null;
+    }
+
+    const agent = await this.agentRepository.findOne(workspaceId, {
+      where: { id: agentId },
+    });
+
+    if (!isDefined(agent)) {
+      throw new AiException(
+        `Agent with id ${agentId} not found`,
+        AiExceptionCode.AGENT_NOT_FOUND,
+      );
+    }
+
+    return agent;
   }
 
   // A record of the run, not its outcome, so a write failure must not fail the run

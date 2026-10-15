@@ -48,7 +48,7 @@ const waitingResult = ({
   toolName = 'wait_for_duration',
   wait = {
     type: 'TIME',
-    resumeAt: new Date(Date.now() + 1_000).toISOString(),
+    resumeAt: new Date(Date.now() + 3_000).toISOString(),
   },
 }: {
   toolName?: string;
@@ -181,8 +181,13 @@ describe('agent runs that wait (integration)', () => {
     await deleteOneAgent({ expectToFail: false, input: { id: agentId } });
   });
 
-  const runTrigger = () =>
-    getAppProviderByClassName<AgentTriggerRunnerService>(
+  // a trigger starts its run in a job, so the run is awaited until its first turn is no longer running
+  const runTrigger = async () => {
+    const [{ startedAt }] = await global.testDataSource.query(
+      `SELECT now() AS "startedAt"`,
+    );
+
+    await getAppProviderByClassName<AgentTriggerRunnerService>(
       'AgentTriggerRunnerService',
     ).run({
       workspaceId,
@@ -190,6 +195,17 @@ describe('agent runs that wait (integration)', () => {
       triggerId,
       payload: { type: 'CRON', firedAt: new Date().toISOString() },
     });
+
+    await expectEventually(async () => {
+      const [turn] = await global.testDataSource.query(
+        `SELECT status FROM "${schema}"."agentTurn"
+         WHERE "agentId" = $1 AND "createdAt" >= $2 ORDER BY "createdAt" LIMIT 1`,
+        [agentId, startedAt],
+      );
+
+      expect(turn?.status ?? 'running').not.toBe('running');
+    });
+  };
 
   it('lets a triggered agent wait for a duration and go on once the wake-up resolves', async () => {
     const executeAgent = mockAgent(waitingResult(), replyingResult);
@@ -324,6 +340,48 @@ describe('agent runs that wait (integration)', () => {
     });
   });
 
+  it('starts a runAgent call without waiting when asked not to, its reply landing in its thread', async () => {
+    const executeAgent = mockAgent(replyingResult);
+
+    const response = await makeMetadataApiRequest({
+      query: gql`
+        mutation RunAgent($input: RunAgentInput!) {
+          runAgent(input: $input) {
+            threadId
+            status
+            result
+            error
+            success
+          }
+        }
+      `,
+      variables: {
+        input: {
+          agentUniversalIdentifier,
+          input: [{ role: 'user', content: 'Follow up tomorrow' }],
+          waitForCompletion: false,
+        },
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.runAgent).toEqual({
+      threadId: expect.any(String),
+      status: 'RUNNING',
+      result: null,
+      error: null,
+      success: true,
+    });
+
+    await expectEventually(async () => {
+      expect(
+        await findTurnStatuses(response.body.data.runAgent.threadId),
+      ).toEqual(['completed']);
+    });
+
+    expect(executeAgent).toHaveBeenCalledTimes(1);
+  });
+
   it('answers a runAgent call whose agent waits as waiting, with its thread', async () => {
     const executeAgent = mockAgent(waitingResult(), replyingResult);
 
@@ -360,9 +418,9 @@ describe('agent runs that wait (integration)', () => {
       expect(
         await findTurnStatuses(response.body.data.runAgent.threadId),
       ).toEqual(['completed', 'completed']);
+      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
     });
 
-    expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
     expect(executeAgent).toHaveBeenCalledTimes(2);
   });
 
@@ -416,14 +474,14 @@ describe('agent runs that wait (integration)', () => {
 
       expect(status).toBe('SUSPENDED');
 
+      // the wake-up goes once the run went on, just after its turn closes
       await expectEventually(async () => {
         expect(await findTurnStatuses(threadId)).toEqual([
           'completed',
           'completed',
         ]);
+        expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
       });
-
-      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
       expect(
         executeAgent.mock.calls.map(
           ([execution]) => execution.executionContext.authContext,

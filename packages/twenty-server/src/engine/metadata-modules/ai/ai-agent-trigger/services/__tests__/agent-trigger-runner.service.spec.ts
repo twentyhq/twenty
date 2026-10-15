@@ -26,6 +26,15 @@ const JOB_DATA: RunAgentTriggerJobData = {
   },
 };
 
+const CALLER = {
+  type: 'AGENT_TRIGGER',
+  ref: {
+    agentId: AGENT_ID,
+    triggerId: TRIGGER_ID,
+    dispatchedRoleId: AGENT_ROLE_ID,
+  },
+};
+
 const buildAgent = (isTriggerActive = true) => ({
   id: AGENT_ID,
   label: 'Enricher',
@@ -43,7 +52,7 @@ const buildAgent = (isTriggerActive = true) => ({
 
 describe('AgentTriggerRunnerService', () => {
   let service: AgentTriggerRunnerService;
-  let runAgent: jest.Mock;
+  let startRun: jest.Mock;
   let currentRoleId: string | undefined;
   let findAgent: jest.Mock;
   let findApplication: jest.Mock;
@@ -54,14 +63,14 @@ describe('AgentTriggerRunnerService', () => {
     findApplication = jest
       .fn()
       .mockResolvedValue({ id: 'application-id', name: 'App' });
-    runAgent = jest.fn().mockResolvedValue(undefined);
+    startRun = jest.fn().mockResolvedValue(undefined);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AgentTriggerRunnerService,
         {
           provide: AgentRunnerService,
-          useValue: { run: runAgent },
+          useValue: { start: startRun },
         },
         {
           provide: AgentRunCallerHandlerRegistryService,
@@ -93,43 +102,43 @@ describe('AgentTriggerRunnerService', () => {
     service = module.get(AgentTriggerRunnerService);
   });
 
-  it('should run the agent as itself in a new conversation, able to wait', async () => {
+  it('should start the agent in a new conversation, able to wait', async () => {
     await service.run(JOB_DATA);
 
-    expect(runAgent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        conversation: { threadId: expect.any(String), isCreated: true },
-        caller: {
-          type: 'AGENT_TRIGGER',
-          ref: {
-            agentId: AGENT_ID,
-            triggerId: TRIGGER_ID,
-            dispatchedRoleId: AGENT_ROLE_ID,
-          },
+    expect(startRun).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      conversation: { threadId: expect.any(String), isCreated: true },
+      caller: CALLER,
+      spec: expect.objectContaining({
+        title: 'Enricher',
+        toolLoadingStrategy: 'lazy',
+        capabilities: {
+          canAskHumans: false,
         },
-        spec: expect.objectContaining({
-          title: 'Enricher',
-          toolLoadingStrategy: 'lazy',
-          capabilities: {
-            canAskHumans: false,
-          },
-        }),
-        prompt: expect.objectContaining({
-          senderUserWorkspaceId: null,
-          senderApplicationId: 'application-id',
-        }),
-        executionContext: expect.objectContaining({
-          actorContext: expect.objectContaining({ name: 'Enricher' }),
-          authContext: expect.objectContaining({
-            type: 'application',
-            actingAgent: { id: AGENT_ID, label: 'Enricher' },
-          }),
-          rolePermissionConfig: {
-            intersectionOf: { agentRoleId: AGENT_ROLE_ID },
-          },
-        }),
       }),
-    );
+      prompt: expect.objectContaining({
+        senderUserWorkspaceId: null,
+        senderApplicationId: 'application-id',
+      }),
+    });
+  });
+
+  it('should run the agent as itself', async () => {
+    expect(
+      await service.buildExecutionContext({
+        workspaceId: WORKSPACE_ID,
+        caller: CALLER,
+      }),
+    ).toMatchObject({
+      actorContext: expect.objectContaining({ name: 'Enricher' }),
+      authContext: expect.objectContaining({
+        type: 'application',
+        actingAgent: { id: AGENT_ID, label: 'Enricher' },
+      }),
+      rolePermissionConfig: {
+        intersectionOf: { agentRoleId: AGENT_ROLE_ID },
+      },
+    });
   });
 
   it("should keep the agent's role alone when its application has no role", async () => {
@@ -139,19 +148,17 @@ describe('AgentTriggerRunnerService', () => {
       defaultRoleId: null,
     });
 
-    await service.run(JOB_DATA);
-
-    expect(runAgent).toHaveBeenCalledTimes(1);
-    expect(runAgent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        executionContext: expect.objectContaining({
-          rolePermissionConfig: {
-            intersectionOf: { agentRoleId: AGENT_ROLE_ID },
-          },
-          agentRunRoleIds: {},
-        }),
+    expect(
+      await service.buildExecutionContext({
+        workspaceId: WORKSPACE_ID,
+        caller: CALLER,
       }),
-    );
+    ).toMatchObject({
+      rolePermissionConfig: {
+        intersectionOf: { agentRoleId: AGENT_ROLE_ID },
+      },
+      agentRunRoleIds: {},
+    });
   });
 
   it("should restrict the agent's role to its application's default role", async () => {
@@ -161,22 +168,20 @@ describe('AgentTriggerRunnerService', () => {
       defaultRoleId: 'application-role-id',
     });
 
-    await service.run(JOB_DATA);
-
-    expect(runAgent).toHaveBeenCalledTimes(1);
-    expect(runAgent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        executionContext: expect.objectContaining({
-          rolePermissionConfig: {
-            intersectionOf: {
-              agentRoleId: AGENT_ROLE_ID,
-              applicationRoleId: 'application-role-id',
-            },
-          },
-          agentRunRoleIds: { applicationRoleId: 'application-role-id' },
-        }),
+    expect(
+      await service.buildExecutionContext({
+        workspaceId: WORKSPACE_ID,
+        caller: CALLER,
       }),
-    );
+    ).toMatchObject({
+      rolePermissionConfig: {
+        intersectionOf: {
+          agentRoleId: AGENT_ROLE_ID,
+          applicationRoleId: 'application-role-id',
+        },
+      },
+      agentRunRoleIds: { applicationRoleId: 'application-role-id' },
+    });
   });
 
   it.each([
@@ -198,7 +203,7 @@ describe('AgentTriggerRunnerService', () => {
 
     await service.run(JOB_DATA);
 
-    expect(runAgent).not.toHaveBeenCalled();
+    expect(startRun).not.toHaveBeenCalled();
   });
 
   it('should not run when the agent role changed since dispatch', async () => {
@@ -206,6 +211,6 @@ describe('AgentTriggerRunnerService', () => {
 
     await service.run(JOB_DATA);
 
-    expect(runAgent).not.toHaveBeenCalled();
+    expect(startRun).not.toHaveBeenCalled();
   });
 });

@@ -13,6 +13,8 @@ import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-p
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ContinueAgentRunJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/continue-agent-run.job';
+import { DeliverAgentRunOutcomeJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/deliver-agent-run-outcome.job';
+import { RunAgentJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/run-agent.job';
 import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
 import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
@@ -23,6 +25,7 @@ import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-module
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-pending-wake-up-handler.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { AgentStepLoopService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
@@ -74,12 +77,15 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentMessageResolver,
     AgentRunResolver,
     AgentRunService,
+    AgentRunSettlementService,
     AgentRunnerService,
     AgentStepLoopService,
     // continues suspended runs once answered or woken up, on the server and the worker alike
     AgentRunPendingWakeUpHandlerService,
     ContinueAgentRunJob,
+    DeliverAgentRunOutcomeJob,
     RunAgentAttachmentService,
+    RunAgentJob,
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(FileEntity),
     provideWorkspaceScopedRepository(PendingWakeUpEntity),

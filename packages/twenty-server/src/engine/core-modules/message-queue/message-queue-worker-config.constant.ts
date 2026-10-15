@@ -248,7 +248,8 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   [MessageQueue.aiQueue]: {
     priority: 5,
     workerOptions: {
-      concurrency: 1,
+      // agent runs wait on the model and their tools most of the time, so several share a worker
+      concurrency: 10,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
