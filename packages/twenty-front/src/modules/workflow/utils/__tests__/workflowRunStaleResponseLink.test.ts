@@ -110,6 +110,39 @@ describe('workflowRunStaleResponseLink', () => {
     });
   });
 
+  it('should keep a cached null value when an older response has one set', async () => {
+    const { client } = setup({
+      response: {
+        workflowRun: {
+          __typename: 'WorkflowRun',
+          id: 'run-1',
+          status: 'FAILED',
+          stepLogs: { 'step-1': 'failed' },
+          updatedAt: COMPLETED_AT,
+        },
+      },
+    });
+
+    client.cache.writeQuery({
+      query: FIND_ONE_WORKFLOW_RUN,
+      variables: { objectRecordId: 'run-1' },
+      data: {
+        workflowRun: {
+          __typename: 'WorkflowRun',
+          id: 'run-1',
+          status: 'RUNNING',
+          stepLogs: null,
+          updatedAt: '2026-10-13T10:00:03.000Z',
+        },
+      },
+    });
+
+    expect(await queryWorkflowRun({ client })).toMatchObject({
+      status: 'RUNNING',
+      stepLogs: null,
+    });
+  });
+
   it('should let a newer run response through', async () => {
     const { client } = setup({
       response: {

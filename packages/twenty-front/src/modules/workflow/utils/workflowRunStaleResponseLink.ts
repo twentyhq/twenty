@@ -1,6 +1,6 @@
 import { ApolloLink, gql } from '@apollo/client';
 import { type ApolloCache } from '@apollo/client/cache';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { parse } from 'graphql';
 import { map } from 'rxjs';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -71,7 +71,7 @@ const keepNewerCachedFields = ({
     ...workflowRun,
     ...Object.fromEntries(
       plainFieldNames
-        .filter((fieldName) => isDefined(cachedWorkflowRun[fieldName]))
+        .filter((fieldName) => !isUndefined(cachedWorkflowRun[fieldName]))
         .map((fieldName) => [fieldName, cachedWorkflowRun[fieldName]]),
     ),
   };
