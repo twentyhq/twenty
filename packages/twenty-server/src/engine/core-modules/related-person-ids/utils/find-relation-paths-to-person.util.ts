@@ -79,6 +79,7 @@ export const findRelationPathsToPerson = ({
           sourceFlatFieldMetadata: field,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          isMorphRelationHeadEnabled: false,
         });
 
         if (!isDefined(relation)) {

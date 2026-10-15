@@ -1470,6 +1470,13 @@
         "description": "Whether the user must choose a value before submitting a form."
       },
       {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Control height: `sm` (24px) or `md` (32px)."
+      },
+      {
         "name": "style",
         "type": "CSSProperties | ((state: RadioGroupState) => CSSProperties | undefined)",
         "required": false,
@@ -1911,6 +1918,27 @@
         "required": false,
         "defaultValue": null,
         "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
+      }
+    ]
+  },
+  {
+    "name": "OverflowingTextTooltipModeProvider",
+    "entryPoint": "twenty-ui/primitives/typography",
+    "slug": "typography/overflowing-text-tooltip-mode-provider",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Content whose OverflowingTextWithTooltip instances use the mode."
+      },
+      {
+        "name": "mode",
+        "type": "\"disabled\" | \"measure-on-hover\" | \"measure-on-open\"",
+        "required": true,
+        "defaultValue": null,
+        "description": "`measure-on-hover` checks truncation on pointer entry and focus. `measure-on-open` checks it when the tooltip tries to open. `disabled` renders only the text."
       }
     ]
   },
@@ -7720,7 +7748,7 @@
           },
           {
             "name": "ref",
-            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<...>)) | null",
             "required": false,
             "defaultValue": null,
             "description": "Ref to the trigger button, or the element supplied through render."
@@ -9495,7 +9523,7 @@
           },
           {
             "name": "ref",
-            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<...>)) | null",
             "required": false,
             "defaultValue": null,
             "description": "Ref to the rendered trigger element, a button by default."
@@ -11894,32 +11922,81 @@
     "slug": "components/layout/overflowing-list",
     "props": [
       {
+        "name": "actionsRef",
+        "type": "RefObject<PopoverRootActions | null>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref exposing the Popover close() and unmount() methods. After preventUnmountOnClose(), call unmount() when the caller-owned exit finishes."
+      },
+      {
         "name": "children",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>>[]",
         "required": true,
         "defaultValue": null,
-        "description": "Complete ordered list of elements, each with a stable key."
+        "description": "Complete ordered list of elements, each with a stable key. The popup contains the complete list, including items visible in the compact row."
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Initial popup visibility when uncontrolled. Defaults to false."
       },
       {
         "name": "maxInlineCount",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum number of items mounted in the compact row. The popup still contains every item."
+        "description": "Maximum number of items visible in the compact row. Available width can reduce this count further. The popup still contains the complete list."
+      },
+      {
+        "name": "onOpenChange",
+        "type": "((open: boolean, eventDetails: PopoverRootChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the requested open state and unchanged Base UI event details, including reason, event, trigger, cancel() and preventUnmountOnClose()."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled popup visibility. A popup can appear only when items overflow."
       },
       {
         "name": "overflowLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Show all items",
-        "description": "Accessible label for the popup. The overflow button is named by its visible count followed by this label. Defaults to Show all items."
+        "description": "Accessible label for the popup. The default overflow button is named by its visible count followed by this label. Defaults to Show all items."
+      },
+      {
+        "name": "popupProps",
+        "type": "Omit<PopoverPopupProps, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Popover.Popup native props, handlers, ref, render composition and focus options for the overflow content. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the compact row root div."
       },
       {
         "name": "showOverflowCount",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger. An open popup stays open until it is dismissed."
+        "description": "Shows the count on hover, keyboard focus or while open by default. Use true to keep it visible whenever items overflow, or false to hide the count and clip the row. An already-open popup stays open until dismissed. Empty lists and lists that fit have no trigger."
+      },
+      {
+        "name": "triggerProps",
+        "type": "Omit<\n      ComponentPropsWithRef<typeof Popover.Trigger>,\n      'handle' | 'payload' | 'ref'\n    > & { ref?: Ref<HTMLElement> }",
+        "required": false,
+        "defaultValue": null,
+        "description": "Popover.Trigger native props, handlers, ref, children and render composition for the count button. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default. Custom components must forward supplied props and ref."
       }
     ]
   },
@@ -13459,6 +13536,13 @@
     "slug": "components/input/search-input",
     "props": [
       {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controls rendered after the search field, such as a filter Dropdown. Set their size and accessible names on the controls."
+      },
+      {
         "name": "aria-label",
         "type": "string",
         "required": false,
@@ -13498,21 +13582,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Disables the text input. Configure filter popup controls separately."
-      },
-      {
-        "name": "filterButtonAriaLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": "Filter",
-        "description": "Accessible label for the optional filter button."
-      },
-      {
-        "name": "filterDropdown",
-        "type": "((filterButton: ReactElement<unknown, string | JSXElementConstructor<any>>) => ReactNode)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Renders a filter popup around the supplied filter button."
+        "description": "Disables the text input. Controls in actions keep their own state."
       },
       {
         "name": "id",
@@ -13561,7 +13631,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Visual size of the input group and optional filter button."
+        "description": "Visual size of the input group."
       },
       {
         "name": "style",

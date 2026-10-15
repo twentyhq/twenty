@@ -1,4 +1,4 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useCallback, useState } from 'react';
@@ -100,14 +100,7 @@ export const SelectHeaderStep = ({
 
   return (
     <>
-      <Dialog.Body
-        style={{
-          display: 'flex',
-          flex: '1 1 0%',
-          flexDirection: 'column',
-          padding: 'var(--t-spacing-10)',
-        }}
-      >
+      <SpreadsheetImportStepBody padding="large">
         <StyledHeadingContainer>
           <Heading title={t`Select header row`} />
         </StyledHeadingContainer>
@@ -118,7 +111,7 @@ export const SelectHeaderStep = ({
             onSelectedRowChange={setSelectedRowIndex}
           />
         </StyledTableContainer>
-      </Dialog.Body>
+      </SpreadsheetImportStepBody>
       <StepNavigationButton
         onContinue={handleOnContinue}
         onBack={onBack}

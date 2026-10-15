@@ -11,10 +11,6 @@ const previewTooltipClass = css`
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   padding: 0;
-
-  [data-anchor-hidden] & {
-    visibility: hidden;
-  }
 `;
 
 type SuggestionItemPreviewTooltipProps = {

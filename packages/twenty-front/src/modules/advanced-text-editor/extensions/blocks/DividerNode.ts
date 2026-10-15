@@ -17,11 +17,11 @@ export const DividerNode = Node.create({
         default: {
           borderTopWidth: '1px',
           borderTopStyle: 'solid',
-          borderTopColor: '#e1e1e1',
+          borderTopColor: '#ebebeb',
           marginTop: '16px',
-          marginRight: '0px',
+          marginRight: '8px',
           marginBottom: '16px',
-          marginLeft: '0px',
+          marginLeft: '8px',
         },
         parseHTML: readBlockStyleAttribute,
         renderHTML: (attributes) => ({
