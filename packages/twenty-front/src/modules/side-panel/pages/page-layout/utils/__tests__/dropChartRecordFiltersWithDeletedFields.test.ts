@@ -1,5 +1,6 @@
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
 
@@ -21,7 +22,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
 
     const result = dropChartRecordFiltersWithDeletedFields({
       chartFilters,
-      validFieldMetadataIds: new Set(['valid-field']),
+      fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
 
     expect(result.recordFilters).toEqual([
@@ -49,7 +50,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
 
     const result = dropChartRecordFiltersWithDeletedFields({
       chartFilters,
-      validFieldMetadataIds: new Set(['valid-field']),
+      fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
 
     expect(result.recordFilterGroups).toEqual([
@@ -71,7 +72,10 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
 
     const result = dropChartRecordFiltersWithDeletedFields({
       chartFilters,
-      validFieldMetadataIds: new Set(['field-a', 'field-b']),
+      fieldMetadataItems: [
+        { id: 'field-a', isActive: true },
+        { id: 'field-b', isActive: true },
+      ],
     });
 
     expect(result.recordFilters).toHaveLength(2);
@@ -82,7 +86,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
 
     const result = dropChartRecordFiltersWithDeletedFields({
       chartFilters,
-      validFieldMetadataIds: new Set(['field-a']),
+      fieldMetadataItems: [{ id: 'field-a', isActive: true }],
     });
 
     expect(result.recordFilters).toEqual([]);
@@ -108,7 +112,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
 
     const result = dropChartRecordFiltersWithDeletedFields({
       chartFilters,
-      validFieldMetadataIds: new Set(),
+      fieldMetadataItems: [],
     });
 
     expect(result.recordFilters).toEqual([]);
@@ -145,7 +149,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
 
     const result = dropChartRecordFiltersWithDeletedFields({
       chartFilters,
-      validFieldMetadataIds: new Set(['valid-field']),
+      fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
 
     expect(result.recordFilters).toEqual([
@@ -189,10 +193,34 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
 
     const result = dropChartRecordFiltersWithDeletedFields({
       chartFilters,
-      validFieldMetadataIds: new Set(),
+      fieldMetadataItems: [],
     });
 
     expect(result.recordFilters).toEqual([]);
     expect(result.recordFilterGroups).toEqual([]);
+  });
+
+  it('should point record filters on a morph relation target at the morph relation field', () => {
+    const chartFilters: ChartFilters = {
+      recordFilters: [{ id: 'filter-1', fieldMetadataId: 'morph-target' }],
+      recordFilterGroups: [],
+    } as unknown as ChartFilters;
+
+    const result = dropChartRecordFiltersWithDeletedFields({
+      chartFilters,
+      fieldMetadataItems: [
+        {
+          id: 'morph-head',
+          isActive: true,
+          morphRelations: [
+            { sourceFieldMetadata: { id: 'morph-target', name: 'ownerPet' } },
+          ],
+        } as FieldMetadataItem,
+      ],
+    });
+
+    expect(result.recordFilters).toEqual([
+      { id: 'filter-1', fieldMetadataId: 'morph-head' },
+    ]);
   });
 });

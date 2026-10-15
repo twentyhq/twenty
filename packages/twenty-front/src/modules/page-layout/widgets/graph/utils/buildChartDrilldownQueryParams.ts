@@ -4,6 +4,7 @@ import { buildFilterFromChartBucket } from '@/page-layout/widgets/graph/utils/bu
 import { buildFilterQueryParams } from '@/page-layout/widgets/graph/utils/buildFilterQueryParams';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
+import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
 import { isDefined } from 'twenty-shared/utils';
 
 export const buildChartDrilldownQueryParams = ({
@@ -17,9 +18,15 @@ export const buildChartDrilldownQueryParams = ({
   const drilldownQueryParams = new URLSearchParams();
 
   if (isDefined(configuration.filter)) {
+    const { recordFilters, recordFilterGroups } =
+      dropChartRecordFiltersWithDeletedFields({
+        chartFilters: configuration.filter,
+        fieldMetadataItems: objectMetadataItem.fields,
+      });
+
     const chartFilterParams = buildFilterQueryParams({
-      recordFilters: configuration.filter.recordFilters ?? [],
-      recordFilterGroups: configuration.filter.recordFilterGroups ?? [],
+      recordFilters,
+      recordFilterGroups,
       objectMetadataItem,
     });
 

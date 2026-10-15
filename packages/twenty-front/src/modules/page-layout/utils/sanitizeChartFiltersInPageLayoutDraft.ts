@@ -1,3 +1,4 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
@@ -6,10 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const sanitizeChartFiltersInPageLayoutDraft = ({
   pageLayoutDraft,
-  validFieldMetadataIdsByObjectMetadataId,
+  fieldMetadataItemsByObjectMetadataId,
 }: {
   pageLayoutDraft: DraftPageLayout;
-  validFieldMetadataIdsByObjectMetadataId: Map<string, Set<string>>;
+  fieldMetadataItemsByObjectMetadataId: Map<string, FieldMetadataItem[]>;
 }): DraftPageLayout => {
   return {
     ...pageLayoutDraft,
@@ -29,17 +30,17 @@ export const sanitizeChartFiltersInPageLayoutDraft = ({
           return widget;
         }
 
-        const validFieldMetadataIds = isDefined(widget.objectMetadataId)
-          ? validFieldMetadataIdsByObjectMetadataId.get(widget.objectMetadataId)
+        const fieldMetadataItems = isDefined(widget.objectMetadataId)
+          ? fieldMetadataItemsByObjectMetadataId.get(widget.objectMetadataId)
           : undefined;
 
-        if (!isDefined(validFieldMetadataIds)) {
+        if (!isDefined(fieldMetadataItems)) {
           return widget;
         }
 
         const sanitizedChartFilters = dropChartRecordFiltersWithDeletedFields({
           chartFilters,
-          validFieldMetadataIds,
+          fieldMetadataItems,
         });
 
         return {

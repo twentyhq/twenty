@@ -84,7 +84,7 @@ export const ChartFiltersSettings = ({
         recordFilters: existingRecordFilters,
         recordFilterGroups: existingRecordFilterGroups,
       },
-      validFieldMetadataIds,
+      fieldMetadataItems: objectMetadataItem.fields,
     });
 
     updateCurrentWidgetConfig({

@@ -47,16 +47,10 @@ export const useGraphWidgetQueryCommon = ({
     flattenedFieldMetadataItemsSelector,
   );
 
-  const objectFieldMetadataIds = new Set(
-    objectMetadataItem.fields
-      .filter((field) => field.isActive)
-      .map((field) => field.id),
-  );
-
   const { recordFilters: sanitizedRecordFilters } =
     dropChartRecordFiltersWithDeletedFields({
       chartFilters: configuration.filter ?? {},
-      validFieldMetadataIds: objectFieldMetadataIds,
+      fieldMetadataItems: objectMetadataItem.fields,
     });
 
   const gqlOperationFilter = computeRecordGqlOperationFilter({
