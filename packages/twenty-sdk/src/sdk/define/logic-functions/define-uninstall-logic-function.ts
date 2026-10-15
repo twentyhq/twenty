@@ -1,9 +1,9 @@
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
-import { type TranslatableUninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/uninstall-logic-function-config';
+import { type UninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/uninstall-logic-function-config';
 
 export const defineUninstallLogicFunction: DefineEntity<
-  TranslatableUninstallLogicFunctionConfig
+  UninstallLogicFunctionConfig
 > = (config) => {
   const errors = [];
 

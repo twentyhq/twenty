@@ -136,6 +136,146 @@ describe('collectTranslatableStrings', () => {
       ]),
     );
   });
+
+  it('collects every registered manifest text, leaving values and identifiers out', () => {
+    const manifest = buildManifest({
+      application: {
+        universalIdentifier: 'rocket-app',
+        displayName: 'Rocket App',
+        description: 'Launch rockets',
+        billing: {
+          description: 'Billed per launch',
+          recurring: {
+            SEAT: { label: 'Seat', period: 'MONTH', amountMicroCredits: 1 },
+          },
+          operations: {
+            LAUNCH: { label: 'Launch', operationType: 'CODE_EXECUTION' },
+          },
+        },
+        applicationVariables: {
+          REGION: {
+            label: 'Region',
+            description: 'Launch region',
+            options: [{ label: 'Europe', value: 'eu' }],
+          },
+        },
+        serverVariables: {
+          SPEED: {
+            description: 'Delivery speed',
+            options: [{ label: 'Express', value: 'express' }],
+          },
+        },
+      },
+      objects: [
+        {
+          labelSingular: 'Rocket',
+          labelPlural: 'Rockets',
+          fields: [
+            {
+              label: 'Stage',
+              options: [
+                { id: 'stage-1', label: 'Ignition', value: 'IGNITION' },
+              ],
+            },
+          ],
+        },
+      ],
+      fields: [
+        {
+          label: 'Fuel',
+          options: [{ id: 'fuel-1', label: 'Hydrogen', value: 'HYDROGEN' }],
+        },
+      ],
+      roles: [{ label: 'Pilot', description: 'Flies rockets' }],
+      skills: [
+        {
+          name: 'launch-skill',
+          label: 'Launch skill',
+          description: 'Knows launches',
+        },
+      ],
+      agents: [
+        {
+          name: 'launch-agent',
+          label: 'Launch agent',
+          description: 'Runs launches',
+        },
+      ],
+      logicFunctions: [{ name: 'launch', description: 'Launches a rocket' }],
+      frontComponents: [{ name: 'cockpit', description: 'The cockpit' }],
+      permissionFlags: [{ label: 'Launch', description: 'Can launch' }],
+      connectionProviders: [{ name: 'nasa', displayName: 'NASA' }],
+    });
+
+    const descriptors = collectTranslatableStrings(manifest);
+
+    expect(descriptors).toEqual(
+      expect.arrayContaining([
+        { message: 'Rocket App', context: 'application.displayName' },
+        { message: 'Launch rockets', context: 'application.description' },
+        {
+          message: 'Billed per launch',
+          context: 'application.billing.description',
+        },
+        { message: 'Seat', context: 'application.billing.recurring.label' },
+        { message: 'Launch', context: 'application.billing.operations.label' },
+        { message: 'Region', context: 'applicationVariable.label' },
+        {
+          message: 'Launch region',
+          context: 'applicationVariable.description',
+        },
+        { message: 'Europe', context: 'applicationVariable.label' },
+        { message: 'Delivery speed', context: 'serverVariable.description' },
+        { message: 'Express', context: 'serverVariable.label' },
+        { message: 'Ignition', context: 'fieldMetadata.label' },
+        { message: 'Hydrogen', context: 'fieldMetadata.label' },
+        { message: 'Pilot', context: 'role.label' },
+        { message: 'Flies rockets', context: 'role.description' },
+        { message: 'Launch skill', context: 'skill.label' },
+        { message: 'Knows launches', context: 'skill.description' },
+        { message: 'Launch agent', context: 'agent.label' },
+        { message: 'Runs launches', context: 'agent.description' },
+        { message: 'launch', context: 'logicFunction.name' },
+        { message: 'Launches a rocket', context: 'logicFunction.description' },
+        { message: 'cockpit', context: 'frontComponent.name' },
+        { message: 'The cockpit', context: 'frontComponent.description' },
+        { message: 'Launch', context: 'permissionFlag.label' },
+        { message: 'Can launch', context: 'permissionFlag.description' },
+        { message: 'NASA', context: 'connectionProvider.displayName' },
+      ]),
+    );
+
+    const messages = descriptors.map(({ message }) => message);
+
+    for (const value of [
+      'rocket-app',
+      'eu',
+      'express',
+      'IGNITION',
+      'HYDROGEN',
+    ]) {
+      expect(messages).not.toContain(value);
+    }
+  });
+
+  // The server resolves an option label by its text in the field label context, so a plain option label sharing a field label's text is translated with it
+  it('extracts a plain option label sharing its text with a field label as the same catalog entry', () => {
+    const manifest = buildManifest({
+      fields: [
+        { label: 'Status' },
+        {
+          label: 'Stage',
+          options: [{ id: 'stage-1', label: 'Status', value: 'STATUS' }],
+        },
+      ],
+    });
+
+    expect(
+      collectTranslatableStrings(manifest).filter(
+        ({ message }) => message === 'Status',
+      ),
+    ).toEqual([{ message: 'Status', context: 'fieldMetadata.label' }]);
+  });
 });
 
 describe('compileApplicationTranslations', () => {

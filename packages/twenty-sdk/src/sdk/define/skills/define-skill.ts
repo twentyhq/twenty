@@ -1,8 +1,8 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import { type TranslatableSkillConfig } from '@/sdk/define/skills/skill-config';
+import { type SkillManifest } from 'twenty-shared/application';
 
-export const defineSkill: DefineEntity<TranslatableSkillConfig> = (config) => {
+export const defineSkill: DefineEntity<SkillManifest> = (config) => {
   const errors: string[] = [];
 
   if (!config.universalIdentifier) {

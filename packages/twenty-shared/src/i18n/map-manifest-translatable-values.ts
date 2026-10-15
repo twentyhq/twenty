@@ -1,18 +1,15 @@
 import { mapTranslatablePropertyPathValues } from './translatable-property-path';
 import {
-  MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES,
-  type MessageTranslatableManifestEntity,
+  MANIFEST_TRANSLATABLE_PROPERTIES,
+  type ManifestTranslatableEntity,
 } from './translatable-properties-by-metadata-name';
 
-export const mapMessageTranslatableManifestValues = <
-  TValue,
-  TMappedValue = TValue,
->({
+export const mapManifestTranslatableValues = <TValue, TMappedValue = TValue>({
   entity,
   value,
   mapValue,
 }: {
-  entity: MessageTranslatableManifestEntity;
+  entity: ManifestTranslatableEntity;
   value: TValue;
   mapValue: ({
     value,
@@ -22,9 +19,7 @@ export const mapMessageTranslatableManifestValues = <
     context: string;
   }) => unknown;
 }): TMappedValue =>
-  Object.entries(
-    MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES[entity],
-  ).reduce<unknown>(
+  Object.entries(MANIFEST_TRANSLATABLE_PROPERTIES[entity]).reduce<unknown>(
     (mappedValue, [pattern, context]) =>
       mapTranslatablePropertyPathValues({
         pattern,

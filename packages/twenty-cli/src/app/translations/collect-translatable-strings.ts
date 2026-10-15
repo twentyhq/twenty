@@ -1,6 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Manifest } from 'twenty-shared/application';
 import {
   getMetadataLabelContext,
+  listManifestTranslatableValues,
+  type ManifestTranslatableEntity,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
@@ -24,6 +27,19 @@ const MANIFEST_KEY_BY_METADATA_NAME = {
   settingsMenuItem: 'settingsMenuItems',
 } as const satisfies Partial<Record<TranslatableMetadataName, keyof Manifest>>;
 
+const MANIFEST_KEY_BY_MANIFEST_TRANSLATABLE_ENTITY = {
+  fieldMetadata: 'fields',
+  role: 'roles',
+  skill: 'skills',
+  agent: 'agents',
+  logicFunction: 'logicFunctions',
+  frontComponent: 'frontComponents',
+  permissionFlag: 'permissionFlags',
+  connectionProvider: 'connectionProviders',
+} as const satisfies Partial<
+  Record<ManifestTranslatableEntity, keyof Manifest>
+>;
+
 export const collectTranslatableStrings = (
   manifest: Manifest,
 ): MessageDescriptor[] => {
@@ -31,6 +47,23 @@ export const collectTranslatableStrings = (
   // field label), and each role is its own catalog entry, so descriptors are
   // deduplicated per (context, message) rather than per message.
   const descriptorByKey = new Map<string, MessageDescriptor>();
+
+  const addString = ({
+    message,
+    context,
+  }: {
+    message: unknown;
+    context: string;
+  }) => {
+    if (!isNonEmptyString(message)) {
+      return;
+    }
+
+    descriptorByKey.set(JSON.stringify([context, message]), {
+      message,
+      context,
+    });
+  };
 
   const addEntityStrings = (
     entity: unknown,
@@ -43,18 +76,22 @@ export const collectTranslatableStrings = (
     for (const property of TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
       metadataName
     ]) {
-      const value = (entity as Record<string, unknown>)[property];
-
-      if (typeof value !== 'string' || value.length === 0) {
-        continue;
-      }
-
-      const context = getMetadataLabelContext(metadataName, property);
-
-      descriptorByKey.set(JSON.stringify([context, value]), {
-        message: value,
-        context,
+      addString({
+        message: (entity as Record<string, unknown>)[property],
+        context: getMetadataLabelContext(metadataName, property),
       });
+    }
+  };
+
+  const addManifestEntityStrings = (
+    value: unknown,
+    entity: ManifestTranslatableEntity,
+  ) => {
+    for (const { value: message, context } of listManifestTranslatableValues({
+      entity,
+      value,
+    })) {
+      addString({ message, context });
     }
   };
 
@@ -72,10 +109,39 @@ export const collectTranslatableStrings = (
     }
   }
 
+  for (const [entity, manifestKey] of Object.entries(
+    MANIFEST_KEY_BY_MANIFEST_TRANSLATABLE_ENTITY,
+  ) as [ManifestTranslatableEntity, keyof Manifest][]) {
+    const values = manifest[manifestKey];
+
+    if (!Array.isArray(values)) {
+      continue;
+    }
+
+    for (const value of values) {
+      addManifestEntityStrings(value, entity);
+    }
+  }
+
   for (const objectManifest of manifest.objects ?? []) {
     for (const field of objectManifest.fields ?? []) {
       addEntityStrings(field, 'fieldMetadata');
+      addManifestEntityStrings(field, 'fieldMetadata');
     }
+  }
+
+  addManifestEntityStrings(manifest.application, 'application');
+
+  for (const applicationVariable of Object.values(
+    manifest.application.applicationVariables ?? {},
+  )) {
+    addManifestEntityStrings(applicationVariable, 'applicationVariable');
+  }
+
+  for (const serverVariable of Object.values(
+    manifest.application.serverVariables ?? {},
+  )) {
+    addManifestEntityStrings(serverVariable, 'serverVariable');
   }
 
   // Tab and widget titles live nested under pageLayouts[].tabs[], not in the

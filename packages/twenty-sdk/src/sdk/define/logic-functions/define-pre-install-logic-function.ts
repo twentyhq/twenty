@@ -1,9 +1,9 @@
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
-import { type TranslatablePreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 
 export const definePreInstallLogicFunction: DefineEntity<
-  TranslatablePreInstallLogicFunctionConfig
+  PreInstallLogicFunctionConfig
 > = (config) => {
   const errors = [];
 

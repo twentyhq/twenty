@@ -84,8 +84,6 @@ export {
   targetObjectWritePermissions,
 } from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
-export { msg } from '@/sdk/front-component/translations/msg';
-
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
 export { defineSettingsFrontComponent } from '@/sdk/define/front-component/define-settings-front-component';
 export type { FrontComponentType } from '@/sdk/define/front-component/front-component-config';

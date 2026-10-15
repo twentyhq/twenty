@@ -3,14 +3,14 @@ import {
   AGENT_TRIGGER_EVENT_NAME_PATTERN,
   AGENT_TRIGGER_LIMITS,
   AGENT_TRIGGER_TYPES,
+  type AgentManifest,
 } from 'twenty-shared/application';
 import { validate as uuidValidate } from 'uuid';
 
-import { type TranslatableAgentConfig } from '@/sdk/define/agents/agent-config';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
-export const defineAgent: DefineEntity<TranslatableAgentConfig> = (config) => {
+export const defineAgent: DefineEntity<AgentManifest> = (config) => {
   const errors: string[] = [];
   const warnings: string[] = [];
 

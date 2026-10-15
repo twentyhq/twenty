@@ -15,15 +15,12 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type TranslatableApplicationConfig } from '@/sdk/define/application/application-config';
+import { type ApplicationConfig } from '@/sdk/define/application/application-config';
 import { normalizeApplicationAssets } from '@/sdk/define/application/utils/normalize-application-assets';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import { isNonEmptyTranslatableText } from '@/sdk/define/common/utils/is-non-empty-translatable-text';
 
-export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
-  config,
-) => {
+export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   const errors = [];
   const warnings = [];
 
@@ -31,7 +28,7 @@ export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
     errors.push('Application must have a universalIdentifier');
   }
 
-  if (!isNonEmptyTranslatableText(config.displayName)) {
+  if (!config.displayName || config.displayName.length === 0) {
     errors.push('Application must have a non empty display name');
   }
 
@@ -84,7 +81,7 @@ export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
       );
     }
 
-    if (!isNonEmptyTranslatableText(billableOperation.label)) {
+    if (!isNonEmptyString(billableOperation.label)) {
       errors.push(
         `Billable operation "${operationName}" must have a non empty label`,
       );
@@ -133,7 +130,7 @@ export const defineApplication: DefineEntity<TranslatableApplicationConfig> = (
       );
     }
 
-    if (!isNonEmptyTranslatableText(recurringCharge.label)) {
+    if (!isNonEmptyString(recurringCharge.label)) {
       errors.push(
         `Recurring charge "${chargeName}" must have a non empty label`,
       );

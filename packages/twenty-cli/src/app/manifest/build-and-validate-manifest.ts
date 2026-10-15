@@ -3,7 +3,6 @@ import { buildManifest } from '@/app/manifest/manifest-build';
 import { manifestValidate } from '@/app/manifest/manifest-validate';
 import { validatePackageJsonDependencies } from '@/app/manifest/utils/validate-package-json-dependencies';
 import { validateYarnLock } from '@/app/manifest/utils/validate-yarn-lock';
-import { type MessageDescriptor } from '@/app/translations/message';
 import { type Manifest } from 'twenty-shared/application';
 
 export type BuildAndValidateManifestSuccess = {
@@ -11,7 +10,6 @@ export type BuildAndValidateManifestSuccess = {
   manifest: Manifest;
   filePaths: EntityFilePaths;
   warnings: string[];
-  manifestMessages: MessageDescriptor[];
 };
 
 export type BuildAndValidateManifestFailure = {
@@ -67,6 +65,5 @@ export const buildAndValidateManifest = async (
       ...validation.warnings,
       ...packageJsonWarnings,
     ],
-    manifestMessages: result.manifestMessages,
   };
 };

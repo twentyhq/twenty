@@ -1,13 +1,11 @@
+import { type FieldManifest } from 'twenty-shared/application';
 import { getFieldDefaultValueWarnings } from '@/sdk/define/fields/get-field-default-value-warnings';
 import { validateFields } from '@/sdk/define/fields/validate-fields';
 
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
-import { type TranslatableFieldManifest } from '@/sdk/define/common/types/translatable-text.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
-export const defineField: DefineEntity<TranslatableFieldManifest> = (
-  config,
-) => {
+export const defineField: DefineEntity<FieldManifest> = (config) => {
   const errors = [];
 
   if (!config.objectUniversalIdentifier) {

@@ -7,11 +7,6 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
-import {
-  serializeApplicationMessages,
-  serializeManifestMessages,
-  serializeObjectMessages,
-} from '@/cli/utilities/build/manifest/utils/serialize-manifest-messages';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
@@ -19,35 +14,20 @@ import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/mani
 import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
-import {
-  type ApplicationConfig,
-  type TranslatableApplicationConfig,
-} from '@/sdk/define/application/application-config';
-import { type TranslatableLogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
-import { type TranslatableAgentConfig } from '@/sdk/define/agents/agent-config';
-import { type TranslatableConnectionProviderConfig } from '@/sdk/define/connection-providers/connection-provider-config';
+import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
-import { type TranslatableFrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';
-import { type TranslatablePostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
-import { type TranslatablePreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
-import {
-  type ObjectConfig,
-  type TranslatableObjectConfig,
-} from '@/sdk/define/objects/object-config';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
+import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
-import { type TranslatablePermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
-import {
-  type RoleConfig,
-  type TranslatableRoleConfig,
-} from '@/sdk/define/roles/role-config';
-import { type TranslatableSkillConfig } from '@/sdk/define/skills/skill-config';
+import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
-import { type TranslatableFieldManifest } from '@/sdk/define/common/types/translatable-text.type';
-import { type MessageDescriptor } from '@/sdk/front-component/translations/message';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -120,7 +100,6 @@ export const buildManifest = async (
   filePaths: EntityFilePaths;
   errors: string[];
   warnings: string[];
-  manifestMessages: MessageDescriptor[];
 }> => {
   const filePaths = await loadSources(appPath);
   const readmeContent = await loadReadme(appPath);
@@ -181,7 +160,6 @@ export const buildManifest = async (
   const commandMenuItemsFilePaths: string[] = [];
   const timelineActivityTypesFilePaths: string[] = [];
   const settingsMenuItemsFilePaths: string[] = [];
-  const manifestMessages: MessageDescriptor[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -201,35 +179,24 @@ export const buildManifest = async (
 
     switch (entity) {
       case ManifestEntityKey.Application: {
-        const extract =
-          await extractManifestFromFile<TranslatableApplicationConfig>({
-            appPath,
-            filePath,
-          });
-
-        applicationConfig = serializeApplicationMessages({
-          applicationConfig: extract.config,
-          messages: manifestMessages,
+        const extract = await extractManifestFromFile<ApplicationConfig>({
+          appPath,
+          filePath,
         });
+
+        applicationConfig = extract.config;
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         applicationFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Objects: {
-        const extract = await extractManifestFromFile<TranslatableObjectConfig>(
-          {
-            appPath,
-            filePath,
-          },
-        );
+        const extract = await extractManifestFromFile<ObjectConfig>({
+          appPath,
+          filePath,
+        });
 
-        objectConfigs.push(
-          serializeObjectMessages({
-            objectConfig: extract.config,
-            messages: manifestMessages,
-          }),
-        );
+        objectConfigs.push(extract.config);
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -237,18 +204,11 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Fields: {
-        const extract =
-          await extractManifestFromFile<TranslatableFieldManifest>({
-            appPath,
-            filePath,
-          });
-        const fieldConfig = addMissingFieldOptionIds(
-          serializeManifestMessages({
-            entity: 'fieldMetadata',
-            value: extract.config,
-            messages: manifestMessages,
-          }),
-        );
+        const extract = await extractManifestFromFile<FieldManifest>({
+          appPath,
+          filePath,
+        });
+        const fieldConfig = addMissingFieldOptionIds(extract.config);
         fields.push(fieldConfig);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -256,35 +216,22 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.PermissionFlags: {
-        const extract =
-          await extractManifestFromFile<TranslatablePermissionFlagConfig>({
-            appPath,
-            filePath,
-          });
-        permissionFlags.push(
-          serializeManifestMessages({
-            entity: 'permissionFlag',
-            value: extract.config,
-            messages: manifestMessages,
-          }),
-        );
+        const extract = await extractManifestFromFile<PermissionFlagManifest>({
+          appPath,
+          filePath,
+        });
+        permissionFlags.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         permissionFlagsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Roles: {
-        const extract = await extractManifestFromFile<TranslatableRoleConfig>({
+        const extract = await extractManifestFromFile<RoleConfig>({
           appPath,
           filePath,
         });
-        roleConfigs.push(
-          serializeManifestMessages({
-            entity: 'role',
-            value: extract.config,
-            messages: manifestMessages,
-          }),
-        );
+        roleConfigs.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         rolesFilePaths.push(relativePath);
@@ -298,34 +245,22 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Skills: {
-        const extract = await extractManifestFromFile<TranslatableSkillConfig>({
+        const extract = await extractManifestFromFile<SkillManifest>({
           appPath,
           filePath,
         });
-        skills.push(
-          serializeManifestMessages({
-            entity: 'skill',
-            value: extract.config,
-            messages: manifestMessages,
-          }),
-        );
+        skills.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         skillsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Agents: {
-        const extract = await extractManifestFromFile<TranslatableAgentConfig>({
+        const extract = await extractManifestFromFile<AgentManifest>({
           appPath,
           filePath,
         });
-        agents.push(
-          serializeManifestMessages({
-            entity: 'agent',
-            value: extract.config,
-            messages: manifestMessages,
-          }),
-        );
+        agents.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         agentsFilePaths.push(relativePath);
@@ -333,37 +268,26 @@ export const buildManifest = async (
       }
       case ManifestEntityKey.ConnectionProviders: {
         const extract =
-          await extractManifestFromFile<TranslatableConnectionProviderConfig>({
+          await extractManifestFromFile<ConnectionProviderManifest>({
             appPath,
             filePath,
           });
-        connectionProviders.push(
-          serializeManifestMessages({
-            entity: 'connectionProvider',
-            value: extract.config,
-            messages: manifestMessages,
-          }),
-        );
+        connectionProviders.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         connectionProvidersFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.LogicFunctions: {
-        const extract =
-          await extractManifestFromFile<TranslatableLogicFunctionConfig>({
-            appPath,
-            filePath,
-          });
+        const extract = await extractManifestFromFile<LogicFunctionConfig>({
+          appPath,
+          filePath,
+        });
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
-        const { handler: _, ...rest } = serializeManifestMessages({
-          entity: 'logicFunction',
-          value: extract.config,
-          messages: manifestMessages,
-        });
+        const { handler: _, ...rest } = extract.config;
 
         const inferredJsonSchema =
           (rest.toolTriggerSettings && !rest.toolTriggerSettings.inputSchema) ||
@@ -412,7 +336,7 @@ export const buildManifest = async (
           targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
         ) {
           const postInstallHookConfig =
-            extract.config as TranslatablePostInstallLogicFunctionConfig;
+            extract.config as PostInstallLogicFunctionConfig;
 
           postInstallLogicFunctions.push({
             universalIdentifier: extract.config.universalIdentifier,
@@ -427,7 +351,7 @@ export const buildManifest = async (
           targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
         ) {
           const preInstallHookConfig =
-            extract.config as TranslatablePreInstallLogicFunctionConfig;
+            extract.config as PreInstallLogicFunctionConfig;
 
           preInstallLogicFunctions.push({
             universalIdentifier: extract.config.universalIdentifier,
@@ -453,20 +377,15 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.FrontComponents: {
-        const extract =
-          await extractManifestFromFile<TranslatableFrontComponentConfig>({
-            appPath,
-            filePath,
-          });
+        const extract = await extractManifestFromFile<FrontComponentConfig>({
+          appPath,
+          filePath,
+        });
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
-        const { component, ...rest } = serializeManifestMessages({
-          entity: 'frontComponent',
-          value: extract.config,
-          messages: manifestMessages,
-        });
+        const { component, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
 
@@ -871,11 +790,5 @@ export const buildManifest = async (
     settingsMenuItems: settingsMenuItemsFilePaths,
   };
 
-  return {
-    manifest,
-    filePaths: entityFilePaths,
-    errors,
-    warnings,
-    manifestMessages,
-  };
+  return { manifest, filePaths: entityFilePaths, errors, warnings };
 };

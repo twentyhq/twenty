@@ -32,7 +32,7 @@ describe('resolveMetadataEventRecord', () => {
     expect(resolved.shortLabel).toMatch(/^translated:/);
   });
 
-  it('should translate the msg() translatable texts of an application entity', () => {
+  it('should translate the manifest translatable texts of an application entity', () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'role',
       record: {

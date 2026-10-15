@@ -77,7 +77,6 @@ When adding AI behavior:
 - Keep instructions grounded in available app data and tools.
 - State when the agent should ask for missing workspace or record context.
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
-- Wrap user-facing `label`/`description` (skills, agents) and `name`/`description` (logic functions) in `msg()` from `twenty-sdk/define` to translate them per member locale. Only the displayed label is translated: the logic function `name` keeps its source value wherever it identifies the function.
 - A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
 
 ## Inbox Messages
@@ -100,7 +99,6 @@ For third-party connections:
 - Keep secrets out of source and public assets.
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
-- Wrap `displayName` in `msg()` from `twenty-sdk/define` to translate it per member locale.
 - When the provider can say which account a token belongs to (team, organization, user), declare `identifyAccountLogicFunction` so a reconnect that authorizes a different account is refused instead of overwriting the connection. Write the handler as one request to the provider's "who am I" endpoint, return the id as a string, and return `{ externalAccountId: null }` when there is no stable id.
 
 ## Post-Install Hooks

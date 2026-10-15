@@ -1,4 +1,4 @@
-import { defineField, FieldType, msg } from 'twenty-sdk/define';
+import { defineField, FieldType } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 export default defineField({
@@ -12,7 +12,7 @@ export default defineField({
     {
       id: 'cd751c81-787d-4581-bc51-efe43f0050a7',
       value: 'PERSONAL',
-      label: msg('Personal'),
+      label: 'Personal',
       color: 'blue',
       position: 0,
     },

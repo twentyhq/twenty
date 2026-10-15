@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  type MessageTranslatableManifestEntity,
-  type MessageTranslatableManifestProperty,
+  type ManifestTranslatableEntity,
+  type ManifestTranslatableProperty,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -210,7 +210,7 @@ export class ApplicationTranslationCatalogService {
   }
 
   async resolveManifestMessage<
-    TEntity extends MessageTranslatableManifestEntity,
+    TEntity extends ManifestTranslatableEntity,
     TSourceValue extends string | null | undefined,
   >({
     entity,
@@ -220,7 +220,7 @@ export class ApplicationTranslationCatalogService {
     context,
   }: {
     entity: TEntity;
-    property: MessageTranslatableManifestProperty<TEntity>;
+    property: ManifestTranslatableProperty<TEntity>;
     sourceValue: TSourceValue;
     applicationId: string | undefined;
     context: ManifestMessageRequestContext;
