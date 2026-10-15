@@ -26,6 +26,7 @@ import { SidePanelDashboardRecordTableSettings } from '@/side-panel/pages/page-l
 import { SidePanelDashboardViewWidgetSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardViewWidgetSettings';
 import { SidePanelRecordPageFieldSettings } from '@/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings';
 import { SidePanelRecordPageFieldsSettings } from '@/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings';
+import { SidePanelPageLayoutDashboardViewWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardViewWidgetTypeSelect';
 import { SidePanelPageLayoutDashboardWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect';
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
@@ -85,6 +86,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [
     SidePanelPages.DashboardViewWidgetSettings,
     <SidePanelDashboardViewWidgetSettings />,
+  ],
+  [
+    SidePanelPages.DashboardViewWidgetTypeSelect,
+    <SidePanelPageLayoutDashboardViewWidgetTypeSelect />,
   ],
   [
     SidePanelPages.RecordPageFieldsSettings,

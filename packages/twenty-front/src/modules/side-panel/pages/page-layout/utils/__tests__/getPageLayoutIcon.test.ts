@@ -22,6 +22,8 @@ describe('getPageLayoutIcon', () => {
     [SidePanelPages.RecordPageFieldsSettings, IconListDetails],
     [SidePanelPages.RecordPageFieldSettings, IconListSearch],
     [SidePanelPages.DashboardRecordTableSettings, IconTable],
+    [SidePanelPages.DashboardViewWidgetSettings, IconTable],
+    [SidePanelPages.DashboardViewWidgetTypeSelect, IconTable],
     [SidePanelPages.PageLayoutRecordPageWidgetTypeSelect, IconPlus],
   ] as const)('returns the expected icon for %s', (page, expectedIcon) => {
     expect(getPageLayoutIcon(page)).toBe(expectedIcon);

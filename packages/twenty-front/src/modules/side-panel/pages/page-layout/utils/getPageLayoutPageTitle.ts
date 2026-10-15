@@ -23,6 +23,8 @@ export const getPageLayoutPageTitle = (page: PageLayoutSidePanelPage) => {
       return t`Record Table Settings`;
     case SidePanelPages.DashboardViewWidgetSettings:
       return t`Saved View Settings`;
+    case SidePanelPages.DashboardViewWidgetTypeSelect:
+      return t`View`;
     case SidePanelPages.PageLayoutRecordPageWidgetTypeSelect:
       return t`New widget`;
     default:

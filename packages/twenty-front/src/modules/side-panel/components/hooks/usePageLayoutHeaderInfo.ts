@@ -220,7 +220,8 @@ export const usePageLayoutHeaderInfo = ({
       });
     }
 
-    case SidePanelPages.PageLayoutDashboardWidgetTypeSelect: {
+    case SidePanelPages.PageLayoutDashboardWidgetTypeSelect:
+    case SidePanelPages.DashboardViewWidgetTypeSelect: {
       return {
         headerIcon: IconPlus,
         headerIconColor: iconColor,

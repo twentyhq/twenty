@@ -1,6 +1,5 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
 import { useOpportunityDefaultChartConfig } from '@/page-layout/hooks/useOpportunityDefaultChartConfig';
@@ -8,8 +7,6 @@ import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hook
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
-import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
-import { useViewWidgetSelectableViews } from '@/page-layout/widgets/view/hooks/useViewWidgetSelectableViews';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -23,7 +20,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlignBoxLeftTop,
@@ -72,22 +69,6 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
   const { removePageLayoutWidgetAndPreservePosition } =
     useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
-
-  const { addDraftViewForRecordTableWidget } =
-    useAddDraftViewForRecordTableWidget(pageLayoutId);
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
-
-  const firstAvailableObjectMetadataItem =
-    readableObjectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.nameSingular === CoreObjectNameSingular.Company,
-    ) ||
-    [...readableObjectMetadataItems].sort((first, second) =>
-      first.labelPlural.localeCompare(second.labelPlural),
-    )[0];
-
-  const { selectableViews: firstAvailableObjectSelectableViews } =
-    useViewWidgetSelectableViews(firstAvailableObjectMetadataItem?.id);
 
   const { data: frontComponentsData } = useQuery<{
     frontComponents: FrontComponent[];
@@ -195,69 +176,9 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     closeSidePanelMenu();
   };
 
-  const handleNavigateToRecordTableSettings = () => {
-    if (
-      isExistingWidgetMissingOrDifferentType(
-        existingWidget?.type,
-        WidgetType.RECORD_TABLE,
-      )
-    ) {
-      if (isDefined(pageLayoutEditingWidgetId)) {
-        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
-      }
-
-      const newRecordTableWidget = createPageLayoutWidget({
-        type: WidgetType.RECORD_TABLE,
-        title: firstAvailableObjectMetadataItem?.labelPlural ?? 'Record Table',
-        configuration: {
-          configurationType: WidgetConfigurationType.RECORD_TABLE,
-          isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,
-        },
-        objectMetadataId: firstAvailableObjectMetadataItem?.id,
-      });
-
-      setPageLayoutEditingWidgetId(newRecordTableWidget.id);
-
-      addDraftViewForRecordTableWidget(
-        newRecordTableWidget.id,
-        firstAvailableObjectMetadataItem,
-      );
-    }
-
+  const handleNavigateToViewWidgetTypeSelect = () => {
     navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.DashboardRecordTableSettings,
-      focusTitleInput: false,
-    });
-  };
-
-  const handleNavigateToViewWidgetSettings = () => {
-    if (
-      isExistingWidgetMissingOrDifferentType(
-        existingWidget?.type,
-        WidgetType.VIEW,
-      )
-    ) {
-      if (isDefined(pageLayoutEditingWidgetId)) {
-        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
-      }
-
-      const newViewWidget = createPageLayoutWidget({
-        type: WidgetType.VIEW,
-        title: firstAvailableObjectMetadataItem?.labelPlural ?? t`Saved view`,
-        configuration: {
-          __typename: 'ViewConfiguration',
-          configurationType: WidgetConfigurationType.VIEW,
-          viewId: firstAvailableObjectSelectableViews[0]?.id,
-        },
-        objectMetadataId: firstAvailableObjectMetadataItem?.id,
-      });
-
-      setPageLayoutEditingWidgetId(newViewWidget.id);
-    }
-
-    navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.DashboardViewWidgetSettings,
-      focusTitleInput: false,
+      sidePanelPage: SidePanelPages.DashboardViewWidgetTypeSelect,
     });
   };
 
@@ -289,8 +210,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
   const selectableItemIds = [
     'chart',
-    'record-table',
-    'saved-view',
+    'view',
     'iframe',
     'rich-text',
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
@@ -311,25 +231,14 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
           />
         </SelectableListItem>
         <SelectableListItem
-          itemId="record-table"
-          onEnter={handleNavigateToRecordTableSettings}
+          itemId="view"
+          onEnter={handleNavigateToViewWidgetTypeSelect}
         >
           <CommandMenuItem
             Icon={IconTable}
             label={t`View`}
-            id="record-table"
-            onClick={handleNavigateToRecordTableSettings}
-          />
-        </SelectableListItem>
-        <SelectableListItem
-          itemId="saved-view"
-          onEnter={handleNavigateToViewWidgetSettings}
-        >
-          <CommandMenuItem
-            Icon={IconTable}
-            label={t`Saved view`}
-            id="saved-view"
-            onClick={handleNavigateToViewWidgetSettings}
+            id="view"
+            onClick={handleNavigateToViewWidgetTypeSelect}
           />
         </SelectableListItem>
         <SelectableListItem
