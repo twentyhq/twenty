@@ -163,7 +163,11 @@ describe('useToggleAgentChatMessageReaction', () => {
 
     const { result, getReactions, store } = renderToggleReaction();
     const confirmedReactions = [
-      { emoji: '👍', workspaceMemberIds: [WORKSPACE_MEMBER_ID] },
+      {
+        emoji: '👍',
+        workspaceMemberIds: [WORKSPACE_MEMBER_ID],
+        hasAssistantReacted: false,
+      },
     ];
 
     let addToggle: Promise<void> = Promise.resolve();
