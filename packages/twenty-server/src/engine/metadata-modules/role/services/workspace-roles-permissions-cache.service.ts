@@ -88,7 +88,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     } = rows;
 
     const isMorphRelationHeadEnabled = morphRelationHeadFeatureFlags.some(
-      (featureFlag) => featureFlag.value === true,
+      ({ value }) => value,
     );
 
     const morphIdByHeadId = new Map<string, string>();

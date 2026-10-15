@@ -15,7 +15,7 @@ export const expandMorphRelationExportFields = ({
   flatObjectMetadataMaps,
 }: {
   fields: FlatFieldMetadata[];
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds'>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): FlatFieldMetadata[] => {
