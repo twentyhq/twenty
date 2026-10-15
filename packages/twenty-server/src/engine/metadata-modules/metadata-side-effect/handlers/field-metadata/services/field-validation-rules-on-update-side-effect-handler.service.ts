@@ -2,20 +2,13 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { msg, t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-
-import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { buildValidationRuleUpdatesAfterFieldChangesSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-validation-rule-updates-after-field-changes-side-effect.util';
-import { getFlatValidationRulesAfterPendingOperations } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/get-flat-validation-rules-after-pending-operations.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { computeValidationRuleFieldChanges } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-field-changes.util';
-import { findActiveValidationRuleBlockingFieldRename } from 'src/engine/metadata-modules/validation-rule/utils/find-active-validation-rule-blocking-field-rename.util';
 
 @Injectable()
 export class FieldValidationRulesOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -33,52 +26,6 @@ export class FieldValidationRulesOnUpdateSideEffectHandlerService extends Metada
     relatedFlatEntityMaps,
     context,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
-    const existingFlatFieldMetadata =
-      relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        flatFieldMetadata.universalIdentifier
-      ];
-
-    if (
-      isDefined(existingFlatFieldMetadata) &&
-      existingFlatFieldMetadata.name !== flatFieldMetadata.name
-    ) {
-      const blockingValidationRule =
-        findActiveValidationRuleBlockingFieldRename({
-          validationRules: getFlatValidationRulesAfterPendingOperations({
-            allFlatEntityOperationRecordByMetadataName,
-            flatValidationRuleByUniversalIdentifier:
-              relatedFlatEntityMaps.flatValidationRuleMaps
-                .byUniversalIdentifier,
-          }),
-          fieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
-          newFieldName: flatFieldMetadata.name,
-          applicationUniversalIdentifier:
-            context.buildOptions.applicationUniversalIdentifier,
-        });
-
-      if (isDefined(blockingValidationRule)) {
-        const newFieldName = flatFieldMetadata.name;
-        const validationRuleName = blockingValidationRule.name;
-
-        return {
-          status: 'fail',
-          type: 'update',
-          metadataName: 'fieldMetadata',
-          flatEntityMinimalInformation: {
-            universalIdentifier: flatFieldMetadata.universalIdentifier,
-            name: newFieldName,
-          } as Partial<MetadataFlatEntity<'fieldMetadata'>>,
-          errors: [
-            {
-              code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-              message: t`"${newFieldName}" is a reserved word in validation rules and the rule "${validationRuleName}" reads this field`,
-              userFriendlyMessage: msg`"${newFieldName}" is a reserved word in validation rules and the rule "${validationRuleName}" reads this field. Choose another name or update the rule first.`,
-            },
-          ],
-        };
-      }
-    }
-
     const triggerFieldChanges = computeValidationRuleFieldChanges({
       updatedFields: [flatFieldMetadata],
       deletedFields: [],
@@ -93,6 +40,8 @@ export class FieldValidationRulesOnUpdateSideEffectHandlerService extends Metada
     return buildValidationRuleUpdatesAfterFieldChangesSideEffect({
       allFlatEntityOperationRecordByMetadataName,
       relatedFlatEntityMaps,
+      applicationUniversalIdentifier:
+        context.buildOptions.applicationUniversalIdentifier,
     });
   }
 }

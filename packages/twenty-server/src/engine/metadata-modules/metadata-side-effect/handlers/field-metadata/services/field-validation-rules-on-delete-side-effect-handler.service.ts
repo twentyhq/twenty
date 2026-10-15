@@ -22,10 +22,13 @@ export class FieldValidationRulesOnDeleteSideEffectHandlerService extends Metada
   buildSideEffects({
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
+    context,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     return buildValidationRuleUpdatesAfterFieldChangesSideEffect({
       allFlatEntityOperationRecordByMetadataName,
       relatedFlatEntityMaps,
+      applicationUniversalIdentifier:
+        context.buildOptions.applicationUniversalIdentifier,
     });
   }
 }
