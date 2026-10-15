@@ -1,5 +1,3 @@
-import { Logger } from '@nestjs/common';
-
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
@@ -26,15 +24,28 @@ const RUN_AS_ACTOR = {
   workspaceMemberId: 'workspace-member-id',
   context: {},
 };
+const COMPLETED_RUN = {
+  status: 'COMPLETED',
+  result: { response: 'Acme is your biggest customer' },
+  error: null,
+};
+
 const buildService = () => {
   const agentRunnerService = {
-    run: jest.fn().mockImplementation(async ({ conversation }) => ({
-      threadId: conversation.threadId,
-      outcome: {
-        status: 'COMPLETED',
-        result: { response: 'Acme is your biggest customer' },
-      },
-    })),
+    start: jest.fn().mockResolvedValue(undefined),
+  };
+  const agentRunSettlementService = {
+    waitFor: jest
+      .fn()
+      .mockImplementation(async ({ start }: { start: () => Promise<void> }) => {
+        await start();
+
+        return COMPLETED_RUN;
+      }),
+    publish: jest.fn().mockResolvedValue(undefined),
+  };
+  const agentRunSuspensionService = {
+    assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
   };
   const agentActorContextService = {
     buildRunAsWorkspaceMemberContext: jest.fn().mockResolvedValue({
@@ -74,6 +85,8 @@ const buildService = () => {
   const service = new AgentRunService(
     agentActorContextService as never,
     agentRunnerService as never,
+    agentRunSettlementService as never,
+    agentRunSuspensionService as never,
     {} as never,
     apiKeyRoleService as never,
     apiKeyService as never,
@@ -84,14 +97,26 @@ const buildService = () => {
   return {
     service,
     agentRunnerService,
+    agentRunSettlementService,
+    agentRunSuspensionService,
     agentActorContextService,
     apiKeyRoleService,
     apiKeyService,
   };
 };
 
-const runInput = (agentRunnerService: { run: jest.Mock }) =>
-  agentRunnerService.run.mock.calls[0][0];
+const runInput = (agentRunnerService: { start: jest.Mock }) =>
+  agentRunnerService.start.mock.calls[0][0];
+
+// how the run acts is read from its caller in the job, as when it goes on after a pause
+const runExecutionContext = (
+  service: AgentRunService,
+  agentRunnerService: { start: jest.Mock },
+) =>
+  service.buildExecutionContext({
+    workspaceId: 'workspace-id',
+    caller: JSON.parse(JSON.stringify(runInput(agentRunnerService).caller)),
+  });
 
 const run = (
   service: AgentRunService,
@@ -138,8 +163,11 @@ describe('AgentRunService', () => {
     });
     expect(secondResult.threadId).not.toBe(result.threadId);
 
-    const { conversation, spec, prompt, executionContext } =
-      runInput(agentRunnerService);
+    const { conversation, spec, prompt } = runInput(agentRunnerService);
+    const executionContext = await runExecutionContext(
+      service,
+      agentRunnerService,
+    );
 
     expect(conversation).toEqual({
       threadId: result.threadId,
@@ -203,14 +231,18 @@ describe('AgentRunService', () => {
       runAsWorkspaceMemberId: 'workspace-member-id',
     });
 
-    const { conversation, caller, prompt, executionContext } =
-      runInput(agentRunnerService);
+    const { conversation, caller, prompt } = runInput(agentRunnerService);
+    const executionContext = await runExecutionContext(
+      service,
+      agentRunnerService,
+    );
 
     expect(result.threadId).toBe(threadId);
     expect(conversation).toEqual({ threadId, isCreated: false });
     expect(caller).toEqual({
       type: 'AGENT_API_RUN',
       ref: {
+        runId: expect.any(String),
         agentId: AGENT.id,
         runAsWorkspaceMemberId: 'workspace-member-id',
         requestUserWorkspaceId: null,
@@ -294,7 +326,11 @@ describe('AgentRunService', () => {
         },
       );
 
-      const { caller, executionContext } = runInput(agentRunnerService);
+      const { caller } = runInput(agentRunnerService);
+      const executionContext = await runExecutionContext(
+        service,
+        agentRunnerService,
+      );
 
       expect(executionContext).toMatchObject({
         authContext: {
@@ -386,7 +422,11 @@ describe('AgentRunService', () => {
       },
     });
 
-    const { caller, executionContext } = runInput(agentRunnerService);
+    const { caller } = runInput(agentRunnerService);
+    const executionContext = await runExecutionContext(
+      service,
+      agentRunnerService,
+    );
 
     expect(executionContext).toMatchObject({
       authContext: { type: 'apiKey', apiKey: { id: 'api-key-id' } },
@@ -463,18 +503,16 @@ describe('AgentRunService', () => {
     await expect(
       run(service, { prompt: 'Hello' }, { isCalledByApplication: false }),
     ).rejects.toMatchObject({ code: AiExceptionCode.RUN_AGENT_NOT_ALLOWED });
-    expect(agentRunnerService.run).not.toHaveBeenCalled();
+    expect(agentRunnerService.start).not.toHaveBeenCalled();
   });
 
   it('reports a run that ran out of credits', async () => {
-    const { service, agentRunnerService } = buildService();
+    const { service, agentRunSettlementService } = buildService();
 
-    agentRunnerService.run.mockResolvedValue({
-      threadId: 'thread-id',
-      outcome: {
-        status: 'FAILED',
-        error: 'Agent stopped: no more available credits.',
-      },
+    agentRunSettlementService.waitFor.mockResolvedValue({
+      status: 'FAILED',
+      result: null,
+      error: 'Agent stopped: no more available credits.',
     });
 
     await expect(
@@ -486,18 +524,71 @@ describe('AgentRunService', () => {
     });
   });
 
-  it('reports a failed run without throwing', async () => {
-    const { service, agentRunnerService } = buildService();
+  it('answers a run that outlasts the wait as running', async () => {
+    const { service, agentRunSettlementService } = buildService();
 
-    jest.spyOn(Logger.prototype, 'error').mockImplementation();
-    agentRunnerService.run.mockRejectedValue(new Error('provider down'));
+    agentRunSettlementService.waitFor.mockResolvedValue(null);
 
     await expect(
       run(service, { input: userInput('Hello') }),
-    ).resolves.toMatchObject({
-      success: false,
-      error: 'Agent execution failed.',
+    ).resolves.toMatchObject({ status: 'RUNNING', success: true });
+  });
+
+  it('starts the run without waiting when asked not to', async () => {
+    const { service, agentRunnerService, agentRunSettlementService } =
+      buildService();
+
+    const result = await run(service, {
+      input: userInput('Hello'),
+      waitForCompletion: false,
     });
+
+    expect(result).toEqual({
+      threadId: runInput(agentRunnerService).conversation.threadId,
+      status: 'RUNNING',
+      result: null,
+      error: null,
+      success: true,
+    });
+    expect(agentRunSettlementService.waitFor).not.toHaveBeenCalled();
+  });
+
+  it('refuses to continue a conversation waiting on an earlier run', async () => {
+    const { service, agentRunnerService, agentRunSuspensionService } =
+      buildService();
+
+    agentRunSuspensionService.assertConversationNotSuspended.mockRejectedValue(
+      new AiException('Waiting', AiExceptionCode.THREAD_AWAITING_ANSWER),
+    );
+
+    await expect(
+      run(service, { input: userInput('Hello'), thread: { key: 'thread' } }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_AWAITING_ANSWER });
+    expect(agentRunnerService.start).not.toHaveBeenCalled();
+  });
+
+  it('tells the waiting call how its run settled', async () => {
+    const { service, agentRunnerService, agentRunSettlementService } =
+      buildService();
+
+    await run(service, { input: userInput('Hello') });
+
+    const { caller } = runInput(agentRunnerService);
+
+    await service.onSuspended({ workspaceId: 'workspace-id', caller });
+    await service.onOutcome({
+      workspaceId: 'workspace-id',
+      caller,
+      outcome: { status: 'FAILED', error: 'provider down' },
+    });
+
+    expect(agentRunSettlementService.publish.mock.calls).toEqual([
+      [caller.ref.runId, { status: 'SUSPENDED', result: null, error: null }],
+      [
+        caller.ref.runId,
+        { status: 'FAILED', result: null, error: 'provider down' },
+      ],
+    ]);
   });
 
   it('refuses a thread without an application token', async () => {
@@ -518,7 +609,7 @@ describe('AgentRunService', () => {
     await expect(
       run(service, { input: userInput('Hello'), thread: { key: '  ' } }),
     ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
-    expect(agentRunnerService.run).not.toHaveBeenCalled();
+    expect(agentRunnerService.start).not.toHaveBeenCalled();
   });
 
   it('refuses assistant messages sent to a thread', async () => {

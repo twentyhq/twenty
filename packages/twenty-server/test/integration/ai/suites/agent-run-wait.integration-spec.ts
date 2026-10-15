@@ -340,6 +340,48 @@ describe('agent runs that wait (integration)', () => {
     });
   });
 
+  it('starts a runAgent call without waiting when asked not to, its reply landing in its thread', async () => {
+    const executeAgent = mockAgent(replyingResult);
+
+    const response = await makeMetadataApiRequest({
+      query: gql`
+        mutation RunAgent($input: RunAgentInput!) {
+          runAgent(input: $input) {
+            threadId
+            status
+            result
+            error
+            success
+          }
+        }
+      `,
+      variables: {
+        input: {
+          agentUniversalIdentifier,
+          input: [{ role: 'user', content: 'Follow up tomorrow' }],
+          waitForCompletion: false,
+        },
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.runAgent).toEqual({
+      threadId: expect.any(String),
+      status: 'RUNNING',
+      result: null,
+      error: null,
+      success: true,
+    });
+
+    await expectEventually(async () => {
+      expect(
+        await findTurnStatuses(response.body.data.runAgent.threadId),
+      ).toEqual(['completed']);
+    });
+
+    expect(executeAgent).toHaveBeenCalledTimes(1);
+  });
+
   it('answers a runAgent call whose agent waits as waiting, with its thread', async () => {
     const executeAgent = mockAgent(waitingResult(), replyingResult);
 
