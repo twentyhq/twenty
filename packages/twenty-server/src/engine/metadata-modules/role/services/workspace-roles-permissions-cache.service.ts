@@ -8,11 +8,12 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FieldMetadataType,
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -52,6 +53,10 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     'universalIdentifier',
     'labelIdentifierFieldMetadataId',
   ],
+  fieldMetadata: {
+    columns: ['id', 'type', 'universalIdentifier', 'morphId'],
+    where: { type: FieldMetadataType.MORPH_RELATION },
+  },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
@@ -73,7 +78,29 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       objectMetadata: workspaceObjectMetadataCollection,
+      fieldMetadata: morphRelationFieldMetadatas,
     } = rows;
+
+    const morphIdByHeadId = new Map<string, string>();
+    const targetIdsByMorphId = new Map<string, string[]>();
+
+    for (const morphRelationFieldMetadata of morphRelationFieldMetadatas) {
+      const { id, morphId } = morphRelationFieldMetadata;
+
+      if (!isDefined(morphId)) {
+        continue;
+      }
+
+      if (isMorphRelationHead(morphRelationFieldMetadata)) {
+        morphIdByHeadId.set(id, morphId);
+        continue;
+      }
+
+      targetIdsByMorphId.set(morphId, [
+        ...(targetIdsByMorphId.get(morphId) ?? []),
+        id,
+      ]);
+    }
 
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
@@ -196,12 +223,24 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
               isDefined(fieldPermission.canReadFieldValue) ||
               isDefined(fieldPermission.canUpdateFieldValue)
             ) {
-              restrictedFields[fieldPermission.fieldMetadataId] = {
+              const fieldRestriction = {
                 canRead: isFieldLabelIdentifier
                   ? true
                   : fieldPermission.canReadFieldValue,
                 canUpdate: fieldPermission.canUpdateFieldValue,
               };
+              const morphId = morphIdByHeadId.get(
+                fieldPermission.fieldMetadataId,
+              );
+
+              restrictedFields[fieldPermission.fieldMetadataId] =
+                fieldRestriction;
+
+              for (const targetId of isDefined(morphId)
+                ? (targetIdsByMorphId.get(morphId) ?? [])
+                : []) {
+                restrictedFields[targetId] ??= fieldRestriction;
+              }
             }
           }
         }

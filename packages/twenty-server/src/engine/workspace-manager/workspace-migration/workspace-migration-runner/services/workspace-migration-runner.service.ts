@@ -78,7 +78,8 @@ export class WorkspaceMigrationRunnerService {
         flatEntityMapsKey === 'flatRoleTargetMaps' ||
         flatEntityMapsKey === 'flatObjectPermissionMaps' ||
         flatEntityMapsKey === 'flatFieldPermissionMaps' ||
-        flatEntityMapsKey === 'flatRolePermissionFlagMaps',
+        flatEntityMapsKey === 'flatRolePermissionFlagMaps' ||
+        flatEntityMapsKey === 'flatFieldMetadataMaps',
     );
 
     const hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(

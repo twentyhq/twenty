@@ -5,9 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import GraphQLJSON from 'graphql-type-json';
 import { AI_MODEL_TIERS } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
+import { MorphRelationHeadSwitchService } from 'src/engine/metadata-modules/morph-relation-head/services/morph-relation-head-switch.service';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { InstanceAndAllWorkspacesUpgradeStatusDTO } from 'src/engine/core-modules/upgrade/dtos/instance-and-all-workspaces-upgrade-status.dto';
 import { WorkspaceUpgradeStatusDTO } from 'src/engine/core-modules/upgrade/dtos/workspace-upgrade-status.dto';
@@ -144,6 +146,7 @@ export class AdminPanelResolver {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
+    private readonly morphRelationHeadSwitchService: MorphRelationHeadSwitchService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
@@ -276,6 +279,18 @@ export class AdminPanelResolver {
     @Args() updateFlagInput: UpdateWorkspaceFeatureFlagInput,
   ): Promise<boolean> {
     try {
+      if (
+        updateFlagInput.featureFlag ===
+        FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED
+      ) {
+        await this.morphRelationHeadSwitchService.switchMorphRelationHead({
+          workspaceId: updateFlagInput.workspaceId,
+          isMorphRelationHeadEnabled: updateFlagInput.value,
+        });
+
+        return true;
+      }
+
       await this.featureFlagService.upsertWorkspaceFeatureFlag({
         workspaceId: updateFlagInput.workspaceId,
         featureFlag: updateFlagInput.featureFlag,
