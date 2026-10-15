@@ -55,7 +55,9 @@ const setAiAgentStepsResponseFormat = async (
     agentId: string;
     responseFormat: AgentResponseFormat;
   },
-): Promise<void> => {
+): Promise<number> => {
+  let updatedStepCount = 0;
+
   const draftCoreVersions =
     await deps.coreWorkflowVersionListService.findDraftCoreWorkflowVersions({
       workspaceId,
@@ -81,8 +83,12 @@ const setAiAgentStepsResponseFormat = async (
           },
         },
       });
+
+      updatedStepCount++;
     }
   }
+
+  return updatedStepCount;
 };
 
 export const createUpdateWorkflowAgentTool = (
@@ -126,19 +132,35 @@ To find the agentId, look at the AI_AGENT step's settings.input.agentId field.`,
         });
       }
 
-      if (isDefined(responseFormat)) {
-        await setAiAgentStepsResponseFormat(deps, {
-          workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
+      if (!isDefined(responseFormat)) {
+        return {
+          success: true,
+          message: `Successfully updated agent ${agentId}`,
           agentId,
-          responseFormat,
-        });
+        };
+      }
+
+      const updatedStepCount = await setAiAgentStepsResponseFormat(deps, {
+        workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
+        agentId,
+        responseFormat,
+      });
+
+      if (updatedStepCount === 0) {
+        return {
+          success: false,
+          error: 'No draft AI_AGENT step uses this agent',
+          message: `The response format was not applied: no draft AI_AGENT step uses agent ${agentId}. Create a draft version first.`,
+          agentId,
+        };
       }
 
       return {
         success: true,
-        message: `Successfully updated agent ${agentId}`,
+        message: `Successfully updated agent ${agentId} and the response format of ${updatedStepCount} draft step(s)`,
         agentId,
+        updatedStepCount,
       };
     } catch (error) {
       return {

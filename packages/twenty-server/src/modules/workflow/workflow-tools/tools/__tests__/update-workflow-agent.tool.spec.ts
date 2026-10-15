@@ -153,7 +153,7 @@ describe('createUpdateWorkflowAgentTool', () => {
       ],
     });
 
-    await tool.execute({
+    const result = await tool.execute({
       agentId: AGENT_ID,
       responseFormat: { type: 'text' },
     } as never);
@@ -161,6 +161,8 @@ describe('createUpdateWorkflowAgentTool', () => {
     expect(
       coreWorkflowVersionMutationService.updateStep,
     ).not.toHaveBeenCalled();
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('no draft AI_AGENT step uses agent');
   });
 
   it('should report a failure when the steps cannot be updated', async () => {
