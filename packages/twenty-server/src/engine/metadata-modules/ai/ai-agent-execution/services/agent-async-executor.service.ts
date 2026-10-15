@@ -7,7 +7,9 @@ import {
   jsonSchema,
   type LanguageModelUsage,
   Output,
+  readUIMessageStream,
   type StepResult,
+  toUIMessageStream,
   type ToolSet,
 } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
@@ -15,6 +17,7 @@ import {
   ASK_QUESTION_TOOL_NAME,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   type ExtendedUIMessage,
+  type ExtendedUIMessagePart,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
@@ -74,6 +77,7 @@ import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-age
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
@@ -478,6 +482,9 @@ export class AgentAsyncExecutorService {
       };
       const offeredToolNames = Object.keys(offeredPausingTools);
 
+      let streamError: unknown;
+      let replyParts: ExtendedUIMessagePart[] = [];
+
       const stepLoop = this.agentStepLoopService.start({
         registeredModel,
         modelConfig: modelConfig ?? {
@@ -501,16 +508,22 @@ export class AgentAsyncExecutorService {
         },
         providerOptions,
         metricsScope: 'agent',
+        onError: (error) => {
+          streamError ??= error;
+        },
       });
 
       getFinishedSteps = stepLoop.getFinishedSteps;
 
-      let streamError: unknown;
-
-      for await (const part of stepLoop.stream.stream) {
-        if (part.type === 'error') {
-          streamError ??= part.error;
-        }
+      // the reply is read the way chat reads its stream, so both save the same parts
+      for await (const message of readUIMessageStream<ExtendedUIMessage>({
+        stream: toUIMessageStream({
+          stream: stepLoop.stream.stream,
+          sendReasoning: true,
+          onError: formatErrorWithCause,
+        }),
+      })) {
+        replyParts = message.parts;
       }
 
       // a model error fails the run, as it did before steps were streamed
@@ -621,6 +634,7 @@ export class AgentAsyncExecutorService {
         // out of credits fails the execution even if it asked something, so it is never left waiting for an answer
         isPaused: endsOnPausingTool && !hasNoMoreAvailableCredits,
         steps: executionSteps,
+        replyParts,
         modelId: registeredModel.modelId,
         totalCostInDollars,
         creditsUsedMicro,

@@ -27,6 +27,7 @@ const baseExecution: AgentExecutionResult = {
   nativeWebSearchCallCount: 2,
   hasNoMoreAvailableCredits: false,
   isPaused: false,
+  replyParts: [],
   modelId: 'claude-sonnet-4',
   totalCostInDollars: 0.012,
   creditsUsedMicro: 12_000,

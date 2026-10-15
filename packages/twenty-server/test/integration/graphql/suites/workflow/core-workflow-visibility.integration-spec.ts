@@ -27,7 +27,6 @@ import {
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -811,9 +810,7 @@ describe('core workflow visibility (e2e)', () => {
         title: 'Summarize the lead',
         agentId: null,
         execution: {
-          steps: [
-            { content: [{ type: 'text', text: 'A warm lead.' }] },
-          ] as AgentExecutionResult['steps'],
+          replyParts: [{ type: 'text', text: 'A warm lead.' }],
         },
       });
     });

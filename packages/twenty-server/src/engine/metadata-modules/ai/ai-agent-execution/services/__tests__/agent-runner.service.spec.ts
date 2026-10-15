@@ -30,6 +30,7 @@ const buildExecution = (
   hasNoMoreAvailableCredits: false,
   isPaused: false,
   steps: [],
+  replyParts: [],
   modelId: 'model-id',
   totalCostInDollars: 0,
   creditsUsedMicro: 0,

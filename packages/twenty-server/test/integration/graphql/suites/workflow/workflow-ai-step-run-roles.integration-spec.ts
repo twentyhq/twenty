@@ -388,4 +388,29 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     expect(calls[1].toolOutputs.join()).toContain(VISIBLE_RECORD_NAME);
     expect(calls[1].toolOutputs.join()).not.toContain(HIDDEN_RECORD_NAME);
   });
+
+  it('saves the step reply in the parts chat saves', async () => {
+    mockModelCallingFindTool();
+
+    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+      'COMPLETED',
+    );
+
+    const replyParts: { type: string; state: string | null }[] =
+      await global.testDataSource.query(
+        `SELECT part.type, part.state FROM "${schema}"."agentMessagePart" part
+         WHERE part."messageId" = (
+           SELECT id FROM "${schema}"."agentMessage"
+           WHERE role = 'assistant' ORDER BY "createdAt" DESC LIMIT 1
+         )
+         ORDER BY part."orderIndex"`,
+      );
+
+    expect(replyParts).toEqual([
+      { type: 'step-start', state: null },
+      { type: `tool-${FIND_TOOL_NAME}`, state: 'output-available' },
+      { type: 'step-start', state: null },
+      { type: 'text', state: null },
+    ]);
+  });
 });
