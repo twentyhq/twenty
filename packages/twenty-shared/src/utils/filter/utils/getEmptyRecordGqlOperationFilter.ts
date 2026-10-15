@@ -1,4 +1,5 @@
 import {
+  FieldMetadataType,
   ViewFilterOperand,
   type ActorFilter,
   type AddressFilter,
@@ -18,16 +19,19 @@ import {
   type UUIDFilter,
 } from '@/types';
 import { CustomError } from '@/utils/errors';
+import { computeMorphRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
 import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/computeEmptyGqlOperationFilterForEmails';
 import { computeEmptyGqlOperationFilterForLinks } from '@/utils/filter/computeEmptyGqlOperationFilterForLinks';
 import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { type FieldShared } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/generateILikeFiltersForCompositeFields';
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 import { isNonEmptyString } from '@sniptt/guards';
 
 type GetEmptyRecordGqlOperationFilterParams = {
   operand: ViewFilterOperand;
-  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'>;
+  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'> &
+    Pick<FieldShared, 'morphRelations'>;
   recordFilter: Omit<RecordFilter, 'id'>;
 };
 
@@ -330,6 +334,24 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'RELATION':
+      if (correspondingField.type === FieldMetadataType.MORPH_RELATION) {
+        emptyRecordFilter = {
+          and: (correspondingField.morphRelations ?? []).map(
+            (morphRelation) => ({
+              [computeMorphRelationGqlFieldJoinColumnName({
+                fieldName: correspondingField.name,
+                relationType: morphRelation.type,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural:
+                  morphRelation.targetObjectMetadata.namePlural,
+              })]: { is: 'NULL' } as RelationFilter,
+            }),
+          ),
+        };
+        break;
+      }
+
       emptyRecordFilter = {
         [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
       };
