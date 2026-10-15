@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   REACT_TO_MESSAGE_TOOL_NAME,
@@ -13,6 +13,7 @@ import { type ToolInput } from '@/ai/types/ToolInput';
 import { buildNamedItemsStatusMessage } from '@/ai/utils/tool-display/buildNamedItemsStatusMessage';
 import { buildToolStatusMessageByCategory } from '@/ai/utils/tool-display/buildToolStatusMessageByCategory';
 import { extractSearchQuery } from '@/ai/utils/tool-display/extractSearchQuery';
+import { hasToolOutputFailed } from '@/ai/utils/tool-display/hasToolOutputFailed';
 import { pickStatusLabel } from '@/ai/utils/tool-display/pickStatusLabel';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
 
@@ -143,8 +144,7 @@ const buildToolDisplayMessage = ({
               metadataItem.nameSingular === parsed.data.objectNameSingular,
           )
         : undefined;
-      const hasFailed =
-        isObject(output) && 'success' in output && output.success === false;
+      const hasFailed = hasToolOutputFailed(output);
 
       if (isDefined(objectMetadataItem)) {
         const objectLabel = objectMetadataItem.labelSingular.toLocaleLowerCase(
@@ -171,8 +171,7 @@ const buildToolDisplayMessage = ({
     case REACT_TO_MESSAGE_TOOL_NAME: {
       const parsed = ReactToMessageSchema.safeParse(input);
       const emoji = parsed.success ? parsed.data.emoji : '';
-      const hasFailed =
-        isObject(output) && 'success' in output && output.success === false;
+      const hasFailed = hasToolOutputFailed(output);
 
       return pickStatusLabel({
         isFinished,

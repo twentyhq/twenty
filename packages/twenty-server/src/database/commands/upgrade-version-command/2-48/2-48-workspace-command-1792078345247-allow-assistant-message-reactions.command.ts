@@ -58,7 +58,6 @@ export class AllowAssistantMessageReactionsCommand extends ProvisionedWorkspaceC
       return;
     }
 
-    // Assistant reactions have no member, so they cannot survive the constraint
     if (!isNullable) {
       await dataSource.query(
         `DELETE FROM ${reactionTable} WHERE "workspaceMemberId" IS NULL`,
