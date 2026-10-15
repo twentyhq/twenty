@@ -366,6 +366,7 @@ export class AgentChatSharingService {
         userWorkspaceId: authContext.userWorkspaceId,
         setting: PermissionFlagType.AI,
         applicationId: authContext.application?.id,
+        agentId: authContext.agentId,
       }))
     ) {
       return throwAgentChatThreadNotFound();

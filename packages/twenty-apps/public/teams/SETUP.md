@@ -47,6 +47,32 @@ three credentials before bot operations can run.
 | `TEAMS_BOT_APP_PASSWORD` | yes    | Client secret of that app registration. Used to mint Bot Connector tokens.                                                                                                                                        |
 | `TEAMS_BOT_TENANT_ID`    | no     | Directory (tenant) ID that owns the Azure Bot. Microsoft stopped issuing multi-tenant bots after 2025-07-31, so token minting is tenant-scoped rather than going through the shared `botframework.com` authority. |
 
+## Chat
+
+Chat lets workspace members message the Teams Assistant bot from Microsoft
+Teams. It needs the [bot server variables](#bot-server-variables), the
+`IS_CHAT_ASSISTANT_ENABLED` release flag, and the workspace's **Enable chat**
+setting.
+
+1. In the Azure Bot resource, set the messaging endpoint to
+   `https://<your-twenty-host>/webhooks/server/c78db1b1-a0ec-4183-9edd-63299ab5a477`
+   and enable the Microsoft Teams channel. The Twenty server must be reachable
+   from the internet over HTTPS.
+2. Add the bot to a Teams app (for example in the Teams Developer Portal, using
+   `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
+3. Turn on **Enable chat**, then add a **workspace-shared** Microsoft connection.
+   Adding it claims the connection's Microsoft tenant for this workspace, so
+   activities from that tenant route here. Personal connections do not claim a
+   tenant, and a tenant can only be claimed by one workspace.
+
+The route verifies the Bot Framework token on every activity and ignores
+activities from tenants no workspace has claimed. The bot answers direct
+messages, and channel or group messages that mention it. It answers as the
+workspace member whose email matches the sender's Microsoft account, links that
+account under **Linked Teams accounts**, and replies with a short notice when no
+member matches. Members who can manage roles can remove a link there; an
+account matched on email is linked again on its next message.
+
 ## Connect
 
 Open **Settings > Applications > Microsoft Teams > Settings**, select
@@ -59,12 +85,22 @@ that account organizes. Graph delivers its notifications to
 `https://<your-twenty-host>/webhooks/server/d62e36e1-82bb-4f78-b2ab-54a31faaafab`,
 so the Twenty server must be reachable from the internet over HTTPS. New
 transcripts then import automatically into Call Recordings as Microsoft
-publishes them. Use the **Sync Teams Transcript** action for transcripts from
-before the connection existed, and for any that Microsoft has not published
-about two and a half hours after the meeting or whose import keeps failing. A
-connection added while transcripts were off has no subscription: reconnect it
-after turning transcripts on. Disconnecting the account or uninstalling the app
-deletes the subscription.
+publishes them. A connection added while transcripts were off has no
+subscription: reconnect it after turning transcripts on. Disconnecting the
+account or uninstalling the app deletes the subscription.
+
+Connecting also imports the transcripts of the last 31 days, once per
+connection. Reconnecting starts it again only when that import failed or
+stalled. For older ones, use **Import history** in **Settings > Applications >
+Microsoft Teams > Settings**: count the transcripts of up to the last 365 days
+first, then import them. Only members who can open the app settings see this
+section, and it imports the meetings of a connection they added themselves:
+their personal one, or a workspace-shared one they created. Every member's
+connection still imports its last 31 days when it connects. The import runs in
+the background, newest first, waiting a minute after each calendar page that
+imported transcripts. Use the **Sync Teams Transcript** action for a single
+transcript, such as one that Microsoft had not published about two and a half
+hours after the meeting or whose import keeps failing.
 
 Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.

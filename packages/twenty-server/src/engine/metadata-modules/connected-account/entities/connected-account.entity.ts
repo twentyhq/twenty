@@ -20,6 +20,7 @@ import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { EXTERNAL_ACCOUNT_ID_MAX_LENGTH } from 'src/engine/metadata-modules/connected-account/constants/external-account-id-max-length.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
@@ -51,6 +52,17 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'varchar', nullable: false })
   handle: string;
+
+  @Column({
+    type: 'varchar',
+    length: EXTERNAL_ACCOUNT_ID_MAX_LENGTH,
+    nullable: true,
+  })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.48.0_AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand_1791975194413',
+  })
+  externalAccountId: string | null;
 
   @Column({ type: 'varchar', nullable: false })
   provider: ConnectedAccountProvider;

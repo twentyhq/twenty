@@ -11,7 +11,7 @@ import ToasterReference from '/snippets/ui/generated/components/feedback/toaster
 
 `Toast` renders one notification. Your application controls when it appears, its position, and when it is removed.
 
-For application notifications, wrap the application in `ToastProvider`, mount one `Toaster` inside it, and use `useToast()` from descendants. Each provider owns a separate notification store.
+For application notifications, wrap the application in `ToastProvider`, mount a `Toaster` inside it, and use `useToast()` from descendants. Each provider owns an independent notification store, countdowns, and dismissal lifecycle. Multiple Toasters can mirror the same provider.
 
 <StoryEmbed
   storyId="ui-feedback-toast--documentation"
@@ -22,6 +22,8 @@ For application notifications, wrap the application in `ToastProvider`, mount on
 ## Application notifications
 
 ```tsx
+import { useState } from 'react';
+
 import {
   ToastProvider,
   Toaster,
@@ -38,26 +40,55 @@ const SaveNotificationButton = () => {
         enqueueToast({
           children: 'Record saved',
           status: 'success',
-          dedupeKey: 'record-saved',
         })
       }
     >
-      Show saved notification
+      Add saved notification
     </Button>
   );
 };
 
-export const Notifications = () => (
-  <ToastProvider limit={3}>
-    <SaveNotificationButton />
-    <Toaster />
-  </ToastProvider>
-);
+export const Notifications = () => {
+  const [limit, setLimit] = useState(3);
+
+  return (
+    <ToastProvider limit={limit}>
+      <SaveNotificationButton />
+      <Button onClick={() => setLimit(1)}>Keep one notification</Button>
+      <Button onClick={() => setLimit(3)}>Keep three notifications</Button>
+      <Toaster />
+    </ToastProvider>
+  );
+};
 ```
 
 `enqueueToast` accepts Toast props and an optional `dedupeKey`, and returns the notification ID. A matching visible key returns the existing ID without adding another notification. `updateToast({ id, ...changes })` patches that live notification. `closeToast(id)` dismisses one notification; `closeToast()` dismisses all visible notifications in the provider.
 
-The provider defaults to three visible notifications. Adding another dismisses the oldest visible ones. The toaster handles dismissal and exit animations. `container` overrides its portal destination; `null` defers rendering. `getToastProps` customizes each notification, while the toaster retains its ID and dismissal handler. Set `aria-label` on `Toaster` to localize its default region name, "Notifications".
+The provider defaults to three visible notifications. `limit` must be a positive integer and can change while the provider is mounted. Lowering it or adding above it dismisses the oldest visible notifications first. Increasing it leaves existing notifications unchanged and does not restore dismissed notifications. Configuration changes preserve the store, surviving IDs, order, and remaining countdown time.
+
+## Provider lifecycle
+
+<StoryEmbed
+  storyId="ui-feedback-toaster-lifecycle--documentation"
+  title="Shared notification lifecycle"
+  height={450}
+/>
+
+Multiple Toasters inside a provider render the same notifications. Updates and dismissal apply to every mirror, and each notification has one shared countdown. Hover or focus inside any mirror pauses it; it resumes after all mirrors release both. Mounting another Toaster does not restart the countdown or create another callback lifecycle. Use separate providers for independent queues.
+
+For provider notifications, expiry, the close button, `closeToast`, and limit eviction call the latest `onClose` once. The notification is already dismissed when the callback runs, so updates and repeated close requests for that ID have no effect. `onCancel` remains a separate action callback and does not dismiss automatically.
+
+Dismissed notifications are inert during exit animations. Their entries are removed after all rendered mirrors finish their exit work or unmount. Unmounting the last Toaster clears dismissed entries and freezes the remaining time for visible notifications. Remounting a Toaster resumes that time. Unmounting the provider discards its notifications and cancels countdown and exit work without calling `onClose`. Captured `enqueueToast`, `updateToast`, and `closeToast` operations from that provider have no effect after it unmounts.
+
+`getToastProps` adapts each notification’s content and presentation. Set `duration` and `progress` in `enqueueToast` or `updateToast` so every mirror shares the same timing configuration. Existing timing overrides through `getToastProps` remain supported when all mirrors return the same duration and progress for a notification. The provider retains the ID, dismissal handler, and shared countdown.
+
+`container` selects a Toaster’s portal destination. When omitted, it uses the surrounding theme container or `document.body`. An explicit element renders there; `null` defers rendering. Visible notifications remain queued, with their countdowns paused while no Toaster is rendered. Portals retain the surrounding theme and direction. Set `aria-label` on each Toaster to localize its default region name, "Notifications", and give mirrored regions appropriate names.
+
+<StoryEmbed
+  storyId="ui-feedback-toaster-lifecycle--portal-documentation"
+  title="Scoped notification portal"
+  height={350}
+/>
 
 ## Update a live notification
 
@@ -115,7 +146,7 @@ export const SaveButton = ({ saveRecord, onViewRecord }: SaveButtonProps) => {
 
 ## Dismissal timing
 
-The countdown defaults to 6,000 milliseconds. It pauses while the pointer is over the toast or keyboard focus is inside it, and resumes only after both leave. The visual countdown follows the remaining dismissal time. Automatic dismissal also works when reduced motion disables the animation.
+The countdown defaults to 6,000 milliseconds. It pauses while the pointer is over the toast or keyboard focus is inside it, and resumes only after both leave. With multiple Toasters, pause state is shared across their mirrors. The visual countdown follows the remaining dismissal time. Automatic dismissal also works when reduced motion disables the animation.
 
 <StoryEmbed
   storyId="ui-feedback-toaster-timing--documentation"

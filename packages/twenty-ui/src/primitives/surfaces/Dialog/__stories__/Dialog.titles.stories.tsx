@@ -84,3 +84,35 @@ export const TitleTypographyDark: Story = {
   ...TitleTypography,
   globals: { colorScheme: 'dark' },
 };
+
+export const CenteredDescription: Story = {
+  render: (args) => (
+    <Dialog.Root defaultOpen>
+      <Dialog.Portal>
+        <Dialog.Backdrop />
+        <Dialog.Viewport>
+          <Dialog.Popup>
+            <Dialog.Header>
+              <Dialog.Title {...args} />
+              <Dialog.Description>
+                Credits are shared by every member of this workspace and renew
+                at the start of each billing period.
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Footer>
+              <Dialog.Close render={<Button>Close</Button>} />
+            </Dialog.Footer>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const dialog = await waitForDialog(canvasElement);
+    const description = within(dialog).getByText(
+      'Credits are shared by every member of this workspace and renew at the start of each billing period.',
+    );
+
+    expect(getComputedStyle(description).textAlign).toBe('center');
+  },
+};

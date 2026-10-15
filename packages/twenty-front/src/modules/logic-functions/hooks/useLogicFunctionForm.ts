@@ -34,13 +34,19 @@ export const useLogicFunctionForm = ({
       value: LogicFunctionFormValues[TKey],
     ): Promise<InputJsonSchema | undefined> => {
       if (key === 'sourceHandlerCode') {
-        const inferredJsonSchema = await getInputSchemaFromSourceCode(
-          value as LogicFunctionFormValues['sourceHandlerCode'],
-        );
+        const sourceHandlerCode =
+          value as LogicFunctionFormValues['sourceHandlerCode'];
 
         setFormValues((prevState: LogicFunctionFormValues) => ({
           ...prevState,
-          sourceHandlerCode: value as string,
+          sourceHandlerCode,
+        }));
+
+        const inferredJsonSchema =
+          await getInputSchemaFromSourceCode(sourceHandlerCode);
+
+        setFormValues((prevState: LogicFunctionFormValues) => ({
+          ...prevState,
           toolTriggerSettings: prevState.toolTriggerSettings
             ? {
                 ...prevState.toolTriggerSettings,

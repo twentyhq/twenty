@@ -40,7 +40,7 @@ export const SettingsApplicationRegistrationRedirectURIsInput = ({
         redirectUri: z
           .string()
           .trim()
-          .min(1, 'URI is required')
+          .min(1, t`URI is required`)
           .url(t`Please enter a valid URL`)
           .refine(
             (value) => !redirectUris.includes(value),

@@ -304,6 +304,14 @@ export class RouteTriggerService {
         );
       }
 
+      // Routes authenticate the caller themselves, behind no AuthPrincipalGuard
+      if (isDefined(routeAuthenticationContext.agentId)) {
+        throw new RouteTriggerException(
+          'This token is only accepted by MCP',
+          RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
       userWorkspaceId = routeAuthenticationContext.userWorkspaceId ?? null;
       userId = routeAuthenticationContext.user?.id ?? null;
     }

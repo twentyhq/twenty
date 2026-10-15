@@ -120,7 +120,10 @@ export class CodeInterpreterTool implements Tool {
         workspaceAuthContextStorage.getStore(),
       );
       const sandboxToken = isDefined(sandboxPrincipal)
-        ? await this.generateSandboxToken(sandboxPrincipal)
+        ? await this.generateSandboxToken({
+            ...sandboxPrincipal,
+            agentId: context.agentId,
+          })
         : undefined;
 
       this.logger.debug(
@@ -353,7 +356,7 @@ export class CodeInterpreterTool implements Tool {
   }
 
   private async generateSandboxToken(
-    sandboxPrincipal: SandboxPrincipal,
+    sandboxPrincipal: SandboxPrincipal & { agentId?: string },
   ): Promise<string> {
     const { token } =
       await this.applicationTokenService.generateApplicationAccessToken({
