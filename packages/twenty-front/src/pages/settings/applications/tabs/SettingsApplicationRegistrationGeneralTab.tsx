@@ -27,11 +27,10 @@ export const SettingsApplicationRegistrationGeneralTab = ({
           applicationRegistrationId={registration.id}
         />
       )}
-      {fromAdmin && (
-        <SettingsApplicationRegistrationGeneralStats
-          registration={registration}
-        />
-      )}
+      <SettingsApplicationRegistrationGeneralStats
+        registration={registration}
+        fromAdmin={fromAdmin}
+      />
       <SettingsAdminApplicationRegistrationDangerZone
         registration={registration}
         fromAdmin={fromAdmin}
