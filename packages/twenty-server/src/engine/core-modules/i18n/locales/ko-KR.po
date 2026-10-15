@@ -1520,10 +1520,10 @@ msgctxt "fieldMetadata.description"
 msgid "Audio-only recording"
 msgstr "오디오 전용 녹음"
 
-#. js-lingui-id: aepsXP
+#. js-lingui-id: 5bRlXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
-msgid "Audit logs require an Enterprise subscription."
-msgstr "감사 로그를 사용하려면 Enterprise 구독이 필요합니다."
+msgid "Audit logs require an Organization subscription."
+msgstr "감사 로그를 사용하려면 Organization 구독이 필요합니다."
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -2472,6 +2472,11 @@ msgstr "표준 스킬 속성은 업데이트할 수 없습니다(활성화/비�
 msgctxt "fieldMetadata.label"
 msgid "Cc"
 msgstr "참조"
+
+#. js-lingui-id: abq5Mk
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Changing log retention requires an Organization subscription."
+msgstr "로그 보존 기간을 변경하려면 Organization 구독이 필요합니다."
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts

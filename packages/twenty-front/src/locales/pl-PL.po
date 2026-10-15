@@ -813,9 +813,14 @@ msgid "{queuedMessage}, skipping {skipReasons}"
 msgstr "{queuedMessage}, pominięto {skipReasons}"
 
 #. js-lingui-id: r4MTJW
-#: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
+#: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "{retentionInDays, plural, one {# day} other {# days}}"
 msgstr "{retentionInDays, plural, one {# dzień} few {# dni} many {# dni} other {# dni}}"
+
+#. js-lingui-id: HlXLUQ
+#: src/modules/log-console/hooks/useLogConsoleRetention.ts
+msgid "{retentionInHours, plural, one {# hour} other {# hours}}"
+msgstr "{retentionInHours, plural, one {# godzina} few {# godziny} many {# godzin} other {# godziny}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1139,6 +1144,11 @@ msgstr "12h"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "2 Columns"
 msgstr "2 kolumny"
+
+#. js-lingui-id: Ur5nZV
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+msgid "2 hours"
+msgstr "2 godziny"
 
 #. js-lingui-id: 0HAF12
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -3137,13 +3147,9 @@ msgstr "Aplikacja została usunięta pomyślnie"
 
 #. js-lingui-id: Oh+wHS
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "App logs"
 msgstr "Dzienniki aplikacji"
-
-#. js-lingui-id: ZGfGyx
-#: src/modules/log-console/hooks/useLogConsoleRetention.ts
-msgid "App logs are kept {retentionInDays} days."
-msgstr "Dzienniki aplikacji są przechowywane przez {retentionInDays} dni."
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -3719,11 +3725,6 @@ msgstr "Dzienniki audytu"
 msgid "Audit Logs"
 msgstr "Logi audytu"
 
-#. js-lingui-id: APXe7E
-#: src/modules/log-console/hooks/useLogConsoleRetention.ts
-msgid "Audit logs are kept {retentionInDays} days."
-msgstr "Dzienniki audytu są przechowywane przez {retentionInDays} dni."
-
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Augment Code"
@@ -4199,6 +4200,11 @@ msgstr "Przeglądaj wątki czatu AI we wszystkich przestrzeniach roboczych, w ty
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Browse partners"
 msgstr "Przeglądaj partnerów"
+
+#. js-lingui-id: 8nmCIQ
+#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
+msgid "Browse record changes, security events, app logs and more"
+msgstr "Przeglądaj zmiany rekordów, zdarzenia bezpieczeństwa, logi aplikacji i nie tylko"
 
 #. js-lingui-id: GsXRxc
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -7194,6 +7200,11 @@ msgstr "Widok niestandardowy"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom views"
 msgstr "Widoki niestandardowe"
+
+#. js-lingui-id: T8n/Qf
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+msgid "Custom, up to 3 years"
+msgstr "Niestandardowy, do 3 lat"
 
 #. js-lingui-id: 876pfE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -14145,6 +14156,11 @@ msgstr "Zablokuj diagram"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Zarejestruj nową transakcję (firma, kwota, etap, oczekiwana data zamknięcia). Szczegóły: "
 
+#. js-lingui-id: qLzdcJ
+#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
+msgid "Log console"
+msgstr "Konsola logów"
+
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -14165,6 +14181,7 @@ msgid "Log out all other devices"
 msgstr "Wyloguj wszystkie pozostałe urządzenia"
 
 #. js-lingui-id: qakNlV
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Log retention"
 msgstr "Retencja dzienników"
@@ -14246,6 +14263,16 @@ msgstr "dzienniki"
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Logs"
 msgstr "Dzienniki"
+
+#. js-lingui-id: FBD/J1
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+msgid "Logs are kept {proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention."
+msgstr "Logi są przechowywane przez {proPlanEventLogRetentionInHours} godzin w ramach Twojego planu. Ulepsz plan, aby dostosować okres przechowywania."
+
+#. js-lingui-id: 6SoluV
+#: src/modules/log-console/hooks/useLogConsoleRetention.ts
+msgid "Logs are kept {retentionLabel}."
+msgstr "Logi są przechowywane przez {retentionLabel}."
 
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16737,10 +16764,10 @@ msgstr "Format liczb"
 msgid "Number of dashboards"
 msgstr "Liczba pulpitów"
 
-#. js-lingui-id: +cbzNC
+#. js-lingui-id: n13TAo
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-msgid "Number of days to retain audit logs (30-1095 days)"
-msgstr "Liczba dni przechowywania dzienników inspekcji (30-1095 dni)"
+msgid "Number of days to retain logs ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} days)"
+msgstr "Liczba dni przechowywania logów ({minEventLogRetentionInDays}–{maxEventLogRetentionInDays} dni)"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -17038,11 +17065,6 @@ msgstr "Jeden na uruchomienie"
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
 msgstr "Jedna subskrypcja zapewnia jeden klucz Organizacji, który obsługuje jedną instancję produkcyjną oraz jedną potencjalną instancję stagingową lub testową. Aby uruchomić środowisko stagingowe lub testowe, zainstaluj Twenty na drugim serwerze, aktywuj go tym samym kluczem Organizacji, a następnie zarejestruj ten serwer jako instancję deweloperską. Instancje deweloperskie odblokowują funkcje premium bez dodatkowego rozliczania i nie są wliczane do twoich miejsc produkcyjnych."
 
-#. js-lingui-id: JEtonz
-#: src/modules/settings/event-logs/components/SettingsLogs.tsx
-msgid "Only application logs are available on your current plan. Other log types require an Organization subscription."
-msgstr "W twoim obecnym planie dostępne są tylko dzienniki aplikacji. Inne typy dzienników wymagają subskrypcji Organization."
-
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
@@ -17234,6 +17256,11 @@ msgstr "Otwórz w panelu bocznym"
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 msgid "Open link"
 msgstr "Otwórz link"
+
+#. js-lingui-id: MQAnOH
+#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
+msgid "Open log console"
+msgstr "Otwórz konsolę logów"
 
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
@@ -18878,6 +18905,11 @@ msgstr "Rekord (opcjonalnie)"
 msgid "Record {displayedRecordNumber} of {recordCount}"
 msgstr "Rekord {displayedRecordNumber} z {recordCount}"
 
+#. js-lingui-id: v5nqef
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+msgid "Record change logs"
+msgstr "Logi zmian rekordów"
+
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Record changes"
@@ -18885,6 +18917,7 @@ msgstr "Zmiany rekordów"
 
 #. js-lingui-id: tpEWQj
 #: src/modules/log-console/components/LogConsole.tsx
+#: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Zmiany rekordów i dzienniki aplikacji są dostępne w twoim obecnym planie. Inne typy dzienników wymagają subskrypcji Organization."
 
@@ -25291,11 +25324,6 @@ msgstr "Uaktualnić do rozliczenia rocznego?"
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Upgrade to Organization"
 msgstr "Uaktualnij do Organization"
-
-#. js-lingui-id: q10MiT
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-msgid "Upgrade to Organization to access audit logs."
-msgstr "Przejdź na Organization, aby uzyskać dostęp do dzienników inspekcji."
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx

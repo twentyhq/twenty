@@ -1520,10 +1520,10 @@ msgctxt "fieldMetadata.description"
 msgid "Audio-only recording"
 msgstr "纯音频录音"
 
-#. js-lingui-id: aepsXP
+#. js-lingui-id: 5bRlXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
-msgid "Audit logs require an Enterprise subscription."
-msgstr "审计日志需要企业版订阅。"
+msgid "Audit logs require an Organization subscription."
+msgstr "审计日志需要组织版订阅。"
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -2472,6 +2472,11 @@ msgstr "无法更新标准技能属性（仅允许启用/停用）"
 msgctxt "fieldMetadata.label"
 msgid "Cc"
 msgstr "抄送"
+
+#. js-lingui-id: abq5Mk
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Changing log retention requires an Organization subscription."
+msgstr "更改日志保留期限需要组织版订阅。"
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts

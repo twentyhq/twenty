@@ -1520,10 +1520,10 @@ msgctxt "fieldMetadata.description"
 msgid "Audio-only recording"
 msgstr "Endast ljudinspelning"
 
-#. js-lingui-id: aepsXP
+#. js-lingui-id: 5bRlXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
-msgid "Audit logs require an Enterprise subscription."
-msgstr "Granskningsloggar kräver ett Enterprise-abonnemang."
+msgid "Audit logs require an Organization subscription."
+msgstr "Granskningsloggar kräver ett Organization-abonnemang."
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -2472,6 +2472,11 @@ msgstr "Det går inte att uppdatera egenskaper för standardfärdighet (endast a
 msgctxt "fieldMetadata.label"
 msgid "Cc"
 msgstr "Cc"
+
+#. js-lingui-id: abq5Mk
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Changing log retention requires an Organization subscription."
+msgstr "Ändring av loggkvarhållning kräver ett Organization-abonnemang."
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
