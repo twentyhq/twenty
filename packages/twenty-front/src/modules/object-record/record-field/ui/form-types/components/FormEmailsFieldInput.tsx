@@ -13,6 +13,7 @@ type FormEmailsFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   subFieldPlaceholders?: Partial<Record<keyof FieldEmailsValue, string>>;
+  isPrimaryEmailOnly?: boolean;
 };
 
 export const FormEmailsFieldInput = ({
@@ -22,6 +23,7 @@ export const FormEmailsFieldInput = ({
   readonly,
   VariablePicker,
   subFieldPlaceholders,
+  isPrimaryEmailOnly = false,
 }: FormEmailsFieldInputProps) => {
   const { t } = useLingui();
 
@@ -31,6 +33,19 @@ export const FormEmailsFieldInput = ({
       additionalEmails: [],
     });
   };
+
+  if (isPrimaryEmailOnly) {
+    return (
+      <FormTextFieldInput
+        label={label}
+        defaultValue={defaultValue?.primaryEmail}
+        onChange={handleChange}
+        placeholder={subFieldPlaceholders?.primaryEmail ?? t`Email`}
+        readonly={readonly}
+        VariablePicker={VariablePicker}
+      />
+    );
+  }
 
   return (
     <FormFieldInputContainer>

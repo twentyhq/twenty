@@ -1,17 +1,14 @@
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormEmailsFieldInput } from '@/object-record/record-field/ui/form-types/components/FormEmailsFieldInput';
+import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
+import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import {
-  type FieldEmailsValue,
-  type FieldMetadata,
-  type FormFieldLinksValue,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
+import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
-import { RecordFormEmailsFieldInput } from '@/object-record/record-form/components/RecordFormEmailsFieldInput';
-import { RecordFormLinksFieldInput } from '@/object-record/record-form/components/RecordFormLinksFieldInput';
+import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
-import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { type JsonValue } from 'type-fest';
 
 type RecordFormFieldInputProps = {
@@ -21,6 +18,7 @@ type RecordFormFieldInputProps = {
   onClear?: () => void;
   readonly?: boolean;
   placeholder?: string;
+  subFieldPlaceholders?: FormFieldInputSubFieldPlaceholders;
 };
 
 export const RecordFormFieldInput = ({
@@ -30,28 +28,39 @@ export const RecordFormFieldInput = ({
   onClear,
   readonly,
   placeholder,
-}: RecordFormFieldInputProps) =>
-  isFieldLinks(field) ? (
-    <RecordFormLinksFieldInput
-      label={field.label}
-      defaultValue={defaultValue as FormFieldLinksValue | undefined}
-      onChange={onChange}
-      linksVariant={getLinksVariant({
-        type: FieldMetadataType.LINKS,
-        settings: field.metadata.settings,
-      })}
-      readonly={readonly}
-      placeholder={placeholder}
-    />
-  ) : isFieldEmails(field) ? (
-    <RecordFormEmailsFieldInput
-      label={field.label}
-      defaultValue={defaultValue as FieldEmailsValue | undefined}
-      onChange={onChange}
-      readonly={readonly}
-      placeholder={placeholder}
-    />
-  ) : (
+  subFieldPlaceholders,
+}: RecordFormFieldInputProps) => {
+  if (isFieldLinks(field)) {
+    return (
+      <FormLinksFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldLinksValue(defaultValue) ? defaultValue : undefined
+        }
+        onChange={onChange}
+        readonly={readonly}
+        subFieldPlaceholders={subFieldPlaceholders}
+        isPrimaryLinkUrlOnly
+      />
+    );
+  }
+
+  if (isFieldEmails(field)) {
+    return (
+      <FormEmailsFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldEmailsValue(defaultValue) ? defaultValue : undefined
+        }
+        onChange={onChange}
+        readonly={readonly}
+        subFieldPlaceholders={subFieldPlaceholders}
+        isPrimaryEmailOnly
+      />
+    );
+  }
+
+  return (
     <FormFieldInput
       field={field}
       defaultValue={defaultValue}
@@ -59,6 +68,8 @@ export const RecordFormFieldInput = ({
       onClear={onClear}
       readonly={readonly}
       placeholder={placeholder}
+      subFieldPlaceholders={subFieldPlaceholders}
       settings={getRecordFormFieldInputSettings(field.type)}
     />
   );
+};
