@@ -6,6 +6,7 @@ import { FormFieldInput } from '@/object-record/record-field/ui/components/FormF
 import { RecordFormFieldInputsEffect } from '@/object-record/record-form/components/RecordFormFieldInputsEffect';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
+import { getRecordFormFieldPlaceholders } from '@/object-record/record-form/utils/getRecordFormFieldPlaceholders';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { styled } from '@linaria/react';
@@ -50,6 +51,8 @@ export const RecordFormFieldInputs = ({
         {fieldMetadataItems.map((fieldMetadataItem) => {
           const gqlFieldName =
             getFieldMetadataItemGqlFieldName(fieldMetadataItem);
+          const { placeholder, subFieldPlaceholders } =
+            getRecordFormFieldPlaceholders(fieldMetadataItem.type);
 
           return (
             <Field.Root key={fieldMetadataItem.id}>
@@ -69,6 +72,8 @@ export const RecordFormFieldInputs = ({
                 settings={getRecordFormFieldInputSettings(
                   fieldMetadataItem.type,
                 )}
+                placeholder={placeholder}
+                subFieldPlaceholders={subFieldPlaceholders}
               />
               {(
                 validationRuleViolationsByFieldMetadataId[

@@ -13,6 +13,7 @@ type FormFullNameFieldInputProps = {
   onChange: (value: FieldFullNameValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  subFieldPlaceholders?: Partial<Record<keyof FieldFullNameValue, string>>;
 };
 
 export const FormFullNameFieldInput = ({
@@ -21,6 +22,7 @@ export const FormFullNameFieldInput = ({
   onChange,
   readonly,
   VariablePicker,
+  subFieldPlaceholders,
 }: FormFullNameFieldInputProps) => {
   const handleFirstNameChange = (newText: string) => {
     onChange({
@@ -44,7 +46,9 @@ export const FormFullNameFieldInput = ({
           label={t`First Name`}
           defaultValue={defaultValue?.firstName}
           onChange={handleFirstNameChange}
-          placeholder={addCharactersToAvoidPasswordManagers(t`First name`)}
+          placeholder={addCharactersToAvoidPasswordManagers(
+            subFieldPlaceholders?.firstName ?? t`First name`,
+          )}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
@@ -52,7 +56,9 @@ export const FormFullNameFieldInput = ({
           label={t`Last Name`}
           defaultValue={defaultValue?.lastName}
           onChange={handleLastNameChange}
-          placeholder={addCharactersToAvoidPasswordManagers(t`Last name`)}
+          placeholder={addCharactersToAvoidPasswordManagers(
+            subFieldPlaceholders?.lastName ?? t`Last name`,
+          )}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
