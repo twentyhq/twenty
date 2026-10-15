@@ -9,7 +9,8 @@ export const getChartFilterFieldMetadataIds = (
     return [];
   }
 
-  const chartFilters = configuration.filter as ChartFilters | null | undefined;
+  // filter is an untyped JSON scalar in the GraphQL schema
+  const chartFilters: ChartFilters | null | undefined = configuration.filter;
 
   return (chartFilters?.recordFilters ?? []).map(
     (recordFilter) => recordFilter.fieldMetadataId,
