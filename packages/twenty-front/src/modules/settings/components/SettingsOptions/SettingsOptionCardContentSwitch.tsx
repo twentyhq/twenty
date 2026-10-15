@@ -1,4 +1,4 @@
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import {
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
@@ -12,12 +12,6 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledSwitch = styled(Switch)`
-  &[data-advanced-mode] {
-    color: ${themeCssVariables.color.yellow};
-  }
-`;
 
 const StyledSettingsCardSwitchContent = styled.div<{ disabled?: boolean }>`
   align-items: center;
@@ -53,7 +47,6 @@ type SettingsOptionCardContentSwitchProps = {
   description?: string;
   divider?: boolean;
   disabled?: boolean;
-  advancedMode?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
@@ -64,7 +57,6 @@ export const SettingsOptionCardContentSwitch = ({
   description,
   divider,
   disabled = false,
-  advancedMode = false,
   checked,
   onChange,
 }: SettingsOptionCardContentSwitchProps) => {
@@ -92,17 +84,16 @@ export const SettingsOptionCardContentSwitch = ({
           )}
         </StyledSettingsCardTextContainer>
         <StyledSettingsCardSwitchButtonContainer>
-          <StyledSwitch
+          <Switch
             id={switchId}
             checked={checked}
             onCheckedChange={onChange}
             disabled={disabled}
             size="sm"
-            data-advanced-mode={advancedMode || undefined}
           />
         </StyledSettingsCardSwitchButtonContainer>
       </StyledSettingsCardSwitchContent>
-      {divider && <Separator />}
+      {divider && <SettingsCardSeparator />}
     </>
   );
 };

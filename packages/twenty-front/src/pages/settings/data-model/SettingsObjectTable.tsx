@@ -22,7 +22,6 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -73,13 +72,11 @@ export const SettingsObjectTable = ({
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const navigate = useNavigateSettings();
 
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
-  const [showSystemObjects, setShowSystemObjects] = useState(true);
-  const shouldShowSystemObjects = isAdvancedModeEnabled && showSystemObjects;
+  const [showSystemObjects, setShowSystemObjects] = useState(false);
 
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
 
@@ -142,18 +139,13 @@ export const SettingsObjectTable = ({
         }
 
         const isSystem = item.objectMetadataItem.isSystem;
-        if (isSystem && !shouldShowSystemObjects) {
+        if (isSystem && !showSystemObjects) {
           return false;
         }
 
         return true;
       }),
-    [
-      sortedObjectSettingsItems,
-      searchTerm,
-      showDeactivated,
-      shouldShowSystemObjects,
-    ],
+    [sortedObjectSettingsItems, searchTerm, showDeactivated, showSystemObjects],
   );
 
   return (
@@ -184,15 +176,13 @@ export const SettingsObjectTable = ({
                       }
                       checked={showDeactivated}
                     >{t`Deactivated`}</SettingsRow>
-                    {isAdvancedModeEnabled && (
-                      <SettingsRow
-                        startElement={<IconSettings />}
-                        onCheckedChange={() =>
-                          setShowSystemObjects(!showSystemObjects)
-                        }
-                        checked={showSystemObjects}
-                      >{t`System objects`}</SettingsRow>
-                    )}
+                    <SettingsRow
+                      startElement={<IconSettings />}
+                      onCheckedChange={() =>
+                        setShowSystemObjects(!showSystemObjects)
+                      }
+                      checked={showSystemObjects}
+                    >{t`System objects`}</SettingsRow>
                   </Dropdown.Section>
                 </DropdownContent>
               </DropdownRoot>

@@ -23,10 +23,6 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledButtonContainer = styled(ButtonGroup)`
-  display: flex;
-`;
-
 type ConfigVariableEditProps = {
   title: string;
   description?: string;
@@ -139,7 +135,7 @@ export const ConfigVariableEdit = ({
               variant="outline"
             />
           ) : (
-            <StyledButtonContainer aria-label={t`Edit variable`}>
+            <ButtonGroup aria-label={t`Edit variable`}>
               <Button
                 startIcon={<IconCheck />}
                 aria-label={t`Save`}
@@ -156,7 +152,7 @@ export const ConfigVariableEdit = ({
                 disabled={isSubmitting}
                 variant="outline"
               />
-            </StyledButtonContainer>
+            </ButtonGroup>
           )}
           <ConfirmationDialog
             dialogId={RESET_VARIABLE_MODAL_ID}

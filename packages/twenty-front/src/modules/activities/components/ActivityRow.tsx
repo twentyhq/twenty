@@ -44,6 +44,7 @@ const INDEPENDENT_ROW_ACTION_SELECTOR = [
 type ActivityRowProps = PropsWithChildren<{
   onClick?: () => void;
   disabled?: boolean;
+  divider?: boolean;
   label: string;
 }>;
 
@@ -51,6 +52,7 @@ export const ActivityRow = ({
   children,
   onClick,
   disabled,
+  divider = false,
   label,
 }: ActivityRowProps) => {
   const handleContentClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -70,7 +72,7 @@ export const ActivityRow = ({
 
   return (
     <StyledRowContentContainer>
-      <StyledRowContent onClick={handleContentClick}>
+      <StyledRowContent divider={divider} onClick={handleContentClick}>
         {isDefined(onClick) && (
           <StyledRowAction
             className={CARD_ACTION_CLASS_NAME}

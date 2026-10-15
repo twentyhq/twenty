@@ -434,6 +434,22 @@ Failures in reconciliation report `error.details.outcome`: `unchanged` after an 
 
 The current export contains metadata and translations, not application source assets or dependency files. Logic-function/front-component code and unsupported metadata are not regenerated. An export with nonempty `files` is refused before writing. Package files, dependency pins and the installed generated client are left alone; pull never installs dependencies. Each export response is limited to 16 MiB. See the [pull implementation](../src/app/pull/README.md) for reconciliation and compatibility details.
 
+## Install a registered app
+
+```bash
+twenty app install --remote dev
+twenty app install --path ./apps/billing --json
+twenty app install --universal-identifier <id> --remote staging --json
+```
+
+`app install` installs a package already registered on the target server. It reads the local app definition to find its universal identifier, without building or typechecking the app; `--universal-identifier` works without a local project. Identifiers are sent in lowercase. It requires `APPLICATIONS` permission.
+
+The server selects the registered package and version. Local source changes are not uploaded. For a private package, run `app publish --private` first; publishing to npm alone does not create a server registration. Installation can run app hooks and update an existing installation. Use `app apply` to sync local source instead.
+
+The command waits up to ten minutes for its server installation job to complete, then verifies that the app is installed. JSON returns `application`, `installed: true` and `jobId`. Failed jobs return `INSTALL_FAILED`; missing or mismatched job status is an error, not a successful installation.
+
+Identifier resolution and installation errors include `details.phase`, `details.completedPhases` and `details.outcome`, plus the universal identifier and job identifier when available. Identifier resolution failures report `phase: "identity"` and `outcome: "not-started"`. Ctrl+C or a timeout stops waiting but does not cancel the server job. Run the same command again to retry or resume waiting for an installation that is still running. The command requires the server's `triggerInstallApplication` and `findInstallApplicationJobStatus` APIs, including lookup by `jobId`.
+
 ## Uninstall an app
 
 ```bash
@@ -442,7 +458,7 @@ twenty app uninstall --yes --json
 twenty app uninstall --universal-identifier <id> --yes
 ```
 
-`app uninstall` builds the app to find its universal identifier, checks that the app is installed on the target and that the workspace allows uninstalling it, then uninstalls it. `--universal-identifier` skips the build, so an app whose source no longer builds can still be uninstalled. It needs the server's `APPLICATIONS` permission.
+`app uninstall` reads the local app definition to find its universal identifier, without building or typechecking the app. It checks that the app is installed on the target and that the workspace allows uninstalling it, then uninstalls it. `--universal-identifier` works without a local project. It needs the server's `APPLICATIONS` permission.
 
 Uninstalling runs the app's uninstall hook and deletes everything the app owns, including its objects, fields and their data. It always needs `--yes`, or a yes at the prompt in an interactive terminal; otherwise it stops with `CONFIRMATION_REQUIRED` (exit 2) before changing anything. An app that is not installed returns `APP_NOT_INSTALLED` (exit 4), and one the workspace does not allow to uninstall returns `APP_NOT_UNINSTALLABLE` (exit 6).
 
@@ -575,6 +591,34 @@ Exit codes:
 | 5    | Partial failure                     |
 | 6    | Conflict                            |
 | 130  | Cancelled                           |
+
+## Publish an app to npm
+
+```sh
+twenty app publish
+twenty app publish --path ./apps/billing --tag beta --json
+```
+
+Builds and typechecks the app, packs that exact build, then publishes the package with public access. No Twenty remote or workspace authentication is required. Publishing to npm does not sync or install the app in a workspace.
+
+Install npm and authenticate with the intended registry first. npm runs from the app directory, so its project/user configuration and environment credentials apply. `--tag` sets the npm dist-tag. GitHub Actions jobs with OIDC request provenance automatically; set `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE=true` to opt out, for example when publishing from a private source repository.
+
+Packing and publishing skip npm lifecycle scripts because the CLI already built the app. npm's package-file selection still applies. If `package.json` has a `files` field, it must include `manifest.json` and the generated app files; the command rejects an incomplete package before publication. npm excludes the root `yarn.lock` from packages. Temporary packages and build snapshots are removed after completion or failure.
+
+Human mode displays npm output and supports interactive authentication when a terminal is available. JSON mode returns one CLI envelope and does not prompt; configure an automation token or npm’s `npm_config_otp` environment option before running it. Failed npm commands return `PUBLISH_FAILED` with the subprocess exit code and captured output. If publication is interrupted after sending the package, check the registry before retrying, since the version may already have been published.
+
+### Publish to a private Twenty registry
+
+```sh
+twenty app publish --private --remote staging
+twenty app publish --private --path ./apps/billing --json
+```
+
+`--private` publishes the same built package to the selected Twenty server registry instead of npm. It uses the normal saved remote or environment credentials, requests a tarball upload, sends the bytes directly to storage, then registers the uploaded app. npm is still needed for local packing, but npm registry credentials are not used and `--tag` is rejected. The server requires file-upload permission and `MARKETPLACE_APPS` permission on the target workspace.
+
+Publishing registers a version; it does not install the app or directly sync the selected workspace. Publishing an update can trigger automatic upgrades in workspaces where the app is already installed with automatic upgrades enabled. The server enforces application ownership, version progression and engine compatibility. JSON results contain `target: "private"`, the selected server under `registry`, the registration and `installed: false`, indicating that this command did not request installation.
+
+Failed uploads never trigger registration. If registration fails or is interrupted after sending the request, the app may already be registered. The error includes the phase, upload file ID and an `unknown` outcome; check the server registry before retrying. Temporary packages are cleaned up in either case.
 
 ## App translations
 

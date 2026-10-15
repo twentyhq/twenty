@@ -13,12 +13,12 @@ export class SettingsPage {
   private readonly dataModelLink: Locator;
   private readonly integrationsLink: Locator;
   private readonly securityLink: Locator;
-  private readonly apisLink: Locator;
+  private readonly developersLink: Locator;
   private readonly webhooksLink: Locator;
   private readonly adminPanelLink: Locator;
   private readonly labLink: Locator;
   private readonly releasesLink: Locator;
-  private readonly advancedToggle: Locator;
+  private readonly logsToggle: Locator;
 
   constructor(public readonly page: Page) {
     this.page = page;
@@ -34,12 +34,12 @@ export class SettingsPage {
     this.dataModelLink = page.getByRole('link', { name: 'Data model' });
     this.integrationsLink = page.getByRole('link', { name: 'Integrations' });
     this.securityLink = page.getByRole('link', { name: 'Security' });
-    this.apisLink = page.getByRole('link', { name: 'APIs' });
+    this.developersLink = page.getByRole('link', { name: 'Developers' });
     this.webhooksLink = page.getByRole('link', { name: 'Webhooks' });
     this.adminPanelLink = page.getByRole('link', { name: 'Admin Panel' });
     this.labLink = page.getByRole('link', { name: 'Lab' });
     this.releasesLink = page.getByRole('link', { name: 'Releases' });
-    this.advancedToggle = page.locator('input[type="checkbox"]').first();
+    this.logsToggle = page.getByRole('switch', { name: 'Logs' });
   }
 
   async leaveSettingsPage() {
@@ -90,8 +90,8 @@ export class SettingsPage {
     await this.securityLink.click();
   }
 
-  async goToAPIsSection() {
-    await this.apisLink.click();
+  async goToDevelopersSection() {
+    await this.developersLink.click();
   }
 
   async goToWebhooksSection() {
@@ -114,7 +114,7 @@ export class SettingsPage {
     await this.page.getByText('Logout').click();
   }
 
-  async toggleAdvancedSettings() {
-    await this.advancedToggle.click();
+  async toggleLogs() {
+    await this.logsToggle.click();
   }
 }

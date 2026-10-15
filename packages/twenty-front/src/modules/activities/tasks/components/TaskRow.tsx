@@ -94,7 +94,13 @@ const StyledCheckboxContainer = styled.div`
   z-index: 1;
 `;
 
-export const TaskRow = ({ task }: { task: Task }) => {
+export const TaskRow = ({
+  task,
+  divider = false,
+}: {
+  task: Task;
+  divider?: boolean;
+}) => {
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -116,6 +122,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   return (
     <ActivityRow
+      divider={divider}
       label={isNonEmptyString(task.title) ? task.title : t`Task title`}
       onClick={() => {
         openRecordInSidePanel({
