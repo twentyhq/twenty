@@ -28,7 +28,7 @@ import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleBu
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
@@ -174,7 +174,7 @@ const meta: Meta<PageDecoratorArgs> = {
         timeFormat: TimeFormat.HOUR_24,
       }),
     );
-    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+    jotaiStore.set(isLogConsoleEnabledState.atom, true);
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
