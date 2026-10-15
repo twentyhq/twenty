@@ -339,6 +339,7 @@ export class MessageChannelSyncStatusService {
     syncStatus:
       | MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
       | MessageChannelSyncStatus.FAILED_UNKNOWN,
+    authFailedReason: string | null = null,
   ) {
     if (!messageChannelIds.length) {
       return;
@@ -388,6 +389,7 @@ export class MessageChannelSyncStatusService {
             { id: Any(connectedAccountIds), workspaceId },
             {
               authFailedAt: new Date(),
+              authFailedReason,
             },
           );
 
