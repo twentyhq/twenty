@@ -63,6 +63,7 @@ export const CodeEditor = ({
   isLoading = false,
   options,
   resizable = false,
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated resizeLabel; this preserves the public UI fallback.
   resizeLabel = 'Resize editor',
   contentPadding = 'default',
   autoHeight = false,

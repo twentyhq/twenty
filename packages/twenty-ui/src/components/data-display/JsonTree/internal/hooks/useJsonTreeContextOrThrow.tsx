@@ -7,6 +7,7 @@ export const useJsonTreeContextOrThrow = () => {
 
   if (!isDefined(value)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal context invariant for developers.
       'useJsonTreeContextOrThrow must be used within a JsonTreeContextProvider',
     );
   }

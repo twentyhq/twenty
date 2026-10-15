@@ -123,7 +123,26 @@
       "options": { "command": "rimraf {projectRoot}/dist" }
     },
     "set-local-version": {},
-    "lint": {},
+    "lint": {
+      "dependsOn": [
+        "^build",
+        "twenty-oxlint-rules:build",
+        "lint:unlocalized-strings"
+      ]
+    },
+    "lint:unlocalized-strings": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "{projectRoot}/.oxlintrc.i18n.json",
+        "{workspaceRoot}/yarn.lock"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx oxlint -c .oxlintrc.i18n.json src/"
+      }
+    },
     "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } },
     "test": {
       "dependsOn": ["check:ownership", "test:exports"],

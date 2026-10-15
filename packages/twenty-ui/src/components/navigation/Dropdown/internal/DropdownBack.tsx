@@ -8,6 +8,7 @@ import { DropdownActionItem } from './DropdownActionItem';
 import { useDropdownContext } from './useDropdownContext';
 
 export const DropdownBack = ({
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass translated children; this preserves the public UI fallback.
   children = 'Back',
   className,
   onClick,

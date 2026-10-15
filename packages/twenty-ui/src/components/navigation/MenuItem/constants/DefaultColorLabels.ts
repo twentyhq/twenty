@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Applications translate these public UI fallback color names at the read path.
 import { type ColorLabels } from '../types/ColorLabels';
 
 export const DEFAULT_COLOR_LABELS: ColorLabels = {
