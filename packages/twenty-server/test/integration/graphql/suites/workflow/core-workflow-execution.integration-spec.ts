@@ -50,7 +50,7 @@ import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/wo
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 
 import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
-import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { type AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import { type WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
@@ -1075,10 +1075,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const mockAgent = () =>
       jest
         .spyOn(
-          getAppProviderByClassName<AgentAsyncExecutorService>(
-            'AgentAsyncExecutorService',
-          ),
-          'executeAgent',
+          getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+          'runAgentTurn',
         )
         .mockResolvedValueOnce(askingResult)
         .mockResolvedValueOnce(replyingResult);
@@ -1163,10 +1161,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     it('records the conversation of an agent that answers without asking, filed under done', async () => {
       jest
         .spyOn(
-          getAppProviderByClassName<AgentAsyncExecutorService>(
-            'AgentAsyncExecutorService',
-          ),
-          'executeAgent',
+          getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+          'runAgentTurn',
         )
         .mockResolvedValueOnce(replyingResult);
       const finalStep = emptyStep();
@@ -1199,10 +1195,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       jest
         .spyOn(
-          getAppProviderByClassName<AgentAsyncExecutorService>(
-            'AgentAsyncExecutorService',
-          ),
-          'executeAgent',
+          getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+          'runAgentTurn',
         )
         .mockResolvedValueOnce(
           agentResult({
@@ -1247,12 +1241,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     it('continues the conversation its key names across runs', async () => {
-      const executeAgent = jest
+      const runAgentTurn = jest
         .spyOn(
-          getAppProviderByClassName<AgentAsyncExecutorService>(
-            'AgentAsyncExecutorService',
-          ),
-          'executeAgent',
+          getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+          'runAgentTurn',
         )
         .mockResolvedValueOnce(replyingResult)
         .mockResolvedValueOnce(replyingResult);
@@ -1276,9 +1268,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const threadId: string = firstRun.stepLogs[agent.id].details.threadId;
 
       expect(secondRun.stepLogs[agent.id].details.threadId).toBe(threadId);
-      expect(executeAgent.mock.calls[0][0].priorMessages).toEqual([]);
+      expect(runAgentTurn.mock.calls[0][0].priorMessages).toEqual([]);
       expect(
-        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+        JSON.stringify(runAgentTurn.mock.calls[1][0].priorMessages),
       ).toContain('Quote sent');
     });
 
@@ -1388,12 +1380,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     it('retries a step whose agent failed after its answer in the same conversation, which holds the answer', async () => {
-      const executeAgent = jest
+      const runAgentTurn = jest
         .spyOn(
-          getAppProviderByClassName<AgentAsyncExecutorService>(
-            'AgentAsyncExecutorService',
-          ),
-          'executeAgent',
+          getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+          'runAgentTurn',
         )
         .mockResolvedValueOnce(askingResult)
         .mockRejectedValueOnce(new Error('The model is overloaded'))
@@ -1421,12 +1411,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         status: 'SUCCESS',
       });
       expect(run.stepLogs[agent.id].details.threadId).toBe(threadId);
-      expect(executeAgent).toHaveBeenCalledTimes(3);
-      expect(executeAgent.mock.calls[2][0].messages).toEqual([
+      expect(runAgentTurn).toHaveBeenCalledTimes(3);
+      expect(runAgentTurn.mock.calls[2][0].messages).toEqual([
         { role: 'user', content: 'Draft the quote' },
       ]);
       expect(
-        JSON.stringify(executeAgent.mock.calls[2][0].priorMessages),
+        JSON.stringify(runAgentTurn.mock.calls[2][0].priorMessages),
       ).toContain('Send it');
       expect(await getToolCalls(threadId)).toMatchObject({
         isWaiting: false,
@@ -1459,7 +1449,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     it('pauses the run on the question and lets the engine continue the agent, without running the step again', async () => {
-      const executeAgent = mockAgent();
+      const runAgentTurn = mockAgent();
       const { runId, agent, finalStep, threadId } = await startAskingRun();
 
       expect((await getRun(runId)).state.stepInfos[finalStep.id].status).toBe(
@@ -1487,7 +1477,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       expect(run.state.stepInfos[finalStep.id].status).toBe('SUCCESS');
 
-      const resumedWith = executeAgent.mock.calls[1][0];
+      const resumedWith = runAgentTurn.mock.calls[1][0];
 
       expect(resumedWith.messages).toEqual([]);
       expect(JSON.stringify(resumedWith.priorMessages)).toContain('Send it');
@@ -1532,12 +1522,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
     it('continues an agent that paused on a wait once its wake-up resolves, without running the step again', async () => {
       const resumeAt = new Date(Date.now() + 3_000).toISOString();
-      const executeAgent = jest
+      const runAgentTurn = jest
         .spyOn(
-          getAppProviderByClassName<AgentAsyncExecutorService>(
-            'AgentAsyncExecutorService',
-          ),
-          'executeAgent',
+          getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+          'runAgentTurn',
         )
         .mockResolvedValueOnce(
           agentResult({
@@ -1607,10 +1595,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         status: 'SUCCESS',
         result: { response: 'Quote sent' },
       });
-      expect(executeAgent).toHaveBeenCalledTimes(2);
-      expect(executeAgent.mock.calls[1][0].messages).toEqual([]);
+      expect(runAgentTurn).toHaveBeenCalledTimes(2);
+      expect(runAgentTurn.mock.calls[1][0].messages).toEqual([]);
       expect(
-        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+        JSON.stringify(runAgentTurn.mock.calls[1][0].priorMessages),
       ).toContain('The wait is over.');
       expect(
         await global.testDataSource.query(
@@ -1621,7 +1609,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     it('continues an agent step paused on a question by 2.45 once the upgrade suspends it', async () => {
-      const executeAgent = mockAgent();
+      const runAgentTurn = mockAgent();
       const { runId, agent, threadId } = await startAskingRun();
 
       // the shape a step paused by 2.45 left behind
@@ -1646,8 +1634,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         status: 'SUCCESS',
         result: { response: 'Quote sent' },
       });
-      expect(executeAgent).toHaveBeenCalledTimes(2);
-      expect(executeAgent.mock.calls[1][0].messages).toEqual([]);
+      expect(runAgentTurn).toHaveBeenCalledTimes(2);
+      expect(runAgentTurn.mock.calls[1][0].messages).toEqual([]);
       expect(run.stepLogs[agent.id].details.usage.totalTokens).toBe(4);
     });
 
@@ -1671,12 +1659,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           },
         },
       ];
-      const executeAgent = jest
+      const runAgentTurn = jest
         .spyOn(
-          getAppProviderByClassName<AgentAsyncExecutorService>(
-            'AgentAsyncExecutorService',
-          ),
-          'executeAgent',
+          getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+          'runAgentTurn',
         )
         .mockResolvedValueOnce(
           agentResult({
@@ -1716,9 +1702,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         status: 'SUCCESS',
         result: { response: 'Quote sent' },
       });
-      expect(executeAgent).toHaveBeenCalledTimes(2);
+      expect(runAgentTurn).toHaveBeenCalledTimes(2);
       expect(
-        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+        JSON.stringify(runAgentTurn.mock.calls[1][0].priorMessages),
       ).not.toContain('"pending"');
     });
 
@@ -1749,7 +1735,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     it('keeps the run alive while the agent continuation is queued, even once a parallel branch has finished', async () => {
-      const executeAgent = mockAgent();
+      const runAgentTurn = mockAgent();
       const agent = agentStep([]);
       const parallelBranch = emptyStep();
       const fixture = await createFixture({
@@ -1815,7 +1801,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         status: 'SUCCESS',
         result: { response: 'Quote sent' },
       });
-      expect(executeAgent).toHaveBeenCalledTimes(2);
+      expect(runAgentTurn).toHaveBeenCalledTimes(2);
     });
 
     it('refuses the answer, leaving the question open, when it cannot be recorded', async () => {

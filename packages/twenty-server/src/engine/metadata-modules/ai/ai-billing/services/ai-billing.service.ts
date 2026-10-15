@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { type StepResult, type ToolSet } from 'ai';
+
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -13,6 +15,7 @@ import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billin
 import { computeAgentTurnUsageFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
 import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
+import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
@@ -204,24 +207,43 @@ export class AiBillingService {
     });
   }
 
-  async emitAiTokenUsageEvent(
-    workspaceId: string,
-    creditsUsedMicro: number,
-    totalTokens: number,
-    modelId: ModelId,
-    operationType: UsageOperationType,
-    agentId?: string | null,
-    userWorkspaceId?: string | null,
-  ): Promise<void> {
+  // what a run's finished steps cost, recorded once the run ends however it ends
+  async recordStepsUsage({
+    modelId,
+    steps,
+    workspaceId,
+    operationType,
+    spenders,
+  }: {
+    modelId: ModelId;
+    steps: StepResult<ToolSet>[];
+    workspaceId: string;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<void> {
+    const totalTokens = steps.reduce(
+      (total, { usage }) =>
+        total + (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0),
+      0,
+    );
+
     await this.usageRecorderService.record(workspaceId, [
       this.buildAiTokenUsageEvent({
-        creditsUsedMicro,
+        creditsUsedMicro: convertDollarsToCreditsMicro(
+          this.calculateStepsCost(modelId, steps),
+        ),
         totalTokens,
         modelId,
         operationType,
-        spenders: { userWorkspaceId, agentId },
+        spenders,
       }),
     ]);
+
+    await this.billNativeWebSearchUsage(
+      countNativeWebSearchCallsFromSteps(steps),
+      workspaceId,
+      spenders.userWorkspaceId,
+    );
   }
 
   private buildAiTokenUsageEvent({

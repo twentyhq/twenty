@@ -4,12 +4,12 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { type RunAgentThread } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { type AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 
 export type AgentRunExecution = Parameters<
-  AgentAsyncExecutorService['executeAgent']
+  AgentTurnService['runAgentTurn']
 >[0] & { threadId: string };
 
 export const captureAgentRunExecution = async ({
@@ -25,12 +25,10 @@ export const captureAgentRunExecution = async ({
   runAsWorkspaceMemberId?: string;
   steps?: AgentExecutionResult['steps'];
 }): Promise<AgentRunExecution> => {
-  const executeAgentSpy = jest
+  const runAgentTurnSpy = jest
     .spyOn(
-      getAppProviderByClassName<AgentAsyncExecutorService>(
-        'AgentAsyncExecutorService',
-      ),
-      'executeAgent',
+      getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+      'runAgentTurn',
     )
     .mockResolvedValue({
       result: {},
@@ -75,7 +73,7 @@ export const captureAgentRunExecution = async ({
       token,
     );
 
-    const execution = executeAgentSpy.mock.calls[0]?.[0];
+    const execution = runAgentTurnSpy.mock.calls[0]?.[0];
 
     if (!isDefined(execution)) {
       throw new Error(
@@ -85,6 +83,6 @@ export const captureAgentRunExecution = async ({
 
     return { ...execution, threadId: response.body.data.runAgent.threadId };
   } finally {
-    executeAgentSpy.mockRestore();
+    runAgentTurnSpy.mockRestore();
   }
 };

@@ -15,7 +15,7 @@ import { type ApplicationLookupService } from 'src/engine/core-modules/applicati
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { type AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
@@ -96,10 +96,8 @@ const mockAgent = (...results: AgentExecutionResult[]) =>
   results.reduce(
     (spy, result) => spy.mockResolvedValueOnce(result),
     jest.spyOn(
-      getAppProviderByClassName<AgentAsyncExecutorService>(
-        'AgentAsyncExecutorService',
-      ),
-      'executeAgent',
+      getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+      'runAgentTurn',
     ),
   );
 
@@ -208,7 +206,7 @@ describe('agent runs that wait (integration)', () => {
   };
 
   it('lets a triggered agent wait for a duration and go on once the wake-up resolves', async () => {
-    const executeAgent = mockAgent(waitingResult(), replyingResult);
+    const runAgentTurn = mockAgent(waitingResult(), replyingResult);
 
     await runTrigger();
 
@@ -229,11 +227,11 @@ describe('agent runs that wait (integration)', () => {
         text: 'Any news?',
       } as Parameters<AgentChatStreamingService['streamAgentChat']>[0]),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_AWAITING_ANSWER });
-    expect(executeAgent.mock.calls[0][0].baseSystemPrompt).toContain(
+    expect(runAgentTurn.mock.calls[0][0].baseSystemPrompt).toContain(
       'wait_for_duration',
     );
     expect(
-      Object.keys(executeAgent.mock.calls[0][0].pausingTools ?? {}),
+      Object.keys(runAgentTurn.mock.calls[0][0].pausingTools ?? {}),
     ).toEqual(['wait_for_event', 'wait_for_duration']);
 
     // the wake-up goes once the run went on, just after its turn closes
@@ -245,10 +243,10 @@ describe('agent runs that wait (integration)', () => {
       expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
     });
 
-    expect(executeAgent).toHaveBeenCalledTimes(2);
-    expect(executeAgent.mock.calls[1][0].messages).toEqual([]);
+    expect(runAgentTurn).toHaveBeenCalledTimes(2);
+    expect(runAgentTurn.mock.calls[1][0].messages).toEqual([]);
     expect(
-      JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+      JSON.stringify(runAgentTurn.mock.calls[1][0].priorMessages),
     ).toContain('The wait is over.');
   });
 
@@ -257,10 +255,8 @@ describe('agent runs that wait (integration)', () => {
 
     jest
       .spyOn(
-        getAppProviderByClassName<AgentAsyncExecutorService>(
-          'AgentAsyncExecutorService',
-        ),
-        'executeAgent',
+        getAppProviderByClassName<AgentTurnService>('AgentTurnService'),
+        'runAgentTurn',
       )
       .mockImplementationOnce(async () => {
         const [{ threadId }] = await global.testDataSource.query(
@@ -294,7 +290,7 @@ describe('agent runs that wait (integration)', () => {
 
   it('drops a waiting triggered run once its trigger is turned off', async () => {
     // an event that never happens, so only the explicit resolution below wakes the run up
-    const executeAgent = mockAgent(
+    const runAgentTurn = mockAgent(
       waitingResult({
         toolName: 'wait_for_event',
         wait: {
@@ -330,7 +326,7 @@ describe('agent runs that wait (integration)', () => {
 
     expect(await findSuspensions('AGENT_TRIGGER', agentId)).toEqual([]);
 
-    expect(executeAgent).toHaveBeenCalledTimes(1);
+    expect(runAgentTurn).toHaveBeenCalledTimes(1);
     expect(await findWaitCallStatus(threadId)).toBe('cancelled');
     expect(await findTurnStatuses(threadId)).toEqual(['cancelled']);
 
@@ -341,7 +337,7 @@ describe('agent runs that wait (integration)', () => {
   });
 
   it('starts a runAgent call without waiting when asked not to, its reply landing in its thread', async () => {
-    const executeAgent = mockAgent(replyingResult);
+    const runAgentTurn = mockAgent(replyingResult);
 
     const response = await makeMetadataApiRequest({
       query: gql`
@@ -379,11 +375,11 @@ describe('agent runs that wait (integration)', () => {
       ).toEqual(['completed']);
     });
 
-    expect(executeAgent).toHaveBeenCalledTimes(1);
+    expect(runAgentTurn).toHaveBeenCalledTimes(1);
   });
 
   it('answers a runAgent call whose agent waits as waiting, with its thread', async () => {
-    const executeAgent = mockAgent(waitingResult(), replyingResult);
+    const runAgentTurn = mockAgent(waitingResult(), replyingResult);
 
     const response = await makeMetadataApiRequest({
       query: gql`
@@ -421,7 +417,7 @@ describe('agent runs that wait (integration)', () => {
       expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
     });
 
-    expect(executeAgent).toHaveBeenCalledTimes(2);
+    expect(runAgentTurn).toHaveBeenCalledTimes(2);
   });
 
   it.each([
@@ -448,7 +444,7 @@ describe('agent runs that wait (integration)', () => {
   ])(
     'goes on with a waiting runAgent call as $title',
     async ({ token, authContext, roleTargetId, callerRoleSource }) => {
-      const executeAgent = mockAgent(waitingResult(), replyingResult);
+      const runAgentTurn = mockAgent(waitingResult(), replyingResult);
 
       const response = await makeMetadataApiRequest(
         {
@@ -483,7 +479,7 @@ describe('agent runs that wait (integration)', () => {
         expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
       });
       expect(
-        executeAgent.mock.calls.map(
+        runAgentTurn.mock.calls.map(
           ([execution]) => execution.executionContext.authContext,
         ),
       ).toEqual([
@@ -496,7 +492,7 @@ describe('agent runs that wait (integration)', () => {
       };
 
       expect(
-        executeAgent.mock.calls.map(
+        runAgentTurn.mock.calls.map(
           ([execution]) => execution.executionContext.agentRunRoleIds,
         ),
       ).toEqual([agentRunRoleIds, agentRunRoleIds]);
@@ -504,7 +500,7 @@ describe('agent runs that wait (integration)', () => {
   );
 
   it('refuses a message to a thread whose run waits, and takes it once the run finished', async () => {
-    const executeAgent = mockAgent(
+    const runAgentTurn = mockAgent(
       waitingResult(),
       replyingResult,
       replyingResult,
@@ -552,6 +548,6 @@ describe('agent runs that wait (integration)', () => {
       result: { response: 'Followed up' },
       threadId: waiting.threadId,
     });
-    expect(executeAgent).toHaveBeenCalledTimes(3);
+    expect(runAgentTurn).toHaveBeenCalledTimes(3);
   });
 });

@@ -1,5 +1,5 @@
 import { APICallError, type LanguageModelV4Content } from '@ai-sdk/provider';
-import { tool, type ToolSet } from 'ai';
+import { type StepResult, tool, type ToolSet } from 'ai';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import { z } from 'zod';
 
@@ -39,10 +39,19 @@ const buildLoop = ({
   midStreamFailingCallIndex?: number;
   streamRetries?: number;
 }) => {
+  let resolveRecordedSteps: (steps: StepResult<ToolSet>[]) => void = () => {};
+  // usage is recorded once the stream settles, after the caller is done reading it
+  const recordedSteps = new Promise<StepResult<ToolSet>[]>((resolve) => {
+    resolveRecordedSteps = resolve;
+  });
   const aiBillingService = {
     decrementAndCheckAvailableCredits: jest
       .fn()
       .mockResolvedValue({ hasNoMoreAvailableCredits }),
+    recordStepsUsage: jest.fn(
+      async ({ steps }: { steps: StepResult<ToolSet>[] }) =>
+        resolveRecordedSteps(steps),
+    ),
   };
   const metricsService = {
     recordHistogram: jest.fn(),
@@ -51,6 +60,7 @@ const buildLoop = ({
   const service = new AgentStepLoopService(
     aiBillingService as never,
     metricsService as never,
+    { captureExceptions: jest.fn() } as never,
   );
 
   const onError = jest.fn();
@@ -111,7 +121,7 @@ const buildLoop = ({
     onError,
   });
 
-  return { loop, aiBillingService, onError };
+  return { loop, aiBillingService, onError, recordedSteps };
 };
 
 const lookupTool = tool({
@@ -126,7 +136,7 @@ const askPersonTool = tool({
 
 describe('AgentStepLoopService', () => {
   it('runs tool steps until the model answers and charges each step', async () => {
-    const { loop, aiBillingService } = buildLoop({
+    const { loop, aiBillingService, recordedSteps } = buildLoop({
       responses: [[toolCall('lookup', { query: 'acme' })]],
       tools: { lookup: lookupTool },
     });
@@ -136,26 +146,29 @@ describe('AgentStepLoopService', () => {
     expect(
       aiBillingService.decrementAndCheckAvailableCredits,
     ).toHaveBeenCalledTimes(2);
-    expect(loop.getFinishedSteps()).toHaveLength(2);
+    expect(await recordedSteps).toHaveLength(2);
+    expect(aiBillingService.recordStepsUsage).toHaveBeenCalledTimes(1);
   });
 
   it('keeps the steps that finished, and their charge, when a later model call fails', async () => {
-    const { loop, aiBillingService, onError } = buildLoop({
+    const { loop, aiBillingService, onError, recordedSteps } = buildLoop({
       responses: [[toolCall('lookup', { query: 'acme' })]],
       tools: { lookup: lookupTool },
       failingCallIndex: 1,
     });
 
     await loop.stream.consumeStream();
+    const [recordedStep, ...otherSteps] = await recordedSteps;
 
     expect(onError).toHaveBeenCalledWith(
       expect.objectContaining({ message: 'provider down' }),
     );
-    expect(loop.getFinishedSteps()).toHaveLength(1);
-    expect(loop.getFinishedSteps()[0].usage.inputTokens).toBe(10);
     expect(
       aiBillingService.decrementAndCheckAvailableCredits,
     ).toHaveBeenCalledTimes(1);
+    expect(otherSteps).toEqual([]);
+    expect(recordedStep.usage.inputTokens).toBe(10);
+    expect(aiBillingService.recordStepsUsage).toHaveBeenCalledTimes(1);
   });
 
   it('retries a step whose stream fails midway, keeping only the retried answer', async () => {

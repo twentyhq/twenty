@@ -15,10 +15,10 @@ import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
-import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
@@ -54,7 +54,7 @@ export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
 
   constructor(
-    private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
+    private readonly agentTurnService: AgentTurnService,
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly conversationReaderService: AgentConversationReaderService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
@@ -331,7 +331,7 @@ export class AgentRunnerService {
     try {
       // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
       execution = await withDedicatedAiTrace(() =>
-        this.agentAsyncExecutorService.executeAgent({
+        this.agentTurnService.runAgentTurn({
           agent,
           messages: prompt?.messages ?? [],
           priorMessages,

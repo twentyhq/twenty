@@ -4,6 +4,7 @@ import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import {
   isStepCount,
   type ModelMessage,
+  NoOutputGeneratedError,
   type StepResult,
   type StopCondition,
   streamText,
@@ -16,6 +17,7 @@ import { sortKeysDeeply } from 'twenty-shared/utils';
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
@@ -31,10 +33,17 @@ import {
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import {
+  extractCacheCreationTokens,
+  extractCacheCreationTokensFromSteps,
+} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { type RegisteredAiModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 // chat and agent runs report to their own metric keys, so existing dashboards keep their series
 export type AgentStepLoopMetricsScope = 'chat' | 'agent';
@@ -93,14 +102,24 @@ export type AgentStepLoopInput = {
   metricsScope: AgentStepLoopMetricsScope;
   onChunk?: (chunk: TextStreamPart<ToolSet>) => void;
   onError?: (error: unknown) => void;
-  onAbort?: (steps: StepResult<ToolSet>[]) => Promise<void>;
 };
 
 export type AgentStepLoop = {
   stream: ReturnType<typeof streamText<ToolSet>>;
   hasNoMoreAvailableCredits: () => boolean;
-  getFinishedSteps: () => StepResult<ToolSet>[];
 };
+
+const sumSteps = (
+  steps: StepResult<ToolSet>[],
+  read: (usage: StepResult<ToolSet>['usage']) => number | undefined,
+): number => steps.reduce((total, { usage }) => total + (read(usage) ?? 0), 0);
+
+// a stopped, interrupted or empty run is not an error to report
+const isExpectedLoopEnd = (error: unknown): boolean =>
+  (error instanceof Error && error.name === 'AbortError') ||
+  (error instanceof AiException &&
+    error.code === AiExceptionCode.STREAM_INTERRUPTED) ||
+  NoOutputGeneratedError.isInstance(error);
 
 @Injectable()
 export class AgentStepLoopService {
@@ -109,6 +128,7 @@ export class AgentStepLoopService {
   constructor(
     private readonly aiBillingService: AiBillingService,
     private readonly metricsService: MetricsService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   start({
@@ -130,13 +150,71 @@ export class AgentStepLoopService {
     metricsScope,
     onChunk,
     onError,
-    onAbort,
   }: AgentStepLoopInput): AgentStepLoop {
     const toolMetricKeys = TOOL_METRIC_KEYS_BY_SCOPE[metricsScope];
     const modelAttributes = { model: registeredModel.modelId };
     const finishedSteps: StepResult<ToolSet>[] = [];
+    const startedAt = performance.now();
     let hasNoMoreAvailableCredits = false;
-    let stepStartedAt = performance.now();
+    let stepStartedAt = startedAt;
+    let isUsageRecorded = false;
+
+    // credits were taken step by step; the run's usage is recorded once, however it ends
+    const recordUsage = async (steps: StepResult<ToolSet>[]) => {
+      if (isUsageRecorded) {
+        return;
+      }
+
+      isUsageRecorded = true;
+
+      await this.aiBillingService.recordStepsUsage({
+        modelId: registeredModel.modelId,
+        steps,
+        workspaceId: billing.workspaceId,
+        operationType: billing.operationType,
+        spenders: {
+          userWorkspaceId: billing.userWorkspaceId,
+          agentId: billing.agentId,
+        },
+      });
+
+      if (metricsScope !== 'chat') {
+        return;
+      }
+
+      for (const [key, amount] of [
+        [
+          MetricsKeys.AiChatInputTokens,
+          sumSteps(steps, (usage) => usage.inputTokens),
+        ],
+        [
+          MetricsKeys.AiChatOutputTokens,
+          sumSteps(steps, (usage) => usage.outputTokens),
+        ],
+        [
+          MetricsKeys.AiChatCacheReadTokens,
+          sumSteps(steps, (usage) => usage.inputTokenDetails?.cacheReadTokens),
+        ],
+        [
+          MetricsKeys.AiChatCacheWriteTokens,
+          extractCacheCreationTokensFromSteps(steps),
+        ],
+      ] as const) {
+        this.metricsService.incrementCounterBy({
+          key,
+          amount,
+          attributes: modelAttributes,
+        });
+      }
+
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.AiChatTurnLatencyMs,
+        value: performance.now() - startedAt,
+        unit: 'ms',
+        attributes: modelAttributes,
+        bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
+      });
+    };
 
     const systemMessage: SystemModelMessage = {
       role: 'system',
@@ -201,24 +279,13 @@ export class AgentStepLoopService {
           });
         }
 
-        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await this.aiBillingService.decrementAndCheckAvailableCredits({
+        if (
+          await this.chargeStep({
             modelId: registeredModel.modelId,
-            billingInput: {
-              usage: step.usage,
-              cacheCreationTokens: extractCacheCreationTokens(
-                step.providerMetadata,
-              ),
-            },
-            workspaceId: billing.workspaceId,
-            operationType: billing.operationType,
-            spenders: {
-              userWorkspaceId: billing.userWorkspaceId,
-              agentId: billing.agentId,
-            },
-          });
-
-        if (stepHasNoMoreAvailableCredits) {
+            billing,
+            step,
+          })
+        ) {
           hasNoMoreAvailableCredits = true;
         }
 
@@ -229,7 +296,7 @@ export class AgentStepLoopService {
         });
         this.recordToolResultMetrics({ step, toolMetricKeys, modelAttributes });
       },
-      onAbort: onAbort ? ({ steps }) => onAbort(steps) : undefined,
+      onAbort: ({ steps }) => recordUsage(steps),
       repairToolCall: ({
         toolCall,
         tools: toolsForRepair,
@@ -253,11 +320,56 @@ export class AgentStepLoopService {
         }),
     });
 
+    Promise.all([stream.usage, stream.steps])
+      .then(
+        ([, steps]) => steps,
+        (error) => {
+          if (!isExpectedLoopEnd(error)) {
+            this.exceptionHandlerService.captureExceptions([error]);
+          }
+
+          return [...finishedSteps];
+        },
+      )
+      .then(recordUsage)
+      .catch((error) =>
+        this.exceptionHandlerService.captureExceptions([error]),
+      );
+
     return {
       stream,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
-      getFinishedSteps: () => [...finishedSteps],
     };
+  }
+
+  // resolves whether the workspace ran out of credits with this step
+  async chargeStep({
+    modelId,
+    billing,
+    step,
+  }: {
+    modelId: string;
+    billing: AgentStepLoopInput['billing'];
+    step: Pick<StepResult<ToolSet>, 'usage' | 'providerMetadata'>;
+  }): Promise<boolean> {
+    const { hasNoMoreAvailableCredits } =
+      await this.aiBillingService.decrementAndCheckAvailableCredits({
+        modelId,
+        billingInput: {
+          usage: step.usage,
+          cacheCreationTokens: extractCacheCreationTokens(
+            step.providerMetadata,
+          ),
+        },
+        workspaceId: billing.workspaceId,
+        operationType: billing.operationType,
+        spenders: {
+          userWorkspaceId: billing.userWorkspaceId,
+          agentId: billing.agentId,
+        },
+      });
+
+    return hasNoMoreAvailableCredits;
   }
 
   private logStepTokens({
