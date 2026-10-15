@@ -39,16 +39,17 @@ blank.
 
 ## 👥 Calls on record pages
 
-The app provides two record page widgets. To show one, edit the record page
-layout and add the widget from the layout editor. Both read the meeting the
-recording belongs to, so nothing is copied onto the recording.
+The app provides two record page widgets. Both read the meeting the recording
+belongs to, so nothing is copied onto the recording.
 
-- **Call participants** (for call recording pages) shows the meeting's attendees.
+- **Call participants** is added to the Home tab of call recording pages. It
+  shows the meeting's attendees.
   People in your CRM open their record when clicked; workspace members are
   shown by name. Attendees that match no one are hidden unless the
   `CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES` app variable is `true`.
-- **Call recordings** (for person, company and opportunity pages) lists the
-  20 most recent recordings of meetings linked to the record.
+- **Call recordings** lists the 20 most recent recordings of meetings linked
+  to a person, company or opportunity. To show it, edit that record page's
+  layout and add the widget from the layout editor.
 
 ## 🗓️ Pausing the recorder
 
