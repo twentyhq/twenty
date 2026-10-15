@@ -106,7 +106,6 @@ describe('resolveEffectiveTranslatedFlatEntity', () => {
     ).toBe('Contract renewal');
   });
 
-  // The mocks above accept any message id; this pins the real id and context against a compiled catalog
   it("translates a custom object's system field label with Twenty's real catalog", () => {
     const i18n = setupI18n({
       locale: 'fr-FR',

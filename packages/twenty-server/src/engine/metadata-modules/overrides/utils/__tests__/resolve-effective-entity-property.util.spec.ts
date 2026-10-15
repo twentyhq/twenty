@@ -19,11 +19,6 @@ import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/override
 // One deliberate amendment since freezing: workspace translations now resolve
 // before the custom-entity short-circuit, so custom entities can carry
 // per-locale translations; both frozen resolvers were updated to match.
-// Second deliberate amendment: a custom entity without a catalog no longer
-// returns every label untranslated. A label Twenty wrote itself (a system
-// field, a generated command, a default tab) falls back to Twenty's own
-// catalog, so translateStandardLabel no longer takes isStandardApp and the
-// frozen custom-entity branches translate when no override is set.
 
 type Locale = keyof typeof APP_LOCALES | undefined;
 

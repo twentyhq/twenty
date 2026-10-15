@@ -80,7 +80,6 @@ describe('resolveMetadataEventRecord', () => {
       i18nContext: buildI18nContext({
         isStandardApp: false,
         applicationCatalog: undefined,
-        // Lingui returns the message id itself when its catalog has no entry
         i18nInstance: { _: (messageId: string) => messageId },
       }),
     });

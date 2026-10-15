@@ -86,10 +86,6 @@ const resolveEffectiveProperty = ({
     }
   }
 
-  // Custom (non-standard) entities without a catalog keep their renames in
-  // base columns, so no override applies to them. Only a label that Twenty
-  // wrote itself (a system field, a generated command, a default tab) can still
-  // be translated, from Twenty's own catalog.
   if (!isStandardApp && !isDefined(applicationCatalog)) {
     return isTranslatable && !isDefined(overrideValue)
       ? translateStandardLabel({

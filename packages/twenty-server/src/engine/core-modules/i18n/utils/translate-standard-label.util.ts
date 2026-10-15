@@ -29,11 +29,6 @@ export const translateStandardLabel = ({
     return catalogTranslation;
   }
 
-  // Twenty writes some labels itself on the entities of every application:
-  // system fields (Creation date, Created by), the "Go to {objectLabelPlural}"
-  // command and the default record page tabs. An application's catalog rarely
-  // carries them, so they fall back to Twenty's own catalog. A label nobody
-  // translated there is returned as it is.
   const translatedMessage = i18nInstance._(
     messageId,
     METADATA_LABEL_PLACEHOLDER_PASS_THROUGH,
