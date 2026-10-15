@@ -313,6 +313,20 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     );
   }
 
+  // the request that waits on the run is still there when its agent or key went away meanwhile
+  async onCallerGone({
+    caller,
+    outcome,
+  }: AgentRunCallerInput & { outcome: AgentRunCallerOutcome }): Promise<void> {
+    await this.publishSettledRun(caller, {
+      status: 'FAILED',
+      error:
+        outcome.status === 'FAILED'
+          ? outcome.error
+          : 'The agent or the key that started this run is gone',
+    });
+  }
+
   private async publishSettledRun(
     caller: AgentRunCaller,
     settledRun: Pick<SettledAgentRun, 'status'> & Partial<SettledAgentRun>,

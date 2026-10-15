@@ -591,6 +591,30 @@ describe('AgentRunService', () => {
     ]);
   });
 
+  it('fails the waiting call when its agent or key went away before the run ended', async () => {
+    const { service, agentRunnerService, agentRunSettlementService } =
+      buildService();
+
+    await run(service, { input: userInput('Hello') });
+
+    const { caller } = runInput(agentRunnerService);
+
+    await service.onCallerGone({
+      workspaceId: 'workspace-id',
+      caller,
+      outcome: { status: 'COMPLETED', result: { response: 'Done' } },
+    });
+
+    expect(agentRunSettlementService.publish).toHaveBeenCalledWith(
+      caller.ref.runId,
+      {
+        status: 'FAILED',
+        result: null,
+        error: 'The agent or the key that started this run is gone',
+      },
+    );
+  });
+
   it('refuses a thread without an application token', async () => {
     const { service } = buildService();
 

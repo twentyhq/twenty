@@ -29,4 +29,12 @@ export type AgentRunCallerHandler = {
       summary: AgentRunSummary | null;
     },
   ): Promise<void>;
+
+  // the caller can no longer take the outcome, but something may still wait on the run, such as a request
+  onCallerGone?(
+    input: AgentRunCallerInput & {
+      threadId: string;
+      outcome: AgentRunCallerOutcome;
+    },
+  ): Promise<void>;
 };

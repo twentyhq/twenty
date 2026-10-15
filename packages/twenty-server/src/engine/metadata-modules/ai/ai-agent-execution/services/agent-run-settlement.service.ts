@@ -54,8 +54,8 @@ export class AgentRunSettlementService implements OnModuleDestroy {
     });
 
     this.listeners.set(key, resolveSettledRun);
-    await this.ensureSubscriber().subscribe(key);
 
+    const timeout = setTimeout(() => resolveSettledRun(null), timeoutMs);
     const pollInterval = setInterval(() => {
       void this.read(key).then((settledRun) => {
         if (isDefined(settledRun)) {
@@ -63,9 +63,13 @@ export class AgentRunSettlementService implements OnModuleDestroy {
         }
       });
     }, RUN_AGENT_SETTLED_RUN_POLL_INTERVAL_MS);
-    const timeout = setTimeout(() => resolveSettledRun(null), timeoutMs);
 
     try {
+      // Redis commands queue while it is down, so a subscription that never lands cannot outlast the deadline
+      await Promise.race([
+        this.ensureSubscriber().subscribe(key),
+        settledRunPromise,
+      ]);
       await start();
 
       return await settledRunPromise;
@@ -73,7 +77,7 @@ export class AgentRunSettlementService implements OnModuleDestroy {
       clearInterval(pollInterval);
       clearTimeout(timeout);
       this.listeners.delete(key);
-      await this.subscriber?.unsubscribe(key).catch(() => {});
+      void this.subscriber?.unsubscribe(key).catch(() => {});
     }
   }
 

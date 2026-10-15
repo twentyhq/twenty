@@ -177,6 +177,8 @@ export class AgentRunSuspensionService {
     });
 
     if (waitingState === 'GONE') {
+      await handler.onCallerGone?.(delivery);
+
       return;
     }
 

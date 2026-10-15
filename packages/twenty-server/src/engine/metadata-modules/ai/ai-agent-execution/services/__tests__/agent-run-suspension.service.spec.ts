@@ -50,6 +50,7 @@ const buildService = ({
       ),
   };
   const onOutcome = jest.fn().mockResolvedValue(undefined);
+  const onCallerGone = jest.fn().mockResolvedValue(undefined);
   const getWaitingState = jest.fn().mockResolvedValue('WAITING');
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
 
@@ -60,7 +61,9 @@ const buildService = ({
     threadLifecycleService as never,
     turnRecorderService as never,
     pendingWakeUpService as never,
-    { getHandlerOrThrow: () => ({ onOutcome, getWaitingState }) } as never,
+    {
+      getHandlerOrThrow: () => ({ onOutcome, onCallerGone, getWaitingState }),
+    } as never,
     messageQueueService as never,
   );
 
@@ -71,6 +74,7 @@ const buildService = ({
     turnRecorderService,
     pendingWakeUpService,
     onOutcome,
+    onCallerGone,
     getWaitingState,
     messageQueueService,
   };
@@ -303,15 +307,21 @@ describe('AgentRunSuspensionService', () => {
       );
     });
 
-    it('drops the outcome of a caller that stopped waiting', async () => {
-      const { service, onOutcome, getWaitingState, messageQueueService } =
-        buildService();
+    it('hands the outcome of a caller that stopped waiting to what may still wait on the run', async () => {
+      const {
+        service,
+        onOutcome,
+        onCallerGone,
+        getWaitingState,
+        messageQueueService,
+      } = buildService();
 
       getWaitingState.mockResolvedValue('GONE');
 
       await service.deliverOutcome(DELIVERY);
 
       expect(onOutcome).not.toHaveBeenCalled();
+      expect(onCallerGone).toHaveBeenCalledWith(DELIVERY);
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
   });

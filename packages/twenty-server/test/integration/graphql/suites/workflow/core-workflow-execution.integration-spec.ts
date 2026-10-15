@@ -1531,7 +1531,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     it('continues an agent that paused on a wait once its wake-up resolves, without running the step again', async () => {
-      const resumeAt = new Date(Date.now() + 1_000).toISOString();
+      const resumeAt = new Date(Date.now() + 3_000).toISOString();
       const executeAgent = jest
         .spyOn(
           getAppProviderByClassName<AgentAsyncExecutorService>(
