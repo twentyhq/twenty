@@ -312,7 +312,7 @@ msgstr "En tidligere endring av datamodellen blir fortsatt brukt i bakgrunnen. P
 #. js-lingui-id: HLhFFb
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
 msgid "A record event can only watch relations that point to a single record."
-msgstr ""
+msgstr "En oppføringshendelse kan bare overvåke relasjoner som peker til én enkelt oppføring."
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -406,7 +406,7 @@ msgstr "En tidslinjeaktivitetstype med dette navnet finnes allerede for denne ap
 #. js-lingui-id: ZCLQ9y
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "A title is required to create a calendar event"
-msgstr ""
+msgstr "En tittel kreves for å opprette en kalenderhendelse"
 
 #. js-lingui-id: jFM4QN
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
@@ -656,12 +656,12 @@ msgstr "Faktisk opptaksstart"
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
-msgstr ""
+msgstr "Legg først til en avsender i denne kampanjen."
 
 #. js-lingui-id: +9n7Wr
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a subject to this campaign first."
-msgstr ""
+msgstr "Legg først til et emne i denne kampanjen."
 
 #. js-lingui-id: ffpvxH
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -695,20 +695,20 @@ msgstr "Legg til i Favoritter"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add to List"
-msgstr ""
+msgstr "Legg til i liste"
 
 #. js-lingui-id: 5QVriP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Add to List"
-msgstr ""
+msgstr "Legg til i liste"
 
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add View to List"
-msgstr ""
+msgstr "Legg til visning i liste"
 
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -952,7 +952,7 @@ msgstr "Alle {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util.ts
 msgctxt "view.name"
 msgid "All Campaigns"
-msgstr ""
+msgstr "Alle kampanjer"
 
 #. js-lingui-id: wgGOAj
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -1322,7 +1322,7 @@ msgstr "Applikasjoner kan ikke oppdatere disse feltene: {fieldsList}."
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
-msgstr ""
+msgstr "Godkjenn tilgangsdomenet ditt"
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -2020,7 +2020,7 @@ msgstr "Oppretting av kalenderhendelser støttes ikke for denne kontoen."
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Calendar event creation is only supported for Google, Microsoft and CalDAV accounts (got {0})"
-msgstr ""
+msgstr "Oppretting av kalenderhendelser støttes bare for Google-, Microsoft- og CalDAV-kontoer (fikk {0})"
 
 #. js-lingui-id: 1t3DGy
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -2505,7 +2505,7 @@ msgstr "Kan ikke fjerne den siste administratoren fra arbeidsområdet."
 #. placeholder {1}: emailingDomain.domain
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Cannot send from {0}: domain {1} is not verified for outbound."
-msgstr ""
+msgstr "Kan ikke sende fra {0}: Domene {1} er ikke bekreftet for utgående sending."
 
 #. js-lingui-id: jNnzPT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
@@ -2727,7 +2727,7 @@ msgstr "Funksjonen for å kreve eierskap er ikke konfigurert på denne serveren.
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Click rate"
-msgstr ""
+msgstr "Klikkfrekvens"
 
 #. js-lingui-id: J7dFKa
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -2857,7 +2857,7 @@ msgstr "Klaget kl."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Complaints"
-msgstr ""
+msgstr "Klager"
 
 #. js-lingui-id: c9jNCJ
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -3019,7 +3019,7 @@ msgstr "Kobling er ikke tillatt for {connectFieldName} på {objectMetadataNameSi
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Connected account \"{connectedAccountId}\" has no calendar channel with sync enabled. Enable calendar sync for this account first."
-msgstr ""
+msgstr "Tilkoblet konto \"{connectedAccountId}\" har ingen kalenderkanal med synkronisering aktivert. Aktiver kalendersynkronisering for denne kontoen først."
 
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -3552,7 +3552,7 @@ msgstr "Kredittildeling ikke funnet."
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "CRM Hygiene"
-msgstr ""
+msgstr "CRM-vedlikehold"
 
 #. js-lingui-id: OZIOad
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -3617,7 +3617,7 @@ msgstr "Dashbord"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Dashboard Building"
-msgstr ""
+msgstr "Dashbordbygging"
 
 #. js-lingui-id: jlbLNx
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
@@ -3652,7 +3652,7 @@ msgstr "Dashbord"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Data Manipulation"
-msgstr ""
+msgstr "Datamanipulering"
 
 #. js-lingui-id: zU5mL2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3762,7 +3762,7 @@ msgstr "Avtale"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Deal Review"
-msgstr ""
+msgstr "Avtalegjennomgang"
 
 #. js-lingui-id: NdYXIK
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -3985,7 +3985,7 @@ msgstr "Slett {objectLabel}"
 #. js-lingui-id: GKRkPC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Delete the relation field together with its targets"
-msgstr ""
+msgstr "Slett relasjonsfeltet sammen med målene"
 
 #. js-lingui-id: pYUji4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4065,7 +4065,7 @@ msgstr "Slettet kl."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Delivered"
-msgstr ""
+msgstr "Levert"
 
 #. js-lingui-id: wm2sD+
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -4374,7 +4374,7 @@ msgstr "E-postdomene ikke funnet."
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email group {0} has no domain."
-msgstr ""
+msgstr "E-postgruppen {0} har ikke noe domene."
 
 #. js-lingui-id: MhPwKU
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
@@ -4390,13 +4390,13 @@ msgstr "E-postgruppe krever en Enterprise-plan."
 #. placeholder {0}: EMAIL_GROUP_SEND_THROTTLE.maxRecipients
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email group send limit reached: {0} recipients per day."
-msgstr ""
+msgstr "Sendegrensen for e-postgruppen er nådd: {0} mottakere per dag."
 
 #. js-lingui-id: 33PyzX
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email handle channels do not support drafts."
-msgstr ""
+msgstr "E-postaliaskanaler støtter ikke utkast."
 
 #. js-lingui-id: m9fD11
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
@@ -4437,13 +4437,13 @@ msgstr "E-post er uendret."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Email Style"
-msgstr ""
+msgstr "E-poststil"
 
 #. js-lingui-id: Bug5E7
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Email Style"
-msgstr ""
+msgstr "E-poststil"
 
 #. js-lingui-id: su92Mw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -4536,12 +4536,12 @@ msgstr "Sluttet"
 #. js-lingui-id: dxayRu
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "endsAt must be a later day than startsAt for all-day events"
-msgstr ""
+msgstr "endsAt må være en senere dag enn startsAt for heldagshendelser"
 
 #. js-lingui-id: C91s97
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "endsAt must be after startsAt"
-msgstr ""
+msgstr "endsAt må være etter startsAt"
 
 #. js-lingui-id: g2om8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -4563,7 +4563,7 @@ msgstr "Satt i kø"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Enrich"
-msgstr ""
+msgstr "Berik"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -4764,7 +4764,7 @@ msgstr "Nøyaktig én av \"groups\" eller \"fields\" må angis"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Excel & Spreadsheets"
-msgstr ""
+msgstr "Excel og regneark"
 
 #. js-lingui-id: CrwP9A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -4837,7 +4837,7 @@ msgstr "Mislykket"
 #. js-lingui-id: MIra1S
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Failed to add people to the list."
-msgstr ""
+msgstr "Kunne ikke legge til personer i listen."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -5544,19 +5544,19 @@ msgstr "Frontkomponenten ble ikke funnet."
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability can only restrict record pages to objects"
-msgstr ""
+msgstr "Tilgjengeligheten for frontkomponentwidgeten kan bare begrense oppføringssider til objekter"
 
 #. js-lingui-id: oDd+6Z
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability has an unsupported page layout type: supported values are {supportedPageLayoutTypes}, received {receivedPageLayoutType}"
-msgstr ""
+msgstr "Tilgjengeligheten for frontkomponentwidgeten har en ikke-støttet sidelayouttype: støttede verdier er {supportedPageLayoutTypes}, mottok {receivedPageLayoutType}"
 
 #. js-lingui-id: fSB/iY
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability references an unknown object"
-msgstr ""
+msgstr "Tilgjengeligheten for frontkomponentwidgeten refererer til et ukjent objekt"
 
 #. js-lingui-id: 4wM9Cs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -5738,7 +5738,7 @@ msgstr "Gå til innstillinger for datamodell"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Developers Settings"
-msgstr ""
+msgstr "Gå til utviklerinnstillinger"
 
 #. js-lingui-id: OLopIl
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6181,7 +6181,7 @@ msgstr "Ugyldig argument oppgitt."
 #. js-lingui-id: Qg2gi/
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Invalid attendee email addresses: {invalidAttendeeList}"
-msgstr ""
+msgstr "Ugyldige e-postadresser for deltakere: {invalidAttendeeList}"
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -6324,7 +6324,7 @@ msgstr "Ugyldig e-postadresse."
 #. js-lingui-id: e2K52e
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Invalid email addresses: {invalidEmailList}"
-msgstr ""
+msgstr "Ugyldige e-postadresser: {invalidEmailList}"
 
 #. js-lingui-id: Lq9KTr
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -6522,7 +6522,7 @@ msgstr "Ugyldig minuttverdi. Bør være et heltall større enn 1"
 #. js-lingui-id: dxo2BJ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Invalid morph relation field"
-msgstr ""
+msgstr "Ugyldig morf-relasjonsfelt"
 
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -6650,7 +6650,7 @@ msgstr "Ugyldige prisnivåer."
 #. js-lingui-id: QaON/M
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Invalid recipients"
-msgstr ""
+msgstr "Ugyldige mottakere"
 
 #. js-lingui-id: XBYAgs
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -7008,7 +7008,7 @@ msgstr "Ugyldig arbeidsflytversjon."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Invitation not found"
-msgstr ""
+msgstr "Invitasjon ikke funnet"
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -7472,7 +7472,7 @@ msgstr "ID for koblet post"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Linked to"
-msgstr ""
+msgstr "Knyttet til"
 
 #. js-lingui-id: z+srLp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -7748,7 +7748,7 @@ msgstr "Møte"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Meeting Prep"
-msgstr ""
+msgstr "Møteforberedelse"
 
 #. js-lingui-id: BV/hGy
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -8173,7 +8173,7 @@ msgstr "Meldinger sendt som del av denne kampanjen"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Metadata Building"
-msgstr ""
+msgstr "Metadatabygging"
 
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -8446,7 +8446,7 @@ msgstr ""
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "New workspace setup is disabled"
-msgstr ""
+msgstr "Oppsett av nytt arbeidsområde er deaktivert"
 
 #. js-lingui-id: 1UzENP
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -8461,7 +8461,7 @@ msgstr "Ingen klassifiseringsmodell er konfigurert."
 #. js-lingui-id: stulJR
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "No connected account found for id \"{connectedAccountId}\""
-msgstr ""
+msgstr "Ingen tilkoblet konto funnet for id \"{connectedAccountId}\""
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8471,7 +8471,7 @@ msgstr "Ingen hendelsesnavn oppgitt i databasehendelsesutløsning"
 #. js-lingui-id: oRDTVp
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "No Google, Microsoft or CalDAV account with calendar sync is connected in this workspace"
-msgstr ""
+msgstr "Ingen Google-, Microsoft- eller CalDAV-konto med kalendersynkronisering er koblet til dette arbeidsområdet"
 
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
@@ -8492,7 +8492,7 @@ msgstr "Ingen postboks er koblet til for denne handlingen. Koble til en i Innsti
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "No outbound domain configured for {handleDomain}. Verify it under Outbound Domains to send from {0}."
-msgstr ""
+msgstr "Ingen utgående domene er konfigurert for {handleDomain}. Bekreft det under Utgående domener for å sende fra {0}."
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8517,7 +8517,7 @@ msgstr "Det ble ikke funnet noen proveniensattest for den publiserte pakken. Pub
 #. js-lingui-id: MKc0pX
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "No recipients specified"
-msgstr ""
+msgstr "Ingen mottakere angitt"
 
 #. js-lingui-id: NcwTz7
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
@@ -8567,7 +8567,7 @@ msgstr "Ingen gyldig autentiseringskontekst funnet."
 #. js-lingui-id: y+0jrr
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "No valid recipients specified"
-msgstr ""
+msgstr "Ingen gyldige mottakere angitt"
 
 #. js-lingui-id: r+kse7
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8783,13 +8783,13 @@ msgstr "Antall mottakere som ble hoppet over uten at det ble sendt e-post til de
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients who clicked a tracked link"
-msgstr ""
+msgstr "Antall mottakere som klikket på en sporet lenke"
 
 #. js-lingui-id: La2Frx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients who opened the email"
-msgstr ""
+msgstr "Antall mottakere som åpnet e-posten"
 
 #. js-lingui-id: bgG8mY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9013,7 +9013,7 @@ msgstr "Ett eller flere forespurte omfang er ugyldige."
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
-msgstr ""
+msgstr "Bare en kampanje som er et utkast eller planlagt, kan sendes."
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9080,7 +9080,7 @@ msgstr "Bare verdiene i dette skjemaet kan endres."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Open rate"
-msgstr ""
+msgstr "Åpningsfrekvens"
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -9548,7 +9548,7 @@ msgstr "Payload må inneholde en sti"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "PDF Processing"
-msgstr ""
+msgstr "PDF-behandling"
 
 #. js-lingui-id: +1y7ep
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -9583,7 +9583,7 @@ msgstr "Personer"
 #. js-lingui-id: KoFgbR
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "People are already being added to this list. Please wait for it to finish."
-msgstr ""
+msgstr "Personer blir allerede lagt til i denne listen. Vent til det er ferdig."
 
 #. js-lingui-id: nAcEw6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
@@ -9773,7 +9773,7 @@ msgstr "Telefoner"
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Pick a list in the To field first."
-msgstr ""
+msgstr "Velg først en liste i Til-feltet."
 
 #. js-lingui-id: T1yaeQ
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9919,7 +9919,7 @@ msgstr "Posisjon må være et endelig tall"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "PowerPoint"
-msgstr ""
+msgstr "PowerPoint"
 
 #. js-lingui-id: YzUxdC
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -10126,7 +10126,7 @@ msgstr "Offentlig domene-URL er ikke definert. Vennligst sett miljøvariablen PU
 #. js-lingui-id: 9jW/sT
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Public invite link is disabled for this workspace"
-msgstr ""
+msgstr "Offentlig invitasjonslenke er deaktivert for dette arbeidsområdet"
 
 #. js-lingui-id: vVCf2E
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -10147,13 +10147,13 @@ msgstr "Spørringen fikk tidsavbrudd. Vennligst prøv igjen."
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
 msgid "Quick Lead"
-msgstr ""
+msgstr "Hurtiglead"
 
 #. js-lingui-id: 95FPf3
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Quick Lead"
-msgstr ""
+msgstr "Hurtiglead"
 
 #. js-lingui-id: V8OqY4
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10403,7 +10403,7 @@ msgstr "Avvist kl."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Related record"
-msgstr ""
+msgstr "Relatert oppføring"
 
 #. js-lingui-id: 2dNwZB
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -10414,7 +10414,7 @@ msgstr "Relatert oppføring ikke funnet."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Related to"
-msgstr ""
+msgstr "Relatert til"
 
 #. js-lingui-id: 9LL5PC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -10464,7 +10464,7 @@ msgstr "Relasjon er ikke aktivert for dette feltet."
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Relation type cannot be changed"
-msgstr ""
+msgstr "Relasjonstypen kan ikke endres"
 
 #. js-lingui-id: g87L9j
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11436,13 +11436,13 @@ msgstr "Del {objectLabelSingular}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Share of delivered recipients who clicked a tracked link"
-msgstr ""
+msgstr "Andel leverte mottakere som klikket på en sporet lenke"
 
 #. js-lingui-id: oXf7ic
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Share of delivered recipients who opened the email, excluding Apple Mail privacy opens"
-msgstr ""
+msgstr "Andel leverte mottakere som åpnet e-posten, unntatt personvernåpninger i Apple Mail"
 
 #. js-lingui-id: FiE0YS
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -11824,12 +11824,12 @@ msgstr "Startet"
 #. js-lingui-id: FnZ04g
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "startsAt and endsAt must be ISO 8601 date-times with an offset (e.g. 2026-07-01T15:00:00Z)"
-msgstr ""
+msgstr "startsAt og endsAt må være ISO 8601-datoer og -tidspunkter med en forskyvning (f.eks. 2026-07-01T15:00:00Z)"
 
 #. js-lingui-id: SHoyyV
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "startsAt and endsAt must be valid ISO 8601 dates"
-msgstr ""
+msgstr "startsAt og endsAt må være gyldige ISO 8601-datoer"
 
 #. js-lingui-id: j0P/LV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -12467,7 +12467,7 @@ msgstr "Selskapets totale årlige omsetning"
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
-msgstr ""
+msgstr "Den tilkoblede {0}-kontoen mangler kalendertillatelser ({missingScopeList}). Koble til kontoen på nytt for å gi kalendertilgang."
 
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12554,7 +12554,7 @@ msgstr "Domenet samsvarer ikke med e-postdomenet ditt."
 #. js-lingui-id: usKG5/
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The email content is invalid."
-msgstr ""
+msgstr "E-postinnholdet er ugyldig."
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -12679,7 +12679,7 @@ msgstr "Listen denne kampanjen ble sendt til"
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that identifies the connected account was not found."
-msgstr ""
+msgstr "Logikkfunksjonen som identifiserer den tilkoblede kontoen, ble ikke funnet."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12785,7 +12785,7 @@ msgstr "Personen i listen"
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The provided connectedAccountId is not a valid UUID"
-msgstr ""
+msgstr "Den angitte connectedAccountId er ikke en gyldig UUID"
 
 #. js-lingui-id: tl8xOZ
 #: src/utils/get-domain-from-email-or-throw.ts
@@ -12847,7 +12847,7 @@ msgstr "Den samme kolonnen kan ikke vises to ganger i en indeks."
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
-msgstr ""
+msgstr "Den valgte modellen er deaktivert av administratoren."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13204,7 +13204,7 @@ msgstr "E-postinnholdet i denne kampanjen er ugyldig."
 #. js-lingui-id: PZ3F8W
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
-msgstr ""
+msgstr "Listen for denne kampanjen ligger i papirkurven. Gjenopprett den eller velg en annen liste i Til-feltet."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -13314,7 +13314,7 @@ msgstr "Dette feltet tilhører ikke arbeidsområdemedlemsobjektet"
 #. js-lingui-id: 5/uEMT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
-msgstr ""
+msgstr "Dette feltet har ingen databasekolonne å indeksere."
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -13511,7 +13511,7 @@ msgstr ""
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This plan is not available."
-msgstr ""
+msgstr "Denne planen er ikke tilgjengelig."
 
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -14011,7 +14011,7 @@ msgstr "Tidslinjeaktivitetstype med navnet {0} finnes allerede for denne applika
 #. js-lingui-id: zwBOko
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "timeZone \"{timeZone}\" is not a valid IANA time zone"
-msgstr ""
+msgstr "timeZone \"{timeZone}\" er ikke en gyldig IANA-tidssone"
 
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -14051,17 +14051,17 @@ msgstr "For mange administratorkandidater funnet."
 #. js-lingui-id: wA9Ol8
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
-msgstr ""
+msgstr "For mange deltakere: {attendeeCount}. Maksimalt tillatt antall er {MAX_EMAIL_RECIPIENTS}."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
-msgstr ""
+msgstr "For mange personer er valgt. Begrens utvalget og prøv igjen."
 
 #. js-lingui-id: JS61oF
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
-msgstr ""
+msgstr "For mange mottakere: {total}. Maksimalt tillatt antall er {MAX_EMAIL_RECIPIENTS}."
 
 #. js-lingui-id: qSInGy
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -14339,7 +14339,7 @@ msgstr "Fjern tilordningen til deg selv før du avslutter abonnementet på denne
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unique clicks"
-msgstr ""
+msgstr "Unike klikk"
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -14351,7 +14351,7 @@ msgstr "Unik indeks kan ikke opprettes for felt {fieldName} av typen {fieldType}
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unique opens"
-msgstr ""
+msgstr "Unike åpninger"
 
 #. js-lingui-id: lIud+S
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
@@ -14649,98 +14649,98 @@ msgstr "Bruk som utkast"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use before a call or a meeting, and whenever the user asks who am I talking to, brief me on this account, or what do I need to know before this conversation"
-msgstr ""
+msgstr "Bruk før en samtale eller et møte, og hver gang brukeren spør hvem de snakker med, ber om en orientering om denne kontoen eller spør hva de trenger å vite før denne samtalen"
 
 #. js-lingui-id: 1xu5KC
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
-msgstr ""
+msgstr "Bruk for Python på data som oppføringsverktøyene ikke kan uttrykke: statistikk, diagrammer som bilder, analyse av en opplastet fil. Ikke bruk det for vanlige lesinger og skrivinger av oppføringer"
 
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use only when explicitly asked to fill a workspace with demonstration data for a given industry"
-msgstr ""
+msgstr "Bruk bare når det uttrykkelig blir bedt om å fylle et arbeidsområde med demonstrasjonsdata for en bestemt bransje"
 
 #. js-lingui-id: T/utz5
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when creating or changing a view of any type, table, kanban or calendar, including the columns, filters, sorts and grouping on it"
-msgstr ""
+msgstr "Bruk når du oppretter eller endrer en visning av hvilken som helst type, tabell, kanban eller kalender, inkludert kolonner, filtre, sorteringer og gruppering i den"
 
 #. js-lingui-id: es1BEL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when finding, filtering, creating, updating or importing records, and whenever a request needs sorting or touches more than a handful of rows"
-msgstr ""
+msgstr "Bruk når du finner, filtrerer, oppretter, oppdaterer eller importerer oppføringer, og når en forespørsel trenger sortering eller omfatter mer enn en håndfull rader"
 
 #. js-lingui-id: yF5Jjw
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the data model itself changes: adding or editing objects, fields, relations or select options"
-msgstr ""
+msgstr "Bruk når selve datamodellen endres: ved å legge til eller redigere objekter, felt, relasjoner eller valgalternativer"
 
 #. js-lingui-id: ZoynaS
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks for a dashboard, a chart, a metric tile or a report page, or wants to change one that exists"
-msgstr ""
+msgstr "Bruk når brukeren ber om et dashbord, et diagram, en metrikkflis eller en rapportside, eller ønsker å endre en som finnes"
 
 #. js-lingui-id: 14JLXH
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks how a deal is doing, which deals are at risk, what is stuck or going quiet, or asks for a pipeline review"
-msgstr ""
+msgstr "Bruk når brukeren spør hvordan en avtale går, hvilke avtaler som er i faresonen, hva som har stoppet opp eller stilnet, eller ber om en gjennomgang av salgstrakten"
 
 #. js-lingui-id: VoJon8
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks to clean up the CRM, find duplicates, fill in missing fields, or asks why the data is messy or which records are stale"
-msgstr ""
+msgstr "Bruk når brukeren ber om å rydde opp i CRM-systemet, finne duplikater, fylle ut manglende felt eller spør hvorfor dataene er rotete eller hvilke oppføringer som er utdaterte"
 
 #. js-lingui-id: TdQ+kX
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks to research or enrich a company or a person, fill in what the CRM does not know about them, or find out what a company actually does"
-msgstr ""
+msgstr "Bruk når brukeren ber om å undersøke eller berike et selskap eller en person, fylle ut det CRM-systemet ikke vet om dem, eller finne ut hva et selskap faktisk gjør"
 
 #. js-lingui-id: WXgRGD
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks who can see or change what: creating a role, editing permissions, or assigning a role to someone"
-msgstr ""
+msgstr "Bruk når brukeren spør hvem som kan se eller endre hva: opprette en rolle, redigere tillatelser eller tildele en rolle til noen"
 
 #. js-lingui-id: 3TOTWi
 #: src/engine/metadata-modules/skill/__tests__/skill.resolver.spec.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y"
-msgstr ""
+msgstr "Bruk når brukeren ønsker at noe skal skje automatisk: opprette, endre, feilsøke eller slette en arbeidsflyt, eller formulere en regel som når X skjer, gjør Y"
 
 #. js-lingui-id: cNoloc
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a PDF is involved: reading text or tables, filling a form, creating, merging or splitting one"
-msgstr ""
+msgstr "Bruk når en PDF er involvert: lese tekst eller tabeller, fylle ut et skjema, opprette, slå sammen eller dele en"
 
 #. js-lingui-id: Tg2sTr
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a PowerPoint deck is the input or the output, including slides, templates, tables and charts"
-msgstr ""
+msgstr "Bruk når en PowerPoint-presentasjon er inndata eller utdata, inkludert lysbilder, maler, tabeller og diagrammer"
 
 #. js-lingui-id: +4MBeN
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a spreadsheet is the input or the output, including formulas, formatting, charts and CSV conversion"
-msgstr ""
+msgstr "Bruk når et regneark er inndata eller utdata, inkludert formler, formatering, diagrammer og CSV-konvertering"
 
 #. js-lingui-id: AKcj8j
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a Word document is the input or the output, including templates, styles and tracked changes"
-msgstr ""
+msgstr "Bruk når et Word-dokument er inndata eller utdata, inkludert maler, stiler og sporede endringer"
 
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -14910,7 +14910,7 @@ msgstr "Valideringsregler kan ikke legges til systemobjekter"
 #. js-lingui-id: HtS2Mw
 #: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
 msgid "Validation rules require the Organization plan."
-msgstr ""
+msgstr "Valideringsregler krever organisasjonsplanen."
 
 #. js-lingui-id: sFN4Dx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -15002,7 +15002,7 @@ msgstr "Visning eksisterer allerede"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "View Building"
-msgstr ""
+msgstr "Visningsbygging"
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -15392,7 +15392,7 @@ msgstr "Vi opplever et midlertidig problem med vår database. Vennligst prøv ig
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
-msgstr ""
+msgstr "Vi kunne ikke identifisere kontoen du autoriserte. Prøv igjen."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -15635,7 +15635,7 @@ msgstr "Widgetvisninger må bruke en widgetvisningstype"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Word Documents"
-msgstr ""
+msgstr "Word-dokumenter"
 
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -15697,7 +15697,7 @@ msgstr "Arbeidsflytautomatiserte utløsere knyttet til arbeidsflyten."
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Workflow Building"
-msgstr ""
+msgstr "Bygging av arbeidsflyt"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
@@ -15713,7 +15713,7 @@ msgstr "Arbeidsflyt-tilkobling ikke funnet."
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow is being updated, please retry"
-msgstr ""
+msgstr "Workflow oppdateres, prøv på nytt"
 
 #. js-lingui-id: Dpef1i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -16044,7 +16044,7 @@ msgstr "Opprettelse av arbeidsområde er begrenset til administratorer"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Workspace Demo Seeding"
-msgstr ""
+msgstr "Fylling av arbeidsområde med demodata"
 
 #. js-lingui-id: qSQPRS
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -16291,7 +16291,7 @@ msgstr "Ville ikke nå hit"
 #. js-lingui-id: +V7jiw
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Write the email content first."
-msgstr ""
+msgstr "Skriv e-postinnholdet først."
 
 #. js-lingui-id: yxN9Xx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16338,7 +16338,7 @@ msgstr "Du er ikke autorisert til å utføre denne handlingen."
 #. js-lingui-id: lmqslv
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "You authorized a different account than the one this connection belongs to."
-msgstr ""
+msgstr "Du autoriserte en annen konto enn den denne tilkoblingen tilhører."
 
 #. js-lingui-id: f0N+mi
 #: src/engine/core-modules/workspace/workspace.exception.ts

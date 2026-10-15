@@ -312,7 +312,7 @@ msgstr "Edellistä tietomallimuutosta otetaan yhä käyttöön taustalla. Yritä
 #. js-lingui-id: HLhFFb
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
 msgid "A record event can only watch relations that point to a single record."
-msgstr ""
+msgstr "Tietuetapahtuma voi seurata vain relaatioita, რომლებიც osoittavat yhteen tietueeseen."
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -406,7 +406,7 @@ msgstr "Tällä nimellä oleva aikajanatoimintotyyppi on jo olemassa tässä sov
 #. js-lingui-id: ZCLQ9y
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "A title is required to create a calendar event"
-msgstr ""
+msgstr "Kalenteritapahtuman luomiseen vaaditaan otsikko"
 
 #. js-lingui-id: jFM4QN
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
@@ -656,12 +656,12 @@ msgstr "Varsinainen tallennuksen aloitusaika"
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
-msgstr ""
+msgstr "Lisää tälle kampanjalle ensin lähettäjä."
 
 #. js-lingui-id: +9n7Wr
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a subject to this campaign first."
-msgstr ""
+msgstr "Lisää tälle kampanjalle ensin aihe."
 
 #. js-lingui-id: ffpvxH
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -695,20 +695,20 @@ msgstr "Lisää suosikkeihin"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add to List"
-msgstr ""
+msgstr "Lisää listaan"
 
 #. js-lingui-id: 5QVriP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Add to List"
-msgstr ""
+msgstr "Lisää listaan"
 
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add View to List"
-msgstr ""
+msgstr "Lisää näkymä listaan"
 
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -952,7 +952,7 @@ msgstr "Kaikki {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util.ts
 msgctxt "view.name"
 msgid "All Campaigns"
-msgstr ""
+msgstr "Kaikki kampanjat"
 
 #. js-lingui-id: wgGOAj
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -1322,7 +1322,7 @@ msgstr "Sovellukset eivät voi päivittää näitä kenttiä: {fieldsList}."
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
-msgstr ""
+msgstr "Hyväksy käyttöoikeusdomainisi"
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -2020,7 +2020,7 @@ msgstr "Tämän tilin kalenteritapahtumien luontia ei tueta."
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Calendar event creation is only supported for Google, Microsoft and CalDAV accounts (got {0})"
-msgstr ""
+msgstr "Kalenteritapahtumien luomista tuetaan vain Google-, Microsoft- ja CalDAV-tileillä (saatiin {0})"
 
 #. js-lingui-id: 1t3DGy
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -2505,7 +2505,7 @@ msgstr "Viimeistä ylläpitäjää ei voi poistaa työtilasta."
 #. placeholder {1}: emailingDomain.domain
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Cannot send from {0}: domain {1} is not verified for outbound."
-msgstr ""
+msgstr "Lähettäminen osoitteesta {0} ei onnistu: domainia {1} ei ole vahvistettu lähtevää postia varten."
 
 #. js-lingui-id: jNnzPT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
@@ -2727,7 +2727,7 @@ msgstr "Omistuksen vahvistusta ei ole otettu käyttöön tällä palvelimella. P
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Click rate"
-msgstr ""
+msgstr "Klikkausprosentti"
 
 #. js-lingui-id: J7dFKa
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -2857,7 +2857,7 @@ msgstr "Valituksen ajankohta"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Complaints"
-msgstr ""
+msgstr "Valitukset"
 
 #. js-lingui-id: c9jNCJ
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -3019,7 +3019,7 @@ msgstr "Yhteyden muodostaminen ei ole sallittua kohteelle {connectFieldName} koh
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Connected account \"{connectedAccountId}\" has no calendar channel with sync enabled. Enable calendar sync for this account first."
-msgstr ""
+msgstr "Yhdistetyllä tilillä \"{connectedAccountId}\" ei ole kalenterikanavaa, jossa synkronointi on käytössä. Ota ensin tämän tilin kalenterisynkronointi käyttöön."
 
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -3309,7 +3309,7 @@ msgstr "Laske ei-tyhjät"
 #. js-lingui-id: ft6dHY
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count true"
-msgstr ""
+msgstr "Laske tosiarvot"
 
 #. js-lingui-id: 9FZBbf
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
@@ -3552,7 +3552,7 @@ msgstr "Hyvityksen myöntöä ei löytynyt."
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "CRM Hygiene"
-msgstr ""
+msgstr "CRM:n ylläpito"
 
 #. js-lingui-id: OZIOad
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -3617,7 +3617,7 @@ msgstr "Koontinäyttö"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Dashboard Building"
-msgstr ""
+msgstr "Koontinäytön luominen"
 
 #. js-lingui-id: jlbLNx
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
@@ -3652,7 +3652,7 @@ msgstr "Koontinäytöt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Data Manipulation"
-msgstr ""
+msgstr "Tietojen käsittely"
 
 #. js-lingui-id: zU5mL2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3762,7 +3762,7 @@ msgstr "Kauppa"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Deal Review"
-msgstr ""
+msgstr "Kaupan tarkastelu"
 
 #. js-lingui-id: NdYXIK
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -3985,7 +3985,7 @@ msgstr "Poista {objectLabel}"
 #. js-lingui-id: GKRkPC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Delete the relation field together with its targets"
-msgstr ""
+msgstr "Poista relaatiokenttä kohteineen"
 
 #. js-lingui-id: pYUji4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4065,7 +4065,7 @@ msgstr "Poistettu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Delivered"
-msgstr ""
+msgstr "Toimitettu"
 
 #. js-lingui-id: wm2sD+
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -4374,7 +4374,7 @@ msgstr "Sähköpostiverkkotunnusta ei löytynyt."
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email group {0} has no domain."
-msgstr ""
+msgstr "Sähköpostiryhmällä {0} ei ole domainia."
 
 #. js-lingui-id: MhPwKU
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
@@ -4390,13 +4390,13 @@ msgstr "Sähköpostiryhmä edellyttää Enterprise-pakettia."
 #. placeholder {0}: EMAIL_GROUP_SEND_THROTTLE.maxRecipients
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email group send limit reached: {0} recipients per day."
-msgstr ""
+msgstr "Sähköpostiryhmän lähetysraja on saavutettu: {0} vastaanottajaa päivässä."
 
 #. js-lingui-id: 33PyzX
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email handle channels do not support drafts."
-msgstr ""
+msgstr "Sähköpostiosoitteiden kanavat eivät tue luonnoksia."
 
 #. js-lingui-id: m9fD11
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
@@ -4437,13 +4437,13 @@ msgstr "Sähköpostia ei ole muutettu."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Email Style"
-msgstr ""
+msgstr "Sähköpostityyli"
 
 #. js-lingui-id: Bug5E7
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Email Style"
-msgstr ""
+msgstr "Sähköpostityyli"
 
 #. js-lingui-id: su92Mw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -4536,12 +4536,12 @@ msgstr "Päättymisaika"
 #. js-lingui-id: dxayRu
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "endsAt must be a later day than startsAt for all-day events"
-msgstr ""
+msgstr "endsAt:n on oltava startsAt:ta myöhempi päivä koko päivän tapahtumissa"
 
 #. js-lingui-id: C91s97
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "endsAt must be after startsAt"
-msgstr ""
+msgstr "endsAt:n on oltava startsAt:n jälkeen"
 
 #. js-lingui-id: g2om8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -4563,7 +4563,7 @@ msgstr "Jonossa"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Enrich"
-msgstr ""
+msgstr "Rikasta"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -4764,7 +4764,7 @@ msgstr "Täsmälleen jompikumpi \"groups\"- tai \"fields\"-parametri on annettav
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Excel & Spreadsheets"
-msgstr ""
+msgstr "Excel ja laskentataulukot"
 
 #. js-lingui-id: CrwP9A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -4837,7 +4837,7 @@ msgstr "Epäonnistui"
 #. js-lingui-id: MIra1S
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Failed to add people to the list."
-msgstr ""
+msgstr "Henkilöiden lisääminen listaan epäonnistui."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -5544,19 +5544,19 @@ msgstr "Front-komponenttia ei löytynyt."
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability can only restrict record pages to objects"
-msgstr ""
+msgstr "Front component -widgetin saatavuus voi rajoittaa tietuesivut vain objekteihin"
 
 #. js-lingui-id: oDd+6Z
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability has an unsupported page layout type: supported values are {supportedPageLayoutTypes}, received {receivedPageLayoutType}"
-msgstr ""
+msgstr "Front component -widgetin saatavuudessa on tukematon sivun asettelutyyppi: tuetut arvot ovat {supportedPageLayoutTypes}, vastaanotettiin {receivedPageLayoutType}"
 
 #. js-lingui-id: fSB/iY
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability references an unknown object"
-msgstr ""
+msgstr "Front component -widgetin saatavuus viittaa tuntemattomaan objektiin"
 
 #. js-lingui-id: 4wM9Cs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -5738,7 +5738,7 @@ msgstr "Siirry tietomallin asetuksiin"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Developers Settings"
-msgstr ""
+msgstr "Siirry kehittäjäasetuksiin"
 
 #. js-lingui-id: OLopIl
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6181,7 +6181,7 @@ msgstr "Annettiin virheellinen argumentti."
 #. js-lingui-id: Qg2gi/
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Invalid attendee email addresses: {invalidAttendeeList}"
-msgstr ""
+msgstr "Virheelliset osallistujien sähköpostiosoitteet: {invalidAttendeeList}"
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -6324,7 +6324,7 @@ msgstr "Virheellinen sähköpostiosoite."
 #. js-lingui-id: e2K52e
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Invalid email addresses: {invalidEmailList}"
-msgstr ""
+msgstr "Virheelliset sähköpostiosoitteet: {invalidEmailList}"
 
 #. js-lingui-id: Lq9KTr
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -6522,7 +6522,7 @@ msgstr "Virheellinen minuuttiarvo. Sen pitäisi olla suurempi kuin 1"
 #. js-lingui-id: dxo2BJ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Invalid morph relation field"
-msgstr ""
+msgstr "Virheellinen morph-relaatiokenttä"
 
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -6650,7 +6650,7 @@ msgstr "Virheelliset hinnoittelutasot."
 #. js-lingui-id: QaON/M
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Invalid recipients"
-msgstr ""
+msgstr "Virheelliset vastaanottajat"
 
 #. js-lingui-id: XBYAgs
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -7008,7 +7008,7 @@ msgstr "Virheellinen työnkulun versio."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Invitation not found"
-msgstr ""
+msgstr "Kutsua ei löytynyt"
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -7472,7 +7472,7 @@ msgstr "Linkitetyn tietueen id"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Linked to"
-msgstr ""
+msgstr "Linkitetty kohteeseen"
 
 #. js-lingui-id: z+srLp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -7748,7 +7748,7 @@ msgstr "Tapaaminen"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Meeting Prep"
-msgstr ""
+msgstr "Kokouksen valmistelu"
 
 #. js-lingui-id: BV/hGy
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -8173,7 +8173,7 @@ msgstr "Osana tätä kampanjaa lähetetyt viestit"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Metadata Building"
-msgstr ""
+msgstr "Metatietojen luominen"
 
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -8446,7 +8446,7 @@ msgstr ""
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "New workspace setup is disabled"
-msgstr ""
+msgstr "Uuden työtilan määritys on poistettu käytöstä"
 
 #. js-lingui-id: 1UzENP
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -8461,7 +8461,7 @@ msgstr "Luokittelumallia ei ole määritetty."
 #. js-lingui-id: stulJR
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "No connected account found for id \"{connectedAccountId}\""
-msgstr ""
+msgstr "Tunnuksella \"{connectedAccountId}\" ei löytynyt yhdistettyä tiliä"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8471,7 +8471,7 @@ msgstr "Tietokanta tapahtumassa ei annettu tapahtuman nimeä"
 #. js-lingui-id: oRDTVp
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "No Google, Microsoft or CalDAV account with calendar sync is connected in this workspace"
-msgstr ""
+msgstr "Tähän työtilaan ei ole yhdistetty Google-, Microsoft- tai CalDAV-tiliä, jossa kalenterisynkronointi on käytössä"
 
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
@@ -8492,7 +8492,7 @@ msgstr "Tähän toimintoon ei ole yhdistetty postilaatikkoa. Yhdistä sellainen 
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "No outbound domain configured for {handleDomain}. Verify it under Outbound Domains to send from {0}."
-msgstr ""
+msgstr "Kahvalle {handleDomain} ei ole määritetty lähtevän postin domainia. Vahvista se kohdassa Lähtevän postin domainit, jotta voit lähettää osoitteesta {0}."
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8517,7 +8517,7 @@ msgstr "Julkaistulle paketille ei löytynyt provenance-todennetta. Julkaise se G
 #. js-lingui-id: MKc0pX
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "No recipients specified"
-msgstr ""
+msgstr "Vastaanottajia ei ole määritetty"
 
 #. js-lingui-id: NcwTz7
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
@@ -8567,7 +8567,7 @@ msgstr "Kelvollista autentikointikontekstia ei löytynyt."
 #. js-lingui-id: y+0jrr
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "No valid recipients specified"
-msgstr ""
+msgstr "Kelvollisia vastaanottajia ei ole määritetty"
 
 #. js-lingui-id: r+kse7
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8783,13 +8783,13 @@ msgstr "Niiden vastaanottajien määrä, jotka ohitettiin ilman sähköpostin l�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients who clicked a tracked link"
-msgstr ""
+msgstr "Seurattua linkkiä klikanneiden vastaanottajien määrä"
 
 #. js-lingui-id: La2Frx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients who opened the email"
-msgstr ""
+msgstr "Sähköpostin avanneiden vastaanottajien määrä"
 
 #. js-lingui-id: bgG8mY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9013,7 +9013,7 @@ msgstr "Yksi tai useampi pyydetyistä käyttöoikeusalueista on virheellinen."
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
-msgstr ""
+msgstr "Vain luonnos- tai ajoitettu kampanja voidaan lähettää."
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9080,7 +9080,7 @@ msgstr "Vain tämän lomakkeen arvoja voi muuttaa."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Open rate"
-msgstr ""
+msgstr "Avausprosentti"
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -9548,7 +9548,7 @@ msgstr "Payloadin on sisällettävä polku"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "PDF Processing"
-msgstr ""
+msgstr "PDF-käsittely"
 
 #. js-lingui-id: +1y7ep
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -9583,7 +9583,7 @@ msgstr "Henkilöt"
 #. js-lingui-id: KoFgbR
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "People are already being added to this list. Please wait for it to finish."
-msgstr ""
+msgstr "Henkilöitä lisätään jo tähän listaan. Odota, että toiminto valmistuu."
 
 #. js-lingui-id: nAcEw6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
@@ -9606,12 +9606,12 @@ msgstr "Vaihekohtaiset havaittavuustiedot (tokenien käyttö, työkalukutsut, lo
 #. js-lingui-id: yIK1GU
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent empty"
-msgstr ""
+msgstr "Tyhjien prosenttiosuus"
 
 #. js-lingui-id: PWLd4c
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent not empty"
-msgstr ""
+msgstr "Ei-tyhjien prosenttiosuus"
 
 #. js-lingui-id: 2TPvIG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9773,7 +9773,7 @@ msgstr "Puhelimet"
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Pick a list in the To field first."
-msgstr ""
+msgstr "Valitse ensin lista Vastaanottaja-kentässä."
 
 #. js-lingui-id: T1yaeQ
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9919,7 +9919,7 @@ msgstr "Sijainnin on oltava äärellinen luku"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "PowerPoint"
-msgstr ""
+msgstr "PowerPoint"
 
 #. js-lingui-id: YzUxdC
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -10126,7 +10126,7 @@ msgstr "Julkisen toimialueen URL ei ole määritelty. Aseta PUBLIC_DOMAIN_URL-ym
 #. js-lingui-id: 9jW/sT
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Public invite link is disabled for this workspace"
-msgstr ""
+msgstr "Julkinen kutsulinkki on poistettu käytöstä tässä työtilassa"
 
 #. js-lingui-id: vVCf2E
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -10147,13 +10147,13 @@ msgstr "Kyselyn aikaraja ylittyi. Yritä uudelleen."
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
 msgid "Quick Lead"
-msgstr ""
+msgstr "Pikainen liidi"
 
 #. js-lingui-id: 95FPf3
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Quick Lead"
-msgstr ""
+msgstr "Pikainen liidi"
 
 #. js-lingui-id: V8OqY4
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10403,7 +10403,7 @@ msgstr "Hylkäysaika"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Related record"
-msgstr ""
+msgstr "Liittyvä tietue"
 
 #. js-lingui-id: 2dNwZB
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -10414,7 +10414,7 @@ msgstr "Liittyvää tietuetta ei löytynyt."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Related to"
-msgstr ""
+msgstr "Liittyy kohteeseen"
 
 #. js-lingui-id: 9LL5PC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -10464,7 +10464,7 @@ msgstr "Suhde ei ole käytössä tälle kentälle."
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Relation type cannot be changed"
-msgstr ""
+msgstr "Relaatiotyyppiä ei voi muuttaa"
 
 #. js-lingui-id: g87L9j
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11436,13 +11436,13 @@ msgstr "Jaa {objectLabelSingular}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Share of delivered recipients who clicked a tracked link"
-msgstr ""
+msgstr "Seurattua linkkiä klikanneiden toimitettujen vastaanottajien osuus"
 
 #. js-lingui-id: oXf7ic
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Share of delivered recipients who opened the email, excluding Apple Mail privacy opens"
-msgstr ""
+msgstr "Sähköpostin avanneiden toimitettujen vastaanottajien osuus, pois lukien Apple Mailin tietosuojasyistä tehdyt avaukset"
 
 #. js-lingui-id: FiE0YS
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -11824,12 +11824,12 @@ msgstr "Aloitusaika"
 #. js-lingui-id: FnZ04g
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "startsAt and endsAt must be ISO 8601 date-times with an offset (e.g. 2026-07-01T15:00:00Z)"
-msgstr ""
+msgstr "startsAt:n ja endsAt:n on oltava ISO 8601 -päivämääräaikoja aikavyöhykepoikkeamalla (esim. 2026-07-01T15:00:00Z)"
 
 #. js-lingui-id: SHoyyV
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "startsAt and endsAt must be valid ISO 8601 dates"
-msgstr ""
+msgstr "startsAt:n ja endsAt:n on oltava kelvollisia ISO 8601 -päivämääriä"
 
 #. js-lingui-id: j0P/LV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -12467,7 +12467,7 @@ msgstr "Yrityksen kokonaisvuosiliikevaihto"
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
-msgstr ""
+msgstr "Yhdistetyltä {0}-tililtä puuttuvat kalenterin käyttöoikeudet ({missingScopeList}). Myönnä kalenterin käyttöoikeus yhdistämällä tili uudelleen."
 
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12554,7 +12554,7 @@ msgstr "Verkkotunnus ei vastaa sähköpostisi verkkotunnusta."
 #. js-lingui-id: usKG5/
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The email content is invalid."
-msgstr ""
+msgstr "Sähköpostin sisältö on virheellinen."
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -12679,7 +12679,7 @@ msgstr "Lista, jolle tämä kampanja lähetettiin"
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that identifies the connected account was not found."
-msgstr ""
+msgstr "Yhdistetyn tilin tunnistavaa logiikkafunktiota ei löytynyt."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12785,7 +12785,7 @@ msgstr "Henkilö listalla"
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The provided connectedAccountId is not a valid UUID"
-msgstr ""
+msgstr "Annettu connectedAccountId ei ole kelvollinen UUID"
 
 #. js-lingui-id: tl8xOZ
 #: src/utils/get-domain-from-email-or-throw.ts
@@ -12847,7 +12847,7 @@ msgstr "Sama sarake ei voi esiintyä indeksissä kahdesti."
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
-msgstr ""
+msgstr "Järjestelmänvalvoja on poistanut valitun mallin käytöstä."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13204,7 +13204,7 @@ msgstr "Tämän kampanjan sähköpostisisältö on virheellinen."
 #. js-lingui-id: PZ3F8W
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
-msgstr ""
+msgstr "Tämän kampanjan lista on roskakorissa. Palauta se tai valitse toinen lista Vastaanottaja-kentässä."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -13314,7 +13314,7 @@ msgstr "Tämä kenttä ei kuulu työtilan jäsenen kohteeseen"
 #. js-lingui-id: 5/uEMT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
-msgstr ""
+msgstr "Tällä kentällä ei ole indeksoitavaa tietokantasaraketta."
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -13511,7 +13511,7 @@ msgstr "Tämä käyttöoikeus on jo asetettu roolille"
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This plan is not available."
-msgstr ""
+msgstr "Tämä tilaus ei ole saatavilla."
 
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -14011,7 +14011,7 @@ msgstr "Aikajanatoimintotyyppi nimeltä {0} on jo olemassa tässä sovelluksessa
 #. js-lingui-id: zwBOko
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "timeZone \"{timeZone}\" is not a valid IANA time zone"
-msgstr ""
+msgstr "timeZone \"{timeZone}\" ei ole kelvollinen IANA-aikavyöhyke"
 
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -14051,17 +14051,17 @@ msgstr "Liian monta ylläpitäjäehdokasta löytyi."
 #. js-lingui-id: wA9Ol8
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
-msgstr ""
+msgstr "Liian monta osallistujaa: {attendeeCount}. Suurin sallittu määrä on {MAX_EMAIL_RECIPIENTS}."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
-msgstr ""
+msgstr "Valittuna on liian monta henkilöä. Rajaa valintaasi ja yritä uudelleen."
 
 #. js-lingui-id: JS61oF
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
-msgstr ""
+msgstr "Liian monta vastaanottajaa: {total}. Suurin sallittu määrä on {MAX_EMAIL_RECIPIENTS}."
 
 #. js-lingui-id: qSInGy
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -14339,7 +14339,7 @@ msgstr "Poista määritys itseltäsi ennen kuin lopetat tämän keskustelun tila
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unique clicks"
-msgstr ""
+msgstr "Yksilölliset klikkaukset"
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -14351,7 +14351,7 @@ msgstr "Uniikkia indeksiä ei voida luoda kentälle {fieldName}, jonka tyyppi on
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unique opens"
-msgstr ""
+msgstr "Yksilölliset avaukset"
 
 #. js-lingui-id: lIud+S
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
@@ -14649,98 +14649,98 @@ msgstr "Käytä luonnoksena"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use before a call or a meeting, and whenever the user asks who am I talking to, brief me on this account, or what do I need to know before this conversation"
-msgstr ""
+msgstr "Käytä ennen puhelua tai kokousta sekä aina, kun käyttäjä kysyy, kenen kanssa hän puhuu, pyytää taustatietoja tästä tilistä tai kysyy, mitä hänen on tiedettävä ennen tätä keskustelua"
 
 #. js-lingui-id: 1xu5KC
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
-msgstr ""
+msgstr "Käytä Pythonia sellaiseen tietojen käsittelyyn, jota tietuetyökaluilla ei voi tehdä: tilastot, kaaviokuvat, ladatun tiedoston jäsentäminen. Älä käytä sitä tavallisiin tietueiden luku- ja kirjoitustoimintoihin"
 
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use only when explicitly asked to fill a workspace with demonstration data for a given industry"
-msgstr ""
+msgstr "Käytä vain, kun pyydetään nimenomaisesti täyttämään työtila tietyn toimialan esittelytiedoilla"
 
 #. js-lingui-id: T/utz5
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when creating or changing a view of any type, table, kanban or calendar, including the columns, filters, sorts and grouping on it"
-msgstr ""
+msgstr "Käytä minkä tahansa näkymän, kuten taulukko-, kanban- tai kalenterinäkymän, luomiseen tai muuttamiseen, mukaan lukien sen sarakkeet, suodattimet, lajittelut ja ryhmittely"
 
 #. js-lingui-id: es1BEL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when finding, filtering, creating, updating or importing records, and whenever a request needs sorting or touches more than a handful of rows"
-msgstr ""
+msgstr "Käytä tietueiden etsimiseen, suodattamiseen, luomiseen, päivittämiseen tai tuomiseen sekä aina, kun pyyntö edellyttää lajittelua tai koskee useampaa kuin kourallista rivejä"
 
 #. js-lingui-id: yF5Jjw
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the data model itself changes: adding or editing objects, fields, relations or select options"
-msgstr ""
+msgstr "Käytä, kun tietomalli muuttuu: objektien, kenttien, relaatioiden tai valintavaihtoehtojen lisäämiseen tai muokkaamiseen"
 
 #. js-lingui-id: ZoynaS
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks for a dashboard, a chart, a metric tile or a report page, or wants to change one that exists"
-msgstr ""
+msgstr "Käytä, kun käyttäjä pyytää koontinäyttöä, kaaviota, mittariruudukkua tai raporttisivua tai haluaa muuttaa olemassa olevaa"
 
 #. js-lingui-id: 14JLXH
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks how a deal is doing, which deals are at risk, what is stuck or going quiet, or asks for a pipeline review"
-msgstr ""
+msgstr "Käytä, kun käyttäjä kysyy, miten kaupalla menee, mitkä kaupat ovat vaarassa, mikä on jumissa tai hiljenemässä, tai pyytää myyntiputken tarkastelua"
 
 #. js-lingui-id: VoJon8
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks to clean up the CRM, find duplicates, fill in missing fields, or asks why the data is messy or which records are stale"
-msgstr ""
+msgstr "Käytä, kun käyttäjä pyytää siivoamaan CRM:n, etsimään kaksoiskappaleita, täyttämään puuttuvia kenttiä tai kysyy, miksi tiedot ovat sekavia tai mitkä tietueet ovat vanhentuneita"
 
 #. js-lingui-id: TdQ+kX
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks to research or enrich a company or a person, fill in what the CRM does not know about them, or find out what a company actually does"
-msgstr ""
+msgstr "Käytä, kun käyttäjä pyytää tutkimaan tai rikastamaan yritystä tai henkilöä, täydentämään tietoja, joita CRM ei heistä tiedä, tai selvittämään, mitä yritys todella tekee"
 
 #. js-lingui-id: WXgRGD
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks who can see or change what: creating a role, editing permissions, or assigning a role to someone"
-msgstr ""
+msgstr "Käytä, kun käyttäjä kysyy, kuka voi nähdä tai muuttaa mitäkin: roolin luomiseen, käyttöoikeuksien muokkaamiseen tai roolin määrittämiseen henkilölle"
 
 #. js-lingui-id: 3TOTWi
 #: src/engine/metadata-modules/skill/__tests__/skill.resolver.spec.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y"
-msgstr ""
+msgstr "Käytä, kun käyttäjä haluaa jonkin tapahtuvan automaattisesti: työnkulun luomiseen, muuttamiseen, virheenkorjaukseen tai poistamiseen tai säännön muotoilemiseen muodossa kun X tapahtuu, tee Y"
 
 #. js-lingui-id: cNoloc
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a PDF is involved: reading text or tables, filling a form, creating, merging or splitting one"
-msgstr ""
+msgstr "Käytä aina, kun kyseessä on PDF: tekstin tai taulukoiden lukemiseen, lomakkeen täyttämiseen, PDF:n luomiseen, yhdistämiseen tai jakamiseen"
 
 #. js-lingui-id: Tg2sTr
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a PowerPoint deck is the input or the output, including slides, templates, tables and charts"
-msgstr ""
+msgstr "Käytä aina, kun PowerPoint-esitys on syöte tai tuloste, mukaan lukien diat, mallit, taulukot ja kaaviot"
 
 #. js-lingui-id: +4MBeN
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a spreadsheet is the input or the output, including formulas, formatting, charts and CSV conversion"
-msgstr ""
+msgstr "Käytä aina, kun laskentataulukko on syöte tai tuloste, mukaan lukien kaavat, muotoilu, kaaviot ja CSV-muunnos"
 
 #. js-lingui-id: AKcj8j
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a Word document is the input or the output, including templates, styles and tracked changes"
-msgstr ""
+msgstr "Käytä aina, kun Word-asiakirja on syöte tai tuloste, mukaan lukien mallit, tyylit ja seuratut muutokset"
 
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -14910,7 +14910,7 @@ msgstr "Validointisääntöjä ei voi lisätä järjestelmäobjekteihin"
 #. js-lingui-id: HtS2Mw
 #: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
 msgid "Validation rules require the Organization plan."
-msgstr ""
+msgstr "Validointisäännöt edellyttävät Organization-tilausta."
 
 #. js-lingui-id: sFN4Dx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -15002,7 +15002,7 @@ msgstr "Näkymä on jo olemassa"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "View Building"
-msgstr ""
+msgstr "Näkymien luominen"
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -15392,7 +15392,7 @@ msgstr "Koemme tilapäistä ongelmaa tietokannassamme. Yritä uudelleen myöhemm
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
-msgstr ""
+msgstr "Emme voineet tunnistaa tiliä, jonka valtuutit. Yritä uudelleen."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -15635,7 +15635,7 @@ msgstr "Widget-näkymien on käytettävä widget-näkymätyyppiä"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Word Documents"
-msgstr ""
+msgstr "Word-asiakirjat"
 
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -15697,7 +15697,7 @@ msgstr "Työnkulun automatisoidut laukaisimet liitetty työnkulkuun."
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Workflow Building"
-msgstr ""
+msgstr "Työnkulkujen luominen"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
@@ -15713,7 +15713,7 @@ msgstr "Työnkulun reunaa ei löytynyt."
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow is being updated, please retry"
-msgstr ""
+msgstr "Työnkulkua päivitetään, yritä uudelleen"
 
 #. js-lingui-id: Dpef1i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -16044,7 +16044,7 @@ msgstr "Työtilojen luominen on rajoitettu ylläpitäjille"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Workspace Demo Seeding"
-msgstr ""
+msgstr "Työtilan esittelytietojen lisäys"
 
 #. js-lingui-id: qSQPRS
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -16291,7 +16291,7 @@ msgstr "Tähän ei päästäisi"
 #. js-lingui-id: +V7jiw
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Write the email content first."
-msgstr ""
+msgstr "Kirjoita ensin sähköpostin sisältö."
 
 #. js-lingui-id: yxN9Xx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16338,7 +16338,7 @@ msgstr "Sinulla ei ole oikeutta suorittaa tätä toimintoa."
 #. js-lingui-id: lmqslv
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "You authorized a different account than the one this connection belongs to."
-msgstr ""
+msgstr "Valtuutit eri tilin kuin sen, johon tämä yhteys kuuluu."
 
 #. js-lingui-id: f0N+mi
 #: src/engine/core-modules/workspace/workspace.exception.ts

@@ -312,7 +312,7 @@ msgstr "Μια προηγούμενη αλλαγή μοντέλου δεδομέ
 #. js-lingui-id: HLhFFb
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
 msgid "A record event can only watch relations that point to a single record."
-msgstr ""
+msgstr "Ένα συμβάν εγγραφής μπορεί να παρακολουθεί μόνο σχέσεις που οδηγούν σε μία μόνο εγγραφή."
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -406,7 +406,7 @@ msgstr "Υπάρχει ήδη τύπος δραστηριότητας χρονο
 #. js-lingui-id: ZCLQ9y
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "A title is required to create a calendar event"
-msgstr ""
+msgstr "Απαιτείται τίτλος για τη δημιουργία ενός συμβάντος ημερολογίου"
 
 #. js-lingui-id: jFM4QN
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
@@ -656,12 +656,12 @@ msgstr "Πραγματική έναρξη εγγραφής"
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
-msgstr ""
+msgstr "Προσθέστε πρώτα έναν αποστολέα σε αυτήν την καμπάνια."
 
 #. js-lingui-id: +9n7Wr
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a subject to this campaign first."
-msgstr ""
+msgstr "Προσθέστε πρώτα ένα θέμα σε αυτήν την καμπάνια."
 
 #. js-lingui-id: ffpvxH
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -695,20 +695,20 @@ msgstr "Προσθήκη στα Αγαπημένα"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add to List"
-msgstr ""
+msgstr "Προσθήκη στη λίστα"
 
 #. js-lingui-id: 5QVriP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Add to List"
-msgstr ""
+msgstr "Προσθήκη στη λίστα"
 
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add View to List"
-msgstr ""
+msgstr "Προσθήκη προβολής στη λίστα"
 
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -952,7 +952,7 @@ msgstr "Όλα ({objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util.ts
 msgctxt "view.name"
 msgid "All Campaigns"
-msgstr ""
+msgstr "Όλες οι καμπάνιες"
 
 #. js-lingui-id: wgGOAj
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -1322,7 +1322,7 @@ msgstr "Οι εφαρμογές δεν μπορούν να ενημερώσου�
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
-msgstr ""
+msgstr "Εγκρίνετε τον τομέα πρόσβασής σας"
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -2020,7 +2020,7 @@ msgstr "Η δημιουργία συμβάντος ημερολογίου δεν
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Calendar event creation is only supported for Google, Microsoft and CalDAV accounts (got {0})"
-msgstr ""
+msgstr "Η δημιουργία συμβάντων ημερολογίου υποστηρίζεται μόνο για λογαριασμούς Google, Microsoft και CalDAV (λήφθηκε {0})"
 
 #. js-lingui-id: 1t3DGy
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -2505,7 +2505,7 @@ msgstr "Δεν είναι δυνατή η αφαίρεση του τελευτα
 #. placeholder {1}: emailingDomain.domain
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Cannot send from {0}: domain {1} is not verified for outbound."
-msgstr ""
+msgstr "Δεν είναι δυνατή η αποστολή από το {0}: ο τομέας {1} δεν έχει επαληθευτεί για εξερχόμενη αποστολή."
 
 #. js-lingui-id: jNnzPT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
@@ -2727,7 +2727,7 @@ msgstr "Η δυνατότητα διεκδίκησης δεν έχει ρυθμ�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Click rate"
-msgstr ""
+msgstr "Ποσοστό κλικ"
 
 #. js-lingui-id: J7dFKa
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -2857,7 +2857,7 @@ msgstr "Υποβλήθηκε παράπονο στις"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Complaints"
-msgstr ""
+msgstr "Καταγγελίες"
 
 #. js-lingui-id: c9jNCJ
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -3019,7 +3019,7 @@ msgstr "Σύνδεση δεν επιτρέπεται για το {connectFieldNa
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Connected account \"{connectedAccountId}\" has no calendar channel with sync enabled. Enable calendar sync for this account first."
-msgstr ""
+msgstr "Ο συνδεδεμένος λογαριασμός \"{connectedAccountId}\" δεν έχει κανάλι ημερολογίου με ενεργοποιημένο συγχρονισμό. Ενεργοποιήστε πρώτα τον συγχρονισμό ημερολογίου για αυτόν τον λογαριασμό."
 
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -3309,7 +3309,7 @@ msgstr "Καταμέτρηση μη κενών"
 #. js-lingui-id: ft6dHY
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count true"
-msgstr ""
+msgstr "Καταμέτρηση αληθών"
 
 #. js-lingui-id: 9FZBbf
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
@@ -3552,7 +3552,7 @@ msgstr "Η παροχή πίστωσης δεν βρέθηκε."
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "CRM Hygiene"
-msgstr ""
+msgstr "Υγιεινή CRM"
 
 #. js-lingui-id: OZIOad
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -3617,7 +3617,7 @@ msgstr "Πίνακας ελέγχου"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Dashboard Building"
-msgstr ""
+msgstr "Δημιουργία πίνακα ελέγχου"
 
 #. js-lingui-id: jlbLNx
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
@@ -3652,7 +3652,7 @@ msgstr "Πίνακες Ελέγχου"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Data Manipulation"
-msgstr ""
+msgstr "Χειρισμός δεδομένων"
 
 #. js-lingui-id: zU5mL2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3762,7 +3762,7 @@ msgstr "Συμφωνία"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Deal Review"
-msgstr ""
+msgstr "Ανασκόπηση συμφωνιών"
 
 #. js-lingui-id: NdYXIK
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -3985,7 +3985,7 @@ msgstr "Διαγραφή {objectLabel}"
 #. js-lingui-id: GKRkPC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Delete the relation field together with its targets"
-msgstr ""
+msgstr "Διαγράψτε το πεδίο σχέσης μαζί με τους στόχους του"
 
 #. js-lingui-id: pYUji4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4065,7 +4065,7 @@ msgstr "Διαγράφηκε Στις"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Delivered"
-msgstr ""
+msgstr "Παραδόθηκε"
 
 #. js-lingui-id: wm2sD+
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -4374,7 +4374,7 @@ msgstr "Ο τομέας email δεν βρέθηκε."
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email group {0} has no domain."
-msgstr ""
+msgstr "Η ομάδα email {0} δεν έχει τομέα."
 
 #. js-lingui-id: MhPwKU
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
@@ -4390,13 +4390,13 @@ msgstr "Η ομάδα email απαιτεί ένα πλάνο Enterprise."
 #. placeholder {0}: EMAIL_GROUP_SEND_THROTTLE.maxRecipients
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email group send limit reached: {0} recipients per day."
-msgstr ""
+msgstr "Επιτεύχθηκε το όριο αποστολής της ομάδας email: {0} παραλήπτες ανά ημέρα."
 
 #. js-lingui-id: 33PyzX
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "Email handle channels do not support drafts."
-msgstr ""
+msgstr "Τα κανάλια διεύθυνσης email δεν υποστηρίζουν πρόχειρα."
 
 #. js-lingui-id: m9fD11
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
@@ -4437,13 +4437,13 @@ msgstr "Το email δεν έχει αλλάξει."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Email Style"
-msgstr ""
+msgstr "Στυλ email"
 
 #. js-lingui-id: Bug5E7
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Email Style"
-msgstr ""
+msgstr "Στυλ email"
 
 #. js-lingui-id: su92Mw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -4536,12 +4536,12 @@ msgstr "Έληξε στις"
 #. js-lingui-id: dxayRu
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "endsAt must be a later day than startsAt for all-day events"
-msgstr ""
+msgstr "το endsAt πρέπει να είναι μεταγενέστερη ημέρα από το startsAt για ολοήμερα συμβάντα"
 
 #. js-lingui-id: C91s97
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "endsAt must be after startsAt"
-msgstr ""
+msgstr "το endsAt πρέπει να είναι μετά το startsAt"
 
 #. js-lingui-id: g2om8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -4563,7 +4563,7 @@ msgstr "Σε ουρά"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Enrich"
-msgstr ""
+msgstr "Εμπλουτισμός"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -4764,7 +4764,7 @@ msgstr "Πρέπει να παρασχεθεί ακριβώς ένα από τα
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Excel & Spreadsheets"
-msgstr ""
+msgstr "Excel και υπολογιστικά φύλλα"
 
 #. js-lingui-id: CrwP9A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -4837,7 +4837,7 @@ msgstr "Απέτυχε"
 #. js-lingui-id: MIra1S
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Failed to add people to the list."
-msgstr ""
+msgstr "Αποτυχία προσθήκης ατόμων στη λίστα."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -5544,19 +5544,19 @@ msgstr "Το front component δεν βρέθηκε."
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability can only restrict record pages to objects"
-msgstr ""
+msgstr "Η διαθεσιμότητα widget στοιχείου front μπορεί να περιορίσει σελίδες εγγραφών μόνο σε αντικείμενα"
 
 #. js-lingui-id: oDd+6Z
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability has an unsupported page layout type: supported values are {supportedPageLayoutTypes}, received {receivedPageLayoutType}"
-msgstr ""
+msgstr "Η διαθεσιμότητα widget στοιχείου front έχει μη υποστηριζόμενο τύπο διάταξης σελίδας: οι υποστηριζόμενες τιμές είναι {supportedPageLayoutTypes}, ελήφθη {receivedPageLayoutType}"
 
 #. js-lingui-id: fSB/iY
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 #: src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util.ts
 msgid "Front component widget availability references an unknown object"
-msgstr ""
+msgstr "Η διαθεσιμότητα widget στοιχείου front αναφέρεται σε άγνωστο αντικείμενο"
 
 #. js-lingui-id: 4wM9Cs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -5738,7 +5738,7 @@ msgstr "Μετάβαση στις ρυθμίσεις μοντέλου δεδομ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Developers Settings"
-msgstr ""
+msgstr "Μετάβαση στις ρυθμίσεις προγραμματιστών"
 
 #. js-lingui-id: OLopIl
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6181,7 +6181,7 @@ msgstr "Δόθηκε μη έγκυρο όρισμα."
 #. js-lingui-id: Qg2gi/
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Invalid attendee email addresses: {invalidAttendeeList}"
-msgstr ""
+msgstr "Μη έγκυρες διευθύνσεις email συμμετεχόντων: {invalidAttendeeList}"
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -6324,7 +6324,7 @@ msgstr "Μη έγκυρη διεύθυνση email."
 #. js-lingui-id: e2K52e
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Invalid email addresses: {invalidEmailList}"
-msgstr ""
+msgstr "Μη έγκυρες διευθύνσεις email: {invalidEmailList}"
 
 #. js-lingui-id: Lq9KTr
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -6522,7 +6522,7 @@ msgstr "Η τιμή λεπτού δεν είναι έγκυρη. Πρέπει ν
 #. js-lingui-id: dxo2BJ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Invalid morph relation field"
-msgstr ""
+msgstr "Μη έγκυρο πεδίο σχέσης μορφής"
 
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -6650,7 +6650,7 @@ msgstr "Μη έγκυρες βαθμίδες τιμολόγησης."
 #. js-lingui-id: QaON/M
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Invalid recipients"
-msgstr ""
+msgstr "Μη έγκυροι παραλήπτες"
 
 #. js-lingui-id: XBYAgs
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -7008,7 +7008,7 @@ msgstr "Μη έγκυρη έκδοση ροής εργασίας."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Invitation not found"
-msgstr ""
+msgstr "Η πρόσκληση δεν βρέθηκε"
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -7472,7 +7472,7 @@ msgstr "Ταυτότητα συνδεδεμένης εγγραφής"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Linked to"
-msgstr ""
+msgstr "Συνδεδεμένο με"
 
 #. js-lingui-id: z+srLp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -7748,7 +7748,7 @@ msgstr "Συνάντηση"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Meeting Prep"
-msgstr ""
+msgstr "Προετοιμασία συνάντησης"
 
 #. js-lingui-id: BV/hGy
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -8173,7 +8173,7 @@ msgstr "Μηνύματα που στάλθηκαν ως μέρος αυτής τ
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Metadata Building"
-msgstr ""
+msgstr "Δημιουργία μεταδεδομένων"
 
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -8446,7 +8446,7 @@ msgstr ""
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "New workspace setup is disabled"
-msgstr ""
+msgstr "Η ρύθμιση νέου χώρου εργασίας είναι απενεργοποιημένη"
 
 #. js-lingui-id: 1UzENP
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -8461,7 +8461,7 @@ msgstr "Δεν έχει διαμορφωθεί μοντέλο ταξινόμησ
 #. js-lingui-id: stulJR
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "No connected account found for id \"{connectedAccountId}\""
-msgstr ""
+msgstr "Δεν βρέθηκε συνδεδεμένος λογαριασμός για το αναγνωριστικό \"{connectedAccountId}\""
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8471,7 +8471,7 @@ msgstr "Δεν παρέχεται όνομα συμβάντος στο ερέθ�
 #. js-lingui-id: oRDTVp
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "No Google, Microsoft or CalDAV account with calendar sync is connected in this workspace"
-msgstr ""
+msgstr "Δεν είναι συνδεδεμένος σε αυτόν τον χώρο εργασίας λογαριασμός Google, Microsoft ή CalDAV με συγχρονισμό ημερολογίου"
 
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
@@ -8492,7 +8492,7 @@ msgstr "Δεν είναι συνδεδεμένο κανένα γραμματοκ
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
 msgid "No outbound domain configured for {handleDomain}. Verify it under Outbound Domains to send from {0}."
-msgstr ""
+msgstr "Δεν έχει διαμορφωθεί εξερχόμενος τομέας για το {handleDomain}. Επαληθεύστε τον στην ενότητα Εξερχόμενοι τομείς για αποστολή από το {0}."
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8517,7 +8517,7 @@ msgstr "Δεν βρέθηκε δήλωση προέλευσης (provenance atte
 #. js-lingui-id: MKc0pX
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "No recipients specified"
-msgstr ""
+msgstr "Δεν καθορίστηκαν παραλήπτες"
 
 #. js-lingui-id: NcwTz7
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
@@ -8567,7 +8567,7 @@ msgstr "Δεν βρέθηκε έγκυρο πλαίσιο ελέγχου ταυ�
 #. js-lingui-id: y+0jrr
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "No valid recipients specified"
-msgstr ""
+msgstr "Δεν καθορίστηκαν έγκυροι παραλήπτες"
 
 #. js-lingui-id: r+kse7
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8783,13 +8783,13 @@ msgstr "Αριθμός παραληπτών που παραλείφθηκαν χ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients who clicked a tracked link"
-msgstr ""
+msgstr "Αριθμός παραληπτών που έκαναν κλικ σε έναν παρακολουθούμενο σύνδεσμο"
 
 #. js-lingui-id: La2Frx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Number of recipients who opened the email"
-msgstr ""
+msgstr "Αριθμός παραληπτών που άνοιξαν το email"
 
 #. js-lingui-id: bgG8mY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9013,7 +9013,7 @@ msgstr "Ένα ή περισσότερα αιτηθέντα πεδία πρόσ�
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
-msgstr ""
+msgstr "Μόνο μια πρόχειρη ή προγραμματισμένη καμπάνια μπορεί να σταλεί."
 
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9080,7 +9080,7 @@ msgstr "Μόνο οι τιμές αυτής της φόρμας μπορούν �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Open rate"
-msgstr ""
+msgstr "Ποσοστό ανοίγματος"
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -9548,7 +9548,7 @@ msgstr "Το payload πρέπει να περιέχει μια διαδρομή"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "PDF Processing"
-msgstr ""
+msgstr "Επεξεργασία PDF"
 
 #. js-lingui-id: +1y7ep
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -9583,7 +9583,7 @@ msgstr "Άνθρωποι"
 #. js-lingui-id: KoFgbR
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "People are already being added to this list. Please wait for it to finish."
-msgstr ""
+msgstr "Γίνεται ήδη προσθήκη ατόμων σε αυτήν τη λίστα. Περιμένετε να ολοκληρωθεί."
 
 #. js-lingui-id: nAcEw6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
@@ -9773,7 +9773,7 @@ msgstr "Τηλέφωνα"
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Pick a list in the To field first."
-msgstr ""
+msgstr "Επιλέξτε πρώτα μια λίστα στο πεδίο Προς."
 
 #. js-lingui-id: T1yaeQ
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -9919,7 +9919,7 @@ msgstr "Η θέση πρέπει να είναι πεπερασμένος αρι
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "PowerPoint"
-msgstr ""
+msgstr "PowerPoint"
 
 #. js-lingui-id: YzUxdC
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -10126,7 +10126,7 @@ msgstr "Η διεύθυνση URL του δημόσιου domain δεν έχει
 #. js-lingui-id: 9jW/sT
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Public invite link is disabled for this workspace"
-msgstr ""
+msgstr "Ο δημόσιος σύνδεσμος πρόσκλησης είναι απενεργοποιημένος για αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: vVCf2E
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -10147,13 +10147,13 @@ msgstr "Το ερώτημα έληξε λόγω χρονικού ορίου. Δ�
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
 msgid "Quick Lead"
-msgstr ""
+msgstr "Γρήγορος υποψήφιος πελάτης"
 
 #. js-lingui-id: 95FPf3
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Quick Lead"
-msgstr ""
+msgstr "Γρήγορος υποψήφιος πελάτης"
 
 #. js-lingui-id: V8OqY4
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10403,7 +10403,7 @@ msgstr "Απορρίφθηκε στις"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Related record"
-msgstr ""
+msgstr "Σχετική εγγραφή"
 
 #. js-lingui-id: 2dNwZB
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -10414,7 +10414,7 @@ msgstr "Η σχετική εγγραφή δεν βρέθηκε."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Related to"
-msgstr ""
+msgstr "Σχετίζεται με"
 
 #. js-lingui-id: 9LL5PC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -10464,7 +10464,7 @@ msgstr "Η σχέση δεν είναι ενεργοποιημένη για αυ
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Relation type cannot be changed"
-msgstr ""
+msgstr "Ο τύπος σχέσης δεν μπορεί να αλλάξει"
 
 #. js-lingui-id: g87L9j
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11436,13 +11436,13 @@ msgstr "Κοινή χρήση {objectLabelSingular}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Share of delivered recipients who clicked a tracked link"
-msgstr ""
+msgstr "Ποσοστό παραδομένων παραληπτών που έκαναν κλικ σε έναν παρακολουθούμενο σύνδεσμο"
 
 #. js-lingui-id: oXf7ic
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Share of delivered recipients who opened the email, excluding Apple Mail privacy opens"
-msgstr ""
+msgstr "Ποσοστό παραδομένων παραληπτών που άνοιξαν το email, εξαιρουμένων των ανοιγμάτων απορρήτου του Apple Mail"
 
 #. js-lingui-id: FiE0YS
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -11824,12 +11824,12 @@ msgstr "Ξεκίνησε στις"
 #. js-lingui-id: FnZ04g
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "startsAt and endsAt must be ISO 8601 date-times with an offset (e.g. 2026-07-01T15:00:00Z)"
-msgstr ""
+msgstr "τα startsAt και endsAt πρέπει να είναι ημερομηνίες-ώρες ISO 8601 με μετατόπιση (π.χ. 2026-07-01T15:00:00Z)"
 
 #. js-lingui-id: SHoyyV
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "startsAt and endsAt must be valid ISO 8601 dates"
-msgstr ""
+msgstr "τα startsAt και endsAt πρέπει να είναι έγκυρες ημερομηνίες ISO 8601"
 
 #. js-lingui-id: j0P/LV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -12467,7 +12467,7 @@ msgstr "Τα συνολικά ετήσια έσοδα της εταιρείας"
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The connected {0} account is missing calendar permissions ({missingScopeList}). Please reconnect the account to grant calendar access."
-msgstr ""
+msgstr "Ο συνδεδεμένος λογαριασμός {0} δεν διαθέτει δικαιώματα ημερολογίου ({missingScopeList}). Επανασυνδέστε τον λογαριασμό για να παραχωρήσετε πρόσβαση στο ημερολόγιο."
 
 #. js-lingui-id: j6q6l+
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12554,7 +12554,7 @@ msgstr "Ο τομέας δεν ταιριάζει με τον τομέα του 
 #. js-lingui-id: usKG5/
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The email content is invalid."
-msgstr ""
+msgstr "Το περιεχόμενο του email δεν είναι έγκυρο."
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -12679,7 +12679,7 @@ msgstr "Η λίστα στην οποία στάλθηκε αυτή η καμπ�
 #. js-lingui-id: gU/AgL
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that identifies the connected account was not found."
-msgstr ""
+msgstr "Η λογική συνάρτηση που αναγνωρίζει τον συνδεδεμένο λογαριασμό δεν βρέθηκε."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -12785,7 +12785,7 @@ msgstr "Το άτομο στη λίστα"
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The provided connectedAccountId is not a valid UUID"
-msgstr ""
+msgstr "Το παρεχόμενο connectedAccountId δεν είναι έγκυρο UUID"
 
 #. js-lingui-id: tl8xOZ
 #: src/utils/get-domain-from-email-or-throw.ts
@@ -12847,7 +12847,7 @@ msgstr "Η ίδια στήλη δεν μπορεί να εμφανιστεί δ�
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
-msgstr ""
+msgstr "Το επιλεγμένο μοντέλο έχει απενεργοποιηθεί από τον διαχειριστή."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13204,7 +13204,7 @@ msgstr "Το περιεχόμενο του email αυτής της καμπάν�
 #. js-lingui-id: PZ3F8W
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
-msgstr ""
+msgstr "Η λίστα αυτής της καμπάνιας βρίσκεται στον κάδο απορριμμάτων. Επαναφέρετέ την ή επιλέξτε άλλη λίστα στο πεδίο Προς."
 
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
@@ -13314,7 +13314,7 @@ msgstr "Αυτό το πεδίο δεν ανήκει στο αντικείμεν
 #. js-lingui-id: 5/uEMT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
-msgstr ""
+msgstr "Αυτό το πεδίο δεν έχει στήλη βάσης δεδομένων για δημιουργία ευρετηρίου."
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -13511,7 +13511,7 @@ msgstr "Αυτό το δικαίωμα έχει ήδη οριστεί για τ�
 #. js-lingui-id: wJWFt2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This plan is not available."
-msgstr ""
+msgstr "Αυτό το πρόγραμμα δεν είναι διαθέσιμο."
 
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -14011,7 +14011,7 @@ msgstr "Υπάρχει ήδη τύπος δραστηριότητας χρονο
 #. js-lingui-id: zwBOko
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "timeZone \"{timeZone}\" is not a valid IANA time zone"
-msgstr ""
+msgstr "το timeZone \"{timeZone}\" δεν είναι έγκυρη ζώνη ώρας IANA"
 
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -14051,17 +14051,17 @@ msgstr "Βρέθηκαν υπερβολικά πολλοί υποψήφιοι δ
 #. js-lingui-id: wA9Ol8
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
-msgstr ""
+msgstr "Πάρα πολλοί συμμετέχοντες: {attendeeCount}. Το μέγιστο επιτρεπόμενο είναι {MAX_EMAIL_RECIPIENTS}."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
-msgstr ""
+msgstr "Επιλέχθηκαν πάρα πολλά άτομα. Περιορίστε την επιλογή σας και δοκιμάστε ξανά."
 
 #. js-lingui-id: JS61oF
 #: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
-msgstr ""
+msgstr "Πάρα πολλοί παραλήπτες: {total}. Το μέγιστο επιτρεπόμενο είναι {MAX_EMAIL_RECIPIENTS}."
 
 #. js-lingui-id: qSInGy
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -14339,7 +14339,7 @@ msgstr "Καταργήστε την ανάθεση από τον εαυτό σα
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unique clicks"
-msgstr ""
+msgstr "Μοναδικά κλικ"
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -14351,7 +14351,7 @@ msgstr "Μοναδικό ευρετήριο δεν μπορεί να δημιο�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unique opens"
-msgstr ""
+msgstr "Μοναδικά ανοίγματα"
 
 #. js-lingui-id: lIud+S
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
@@ -14649,98 +14649,98 @@ msgstr "Χρήση ως πρόχειρο"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use before a call or a meeting, and whenever the user asks who am I talking to, brief me on this account, or what do I need to know before this conversation"
-msgstr ""
+msgstr "Χρησιμοποιήστε το πριν από μια κλήση ή συνάντηση και όποτε ο χρήστης ρωτά με ποιον μιλάω, ενημέρωσέ με για αυτόν τον λογαριασμό ή τι πρέπει να γνωρίζω πριν από αυτήν τη συζήτηση"
 
 #. js-lingui-id: 1xu5KC
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes"
-msgstr ""
+msgstr "Χρησιμοποιήστε το για Python σε δεδομένα που τα εργαλεία εγγραφών δεν μπορούν να εκφράσουν: στατιστικά, εικόνες γραφημάτων, ανάλυση ενός μεταφορτωμένου αρχείου. Μην το χρησιμοποιείτε για συνηθισμένες αναγνώσεις και εγγραφές εγγραφών"
 
 #. js-lingui-id: Gltw+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use only when explicitly asked to fill a workspace with demonstration data for a given industry"
-msgstr ""
+msgstr "Χρησιμοποιήστε το μόνο όταν ζητηθεί ρητά να γεμίσετε έναν χώρο εργασίας με δεδομένα επίδειξης για έναν συγκεκριμένο κλάδο"
 
 #. js-lingui-id: T/utz5
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when creating or changing a view of any type, table, kanban or calendar, including the columns, filters, sorts and grouping on it"
-msgstr ""
+msgstr "Χρησιμοποιήστε το κατά τη δημιουργία ή την αλλαγή μιας προβολής οποιουδήποτε τύπου, πίνακα, kanban ή ημερολογίου, συμπεριλαμβανομένων των στηλών, φίλτρων, ταξινομήσεων και ομαδοποίησης σε αυτήν"
 
 #. js-lingui-id: es1BEL
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when finding, filtering, creating, updating or importing records, and whenever a request needs sorting or touches more than a handful of rows"
-msgstr ""
+msgstr "Χρησιμοποιήστε το κατά την εύρεση, φιλτράρισμα, δημιουργία, ενημέρωση ή εισαγωγή εγγραφών και όποτε ένα αίτημα χρειάζεται ταξινόμηση ή αφορά περισσότερες από λίγες γραμμές"
 
 #. js-lingui-id: yF5Jjw
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the data model itself changes: adding or editing objects, fields, relations or select options"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όταν αλλάζει το ίδιο το μοντέλο δεδομένων: προσθήκη ή επεξεργασία αντικειμένων, πεδίων, σχέσεων ή επιλογών επιλογής"
 
 #. js-lingui-id: ZoynaS
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks for a dashboard, a chart, a metric tile or a report page, or wants to change one that exists"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όταν ο χρήστης ζητά έναν πίνακα ελέγχου, ένα γράφημα, ένα πλακίδιο μετρικής ή μια σελίδα αναφοράς ή θέλει να αλλάξει κάποιο που υπάρχει"
 
 #. js-lingui-id: 14JLXH
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks how a deal is doing, which deals are at risk, what is stuck or going quiet, or asks for a pipeline review"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όταν ο χρήστης ρωτά πώς πάει μια συμφωνία, ποιες συμφωνίες διατρέχουν κίνδυνο, τι έχει κολλήσει ή τι έχει σταματήσει να κινείται ή ζητά ανασκόπηση διοχέτευσης"
 
 #. js-lingui-id: VoJon8
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks to clean up the CRM, find duplicates, fill in missing fields, or asks why the data is messy or which records are stale"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όταν ο χρήστης ζητά να καθαρίσει το CRM, να βρει διπλότυπα, να συμπληρώσει πεδία που λείπουν ή ρωτά γιατί τα δεδομένα είναι ακατάστατα ή ποιες εγγραφές είναι παρωχημένες"
 
 #. js-lingui-id: TdQ+kX
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks to research or enrich a company or a person, fill in what the CRM does not know about them, or find out what a company actually does"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όταν ο χρήστης ζητά να ερευνήσει ή να εμπλουτίσει μια εταιρεία ή ένα άτομο, να συμπληρώσει όσα δεν γνωρίζει το CRM για αυτά ή να μάθει με τι ασχολείται πραγματικά μια εταιρεία"
 
 #. js-lingui-id: WXgRGD
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user asks who can see or change what: creating a role, editing permissions, or assigning a role to someone"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όταν ο χρήστης ρωτά ποιος μπορεί να δει ή να αλλάξει τι: δημιουργία ρόλου, επεξεργασία δικαιωμάτων ή ανάθεση ρόλου σε κάποιον"
 
 #. js-lingui-id: 3TOTWi
 #: src/engine/metadata-modules/skill/__tests__/skill.resolver.spec.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όταν ο χρήστης θέλει να συμβεί κάτι αυτόματα: δημιουργία, αλλαγή, αποσφαλμάτωση ή διαγραφή μιας ροής εργασίας ή διατύπωση ενός κανόνα ως όταν συμβαίνει το X κάνε το Y"
 
 #. js-lingui-id: cNoloc
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a PDF is involved: reading text or tables, filling a form, creating, merging or splitting one"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όποτε εμπλέκεται ένα PDF: ανάγνωση κειμένου ή πινάκων, συμπλήρωση φόρμας, δημιουργία, συγχώνευση ή διαχωρισμός ενός PDF"
 
 #. js-lingui-id: Tg2sTr
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a PowerPoint deck is the input or the output, including slides, templates, tables and charts"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όποτε μια παρουσίαση PowerPoint είναι η είσοδος ή η έξοδος, συμπεριλαμβανομένων διαφανειών, προτύπων, πινάκων και γραφημάτων"
 
 #. js-lingui-id: +4MBeN
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a spreadsheet is the input or the output, including formulas, formatting, charts and CSV conversion"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όποτε ένα υπολογιστικό φύλλο είναι η είσοδος ή η έξοδος, συμπεριλαμβανομένων τύπων, μορφοποίησης, γραφημάτων και μετατροπής CSV"
 
 #. js-lingui-id: AKcj8j
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.description"
 msgid "Use whenever a Word document is the input or the output, including templates, styles and tracked changes"
-msgstr ""
+msgstr "Χρησιμοποιήστε το όποτε ένα έγγραφο Word είναι η είσοδος ή η έξοδος, συμπεριλαμβανομένων προτύπων, στυλ και παρακολουθούμενων αλλαγών"
 
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -14910,7 +14910,7 @@ msgstr "Δεν είναι δυνατή η προσθήκη κανόνων επι
 #. js-lingui-id: HtS2Mw
 #: src/engine/metadata-modules/validation-rule/validation-rule.exception.ts
 msgid "Validation rules require the Organization plan."
-msgstr ""
+msgstr "Οι κανόνες επικύρωσης απαιτούν το πρόγραμμα Organization."
 
 #. js-lingui-id: sFN4Dx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -15002,7 +15002,7 @@ msgstr "Η προβολή ήδη υπάρχει"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "View Building"
-msgstr ""
+msgstr "Δημιουργία προβολών"
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -15392,7 +15392,7 @@ msgstr "Αντιμετωπίζουμε προσωρινό πρόβλημα με 
 #. js-lingui-id: SO+/3j
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
-msgstr ""
+msgstr "Δεν μπορέσαμε να αναγνωρίσουμε τον λογαριασμό που εξουσιοδοτήσατε. Δοκιμάστε ξανά."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -15635,7 +15635,7 @@ msgstr "Οι προβολές γραφικού στοιχείου πρέπει �
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Word Documents"
-msgstr ""
+msgstr "Έγγραφα Word"
 
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -15697,7 +15697,7 @@ msgstr "Αυτοματοποιημένοι ενεργοποιητές ροής �
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Workflow Building"
-msgstr ""
+msgstr "Δημιουργία ροής εργασίας"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
@@ -15713,7 +15713,7 @@ msgstr "Η ακμή ροής εργασίας δεν βρέθηκε."
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow is being updated, please retry"
-msgstr ""
+msgstr "Η ροή εργασίας ενημερώνεται, προσπαθήστε ξανά"
 
 #. js-lingui-id: Dpef1i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -16044,7 +16044,7 @@ msgstr "Η δημιουργία χώρου εργασίας περιορίζετ
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Workspace Demo Seeding"
-msgstr ""
+msgstr "Σπορά δεδομένων επίδειξης χώρου εργασίας"
 
 #. js-lingui-id: qSQPRS
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -16291,7 +16291,7 @@ msgstr "Δεν θα έφτανε εδώ"
 #. js-lingui-id: +V7jiw
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Write the email content first."
-msgstr ""
+msgstr "Γράψτε πρώτα το περιεχόμενο του email."
 
 #. js-lingui-id: yxN9Xx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16338,7 +16338,7 @@ msgstr "Δεν διαθέτετε την απαιτούμενη εξουσιοδ
 #. js-lingui-id: lmqslv
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "You authorized a different account than the one this connection belongs to."
-msgstr ""
+msgstr "Εξουσιοδοτήσατε διαφορετικό λογαριασμό από εκείνον στον οποίο ανήκει αυτή η σύνδεση."
 
 #. js-lingui-id: f0N+mi
 #: src/engine/core-modules/workspace/workspace.exception.ts

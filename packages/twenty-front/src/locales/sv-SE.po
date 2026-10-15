@@ -7811,7 +7811,7 @@ msgstr "Datum"
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
 msgid "Date and Time"
-msgstr ""
+msgstr "Datum och tid"
 
 #. js-lingui-id: QIIAIQ
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
@@ -8046,7 +8046,7 @@ msgstr "Definiera vad som ska vara synligt för andra användare i din arbetsyta
 #. js-lingui-id: YeWQto
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/DelayAction.ts
 msgid "Delay"
-msgstr ""
+msgstr "Fördröjning"
 
 #. js-lingui-id: EcAkBs
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -8589,7 +8589,7 @@ msgstr "Utvecklare"
 #. js-lingui-id: dSd6CG
 #: src/utils/title-utils.ts
 msgid "Developers - Settings"
-msgstr ""
+msgstr "Utvecklare - Inställningar"
 
 #. js-lingui-id: b9bH06
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -8919,7 +8919,7 @@ msgstr "Ladda ner fil"
 #. js-lingui-id: cr4Lz4
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Download files"
-msgstr ""
+msgstr "Ladda ner filer"
 
 #. js-lingui-id: IDPv1P
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -9003,7 +9003,7 @@ msgstr ""
 #. js-lingui-id: uMA2sb
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "Duplicate email addresses"
-msgstr ""
+msgstr "Duplicerade e-postadresser"
 
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -9207,7 +9207,7 @@ msgstr "Redigera fält"
 #. js-lingui-id: JxG4b4
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Edit form"
-msgstr ""
+msgstr "Redigera formulär"
 
 #. js-lingui-id: JTcEch
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
@@ -9274,7 +9274,7 @@ msgstr ""
 #. js-lingui-id: 49lAth
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Edit profile information"
-msgstr ""
+msgstr "Redigera profilinformation"
 
 #. js-lingui-id: 19vPbj
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
@@ -9468,7 +9468,7 @@ msgstr "Delning av e-post"
 #. js-lingui-id: dFNND7
 #: src/modules/side-panel/hooks/useOpenEmailPageStyleInSidePanel.ts
 msgid "Email style"
-msgstr ""
+msgstr "E-poststil"
 
 #. js-lingui-id: jvneza
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -9849,7 +9849,7 @@ msgstr "Ange CC-e-postadresser, separerade med kommatecken"
 #. js-lingui-id: FSFabs
 #: src/modules/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText.ts
 msgid "Enter date"
-msgstr ""
+msgstr "Ange datum"
 
 #. js-lingui-id: MJoxIi
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -9916,7 +9916,7 @@ msgstr "Ange Message-ID att svara på"
 #. js-lingui-id: 5L6L8T
 #: src/modules/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText.ts
 msgid "Enter number"
-msgstr ""
+msgstr "Ange nummer"
 
 #. js-lingui-id: O0qPMN
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -10031,7 +10031,7 @@ msgstr "Ange värde"
 #. js-lingui-id: hY7Lb3
 #: src/modules/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText.ts
 msgid "Enter value for {fieldLabel}"
-msgstr ""
+msgstr "Ange värde för {fieldLabel}"
 
 #. js-lingui-id: UX/3E/
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput.tsx
@@ -10041,7 +10041,7 @@ msgstr "Ange värden, separerade med kommatecken"
 #. js-lingui-id: EgRpNk
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 msgid "Enter your text"
-msgstr ""
+msgstr "Ange din text"
 
 #. js-lingui-id: GDMzJS
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -10062,12 +10062,12 @@ msgstr "Enhets-ID kopierat till urklipp"
 #. js-lingui-id: Valds7
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "EntityDescriptor element is missing"
-msgstr ""
+msgstr "Elementet EntityDescriptor saknas"
 
 #. js-lingui-id: AAHpAf
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "entityID is not a valid URL"
-msgstr ""
+msgstr "entityID är inte en giltig URL"
 
 #. js-lingui-id: /qwiJU
 #. placeholder {0}: entries.length
@@ -10607,12 +10607,12 @@ msgstr "Exportera CSV"
 #. js-lingui-id: e2LsfZ
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Export CSV files"
-msgstr ""
+msgstr "Exportera CSV-filer"
 
 #. js-lingui-id: VbX676
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Expose each relation to several objects as one field with a stable id."
-msgstr ""
+msgstr "Exponera varje relation till flera objekt som ett fält med ett stabilt id."
 
 #. js-lingui-id: leUV74
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection.tsx
@@ -10633,32 +10633,32 @@ msgstr "Uttryck"
 #. js-lingui-id: ntVDJy
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Expression did not return true or false"
-msgstr ""
+msgstr "Uttrycket returnerade inte sant eller falskt"
 
 #. js-lingui-id: ZRQfpa
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Expression is empty"
-msgstr ""
+msgstr "Uttrycket är tomt"
 
 #. js-lingui-id: mthZyM
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Expression is incomplete"
-msgstr ""
+msgstr "Uttrycket är ofullständigt"
 
 #. js-lingui-id: 9HQ967
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Expression is longer than {maxLength} characters"
-msgstr ""
+msgstr "Uttrycket är längre än {maxLength} tecken"
 
 #. js-lingui-id: aW/VQS
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Expression is not valid"
-msgstr ""
+msgstr "Uttrycket är inte giltigt"
 
 #. js-lingui-id: vWD5pX
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "External Event ID"
-msgstr ""
+msgstr "Externt händelse-ID"
 
 #. js-lingui-id: 4NR4Ja
 #: src/modules/ai/utils/getAiModelTierLabel.ts
@@ -10720,7 +10720,7 @@ msgstr "Det gick inte att lägga till modellen"
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
 msgid "Failed to add people to the list. Please try again."
-msgstr ""
+msgstr "Det gick inte att lägga till personer i listan. Försök igen."
 
 #. js-lingui-id: gU+vGA
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -11375,7 +11375,7 @@ msgstr ""
 #. js-lingui-id: ZLG0oh
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "File is not valid XML"
-msgstr ""
+msgstr "Filen är inte giltig XML"
 
 #. js-lingui-id: N793lP
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -11446,7 +11446,7 @@ msgstr "Filtrera"
 #. js-lingui-id: q5TuAU
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Filter applications"
-msgstr ""
+msgstr "Filtrera applikationer"
 
 #. js-lingui-id: LjNPDA
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
@@ -11574,7 +11574,7 @@ msgstr "Första"
 #. js-lingui-id: Kszm8Q
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "First {objectLabelSingular}"
-msgstr ""
+msgstr "Första {objectLabelSingular}"
 
 #. js-lingui-id: ZyIk6Y
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -11887,7 +11887,7 @@ msgstr "Fullständigt namn"
 #: src/modules/settings/data-model/constants/SettingsCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
 msgid "Full Name"
-msgstr ""
+msgstr "Fullständigt namn"
 
 #. js-lingui-id: i9zh9T
 #: src/modules/navigation/constants/OpenRecordInOptions.ts
@@ -12121,7 +12121,7 @@ msgstr "Gå tillbaka"
 #. js-lingui-id: Zbxovm
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsSidePanel.ts
 msgid "Go back when search is empty"
-msgstr ""
+msgstr "Gå tillbaka när sökningen är tom"
 
 #. js-lingui-id: LmLruJ
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
@@ -12359,17 +12359,17 @@ msgstr "Identifierare"
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
-msgstr ""
+msgstr "Har många"
 
 #. js-lingui-id: j4eGoe
 #: src/modules/workflow/workflow-variables/constants/WorkflowPersistedOutputSchemaLabels.ts
 msgid "Has Processed All Items"
-msgstr ""
+msgstr "Har bearbetat alla objekt"
 
 #. js-lingui-id: nBt4yz
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
 msgid "Has Timed Out"
-msgstr ""
+msgstr "Tidsgränsen har överskridits"
 
 #. js-lingui-id: Gpb1xF
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -12465,7 +12465,7 @@ msgstr "Hebrew"
 #. js-lingui-id: haUdlP
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
 msgid "hello, world"
-msgstr ""
+msgstr "hej, världen"
 
 #. js-lingui-id: CRzGla
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12516,7 +12516,7 @@ msgstr "Dölj {0}"
 #. js-lingui-id: ER1obD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Hide API values"
-msgstr ""
+msgstr "Dölj API-värden"
 
 #. js-lingui-id: MuEcPp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -12547,7 +12547,7 @@ msgstr "Dölj fält"
 #. js-lingui-id: /EYajH
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Hide fields"
-msgstr ""
+msgstr "Dölj fält"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
@@ -12568,7 +12568,7 @@ msgstr "Dölj etiketten"
 #. js-lingui-id: ukvVHc
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Hide logs"
-msgstr ""
+msgstr "Dölj loggar"
 
 #. js-lingui-id: y9sG4l
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -12583,7 +12583,7 @@ msgstr "Hög"
 #. js-lingui-id: xq2p7Z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Highlighted quotation"
-msgstr ""
+msgstr "Markerat citat"
 
 #. js-lingui-id: 1ETc0T
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -12842,7 +12842,7 @@ msgstr "Metadata XML för identitetsleverantör"
 #. js-lingui-id: 5Iw/up
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "IDPSSODescriptor element is missing"
-msgstr ""
+msgstr "Elementet IDPSSODescriptor saknas"
 
 #. js-lingui-id: vyLxYN
 #: src/modules/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel.ts
@@ -12877,12 +12877,12 @@ msgstr "Om du har tappat bort denna nyckel kan du återskapa den, men var medvet
 #. js-lingui-id: tMlNoP
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/IfElseAction.ts
 msgid "If/else"
-msgstr ""
+msgstr "Om/annars"
 
 #. js-lingui-id: x4Dk64
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "If/Else"
-msgstr ""
+msgstr "Om/annars"
 
 #. js-lingui-id: KDMdBi
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
@@ -12977,7 +12977,7 @@ msgstr "Agera som användare"
 #. js-lingui-id: JRtW05
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Impersonate workspace members"
-msgstr ""
+msgstr "Imitera arbetsytans medlemmar"
 
 #. js-lingui-id: n3ohBy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -13052,7 +13052,7 @@ msgstr "Importera CSV"
 #. js-lingui-id: mz2YIm
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Import CSV files"
-msgstr ""
+msgstr "Importera CSV-filer"
 
 #. js-lingui-id: CKnl/+
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalWrapper.tsx
@@ -13104,7 +13104,7 @@ msgstr "Inom {listName}"
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In the list"
-msgstr ""
+msgstr "I listan"
 
 #. js-lingui-id: hVockd
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -13164,7 +13164,7 @@ msgstr "Ofullständig och förfallen"
 #. js-lingui-id: 2zJCP1
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Incomplete Expired"
-msgstr ""
+msgstr "Ofullständig och förfallen"
 
 #. js-lingui-id: Xltrl0
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -13359,12 +13359,12 @@ msgstr "Installera den fjärranslutna MCP-servern i en VS Code-profil."
 #. js-lingui-id: 7HgEjW
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 msgid "Install this app on its owner workspace {ownerWorkspaceDisplayName} to enable its server routes"
-msgstr ""
+msgstr "Installera den här appen på dess ägares arbetsyta {ownerWorkspaceDisplayName} för att aktivera dess serverrutter"
 
 #. js-lingui-id: LeVr9T
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 msgid "Install this app on this workspace, its owner, to enable its server routes"
-msgstr ""
+msgstr "Installera den här appen på den här arbetsytan, dess ägare, för att aktivera dess serverrutter"
 
 #. js-lingui-id: Xry+oU
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
@@ -13861,7 +13861,7 @@ msgstr "Ansluter"
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
 msgid "JSON"
-msgstr ""
+msgstr "JSON"
 
 #. js-lingui-id: klrZv0
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -13935,12 +13935,12 @@ msgstr "Tangentbordsgenvägar"
 #. js-lingui-id: QJ5fiq
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "KeyDescriptor element is missing"
-msgstr ""
+msgstr "Elementet KeyDescriptor saknas"
 
 #. js-lingui-id: jXb7iO
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "KeyInfo element is missing"
-msgstr ""
+msgstr "Elementet KeyInfo saknas"
 
 #. js-lingui-id: nhxAdQ
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
@@ -14559,7 +14559,7 @@ msgstr "Länketikett"
 #. js-lingui-id: kzhFWB
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
 msgid "Link Label"
-msgstr ""
+msgstr "Länketikett"
 
 #. js-lingui-id: 8uujEK
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
@@ -14768,7 +14768,7 @@ msgstr "Laddar…"
 #. js-lingui-id: d5zxa4
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Local"
-msgstr ""
+msgstr "Lokal"
 
 #. js-lingui-id: 7VBQ2j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -14977,7 +14977,7 @@ msgstr ""
 #. js-lingui-id: sOv4bh
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Make HTTP requests to external services"
-msgstr ""
+msgstr "Gör HTTP-förfrågningar till externa tjänster"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -14990,7 +14990,7 @@ msgstr "Hantera"
 #. js-lingui-id: oAmlXS
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage API keys, webhooks, and apps"
-msgstr ""
+msgstr "Hantera API-nycklar, webhooks och appar"
 
 #. js-lingui-id: +nqVyF
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -15033,7 +15033,7 @@ msgstr "Hantera funktionsflaggor för den här arbetsytan"
 #. js-lingui-id: 4JpqYw
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Manage indexes"
-msgstr ""
+msgstr "Hantera index"
 
 #. js-lingui-id: BaAAPb
 #: src/modules/settings/billing/hooks/useManageUsageLimitsButton.tsx
@@ -15058,7 +15058,7 @@ msgstr "Hantera objekt, fält och relationer"
 #. js-lingui-id: ojppNn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Manage roles and permissions"
-msgstr ""
+msgstr "Hantera roller och behörigheter"
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -15068,7 +15068,7 @@ msgstr "Hantera säkerhetspolicyer"
 #. js-lingui-id: 36pD/j
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Manage security settings"
-msgstr ""
+msgstr "Hantera säkerhetsinställningar"
 
 #. js-lingui-id: 49MfD1
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -15083,7 +15083,7 @@ msgstr "Hantera marketplace-applikationskatalogen"
 #. js-lingui-id: vFOJ6L
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Manage the marketplace catalog"
-msgstr ""
+msgstr "Hantera marketplace-katalogen"
 
 #. js-lingui-id: N7fMy9
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -15108,7 +15108,7 @@ msgstr "Hantera avregistrerade, ämnen för avanmälan och sidan som mottagarna 
 #. js-lingui-id: uF/yli
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Manage views"
-msgstr ""
+msgstr "Hantera vyer"
 
 #. js-lingui-id: /berfj
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -15124,12 +15124,12 @@ msgstr "Hantera arbetsflöden"
 #. js-lingui-id: J+c0BR
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Manage workspace members"
-msgstr ""
+msgstr "Hantera arbetsytans medlemmar"
 
 #. js-lingui-id: zr81mu
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Manage workspace preferences"
-msgstr ""
+msgstr "Hantera arbetsytans inställningar"
 
 #. js-lingui-id: FyFNsd
 #: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
@@ -15164,7 +15164,7 @@ msgstr "Manuell konfiguration"
 #. js-lingui-id: FD1NX6
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "Manual trigger"
-msgstr ""
+msgstr "Manuell utlösare"
 
 #. js-lingui-id: ospBFm
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
@@ -15179,7 +15179,7 @@ msgstr "Marginal"
 #. js-lingui-id: yYix7P
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral.ts
 msgid "Mark as favourite"
-msgstr ""
+msgstr "Markera som favorit"
 
 #. js-lingui-id: fI1Tll
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
@@ -15189,7 +15189,7 @@ msgstr "Markera den här appen som granskad och godkänd"
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
 msgid "Markdown"
-msgstr ""
+msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
@@ -15238,7 +15238,7 @@ msgstr "Maximal importkapacitet: {formatSpreadsheetMaxRecordImportCapacity} post
 #. js-lingui-id: LUlR6K
 #: src/modules/sign-in-background-mock/components/BackgroundMockTable.tsx
 msgid "Max of Employees"
-msgstr ""
+msgstr "Max antal anställda"
 
 #. js-lingui-id: S8w4XA
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -15434,7 +15434,7 @@ msgstr "Meddelande ej hittat"
 #. js-lingui-id: WBqqHH
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Message record ID"
-msgstr ""
+msgstr "ID för meddelandepost"
 
 #. js-lingui-id: elpx6r
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
@@ -15454,12 +15454,12 @@ msgstr "Meddelandesynkronisering är inte tillgänglig eftersom tjänsten är ne
 #. js-lingui-id: dOX4yF
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Message thread ID"
-msgstr ""
+msgstr "Meddelandetråd-ID"
 
 #. js-lingui-id: qqt1WI
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Message-ID header"
-msgstr ""
+msgstr "Message-ID-rubrik"
 
 #. js-lingui-id: t7TeQU
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -15731,7 +15731,7 @@ msgstr "Fler åtgärder"
 #. js-lingui-id: TzzH0D
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions.ts
 msgid "More advanced fields for advanced projects"
-msgstr ""
+msgstr "Fler avancerade fält för avancerade projekt"
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
@@ -15769,12 +15769,12 @@ msgstr "Fler widgetar"
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
 msgid "Morph Relation"
-msgstr ""
+msgstr "Morph-relation"
 
 #. js-lingui-id: IgnC+t
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Morph relation heads"
-msgstr ""
+msgstr "Morph-relationshuvuden"
 
 #. js-lingui-id: SOHptZ
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -15816,7 +15816,7 @@ msgstr "Flytta åt höger"
 #. js-lingui-id: /QJE1J
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsSidePanel.ts
 msgid "Move through list items"
-msgstr ""
+msgstr "Flytta genom listobjekt"
 
 #. js-lingui-id: TH+XKl
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
@@ -15832,12 +15832,12 @@ msgstr "Flytta till mapp"
 #. js-lingui-id: HV6Nkp
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Move to the new {planLabel} plan"
-msgstr ""
+msgstr "Byt till den nya planen {planLabel}"
 
 #. js-lingui-id: HWI+M8
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Move to the new {planLabel} plan?"
-msgstr ""
+msgstr "Byta till den nya planen {planLabel}?"
 
 #. js-lingui-id: QyioBP
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
@@ -15868,13 +15868,13 @@ msgstr "millisekunder"
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
 msgid "Multi-select"
-msgstr ""
+msgstr "Flerval"
 
 #. js-lingui-id: aVoVcG
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions.ts
 msgid "Multi-Select"
-msgstr ""
+msgstr "Flerval"
 
 #. js-lingui-id: cT1jbf
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
@@ -16001,7 +16001,7 @@ msgstr "Namn och beskrivning"
 #. js-lingui-id: VVSh3E
 #: src/modules/object-metadata/utils/metadataLabelErrorMessages.ts
 msgid "Name cannot be empty."
-msgstr ""
+msgstr "Namnet får inte vara tomt."
 
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -16022,7 +16022,7 @@ msgstr "Namn på ditt arbetsområde"
 #. js-lingui-id: lxgzPN
 #: src/modules/object-metadata/utils/metadataLabelErrorMessages.ts
 msgid "Name should start with a letter."
-msgstr ""
+msgstr "Namnet måste börja med en bokstav."
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -16362,7 +16362,7 @@ msgstr "Nästa chatt"
 #. js-lingui-id: F/RdYr
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Next invoice {totalRenewDate}. Invoice amount may vary if you add members or credits between periods"
-msgstr ""
+msgstr "Nästa faktura {totalRenewDate}. Fakturabeloppet kan variera om du lägger till medlemmar eller krediter mellan perioderna"
 
 #. js-lingui-id: LTn6w8
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -16519,12 +16519,12 @@ msgstr "Ingen applikation hittades. Om du precis har publicerat den på npm med 
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "No application matches your search"
-msgstr ""
+msgstr "Ingen applikation matchar din sökning"
 
 #. js-lingui-id: 8WjmOc
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "No applications available yet"
-msgstr ""
+msgstr "Inga applikationer tillgängliga ännu"
 
 #. js-lingui-id: pfRh+M
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -16887,7 +16887,7 @@ msgstr "Inga anteckningar"
 #. js-lingui-id: rGtOQu
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "No one on this list can receive this campaign."
-msgstr ""
+msgstr "Ingen i den här listan kan ta emot den här kampanjen."
 
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -17071,7 +17071,7 @@ msgstr "Inga serveradministratörer hittades."
 #. js-lingui-id: XC3Be5
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "No SingleSignOnService with HTTP-Redirect or HTTP-POST binding was found"
-msgstr ""
+msgstr "Ingen SingleSignOnService med HTTP-Redirect- eller HTTP-POST-bindning hittades"
 
 #. js-lingui-id: b5hW1u
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -17363,7 +17363,7 @@ msgstr "Inte tom"
 #. js-lingui-id: F+z8z/
 #: src/modules/sign-in-background-mock/components/BackgroundMockTable.tsx
 msgid "Not empty of Address"
-msgstr ""
+msgstr "Inte tomt för adress"
 
 #. js-lingui-id: pAtylB
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
@@ -17393,7 +17393,7 @@ msgstr "Ännu inte uppmätt vid denna ansträngningsnivå. Visar basmodellens v�
 #. js-lingui-id: cURAbX
 #: src/modules/workflow/workflow-trigger/constants/ManualTriggerIsPinnedOptions.ts
 msgid "Not Pinned"
-msgstr ""
+msgstr "Inte fäst"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -17451,7 +17451,7 @@ msgstr "Inte synkroniserad"
 #. js-lingui-id: 2QZy/z
 #: src/modules/object-core/components/CoreObjectSystemFilterChip.tsx
 msgid "Not system"
-msgstr ""
+msgstr "Inte system"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -17497,7 +17497,7 @@ msgstr "nu"
 #. js-lingui-id: TbACTY
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
 msgid "npm i confidence"
-msgstr ""
+msgstr "npm i confidence"
 
 #. js-lingui-id: OduKuG
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -17804,7 +17804,7 @@ msgstr "Introduktionsbelöning"
 #. js-lingui-id: 6oNv52
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 msgid "Once claimed, install this app on its owner workspace to enable its server routes"
-msgstr ""
+msgstr "När den har tagits i anspråk installerar du den här appen på dess ägares arbetsyta för att aktivera dess serverrutter"
 
 #. js-lingui-id: qaG+Ug
 #: src/modules/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning.tsx
@@ -18060,12 +18060,12 @@ msgstr "Öppna Replit med Twenty:s fjärrserverkonfiguration."
 #. js-lingui-id: d8DZWS
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral.ts
 msgid "Open search"
-msgstr ""
+msgstr "Öppna sökning"
 
 #. js-lingui-id: +ZIxiw
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsSidePanel.ts
 msgid "Open selected list item"
-msgstr ""
+msgstr "Öppna markerat listobjekt"
 
 #. js-lingui-id: Yp+Hi/
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
@@ -18134,7 +18134,7 @@ msgstr "Avanmälningar"
 #. js-lingui-id: 0G9riC
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "Opted out of {topicName}"
-msgstr ""
+msgstr "Har avregistrerat sig från {topicName}"
 
 #. js-lingui-id: P01iZO
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -18155,7 +18155,7 @@ msgstr "Alternativ 1"
 #. js-lingui-id: 1yJklk
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Optional — a Bedrock API key, used instead of an access key pair or the IAM role"
-msgstr ""
+msgstr "Valfritt — en Bedrock API-nyckel som används i stället för ett par åtkomstnycklar eller IAM-rollen"
 
 #. js-lingui-id: gUeG+X
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -18332,7 +18332,7 @@ msgstr "Avbrott"
 #. js-lingui-id: EufvBx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Outcome"
-msgstr ""
+msgstr "Resultat"
 
 #. js-lingui-id: gdC3cZ
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
@@ -18550,7 +18550,7 @@ msgstr "Lösenord måste vara mellan 8 och 50 tecken"
 #. js-lingui-id: Ff0Dor
 #: src/modules/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions.ts
 msgid "Past"
-msgstr ""
+msgstr "Dåtid"
 
 #. js-lingui-id: BFjW8X
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -18560,12 +18560,12 @@ msgstr "Förfallen"
 #. js-lingui-id: K/i6zo
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Past Due"
-msgstr ""
+msgstr "Förfallen"
 
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Paste expected call response here to use its keys later in the workflow"
-msgstr ""
+msgstr "Klistra in förväntat anropssvar här för att använda dess nycklar senare i arbetsflödet"
 
 #. js-lingui-id: YrKalV
 #: src/modules/advanced-text-editor/extensions/blocks/HtmlNodeInlineEditor.tsx
@@ -18640,7 +18640,7 @@ msgstr "Väntar"
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
 msgid "People added to the list."
-msgstr ""
+msgstr "Personer har lagts till i listan."
 
 #. js-lingui-id: R/RRKy
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -18805,7 +18805,7 @@ msgstr "Välj en {0}-post"
 #. js-lingui-id: oWuONu
 #: src/modules/side-panel/pages/email-block-settings/components/EmailColorInput.tsx
 msgid "Pick a color"
-msgstr ""
+msgstr "Välj en färg"
 
 #. js-lingui-id: T1yaeQ
 #: src/modules/activities/emails/utils/buildCampaignDeliveryHint.ts
@@ -18840,7 +18840,7 @@ msgstr "Välj ett eller flera fält. Den ordning du väljer dem i blir kolumnord
 #. js-lingui-id: dq4oep
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/PickRecordAction.ts
 msgid "Pick Record"
-msgstr ""
+msgstr "Välj post"
 
 #. js-lingui-id: X1kz7Q
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -19031,7 +19031,7 @@ msgstr "Polish"
 #. js-lingui-id: iZqrrG
 #: src/modules/settings/accounts/validation-schemas/connectionImapSmtpCalDav.ts
 msgid "Port must be a positive number when configuring this protocol"
-msgstr ""
+msgstr "Porten måste vara ett positivt tal när detta protokoll konfigureras"
 
 #. js-lingui-id: 0nsqwk
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -19206,17 +19206,17 @@ msgstr "Primär länk-URL"
 #. js-lingui-id: cLMTPc
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
 msgid "Primary Phone Calling Code"
-msgstr ""
+msgstr "Primär telefonuppringningskod"
 
 #. js-lingui-id: IKC0Ab
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
 msgid "Primary Phone Country Code"
-msgstr ""
+msgstr "Primär telefonlandskod"
 
 #. js-lingui-id: VH++Jw
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
 msgid "Primary Phone Number"
-msgstr ""
+msgstr "Primärt telefonnummer"
 
 #. js-lingui-id: rW8PxS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -19255,12 +19255,12 @@ msgstr "Pro"
 #. js-lingui-id: AN6jXX
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Probabilities"
-msgstr ""
+msgstr "Sannolikheter"
 
 #. js-lingui-id: a6ypM6
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Probability of true"
-msgstr ""
+msgstr "Sannolikhet för sant"
 
 #. js-lingui-id: vrnnn9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -19470,7 +19470,7 @@ msgstr "Snabbinstallation"
 #. js-lingui-id: h3jEHK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "quote"
-msgstr ""
+msgstr "citat"
 
 #. js-lingui-id: ZhhOwV
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -19479,7 +19479,7 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
 msgid "Quote"
-msgstr ""
+msgstr "Citat"
 
 #. js-lingui-id: 4JbV5W
 #: src/modules/ai/utils/tool-display/buildGenericToolStatusMessage.ts
@@ -19538,22 +19538,22 @@ msgstr "Raycast"
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read {target}"
-msgstr ""
+msgstr "Läs {target}"
 
 #. js-lingui-id: CtiZIZ
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read and delete {target}"
-msgstr ""
+msgstr "Läs och ta bort {target}"
 
 #. js-lingui-id: sISMBu
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read and write {target}"
-msgstr ""
+msgstr "Läs och skriv {target}"
 
 #. js-lingui-id: uPMXgH
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read and write data model configuration"
-msgstr ""
+msgstr "Läs och skriv datamodellkonfiguration"
 
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -19608,7 +19608,7 @@ msgstr "Skrivskyddad {entityTypeLabel}-definition som levereras av den här appe
 #. js-lingui-id: mqj7ck
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read, write, and delete {target}"
-msgstr ""
+msgstr "Läs, skriv och ta bort {target}"
 
 #. js-lingui-id: EqCbT9
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -19698,7 +19698,7 @@ msgstr "Mottagare"
 #. js-lingui-id: 1nxvsm
 #: src/modules/activities/emails/utils/buildCampaignDeliveryHint.ts
 msgid "Recipients are recounted at send time. You can cancel until then."
-msgstr ""
+msgstr "Mottagarna räknas om vid sändningstillfället. Du kan avbryta fram till dess."
 
 #. js-lingui-id: WEYdDv
 #: src/modules/ai/components/AiChatQuestionCard.tsx
@@ -19823,7 +19823,7 @@ msgstr "Post skapas"
 #. js-lingui-id: /zKa2x
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "Record is created or updated"
-msgstr ""
+msgstr "Post skapas eller uppdateras"
 
 #. js-lingui-id: pTBjmd
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20129,7 +20129,7 @@ msgstr "Laddar om..."
 #. js-lingui-id: ptgx5Y
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Remaining credits"
-msgstr ""
+msgstr "Återstående krediter"
 
 #. js-lingui-id: qlAIQ1
 #: src/modules/settings/components/SettingsItemTypeTag.tsx
@@ -20495,7 +20495,7 @@ msgstr "Krävs för att köra åtgärden"
 #. js-lingui-id: nLLZlm
 #: src/modules/activities/emails/utils/buildCampaignSendButtonTitle.ts
 msgid "Reschedule Campaign"
-msgstr ""
+msgstr "Schemalägg om kampanj"
 
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -20759,7 +20759,7 @@ msgstr "Återvänd värde"
 #. js-lingui-id: 0GjYge
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Returns an array of records"
-msgstr ""
+msgstr "Returnerar en array med poster"
 
 #. js-lingui-id: wu55ly
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -20770,7 +20770,7 @@ msgstr "omvänd alfabetisk ordning"
 #. js-lingui-id: fS4pwl
 #: src/modules/object-record/record-group/constants/RecordGroupSortLabels.ts
 msgid "Reverse Alphabetical"
-msgstr ""
+msgstr "Omvänd alfabetisk ordning"
 
 #. js-lingui-id: 35zlhZ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -20964,7 +20964,7 @@ msgstr "Säkerhet på radnivå"
 #. js-lingui-id: OIWtYf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
 msgid "rubber duck: on"
-msgstr ""
+msgstr "gummianka: på"
 
 #. js-lingui-id: 7jTlsu
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -20974,7 +20974,7 @@ msgstr "Rubin"
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule activated."
-msgstr ""
+msgstr "Regeln har aktiverats."
 
 #. js-lingui-id: Tz7o+/
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -21004,12 +21004,12 @@ msgstr "Kör en arbetsflöde och återvänd hit för att se dess körningar"
 #. js-lingui-id: OI5vF+
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Run AI agents"
-msgstr ""
+msgstr "Kör AI-agenter"
 
 #. js-lingui-id: jaxldt
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Run code"
-msgstr ""
+msgstr "Kör kod"
 
 #. js-lingui-id: rRyKdg
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -21186,7 +21186,7 @@ msgstr "Schemalägg ett underhållsfönster och meddela alla användare"
 #. js-lingui-id: b41Wtr
 #: src/modules/activities/emails/utils/buildCampaignSendButtonTitle.ts
 msgid "Schedule Campaign"
-msgstr ""
+msgstr "Schemalägg kampanj"
 
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -21229,7 +21229,7 @@ msgstr "Omfattningar"
 #. js-lingui-id: Eq6YVV
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Score"
-msgstr ""
+msgstr "Poäng"
 
 #. js-lingui-id: oOi11l
 #: src/modules/ai/components/AiChatScrollToBottomButton.tsx
@@ -21754,7 +21754,7 @@ msgstr "Visa funktion"
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "See installed applications"
-msgstr ""
+msgstr "Se installerade applikationer"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -21837,7 +21837,7 @@ msgstr "Välj ett block för att redigera dess stil."
 #. js-lingui-id: N84DtY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 msgid "Select a Company"
-msgstr ""
+msgstr "Välj ett företag"
 
 #. js-lingui-id: PWGE2B
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker.tsx
@@ -21933,7 +21933,7 @@ msgstr "Välj åtgärd"
 #. js-lingui-id: MJLc18
 #: src/modules/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText.ts
 msgid "Select actor"
-msgstr ""
+msgstr "Välj aktör"
 
 #. js-lingui-id: MdbcUR
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
@@ -22170,7 +22170,7 @@ msgstr "Skicka e-post"
 #. js-lingui-id: ZVpOnk
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Send emails from connected accounts"
-msgstr ""
+msgstr "Skicka e-post från anslutna konton"
 
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -22202,7 +22202,7 @@ msgstr "Skicka nu"
 #. js-lingui-id: /NJZkY
 #: src/modules/activities/emails/utils/buildCampaignSendButtonTitle.ts
 msgid "Send Now"
-msgstr ""
+msgstr "Skicka nu"
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -22217,7 +22217,7 @@ msgstr "Skicka testmejl"
 #. js-lingui-id: /oZ3Nx
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
-msgstr ""
+msgstr "Skicka till inkorgen"
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -22403,12 +22403,12 @@ msgstr "Ange namnet på din subdomän"
 #. js-lingui-id: 6JeGYP
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 msgid "Set the required server variables"
-msgstr ""
+msgstr "Ange de obligatoriska servervariablerna"
 
 #. js-lingui-id: B2r0Xq
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 msgid "Set the required server variables: {missingVariableKeys}"
-msgstr ""
+msgstr "Ange de obligatoriska servervariablerna: {missingVariableKeys}"
 
 #. js-lingui-id: tG3Y2G
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -22473,7 +22473,7 @@ msgstr "menyalternativ för inställningar"
 #. js-lingui-id: o8ORjE
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Settings most workspaces never need to change"
-msgstr ""
+msgstr "Inställningar som de flesta arbetsytor aldrig behöver ändra"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -22633,7 +22633,7 @@ msgstr "Visa alla"
 #. js-lingui-id: D55ejf
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Show all applications"
-msgstr ""
+msgstr "Visa alla applikationer"
 
 #. js-lingui-id: E1fsbl
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
@@ -22653,7 +22653,7 @@ msgstr "Visa alla objekt"
 #. js-lingui-id: AgRM8y
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Show API values"
-msgstr ""
+msgstr "Visa API-värden"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -22683,7 +22683,7 @@ msgstr "Visa dolda objekt"
 #. js-lingui-id: dlzDxE
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Show logs"
-msgstr ""
+msgstr "Visa loggar"
 
 #. js-lingui-id: fMPkxb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -22799,7 +22799,7 @@ msgstr "Signeringsnycklar"
 #. js-lingui-id: S8G1qk
 #: src/modules/workflow/workflow-trigger/constants/ManualTriggerAvailabilityTypeOptions.ts
 msgid "Single"
-msgstr ""
+msgstr "Enkel"
 
 #. js-lingui-id: BZdVGR
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -22819,7 +22819,7 @@ msgstr "Enkel inloggning (SSO)"
 #. js-lingui-id: Wam+64
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "SingleSignOnService Location is not a valid URL"
-msgstr ""
+msgstr "SingleSignOnService-platsen är inte en giltig URL"
 
 #. js-lingui-id: maCaRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -23013,7 +23013,7 @@ msgstr "Vissa"
 #. js-lingui-id: 4anZUx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "some content"
-msgstr ""
+msgstr "visst innehåll"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -23603,7 +23603,7 @@ msgstr "Prenumerationsfel. Försök igen eller kontakta Twenty-teamet"
 #. js-lingui-id: kSY/ji
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription has been moved to the new {planLabel} plan."
-msgstr ""
+msgstr "Prenumerationen har flyttats till den nya {planLabel}-planen."
 
 #. js-lingui-id: +QiH+4
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
@@ -23966,7 +23966,7 @@ msgstr "Prata med vårt team"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Tarball"
-msgstr ""
+msgstr "Tar-arkiv"
 
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -24289,7 +24289,7 @@ msgstr "Ikonen som din arbetsflödesutlösare visar i kommandomenyn"
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "The marketplace could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "Marknadsplatsen kunde inte läsas in. Kontrollera din anslutning och försök igen."
 
 #. js-lingui-id: JNopdb
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
@@ -24514,7 +24514,7 @@ msgstr "Tredje"
 #. js-lingui-id: 7rdgqz
 #: src/modules/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions.ts
 msgid "This"
-msgstr ""
+msgstr "Den här"
 
 #. js-lingui-id: Dpc6NX
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -24615,7 +24615,7 @@ msgstr "Den här applikationen kunde inte hittas. Den kan ha tagits bort från m
 #. js-lingui-id: TtWqER
 #: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "Det gick inte att läsa in den här applikationen. Kontrollera din anslutning och försök igen."
 
 #. js-lingui-id: dT2Ibb
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -24630,18 +24630,18 @@ msgstr "Den här applikationen har redan gjorts anspråk på."
 #. js-lingui-id: GUB/rD
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "This application is not available on the marketplace. It may have been removed or the link is incorrect."
-msgstr ""
+msgstr "Den här applikationen är inte tillgänglig på marknadsplatsen. Den kan ha tagits bort eller så är länken felaktig."
 
 #. js-lingui-id: LhGdUS
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "This application is not installed on this workspace. It may have been uninstalled or the link is incorrect."
-msgstr ""
+msgstr "Den här applikationen är inte installerad på den här arbetsytan. Den kan ha avinstallerats eller så är länken felaktig."
 
 #. js-lingui-id: 5j3WfU
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "This application is not vetted by Twenty. Use at your own risk."
-msgstr ""
+msgstr "Den här applikationen är inte granskad av Twenty. Använd den på egen risk."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -24799,7 +24799,7 @@ msgstr "Den här månaden"
 #. js-lingui-id: AwFolB
 #: src/modules/object-metadata/utils/metadataLabelErrorMessages.ts
 msgid "This name is already used."
-msgstr ""
+msgstr "Det här namnet används redan."
 
 #. js-lingui-id: um21gF
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
@@ -25294,7 +25294,7 @@ msgstr ""
 #. js-lingui-id: TAyxDj
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Total Count"
-msgstr ""
+msgstr "Totalt antal"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -25321,7 +25321,7 @@ msgstr "Spåra länkklick"
 #. js-lingui-id: zoE6gY
 #: src/modules/settings/workspace/components/OpenTrackingSwitch.tsx
 msgid "Track opens"
-msgstr ""
+msgstr "Spåra öppningar"
 
 #. js-lingui-id: U0HZma
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -25442,7 +25442,7 @@ msgstr "Testplan"
 #. js-lingui-id: nDGpcY
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Trialing"
-msgstr ""
+msgstr "Provperiod pågår"
 
 #. js-lingui-id: H2Sfhg
 #: src/modules/object-core/agents/components/CoreAgentRunSource.tsx
@@ -25548,7 +25548,7 @@ msgstr "Sant när värdet är angivet, även om det är en tom text."
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
 msgid "True/False"
-msgstr ""
+msgstr "Sant/falskt"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -25598,7 +25598,7 @@ msgstr "Omvandla till"
 #. js-lingui-id: 10DZzC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages."
-msgstr ""
+msgstr "Gör AI-fliken till en inkorg för att sortera, tilldela, skjuta upp och följa chattar, låt arbetsflöden skicka meddelanden och agentfrågor till en medlems inkorg och visa en flik för Konversationer på postsidor."
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25718,7 +25718,7 @@ msgstr "Skriv ett fältnamn eller en funktion"
 #. js-lingui-id: 4bycQF
 #: src/modules/advanced-text-editor/extensions/empty-block-hint/EmptyBlockHint.ts
 msgid "Type anything or press / for commands"
-msgstr ""
+msgstr "Skriv vad som helst eller tryck på / för kommandon"
 
 #. js-lingui-id: qzD6hf
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
@@ -25827,7 +25827,7 @@ msgstr "Ångra"
 #. js-lingui-id: MsoVWz
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Unexpected \"{token}\""
-msgstr ""
+msgstr "Oväntad \"{token}\""
 
 #. js-lingui-id: fo0VXg
 #: src/modules/settings/applications/components/SettingsApplicationUninstallButton.tsx
@@ -25867,7 +25867,7 @@ msgstr "Unika fält"
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
 msgctxt "Field type"
 msgid "Unique ID"
-msgstr ""
+msgstr "Unikt ID"
 
 #. js-lingui-id: pRpC/r
 #: src/modules/side-panel/pages/page-layout/constants/settings/PrefixSetting.ts
@@ -25930,12 +25930,12 @@ msgstr "Okänt fält"
 #. js-lingui-id: ZR1Vff
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Unknown field \"{fieldName}\""
-msgstr ""
+msgstr "Okänt fält \"{fieldName}\""
 
 #. js-lingui-id: XZ5u5t
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
-msgstr ""
+msgstr "Okänt fält \"{fieldName}\" på \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
@@ -25951,7 +25951,7 @@ msgstr "Okänt objekt"
 #. js-lingui-id: EYmqWM
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "Unknown parsing error"
-msgstr ""
+msgstr "Okänt tolkningsfel"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
@@ -26203,7 +26203,7 @@ msgstr "Namnlös lista"
 #. js-lingui-id: NbOWt/
 #: src/modules/command-menu-item/engine-command/record/single-record/components/ExportNoteSingleRecordCommand.tsx
 msgid "Untitled Note"
-msgstr ""
+msgstr "Namnlös anteckning"
 
 #. js-lingui-id: s+FRCn
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
@@ -26269,7 +26269,7 @@ msgstr "Uppdatera {contextStoreNumberOfSelectedRecords} poster"
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
 msgid "Update all workspace settings"
-msgstr ""
+msgstr "Uppdatera alla arbetsytans inställningar"
 
 #. js-lingui-id: XeFxgX
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -26357,7 +26357,7 @@ msgstr "Uppdaterade {objectLabel}"
 #. js-lingui-id: CqG02B
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
 msgid "Updated Fields"
-msgstr ""
+msgstr "Uppdaterade fält"
 
 #. js-lingui-id: xuCD/Q
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -26469,7 +26469,7 @@ msgstr "Uppgradera till Organization för att konfigurera SSO."
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to set validation rules."
-msgstr ""
+msgstr "Uppgradera till Organisation för att ange valideringsregler."
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -26584,7 +26584,7 @@ msgstr "URI:n finns redan i listan över omdirigerings-URI:er"
 #. js-lingui-id: zB6VwN
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput.tsx
 msgid "URI is required"
-msgstr ""
+msgstr "URI är obligatorisk"
 
 #. js-lingui-id: IagCbF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor.tsx
@@ -26605,7 +26605,7 @@ msgstr "URL kopierad till urklipp"
 #. js-lingui-id: HtrFfw
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 msgid "URL is required"
-msgstr ""
+msgstr "URL är obligatorisk"
 
 #. js-lingui-id: pphDjD
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
@@ -26691,7 +26691,7 @@ msgstr "Använd ‘{trimmedSidePanelSearch}’ med..."
 #. js-lingui-id: 4fO7a3
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr ""
+msgstr "Använd ett särskilt formulär när du skapar poster och aktivera valideringsregler."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx
@@ -26701,7 +26701,7 @@ msgstr "Använd en återställningskod"
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
 msgid "Use all tools"
-msgstr ""
+msgstr "Använd alla verktyg"
 
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -26711,7 +26711,7 @@ msgstr "Använd autentiseringsappar och webbläsartillägg som 1Password, Authy,
 #. js-lingui-id: BLsDIB
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Use either an API key or an access key pair, not both"
-msgstr ""
+msgstr "Använd antingen en API-nyckel eller ett åtkomstnyckelpar, inte båda"
 
 #. js-lingui-id: 5ZehS/
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -27171,7 +27171,7 @@ msgstr "view group"
 #. js-lingui-id: rbFOyY
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab.tsx
 msgid "View in marketplace"
-msgstr ""
+msgstr "Visa på marknadsplatsen"
 
 #. js-lingui-id: B02hom
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -27237,7 +27237,7 @@ msgstr "Visa användning"
 #. js-lingui-id: U5dMR6
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
 msgid "View workspace"
-msgstr ""
+msgstr "Visa arbetsyta"
 
 #. js-lingui-id: M/TIv1
 #: src/modules/object-record/record-sharing/constants/RecordShareAccessLevelOptions.ts
@@ -27326,7 +27326,7 @@ msgstr "VS Code"
 #. js-lingui-id: 32FWxT
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/WaitForEventAction.ts
 msgid "Wait for Event"
-msgstr ""
+msgstr "Vänta på händelse"
 
 #. js-lingui-id: uUehLT
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
@@ -27481,7 +27481,7 @@ msgstr "Vi stödjer dina kvadratiska PNG, JPEG och GIF som är under 10MB"
 #. js-lingui-id: QbhLXt
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "We will activate your {planLabel} and email your invoice now. Do you want to proceed?"
-msgstr ""
+msgstr "Vi aktiverar din {planLabel} och skickar din faktura via e-post nu. Vill du fortsätta?"
 
 #. js-lingui-id: SWTQIo
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -27598,7 +27598,7 @@ msgstr "Webbplats"
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Websites allowed to embed this workspace. Only add ones you fully trust."
-msgstr ""
+msgstr "Webbplatser som får bädda in den här arbetsytan. Lägg endast till webbplatser som du har fullt förtroende för."
 
 #. js-lingui-id: zx4BuL
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -27809,7 +27809,7 @@ msgstr "Fortsätter till nästa iteration även om den aktuella misslyckas"
 #. js-lingui-id: 8RLvWE
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "Will get this email"
-msgstr ""
+msgstr "Kommer att få detta e-postmeddelande"
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -27824,7 +27824,7 @@ msgstr "Med mottagaren, eller skaparen av arbetsflödet om det lämnas tomt. Den
 #. js-lingui-id: wlLr65
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "Without an email address"
-msgstr ""
+msgstr "Utan e-postadress"
 
 #. js-lingui-id: p9B1Re
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -28080,7 +28080,7 @@ msgstr "Arbetsytamedlem"
 #. js-lingui-id: Nezrdw
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Workspace Member ID"
-msgstr ""
+msgstr "ID för arbetsytamedlem"
 
 #. js-lingui-id: wtxjAY
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
@@ -28130,12 +28130,12 @@ msgstr "Omslag på inspelningssidor"
 #. js-lingui-id: w2NPe3
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "Write {path} without spaces around the dot"
-msgstr ""
+msgstr "Skriv {path} utan mellanslag runt punkten"
 
 #. js-lingui-id: QSfP+b
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Write {target}"
-msgstr ""
+msgstr "Redigera {target}"
 
 #. js-lingui-id: Q9pNST
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
@@ -28156,7 +28156,7 @@ msgstr "Skriv en beskrivning för denna agent"
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Write and delete {target}"
-msgstr ""
+msgstr "Redigera och ta bort {target}"
 
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -28183,12 +28183,12 @@ msgstr "X Axels Data"
 #. js-lingui-id: KG1naz
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "X509Certificate is missing or empty"
-msgstr ""
+msgstr "X509Certificate saknas eller är tomt"
 
 #. js-lingui-id: ciFe9I
 #: src/modules/settings/security/utils/parseSamlMetadataFromXmlFile.ts
 msgid "X509Data element is missing"
-msgstr ""
+msgstr "X509Data-element saknas"
 
 #. js-lingui-id: fplGg6
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -28471,12 +28471,12 @@ msgstr "Dina betalningsuppgifter är ofullständiga. Granska dem och försök ig
 #. js-lingui-id: jJdoqw
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your plan moves to the new {planLabel} plan immediately and your trial continues."
-msgstr ""
+msgstr "Din plan flyttas omedelbart till den nya {planLabel}-planen och din provperiod fortsätter."
 
 #. js-lingui-id: tYgu0o
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your plan moves to the new {planLabel} plan immediately, with a prorated charge for the rest of your current billing period."
-msgstr ""
+msgstr "Din plan flyttas omedelbart till den nya {planLabel}-planen, med en proportionell avgift för återstoden av din nuvarande faktureringsperiod."
 
 #. js-lingui-id: Bz74IS
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
@@ -28486,13 +28486,13 @@ msgstr "Din plan byts omedelbart till {planLabel} och din provperiod fortsätter
 #. js-lingui-id: lnGjXl
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your plan switches to {planLabel} immediately, with a prorated charge for the rest of your current billing period."
-msgstr ""
+msgstr "Din plan byts omedelbart till {planLabel}, med en proportionell avgift för återstoden av din nuvarande faktureringsperiod."
 
 #. js-lingui-id: /9gM4u
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your plan switches to {planLabel} on {0}, at the end of your current billing period."
-msgstr ""
+msgstr "Din plan byts till {planLabel} den {0}, vid slutet av din nuvarande faktureringsperiod."
 
 #. js-lingui-id: iizYt1
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
