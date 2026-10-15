@@ -1,4 +1,5 @@
 import { type LanguageModelUsage, type StepResult, type ToolSet } from 'ai';
+import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 
@@ -10,6 +11,8 @@ export type AgentExecutionResult = {
   hasNoMoreAvailableCredits: boolean;
   isPaused: boolean;
   steps: StepResult<ToolSet>[];
+  // the reply as the conversation saves it
+  replyParts: ExtendedUIMessagePart[];
   modelId: string;
   totalCostInDollars: number;
   creditsUsedMicro: number;

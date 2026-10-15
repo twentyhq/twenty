@@ -32,6 +32,7 @@ import {
   type WorkflowAiAgentAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import {
   type WorkflowManualTrigger,
   WorkflowTriggerType,
@@ -297,7 +298,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             agentId: null,
             execution: {
               isPaused: true,
-              steps: [{ content }],
+              replyParts: mapAiStepsToUIMessageParts([{ content }]),
             },
           });
         },

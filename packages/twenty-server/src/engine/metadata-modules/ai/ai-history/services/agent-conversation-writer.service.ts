@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
-import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -234,7 +233,7 @@ export class AgentConversationWriterService {
     isAwaitingAnswer: boolean;
     replyParts: ExtendedUIMessagePart[];
   }> {
-    const replyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
+    const replyParts = execution.replyParts ?? [];
 
     if (replyParts.length === 0) {
       return { isAwaitingAnswer: false, replyParts };

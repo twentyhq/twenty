@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 
 export type AgentRunExecution = Parameters<
   AgentAsyncExecutorService['executeAgent']
@@ -49,6 +50,7 @@ export const captureAgentRunExecution = async ({
       hasNoMoreAvailableCredits: false,
       isPaused: false,
       steps,
+      replyParts: mapAiStepsToUIMessageParts(steps),
       modelId: 'stub-model',
       totalCostInDollars: 0,
       creditsUsedMicro: 0,

@@ -18,6 +18,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -40,6 +41,7 @@ const agentResult = (
     hasNoMoreAvailableCredits: false,
     modelId: 'test-model',
     ...overrides,
+    replyParts: mapAiStepsToUIMessageParts(overrides.steps ?? []),
   }) as AgentExecutionResult;
 
 const waitingResult = ({
