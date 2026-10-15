@@ -124,6 +124,7 @@ const comparableSnapshot = (build: ToolingBuild) => {
 
   return {
     ...build,
+    translationLabels: undefined,
     manifest,
     buildId: '',
     directory: '',
