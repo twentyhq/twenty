@@ -3764,6 +3764,7 @@ type Query {
   applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
+  applicationTranslationCatalog(applicationId: UUID!, locale: String!): JSON!
   barChartData(input: BarChartDataInput!): BarChartData!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID

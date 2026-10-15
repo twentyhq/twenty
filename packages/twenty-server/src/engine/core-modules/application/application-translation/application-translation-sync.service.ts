@@ -64,5 +64,8 @@ export class ApplicationTranslationSyncService {
     await this.applicationTranslationCacheService.invalidate(
       applicationRegistrationId,
     );
+    void this.applicationTranslationCacheService.notifyCatalogUpdated(
+      applicationRegistrationId,
+    );
   }
 }

@@ -1,11 +1,10 @@
 import { type ReactNode } from 'react';
 
-import { useLocale } from '../hooks/useLocale';
+import { useTranslate } from '../hooks/useTranslate';
 import {
   normalizeMessageWhitespace,
   type TranslationValues,
 } from '../translations/message';
-import { resolveTranslation } from '../translations/resolveTranslation';
 
 export type TransProps = {
   children?: ReactNode;
@@ -36,7 +35,7 @@ export const Trans = ({
   context,
   values,
 }: TransProps): ReactNode => {
-  const locale = useLocale();
+  const { t } = useTranslate();
 
   const sourceMessage = getSourceMessage(message, children);
 
@@ -44,9 +43,5 @@ export const Trans = ({
     return children;
   }
 
-  return resolveTranslation(
-    { message: sourceMessage, context },
-    values,
-    locale,
-  );
+  return t({ message: sourceMessage, context }, values);
 };

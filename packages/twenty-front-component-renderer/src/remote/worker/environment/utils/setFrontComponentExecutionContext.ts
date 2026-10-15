@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { getFrontComponentExecutionContext } from '@/remote/worker/environment/utils/getFrontComponentExecutionContext';
 import { getFrontComponentExecutionContextListeners } from '@/remote/worker/environment/utils/getFrontComponentExecutionContextListeners';
+import { setFrontComponentRuntimeTranslations } from '@/remote/worker/environment/utils/setFrontComponentRuntimeTranslations';
 import { reuseUnchangedExecutionContextValues } from '@/remote/worker/environment/utils/reuseUnchangedExecutionContextValues';
 
 export const setFrontComponentExecutionContext = (
@@ -21,6 +22,8 @@ export const setFrontComponentExecutionContext = (
         nextExecutionContext: context,
       })
     : context;
+
+  setFrontComponentRuntimeTranslations(context);
 
   for (const listener of getFrontComponentExecutionContextListeners()) {
     listener();

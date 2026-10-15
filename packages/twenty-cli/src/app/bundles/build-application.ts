@@ -22,14 +22,12 @@ import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-call
 import { buildSharedDependenciesBundle } from '@/app/bundles/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
 import { type SharedDependenciesBuildContext } from '@/app/bundles/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
 import { type EntityFilePaths } from '@/app/manifest/types/entity-file-paths.type';
-import { loadFrontComponentTranslationCatalogs } from '@/app/translations/load-front-component-translation-catalogs';
 import {
   emptyDir,
   ensureDir,
   pathExists,
   pathExistsSync,
 } from '@/app/fs-utils';
-import { FRONT_COMPONENT_TRANSLATIONS_KEY } from '@/app/bundles/constants/front-component-translations-key';
 
 export type AppBuildOptions = {
   appPath: string;
@@ -77,19 +75,6 @@ export const buildApplication = async (
   const sharedDependencies =
     options.manifest.application.frontComponentSharedDependencies;
 
-  const frontComponentTranslationCatalogs =
-    await loadFrontComponentTranslationCatalogs(options.appPath);
-
-  const frontComponentTranslationsBanner = Object.keys(
-    frontComponentTranslationCatalogs,
-  ).length
-    ? {
-        js: `globalThis[${JSON.stringify(FRONT_COMPONENT_TRANSLATIONS_KEY)}]=${JSON.stringify(
-          frontComponentTranslationCatalogs,
-        )};`,
-      }
-    : undefined;
-
   await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: logicFunctions,
@@ -134,9 +119,6 @@ export const buildApplication = async (
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
-      ...(frontComponentTranslationsBanner !== undefined
-        ? { banner: frontComponentTranslationsBanner }
-        : {}),
       plugins: [
         ...getFrontComponentBuildPlugins({
           getSharedDependenciesBuildContext: () =>

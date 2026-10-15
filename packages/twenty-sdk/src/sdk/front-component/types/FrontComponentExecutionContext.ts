@@ -23,6 +23,7 @@ export type FrontComponentExecutionContext = {
   /** Resolved color scheme of the host UI ('System' is already resolved) */
   colorScheme: 'light' | 'dark';
   locale?: AppLocale;
+  translationCatalog?: Record<string, string>;
   /** Set when the component renders an AI chat tool call */
   toolCall?: FrontComponentToolCall;
 };

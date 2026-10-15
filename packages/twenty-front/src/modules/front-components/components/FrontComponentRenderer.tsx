@@ -1,6 +1,7 @@
 import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
+import { useApplicationTranslationCatalog } from '@/front-components/hooks/useApplicationTranslationCatalog';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
@@ -140,6 +141,19 @@ const FrontComponentRendererContent = ({
     colorScheme,
   });
 
+  const { translationCatalog, isWaitingForInitialCatalog } =
+    useApplicationTranslationCatalog({
+      applicationId,
+      locale: executionContext.locale,
+    });
+  const translatedExecutionContext = useMemo(
+    () => ({
+      ...executionContext,
+      translationCatalog,
+    }),
+    [executionContext, translationCatalog],
+  );
+
   const resolvedApplicationName = applicationName ?? frontComponent.name;
   const {
     activeSessions,
@@ -217,7 +231,9 @@ const FrontComponentRendererContent = ({
 
   const isSdkClientReady = !usesSdkClient || !sdkClientChecksumsLoading;
   const isReadyToRender =
-    isDefined(initialApplicationTokenPair) && isSdkClientReady;
+    isDefined(initialApplicationTokenPair) &&
+    isSdkClientReady &&
+    !isWaitingForInitialCatalog;
 
   return (
     <>
@@ -260,7 +276,7 @@ const FrontComponentRendererContent = ({
             functionsBaseUrl={functionsBaseUrl}
             sdkClientUrls={sdkClientUrls}
             sharedDependenciesUrl={sharedDependenciesUrl}
-            executionContext={executionContext}
+            executionContext={translatedExecutionContext}
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi
             }

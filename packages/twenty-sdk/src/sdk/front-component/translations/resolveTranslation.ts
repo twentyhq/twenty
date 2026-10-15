@@ -15,10 +15,10 @@ export const resolveTranslation = (
   descriptor: string | MessageDescriptor,
   values: TranslationValues | undefined,
   locale: AppLocale,
+  catalog = getFrontComponentTranslations()[locale],
 ): string => {
   const { message, context } = normalizeMessageDescriptor(descriptor);
 
-  const catalog = getFrontComponentTranslations()[locale];
   const translation = catalog?.[generateMessageId(message, context)];
 
   return interpolateMessagePlaceholders(translation ?? message, values);

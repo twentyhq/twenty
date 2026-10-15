@@ -21,14 +21,12 @@ import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartab
 import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
 import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
-import { loadFrontComponentTranslationCatalogs } from '@/cli/utilities/translations/load-front-component-translation-catalogs';
 import {
   emptyDir,
   ensureDir,
   pathExists,
   pathExistsSync,
 } from '@/cli/utilities/file/fs-utils';
-import { FRONT_COMPONENT_TRANSLATIONS_KEY } from '@/sdk/front-component/constants/front-component-translations-key';
 
 export type AppBuildOptions = {
   appPath: string;
@@ -76,20 +74,6 @@ export const buildApplication = async (
   const sharedDependencies =
     options.manifest.application.frontComponentSharedDependencies;
 
-  // Baked into each bundle so t()/<Trans> resolve in the sandboxed worker without a server round-trip
-  const frontComponentTranslationCatalogs =
-    await loadFrontComponentTranslationCatalogs(options.appPath);
-
-  const frontComponentTranslationsBanner = Object.keys(
-    frontComponentTranslationCatalogs,
-  ).length
-    ? {
-        js: `globalThis[${JSON.stringify(FRONT_COMPONENT_TRANSLATIONS_KEY)}]=${JSON.stringify(
-          frontComponentTranslationCatalogs,
-        )};`,
-      }
-    : undefined;
-
   await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: logicFunctions,
@@ -134,9 +118,6 @@ export const buildApplication = async (
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
-      ...(frontComponentTranslationsBanner !== undefined
-        ? { banner: frontComponentTranslationsBanner }
-        : {}),
       plugins: [
         ...getFrontComponentBuildPlugins({
           getSharedDependenciesBuildContext: () =>

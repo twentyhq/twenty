@@ -1,11 +1,14 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Parent, Query, ResolveField } from '@nestjs/graphql';
+import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
+import GraphQLJSON from 'graphql-type-json';
+
+import { isDefined, isValidLocale } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { type ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -53,7 +56,40 @@ export class ApplicationResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
   ) {}
+
+  @Query(() => GraphQLJSON)
+  @UseGuards(ApplicationTargetGuard)
+  async applicationTranslationCatalog(
+    @ApplicationTargetArg(
+      'applicationId',
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
+      { type: () => UUIDScalarType },
+    )
+    applicationId: string,
+    @Args('locale', { type: () => String }) locale: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<Record<string, string>> {
+    if (!isValidLocale(locale)) {
+      throw new ApplicationException(
+        'Unsupported translation locale',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+    const application = flatApplicationMaps.byId[applicationId];
+    if (!isDefined(application?.applicationRegistrationId)) {
+      return {};
+    }
+    return this.applicationTranslationCacheService.getCurrentCatalog({
+      applicationRegistrationId: application.applicationRegistrationId,
+      locale,
+    });
+  }
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
   @UseGuards(ApplicationTargetGuard)

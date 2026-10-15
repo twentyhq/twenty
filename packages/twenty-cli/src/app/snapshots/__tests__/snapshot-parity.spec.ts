@@ -459,7 +459,7 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
     expect(result.success, JSON.stringify(result)).toBe(true);
     expect(JSON.stringify(result)).not.toContain('twenty-sdk/cli');
   }, 60000);
-  it('matches CSS, baked translations, README selection and immutable symlinked assets', async () => {
+  it('matches CSS, translation manifests, README selection and immutable symlinked assets', async () => {
     const appPath = await copyFixture('minimal-app');
     await mkdir(join(appPath, 'locales'), { recursive: true });
     await writeFile(
@@ -500,6 +500,40 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
         '# Keep the markdown readme\n',
       );
       expect(await pathExists(join(directory, 'README.txt'))).toBe(false);
+    } finally {
+      await releaseSnapshot({ buildId: first.data.buildId });
+    }
+  }, 60000);
+
+  it('keeps every front component checksum stable after a translation-only edit', async () => {
+    const appPath = await copyFixture('rich-app');
+    await mkdir(join(appPath, 'locales'), { recursive: true });
+    const localePath = join(appPath, 'locales/fr-FR.json');
+    await writeFile(localePath, JSON.stringify({ Hello: 'Bonjour' }));
+    const first = await buildSnapshot({ appPath });
+    if (!first.success) throw new Error(JSON.stringify(first));
+    try {
+      await writeFile(localePath, JSON.stringify({ Hello: 'Salut' }));
+      const second = await buildSnapshot({ appPath });
+      if (!second.success) throw new Error(JSON.stringify(second));
+      try {
+        expect(first.data.manifest.frontComponents).toHaveLength(4);
+        expect(second.data.manifest.frontComponents).toEqual(
+          first.data.manifest.frontComponents,
+        );
+        expect(second.data.manifest.translations).not.toEqual(
+          first.data.manifest.translations,
+        );
+        const componentHashes = (build: ToolingBuild) =>
+          build.files
+            .filter((file) => file.role === 'built-front-component')
+            .map(({ sourcePath, sha256 }) => ({ sourcePath, sha256 }));
+        expect(componentHashes(second.data)).toEqual(
+          componentHashes(first.data),
+        );
+      } finally {
+        await releaseSnapshot({ buildId: second.data.buildId });
+      }
     } finally {
       await releaseSnapshot({ buildId: first.data.buildId });
     }

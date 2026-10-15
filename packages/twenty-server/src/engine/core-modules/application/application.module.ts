@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationGaugeService } from 'src/engine/core-modules/application/application-gauge.service';
 import { ApplicationStopModule } from 'src/engine/core-modules/application/application-stop/application-stop.module';
@@ -25,6 +26,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
 
 @Module({
   imports: [
+    ApplicationTranslationModule,
     ApplicationRegistrationLookupModule,
     TypeOrmModule.forFeature([
       ApplicationEntity,

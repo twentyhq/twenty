@@ -13,7 +13,8 @@ See the [app tooling overview](../README.md) for package ownership.
 Logic functions use an ESM/CJS banner, external modules and define stubs.
 Front components use JSX wrappers, remote-DOM transformation, optional
 preact aliases, bundled CSS injection, static shared-dependency export discovery
-and live-binding shims. The app's translation catalogs are embedded in the bundles.
+and live-binding shims. Translation catalogs live in the manifest and are supplied
+by the host at runtime, so catalog-only edits leave component checksums unchanged.
 Dependency discovery does not execute package initialization code. CommonJS
 named exports must be statically detectable; packages that compute export names
 at runtime can be consumed through their default export.
@@ -77,9 +78,29 @@ pipelines. The fresh CLI template's test setup typechecks with an authoring-only
 Source-map comparisons for unchanged bundles resolve paths against each map's
 directory and exclude the define stub's generator banner from `sourcesContent`.
 
-Additional tests cover optional covers, project SDK constants, baked translations
-and CSS, README selection, immutable symlink copies, concurrent snapshots,
+Additional tests cover optional covers, project SDK constants, translation manifests,
+translation-independent component checksums and CSS, README selection, immutable symlink copies, concurrent snapshots,
 release ownership, failed/cancelled builds and failed snapshot consumers. The
 build/apply contract runs CLI snapshots against a local HTTP fixture, including
 uploads, sync, pull-base recording, release and client generation. It does not contact
 a live Twenty workspace.
+
+## Runtime translations
+
+The host reads the active locale for an application installed in the current
+workspace. Catalogs remain registration-wide, shared across installations and
+application versions. Apply updates the catalog; mounted components receive the
+new text through their execution context, without restarting the component.
+
+Deploy the server and frontend support before distributing bundles built without
+embedded catalogs. On an older host, new bundles render source messages. Older
+bundles keep their own embedded catalogs, including when running on a newer host.
+Use the updated SDK's `useTranslate` or `Trans` for reactive text; strings computed
+once at module initialization do not recompute when a catalog changes.
+
+Catalog reads are shared per client, workspace, application and locale. Events
+received during a request schedule a subsequent read. Reconnects refresh active
+catalogs. A slow initial read delays rendering by at most 500 ms; missing catalogs
+and failed initial reads fall back to source messages. Failed refreshes retain the
+last working catalog. Locale changes keep mounted components alive and update
+text when the new catalog arrives.
