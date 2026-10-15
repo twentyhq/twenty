@@ -100,10 +100,13 @@ export const runDataExportCommand: CommandRun<TargetCommandContext> = async ({
       signal,
     );
     if (outputMode === 'human') {
-      output.progress(
-        `Target: ${target.remoteName ?? target.source} (${target.apiUrl})`,
-      );
-      output.progress(`Exporting ${object.namePlural}…`, { percentage: 0 });
+      output.progress({
+        message: `Target: ${target.remoteName ?? target.source} (${target.apiUrl})`,
+      });
+      output.progress({
+        message: `Exporting ${object.namePlural}…`,
+        percentage: 0,
+      });
     }
     let result: { id: string; bytes: number } | undefined;
     let exportId: string | undefined;
@@ -158,7 +161,8 @@ export const runDataExportCommand: CommandRun<TargetCommandContext> = async ({
             signal,
           );
           if (outputMode === 'human') {
-            output.progress(`Exporting ${object.namePlural}…`, {
+            output.progress({
+              message: `Exporting ${object.namePlural}…`,
               percentage: update.progress,
             });
           }
@@ -169,7 +173,7 @@ export const runDataExportCommand: CommandRun<TargetCommandContext> = async ({
             throw invalidExport();
           }
           if (outputMode === 'human') {
-            output.progress('Downloading CSV…');
+            output.progress({ message: 'Downloading CSV…' });
           }
           const bytes = await downloadRecordExport({
             id: update.id,
