@@ -5,10 +5,12 @@ import { type AgentChatChannel } from '~/generated-metadata/graphql';
 
 type AgentChatChannelIconProps = {
   channel: Pick<AgentChatChannel, 'icon' | 'color'>;
+  size?: number;
 };
 
 export const AgentChatChannelIcon = ({
   channel,
+  size,
 }: AgentChatChannelIconProps) => {
   const ChannelIcon = useAgentChatChannelIcon(channel.icon);
 
@@ -16,6 +18,7 @@ export const AgentChatChannelIcon = ({
     <ColoredIcon
       Icon={ChannelIcon}
       color={channel.color ?? AGENT_CHAT_CHANNEL_DEFAULT_COLOR}
+      size={size}
     />
   );
 };
