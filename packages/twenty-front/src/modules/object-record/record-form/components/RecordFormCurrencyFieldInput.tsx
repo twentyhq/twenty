@@ -1,11 +1,22 @@
-import { FormCurrencyAmountFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyAmountFieldInput';
 import {
   type FieldCurrencyValue,
   type FormFieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { RecordFormPickerFieldInput } from '@/object-record/record-form/components/RecordFormPickerFieldInput';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
+import {
+  convertCurrencyAmountToCurrencyMicros,
+  convertCurrencyMicrosToCurrencyAmount,
+  isDefined,
+} from 'twenty-shared/utils';
+import {
+  canBeCastAsNumberOrNull,
+  castAsNumberOrNull,
+} from '~/utils/cast-as-number-or-null';
 
 type RecordFormCurrencyFieldInputProps = {
   label?: string;
@@ -24,6 +35,17 @@ export const RecordFormCurrencyFieldInput = ({
   readonly,
   placeholder,
 }: RecordFormCurrencyFieldInputProps) => {
+  const amountMicros = defaultValue?.amountMicros ?? null;
+
+  const [amountText, setAmountText] = useState(
+    isDefined(amountMicros)
+      ? String(convertCurrencyMicrosToCurrencyAmount(amountMicros))
+      : '',
+  );
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined,
+  );
+
   const currencyCode = isNonEmptyString(defaultValue?.currencyCode)
     ? defaultValue.currencyCode
     : (defaultCurrencyCode ?? CurrencyCode.USD);
@@ -31,21 +53,42 @@ export const RecordFormCurrencyFieldInput = ({
   const handleCurrencyCodeChange = (newCurrencyCode: string) =>
     onChange({
       currencyCode: newCurrencyCode as CurrencyCode,
-      amountMicros: defaultValue?.amountMicros ?? null,
+      amountMicros,
     });
 
-  const handleAmountMicrosChange = (
-    amountMicros: FormFieldCurrencyValue['amountMicros'],
-  ) => onChange({ currencyCode, amountMicros });
+  const handleAmountTextChange = (newAmountText: string) => {
+    setAmountText(newAmountText);
+
+    const trimmedAmountText = newAmountText.trim();
+
+    if (!canBeCastAsNumberOrNull(trimmedAmountText)) {
+      setErrorMessage(t`Invalid number`);
+      return;
+    }
+
+    setErrorMessage(undefined);
+
+    const amount = castAsNumberOrNull(trimmedAmountText);
+
+    onChange({
+      currencyCode,
+      amountMicros: isDefined(amount)
+        ? convertCurrencyAmountToCurrencyMicros(amount)
+        : null,
+    });
+  };
 
   return (
-    <FormCurrencyAmountFieldInput
+    <RecordFormPickerFieldInput
       label={label}
-      defaultValue={defaultValue?.amountMicros ?? ''}
-      onChange={handleAmountMicrosChange}
+      value={amountText}
+      onChange={handleAmountTextChange}
+      placeholder={
+        isNonEmptyString(placeholder) ? placeholder : t`Enter a number`
+      }
       readonly={readonly}
-      placeholder={placeholder}
-      leftElement={
+      error={errorMessage}
+      picker={
         <CurrencyPickerDropdownButton
           selectedCurrencyCode={currencyCode}
           onChange={handleCurrencyCodeChange}

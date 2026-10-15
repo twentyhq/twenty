@@ -16,7 +16,6 @@ type FormCurrencyAmountFieldInputProps = Pick<
   | 'readonly'
   | 'hint'
   | 'placeholder'
-  | 'leftElement'
 >;
 
 const getAmountFromAmountMicros = (
@@ -45,7 +44,6 @@ export const FormCurrencyAmountFieldInput = ({
   readonly,
   hint,
   placeholder,
-  leftElement,
 }: FormCurrencyAmountFieldInputProps) => {
   return (
     <FormNumberFieldInput
@@ -54,7 +52,6 @@ export const FormCurrencyAmountFieldInput = ({
       readonly={readonly}
       hint={hint}
       placeholder={placeholder}
-      leftElement={leftElement}
       defaultValue={getAmountFromAmountMicros(defaultValue)}
       onChange={(newAmount) =>
         onChange(

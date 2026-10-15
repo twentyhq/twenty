@@ -1,5 +1,5 @@
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { RecordFormPickerFieldInput } from '@/object-record/record-form/components/RecordFormPickerFieldInput';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { t } from '@lingui/core/macro';
@@ -51,15 +51,15 @@ export const RecordFormPhoneFieldInput = ({
   };
 
   return (
-    <FormTextFieldInput
+    <RecordFormPickerFieldInput
       label={label}
-      defaultValue={defaultValue?.primaryPhoneNumber ?? ''}
+      value={defaultValue?.primaryPhoneNumber ?? ''}
       onChange={(newNumber) =>
         handlePhoneChange({ newCountryCode: countryCode, newNumber })
       }
       placeholder={placeholder ?? t`Enter phone number`}
       readonly={readonly}
-      leftElement={
+      picker={
         <PhoneCountryPickerDropdownButton
           value={countryCode}
           onChange={(newCountryCode) =>
