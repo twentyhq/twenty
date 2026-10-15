@@ -13,9 +13,8 @@ export { findNestedTranslatablePropertyContext } from './find-nested-translatabl
 export { generateMessageId } from './generate-message-id';
 export { getMetadataLabelContext } from './get-metadata-label-context';
 export { interpolateMessagePlaceholders } from './interpolate-message-placeholders';
-export { isManifestTranslatableEntity } from './is-manifest-translatable-entity';
-export { listManifestTranslatableValues } from './list-manifest-translatable-values';
-export { mapManifestTranslatableValues } from './map-manifest-translatable-values';
+export { isMessageTranslatableManifestEntity } from './is-message-translatable-manifest-entity';
+export { mapMessageTranslatableManifestValues } from './map-message-translatable-manifest-values';
 export type {
   MetadataLabelPlaceholderName,
   MetadataLabelPlaceholderValues,
@@ -31,13 +30,13 @@ export {
 export type {
   TranslatableMetadataName,
   TranslatablePropertyName,
-  ManifestTranslatableEntity,
-  ManifestTranslatableProperty,
+  MessageTranslatableManifestEntity,
+  MessageTranslatableManifestProperty,
 } from './translatable-properties-by-metadata-name';
 export {
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
-  MANIFEST_TRANSLATABLE_PROPERTIES,
+  MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES,
   NESTED_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
 } from './translatable-properties-by-metadata-name';
 export type { TranslatablePropertyPath } from './translatable-property-path';

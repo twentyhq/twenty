@@ -1,8 +1,8 @@
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
-import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { type TranslatableRoleConfig } from '@/sdk/define/roles/role-config';
 
-export const defineRole: DefineEntity<RoleConfig> = (config) => {
+export const defineRole: DefineEntity<TranslatableRoleConfig> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {

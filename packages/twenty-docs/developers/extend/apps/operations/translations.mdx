@@ -11,9 +11,10 @@ any locale left untranslated falls back to it.
 Your app has two kinds of translatable text, and both flow through the same
 `locales/` catalog:
 
-- **Manifest labels** — object and field names, option labels, view titles,
-  menu items, descriptions, role and skill labels, and the other display texts
-  declared in your app's manifest.
+- **Manifest labels** — object and field names, view titles, menu items, and
+  other strings declared in your app's metadata, plus every other manifest
+  text you mark with `msg()` (option labels, descriptions, role and skill
+  labels…).
 - **Front-component strings** — the UI text your React front components render.
 
 You mark the translatable strings, extract them into per-locale catalogs,
@@ -83,16 +84,33 @@ contextual by construction — each one carries the metadata role it plays
 (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), so
 the same word can translate differently as an object name and as a view name.
 
-## What gets translated
+## Marking texts with `msg()`
 
-Every display text of your manifest is extracted automatically, each under its
-own catalog context. Values and identifiers, such as option `value`s or
-universal identifiers, are never extracted. To keep a text like a brand name as
-written, leave its translation empty: it falls back to the source text.
+Object, field, view, page layout, command menu, navigation menu, timeline
+activity type and settings menu labels are always extracted. Every other text
+of your manifest is translated only when it is wrapped in `msg()` from
+`twenty-sdk/define`. Plain values stay as written, so names that should never
+change, like brands or products, stay out of your catalogs:
+
+```ts
+import { defineField, FieldType, msg } from 'twenty-sdk/define';
+
+export default defineField({
+  // ...
+  type: FieldType.SELECT,
+  options: [
+    { value: 'WEEK', label: msg('Week'), position: 0, color: 'blue' },
+    { value: 'ACME', label: 'Acme', position: 1, color: 'green' },
+  ],
+});
+```
+
+The build stores the plain text, so wrapping an existing value changes neither
+what the server receives nor any identifier derived from it. Each marked text is
+extracted under its own catalog context:
 
 | Where | Properties | Context |
 | --- | --- | --- |
-| `defineObject()`, `defineField()`, views, page layouts, menus | names, labels and descriptions | `objectMetadata.<property>`, `fieldMetadata.<property>`, `view.name`, … |
 | `defineField()`, object `fields` | select option `label` | `fieldMetadata.label` (shared with field names) |
 | `defineApplication()` | `displayName`, `description`, `billing.description`, billing `recurring` and `operations` `label` | `application.<property>` |
 | `applicationVariables` | `label`, `description`, option `label` | `applicationVariable.<property>`, options under `applicationVariable.label` |
@@ -104,8 +122,8 @@ written, leave its translation empty: it falls back to the source text.
 | `definePermissionFlag()` | `label`, `description` | `permissionFlag.<property>` |
 | `defineConnectionProvider()` | `displayName` | `connectionProvider.displayName` |
 
-The full lists live in `TRANSLATABLE_PROPERTIES_BY_METADATA_NAME` and
-`MANIFEST_TRANSLATABLE_PROPERTIES` from `twenty-shared/i18n`.
+The full list lives in `MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES` from
+`twenty-shared/i18n`.
 
 ## Extracting and translating
 
@@ -116,8 +134,8 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extraction collects both your manifest labels and the `t()`/`msg()`/`Trans`
-strings from your front-component source into `locales/<locale>.json`, keyed by
+Extraction collects your manifest labels, the manifest texts you marked with
+`msg()`, and the `t()`/`msg()`/`Trans` strings from your front-component source into `locales/<locale>.json`, keyed by
 source string. Fill in the translations:
 
 ```json

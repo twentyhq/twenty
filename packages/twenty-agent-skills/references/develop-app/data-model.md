@@ -93,6 +93,8 @@ Select and multi-select option `value` strings must be uppercase snake case:
 
 For select fields, default values must be quoted string expressions like `"'PLANNED'"`, not plain strings like `'planned'`.
 
+Wrap an option `label` in `msg()` from `twenty-sdk/define` to translate it per member locale (`label: msg('Planned')`). Unwrapped labels stay as written, which suits brand or product names.
+
 ### Relations
 
 A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`, one on each object. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName` (the convention is `<fieldName>Id`); the build rejects a `MANY_TO_ONE` relation without one. `yarn twenty dev:add field` emits it, but the reverse `ONE_TO_MANY` field still has to be written by hand, including on a standard object such as Company:

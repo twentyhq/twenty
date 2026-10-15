@@ -1,11 +1,11 @@
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type TranslatableFrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-export const defineFrontComponent: DefineEntity<FrontComponentConfig> = (
-  config,
-) => {
+export const defineFrontComponent: DefineEntity<
+  TranslatableFrontComponentConfig
+> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {

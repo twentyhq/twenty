@@ -3,10 +3,10 @@ import {
   buildTranslatablePropertyPath,
   FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
   findNestedTranslatablePropertyContext,
-  mapManifestTranslatableValues,
-  MANIFEST_TRANSLATABLE_PROPERTIES,
-  type ManifestTranslatableEntity,
-  type ManifestTranslatableProperty,
+  mapMessageTranslatableManifestValues,
+  MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES,
+  type MessageTranslatableManifestEntity,
+  type MessageTranslatableManifestProperty,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
@@ -203,7 +203,7 @@ export const resolveEffectiveFieldMetadataOptionLabel = ({
     : translateStandardLabel({
         sourceValue: option.label,
         context:
-          MANIFEST_TRANSLATABLE_PROPERTIES.fieldMetadata[
+          MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES.fieldMetadata[
             FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN
           ],
         isStandardApp: i18nContext.isStandardApp,
@@ -217,7 +217,7 @@ type ManifestMessageI18nContext = Pick<
 >;
 
 export const resolveEffectiveManifestMessage = <
-  TEntity extends ManifestTranslatableEntity,
+  TEntity extends MessageTranslatableManifestEntity,
 >({
   entity,
   property,
@@ -225,12 +225,12 @@ export const resolveEffectiveManifestMessage = <
   i18nContext,
 }: {
   entity: TEntity;
-  property: ManifestTranslatableProperty<TEntity>;
+  property: MessageTranslatableManifestProperty<TEntity>;
   sourceValue: string;
   i18nContext: ManifestMessageI18nContext;
 }): string => {
   const contextByProperty: Record<string, string> =
-    MANIFEST_TRANSLATABLE_PROPERTIES[entity];
+    MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES[entity];
 
   return translateStandardLabel({
     sourceValue,
@@ -246,11 +246,11 @@ export const resolveEffectiveManifestMessages = <TValue>({
   value,
   i18nContext,
 }: {
-  entity: ManifestTranslatableEntity;
+  entity: MessageTranslatableManifestEntity;
   value: TValue;
   i18nContext: ManifestMessageI18nContext;
 }): TValue =>
-  mapManifestTranslatableValues({
+  mapMessageTranslatableManifestValues({
     entity,
     value,
     mapValue: ({ value: sourceValue, context }) =>

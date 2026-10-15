@@ -24,7 +24,7 @@ export type TranslatablePropertyName<T extends TranslatableMetadataName> =
 export const FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN =
   'options.*.label';
 
-export const MANIFEST_TRANSLATABLE_PROPERTIES = {
+export const MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES = {
   fieldMetadata: {
     [FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN]: 'fieldMetadata.label',
   },
@@ -73,15 +73,15 @@ export const MANIFEST_TRANSLATABLE_PROPERTIES = {
   },
 } as const satisfies Record<string, Record<string, string>>;
 
-export type ManifestTranslatableEntity =
-  keyof typeof MANIFEST_TRANSLATABLE_PROPERTIES;
+export type MessageTranslatableManifestEntity =
+  keyof typeof MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES;
 
-export type ManifestTranslatableProperty<
-  TEntity extends ManifestTranslatableEntity,
-> = keyof (typeof MANIFEST_TRANSLATABLE_PROPERTIES)[TEntity] & string;
+export type MessageTranslatableManifestProperty<
+  TEntity extends MessageTranslatableManifestEntity,
+> = keyof (typeof MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES)[TEntity] & string;
 
 export const NESTED_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
-  fieldMetadata: MANIFEST_TRANSLATABLE_PROPERTIES.fieldMetadata,
+  fieldMetadata: MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES.fieldMetadata,
 } as const satisfies Partial<
   Record<TranslatableMetadataName, Record<string, string>>
 >;

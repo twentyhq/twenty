@@ -3,7 +3,7 @@ import {
   FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN,
   generateMessageId,
   getMetadataLabelContext,
-  MANIFEST_TRANSLATABLE_PROPERTIES,
+  MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
 } from 'twenty-shared/i18n';
@@ -100,7 +100,7 @@ describe('standard metadata labels reach the catalog under their context', () =>
 
   it('fieldMetadata options', () => {
     const context =
-      MANIFEST_TRANSLATABLE_PROPERTIES.fieldMetadata[
+      MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES.fieldMetadata[
         FIELD_OPTION_LABEL_TRANSLATABLE_PROPERTY_PATTERN
       ];
     const missing = Object.values(

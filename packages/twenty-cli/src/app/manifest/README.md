@@ -26,6 +26,12 @@ and an empty one (`{}`), context-dependent message IDs, authored-over-compiled
 precedence, orphan compiled translations, collision handling and skipped-file
 warnings. It reads catalogs without rewriting them.
 
+Texts wrapped in `msg()` (the properties listed in
+`MESSAGE_TRANSLATABLE_MANIFEST_PROPERTIES`, such as select option labels or role
+and variable descriptions) are serialized to their message before anything else
+reads them, and returned as `manifestMessages` with their catalog context for
+translation extraction.
+
 Select options without an `id` receive a deterministic ID from their label and
 field identifier. Keep an explicit `id` when changing an option's label or value,
 so existing view filters continue to reference the same option. Duplicate option

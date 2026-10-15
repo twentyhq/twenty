@@ -1,10 +1,10 @@
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import { type HealthCheckLogicFunctionConfig } from '@/sdk/define/logic-functions/health-check-logic-function-config';
+import { type TranslatableHealthCheckLogicFunctionConfig } from '@/sdk/define/logic-functions/health-check-logic-function-config';
 
-export const defineHealthCheck: DefineEntity<HealthCheckLogicFunctionConfig> = (
-  config,
-) => {
+export const defineHealthCheck: DefineEntity<
+  TranslatableHealthCheckLogicFunctionConfig
+> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {

@@ -1,6 +1,5 @@
 import { findNestedTranslatablePropertyContext } from '@/i18n/find-nested-translatable-property-context';
-import { listManifestTranslatableValues } from '@/i18n/list-manifest-translatable-values';
-import { mapManifestTranslatableValues } from '@/i18n/map-manifest-translatable-values';
+import { mapMessageTranslatableManifestValues } from '@/i18n/map-message-translatable-manifest-values';
 import {
   buildTranslatablePropertyPath,
   listTranslatablePropertyPathValues,
@@ -102,7 +101,7 @@ describe('translatable property paths', () => {
 
   it('maps the translatable values of a manifest entity with their catalog context', () => {
     expect(
-      mapManifestTranslatableValues({
+      mapMessageTranslatableManifestValues({
         entity: 'applicationVariable',
         value: {
           description: 'Default shipping region',
@@ -116,27 +115,5 @@ describe('translatable property paths', () => {
       options: [{ label: 'Europe [applicationVariable.label]', value: 'eu' }],
       value: { label: 'not translatable' },
     });
-  });
-
-  it('lists the translatable values of a manifest entity with their catalog context', () => {
-    expect(
-      listManifestTranslatableValues({
-        entity: 'application',
-        value: {
-          displayName: 'Rich App',
-          billing: {
-            recurring: { SEAT: { label: 'Seat', period: 'MONTH' } },
-            operations: {
-              ENRICH: { label: 'Enrichment', operationType: 'CODE_EXECUTION' },
-            },
-          },
-          universalIdentifier: 'not translatable',
-        },
-      }),
-    ).toEqual([
-      { value: 'Rich App', context: 'application.displayName' },
-      { value: 'Seat', context: 'application.billing.recurring.label' },
-      { value: 'Enrichment', context: 'application.billing.operations.label' },
-    ]);
   });
 });

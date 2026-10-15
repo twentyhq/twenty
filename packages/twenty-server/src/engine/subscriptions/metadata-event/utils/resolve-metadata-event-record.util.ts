@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  isManifestTranslatableEntity,
+  isMessageTranslatableManifestEntity,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
 } from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
@@ -61,7 +61,7 @@ export const resolveMetadataEventRecord = ({
   }
 
   if (!translatable) {
-    return isManifestTranslatableEntity(metadataName)
+    return isMessageTranslatableManifestEntity(metadataName)
       ? resolveEffectiveManifestMessages({
           entity: metadataName,
           value: resolved,

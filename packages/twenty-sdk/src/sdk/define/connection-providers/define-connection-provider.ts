@@ -1,4 +1,5 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { type TranslatableConnectionProviderConfig } from '@/sdk/define/connection-providers/connection-provider-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 import { type ConnectionProviderManifest } from 'twenty-shared/application';
@@ -19,7 +20,7 @@ const LOGIC_FUNCTION_KEYS = [
 ] as const satisfies readonly ConnectionProviderLogicFunctionKey[];
 
 export const defineConnectionProvider: DefineEntity<
-  ConnectionProviderManifest
+  TranslatableConnectionProviderConfig
 > = (config) => {
   const errors: string[] = [];
 
