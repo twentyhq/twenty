@@ -102,7 +102,7 @@ msgstr "在域名 \"{domainName}\" 中找到 {hostnameCount} 个主机名。预�
 #: src/modules/dashboard/chart-data/utils/__tests__/get-aggregate-value-label.util.spec.ts
 #: src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util.ts
 msgid "{operationLabel} of {aggregateFieldLabel}"
-msgstr ""
+msgstr "{operationLabel} 的 {aggregateFieldLabel}"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1679,7 +1679,7 @@ msgstr "头像网址"
 #. js-lingui-id: 3uQmjD
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Average"
-msgstr ""
+msgstr "平均"
 
 #. js-lingui-id: EaJzRw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1812,7 +1812,7 @@ msgstr "砰"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Bounced"
-msgstr ""
+msgstr "已退信"
 
 #. js-lingui-id: 5Xcd0y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -2579,13 +2579,13 @@ msgstr "聊天"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Chat"
-msgstr ""
+msgstr "聊天"
 
 #. js-lingui-id: YFWtmh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Chat"
-msgstr ""
+msgstr "聊天"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2749,7 +2749,7 @@ msgstr "代码解释器"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Code Interpreter"
-msgstr ""
+msgstr "代码解释器"
 
 #. js-lingui-id: o21Tgt
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -3284,37 +3284,37 @@ msgstr "无法解析现有对象，因而无法协调其记录页面标签标识
 #. js-lingui-id: wBMjJ2
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count"
-msgstr ""
+msgstr "计数"
 
 #. js-lingui-id: EkZfen
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count all"
-msgstr ""
+msgstr "计算所有"
 
 #. js-lingui-id: vQJINq
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count empty"
-msgstr ""
+msgstr "计算空值"
 
 #. js-lingui-id: sLDQbp
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count false"
-msgstr ""
+msgstr "计数否"
 
 #. js-lingui-id: DzRsDJ
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count not empty"
-msgstr ""
+msgstr "计算非空值"
 
 #. js-lingui-id: ft6dHY
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count true"
-msgstr ""
+msgstr "计算为是"
 
 #. js-lingui-id: 9FZBbf
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count unique values"
-msgstr ""
+msgstr "计算唯一值"
 
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4113,7 +4113,7 @@ msgstr "销毁"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
-msgstr ""
+msgstr "开发者"
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -7694,7 +7694,7 @@ msgstr "在退订域名通过验证之前，营销发送将被暂停。"
 #. js-lingui-id: CK1KXz
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Max"
-msgstr ""
+msgstr "最大"
 
 #. js-lingui-id: Dq8Em0
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -8200,7 +8200,7 @@ msgstr "迁移执行失败。"
 #. js-lingui-id: eTUF28
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Min"
-msgstr ""
+msgstr "最小"
 
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -9606,12 +9606,12 @@ msgstr "按步骤的可观测性有效负载（token 使用情况、工具调用
 #. js-lingui-id: yIK1GU
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent empty"
-msgstr ""
+msgstr "空百分比"
 
 #. js-lingui-id: PWLd4c
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent not empty"
-msgstr ""
+msgstr "非空百分比"
 
 #. js-lingui-id: 2TPvIG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10851,7 +10851,7 @@ msgstr "角色"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Roles"
-msgstr ""
+msgstr "角色"
 
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -11544,7 +11544,7 @@ msgstr "跳过原因"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skipped"
-msgstr ""
+msgstr "已跳过"
 
 #. js-lingui-id: WBwjjW
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11978,7 +11978,7 @@ msgstr "未找到订阅阶段。"
 #. js-lingui-id: AxQiPW
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Sum"
-msgstr ""
+msgstr "总和"
 
 #. js-lingui-id: RUXdNM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -12156,7 +12156,7 @@ msgstr "任务"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Task"
-msgstr ""
+msgstr "任务"
 
 #. js-lingui-id: 7V9t6v
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -13790,7 +13790,7 @@ msgstr "会话"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Thread"
-msgstr ""
+msgstr "会话"
 
 #. js-lingui-id: YBkEbP
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -16644,7 +16644,7 @@ msgstr "您的双因素身份验证已重置"
 #. js-lingui-id: 0thatt
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Your workspace has been deleted"
-msgstr ""
+msgstr "您的工作区已被删除"
 
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

@@ -102,7 +102,7 @@ msgstr "\"{domainName}\" alan adı için {hostnameCount} hostname bulundu. 1 bek
 #: src/modules/dashboard/chart-data/utils/__tests__/get-aggregate-value-label.util.spec.ts
 #: src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util.ts
 msgid "{operationLabel} of {aggregateFieldLabel}"
-msgstr ""
+msgstr "{aggregateFieldLabel}'in {operationLabel}"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -677,13 +677,13 @@ msgstr "JSON yanıt biçimine en az bir çıktı alanı ekleyin"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add Block"
-msgstr ""
+msgstr "Blok Ekle"
 
 #. js-lingui-id: eCsjN4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Add Block"
-msgstr ""
+msgstr "Blok Ekle"
 
 #. js-lingui-id: mwzvkz
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1679,7 +1679,7 @@ msgstr "Avatar URL"
 #. js-lingui-id: 3uQmjD
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Average"
-msgstr ""
+msgstr "Ortalama"
 
 #. js-lingui-id: EaJzRw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1812,7 +1812,7 @@ msgstr "Bum"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Bounced"
-msgstr ""
+msgstr "Geri döndü"
 
 #. js-lingui-id: 5Xcd0y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -2579,13 +2579,13 @@ msgstr "Sohbet"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Chat"
-msgstr ""
+msgstr "Sohbet"
 
 #. js-lingui-id: YFWtmh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Chat"
-msgstr ""
+msgstr "Sohbet"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2749,7 +2749,7 @@ msgstr "Kod Yorumlayıcı"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Code Interpreter"
-msgstr ""
+msgstr "Kod Yorumlayıcı"
 
 #. js-lingui-id: o21Tgt
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -3284,17 +3284,17 @@ msgstr "Mevcut nesne, kayıt sayfası görünümündeki etiket tanımlayıcı al
 #. js-lingui-id: wBMjJ2
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count"
-msgstr ""
+msgstr "Sayım"
 
 #. js-lingui-id: EkZfen
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count all"
-msgstr ""
+msgstr "Toplamı say"
 
 #. js-lingui-id: vQJINq
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count empty"
-msgstr ""
+msgstr "Boş olanları say"
 
 #. js-lingui-id: sLDQbp
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
@@ -3304,7 +3304,7 @@ msgstr ""
 #. js-lingui-id: DzRsDJ
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count not empty"
-msgstr ""
+msgstr "Boş olmayanları say"
 
 #. js-lingui-id: ft6dHY
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
@@ -3314,7 +3314,7 @@ msgstr ""
 #. js-lingui-id: 9FZBbf
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count unique values"
-msgstr ""
+msgstr "Benzersiz değerleri say"
 
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4113,7 +4113,7 @@ msgstr "Yok Et"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
-msgstr ""
+msgstr "Geliştiriciler"
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -7694,7 +7694,7 @@ msgstr "Pazarlama gönderimi, abonelikten çıkma alan adı doğrulanana kadar b
 #. js-lingui-id: CK1KXz
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Max"
-msgstr ""
+msgstr "Maks"
 
 #. js-lingui-id: Dq8Em0
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -8200,7 +8200,7 @@ msgstr "Migrasyon yürütmesi başarısız oldu."
 #. js-lingui-id: eTUF28
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Min"
-msgstr ""
+msgstr "Dk"
 
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -9606,12 +9606,12 @@ msgstr "Adım başına gözlemlenebilirlik yükü (token kullanımı, araç ça�
 #. js-lingui-id: yIK1GU
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent empty"
-msgstr ""
+msgstr "Yüzde olarak boş"
 
 #. js-lingui-id: PWLd4c
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent not empty"
-msgstr ""
+msgstr "Yüzde olarak dolu"
 
 #. js-lingui-id: 2TPvIG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10851,7 +10851,7 @@ msgstr "Roller"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Roles"
-msgstr ""
+msgstr "Roller"
 
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -11544,7 +11544,7 @@ msgstr "Atlama nedeni"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skipped"
-msgstr ""
+msgstr "Atlandı"
 
 #. js-lingui-id: WBwjjW
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11978,7 +11978,7 @@ msgstr "Abonelik aşaması bulunamadı."
 #. js-lingui-id: AxQiPW
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Sum"
-msgstr ""
+msgstr "Toplam"
 
 #. js-lingui-id: RUXdNM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -12156,7 +12156,7 @@ msgstr "Görev"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Task"
-msgstr ""
+msgstr "Görev"
 
 #. js-lingui-id: 7V9t6v
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -13790,7 +13790,7 @@ msgstr "İleti dizisi"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Thread"
-msgstr ""
+msgstr "İleti dizisi"
 
 #. js-lingui-id: YBkEbP
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -16644,7 +16644,7 @@ msgstr "İki faktörlü kimlik doğrulamanız sıfırlandı"
 #. js-lingui-id: 0thatt
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Your workspace has been deleted"
-msgstr ""
+msgstr "Çalışma alanınız silindi"
 
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

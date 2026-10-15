@@ -102,7 +102,7 @@ msgstr "{hostnameCount} vertsnavn funnet for domenet \"{domainName}\". Forvent 1
 #: src/modules/dashboard/chart-data/utils/__tests__/get-aggregate-value-label.util.spec.ts
 #: src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util.ts
 msgid "{operationLabel} of {aggregateFieldLabel}"
-msgstr ""
+msgstr "{operationLabel} av {aggregateFieldLabel}"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -677,13 +677,13 @@ msgstr "Legg til minst ett utdatafelt i JSON-responsformatet"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add Block"
-msgstr ""
+msgstr "Legg til blokk"
 
 #. js-lingui-id: eCsjN4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Add Block"
-msgstr ""
+msgstr "Legg til blokk"
 
 #. js-lingui-id: mwzvkz
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1679,7 +1679,7 @@ msgstr "Avatar-URL"
 #. js-lingui-id: 3uQmjD
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Average"
-msgstr ""
+msgstr "Gjennomsnitt"
 
 #. js-lingui-id: EaJzRw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1812,7 +1812,7 @@ msgstr "Boom"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Bounced"
-msgstr ""
+msgstr "Returnert"
 
 #. js-lingui-id: 5Xcd0y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -2579,13 +2579,13 @@ msgstr "Chat"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Chat"
-msgstr ""
+msgstr "Chat"
 
 #. js-lingui-id: YFWtmh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Chat"
-msgstr ""
+msgstr "Chat"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2749,7 +2749,7 @@ msgstr "Kodefortolker"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Code Interpreter"
-msgstr ""
+msgstr "Kodefortolker"
 
 #. js-lingui-id: o21Tgt
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -3284,37 +3284,37 @@ msgstr "Kunne ikke finne det eksisterende objektet for å avstemme etikettidenti
 #. js-lingui-id: wBMjJ2
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count"
-msgstr ""
+msgstr "Telling"
 
 #. js-lingui-id: EkZfen
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count all"
-msgstr ""
+msgstr "Tell alle"
 
 #. js-lingui-id: vQJINq
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count empty"
-msgstr ""
+msgstr "Tell tomme"
 
 #. js-lingui-id: sLDQbp
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count false"
-msgstr ""
+msgstr "Tell falsk"
 
 #. js-lingui-id: DzRsDJ
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count not empty"
-msgstr ""
+msgstr "Tell ikke tomme"
 
 #. js-lingui-id: ft6dHY
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count true"
-msgstr ""
+msgstr "Tell sant"
 
 #. js-lingui-id: 9FZBbf
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count unique values"
-msgstr ""
+msgstr "Tell unike verdier"
 
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4113,7 +4113,7 @@ msgstr "Ødelegg"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
-msgstr ""
+msgstr "Utviklere"
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -7694,7 +7694,7 @@ msgstr "Markedsføringsutsendelser er satt på vent til avmeldingsdomenet er ver
 #. js-lingui-id: CK1KXz
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Max"
-msgstr ""
+msgstr "Maks"
 
 #. js-lingui-id: Dq8Em0
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -8200,7 +8200,7 @@ msgstr "Kjøring av migrering mislyktes."
 #. js-lingui-id: eTUF28
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Min"
-msgstr ""
+msgstr "Min"
 
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -9606,12 +9606,12 @@ msgstr "Nyttelast for observabilitet per steg (tokenbruk, verktøykall, loggoppf
 #. js-lingui-id: yIK1GU
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent empty"
-msgstr ""
+msgstr "Prosent tom"
 
 #. js-lingui-id: PWLd4c
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent not empty"
-msgstr ""
+msgstr "Prosent ikke tom"
 
 #. js-lingui-id: 2TPvIG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10851,7 +10851,7 @@ msgstr "Roller"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Roles"
-msgstr ""
+msgstr "Roller"
 
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -11544,7 +11544,7 @@ msgstr "Årsak til utelatelse"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skipped"
-msgstr ""
+msgstr "Hoppet over"
 
 #. js-lingui-id: WBwjjW
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11978,7 +11978,7 @@ msgstr "Abonnementsfase ikke funnet."
 #. js-lingui-id: AxQiPW
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Sum"
-msgstr ""
+msgstr "Sum"
 
 #. js-lingui-id: RUXdNM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -12156,7 +12156,7 @@ msgstr "Oppgave"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Task"
-msgstr ""
+msgstr "Oppgave"
 
 #. js-lingui-id: 7V9t6v
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -13790,7 +13790,7 @@ msgstr "Tråd"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Thread"
-msgstr ""
+msgstr "Tråd"
 
 #. js-lingui-id: YBkEbP
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -16644,7 +16644,7 @@ msgstr "Tofaktorautentiseringen din ble tilbakestilt"
 #. js-lingui-id: 0thatt
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Your workspace has been deleted"
-msgstr ""
+msgstr "Arbeidsområdet ditt er slettet"
 
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

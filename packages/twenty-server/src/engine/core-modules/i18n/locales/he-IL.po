@@ -102,7 +102,7 @@ msgstr "נמצאו {hostnameCount} שמות מתחם עבור הדומיין \"{
 #: src/modules/dashboard/chart-data/utils/__tests__/get-aggregate-value-label.util.spec.ts
 #: src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util.ts
 msgid "{operationLabel} of {aggregateFieldLabel}"
-msgstr ""
+msgstr "{operationLabel} של {aggregateFieldLabel}"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -677,13 +677,13 @@ msgstr "הוסיפו לפחות שדה פלט אחד לתבנית תגובת JSO
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add Block"
-msgstr ""
+msgstr "הוסף בלוק"
 
 #. js-lingui-id: eCsjN4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Add Block"
-msgstr ""
+msgstr "הוסף בלוק"
 
 #. js-lingui-id: mwzvkz
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1679,7 +1679,7 @@ msgstr "כתובת אתר של אווטאר"
 #. js-lingui-id: 3uQmjD
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Average"
-msgstr ""
+msgstr "ממוצע"
 
 #. js-lingui-id: EaJzRw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1812,7 +1812,7 @@ msgstr "בום"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Bounced"
-msgstr ""
+msgstr "הוחזר"
 
 #. js-lingui-id: 5Xcd0y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -2579,13 +2579,13 @@ msgstr "שיחה"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Chat"
-msgstr ""
+msgstr "שיחה"
 
 #. js-lingui-id: YFWtmh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Chat"
-msgstr ""
+msgstr "שיחה"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2749,7 +2749,7 @@ msgstr "מפרש קוד"
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
 msgid "Code Interpreter"
-msgstr ""
+msgstr "מפרש קוד"
 
 #. js-lingui-id: o21Tgt
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -3284,17 +3284,17 @@ msgstr "לא ניתן היה לאתר את האובייקט הקיים כדי ל
 #. js-lingui-id: wBMjJ2
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count"
-msgstr ""
+msgstr "ספור"
 
 #. js-lingui-id: EkZfen
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count all"
-msgstr ""
+msgstr "ספור הכל"
 
 #. js-lingui-id: vQJINq
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count empty"
-msgstr ""
+msgstr "ספור ריקים"
 
 #. js-lingui-id: sLDQbp
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
@@ -3304,17 +3304,17 @@ msgstr ""
 #. js-lingui-id: DzRsDJ
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count not empty"
-msgstr ""
+msgstr "ספור לא ריקים"
 
 #. js-lingui-id: ft6dHY
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count true"
-msgstr ""
+msgstr "ספור אמת"
 
 #. js-lingui-id: 9FZBbf
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Count unique values"
-msgstr ""
+msgstr "ספור ערכים ייחודיים"
 
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4113,7 +4113,7 @@ msgstr "הרוס"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
-msgstr ""
+msgstr "מפתחים"
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -7694,7 +7694,7 @@ msgstr "שליחת דיוור שיווקי מושהית עד שדומיין בי
 #. js-lingui-id: CK1KXz
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Max"
-msgstr ""
+msgstr "מקס"
 
 #. js-lingui-id: Dq8Em0
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -8200,7 +8200,7 @@ msgstr "הרצת ההגירה נכשלה."
 #. js-lingui-id: eTUF28
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Min"
-msgstr ""
+msgstr "מינ'"
 
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -9606,12 +9606,12 @@ msgstr "מטען תצפיתיות לכל שלב (שימוש באסימונים, 
 #. js-lingui-id: yIK1GU
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent empty"
-msgstr ""
+msgstr "אחוז ריק"
 
 #. js-lingui-id: PWLd4c
 #: src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util.ts
 msgid "Percent not empty"
-msgstr ""
+msgstr "אחוז שאינו ריק"
 
 #. js-lingui-id: 2TPvIG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11544,7 +11544,7 @@ msgstr "סיבת דילוג"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skipped"
-msgstr ""
+msgstr "דולג"
 
 #. js-lingui-id: WBwjjW
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12156,7 +12156,7 @@ msgstr "משימה"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Task"
-msgstr ""
+msgstr "משימה"
 
 #. js-lingui-id: 7V9t6v
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -13790,7 +13790,7 @@ msgstr "שרשור"
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Thread"
-msgstr ""
+msgstr "שרשור"
 
 #. js-lingui-id: YBkEbP
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -16644,7 +16644,7 @@ msgstr "האימות הדו-שלבי שלך אופס"
 #. js-lingui-id: 0thatt
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Your workspace has been deleted"
-msgstr ""
+msgstr "מרחב העבודה שלך נמחק"
 
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
