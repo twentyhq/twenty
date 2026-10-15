@@ -4,6 +4,7 @@ import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFi
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { GraphWidget } from '@/page-layout/widgets/graph/components/GraphWidget';
 import { GraphWidgetUnavailableFieldsDisplay } from '@/page-layout/widgets/graph/components/GraphWidgetUnavailableFieldsDisplay';
+import { getChartFilterFieldMetadataIds } from '@/page-layout/widgets/graph/utils/getChartFilterFieldMetadataIds';
 import { getUnavailableChartFields } from '@/page-layout/widgets/graph/utils/getUnavailableChartFields';
 import { hasMinimalRequiredConfigForGraph } from '@/page-layout/widgets/graph/utils/hasMinimalRequiredConfigForGraph';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -29,7 +30,10 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
 
   const unavailableFields = isDefined(objectMetadataItem)
     ? getUnavailableChartFields({
-        fieldMetadataIds: extractFieldMetadataIdsFromWidget(widget),
+        fieldMetadataIds: [
+          ...extractFieldMetadataIdsFromWidget(widget),
+          ...getChartFilterFieldMetadataIds(widget.configuration),
+        ],
         fieldMetadataItems: objectMetadataItem.fields,
       })
     : [];
