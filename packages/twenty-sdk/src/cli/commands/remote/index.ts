@@ -33,8 +33,6 @@ const authenticate = async (
 const runOAuthWithApiKeyFallback = async (
   apiUrl: string,
 ): Promise<AuthMethod> => {
-  console.log(chalk.gray('Opening browser for authentication...'));
-
   const oauthResult = await authLoginOAuth({ apiUrl });
 
   if (oauthResult.success) {

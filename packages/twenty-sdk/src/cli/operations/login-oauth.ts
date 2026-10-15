@@ -5,6 +5,7 @@ import { generatePkceChallenge } from '@/cli/utilities/auth/pkce';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import axios from 'axios';
+import chalk from 'chalk';
 
 import { AUTH_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -73,13 +74,19 @@ const innerAuthLoginOAuth = async (
     authUrl.searchParams.set('codeChallenge', codeChallenge);
     authUrl.searchParams.set('redirectUrl', callbackServer.callbackUrl);
 
+    console.log(chalk.gray('Opening browser for authentication...'));
+
     const browserOpened = await openBrowser(authUrl.toString());
 
-    if (!browserOpened) {
-      console.log(
-        `\nOpen this URL in your browser to authenticate:\n${authUrl.toString()}\n`,
-      );
-    }
+    // The tab can open in the background or land on a sign-in page (e.g. after a local DB reset)
+    console.log(
+      `\n${browserOpened ? 'If nothing opens, visit' : 'Open this URL in your browser to authenticate'}:\n${authUrl.toString()}\n`,
+    );
+    console.log(
+      chalk.gray(
+        'Waiting for approval in the browser (sign in first if asked). Press Ctrl+C to cancel.',
+      ),
+    );
 
     const callbackResult = await callbackServer.waitForCallback();
 

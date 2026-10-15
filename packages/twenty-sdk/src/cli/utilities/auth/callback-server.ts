@@ -178,7 +178,7 @@ const errorHtml = (error: string, isDarkMode: boolean) =>
 export const startCallbackServer = (options?: {
   timeoutMs?: number;
 }): Promise<CallbackServer> => {
-  const timeoutMs = options?.timeoutMs ?? 120_000;
+  const timeoutMs = options?.timeoutMs ?? 5 * 60_000;
 
   return new Promise((resolve, reject) => {
     let callbackResolve: (result: CallbackResult) => void;
