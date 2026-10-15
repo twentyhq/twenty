@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveMorphRelationAggregateAsCount } from 'src/modules/dashboard/chart-data/utils/resolve-morph-relation-aggregate-as-count.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -35,6 +37,7 @@ type GetLineChartDataParams = {
   objectMetadataId: string;
   configuration: LineChartConfigurationDTO;
   authContext: WorkspaceAuthContext;
+  locale: keyof typeof APP_LOCALES;
 };
 
 @Injectable()
@@ -43,6 +46,7 @@ export class LineChartDataService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly chartDataQueryService: ChartDataQueryService,
     private readonly chartRelationLabelService: ChartRelationLabelService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async getLineChartData({
@@ -50,6 +54,7 @@ export class LineChartDataService {
     objectMetadataId,
     configuration: rawConfiguration,
     authContext,
+    locale,
   }: GetLineChartDataParams): Promise<LineChartDataDTO> {
     try {
       const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -194,6 +199,8 @@ export class LineChartDataService {
         secondaryRelationLabelResolution: relationLabelResolutions.secondary,
       });
 
+      const i18n = this.i18nService.getI18nInstance(locale);
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return transformToTwoDimensionalLineChartData({
           filteredRawResults: resolvedResults,
@@ -206,6 +213,7 @@ export class LineChartDataService {
           seriesIdPrefix,
           primaryRelationLabelResolution: relationLabelResolutions.primary,
           secondaryRelationLabelResolution: relationLabelResolutions.secondary,
+          i18n,
         });
       }
 
@@ -218,6 +226,7 @@ export class LineChartDataService {
         firstDayOfTheWeek,
         seriesIdPrefix,
         relationLabelResolution: relationLabelResolutions.primary,
+        i18n,
       });
     } catch (error) {
       throw wrapChartDataQueryError(error, 'Line chart data retrieval failed');

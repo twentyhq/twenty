@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { resolveMorphRelationAggregateAsCount } from 'src/modules/dashboard/chart-data/utils/resolve-morph-relation-aggregate-as-count.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -34,6 +36,7 @@ type GetBarChartDataParams = {
   objectMetadataId: string;
   configuration: BarChartConfigurationDTO;
   authContext: WorkspaceAuthContext;
+  locale: keyof typeof APP_LOCALES;
 };
 
 @Injectable()
@@ -42,6 +45,7 @@ export class BarChartDataService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly chartDataQueryService: ChartDataQueryService,
     private readonly chartRelationLabelService: ChartRelationLabelService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async getBarChartData({
@@ -49,6 +53,7 @@ export class BarChartDataService {
     objectMetadataId,
     configuration: rawConfiguration,
     authContext,
+    locale,
   }: GetBarChartDataParams): Promise<BarChartDataDTO> {
     try {
       const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -186,6 +191,8 @@ export class BarChartDataService {
         secondaryRelationLabelResolution: relationLabelResolutions.secondary,
       });
 
+      const i18n = this.i18nService.getI18nInstance(locale);
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return transformToTwoDimensionalBarChartData({
           filteredRawResults: resolvedResults,
@@ -197,6 +204,7 @@ export class BarChartDataService {
           firstDayOfTheWeek,
           primaryRelationLabelResolution: relationLabelResolutions.primary,
           secondaryRelationLabelResolution: relationLabelResolutions.secondary,
+          i18n,
         });
       }
 
@@ -208,6 +216,7 @@ export class BarChartDataService {
         userTimezone,
         firstDayOfTheWeek,
         relationLabelResolution: relationLabelResolutions.primary,
+        i18n,
       });
     } catch (error) {
       throw wrapChartDataQueryError(error, 'Bar chart data retrieval failed');

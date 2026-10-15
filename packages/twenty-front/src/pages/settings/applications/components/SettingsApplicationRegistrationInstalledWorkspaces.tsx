@@ -1,9 +1,8 @@
 import { useQuery } from '@apollo/client/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -29,7 +28,7 @@ const INITIAL_VISIBLE_WORKSPACES = 3;
 const SHOW_MORE_PAGE_SIZE = 20;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
-const StyledSection = styled(Section.Root)`
+const StyledSection = styled.div`
   margin-top: ${themeCssVariables.spacing[5]};
 `;
 

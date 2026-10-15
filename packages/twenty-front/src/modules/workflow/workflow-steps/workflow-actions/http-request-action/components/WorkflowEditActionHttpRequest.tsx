@@ -63,28 +63,6 @@ const StyledConfigurationTabContent = styled.div`
   height: 100%;
 `;
 
-const StyledFullHeightFormRawJsonFieldInputContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-
-  & > div:last-child {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-
-    & > div {
-      flex: 1;
-      height: 100%;
-      max-height: none !important;
-
-      & > div {
-        height: 100%;
-      }
-    }
-  }
-`;
-
 export const WorkflowEditActionHttpRequest = ({
   action,
   actionOptions,
@@ -184,16 +162,15 @@ export const WorkflowEditActionHttpRequest = ({
                 />
               )}
 
-              <StyledFullHeightFormRawJsonFieldInputContainer>
-                <FormRawJsonFieldInput
-                  label={t`Expected Response Body`}
-                  placeholder={JSON_RESPONSE_PLACEHOLDER}
-                  defaultValue={outputSchema}
-                  onChange={handleOutputSchemaChange}
-                  readonly={actionOptions.readonly}
-                  error={error}
-                />
-              </StyledFullHeightFormRawJsonFieldInputContainer>
+              <FormRawJsonFieldInput
+                label={t`Expected Response Body`}
+                placeholder={JSON_RESPONSE_PLACEHOLDER}
+                defaultValue={outputSchema}
+                onChange={handleOutputSchemaChange}
+                readonly={actionOptions.readonly}
+                error={error}
+                fullHeight
+              />
             </StyledConfigurationTabContent>
           )}
           {activeTabId === WorkflowHttpRequestTabId.TEST && (
