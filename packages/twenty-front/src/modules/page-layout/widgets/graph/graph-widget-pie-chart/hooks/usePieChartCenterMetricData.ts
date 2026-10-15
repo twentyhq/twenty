@@ -1,4 +1,3 @@
-import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/utils/findChartGroupByFieldMetadataItem';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
@@ -42,22 +41,22 @@ export const usePieChartCenterMetricData = ({
     configuration,
   });
 
-  const groupByFieldName = findChartGroupByFieldMetadataItem({
-    fieldMetadataItems: objectMetadataItem.fields,
-    groupByFieldMetadataId: configuration.groupByFieldMetadataId,
-  })?.name;
+  const groupByField = objectMetadataItem.fields.find(
+    (field: { id: string }) =>
+      field.id === configuration.groupByFieldMetadataId,
+  );
 
   const centerMetricFilter = useMemo(() => {
-    if (!configuration.hideEmptyCategory || !isDefined(groupByFieldName)) {
+    if (!configuration.hideEmptyCategory || !groupByField) {
       return gqlOperationFilter;
     }
 
-    const notNullFilter = { [groupByFieldName]: { is: 'NOT_NULL' as const } };
+    const notNullFilter = { [groupByField.name]: { is: 'NOT_NULL' as const } };
 
     return isDefined(gqlOperationFilter)
       ? { and: [gqlOperationFilter, notNullFilter] }
       : notNullFilter;
-  }, [gqlOperationFilter, configuration.hideEmptyCategory, groupByFieldName]);
+  }, [gqlOperationFilter, configuration.hideEmptyCategory, groupByField]);
 
   const centerMetricAggregateOperation =
     configuration.aggregateOperation as AggregateOperations;

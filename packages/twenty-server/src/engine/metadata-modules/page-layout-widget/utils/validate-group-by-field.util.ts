@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -55,6 +56,12 @@ export const validateGroupByFieldOrThrow = ({
   if (field.objectMetadataId !== objectMetadataId) {
     throw new PageLayoutWidgetFieldValidationException(
       `${paramName} must belong to objectMetadataId "${objectMetadataId}".`,
+    );
+  }
+
+  if (field.type === FieldMetadataType.MORPH_RELATION) {
+    throw new PageLayoutWidgetFieldValidationException(
+      `${paramName} cannot be a morph relation field.`,
     );
   }
 

@@ -1,4 +1,3 @@
-import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { getChartDefaultOrderByForFieldType } from '@/side-panel/pages/page-layout/utils/getChartDefaultOrderByForFieldType';
 import { isFieldOrRelationNestedFieldDateKind } from '@/side-panel/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
@@ -53,12 +52,9 @@ export const buildChartGroupByFieldConfigUpdate = <
     'PieChartConfiguration',
   );
 
-  const fieldMetadataItem = isDefined(fieldId)
-    ? findFieldMetadataItemByFieldMetadataId({
-        fieldMetadataItems: objectMetadataItem?.fields,
-        fieldMetadataId: fieldId,
-      })
-    : undefined;
+  const fieldMetadataItem = objectMetadataItem?.fields?.find(
+    (field) => field.id === fieldId,
+  );
 
   const defaultOrderBy = isDefined(fieldMetadataItem?.type)
     ? getChartDefaultOrderByForFieldType(fieldMetadataItem?.type)
@@ -71,10 +67,9 @@ export const buildChartGroupByFieldConfigUpdate = <
       return false;
     }
 
-    const candidateFieldMetadataItem = findFieldMetadataItemByFieldMetadataId({
-      fieldMetadataItems: objectMetadataItem?.fields,
-      fieldMetadataId,
-    });
+    const candidateFieldMetadataItem = objectMetadataItem?.fields?.find(
+      (field) => field.id === fieldMetadataId,
+    );
 
     return (
       isDefined(candidateFieldMetadataItem) &&

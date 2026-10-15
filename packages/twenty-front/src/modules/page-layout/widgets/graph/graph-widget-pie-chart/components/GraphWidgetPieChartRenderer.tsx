@@ -1,4 +1,3 @@
-import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
@@ -67,10 +66,9 @@ export const GraphWidgetPieChartRenderer = () => {
     numberFormat: widget.configuration.numberFormat,
   });
 
-  const groupByField = findFieldMetadataItemByFieldMetadataId({
-    fieldMetadataItems: objectMetadataItem.fields,
-    fieldMetadataId: widget.configuration.groupByFieldMetadataId,
-  });
+  const groupByField = objectMetadataItem.fields.find(
+    (field) => field.id === widget.configuration.groupByFieldMetadataId,
+  );
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(groupByField);
 

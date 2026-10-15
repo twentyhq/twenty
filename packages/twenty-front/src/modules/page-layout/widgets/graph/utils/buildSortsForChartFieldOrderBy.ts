@@ -1,4 +1,3 @@
-import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/utils/findChartGroupByFieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type NormalizedChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -23,17 +22,17 @@ export const buildSortsForChartFieldOrderBy = ({
     normalizedFields;
 
   if (
-    (orderBy !== GraphOrderBy.FIELD_ASC &&
-      orderBy !== GraphOrderBy.FIELD_DESC) ||
-    !isDefined(groupByFieldMetadataId)
+    orderBy !== GraphOrderBy.FIELD_ASC &&
+    orderBy !== GraphOrderBy.FIELD_DESC
   ) {
     return null;
   }
 
-  const primaryField = findChartGroupByFieldMetadataItem({
-    fieldMetadataItems: objectMetadataItem.fields,
-    groupByFieldMetadataId,
-  });
+  const primaryField = groupByFieldMetadataId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === groupByFieldMetadataId,
+      )
+    : undefined;
 
   if (!isDefined(primaryField)) {
     return null;

@@ -1,4 +1,3 @@
-import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { getFieldLabelWithSubField } from '@/side-panel/pages/page-layout/utils/getFieldLabelWithSubField';
 import { getSortLabelSuffixForFieldType } from '@/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -34,10 +33,9 @@ export const useGraphXSortOptionLabels = ({
     aggregateFieldMetadataId?: string;
     aggregateOperation?: ExtendedAggregateOperations;
   }): string => {
-    const groupByField = findFieldMetadataItemByFieldMetadataId({
-      fieldMetadataItems: objectMetadataItem?.fields,
-      fieldMetadataId: groupByFieldMetadataIdX,
-    });
+    const groupByField = objectMetadataItem?.fields.find(
+      (fieldMetadataItem) => fieldMetadataItem.id === groupByFieldMetadataIdX,
+    );
 
     const fieldLabel = getFieldLabelWithSubField({
       field: groupByField,

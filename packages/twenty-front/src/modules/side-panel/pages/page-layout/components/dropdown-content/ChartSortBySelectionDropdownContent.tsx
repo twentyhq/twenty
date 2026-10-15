@@ -1,4 +1,3 @@
-import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useState } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -100,10 +99,9 @@ export const ChartSortBySelectionDropdownContent = () => {
       barOrLineChartConfiguration.primaryAxisGroupBySubFieldName;
   }
 
-  const primaryAxisField = findFieldMetadataItemByFieldMetadataId({
-    fieldMetadataItems: objectMetadataItem?.fields,
-    fieldMetadataId: groupByFieldMetadataId,
-  });
+  const primaryAxisField = objectMetadataItem?.fields.find(
+    (field) => field.id === groupByFieldMetadataId,
+  );
 
   if (!isDefined(primaryAxisField)) {
     return null;

@@ -1,4 +1,3 @@
-import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/utils/findChartGroupByFieldMetadataItem';
 import { type BuildChartDrilldownQueryParamsInput } from '@/page-layout/widgets/graph/types/BuildChartDrilldownQueryParamsInput';
 import { buildFilterFromChartBucket } from '@/page-layout/widgets/graph/utils/buildFilterFromChartBucket';
 import { buildFilterQueryParams } from '@/page-layout/widgets/graph/utils/buildFilterQueryParams';
@@ -32,10 +31,9 @@ export const buildChartDrilldownQueryParams = ({
     normalizeChartConfigurationFields(configuration);
 
   const primaryField = isDefined(groupByFieldMetadataId)
-    ? findChartGroupByFieldMetadataItem({
-        fieldMetadataItems: objectMetadataItem.fields,
-        groupByFieldMetadataId,
-      })
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === groupByFieldMetadataId,
+      )
     : undefined;
 
   if (isDefined(primaryField)) {
