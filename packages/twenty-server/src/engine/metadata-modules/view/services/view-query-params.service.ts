@@ -134,6 +134,7 @@ export class ViewQueryParamsService {
       fieldMetadataItems: buildRecordFilterFlatFieldMetadatas({
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
+        recordFilters,
       }),
       recordFilters,
       recordFilterGroups,

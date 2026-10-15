@@ -83,6 +83,7 @@ export const convertChartFilterToGqlOperationFilter = ({
     fieldMetadataItems: buildRecordFilterFlatFieldMetadatas({
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
+      recordFilters: convertedRecordFilters,
     }),
     recordFilters: convertedRecordFilters,
     recordFilterGroups: convertedRecordFilterGroups,
