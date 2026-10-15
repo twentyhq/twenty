@@ -27,7 +27,11 @@
       }
     },
     "typecheck": {},
-    "lint": {},
+    "lint": {
+      "options": {
+        "command": "npx oxlint -c .oxlintrc.json . && (npx oxfmt --check . || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint --configuration=fix' && false)) && npx oxlint -c .oxlintrc.i18n.json src"
+      }
+    },
     "fmt": {
       "options": {
         "files": "src"
