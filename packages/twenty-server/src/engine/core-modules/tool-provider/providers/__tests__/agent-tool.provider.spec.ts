@@ -2,6 +2,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FieldActorSource } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { AgentToolProvider } from 'src/engine/core-modules/tool-provider/providers/agent-tool.provider';
 import { type AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
@@ -31,7 +32,10 @@ const buildAgent = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const buildProvider = (options?: { hasAiSettingsPermission?: boolean }) => {
+const buildProvider = (options?: {
+  hasAiSettingsPermission?: boolean;
+  isAiChatInboxEnabled?: boolean;
+}) => {
   const agentService = {
     findManyAgents: jest.fn().mockResolvedValue([]),
     findOneAgentById: jest.fn().mockResolvedValue(buildAgent()),
@@ -51,6 +55,11 @@ const buildProvider = (options?: { hasAiSettingsPermission?: boolean }) => {
       .fn()
       .mockResolvedValue(options?.hasAiSettingsPermission ?? true),
   };
+  const featureFlagService = {
+    isFeatureEnabled: jest
+      .fn()
+      .mockResolvedValue(options?.isAiChatInboxEnabled ?? true),
+  };
 
   const provider = new AgentToolProvider(
     new AgentToolWorkspaceService(
@@ -58,6 +67,7 @@ const buildProvider = (options?: { hasAiSettingsPermission?: boolean }) => {
       aiModelRegistryService as unknown as AiModelRegistryService,
     ),
     permissionsService as unknown as PermissionsService,
+    featureFlagService as unknown as FeatureFlagService,
   );
 
   return {
@@ -106,6 +116,15 @@ describe('AgentToolProvider', () => {
       const { provider } = buildProvider({ hasAiSettingsPermission: false });
 
       await expect(provider.isAvailable(context)).resolves.toBe(false);
+    });
+
+    it('is not available while the AI chat inbox feature flag is off', async () => {
+      const { provider, permissionsService } = buildProvider({
+        isAiChatInboxEnabled: false,
+      });
+
+      await expect(provider.isAvailable(context)).resolves.toBe(false);
+      expect(permissionsService.checkRolesPermissions).not.toHaveBeenCalled();
     });
   });
 
