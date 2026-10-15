@@ -1,10 +1,11 @@
 import { clearLine, cursorTo } from 'node:readline';
-import { stripVTControlCharacters } from 'node:util';
+import stringWidth from 'string-width';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { type OutputMode } from '@/output/types/output-mode.type';
 import { type Output } from '@/output/types/output.type';
+import { writeLine } from '@/output/write-line';
 import { isContinuousIntegration } from '@/utils/is-continuous-integration';
 
 export const createProgressOutput = ({ mode }: { mode: OutputMode }) => {
@@ -20,13 +21,12 @@ export const createProgressOutput = ({ mode }: { mode: OutputMode }) => {
     hasActiveBar = false;
   };
 
-  const write: Output['progress'] = (message, options) => {
-    const percentage = options?.percentage;
+  const write: Output['progress'] = ({ message, percentage }) => {
     const progressText = isDefined(percentage) ? `${percentage}%` : '';
     const barWidth = Math.min(
       20,
       (process.stderr.columns ?? 80) -
-        stripVTControlCharacters(message).length -
+        stringWidth(message) -
         progressText.length -
         5,
     );
@@ -35,7 +35,7 @@ export const createProgressOutput = ({ mode }: { mode: OutputMode }) => {
 
     if (
       mode !== 'human' ||
-      process.stderr.isTTY !== true ||
+      !process.stderr.isTTY ||
       isContinuousIntegration() ||
       process.env.TERM === 'dumb' ||
       !isDefined(percentage) ||
@@ -46,7 +46,7 @@ export const createProgressOutput = ({ mode }: { mode: OutputMode }) => {
         ? `${message} ${progressText}`
         : message;
 
-      process.stderr.write(line.endsWith('\n') ? line : `${line}\n`);
+      writeLine({ stream: process.stderr, text: line });
 
       return;
     }

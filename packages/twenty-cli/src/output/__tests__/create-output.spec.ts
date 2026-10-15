@@ -48,8 +48,8 @@ describe('terminal progress', () => {
   it('updates one stderr line even when stdin is not a terminal', () => {
     const output = createOutput({ mode: 'human', command: 'data export' });
 
-    output.progress('Exporting companies…', { percentage: 25 });
-    output.progress('Exporting companies…', { percentage: 75 });
+    output.progress({ message: 'Exporting companies…', percentage: 25 });
+    output.progress({ message: 'Exporting companies…', percentage: 75 });
 
     expect(stdout).toBe('');
     expect(stderr).toContain('█████░░░░░░░░░░░░░░░  25%');
@@ -71,8 +71,8 @@ describe('terminal progress', () => {
       vi.stubEnv('TERM', term);
       const output = createOutput({ mode: 'human', command: 'data export' });
 
-      output.progress('Exporting companies…', { percentage: 25 });
-      output.progress('Exporting companies…', { percentage: 75 });
+      output.progress({ message: 'Exporting companies…', percentage: 25 });
+      output.progress({ message: 'Exporting companies…', percentage: 75 });
 
       expect(stderr).toBe(
         'Exporting companies… 25%\nExporting companies… 75%\n',
@@ -85,7 +85,7 @@ describe('terminal progress', () => {
     vi.stubEnv('CI', ci);
     const output = createOutput({ mode: 'human', command: 'data export' });
 
-    output.progress('Exporting companies…', { percentage: 25 });
+    output.progress({ message: 'Exporting companies…', percentage: 25 });
 
     expect(stderr).toContain('█');
   });
@@ -94,23 +94,89 @@ describe('terminal progress', () => {
     process.stderr.columns = 40;
     const output = createOutput({ mode: 'human', command: 'data export' });
 
-    output.progress('Exporting companies…', { percentage: 25 });
+    output.progress({ message: 'Exporting companies…', percentage: 25 });
 
     expect(stderr.length).toBeLessThan(40);
     expect(stderr).toContain('░');
-    output.progress('Downloading CSV…');
+    output.progress({ message: 'Downloading CSV…' });
     stderr = '';
     process.stderr.columns = 25;
-    output.progress('Exporting companies…', { percentage: 75 });
+    output.progress({ message: 'Exporting companies…', percentage: 75 });
 
     expect(stderr).toBe('Exporting companies… 75%\n');
+  });
+
+  it.each([
+    '界'.repeat(12),
+    '\u001b[32m' + '界'.repeat(12) + '\u001b[0m',
+    '👨‍👩‍👧‍👦'.repeat(12),
+    'e\u0301'.repeat(24),
+  ])('fits a bar to displayed terminal columns for %s', (message) => {
+    process.stderr.columns = 40;
+    const output = createOutput({ mode: 'human', command: 'data export' });
+
+    output.progress({ message, percentage: 25 });
+
+    expect(stderr).toBe(`${message}  ██░░░░░░  25%`);
+    output.progress({ message: 'Downloading CSV…' });
+    expect(stderr).toBe(
+      `${message}  ██░░░░░░  25%\u001b[1G\u001b[2KDownloading CSV…\n`,
+    );
+  });
+
+  it('uses a plain line when wide text leaves no room for a bar', () => {
+    process.stderr.columns = 35;
+    const output = createOutput({ mode: 'human', command: 'data export' });
+    const message = '界'.repeat(12);
+
+    output.progress({ message, percentage: 25 });
+
+    expect(stderr).toBe(`${message} 25%\n`);
+  });
+
+  it('includes percentages in NDJSON progress and omits them when absent', () => {
+    const output = createOutput({ mode: 'ndjson', command: 'data export' });
+
+    output.progress({ message: 'Starting export…', percentage: 0 });
+    output.progress({ message: 'Exporting companies…', percentage: 25 });
+    output.progress({ message: 'Downloading CSV…' });
+
+    expect(stderr).toBe('');
+    expect(
+      stdout
+        .trim()
+        .split('\n')
+        .map((line) => JSON.parse(line)),
+    ).toEqual([
+      {
+        schemaVersion: 1,
+        command: 'data export',
+        type: 'progress',
+        sequence: 1,
+        data: { message: 'Starting export…', percentage: 0 },
+      },
+      {
+        schemaVersion: 1,
+        command: 'data export',
+        type: 'progress',
+        sequence: 2,
+        data: { message: 'Exporting companies…', percentage: 25 },
+      },
+      {
+        schemaVersion: 1,
+        command: 'data export',
+        type: 'progress',
+        sequence: 3,
+        data: { message: 'Downloading CSV…' },
+      },
+    ]);
   });
 
   it('clears the bar before the next ordinary progress line', () => {
     const output = createOutput({ mode: 'human', command: 'data export' });
 
-    output.progress('Exporting companies…', { percentage: 100 });
-    output.progress('Downloading CSV…');
+    output.progress({ message: 'Exporting companies…', percentage: 100 });
+    output.progress({ message: 'Downloading CSV…' });
 
     expect(stderr).toContain('\u001b[1G\u001b[2KDownloading CSV…\n');
   });
@@ -118,7 +184,7 @@ describe('terminal progress', () => {
   it('clears the bar before a success line on stdout', () => {
     const output = createOutput({ mode: 'human', command: 'data export' });
 
-    output.progress('Exporting companies…', { percentage: 100 });
+    output.progress({ message: 'Exporting companies…', percentage: 100 });
     output.succeed({ data: {}, human: 'Exported companies' });
 
     expect(combined).toContain('\u001b[1G\u001b[2KExported companies\n');
@@ -128,7 +194,7 @@ describe('terminal progress', () => {
   it('clears the bar when a warning is queued', () => {
     const output = createOutput({ mode: 'human', command: 'data export' });
 
-    output.progress('Exporting companies…', { percentage: 25 });
+    output.progress({ message: 'Exporting companies…', percentage: 25 });
     output.warn({ code: 'WARNING', message: 'A warning' });
 
     expect(stderr.endsWith('\u001b[1G\u001b[2K')).toBe(true);
@@ -146,7 +212,7 @@ describe('terminal progress', () => {
   ])('clears the bar before $code', (error) => {
     const output = createOutput({ mode: 'human', command: 'data export' });
 
-    output.progress('Exporting companies…', { percentage: 25 });
+    output.progress({ message: 'Exporting companies…', percentage: 25 });
     output.fail(error);
 
     const cleared = stderr.indexOf('\u001b[1G\u001b[2K');
@@ -159,7 +225,7 @@ describe('terminal progress', () => {
   it('keeps JSON diagnostics plain and emits one result envelope', () => {
     const output = createOutput({ mode: 'json', command: 'data export' });
 
-    output.progress('Exporting companies…', { percentage: 25 });
+    output.progress({ message: 'Exporting companies…', percentage: 25 });
     output.succeed({ data: { bytes: 42 }, human: 'Done' });
 
     expect(stderr).toBe('Exporting companies… 25%\n');

@@ -26,7 +26,7 @@ export const runAppInstallCommand: CommandRun<TargetCommandContext> = async (
 
   const progressMessage = `Installing the registered app on ${target.apiUrl}…`;
 
-  output.progress(progressMessage, { percentage: 0 });
+  output.progress({ message: progressMessage, percentage: 0 });
 
   const result = await installRegisteredApp({
     universalIdentifier,
@@ -34,7 +34,7 @@ export const runAppInstallCommand: CommandRun<TargetCommandContext> = async (
     target,
     signal,
     onProgress: (percentage) =>
-      output.progress(progressMessage, { percentage }),
+      output.progress({ message: progressMessage, percentage }),
   });
 
   return {

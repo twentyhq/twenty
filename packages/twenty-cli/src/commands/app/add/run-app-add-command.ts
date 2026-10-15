@@ -31,7 +31,7 @@ export const runAppAddCommand: CommandRun = async (context) => {
   }
 
   for (const diagnostic of identity.diagnostics) {
-    output.progress(formatToolingDiagnostic(diagnostic));
+    output.progress({ message: formatToolingDiagnostic(diagnostic) });
   }
 
   const { entity, name, files } = await prepareAppAddFiles({
