@@ -22,7 +22,9 @@ export const runAppTranslationsExtractCommand: CommandRun = async (context) => {
   });
   const sdk = await resolveSourceSdk({ appPath: project.path });
 
-  output.progress(`Extracting translatable strings from ${project.name}…`);
+  output.progress({
+    message: `Extracting translatable strings from ${project.name}…`,
+  });
   const worker = await runAppWorker({
     request: { type: 'extractTranslations', appPath: project.path, locale },
     signal,
@@ -53,7 +55,7 @@ export const runAppTranslationsExtractCommand: CommandRun = async (context) => {
 
   if (outputMode === 'human') {
     for (const diagnostic of diagnostics) {
-      output.progress(formatToolingDiagnostic(diagnostic));
+      output.progress({ message: formatToolingDiagnostic(diagnostic) });
     }
   }
   if (!result.success) {

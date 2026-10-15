@@ -132,7 +132,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
 
         if (context.outputMode === 'human' && Array.isArray(diagnostics)) {
           for (const diagnostic of diagnostics.filter(isToolingDiagnostic)) {
-            output.progress(formatToolingDiagnostic(diagnostic));
+            output.progress({ message: formatToolingDiagnostic(diagnostic) });
           }
         }
 

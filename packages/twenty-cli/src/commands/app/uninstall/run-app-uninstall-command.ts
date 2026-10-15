@@ -28,7 +28,7 @@ export const runAppUninstallCommand: CommandRun<TargetCommandContext> = async (
     throw fail(error, 'identity');
   });
 
-  output.progress(`Checking the app on ${target.apiUrl}…`);
+  output.progress({ message: `Checking the app on ${target.apiUrl}…` });
 
   const installedApp = await fetchInstalledApp({
     universalIdentifier,
@@ -65,7 +65,7 @@ export const runAppUninstallCommand: CommandRun<TargetCommandContext> = async (
     throw fail(error, 'confirmation');
   });
 
-  output.progress(`Uninstalling ${appName}…`);
+  output.progress({ message: `Uninstalling ${appName}…` });
 
   await uninstallApp({ universalIdentifier, target, signal }).catch(
     (error: unknown) => {
