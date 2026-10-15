@@ -60,9 +60,9 @@ export const publishAppToServer = async ({
     fileId = upload.fileId;
     completedPhases.push(phase);
     phase = 'upload';
-    output.progress(
-      `Uploading ${packedApp.name}@${packedApp.version} to ${target.apiUrl}…`,
-    );
+    output.progress({
+      message: `Uploading ${packedApp.name}@${packedApp.version} to ${target.apiUrl}…`,
+    });
     const status = await putUploadFile({
       uploadUrl: upload.uploadUrl,
       contentType: upload.contentType,
@@ -79,7 +79,7 @@ export const publishAppToServer = async ({
 
     completedPhases.push(phase);
     signal.throwIfAborted();
-    output.progress('Registering the uploaded app…');
+    output.progress({ message: 'Registering the uploaded app…' });
     phase = 'register';
     const result = await client.mutation({
       __name: 'CompleteAppTarballUpload',
