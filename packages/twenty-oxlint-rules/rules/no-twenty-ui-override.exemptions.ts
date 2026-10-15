@@ -6,8 +6,18 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/activities/components/ActivityList.tsx',
+    reason: 'Card.Root scrolls inside a full-height activity list',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/activities/emails/components/EmailsCardContent.tsx',
     reason: 'Section.Root fills the widget height',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx',
+    reason: 'Separator spacing inside the sign-in form',
   },
   {
     filePath:
@@ -36,6 +46,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsForm.tsx',
+    reason: 'Section.Root laid out as the padded column of bulk edit fields',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/onboarding/components/OnboardingSkipDialog.tsx',
     reason: 'Dialog.Header centers the visual and anchors the close button',
   },
@@ -46,8 +61,19 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesByHealthAccordion.tsx',
+    reason: 'Card.Content laid out as the accordion header row',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/applications/components/SettingsApplicationOverviewCard.tsx',
     reason: 'Card.Root media layout with a minimum height',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/components/SettingsCard.tsx',
+    reason:
+      'Compact Card.Content column for the settings card header and description',
   },
   {
     filePath:
@@ -56,8 +82,18 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/components/SettingsOptions/SettingsCardContentBase.tsx',
+    reason: 'Card.Content laid out as a settings option row',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/components/SettingsTableCard.tsx',
     reason: 'Forwards the caller className to Card.Root',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/config-variables/components/ConfigVariableEdit.tsx',
+    reason: 'Section.Header without trailing margin above the variable input',
   },
   {
     filePath:
@@ -71,6 +107,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx',
+    reason: 'Card.Footer laid out around the add option button',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx',
     reason: 'React Flow panel classes on ButtonGroup',
   },
@@ -78,6 +119,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx',
     reason: 'Tinted preview Card.Content',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/event-logs/components/SettingsLogs.tsx',
+    reason: 'Card.Content laid out as the column of log filters and results',
   },
   {
     filePath:
@@ -93,6 +139,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/spreadsheet-import/components/SpreadsheetImportStepBody.tsx',
     reason: 'Dialog.Body laid out as a full-height import step',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/spreadsheet-import/components/StepNavigationButton.tsx',
+    reason: 'Dialog.Footer laid out as the import step navigation bar',
   },
   {
     filePath:

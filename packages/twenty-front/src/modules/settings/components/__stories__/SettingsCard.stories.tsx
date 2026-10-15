@@ -32,7 +32,6 @@ export const Default: Story = {
     await userEvent.keyboard('{Enter} ');
     await expect(args.onClick).toHaveBeenCalledTimes(2);
     await expect(action).toHaveStyle({
-      position: 'absolute',
       outlineWidth: '2px',
       outlineStyle: 'solid',
       outlineOffset: '-2px',
@@ -43,12 +42,29 @@ export const Default: Story = {
 export const Disabled: Story = {
   args: { ...Default.args, disabled: true },
   play: async ({ canvasElement, args }) => {
-    const action = within(canvasElement).getByRole('button', {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.queryByRole('button', { name: 'Settings Card' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByText('Settings Card'));
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const ExternalLink: Story = {
+  args: {
+    Icon: React.createElement(IconMailCog),
+    title: 'Settings Card',
+    href: 'https://twenty.com',
+  },
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', {
       name: 'Settings Card',
     });
 
-    await expect(action).toBeDisabled();
-    await userEvent.click(action);
-    await expect(args.onClick).not.toHaveBeenCalled();
+    await expect(link).toHaveAttribute('href', 'https://twenty.com');
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   },
 };

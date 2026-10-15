@@ -50,7 +50,7 @@ export const EmailsCardContent = ({
       <StyledSection>
         <ActivityList isScrollable>
           {timelineThreads.map((thread) => (
-            <EmailThreadPreview key={thread.id} thread={thread} />
+            <EmailThreadPreview key={thread.id} thread={thread} divider />
           ))}
           <CustomResolverFetchMoreLoader
             loading={isFetchingMore}

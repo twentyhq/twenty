@@ -12,6 +12,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
@@ -30,12 +31,11 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
   flex-direction: column;
   flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
   min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
+`;
 
-  /* Field editors keep their intrinsic height inside forms; document editors stretch. */
-  & > * {
-    flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
-    min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
-  }
+const documentChromeFieldInputContainerClassName = css`
+  flex-grow: 1;
+  min-height: 0;
 `;
 
 const StyledAdvancedTextFieldFieldContainer = styled.div`
@@ -241,7 +241,13 @@ export const FormAdvancedTextFieldInput = ({
       <StyledAdvancedTextFieldContainerWrapper
         hasFieldChrome={chrome === 'field'}
       >
-        <FormFieldInputContainer>
+        <FormFieldInputContainer
+          className={
+            chrome === 'field'
+              ? undefined
+              : documentChromeFieldInputContainerClassName
+          }
+        >
           {label ? <Field.Label>{label}</Field.Label> : null}
 
           <StyledAdvancedTextFieldFieldContainer>

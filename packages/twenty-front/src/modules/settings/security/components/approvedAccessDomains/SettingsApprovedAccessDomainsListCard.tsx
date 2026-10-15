@@ -1,5 +1,5 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { SettingsPath } from 'twenty-shared/types';
 
@@ -11,19 +11,12 @@ import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { IconAt, IconMailCog } from 'twenty-ui/icon';
 import { GetApprovedAccessDomainsDocument } from '~/generated-metadata/graphql';
-
-const StyledLinkContainer = styled.div`
-  > a {
-    text-decoration: none;
-  }
-`;
 
 export const SettingsApprovedAccessDomainsListCard = () => {
   const navigate = useNavigate();
@@ -53,14 +46,11 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     <>
       <ToastOnQueryErrorEffect error={domainsError} />
       {loading || !approvedAccessDomains.length ? (
-        <StyledLinkContainer>
-          <Link to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
-            <SettingsCard
-              title={t`Add Approved Access Domain`}
-              Icon={<IconMailCog />}
-            />
-          </Link>
-        </StyledLinkContainer>
+        <SettingsCard
+          to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}
+          title={t`Add Approved Access Domain`}
+          Icon={<IconMailCog />}
+        />
       ) : (
         <>
           <SettingsSecurityApprovedAccessDomainValidationEffect />

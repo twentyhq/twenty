@@ -15,7 +15,6 @@ type SettingsOptionCardContentButtonProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
   description?: string;
-  disabled?: boolean;
   Button?: React.ReactNode;
 };
 
@@ -28,11 +27,10 @@ export const SettingsOptionCardContentButton = ({
   Icon,
   title,
   description,
-  disabled = false,
   Button,
 }: SettingsOptionCardContentButtonProps) => {
   return (
-    <StyledSettingsCardContent disabled={disabled}>
+    <StyledSettingsCardContent>
       {Icon && (
         <StyledSettingsCardIcon>
           <SettingsOptionIconCustomizer Icon={Icon} />
