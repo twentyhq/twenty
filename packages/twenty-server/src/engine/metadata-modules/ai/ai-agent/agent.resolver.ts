@@ -139,9 +139,18 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    ApplicationTargetGuard,
+  )
   async deleteOneAgent(
-    @Args('input') { id }: AgentIdInput,
+    @ApplicationTargetArg<AgentIdInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'agent',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentDTO> {
     const deletedFlatAgent = await this.agentService.deleteOneAgent(
