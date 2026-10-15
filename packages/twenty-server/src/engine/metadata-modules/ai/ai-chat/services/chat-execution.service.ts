@@ -119,6 +119,7 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -296,7 +297,7 @@ export class ChatExecutionService {
 
     const latestUserMessage = [...messages]
       .reverse()
-      .find((message) => message.role === 'user');
+      .find((message) => message.role === AgentMessageRole.USER);
 
     // Members mentioned in this message are only added once the turn is queued
     const isGroupConversation =

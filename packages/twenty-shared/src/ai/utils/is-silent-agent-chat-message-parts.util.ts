@@ -10,8 +10,6 @@ const isSucceededNoReplyToolPart = (part: ExtendedUIMessagePart): boolean =>
   'success' in part.output &&
   part.output.success === true;
 
-// Anything else the turn did, such as a tool call or a question, is shown, so
-// the turn only counts as silent when nothing else would be
 const isHiddenInSilentTurn = (part: ExtendedUIMessagePart): boolean =>
   isNoReplyToolPart(part) ||
   part.type === 'step-start' ||
