@@ -11,6 +11,7 @@ export const normalizeGroupByDimensionValue = (
     // TODO: to remove once backend properly returns DATE without time
     switch (granularity) {
       case 'DAY':
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a GraphQL protocol token or internal cache diagnostic.
         return dateValue.toISOString().split('T')[0];
       case 'MONTH':
         return dateValue.toISOString().substring(0, 7);

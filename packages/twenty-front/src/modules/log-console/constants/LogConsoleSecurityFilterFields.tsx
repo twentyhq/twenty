@@ -25,16 +25,19 @@ export const LOG_CONSOLE_SECURITY_FILTER_FIELDS: LogConsoleFilterField[] = [
       },
       {
         label: t`Impersonation`,
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
         values: ['Impersonation'],
         startIcon: <IconSpy />,
       },
       {
         label: t`Signed up`,
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
         values: ['User Signup'],
         startIcon: <IconUserPlus />,
       },
       {
         label: t`Custom domain`,
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
         values: ['Custom Domain Activated', 'Custom Domain Deactivated'],
         startIcon: <IconWorld />,
       },

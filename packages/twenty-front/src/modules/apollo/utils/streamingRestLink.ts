@@ -5,6 +5,7 @@ import {
   type FetchResult,
 } from '@apollo/client';
 import { ServerError } from '@apollo/client/errors';
+import { t } from '@lingui/core/macro';
 import { type ArgumentNode, type DirectiveNode } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -64,14 +65,14 @@ export class StreamingRestLink extends ApolloLink {
       fetch(url, requestConfig)
         .then(async (response) => {
           if (!response.ok) {
-            throw new ServerError(`HTTP error! status: ${response.status}`, {
+            throw new ServerError(t`HTTP error! status: ${response.status}`, {
               response,
               bodyText: '',
             });
           }
 
           if (!response.body) {
-            throw new Error('Response body is null');
+            throw new Error(t`Response body is null`);
           }
 
           const reader = response.body.getReader();
@@ -186,6 +187,7 @@ export class StreamingRestLink extends ApolloLink {
       return `${this.baseUri}${path}`;
     }
 
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only request configuration diagnostic.
     throw new Error('No valid URL found');
   }
 

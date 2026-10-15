@@ -84,7 +84,9 @@ export const CalendarEventRow = ({
 
   const startTimeLabel = calendarEvent.isFullDay
     ? t`All day`
-    : format(startsAt, 'HH:mm');
+    : // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
+      format(startsAt, 'HH:mm');
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
   const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
 
   const isCurrentWorkspaceMemberAttending = calendarEvent.participants?.some(

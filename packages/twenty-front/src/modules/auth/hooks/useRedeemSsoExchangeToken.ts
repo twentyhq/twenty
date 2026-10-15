@@ -3,6 +3,7 @@ import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -29,7 +30,7 @@ export const useRedeemSsoExchangeToken = () => {
         });
 
         if (!isDefined(data?.getAuthTokensFromSSOExchangeToken)) {
-          throw new Error('No getAuthTokensFromSSOExchangeToken result');
+          throw new Error(t`No getAuthTokensFromSSOExchangeToken result`);
         }
 
         markSessionActive();

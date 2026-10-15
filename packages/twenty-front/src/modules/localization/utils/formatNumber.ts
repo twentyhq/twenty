@@ -1,5 +1,7 @@
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DEFAULT_DECIMAL_VALUE = 0;
@@ -25,11 +27,14 @@ const defaultOptions: Required<FormatNumberOptions> = {
   format: NumberFormat.COMMAS_AND_DOT,
 };
 
-const ABBREVIATION_SUFFIX_BY_THRESHOLD: Record<number, string> = {
-  1e9: 'B',
-  1e6: 'M',
-  1e3: 'k',
-  1: '',
+const ABBREVIATION_SUFFIX_BY_THRESHOLD: Record<
+  number,
+  MessageDescriptor | null
+> = {
+  1e9: msg`B`,
+  1e6: msg`M`,
+  1e3: msg`k`,
+  1: null,
 };
 
 const getAbbreviationDivisor = (absoluteValue: number) =>
@@ -114,11 +119,13 @@ export const formatNumber = (
     );
     const divisor = getAbbreviationDivisor(roundedAbsoluteValue);
 
+    const suffix = ABBREVIATION_SUFFIX_BY_THRESHOLD[divisor];
+
     return (
       getNumberFormatter({
         locale,
         maximumFractionDigits: options.decimals,
-      }).format(value / divisor) + ABBREVIATION_SUFFIX_BY_THRESHOLD[divisor]
+      }).format(value / divisor) + (suffix ? t(suffix) : '')
     );
   }
 
