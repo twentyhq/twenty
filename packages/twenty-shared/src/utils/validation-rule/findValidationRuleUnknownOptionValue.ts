@@ -1,6 +1,7 @@
 import { type Instruction } from 'expr-eval-fork';
 import { isNumber, isString } from '@sniptt/guards';
 
+import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { type ValidationRuleFunctionName } from '@/types/ValidationRuleFunctionName';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -185,15 +186,17 @@ export const findValidationRuleUnknownOptionValue = ({
           isNumber(instruction.value) ? instruction.value : 0,
         );
         const functionOperand = popOperand();
+        const [containerOperand, searchedOperand] = functionArguments;
 
         if (
           functionOperand.kind === 'function' &&
           functionOperand.name === INCLUDES_FUNCTION_NAME &&
-          functionArguments.length === 2
+          containerOperand?.kind === 'field' &&
+          containerOperand.field.type === FieldMetadataType.MULTI_SELECT
         ) {
           const unknownOptionValue = findUnknownOptionValueInComparison({
-            fieldOperand: functionArguments[0],
-            valueOperand: functionArguments[1],
+            fieldOperand: containerOperand,
+            valueOperand: searchedOperand,
           });
 
           if (isDefined(unknownOptionValue)) {

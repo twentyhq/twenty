@@ -279,6 +279,10 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('company.tier == "GOLD"').isValid).toBe(true);
   });
 
+  it('should keep includes as a text search on a select field', () => {
+    expect(compile('includes(stage, "W")').isValid).toBe(true);
+  });
+
   it('should not check values compared to fields without options', () => {
     expect(compile('company.industry == "anything"').isValid).toBe(true);
     expect(compile('includes(company.industry, "Soft")').isValid).toBe(true);
