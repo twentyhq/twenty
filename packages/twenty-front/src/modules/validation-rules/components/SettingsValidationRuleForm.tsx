@@ -6,6 +6,7 @@ import { IconAddressBook, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isFieldMetadataItemEligibleForRecordForm } from '@/object-record/record-form/utils/isFieldMetadataItemEligibleForRecordForm';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -51,8 +52,8 @@ export const SettingsValidationRuleForm = ({
     ...objectMetadataItem.fields
       .filter(
         (field) =>
-          !field.isSystem &&
-          (field.isActive || field.id === values.errorFieldMetadataId),
+          field.id === values.errorFieldMetadataId ||
+          isFieldMetadataItemEligibleForRecordForm(field),
       )
       .map((field) => ({
         label: field.label,

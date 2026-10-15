@@ -122,7 +122,7 @@ export const SettingsValidationRuleEditForm = ({
       });
       enqueueToast({
         status: 'success',
-        children: isActive ? t`Rule enabled.` : t`Rule disabled.`,
+        children: isActive ? t`Rule activated.` : t`Rule deactivated.`,
       });
       navigateToObjectValidationRules();
     } catch (error) {
@@ -174,8 +174,8 @@ export const SettingsValidationRuleEditForm = ({
           title={t`Danger zone`}
           description={
             validationRule.isActive
-              ? t`Disable the rule to stop checking records against it.`
-              : t`This rule is disabled. Records are not checked against it.`
+              ? t`Deactivate the rule to stop checking records against it.`
+              : t`This rule is inactive. Records are not checked against it.`
           }
         />
         <StyledDangerButtons>
@@ -188,7 +188,7 @@ export const SettingsValidationRuleEditForm = ({
             disabled={isSaving}
             onClick={handleToggleActive}
           >
-            {validationRule.isActive ? t`Disable` : t`Enable`}
+            {validationRule.isActive ? t`Deactivate` : t`Activate`}
           </Button>
           <Button
             startIcon={<IconTrash />}
