@@ -190,7 +190,7 @@ describe('useAgentChat', () => {
     expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 
-  it('clears the composer only once the message is sent', async () => {
+  it('keeps the composer while attachments upload and clears it on send', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),

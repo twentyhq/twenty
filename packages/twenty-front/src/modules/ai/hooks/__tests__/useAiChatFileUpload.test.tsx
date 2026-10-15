@@ -1,21 +1,15 @@
 import { type MockedResponse } from '@apollo/client/testing';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CreateFileUploadDocument } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-
-const enqueueToast = jest.fn();
-
-jest.mock('twenty-ui/components/feedback', () => ({
-  ...jest.requireActual('twenty-ui/components/feedback'),
-  useToast: () => ({ enqueueToast }),
-}));
 
 const createFileUploadMock: MockedResponse = {
   request: { query: CreateFileUploadDocument, variables: () => true },
@@ -32,13 +26,13 @@ const createFileUploadMock: MockedResponse = {
 };
 
 const putFile = jest.fn(
-  (_url: string, { signal }: RequestInit) =>
+  (_input: RequestInfo | URL, init?: RequestInit) =>
     new Promise<Response>((_resolve, reject) => {
-      signal?.addEventListener('abort', () => reject(signal.reason));
+      init?.signal?.addEventListener('abort', reject);
     }),
 );
 
-global.fetch = putFile as unknown as typeof fetch;
+global.fetch = putFile;
 
 const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [createFileUploadMock],
@@ -46,7 +40,10 @@ const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MetadataAndApolloMocksWrapper>
-    <I18nProvider i18n={i18n}>{children}</I18nProvider>
+    <I18nProvider i18n={i18n}>
+      {children}
+      <AppToaster />
+    </I18nProvider>
   </MetadataAndApolloMocksWrapper>
 );
 
@@ -55,7 +52,7 @@ describe('useAiChatFileUpload', () => {
     const { result } = renderHook(() => useAiChatFileUpload(), {
       wrapper: Wrapper,
     });
-    const file = new File(['brief'], 'brief.pdf', { type: 'application/pdf' });
+    const file = new File(['brief'], 'brief.pdf');
 
     let upload: Promise<void> = Promise.resolve();
 
@@ -70,7 +67,7 @@ describe('useAiChatFileUpload', () => {
       await upload;
     });
 
-    expect(putFile.mock.calls[0][1].signal?.aborted).toBe(true);
-    expect(enqueueToast).not.toHaveBeenCalled();
+    expect(putFile.mock.calls[0][1]?.signal?.aborted).toBe(true);
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 });
