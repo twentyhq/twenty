@@ -103,6 +103,15 @@ export class ImapSmtpCaldavService {
         );
       }
 
+      if (error.tlsFailed === true) {
+        throw new UserInputError(
+          `IMAP STARTTLS upgrade failed: ${error.message}`,
+          {
+            userFriendlyMessage: msg`We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead.`,
+          },
+        );
+      }
+
       if (error.code === 'ECONNREFUSED') {
         throw new UserInputError(
           `IMAP connection refused. Please verify server and port.`,
