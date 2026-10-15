@@ -1181,6 +1181,20 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       return state;
     };
 
+    // the run surfaces its waiting conversation just after its turn stops running
+    const waitForWaitingInboxState = async (threadId: string) => {
+      for (let attempt = 0; attempt < 50; attempt++) {
+        const state = await getInboxState(threadId);
+
+        if (isDefined(state?.lastMessageText)) {
+          return state;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      return getInboxState(threadId);
+    };
+
     it('records the conversation of an agent that answers without asking, filed under done', async () => {
       jest
         .spyOn(
@@ -1327,7 +1341,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const run = await waitForPausedAgentStep(runId, agent.id);
       const threadId: string = run.stepLogs[agent.id].details.threadId;
 
-      expect(await getInboxState(threadId)).toMatchObject({
+      expect(await waitForWaitingInboxState(threadId)).toMatchObject({
         workspaceMemberId: creator.workspaceMemberId,
         lastMessageText: agent.name,
         isArchived: true,
