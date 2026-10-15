@@ -7,7 +7,6 @@ export class AgentMessageReactionSummaryDTO {
   @Field(() => String)
   emoji: string;
 
-  // In the order the members reacted
   @Field(() => [UUIDScalarType])
   workspaceMemberIds: string[];
 }

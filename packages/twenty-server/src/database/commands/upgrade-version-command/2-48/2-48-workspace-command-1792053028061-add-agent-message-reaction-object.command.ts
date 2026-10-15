@@ -20,7 +20,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const REACTION_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentMessageReaction.universalIdentifier;
 
-// Fields this change adds to objects that already exist
 const EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentMessage.fields.reactions.universalIdentifier,
   STANDARD_OBJECTS.workspaceMember.fields.agentMessageReactions

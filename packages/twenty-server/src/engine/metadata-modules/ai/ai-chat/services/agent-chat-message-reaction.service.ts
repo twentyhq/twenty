@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
+  AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH,
   type AgentMessageReactionSummary,
   isValidAgentMessageReactionEmoji,
 } from 'twenty-shared/ai';
@@ -36,8 +37,6 @@ type AgentMessageReactionSummaryRow = AgentMessageReactionSummary & {
 
 type BuildReactionWriteQuery = (reactionTable: string) => string;
 
-// Both return how many rows changed, so a repeated call is a no-op that sends
-// nothing
 const buildAddReactionQuery: BuildReactionWriteQuery = (reactionTable) =>
   `WITH inserted AS (
      INSERT INTO ${reactionTable} ("messageId", "workspaceMemberId", emoji)
@@ -55,9 +54,6 @@ const buildRemoveReactionQuery: BuildReactionWriteQuery = (reactionTable) =>
    )
    SELECT COUNT(*)::int AS "changedCount" FROM deleted`;
 
-// Reactions are written in SQL, outside the ORM, and sent to the chat's
-// viewers only: they are not record events, not model context and not
-// thread activity
 @Injectable()
 export class AgentChatMessageReactionService {
   private readonly logger = new Logger(AgentChatMessageReactionService.name);
@@ -74,16 +70,18 @@ export class AgentChatMessageReactionService {
   addReaction(
     args: AgentMessageReactionArgs,
   ): Promise<AgentMessageReactionSummary[]> {
-    return this.writeReaction(args, buildAddReactionQuery);
+    return this.writeReaction({ ...args, buildQuery: buildAddReactionQuery });
   }
 
   removeReaction(
     args: AgentMessageReactionArgs,
   ): Promise<AgentMessageReactionSummary[]> {
-    return this.writeReaction(args, buildRemoveReactionQuery);
+    return this.writeReaction({
+      ...args,
+      buildQuery: buildRemoveReactionQuery,
+    });
   }
 
-  // One query for every message shown, however many there are
   async findReactionsByMessageId({
     workspaceId,
     messageIds,
@@ -105,18 +103,18 @@ export class AgentChatMessageReactionService {
     });
   }
 
-  private async writeReaction(
-    {
-      messageId,
-      emoji,
-      workspaceMemberId,
-      workspaceId,
-    }: AgentMessageReactionArgs,
-    buildQuery: BuildReactionWriteQuery,
-  ): Promise<AgentMessageReactionSummary[]> {
+  private async writeReaction({
+    messageId,
+    emoji,
+    workspaceMemberId,
+    workspaceId,
+    buildQuery,
+  }: AgentMessageReactionArgs & {
+    buildQuery: BuildReactionWriteQuery;
+  }): Promise<AgentMessageReactionSummary[]> {
     if (!isValidAgentMessageReactionEmoji(emoji)) {
       throw new AiException(
-        'A reaction must contain an emoji, no whitespace and at most 32 characters',
+        `A reaction must contain an emoji, no whitespace and at most ${AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH} characters`,
         AiExceptionCode.INVALID_CHAT_MESSAGE_REACTION_EMOJI,
       );
     }
@@ -137,8 +135,7 @@ export class AgentChatMessageReactionService {
       workspaceId,
     });
 
-    // The object is created by an upgrade command, which may not have reached
-    // this workspace yet
+    // Created by an upgrade command that may not have reached this workspace yet
     if (!(await this.isReactionObjectProvisioned(workspaceId))) {
       return throwAgentChatMessageNotFound();
     }
@@ -146,8 +143,7 @@ export class AgentChatMessageReactionService {
     const { changedCount, reactions, revision } = await this.storageService.run(
       workspaceId,
       async ({ manager, table }) => {
-        // Serializes the reactions to one message, so each change reads every
-        // change committed before it and the last one sent is complete
+        // Serializes the reactions to one message so each change sees the ones before it
         const lockedMessages = await manager.query<{ id: string }[]>(
           `SELECT id FROM ${table('agentMessage')} WHERE id = $1 FOR NO KEY UPDATE`,
           [messageId],
@@ -157,8 +153,7 @@ export class AgentChatMessageReactionService {
           return throwAgentChatMessageNotFound();
         }
 
-        // Read while the lock is held, so it orders the snapshots even when
-        // they are published out of order
+        // Read under the lock, so it orders snapshots published out of order
         const [{ revision }] = await manager.query<{ revision: string }[]>(
           `SELECT floor(extract(epoch FROM clock_timestamp()) * 1000000)::bigint AS revision`,
         );
@@ -248,8 +243,7 @@ export class AgentChatMessageReactionService {
     );
   }
 
-  // Sent once the write has committed, so a failure here must not report the
-  // write itself as failed
+  // The write has committed, so a failure to publish must not fail the request
   private async publishReactionsUpdated({
     threadId,
     messageId,

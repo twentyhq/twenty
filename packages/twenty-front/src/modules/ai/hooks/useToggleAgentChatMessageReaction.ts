@@ -18,8 +18,7 @@ export const useToggleAgentChatMessageReaction = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
 
-  // The reaction shows right away. The live snapshots that follow carry the
-  // server's state, so a refused change only takes back its own reaction
+  // Live snapshots carry the server's state, so a refused change only takes back its own reaction
   const toggleAgentChatMessageReaction = useCallback(
     async ({ messageId, emoji }: { messageId: string; emoji: string }) => {
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;

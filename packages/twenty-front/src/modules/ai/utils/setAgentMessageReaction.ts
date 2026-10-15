@@ -1,4 +1,5 @@
 import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 export const setAgentMessageReaction = ({
   reactions,
@@ -15,7 +16,7 @@ export const setAgentMessageReaction = ({
     (reaction) => reaction.emoji === emoji,
   );
 
-  if (!existingReaction) {
+  if (!isDefined(existingReaction)) {
     return isReacted
       ? [...reactions, { emoji, workspaceMemberIds: [workspaceMemberId] }]
       : reactions;

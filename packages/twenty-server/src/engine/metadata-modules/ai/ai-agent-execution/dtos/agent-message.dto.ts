@@ -37,7 +37,6 @@ export class AgentMessageDTO {
   @Field(() => [AgentMessagePartDTO])
   parts: AgentMessagePartDTO[];
 
-  // Ordered by the first time each emoji was used on the message
   @Field(() => [AgentMessageReactionSummaryDTO])
   reactions: AgentMessageReactionSummaryDTO[];
 

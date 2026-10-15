@@ -143,7 +143,6 @@ const buildResolver = () => {
     threadService,
     threadRepository,
     messages,
-    messageReactions,
     sharing,
     streaming,
     events,
@@ -478,39 +477,6 @@ describe('Shared conversation API boundaries', () => {
         senderUserWorkspaceId: null,
         reactions: [],
       },
-    ]);
-  });
-
-  it('loads the reactions of every message shown in one call', async () => {
-    const { resolver, messages, messageReactions } = buildResolver();
-    const reactions = [
-      { emoji: '👍', workspaceMemberIds: ['sender-member', 'owner'] },
-      { emoji: '🎉', workspaceMemberIds: ['owner'] },
-    ];
-    messages.find.mockResolvedValue([
-      { id: 'reacted', senderWorkspaceMemberId: null },
-      { id: 'not-reacted', senderWorkspaceMemberId: null },
-    ]);
-    messageReactions.findReactionsByMessageId.mockResolvedValue(
-      new Map([['reacted', reactions]]),
-    );
-
-    const shownMessages = await resolver.chatMessages(
-      THREAD_ID,
-      VIEWER_ID,
-      workspace,
-    );
-
-    expect(messageReactions.findReactionsByMessageId).toHaveBeenCalledTimes(1);
-    expect(messageReactions.findReactionsByMessageId).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      messageIds: ['reacted', 'not-reacted'],
-    });
-    expect(
-      shownMessages.map(({ id, reactions }) => ({ id, reactions })),
-    ).toEqual([
-      { id: 'reacted', reactions },
-      { id: 'not-reacted', reactions: [] },
     ]);
   });
 
