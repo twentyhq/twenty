@@ -1,3 +1,4 @@
+import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
 import { z } from 'zod';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -11,7 +12,9 @@ type ReactToMessageInput = z.infer<typeof reactToMessageInputSchema>;
 export const createReactToMessageTool = ({
   reactToLatestMemberMessage,
 }: {
-  reactToLatestMemberMessage: (emoji: string) => Promise<unknown>;
+  reactToLatestMemberMessage: (
+    emoji: string,
+  ) => Promise<AgentMessageReactionSummary[]>;
 }) => ({
   description:
     "React with one emoji to the member's latest message, as a teammate would in chat. " +

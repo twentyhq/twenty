@@ -10,6 +10,7 @@ import { RemoveWorkflowRunIndexWorkflowVersionColumnCommand } from 'src/database
 import { SyncCampaignComposerStandardMetadataCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792064982496-sync-campaign-composer-standard-metadata.command';
 import { FlushWorkflowAutomatedTriggerMapsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792068879353-flush-workflow-automated-trigger-maps.command';
 import { AddAgentMessageReactionObjectCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792072097024-add-agent-message-reaction-object.command';
+import { AllowAssistantMessageReactionsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792078345247-allow-assistant-message-reactions.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -31,6 +32,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SyncCampaignComposerStandardMetadataCommand,
     FlushWorkflowAutomatedTriggerMapsCommand,
     AddAgentMessageReactionObjectCommand,
+    AllowAssistantMessageReactionsCommand,
   ],
 })
 export class V2_48_UpgradeVersionCommandModule {}

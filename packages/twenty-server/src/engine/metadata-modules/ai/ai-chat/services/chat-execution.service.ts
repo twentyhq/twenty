@@ -284,13 +284,14 @@ export class ChatExecutionService {
       modelId: registeredModel.modelId,
     });
 
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      workspace.id,
+    );
+
     // judged on the conversation, not setup status: onboarding continues here after setup completes
     const canAttachConversationToRecords =
-      !isWorkspaceSetupConversation &&
-      (await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-        workspace.id,
-      ));
+      !isWorkspaceSetupConversation && isAiChatInboxEnabled;
 
     const latestMemberMessageId = [...messages]
       .reverse()
@@ -333,7 +334,7 @@ export class ChatExecutionService {
               }),
           }
         : {}),
-      ...(canAttachConversationToRecords && isDefined(latestMemberMessageId)
+      ...(isAiChatInboxEnabled && isDefined(latestMemberMessageId)
         ? {
             [REACT_TO_MESSAGE_TOOL_NAME]: createReactToMessageTool({
               reactToLatestMemberMessage: (emoji) =>

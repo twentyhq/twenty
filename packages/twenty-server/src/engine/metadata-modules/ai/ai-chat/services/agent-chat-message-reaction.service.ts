@@ -46,8 +46,7 @@ const buildAddReactionQuery: BuildReactionWriteQuery = (reactionTable) =>
    )
    SELECT COUNT(*)::int AS "changedCount" FROM inserted`;
 
-// The unique index treats missing members as distinct, so the message lock held
-// by every write is what keeps one assistant reaction per emoji
+// NULL members bypass the unique index; the message lock dedupes assistant reactions
 const buildAddAssistantReactionQuery: BuildReactionWriteQuery = (
   reactionTable,
 ) =>
