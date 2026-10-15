@@ -88,7 +88,7 @@ export const parseAppPlan = ({
     }) ||
     !isArray(value.actions) ||
     !value.actions.every(isAction) ||
-    (isDefined(value.translationActions) &&
+    (!isNull(value.translationActions) &&
       (!isArray(value.translationActions) ||
         !value.translationActions.every(isTranslationAction)))
   ) {
@@ -120,6 +120,6 @@ export const parseAppPlan = ({
             return isDefined(label) ? [[messageId, label]] : [];
           }),
         ),
-      })) ?? value.translationActions,
+      })) ?? null,
   };
 };

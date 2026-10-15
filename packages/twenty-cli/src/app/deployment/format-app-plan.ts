@@ -274,7 +274,7 @@ export const formatAppPlanActions = ({
 }: {
   actions: AppPlanAction[];
   summary: AppPlanSummary;
-  translationActions?: AppTranslationPlanAction[] | null;
+  translationActions: AppTranslationPlanAction[] | null;
   inferDeletionFromMissingEntities: boolean;
   stream?: NodeJS.WriteStream;
 }) => {
@@ -284,11 +284,7 @@ export const formatAppPlanActions = ({
   const translationWarning =
     translationActions === null
       ? ['Translation changes could not be computed. Retry app plan.']
-      : translationActions === undefined
-        ? [
-            'This server does not report translation changes. Upgrade the server to preview translations.',
-          ]
-        : [];
+      : [];
 
   if (actions.length === 0 && (translationActions?.length ?? 0) === 0) {
     return [
@@ -341,7 +337,7 @@ export const formatAppPlan = ({
   apiUrl: string;
   actions: AppPlanAction[];
   summary: AppPlanSummary;
-  translationActions?: AppTranslationPlanAction[] | null;
+  translationActions: AppTranslationPlanAction[] | null;
   inferDeletionFromMissingEntities: boolean;
 }) =>
   [

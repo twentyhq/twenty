@@ -53,7 +53,6 @@ controls workspace metadata deletion.
 
 The JSON result keeps metadata `actions` unchanged and adds `translationActions`.
 An empty array confirms no translation changes, `null` means translation reporting
-or synchronization failed, and an omitted field means an older server does not
-support reporting. Metadata success can coexist with a translation failure; apply
-warns to retry in that case. Older servers are retried without the new selection
-only after GraphQL schema validation rejects it, before any mutation executes.
+or synchronization failed. Metadata success can coexist with a translation
+failure; apply warns to retry in that case. The CLI requires a server that exposes
+`translationActions`.
