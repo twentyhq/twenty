@@ -118,7 +118,7 @@ describe('RecordFormFieldInputs with the real currency input', () => {
     expect(onFieldValueClear).not.toHaveBeenCalled();
 
     expect(screen.queryByText(/\(USD\)/)).not.toBeInTheDocument();
-    expect(screen.getByText('No currency')).toBeInTheDocument();
+    expect(screen.getByText('Select a currency')).toBeInTheDocument();
   });
 
   it('keeps the currency cleared when an amount is typed after clearing', async () => {
