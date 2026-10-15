@@ -335,18 +335,12 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'RELATION':
-      if (correspondingField.type === FieldMetadataType.MORPH_RELATION) {
-        const { morphRelations } = correspondingField;
-
-        if (!isNonEmptyArray(morphRelations)) {
-          throw new CustomError(
-            `Morph relation field ${correspondingField.name} has no morph relations`,
-            'MISSING_MORPH_RELATIONS_FOR_EMPTY_FILTER',
-          );
-        }
-
+      if (
+        correspondingField.type === FieldMetadataType.MORPH_RELATION &&
+        isNonEmptyArray(correspondingField.morphRelations)
+      ) {
         emptyRecordFilter = {
-          and: morphRelations.map((morphRelation) => ({
+          and: correspondingField.morphRelations.map((morphRelation) => ({
             [computeMorphRelationGqlFieldJoinColumnName({
               fieldName: correspondingField.name,
               relationType: morphRelation.type,
