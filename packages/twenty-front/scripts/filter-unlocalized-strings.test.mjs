@@ -6,10 +6,7 @@ const check = (source, value, filename = 'example.tsx') => {
   const sourceBuffer = Buffer.from(source);
   const offset = Buffer.byteLength(source.slice(0, source.indexOf(value)));
 
-  return createStringDiagnosticFilter(
-    filename,
-    sourceBuffer,
-  )({
+  return createStringDiagnosticFilter({ filename, sourceBuffer })({
     offset,
     length: Buffer.byteLength(value),
   });

@@ -129,10 +129,10 @@ const violations = diagnostics.filter((diagnostic) => {
   let filter = diagnosticFilters.get(diagnostic.filename);
 
   if (!filter) {
-    filter = createStringDiagnosticFilter(
-      diagnostic.filename,
-      readFileSync(resolve(PACKAGE_ROOT, diagnostic.filename)),
-    );
+    filter = createStringDiagnosticFilter({
+      filename: diagnostic.filename,
+      sourceBuffer: readFileSync(resolve(PACKAGE_ROOT, diagnostic.filename)),
+    });
     diagnosticFilters.set(diagnostic.filename, filter);
   }
 

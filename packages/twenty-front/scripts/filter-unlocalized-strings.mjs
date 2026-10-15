@@ -18,7 +18,6 @@ const VISIBLE_NAMES = new Set([
   'tooltip',
 ]);
 
-// API examples and input formats must stay literal across locales.
 const TECHNICAL_PLACEHOLDERS = new Set([
   '<p>Hello</p>',
   'auto',
@@ -51,11 +50,11 @@ const getName = (node) =>
     ? node.text
     : node.getText();
 
-const isVisibleName = (name, value) =>
+const isVisibleName = ({ name, value }) =>
   VISIBLE_NAMES.has(name) &&
   (name !== 'placeholder' || !TECHNICAL_PLACEHOLDERS.has(value));
 
-const isVisibleString = (node, value) => {
+const isVisibleString = ({ node, value }) => {
   if (ts.isJsxText(node)) {
     return true;
   }
@@ -75,7 +74,7 @@ const isVisibleString = (node, value) => {
   const parent = expression.parent;
 
   if (ts.isJsxAttribute(parent)) {
-    return isVisibleName(getName(parent.name), value);
+    return isVisibleName({ name: getName(parent.name), value });
   }
 
   if (ts.isJsxExpression(parent)) {
@@ -86,17 +85,17 @@ const isVisibleString = (node, value) => {
     }
 
     if (ts.isJsxAttribute(container)) {
-      return isVisibleName(getName(container.name), value);
+      return isVisibleName({ name: getName(container.name), value });
     }
   }
 
   return (
     ts.isPropertyAssignment(parent) &&
-    isVisibleName(getName(parent.name), value)
+    isVisibleName({ name: getName(parent.name), value })
   );
 };
 
-export const createStringDiagnosticFilter = (filename, sourceBuffer) => {
+export const createStringDiagnosticFilter = ({ filename, sourceBuffer }) => {
   const sourceFile = ts.createSourceFile(
     filename,
     sourceBuffer.toString('utf8'),
@@ -140,7 +139,7 @@ export const createStringDiagnosticFilter = (filename, sourceBuffer) => {
 
     return (
       !CASE_IGNORES.some((pattern) => pattern.test(value)) ||
-      isVisibleString(stringNode, value)
+      isVisibleString({ node: stringNode, value })
     );
   };
 };
