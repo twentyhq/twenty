@@ -28,12 +28,7 @@ export class BillingPlanService {
   ) {}
 
   async listPlans(): Promise<BillingGetPlanResult[]> {
-    const planKeys = [
-      ...BILLING_SELLABLE_PLAN_KEYS,
-      ...Object.values(BillingPlanKey).filter(
-        (planKey) => !BILLING_SELLABLE_PLAN_KEYS.includes(planKey),
-      ),
-    ];
+    const planKeys = Object.values(BillingPlanKey);
 
     const products = await this.billingProductRepository.find({
       where: {

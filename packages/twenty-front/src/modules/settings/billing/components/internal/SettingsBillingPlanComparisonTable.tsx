@@ -3,7 +3,7 @@ import { AnimatedFormattedNumber } from '@/settings/billing/components/internal/
 import { SettingsBillingPlanComparisonTableRow } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow';
 import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
 import { SETTINGS_BILLING_PLAN_COMPARISON_ROWS } from '@/settings/billing/constants/SettingsBillingPlanComparisonRows';
-import { type SettingsBillingPlanAction } from '@/settings/billing/types/SettingsBillingPlanAction';
+import { type SettingsBillingComparedPlan } from '@/settings/billing/types/SettingsBillingComparedPlan';
 import {
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
@@ -24,18 +24,16 @@ import {
 
 type SettingsBillingPlanComparisonTableProps = {
   billingInterval: SettingsBillingPlanInterval;
+  comparedPlans: SettingsBillingComparedPlan[];
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
   ) => void;
-  planActions: SettingsBillingPlanAction[];
-  planKeys: BillingPlanKey[];
   planPrices: SettingsBillingPlanPrices;
 };
 
 const STICKY_HEADER_TOP_OFFSET = themeCssVariables.spacing[6];
 
-const getComparisonGridColumns = (columnCount: number) =>
-  `repeat(${columnCount}, minmax(0, 1fr))`;
+const MOBILE_COMPARISON_GRID_COLUMNS = 'repeat(2, minmax(0, 1fr))';
 
 const StyledContentContainer = styled.div`
   max-width: 694px;
@@ -58,15 +56,14 @@ const StyledStickyHeaderContainer = styled.div`
   }
 `;
 
-const StyledMobilePlanNamesGrid = styled.div<{ planCount: number }>`
+const StyledMobilePlanNamesGrid = styled.div`
   display: none;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     background: ${themeCssVariables.background.primary};
     border-bottom: 1px solid ${themeCssVariables.border.color.medium};
     display: grid;
-    grid-template-columns: ${({ planCount }) =>
-      getComparisonGridColumns(planCount)};
+    grid-template-columns: ${MOBILE_COMPARISON_GRID_COLUMNS};
     position: sticky;
     top: 0;
     z-index: 2;
@@ -79,14 +76,13 @@ const StyledComparisonTable = styled.div`
   width: 100%;
 `;
 
-const StyledComparisonHeaderGrid = styled.div<{ planCount: number }>`
+const StyledComparisonHeaderGrid = styled.div`
   background: ${themeCssVariables.border.color.medium};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: ${({ planCount }) =>
-    getComparisonGridColumns(planCount + 1)};
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   overflow: clip;
   row-gap: 1px;
   width: 100%;
@@ -96,16 +92,14 @@ const StyledComparisonHeaderGrid = styled.div<{ planCount: number }>`
   }
 `;
 
-const StyledComparisonBodyGrid = styled.div<{ planCount: number }>`
+const StyledComparisonBodyGrid = styled.div`
   display: grid;
-  grid-template-columns: ${({ planCount }) =>
-    getComparisonGridColumns(planCount + 1)};
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   overflow: clip;
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    grid-template-columns: ${({ planCount }) =>
-      getComparisonGridColumns(planCount)};
+    grid-template-columns: ${MOBILE_COMPARISON_GRID_COLUMNS};
   }
 `;
 
@@ -202,9 +196,8 @@ const StyledActionSlot = styled.div`
 
 export const SettingsBillingPlanComparisonTable = ({
   billingInterval,
+  comparedPlans,
   onBillingIntervalChange,
-  planActions,
-  planKeys,
   planPrices,
 }: SettingsBillingPlanComparisonTableProps) => {
   const { t } = useLingui();
@@ -231,7 +224,7 @@ export const SettingsBillingPlanComparisonTable = ({
     <StyledContentContainer>
       <StyledComparisonTable>
         <StyledStickyHeaderContainer>
-          <StyledComparisonHeaderGrid planCount={planKeys.length}>
+          <StyledComparisonHeaderGrid>
             <StyledHeaderCell>
               <StyledHeaderText>
                 <StyledComparisonTitle>{t`Compare plans`}</StyledComparisonTitle>
@@ -250,8 +243,7 @@ export const SettingsBillingPlanComparisonTable = ({
               />
             </StyledHeaderCell>
 
-            {planKeys.map((planKey, planIndex) => {
-              const action = planActions[planIndex];
+            {comparedPlans.map(({ action, planKey }) => {
               const price = planPrices[planKey][billingInterval];
 
               return (
@@ -290,20 +282,20 @@ export const SettingsBillingPlanComparisonTable = ({
           </StyledComparisonHeaderGrid>
         </StyledStickyHeaderContainer>
 
-        <StyledMobilePlanNamesGrid aria-hidden planCount={planKeys.length}>
-          {planKeys.map((planKey) => (
+        <StyledMobilePlanNamesGrid aria-hidden>
+          {comparedPlans.map(({ planKey }) => (
             <StyledMobilePlanName key={planKey}>
               {getPlanTitle(planKey)}
             </StyledMobilePlanName>
           ))}
         </StyledMobilePlanNamesGrid>
 
-        <StyledComparisonBodyGrid planCount={planKeys.length}>
+        <StyledComparisonBodyGrid>
           {SETTINGS_BILLING_PLAN_COMPARISON_ROWS.map((row, rowIndex) => (
             <SettingsBillingPlanComparisonTableRow
               key={`row-${rowIndex}`}
               hasTopBorder={rowIndex > 0}
-              planKeys={planKeys}
+              planKeys={comparedPlans.map(({ planKey }) => planKey)}
               row={row}
             />
           ))}

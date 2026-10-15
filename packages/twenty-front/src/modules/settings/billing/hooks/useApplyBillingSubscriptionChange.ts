@@ -3,7 +3,6 @@ import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
-import { hasSameBillingPlanLabel } from '@/settings/billing/utils/hasSameBillingPlanLabel';
 import { isBillingSubscriptionChangeImmediate } from '@/settings/billing/utils/isBillingSubscriptionChangeImmediate';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -90,7 +89,7 @@ export const useApplyBillingSubscriptionChange = () => {
 
         if (
           isImmediate &&
-          hasSameBillingPlanLabel(change.targetPlanKey, currentPlan.planKey)
+          planLabel === getBillingPlanLabel(currentPlan.planKey)
         ) {
           return t`Subscription has been moved to the new ${planLabel} plan.`;
         }

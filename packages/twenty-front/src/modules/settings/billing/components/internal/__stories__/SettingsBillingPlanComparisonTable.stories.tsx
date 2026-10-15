@@ -34,11 +34,16 @@ const meta = {
   args: {
     billingInterval: SubscriptionInterval.Year,
     onBillingIntervalChange: fn(),
-    planActions: [
-      { title: 'Choose Pro', variant: 'solid' },
-      { title: 'Choose Organization', variant: 'outline' },
+    comparedPlans: [
+      {
+        action: { title: 'Choose Pro', variant: 'solid' },
+        planKey: BillingPlanKey.PRO,
+      },
+      {
+        action: { title: 'Choose Organization', variant: 'outline' },
+        planKey: BillingPlanKey.ENTERPRISE,
+      },
     ],
-    planKeys: [BillingPlanKey.PRO, BillingPlanKey.ENTERPRISE],
     planPrices: {
       [BillingPlanKey.PRO]: {
         [SubscriptionInterval.Year]: 9,
@@ -113,25 +118,5 @@ export const MobileBillingPeriod: Story = {
     ).toBeLessThanOrEqual(headerCell?.getBoundingClientRect().right ?? 0);
 
     await playBillingPeriodToggle(context);
-  },
-};
-
-export const CurrentPlanNotOnSale: Story = {
-  args: {
-    planActions: [
-      { title: 'Move to the new Pro plan', variant: 'solid' },
-      { disabled: true, title: 'Unavailable', variant: 'outline' },
-    ],
-    planKeys: [BillingPlanKey.PRO_V2, BillingPlanKey.ORGANIZATION_V2],
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      canvas.getByRole('button', { name: 'Move to the new Pro plan' }),
-    ).toBeEnabled();
-    await expect(
-      canvas.getByRole('button', { name: 'Unavailable' }),
-    ).toBeDisabled();
   },
 };

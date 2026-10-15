@@ -5,10 +5,13 @@ import { useNextInterval } from '@/settings/billing/hooks/useNextInterval';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { usePlanByPlanKey } from '@/settings/billing/hooks/usePlanByPlanKey';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
+import { type SettingsBillingComparedPlan } from '@/settings/billing/types/SettingsBillingComparedPlan';
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/SettingsBillingPlanAction';
-import { type SettingsBillingPlanInterval } from '@/settings/billing/types/SettingsBillingPlanComparison';
+import {
+  type SettingsBillingComparedPlanKeys,
+  type SettingsBillingPlanInterval,
+} from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { getBillingPlanCell } from '@/settings/billing/utils/getBillingPlanCell';
-import { hasSameBillingPlanLabel } from '@/settings/billing/utils/hasSameBillingPlanLabel';
 import { isBillingSubscriptionChangeUpgrade } from '@/settings/billing/utils/isBillingSubscriptionChangeUpgrade';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -36,20 +39,20 @@ import {
 
 type UseBillingPlanActionsParams = {
   billingInterval: SettingsBillingPlanInterval;
+  comparedPlanKeys: SettingsBillingComparedPlanKeys;
   currentPlanKey: BillingPlanKey;
   isApplyingBillingSubscriptionChange: boolean;
   onBillingSubscriptionChangeRequested: (
     change: BillingSubscriptionChange,
   ) => void;
-  planKeys: BillingPlanKey[];
 };
 
 export const useBillingPlanActions = ({
   billingInterval,
+  comparedPlanKeys,
   currentPlanKey,
   isApplyingBillingSubscriptionChange,
   onBillingSubscriptionChangeRequested,
-  planKeys,
 }: UseBillingPlanActionsParams) => {
   const { t } = useLingui();
   const { getBillingPlanLabel } = useBillingWording();
@@ -102,7 +105,7 @@ export const useBillingPlanActions = ({
   }) => {
     const planLabel = getBillingPlanLabel(targetPlanKey);
 
-    if (hasSameBillingPlanLabel(targetPlanKey, currentPlanKey)) {
+    if (planLabel === getBillingPlanLabel(currentPlanKey)) {
       return t`Move to the new ${planLabel} plan`;
     }
 
@@ -242,7 +245,9 @@ export const useBillingPlanActions = ({
     });
   };
 
-  return {
-    planActions: planKeys.map((planKey) => getPlanAction(planKey)),
-  };
+  const comparedPlans: SettingsBillingComparedPlan[] = comparedPlanKeys.map(
+    (planKey) => ({ action: getPlanAction(planKey), planKey }),
+  );
+
+  return { comparedPlans };
 };

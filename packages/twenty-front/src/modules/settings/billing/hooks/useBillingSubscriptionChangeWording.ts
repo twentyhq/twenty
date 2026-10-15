@@ -8,7 +8,6 @@ import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import { type BillingSubscriptionChangeWording } from '@/settings/billing/types/BillingSubscriptionChangeWording';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/SettingsBillingPlanComparison';
-import { hasSameBillingPlanLabel } from '@/settings/billing/utils/hasSameBillingPlanLabel';
 import { isBillingSubscriptionChangeImmediate } from '@/settings/billing/utils/isBillingSubscriptionChangeImmediate';
 import { isBillingSubscriptionChangeUpgrade } from '@/settings/billing/utils/isBillingSubscriptionChangeUpgrade';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -94,37 +93,38 @@ export const useBillingSubscriptionChangeWording = () => {
     }
   };
 
-  const isImmediateChange = (change: BillingSubscriptionChange) =>
-    isBillingSubscriptionChangeImmediate({
-      change,
-      currentPlan,
-      subscriptionStatus,
-    });
-
   const getChargeTiming = (change: BillingSubscriptionChange): ChargeTiming => {
     if (isTrialing) {
       return 'AFTER_TRIAL';
     }
 
-    return isImmediateChange(change) ? 'NOW' : 'SCHEDULED';
+    return isBillingSubscriptionChangeImmediate({
+      change,
+      currentPlan,
+      subscriptionStatus,
+    })
+      ? 'NOW'
+      : 'SCHEDULED';
   };
 
   const getSwitchPlanLeadSentence = (
     change: Extract<BillingSubscriptionChange, { type: 'SWITCH_PLAN' }>,
   ) => {
     const planLabel = getBillingPlanLabel(change.targetPlanKey);
+    const isNewVersionOfCurrentPlan =
+      planLabel === getBillingPlanLabel(currentPlanKey);
 
     if (isTrialing) {
-      return hasSameBillingPlanLabel(change.targetPlanKey, currentPlanKey)
+      return isNewVersionOfCurrentPlan
         ? t`Your plan moves to the new ${planLabel} plan immediately and your trial continues.`
         : t`Your plan switches to ${planLabel} immediately and your trial continues.`;
     }
 
-    if (!isImmediateChange(change)) {
+    if (currentPlan.downgradePlanKeys.includes(change.targetPlanKey)) {
       return t`Your plan switches to ${planLabel} on ${getBeautifiedRenewDate()}, at the end of your current billing period.`;
     }
 
-    if (hasSameBillingPlanLabel(change.targetPlanKey, currentPlanKey)) {
+    if (isNewVersionOfCurrentPlan) {
       return t`Your plan moves to the new ${planLabel} plan immediately, with a prorated charge for the rest of your current billing period.`;
     }
 
@@ -136,7 +136,7 @@ export const useBillingSubscriptionChangeWording = () => {
   ) => {
     const planLabel = getBillingPlanLabel(change.targetPlanKey);
 
-    if (hasSameBillingPlanLabel(change.targetPlanKey, currentPlanKey)) {
+    if (planLabel === getBillingPlanLabel(currentPlanKey)) {
       return t`Move to the new ${planLabel} plan?`;
     }
 

@@ -4,6 +4,7 @@ import { SettingsBillingPlansWithoutSubscription } from '@/settings/billing/comp
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/SettingsBillingPlanComparison';
+import { getComparedBillingPlanKeysOrThrow } from '@/settings/billing/utils/getComparedBillingPlanKeysOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,9 +22,7 @@ export const SettingsBillingPlansContent = () => {
     currentWorkspace?.currentBillingSubscription,
   );
 
-  const planKeys = listPlans()
-    .filter((plan) => plan.isSellable)
-    .map((plan) => plan.planKey);
+  const comparedPlanKeys = getComparedBillingPlanKeysOrThrow(listPlans());
 
   if (
     !isDefined(currentPlanKey) ||
@@ -32,8 +31,8 @@ export const SettingsBillingPlansContent = () => {
     return (
       <SettingsBillingPlansWithoutSubscription
         billingInterval={billingInterval}
+        comparedPlanKeys={comparedPlanKeys}
         onBillingIntervalChange={setBillingInterval}
-        planKeys={planKeys}
         planPrices={planPrices}
       />
     );
@@ -42,9 +41,9 @@ export const SettingsBillingPlansContent = () => {
   return (
     <SettingsBillingPlansWithSubscription
       billingInterval={billingInterval}
+      comparedPlanKeys={comparedPlanKeys}
       currentPlanKey={currentPlanKey}
       onBillingIntervalChange={setBillingInterval}
-      planKeys={planKeys}
       planPrices={planPrices}
     />
   );

@@ -14,10 +14,12 @@ import {
 
 export const useHandleCheckoutSession = ({
   recurringInterval,
+  plan,
   requirePaymentMethod,
   successUrlPath,
 }: {
   recurringInterval: SubscriptionInterval;
+  plan: BillingPlanKey;
   requirePaymentMethod: boolean;
   successUrlPath: string;
 }) => {
@@ -29,7 +31,7 @@ export const useHandleCheckoutSession = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleCheckoutSession = async (plan: BillingPlanKey) => {
+  const handleCheckoutSession = async () => {
     setIsSubmitting(true);
     try {
       const { data } = await checkoutSession({

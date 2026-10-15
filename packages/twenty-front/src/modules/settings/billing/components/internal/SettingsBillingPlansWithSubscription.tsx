@@ -5,6 +5,7 @@ import { useBillingPlanActions } from '@/settings/billing/hooks/useBillingPlanAc
 import { useBillingSubscriptionChangeWording } from '@/settings/billing/hooks/useBillingSubscriptionChangeWording';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import {
+  type SettingsBillingComparedPlanKeys,
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
 } from '@/settings/billing/types/SettingsBillingPlanComparison';
@@ -18,19 +19,19 @@ import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
+  comparedPlanKeys: SettingsBillingComparedPlanKeys;
   currentPlanKey: BillingPlanKey;
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
   ) => void;
-  planKeys: BillingPlanKey[];
   planPrices: SettingsBillingPlanPrices;
 };
 
 export const SettingsBillingPlansWithSubscription = ({
   billingInterval,
+  comparedPlanKeys,
   currentPlanKey,
   onBillingIntervalChange,
-  planKeys,
   planPrices,
 }: SettingsBillingPlansWithSubscriptionProps) => {
   const { t } = useLingui();
@@ -43,15 +44,15 @@ export const SettingsBillingPlansWithSubscription = ({
   } = useApplyBillingSubscriptionChange();
   const { getBillingSubscriptionChangeWording } =
     useBillingSubscriptionChangeWording();
-  const { planActions } = useBillingPlanActions({
+  const { comparedPlans } = useBillingPlanActions({
     billingInterval,
+    comparedPlanKeys,
     currentPlanKey,
     isApplyingBillingSubscriptionChange,
     onBillingSubscriptionChangeRequested: (change) => {
       setPendingChange(change);
       openDialog(BILLING_MODAL_IDS.confirmSubscriptionChange);
     },
-    planKeys,
   });
 
   const pendingChangeWording = isDefined(pendingChange)
@@ -65,9 +66,8 @@ export const SettingsBillingPlansWithSubscription = ({
     <SettingsPageContainer overflow="visible">
       <SettingsBillingPlanComparisonTable
         billingInterval={billingInterval}
+        comparedPlans={comparedPlans}
         onBillingIntervalChange={onBillingIntervalChange}
-        planActions={planActions}
-        planKeys={planKeys}
         planPrices={planPrices}
       />
       {isDefined(pendingChange) && isDefined(pendingChangeWording) && (
