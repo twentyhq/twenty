@@ -260,6 +260,7 @@ export class AgentRunnerService {
           ].join('\n\n'),
           pausingTools: createAgentWaitTools(),
           canAskHumans: spec.capabilities.canAskHumans,
+          responseFormat: spec.responseFormat ?? agent.responseFormat,
           workspaceId,
           executionContext,
           additionalExcludedToolNames: spec.additionalExcludedToolNames,

@@ -187,7 +187,7 @@ export class ChatExecutionService {
       ...(await getAuthorization()),
       resolveExecutionContext: undefined,
     });
-    const { actorContext, roleId, userId, userContext } =
+    const { actorContext, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
@@ -207,17 +207,13 @@ export class ChatExecutionService {
       resolveExecutionContext,
     };
 
-    const toolCatalog = await this.toolRegistry.buildToolIndex(
-      workspace.id,
-      roleId,
-      {
-        userId,
-        userWorkspaceId,
-        locale,
-        excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
-        rolePermissionConfig: toolContext.rolePermissionConfig,
-      },
-    );
+    const toolCatalog = await this.toolRegistry.buildToolIndex(workspace.id, {
+      userId,
+      userWorkspaceId,
+      locale,
+      excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
+      rolePermissionConfig: toolContext.rolePermissionConfig,
+    });
 
     const skillCatalog = await this.skillService.findAllFlatSkills(
       workspace.id,

@@ -9,18 +9,22 @@ import { resolveSourceSdk } from '@/app/project/resolve-source-sdk';
 import { runAppWorker } from '@/app/run-app-worker';
 import { toWorkerOutputDiagnostics } from '@/app/to-worker-output-diagnostics';
 import { CliError } from '@/output/cli-error';
+import { type CliWarning } from '@/output/types/cli-warning.type';
 
 export const buildDevSnapshot = async ({
   appPath,
   signal,
   updateWatchInputs,
+  warn,
 }: {
   appPath: string;
   signal: AbortSignal;
   updateWatchInputs: (inputs: WatchInputs, success: boolean) => Promise<void>;
+  warn?: (warning: CliWarning) => void;
 }) => {
   const tooling = await resolveSourceSdk({
     appPath,
+    warn,
   });
   const sourceFingerprints = await collectSourceFingerprints(appPath).catch(
     () => undefined,

@@ -3,6 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Temporal } from 'temporal-polyfill';
+import { Field } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const INITIAL_DATE = Temporal.ZonedDateTime.from(
@@ -125,6 +126,12 @@ export const WithOpenYearSelect: Story = {
 };
 
 export const WithTimeInput: Story = {
+  render: () => (
+    <Field.Root>
+      <Field.Label>Due date</Field.Label>
+      <DateTimePickerStory />
+    </Field.Root>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -136,6 +143,7 @@ export const WithTimeInput: Story = {
     );
 
     expect(timeInput).toBeInTheDocument();
+    expect(canvas.getByRole('textbox', { name: 'Time' })).toBe(timeInput);
   },
 };
 

@@ -15,6 +15,7 @@ declare module 'express-serve-static-core' {
     user?: FlatAuthContextUser | null;
     apiKey?: FlatApiKey | null;
     application?: FlatApplication | null;
+    agentId?: string;
     userWorkspace?: FlatUserWorkspace;
     locale: keyof typeof APP_LOCALES;
     workspace?: FlatWorkspace;

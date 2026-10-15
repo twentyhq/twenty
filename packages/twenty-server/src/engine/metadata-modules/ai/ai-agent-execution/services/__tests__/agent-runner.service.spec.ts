@@ -4,7 +4,8 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
-import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 
 const CREATED_BY = {
   source: 'WORKFLOW',
@@ -46,6 +47,9 @@ const buildExecution = (
   },
   ...overrides,
 });
+
+const buildAgent = (responseFormat: AgentResponseFormat): AgentEntity =>
+  Object.assign(new AgentEntity(), { id: 'agent-id', responseFormat });
 
 const RUN_INPUT: AgentRunnerRunInput = {
   workspaceId: 'workspace-id',
@@ -206,6 +210,49 @@ describe('AgentRunnerService', () => {
         turnId: 'turn-id',
         title: 'Draft the quote',
       }),
+    );
+  });
+
+  it("asks for the caller's output format over the agent's own", async () => {
+    const { service, agentAsyncExecutorService } = buildService();
+    const callerResponseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    await service.run({
+      ...RUN_INPUT,
+      agent: buildAgent({ type: 'text' }),
+      spec: { ...RUN_INPUT.spec, responseFormat: callerResponseFormat },
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledTimes(1);
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({ responseFormat: callerResponseFormat }),
+    );
+  });
+
+  it("falls back to the agent's output format when the caller gives none", async () => {
+    const { service, agentAsyncExecutorService } = buildService();
+    const agentResponseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    await service.run({
+      ...RUN_INPUT,
+      agent: buildAgent(agentResponseFormat),
+    });
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledTimes(1);
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({ responseFormat: agentResponseFormat }),
     );
   });
 

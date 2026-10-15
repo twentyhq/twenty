@@ -29,18 +29,6 @@ export const RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR =
 export const RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR =
   '--record-table-first-column-left';
 
-const MAX_COLUMNS = 100;
-
-const columnFieldWidthRules = Array.from(
-  { length: MAX_COLUMNS },
-  (_, i) =>
-    `div.${getRecordTableColumnFieldWidthClassName(i)} {
-    width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-    min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-    max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-  }`,
-).join('\n');
-
 export const getRecordTableColumnWidthInlineStyles = ({
   visibleRecordFields,
   isDragColumnHidden,
@@ -177,8 +165,6 @@ const StyledTable = styled.div<{
     min-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
     width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
-
-  ${columnFieldWidthRules}
 
   div.${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
     max-width: var(

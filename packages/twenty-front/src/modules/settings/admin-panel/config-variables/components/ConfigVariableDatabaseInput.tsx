@@ -141,7 +141,6 @@ export const ConfigVariableDatabaseInput = ({
                   {selectOptions.map((option) => (
                     <Dropdown.OptionItem
                       key={option.value}
-                      className="config-variable-array-menu-item-multi-select"
                       selected={isValueSelected(option.value)}
                       onSelect={() => handleMultiSelectChange(option.value)}
                     >

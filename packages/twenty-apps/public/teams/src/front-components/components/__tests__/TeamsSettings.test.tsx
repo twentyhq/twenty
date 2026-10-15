@@ -41,6 +41,11 @@ vi.mock('twenty-sdk/front-component', () => ({
   useTranslate: () => ({ t: (message: string) => message }),
 }));
 
+vi.mock(
+  'src/features/transcripts/front-components/TranscriptImportHistorySection',
+  () => ({ TranscriptImportHistorySection: () => null }),
+);
+
 vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: class {
     query = queryMock;
@@ -53,6 +58,11 @@ vi.mock('twenty-client-sdk/rest', () => ({
     get = restGetMock;
   },
 }));
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/current-user-has-roles-permission',
+  () => ({ currentUserHasRolesPermission: async () => false }),
+);
 
 describe('TeamsSettings', () => {
   beforeEach(() => {

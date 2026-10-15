@@ -5,14 +5,11 @@ import {
   ArrayMaxSize,
   IsArray,
   IsEnum,
-  IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { type RunAgentMessage } from 'twenty-shared/application';
-import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { MAX_RUN_AGENT_MESSAGE_ATTACHMENTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/max-run-agent-message-attachments.const';
 import { RunAgentMessageAttachmentInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-message-attachment.input';
@@ -25,10 +22,13 @@ export class RunAgentMessageInputDTO implements RunAgentMessage {
   role: RunAgentMessageRole;
 
   @IsString()
-  @ValidateIf(
-    (message: RunAgentMessageInputDTO) => !isNonEmptyArray(message.attachments),
-  )
-  @IsNotEmpty()
+  // TODO(@abdulrahmancodes): restore once callers stop sending empty turns. It rejects the
+  // empty assistant turns the Slack app replays, so those callers go first. The service
+  // already refuses blank turns in input.
+  // @ValidateIf(
+  //   (message: RunAgentMessageInputDTO) => !isNonEmptyArray(message.attachments),
+  // )
+  // @IsNotEmpty()
   @Field()
   content: string;
 
