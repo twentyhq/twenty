@@ -17,7 +17,7 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { addMorphRelationsToMorphRelationHeadFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/add-morph-relations-to-morph-relation-head-flat-field-metadatas.util';
+import { addMorphRelationsToMorphRelationHeadsForRecordFilters } from 'src/engine/metadata-modules/flat-field-metadata/utils/add-morph-relations-to-morph-relation-heads-for-record-filters.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type ConvertChartFilterToGqlOperationFilterParams = {
@@ -80,7 +80,7 @@ export const convertChartFilterToGqlOperationFilter = ({
     }));
 
   return computeRecordGqlOperationFilter({
-    fieldMetadataItems: addMorphRelationsToMorphRelationHeadFlatFieldMetadatas({
+    fieldMetadataItems: addMorphRelationsToMorphRelationHeadsForRecordFilters({
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       recordFilters: convertedRecordFilters,
