@@ -74,6 +74,7 @@ export class FeatureFlagService {
 
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'featureFlagsMap',
+        'rolesPermissions',
       ]);
     }
   }
@@ -124,6 +125,7 @@ export class FeatureFlagService {
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'featureFlagsMap',
+      'rolesPermissions',
     ]);
 
     return result;

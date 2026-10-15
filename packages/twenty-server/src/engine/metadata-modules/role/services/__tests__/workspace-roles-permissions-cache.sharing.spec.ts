@@ -45,6 +45,7 @@ const compute = ({
       rowLevelPermissionPredicate: { byRoleId: new Map() },
       rowLevelPermissionPredicateGroup: { byRoleId: new Map() },
       fieldMetadata: [],
+      featureFlag: [],
     },
   } as never).role.thread;
 };
