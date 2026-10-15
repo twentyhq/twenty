@@ -57,6 +57,37 @@ describe('getValidationRuleErrorMessage', () => {
     ).toBe('Expression did not return true or false');
   });
 
+  it('should return the message for each syntax error code', () => {
+    expect(
+      getValidationRuleErrorMessage({
+        errorCode: 'INCOMPLETE_EXPRESSION',
+        errorMessage: 'raw message',
+      }),
+    ).toBe('Expression is incomplete');
+
+    expect(
+      getValidationRuleErrorMessage({
+        errorCode: 'UNCLOSED_TEXT',
+        errorMessage: 'raw message',
+      }),
+    ).toBe('A text value is missing its closing quote');
+
+    expect(
+      getValidationRuleErrorMessage({
+        errorCode: 'INVALID_SYNTAX',
+        errorParams: { token: '?' },
+        errorMessage: 'raw message',
+      }),
+    ).toBe('Unexpected "?"');
+
+    expect(
+      getValidationRuleErrorMessage({
+        errorCode: 'INVALID_SYNTAX',
+        errorMessage: 'raw message',
+      }),
+    ).toBe('Expression is not valid');
+  });
+
   it('should put the error params back into the message', () => {
     expect(
       getValidationRuleErrorMessage({
