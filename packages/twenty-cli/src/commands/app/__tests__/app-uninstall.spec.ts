@@ -1,7 +1,6 @@
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
-import { writeTestSourceSdk } from '@/app/__tests__/utils/write-test-source-sdk';
-import { existsSync } from 'node:fs';
-import { rm, mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { createSourceTestApp } from '@/app/source/__tests__/utils/create-source-test-app';
+import { rm, mkdtemp, writeFile } from 'node:fs/promises';
 import { type ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -41,7 +40,7 @@ let workerDirectory: string;
 
 beforeAll(async () => {
   workerDirectory = await mkdtemp(join(tmpdir(), 'twenty-command-worker-'));
-  await buildTestAppWorker(workerDirectory, { useToolingFixture: true });
+  await buildTestAppWorker(workerDirectory);
   worker.modulePath = join(workerDirectory, 'app-worker.cjs');
 }, 60_000);
 
@@ -165,39 +164,17 @@ describe('app uninstall', () => {
 
   beforeEach(async () => {
     appPath = await mkdtemp(join(tmpdir(), 'twenty-cli-uninstall-'));
+    await createSourceTestApp(appPath);
     await writeFile(
-      join(appPath, 'package.json'),
-      JSON.stringify({
-        name: 'uninstall-app',
-        devDependencies: { 'twenty-sdk': '9.9.9' },
-      }),
+      join(appPath, 'app.ts'),
+      `import { defineApplication } from 'twenty-sdk/define';
+      export default defineApplication(${JSON.stringify(APPLICATION)});`,
     );
-    await writeTestSourceSdk({ appPath });
     await writeFile(
-      join(appPath, 'test-tooling.cjs'),
-      `
-      const fs = require('node:fs');
-      const path = require('node:path');
-      exports.buildSourceSnapshot = async () => {
-        fs.writeFileSync(path.join(__dirname, 'built.txt'), 'built');
-        return {
-          success: true,
-          data: {
-            buildId: 'build-id',
-            contentHash: 'a'.repeat(64),
-            application: ${JSON.stringify(APPLICATION)},
-            manifestFormat: 'twenty-application',
-            manifest: { application: ${JSON.stringify(APPLICATION)} },
-            files: [],
-          },
-          diagnostics: [],
-        };
-      };
-      exports.releaseSourceSnapshot = async ({ buildId }) => {
-        fs.writeFileSync(path.join(__dirname, 'released.txt'), buildId);
-        return { success: true, data: null, diagnostics: [] };
-      };
-    `,
+      join(appPath, 'broken-function.ts'),
+      `import { defineLogicFunction } from 'twenty-sdk/define';
+      import { handler } from './missing-handler';
+      export default defineLogicFunction({ handler });`,
     );
     vi.stubEnv('TWENTY_API_URL', server.url);
     vi.stubEnv('TWENTY_API_KEY', 'uninstall-test-key');
@@ -214,15 +191,16 @@ describe('app uninstall', () => {
     server.requests.length = 0;
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     state.heldUninstallResponse?.end();
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
+    await rm(appPath, { recursive: true, force: true });
   });
 
   afterAll(() => server.close());
 
-  it('finds the app from its build, checks it, then uninstalls it', async () => {
+  it('reads the app identity and uninstalls it even with broken function source', async () => {
     const { envelope, exitCode } = await runJson('--yes');
 
     expect(exitCode).toBe(0);
@@ -232,18 +210,17 @@ describe('app uninstall', () => {
         name: APPLICATION.displayName,
       },
       uninstalled: true,
-      completedPhases: ['build', 'check', 'uninstall'],
+      completedPhases: ['identity', 'check', 'uninstall'],
     });
     expect(operations()).toEqual(['check', 'uninstall']);
     expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
       universalIdentifier: APPLICATION.universalIdentifier,
     });
-    expect(await readFile(join(appPath, 'released.txt'), 'utf8')).toBe(
-      'build-id',
-    );
   });
 
-  it('uninstalls by universal identifier without building the project', async () => {
+  it('uninstalls by universal identifier without reading the project', async () => {
+    await rm(appPath, { recursive: true, force: true });
+
     const { envelope, exitCode } = await runJson(
       '--universal-identifier',
       APPLICATION.universalIdentifier,
@@ -252,7 +229,24 @@ describe('app uninstall', () => {
 
     expect(exitCode).toBe(0);
     expect(envelope.data.completedPhases).toEqual(['check', 'uninstall']);
-    expect(existsSync(join(appPath, 'built.txt'))).toBe(false);
+  });
+
+  it('does not uninstall if the project has no application definition', async () => {
+    await rm(join(appPath, 'app.ts'));
+
+    const { envelope, exitCode } = await runJson('--yes');
+
+    expect(exitCode).toBe(2);
+    expect(envelope.error).toMatchObject({
+      code: 'INVALID_INPUT',
+      message: 'This project has no application definition.',
+      details: {
+        phase: 'identity',
+        outcome: 'not-started',
+        completedPhases: [],
+      },
+    });
+    expect(server.requests).toHaveLength(0);
   });
 
   it('sends the canonical form of an uppercase universal identifier', async () => {
@@ -300,7 +294,7 @@ describe('app uninstall', () => {
       details: {
         phase: 'check',
         outcome: 'not-started',
-        completedPhases: ['build'],
+        completedPhases: ['identity'],
       },
     });
     expect(operations()).toEqual(['check']);
@@ -329,7 +323,7 @@ describe('app uninstall', () => {
       details: {
         phase: 'confirmation',
         outcome: 'not-started',
-        completedPhases: ['build', 'check'],
+        completedPhases: ['identity', 'check'],
       },
     });
     expect(operations()).toEqual(['check']);
@@ -382,7 +376,7 @@ describe('app uninstall', () => {
         details: {
           phase: 'uninstall',
           outcome,
-          completedPhases: ['build', 'check'],
+          completedPhases: ['identity', 'check'],
         },
       });
     },
