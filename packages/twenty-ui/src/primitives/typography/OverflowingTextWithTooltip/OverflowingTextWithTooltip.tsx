@@ -137,9 +137,13 @@ export const OverflowingTextWithTooltip = memo(
           render={textElement}
         />
         <Tooltip.Portal>
-          <Tooltip.Positioner sideOffset={5} side={tooltipPlace}>
+          <Tooltip.Positioner
+            sideOffset={5}
+            side={tooltipPlace}
+            positionMethod="absolute"
+            style={{ maxWidth: '300px' }}
+          >
             <Tooltip.Popup
-              maxWidth={300}
               className={
                 isTooltipMultiline ? styles.multilineTooltip : undefined
               }

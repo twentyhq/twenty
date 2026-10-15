@@ -34,8 +34,9 @@ export const RecordListFieldTooltip = ({
                 side="bottom"
                 positionMethod="fixed"
                 sideOffset={10}
+                style={{ maxWidth: '300px' }}
               >
-                <Tooltip.Popup maxWidth={300}>
+                <Tooltip.Popup>
                   <TooltipTextContent
                     startIcon={isDefined(FieldIcon) ? <FieldIcon /> : undefined}
                   >
