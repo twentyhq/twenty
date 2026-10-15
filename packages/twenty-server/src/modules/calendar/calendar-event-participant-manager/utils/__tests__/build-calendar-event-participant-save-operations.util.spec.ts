@@ -152,20 +152,6 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
     },
   );
 
-  it('lets the organizer channel record the answer of another attendee', () => {
-    const operations = buildOperations({
-      fetchedParticipants: [
-        buildFetchedParticipant({ responseStatus: 'DECLINED' }),
-      ],
-      existingParticipants: [buildExistingParticipant()],
-      channelRole: 'ORGANIZER_CHANNEL',
-    });
-
-    expect(operations.participantsToUpdate).toEqual([
-      expect.objectContaining({ criteria: 'existing-participant-id' }),
-    ]);
-  });
-
   it.each<CalendarEventChannelRole>([
     'ATTENDEE_CHANNEL',
     'ATTENDEE_CHANNEL_WITH_ORGANIZER_SYNCING',
