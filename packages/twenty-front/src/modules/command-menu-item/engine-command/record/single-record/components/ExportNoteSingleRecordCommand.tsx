@@ -1,5 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportNoteSingleRecordCommand = () => {
@@ -14,7 +15,7 @@ export const ExportNoteSingleRecordCommand = () => {
     );
   }
 
-  const filename = `${(selectedRecord.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
+  const filename = `${(selectedRecord.title || t`Untitled Note`).replace(/[<>:"/\\|?*]/g, '-')}`;
 
   const handleExecute = async () => {
     const initialBody = selectedRecord.bodyV2?.blocknote;

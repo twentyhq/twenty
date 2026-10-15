@@ -58,7 +58,6 @@ export const SettingsWorkspaceEmailSyncSection = () => {
           description={t`Include emails where all participants share the same domain.`}
           checked={currentWorkspace?.isInternalMessagesImportEnabled ?? false}
           onChange={handleSyncInternalEmailsChange}
-          advancedMode
         />
       </Card.Root>
     </Section.Root>

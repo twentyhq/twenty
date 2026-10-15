@@ -13,6 +13,7 @@ const BASE_INPUT = {
   agentUniversalIdentifier: 'agent-uid',
   runAsWorkspaceMemberId: 'member-1',
   messages: [{ role: 'user' as const, content: 'hi' }],
+  thread: { key: 'C123:1700000000.000100', title: 'hi' },
 };
 
 describe('runSlackAssistantAgentWithDeadline', () => {

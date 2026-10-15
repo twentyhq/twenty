@@ -1,4 +1,4 @@
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import {
   StyledSettingsCardContent,
   StyledSettingsCardDescription,
@@ -19,7 +19,6 @@ type SettingsOptionCardContentSelectProps = {
   title: React.ReactNode;
   description?: string;
   divider?: boolean;
-  disabled?: boolean;
   children?: React.ReactNode;
 };
 
@@ -55,12 +54,11 @@ export const SettingsOptionCardContentSelect = ({
   title,
   description,
   divider,
-  disabled = false,
   children,
 }: SettingsOptionCardContentSelectProps) => {
   return (
     <>
-      <StyledSelectRow disabled={disabled}>
+      <StyledSelectRow>
         {(isDefined(LeftComponent) || isDefined(Icon)) && (
           <StyledSettingsCardIcon>
             {LeftComponent ??
@@ -77,7 +75,7 @@ export const SettingsOptionCardContentSelect = ({
         </StyledSelectText>
         <StyledSelectContainer>{children}</StyledSelectContainer>
       </StyledSelectRow>
-      {divider && <Separator />}
+      {divider && <SettingsCardSeparator />}
     </>
   );
 };
