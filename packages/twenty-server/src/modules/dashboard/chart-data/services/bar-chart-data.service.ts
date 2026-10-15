@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { resolveMorphRelationAggregateAsCount } from 'src/modules/dashboard/chart-data/utils/resolve-morph-relation-aggregate-as-count.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -27,6 +26,7 @@ import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/serv
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { filterOutUnresolvedRelationBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-unresolved-relation-buckets.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
+import { resolveMorphRelationAggregateAsCount } from 'src/modules/dashboard/chart-data/utils/resolve-morph-relation-aggregate-as-count.util';
 import { wrapChartDataQueryError } from 'src/modules/dashboard/chart-data/utils/wrap-chart-data-query-error.util';
 import { transformToOneDimensionalBarChartData } from 'src/modules/dashboard/chart-data/utils/transform-to-one-dimensional-bar-chart-data.util';
 import { transformToTwoDimensionalBarChartData } from 'src/modules/dashboard/chart-data/utils/transform-to-two-dimensional-bar-chart-data.util';
