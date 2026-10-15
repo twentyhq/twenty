@@ -6,6 +6,7 @@ import { MINUTES_PER_HOUR } from 'src/features/transcripts/front-components/cons
 import { type TeamsTranscriptHistoryImportEstimate } from 'src/features/transcripts/front-components/types/teams-transcript-history-import-estimate.type';
 import { type TeamsTranscriptHistoryView } from 'src/features/transcripts/front-components/types/teams-transcript-history-view.type';
 import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
+import { getTeamsTranscriptHistoryToImportCount } from 'src/features/transcripts/utils/get-teams-transcript-history-to-import-count';
 
 const getImportEstimate = (
   pageCount: number,
@@ -38,8 +39,7 @@ export const getTeamsTranscriptHistoryView = ({
     return { kind: 'stalled' };
   }
 
-  const toImportCount =
-    state.transcriptCount - state.alreadyImportedCount - state.deletedCount;
+  const toImportCount = getTeamsTranscriptHistoryToImportCount(state);
 
   switch (state.phase) {
     case 'counting':

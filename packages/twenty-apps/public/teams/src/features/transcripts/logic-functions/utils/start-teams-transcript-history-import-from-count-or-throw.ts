@@ -4,6 +4,7 @@ import { TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT } from 'src/features/transcri
 import { type TeamsTranscriptHistoryRouteResult } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-route-result.type';
 import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
 import { buildTeamsTranscriptHistoryKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-history-kv-key';
+import { getTeamsTranscriptHistoryToImportCount } from 'src/features/transcripts/utils/get-teams-transcript-history-to-import-count';
 import { scheduleTeamsTranscriptHistoryRunOrThrow } from 'src/features/transcripts/logic-functions/utils/schedule-teams-transcript-history-run-or-throw';
 
 export const startTeamsTranscriptHistoryImportFromCountOrThrow = async ({
@@ -21,12 +22,10 @@ export const startTeamsTranscriptHistoryImportFromCountOrThrow = async ({
     return { success: false, errorCode: 'count-required' };
   }
 
-  const toImportCount =
-    countedState.transcriptCount -
-    countedState.alreadyImportedCount -
-    countedState.deletedCount;
-
-  if (toImportCount > TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT) {
+  if (
+    getTeamsTranscriptHistoryToImportCount(countedState) >
+    TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT
+  ) {
     return { success: false, errorCode: 'import-limit-exceeded' };
   }
 

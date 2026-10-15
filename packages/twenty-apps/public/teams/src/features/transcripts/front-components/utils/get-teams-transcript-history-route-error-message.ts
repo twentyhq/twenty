@@ -7,9 +7,11 @@ import { type TeamsTranscriptHistoryRouteErrorCode } from 'src/features/transcri
 export const getTeamsTranscriptHistoryRouteErrorMessage = ({
   errorCode,
   unknownErrorMessage,
+  locale,
 }: {
   errorCode: TeamsTranscriptHistoryRouteErrorCode;
   unknownErrorMessage: string;
+  locale: string;
 }): string => {
   switch (errorCode) {
     case 'transcripts-not-enabled':
@@ -29,7 +31,7 @@ export const getTeamsTranscriptHistoryRouteErrorMessage = ({
     case 'count-required':
       return t('Count the transcripts again before importing them.');
     case 'import-limit-exceeded':
-      return getTeamsTranscriptHistoryImportLimitMessage();
+      return getTeamsTranscriptHistoryImportLimitMessage(locale);
     case 'unknown':
       return unknownErrorMessage;
   }

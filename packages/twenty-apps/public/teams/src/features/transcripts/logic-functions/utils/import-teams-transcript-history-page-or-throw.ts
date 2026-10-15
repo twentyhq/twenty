@@ -6,7 +6,6 @@ import { TEAMS_TRANSCRIPT_HISTORY_UPSERT_BATCH_SIZE } from 'src/features/transcr
 import { type TeamsOccurrenceTranscript } from 'src/features/transcripts/logic-functions/types/teams-occurrence-transcript.type';
 import { type TeamsTranscriptHistoryPageCounts } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-page-counts.type';
 import { buildTeamsCallRecordingSyncFields } from 'src/features/transcripts/logic-functions/utils/build-teams-call-recording-sync-fields';
-import { chunkIntoBatches } from 'src/features/transcripts/logic-functions/utils/chunk-into-batches';
 import { computeCallRecordingIdForTeamsTranscript } from 'src/features/transcripts/logic-functions/utils/compute-call-recording-id-for-teams-transcript';
 import { downloadMeetingTranscriptContent } from 'src/features/transcripts/logic-functions/utils/download-meeting-transcript-content';
 import { findDeletedAndCompletedCallRecordingIdsOrThrow } from 'src/features/transcripts/logic-functions/utils/find-deleted-and-completed-call-recording-ids-or-throw';
@@ -53,7 +52,9 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
   importedSince: string;
   importLimit: number;
   isRunActive: () => Promise<boolean>;
-}): Promise<TeamsTranscriptHistoryPageCounts> => {
+}): Promise<
+  TeamsTranscriptHistoryPageCounts & { isImportLimitReached: boolean }
+> => {
   const pageTranscripts = [
     ...new Map(
       transcripts.map((occurrenceTranscript) => {
@@ -93,14 +94,22 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
   let skippedCount =
     deletedCallRecordingIds.size + completedCallRecordingIds.size;
   let unavailableCount = 0;
+  let nextTranscriptIndex = 0;
 
-  for (const transcriptBatch of chunkIntoBatches(
-    importableTranscripts,
-    TEAMS_TRANSCRIPT_HISTORY_UPSERT_BATCH_SIZE,
-  )) {
-    if (importedCount >= importLimit) {
-      break;
-    }
+  while (
+    nextTranscriptIndex < importableTranscripts.length &&
+    importedCount < importLimit
+  ) {
+    const transcriptBatch = importableTranscripts.slice(
+      nextTranscriptIndex,
+      nextTranscriptIndex +
+        Math.min(
+          TEAMS_TRANSCRIPT_HISTORY_UPSERT_BATCH_SIZE,
+          importLimit - importedCount,
+        ),
+    );
+
+    nextTranscriptIndex += transcriptBatch.length;
 
     const callRecordings: (ReturnType<typeof toCallRecordingData> & {
       id: string;
@@ -112,10 +121,6 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       calendarReference,
       callRecordingId,
     } of transcriptBatch) {
-      if (importedCount + callRecordings.length >= importLimit) {
-        break;
-      }
-
       const transcriptContent = await downloadAvailableTranscriptContentOrThrow(
         {
           accessToken,
@@ -185,5 +190,8 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
     importedCount,
     skippedCount,
     unavailableCount,
+    isImportLimitReached:
+      importedCount >= importLimit &&
+      nextTranscriptIndex < importableTranscripts.length,
   };
 };

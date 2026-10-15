@@ -250,6 +250,29 @@ describe('processTeamsTranscriptHistoryPageOrThrow', () => {
     expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
+  it('should finish the run normally when its last page fills the import limit exactly', async () => {
+    kvStore.set(STATE_KV_KEY, {
+      ...STATE,
+      importedCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT - 5,
+    });
+    listTeamsCalendarPageMock.mockResolvedValue({ occurrences: [] });
+    importTeamsTranscriptHistoryPageMock.mockResolvedValue({
+      ...PAGE_COUNTS,
+      importedCount: 5,
+      isImportLimitReached: false,
+    });
+
+    await processImportPage(JOB);
+
+    const state = kvStore.get(STATE_KV_KEY);
+
+    expect(state).toMatchObject({
+      phase: 'imported',
+      importedCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT,
+    });
+    expect(state).not.toHaveProperty('isImportLimitReached');
+  });
+
   it('should count the last page of a count without importing it', async () => {
     kvStore.set(STATE_KV_KEY, {
       ...STATE,

@@ -12,6 +12,7 @@ import { TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT } from 'src/features/transcri
 import { TEAMS_TRANSCRIPT_HISTORY_STATUS_ROUTE_PATH } from 'src/features/transcripts/constants/teams-transcript-history-status-route-path';
 import { TranscriptImportHistoryCountSummary } from 'src/features/transcripts/front-components/TranscriptImportHistoryCountSummary';
 import { TranscriptImportHistoryProgress } from 'src/features/transcripts/front-components/TranscriptImportHistoryProgress';
+import { formatTeamsTranscriptHistoryCount } from 'src/features/transcripts/front-components/utils/format-teams-transcript-history-count';
 import { TEAMS_TRANSCRIPT_HISTORY_DEFAULT_DAYS } from 'src/features/transcripts/front-components/constants/teams-transcript-history-default-days';
 import { type TeamsTranscriptHistoryRouteRequest } from 'src/features/transcripts/front-components/types/teams-transcript-history-route-request.type';
 import { type TeamsTranscriptHistoryView } from 'src/features/transcripts/front-components/types/teams-transcript-history-view.type';
@@ -154,6 +155,7 @@ export const TranscriptImportHistorySection = () => {
           message: getTeamsTranscriptHistoryRouteErrorMessage({
             errorCode: result.errorCode,
             unknownErrorMessage,
+            locale,
           }),
           variant: 'error',
         });
@@ -216,6 +218,7 @@ export const TranscriptImportHistorySection = () => {
             {getTeamsTranscriptHistoryRouteErrorMessage({
               errorCode: loadErrorCode,
               unknownErrorMessage: t('Could not load the import history.'),
+              locale,
             })}
           </p>
           <StyledSettingsButton type="button" onClick={handleHistoryRefresh}>
@@ -294,7 +297,10 @@ export const TranscriptImportHistorySection = () => {
             {t(
               'Connecting imports up to {maxImportCount} transcripts from the last {days} days.',
               {
-                maxImportCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT,
+                maxImportCount: formatTeamsTranscriptHistoryCount({
+                  count: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT,
+                  locale,
+                }),
                 days: TEAMS_TRANSCRIPT_HISTORY_INITIAL_IMPORT_DAYS,
               },
             )}

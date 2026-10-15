@@ -147,7 +147,8 @@ const buildRow = (
 
 const toPageCounts = (
   counts: Partial<
-    Record<'importedCount' | 'skippedCount' | 'unavailableCount', number>
+    Record<'importedCount' | 'skippedCount' | 'unavailableCount', number> &
+      Record<'isImportLimitReached', boolean>
   >,
 ) => ({
   transcriptCount: 0,
@@ -156,6 +157,7 @@ const toPageCounts = (
   importedCount: 0,
   skippedCount: 0,
   unavailableCount: 0,
+  isImportLimitReached: false,
   ...counts,
 });
 
@@ -333,7 +335,13 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         importLimit: 2,
         isRunActive: async () => true,
       }),
-    ).resolves.toEqual(toPageCounts({ importedCount: 2, unavailableCount: 1 }));
+    ).resolves.toEqual(
+      toPageCounts({
+        importedCount: 2,
+        unavailableCount: 1,
+        isImportLimitReached: true,
+      }),
+    );
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
       'new-1',
       'new-2',
@@ -358,7 +366,9 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         importLimit: 2,
         isRunActive: async () => true,
       }),
-    ).resolves.toEqual(toPageCounts({ importedCount: 2 }));
+    ).resolves.toEqual(
+      toPageCounts({ importedCount: 2, isImportLimitReached: true }),
+    );
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
       'new-1',
     ]);
@@ -392,10 +402,50 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         importLimit: 10,
         isRunActive: async () => true,
       }),
-    ).resolves.toEqual(toPageCounts({ importedCount: 10, skippedCount: 1 }));
+    ).resolves.toEqual(
+      toPageCounts({
+        importedCount: 10,
+        skippedCount: 1,
+        isImportLimitReached: true,
+      }),
+    );
     expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual(
       transcriptIds.slice(1, 11),
     );
+  });
+
+  it('should import the transcripts after one deleted during its download when the batch fills the import limit', async () => {
+    const transcriptIds = ['deleted-during-import', 'new-1', 'new-2', 'new-3'];
+    const coreApiClient = buildCoreApiClient([
+      buildRow('deleted-during-import', 'PROCESSING'),
+    ]);
+
+    downloadMeetingTranscriptContentMock.mockImplementationOnce(async () => {
+      coreApiClient.rowsById.set(
+        computeCallRecordingIdForTeamsTranscript('deleted-during-import'),
+        buildRow('deleted-during-import', 'PROCESSING', {
+          deletedAt: '2026-09-15T00:01:00.000Z',
+        }),
+      );
+
+      return TRANSCRIPT_CONTENT;
+    });
+
+    await expect(
+      importTeamsTranscriptHistoryPageOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        transcripts: transcriptIds.map(buildTranscript),
+        importedSince: RUN_STARTED_AT,
+        importLimit: 3,
+        isRunActive: async () => true,
+      }),
+    ).resolves.toEqual(toPageCounts({ importedCount: 3, skippedCount: 1 }));
+    expect(getWrittenTranscriptIds(coreApiClient, transcriptIds)).toEqual([
+      'new-1',
+      'new-2',
+      'new-3',
+    ]);
   });
 
   it('should stop writing once the run is removed', async () => {

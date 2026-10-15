@@ -19,7 +19,7 @@ export const TranscriptImportHistoryCountSummary = ({
   isSubmitting,
   onImport,
 }: TranscriptImportHistoryCountSummaryProps) => {
-  const { t } = useTranslate();
+  const { t, locale } = useTranslate();
 
   const getImportAction = () => {
     if (view.toImportCount <= 0) {
@@ -30,7 +30,9 @@ export const TranscriptImportHistoryCountSummary = ({
 
     if (view.toImportCount > TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT) {
       return (
-        <p role="alert">{getTeamsTranscriptHistoryImportLimitMessage()}</p>
+        <p role="alert">
+          {getTeamsTranscriptHistoryImportLimitMessage(locale)}
+        </p>
       );
     }
 

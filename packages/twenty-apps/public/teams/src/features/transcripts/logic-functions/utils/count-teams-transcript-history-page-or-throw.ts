@@ -12,16 +12,21 @@ export const countTeamsTranscriptHistoryPageOrThrow = async ({
   coreApiClient: Pick<CoreApiClient, 'query'>;
   transcripts: TeamsOccurrenceTranscript[];
 }): Promise<TeamsTranscriptHistoryPageCounts> => {
+  const callRecordingIds = [
+    ...new Set(
+      transcripts.map(({ transcript }) =>
+        computeCallRecordingIdForTeamsTranscript(transcript.id),
+      ),
+    ),
+  ];
   const { deletedCallRecordingIds, completedCallRecordingIds } =
     await findDeletedAndCompletedCallRecordingIdsOrThrow({
       coreApiClient,
-      callRecordingIds: transcripts.map(({ transcript }) =>
-        computeCallRecordingIdForTeamsTranscript(transcript.id),
-      ),
+      callRecordingIds,
     });
 
   return {
-    transcriptCount: transcripts.length,
+    transcriptCount: callRecordingIds.length,
     alreadyImportedCount: completedCallRecordingIds.size,
     deletedCount: deletedCallRecordingIds.size,
     importedCount: 0,

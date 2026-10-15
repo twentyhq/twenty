@@ -50,17 +50,20 @@ const getPhaseAfterPage = ({
   phase,
   nextJob,
   importedCount,
+  isImportLimitReachedOnPage,
 }: {
   phase: TeamsTranscriptHistoryRunningPhase;
   nextJob: TeamsTranscriptHistoryJobPayload | undefined;
   importedCount: number;
+  isImportLimitReachedOnPage: boolean;
 }): Pick<
   TeamsTranscriptHistoryState,
   'phase' | 'errorCode' | 'isImportLimitReached'
 > => {
   if (
     phase === 'importing' &&
-    importedCount >= TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT
+    importedCount >= TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT &&
+    (isImportLimitReachedOnPage || isDefined(nextJob))
   ) {
     return { phase: 'imported', isImportLimitReached: true };
   }
@@ -81,6 +84,7 @@ export const getTeamsTranscriptHistoryPageTransition = ({
   job,
   phase,
   pageCounts,
+  isImportLimitReachedOnPage,
   nextPageUrl,
   now,
 }: {
@@ -88,6 +92,7 @@ export const getTeamsTranscriptHistoryPageTransition = ({
   job: TeamsTranscriptHistoryJobPayload;
   phase: TeamsTranscriptHistoryRunningPhase;
   pageCounts: TeamsTranscriptHistoryPageCounts;
+  isImportLimitReachedOnPage: boolean;
   nextPageUrl?: string;
   now: number;
 }): {
@@ -96,7 +101,12 @@ export const getTeamsTranscriptHistoryPageTransition = ({
 } => {
   const nextJob = getNextJob({ state, job, nextPageUrl });
   const importedCount = state.importedCount + pageCounts.importedCount;
-  const phaseAfterPage = getPhaseAfterPage({ phase, nextJob, importedCount });
+  const phaseAfterPage = getPhaseAfterPage({
+    phase,
+    nextJob,
+    importedCount,
+    isImportLimitReachedOnPage,
+  });
 
   return {
     state: {
@@ -110,7 +120,7 @@ export const getTeamsTranscriptHistoryPageTransition = ({
       skippedCount: state.skippedCount + pageCounts.skippedCount,
       unavailableCount: state.unavailableCount + pageCounts.unavailableCount,
       pageCount: job.pageIndex + 1,
-      // A page cut short by the import limit was not fully checked.
+      // A page the import limit cut short was not fully checked.
       checkedThrough:
         isNonEmptyString(nextPageUrl) || phaseAfterPage.isImportLimitReached
           ? state.checkedThrough

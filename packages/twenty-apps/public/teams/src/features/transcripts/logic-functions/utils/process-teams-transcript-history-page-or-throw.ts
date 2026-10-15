@@ -137,12 +137,15 @@ const processPageOrThrow = async ({
       ),
     });
   const coreApiClient = new CoreApiClient({ runAs: 'application' });
-  const phaseCounts =
+  const { isImportLimitReached, ...phaseCounts } =
     phase === 'counting'
-      ? await countTeamsTranscriptHistoryPageOrThrow({
-          coreApiClient,
-          transcripts,
-        })
+      ? {
+          ...(await countTeamsTranscriptHistoryPageOrThrow({
+            coreApiClient,
+            transcripts,
+          })),
+          isImportLimitReached: false,
+        }
       : await importTeamsTranscriptHistoryPageOrThrow({
           accessToken,
           coreApiClient,
@@ -173,6 +176,7 @@ const processPageOrThrow = async ({
       job,
       phase,
       pageCounts,
+      isImportLimitReachedOnPage: isImportLimitReached,
       nextPageUrl: page.nextPageUrl,
       now: Date.now(),
     },

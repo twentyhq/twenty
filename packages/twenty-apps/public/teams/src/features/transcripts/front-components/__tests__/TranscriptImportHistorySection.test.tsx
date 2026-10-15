@@ -133,11 +133,62 @@ describe('TranscriptImportHistorySection', () => {
 
     expect(screen.getByText('To import: 1001')).toBeTruthy();
     expect(screen.getByRole('alert').textContent).toBe(
-      'You can import up to 1000 transcripts at a time. Count fewer days, or use the API to import more.',
+      'You can import up to 1,000 transcripts at a time. Count fewer days, or use the API to import more.',
     );
     expect(
       screen.queryByRole('button', { name: 'Import transcripts' }),
     ).toBeNull();
+  });
+
+  it('should offer to import a count of exactly the import limit', async () => {
+    postMock.mockResolvedValue(
+      toSuccess({ ...COUNTED_STATE, transcriptCount: 1_015 }),
+    );
+
+    render(<TranscriptImportHistorySection />);
+    await advanceTime();
+
+    expect(screen.getByText('To import: 1000')).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'Import transcripts' }),
+    ).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('should explain the import limit when the import is refused for it', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    postMock.mockImplementation(async (path: string) =>
+      path.endsWith('/import')
+        ? { success: false, errorCode: 'import-limit-exceeded' }
+        : toSuccess(COUNTED_STATE),
+    );
+
+    render(<TranscriptImportHistorySection />);
+    await advanceTime();
+    await user.click(
+      screen.getByRole('button', { name: 'Import transcripts' }),
+    );
+    await advanceTime();
+
+    expect(enqueueSnackbarMock).toHaveBeenCalledWith({
+      message:
+        'You can import up to 1,000 transcripts at a time. Count fewer days, or use the API to import more.',
+      variant: 'error',
+    });
+  });
+
+  it('should say how much the import on connect brings in', async () => {
+    postMock.mockResolvedValue(toSuccess(null));
+
+    render(<TranscriptImportHistorySection />);
+    await advanceTime();
+
+    expect(
+      screen.getByText(
+        'Connecting imports up to 1,000 transcripts from the last 31 days.',
+      ),
+    ).toBeTruthy();
   });
 
   it('should say when an import stopped at the import limit', async () => {
@@ -155,7 +206,7 @@ describe('TranscriptImportHistorySection', () => {
 
     expect(
       screen.getByText(
-        'Import stopped at the limit of 1000 transcripts. Count again to see what is left.',
+        'Import stopped at the limit of 1,000 transcripts. Count again to see what is left.',
       ),
     ).toBeTruthy();
   });

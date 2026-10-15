@@ -91,14 +91,15 @@ account or uninstalling the app deletes the subscription.
 
 Connecting also imports up to 1,000 transcripts from the last 31 days, once per
 connection. Reconnecting starts it again only when that import failed or
-stalled. For older ones, use **Import history** in **Settings > Applications >
+stalled. For older ones, or the rest of the last 31 days when that import
+stopped at 1,000, use **Import history** in **Settings > Applications >
 Microsoft Teams > Settings**: count the transcripts of up to the last 365 days
 first, then import them. One import brings in at most 1,000 transcripts: when
-the count is over that, count fewer days, or use the API to import more. Only
-members who can open the app settings see this section, and it imports the
-meetings of a connection they added themselves: their personal one, or a
-workspace-shared one they created. Every member's connection still imports its
-last 31 days when it connects. The import runs in the background, newest first,
+more than 1,000 are left to import, count fewer days, or use the API to import
+more. Only members who can open the app settings see this section, and it
+imports the meetings of a connection they added themselves: their personal one,
+or a workspace-shared one they created. Every member's connection still runs
+that import when it connects. The import runs in the background, newest first,
 waiting a minute after each calendar page that imported transcripts. Use the
 **Sync Teams Transcript** action for a single transcript, such as one that
 Microsoft had not published about two and a half hours after the meeting or

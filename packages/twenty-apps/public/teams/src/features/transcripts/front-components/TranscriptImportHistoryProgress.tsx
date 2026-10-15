@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT } from 'src/features/transcripts/constants/teams-transcript-history-max-import-count';
 import { type TeamsTranscriptHistoryView } from 'src/features/transcripts/front-components/types/teams-transcript-history-view.type';
+import { formatTeamsTranscriptHistoryCount } from 'src/features/transcripts/front-components/utils/format-teams-transcript-history-count';
 import { formatTeamsTranscriptHistoryDate } from 'src/features/transcripts/front-components/utils/format-teams-transcript-history-date';
 import { StyledSettingsFigureList } from 'src/front-components/components/StyledSettingsFigureList';
 import { StyledSettingsText } from 'src/front-components/components/StyledSettingsText';
@@ -45,7 +46,12 @@ export const TranscriptImportHistoryProgress = ({
     return view.isImportLimitReached
       ? t(
           'Import stopped at the limit of {maxImportCount} transcripts. Count again to see what is left.',
-          { maxImportCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT },
+          {
+            maxImportCount: formatTeamsTranscriptHistoryCount({
+              count: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT,
+              locale,
+            }),
+          },
         )
       : t('Import finished.');
   };
