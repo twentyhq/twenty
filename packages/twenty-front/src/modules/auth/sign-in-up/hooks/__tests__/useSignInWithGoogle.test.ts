@@ -1,11 +1,8 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
+import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { renderHook } from '@testing-library/react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import {
-  BillingPlanKey,
-  SubscriptionInterval,
-} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('react-router-dom', () => ({
@@ -19,12 +16,6 @@ jest.mock('@/auth/hooks/useAuth', () => ({
 }));
 
 describe('useSignInWithGoogle', () => {
-  const mockBillingCheckoutSession = {
-    plan: BillingPlanKey.PRO,
-    interval: SubscriptionInterval.Month,
-    requirePaymentMethod: true,
-  };
-
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
   });
@@ -54,7 +45,7 @@ describe('useSignInWithGoogle', () => {
       action: 'join-workspace',
       workspaceInviteHash: 'testHash',
       workspacePersonalInviteToken: 'testToken',
-      billingCheckoutSession: mockBillingCheckoutSession,
+      billingCheckoutSession: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
     });
   });
 
@@ -80,7 +71,7 @@ describe('useSignInWithGoogle', () => {
       action: 'join-workspace',
       workspaceInviteHash: 'testHash',
       workspacePersonalInviteToken: undefined,
-      billingCheckoutSession: mockBillingCheckoutSession,
+      billingCheckoutSession: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
     });
   });
 });

@@ -104,11 +104,9 @@ const STATUS_LABELS: Record<SubscriptionStatus, MessageDescriptor> = {
 };
 
 const toBillingPlanKey = (planKey: string): BillingPlanKey | null =>
-  planKey === BillingPlanKey.PRO
-    ? BillingPlanKey.PRO
-    : planKey === BillingPlanKey.ENTERPRISE
-      ? BillingPlanKey.ENTERPRISE
-      : null;
+  Object.values(BillingPlanKey).find(
+    (billingPlanKey) => billingPlanKey === planKey,
+  ) ?? null;
 
 const StripeLink = ({
   path,
