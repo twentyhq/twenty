@@ -91,6 +91,7 @@ export class StripeCheckoutService {
     plan = BillingPlanKey.PRO,
     requirePaymentMethod = false,
     withTrialPeriod,
+    idempotencyKey,
   }: {
     user: AuthContextUser;
     workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
@@ -99,6 +100,7 @@ export class StripeCheckoutService {
     plan?: BillingPlanKey;
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
+    idempotencyKey: string;
   }): Promise<Stripe.Subscription> {
     stripeCustomerId = await this.getOrCreateStripeCustomerId({
       user,
@@ -126,7 +128,9 @@ export class StripeCheckoutService {
       automatic_tax: { enabled: !!requirePaymentMethod },
     };
 
-    return await this.stripe.subscriptions.create(subscriptionParams);
+    return await this.stripe.subscriptions.create(subscriptionParams, {
+      idempotencyKey: `direct-subscription-${workspace.id}-${idempotencyKey}`,
+    });
   }
 
   async createSubscriptionWithPaymentMethodCollection({
