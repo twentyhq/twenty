@@ -1,9 +1,9 @@
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
+import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
 
-describe('dropChartRecordFiltersWithDeletedFields', () => {
+describe('sanitizeChartRecordFilters', () => {
   it('should drop record filters referencing fields that no longer exist', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [
@@ -19,7 +19,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
       fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
@@ -47,7 +47,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
       fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
@@ -69,7 +69,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
       fieldMetadataItems: [
         { id: 'field-a', isActive: true },
@@ -83,7 +83,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
   it('should handle undefined record filters', () => {
     const chartFilters: ChartFilters = {} as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
       fieldMetadataItems: [{ id: 'field-a', isActive: true }],
     });
@@ -109,7 +109,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
       fieldMetadataItems: [],
     });
@@ -146,7 +146,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
       fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
@@ -190,7 +190,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
       fieldMetadataItems: [],
     });
@@ -204,7 +204,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       recordFilters: [{ id: 'filter-1', fieldMetadataId: 'morph-target' }],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
       fieldMetadataItems: [
         {

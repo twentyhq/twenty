@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
+import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -43,7 +43,7 @@ export const sanitizeChartFiltersInPageLayoutDraft = ({
           return widget;
         }
 
-        const sanitizedChartFilters = dropChartRecordFiltersWithDeletedFields({
+        const sanitizedChartFilters = sanitizeChartRecordFilters({
           chartFilters,
           fieldMetadataItems,
         });

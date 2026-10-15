@@ -3,7 +3,7 @@ import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFil
 import { pointChartRecordFiltersAtMorphRelationFields } from '@/side-panel/pages/page-layout/utils/pointChartRecordFiltersAtMorphRelationFields';
 import { isDefined } from 'twenty-shared/utils';
 
-export const dropChartRecordFiltersWithDeletedFields = ({
+export const sanitizeChartRecordFilters = ({
   chartFilters,
   fieldMetadataItems,
 }: {

@@ -62,12 +62,12 @@ export class WorkspaceMigrationRunnerService {
           getMetadataFlatEntityMapsKey(metadataName),
         ),
     ),
-    hasMorphRelationFieldBeenCreated = false,
+    hasMorphRelationFieldChanged = false,
   }: {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
     workspaceId: string;
     hasSchemaMetadataChanged?: boolean;
-    hasMorphRelationFieldBeenCreated?: boolean;
+    hasMorphRelationFieldChanged?: boolean;
   }): Promise<void> {
     this.logger.perfTime(
       'Runner',
@@ -94,7 +94,7 @@ export class WorkspaceMigrationRunnerService {
     const cacheKeyNamesToInvalidate: WorkspaceCacheKeyName[] = [
       ...new Set([
         ...withDerivedFieldMetadataMaps(allFlatEntityMapsKeys),
-        ...(hasRolesPermissionsChanged || hasMorphRelationFieldBeenCreated
+        ...(hasRolesPermissionsChanged || hasMorphRelationFieldChanged
           ? ['rolesPermissions' as const]
           : []),
         ...(hasWorkflowVersionsChanged
@@ -268,13 +268,6 @@ export class WorkspaceMigrationRunnerService {
     const hasSchemaMetadataChanged =
       isSchemaAffectingWorkspaceMigration(actions);
 
-    const hasMorphRelationFieldBeenCreated = actions.some(
-      (action) =>
-        action.metadataName === 'fieldMetadata' &&
-        action.type === 'create' &&
-        action.flatEntity.type === FieldMetadataType.MORPH_RELATION,
-    );
-
     const hasSearchVectorRebuildAction = actions.some(
       (action) =>
         action.metadataName === 'fieldMetadata' &&
@@ -304,6 +297,16 @@ export class WorkspaceMigrationRunnerService {
       });
 
     this.logger.perfTimeEnd('Runner', 'Initial cache retrieval');
+
+    const hasMorphRelationFieldChanged = actions.some(
+      (action) =>
+        action.metadataName === 'fieldMetadata' &&
+        (action.type === 'create'
+          ? action.flatEntity
+          : cachedAllFlatEntityMaps.flatFieldMetadataMaps
+              ?.byUniversalIdentifier[action.universalIdentifier]
+        )?.type === FieldMetadataType.MORPH_RELATION,
+    );
 
     const initialCacheRetrievalMs =
       performance.now() - initialCacheRetrievalStart;
@@ -526,7 +529,7 @@ export class WorkspaceMigrationRunnerService {
           allFlatEntityMapsKeys,
           workspaceId,
           hasSchemaMetadataChanged,
-          hasMorphRelationFieldBeenCreated,
+          hasMorphRelationFieldChanged,
         });
       } catch (cacheError) {
         this.logger.error(
@@ -557,7 +560,7 @@ export class WorkspaceMigrationRunnerService {
         allFlatEntityMapsKeys,
         workspaceId,
         hasSchemaMetadataChanged,
-        hasMorphRelationFieldBeenCreated,
+        hasMorphRelationFieldChanged,
       });
 
       this.recordRunPhaseMetric({
