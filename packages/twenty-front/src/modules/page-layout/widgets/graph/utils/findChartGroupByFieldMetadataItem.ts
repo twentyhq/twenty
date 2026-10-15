@@ -7,7 +7,7 @@ export const findChartGroupByFieldMetadataItem = ({
   groupByFieldMetadataId,
 }: {
   fieldMetadataItems: FieldMetadataItem[] | undefined;
-  groupByFieldMetadataId: string | null | undefined;
+  groupByFieldMetadataId: string;
 }): FieldMetadataItem | undefined => {
   const fieldMetadataItem = findFieldMetadataItemByFieldMetadataId({
     fieldMetadataItems,

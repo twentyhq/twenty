@@ -53,10 +53,12 @@ export const buildChartGroupByFieldConfigUpdate = <
     'PieChartConfiguration',
   );
 
-  const fieldMetadataItem = findFieldMetadataItemByFieldMetadataId({
-    fieldMetadataItems: objectMetadataItem?.fields,
-    fieldMetadataId: fieldId,
-  });
+  const fieldMetadataItem = isDefined(fieldId)
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: fieldId,
+      })
+    : undefined;
 
   const defaultOrderBy = isDefined(fieldMetadataItem?.type)
     ? getChartDefaultOrderByForFieldType(fieldMetadataItem?.type)

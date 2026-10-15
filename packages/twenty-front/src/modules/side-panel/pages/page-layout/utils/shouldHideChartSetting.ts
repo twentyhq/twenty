@@ -140,11 +140,15 @@ export const shouldHideChartSetting = (
           groupByFieldMetadataId:
             configuration.primaryAxisGroupByFieldMetadataId,
         });
-        const secondaryField = findChartGroupByFieldMetadataItem({
-          fieldMetadataItems: objectMetadataItem.fields,
-          groupByFieldMetadataId:
-            configuration.secondaryAxisGroupByFieldMetadataId,
-        });
+        const secondaryField = isDefined(
+          configuration.secondaryAxisGroupByFieldMetadataId,
+        )
+          ? findChartGroupByFieldMetadataItem({
+              fieldMetadataItems: objectMetadataItem.fields,
+              groupByFieldMetadataId:
+                configuration.secondaryAxisGroupByFieldMetadataId,
+            })
+          : undefined;
         const bothAxesAreArrayFields =
           isDefined(primaryField) &&
           isFieldMetadataArrayKind(primaryField.type) &&

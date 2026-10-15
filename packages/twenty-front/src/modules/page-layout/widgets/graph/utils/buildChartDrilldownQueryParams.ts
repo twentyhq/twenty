@@ -31,10 +31,12 @@ export const buildChartDrilldownQueryParams = ({
   const { groupByFieldMetadataId, dateGranularity, groupBySubFieldName } =
     normalizeChartConfigurationFields(configuration);
 
-  const primaryField = findChartGroupByFieldMetadataItem({
-    fieldMetadataItems: objectMetadataItem.fields,
-    groupByFieldMetadataId,
-  });
+  const primaryField = isDefined(groupByFieldMetadataId)
+    ? findChartGroupByFieldMetadataItem({
+        fieldMetadataItems: objectMetadataItem.fields,
+        groupByFieldMetadataId,
+      })
+    : undefined;
 
   if (isDefined(primaryField)) {
     const primaryFilters = buildFilterFromChartBucket({

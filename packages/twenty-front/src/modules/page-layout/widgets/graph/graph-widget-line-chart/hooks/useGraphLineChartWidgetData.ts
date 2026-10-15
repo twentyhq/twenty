@@ -65,10 +65,15 @@ export const useGraphLineChartWidgetData = ({
     ? new Map(Object.entries(queryData.lineChartData.formattedToRawLookup))
     : new Map();
 
-  const secondaryAxisField = findChartGroupByFieldMetadataItem({
-    fieldMetadataItems: objectMetadataItem?.fields,
-    groupByFieldMetadataId: configuration.secondaryAxisGroupByFieldMetadataId,
-  });
+  const secondaryAxisField = isDefined(
+    configuration.secondaryAxisGroupByFieldMetadataId,
+  )
+    ? findChartGroupByFieldMetadataItem({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        groupByFieldMetadataId:
+          configuration.secondaryAxisGroupByFieldMetadataId,
+      })
+    : undefined;
 
   const selectFieldOptions =
     isDefined(secondaryAxisField) &&

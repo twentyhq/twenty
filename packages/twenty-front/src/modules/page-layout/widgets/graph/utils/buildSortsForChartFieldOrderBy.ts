@@ -23,8 +23,9 @@ export const buildSortsForChartFieldOrderBy = ({
     normalizedFields;
 
   if (
-    orderBy !== GraphOrderBy.FIELD_ASC &&
-    orderBy !== GraphOrderBy.FIELD_DESC
+    (orderBy !== GraphOrderBy.FIELD_ASC &&
+      orderBy !== GraphOrderBy.FIELD_DESC) ||
+    !isDefined(groupByFieldMetadataId)
   ) {
     return null;
   }
