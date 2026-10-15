@@ -642,6 +642,26 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
   };
 
+  // an agent step waits as soon as it starts its run, which pauses later in its own job
+  const waitForPausedAgentStep = async (runId: string, stepId: string) => {
+    const pendingRun = await waitForStep(runId, stepId, 'PENDING');
+    const threadId: string = pendingRun.stepLogs[stepId].details.threadId;
+
+    for (let attempt = 0; attempt < 150; attempt++) {
+      const [turn] = await global.testDataSource.query(
+        `SELECT status FROM "${schema}"."agentTurn" WHERE "threadId" = $1 ORDER BY "createdAt" DESC LIMIT 1`,
+        [threadId],
+      );
+
+      if (isDefined(turn) && turn.status !== 'running') {
+        return getRun(runId);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    throw new Error(`The agent of step ${stepId} never paused`);
+  };
+
   const backfill = async (dryRun = false) =>
     global.workflowTestServices.backfill.runOnWorkspace({
       workspaceId,
@@ -1107,7 +1127,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       // A run reads through its workspace workflow record, which a mirrorless fixture lacks.
       const fixture = await createFixture({ steps: [agent, finalStep] });
       const runId = await runFixture(fixture);
-      const run = await waitForStep(runId, agent.id, 'PENDING');
+      const run = await waitForPausedAgentStep(runId, agent.id);
       const threadId: string = run.stepLogs[agent.id].details.threadId;
 
       return { runId, agent, finalStep, threadId };
@@ -1289,7 +1309,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
 
       const runId = await runFixture(fixture);
-      const run = await waitForStep(runId, agent.id, 'PENDING');
+      const run = await waitForPausedAgentStep(runId, agent.id);
       const threadId: string = run.stepLogs[agent.id].details.threadId;
 
       expect(await getInboxState(threadId)).toMatchObject({
@@ -1330,7 +1350,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
 
       const runId = await runFixture(fixture);
-      const run = await waitForStep(runId, agent.id, 'PENDING');
+      const run = await waitForPausedAgentStep(runId, agent.id);
       const threadId: string = run.stepLogs[agent.id].details.threadId;
       const [conversation] = await global.testDataSource.query(
         `SELECT "workspaceMemberId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
@@ -1390,7 +1410,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       } as WorkflowAction;
       const fixture = await createFixture({ steps: [agent] });
       const runId = await runFixture(fixture);
-      const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
+      const pausedRun = await waitForPausedAgentStep(runId, agent.id);
       const threadId: string = pausedRun.stepLogs[agent.id].details.threadId;
 
       expect((await answer({ threadId })).body.errors).toBeUndefined();
@@ -1568,7 +1588,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const agent = agentStep([finalStep.id]);
       const fixture = await createFixture({ steps: [agent, finalStep] });
       const runId = await runFixture(fixture);
-      const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
+      const pausedRun = await waitForPausedAgentStep(runId, agent.id);
       const threadId: string = pausedRun.stepLogs[agent.id].details.threadId;
 
       expect(pausedRun.state.stepInfos[agent.id].wait).toEqual({
@@ -1737,7 +1757,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         triggerNextStepIds: [agent.id, parallelBranch.id],
       });
       const runId = await runFixture(fixture);
-      const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
+      const pausedRun = await waitForPausedAgentStep(runId, agent.id);
 
       await waitForStep(runId, parallelBranch.id, 'SUCCESS');
 

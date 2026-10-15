@@ -6242,6 +6242,8 @@ export type RunAgentInput = {
   input?: InputMaybe<Array<RunAgentMessageInput>>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
   thread?: InputMaybe<RunAgentThreadInput>;
+  /** Wait for the run to complete, fail or pause (default). False returns as soon as the run starts, with status RUNNING. */
+  waitForCompletion?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type RunAgentMessageAttachmentInput = {

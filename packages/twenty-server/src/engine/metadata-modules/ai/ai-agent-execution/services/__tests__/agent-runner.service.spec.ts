@@ -111,13 +111,16 @@ const buildService = (execution = buildExecution()) => {
     suspend: jest.fn().mockResolvedValue(undefined),
     settle: jest.fn().mockResolvedValue(undefined),
     recordWaitOutcome: jest.fn().mockResolvedValue(undefined),
+    deliverOutcome: jest.fn().mockResolvedValue(undefined),
   };
   const callerHandler = {
     getWaitingState: jest.fn().mockResolvedValue('WAITING'),
     buildExecutionContext: jest
       .fn()
       .mockResolvedValue(RUN_INPUT.executionContext),
+    onSuspended: jest.fn().mockResolvedValue(undefined),
   };
+  const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
 
   const pendingWakeUpService = {
     find: jest.fn().mockResolvedValue({
@@ -137,11 +140,13 @@ const buildService = (execution = buildExecution()) => {
     agentRunSuspensionService as never,
     { getHandlerOrThrow: () => callerHandler } as never,
     pendingWakeUpService as never,
+    messageQueueService as never,
     {} as never,
   );
 
   return {
     service,
+    messageQueueService,
     agentAsyncExecutorService,
     agentRunConversationService,
     conversationReaderService,
@@ -151,7 +156,86 @@ const buildService = (execution = buildExecution()) => {
   };
 };
 
+const {
+  agent: _agent,
+  executionContext: _executionContext,
+  ...JOB_DATA
+} = RUN_INPUT;
+
 describe('AgentRunnerService', () => {
+  it('starts a run in a job, without the agent or how it acts', async () => {
+    const { service, messageQueueService, agentAsyncExecutorService } =
+      buildService();
+
+    await service.start(JOB_DATA);
+
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      'RunAgentJob',
+      JOB_DATA,
+    );
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it('runs a started run as its caller acts now and hands the caller its outcome', async () => {
+    const { service, callerHandler, agentRunSuspensionService } =
+      buildService();
+
+    await service.runStarted(JOB_DATA);
+
+    expect(callerHandler.buildExecutionContext).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      caller: RUN_INPUT.caller,
+    });
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      caller: RUN_INPUT.caller,
+      threadId: 'thread-id',
+      outcome: { status: 'COMPLETED', result: { answer: 'done' } },
+      summary: expect.objectContaining({ modelId: 'model-id' }),
+    });
+  });
+
+  it('hands the caller a failure when a started run cannot run', async () => {
+    const { service, callerHandler, agentRunSuspensionService } =
+      buildService();
+
+    callerHandler.buildExecutionContext.mockRejectedValue(
+      new Error('trigger turned off'),
+    );
+
+    await service.runStarted(JOB_DATA);
+
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'trigger turned off' },
+        summary: null,
+      }),
+    );
+  });
+
+  it('shows the caller where a started run waits, without handing it an outcome', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      agentRunSuspensionService,
+      callerHandler,
+    } = buildService(buildExecution({ isPaused: true }));
+
+    agentRunConversationService.closeTurn.mockResolvedValue({
+      isAwaitingAnswer: true,
+    });
+
+    await service.runStarted(JOB_DATA);
+
+    expect(callerHandler.onSuspended).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      caller: RUN_INPUT.caller,
+      threadId: 'thread-id',
+      summary: expect.objectContaining({ modelId: 'model-id' }),
+    });
+    expect(agentRunSuspensionService.deliverOutcome).not.toHaveBeenCalled();
+  });
+
   it('continues a conversation under its lock and records the turn', async () => {
     const {
       service,
