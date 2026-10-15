@@ -29,6 +29,7 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('recordFilter.fieldMetadataId is not defined');
   }
 
@@ -46,6 +47,7 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     });
 
   if (!isDefined(relationObjectMetadataNameSingular)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('relationObjectMetadataNameSingular is not defined');
   }
 
@@ -55,6 +57,7 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   );
 
   if (!isDefined(relationObjectMetadataItem)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('relationObjectMetadataItem is not defined');
   }
 

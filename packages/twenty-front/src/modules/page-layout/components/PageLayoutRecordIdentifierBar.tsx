@@ -14,6 +14,7 @@ import { IconPinned } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+// oxlint-disable-next-line lingui/no-unlocalized-strings -- This value is a CSS track expression.
 const SIDE_TRACK = `min(${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px, calc(100% / 3))`;
 
 // Equal side tracks center the tabs; their width ignores visible tabs so overflow can recover on resize.

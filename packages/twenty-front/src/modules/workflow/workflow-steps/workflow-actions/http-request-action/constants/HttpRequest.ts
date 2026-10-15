@@ -14,6 +14,7 @@ const {
   ] as const,
   METHODS_WITH_BODY: ['POST', 'PUT', 'PATCH'] as const,
   DEFAULT_JSON_BODY_PLACEHOLDER:
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This JSON snippet is a code example with stable keys and placeholders.
     '{\n  "key": "value"\n "another_key": "{{workflow.variable}}" \n}',
   DEFAULT_HTTP_REQUEST_OUTPUT_VALUE: {
     data: undefined,

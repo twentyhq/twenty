@@ -72,6 +72,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const objectMetadataId = currentView?.objectMetadataId;
 
   if (!objectMetadataId) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('Object metadata id is missing from current view');
   }
 
@@ -98,6 +99,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
 
   const handleClick = () => {
     if (!isDefined(currentView)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       throw new Error('Missing current view id');
     }
 
@@ -112,6 +114,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         ) ?? availableFieldMetadataItemsForFilter[0];
 
       if (!isDefined(defaultFieldMetadataItem)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error('Missing default filter definition');
       }
 

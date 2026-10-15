@@ -8,6 +8,7 @@ export const useWorkflowRunIdOrThrow = () => {
   );
 
   if (!isDefined(workflowVisualizerWorkflowRunId)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('Expected the workflow run ID to be defined');
   }
 

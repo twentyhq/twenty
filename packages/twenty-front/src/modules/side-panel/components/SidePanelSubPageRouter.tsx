@@ -31,7 +31,9 @@ export const SidePanelSubPageRouter = ({
 
   if (!isDefined(subPageComponent)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       `Missing side panel sub-page config for "${currentSidePanelSubPage.subPage}". ` +
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         'Please add it to SIDE_PANEL_SUB_PAGES_CONFIG.',
     );
   }

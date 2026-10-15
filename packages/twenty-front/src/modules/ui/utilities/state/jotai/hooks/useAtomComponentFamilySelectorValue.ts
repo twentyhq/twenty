@@ -15,6 +15,7 @@ export const useAtomComponentFamilySelectorValue = <StateType, FamilyKey>(
 
   if (!componentInstanceContext) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing component state is a developer invariant diagnostic.
       `Instance context for key "${componentFamilySelector.key}" is not defined`,
     );
   }

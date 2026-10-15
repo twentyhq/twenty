@@ -22,11 +22,13 @@ export const assertChartWidgetOrThrow: AssertChartWidgetOrThrow = (
 ) => {
   assertIsDefinedOrThrow(
     widget.objectMetadataId,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     new Error('Widget objectMetadataId is required'),
   );
 
   assertIsDefinedOrThrow(
     widget.configuration,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     new Error('Widget configuration is required'),
   );
 
@@ -37,6 +39,7 @@ export const assertChartWidgetOrThrow: AssertChartWidgetOrThrow = (
     )
   ) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       `Expected chart configuration but got ${widget.configuration.__typename}`,
     );
   }

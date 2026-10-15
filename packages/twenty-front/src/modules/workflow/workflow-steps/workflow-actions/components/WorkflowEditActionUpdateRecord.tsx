@@ -218,7 +218,8 @@ export const WorkflowEditActionUpdateRecord = ({
               definition.metadata.relationType === RelationType.MANY_TO_ONE;
 
             const value = isFieldRelationManyToOne
-              ? `${definition.metadata.fieldName}Id`
+              ? // oxlint-disable-next-line lingui/no-unlocalized-strings -- This suffix forms a GraphQL field identifier.
+                `${definition.metadata.fieldName}Id`
               : definition.metadata.fieldName;
 
             return value === fieldName;

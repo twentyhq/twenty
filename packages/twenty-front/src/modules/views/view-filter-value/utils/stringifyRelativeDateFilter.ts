@@ -14,6 +14,7 @@ export const stringifyRelativeDateFilter = (
     relativeDateFilter.amount <= 0
   ) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       'Amount must be defined and greater than 0 for relative date filters',
     );
   }

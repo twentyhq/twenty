@@ -32,7 +32,10 @@ export const LineAnimatedAreaPath = ({
       fill={`url(#${fillId})`}
       strokeWidth={0}
       opacity={isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1}
-      style={{ transition: 'opacity 0.15s ease-in-out' }}
+      style={{
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This value is a CSS transition.
+        transition: 'opacity 0.15s ease-in-out',
+      }}
     />
   );
 };

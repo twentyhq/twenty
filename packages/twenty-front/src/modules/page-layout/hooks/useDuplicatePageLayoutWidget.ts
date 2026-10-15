@@ -61,6 +61,7 @@ export const useDuplicatePageLayoutWidget = (
         .find((widget) => widget.id === widgetId);
 
       if (!isDefined(sourceWidget)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error(`Widget with id ${widgetId} not found`);
       }
 
@@ -70,6 +71,7 @@ export const useDuplicatePageLayoutWidget = (
 
       if (!isDefined(sourceTab)) {
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
           `Tab with id ${sourceWidget.pageLayoutTabId} not found`,
         );
       }
@@ -103,6 +105,7 @@ export const useDuplicatePageLayoutWidget = (
       );
 
       if (!isDefined(sourceLayout)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error(`Layout for widget ${widgetId} not found`);
       }
 
