@@ -130,7 +130,7 @@ describe('Record stock limit', () => {
   };
 
   const dropStockCounter = () =>
-    dropKeys(`*{${SEED_APPLE_WORKSPACE_ID}}:stock:RECORD:*`);
+    dropKeys(`*{${SEED_APPLE_WORKSPACE_ID}}:stock-held:RECORD:*`);
 
   const refreshUsageLimitsCache = () =>
     getAppProviderByClassName<WorkspaceCacheService>(

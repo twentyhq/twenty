@@ -75,7 +75,7 @@ export const SidePanelComposeCalendarEventPage = () => {
       });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to reconnect calendar account`,
       });
     }

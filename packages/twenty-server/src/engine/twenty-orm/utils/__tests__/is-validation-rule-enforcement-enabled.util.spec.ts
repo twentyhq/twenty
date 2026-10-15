@@ -5,7 +5,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 
-const FLAG_ON = { [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: true };
+const FLAG_ON = { [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: true };
 
 describe('isValidationRuleEnforcementEnabled', () => {
   it('enforces rules on an Organization plan workspace', () => {

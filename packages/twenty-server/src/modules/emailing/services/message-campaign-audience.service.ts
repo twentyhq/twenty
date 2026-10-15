@@ -14,6 +14,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 @Injectable()
 export class MessageCampaignAudienceService {
@@ -147,7 +148,7 @@ export class MessageCampaignAudienceService {
   }> {
     const listMemberRepository = this.workspaceOrmManager.getRepository(
       MessageListMemberWorkspaceEntity,
-      { unionOf: [roleId] },
+      buildEmailingRolePermissionConfig(roleId),
     );
 
     const members = await listMemberRepository.find({ where: { listId } });
@@ -159,7 +160,7 @@ export class MessageCampaignAudienceService {
 
     const personRepository = this.workspaceOrmManager.getRepository(
       PersonWorkspaceEntity,
-      { unionOf: [roleId] },
+      buildEmailingRolePermissionConfig(roleId),
     );
 
     const people = await personRepository.find({

@@ -39,7 +39,7 @@ export const SettingsBillingNewLimit = () => {
 
     try {
       await createUsageLimit({ variables: { input } });
-      enqueueToast({ variant: 'success', children: t`Limit created.` });
+      enqueueToast({ status: 'success', children: t`Limit created.` });
       navigate(SettingsPath.BillingLimits);
     } catch (error) {
       const serverMessage =
@@ -48,7 +48,7 @@ export const SettingsBillingNewLimit = () => {
           : undefined;
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: serverMessage ?? t`Failed to create the limit.`,
       });
     }

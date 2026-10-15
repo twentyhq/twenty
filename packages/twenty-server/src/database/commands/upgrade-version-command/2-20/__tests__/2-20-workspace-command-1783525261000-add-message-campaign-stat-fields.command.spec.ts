@@ -119,11 +119,12 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
 
     computeTwentyStandardApplicationAllFlatEntityMapsMock.mockReturnValue({
       allFlatEntityMaps: {
-        flatFieldMetadataMaps: buildStandardFieldMetadataMaps(
-          CAMPAIGN_VIEW_FIELDS.map(
+        flatFieldMetadataMaps: buildStandardFieldMetadataMaps([
+          ...CAMPAIGN_VIEW_FIELDS.map(
             ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
           ),
-        ),
+          ...STAT_FIELD_UNIVERSAL_IDENTIFIERS,
+        ]),
         flatViewMaps: buildByUniversalIdentifierMap([
           CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER,
         ]),

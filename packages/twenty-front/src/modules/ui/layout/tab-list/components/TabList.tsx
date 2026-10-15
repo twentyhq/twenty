@@ -70,6 +70,7 @@ export const TabList = ({
   behaveAsLinks = true,
   className,
   componentInstanceId,
+  defaultActiveTabId,
   onChangeTab,
   onClickTab,
   rightComponent,
@@ -92,11 +93,15 @@ export const TabList = ({
     behaveAsLinks &&
     workspaceSurface.ownsRouteLocation &&
     visibleTabs.some((tab) => tab.id === routeTabId);
+  const defaultTabId =
+    visibleTabs.find((tab) => tab.id === defaultActiveTabId)?.id ??
+    visibleTabs[0]?.id ??
+    null;
   const nextActiveTabId = shouldSelectRouteTab
     ? routeTabId
     : activeTabExists
       ? activeTabId
-      : (visibleTabs[0]?.id ?? null);
+      : defaultTabId;
 
   const {
     visibleTabCount,

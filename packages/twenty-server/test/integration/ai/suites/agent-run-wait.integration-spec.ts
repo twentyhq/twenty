@@ -373,6 +373,7 @@ describe('agent runs that wait (integration)', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       },
       roleTargetId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      callerRoleSource: 'userWorkspaceRoleId',
     },
     {
       title: 'the API key that made it',
@@ -382,10 +383,11 @@ describe('agent runs that wait (integration)', () => {
         apiKey: expect.objectContaining({ id: API_KEY_DATA_SEED_IDS.ID_1 }),
       },
       roleTargetId: API_KEY_DATA_SEED_IDS.ID_1,
+      callerRoleSource: 'apiKeyRoleId',
     },
   ])(
     'goes on with a waiting runAgent call as $title',
-    async ({ token, authContext, roleTargetId }) => {
+    async ({ token, authContext, roleTargetId, callerRoleSource }) => {
       const executeAgent = mockAgent(waitingResult(), replyingResult);
 
       const response = await makeMetadataApiRequest(
@@ -429,14 +431,15 @@ describe('agent runs that wait (integration)', () => {
         expect.objectContaining(authContext),
       ]);
 
-      const roleRestrictionIds = [await findCallerRoleId(roleTargetId)];
+      const agentRunRoleIds = {
+        [callerRoleSource]: await findCallerRoleId(roleTargetId),
+      };
 
       expect(
         executeAgent.mock.calls.map(
-          ([execution]) =>
-            execution.executionContext.additionalRoleRestrictionIds,
+          ([execution]) => execution.executionContext.agentRunRoleIds,
         ),
-      ).toEqual([roleRestrictionIds, roleRestrictionIds]);
+      ).toEqual([agentRunRoleIds, agentRunRoleIds]);
     },
   );
 

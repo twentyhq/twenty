@@ -10,6 +10,8 @@ import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
+const MINIMUM_DISPLAYED_UNINSTALL_PROGRESS = 10;
+
 type SettingsApplicationUninstallButtonProps = {
   onUninstall: () => void;
   isUninstalling?: boolean;
@@ -28,7 +30,7 @@ export const SettingsApplicationUninstallButton = ({
 
   const confirmationValue = t`yes`;
   const displayedUninstallProgress = formatQueueJobProgressLabel(
-    uninstallProgress ?? 0,
+    Math.max(uninstallProgress ?? 0, MINIMUM_DISPLAYED_UNINSTALL_PROGRESS),
   );
 
   const isDisabled = isNonEmptyString(disabledReason);

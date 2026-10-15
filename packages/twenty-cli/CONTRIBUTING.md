@@ -108,42 +108,60 @@ registry access is required for installation; the commands do not contact a
 Twenty workspace. Temporary files are removed afterward, and nothing is
 published. CI runs the same target for CLI and dependency changes.
 
+The CLI CI job also runs `scripts/test-app-publish.mjs` after building the CLI
+and SDK. It starts a disposable Verdaccio registry with no upstream registries,
+publishes a fixture with real npm, downloads and inspects the tarball, and checks
+version rejection, incomplete packages and cleanup. On Linux CI the test runs
+inside a network namespace with only loopback enabled, so it cannot reach public
+npm. It uses temporary npm configuration and a local test token.
+
 ## Releases
 
-The CLI has its own release line. A `cli/vX.Y.Z` tag publishes the `twenty`
-package at that version, which must match `package.json`.
+Publish the CLI when its changes warrant a release. A server release does not
+require a CLI release; skip versions when the CLI has no changes worth shipping.
+When publishing, aim to align the CLI version with the corresponding Twenty
+server, SDK and UI version.
+
+Publishing is independent through the `cli/` tag family: `cli/v2.46.0` publishes
+only `twenty@2.46.0`. The tag version must match
+`packages/twenty-cli/package.json`. Bumping the package version alone does not
+publish the CLI.
 
 `app init` pins `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` to the
 `twenty-sdk` version of the commit the CLI was built from. `main` moves
-to the next, unpublished SDK version right after each SDK release, so a CLI
-release must be built from the commit of an SDK release:
+to the next, unpublished SDK version right after each SDK release:
 
-1. Merge the CLI version bump before that SDK release is tagged.
-2. Once the `sdk/vA.B.C` packages are on npm, tag the same commit `cli/vX.Y.Z`.
+1. Start from the matching `sdk/vA.B.C` release commit. If a CLI version bump
+   is still needed, make it on a branch from that commit.
+2. Once the SDK, client SDK and UI packages at `A.B.C` are on npm, tag the
+   prepared commit `cli/vA.B.C`.
+3. Run the `Publish npm packages` workflow in `twenty-infra` with that tag as
+   its `ref`. Creating the tag alone does not publish the package.
 
-`yarn npm publish` first runs `scripts/check-publish.mjs`, which needs a fresh
-build and npm registry access. It fails when the executable, worker, lazy chunks
-or templates are missing, when `dist` was built for another version, when one of
-its CLI runs fails or times out, or when `app init` would pin versions that are
-not on npm. An unreachable registry is reported separately from a missing
-version. The check does not read tags: it confirms that the pinned versions are
-published, and tagging the SDK release commit remains a release step.
+`yarn npm publish` first runs `scripts/prepublish.mjs`, which needs a fresh
+build and npm registry access. It checks the build first, and fails when the
+executable, worker, lazy chunks or templates are missing, when `dist` was built
+for another version, when one of its CLI runs fails or times out, or when
+`app init` would pin versions that are not on npm. An unreachable registry is
+reported separately from a missing version. The check does not read tags: it
+confirms that the pinned versions are published. Selecting the matching SDK
+release remains a release step.
 
-`prepublish` then runs `scripts/generate-template-lock.mjs`. It resolves the app
-template's dependencies with the repository's Yarn against the public registry,
-under a 3-day minimum release age that exempts the pinned Twenty packages, and
-writes `dist/app-template/yarn.lock`. Apps created with `app init` then install
-exact, integrity-checked versions, including for people who enforce a minimum
-release age. The lockfile keeps the template's placeholder name, and the first
+Once the check passes, the script resolves the built app template's
+dependencies, with the versions that `app init` pinned during the check, using
+the repository's Yarn against the public registry, under a 3-day minimum
+release age that exempts the pinned Twenty packages. It then writes
+`dist/app-template/yarn.lock`. Apps created with `app init` then install exact,
+integrity-checked versions, including for people who enforce a minimum release
+age. The lockfile keeps the template's placeholder name, and the first
 `yarn install` renames that root entry.
 
-The tests of both scripts run with `twenty-cli:test:package`. To run the scripts
+The tests of both steps run with `twenty-cli:test:package`. To run the script
 before tagging:
 
 ```bash
 yarn nx build twenty-cli
-node packages/twenty-cli/scripts/check-publish.mjs
-node packages/twenty-cli/scripts/generate-template-lock.mjs
+node packages/twenty-cli/scripts/prepublish.mjs
 ```
 
 ## App integration tests

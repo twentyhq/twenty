@@ -187,6 +187,7 @@ export class SignInUpService {
       throw new AuthException(
         'Invitation not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        { userFriendlyMessage: msg`Invitation not found` },
       );
     }
 
@@ -215,6 +216,7 @@ export class SignInUpService {
       throw new AuthException(
         'Invitation not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        { userFriendlyMessage: msg`Invitation not found` },
       );
     }
 
@@ -435,6 +437,7 @@ export class SignInUpService {
       throw new AuthException(
         'New workspace setup is disabled',
         AuthExceptionCode.SIGNUP_DISABLED,
+        { userFriendlyMessage: msg`New workspace setup is disabled` },
       );
     }
   }
@@ -467,6 +470,7 @@ export class SignInUpService {
     throw new AuthException(
       'New workspace setup is disabled',
       AuthExceptionCode.SIGNUP_DISABLED,
+      { userFriendlyMessage: msg`New workspace setup is disabled` },
     );
   }
 
@@ -639,7 +643,7 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
-    options?: { displayName?: string; subdomain?: string },
+    options?: { displayName?: string; subdomain?: string; partner?: string },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -810,6 +814,7 @@ export class SignInUpService {
           userEmail: email,
           workspaceId: workspace.id,
           workspaceDisplayName: workspace.displayName,
+          partner: options?.partner,
         });
       }
 

@@ -18,6 +18,8 @@ export type AppConnection = {
   // OAuth-derived identifier (typically email or login). Stays stable across
   // reconnects of the same upstream account.
   handle: string;
+  // Upstream account id from identifyAccountLogicFunction; not unique, apps dedupe on it themselves.
+  externalAccountId: string | null;
   // Connection-row visibility:
   //   'user'      = visible only to the user who created it.
   //   'workspace' = visible to every user in the workspace.

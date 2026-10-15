@@ -22,7 +22,10 @@ export const readExecManifest = async ({
     explicitPath: readStringOption(options, 'path'),
     workingDirectory: process.cwd(),
   });
-  const sdk = await resolveSourceSdk({ appPath: project.path });
+  const sdk = await resolveSourceSdk({
+    appPath: project.path,
+    warn: output.warn,
+  });
 
   output.progress(`Reading app definitions in ${project.path}…`);
   const worker = await runAppWorker({

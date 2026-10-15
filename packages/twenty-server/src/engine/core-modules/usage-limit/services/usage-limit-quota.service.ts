@@ -1,18 +1,18 @@
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
 
 import uniqBy from 'lodash.uniqby';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WARM_AND_CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-quota-counters-script.constant';
+import { WARM_AND_CONSUME_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-counters-script.constant';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
+import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
@@ -36,7 +36,6 @@ import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/ut
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
 import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit/utils/compute-credit-allowance-micro.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
-import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
@@ -73,10 +72,8 @@ type QuotaConsumeResult = {
 };
 
 @Injectable()
-export class UsageLimitQuotaService implements OnModuleInit {
+export class UsageLimitQuotaService {
   private readonly logger = new Logger(UsageLimitQuotaService.name);
-
-  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
@@ -85,17 +82,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
     private readonly usagePeriodService: UsagePeriodService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly usageRecorderService: UsageRecorderService,
-    private readonly discoveryService: DiscoveryService,
+    private readonly billingCreditAllowanceService: BillingCreditAllowanceService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
+    private readonly usageLimitDefaultValueService: UsageLimitDefaultValueService,
     private readonly metricsService: MetricsService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
-
-  onModuleInit() {
-    this.creditAllowanceProvider = findCreditAllowanceProvider(
-      this.discoveryService,
-    );
-  }
 
   async findExhaustedScope(
     args: QuotaConsumeArgs & { cost?: QuotaCost },
@@ -563,7 +555,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return [];
     }
 
-    const quotaLimitDefaults = this.buildQuotaLimitDefaults(resourceType);
+    const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
+      workspaceId,
+      resourceType,
+    });
 
     const quotaLimits = await this.findQuotaLimits({
       workspaceId,
@@ -592,9 +587,13 @@ export class UsageLimitQuotaService implements OnModuleInit {
     });
   }
 
-  private buildQuotaLimitDefaults(
-    resourceType: UsageResourceType,
-  ): QuotaLimitDefault[] {
+  private async buildQuotaLimitDefaults({
+    workspaceId,
+    resourceType,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+  }): Promise<QuotaLimitDefault[]> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return [];
     }
@@ -604,12 +603,26 @@ export class UsageLimitQuotaService implements OnModuleInit {
       limitKind: 'quota',
     });
 
-    return (definition?.defaults ?? []).map(
-      ({ limitValueConfigVariable, ...quotaLimitDefaultDefinition }) => ({
-        ...quotaLimitDefaultDefinition,
-        limitValue: this.twentyConfigService.get(limitValueConfigVariable),
-      }),
+    const quotaLimitDefaults = await Promise.all(
+      (definition?.defaults ?? []).map(
+        async ({
+          limitValueConfigVariable,
+          ...quotaLimitDefaultDefinition
+        }) => {
+          const limitValue =
+            await this.usageLimitDefaultValueService.findDefaultLimitValue({
+              workspaceId,
+              limitValueConfigVariable,
+            });
+
+          return isDefined(limitValue)
+            ? [{ ...quotaLimitDefaultDefinition, limitValue }]
+            : [];
+        },
+      ),
     );
+
+    return quotaLimitDefaults.flat();
   }
 
   private async buildAllowanceCounterAdmittingOnFailure(
@@ -639,12 +652,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private async buildAllowanceCounter(
     workspaceId: string,
   ): Promise<AllowanceQuotaCounter | null> {
-    if (!(await this.creditAllowanceProvider.isCreditAllowanceEnabled())) {
+    if (
+      !(await this.billingCreditAllowanceService.isCreditAllowanceEnabled())
+    ) {
       return null;
     }
 
     const allowance =
-      await this.creditAllowanceProvider.getCreditAllowance(workspaceId);
+      await this.billingCreditAllowanceService.getCreditAllowance(workspaceId);
 
     if (!isDefined(allowance)) {
       return null;
@@ -814,7 +829,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     }
 
     const results = await this.cacheStorage.runScript<unknown[]>({
-      script: WARM_AND_CONSUME_QUOTA_COUNTERS_SCRIPT,
+      script: WARM_AND_CONSUME_COUNTERS_SCRIPT,
       keys: counters.map((counter) => counter.key),
       args: buildConsumeScriptArguments(entries),
     });

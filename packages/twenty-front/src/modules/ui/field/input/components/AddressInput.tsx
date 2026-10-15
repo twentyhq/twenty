@@ -23,21 +23,19 @@ import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 import { useFocusManagement } from '@/ui/field/input/hooks/useFocusManagement';
 
 const StyledAddressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   padding: 4px 8px;
 
   width: 344px;
-  > div {
-    margin-bottom: 6px;
-  }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
+    gap: 8px;
     width: auto;
     min-width: 100px;
     max-width: 200px;
     overflow: hidden;
-    > div {
-      margin-bottom: 8px;
-    }
   }
 `;
 
@@ -47,10 +45,7 @@ const StyledHalfRowContainer = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    display: block;
-    > div {
-      margin-bottom: 7px;
-    }
+    grid-template-columns: minmax(0, 1fr);
   }
 `;
 

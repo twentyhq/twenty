@@ -1,7 +1,6 @@
-import { type useRender } from '@base-ui/react/use-render';
+import { type ProgressRootProps } from '../../Progress/types/ProgressRootProps';
 
-export type ProgressRingProps = useRender.ComponentProps<'div'> & {
-  value: number;
+export type ProgressRingProps = ProgressRootProps & {
   size?: 'sm' | 'md';
   barColor?: string;
 };

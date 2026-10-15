@@ -13,6 +13,7 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 const FLAT_FRONT_COMPONENT_ROWS_REQUIREMENT = {
   frontComponent: true,
   application: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -25,10 +26,17 @@ export class WorkspaceFlatFrontComponentMapCacheService extends MetadataFlatEnti
   }: WorkspaceCacheProviderContext<
     typeof FLAT_FRONT_COMPONENT_ROWS_REQUIREMENT
   >): FlatFrontComponentMaps {
-    const { frontComponent: frontComponents, application: applications } = rows;
+    const {
+      frontComponent: frontComponents,
+      application: applications,
+      objectMetadata: objectMetadatas,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
+    const objectMetadataUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(objectMetadatas),
+    );
 
     const flatFrontComponentMaps = createEmptyFlatEntityMaps();
 
@@ -36,6 +44,7 @@ export class WorkspaceFlatFrontComponentMapCacheService extends MetadataFlatEnti
       const flatFrontComponent = fromFrontComponentEntityToFlatFrontComponent({
         entity: frontComponentEntity,
         applicationIdToUniversalIdentifierMap,
+        objectMetadataUniversalIdentifierById,
       });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

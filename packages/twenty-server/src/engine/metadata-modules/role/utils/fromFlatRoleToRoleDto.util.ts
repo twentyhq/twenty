@@ -17,6 +17,7 @@ export const fromFlatRoleToRoleDto = ({
   description,
   icon,
   universalIdentifier,
+  applicationId,
 }: FlatRole): RoleDTO => {
   return {
     canAccessAllTools,
@@ -34,5 +35,6 @@ export const fromFlatRoleToRoleDto = ({
     description: description ?? undefined,
     icon: icon ?? undefined,
     universalIdentifier,
+    applicationId,
   };
 };

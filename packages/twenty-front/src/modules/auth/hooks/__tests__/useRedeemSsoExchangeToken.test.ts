@@ -113,7 +113,7 @@ describe('useRedeemSsoExchangeToken', () => {
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'Invalid SSO exchange token',
     });
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
