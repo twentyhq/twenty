@@ -40,12 +40,18 @@ type LogConsoleAppAnalyticsReportProps = {
   target: LogConsoleAppAnalyticsTarget;
   trackedSince?: string;
   range: LogConsoleAppAnalyticsRange;
+  isPaused: boolean;
+  isLive: boolean;
+  now: string;
 };
 
 export const LogConsoleAppAnalyticsReport = ({
   target,
   trackedSince,
   range,
+  isPaused,
+  isLive,
+  now,
 }: LogConsoleAppAnalyticsReportProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
@@ -53,7 +59,7 @@ export const LogConsoleAppAnalyticsReport = ({
 
   const { periodStart, periodEnd } = getLogConsoleAppAnalyticsPeriod({
     range,
-    now: new Date().toISOString(),
+    now,
     trackedSince,
   });
 
@@ -61,6 +67,8 @@ export const LogConsoleAppAnalyticsReport = ({
     target,
     periodStart,
     periodEnd,
+    isPaused,
+    isLive,
   });
 
   // A single workspace is either active or not, so workspace counts only make sense across installs

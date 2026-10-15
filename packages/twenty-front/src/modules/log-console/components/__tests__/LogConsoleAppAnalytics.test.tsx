@@ -2,13 +2,17 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { LogConsoleAppAnalytics } from '@/log-console/components/LogConsoleAppAnalytics';
 import { logConsoleAppAnalyticsApplicationIdState } from '@/log-console/states/logConsoleAppAnalyticsApplicationIdState';
+import { logConsoleAppAnalyticsRangeState } from '@/log-console/states/logConsoleAppAnalyticsRangeState';
 import { logConsoleAppAnalyticsScopeState } from '@/log-console/states/logConsoleAppAnalyticsScopeState';
+import { type LogConsoleAppAnalyticsRange } from '@/log-console/types/LogConsoleAppAnalyticsRange';
 import { type LogConsoleAppAnalyticsTarget } from '@/log-console/types/LogConsoleAppAnalyticsTarget';
+import { getLogConsoleAppAnalyticsPeriod } from '@/log-console/utils/getLogConsoleAppAnalyticsPeriod';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import {
@@ -25,14 +29,23 @@ import { mockedUserData } from '~/testing/mock-data/users';
 jest.mock('@/log-console/components/LogConsoleAppAnalyticsReport', () => ({
   LogConsoleAppAnalyticsReport: ({
     target,
+    range,
+    now,
   }: {
     target: LogConsoleAppAnalyticsTarget;
+    range: LogConsoleAppAnalyticsRange;
+    now: string;
   }) => (
-    <div>
-      {target.scope === 'current-workspace'
-        ? `Workspace report for ${target.applicationId}`
-        : `All workspaces report for ${target.applicationRegistrationId}`}
-    </div>
+    <>
+      <div>
+        {target.scope === 'current-workspace'
+          ? `Workspace report for ${target.applicationId}`
+          : `All workspaces report for ${target.applicationRegistrationId}`}
+      </div>
+      <div>
+        Period end: {getLogConsoleAppAnalyticsPeriod({ range, now }).periodEnd}
+      </div>
+    </>
   ),
 }));
 
@@ -124,6 +137,7 @@ const renderAppAnalytics = ({
 describe('LogConsoleAppAnalytics', () => {
   afterEach(() => {
     localStorage.clear();
+    jest.useRealTimers();
   });
 
   it('should explain that there is nothing to report when no app is installed or developed here', async () => {
@@ -190,6 +204,105 @@ describe('LogConsoleAppAnalytics', () => {
       await screen.findByText('Workspace report for application-2'),
     ).toBeInTheDocument();
     expect(screen.getByText('Slack')).toBeInTheDocument();
+  });
+
+  it('should pause and resume updates without changing the selected app or range', async () => {
+    const user = userEvent.setup();
+
+    renderAppAnalytics({
+      permissionFlags: [PermissionFlagType.APPLICATIONS],
+    });
+    act(() => {
+      jotaiStore.set(
+        logConsoleAppAnalyticsApplicationIdState.atom,
+        'application-2',
+      );
+    });
+
+    expect(
+      await screen.findByText('Workspace report for application-2'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Last 30 days')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Pause' }));
+
+    expect(screen.getByRole('button', { name: 'Resume' })).toBeInTheDocument();
+    expect(
+      screen.getByText('Workspace report for application-2'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Slack')).toBeInTheDocument();
+    expect(screen.getByText('Last 30 days')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Resume' }));
+
+    expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument();
+    expect(
+      screen.getByText('Workspace report for application-2'),
+    ).toBeInTheDocument();
+  });
+
+  it('should advance a mounted preset report across UTC midnight without new analytics data', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-10-15T23:59:59.000Z'));
+
+    renderAppAnalytics({ permissionFlags: [PermissionFlagType.APPLICATIONS] });
+
+    expect(
+      screen.getByText('Period end: 2026-10-16T00:00:00Z'),
+    ).toBeInTheDocument();
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(1_001);
+    });
+
+    expect(
+      screen.getByText('Period end: 2026-10-17T00:00:00Z'),
+    ).toBeInTheDocument();
+  });
+
+  it('should hold the report period across UTC midnight while paused and catch up on resume', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-10-15T23:59:59.000Z'));
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+
+    renderAppAnalytics({ permissionFlags: [PermissionFlagType.APPLICATIONS] });
+
+    expect(
+      screen.getByText('Period end: 2026-10-16T00:00:00Z'),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Pause' }));
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(1_001);
+    });
+
+    expect(
+      screen.getByText('Period end: 2026-10-16T00:00:00Z'),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Resume' }));
+
+    expect(
+      screen.getByText('Period end: 2026-10-17T00:00:00Z'),
+    ).toBeInTheDocument();
+  });
+
+  it('should hide live updates for a historical custom range', () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-10-15T12:00:00.000Z'));
+
+    renderAppAnalytics({ permissionFlags: [PermissionFlagType.APPLICATIONS] });
+    act(() => {
+      jotaiStore.set(logConsoleAppAnalyticsRangeState.atom, {
+        kind: 'custom',
+        startDate: '2026-09-01',
+        endDate: '2026-09-30',
+      });
+    });
+
+    expect(
+      screen.queryByRole('button', { name: 'Pause' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Resume' }),
+    ).not.toBeInTheDocument();
   });
 
   it('should only report on this workspace for members who cannot read app registrations', async () => {

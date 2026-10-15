@@ -1,7 +1,10 @@
 import { skipToken, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlayerPause, IconPlayerPlay } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
@@ -88,6 +91,35 @@ export const LogConsoleAppAnalytics = () => {
   ] = useAtomState(logConsoleAppAnalyticsRegistrationIdState);
   const [logConsoleAppAnalyticsRange, setLogConsoleAppAnalyticsRange] =
     useAtomState(logConsoleAppAnalyticsRangeState);
+  const [pausedAt, setPausedAt] = useState<string>();
+  const [now, setNow] = useState(() => new Date().toISOString());
+
+  useEffect(() => {
+    const nextUtcMidnight = new Date(now);
+
+    nextUtcMidnight.setUTCHours(24, 0, 0, 0);
+
+    const timeoutId = setTimeout(
+      () => setNow(new Date().toISOString()),
+      Math.max(0, nextUtcMidnight.getTime() - Date.now()),
+    );
+
+    return () => clearTimeout(timeoutId);
+  }, [now]);
+
+  const isLive =
+    logConsoleAppAnalyticsRange.kind === 'preset' ||
+    logConsoleAppAnalyticsRange.endDate >= now.slice(0, 10);
+  const isPaused = isDefined(pausedAt);
+
+  const togglePause = () => {
+    if (isPaused) {
+      setPausedAt(undefined);
+      setNow(new Date().toISOString());
+    } else {
+      setPausedAt(now);
+    }
+  };
 
   const applications = useAtomStateValue(applicationsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -189,6 +221,7 @@ export const LogConsoleAppAnalytics = () => {
     'current-workspace': t`This workspace`,
     'all-workspaces': t`All workspaces`,
   };
+  const pauseLabel = isPaused ? t`Resume` : t`Pause`;
 
   return (
     <StyledContainer>
@@ -223,20 +256,34 @@ export const LogConsoleAppAnalytics = () => {
             needIconCheck
           />
         </StyledToolbarGroup>
-        <LogConsoleAppAnalyticsRangeDropdown
-          range={logConsoleAppAnalyticsRange}
-          onRangeChange={setLogConsoleAppAnalyticsRange}
-        />
+        <StyledToolbarGroup>
+          {isLive && (
+            <IconButton
+              tooltip={pauseLabel}
+              aria-label={pauseLabel}
+              onClick={togglePause}
+            >
+              {isPaused ? <IconPlayerPlay /> : <IconPlayerPause />}
+            </IconButton>
+          )}
+          <LogConsoleAppAnalyticsRangeDropdown
+            range={logConsoleAppAnalyticsRange}
+            onRangeChange={setLogConsoleAppAnalyticsRange}
+          />
+        </StyledToolbarGroup>
       </StyledToolbar>
       <ScrollWrapper
         componentInstanceId={LOG_CONSOLE_APP_ANALYTICS_SCROLL_WRAPPER_ID}
       >
         <StyledContent>
           <LogConsoleAppAnalyticsReport
-            key={`${scope}-${selectedApp.id}`}
+            key={`${scope}-${selectedApp.id}-${JSON.stringify(logConsoleAppAnalyticsRange)}`}
             target={target}
             trackedSince={selectedApp.trackedSince}
             range={logConsoleAppAnalyticsRange}
+            isPaused={isPaused}
+            isLive={isLive}
+            now={pausedAt ?? now}
           />
         </StyledContent>
       </ScrollWrapper>
