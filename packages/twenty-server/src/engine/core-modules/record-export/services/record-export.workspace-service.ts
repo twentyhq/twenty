@@ -60,6 +60,7 @@ import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-module
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
+import { expandMorphRelationExportFields } from 'src/engine/core-modules/record-export/utils/expand-morph-relation-export-fields.util';
 import { computeRecordExportPermissionsHash } from 'src/engine/core-modules/record-export/utils/compute-record-export-permissions-hash.util';
 import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
@@ -666,7 +667,14 @@ export class RecordExportWorkspaceService {
     if (fields.some((field) => !field.isActive)) {
       throw new BadRequestException(t`An export field is no longer available.`);
     }
-    const columns = buildRecordExportColumns(fields);
+    const columns = buildRecordExportColumns(
+      expandMorphRelationExportFields({
+        fields,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      }),
+    );
     const node: CommonSelectedFields = {};
 
     for (const column of columns) {

@@ -5,6 +5,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-filter/utils/hydrateRecordFiltersFromFieldMetadata';
 import { hasInitializedChartFiltersComponentState } from '@/side-panel/pages/page-layout/states/hasInitializedChartFiltersComponentState';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
+import { pointChartRecordFiltersAtMorphRelationFields } from '@/side-panel/pages/page-layout/utils/pointChartRecordFiltersAtMorphRelationFields';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -45,7 +46,10 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
     if (!hasInitializedChartFilters && isDefined(initialChartFilters)) {
       setCurrentRecordFilters(
         hydrateRecordFiltersFromFieldMetadata({
-          recordFilters: initialChartFilters.recordFilters ?? [],
+          recordFilters: pointChartRecordFiltersAtMorphRelationFields({
+            recordFilters: initialChartFilters.recordFilters ?? [],
+            fieldMetadataItems: flattenedFieldMetadataItems,
+          }),
           fieldMetadataItems: flattenedFieldMetadataItems,
         }),
       );

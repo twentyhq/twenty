@@ -17,7 +17,7 @@ export class FieldMorphRelationHeadOnDeleteSideEffectHandlerService extends Meta
     metadataName: 'fieldMetadata',
     name: 'fieldMorphRelationHeadOnDelete',
     description:
-      'When the last target of a morph relation is deleted, delete its head. Counterpart of fieldMorphRelationHeadOnCreate: manifest deletion inference excludes isSystemSideEffect rows, so removing a morph field from a manifest would otherwise leave the head behind, still reserving the field name. Noop while another target of the same morphId survives or is created in the same batch.',
+      'When the last target of a morph relation is deleted, delete its head and the view fields displaying it. Counterpart of fieldMorphRelationHeadOnCreate: manifest deletion inference excludes isSystemSideEffect rows, so removing a morph field from a manifest would otherwise leave the head behind, still reserving the field name. Noop while another target of the same morphId survives or is created in the same batch.',
   },
 ) {
   buildSideEffects({
@@ -80,11 +80,26 @@ export class FieldMorphRelationHeadOnDeleteSideEffectHandlerService extends Meta
       return { status: 'noop' };
     }
 
+    const viewFieldsToDelete = Object.fromEntries(
+      head.viewFieldUniversalIdentifiers
+        .map(
+          (universalIdentifier) =>
+            relatedFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
+              universalIdentifier
+            ],
+        )
+        .filter(isDefined)
+        .map((viewField) => [viewField.universalIdentifier, viewField]),
+    );
+
     return {
       status: 'success',
       operations: {
         fieldMetadata: {
           flatEntityToDelete: { [head.universalIdentifier]: head },
+        },
+        viewField: {
+          flatEntityToDelete: viewFieldsToDelete,
         },
       },
     };

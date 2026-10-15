@@ -1,9 +1,9 @@
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
+import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
 
-describe('dropChartRecordFiltersWithDeletedFields', () => {
+describe('sanitizeChartRecordFilters', () => {
   it('should drop record filters referencing fields that no longer exist', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [
@@ -19,9 +19,9 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
-      validFieldMetadataIds: new Set(['valid-field']),
+      fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
 
     expect(result.recordFilters).toEqual([
@@ -47,9 +47,9 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
-      validFieldMetadataIds: new Set(['valid-field']),
+      fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
 
     expect(result.recordFilterGroups).toEqual([
@@ -69,9 +69,12 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
-      validFieldMetadataIds: new Set(['field-a', 'field-b']),
+      fieldMetadataItems: [
+        { id: 'field-a', isActive: true },
+        { id: 'field-b', isActive: true },
+      ],
     });
 
     expect(result.recordFilters).toHaveLength(2);
@@ -80,9 +83,9 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
   it('should handle undefined record filters', () => {
     const chartFilters: ChartFilters = {} as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
-      validFieldMetadataIds: new Set(['field-a']),
+      fieldMetadataItems: [{ id: 'field-a', isActive: true }],
     });
 
     expect(result.recordFilters).toEqual([]);
@@ -106,9 +109,9 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
-      validFieldMetadataIds: new Set(),
+      fieldMetadataItems: [],
     });
 
     expect(result.recordFilters).toEqual([]);
@@ -143,9 +146,9 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
-      validFieldMetadataIds: new Set(['valid-field']),
+      fieldMetadataItems: [{ id: 'valid-field', isActive: true }],
     });
 
     expect(result.recordFilters).toEqual([
@@ -187,12 +190,33 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
       ],
     } as ChartFilters;
 
-    const result = dropChartRecordFiltersWithDeletedFields({
+    const result = sanitizeChartRecordFilters({
       chartFilters,
-      validFieldMetadataIds: new Set(),
+      fieldMetadataItems: [],
     });
 
     expect(result.recordFilters).toEqual([]);
     expect(result.recordFilterGroups).toEqual([]);
+  });
+
+  it('should point record filters on a morph relation target at the morph relation field', () => {
+    const chartFilters: ChartFilters = {
+      recordFilters: [{ id: 'filter-1', fieldMetadataId: 'morph-target' }],
+    } as ChartFilters;
+
+    const result = sanitizeChartRecordFilters({
+      chartFilters,
+      fieldMetadataItems: [
+        {
+          id: 'morph-head',
+          isActive: true,
+          morphRelations: [{ sourceFieldMetadata: { id: 'morph-target' } }],
+        },
+      ],
+    });
+
+    expect(result.recordFilters).toEqual([
+      { id: 'filter-1', fieldMetadataId: 'morph-head' },
+    ]);
   });
 });
