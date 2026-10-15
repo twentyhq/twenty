@@ -25,6 +25,7 @@ export const DestroyRecordsCommand = () => {
   } = useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
     throw new Error('Object metadata is required to destroy records');
   }
 
@@ -66,7 +67,7 @@ export const DestroyRecordsCommand = () => {
     }
 
     if (!isDefined(graphqlFilter)) {
-      throw new Error('Cannot destroy records without a valid filter');
+      throw new Error(t`Cannot destroy records without a valid filter`);
     }
 
     if (!isSingleRecord || isInSidePanel) {

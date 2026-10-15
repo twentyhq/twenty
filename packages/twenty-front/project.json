@@ -64,17 +64,31 @@
         "{projectRoot}/.oxlintrc.json",
         "{projectRoot}/.oxlintrc.i18n.json",
         "{projectRoot}/scripts/check-unlocalized-strings.mjs",
-        { "env": "LINGUI_LINT_BASE_SHA" },
         "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false)) && node scripts/check-unlocalized-strings.mjs"
+        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false)) && node scripts/check-unlocalized-strings.mjs --all"
       },
       "configurations": {
         "fix": {
           "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ && npx oxfmt src/"
         }
+      }
+    },
+    "lint:unlocalized-strings": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "{projectRoot}/.oxlintrc.i18n.json",
+        "{projectRoot}/scripts/check-unlocalized-strings.mjs",
+        "{projectRoot}/package.json",
+        "{workspaceRoot}/yarn.lock"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-unlocalized-strings.mjs --all"
       }
     },
     "lint:i18n": {

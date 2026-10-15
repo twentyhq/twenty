@@ -12,6 +12,7 @@ export const CancelDashboardSingleRecordCommand = () => {
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
     throw new Error('Selected record is required to cancel dashboard');
   }
 

@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,6 +8,11 @@ const REPOSITORY_ROOT = resolve(FRONTEND_ROOT, '../..');
 const SOURCE_PREFIX = 'packages/twenty-front/';
 const RULE_CODE = 'lingui(no-unlocalized-strings)';
 const BASE_REF = process.env.LINGUI_LINT_BASE_SHA || 'origin/main';
+const CHECK_ALL = process.argv.length === 3 && process.argv[2] === '--all';
+
+if (process.argv.length > 2 && !CHECK_ALL) {
+  throw new Error('Usage: node check-unlocalized-strings.mjs [--all]');
+}
 
 const run = (command, arguments_, cwd) => {
   const result = spawnSync(command, arguments_, {
@@ -29,7 +34,22 @@ const isProductionSource = (path) =>
   !/(^|\/)(__mocks__|__tests__|__stories__|testing|generated[^/]*)\//.test(
     path,
   ) &&
-  !/\.(test|spec|stories)\.tsx?$/.test(path);
+  !/\.(test|spec|stories|mock)\.tsx?$/.test(path);
+
+const getProductionSourceFiles = (directory) =>
+  readdirSync(resolve(FRONTEND_ROOT, directory), {
+    withFileTypes: true,
+  }).flatMap((entry) => {
+    const path = `${directory}/${entry.name}`;
+
+    if (entry.isDirectory()) {
+      return getProductionSourceFiles(path);
+    }
+
+    return entry.isFile() && isProductionSource(`${SOURCE_PREFIX}${path}`)
+      ? [path]
+      : [];
+  });
 
 const getAddedLines = (patch) => {
   const addedLinesByFile = new Map();
@@ -76,59 +96,101 @@ const getAddedLines = (patch) => {
   return addedLinesByFile;
 };
 
-const diff = run(
-  'git',
-  [
-    '-c',
-    'core.quotePath=false',
-    'diff',
-    '--no-ext-diff',
-    '--unified=0',
-    BASE_REF,
-    '--',
-    `${SOURCE_PREFIX}src/`,
-  ],
-  REPOSITORY_ROOT,
-);
+let addedLinesByFile = new Map();
+let filesToLint;
 
-if (diff.status !== 0) {
-  throw new Error(diff.stderr || `Could not compare source with ${BASE_REF}`);
+if (CHECK_ALL) {
+  filesToLint = getProductionSourceFiles('src');
+} else {
+  const diff = run(
+    'git',
+    [
+      '-c',
+      'core.quotePath=false',
+      'diff',
+      '--no-ext-diff',
+      '--unified=0',
+      BASE_REF,
+      '--',
+      `${SOURCE_PREFIX}src/`,
+    ],
+    REPOSITORY_ROOT,
+  );
+
+  if (diff.status !== 0) {
+    throw new Error(diff.stderr || `Could not compare source with ${BASE_REF}`);
+  }
+
+  addedLinesByFile = getAddedLines(diff.stdout);
+  filesToLint = [...addedLinesByFile]
+    .filter(([, lines]) => lines.size > 0)
+    .map(([path]) => path.slice(SOURCE_PREFIX.length));
 }
 
-const addedLinesByFile = getAddedLines(diff.stdout);
-const changedFiles = [...addedLinesByFile]
-  .filter(([, lines]) => lines.size > 0)
-  .map(([path]) => path.slice(SOURCE_PREFIX.length));
-
-if (changedFiles.length === 0) {
-  console.log('No added frontend source lines to check for translations.');
+if (filesToLint.length === 0) {
+  console.log(
+    CHECK_ALL
+      ? 'No production frontend source files to check for translations.'
+      : 'No added frontend source lines to check for translations.',
+  );
   process.exit(0);
 }
 
-const lint = run(
-  process.execPath,
-  [
-    '../../node_modules/oxlint/bin/oxlint',
-    '-c',
-    '.oxlintrc.i18n.json',
-    '--format=json',
-    ...changedFiles,
-  ],
-  FRONTEND_ROOT,
-);
+const MAX_FILE_ARGUMENT_BYTES = 64 * 1024;
+const fileBatches = [];
+let fileBatch = [];
+let argumentBytes = 0;
 
-let diagnostics;
+for (const file of filesToLint) {
+  const fileBytes = Buffer.byteLength(file) + 1;
 
-try {
-  diagnostics = JSON.parse(lint.stdout).diagnostics;
-} catch {
-  throw new Error(
-    lint.stderr || lint.stdout || 'Oxlint did not return JSON diagnostics.',
-  );
+  if (
+    argumentBytes + fileBytes > MAX_FILE_ARGUMENT_BYTES &&
+    fileBatch.length > 0
+  ) {
+    fileBatches.push(fileBatch);
+    fileBatch = [];
+    argumentBytes = 0;
+  }
+
+  fileBatch.push(file);
+  argumentBytes += fileBytes;
 }
 
-if (lint.status !== 0 && lint.status !== 1) {
-  throw new Error(lint.stderr || `Oxlint failed with exit code ${lint.status}`);
+fileBatches.push(fileBatch);
+
+const diagnostics = [];
+
+for (const batch of fileBatches) {
+  const lint = run(
+    process.execPath,
+    [
+      '../../node_modules/oxlint/bin/oxlint',
+      '-c',
+      '.oxlintrc.i18n.json',
+      '--format=json',
+      ...batch,
+    ],
+    FRONTEND_ROOT,
+  );
+
+  let batchDiagnostics;
+
+  try {
+    batchDiagnostics = JSON.parse(lint.stdout).diagnostics;
+  } catch {
+    throw new Error(
+      lint.stderr || lint.stdout || 'Oxlint did not return JSON diagnostics.',
+    );
+  }
+
+  if (lint.status !== 0 && lint.status !== 1) {
+    throw new Error(
+      lint.stderr || `Oxlint failed with exit code ${lint.status}`,
+    );
+  }
+
+  diagnostics.push(...batchDiagnostics);
 }
 
 const unexpectedErrors = diagnostics.filter(
@@ -146,12 +208,20 @@ const sourceFiles = new Map();
 const violationLines = new Map();
 
 const violations = diagnostics.filter((diagnostic) => {
+  if (diagnostic.code !== RULE_CODE) {
+    return false;
+  }
+
+  if (CHECK_ALL) {
+    return true;
+  }
+
   const changedLines = addedLinesByFile.get(
     `${SOURCE_PREFIX}${diagnostic.filename}`,
   );
   const span = diagnostic.labels[0]?.span;
 
-  if (diagnostic.code !== RULE_CODE || !changedLines || !span) {
+  if (!changedLines || !span) {
     return false;
   }
 
@@ -180,16 +250,24 @@ const violations = diagnostics.filter((diagnostic) => {
 });
 
 for (const violation of violations) {
-  const line = violationLines.get(violation);
+  const line = CHECK_ALL
+    ? violation.labels[0]?.span.line
+    : violationLines.get(violation);
 
   console.error(`${violation.filename}:${line}: ${violation.message}`);
 }
 
 if (violations.length > 0) {
   console.error(
-    `${violations.length} added string(s) need Lingui translation markers.`,
+    CHECK_ALL
+      ? `${violations.length} string(s) need Lingui translation markers.`
+      : `${violations.length} added string(s) need Lingui translation markers.`,
   );
   process.exitCode = 1;
 } else {
-  console.log('No new untranslated frontend strings.');
+  console.log(
+    CHECK_ALL
+      ? 'No untranslated production frontend strings.'
+      : 'No new untranslated frontend strings.',
+  );
 }
