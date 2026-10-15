@@ -51,7 +51,7 @@ export const generateCsv: GenerateExport = ({
     fieldMetadataId: '',
     type: FieldMetadataType.UUID,
     iconName: '',
-    label: `Id`,
+    label: t`ID`,
     metadata: {
       fieldName: 'id',
     },
@@ -62,8 +62,11 @@ export const generateCsv: GenerateExport = ({
   const columnsToExportWithIdColumn = [objectIdColumn, ...columnsToExport];
 
   const keys = columnsToExportWithIdColumn.flatMap((col) => {
-    const headerLabel = `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`;
+    const headerLabel =
+      col.type === 'RELATION' ? t`${col.label} ID` : col.label;
     const column = {
+      // Metadata and protocol identifiers must stay stable across locales.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
       title: formatValueForCSV(sanitizeValueForCSVExport(headerLabel)),
     };

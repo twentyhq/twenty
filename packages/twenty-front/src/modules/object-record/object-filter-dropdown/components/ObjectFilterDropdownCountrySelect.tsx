@@ -74,6 +74,8 @@ export const ObjectFilterDropdownCountrySelect = () => {
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         'Field metadata item used in filter dropdown should be defined',
       );
     }

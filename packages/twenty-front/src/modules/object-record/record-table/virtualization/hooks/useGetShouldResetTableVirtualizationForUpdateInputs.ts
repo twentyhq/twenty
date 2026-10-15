@@ -44,6 +44,8 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
           fieldNamesForUpdateInput.includes(fieldMetadataItemToFilter.name) ||
           (fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
             fieldNamesForUpdateInput.includes(
+              // Metadata and protocol identifiers must stay stable across locales.
+              // oxlint-disable-next-line lingui/no-unlocalized-strings
               `${fieldMetadataItemToFilter.name}Id`,
             )),
       );

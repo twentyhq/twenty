@@ -28,6 +28,8 @@ export const usePerformCombinedFindManyRecords = () => {
     const filterPerMetadataItemArray = operationSignatures
       .map(
         ({ objectNameSingular }) =>
+          // Generated GraphQL syntax must stay stable across locales.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `$filter${capitalize(objectNameSingular)}: ${capitalize(
             objectNameSingular,
           )}FilterInput`,
@@ -37,6 +39,8 @@ export const usePerformCombinedFindManyRecords = () => {
     const orderByPerMetadataItemArray = operationSignatures
       .map(
         ({ objectNameSingular }) =>
+          // Generated GraphQL syntax must stay stable across locales.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `$orderBy${capitalize(objectNameSingular)}: [${capitalize(
             objectNameSingular,
           )}OrderByInput]`,
@@ -46,6 +50,8 @@ export const usePerformCombinedFindManyRecords = () => {
     const cursorFilteringPerMetadataItemArray = operationSignatures
       .map(
         ({ objectNameSingular }) =>
+          // Generated GraphQL syntax must stay stable across locales.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `$after${capitalize(objectNameSingular)}: String, $before${capitalize(objectNameSingular)}: String, $first${capitalize(objectNameSingular)}: Int, $last${capitalize(objectNameSingular)}: Int`,
       )
       .join(', ');
@@ -60,6 +66,8 @@ export const usePerformCombinedFindManyRecords = () => {
 
         if (isUndefined(objectMetadataItem)) {
           throw new Error(
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
           );
         }

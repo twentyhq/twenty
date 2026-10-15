@@ -116,13 +116,17 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ViewType.LIST,
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
     ...(isDefaultView ? [] : [ViewType.KANBAN]),
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
     ...(currentView?.type === ViewType.CALENDAR
       ? ['CalendarView', 'CalendarDateField']
       : []),
     ...(currentView?.type !== ViewType.TABLE &&
     currentView?.type !== ViewType.LIST
-      ? ['Compact view']
+      ? // Selectable list ids must match their stable item ids.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
+        ['Compact view']
       : []),
   ];
 
