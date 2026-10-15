@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { MorphRelationHeadModule } from 'src/engine/metadata-modules/morph-relation-head/morph-relation-head.module';
 import { ViewFilterController } from 'src/engine/metadata-modules/view-filter/controllers/view-filter.controller';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewFilterResolver } from 'src/engine/metadata-modules/view-filter/resolvers/view-filter.resolver';
@@ -19,6 +20,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ViewPermissionsModule,
+    MorphRelationHeadModule,
   ],
   controllers: [ViewFilterController],
   providers: [
