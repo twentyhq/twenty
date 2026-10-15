@@ -27,6 +27,8 @@ import {
 } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -109,6 +111,7 @@ type RegistryToolContext = Pick<
   | 'workspaceId'
   | 'roleId'
   | 'authContext'
+  | 'application'
   | 'actorContext'
   | 'userId'
   | 'userWorkspaceId'
@@ -159,6 +162,20 @@ export class AgentAsyncExecutorService {
     }
 
     return {};
+  }
+
+  private resolveCallingApplication(
+    authContext?: WorkspaceAuthContext,
+  ): FlatApplication | undefined {
+    if (isDefined(authContext) && isUserAuthContext(authContext)) {
+      return authContext.application ?? authContext.viaApplication;
+    }
+
+    if (isDefined(authContext) && isApplicationAuthContext(authContext)) {
+      return authContext.application;
+    }
+
+    return undefined;
   }
 
   // preloading the few granted object schemas saves the model a learn_tools round trip
@@ -234,12 +251,13 @@ export class AgentAsyncExecutorService {
       userId,
       userWorkspaceId,
       rolePermissionConfig,
+      application,
     } = toolContext;
 
     const fullCatalog = await this.toolRegistry.buildToolIndex(
       workspaceId,
       roleId,
-      { userId, userWorkspaceId, rolePermissionConfig },
+      { userId, userWorkspaceId, rolePermissionConfig, application },
     );
 
     const allowedCategories = new Set(
@@ -412,6 +430,7 @@ export class AgentAsyncExecutorService {
             roleId: agentRoleId,
             agentId: agent.id,
             authContext,
+            application: this.resolveCallingApplication(authContext),
             actorContext,
             ...this.resolveUserIdentity(authContext),
           };
