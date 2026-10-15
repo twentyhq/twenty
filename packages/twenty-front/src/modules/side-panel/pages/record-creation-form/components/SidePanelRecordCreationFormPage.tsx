@@ -30,7 +30,7 @@ import { getValidationRuleViolationsFromError } from '@/validation-rules/utils/g
 import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/groupValidationRuleViolationsByField';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -129,7 +129,7 @@ const SidePanelRecordCreationForm = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formResetCount, setFormResetCount] = useState(0);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentId = useId();
   const optionsDropdownId = useId();
   const [draftValidationRuleViolations, setDraftValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
@@ -232,7 +232,8 @@ const SidePanelRecordCreationForm = ({
 
   const scrollToFirstFieldViolation = () => {
     requestAnimationFrame(() => {
-      contentRef.current
+      document
+        .getElementById(contentId)
         ?.querySelector('[role="alert"]')
         ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
@@ -344,7 +345,7 @@ const SidePanelRecordCreationForm = ({
           />
         }
       />
-      <StyledContent key={formResetCount} ref={contentRef}>
+      <StyledContent key={formResetCount} id={contentId}>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={visibleFieldMetadataItems}
