@@ -10,7 +10,10 @@ export const sanitizeChartFiltersInPageLayoutDraft = ({
   fieldMetadataItemsByObjectMetadataId,
 }: {
   pageLayoutDraft: DraftPageLayout;
-  fieldMetadataItemsByObjectMetadataId: Map<string, FieldMetadataItem[]>;
+  fieldMetadataItemsByObjectMetadataId: Map<
+    string,
+    Pick<FieldMetadataItem, 'id' | 'isActive' | 'morphRelations'>[]
+  >;
 }): DraftPageLayout => {
   return {
     ...pageLayoutDraft,

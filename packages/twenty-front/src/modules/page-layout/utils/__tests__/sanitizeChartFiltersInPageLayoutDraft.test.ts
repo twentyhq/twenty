@@ -1,4 +1,3 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -71,10 +70,7 @@ const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => {
 
 const buildValidFieldsMap = (fieldIds: string[]) =>
   new Map([
-    [
-      TEST_OBJECT_METADATA_ID,
-      fieldIds.map((id) => ({ id, isActive: true }) as FieldMetadataItem),
-    ],
+    [TEST_OBJECT_METADATA_ID, fieldIds.map((id) => ({ id, isActive: true }))],
   ]);
 
 describe('sanitizeChartFiltersInPageLayoutDraft', () => {

@@ -6,6 +6,10 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 type MorphRelationFieldMetadata = Pick<
@@ -64,7 +68,13 @@ export const buildResolveMorphRelationPermissionFieldIds = ({
               const applicationUniversalIdentifier =
                 applicationUniversalIdentifierById.get(target.applicationId);
 
-              assertIsDefinedOrThrow(applicationUniversalIdentifier);
+              assertIsDefinedOrThrow(
+                applicationUniversalIdentifier,
+                new PermissionsException(
+                  `Application ${target.applicationId} of morph relation field ${target.id} not found`,
+                  PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
+                ),
+              );
 
               return {
                 id: target.id,
