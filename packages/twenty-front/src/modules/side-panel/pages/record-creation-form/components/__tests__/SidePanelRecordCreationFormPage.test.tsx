@@ -1,7 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type createElement, type Fragment, type ReactNode } from 'react';
@@ -101,6 +101,7 @@ let mockValidationRules: ValidationRule[] = [];
 const openRecordCreationFormSettingsInSidePanel = jest.fn();
 const mockHasPermissionFlag = jest.fn();
 const mockEnqueueToast = jest.fn();
+const scrollIntoView = jest.fn();
 
 jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
@@ -291,6 +292,7 @@ const renderPage = () =>
 describe('SidePanelRecordCreationFormPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    Element.prototype.scrollIntoView = scrollIntoView;
     resetJotaiStore();
     mockValidationRules = [];
     settleRecordCreationDraft.mockResolvedValue({});
@@ -375,13 +377,15 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
-    expect(
-      within(screen.getByRole('group', { name: 'Nickname field' })).getByRole(
-        'alert',
-      ),
-    ).toHaveTextContent('A company needs a nickname');
+    const nicknameAlert = within(
+      screen.getByRole('group', { name: 'Nickname field' }),
+    ).getByRole('alert');
+
+    expect(nicknameAlert).toHaveTextContent('A company needs a nickname');
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(settleRecordCreationDraft).not.toHaveBeenCalled();
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(1));
+    expect(scrollIntoView.mock.contexts[0]).toBe(nicknameAlert);
   });
 
   it('keeps hidden fields collapsed and shows a validation error on the whole record below the fields', async () => {
@@ -418,12 +422,15 @@ describe('SidePanelRecordCreationFormPage', () => {
       shouldKeepOpen: false,
     });
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
-    expect(
-      within(screen.getByRole('group', { name: 'Nickname field' })).getByRole(
-        'alert',
-      ),
-    ).toHaveTextContent('A company needs a nickname');
+
+    const nicknameAlert = within(
+      screen.getByRole('group', { name: 'Nickname field' }),
+    ).getByRole('alert');
+
+    expect(nicknameAlert).toHaveTextContent('A company needs a nickname');
     expect(mockEnqueueToast).not.toHaveBeenCalled();
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(1));
+    expect(scrollIntoView.mock.contexts[0]).toBe(nicknameAlert);
   });
 
   it('keeps a message from the server under its field while the user edits, until the next create', async () => {

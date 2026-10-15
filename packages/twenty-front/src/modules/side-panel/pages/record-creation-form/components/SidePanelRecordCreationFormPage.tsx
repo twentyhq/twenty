@@ -234,7 +234,7 @@ const SidePanelRecordCreationForm = ({
     requestAnimationFrame(() => {
       contentRef.current
         ?.querySelector('[role="alert"]')
-        ?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   };
 
