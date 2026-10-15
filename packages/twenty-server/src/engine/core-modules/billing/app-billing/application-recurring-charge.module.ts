@@ -2,6 +2,8 @@
 
 import { Module } from '@nestjs/common';
 
+import { ApplicationRegistrationAnalyticsModule } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.module';
+
 import { ApplicationRecurringChargeService } from 'src/engine/core-modules/billing/app-billing/application-recurring-charge.service';
 import { ApplicationRecurringChargeCronCommand } from 'src/engine/core-modules/billing/app-billing/crons/commands/application-recurring-charge.cron.command';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -11,6 +13,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    ApplicationRegistrationAnalyticsModule,
     BillingModule,
     UsageAnalyticsModule,
     UsageLimitModule,

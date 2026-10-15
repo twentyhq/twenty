@@ -15,6 +15,7 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
 
 @Injectable()
 export class ApplicationUninstallRunnerService {
@@ -23,6 +24,7 @@ export class ApplicationUninstallRunnerService {
     private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly metricsService: MetricsService,
+    private readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService,
     private readonly cacheLockService: CacheLockService,
   ) {}
 
@@ -66,15 +68,26 @@ export class ApplicationUninstallRunnerService {
         APPLICATION_LIFECYCLE_LOCK_OPTIONS,
       );
     } catch (error) {
+      const errorCode =
+        error instanceof ApplicationException ? error.code : 'UNKNOWN';
+
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AppUninstallFailed,
         amount: 1,
         attributes: {
           ...this.buildMetricsAttributes({ universalIdentifier, application }),
-          error_code:
-            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+          error_code: errorCode,
         },
       });
+
+      if (isDefined(application)) {
+        this.applicationRegistrationMetricService.recordForApplication({
+          application,
+          metric: 'uninstall.failed',
+          dimension: errorCode,
+          workspaceId,
+        });
+      }
 
       throw error;
     }
@@ -87,6 +100,14 @@ export class ApplicationUninstallRunnerService {
         application,
       }),
     });
+
+    if (isDefined(application)) {
+      this.applicationRegistrationMetricService.recordForApplication({
+        application,
+        metric: 'uninstall.succeeded',
+        workspaceId,
+      });
+    }
   }
 
   private buildMetricsAttributes({

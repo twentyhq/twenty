@@ -1,6 +1,8 @@
 /* @license Enterprise */
 
 import { Module } from '@nestjs/common';
+
+import { ApplicationRegistrationAnalyticsModule } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppBillingController } from 'src/engine/core-modules/billing/app-billing/app-billing.controller';
@@ -15,6 +17,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    ApplicationRegistrationAnalyticsModule,
     AuthModule,
     BillingModule,
     ThrottlerModule,

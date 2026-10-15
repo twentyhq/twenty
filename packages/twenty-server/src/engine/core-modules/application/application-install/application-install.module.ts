@@ -17,6 +17,7 @@ import { ApplicationLifecycleJobService } from 'src/engine/core-modules/applicat
 import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { ApplicationRegistrationAnalyticsModule } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -38,6 +39,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     MarketplaceModule,
     CacheLockModule,
     MetricsModule,
+    ApplicationRegistrationAnalyticsModule,
     PermissionsModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,

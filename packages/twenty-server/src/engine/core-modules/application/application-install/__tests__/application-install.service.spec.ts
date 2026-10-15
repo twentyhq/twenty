@@ -7,6 +7,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { type ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
 import { type ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { type ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
@@ -90,6 +91,7 @@ describe('ApplicationInstallService', () => {
     {} as MessageQueueService,
     {} as WorkspaceCacheService,
     { incrementCounterBy: jest.fn() } as unknown as MetricsService,
+    { record: jest.fn() } as unknown as ApplicationRegistrationMetricService,
   );
 
   const install = () =>

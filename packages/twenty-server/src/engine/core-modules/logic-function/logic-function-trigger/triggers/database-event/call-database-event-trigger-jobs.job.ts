@@ -9,6 +9,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
@@ -34,6 +35,7 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -137,6 +139,12 @@ export class CallDatabaseEventTriggerJobsJob {
           this.logger.warn(
             `Enqueue throttled for application ${applicationId} (registration ${applicationRegistrationId}) in workspace ${workspaceEventBatch.workspaceId}: skipping ${logicFunctionPayloads.length} logic function trigger(s)`,
           );
+          this.applicationRegistrationMetricService.recordForApplication({
+            application,
+            metric: 'job.rate_limited',
+            value: logicFunctionPayloads.length,
+            workspaceId: workspaceEventBatch.workspaceId,
+          });
 
           continue;
         }

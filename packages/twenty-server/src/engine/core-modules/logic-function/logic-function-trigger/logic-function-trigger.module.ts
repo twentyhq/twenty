@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+
+import { ApplicationRegistrationAnalyticsModule } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
@@ -26,6 +28,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkspaceCacheModule,
     CronModule,
     RecordShareModule,
+    ApplicationRegistrationAnalyticsModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(LogicFunctionEntity),

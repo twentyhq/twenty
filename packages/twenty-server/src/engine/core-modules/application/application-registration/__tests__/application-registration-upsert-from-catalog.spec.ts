@@ -19,6 +19,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -101,6 +102,10 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         {
           provide: MetricsService,
           useValue: { incrementCounterBy: jest.fn() },
+        },
+        {
+          provide: ApplicationRegistrationMetricService,
+          useValue: { record: jest.fn() },
         },
         {
           provide: getQueueToken(MessageQueue.applicationUpgradeQueue),

@@ -37,7 +37,10 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
+import { ApplicationRegistrationMetricService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-metric.service';
+import { toApplicationRegistrationMetricErrorCategory } from 'src/engine/core-modules/application/application-registration-analytics/utils/to-application-registration-metric-error-category.util';
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
+import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
@@ -111,6 +114,7 @@ export class LogicFunctionExecutorService {
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly applicationRegistrationMetricService: ApplicationRegistrationMetricService,
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
@@ -215,6 +219,19 @@ export class LogicFunctionExecutorService {
           `${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
+      this.applicationRegistrationMetricService.recordForApplication({
+        application: flatApplication,
+        metric: 'function.execution',
+        dimension: flatLogicFunction.name,
+        workspaceId,
+      });
+      this.applicationRegistrationMetricService.recordForApplication({
+        application: flatApplication,
+        metric: 'function.error',
+        dimension: 'EXECUTION_FAILED',
+        context: flatLogicFunction.name,
+        workspaceId,
+      });
       throw error;
     }
 
@@ -615,6 +632,25 @@ export class LogicFunctionExecutorService {
         functionId: flatLogicFunction.id,
         functionName: flatLogicFunction.name,
       });
+
+    this.applicationRegistrationMetricService.recordForApplication({
+      application: flatApplication,
+      metric: 'function.execution',
+      dimension: flatLogicFunction.name,
+      workspaceId,
+    });
+
+    if (result.status === LogicFunctionExecutionStatus.ERROR) {
+      this.applicationRegistrationMetricService.recordForApplication({
+        application: flatApplication,
+        metric: 'function.error',
+        dimension: toApplicationRegistrationMetricErrorCategory(
+          result.error?.errorType,
+        ),
+        context: flatLogicFunction.name,
+        workspaceId,
+      });
+    }
 
     // Billing-exempt apps skip the invocation charge; their explicit chargeCredits and AI usage are still billed.
     await this.usageLimitQuotaService.charge({

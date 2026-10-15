@@ -51,12 +51,29 @@ export type ApplicationLogRow = {
   message: string;
 };
 
-// The `table` literals must match the registry's clickHouseTable values (EVENT_LOG_TYPES).
+// Carries a keyed workspace hash instead of the id: these rows are read by app owners, not by the workspace
+export type ApplicationRegistrationMetricRow = {
+  timestamp: string;
+  applicationRegistrationId: string;
+  universalIdentifier: string;
+  version: string;
+  metric: string;
+  dimension: string;
+  context: string;
+  workspaceHash: string;
+  value: number;
+};
+
+// These literals must match the clickHouseTable values in EVENT_LOG_TYPES, which exposes every table but applicationRegistrationMetric
 export type WorkspaceEventEnvelope =
   | { table: 'workspaceEvent'; row: AnalyticsEventRow }
   | { table: 'pageview'; row: PageviewRow }
   | { table: 'objectEvent'; row: ObjectEventRow }
   | { table: 'usageEvent'; row: UsageEventRow }
-  | { table: 'applicationLog'; row: ApplicationLogRow };
+  | { table: 'applicationLog'; row: ApplicationLogRow }
+  | {
+      table: 'applicationRegistrationMetric';
+      row: ApplicationRegistrationMetricRow;
+    };
 
 export type WorkspaceEventTable = WorkspaceEventEnvelope['table'];
