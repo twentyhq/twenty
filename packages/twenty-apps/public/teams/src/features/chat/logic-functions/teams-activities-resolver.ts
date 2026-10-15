@@ -11,11 +11,10 @@ import {
   TEAMS_ACTIVITIES_ROUTE_UNIVERSAL_IDENTIFIER,
 } from 'src/features/chat/constants/universal-identifiers';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
-import { TeamsBotConnectorKeysUnavailableError } from 'src/features/chat/logic-functions/types/teams-bot-connector-keys-unavailable-error';
+import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-functions/types/teams-activity-token-invalid-error';
 import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/types/teams-inbound-activity.type';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { getTeamsBotCredentials } from 'src/features/chat/logic-functions/utils/get-teams-bot-credentials';
-import { loadTeamsBotConnectorKeysOrThrowUnavailable } from 'src/features/chat/logic-functions/utils/load-teams-bot-connector-keys-or-throw-unavailable';
 import { verifyTeamsActivityTokenOrThrow } from 'src/features/chat/logic-functions/utils/verify-teams-activity-token';
 
 export const teamsActivitiesResolverHandler = async (
@@ -37,13 +36,12 @@ export const teamsActivitiesResolverHandler = async (
     authorizationHeader: routePayload.headers.authorization,
     activityServiceUrl: activity.serviceUrl,
     botAppId: botCredentials.credentials.appId,
-    loadKeys: loadTeamsBotConnectorKeysOrThrowUnavailable,
   }).catch((error: unknown) => {
-    if (error instanceof TeamsBotConnectorKeysUnavailableError) {
-      throw error;
+    if (error instanceof TeamsActivityTokenInvalidError) {
+      return null;
     }
 
-    return null;
+    throw error;
   });
 
   if (!isNonEmptyString(serviceUrl)) {

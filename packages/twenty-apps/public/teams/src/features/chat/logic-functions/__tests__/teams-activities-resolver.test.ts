@@ -3,12 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
 import { teamsActivitiesResolverHandler } from 'src/features/chat/logic-functions/teams-activities-resolver';
+import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-functions/types/teams-activity-token-invalid-error';
 import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/types/teams-inbound-activity.type';
 
-const { kvGetMock, verifyTokenMock, getKeysMock } = vi.hoisted(() => ({
+const { kvGetMock, verifyTokenMock } = vi.hoisted(() => ({
   kvGetMock: vi.fn(),
   verifyTokenMock: vi.fn(),
-  getKeysMock: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
@@ -19,11 +19,6 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 vi.mock(
   'src/features/chat/logic-functions/utils/verify-teams-activity-token',
   () => ({ verifyTeamsActivityTokenOrThrow: verifyTokenMock }),
-);
-
-vi.mock(
-  'src/features/chat/logic-functions/utils/get-teams-bot-connector-keys',
-  () => ({ getTeamsBotConnectorKeys: getKeysMock }),
 );
 
 const SERVICE_URL = 'https://smba.trafficmanager.net/emea/';
@@ -72,7 +67,6 @@ describe('teamsActivitiesResolverHandler', () => {
           authorizationHeader: 'Bearer bot-framework-token',
           activityServiceUrl: SERVICE_URL,
           botAppId: 'bot-app-id',
-          loadKeys: expect.any(Function),
         },
       ],
     ]);
@@ -82,7 +76,9 @@ describe('teamsActivitiesResolverHandler', () => {
   });
 
   it('rejects an activity whose token does not verify', async () => {
-    verifyTokenMock.mockRejectedValue(new Error('bad signature'));
+    verifyTokenMock.mockRejectedValue(
+      new TeamsActivityTokenInvalidError('signature verification failed'),
+    );
 
     const result = await resolve(MESSAGE_ACTIVITY);
 
@@ -92,8 +88,7 @@ describe('teamsActivitiesResolverHandler', () => {
   });
 
   it('fails with a server error when the signing keys cannot be loaded', async () => {
-    getKeysMock.mockRejectedValue(new Error('Key endpoint unavailable'));
-    verifyTokenMock.mockImplementation(({ loadKeys }) => loadKeys());
+    verifyTokenMock.mockRejectedValue(new Error('Key endpoint unavailable'));
 
     await expect(resolve(MESSAGE_ACTIVITY)).rejects.toThrow(
       'Key endpoint unavailable',
@@ -111,23 +106,37 @@ describe('teamsActivitiesResolverHandler', () => {
   });
 
   it.each([
-    ['a body without a serviceUrl', null, 400],
+    [
+      'a body without a serviceUrl',
+      null,
+      new Response({ error: 'Missing Teams activity' }, { status: 400 }),
+    ],
     [
       'a non-message activity',
       { ...MESSAGE_ACTIVITY, type: 'conversationUpdate' },
-      undefined,
+      new Response({ ok: true, skipped: 'Not a message' }),
     ],
     [
       'an activity without a tenant',
       { ...MESSAGE_ACTIVITY, channelData: undefined },
-      undefined,
+      new Response({ ok: true, skipped: 'No tenant on the activity' }),
     ],
-  ])('does not dispatch %s', async (_, activity, status) => {
-    const result = await resolve(activity);
-
-    expect(result).toBeInstanceOf(Response);
-    expect((result as Response).status).toBe(status);
+  ])('does not dispatch %s', async (_, activity, expectedResponse) => {
+    expect(await resolve(activity)).toEqual(expectedResponse);
     expect(kvGetMock).not.toHaveBeenCalled();
+  });
+
+  it('reads the tenant from the conversation when channelData has none', async () => {
+    const result = await resolve({
+      ...MESSAGE_ACTIVITY,
+      channelData: undefined,
+      conversation: { id: 'conversation-1', tenantId: 'tenant-2' },
+    });
+
+    expect(result).toMatchObject({ payload: { tenantId: 'tenant-2' } });
+    expect(kvGetMock.mock.calls).toEqual([
+      ['teams-tenant:tenant-2', { scope: 'SERVER' }],
+    ]);
   });
 
   it('does not dispatch when no workspace claims the tenant', async () => {
