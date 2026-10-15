@@ -29,11 +29,15 @@ export const collectTranslationLabels = async ({
   for (const localePath of localePaths) {
     try {
       const catalog: unknown = await readJson(localePath);
-      if (isPlainObject(catalog)) {
-        descriptors.push(...flattenLocaleCatalog(catalog));
+      if (!isPlainObject(catalog)) {
+        throw new Error('Expected a JSON object');
       }
-    } catch {
-      continue;
+      descriptors.push(...flattenLocaleCatalog(catalog));
+    } catch (error) {
+      throw new Error(
+        `Could not read translation labels from ${localePath}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
+      );
     }
   }
 

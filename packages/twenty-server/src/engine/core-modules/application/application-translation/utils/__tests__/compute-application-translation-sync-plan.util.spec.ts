@@ -1,82 +1,95 @@
 import { computeApplicationTranslationSyncPlan } from 'src/engine/core-modules/application/application-translation/utils/compute-application-translation-sync-plan.util';
 
+const frenchRow = {
+  id: 'row-fr',
+  locale: 'fr-FR' as const,
+  messages: { greeting: 'Bonjour' },
+  deletedAt: null,
+};
+
 describe('computeApplicationTranslationSyncPlan', () => {
-  it('inserts the locales a first sync brings', () => {
-    expect(
-      computeApplicationTranslationSyncPlan({
-        existingRows: [],
-        translations: { 'fr-FR': { abc123: 'Entreprise' } },
-      }),
-    ).toEqual({
-      rowsToUpdate: [],
-      rowsToInsert: [{ locale: 'fr-FR', messages: { abc123: 'Entreprise' } }],
-      rowIdsToSoftDelete: [],
-    });
-  });
-
-  it('updates a locale it already stores', () => {
-    expect(
-      computeApplicationTranslationSyncPlan({
-        existingRows: [{ id: 'row-fr', locale: 'fr-FR', deletedAt: null }],
-        translations: { 'fr-FR': { abc123: 'Société' } },
-      }),
-    ).toEqual({
-      rowsToUpdate: [{ id: 'row-fr', messages: { abc123: 'Société' } }],
-      rowsToInsert: [],
-      rowIdsToSoftDelete: [],
-    });
-  });
-
-  it('prunes only the locales the manifest dropped', () => {
+  it('derives inserts, updates and deletions from the reported changes', () => {
     const plan = computeApplicationTranslationSyncPlan({
       existingRows: [
-        { id: 'row-fr', locale: 'fr-FR', deletedAt: null },
-        { id: 'row-de', locale: 'de-DE', deletedAt: null },
+        frenchRow,
+        { ...frenchRow, id: 'row-de', locale: 'de-DE' },
       ],
-      translations: { 'fr-FR': { abc123: 'Entreprise' } },
+      translations: {
+        'fr-FR': { greeting: 'Salut' },
+        'es-ES': { greeting: 'Hola' },
+      },
     });
 
-    expect(plan.rowIdsToSoftDelete).toEqual(['row-de']);
-    expect(plan.rowsToUpdate).toEqual([
-      { id: 'row-fr', messages: { abc123: 'Entreprise' } },
+    expect(plan.actions.map(({ type, locale }) => ({ type, locale }))).toEqual([
+      { type: 'delete', locale: 'de-DE' },
+      { type: 'create', locale: 'es-ES' },
+      { type: 'update', locale: 'fr-FR' },
     ]);
+    expect(plan.rowsToInsert).toEqual([
+      { locale: 'es-ES', messages: { greeting: 'Hola' } },
+    ]);
+    expect(plan.rowsToUpdate).toEqual([
+      { id: 'row-fr', locale: 'fr-FR', messages: { greeting: 'Salut' } },
+    ]);
+    expect(plan.rowIdsToSoftDelete).toEqual(['row-de']);
   });
 
-  it('prunes every locale when the manifest declares none', () => {
+  it('does not write unchanged catalogs', () => {
     expect(
       computeApplicationTranslationSyncPlan({
-        existingRows: [
-          { id: 'row-fr', locale: 'fr-FR', deletedAt: null },
-          { id: 'row-de', locale: 'de-DE', deletedAt: null },
-        ],
-        translations: {},
-      }).rowIdsToSoftDelete,
-    ).toEqual(['row-fr', 'row-de']);
-  });
-
-  it('leaves an already soft-deleted row out of the prune list', () => {
-    expect(
-      computeApplicationTranslationSyncPlan({
-        existingRows: [
-          { id: 'row-fr', locale: 'fr-FR', deletedAt: new Date() },
-        ],
-        translations: {},
-      }).rowIdsToSoftDelete,
-    ).toEqual([]);
-  });
-
-  it('revives a soft-deleted locale instead of inserting a duplicate', () => {
-    expect(
-      computeApplicationTranslationSyncPlan({
-        existingRows: [
-          { id: 'row-fr-old', locale: 'fr-FR', deletedAt: new Date() },
-        ],
-        translations: { 'fr-FR': { abc123: 'Entreprise' } },
+        existingRows: [frenchRow],
+        translations: { 'fr-FR': frenchRow.messages },
       }),
     ).toEqual({
-      rowsToUpdate: [{ id: 'row-fr-old', messages: { abc123: 'Entreprise' } }],
+      actions: [],
       rowsToInsert: [],
+      rowsToUpdate: [],
       rowIdsToSoftDelete: [],
     });
+  });
+
+  it('revives a deleted locale but prefers an active row over older deleted rows', () => {
+    const deletedRow = {
+      ...frenchRow,
+      id: 'deleted-fr',
+      deletedAt: new Date(),
+    };
+    const translations = { 'fr-FR': { greeting: 'Salut' } };
+    const revived = computeApplicationTranslationSyncPlan({
+      existingRows: [deletedRow],
+      translations,
+    });
+    expect(revived.actions[0].type).toBe('create');
+    expect(revived.rowsToUpdate[0].id).toBe('deleted-fr');
+    expect(revived.rowsToInsert).toEqual([]);
+
+    for (const existingRows of [
+      [deletedRow, frenchRow],
+      [frenchRow, deletedRow],
+    ]) {
+      const updated = computeApplicationTranslationSyncPlan({
+        existingRows,
+        translations,
+      });
+      expect(updated.actions[0].type).toBe('update');
+      expect(updated.rowsToUpdate[0].id).toBe('row-fr');
+    }
+  });
+
+  it('prunes active rows only when the manifest explicitly declares no locales', () => {
+    const plan = computeApplicationTranslationSyncPlan({
+      existingRows: [
+        frenchRow,
+        {
+          ...frenchRow,
+          id: 'deleted-de',
+          locale: 'de-DE',
+          deletedAt: new Date(),
+        },
+      ],
+      translations: {},
+    });
+    expect(plan.rowIdsToSoftDelete).toEqual(['row-fr']);
+    expect(plan.actions).toHaveLength(1);
   });
 });
