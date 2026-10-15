@@ -135,6 +135,14 @@ describe('getEmptyRecordGqlOperationFilter', () => {
       });
     });
 
+    it('should throw for MORPH_RELATION type without morph relations', () => {
+      expect(() =>
+        getEmptyRecordGqlOperationFilter(
+          makeParams(FieldMetadataType.MORPH_RELATION),
+        ),
+      ).toThrow('Morph relation field testField has no morph relations');
+    });
+
     it('should handle UUID type', () => {
       const result = getEmptyRecordGqlOperationFilter(
         makeParams(FieldMetadataType.UUID),

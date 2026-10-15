@@ -18,6 +18,7 @@ import {
   type StringFilter,
   type UUIDFilter,
 } from '@/types';
+import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { CustomError } from '@/utils/errors';
 import { computeMorphRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
 import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/computeEmptyGqlOperationFilterForEmails';
@@ -335,19 +336,26 @@ export const getEmptyRecordGqlOperationFilter = ({
       break;
     case 'RELATION':
       if (correspondingField.type === FieldMetadataType.MORPH_RELATION) {
+        const { morphRelations } = correspondingField;
+
+        if (!isNonEmptyArray(morphRelations)) {
+          throw new CustomError(
+            `Morph relation field ${correspondingField.name} has no morph relations`,
+            'MISSING_MORPH_RELATIONS_FOR_EMPTY_FILTER',
+          );
+        }
+
         emptyRecordFilter = {
-          and: (correspondingField.morphRelations ?? []).map(
-            (morphRelation) => ({
-              [computeMorphRelationGqlFieldJoinColumnName({
-                fieldName: correspondingField.name,
-                relationType: morphRelation.type,
-                targetObjectMetadataNameSingular:
-                  morphRelation.targetObjectMetadata.nameSingular,
-                targetObjectMetadataNamePlural:
-                  morphRelation.targetObjectMetadata.namePlural,
-              })]: { is: 'NULL' } as RelationFilter,
-            }),
-          ),
+          and: morphRelations.map((morphRelation) => ({
+            [computeMorphRelationGqlFieldJoinColumnName({
+              fieldName: correspondingField.name,
+              relationType: morphRelation.type,
+              targetObjectMetadataNameSingular:
+                morphRelation.targetObjectMetadata.nameSingular,
+              targetObjectMetadataNamePlural:
+                morphRelation.targetObjectMetadata.namePlural,
+            })]: { is: 'NULL' } satisfies RelationFilter,
+          })),
         };
         break;
       }
