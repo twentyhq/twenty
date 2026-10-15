@@ -25,13 +25,16 @@ export type ServerRouteResolverHandler<TPayload = any> = (
   context: LogicFunctionExecutionContext,
 ) => ServerRouteResolverResult | Promise<ServerRouteResolverResult>;
 
-type LogicFunctionConfigBase = Omit<
-  LogicFunctionManifest,
-  | 'sourceHandlerPath'
-  | 'builtHandlerPath'
-  | 'builtHandlerChecksum'
-  | 'handlerName'
-  | 'serverRouteTriggerSettings'
+type LogicFunctionConfigBase = WithTranslatableProperties<
+  Omit<
+    LogicFunctionManifest,
+    | 'sourceHandlerPath'
+    | 'builtHandlerPath'
+    | 'builtHandlerChecksum'
+    | 'handlerName'
+    | 'serverRouteTriggerSettings'
+  >,
+  'name' | 'description'
 >;
 
 export type LogicFunctionConfig = LogicFunctionConfigBase &
@@ -45,8 +48,3 @@ export type LogicFunctionConfig = LogicFunctionConfigBase &
         handler: ServerRouteResolverHandler;
       }
   );
-
-export type TranslatableLogicFunctionConfig = WithTranslatableProperties<
-  LogicFunctionConfig,
-  'name' | 'description'
->;

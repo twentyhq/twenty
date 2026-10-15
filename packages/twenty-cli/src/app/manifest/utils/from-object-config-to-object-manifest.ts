@@ -1,3 +1,4 @@
+import { type WithSerializedMessages } from '@/app/manifest/types/translatable-text.type';
 import { type ObjectConfig } from '@/app/manifest/types/object-config.type';
 import { addMissingFieldOptionIds } from '@/app/manifest/utils/add-missing-field-option-ids';
 import { getDefaultFieldsInObjectFields } from '@/app/manifest/utils/get-default-fields-in-object-fields';
@@ -7,7 +8,7 @@ export const fromObjectConfigToObjectManifest = ({
   objectConfig,
   applicationUniversalIdentifier,
 }: {
-  objectConfig: ObjectConfig;
+  objectConfig: WithSerializedMessages<ObjectConfig>;
   applicationUniversalIdentifier: string;
 }): { objectManifest: ObjectManifest | null; errors: string[] } => {
   const { objectFields: objectFieldsWithDefaults } =

@@ -1,4 +1,5 @@
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
+import { type WithSerializedMessages } from '@/sdk/define/common/types/translatable-text.type';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -8,7 +9,11 @@ const APP_UID = '11111111-1111-4111-8111-111111111111';
 const OBJECT_UID = '22222222-2222-4222-8222-222222222222';
 const RELATION_FIELD_UID = '33333333-3333-4333-8333-333333333333';
 
-const buildObjectConfig = (overrides: Partial<ObjectConfig>): ObjectConfig =>
+type SerializedObjectConfig = WithSerializedMessages<ObjectConfig>;
+
+const buildObjectConfig = (
+  overrides: Partial<SerializedObjectConfig>,
+): SerializedObjectConfig =>
   ({
     universalIdentifier: OBJECT_UID,
     nameSingular: 'petCareAgreement',
@@ -24,7 +29,7 @@ const buildObjectConfig = (overrides: Partial<ObjectConfig>): ObjectConfig =>
       },
     ],
     ...overrides,
-  }) as unknown as ObjectConfig;
+  }) as unknown as SerializedObjectConfig;
 
 describe('getDefaultFieldsInObjectFields', () => {
   it('should append a name field when the object declares none', () => {
@@ -55,7 +60,7 @@ describe('getDefaultFieldsInObjectFields', () => {
             type: FieldMetadataType.TEXT,
           },
         ],
-      } as unknown as Partial<ObjectConfig>),
+      } as unknown as Partial<SerializedObjectConfig>),
       applicationUniversalIdentifier: APP_UID,
     });
 

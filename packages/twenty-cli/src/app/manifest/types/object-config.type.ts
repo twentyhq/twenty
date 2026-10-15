@@ -3,11 +3,8 @@ import { type TranslatableObjectFieldManifest } from '@/app/manifest/types/trans
 
 export type ObjectConfig = Omit<
   ObjectManifest,
-  'labelIdentifierFieldMetadataUniversalIdentifier'
+  'labelIdentifierFieldMetadataUniversalIdentifier' | 'fields'
 > & {
   labelIdentifierFieldMetadataUniversalIdentifier?: string;
-};
-
-export type TranslatableObjectConfig = Omit<ObjectConfig, 'fields'> & {
   fields: TranslatableObjectFieldManifest[];
 };

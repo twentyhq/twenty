@@ -1,3 +1,4 @@
+import { type WithSerializedMessages } from '@/app/manifest/types/translatable-text.type';
 import { isLabelFieldDefinedOutsideObject } from '@/app/manifest/utils/is-label-field-defined-outside-object';
 import type { ObjectConfig } from '@/app/manifest/types/object-config.type';
 import {
@@ -10,7 +11,7 @@ const getDefaultNameObjectField = ({
   objectConfig,
   applicationUniversalIdentifier,
 }: {
-  objectConfig: ObjectConfig;
+  objectConfig: WithSerializedMessages<ObjectConfig>;
   applicationUniversalIdentifier: string;
 }): ObjectFieldManifest => ({
   name: 'name',
@@ -31,7 +32,7 @@ export const getDefaultFieldsInObjectFields = ({
   objectConfig,
   applicationUniversalIdentifier,
 }: {
-  objectConfig: ObjectConfig;
+  objectConfig: WithSerializedMessages<ObjectConfig>;
   applicationUniversalIdentifier: string;
 }): { objectFields: ObjectFieldManifest[] } => {
   const objectConfigFieldNames = (objectConfig.fields ?? []).map(

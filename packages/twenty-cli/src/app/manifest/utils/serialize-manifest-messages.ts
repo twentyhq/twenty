@@ -5,15 +5,9 @@ import {
 } from 'twenty-shared/i18n';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import {
-  type ApplicationConfig,
-  type TranslatableApplicationConfig,
-} from '@/app/manifest/types/application-config.type';
+import { type ApplicationConfig } from '@/app/manifest/types/application-config.type';
 import { type WithSerializedMessages } from '@/app/manifest/types/translatable-text.type';
-import {
-  type ObjectConfig,
-  type TranslatableObjectConfig,
-} from '@/app/manifest/types/object-config.type';
+import { type ObjectConfig } from '@/app/manifest/types/object-config.type';
 import { type MessageDescriptor } from '@/app/translations/message';
 
 export const serializeManifestMessages = <TValue>({
@@ -59,9 +53,9 @@ export const serializeObjectMessages = ({
   objectConfig,
   messages,
 }: {
-  objectConfig: TranslatableObjectConfig;
+  objectConfig: ObjectConfig;
   messages: MessageDescriptor[];
-}): ObjectConfig => ({
+}): WithSerializedMessages<ObjectConfig> => ({
   ...objectConfig,
   fields: (objectConfig.fields ?? []).map((field) =>
     serializeManifestMessages({
@@ -80,9 +74,9 @@ export const serializeApplicationMessages = ({
   },
   messages,
 }: {
-  applicationConfig: TranslatableApplicationConfig;
+  applicationConfig: ApplicationConfig;
   messages: MessageDescriptor[];
-}): ApplicationConfig => ({
+}): WithSerializedMessages<ApplicationConfig> => ({
   ...serializeManifestMessages({
     entity: 'application',
     value: applicationConfig,

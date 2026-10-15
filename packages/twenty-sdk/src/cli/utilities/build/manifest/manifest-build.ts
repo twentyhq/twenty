@@ -19,34 +19,28 @@ import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/mani
 import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
-import {
-  type ApplicationConfig,
-  type TranslatableApplicationConfig,
-} from '@/sdk/define/application/application-config';
-import { type TranslatableLogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
-import { type TranslatableAgentConfig } from '@/sdk/define/agents/agent-config';
-import { type TranslatableConnectionProviderConfig } from '@/sdk/define/connection-providers/connection-provider-config';
+import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
+import { type AgentConfig } from '@/sdk/define/agents/agent-config';
+import { type ConnectionProviderConfig } from '@/sdk/define/connection-providers/connection-provider-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
-import { type TranslatableFrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';
-import { type TranslatablePostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
-import { type TranslatablePreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
-import {
-  type ObjectConfig,
-  type TranslatableObjectConfig,
-} from '@/sdk/define/objects/object-config';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
+import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
-import { type TranslatablePermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
-import {
-  type RoleConfig,
-  type TranslatableRoleConfig,
-} from '@/sdk/define/roles/role-config';
-import { type TranslatableSkillConfig } from '@/sdk/define/skills/skill-config';
+import { type PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
+import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { type SkillConfig } from '@/sdk/define/skills/skill-config';
 import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
-import { type TranslatableFieldManifest } from '@/sdk/define/common/types/translatable-text.type';
+import {
+  type TranslatableFieldManifest,
+  type WithSerializedMessages,
+} from '@/sdk/define/common/types/translatable-text.type';
 import { type MessageDescriptor } from '@/sdk/front-component/translations/message';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
@@ -127,9 +121,9 @@ export const buildManifest = async (
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  let applicationConfig: ApplicationConfig | undefined;
-  const objectConfigs: ObjectConfig[] = [];
-  const roleConfigs: RoleConfig[] = [];
+  let applicationConfig: WithSerializedMessages<ApplicationConfig> | undefined;
+  const objectConfigs: WithSerializedMessages<ObjectConfig>[] = [];
+  const roleConfigs: WithSerializedMessages<RoleConfig>[] = [];
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
@@ -202,7 +196,7 @@ export const buildManifest = async (
     switch (entity) {
       case ManifestEntityKey.Application: {
         const extract =
-          await extractManifestFromFile<TranslatableApplicationConfig>({
+          await extractManifestFromFile<ApplicationConfig>({
             appPath,
             filePath,
           });
@@ -217,7 +211,7 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Objects: {
-        const extract = await extractManifestFromFile<TranslatableObjectConfig>(
+        const extract = await extractManifestFromFile<ObjectConfig>(
           {
             appPath,
             filePath,
@@ -257,7 +251,7 @@ export const buildManifest = async (
       }
       case ManifestEntityKey.PermissionFlags: {
         const extract =
-          await extractManifestFromFile<TranslatablePermissionFlagConfig>({
+          await extractManifestFromFile<PermissionFlagConfig>({
             appPath,
             filePath,
           });
@@ -274,7 +268,7 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Roles: {
-        const extract = await extractManifestFromFile<TranslatableRoleConfig>({
+        const extract = await extractManifestFromFile<RoleConfig>({
           appPath,
           filePath,
         });
@@ -298,7 +292,7 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Skills: {
-        const extract = await extractManifestFromFile<TranslatableSkillConfig>({
+        const extract = await extractManifestFromFile<SkillConfig>({
           appPath,
           filePath,
         });
@@ -315,7 +309,7 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Agents: {
-        const extract = await extractManifestFromFile<TranslatableAgentConfig>({
+        const extract = await extractManifestFromFile<AgentConfig>({
           appPath,
           filePath,
         });
@@ -333,7 +327,7 @@ export const buildManifest = async (
       }
       case ManifestEntityKey.ConnectionProviders: {
         const extract =
-          await extractManifestFromFile<TranslatableConnectionProviderConfig>({
+          await extractManifestFromFile<ConnectionProviderConfig>({
             appPath,
             filePath,
           });
@@ -351,7 +345,7 @@ export const buildManifest = async (
       }
       case ManifestEntityKey.LogicFunctions: {
         const extract =
-          await extractManifestFromFile<TranslatableLogicFunctionConfig>({
+          await extractManifestFromFile<LogicFunctionConfig>({
             appPath,
             filePath,
           });
@@ -412,7 +406,7 @@ export const buildManifest = async (
           targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
         ) {
           const postInstallHookConfig =
-            extract.config as TranslatablePostInstallLogicFunctionConfig;
+            extract.config as PostInstallLogicFunctionConfig;
 
           postInstallLogicFunctions.push({
             universalIdentifier: extract.config.universalIdentifier,
@@ -427,7 +421,7 @@ export const buildManifest = async (
           targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
         ) {
           const preInstallHookConfig =
-            extract.config as TranslatablePreInstallLogicFunctionConfig;
+            extract.config as PreInstallLogicFunctionConfig;
 
           preInstallLogicFunctions.push({
             universalIdentifier: extract.config.universalIdentifier,
@@ -454,7 +448,7 @@ export const buildManifest = async (
       }
       case ManifestEntityKey.FrontComponents: {
         const extract =
-          await extractManifestFromFile<TranslatableFrontComponentConfig>({
+          await extractManifestFromFile<FrontComponentConfig>({
             appPath,
             filePath,
           });

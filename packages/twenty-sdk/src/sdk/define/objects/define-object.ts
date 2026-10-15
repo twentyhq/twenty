@@ -3,11 +3,9 @@ import { createValidationResult } from '@/sdk/define/common/utils/create-validat
 import { getFieldDefaultValueWarnings } from '@/sdk/define/fields/get-field-default-value-warnings';
 import { validateFields } from '@/sdk/define/fields/validate-fields';
 import { isEngineDerivedLabelIdentifier } from '@/sdk/define/objects/is-engine-derived-label-identifier';
-import { type TranslatableObjectConfig } from '@/sdk/define/objects/object-config';
+import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 
-export const defineObject: DefineEntity<TranslatableObjectConfig> = (
-  config,
-) => {
+export const defineObject: DefineEntity<ObjectConfig> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {

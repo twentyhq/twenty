@@ -1,3 +1,4 @@
+import { type WithSerializedMessages } from '@/app/manifest/types/translatable-text.type';
 import { type LogicFunctionConfig } from '@/app/manifest/types/logic-function-config.type';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
 import {
@@ -10,7 +11,7 @@ export const fromLogicFunctionConfigToLogicFunctionManifest = async ({
   sourceCode,
   sourcePath,
 }: {
-  logicFunctionConfig: LogicFunctionConfig;
+  logicFunctionConfig: WithSerializedMessages<LogicFunctionConfig>;
   sourceCode: string;
   sourcePath: string;
 }): Promise<LogicFunctionManifest> => {

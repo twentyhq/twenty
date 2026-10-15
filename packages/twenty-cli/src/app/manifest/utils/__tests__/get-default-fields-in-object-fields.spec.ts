@@ -1,6 +1,7 @@
 import { isEngineDerivedLabelIdentifier } from '../../../../../../twenty-sdk/src/sdk/define/objects/is-engine-derived-label-identifier';
 import { getDefaultFieldsInObjectFields } from '@/app/manifest/utils/get-default-fields-in-object-fields';
 import { type ObjectConfig } from '@/app/manifest/types/object-config.type';
+import { type WithSerializedMessages } from '@/app/manifest/types/translatable-text.type';
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { describe, expect, it } from 'vitest';
@@ -9,7 +10,11 @@ const APP_UID = '11111111-1111-4111-8111-111111111111';
 const OBJECT_UID = '22222222-2222-4222-8222-222222222222';
 const RELATION_FIELD_UID = '33333333-3333-4333-8333-333333333333';
 
-const buildObjectConfig = (overrides: Partial<ObjectConfig>): ObjectConfig =>
+type SerializedObjectConfig = WithSerializedMessages<ObjectConfig>;
+
+const buildObjectConfig = (
+  overrides: Partial<SerializedObjectConfig>,
+): SerializedObjectConfig =>
   ({
     universalIdentifier: OBJECT_UID,
     nameSingular: 'petCareAgreement',
@@ -25,7 +30,7 @@ const buildObjectConfig = (overrides: Partial<ObjectConfig>): ObjectConfig =>
       },
     ],
     ...overrides,
-  }) as unknown as ObjectConfig;
+  }) as unknown as SerializedObjectConfig;
 
 describe('getDefaultFieldsInObjectFields', () => {
   it.each([
@@ -98,7 +103,7 @@ describe('getDefaultFieldsInObjectFields', () => {
             type: FieldMetadataType.TEXT,
           },
         ],
-      } as unknown as Partial<ObjectConfig>),
+      } as unknown as Partial<SerializedObjectConfig>),
       applicationUniversalIdentifier: APP_UID,
     });
 

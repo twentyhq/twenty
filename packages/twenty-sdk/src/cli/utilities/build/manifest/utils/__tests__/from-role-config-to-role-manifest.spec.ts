@@ -1,5 +1,8 @@
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
+import { type WithSerializedMessages } from '@/sdk/define/common/types/translatable-text.type';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+
+type SerializedRoleConfig = WithSerializedMessages<RoleConfig>;
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -20,12 +23,12 @@ const OBJECT_PERMISSION_UNIVERSAL_IDENTIFIER =
 const FIELD_PERMISSION_UNIVERSAL_IDENTIFIER =
   '44444444-0000-4000-8000-000000000000';
 
-const baseConfig: RoleConfig = {
+const baseConfig: SerializedRoleConfig = {
   universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Partner',
 };
 
-const convert = (roleConfig: RoleConfig) =>
+const convert = (roleConfig: SerializedRoleConfig) =>
   fromRoleConfigToRoleManifest({
     roleConfig,
     applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -93,7 +96,7 @@ describe('fromRoleConfigToRoleManifest', () => {
   });
 
   it('passes predicates through with their explicit universalIdentifier', () => {
-    const config: RoleConfig = {
+    const config: SerializedRoleConfig = {
       ...baseConfig,
       rowLevelPermissionPredicates: [
         {
@@ -117,7 +120,7 @@ describe('fromRoleConfigToRoleManifest', () => {
   });
 
   it('passes predicate groups through with their explicit universalIdentifier', () => {
-    const config: RoleConfig = {
+    const config: SerializedRoleConfig = {
       ...baseConfig,
       rowLevelPermissionPredicateGroups: [
         {

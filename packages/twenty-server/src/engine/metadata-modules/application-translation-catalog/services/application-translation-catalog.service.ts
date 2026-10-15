@@ -24,7 +24,7 @@ import { type ManifestMessageRequestContext } from 'src/engine/metadata-modules/
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { resolveRegistrationIdByApplicationId } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-registration-id-by-application-id.util';
 import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
-import { resolveEffectiveFieldMetadataRecordOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-record-options.util';
+import { resolveEffectiveNestedTranslatableProperties } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-nested-translatable-properties.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import { resolveEffectiveManifestMessage } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
@@ -334,12 +334,11 @@ export class ApplicationTranslationCatalogService {
           entity,
           i18nContext,
         }),
-        ...(metadataName === 'fieldMetadata'
-          ? resolveEffectiveFieldMetadataRecordOptions({
-              record: entity,
-              i18nContext,
-            })
-          : {}),
+        ...resolveEffectiveNestedTranslatableProperties({
+          metadataName,
+          record: entity,
+          i18nContext,
+        }),
       };
     });
   }

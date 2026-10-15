@@ -1,3 +1,4 @@
+import { type WithSerializedMessages } from '@/app/manifest/types/translatable-text.type';
 import { type RoleConfig } from '@/app/manifest/types/role-config.type';
 import {
   getFieldPermissionUniversalIdentifier,
@@ -9,7 +10,7 @@ export const fromRoleConfigToRoleManifest = ({
   roleConfig,
   applicationUniversalIdentifier,
 }: {
-  roleConfig: RoleConfig;
+  roleConfig: WithSerializedMessages<RoleConfig>;
   applicationUniversalIdentifier: string;
 }): RoleManifest => {
   return {

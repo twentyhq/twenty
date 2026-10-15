@@ -11,7 +11,7 @@ import {
   resolveEffectiveEntityPropertyByName,
   resolveEffectiveManifestMessages,
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
-import { resolveEffectiveFieldMetadataRecordOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-record-options.util';
+import { resolveEffectiveNestedTranslatableProperties } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-nested-translatable-properties.util';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 import { isTranslatableMetadataName } from 'src/engine/subscriptions/metadata-event/utils/is-translatable-metadata-name.util';
 
@@ -84,12 +84,12 @@ export const resolveMetadataEventRecord = ({
     }
   }
 
-  if (metadataName === 'fieldMetadata') {
-    return {
-      ...resolved,
-      ...resolveEffectiveFieldMetadataRecordOptions({ record, i18nContext }),
-    };
-  }
-
-  return resolved;
+  return {
+    ...resolved,
+    ...resolveEffectiveNestedTranslatableProperties({
+      metadataName,
+      record,
+      i18nContext,
+    }),
+  };
 };

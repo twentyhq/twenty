@@ -5,7 +5,7 @@ import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import { resolveEffectiveEntityPropertyByName } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
-import { resolveEffectiveFieldMetadataRecordOptions } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-field-metadata-record-options.util';
+import { resolveEffectiveNestedTranslatableProperties } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-nested-translatable-properties.util';
 import {
   type OverridableFlatEntity,
   resolveEffectiveFlatEntityProperty,
@@ -48,13 +48,12 @@ export const resolveEffectiveTranslatedFlatEntity = <
     flatEntity,
   );
 
-  return metadataName === 'fieldMetadata'
-    ? {
-        ...translatedFlatEntity,
-        ...resolveEffectiveFieldMetadataRecordOptions({
-          record: flatEntity,
-          i18nContext,
-        }),
-      }
-    : translatedFlatEntity;
+  return {
+    ...translatedFlatEntity,
+    ...resolveEffectiveNestedTranslatableProperties({
+      metadataName,
+      record: flatEntity,
+      i18nContext,
+    }),
+  };
 };

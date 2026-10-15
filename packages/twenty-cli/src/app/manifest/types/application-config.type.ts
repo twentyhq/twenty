@@ -12,21 +12,7 @@ import {
   type WithTranslatableProperties,
 } from '@/app/manifest/types/translatable-text.type';
 
-export type ApplicationConfig = Omit<
-  ApplicationManifest,
-  | 'packageJsonChecksum'
-  | 'yarnLockChecksum'
-  | 'requiredServerVersionRange'
-  | 'postInstallLogicFunction'
-  | 'preInstallLogicFunction'
-  | 'settingsFrontComponent'
-  | 'defaultRoleUniversalIdentifier'
-  | 'aboutDescription'
-> & {
-  defaultRoleUniversalIdentifier?: string;
-};
-
-type TranslatableApplicationBilling = Omit<
+type ApplicationBillingConfig = Omit<
   WithTranslatableProperties<ApplicationBilling, 'description'>,
   'recurring' | 'operations'
 > & {
@@ -41,10 +27,24 @@ type TranslatableApplicationBilling = Omit<
   >;
 };
 
-export type TranslatableApplicationConfig = Omit<
-  WithTranslatableProperties<ApplicationConfig, 'displayName' | 'description'>,
-  'applicationVariables' | 'serverVariables' | 'billing'
+export type ApplicationConfig = Omit<
+  WithTranslatableProperties<
+    ApplicationManifest,
+    'displayName' | 'description'
+  >,
+  | 'packageJsonChecksum'
+  | 'yarnLockChecksum'
+  | 'requiredServerVersionRange'
+  | 'postInstallLogicFunction'
+  | 'preInstallLogicFunction'
+  | 'settingsFrontComponent'
+  | 'defaultRoleUniversalIdentifier'
+  | 'aboutDescription'
+  | 'applicationVariables'
+  | 'serverVariables'
+  | 'billing'
 > & {
+  defaultRoleUniversalIdentifier?: string;
   applicationVariables?: Record<
     string,
     WithTranslatableOptionLabels<
@@ -57,5 +57,5 @@ export type TranslatableApplicationConfig = Omit<
       WithTranslatableProperties<ServerVariables[string], 'description'>
     >
   >;
-  billing?: TranslatableApplicationBilling;
+  billing?: ApplicationBillingConfig;
 };

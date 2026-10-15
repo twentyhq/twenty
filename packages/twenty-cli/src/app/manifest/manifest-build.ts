@@ -20,26 +20,17 @@ import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/valid
 import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/app/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
-import {
-  type ApplicationConfig,
-  type TranslatableApplicationConfig,
-} from '@/app/manifest/types/application-config.type';
-import { type TranslatableLogicFunctionConfig } from '@/app/manifest/types/logic-function-config.type';
+import { type ApplicationConfig } from '@/app/manifest/types/application-config.type';
+import { type LogicFunctionConfig } from '@/app/manifest/types/logic-function-config.type';
 import { type CommandMenuItemConfig } from '@/app/manifest/types/command-menu-item-config.type';
-import { type TranslatableFrontComponentConfig } from '@/app/manifest/types/front-component-config.type';
+import { type FrontComponentConfig } from '@/app/manifest/types/front-component-config.type';
 import { type IndexConfig } from '@/app/manifest/types/index-config.type';
 import { type PostInstallLogicFunctionConfig } from '@/app/manifest/types/post-install-logic-function-config.type';
 import { type PreInstallLogicFunctionConfig } from '@/app/manifest/types/pre-install-logic-function-config.type';
-import {
-  type ObjectConfig,
-  type TranslatableObjectConfig,
-} from '@/app/manifest/types/object-config.type';
+import { type ObjectConfig } from '@/app/manifest/types/object-config.type';
 import { type PageLayoutConfig } from '@/app/manifest/types/page-layout-config.type';
 import { type PageLayoutTabConfig } from '@/app/manifest/types/page-layout-tab-config.type';
-import {
-  type RoleConfig,
-  type TranslatableRoleConfig,
-} from '@/app/manifest/types/role-config.type';
+import { type RoleConfig } from '@/app/manifest/types/role-config.type';
 import { type TimelineActivityTypeConfig } from '@/app/manifest/types/timeline-activity-type-config.type';
 import { type SettingsMenuItemConfig } from '@/app/manifest/types/settings-menu-item-config.type';
 import { type ViewConfig } from '@/app/manifest/types/view-config.type';
@@ -49,6 +40,7 @@ import {
   type TranslatableFieldManifest,
   type TranslatablePermissionFlagManifest,
   type TranslatableSkillManifest,
+  type WithSerializedMessages,
 } from '@/app/manifest/types/translatable-text.type';
 import { type MessageDescriptor } from '@/app/translations/message';
 import { readFile } from 'node:fs/promises';
@@ -122,9 +114,9 @@ export const buildManifest = async (
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  let applicationConfig: ApplicationConfig | undefined;
-  const objectConfigs: ObjectConfig[] = [];
-  const roleConfigs: RoleConfig[] = [];
+  let applicationConfig: WithSerializedMessages<ApplicationConfig> | undefined;
+  const objectConfigs: WithSerializedMessages<ObjectConfig>[] = [];
+  const roleConfigs: WithSerializedMessages<RoleConfig>[] = [];
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
@@ -196,11 +188,10 @@ export const buildManifest = async (
 
     switch (entity) {
       case 'application': {
-        const extract =
-          await extractManifestFromFile<TranslatableApplicationConfig>({
-            appPath,
-            filePath,
-          });
+        const extract = await extractManifestFromFile<ApplicationConfig>({
+          appPath,
+          filePath,
+        });
 
         applicationConfig = serializeApplicationMessages({
           applicationConfig: extract.config,
@@ -212,12 +203,10 @@ export const buildManifest = async (
         break;
       }
       case 'objects': {
-        const extract = await extractManifestFromFile<TranslatableObjectConfig>(
-          {
-            appPath,
-            filePath,
-          },
-        );
+        const extract = await extractManifestFromFile<ObjectConfig>({
+          appPath,
+          filePath,
+        });
 
         objectConfigs.push(
           serializeObjectMessages({
@@ -269,7 +258,7 @@ export const buildManifest = async (
         break;
       }
       case 'roles': {
-        const extract = await extractManifestFromFile<TranslatableRoleConfig>({
+        const extract = await extractManifestFromFile<RoleConfig>({
           appPath,
           filePath,
         });
@@ -349,11 +338,10 @@ export const buildManifest = async (
         break;
       }
       case 'logicFunctions': {
-        const extract =
-          await extractManifestFromFile<TranslatableLogicFunctionConfig>({
-            appPath,
-            filePath,
-          });
+        const extract = await extractManifestFromFile<LogicFunctionConfig>({
+          appPath,
+          filePath,
+        });
         const logicFunctionConfig = serializeManifestMessages({
           entity: 'logicFunction',
           value: extract.config,
@@ -420,11 +408,10 @@ export const buildManifest = async (
         break;
       }
       case 'frontComponents': {
-        const extract =
-          await extractManifestFromFile<TranslatableFrontComponentConfig>({
-            appPath,
-            filePath,
-          });
+        const extract = await extractManifestFromFile<FrontComponentConfig>({
+          appPath,
+          filePath,
+        });
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));

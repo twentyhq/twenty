@@ -4,18 +4,16 @@ import { type WithTranslatableProperties } from '@/app/manifest/types/translatab
 
 export type FrontComponentType = { name: string };
 
-export type FrontComponentConfig = Omit<
-  FrontComponentManifest,
-  | 'sourceComponentPath'
-  | 'builtComponentPath'
-  | 'builtComponentChecksum'
-  | 'componentName'
-  | 'usesSdkClient'
+export type FrontComponentConfig = WithTranslatableProperties<
+  Omit<
+    FrontComponentManifest,
+    | 'sourceComponentPath'
+    | 'builtComponentPath'
+    | 'builtComponentChecksum'
+    | 'componentName'
+    | 'usesSdkClient'
+  >,
+  'name' | 'description'
 > & {
   component: FrontComponentType;
 };
-
-export type TranslatableFrontComponentConfig = WithTranslatableProperties<
-  FrontComponentConfig,
-  'name' | 'description'
->;

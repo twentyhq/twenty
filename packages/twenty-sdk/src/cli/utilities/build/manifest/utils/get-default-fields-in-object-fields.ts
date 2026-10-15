@@ -1,3 +1,4 @@
+import { type WithSerializedMessages } from '@/sdk/define/common/types/translatable-text.type';
 import { isEngineDerivedLabelIdentifier } from '@/sdk/define/objects/is-engine-derived-label-identifier';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
@@ -10,7 +11,7 @@ const getDefaultNameObjectField = ({
   objectConfig,
   applicationUniversalIdentifier,
 }: {
-  objectConfig: ObjectConfig;
+  objectConfig: WithSerializedMessages<ObjectConfig>;
   applicationUniversalIdentifier: string;
 }): ObjectFieldManifest => ({
   name: 'name',
@@ -31,7 +32,7 @@ export const getDefaultFieldsInObjectFields = ({
   objectConfig,
   applicationUniversalIdentifier,
 }: {
-  objectConfig: ObjectConfig;
+  objectConfig: WithSerializedMessages<ObjectConfig>;
   applicationUniversalIdentifier: string;
 }): { objectFields: ObjectFieldManifest[] } => {
   const objectConfigFieldNames = (objectConfig.fields ?? []).map(
