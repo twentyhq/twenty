@@ -1,6 +1,5 @@
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
 
@@ -203,8 +202,7 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
   it('should point record filters on a morph relation target at the morph relation field', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [{ id: 'filter-1', fieldMetadataId: 'morph-target' }],
-      recordFilterGroups: [],
-    } as unknown as ChartFilters;
+    } as ChartFilters;
 
     const result = dropChartRecordFiltersWithDeletedFields({
       chartFilters,
@@ -212,10 +210,8 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
         {
           id: 'morph-head',
           isActive: true,
-          morphRelations: [
-            { sourceFieldMetadata: { id: 'morph-target', name: 'ownerPet' } },
-          ],
-        } as FieldMetadataItem,
+          morphRelations: [{ sourceFieldMetadata: { id: 'morph-target' } }],
+        },
       ],
     });
 

@@ -8,10 +8,9 @@ export const dropChartRecordFiltersWithDeletedFields = ({
   fieldMetadataItems,
 }: {
   chartFilters: ChartFilters;
-  fieldMetadataItems: Pick<
-    FieldMetadataItem,
-    'id' | 'isActive' | 'morphRelations'
-  >[];
+  fieldMetadataItems: (Pick<FieldMetadataItem, 'id' | 'isActive'> & {
+    morphRelations?: { sourceFieldMetadata: { id: string } }[] | null;
+  })[];
 }): ChartFilters => {
   const activeFieldMetadataItems = fieldMetadataItems.filter(
     (fieldMetadataItem) => fieldMetadataItem.isActive,

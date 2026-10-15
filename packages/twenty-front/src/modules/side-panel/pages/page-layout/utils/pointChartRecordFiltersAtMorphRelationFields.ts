@@ -6,7 +6,9 @@ export const pointChartRecordFiltersAtMorphRelationFields = ({
   fieldMetadataItems,
 }: {
   recordFilters: RecordFilter[];
-  fieldMetadataItems: Pick<FieldMetadataItem, 'id' | 'morphRelations'>[];
+  fieldMetadataItems: (Pick<FieldMetadataItem, 'id'> & {
+    morphRelations?: { sourceFieldMetadata: { id: string } }[] | null;
+  })[];
 }): RecordFilter[] => {
   const fieldMetadataIdByMorphRelationTargetId = new Map(
     fieldMetadataItems.flatMap((fieldMetadataItem) =>
