@@ -118,6 +118,7 @@ export type AgentMessage = {
   id: Scalars['UUID']['output'];
   parts: Array<AgentMessagePart>;
   processedAt?: Maybe<Scalars['DateTime']['output']>;
+  reactions: Array<AgentMessageReactionSummary>;
   role: Scalars['String']['output'];
   senderUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   senderWorkspaceMemberId?: Maybe<Scalars['UUID']['output']>;
@@ -154,6 +155,12 @@ export type AgentMessagePart = {
   toolName?: Maybe<Scalars['String']['output']>;
   toolOutput?: Maybe<Scalars['JSON']['output']>;
   type: Scalars['String']['output'];
+};
+
+export type AgentMessageReactionSummary = {
+  __typename?: 'AgentMessageReactionSummary';
+  emoji: Scalars['String']['output'];
+  workspaceMemberIds: Array<Scalars['UUID']['output']>;
 };
 
 export type AgentRun = {
@@ -3137,6 +3144,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateSkill: Skill;
   activateWorkspace: Workspace;
+  addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
@@ -3286,6 +3294,7 @@ export type Mutation = {
   installMarketplaceApp: Scalars['Boolean']['output'];
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
+  removeAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
@@ -3427,6 +3436,12 @@ export type MutationActivateSkillArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
+};
+
+
+export type MutationAddAgentChatMessageReactionArgs = {
+  emoji: Scalars['String']['input'];
+  messageId: Scalars['UUID']['input'];
 };
 
 
@@ -4133,6 +4148,12 @@ export type MutationInstallApplicationArgs = {
 export type MutationInstallMarketplaceAppArgs = {
   universalIdentifier: Scalars['String']['input'];
   version?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationRemoveAgentChatMessageReactionArgs = {
+  emoji: Scalars['String']['input'];
+  messageId: Scalars['UUID']['input'];
 };
 
 
