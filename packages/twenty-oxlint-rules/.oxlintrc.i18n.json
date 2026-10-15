@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
   "jsPlugins": ["eslint-plugin-lingui"],
   "categories": {
     "correctness": "off"

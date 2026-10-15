@@ -35,9 +35,9 @@
       },
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
-        "{workspaceRoot}/packages/twenty-front/.oxlintrc.i18n.json",
-        "{workspaceRoot}/packages/twenty-front/scripts/check-unlocalized-strings.mjs",
-        "{workspaceRoot}/packages/twenty-front/scripts/filter-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/.oxlintrc.i18n.json",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs",
         "{projectRoot}/package.json",
         "{workspaceRoot}/yarn.lock"
       ]

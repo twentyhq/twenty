@@ -62,8 +62,7 @@
         "vitest.config.ts",
         "lingui.config.ts",
         "nyc.config.cjs",
-        "jest-failures-only-reporter.cjs",
-        "scripts/**/*.mjs"
+        "jest-failures-only-reporter.cjs"
       ],
       "graphql-codegen": [
         "codegen.cjs",
@@ -75,10 +74,13 @@
         "@babel/preset-typescript",
         "buffer",
         "esbuild",
-        "eslint",
         "playwright",
         "rollup-plugin-node-polyfills"
       ]
+    },
+    "packages/twenty-oxlint-rules": {
+      "entry": ["scripts/**/*.mjs"],
+      "ignoreDependencies": ["eslint", "eslint-plugin-lingui", "oxlint"]
     },
     "packages/twenty-ui": {
       "entry": ["scripts/**/*.ts", "docs/**/*.ts"],

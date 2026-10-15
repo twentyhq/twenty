@@ -83,16 +83,16 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
-        "{projectRoot}/.oxlintrc.i18n.json",
-        "{projectRoot}/scripts/check-unlocalized-strings.mjs",
-        "{projectRoot}/scripts/filter-unlocalized-strings.mjs",
-        "{projectRoot}/scripts/filter-unlocalized-strings.test.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/.oxlintrc.i18n.json",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.test.mjs",
         "{projectRoot}/package.json",
         "{workspaceRoot}/yarn.lock"
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node --test scripts/filter-unlocalized-strings.test.mjs && node scripts/check-unlocalized-strings.mjs"
+        "command": "node --test ../twenty-oxlint-rules/scripts/filter-unlocalized-strings.test.mjs && node ../twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs . src"
       }
     },
     "lint:i18n": {

@@ -23,6 +23,9 @@ jobs:
         yarn.lock
         .github/workflows/ci-emails.yaml
         packages/twenty-emails/**
+        packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs
+        packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs
+        packages/twenty-oxlint-rules/.oxlintrc.i18n.json
   emails-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

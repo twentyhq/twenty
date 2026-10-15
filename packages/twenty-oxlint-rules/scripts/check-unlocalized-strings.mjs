@@ -1,14 +1,18 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createStringDiagnosticFilter } from './filter-unlocalized-strings.mjs';
 
-const FRONTEND_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const SHARED_LINT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PACKAGE_ROOT = process.argv[2]
   ? resolve(process.cwd(), process.argv[2])
-  : FRONTEND_ROOT;
+  : process.cwd();
 const SOURCE_DIRECTORIES = process.argv.slice(3);
+const PACKAGE_CONFIG = resolve(PACKAGE_ROOT, '.oxlintrc.i18n.json');
+const LINT_CONFIG = existsSync(PACKAGE_CONFIG)
+  ? PACKAGE_CONFIG
+  : resolve(SHARED_LINT_ROOT, '.oxlintrc.i18n.json');
 const RULE_CODE = 'lingui(no-unlocalized-strings)';
 const MAX_FILE_ARGUMENT_BYTES = 64 * 1024;
 
@@ -80,9 +84,9 @@ for (const batch of fileBatches) {
   const lint = spawnSync(
     process.execPath,
     [
-      resolve(FRONTEND_ROOT, '../../node_modules/oxlint/bin/oxlint'),
+      resolve(SHARED_LINT_ROOT, '../../node_modules/oxlint/bin/oxlint'),
       '-c',
-      resolve(FRONTEND_ROOT, '.oxlintrc.i18n.json'),
+      LINT_CONFIG,
       '--format=json',
       ...batch,
     ],
