@@ -36,6 +36,7 @@ import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
@@ -84,6 +85,7 @@ export class AgentChatResolver {
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly messageReactionService: AgentChatMessageReactionService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -112,9 +114,15 @@ export class AgentChatResolver {
       workspaceMemberId,
       workspaceId,
     });
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
+    const [{ flatWorkspaceMemberMaps }, reactionsByMessageId] =
+      await Promise.all([
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatWorkspaceMemberMaps',
+        ]),
+        this.messageReactionService.findReactionsByMessageId({
+          workspaceId,
+          messageIds: messages.map(({ id }) => id),
+        }),
       ]);
 
     // Fronts cached from the release before still name senders by their
@@ -126,6 +134,7 @@ export class AgentChatResolver {
 
       return {
         ...message,
+        reactions: reactionsByMessageId.get(message.id) ?? [],
         senderUserWorkspaceId: isDefined(senderUserId)
           ? (flatWorkspaceMemberMaps.userWorkspaceIdByUserId[senderUserId] ??
             null)
