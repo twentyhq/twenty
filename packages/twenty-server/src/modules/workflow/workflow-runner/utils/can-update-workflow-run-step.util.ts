@@ -1,6 +1,4 @@
 import isEqual from 'lodash.isequal';
-import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import {
@@ -13,15 +11,10 @@ export const canUpdateWorkflowRunStep = ({
   step,
 }: {
   workflowRun: {
-    createdBy: Pick<ActorMetadata, 'context'>;
     state: { flow?: { steps?: WorkflowAction[] } } | null;
   };
   step: WorkflowAction;
 }): boolean => {
-  if (!isDefined(workflowRun.createdBy.context?.applicationId)) {
-    return true;
-  }
-
   const existingStep = workflowRun.state?.flow?.steps?.find(
     ({ id }) => id === step.id,
   );
