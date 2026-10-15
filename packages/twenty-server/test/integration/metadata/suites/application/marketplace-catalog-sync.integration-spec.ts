@@ -948,7 +948,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
           packageName: SOURCE_PACKAGE,
           version: '2.0.0',
           manifest,
-          stubRegistryArtifact: false,
+          shouldStubRegistryArtifact: false,
         });
       } finally {
         registryStub.restore();

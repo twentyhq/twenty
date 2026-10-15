@@ -9,22 +9,21 @@ import {
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 
 // Runs the catalog sync against a registry that serves a single package, so
-// the test never reaches npm. With stubRegistryArtifact false, the version
-// metadata lookup runs for real and the caller stubs the registry client.
+// the test never reaches npm.
 export const syncMarketplaceCatalogFromRegistryPackage = async ({
   packageName,
   version,
   manifest,
   asset = null,
   dist = null,
-  stubRegistryArtifact = true,
+  shouldStubRegistryArtifact = true,
 }: {
   packageName: string;
   version: string;
   manifest: Manifest;
   asset?: Buffer | null;
   dist?: RegistryArtifact | null;
-  stubRegistryArtifact?: boolean;
+  shouldStubRegistryArtifact?: boolean;
 }): Promise<void> => {
   const marketplaceService =
     getAppProviderByClassName<MarketplaceService>('MarketplaceService');
@@ -40,7 +39,7 @@ export const syncMarketplaceCatalogFromRegistryPackage = async ({
   const fetchAssetFromRegistryCdnSpy = jest
     .spyOn(marketplaceService, 'fetchAssetFromRegistryCdn')
     .mockResolvedValue(asset);
-  const findRegistryArtifactSpy = stubRegistryArtifact
+  const findRegistryArtifactSpy = shouldStubRegistryArtifact
     ? jest
         .spyOn(
           getAppProviderByClassName<ApplicationPackageFetcherService>(
