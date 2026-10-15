@@ -1,17 +1,9 @@
 import {
   type LanguageModelV4CallOptions,
-  type LanguageModelV4Content,
-  type LanguageModelV4FinishReason,
   type LanguageModelV4StreamPart,
-  type LanguageModelV4Usage,
 } from '@ai-sdk/provider';
 import { convertArrayToReadableStream, MockLanguageModelV4 } from 'ai/test';
-
-export type ScriptedModelResponse = {
-  content: LanguageModelV4Content[];
-  finishReason: LanguageModelV4FinishReason;
-  usage: LanguageModelV4Usage;
-};
+import { type ScriptedModelResponse } from 'test/utils/scripted-model-response.type';
 
 const toStreamParts = (
   { content, finishReason, usage }: ScriptedModelResponse,

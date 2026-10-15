@@ -28,10 +28,12 @@ const buildLoop = ({
   responses,
   tools,
   hasNoMoreAvailableCredits = false,
+  failingCallIndex,
 }: {
   responses: LanguageModelV4Content[][];
   tools: ToolSet;
   hasNoMoreAvailableCredits?: boolean;
+  failingCallIndex?: number;
 }) => {
   const aiBillingService = {
     decrementAndCheckAvailableCredits: jest
@@ -47,7 +49,13 @@ const buildLoop = ({
     metricsService as never,
   );
 
+  const onError = jest.fn();
+
   const model = createScriptedLanguageModel((_options, callIndex) => {
+    if (callIndex === failingCallIndex) {
+      throw new Error('provider down');
+    }
+
     const content = responses[callIndex] ?? [{ type: 'text', text: 'Done' }];
 
     return {
@@ -81,9 +89,10 @@ const buildLoop = ({
     telemetry: { functionId: 'test' },
     metricsScope: 'agent',
     offeredPausingToolNames: ['ask_person'],
+    onError,
   });
 
-  return { loop, aiBillingService };
+  return { loop, aiBillingService, onError };
 };
 
 const lookupTool = tool({
@@ -109,6 +118,25 @@ describe('AgentStepLoopService', () => {
       aiBillingService.decrementAndCheckAvailableCredits,
     ).toHaveBeenCalledTimes(2);
     expect(loop.getFinishedSteps()).toHaveLength(2);
+  });
+
+  it('keeps the steps that finished, and their charge, when a later model call fails', async () => {
+    const { loop, aiBillingService, onError } = buildLoop({
+      responses: [[toolCall('lookup', { query: 'acme' })]],
+      tools: { lookup: lookupTool },
+      failingCallIndex: 1,
+    });
+
+    await loop.stream.consumeStream();
+
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'provider down' }),
+    );
+    expect(loop.getFinishedSteps()).toHaveLength(1);
+    expect(loop.getFinishedSteps()[0].usage.inputTokens).toBe(10);
+    expect(
+      aiBillingService.decrementAndCheckAvailableCredits,
+    ).toHaveBeenCalledTimes(1);
   });
 
   it('stops on an offered pausing tool that waits on a person', async () => {
