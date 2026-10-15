@@ -1,3 +1,4 @@
+import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/utils/findChartGroupByFieldMetadataItem';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graph-widget-pie-chart/types/PieChartDataItem';
@@ -66,10 +67,10 @@ export const useGraphPieChartWidgetData = ({
     ? new Map(Object.entries(queryData.pieChartData.formattedToRawLookup))
     : new Map();
 
-  const groupByField = objectMetadataItem?.fields?.find(
-    (field: { id: string }) =>
-      field.id === configuration.groupByFieldMetadataId,
-  );
+  const groupByField = findChartGroupByFieldMetadataItem({
+    fieldMetadataItems: objectMetadataItem?.fields,
+    groupByFieldMetadataId: configuration.groupByFieldMetadataId,
+  });
 
   const selectFieldOptions =
     isDefined(groupByField) &&

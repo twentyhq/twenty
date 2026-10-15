@@ -1,3 +1,4 @@
+import { RelationType } from '~/generated-metadata/graphql';
 import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/groupValidationRuleViolationsByField';
 
 const TITLE_VIOLATION = {
@@ -17,7 +18,7 @@ describe('groupValidationRuleViolationsByField', () => {
     expect(
       groupValidationRuleViolationsByField({
         violations: [TITLE_VIOLATION, RECORD_VIOLATION],
-        displayedFieldMetadataIds: ['field-title'],
+        displayedFieldMetadataItems: [{ id: 'field-title' }],
       }),
     ).toEqual({
       violationsByFieldMetadataId: { 'field-title': [TITLE_VIOLATION] },
@@ -29,7 +30,7 @@ describe('groupValidationRuleViolationsByField', () => {
     expect(
       groupValidationRuleViolationsByField({
         violations: [TITLE_VIOLATION],
-        displayedFieldMetadataIds: ['field-due-date'],
+        displayedFieldMetadataItems: [{ id: 'field-due-date' }],
       }),
     ).toEqual({
       violationsByFieldMetadataId: {},
@@ -47,8 +48,53 @@ describe('groupValidationRuleViolationsByField', () => {
     expect(
       groupValidationRuleViolationsByField({
         violations: [TITLE_VIOLATION, secondTitleViolation],
-        displayedFieldMetadataIds: ['field-title'],
+        displayedFieldMetadataItems: [{ id: 'field-title' }],
       }).violationsByFieldMetadataId,
     ).toEqual({ 'field-title': [TITLE_VIOLATION, secondTitleViolation] });
+  });
+
+  it('should put a violation on a morph target under the field exposing that morph', () => {
+    const ownerViolation = {
+      ruleId: 'owner-rule',
+      message: 'A task needs an owner',
+      fieldMetadataId: 'field-owner-company',
+    };
+
+    expect(
+      groupValidationRuleViolationsByField({
+        violations: [ownerViolation],
+        displayedFieldMetadataItems: [
+          {
+            id: 'field-owner-head',
+            morphRelations: [
+              {
+                type: RelationType.MANY_TO_ONE,
+                sourceFieldMetadata: {
+                  id: 'field-owner-company',
+                  name: 'ownerCompany',
+                },
+                targetFieldMetadata: {
+                  id: 'field-company-tasks',
+                  name: 'tasks',
+                },
+                sourceObjectMetadata: {
+                  id: 'object-task',
+                  nameSingular: 'task',
+                  namePlural: 'tasks',
+                },
+                targetObjectMetadata: {
+                  id: 'object-company',
+                  nameSingular: 'company',
+                  namePlural: 'companies',
+                },
+              },
+            ],
+          },
+        ],
+      }),
+    ).toEqual({
+      violationsByFieldMetadataId: { 'field-owner-head': [ownerViolation] },
+      recordViolations: [],
+    });
   });
 });

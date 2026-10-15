@@ -1,3 +1,4 @@
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
@@ -103,9 +104,10 @@ export const GraphWidgetLineChartRenderer = () => {
 
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
-  const primaryGroupByField = objectMetadataItem.fields.find(
-    (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
-  );
+  const primaryGroupByField = findFieldMetadataItemByFieldMetadataId({
+    fieldMetadataItems: objectMetadataItem.fields,
+    fieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
+  });
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(primaryGroupByField);
 

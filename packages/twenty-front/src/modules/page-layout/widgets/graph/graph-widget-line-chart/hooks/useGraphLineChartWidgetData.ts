@@ -1,3 +1,4 @@
+import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/utils/findChartGroupByFieldMetadataItem';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
@@ -64,10 +65,10 @@ export const useGraphLineChartWidgetData = ({
     ? new Map(Object.entries(queryData.lineChartData.formattedToRawLookup))
     : new Map();
 
-  const secondaryAxisField = objectMetadataItem?.fields?.find(
-    (field: { id: string }) =>
-      field.id === configuration.secondaryAxisGroupByFieldMetadataId,
-  );
+  const secondaryAxisField = findChartGroupByFieldMetadataItem({
+    fieldMetadataItems: objectMetadataItem?.fields,
+    groupByFieldMetadataId: configuration.secondaryAxisGroupByFieldMetadataId,
+  });
 
   const selectFieldOptions =
     isDefined(secondaryAxisField) &&

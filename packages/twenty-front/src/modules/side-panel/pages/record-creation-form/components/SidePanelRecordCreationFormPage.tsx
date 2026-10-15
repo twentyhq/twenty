@@ -1,3 +1,4 @@
+import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
@@ -174,12 +175,12 @@ const SidePanelRecordCreationForm = ({
         ...draftValidationRuleViolations,
         ...serverValidationRuleViolations,
       ],
-      displayedFieldMetadataIds: [
+      displayedFieldMetadataItems: [
         ...visibleFieldMetadataItems,
         ...(recordCreationFormAreHiddenFieldsShown
           ? hiddenFieldMetadataItems
           : []),
-      ].map((fieldMetadataItem) => fieldMetadataItem.id),
+      ],
     });
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
@@ -220,7 +221,14 @@ const SidePanelRecordCreationForm = ({
   ) => {
     const isAnyHiddenFieldTargeted = hiddenFieldMetadataItems.some(
       (fieldMetadataItem) =>
-        targetedFieldMetadataIds.includes(fieldMetadataItem.id),
+        targetedFieldMetadataIds.some(
+          (targetedFieldMetadataId) =>
+            isDefined(targetedFieldMetadataId) &&
+            doesFieldMetadataItemMatchFieldMetadataId({
+              fieldMetadataItem,
+              fieldMetadataId: targetedFieldMetadataId,
+            }),
+        ),
     );
 
     if (isAnyHiddenFieldTargeted) {
