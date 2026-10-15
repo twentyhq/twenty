@@ -17,10 +17,12 @@ import { type ApplicationRegistrationAnalyticsTotals } from '~/generated-metadat
 
 type LogConsoleAppAnalyticsTotalsProps = {
   totals: Omit<ApplicationRegistrationAnalyticsTotals, '__typename'>;
+  showActiveWorkspaces: boolean;
 };
 
 export const LogConsoleAppAnalyticsTotals = ({
   totals,
+  showActiveWorkspaces,
 }: LogConsoleAppAnalyticsTotalsProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
@@ -38,11 +40,15 @@ export const LogConsoleAppAnalyticsTotals = ({
       : formatNumber(succeeded);
 
   const items = [
-    {
-      Icon: IconBuildingSkyscraper,
-      label: t`Active workspaces`,
-      value: formatNumber(totals.activeWorkspaces),
-    },
+    ...(showActiveWorkspaces
+      ? [
+          {
+            Icon: IconBuildingSkyscraper,
+            label: t`Active workspaces`,
+            value: formatNumber(totals.activeWorkspaces),
+          },
+        ]
+      : []),
     {
       Icon: IconBrandDocker,
       label: t`Installs`,

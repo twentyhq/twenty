@@ -10,9 +10,10 @@ import { LogConsoleAppAnalyticsLineChartSection } from '@/log-console/components
 import { LogConsoleAppAnalyticsTotals } from '@/log-console/components/LogConsoleAppAnalyticsTotals';
 import { LogConsoleAppAnalyticsVersionTable } from '@/log-console/components/LogConsoleAppAnalyticsVersionTable';
 import { LOG_CONSOLE_APP_ANALYTICS_VERSION_CHART_MAX_SERIES } from '@/log-console/constants/LogConsoleAppAnalyticsVersionChartMaxSeries';
+import { useLogConsoleAppAnalytics } from '@/log-console/hooks/useLogConsoleAppAnalytics';
 import { type LogConsoleAppAnalyticsRange } from '@/log-console/types/LogConsoleAppAnalyticsRange';
+import { type LogConsoleAppAnalyticsTarget } from '@/log-console/types/LogConsoleAppAnalyticsTarget';
 import { getLogConsoleAppAnalyticsPeriod } from '@/log-console/utils/getLogConsoleAppAnalyticsPeriod';
-import { useApplicationRegistrationAnalytics } from '@/settings/application-registrations/hooks/useApplicationRegistrationAnalytics';
 import { buildApplicationRegistrationAnalyticsLineSeries } from '@/settings/application-registrations/utils/buildApplicationRegistrationAnalyticsLineSeries';
 import { buildApplicationRegistrationAnalyticsVersionLineSeries } from '@/settings/application-registrations/utils/buildApplicationRegistrationAnalyticsVersionLineSeries';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -36,14 +37,14 @@ const StyledBreakdownGrid = styled.div`
 `;
 
 type LogConsoleAppAnalyticsReportProps = {
-  applicationRegistrationId: string;
-  registrationCreatedAt: string;
+  target: LogConsoleAppAnalyticsTarget;
+  trackedSince?: string;
   range: LogConsoleAppAnalyticsRange;
 };
 
 export const LogConsoleAppAnalyticsReport = ({
-  applicationRegistrationId,
-  registrationCreatedAt,
+  target,
+  trackedSince,
   range,
 }: LogConsoleAppAnalyticsReportProps) => {
   const { t } = useLingui();
@@ -53,15 +54,17 @@ export const LogConsoleAppAnalyticsReport = ({
   const { periodStart, periodEnd } = getLogConsoleAppAnalyticsPeriod({
     range,
     now: new Date().toISOString(),
-    registrationCreatedAt,
+    trackedSince,
   });
 
-  const { analytics, isInitialLoading, error } =
-    useApplicationRegistrationAnalytics({
-      applicationRegistrationId,
-      periodStart,
-      periodEnd,
-    });
+  const { analytics, isInitialLoading, error } = useLogConsoleAppAnalytics({
+    target,
+    periodStart,
+    periodEnd,
+  });
+
+  // A single workspace is either active or not, so workspace counts only make sense across installs
+  const isAcrossWorkspaces = target.scope === 'all-workspaces';
 
   if (isInitialLoading) {
     return <UsageSectionSkeleton />;
@@ -128,9 +131,16 @@ export const LogConsoleAppAnalyticsReport = ({
       <Section.Root>
         <Section.Header
           title={t`Overview`}
-          description={t`Aggregated per UTC day across every workspace this app is installed in. The current day is still accumulating, and workspaces are never identified.`}
+          description={
+            isAcrossWorkspaces
+              ? t`Aggregated per UTC day across every workspace this app is installed in. The current day is still accumulating, and workspaces are never identified.`
+              : t`Aggregated per UTC day for this workspace only. The current day is still accumulating.`
+          }
         />
-        <LogConsoleAppAnalyticsTotals totals={analytics.totals} />
+        <LogConsoleAppAnalyticsTotals
+          totals={analytics.totals}
+          showActiveWorkspaces={isAcrossWorkspaces}
+        />
       </Section.Root>
       <LogConsoleAppAnalyticsLineChartSection
         title={t`Installs`}
@@ -149,14 +159,19 @@ export const LogConsoleAppAnalyticsReport = ({
           formatValue={formatCount}
         />
       </StyledBreakdownGrid>
-      <LogConsoleAppAnalyticsLineChartSection
-        title={t`Version adoption`}
-        description={t`Workspaces active on each of the most recent versions per day.`}
-        chartId="log-console-app-analytics-version-adoption"
-        series={versionAdoptionSeries}
-        formatValue={formatCount}
+      {isAcrossWorkspaces && (
+        <LogConsoleAppAnalyticsLineChartSection
+          title={t`Version adoption`}
+          description={t`Workspaces active on each of the most recent versions per day.`}
+          chartId="log-console-app-analytics-version-adoption"
+          series={versionAdoptionSeries}
+          formatValue={formatCount}
+        />
+      )}
+      <LogConsoleAppAnalyticsVersionTable
+        versions={analytics.versions}
+        showActiveWorkspaces={isAcrossWorkspaces}
       />
-      <LogConsoleAppAnalyticsVersionTable versions={analytics.versions} />
       <LogConsoleAppAnalyticsLineChartSection
         title={t`Function executions`}
         description={t`Logic function runs and failures per day.`}
@@ -199,7 +214,11 @@ export const LogConsoleAppAnalyticsReport = ({
       />
       <LogConsoleAppAnalyticsLineChartSection
         title={t`Revenue`}
-        description={t`Credits charged to workspaces by this app per day, before any revenue share.`}
+        description={
+          isAcrossWorkspaces
+            ? t`Credits charged to workspaces by this app per day, before any revenue share.`
+            : t`Credits this app charged to this workspace per day.`
+        }
         chartId="log-console-app-analytics-revenue"
         series={revenueSeries}
         formatValue={formatUsageValue}

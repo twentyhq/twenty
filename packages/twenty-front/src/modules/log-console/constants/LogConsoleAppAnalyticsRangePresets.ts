@@ -3,7 +3,7 @@ import { msg } from '@lingui/core/macro';
 
 import { type LogConsoleAppAnalyticsRangePreset } from '@/log-console/types/LogConsoleAppAnalyticsRangePreset';
 
-// A preset without lastDays spans from the app registration up to today
+// A preset without lastDays spans from when the app started reporting, or the whole retention when that is unknown, up to today
 export const LOG_CONSOLE_APP_ANALYTICS_RANGE_PRESETS: Record<
   LogConsoleAppAnalyticsRangePreset,
   { label: MessageDescriptor; lastDays?: number }

@@ -9,7 +9,7 @@ describe('getLogConsoleAppAnalyticsPeriod', () => {
       getLogConsoleAppAnalyticsPeriod({
         range: { kind: 'preset', preset: '7d' },
         now: NOW,
-        registrationCreatedAt: REGISTRATION_CREATED_AT,
+        trackedSince: REGISTRATION_CREATED_AT,
       }),
     ).toEqual({
       periodStart: '2026-10-08T00:00:00Z',
@@ -22,7 +22,7 @@ describe('getLogConsoleAppAnalyticsPeriod', () => {
       getLogConsoleAppAnalyticsPeriod({
         range: { kind: 'preset', preset: '1y' },
         now: NOW,
-        registrationCreatedAt: REGISTRATION_CREATED_AT,
+        trackedSince: REGISTRATION_CREATED_AT,
       }),
     ).toEqual({
       periodStart: '2025-10-15T00:00:00Z',
@@ -35,7 +35,7 @@ describe('getLogConsoleAppAnalyticsPeriod', () => {
       getLogConsoleAppAnalyticsPeriod({
         range: { kind: 'preset', preset: 'all' },
         now: NOW,
-        registrationCreatedAt: REGISTRATION_CREATED_AT,
+        trackedSince: REGISTRATION_CREATED_AT,
       }),
     ).toEqual({
       periodStart: '2026-09-20T00:00:00Z',
@@ -48,7 +48,19 @@ describe('getLogConsoleAppAnalyticsPeriod', () => {
       getLogConsoleAppAnalyticsPeriod({
         range: { kind: 'preset', preset: 'all' },
         now: NOW,
-        registrationCreatedAt: '2020-01-01T00:00:00.000Z',
+        trackedSince: '2020-01-01T00:00:00.000Z',
+      }),
+    ).toEqual({
+      periodStart: '2025-10-15T00:00:00Z',
+      periodEnd: '2026-10-15T00:00:00Z',
+    });
+  });
+
+  it('should span the whole retention for all time when tracking start is unknown', () => {
+    expect(
+      getLogConsoleAppAnalyticsPeriod({
+        range: { kind: 'preset', preset: 'all' },
+        now: NOW,
       }),
     ).toEqual({
       periodStart: '2025-10-15T00:00:00Z',
@@ -65,7 +77,7 @@ describe('getLogConsoleAppAnalyticsPeriod', () => {
           endDate: '2026-10-05',
         },
         now: NOW,
-        registrationCreatedAt: REGISTRATION_CREATED_AT,
+        trackedSince: REGISTRATION_CREATED_AT,
       }),
     ).toEqual({
       periodStart: '2026-10-01T00:00:00Z',
@@ -82,7 +94,7 @@ describe('getLogConsoleAppAnalyticsPeriod', () => {
           endDate: '2026-10-05',
         },
         now: NOW,
-        registrationCreatedAt: REGISTRATION_CREATED_AT,
+        trackedSince: REGISTRATION_CREATED_AT,
       }),
     ).toEqual({
       periodStart: '2025-10-06T00:00:00Z',

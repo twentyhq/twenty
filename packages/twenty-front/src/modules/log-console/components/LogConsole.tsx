@@ -400,8 +400,8 @@ export const LogConsole = () => {
     source.requiresAuditLogs && !hasAuditLogsEntitlement;
 
   const isSourceAllowed = (source: LogConsoleSource) =>
-    !isDefined(source.requiredPermissionFlag) ||
-    permissionFlagMap[source.requiredPermissionFlag];
+    !isDefined(source.requiredPermissionFlags) ||
+    source.requiredPermissionFlags.some((flag) => permissionFlagMap[flag]);
 
   const allowedSources = LOG_CONSOLE_SOURCES.filter(isSourceAllowed);
 

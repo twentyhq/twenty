@@ -364,6 +364,12 @@ type Application {
   yarnLockFileId: UUID
 }
 
+input ApplicationAnalyticsInput {
+  applicationId: UUID!
+  periodEnd: DateTime
+  periodStart: DateTime
+}
+
 type ApplicationAuthorization {
   applicationId: UUID!
   applicationName: String!
@@ -3871,6 +3877,7 @@ type Query {
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
   ): FieldConnection!
+  findApplicationAnalytics(input: ApplicationAnalyticsInput!): ApplicationRegistrationAnalytics!
   findApplicationRegistrationAnalytics(input: ApplicationRegistrationAnalyticsInput!): ApplicationRegistrationAnalytics!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration

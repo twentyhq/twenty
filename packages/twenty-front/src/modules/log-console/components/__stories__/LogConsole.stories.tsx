@@ -23,13 +23,16 @@ import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
+import { logConsoleAppAnalyticsApplicationIdState } from '@/log-console/states/logConsoleAppAnalyticsApplicationIdState';
 import { logConsoleAppAnalyticsRegistrationIdState } from '@/log-console/states/logConsoleAppAnalyticsRegistrationIdState';
+import { logConsoleAppAnalyticsScopeState } from '@/log-console/states/logConsoleAppAnalyticsScopeState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { FIND_APPLICATION_ANALYTICS } from '@/settings/application-registrations/graphql/queries/findApplicationAnalytics';
 import { FIND_APPLICATION_REGISTRATION_ANALYTICS } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationAnalytics';
 import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
@@ -191,6 +194,8 @@ const meta: Meta<PageDecoratorArgs> = {
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
     jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
     jotaiStore.set(logConsoleAppAnalyticsRegistrationIdState.atom, null);
+    jotaiStore.set(logConsoleAppAnalyticsApplicationIdState.atom, null);
+    jotaiStore.set(logConsoleAppAnalyticsScopeState.atom, 'current-workspace');
   },
   parameters: {
     layout: 'fullscreen',
@@ -979,6 +984,7 @@ export const AppAnalyticsOpen: Story = {
       }),
       'app-analytics',
     );
+    jotaiStore.set(logConsoleAppAnalyticsScopeState.atom, 'all-workspaces');
   },
   parameters: {
     msw: {
@@ -1089,5 +1095,53 @@ export const AppAnalyticsChartTooltip: Story = {
     expect(tooltipRect.right).toBeLessThanOrEqual(chartRect.right);
     expect(tooltipRect.top).toBeGreaterThanOrEqual(chartRect.top);
     expect(tooltipRect.bottom).toBeLessThanOrEqual(chartRect.bottom);
+  },
+};
+
+export const AppAnalyticsCurrentWorkspace: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-analytics',
+    );
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query(
+          getOperationName(FIND_MANY_APPLICATION_REGISTRATIONS) ?? '',
+          () =>
+            HttpResponse.json({
+              data: {
+                findManyApplicationRegistrations: [APP_ANALYTICS_REGISTRATION],
+              },
+            }),
+        ),
+        metadataGraphql.query(
+          getOperationName(FIND_APPLICATION_ANALYTICS) ?? '',
+          () =>
+            HttpResponse.json({
+              data: { findApplicationAnalytics: APP_ANALYTICS },
+            }),
+        ),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      'Aggregated per UTC day for this workspace only. The current day is still accumulating.',
+      {},
+      { timeout: 5000 },
+    );
+    expect(canvas.getByText('This workspace')).toBeVisible();
+    expect(canvas.getByText('Lead Scoring')).toBeVisible();
+    expect(canvas.queryByText('Active workspaces')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Version adoption')).not.toBeInTheDocument();
   },
 };

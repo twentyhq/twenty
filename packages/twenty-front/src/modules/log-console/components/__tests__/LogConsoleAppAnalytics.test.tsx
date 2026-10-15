@@ -4,8 +4,13 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { LogConsoleAppAnalytics } from '@/log-console/components/LogConsoleAppAnalytics';
-import { logConsoleAppAnalyticsRegistrationIdState } from '@/log-console/states/logConsoleAppAnalyticsRegistrationIdState';
+import { logConsoleAppAnalyticsApplicationIdState } from '@/log-console/states/logConsoleAppAnalyticsApplicationIdState';
+import { logConsoleAppAnalyticsScopeState } from '@/log-console/states/logConsoleAppAnalyticsScopeState';
+import { type LogConsoleAppAnalyticsTarget } from '@/log-console/types/LogConsoleAppAnalyticsTarget';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -13,14 +18,22 @@ import {
 import {
   ApplicationRegistrationSourceType,
   FindManyApplicationRegistrationsDocument,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 jest.mock('@/log-console/components/LogConsoleAppAnalyticsReport', () => ({
   LogConsoleAppAnalyticsReport: ({
-    applicationRegistrationId,
+    target,
   }: {
-    applicationRegistrationId: string;
-  }) => <div>Report for {applicationRegistrationId}</div>,
+    target: LogConsoleAppAnalyticsTarget;
+  }) => (
+    <div>
+      {target.scope === 'current-workspace'
+        ? `Workspace report for ${target.applicationId}`
+        : `All workspaces report for ${target.applicationRegistrationId}`}
+    </div>
+  ),
 }));
 
 jest.mock(
@@ -28,10 +41,54 @@ jest.mock(
   () => ({ useRefetchOnApplicationRegistrationChange: () => undefined }),
 );
 
-const renderWithRegistrations = (
-  registrations: { id: string; name: string }[],
-) => {
+const INSTALLED_APPLICATIONS: FlatApplication[] = [
+  {
+    id: 'application-1',
+    universalIdentifier: 'application-1-universal',
+    name: 'Call recorder',
+    description: '',
+    version: '1.0.0',
+    applicationRegistrationId: 'installed-registration-1',
+  },
+  {
+    id: 'application-2',
+    universalIdentifier: 'application-2-universal',
+    name: 'Slack',
+    description: '',
+    version: '2.0.0',
+    applicationRegistrationId: 'installed-registration-2',
+  },
+  {
+    id: 'standard-application',
+    universalIdentifier: 'standard-application-universal',
+    name: 'Standard',
+    description: '',
+    version: '1.0.0',
+    applicationRegistrationId: null,
+  },
+];
+
+const OWNED_REGISTRATIONS = [{ id: 'registration-1', name: 'Lead scoring' }];
+
+const renderAppAnalytics = ({
+  permissionFlags,
+  installedApplications = INSTALLED_APPLICATIONS,
+  ownedRegistrations = OWNED_REGISTRATIONS,
+}: {
+  permissionFlags: PermissionFlagType[];
+  installedApplications?: FlatApplication[];
+  ownedRegistrations?: { id: string; name: string }[];
+}) => {
   resetJotaiStore();
+  jotaiStore.set(currentUserWorkspaceState.atom, {
+    ...mockedUserData.currentUserWorkspace,
+    permissionFlags,
+  });
+  jotaiStore.set(metadataStoreState.atomFamily('applications'), {
+    current: installedApplications,
+    draft: [],
+    status: 'up-to-date',
+  } as never);
 
   render(
     <I18nProvider i18n={i18n}>
@@ -42,7 +99,7 @@ const renderWithRegistrations = (
               request: { query: FindManyApplicationRegistrationsDocument },
               result: {
                 data: {
-                  findManyApplicationRegistrations: registrations.map(
+                  findManyApplicationRegistrations: ownedRegistrations.map(
                     (registration) => ({
                       __typename: 'ApplicationRegistration',
                       ...registration,
@@ -69,43 +126,98 @@ describe('LogConsoleAppAnalytics', () => {
     localStorage.clear();
   });
 
-  it('should explain that analytics need a registered app when there is none', async () => {
-    renderWithRegistrations([]);
+  it('should explain that there is nothing to report when no app is installed or developed here', async () => {
+    renderAppAnalytics({
+      permissionFlags: [
+        PermissionFlagType.APPLICATIONS,
+        PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      ],
+      installedApplications: [],
+      ownedRegistrations: [],
+    });
 
     expect(
       await screen.findByText(
-        'No app registered yet. Analytics appear here for the apps this workspace develops.',
+        'No app to report on yet. Analytics appear here for the apps installed in this workspace and the apps it develops.',
       ),
     ).toBeInTheDocument();
   });
 
-  it('should report on the first registered app by default', async () => {
-    renderWithRegistrations([
-      { id: 'registration-1', name: 'Lead scoring' },
-      { id: 'registration-2', name: 'Invoice sync' },
-    ]);
+  it('should report on the first app installed in this workspace by default', async () => {
+    renderAppAnalytics({
+      permissionFlags: [
+        PermissionFlagType.APPLICATIONS,
+        PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      ],
+    });
 
     expect(
-      await screen.findByText('Report for registration-1'),
+      await screen.findByText('Workspace report for application-1'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('This workspace')).toBeInTheDocument();
+    expect(screen.getByText('Call recorder')).toBeInTheDocument();
+  });
+
+  it('should report across workspaces on an app this workspace develops', async () => {
+    renderAppAnalytics({
+      permissionFlags: [
+        PermissionFlagType.APPLICATIONS,
+        PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      ],
+    });
+    act(() => {
+      jotaiStore.set(logConsoleAppAnalyticsScopeState.atom, 'all-workspaces');
+    });
+
+    expect(
+      await screen.findByText('All workspaces report for registration-1'),
     ).toBeInTheDocument();
     expect(screen.getByText('Lead scoring')).toBeInTheDocument();
   });
 
-  it('should report on the previously selected app', async () => {
-    renderWithRegistrations([
-      { id: 'registration-1', name: 'Lead scoring' },
-      { id: 'registration-2', name: 'Invoice sync' },
-    ]);
+  it('should report on the previously selected installed app', async () => {
+    renderAppAnalytics({
+      permissionFlags: [PermissionFlagType.APPLICATIONS],
+    });
     act(() => {
       jotaiStore.set(
-        logConsoleAppAnalyticsRegistrationIdState.atom,
-        'registration-2',
+        logConsoleAppAnalyticsApplicationIdState.atom,
+        'application-2',
       );
     });
 
     expect(
-      await screen.findByText('Report for registration-2'),
+      await screen.findByText('Workspace report for application-2'),
     ).toBeInTheDocument();
-    expect(screen.getByText('Invoice sync')).toBeInTheDocument();
+    expect(screen.getByText('Slack')).toBeInTheDocument();
+  });
+
+  it('should only report on this workspace for members who cannot read app registrations', async () => {
+    renderAppAnalytics({
+      permissionFlags: [PermissionFlagType.APPLICATIONS],
+    });
+    act(() => {
+      jotaiStore.set(logConsoleAppAnalyticsScopeState.atom, 'all-workspaces');
+    });
+
+    expect(
+      await screen.findByText('Workspace report for application-1'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('All workspaces')).not.toBeInTheDocument();
+  });
+
+  it('should fall back to apps this workspace develops when no installed app reports analytics', async () => {
+    renderAppAnalytics({
+      permissionFlags: [
+        PermissionFlagType.APPLICATIONS,
+        PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      ],
+      installedApplications: [INSTALLED_APPLICATIONS[2]],
+    });
+
+    expect(
+      await screen.findByText('All workspaces report for registration-1'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Standard')).not.toBeInTheDocument();
   });
 });

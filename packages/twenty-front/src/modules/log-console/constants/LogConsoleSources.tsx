@@ -216,7 +216,10 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     label: msg`App analytics`,
     Icon: IconLayoutDashboard,
     requiresAuditLogs: false,
-    requiredPermissionFlag: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+    requiredPermissionFlags: [
+      PermissionFlagType.APPLICATIONS,
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+    ],
     renderContent: () => (
       <Suspense fallback={null}>
         <LogConsoleAppAnalytics />

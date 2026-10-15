@@ -21,7 +21,8 @@ type LogConsoleSourceBase = {
   label: MessageDescriptor;
   Icon: IconComponent;
   requiresAuditLogs: boolean;
-  requiredPermissionFlag?: PermissionFlagType;
+  // Any one of these flags opens the source
+  requiredPermissionFlags?: PermissionFlagType[];
   filterFields?: LogConsoleFilterField[];
 };
 

@@ -40,13 +40,22 @@ export const mockedEventLogLogicFunctions: MockedLogicFunction[] = [
 
 export const mockedEventLogApplications: Pick<
   FlatApplication,
-  'id' | 'name'
+  'id' | 'name' | 'applicationRegistrationId'
 >[] = [
-  { id: SYNC_STRIPE_INVOICES.applicationId, name: 'Stripe Sync' },
-  { id: SCORE_INBOUND_LEAD.applicationId, name: 'Lead Scoring' },
+  {
+    id: SYNC_STRIPE_INVOICES.applicationId,
+    name: 'Stripe Sync',
+    applicationRegistrationId: null,
+  },
+  {
+    id: SCORE_INBOUND_LEAD.applicationId,
+    name: 'Lead Scoring',
+    applicationRegistrationId: '20202020-3f8e-4c4b-9a7d-2e6b1c5d8f13',
+  },
   {
     id: ENRICH_COMPANY_FROM_DOMAIN.applicationId,
     name: 'Company Enrichment',
+    applicationRegistrationId: null,
   },
 ];
 
