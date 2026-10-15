@@ -4,15 +4,15 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { findStandardWorkflowRunIndexWorkflowVersionViewFields } from 'src/database/commands/upgrade-version-command/2-47/utils/find-standard-workflow-run-index-workflow-version-view-fields.util';
+import { findStandardWorkflowRunIndexWorkflowVersionViewFields } from 'src/database/commands/upgrade-version-command/2-48/utils/find-standard-workflow-run-index-workflow-version-view-fields.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.47.0', 1791967167859)
+@RegisteredWorkspaceCommand('2.48.0', 1792051845780)
 @Command({
-  name: 'upgrade:2-47:remove-workflow-run-index-workflow-version-column',
+  name: 'upgrade:2-48:remove-workflow-run-index-workflow-version-column',
   description:
     'Remove the standard "Workflow version" column from the workflow runs index view',
 })
