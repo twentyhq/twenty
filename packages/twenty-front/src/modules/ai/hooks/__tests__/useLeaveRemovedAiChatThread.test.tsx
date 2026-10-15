@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 
 import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -39,6 +40,17 @@ const buildChat = (id: string, updatedAt: string): AgentChatThreadRecord => ({
   deletedAt: null,
 });
 
+const buildFollowedParticipant = (threadId: string) => ({
+  id: `participant-${threadId}`,
+  threadId,
+  lastReadAt: null,
+  archivedAt: null,
+  snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
+  updatedAt: '2026-09-20T00:00:00.000Z',
+});
+
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
@@ -65,6 +77,15 @@ describe('useLeaveRemovedAiChatThread', () => {
       buildChat(OLDER_CHAT_ID, '2026-09-01T00:00:00.000Z'),
       buildChat(RECENT_CHAT_ID, '2026-09-20T00:00:00.000Z'),
     ]);
+    jotaiStore.set(
+      agentChatThreadParticipantsState.atom,
+      Object.fromEntries(
+        [OLDER_CHAT_ID, RECENT_CHAT_ID].map((threadId) => [
+          threadId,
+          buildFollowedParticipant(threadId),
+        ]),
+      ),
+    );
     jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
       [RECENT_CHAT_ID]: 'Pending question',
     });

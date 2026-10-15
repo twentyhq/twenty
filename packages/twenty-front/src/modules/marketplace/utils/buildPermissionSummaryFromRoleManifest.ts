@@ -1,150 +1,78 @@
+import { type PermissionSummaryItem } from '@/marketplace/types/PermissionSummaryItem';
+import { type RecordAccess } from '@/marketplace/types/RecordAccess';
+import { buildObjectRecordsPermissionSummary } from '@/marketplace/utils/buildObjectRecordsPermissionSummary';
+import { buildPermissionFlagSummary } from '@/marketplace/utils/buildPermissionFlagSummary';
+import { getRecordAccessLabel } from '@/marketplace/utils/getRecordAccessLabel';
 import { t } from '@lingui/core/macro';
 import { type RoleManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  type IconComponent,
-  IconAddressBook,
-  IconCreditCard,
-  IconHierarchy,
-  IconKey,
-  IconPlug,
-  IconSettings,
-  IconSettingsAutomation,
-  IconSparkles,
-  IconTool,
-  IconUsers,
-} from 'twenty-ui/icon';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
+import { IconAddressBook, IconSettings, IconTool } from 'twenty-ui/icon';
 
-export type PermissionSummaryItem = {
-  Icon: IconComponent;
-  label: string;
+export type { PermissionSummaryItem } from '@/marketplace/types/PermissionSummaryItem';
+
+export type BuildPermissionSummaryOptions = {
+  objectLabelsByUniversalIdentifier?: Record<string, string>;
+  appObjectUniversalIdentifiers?: ReadonlySet<string>;
 };
 
-const getRecordPermissionLabel = ({
-  canRead,
-  canUpdate,
-  canDelete,
-}: {
-  canRead: boolean;
-  canUpdate: boolean;
-  canDelete: boolean;
-}): string => {
-  if (canRead && canUpdate && canDelete) {
-    return t`Read, write, and delete records`;
-  }
-
-  if (canRead && canUpdate) {
-    return t`Read and write records`;
-  }
-
-  if (canRead && canDelete) {
-    return t`Read and delete records`;
-  }
-
-  if (canUpdate && canDelete) {
-    return t`Write and delete records`;
-  }
-
-  if (canRead) {
-    return t`Read records`;
-  }
-
-  if (canUpdate) {
-    return t`Write records`;
-  }
-
-  return t`Delete records`;
-};
+const getRoleAccess = (defaultRole: RoleManifest): RecordAccess => ({
+  canRead: defaultRole.canReadAllObjectRecords ?? false,
+  canWrite: defaultRole.canUpdateAllObjectRecords ?? false,
+  canDelete:
+    (defaultRole.canSoftDeleteAllObjectRecords ?? false) ||
+    (defaultRole.canDestroyAllObjectRecords ?? false),
+});
 
 export const buildPermissionSummaryFromRoleManifest = (
   defaultRole: RoleManifest,
+  {
+    objectLabelsByUniversalIdentifier = {},
+    appObjectUniversalIdentifiers = new Set(),
+  }: BuildPermissionSummaryOptions = {},
 ): PermissionSummaryItem[] => {
-  const items: PermissionSummaryItem[] = [];
+  const roleAccess = getRoleAccess(defaultRole);
 
-  const canRead = defaultRole.canReadAllObjectRecords ?? false;
-  const canUpdate = defaultRole.canUpdateAllObjectRecords ?? false;
-  const canSoftDelete = defaultRole.canSoftDeleteAllObjectRecords ?? false;
-  const canDestroy = defaultRole.canDestroyAllObjectRecords ?? false;
-  const canDelete = canSoftDelete || canDestroy;
-
-  if (canRead || canUpdate || canDelete) {
-    items.push({
-      Icon: IconAddressBook,
-      label: getRecordPermissionLabel({ canRead, canUpdate, canDelete }),
-    });
-  }
-
-  if ((defaultRole.objectPermissions ?? []).length > 0 && items.length === 0) {
-    items.push({
-      Icon: IconAddressBook,
-      label: t`Access specific object records`,
-    });
-  }
-
-  const hasDataModelFlag = (
-    defaultRole.permissionFlagUniversalIdentifiers ?? []
-  ).some((flag) => flag === SystemPermissionFlag.DATA_MODEL);
-
-  if (hasDataModelFlag) {
-    items.push({
-      Icon: IconHierarchy,
-      label: t`Read and write data model configuration`,
-    });
-  }
-
-  if (defaultRole.canUpdateAllSettings) {
-    items.push({
-      Icon: IconSettings,
-      label: t`Update workspace settings`,
-    });
-  }
-
-  if (defaultRole.canAccessAllTools) {
-    items.push({
-      Icon: IconTool,
-      label: t`Access all tools`,
-    });
-  }
-
-  const otherFlags = (
-    defaultRole.permissionFlagUniversalIdentifiers ?? []
-  ).filter((flag) => flag !== SystemPermissionFlag.DATA_MODEL);
-
-  const flagLabels: Record<string, { label: string; Icon: IconComponent }> = {
-    [SystemPermissionFlag.WORKFLOWS]: {
-      label: t`Manage workflows`,
-      Icon: IconSettingsAutomation,
-    },
-    [SystemPermissionFlag.SECURITY]: {
-      label: t`Manage security settings`,
-      Icon: IconKey,
-    },
-    [SystemPermissionFlag.WORKSPACE_MEMBERS]: {
-      label: t`Manage workspace members`,
-      Icon: IconUsers,
-    },
-    [SystemPermissionFlag.BILLING]: {
-      label: t`Manage billing`,
-      Icon: IconCreditCard,
-    },
-    [SystemPermissionFlag.API_KEYS_AND_WEBHOOKS]: {
-      label: t`Manage MCP, API keys, and webhooks`,
-      Icon: IconPlug,
-    },
-    [SystemPermissionFlag.AI]: {
-      label: t`Run AI agents`,
-      Icon: IconSparkles,
-    },
+  const roleWithoutAppObjectPermissions: RoleManifest = {
+    ...defaultRole,
+    objectPermissions: (defaultRole.objectPermissions ?? []).filter(
+      ({ objectUniversalIdentifier }) =>
+        !appObjectUniversalIdentifiers.has(objectUniversalIdentifier),
+    ),
   };
 
-  for (const flag of otherFlags) {
-    const config = flagLabels[flag];
+  const allRecordsLabel = getRecordAccessLabel({
+    access: roleAccess,
+    target: t`all records`,
+  });
 
-    if (isDefined(config)) {
-      items.push(config);
-    }
-  }
+  const permissionFlagUniversalIdentifiers =
+    defaultRole.permissionFlagUniversalIdentifiers ?? [];
 
-  return items;
+  return [
+    ...(isDefined(allRecordsLabel)
+      ? [{ Icon: IconAddressBook, label: allRecordsLabel }]
+      : []),
+    ...buildObjectRecordsPermissionSummary({
+      defaultRole: roleWithoutAppObjectPermissions,
+      roleAccess,
+      objectLabelsByUniversalIdentifier,
+    }),
+    ...buildPermissionFlagSummary(
+      permissionFlagUniversalIdentifiers.filter(
+        (flag) => flag === SystemPermissionFlag.DATA_MODEL,
+      ),
+    ),
+    ...(defaultRole.canUpdateAllSettings
+      ? [{ Icon: IconSettings, label: t`Update all workspace settings` }]
+      : []),
+    ...(defaultRole.canAccessAllTools
+      ? [{ Icon: IconTool, label: t`Use all tools` }]
+      : []),
+    ...buildPermissionFlagSummary(
+      permissionFlagUniversalIdentifiers.filter(
+        (flag) => flag !== SystemPermissionFlag.DATA_MODEL,
+      ),
+    ),
+  ];
 };

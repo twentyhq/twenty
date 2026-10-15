@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { createRef } from 'react';
@@ -7,6 +7,7 @@ import styles from '../OverflowingTextWithTooltip.module.scss';
 
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 
+import { OverflowingTextTooltipModeProvider } from '../OverflowingTextTooltipModeProvider';
 import { OverflowingTextWithTooltip } from '../OverflowingTextWithTooltip';
 
 const setTextDimensions = ({
@@ -286,5 +287,88 @@ describe('OverflowingTextWithTooltip', () => {
       'auto',
     );
     expect(screen.getByText('הטמעת CRM לאקמה')).toHaveAttribute('dir', 'auto');
+  });
+
+  it('renders only the text when the tooltip mode is disabled', async () => {
+    const user = userEvent.setup();
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <OverflowingTextTooltipModeProvider mode="disabled">
+        <OverflowingTextWithTooltip
+          text="Truncated label"
+          ref={ref}
+          alwaysShowTooltip
+          isFocusable
+          tooltipDelay={0}
+        />
+      </OverflowingTextTooltipModeProvider>,
+    );
+
+    const text = screen.getByText('Truncated label');
+    expect(ref.current).toBe(text);
+
+    await user.hover(text);
+    await user.tab();
+
+    expect(text).toHaveFocus();
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('opens for a truncated label entered without a pointerenter when measured on open', async () => {
+    render(
+      <OverflowingTextTooltipModeProvider mode="measure-on-open">
+        <OverflowingTextWithTooltip text="Truncated label" tooltipDelay={0} />
+      </OverflowingTextTooltipModeProvider>,
+    );
+
+    const text = screen.getByText('Truncated label');
+    setTextDimensions({ element: text, clientWidth: 80, scrollWidth: 160 });
+
+    fireEvent.mouseEnter(text);
+    fireEvent.mouseMove(text);
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Truncated label',
+    );
+  });
+
+  it('stays closed for a label that fits when measured on open', async () => {
+    const user = userEvent.setup();
+    render(
+      <OverflowingTextTooltipModeProvider mode="measure-on-open">
+        <OverflowingTextWithTooltip text="Short label" tooltipDelay={0} />
+      </OverflowingTextTooltipModeProvider>,
+    );
+
+    await user.hover(screen.getByText('Short label'));
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('measures a label that becomes truncated after mount when opening', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <OverflowingTextTooltipModeProvider mode="measure-on-open">
+        <OverflowingTextWithTooltip text="Label" tooltipDelay={0} />
+      </OverflowingTextTooltipModeProvider>,
+    );
+
+    rerender(
+      <OverflowingTextTooltipModeProvider mode="measure-on-open">
+        <OverflowingTextWithTooltip
+          text="A much longer label"
+          tooltipDelay={0}
+        />
+      </OverflowingTextTooltipModeProvider>,
+    );
+
+    const text = screen.getByText('A much longer label');
+    setTextDimensions({ element: text, clientWidth: 80, scrollWidth: 160 });
+
+    await user.hover(text);
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'A much longer label',
+    );
   });
 });

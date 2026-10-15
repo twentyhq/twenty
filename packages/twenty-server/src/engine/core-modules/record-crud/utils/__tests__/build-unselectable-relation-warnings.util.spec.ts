@@ -39,6 +39,7 @@ const createRelationField = ({
   type: FieldMetadataType.RELATION,
   name,
   relationTargetObjectMetadataId,
+  morphId: null,
 });
 
 const createObject = ({

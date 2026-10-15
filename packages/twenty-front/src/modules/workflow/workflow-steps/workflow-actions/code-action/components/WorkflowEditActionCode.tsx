@@ -274,8 +274,12 @@ export const WorkflowEditActionCode = ({
     500,
   );
 
-  const handleCodeChange = async (newCode: string) => {
-    if (actionOptions.readonly === true || !isDefined(workflow)) {
+  const handleCodeChange = async (newCode: string | undefined) => {
+    if (
+      actionOptions.readonly === true ||
+      !isDefined(workflow) ||
+      !isDefined(newCode)
+    ) {
       return;
     }
 

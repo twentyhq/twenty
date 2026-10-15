@@ -16,7 +16,6 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -25,7 +24,6 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useNavigate } from 'react-router-dom';
 import {
   CoreObjectNameSingular,
-  FeatureFlagKey,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -64,9 +62,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-  );
 
   const canReadObjectRecords = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
@@ -94,7 +89,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     objectMetadataItems,
     views,
     lastVisitedViewPerObjectMetadataItem,
-    isInitialObjectViewEnabled,
   });
 
   const isActive = hasNavigationMenuItem
@@ -165,14 +159,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         )
       : () => <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
 
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
-
   const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
     navigationMenuItemType: navigationMenuItem?.type,
     objectNameSingular: objectMetadataItem.nameSingular,
-    isWorkflowCoreIndexPageEnabled,
   });
 
   const objectSecondaryLabel = isViewWithResolvedView

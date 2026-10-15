@@ -44,7 +44,6 @@ const buildService = ({
       turnRepository as never,
       messageRepository as never,
       messagePartRepository as never,
-      { hasUpgradedAgentHistory: jest.fn().mockResolvedValue(true) } as never,
     ),
     turnRepository,
     messageRepository,

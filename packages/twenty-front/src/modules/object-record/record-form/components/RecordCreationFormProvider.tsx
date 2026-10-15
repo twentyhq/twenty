@@ -8,6 +8,8 @@ import {
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -42,9 +44,11 @@ export const RecordCreationFormProvider = ({
     async ({
       requestId,
       draftRecord,
+      shouldKeepOpen = false,
     }: {
       requestId: string;
       draftRecord: Partial<ObjectRecord> | null;
+      shouldKeepOpen?: boolean;
     }) => {
       const pendingRecordCreation = pendingRecordCreations.find(
         (candidate) => candidate.requestId === requestId,
@@ -77,11 +81,26 @@ export const RecordCreationFormProvider = ({
         ),
       );
 
-      let createdRecord: ObjectRecord;
-
       try {
-        createdRecord = await pendingRecordCreation.createRecord(draftRecord);
+        const createdRecord =
+          await pendingRecordCreation.createRecord(draftRecord);
+
+        if (!shouldKeepOpen) {
+          removePageFromSidePanelHistory(requestId);
+
+          pendingRecordCreation.resolve(createdRecord);
+
+          setPendingRecordCreations((previousPendingRecordCreations) =>
+            previousPendingRecordCreations.filter(
+              (candidate) => candidate.requestId !== requestId,
+            ),
+          );
+        }
+
+        return {};
       } catch (error) {
+        return { error };
+      } finally {
         setPendingRecordCreations((previousPendingRecordCreations) =>
           previousPendingRecordCreations.map((candidate) =>
             candidate.requestId === requestId
@@ -89,21 +108,7 @@ export const RecordCreationFormProvider = ({
               : candidate,
           ),
         );
-
-        return { error };
       }
-
-      removePageFromSidePanelHistory(requestId);
-
-      pendingRecordCreation.resolve(createdRecord);
-
-      setPendingRecordCreations((previousPendingRecordCreations) =>
-        previousPendingRecordCreations.filter(
-          (candidate) => candidate.requestId !== requestId,
-        ),
-      );
-
-      return {};
     },
     [pendingRecordCreations, removePageFromSidePanelHistory],
   );
@@ -120,6 +125,21 @@ export const RecordCreationFormProvider = ({
         draftRecord: Partial<ObjectRecord>,
       ) => Promise<ObjectRecord>;
     }) => {
+      const topSidePanelPage = store.get(isSidePanelOpenedState.atom)
+        ? store.get(sidePanelNavigationStackState.atom).at(-1)
+        : undefined;
+
+      if (
+        topSidePanelPage?.page === SidePanelPages.RecordCreationForm &&
+        store.get(
+          recordCreationFormRequestComponentState.atomFamily({
+            instanceId: topSidePanelPage.pageId,
+          }),
+        )?.objectMetadataId === objectMetadataItem.id
+      ) {
+        return Promise.resolve(null);
+      }
+
       const requestId = v4();
 
       store.set(

@@ -8,7 +8,7 @@ import MenuItemAvatarReference from '/snippets/ui/generated/components/navigatio
 import MenuItemDraggableReference from '/snippets/ui/generated/components/navigation/menu-item-draggable.mdx';
 import MenuItemSuggestionReference from '/snippets/ui/generated/components/navigation/menu-item-suggestion.mdx';
 
-These components provide row presentation. For complete menu semantics, keyboard navigation, and dismissal, use [Dropdown](/ui/components/navigation/dropdown) or [Menu](/ui/primitives/surfaces/menu).
+These components provide row presentation. For complete menu semantics, keyboard navigation, and dismissal, use [Dropdown](/ui/components/navigation/dropdown).
 
 ## MenuItem
 
@@ -48,7 +48,7 @@ It shares MenuItem's pointer and keyboard limitations. For a selectable person, 
 
 ## MenuItemDraggable
 
-`MenuItemDraggable` renders a menu row that can show a drag grip. The application supplies drag behavior. `gripMode` defaults to `never`, which shows no grip; `always` shows the grip, and `onHover` swaps `LeftIcon` for the grip while the row is hovered, so it shows nothing without a `LeftIcon`. `isDragDisabled` affects the appearance, not external drag handlers.
+`MenuItemDraggable` renders a menu row that can show a drag grip. The application supplies drag behavior. `gripMode` defaults to `never`, which shows no grip; `always` shows the grip, and `onHover` swaps the leading content (`LeftComponent`, otherwise `LeftIcon`) for the grip while the row is hovered, so it shows nothing without leading content. `isDragDisabled` affects the appearance, not external drag handlers.
 
 ```tsx
 import { MenuItemDraggable } from 'twenty-ui/components/navigation';

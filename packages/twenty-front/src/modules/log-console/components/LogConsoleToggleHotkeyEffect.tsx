@@ -11,6 +11,7 @@ export const LogConsoleToggleHotkeyEffect = ({
     keys: ['ctrl+j', 'meta+j'],
     callback: onToggle,
     containsModifier: true,
+    enableOnSettingsPage: true,
     dependencies: [onToggle],
   });
 

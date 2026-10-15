@@ -13,7 +13,6 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { DEFAULT_AGENT_WORKFLOW_ACTOR } from 'src/modules/workflow/workflow-tools/constants/default-agent-workflow-actor.constant';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
   type WorkflowToolContext,
@@ -94,7 +93,7 @@ IMPORTANT: The tool schema provides comprehensive field descriptions, examples, 
 - Field requirements and data types
 - Common object patterns and field structures
 - Proper relationship field formats
-- Variable reference syntax: {{trigger.fieldName}} for trigger data, {{<step-id>.fieldName}} for step outputs (step-id is the step's UUID, not its name). The path mirrors the step's output schema exactly and is addressed directly; Twenty does not add a "result" wrapper. A FIND_RECORDS step exposes {{<find-step-id>.all}} and {{<find-step-id>.first.id}}, not {{<find-step-id>.result.all}}.
+- Variable reference syntax: {{trigger.properties.after.fieldName}} for a DATABASE_EVENT trigger's record ({{trigger.properties.before.fieldName}} for deleted events), {{trigger.payload.fieldName}} for a MANUAL trigger's selected record, {{trigger.fieldName}} for a WEBHOOK trigger's request body, {{<step-id>.fieldName}} for step outputs (step-id is the step's UUID, not its name). The path mirrors the step's output schema exactly and is addressed directly; Twenty does not add a "result" wrapper. A FIND_RECORDS step exposes {{<find-step-id>.all}} and {{<find-step-id>.first.id}}, not {{<find-step-id>.result.all}}.
 - Error handling options
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.
@@ -125,7 +124,6 @@ Call validate_workflow once when the workflow is complete, before activating.`,
       const coreWorkflow =
         await deps.coreWorkflowMutationService.createWorkflow({
           workspaceId,
-          createdBy: context.actorContext ?? DEFAULT_AGENT_WORKFLOW_ACTOR,
           userWorkspaceId: undefined,
           name: parameters.name,
         });
@@ -146,7 +144,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
           },
         );
 
-      await deps.coreWorkflowVersionWriteService.writeContentAndMirror({
+      await deps.coreWorkflowVersionWriteService.writeContent({
         workspaceId,
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,

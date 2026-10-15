@@ -66,7 +66,7 @@ export const useEndSubscriptionTrialPeriod = () => {
     }
 
     enqueueToast({
-      variant: 'error',
+      status: 'error',
       children: t`No payment method found. Please update your billing details.`,
     });
   };
@@ -80,7 +80,7 @@ export const useEndSubscriptionTrialPeriod = () => {
 
       if (options?.skipPaymentMethodRedirect === true) {
         enqueueToast({
-          variant: 'info',
+          status: 'info',
           children: t`Activating subscription...`,
         });
       }
@@ -154,14 +154,14 @@ export const useEndSubscriptionTrialPeriod = () => {
       );
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Subscription activated.`,
       });
 
       return { success: true, hasPaymentMethod: true };
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error while ending trial period. Please contact Twenty team.`,
       });
       return { success: false };

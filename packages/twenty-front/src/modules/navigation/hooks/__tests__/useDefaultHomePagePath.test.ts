@@ -26,15 +26,10 @@ import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTe
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 let mockIsMobile = false;
-let mockIsInitialObjectViewEnabled = false;
 
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => mockIsMobile,
-}));
-
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsInitialObjectViewEnabled,
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
@@ -224,7 +219,6 @@ const renderHooks = ({
 describe('useDefaultHomePagePath', () => {
   afterEach(() => {
     mockIsMobile = false;
-    mockIsInitialObjectViewEnabled = false;
   });
 
   it('should return proper path when no currentUser', async () => {
@@ -328,9 +322,7 @@ describe('useDefaultHomePagePath', () => {
       expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
     });
   });
-  it('should target the initial view rather than the index view when the menu has no object item and the flag is on', async () => {
-    mockIsInitialObjectViewEnabled = true;
-
+  it('should target the initial view rather than the index view when the menu has no object item', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,
       withExistingView: false,
@@ -344,24 +336,6 @@ describe('useDefaultHomePagePath', () => {
     await waitFor(() => {
       expect(result.current.defaultHomePagePath).toEqual(
         '/objects/companies?viewId=initial-view-id',
-      );
-    });
-  });
-
-  it('should target the index view when the menu has no object item and the flag is off', async () => {
-    const { result } = renderHooks({
-      withCurrentUser: true,
-      withExistingView: false,
-      navigationMenuItems: [],
-      views: [
-        buildCompanyView('index-view-id', ViewKey.INDEX, 0),
-        buildCompanyView('initial-view-id', null, 1),
-      ],
-    });
-
-    await waitFor(() => {
-      expect(result.current.defaultHomePagePath).toEqual(
-        '/objects/companies?viewId=index-view-id',
       );
     });
   });

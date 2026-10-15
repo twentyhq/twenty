@@ -9,6 +9,7 @@ import { RecordSharingAccessSelect } from '@/object-record/record-sharing/compon
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordDropdownItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 const StyledRecipients = styled.div`
@@ -95,8 +96,7 @@ export const SidePanelShareRecordAddPeopleItem = ({
                 });
               }}
             >
-              {`${member.name.firstName} ${member.name.lastName}`.trim() ||
-                member.userEmail}
+              {getWorkspaceMemberNameOrEmail(member)}
             </Dropdown.ActionItem>
           ))}
           {availableRoles.map((role) => (

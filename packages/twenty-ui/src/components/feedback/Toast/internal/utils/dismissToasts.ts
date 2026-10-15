@@ -1,4 +1,6 @@
-import { type createToastStore } from '../stores/createToastStore';
+import { type Store } from '@base-ui/utils/store';
+
+import { type ToastStoreState } from '../types/ToastStoreState';
 import { type ToastEntry } from '../types/ToastEntry';
 import { isToastVisible } from './isToastVisible';
 
@@ -7,13 +9,17 @@ export const dismissToasts = ({
   toastsToClose,
   nextToasts = store.state.toasts,
 }: {
-  store: ReturnType<typeof createToastStore>;
+  store: Store<ToastStoreState>;
   toastsToClose: ToastEntry[];
   nextToasts?: ToastEntry[];
 }) => {
-  const toasts = nextToasts.map(
-    (toast): ToastEntry =>
-      toastsToClose.includes(toast) ? { ...toast, status: 'closing' } : toast,
+  const visibleToastsToClose = toastsToClose.filter(
+    (toast) => isToastVisible(toast) && store.state.toasts.includes(toast),
+  );
+  const toasts = nextToasts.map((toast): ToastEntry =>
+    visibleToastsToClose.includes(toast)
+      ? { ...toast, status: 'closing' }
+      : toast,
   );
 
   const isToasterMounted = store.state.mountedToasterCount > 0;
@@ -23,7 +29,7 @@ export const dismissToasts = ({
     isToasterMounted ? toasts : toasts.filter(isToastVisible),
   );
 
-  for (const toast of toastsToClose) {
+  for (const toast of visibleToastsToClose) {
     toast.notification.onClose?.();
   }
 };

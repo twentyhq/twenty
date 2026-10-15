@@ -49,9 +49,7 @@ const StyledHeaderRight = styled.div`
 `;
 
 const StyledExecutionStatusTag = styled(Tag)`
-  && {
-    min-width: fit-content;
-  }
+  min-width: fit-content;
 `;
 
 const StyledTitle = styled.span`

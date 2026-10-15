@@ -1,7 +1,7 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 import { IconInfoCircle } from '@ui/icon';
@@ -39,6 +39,7 @@ const TabsExample = ({
       <Tabs.Tab {...tabProps} />
       <Tabs.Tab value="activity">Activity</Tabs.Tab>
       <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
     </Tabs.List>
     <Tabs.Panel
       value="overview"
@@ -208,11 +209,13 @@ export const KeepMounted: Story = {
   render: (args) => <TabsExample tabProps={args} keepMounted />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const overviewPanel = canvas.getByRole('tabpanel', { name: 'Overview' });
     await userEvent.type(
       canvas.getByRole('textbox', { name: 'Draft note' }),
       'A saved draft',
     );
     await userEvent.click(canvas.getByRole('tab', { name: 'Activity' }));
+    await waitFor(() => expect(overviewPanel).not.toBeVisible());
     await userEvent.tab();
     await expect(
       canvas.getByRole('tabpanel', { name: 'Activity' }),
@@ -221,6 +224,53 @@ export const KeepMounted: Story = {
     await expect(
       canvas.getByRole('textbox', { name: 'Draft note' }),
     ).toHaveValue('A saved draft');
+  },
+};
+
+const ACTIVITY_LOG_ENTRIES = Array.from(
+  { length: 12 },
+  (_, index) => `Activity entry ${index + 1}`,
+);
+
+export const FixedHeight: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 360 } },
+  args: { value: 'activity', children: 'Activity' },
+  render: (args) => (
+    <Tabs.Root defaultValue="activity" className={styles.fixedHeightRoot}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab {...args} />
+        <Tabs.Tab value="notes">Notes</Tabs.Tab>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Panel value="activity" className={styles.scrollingPanel}>
+        <div
+          role="region"
+          aria-label="Activity log"
+          tabIndex={0}
+          className={styles.scrollArea}
+        >
+          {ACTIVITY_LOG_ENTRIES.map((entry) => (
+            <p key={entry}>{entry}</p>
+          ))}
+        </div>
+      </Tabs.Panel>
+      <Tabs.Panel value="notes" className={styles.panel}>
+        Record notes
+      </Tabs.Panel>
+    </Tabs.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const activityLog = canvas.getByRole('region', { name: 'Activity log' });
+
+    await expect(activityLog.scrollHeight).toBeGreaterThan(
+      activityLog.clientHeight,
+    );
+
+    activityLog.scrollTop = activityLog.scrollHeight;
+
+    await waitFor(() => expect(activityLog.scrollTop).toBeGreaterThan(0));
   },
 };
 
@@ -266,6 +316,7 @@ export const Catalog: CatalogStory<Story, typeof Tabs.Tab> = {
     <Tabs.Root value={args.value === 'selected' ? 'selected' : null}>
       <Tabs.List aria-label="Record details">
         <Tabs.Tab {...args} />
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value={args.value} keepMounted />
     </Tabs.Root>

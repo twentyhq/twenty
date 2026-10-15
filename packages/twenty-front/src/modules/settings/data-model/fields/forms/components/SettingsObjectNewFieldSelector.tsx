@@ -13,7 +13,7 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -71,28 +71,18 @@ export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
-  const { t } = useLingui();
   const theme = useTheme();
+  const { i18n } = useLingui();
   const { control, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
   const [searchQuery, setSearchQuery] = useState('');
   const fieldTypeConfigs = Object.entries<SettingsFieldTypeConfig<any>>(
     SETTINGS_FIELD_TYPE_CONFIGS,
-  )
-    .map(
-      ([key, config]) =>
-        [
-          key,
-          key === FieldMetadataType.MORPH_RELATION
-            ? { ...config, label: msg`Relation` }
-            : config,
-        ] as [string, SettingsFieldTypeConfig<any>],
-    )
-    .filter(
-      ([key, config]) =>
-        !excludedFieldTypes.includes(key as SettingsFieldType) &&
-        t(config.label).toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+  ).filter(
+    ([key, config]) =>
+      !excludedFieldTypes.includes(key as SettingsFieldType) &&
+      i18n._(config.label).toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const { resetDefaultValueField: resetBooleanDefaultValueField } =
     useBooleanSettingsFormInitialValues({ existingFieldMetadataId: 'new' });
@@ -144,8 +134,8 @@ export const SettingsObjectNewFieldSelector = ({
             {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
               <Section.Root key={category}>
                 <Section.Header
-                  title={t(SETTINGS_FIELD_TYPE_CATEGORY_LABELS[category])}
-                  description={t(
+                  title={i18n._(SETTINGS_FIELD_TYPE_CATEGORY_LABELS[category])}
+                  description={i18n._(
                     SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category],
                   )}
                 />
@@ -153,6 +143,21 @@ export const SettingsObjectNewFieldSelector = ({
                   {fieldTypeConfigs
                     .filter(([, config]) => config.category === category)
                     .filter(([key]) => key !== FieldMetadataType.RELATION)
+                    .map(
+                      ([key, config]) =>
+                        [
+                          key,
+                          key === FieldMetadataType.MORPH_RELATION
+                            ? {
+                                ...config,
+                                label: msg({
+                                  message: `Relation`,
+                                  context: 'Field type',
+                                }),
+                              }
+                            : config,
+                        ] as [string, SettingsFieldTypeConfig<any>],
+                    )
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
                         <UndecoratedLink
@@ -177,7 +182,7 @@ export const SettingsObjectNewFieldSelector = ({
                                 />
                               </StyledFieldTypeIconContainer>
                             }
-                            title={t(config.label)}
+                            title={i18n._(config.label)}
                           />
                         </UndecoratedLink>
                       </StyledCardContainer>

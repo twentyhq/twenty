@@ -36,9 +36,7 @@ jobs:
         .yarn/**
   cli-package-test:
     needs: changed-files-check
-    if: >-
-      !cancelled() &&
-      (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
@@ -52,9 +50,7 @@ jobs:
         run: npx nx run twenty-cli:test:package
   cli-test:
     needs: changed-files-check
-    if: >-
-      !cancelled() &&
-      (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -78,6 +74,10 @@ jobs:
       - name: Unit tests
         run: npx vitest run --maxWorkers=2
         working-directory: packages/twenty-cli
+      - name: Test app publishing with an isolated local registry
+        run: |
+          sudo unshare --net -- sh -c 'ip link set lo up && exec "$@"' sh \
+            env CI=true "$(command -v node)" --test packages/twenty-cli/scripts/test-app-publish.mjs
       - name: Save CLI test cache
         uses: ./.github/actions/save-cache
         with:

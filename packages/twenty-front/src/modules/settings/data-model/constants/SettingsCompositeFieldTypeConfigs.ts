@@ -1,3 +1,6 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import {
   type FieldActorValue,
   type FieldAddressValue,
@@ -8,11 +11,8 @@ import {
   type FieldPhonesValue,
   type FieldRichTextValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
 import {
   COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES,
   CurrencyCode,
@@ -52,7 +52,7 @@ type SettingsCompositeFieldTypeConfigArray = Record<
 
 export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.CURRENCY]: {
-    label: msg`Currency`,
+    label: msg({ message: `Currency`, context: 'Field type' }),
     Icon: IllustrationIconCurrency,
     subFields: [
       {
@@ -95,7 +95,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldCurrencyValue>,
   [FieldMetadataType.EMAILS]: {
-    label: msg`Emails`,
+    label: msg({ message: `Emails`, context: 'Field type' }),
     Icon: IllustrationIconMail,
     subFields: [
       {
@@ -142,7 +142,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldEmailsValue>,
   [FieldMetadataType.LINKS]: {
-    label: msg`Links`,
+    label: msg({ message: `Links`, context: 'Field type' }),
     Icon: IllustrationIconLink,
     subFields: [
       {
@@ -199,7 +199,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
   [FieldMetadataType.PHONES]: {
-    label: msg`Phones`,
+    label: msg({ message: `Phones`, context: 'Field type' }),
     Icon: IllustrationIconPhone,
     subFields: [
       {
@@ -275,7 +275,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
   [FieldMetadataType.FULL_NAME]: {
-    label: msg`Full Name`,
+    label: msg({ message: `Full Name`, context: 'Field type' }),
     Icon: IllustrationIconUser,
     subFields: [
       {
@@ -309,7 +309,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
   [FieldMetadataType.ADDRESS]: {
-    label: msg`Address`,
+    label: msg({ message: `Address`, context: 'Field type' }),
     Icon: IllustrationIconMap,
     subFields: [
       {
@@ -436,7 +436,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldAddressValue>,
   [FieldMetadataType.ACTOR]: {
-    label: msg`Actor`,
+    label: msg({ message: `Actor`, context: 'Field type' }),
     Icon: IllustrationIconSetting,
     category: 'Basic',
     subFields: [
@@ -444,8 +444,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR].source,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
-            .source,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR].source,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
@@ -454,8 +453,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR].name,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
-            .name,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR].name,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
@@ -476,8 +474,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR]
             .context,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
-            .context,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR].context,
         isImportable: true,
         isFilterable: false,
         isIncludedInUniqueConstraint: false,
@@ -505,7 +502,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     ],
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
   [FieldMetadataType.RICH_TEXT]: {
-    label: msg`Rich Text`,
+    label: msg({ message: `Rich Text`, context: 'Field type' }),
     Icon: IllustrationIconText,
     category: 'Basic',
     subFields: [

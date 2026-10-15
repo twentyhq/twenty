@@ -3,7 +3,7 @@ import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
@@ -27,6 +27,10 @@ export const useUninstallApplication = ({
   const { enqueueToast } = useToast();
   const [triggerUninstallApplication, { loading: isTriggeringUninstall }] =
     useMutation(TriggerUninstallApplicationDocument);
+  const [findUninstallApplicationJobStatus] = useLazyQuery(
+    FindUninstallApplicationJobStatusDocument,
+    { fetchPolicy: 'network-only' },
+  );
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   const { data: jobStatusData } = useQuery(
@@ -54,7 +58,7 @@ export const useUninstallApplication = ({
     (jobStatus: TrackedJobStatus, trackedUninstallIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: isNonEmptyString(jobStatus.failedReason)
             ? jobStatus.failedReason
             : t`Error uninstalling application.`,
@@ -77,7 +81,7 @@ export const useUninstallApplication = ({
       );
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Application successfully uninstalled.`,
       });
       onCompleted?.();
@@ -85,9 +89,21 @@ export const useUninstallApplication = ({
     [enqueueToast, onCompleted, setCurrentWorkspace],
   );
 
+  const fetchUninstallJobStatus = useCallback(
+    async (jobId: string, trackedUninstallIdentifier: string) => {
+      const { data } = await findUninstallApplicationJobStatus({
+        variables: { universalIdentifier: trackedUninstallIdentifier, jobId },
+      });
+
+      return data?.findUninstallApplicationJobStatus;
+    },
+    [findUninstallApplicationJobStatus],
+  );
+
   const { activeJobId, activeJobProgress, trackJob } = useTrackedQueueJob({
     runningJob,
     onQueueJobSettled: handleUninstallJobSettled,
+    fetchJobStatus: fetchUninstallJobStatus,
   });
 
   const uninstall = async (): Promise<void> => {
@@ -109,7 +125,7 @@ export const useUninstallApplication = ({
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: graphqlMessage ?? t`Error uninstalling application.`,
       });
     }

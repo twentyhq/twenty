@@ -1,5 +1,6 @@
 export type AgentChatThreadInboxStatus = {
-  scope: 'INBOX' | 'SNOOZED' | 'ARCHIVED';
+  // NONE: a chat the member can open but does not follow
+  scope: 'INBOX' | 'SNOOZED' | 'ARCHIVED' | 'NONE';
   isUnread: boolean;
   isSubscribed: boolean;
   isMentioned: boolean;

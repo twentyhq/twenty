@@ -6,13 +6,13 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
+import { SettingsCard } from '@/settings/components/SettingsCard';
+import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
-import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
-import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
@@ -20,19 +20,21 @@ import {
 import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
-import { isEmptyObject } from 'twenty-shared/utils';
+import { getSettingsPath, isEmptyObject } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconArchive, IconTrash } from 'twenty-ui/icon';
+import { IconArchive, IconBolt, IconSearch, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -54,6 +56,12 @@ const StyledFormSectionContainer = styled.div`
   }
 `;
 
+const StyledLinkCardsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledDangerButtonsContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -67,6 +75,7 @@ export const ObjectSettings = ({
   setIsDeleting,
 }: ObjectSettingsProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const navigate = useNavigateSettings();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -99,9 +108,10 @@ export const ObjectSettings = ({
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
-  const isValidationRulesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+  const isRecordCreationFormEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
+  const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
@@ -126,7 +136,7 @@ export const ObjectSettings = ({
     const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Object deleted` });
+      enqueueToast({ status: 'success', children: t`Object deleted` });
       closeDialog(DELETE_OBJECT_MODAL_ID);
       navigate(SettingsPath.Objects);
       return;
@@ -163,31 +173,28 @@ export const ObjectSettings = ({
           />
         </Section.Root>
       </StyledFormSectionContainer>
-      <StyledFormSectionContainer>
-        <Section.Root>
-          <Section.Header
-            title={t`Translations`}
-            description={t`What each language displays for this object's labels`}
-          />
-          <SettingsTranslationsCard
-            objectNamePlural={objectMetadataItem.namePlural}
-            disabled={hasUnsavedAboutEdits}
-          />
-        </Section.Root>
-      </StyledFormSectionContainer>
-      {isValidationRulesEnabled &&
+      {isRecordCreationFormEnabled &&
         !objectMetadataItem.isRemote &&
         !objectMetadataItem.isSystem && (
           <StyledFormSectionContainer>
             <Section.Root>
               <Section.Header
                 title={t`Validation rules`}
-                description={t`A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows.`}
+                description={t`Block records that break your rules, like an opportunity marked Won with no amount. Checked on every save.`}
+                actions={<OrganizationAdornment />}
               />
-              <SettingsObjectValidationRulesSection
-                objectMetadataItem={objectMetadataItem}
-                isReadOnly={isReadOnly}
-              />
+              {hasValidationRulesEntitlement ? (
+                <SettingsObjectValidationRulesSection
+                  objectMetadataItem={objectMetadataItem}
+                  isReadOnly={isReadOnly}
+                />
+              ) : (
+                <SettingsEnterpriseFeatureGateCard
+                  title={t`Organization feature`}
+                  description={t`Upgrade to Organization to set validation rules.`}
+                  buttonTitle={t`Activate`}
+                />
+              )}
             </Section.Root>
           </StyledFormSectionContainer>
         )}
@@ -206,34 +213,40 @@ export const ObjectSettings = ({
             </Section.Root>
           </StyledFormSectionContainer>
         )}
-      <AdvancedSettingsWrapper>
-        <StyledFormSectionContainer>
-          <Section.Root>
-            <Section.Header
-              title={t`Search`}
-              description={t`Configure how this object appears in search results`}
+      <StyledFormSectionContainer>
+        <Section.Root>
+          <Section.Header
+            title={t`Advanced`}
+            description={t`Settings most workspaces never need to change`}
+          />
+          <StyledLinkCardsContainer>
+            <SettingsTranslationsCard
+              objectNamePlural={objectMetadataItem.namePlural}
+              disabled={hasUnsavedAboutEdits}
             />
-            <SettingsObjectSearchSection
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
-          </Section.Root>
-        </StyledFormSectionContainer>
-      </AdvancedSettingsWrapper>
-      <AdvancedSettingsWrapper>
-        <StyledFormSectionContainer>
-          <Section.Root>
-            <Section.Header
-              title={t`Indexes`}
-              description={t`Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent.`}
-            />
-            <SettingsObjectIndexesSection
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
-          </Section.Root>
-        </StyledFormSectionContainer>
-      </AdvancedSettingsWrapper>
+            <UndecoratedLink
+              to={getSettingsPath(SettingsPath.ObjectSearch, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              <SettingsCard
+                Icon={<IconSearch size={theme.icon.size.md} />}
+                title={t`Configure search`}
+              />
+            </UndecoratedLink>
+            <UndecoratedLink
+              to={getSettingsPath(SettingsPath.ObjectIndexes, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              <SettingsCard
+                Icon={<IconBolt size={theme.icon.size.md} />}
+                title={t`Manage indexes`}
+              />
+            </UndecoratedLink>
+          </StyledLinkCardsContainer>
+        </Section.Root>
+      </StyledFormSectionContainer>
       {!isReadOnly && (
         <StyledFormSectionContainer>
           <Section.Root>

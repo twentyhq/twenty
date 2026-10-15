@@ -204,7 +204,11 @@ describe('manifestValidate', () => {
       );
     });
 
-    it.each(['onConnectLogicFunction', 'onDisconnectLogicFunction'] as const)(
+    it.each([
+      'identifyAccountLogicFunction',
+      'onConnectLogicFunction',
+      'onDisconnectLogicFunction',
+    ] as const)(
       'should not flag a connection provider referencing a logic function via %s as a duplicate',
       (lifecycleHookKey) => {
         const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
@@ -1156,6 +1160,109 @@ describe('manifestValidate', () => {
           ),
         ]),
       );
+    });
+  });
+
+  describe('front component widget availability warnings', () => {
+    const frontComponent = {
+      universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000020',
+      name: 'Insights',
+      sourceComponentPath: 'src/insights.tsx',
+      builtComponentPath: 'src/insights.mjs',
+      builtComponentChecksum: 'checksum',
+      componentName: 'Insights',
+    };
+
+    it('warns about a visible front component that no widget picker offers', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        frontComponents: [frontComponent],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.warnings).toEqual([
+        expect.stringContaining(
+          'Front component "Insights" declares no widgetAvailability',
+        ),
+      ]);
+    });
+
+    it('does not warn when widgetAvailability is declared', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        frontComponents: [
+          {
+            ...frontComponent,
+            widgetAvailability: { pageLayoutType: PageLayoutType.DASHBOARD },
+          },
+        ],
+      });
+
+      expect(result.warnings).toEqual([]);
+    });
+
+    it('does not warn about a front component the app places in its own page layout', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        frontComponents: [frontComponent],
+        pageLayoutTabs: [
+          {
+            universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000025',
+            title: 'Overview',
+            position: 0,
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            widgets: [
+              {
+                universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000026',
+                title: 'Insights',
+                type: WidgetType.FRONT_COMPONENT,
+                configuration: {
+                  configurationType: 'FRONT_COMPONENT',
+                  frontComponentUniversalIdentifier:
+                    frontComponent.universalIdentifier,
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      expect(result.warnings).toEqual([]);
+    });
+
+    it('does not warn about headless front components or those opened from a menu item', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        frontComponents: [
+          { ...frontComponent, isHeadless: true },
+          {
+            ...frontComponent,
+            universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000021',
+          },
+          {
+            ...frontComponent,
+            universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000022',
+          },
+        ],
+        settingsMenuItems: [
+          {
+            universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000023',
+            frontComponentUniversalIdentifier:
+              'a0a1a2a3-a4a5-4000-8000-000000000021',
+            title: 'Settings',
+          },
+        ],
+        commandMenuItems: [
+          {
+            universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000024',
+            frontComponentUniversalIdentifier:
+              'a0a1a2a3-a4a5-4000-8000-000000000022',
+            label: 'Open',
+          },
+        ],
+      });
+
+      expect(result.warnings).toEqual([]);
     });
   });
 });

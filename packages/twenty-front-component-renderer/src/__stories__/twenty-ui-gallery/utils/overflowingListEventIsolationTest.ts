@@ -24,7 +24,9 @@ export const overflowingListEventIsolationTest: TwentyUiGalleryPlayFunction =
     trigger.focus();
     await userEvent.keyboard('{Enter}');
 
-    const popup = await page.findByRole('dialog', { name: 'Show all targets' });
+    const popup = await page.findByRole('dialog', {
+      name: 'Show all targets',
+    });
     const lastTarget = within(popup).getByRole('button', { name: 'Delta' });
     await waitFor(() => expect(lastTarget).toBeVisible());
     expect(trigger).toHaveAttribute('aria-expanded', 'true');

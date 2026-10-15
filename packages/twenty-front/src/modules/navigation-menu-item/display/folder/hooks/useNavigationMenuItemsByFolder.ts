@@ -5,7 +5,6 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -27,7 +26,6 @@ type NavigationMenuItemFolderEntry = Pick<
 export const useNavigationMenuItemsByFolder = () => {
   const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useNavigationObjectMetadataItems();
-  const isWorkflowCoreEnabled = useIsWorkflowCoreEnabled();
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
@@ -90,7 +88,6 @@ export const useNavigationMenuItemsByFolder = () => {
         itemsInFolder,
         views,
         objectMetadataItems,
-        isWorkflowCoreEnabled,
       );
 
       acc.push({

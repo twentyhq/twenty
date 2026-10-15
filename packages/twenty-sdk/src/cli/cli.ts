@@ -12,7 +12,7 @@ const program = new Command();
 
 program
   .name('twenty')
-  .description('CLI for Twenty application development')
+  .description('Deprecated CLI bundled with twenty-sdk')
   .version(packageJson.version);
 
 program.option(
@@ -39,6 +39,15 @@ program.hook('preAction', async (thisCommand) => {
 registerCommands(program);
 
 program.exitOverride();
+
+console.warn(
+  chalk.yellow(
+    [
+      'Warning: The CLI bundled with twenty-sdk is deprecated. Use the standalone twenty package instead.',
+      'Install: npm install -g twenty',
+    ].join('\n'),
+  ),
+);
 
 try {
   program.parse();

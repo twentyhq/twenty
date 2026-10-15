@@ -11,7 +11,7 @@ const CORE_ACTIVE_VERSION_ID = '20202020-eeee-4d02-bf25-6aeccf7ea419';
 
 const buildContext = () => ({
   workspaceId: WORKSPACE_ID,
-  rolePermissionConfig: { intersectionOf: [ROLE_ID] },
+  rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: ROLE_ID } },
 });
 
 const buildDeps = ({

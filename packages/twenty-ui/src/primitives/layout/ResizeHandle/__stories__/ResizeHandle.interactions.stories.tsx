@@ -264,8 +264,29 @@ export const PreventedEvents: Story = {
     onPointerDown: (event) => event.preventDefault(),
     onKeyDown: (event) => event.preventDefault(),
   },
+  render: (args) => (
+    <>
+      <ResizeHandle {...args} aria-label="Prevented resize" />
+      <ResizeHandle
+        {...args}
+        aria-label="Cancelled drag"
+        onPointerDown={undefined}
+        onKeyDown={undefined}
+        onPointerMove={(event) => {
+          if (event.clientY >= 100) {
+            event.preventDefault();
+          }
+        }}
+        onPointerUp={(event) => event.preventDefault()}
+      />
+    </>
+  ),
   play: async ({ canvasElement, args }) => {
-    const handle = within(canvasElement).getByRole('separator');
+    const canvas = within(canvasElement);
+    const handle = canvas.getByRole('separator', { name: 'Prevented resize' });
+    const cancelledHandle = canvas.getByRole('separator', {
+      name: 'Cancelled drag',
+    });
     const pointer = userEvent.setup();
 
     await pointer.pointer({ target: handle, keys: '[MouseLeft>]' });
@@ -275,6 +296,41 @@ export const PreventedEvents: Story = {
     await userEvent.keyboard('{ArrowDown}');
     await expect(handle).toHaveAttribute('aria-valuenow', '150');
     await expect(args.onValueChange).not.toHaveBeenCalled();
+
+    await withMockPointerCapture({
+      handle: cancelledHandle,
+      run: async () => {
+        await pointer.pointer({
+          target: cancelledHandle,
+          keys: '[MouseLeft>]',
+          coords: { y: 10 },
+        });
+        await pointer.pointer({ target: cancelledHandle, coords: { y: 60 } });
+        await expect(cancelledHandle).toHaveAttribute('aria-valuenow', '200');
+        await pointer.pointer({ target: cancelledHandle, coords: { y: 100 } });
+        await expect(cancelledHandle).toHaveAttribute('aria-valuenow', '200');
+        await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+        await pointer.pointer({
+          target: cancelledHandle,
+          keys: '[/MouseLeft]',
+        });
+        await expect(cancelledHandle).toHaveAttribute('aria-valuenow', '150');
+        await expect(args.onValueChange).toHaveBeenLastCalledWith(150);
+        await expect(args.onValueCommitted).not.toHaveBeenCalled();
+        await expect(args.onResizeEnd).toHaveBeenCalledWith({
+          cancelled: true,
+          value: 150,
+        });
+        await expect(
+          cancelledHandle.releasePointerCapture,
+        ).toHaveBeenCalledWith(1);
+      },
+    });
+
+    cancelledHandle.focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(cancelledHandle).toHaveAttribute('aria-valuenow', '160');
+    await expect(args.onValueCommitted).toHaveBeenCalledWith(160);
   },
 };
 

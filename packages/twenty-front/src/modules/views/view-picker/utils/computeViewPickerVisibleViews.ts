@@ -7,16 +7,10 @@ export const computeViewPickerVisibleViews = <
 >({
   views,
   currentViewId,
-  isInitialObjectViewEnabled,
 }: {
   views: TView[];
   currentViewId?: string;
-  isInitialObjectViewEnabled: boolean;
 }): TView[] => {
-  if (!isInitialObjectViewEnabled) {
-    return views;
-  }
-
   const viewsWithoutIndexView = views.filter(
     (view) => view.key !== ViewKey.INDEX,
   );

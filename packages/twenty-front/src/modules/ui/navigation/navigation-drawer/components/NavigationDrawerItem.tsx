@@ -18,7 +18,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   Shortcut,
@@ -109,10 +109,6 @@ const StyledItem = styled.button<StyledItemProps>`
       variant === 'tertiary'
         ? themeCssVariables.font.color.tertiary
         : themeCssVariables.font.color.primary};
-  }
-
-  &:hover .keyboard-shortcuts {
-    visibility: visible;
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -390,23 +386,19 @@ export const NavigationDrawerItem = ({
 
             {isSoon && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <Pill label={t`Soon`} />
+                <Badge>{t`Soon`}</Badge>
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 
             {isNew && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <Pill label={t`New`} />
+                <Badge>{t`New`}</Badge>
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 
             {isDefined(keyboardKeys) && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <Shortcut
-                  className="keyboard-shortcuts"
-                  shortcut={keyboardKeys}
-                  sequenceJoinLabel={t`then`}
-                />
+                <Shortcut shortcut={keyboardKeys} sequenceJoinLabel={t`then`} />
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 

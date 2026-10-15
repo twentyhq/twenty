@@ -31,11 +31,75 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
+    {
+      applicationVersion = '1.0.1',
+      isWorkflowCached = true,
+      installedApplicationRole,
+    }: {
+      applicationVersion?: string | null;
+      isWorkflowCached?: boolean;
+      installedApplicationRole?: { canReadObjectRecords: boolean } | null;
+    } = {},
   ) => {
+    const cachedListeners = isWorkflowCached ? listeners : [];
+    const isInstalledApplication = installedApplicationRole !== undefined;
+
     workspaceCacheService.getOrRecompute.mockResolvedValue({
       flatObjectMetadataMaps: { byUniversalIdentifier: {} },
       featureFlagsMap: {},
-      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+      flatApplicationMaps: {
+        byId: {
+          'application-id': {
+            id: 'application-id',
+            version: applicationVersion,
+            canBeUninstalled: isInstalledApplication,
+            defaultRoleId: installedApplicationRole
+              ? 'application-role-id'
+              : null,
+          },
+        },
+        idByUniversalIdentifier: {},
+      },
+      ...(isInstalledApplication
+        ? {
+            rolesPermissions: installedApplicationRole
+              ? {
+                  'application-role-id': {
+                    'test-object-metadata': {
+                      canReadObjectRecords:
+                        installedApplicationRole.canReadObjectRecords,
+                      canUpdateObjectRecords: false,
+                      canSoftDeleteObjectRecords: false,
+                      canDestroyObjectRecords: false,
+                      restrictedFields: {},
+                      rowLevelPermissionPredicates: [],
+                      rowLevelPermissionPredicateGroups: [],
+                    },
+                  },
+                }
+              : {},
+            roleIdsWithAllRecordsAccess: [],
+            flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+            flatRowLevelPermissionPredicateGroupMaps:
+              createEmptyFlatEntityMaps(),
+            flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+          }
+        : {}),
+      flatWorkflowMaps: {
+        byUniversalIdentifier: Object.fromEntries(
+          cachedListeners.map((listener) => [
+            listener.workflowId,
+            { id: listener.workflowId, applicationId: 'application-id' },
+          ]),
+        ),
+        universalIdentifierById: Object.fromEntries(
+          cachedListeners.map((listener) => [
+            listener.workflowId,
+            listener.workflowId,
+          ]),
+        ),
+        universalIdentifiersByApplicationId: {},
+      },
       flatRoleMaps: { byUniversalIdentifier: {} },
       workflowAutomatedTriggerMaps: {
         byWorkflowId: Object.fromEntries(
@@ -200,6 +264,53 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         },
         { retryLimit: 3 },
       );
+    });
+
+    it('should not trigger workflow while its application is still installing', async () => {
+      setTriggerMap(mockEventListeners, { applicationVersion: null });
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('should trigger an application workflow on records its application role reads', async () => {
+      setTriggerMap(mockEventListeners, {
+        installedApplicationRole: { canReadObjectRecords: true },
+      });
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not trigger an application workflow on records its application role cannot read', async () => {
+      setTriggerMap(mockEventListeners, {
+        installedApplicationRole: { canReadObjectRecords: false },
+      });
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger an application workflow whose application has no role', async () => {
+      setTriggerMap(mockEventListeners, { installedApplicationRole: null });
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('should trigger workflow missing from the workflow cache', async () => {
+      setTriggerMap(mockEventListeners, {
+        applicationVersion: null,
+        isWorkflowCached: false,
+      });
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger workflow when no fields are specified', async () => {
@@ -452,6 +563,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
               }
             : {
+                flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+                flatWorkflowMaps: createEmptyFlatEntityMaps(),
                 workflowAutomatedTriggerMaps: {
                   byWorkflowId: {
                     [workflowId]: {
@@ -525,6 +638,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
               }
             : {
+                flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+                flatWorkflowMaps: createEmptyFlatEntityMaps(),
                 workflowAutomatedTriggerMaps: {
                   byWorkflowId: {
                     [workflowId]: {

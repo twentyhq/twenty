@@ -6,7 +6,7 @@ import {
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { IconCheck, IconX } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledFeatureCell = styled.div<{
   hasTopBorder?: boolean;
@@ -28,6 +28,24 @@ const StyledFeatureCell = styled.div<{
   min-height: 40px;
   min-width: 0;
   padding: 0 ${themeCssVariables.spacing[4]};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    border-top: 0;
+    min-height: auto;
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}
+      ${themeCssVariables.spacing[2]};
+  }
+`;
+
+const StyledFeatureLabelCell = styled(StyledFeatureCell)`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    border-top: ${({ hasTopBorder }) =>
+      hasTopBorder
+        ? `1px solid ${themeCssVariables.border.color.medium}`
+        : '0'};
+    grid-column: 1 / -1;
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} 0;
+  }
 `;
 
 const StyledCategoryCell = styled.div<{ hasTopBorder?: boolean }>`
@@ -44,6 +62,10 @@ const StyledCategoryCell = styled.div<{ hasTopBorder?: boolean }>`
   line-height: 1.4;
   min-height: 40px;
   padding: 0 ${themeCssVariables.spacing[4]};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding: 0 ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledCellText = styled.span`
@@ -51,6 +73,10 @@ const StyledCellText = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    white-space: normal;
+  }
 `;
 
 const StyledComparisonCellIcon = styled.div<{ isIncluded: boolean }>`
@@ -111,9 +137,9 @@ export const SettingsBillingPlanComparisonTableRow = ({
 
   return (
     <>
-      <StyledFeatureCell hasTopBorder={hasTopBorder} isLabel>
+      <StyledFeatureLabelCell hasTopBorder={hasTopBorder} isLabel>
         <StyledCellText>{i18n._(row.featureLabel)}</StyledCellText>
-      </StyledFeatureCell>
+      </StyledFeatureLabelCell>
       {SETTINGS_BILLING_COMPARED_PLAN_KEYS.map((planKey) => (
         <StyledFeatureCell hasTopBorder={hasTopBorder} key={planKey}>
           <SettingsBillingPlanComparisonCellContent cell={row.plans[planKey]} />

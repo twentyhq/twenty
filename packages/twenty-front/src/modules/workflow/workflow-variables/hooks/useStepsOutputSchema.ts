@@ -1,7 +1,6 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
@@ -32,7 +31,6 @@ import { ComputeStepOutputSchemaDocument } from '~/generated/graphql';
 export const useStepsOutputSchema = () => {
   const store = useStore();
   const client = useApolloCoreClient();
-  const isCore = useIsWorkflowCoreEnabled();
   const { enqueueToast } = useToast();
   const { i18n } = useLingui();
 
@@ -99,7 +97,7 @@ export const useStepsOutputSchema = () => {
           false,
         );
 
-        if (isCore && step.type === 'ITERATOR') {
+        if (step.type === 'ITERATOR') {
           void client
             .mutate({
               mutation: ComputeStepOutputSchemaDocument,
@@ -189,7 +187,7 @@ export const useStepsOutputSchema = () => {
         );
       }
     },
-    [store, client, isCore, enqueueToast, i18n.locale],
+    [store, client, enqueueToast, i18n.locale],
   );
 
   const markStepForRecomputation = useCallback(
