@@ -188,8 +188,33 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('stage = "WON"').isValid).toBe(false);
   });
 
-  it('should reject a syntax error', () => {
-    expect(compile('stage ==').isValid).toBe(false);
+  it('should report an incomplete expression', () => {
+    expect(compile('stage ==')).toEqual({
+      isValid: false,
+      errorMessage: 'Expression is incomplete',
+      errorCode: 'INCOMPLETE_EXPRESSION',
+    });
+    expect(compile('(stage == "WON"').errorCode).toBe('INCOMPLETE_EXPRESSION');
+  });
+
+  it('should report a text value missing its closing quote', () => {
+    expect(compile('stage == "WON')).toEqual({
+      isValid: false,
+      errorMessage: 'A text value is missing its closing quote',
+      errorCode: 'UNCLOSED_TEXT',
+    });
+  });
+
+  it('should name the unexpected character or operator', () => {
+    expect(compile('stage = "WON"')).toEqual({
+      isValid: false,
+      errorMessage: 'Unexpected "="',
+      errorCode: 'INVALID_SYNTAX',
+      errorParams: { token: '=' },
+    });
+    expect(compile('stage == and "WON"').errorParams).toEqual({
+      token: 'and',
+    });
   });
 
   it('should reject an empty expression', () => {

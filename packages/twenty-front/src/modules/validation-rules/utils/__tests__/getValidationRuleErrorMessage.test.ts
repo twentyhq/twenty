@@ -88,6 +88,10 @@ describe('getValidationRuleErrorMessage', () => {
       'isDefined(company.size)',
       'isDefined(company.people)',
       'stage',
+      'stage ==',
+      'stage == "WON',
+      'stage = "WON"',
+      'amount amount',
     ];
 
     for (const expression of expressions) {
