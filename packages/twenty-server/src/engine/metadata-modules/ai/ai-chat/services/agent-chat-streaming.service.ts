@@ -237,7 +237,6 @@ export class AgentChatStreamingService {
     );
   }
 
-  // Saved as its own finished turn, so it never starts or waits for a reply
   saveMessageWithoutReply({
     thread,
     userWorkspaceId,
@@ -283,7 +282,7 @@ export class AgentChatStreamingService {
         await this.eventPublisherService.publish({
           workspaceId,
           threadId,
-          event: { type: 'message-persisted', messageId: savedMessage.id },
+          event: { type: 'message-added', messageId: savedMessage.id },
         });
 
         await this.threadService.notifyThreadActivityUpdated({

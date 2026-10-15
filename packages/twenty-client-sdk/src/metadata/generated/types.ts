@@ -7631,9 +7631,6 @@ export default {
                         254,
                         "[FileAttachmentInput!]"
                     ],
-                    "isAssistantMentioned": [
-                        4
-                    ],
                     "mentionedWorkspaceMemberIds": [
                         493,
                         "[UUID!]"
@@ -7644,6 +7641,9 @@ export default {
                     ],
                     "modelId": [
                         1
+                    ],
+                    "shouldAssistantReply": [
+                        4
                     ],
                     "text": [
                         1,

@@ -101,8 +101,8 @@ const buildResolver = () => {
       .mockResolvedValue({ chunks: [], maxSeq: 0 }),
   };
   const redis = { getClient: jest.fn() };
-  const replyPolicy = {
-    shouldAssistantReply: jest.fn().mockResolvedValue(true),
+  const featureFlags = {
+    isFeatureEnabled: jest.fn().mockResolvedValue(true),
   };
   const threadLifecycle = new AgentChatThreadLifecycleService(
     threadRepository as never,
@@ -138,14 +138,14 @@ const buildResolver = () => {
         },
       }),
     } as never,
-    replyPolicy as never,
+    featureFlags as never,
   );
   return {
     resolver,
     chatService,
     threadService,
     threadRepository,
-    replyPolicy,
+    featureFlags,
     messages,
     sharing,
     streaming,
@@ -355,12 +355,8 @@ describe('Shared conversation API boundaries', () => {
     );
   });
 
-  it('saves a message nobody asked the assistant about without starting a turn', async () => {
-    const { resolver, streaming, replyPolicy } = buildResolver();
-
-    replyPolicy.shouldAssistantReply.mockResolvedValue(false);
-
-    const result = await resolver.sendChatMessage(
+  const sendWithAssistantOff = (resolver: AgentChatResolver) =>
+    resolver.sendChatMessage(
       THREAD_ID,
       'Tim, can you take this one?',
       'message',
@@ -371,20 +367,31 @@ describe('Shared conversation API boundaries', () => {
       'owner-user',
       'owner',
       workspace,
+      false,
     );
 
-    expect(replyPolicy.shouldAssistantReply).toHaveBeenCalledWith(
-      expect.objectContaining({
-        isAssistantMentioned: false,
-        mentionedWorkspaceMemberIds: ['tim'],
-      }),
-    );
+  it('saves a message without starting a turn when the assistant is off', async () => {
+    const { resolver, streaming } = buildResolver();
+
+    const result = await sendWithAssistantOff(resolver);
+
     expect(streaming.saveMessageWithoutReply).toHaveBeenCalled();
     expect(streaming.streamAgentChat).not.toHaveBeenCalled();
     expect(result).toEqual(
       expect.objectContaining({ messageId: 'message', queued: false }),
     );
     expect(result.streamId).toBeUndefined();
+  });
+
+  it('still replies when the assistant is off but the inbox is not enabled', async () => {
+    const { resolver, streaming, featureFlags } = buildResolver();
+
+    featureFlags.isFeatureEnabled.mockResolvedValue(false);
+
+    await sendWithAssistantOff(resolver);
+
+    expect(streaming.streamAgentChat).toHaveBeenCalled();
+    expect(streaming.saveMessageWithoutReply).not.toHaveBeenCalled();
   });
 
   it('adds the mentioned members once the message is sent', async () => {
