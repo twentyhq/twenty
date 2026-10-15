@@ -2,8 +2,6 @@ import { isUndefined } from '@sniptt/guards';
 
 import { getTimestamp } from 'src/front-components/utils/get-timestamp.util';
 
-// Rows sit in a narrow record-page column, so the year is only spent on dates
-// that need it.
 const CURRENT_YEAR_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   month: 'short',
   day: 'numeric',

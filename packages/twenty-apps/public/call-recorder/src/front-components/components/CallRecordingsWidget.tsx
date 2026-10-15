@@ -59,11 +59,7 @@ const CallRecordingList = ({
       );
     case 'loaded':
       if (callRecordingsState.callRecordings.length === 0) {
-        return (
-          <StyledWidgetContainer>
-            <WidgetMessage message="No call recordings yet." />
-          </StyledWidgetContainer>
-        );
+        return null;
       }
 
       return (

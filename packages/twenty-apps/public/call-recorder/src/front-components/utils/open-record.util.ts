@@ -1,8 +1,6 @@
 import { openSidePanelPage, SidePanelPages } from 'twenty-sdk/front-component';
 
-// The host resolves ViewRecord against the object's "open record in" setting
-// and falls back to the record page on mobile, as Twenty's own chips do; a
-// routed RecordShowPage would always force one or the other.
+// ViewRecord follows the object's "open record in" setting, like native chips.
 export const openRecord = ({
   objectNameSingular,
   recordId,

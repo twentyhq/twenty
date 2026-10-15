@@ -20,7 +20,6 @@ const DISPLAY_ITEM_KIND_ORDER: Record<
 
 type BuildCallParticipantDisplayItemsResult = {
   items: CallParticipantDisplayItem[];
-  hiddenUnmatchedCount: number;
 };
 
 // A null relation next to its id means the record is deleted or unreadable.
@@ -145,7 +144,6 @@ export const buildCallParticipantDisplayItems = ({
   showUnmatchedAttendees: boolean;
 }): BuildCallParticipantDisplayItemsResult => {
   const displayItemsByKey = new Map<string, CallParticipantDisplayItem>();
-  let hiddenUnmatchedCount = 0;
 
   for (const participant of participants) {
     const displayItem = toDisplayItem({ participant, areRelationsLoaded });
@@ -155,7 +153,6 @@ export const buildCallParticipantDisplayItems = ({
     }
 
     if (displayItem.kind === 'unmatched' && !showUnmatchedAttendees) {
-      hiddenUnmatchedCount += 1;
       continue;
     }
 
@@ -176,6 +173,5 @@ export const buildCallParticipantDisplayItems = ({
 
   return {
     items: [...displayItemsByKey.values()].sort(compareDisplayItems),
-    hiddenUnmatchedCount,
   };
 };

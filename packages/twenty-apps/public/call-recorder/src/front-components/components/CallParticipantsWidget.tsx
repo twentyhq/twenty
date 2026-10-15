@@ -31,30 +31,20 @@ const CallParticipantList = ({ callRecordingId }: CallParticipantListProps) => {
 
   switch (callParticipantsState.status) {
     case 'loading':
-      return <WidgetMessage message="Loading participants…" />;
+      return null;
     case 'error':
       return <WidgetMessage message="Could not load participants." />;
     case 'notLinkedToMeeting':
-      return (
-        <WidgetMessage message="This recording is not linked to a meeting." />
-      );
+      return null;
     case 'loaded': {
-      const { items, hiddenUnmatchedCount } = buildCallParticipantDisplayItems({
+      const { items } = buildCallParticipantDisplayItems({
         participants: callParticipantsState.participants,
         areRelationsLoaded: callParticipantsState.areRelationsLoaded,
         showUnmatchedAttendees: isShowUnmatchedAttendeesEnabled(),
       });
 
       if (items.length === 0) {
-        return (
-          <WidgetMessage
-            message={
-              hiddenUnmatchedCount > 0
-                ? 'No attendees match a person or member of your workspace.'
-                : 'This meeting has no participants to show.'
-            }
-          />
-        );
+        return null;
       }
 
       return (

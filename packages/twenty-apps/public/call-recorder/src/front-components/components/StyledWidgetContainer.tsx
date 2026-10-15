@@ -6,7 +6,7 @@ export const StyledWidgetContainer = styled.div`
   display: flex;
   flex-direction: column;
   font-family: ${() => themeCssVariables.font.family};
-  gap: ${() => themeCssVariables.spacing[2]};
-  padding: ${() => themeCssVariables.spacing[2]};
+  gap: ${() => themeCssVariables.spacing[1]};
+  padding: ${() => themeCssVariables.spacing[1]};
   width: 100%;
 `;
