@@ -37,6 +37,11 @@ const StyledStatsColumn = styled.div`
   min-width: 0;
 `;
 
+const StyledEmptyMessage = styled.p`
+  color: ${themeCssVariables.font.color.tertiary};
+  margin: ${themeCssVariables.spacing[2]} 0 0;
+`;
+
 type SettingsApplicationRegistrationInstallStatsProps = {
   registration: ApplicationRegistration;
   isAdminView?: boolean;
@@ -77,6 +82,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
     stats?.versionDistribution
       .map(({ version, count }) => `${version} (${formatCount(count)})`)
       .join(', ') || '—';
+  const hasInstallations = (stats?.activeInstalls ?? 0) > 0;
 
   const statsItems: TableItem[] = [
     {
@@ -84,12 +90,18 @@ export const SettingsApplicationRegistrationInstallStats = ({
       label: t`Installs`,
       value: formatCount(stats?.activeInstalls),
     },
-    {
+  ];
+
+  if (hasInstallations) {
+    statsItems.push({
       Icon: IconRefresh,
       label: t`Auto update enabled`,
       value: formatCount(stats?.autoUpdateEnabled),
-    },
-    {
+    });
+  }
+
+  if ((stats?.workspacesNeedingAttention ?? 0) > 0) {
+    statsItems.push({
       Icon: IconAlertTriangle,
       label: t`Needs configuration`,
       value: (
@@ -101,23 +113,43 @@ export const SettingsApplicationRegistrationInstallStats = ({
           </span>
         </Tooltip>
       ),
-    },
-    {
+    });
+  }
+
+  if ((stats?.suspendedInstalls ?? 0) > 0) {
+    statsItems.push({
       Icon: IconPlayerPause,
       label: t`On suspended workspaces`,
       value: formatCount(stats?.suspendedInstalls),
-    },
-    {
-      Icon: IconVersions,
-      label: t`Most installed version`,
-      value: stats?.mostInstalledVersion ?? '—',
-    },
-    {
-      Icon: IconChartBar,
-      label: t`Distribution`,
-      value: <OverflowingTextWithTooltip text={versionDistribution} />,
-    },
-  ];
+    });
+  }
+
+  if (hasInstallations) {
+    statsItems.push(
+      {
+        Icon: IconVersions,
+        label: t`Most installed version`,
+        value: stats?.mostInstalledVersion ?? '—',
+      },
+      {
+        Icon: IconChartBar,
+        label: t`Distribution`,
+        value: <OverflowingTextWithTooltip text={versionDistribution} />,
+      },
+    );
+  }
+
+  const consumedOperations = (stats?.creditBreakdown ?? [])
+    .filter(
+      ({ creditsConsumed }) =>
+        isDefined(creditsConsumed) && creditsConsumed !== 0,
+    )
+    .sort(
+      (left, right) =>
+        right.creditsConsumed - left.creditsConsumed ||
+        left.key.localeCompare(right.key),
+    );
+
   const creditItems: TableItem[] = [
     {
       Icon: IconCoins,
@@ -130,29 +162,19 @@ export const SettingsApplicationRegistrationInstallStats = ({
         </Tooltip>
       ),
     },
-    ...(stats?.creditBreakdown ?? [])
-      .filter(
-        ({ creditsConsumed }) =>
-          isDefined(creditsConsumed) && creditsConsumed !== 0,
-      )
-      .sort(
-        (left, right) =>
-          right.creditsConsumed - left.creditsConsumed ||
-          left.key.localeCompare(right.key),
-      )
-      .map((operation) => {
-        const standardLabel = Object.entries(USAGE_OPERATION_TYPE_LABELS).find(
-          ([operationType]) => operationType === operation.operationType,
-        )?.[1];
+    ...consumedOperations.map((operation) => {
+      const standardLabel = Object.entries(USAGE_OPERATION_TYPE_LABELS).find(
+        ([operationType]) => operationType === operation.operationType,
+      )?.[1];
 
-        return {
-          label:
-            operation.isAppDefined || !isDefined(standardLabel)
-              ? operation.label
-              : i18n._(standardLabel),
-          value: formatCredits(operation.creditsConsumed),
-        };
-      }),
+      return {
+        label:
+          operation.isAppDefined || !isDefined(standardLabel)
+            ? operation.label
+            : i18n._(standardLabel),
+        value: formatCredits(operation.creditsConsumed),
+      };
+    }),
   ];
 
   return (
@@ -163,14 +185,19 @@ export const SettingsApplicationRegistrationInstallStats = ({
           items={statsItems}
           gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
         />
+        {stats?.activeInstalls === 0 && (
+          <StyledEmptyMessage>{t`No installations yet.`}</StyledEmptyMessage>
+        )}
       </StyledStatsColumn>
-      <StyledStatsColumn role="group" aria-label={t`Credit consumption`}>
-        <SettingsTableCard
-          rounded
-          items={creditItems}
-          gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
-        />
-      </StyledStatsColumn>
+      {consumedOperations.length > 0 && (
+        <StyledStatsColumn role="group" aria-label={t`Credit consumption`}>
+          <SettingsTableCard
+            rounded
+            items={creditItems}
+            gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
+          />
+        </StyledStatsColumn>
+      )}
     </StyledStatsLayout>
   );
 };

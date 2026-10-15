@@ -130,7 +130,7 @@ describe('SettingsApplicationRegistrationInstallStats', () => {
     },
   );
 
-  it('keeps unavailable health and credits distinct from zero', async () => {
+  it('hides unavailable health and credit data', async () => {
     renderStats({
       stats: {
         ...STATS,
@@ -143,11 +143,14 @@ describe('SettingsApplicationRegistrationInstallStats', () => {
 
     await screen.findByText('1.2.3 (2), 1.2.2 (2)');
     for (const label of ['Needs configuration', 'Total credits consumed']) {
-      expect(getRow(label).getByText('—')).toBeInTheDocument();
+      expect(screen.queryByText(label)).not.toBeInTheDocument();
     }
+    expect(
+      screen.queryByRole('group', { name: 'Credit consumption' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('shows zero counts and credits for an app without installations or usage', async () => {
+  it('shows a compact empty state without installations or usage', async () => {
     renderStats({
       stats: {
         ...STATS,
@@ -162,14 +165,67 @@ describe('SettingsApplicationRegistrationInstallStats', () => {
       },
     });
 
-    await screen.findByText('Installs');
-    expect(await getRow('Installs').findByText('0')).toBeInTheDocument();
+    await screen.findByText('No installations yet.');
+    expect(getRow('Installs').getByText('0')).toBeInTheDocument();
+    for (const label of [
+      'Auto update enabled',
+      'Needs configuration',
+      'On suspended workspaces',
+      'Total credits consumed',
+      'Most installed version',
+      'Distribution',
+    ]) {
+      expect(screen.queryByText(label)).not.toBeInTheDocument();
+    }
+  });
+
+  it('keeps useful installation rows when no issues or consumption are recorded', async () => {
+    renderStats({
+      stats: {
+        ...STATS,
+        autoUpdateEnabled: 0,
+        workspacesNeedingAttention: 0,
+        suspendedInstalls: 0,
+        totalCreditsConsumed: 0,
+        creditBreakdown: STATS.creditBreakdown!.map((operation) => ({
+          ...operation,
+          creditsConsumed: 0,
+        })),
+      },
+    });
+
+    await screen.findByText('1.2.3 (2), 1.2.2 (2)');
     expect(getRow('Auto update enabled').getByText('0')).toBeInTheDocument();
+    expect(screen.queryByText('Needs configuration')).not.toBeInTheDocument();
     expect(
-      getRow('On suspended workspaces').getByText('0'),
+      screen.queryByText('On suspended workspaces'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('group', { name: 'Credit consumption' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('No installations yet.')).not.toBeInTheDocument();
+  });
+
+  it('keeps historical consumption visible after all installations are removed', async () => {
+    renderStats({
+      stats: {
+        ...STATS,
+        activeInstalls: 0,
+        autoUpdateEnabled: 0,
+        suspendedInstalls: 0,
+        workspacesNeedingAttention: 0,
+        mostInstalledVersion: null,
+        versionDistribution: [],
+      },
+    });
+
+    await screen.findByText('No installations yet.');
+    expect(getRow('Installs').getByText('0')).toBeInTheDocument();
+    expect(
+      getRow('Total credits consumed').getByText('104.3'),
     ).toBeInTheDocument();
-    expect(getRow('Total credits consumed').getByText('0')).toBeInTheDocument();
-    expect(getRow('Distribution').getByText('—')).toBeInTheDocument();
+    expect(getRow('Recorded calls').getByText('49.3')).toBeInTheDocument();
+    expect(screen.queryByText('Distribution')).not.toBeInTheDocument();
   });
 
   it('shows only non-zero operations, sorted by consumption descending', async () => {
