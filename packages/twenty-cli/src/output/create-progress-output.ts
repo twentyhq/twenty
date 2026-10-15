@@ -3,6 +3,7 @@ import stringWidth from 'string-width';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { formatProgressLine } from '@/output/format-progress-line';
 import { type OutputMode } from '@/output/types/output-mode.type';
 import { type Output } from '@/output/types/output.type';
 import { writeLine } from '@/output/write-line';
@@ -42,11 +43,10 @@ export const createProgressOutput = ({ mode }: { mode: OutputMode }) => {
       !Number.isFinite(percentage) ||
       barWidth < 4
     ) {
-      const line = isDefined(percentage)
-        ? `${message} ${progressText}`
-        : message;
-
-      writeLine({ stream: process.stderr, text: line });
+      writeLine({
+        stream: process.stderr,
+        text: formatProgressLine({ message, percentage }),
+      });
 
       return;
     }
