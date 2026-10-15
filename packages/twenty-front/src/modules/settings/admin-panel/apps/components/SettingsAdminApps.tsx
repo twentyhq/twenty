@@ -13,6 +13,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { msg, t } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
+import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -59,17 +60,16 @@ const PAGE_SIZE = 25;
 
 const SOURCE_TYPE_FILTER_OPTIONS: {
   sourceType: ApplicationRegistrationSourceType;
-  label: MessageDescriptor;
+  label: string | MessageDescriptor;
 }[] = [
-  { sourceType: ApplicationRegistrationSourceType.NPM, label: msg`NPM` },
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- NPM is the package ecosystem's name.
+  { sourceType: ApplicationRegistrationSourceType.NPM, label: 'NPM' },
   {
     sourceType: ApplicationRegistrationSourceType.TARBALL,
     label: msg`Tarball`,
   },
-  {
-    sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-    label: msg`OAuth`,
-  },
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- OAuth is a protocol name.
+  { sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY, label: 'OAuth' },
   { sourceType: ApplicationRegistrationSourceType.LOCAL, label: msg`Local` },
 ];
 
@@ -218,7 +218,7 @@ export const SettingsAdminApps = () => {
                       onCheckedChange={() => toggleSourceTypeFilter(sourceType)}
                       checked={sourceTypeFilters.includes(sourceType)}
                     >
-                      {t(label)}
+                      {isString(label) ? label : t(label)}
                     </SettingsRow>
                   ))}
                 </Dropdown.Section>

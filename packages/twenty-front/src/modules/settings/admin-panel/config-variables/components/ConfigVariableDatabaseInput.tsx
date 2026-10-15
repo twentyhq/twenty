@@ -56,8 +56,10 @@ export const ConfigVariableDatabaseInput = ({
       : [];
 
   const booleanOptions = [
-    { value: 'true', label: t`true` },
-    { value: 'false', label: t`false` },
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Show the exact configuration literal.
+    { value: 'true', label: 'true' },
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Show the exact configuration literal.
+    { value: 'false', label: 'false' },
   ];
 
   const isValueSelected = (optionValue: string) => {

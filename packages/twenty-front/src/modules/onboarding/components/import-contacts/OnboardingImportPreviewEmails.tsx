@@ -8,6 +8,7 @@ import {
 } from '@/onboarding/constants/ImportContactsPreviewEmails';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
@@ -181,7 +182,9 @@ const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => (
       {email.sender}
     </StyledEmailSender>
     {isDefined(email.subject) && (
-      <StyledEmailSubject>{t(email.subject)}</StyledEmailSubject>
+      <StyledEmailSubject>
+        {isString(email.subject) ? email.subject : t(email.subject)}
+      </StyledEmailSubject>
     )}
   </StyledEmailRow>
 );

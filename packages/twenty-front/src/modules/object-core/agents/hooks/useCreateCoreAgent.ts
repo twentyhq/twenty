@@ -43,7 +43,8 @@ export const useCreateCoreAgent = () => {
             name: `untitledAgent${v4().split('-')[0]}`,
             label: t`Untitled agent`,
             icon: 'IconLego',
-            prompt: t`You are a helpful AI assistant.`,
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- The persisted default instruction is canonical across locales.
+            prompt: 'You are a helpful AI assistant.',
             modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
           },
         },

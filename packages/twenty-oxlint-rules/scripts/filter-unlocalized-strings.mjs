@@ -18,6 +18,13 @@ const VISIBLE_NAMES = new Set([
   'tooltip',
 ]);
 
+const JSX_VISIBLE_NAMES = new Set([
+  'error',
+  'errorMessage',
+  'helperText',
+  'hint',
+]);
+
 const TECHNICAL_PLACEHOLDERS = new Set([
   '<p>Hello</p>',
   'auto',
@@ -54,6 +61,9 @@ const isVisibleName = ({ name, value }) =>
   VISIBLE_NAMES.has(name) &&
   (name !== 'placeholder' || !TECHNICAL_PLACEHOLDERS.has(value));
 
+const isVisibleJsxName = ({ name, value }) =>
+  JSX_VISIBLE_NAMES.has(name) || isVisibleName({ name, value });
+
 const isVisibleString = ({ node, value }) => {
   if (ts.isJsxText(node)) {
     return true;
@@ -74,7 +84,7 @@ const isVisibleString = ({ node, value }) => {
   const parent = expression.parent;
 
   if (ts.isJsxAttribute(parent)) {
-    return isVisibleName({ name: getName(parent.name), value });
+    return isVisibleJsxName({ name: getName(parent.name), value });
   }
 
   if (ts.isJsxExpression(parent)) {
@@ -85,7 +95,7 @@ const isVisibleString = ({ node, value }) => {
     }
 
     if (ts.isJsxAttribute(container)) {
-      return isVisibleName({ name: getName(container.name), value });
+      return isVisibleJsxName({ name: getName(container.name), value });
     }
   }
 

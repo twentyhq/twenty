@@ -31,9 +31,18 @@ const ABBREVIATION_SUFFIX_BY_THRESHOLD: Record<
   number,
   MessageDescriptor | null
 > = {
-  1e9: msg`B`,
-  1e6: msg`M`,
-  1e3: msg`k`,
+  1e9: msg({
+    message: 'B',
+    comment: 'Billion (10^9); the number is already divided by 1,000,000,000.',
+  }),
+  1e6: msg({
+    message: 'M',
+    comment: 'Million (10^6); the number is already divided by 1,000,000.',
+  }),
+  1e3: msg({
+    message: 'k',
+    comment: 'Thousand (10^3); the number is already divided by 1,000.',
+  }),
   1: null,
 };
 

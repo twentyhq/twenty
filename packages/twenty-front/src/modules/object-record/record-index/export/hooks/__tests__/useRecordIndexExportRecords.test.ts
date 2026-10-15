@@ -69,7 +69,7 @@ describe('generateCsv', () => {
     ];
     const csv = generateCsv({ columns, rows });
     expect(csv)
-      .toEqual(`\uFEFFID,Foo,Empty,Nested link field / Link URL,Nested link field / Secondary Links,Relation
+      .toEqual(`\uFEFFId,Foo,Empty,Nested link field / Link URL,Nested link field / Secondary Links,Relation
 1,some field,,https://www.test.com,"[{""label"":""secondary link 1"",""url"":""https://www.test.com""},{""label"":""secondary link 2"",""url"":""https://www.test.com""}]",a relation`);
   });
 
@@ -125,7 +125,7 @@ describe('generateCsv', () => {
       '{"0":"JavaScript","1":"TypeScript","2":"React"}',
     );
 
-    expect(csv).toContain('ID,Name,Tags,Skills');
+    expect(csv).toContain('Id,Name,Tags,Skills');
     expect(csv).toContain('1,John Doe');
     expect(csv).toContain('2,Jane Smith');
   });
@@ -168,8 +168,26 @@ describe('generateCsv', () => {
 
     expect(csv).toContain('[]');
 
-    expect(csv).toContain('ID,Name,Tags,Skills');
+    expect(csv).toContain('Id,Name,Tags,Skills');
     expect(csv).toContain('1,John Doe,[],[]');
+  });
+
+  it('preserves the relation ID header for CSV consumers', () => {
+    const csv = generateCsv({
+      columns: [
+        {
+          label: 'Company',
+          type: FieldMetadataType.RELATION,
+          metadata: {
+            fieldName: 'company',
+            relationType: RelationType.MANY_TO_ONE,
+          },
+        },
+      ],
+      rows: [{ id: '1', companyId: '2' }],
+    });
+
+    expect(csv).toBe('\uFEFFId,Company Id\n1,2');
   });
 
   describe('CSV Injection Prevention with ZWJ', () => {
