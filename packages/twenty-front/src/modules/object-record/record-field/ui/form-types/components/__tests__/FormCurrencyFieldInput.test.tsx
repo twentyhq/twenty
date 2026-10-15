@@ -25,12 +25,10 @@ const renderCurrencyInput = ({
   amountMicros,
   readonly = false,
   amountUnit,
-  subFieldPlaceholders,
 }: {
   amountMicros: FormFieldCurrencyValue['amountMicros'];
   readonly?: boolean;
   amountUnit?: FormFieldCurrencyInputSettings['amountUnit'];
-  subFieldPlaceholders?: Partial<Record<keyof FormFieldCurrencyValue, string>>;
 }) => {
   const onChange = jest.fn();
   const store = createStore();
@@ -44,7 +42,6 @@ const renderCurrencyInput = ({
         defaultValue={value}
         amountUnit={amountUnit}
         readonly={readonly}
-        subFieldPlaceholders={subFieldPlaceholders}
         onChange={(newValue) => {
           setValue(newValue);
           onChange(newValue);
@@ -179,20 +176,4 @@ it('keeps raw micros by default for workflow currency forms', async () => {
     currencyCode: CurrencyCode.USD,
     amountMicros: 24,
   });
-});
-
-it('shows the amount placeholder it is given', () => {
-  renderCurrencyInput({
-    amountMicros: null,
-    amountUnit: 'units',
-    subFieldPlaceholders: { amountMicros: '2000' },
-  });
-
-  expect(screen.getByPlaceholderText('2000')).toBeInTheDocument();
-});
-
-it('keeps the generic amount placeholder without one', () => {
-  renderCurrencyInput({ amountMicros: null, amountUnit: 'units' });
-
-  expect(screen.getByPlaceholderText('Enter a number')).toBeInTheDocument();
 });

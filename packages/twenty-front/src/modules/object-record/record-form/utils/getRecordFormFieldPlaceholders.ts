@@ -1,3 +1,4 @@
+import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import {
@@ -8,7 +9,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type RecordFormFieldPlaceholders = {
   placeholder?: string;
-  subFieldPlaceholders?: Partial<Record<string, string>>;
+  subFieldPlaceholders?: FormFieldInputSubFieldPlaceholders;
 };
 
 const getNonCompositeExampleValue = (
