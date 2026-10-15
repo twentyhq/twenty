@@ -1,4 +1,4 @@
-import { type CanvasTheme } from 'twenty-shared/utils';
+import { type CanvasTheme, EMAIL_TYPOGRAPHY } from 'twenty-shared/utils';
 
 export const getEffectiveSectionStyleValue = (
   property: string,
@@ -12,9 +12,9 @@ export const getEffectiveSectionStyleValue = (
     case 'backgroundColor':
       return canvasTheme?.bodyBackground ?? '';
     case 'fontSize':
-      return '14px';
+      return EMAIL_TYPOGRAPHY.fontSize;
     case 'lineHeight':
-      return '1.5';
+      return EMAIL_TYPOGRAPHY.lineHeight;
     case 'borderColor':
       return canvasTheme?.borderColor ?? '';
     default:

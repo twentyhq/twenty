@@ -483,6 +483,7 @@ export class UserResolver {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
+        agentId: undefined,
       }));
 
     if (!canDeleteUserFromWorkspace) {
@@ -551,6 +552,7 @@ export class UserResolver {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
+        agentId: undefined,
       }));
 
     if (!canUpdateWorkspaceMember) {

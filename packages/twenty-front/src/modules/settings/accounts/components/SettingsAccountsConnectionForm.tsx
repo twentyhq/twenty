@@ -53,10 +53,6 @@ const StyledFieldRow = styled.div`
 
 const StyledFieldGroup = styled.div`
   flex: 1;
-
-  & > * {
-    width: 100%;
-  }
 `;
 
 type SettingsAccountsConnectionFormProps = {
@@ -211,7 +207,7 @@ export const SettingsAccountsConnectionForm = ({
                   <Select
                     label={t`IMAP Connection security`}
                     options={[
-                      { label: 'None', value: 'NONE' },
+                      { label: t`None`, value: 'NONE' },
                       { label: 'STARTTLS', value: 'STARTTLS' },
                       { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
@@ -308,7 +304,7 @@ export const SettingsAccountsConnectionForm = ({
                   <Select
                     label={t`SMTP Connection security`}
                     options={[
-                      { label: 'None', value: 'NONE' },
+                      { label: t`None`, value: 'NONE' },
                       { label: 'STARTTLS', value: 'STARTTLS' },
                       { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}

@@ -24,12 +24,14 @@ export class NavigationMenuItemAccessService {
     workspaceId,
     apiKeyId,
     applicationId,
+    agentId,
     inputUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
     workspaceId: string;
     apiKeyId: string | undefined;
     applicationId: string | undefined;
+    agentId: string | undefined;
     inputUserWorkspaceId: string | undefined;
   }): Promise<boolean> {
     if (!isDefined(inputUserWorkspaceId)) {
@@ -40,6 +42,7 @@ export class NavigationMenuItemAccessService {
           setting: PermissionFlagType.LAYOUTS,
           apiKeyId,
           applicationId,
+          agentId,
         });
 
       if (!hasPermission) {
@@ -70,12 +73,14 @@ export class NavigationMenuItemAccessService {
     workspaceId,
     apiKeyId,
     applicationId,
+    agentId,
     existingUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
     workspaceId: string;
     apiKeyId: string | undefined;
     applicationId: string | undefined;
+    agentId: string | undefined;
     existingUserWorkspaceId: string | null | undefined;
   }): Promise<boolean> {
     if (!isDefined(existingUserWorkspaceId)) {
@@ -86,6 +91,7 @@ export class NavigationMenuItemAccessService {
           setting: PermissionFlagType.LAYOUTS,
           apiKeyId,
           applicationId,
+          agentId,
         });
 
       if (!hasPermission) {
@@ -123,12 +129,14 @@ export class NavigationMenuItemAccessService {
     workspaceId,
     apiKeyId,
     applicationId,
+    agentId,
     existingUserWorkspaceId,
   }: {
     userWorkspaceId: string | undefined;
     workspaceId: string;
     apiKeyId: string | undefined;
     applicationId: string | undefined;
+    agentId: string | undefined;
     existingUserWorkspaceId: string | null | undefined;
   }): Promise<boolean> {
     if (!isDefined(existingUserWorkspaceId)) {
@@ -139,6 +147,7 @@ export class NavigationMenuItemAccessService {
           setting: PermissionFlagType.LAYOUTS,
           apiKeyId,
           applicationId,
+          agentId,
         });
 
       if (!hasPermission) {

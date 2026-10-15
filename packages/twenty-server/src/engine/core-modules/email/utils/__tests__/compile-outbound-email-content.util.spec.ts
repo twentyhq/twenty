@@ -129,6 +129,79 @@ describe('compileOutboundEmailContent', () => {
     expect(html).toContain('2px dashed #ff0000');
   });
 
+  it('should render a blockquote with a neutral left border', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'blockquote',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Quoted text' }],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(html).toContain('<blockquote');
+    expect(html).toContain('border-left:2px solid #999999');
+    expect(html).toContain('Quoted text');
+  });
+
+  it('should keep list item text in the text color with neutral markers', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'bulletList',
+          content: [
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: 'First item' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(html).toMatch(/<li style="[^"]*color:#999999/);
+    expect(html).toContain('<div style="color:#333333">First item</div>');
+  });
+
+  it('should keep paragraph alignment inside list items', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'bulletList',
+          content: [
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: { style: { textAlign: 'center' } },
+                  content: [{ type: 'text', text: 'Centered item' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(html).toContain(
+      '<div style="color:#333333;text-align:center">Centered item</div>',
+    );
+  });
+
   it('should apply text block styles to headings and paragraphs', async () => {
     const html = await compileDocument({
       type: 'doc',
@@ -148,7 +221,7 @@ describe('compileOutboundEmailContent', () => {
 
     expect(html).toContain('color:#0000ff');
     expect(html).toContain('font-size:40px');
-    expect(html).not.toContain('font-size:24px');
+    expect(html).not.toContain('font-size:20px');
     expect(html).toContain('text-align:center');
     expect(html).toContain('letter-spacing:2px');
   });
