@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.48.0', 1791989212468)
+@RegisteredInstanceCommand('2.48.0', 1792053547326)
 export class AddAgentChatChannelFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

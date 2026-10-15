@@ -7,7 +7,7 @@ import { AddCampaignListViewCommand } from 'src/database/commands/upgrade-versio
 import { RenameDevelopersSettingsCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791988325586-rename-developers-settings-command-menu-item.command';
 import { BackfillMorphRelationHeadsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791998420300-backfill-morph-relation-heads.command';
 import { RemoveWorkflowRunIndexWorkflowVersionColumnCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792051845780-remove-workflow-run-index-workflow-version-column.command';
-import { AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791989271935-add-agent-chat-channels.command';
+import { AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792053606451-add-agent-chat-channels.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
