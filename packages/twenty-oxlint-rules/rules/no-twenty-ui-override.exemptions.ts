@@ -51,11 +51,6 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/settings/components/SettingsOptions/SettingsOptionCardContentSwitch.tsx',
-    reason: 'Advanced mode color on the Switch',
-  },
-  {
-    filePath:
       'packages/twenty-front/src/modules/settings/components/SettingsTableCard.tsx',
     reason: 'Forwards the caller className to Card.Root',
   },
@@ -81,7 +76,7 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/settings/mcp-and-apis/components/SettingsMcpSetupCard.tsx',
+      'packages/twenty-front/src/modules/settings/mcp/components/SettingsMcpSetupCard.tsx',
     reason: 'One-off Card.Content row layout',
   },
   {
@@ -103,11 +98,6 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/ui/feedback/toast/components/AppToaster.tsx',
     reason: 'Toaster stacking order above the app layers',
-  },
-  {
-    filePath:
-      'packages/twenty-front/src/modules/ui/input/components/AdvancedSettingsSwitch.tsx',
-    reason: 'Advanced mode color on the Switch',
   },
   {
     filePath:

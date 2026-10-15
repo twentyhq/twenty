@@ -575,3 +575,62 @@ Exit codes:
 | 5    | Partial failure                     |
 | 6    | Conflict                            |
 | 130  | Cancelled                           |
+
+## Publish an app to npm
+
+```sh
+twenty app publish
+twenty app publish --path ./apps/billing --tag beta --json
+```
+
+Builds and typechecks the app, packs that exact build, then publishes the package with public access. No Twenty remote or workspace authentication is required. Publishing to npm does not sync or install the app in a workspace.
+
+Install npm and authenticate with the intended registry first. npm runs from the app directory, so its project/user configuration and environment credentials apply. `--tag` sets the npm dist-tag. GitHub Actions jobs with OIDC request provenance automatically; set `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE=true` to opt out, for example when publishing from a private source repository.
+
+Packing and publishing skip npm lifecycle scripts because the CLI already built the app. npm's package-file selection still applies. If `package.json` has a `files` field, it must include `manifest.json` and the generated app files; the command rejects an incomplete package before publication. npm excludes the root `yarn.lock` from packages. Temporary packages and build snapshots are removed after completion or failure.
+
+Human mode displays npm output and supports interactive authentication when a terminal is available. JSON mode returns one CLI envelope and does not prompt; configure an automation token or npm’s `npm_config_otp` environment option before running it. Failed npm commands return `PUBLISH_FAILED` with the subprocess exit code and captured output. If publication is interrupted after sending the package, check the registry before retrying, since the version may already have been published.
+
+### Publish to a private Twenty registry
+
+```sh
+twenty app publish --private --remote staging
+twenty app publish --private --path ./apps/billing --json
+```
+
+`--private` publishes the same built package to the selected Twenty server registry instead of npm. It uses the normal saved remote or environment credentials, requests a tarball upload, sends the bytes directly to storage, then registers the uploaded app. npm is still needed for local packing, but npm registry credentials are not used and `--tag` is rejected. The server requires file-upload permission and `MARKETPLACE_APPS` permission on the target workspace.
+
+Publishing registers a version; it does not install the app or directly sync the selected workspace. Publishing an update can trigger automatic upgrades in workspaces where the app is already installed with automatic upgrades enabled. The server enforces application ownership, version progression and engine compatibility. JSON results contain `target: "private"`, the selected server under `registry`, the registration and `installed: false`, indicating that this command did not request installation.
+
+Failed uploads never trigger registration. If registration fails or is interrupted after sending the request, the app may already be registered. The error includes the phase, upload file ID and an `unknown` outcome; check the server registry before retrying. Temporary packages are cleaned up in either case.
+
+## App translations
+
+```sh
+twenty app translations extract
+twenty app translations extract --locale fr-FR
+twenty app translations extract --path ./apps/billing --json
+```
+
+Use `--path` for an explicit app directory. Without `--path`, the CLI finds the
+app containing the current directory.
+
+Extraction runs locally, without a workspace connection. It reads app metadata
+and static `t`, `msg`, and `Trans` strings in front-component source files. It
+refreshes `locales/en.json` with source strings and updates existing target JSON
+catalogs. `--locale` also creates a missing supported target catalog, for example
+`locales/fr-FR.json`. The source locale `en` cannot be a target.
+
+Translations for unchanged message/context pairs are preserved. New entries have
+empty translations; obsolete entries are removed. Context groups remain separate.
+Malformed target catalogs fail with `INVALID_INPUT` before writing any catalogs.
+Unsafe catalog or staging paths report `APP_PATH_UNAVAILABLE`. Files under
+`locales/compiled` are left untouched. Temporary files live under `.twenty/cli`.
+Each catalog is replaced atomically; an
+interrupted run may update only some catalogs, so rerun extraction to finish.
+
+The command validates app definitions but does not bundle or upload them. Edit
+the target catalogs, then run `twenty app apply` to deploy translations. Build
+and apply already compile translations; no separate compile command is needed.
+JSON output includes the app, source-string count, updated catalog paths and
+diagnostics.
