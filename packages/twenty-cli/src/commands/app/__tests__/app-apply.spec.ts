@@ -1737,39 +1737,31 @@ describe('app apply', () => {
     expect(operations()).not.toContain('workspace');
   });
 
-  it.each([
-    [null, 'TRANSLATION_REPORT_UNAVAILABLE', 'translation sync failed'],
-    [
-      undefined,
-      'TRANSLATION_REPORT_UNSUPPORTED',
-      'does not report translation changes',
-    ],
-  ])(
-    'keeps metadata success but warns for translation reporting: %s',
-    async (translationActions, code, message) => {
-      state.syncResponseOverride = {
-        data: {
-          syncApplication: {
-            applicationUniversalIdentifier: APPLICATION.universalIdentifier,
-            actions: [],
-            translationActions,
-          },
+  it('keeps metadata success but warns when translation sync fails', async () => {
+    state.syncResponseOverride = {
+      data: {
+        syncApplication: {
+          applicationUniversalIdentifier: APPLICATION.universalIdentifier,
+          actions: [],
+          translationActions: null,
         },
-      };
-      const { envelope, exitCode } = await runJson();
-      expect(exitCode).toBe(0);
-      expect(envelope.data.translationActions).toBe(translationActions);
-      expect(envelope.warnings).toContainEqual(
-        expect.objectContaining({
-          code,
-          message: expect.stringContaining(message),
-        }),
-      );
-      expect(
-        operations().filter((operation) => operation === 'sync'),
-      ).toHaveLength(1);
-    },
-  );
+      },
+    };
+
+    const { envelope, exitCode } = await runJson();
+
+    expect(exitCode).toBe(0);
+    expect(envelope.data.translationActions).toBeNull();
+    expect(envelope.warnings).toContainEqual(
+      expect.objectContaining({
+        code: 'TRANSLATION_REPORT_UNAVAILABLE',
+        message: expect.stringContaining('translation sync failed'),
+      }),
+    );
+    expect(
+      operations().filter((operation) => operation === 'sync'),
+    ).toHaveLength(1);
+  });
 
   it('reports an unknown outcome when the sync fails', async () => {
     state.syncError = 'BAD_USER_INPUT';

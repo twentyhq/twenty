@@ -23,5 +23,5 @@ export type AppTranslationPlanAction = {
 
 export type AppPlan = {
   actions: AppPlanAction[];
-  translationActions: AppTranslationPlanAction[] | null | undefined;
+  translationActions: AppTranslationPlanAction[] | null;
 };

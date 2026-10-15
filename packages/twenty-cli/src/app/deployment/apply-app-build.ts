@@ -24,7 +24,7 @@ export type AppApplyResult = {
   completedPhases: AppApplyPhase[];
   isRegistrationCreated: boolean;
   appliedActions: AppPlanAction[] | undefined;
-  translationActions: AppTranslationPlanAction[] | null | undefined;
+  translationActions: AppTranslationPlanAction[] | null;
   acknowledgedUniversalIdentifier: string;
   upload: AppUploadProgress;
 };
@@ -231,13 +231,7 @@ export const applyAppBuild = async ({
     }),
   );
 
-  if (appliedTranslationActions === undefined) {
-    output.warn({
-      code: 'TRANSLATION_REPORT_UNSUPPORTED',
-      message:
-        'This server does not report translation changes. Upgrade the server to see translation results.',
-    });
-  } else if (appliedTranslationActions === null) {
+  if (appliedTranslationActions === null) {
     output.warn({
       code: 'TRANSLATION_REPORT_UNAVAILABLE',
       message:

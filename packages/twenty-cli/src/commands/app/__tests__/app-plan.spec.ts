@@ -200,26 +200,16 @@ describe('app plan', () => {
     expect(server.requests).toHaveLength(1);
   });
 
-  it.each([
-    [null, 'Translation changes could not be computed. Retry app plan.'],
-    [undefined, 'This server does not report translation changes.'],
-  ])(
-    'distinguishes failed and unsupported translation reports: %s',
-    async (translationActions, warning) => {
-      state.response = {
-        data: {
-          syncApplication: {
-            applicationUniversalIdentifier: 'app-id',
-            actions: [],
-            translationActions,
-          },
-        },
-      };
-      const result = await run();
-      expect(result.exitCode, result.stderr).toBe(0);
-      expect(result.stdout).toContain(warning);
-    },
-  );
+  it('warns when translation changes could not be computed', async () => {
+    state.response = planResponse([], 'app-id', null);
+
+    const result = await run();
+
+    expect(result.exitCode, result.stderr).toBe(0);
+    expect(result.stdout).toContain(
+      'Translation changes could not be computed. Retry app plan.',
+    );
+  });
 
   it('reports locale removal without suggesting --no-delete preserves translations', async () => {
     state.response = planResponse([], 'app-id', [
@@ -449,6 +439,14 @@ describe('app plan', () => {
     null,
     [],
     planResponse(null),
+    {
+      data: {
+        syncApplication: {
+          applicationUniversalIdentifier: 'app-id',
+          actions: [],
+        },
+      },
+    },
     planResponse(ACTIONS, 'another-app'),
     planResponse([{ type: 'delete', metadataName: 'objectMetadata' }]),
     planResponse([{ type: 'unknown', metadataName: 'fieldMetadata' }]),

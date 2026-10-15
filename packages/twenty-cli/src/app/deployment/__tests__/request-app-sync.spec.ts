@@ -25,7 +25,7 @@ const server = await startTestServer((request, response) => {
       syncApplication: {
         applicationUniversalIdentifier: 'app',
         actions: [],
-        ...(state.reject ? {} : { translationActions: null }),
+        translationActions: null,
       },
     },
   });
@@ -59,30 +59,21 @@ beforeEach(() => {
 });
 afterAll(() => server.close());
 
-describe('translation report compatibility', () => {
+describe('translation reports', () => {
   it.each([true, false])(
-    'retries only schema validation on older servers, dryRun=%s',
+    'propagates schema validation errors without retrying, dryRun=%s',
     async (dryRun) => {
-      const response = await request(dryRun);
-      expect(server.requests).toHaveLength(2);
-      const first = JSON.parse(server.requests[0].body);
-      const second = JSON.parse(server.requests[1].body);
-      expect(first.query).toContain('translationActions');
-      expect(second.query).not.toContain('translationActions');
-      expect(second.variables).toEqual(first.variables);
-      expect(
-        parseAppPlan({
-          value: response.syncApplication,
-          applicationUniversalIdentifier: 'app',
-        }),
-      ).toEqual({
-        actions: [],
-        translationActions: undefined,
+      await expect(request(dryRun)).rejects.toMatchObject({
+        code: 'GRAPHQL_ERROR',
       });
+      expect(server.requests).toHaveLength(1);
+      expect(JSON.parse(server.requests[0].body).query).toContain(
+        'translationActions',
+      );
     },
   );
 
-  it('does not retry a mutation after an execution failure with similar text', async () => {
+  it('does not retry a mutation after an execution failure', async () => {
     state.code = 'INTERNAL_SERVER_ERROR';
     await expect(request(false)).rejects.toMatchObject({
       code: 'GRAPHQL_ERROR',

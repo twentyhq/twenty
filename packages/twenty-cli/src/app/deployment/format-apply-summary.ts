@@ -38,7 +38,7 @@ export const formatApplySummary = ({
   applicationName: string;
   apiUrl: string;
   summary: AppPlanSummary | undefined;
-  translationActions?: AppTranslationPlanAction[] | null;
+  translationActions: AppTranslationPlanAction[] | null;
   upload: AppUploadProgress;
   isRegistrationCreated: boolean;
   clientGeneration: 'generated' | 'skipped';
