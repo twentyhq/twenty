@@ -1894,6 +1894,7 @@ enum EngineComponentKey {
   EDIT_DASHBOARD_LAYOUT
   EDIT_RECORD_PAGE_LAYOUT
   EMAIL_BLOCK_SETTINGS
+  EMAIL_PAGE_STYLE
   EXPORT_FROM_RECORD_INDEX
   EXPORT_FROM_RECORD_SHOW
   EXPORT_MULTIPLE_RECORDS
@@ -4168,6 +4169,7 @@ input RunAgentInput {
   input: [RunAgentMessageInput!]
   messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
   prompt: String @deprecated(reason: "Use input instead.")
+  responseFormat: JSON
   runAsWorkspaceMemberId: UUID
   thread: RunAgentThreadInput
 }

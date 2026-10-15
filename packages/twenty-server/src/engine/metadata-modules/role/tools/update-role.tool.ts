@@ -4,7 +4,6 @@ import { rolePermissionsSchema } from 'src/engine/metadata-modules/role/tools/sc
 import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
 import { toRoleSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
-import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const updateRoleSchema = z.object({
   roleId: z.uuid().describe('Id of the role to update'),
@@ -29,29 +28,19 @@ export const createUpdateRoleTool = (
 System-managed roles (isEditable=false, like Admin) cannot be updated. Updates that would remove your own access to role management are rejected.`,
   inputSchema: updateRoleSchema,
   execute: async (parameters: UpdateRoleParams) => {
-    try {
-      const role = await deps.roleService.updateRole({
-        workspaceId: context.workspaceId,
-        input: {
-          id: parameters.roleId,
-          update: parameters.update,
-        },
-        actingRoleIds: context.callerRoleIds,
-      });
+    const role = await deps.roleService.updateRole({
+      workspaceId: context.workspaceId,
+      input: {
+        id: parameters.roleId,
+        update: parameters.update,
+      },
+      actingRoleIds: context.callerRoleIds,
+    });
 
-      return {
-        success: true,
-        message: `Role "${role.label}" updated`,
-        result: toRoleSummary(role),
-      };
-    } catch (error) {
-      const message = toRoleToolErrorMessage(error);
-
-      return {
-        success: false,
-        message: `Failed to update role: ${message}`,
-        error: message,
-      };
-    }
+    return {
+      success: true,
+      message: `Role "${role.label}" updated`,
+      result: toRoleSummary(role),
+    };
   },
 });

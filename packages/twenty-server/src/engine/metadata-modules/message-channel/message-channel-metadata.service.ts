@@ -158,11 +158,13 @@ export class MessageChannelMetadataService {
     userWorkspaceId,
     workspaceId,
     applicationId,
+    agentId,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
     applicationId?: string;
+    agentId?: string;
   }): Promise<MessageChannelEntity> {
     const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
 
@@ -185,6 +187,7 @@ export class MessageChannelMetadataService {
         userWorkspaceId,
         workspaceId,
         applicationId,
+        agentId,
       });
 
     if (!isAdministrableByCaller) {

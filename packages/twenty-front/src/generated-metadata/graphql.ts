@@ -2006,6 +2006,7 @@ export enum EngineComponentKey {
   EDIT_DASHBOARD_LAYOUT = 'EDIT_DASHBOARD_LAYOUT',
   EDIT_RECORD_PAGE_LAYOUT = 'EDIT_RECORD_PAGE_LAYOUT',
   EMAIL_BLOCK_SETTINGS = 'EMAIL_BLOCK_SETTINGS',
+  EMAIL_PAGE_STYLE = 'EMAIL_PAGE_STYLE',
   EXPORT_FROM_RECORD_INDEX = 'EXPORT_FROM_RECORD_INDEX',
   EXPORT_FROM_RECORD_SHOW = 'EXPORT_FROM_RECORD_SHOW',
   EXPORT_MULTIPLE_RECORDS = 'EXPORT_MULTIPLE_RECORDS',
@@ -6248,6 +6249,7 @@ export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
   input?: InputMaybe<Array<RunAgentMessageInput>>;
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
   thread?: InputMaybe<RunAgentThreadInput>;
 };

@@ -1,14 +1,26 @@
 import { type ReactNode } from 'react';
 import { Body, Container, Head, Html } from 'react-email';
 import { type JSONContent } from '@tiptap/core';
-import { type CanvasTheme, resolveCanvasTheme } from 'twenty-shared/utils';
+import {
+  CANVAS_THEME_DEFAULTS,
+  type CanvasTheme,
+  EMAIL_TYPOGRAPHY,
+  resolveCanvasTheme,
+} from 'twenty-shared/utils';
 import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
 
 const BASE_STYLE_RESET = `blockquote,h1,h2,h3,img,li,ol,p,ul{margin-top:0;margin-bottom:0}`;
 
+const BASE_TYPOGRAPHY = {
+  fontFamily: EMAIL_TYPOGRAPHY.fontFamily,
+  fontSize: EMAIL_TYPOGRAPHY.fontSize,
+  lineHeight: EMAIL_TYPOGRAPHY.lineHeight,
+};
+
 const themedBody = (theme: CanvasTheme, children: ReactNode) => (
   <Body
     style={{
+      ...BASE_TYPOGRAPHY,
       backgroundColor: theme.pageBackground,
       color: theme.textColor,
       margin: 0,
@@ -39,8 +51,9 @@ export const reactMarkupFromJSON = (json: JSONContent | string) => {
     return json;
   }
 
-  const jsxNodes = mappedNodeContent(json);
   const canvasTheme = resolveCanvasTheme(json.attrs?.canvasTheme);
+  const textColor = canvasTheme?.textColor ?? CANVAS_THEME_DEFAULTS.textColor;
+  const jsxNodes = mappedNodeContent(json, { color: textColor });
 
   return (
     <Html>
@@ -54,7 +67,7 @@ export const reactMarkupFromJSON = (json: JSONContent | string) => {
       {canvasTheme !== null ? (
         themedBody(canvasTheme, jsxNodes)
       ) : (
-        <Body>{jsxNodes}</Body>
+        <Body style={{ ...BASE_TYPOGRAPHY, color: textColor }}>{jsxNodes}</Body>
       )}
     </Html>
   );

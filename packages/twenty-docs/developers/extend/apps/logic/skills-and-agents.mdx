@@ -64,7 +64,7 @@ Key points:
 - `description` (optional) provides context about what the agent does.
 - `icon` (optional) sets the icon displayed in the UI.
 - `modelId` (optional) overrides the default AI model used by the agent.
-- `responseFormat` (optional) controls the shape of the agent's output. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output.
+- `responseFormat` (optional) sets the agent's default output shape. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output. A `runAgent()` call or a workflow AI step can ask for a different shape, which takes precedence.
 - `roleUniversalIdentifier` (optional) binds the agent to a role your app defines. That role must not grant more than the application role, or the build fails; see [Agent roles](/developers/extend/apps/config/roles#agent-roles).
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
@@ -187,6 +187,29 @@ alongside `AI`. `filename` is optional and only labels the file for the model.
 - The `fileId` must name a fully uploaded file in the same workspace, under the
   `agent-chat` folder. Anything else fails the call instead of quietly
   answering without the file.
+
+### Asking for a structured result
+
+Pass `responseFormat` to get a shape for this call only. It takes precedence over
+the agent's own `responseFormat`, so one agent can serve callers that need
+different outputs. It uses the same schema as `defineAgent()`:
+
+```ts src/logic-functions/score-lead.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: `Score this lead: ${JSON.stringify(lead)}`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+      },
+      required: ['score'],
+    },
+  },
+});
+```
 
 ### Continuing a conversation
 

@@ -4,6 +4,7 @@ import { parseLegacyHtmlDocument } from '@/advanced-text-editor/utils/parseLegac
 
 export const INLINE_EMAIL_BODY_EDITOR_PROFILE = {
   chrome: 'document',
+  variant: 'email',
   minHeight: 120,
   enableFullScreen: true,
   parseLegacyDocument: parseLegacyHtmlDocument,
