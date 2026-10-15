@@ -25,6 +25,18 @@ describe('buildMailServerCertificateOptions', () => {
     });
   });
 
+  it('verifies against the hostname when the host was saved as a URL', () => {
+    expect(
+      buildMailServerCertificateOptions({
+        host: 'imaps://mail.example.com:993',
+        isSelfSignedCertificateAllowed: false,
+      }),
+    ).toEqual({
+      rejectUnauthorized: true,
+      servername: 'mail.example.com',
+    });
+  });
+
   it('omits the servername for IP literals, which are not valid SNI values', () => {
     expect(
       buildMailServerCertificateOptions({
