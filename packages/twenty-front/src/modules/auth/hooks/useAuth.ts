@@ -60,7 +60,6 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { isChooseWorkspaceActionRequested } from '@/auth/utils/isChooseWorkspaceActionRequested';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -199,7 +198,8 @@ export const useAuth = () => {
         }
 
         if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
-          throw new Error(t`No login token`);
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
+          throw new Error('No login token');
         }
 
         return getLoginTokenResult.data.getLoginTokenFromCredentials;
@@ -235,7 +235,8 @@ export const useAuth = () => {
       }
 
       if (!loginTokenResult.data?.verifyEmailAndGetLoginToken) {
-        throw new Error(t`No login token`);
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
+        throw new Error('No login token');
       }
 
       return loginTokenResult.data.verifyEmailAndGetLoginToken;
@@ -262,7 +263,8 @@ export const useAuth = () => {
       }
 
       if (!data?.verifyEmailAndGetWorkspaceAgnosticToken) {
-        throw new Error(t`No workspace agnostic token in result`);
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
+        throw new Error('No workspace agnostic token in result');
       }
 
       markSessionActive();
@@ -315,7 +317,8 @@ export const useAuth = () => {
         }
 
         if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
-          throw new Error(t`No getAuthTokensFromLoginToken result`);
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
+          throw new Error('No getAuthTokensFromLoginToken result');
         }
 
         await handleLoadWorkspaceAfterAuthentication();
@@ -411,7 +414,8 @@ export const useAuth = () => {
       }
 
       if (!signUpResult.data?.signUp) {
-        throw new Error(t`No signUp result`);
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
+        throw new Error('No signUp result');
       }
 
       markSessionActive();
@@ -495,7 +499,8 @@ export const useAuth = () => {
       }
 
       if (!signUpInWorkspaceResult.data?.signUpInWorkspace) {
-        throw new Error(t`No login token`);
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
+        throw new Error('No login token');
       }
 
       if (isEmailVerificationRequired) {
@@ -623,7 +628,8 @@ export const useAuth = () => {
       }
 
       if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {
-        throw new Error(t`No getAuthTokensFromOTP result`);
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
+        throw new Error('No getAuthTokensFromOTP result');
       }
 
       await handleLoadWorkspaceAfterAuthentication();
@@ -657,7 +663,8 @@ export const useAuth = () => {
 
         if (!isDefined(redemption)) {
           throw new Error(
-            t`No getAuthTokensFromTwoFactorAuthenticationRecoveryCode result`,
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
+            'No getAuthTokensFromTwoFactorAuthenticationRecoveryCode result',
           );
         }
 

@@ -1,5 +1,5 @@
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
-import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
+import { getDataResidencyOptions } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -430,7 +430,7 @@ export const SettingsAdminNewAiProvider = () => {
                       onChange={onChange}
                       options={[
                         { value: '', label: t`None` },
-                        ...DATA_RESIDENCY_OPTIONS,
+                        ...getDataResidencyOptions(t),
                       ]}
                       fullWidth
                     />

@@ -5,7 +5,6 @@ import {
   type FetchResult,
 } from '@apollo/client';
 import { ServerError } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
 import { type ArgumentNode, type DirectiveNode } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -65,14 +64,16 @@ export class StreamingRestLink extends ApolloLink {
       fetch(url, requestConfig)
         .then(async (response) => {
           if (!response.ok) {
-            throw new ServerError(t`HTTP error! status: ${response.status}`, {
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- HTTP status text is a stable transport diagnostic.
+            throw new ServerError(`HTTP error! status: ${response.status}`, {
               response,
               bodyText: '',
             });
           }
 
           if (!response.body) {
-            throw new Error(t`Response body is null`);
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep stream diagnostics stable for issue grouping.
+            throw new Error('Response body is null');
           }
 
           const reader = response.body.getReader();

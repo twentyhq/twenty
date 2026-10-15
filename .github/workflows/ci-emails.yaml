@@ -20,6 +20,8 @@ jobs:
     with:
       files: |
         package.json
+        yarn.lock
+        .github/workflows/ci-emails.yaml
         packages/twenty-emails/**
   emails-test:
     needs: changed-files-check
@@ -33,6 +35,8 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Lint twenty-emails
+        run: npx nx lint twenty-emails
       - name: Build twenty-emails
         run: npx nx build twenty-emails
       - name: Extract translations (lingui)

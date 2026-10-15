@@ -118,7 +118,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    t`Field did not match the regex /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags} `,
+                    t`Field did not match the regex /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags ?? ''} `,
                 },
               };
             }
