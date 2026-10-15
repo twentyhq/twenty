@@ -1,4 +1,4 @@
-import { type LanguageModelV4Content } from '@ai-sdk/provider';
+import { APICallError, type LanguageModelV4Content } from '@ai-sdk/provider';
 import { tool, type ToolSet } from 'ai';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import { z } from 'zod';
@@ -29,11 +29,15 @@ const buildLoop = ({
   tools,
   hasNoMoreAvailableCredits = false,
   failingCallIndex,
+  midStreamFailingCallIndex,
+  streamRetries,
 }: {
   responses: LanguageModelV4Content[][];
   tools: ToolSet;
   hasNoMoreAvailableCredits?: boolean;
   failingCallIndex?: number;
+  midStreamFailingCallIndex?: number;
+  streamRetries?: number;
 }) => {
   const aiBillingService = {
     decrementAndCheckAvailableCredits: jest
@@ -54,6 +58,20 @@ const buildLoop = ({
   const model = createScriptedLanguageModel((_options, callIndex) => {
     if (callIndex === failingCallIndex) {
       throw new Error('provider down');
+    }
+
+    if (callIndex === midStreamFailingCallIndex) {
+      return {
+        content: [{ type: 'text', text: 'Do' }],
+        finishReason: { unified: 'error', raw: undefined },
+        usage: USAGE,
+        streamError: new APICallError({
+          message: 'Service unavailable',
+          url: 'https://provider.test',
+          requestBodyValues: {},
+          statusCode: 503,
+        }),
+      };
     }
 
     const content = responses[callIndex] ?? [{ type: 'text', text: 'Done' }];
@@ -88,6 +106,7 @@ const buildLoop = ({
     },
     telemetry: { functionId: 'test' },
     metricsScope: 'agent',
+    streamRetries,
     offeredPausingToolNames: ['ask_person'],
     onError,
   });
@@ -134,6 +153,21 @@ describe('AgentStepLoopService', () => {
     );
     expect(loop.getFinishedSteps()).toHaveLength(1);
     expect(loop.getFinishedSteps()[0].usage.inputTokens).toBe(10);
+    expect(
+      aiBillingService.decrementAndCheckAvailableCredits,
+    ).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries a step whose stream fails midway, keeping only the retried answer', async () => {
+    const { loop, aiBillingService } = buildLoop({
+      responses: [],
+      tools: {},
+      midStreamFailingCallIndex: 0,
+      streamRetries: 2,
+    });
+
+    expect(await loop.stream.text).toBe('Done');
+    expect(await loop.stream.steps).toHaveLength(1);
     expect(
       aiBillingService.decrementAndCheckAvailableCredits,
     ).toHaveBeenCalledTimes(1);

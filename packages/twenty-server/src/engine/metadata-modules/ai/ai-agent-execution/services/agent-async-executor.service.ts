@@ -9,6 +9,7 @@ import {
   Output,
   readUIMessageStream,
   type StepResult,
+  type TextStreamPart,
   toUIMessageStream,
   type ToolSet,
 } from 'ai';
@@ -354,7 +355,6 @@ export class AgentAsyncExecutorService {
     let cacheCreationTokens = 0;
     let nativeWebSearchCallCount = 0;
     let executionSteps: StepResult<ToolSet>[] = [];
-    // the steps a run that failed midway still made, so their usage is recorded
     let getFinishedSteps: () => StepResult<ToolSet>[] = () => [];
     let resolvedModelId: string | undefined;
 
@@ -507,10 +507,9 @@ export class AgentAsyncExecutorService {
           agentId: agent?.id,
         },
         providerOptions,
+        // nobody resends a background run, so a provider error after streaming started is retried here
+        streamRetries: 2,
         metricsScope: 'agent',
-        onError: (error) => {
-          streamError ??= error;
-        },
       });
 
       getFinishedSteps = stepLoop.getFinishedSteps;
@@ -518,7 +517,21 @@ export class AgentAsyncExecutorService {
       // the reply is read the way chat reads its stream, so both save the same parts
       for await (const message of readUIMessageStream<ExtendedUIMessage>({
         stream: toUIMessageStream({
-          stream: stepLoop.stream.stream,
+          // a retried provider error never reaches this stream, so an error part here fails the run
+          stream: stepLoop.stream.stream.pipeThrough(
+            new TransformStream<
+              TextStreamPart<ToolSet>,
+              TextStreamPart<ToolSet>
+            >({
+              transform: (part, controller) => {
+                if (part.type === 'error') {
+                  streamError ??= part.error;
+                }
+
+                controller.enqueue(part);
+              },
+            }),
+          ),
           sendReasoning: true,
           onError: formatErrorWithCause,
         }),
@@ -526,7 +539,6 @@ export class AgentAsyncExecutorService {
         replyParts = message.parts;
       }
 
-      // a model error fails the run, as it did before steps were streamed
       if (isDefined(streamError)) {
         throw streamError;
       }

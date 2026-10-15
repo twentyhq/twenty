@@ -72,7 +72,6 @@ export type AgentStepLoopInput = {
   registeredModel: RegisteredAiModel;
   modelConfig: Pick<AiModelConfig, 'sdkPackage' | 'modelFamily'>;
   systemPrompt: string;
-  // system messages that follow the prompt, such as the contexts a thread opens with
   contextMessages?: SystemModelMessage[];
   messages: ModelMessage[];
   tools: ToolSet;
@@ -89,7 +88,7 @@ export type AgentStepLoopInput = {
   };
   telemetry: Parameters<typeof buildAiTelemetry>[0];
   providerOptions?: ProviderOptions;
-  // runs before each step, such as checking the actor may still act
+  streamRetries?: number;
   beforeStep?: () => Promise<unknown>;
   metricsScope: AgentStepLoopMetricsScope;
   onChunk?: (chunk: TextStreamPart<ToolSet>) => void;
@@ -100,12 +99,9 @@ export type AgentStepLoopInput = {
 export type AgentStepLoop = {
   stream: ReturnType<typeof streamText<ToolSet>>;
   hasNoMoreAvailableCredits: () => boolean;
-  // the steps that finished, also known when the loop fails or is aborted midway
   getFinishedSteps: () => StepResult<ToolSet>[];
 };
 
-// The model loop every agent run goes through: a step runs, its tools run, and the next step
-// starts until the model answers, pauses on a person, runs out of credits or of steps
 @Injectable()
 export class AgentStepLoopService {
   private readonly logger = new Logger(AgentStepLoopService.name);
@@ -129,6 +125,7 @@ export class AgentStepLoopService {
     billing,
     telemetry,
     providerOptions,
+    streamRetries,
     beforeStep,
     metricsScope,
     onChunk,
@@ -154,6 +151,7 @@ export class AgentStepLoopService {
       tools,
       toolChoice,
       abortSignal,
+      streamRetries,
       stopWhen: async (step) =>
         hasNoMoreAvailableCredits ||
         endsOnPausingToolCall({

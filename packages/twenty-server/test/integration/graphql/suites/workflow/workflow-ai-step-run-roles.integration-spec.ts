@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import { APICallError } from '@ai-sdk/provider';
+
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import {
   createCoreWorkflow,
@@ -59,7 +61,9 @@ type ModelCall = {
 };
 
 // The model calls the find tool once, then answers, so the test sees the tools the step offers and what they return
-const mockModelCallingFindTool = (): ModelCall[] => {
+const mockModelCallingFindTool = ({
+  failsOnceMidAnswer = false,
+}: { failsOnceMidAnswer?: boolean } = {}): ModelCall[] => {
   const calls: ModelCall[] = [];
   const model = createScriptedLanguageModel((options) => {
     calls.push({
@@ -70,24 +74,41 @@ const mockModelCallingFindTool = (): ModelCall[] => {
         .map((part) => JSON.stringify(part)),
     });
 
-    return calls.length === 1
-      ? {
-          content: [
-            {
-              type: 'tool-call',
-              toolCallId: 'find-1',
-              toolName: FIND_TOOL_NAME,
-              input: JSON.stringify({ select: ['id', 'name'] }),
-            },
-          ],
-          finishReason: { unified: 'tool-calls', raw: undefined },
-          usage: USAGE,
-        }
-      : {
-          content: [{ type: 'text', text: 'Done' }],
-          finishReason: { unified: 'stop', raw: undefined },
-          usage: USAGE,
-        };
+    if (calls.length === 1) {
+      return {
+        content: [
+          {
+            type: 'tool-call',
+            toolCallId: 'find-1',
+            toolName: FIND_TOOL_NAME,
+            input: JSON.stringify({ select: ['id', 'name'] }),
+            providerMetadata: { openai: { itemId: 'find-item' } },
+          },
+        ],
+        finishReason: { unified: 'tool-calls', raw: undefined },
+        usage: USAGE,
+      };
+    }
+
+    if (failsOnceMidAnswer && calls.length === 2) {
+      return {
+        content: [{ type: 'text', text: 'Do' }],
+        finishReason: { unified: 'error', raw: undefined },
+        usage: USAGE,
+        streamError: new APICallError({
+          message: 'Service unavailable',
+          url: 'https://provider.test',
+          requestBodyValues: {},
+          statusCode: 503,
+        }),
+      };
+    }
+
+    return {
+      content: [{ type: 'text', text: 'Done' }],
+      finishReason: { unified: 'stop', raw: undefined },
+      usage: USAGE,
+    };
   });
   const aiModelRegistryService =
     getAppProviderByClassName<AiModelRegistryService>('AiModelRegistryService');
@@ -389,6 +410,26 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     expect(calls[1].toolOutputs.join()).not.toContain(HIDDEN_RECORD_NAME);
   });
 
+  const findSavedReplyParts = (): Promise<
+    {
+      type: string;
+      state: string | null;
+      textContent: string | null;
+      hasToolOutput: boolean;
+      providerMetadata: object | null;
+    }[]
+  > =>
+    global.testDataSource.query(
+      `SELECT part.type, part.state, part."textContent", part."toolOutput" IS NOT NULL AS "hasToolOutput",
+         part."providerMetadata"
+       FROM "${schema}"."agentMessagePart" part
+       WHERE part."messageId" = (
+         SELECT id FROM "${schema}"."agentMessage"
+         WHERE role = 'assistant' ORDER BY "createdAt" DESC LIMIT 1
+       )
+       ORDER BY part."orderIndex"`,
+    );
+
   it('saves the step reply in the parts chat saves', async () => {
     mockModelCallingFindTool();
 
@@ -396,21 +437,33 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       'COMPLETED',
     );
 
-    const replyParts: { type: string; state: string | null }[] =
-      await global.testDataSource.query(
-        `SELECT part.type, part.state FROM "${schema}"."agentMessagePart" part
-         WHERE part."messageId" = (
-           SELECT id FROM "${schema}"."agentMessage"
-           WHERE role = 'assistant' ORDER BY "createdAt" DESC LIMIT 1
-         )
-         ORDER BY part."orderIndex"`,
-      );
-
-    expect(replyParts).toEqual([
-      { type: 'step-start', state: null },
-      { type: `tool-${FIND_TOOL_NAME}`, state: 'output-available' },
-      { type: 'step-start', state: null },
-      { type: 'text', state: null },
+    expect(await findSavedReplyParts()).toMatchObject([
+      { type: 'step-start' },
+      {
+        type: `tool-${FIND_TOOL_NAME}`,
+        state: 'output-available',
+        hasToolOutput: true,
+        providerMetadata: { openai: { itemId: 'find-item' } },
+      },
+      { type: 'step-start' },
+      { type: 'text', textContent: 'Done' },
     ]);
+  });
+
+  it('completes the step when the provider fails midway through an answer once', async () => {
+    const calls = mockModelCallingFindTool({ failsOnceMidAnswer: true });
+
+    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+      'COMPLETED',
+    );
+
+    expect(calls).toHaveLength(3);
+
+    const savedReplyParts = await findSavedReplyParts();
+
+    expect(savedReplyParts[savedReplyParts.length - 1]).toMatchObject({
+      type: 'text',
+      textContent: 'Done',
+    });
   });
 });

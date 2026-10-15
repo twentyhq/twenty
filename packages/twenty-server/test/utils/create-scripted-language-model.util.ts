@@ -6,7 +6,7 @@ import { convertArrayToReadableStream, MockLanguageModelV4 } from 'ai/test';
 import { type ScriptedModelResponse } from 'test/utils/scripted-model-response.type';
 
 const toStreamParts = (
-  { content, finishReason, usage }: ScriptedModelResponse,
+  { content, finishReason, usage, streamError }: ScriptedModelResponse,
   callIndex: number,
 ): LanguageModelV4StreamPart[] => [
   { type: 'stream-start', warnings: [] },
@@ -27,10 +27,12 @@ const toStreamParts = (
           { type: 'reasoning-end', id },
         ];
       default:
-        return [part as LanguageModelV4StreamPart];
+        return [part];
     }
   }),
-  { type: 'finish', finishReason, usage },
+  streamError === undefined
+    ? { type: 'finish', finishReason, usage }
+    : { type: 'error', error: streamError },
 ];
 
 // Agent runs stream their steps, so a mock model answers both generate and stream calls from one script
@@ -43,10 +45,15 @@ export const createScriptedLanguageModel = (
   let callCount = 0;
 
   return new MockLanguageModelV4({
-    doGenerate: async (options) => ({
-      ...(await respond(options, callCount++)),
-      warnings: [],
-    }),
+    doGenerate: async (options) => {
+      const { streamError, ...response } = await respond(options, callCount++);
+
+      if (streamError !== undefined) {
+        throw streamError;
+      }
+
+      return { ...response, warnings: [] };
+    },
     doStream: async (options) => {
       const callIndex = callCount++;
 

@@ -11,7 +11,6 @@ export type AgentExecutionResult = {
   hasNoMoreAvailableCredits: boolean;
   isPaused: boolean;
   steps: StepResult<ToolSet>[];
-  // the reply as the conversation saves it
   replyParts: ExtendedUIMessagePart[];
   modelId: string;
   totalCostInDollars: number;
