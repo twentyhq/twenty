@@ -12,21 +12,28 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
+import { type UnsubscribePageSender } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-page-sender.type';
+import { type UnsubscribePageTracking } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-page-tracking.type';
+import { type UnsubscribeTokenPayload } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-token-payload.type';
 import { type UnsubscribeTokenVerification } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-token-verification.type';
 import { buildUnsubscribePreferencesPage } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-preferences-page.util';
 import { buildUnsubscribeResultPage } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-result-page.util';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RecipientPageExceptionFilter } from 'src/modules/emailing/filters/recipient-page-exception.filter';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 
@@ -59,6 +66,9 @@ export class UnsubscribeController {
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly throttlerService: ThrottlerService,
+    private readonly fileUrlService: FileUrlService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   private async throttleOrThrow(bucketKey: string): Promise<void> {
@@ -120,26 +130,61 @@ export class UnsubscribeController {
 
     const { payload, isExpired } = this.verifyTokenOrThrow(token);
 
-    const [topics, isTrackingOptedOut] = isExpired
-      ? [[], undefined]
-      : await Promise.all([
-          this.messageSuppressionService.getTopicOptOutState({
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload.workspaceId,
+    });
+
+    const [sender, topics, tracking] = await Promise.all([
+      this.getSender(workspace),
+      isExpired
+        ? []
+        : this.messageSuppressionService.getTopicOptOutState({
             workspaceId: payload.workspaceId,
             emailAddress: payload.emailAddress,
           }),
-          this.messageSuppressionService.isTrackingOptedOut({
-            workspaceId: payload.workspaceId,
-            emailAddress: payload.emailAddress,
-          }),
-        ]);
+      isExpired ? undefined : this.getTracking(workspace, payload),
+    ]);
 
     return buildUnsubscribePreferencesPage({
       token,
+      sender,
+      emailAddress: payload.emailAddress,
       topics,
-      isTrackingOptedOut,
+      tracking,
       updatePath: UPDATE_PREFERENCES_PATH,
       unsubscribeAllPath: UNSUBSCRIBE_ALL_PATH,
     });
+  }
+
+  private async getSender(
+    workspace: WorkspaceEntity | null,
+  ): Promise<UnsubscribePageSender> {
+    if (!isDefined(workspace)) {
+      return { name: null, logoUrl: null };
+    }
+
+    return {
+      name: workspace.displayName ?? null,
+      logoUrl: await this.fileUrlService.signWorkspaceLogoUrl(workspace),
+    };
+  }
+
+  private async getTracking(
+    workspace: WorkspaceEntity | null,
+    { workspaceId, emailAddress }: UnsubscribeTokenPayload,
+  ): Promise<UnsubscribePageTracking | undefined> {
+    if (!isDefined(workspace)) {
+      return undefined;
+    }
+
+    return {
+      isOptedOut: await this.messageSuppressionService.isTrackingOptedOut({
+        workspaceId,
+        emailAddress,
+      }),
+      isOpenTrackingEnabled: workspace.isCampaignOpenTrackingEnabled,
+      isClickTrackingEnabled: workspace.isCampaignClickTrackingEnabled,
+    };
   }
 
   @Post('preferences')
