@@ -376,6 +376,7 @@ export type Application = {
   agents: Array<Agent>;
   applicationRegistration?: Maybe<ApplicationRegistrationSummary>;
   applicationRegistrationId?: Maybe<Scalars['UUID']['output']>;
+  applicationRegistrationVersionId?: Maybe<Scalars['UUID']['output']>;
   applicationVariables: Array<ApplicationVariable>;
   autoUpgrade: Scalars['Boolean']['output'];
   availablePackages: Scalars['JSON']['output'];

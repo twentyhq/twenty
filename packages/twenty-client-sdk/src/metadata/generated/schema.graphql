@@ -336,6 +336,7 @@ type Application {
   agents: [Agent!]!
   applicationRegistration: ApplicationRegistrationSummary
   applicationRegistrationId: UUID
+  applicationRegistrationVersionId: UUID
   applicationVariables: [ApplicationVariable!]!
   autoUpgrade: Boolean!
   availablePackages: JSON!

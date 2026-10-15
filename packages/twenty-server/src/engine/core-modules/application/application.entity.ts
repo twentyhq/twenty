@@ -20,12 +20,14 @@ import {
 } from 'typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { ADD_HEALTH_CHECK_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-health-check-to-application-upgrade-command-name.constant';
+import { ADD_APPLICATION_REGISTRATION_VERSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-48/add-application-registration-versions-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -211,6 +213,20 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   @JoinColumn({ name: 'applicationRegistrationId' })
   applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_APPLICATION_REGISTRATION_VERSIONS_UPGRADE_COMMAND_NAME,
+  })
+  applicationRegistrationVersionId: string | null;
+
+  @ManyToOne(() => ApplicationRegistrationVersionEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationRegistrationVersionId' })
+  applicationRegistrationVersion: Relation<ApplicationRegistrationVersionEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
