@@ -111,7 +111,6 @@ export const SidePanelWorkflowStepInfo = ({
         : (stepDefinition.definition.name ?? t`Action`)
       : '';
 
-  // An editable title keeps the stored name, so saving it never writes a translation
   const displayedStepName =
     isReadonly &&
     isDefined(stepDefinition) &&

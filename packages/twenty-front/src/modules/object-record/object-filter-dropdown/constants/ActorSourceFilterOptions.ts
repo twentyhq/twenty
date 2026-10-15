@@ -12,7 +12,6 @@ import {
   IconWebhook,
 } from 'twenty-ui/icon';
 
-// A view saves the English name as its filter display value, so the label is translated when the filter is displayed
 export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
   id: string;
   name: string;

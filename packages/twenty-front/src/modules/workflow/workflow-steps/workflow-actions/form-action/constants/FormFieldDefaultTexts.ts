@@ -3,7 +3,6 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-// Form fields save these English defaults from getDefaultFormFieldSettings, so they are translated when displayed, never when written
 export const FORM_FIELD_DEFAULT_TEXTS: Array<{
   type: WorkflowFormFieldType;
   text: string;

@@ -64,7 +64,6 @@ const parseEventName = (
   return { objectName, action };
 };
 
-// The shared builder keeps the English labels the server stores, so the front translates them when it builds its own copy
 const buildTranslatedMetadataNode = (): Node => {
   const metadataNode = buildManualTriggerMetadataNode();
 

@@ -80,7 +80,6 @@ export const ObjectFilterDropdownCurrencySelect = () => {
       );
     }
 
-    // A view saves the display value, so it keeps the English currency names
     const selectedItemNames = CURRENCIES.filter((currency) =>
       newSelectedItemIds.includes(currency.value),
     ).map((currency) => currency.label);

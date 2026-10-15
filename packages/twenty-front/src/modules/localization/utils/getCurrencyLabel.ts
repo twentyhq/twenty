@@ -13,7 +13,6 @@ export const getCurrencyLabel = ({
 }): string => {
   const sourceLocaleLabel = CURRENCY_CODE_LABELS[currencyCode].label;
 
-  // The record search matches typed text against these source labels, so the source locale keeps them
   if (locale === SOURCE_LOCALE) {
     return sourceLocaleLabel;
   }

@@ -21,7 +21,6 @@ export type PermissionSummaryItem = {
   label: string;
 };
 
-// One full sentence per combination, so translators can reorder the words
 const getRecordPermissionLabel = ({
   canRead,
   canUpdate,

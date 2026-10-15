@@ -3,7 +3,6 @@ import { msg } from '@lingui/core/macro';
 import { type COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-// COMPOSITE_FIELD_SUB_FIELD_LABELS in twenty-shared stays English for the server and the import keys
 export const COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES: {
   [key in keyof typeof COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES]: Record<
     string,

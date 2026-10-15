@@ -4,7 +4,6 @@ import {
   type ValidationRuleErrorParams,
 } from 'twenty-shared/types';
 
-// Errors without a code are opaque parser messages, so they keep the English text from twenty-shared
 export const getValidationRuleErrorMessage = ({
   errorCode,
   errorParams,

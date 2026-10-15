@@ -26,7 +26,6 @@ import {
 import { useIcons } from 'twenty-ui/icon';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-// A file exported in English keeps matching its columns when the labels are translated
 const getSourceLocaleAlternateMatches = ({
   label,
   sourceLocaleLabel,

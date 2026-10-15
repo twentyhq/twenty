@@ -24,7 +24,6 @@ jest.mock('@/workspace/hooks/useWorkspaceFeatureFlagsMap', () => ({
 jest.mock(
   '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems',
   () => ({
-    // The action labels are message descriptors, translated like the real component does
     WorkflowActionMenuItems: ({
       actions,
     }: {

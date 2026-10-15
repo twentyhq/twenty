@@ -158,7 +158,6 @@ export const useFieldsWidgetGroups = ({
     view,
     viewId,
     workspaceCustomApplicationId,
-    // The default groups get their names translated when they are built
     // oxlint-disable-next-line react-hooks/exhaustive-deps
     i18n.locale,
   ]);

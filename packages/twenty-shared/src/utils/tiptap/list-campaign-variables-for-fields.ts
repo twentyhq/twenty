@@ -35,7 +35,6 @@ const COMPOSITE_CAMPAIGN_VARIABLE_SUBFIELDS: Partial<
   ],
 };
 
-// The front passes translated sub-field labels; the server keeps the English defaults
 export const listCampaignVariablesForFields = (
   fields: CampaignVariableEligibleField[],
   subFieldLabelsByName: Partial<Record<string, string>> = {},

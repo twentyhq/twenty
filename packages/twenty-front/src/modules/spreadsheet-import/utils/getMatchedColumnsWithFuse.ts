@@ -26,7 +26,6 @@ export const getMatchedColumnsWithFuse = ({
     keys: [
       {
         name: 'label',
-        // One key keeps the score of a field without alternate matches unchanged
         getFn: (field) =>
           isNonEmptyArray(field.alternateMatches)
             ? [field.label, ...field.alternateMatches]

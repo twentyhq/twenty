@@ -41,7 +41,6 @@ export const useStepsOutputSchema = () => {
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
       const locale = i18n.locale;
 
-      // Cached schemas hold step names and labels translated when they were computed
       const isComputedInLocale = (stepKey: string) =>
         store.get(stepsOutputSchemaLocaleFamilyState.atomFamily(stepKey)) ===
         locale;

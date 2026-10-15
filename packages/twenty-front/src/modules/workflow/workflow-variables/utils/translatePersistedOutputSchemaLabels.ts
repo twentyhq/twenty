@@ -3,7 +3,6 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 
-// The server builds this label around an object label, so it cannot be an entry of the label list
 const CURRENT_ITEM_OF_OBJECT_LABEL_PATTERN = /^Current Item \((.+)\)$/;
 
 const translatePersistedLabel = ({

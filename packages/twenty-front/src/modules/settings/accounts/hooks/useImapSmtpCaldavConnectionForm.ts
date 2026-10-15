@@ -76,7 +76,6 @@ export const useImapSmtpCaldavConnectionForm = ({
         : getConnectionImapSmtpCalDavSchema(),
     [
       isEditing,
-      // The schema gets its validation messages translated when it is built
       // oxlint-disable-next-line react-hooks/exhaustive-deps
       i18n.locale,
     ],

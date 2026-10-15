@@ -28,7 +28,6 @@ import { WEBHOOK_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// Steps and triggers store these English names when they are created, so they are translated when displayed, never when written
 export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
   type: WorkflowActionType | WorkflowTriggerType;
   name: string;

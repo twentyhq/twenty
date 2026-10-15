@@ -6,7 +6,6 @@ import {
   type SettingsMenuItem,
 } from '~/generated-metadata/graphql';
 
-// The server gives the tab it synthesizes for a legacy application this fixed English title, stored as data
 const LEGACY_SETTINGS_MENU_ITEM_TITLE = 'Settings';
 
 export const getSettingsMenuItemDisplayTitle = ({

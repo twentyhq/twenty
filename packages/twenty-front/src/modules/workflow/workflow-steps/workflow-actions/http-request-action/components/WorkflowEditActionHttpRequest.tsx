@@ -88,7 +88,6 @@ export const WorkflowEditActionHttpRequest = ({
 }: WorkflowEditActionHttpRequestProps) => {
   const { t } = useLingui();
 
-  // Braces stay outside the message, because Lingui reads them as placeholders
   const jsonResponsePlaceholder = `{\n  ${t`Paste expected call response here to use its keys later in the workflow`} \n}`;
 
   const theme = useTheme();
