@@ -44,6 +44,7 @@ import {
   buildSourceStepWithRemovedEdge,
 } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
+import { assertAgentStepKeepsItsAgentOrThrow } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/assert-agent-step-keeps-its-agent-or-throw.util';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
@@ -225,6 +226,8 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
+
+    assertAgentStepKeepsItsAgentOrThrow({ existingStep, step });
 
     const isStepTypeChanged = existingStep.type !== step.type;
 

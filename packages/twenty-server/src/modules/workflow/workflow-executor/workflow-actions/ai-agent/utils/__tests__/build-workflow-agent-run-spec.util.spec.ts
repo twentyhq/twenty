@@ -26,10 +26,10 @@ describe('buildWorkflowAgentRunSpec', () => {
   it('keeps the agent from asking without human input instructions', () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({
-        agentId: 'agent-id',
         prompt: 'Draft the quote',
         humanInputInstructions: '  ',
       }),
+      agentId: 'agent-id',
       isApplicationBound: false,
     });
 
@@ -47,9 +47,9 @@ describe('buildWorkflowAgentRunSpec', () => {
   it('lets the agent ask humans with the instructions the step gives', () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({
-        agentId: 'agent-id',
         humanInputInstructions: ' Ask before choosing a plan. ',
       }),
+      agentId: 'agent-id',
       isApplicationBound: false,
     });
 
@@ -63,7 +63,8 @@ describe('buildWorkflowAgentRunSpec', () => {
   it('keeps tools out of reach of an application-bound run', () => {
     expect(
       buildWorkflowAgentRunSpec({
-        step: buildStep({ agentId: 'agent-id', prompt: 'Draft the quote' }),
+        step: buildStep({ prompt: 'Draft the quote' }),
+        agentId: 'agent-id',
         isApplicationBound: true,
       }).additionalExcludedToolNames,
     ).toContain('send_email');

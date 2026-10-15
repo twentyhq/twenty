@@ -149,7 +149,7 @@ export class AgentRunnerService {
 
       if (!isDefined(agent)) {
         throw new AiException(
-          `Agent with id ${runSpec.agentId} not found`,
+          `Agent step "${runSpec.title}" has no agent. Delete this step and add a new AI step.`,
           AiExceptionCode.AGENT_NOT_FOUND,
         );
       }

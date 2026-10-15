@@ -462,7 +462,11 @@ describe('AgentRunnerService', () => {
     expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
     expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
       expect.objectContaining({
-        outcome: { status: 'FAILED', error: 'Agent with id null not found' },
+        outcome: {
+          status: 'FAILED',
+          error:
+            'Agent step "Draft the quote" has no agent. Delete this step and add a new AI step.',
+        },
       }),
     );
   });
