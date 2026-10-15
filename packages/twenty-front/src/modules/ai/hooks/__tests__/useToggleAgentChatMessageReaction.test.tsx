@@ -1,0 +1,94 @@
+import { act, renderHook } from '@testing-library/react';
+import { createStore, Provider } from 'jotai';
+import { type ReactNode } from 'react';
+
+import { useToggleAgentChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
+import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+
+const MESSAGE_ID = 'message-id';
+const WORKSPACE_MEMBER_ID = 'julia';
+
+const mutate = jest.fn();
+const enqueueToast = jest.fn();
+
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useApolloClient: () => ({ mutate }),
+}));
+
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
+  useToast: () => ({ enqueueToast }),
+}));
+
+const renderToggleReaction = () => {
+  const store = createStore();
+
+  store.set(currentWorkspaceMemberState.atom, {
+    id: WORKSPACE_MEMBER_ID,
+  } as never);
+
+  const { result } = renderHook(() => useToggleAgentChatMessageReaction(), {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <Provider store={store}>{children}</Provider>
+    ),
+  });
+
+  const getReactions = () =>
+    store.get(
+      agentChatMessageReactionsFamilyState.atomFamily({
+        messageId: MESSAGE_ID,
+      }),
+    );
+
+  return { result, getReactions };
+};
+
+describe('useToggleAgentChatMessageReaction', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('takes back only the refused reaction when another one was added meanwhile', async () => {
+    let refuseThumbsUp: (error: Error) => void = () => undefined;
+
+    mutate
+      .mockReturnValueOnce(
+        new Promise((_resolve, reject) => {
+          refuseThumbsUp = reject;
+        }),
+      )
+      .mockResolvedValueOnce({ data: {} });
+
+    const { result, getReactions } = renderToggleReaction();
+
+    let thumbsUpToggle: Promise<void> = Promise.resolve();
+
+    await act(async () => {
+      thumbsUpToggle = result.current.toggleAgentChatMessageReaction({
+        messageId: MESSAGE_ID,
+        emoji: '👍',
+      });
+      await result.current.toggleAgentChatMessageReaction({
+        messageId: MESSAGE_ID,
+        emoji: '🎉',
+      });
+    });
+
+    expect(getReactions()).toEqual([
+      { emoji: '👍', workspaceMemberIds: [WORKSPACE_MEMBER_ID] },
+      { emoji: '🎉', workspaceMemberIds: [WORKSPACE_MEMBER_ID] },
+    ]);
+
+    await act(async () => {
+      refuseThumbsUp(new Error('Network error'));
+      await thumbsUpToggle;
+    });
+
+    expect(getReactions()).toEqual([
+      { emoji: '🎉', workspaceMemberIds: [WORKSPACE_MEMBER_ID] },
+    ]);
+    expect(enqueueToast).toHaveBeenCalledTimes(1);
+  });
+});
