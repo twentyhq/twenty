@@ -21,6 +21,10 @@ const DocumentViewer = lazy(() =>
 
 const GLOBAL_FILE_PREVIEW_MODAL_ID = 'global-file-preview-modal';
 
+const StyledPreviewPopup = styled(Dialog.Popup)`
+  padding: ${themeCssVariables.spacing[4]};
+`;
+
 const StyledModalHeader = styled.div`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
@@ -105,11 +109,10 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
       renderInDocumentBody
     >
       {({ onKeyDown }) => (
-        <Dialog.Popup
+        <StyledPreviewPopup
           aria-label={filePreview.label ?? t`File preview`}
           onKeyDown={onKeyDown}
           size="lg"
-          style={{ padding: 'var(--t-spacing-4)' }}
         >
           <StyledModalHeader>
             <StyledHeader>
@@ -153,7 +156,7 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
               </Suspense>
             </StyledModalContent>
           </ScrollWrapper>
-        </Dialog.Popup>
+        </StyledPreviewPopup>
       )}
     </DialogInstance>
   );

@@ -3,7 +3,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { capitalize } from 'twenty-shared/utils';
 
 import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
 import { ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS } from '@/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions';
@@ -42,6 +41,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOpera
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCellProps) => {
     const { readonly } = useContext(AdvancedFilterContext);
 
+    const logicalOperatorOptions = ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS.map(
+      (option) => ({
+        ...option,
+        label: t(option.label),
+      }),
+    );
+
+    const logicalOperatorLabel = logicalOperatorOptions.find(
+      (option) => option.value === recordFilterGroup.logicalOperator,
+    )?.label;
+
     return (
       <StyledContainer>
         {index === 0 ? (
@@ -52,7 +62,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOpera
               dropdownWidth={GenericDropdownContentWidth.Narrow}
               dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
               value={recordFilterGroup.logicalOperator}
-              options={ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS}
+              options={logicalOperatorOptions}
               dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
               disabled
             />
@@ -62,9 +72,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOpera
             />
           )
         ) : (
-          <StyledText>
-            {capitalize(recordFilterGroup.logicalOperator.toLowerCase())}
-          </StyledText>
+          <StyledText>{logicalOperatorLabel}</StyledText>
         )}
       </StyledContainer>
     );

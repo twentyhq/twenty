@@ -68,10 +68,10 @@ export class ApplicationRegistrationClaimController {
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
-        pathname: getSettingsPath(SettingsPath.Applications),
+        pathname: getSettingsPath(SettingsPath.Developers),
       });
 
-      url.hash = 'developer';
+      url.hash = 'apps';
 
       return res.redirect(url.toString());
     } catch (error) {
@@ -81,11 +81,11 @@ export class ApplicationRegistrationClaimController {
       if (workspace !== null) {
         const url = this.workspaceDomainsService.buildWorkspaceURL({
           workspace,
-          pathname: getSettingsPath(SettingsPath.Applications),
+          pathname: getSettingsPath(SettingsPath.Developers),
         });
 
         url.searchParams.set('claimErrorCode', claimErrorCode);
-        url.hash = 'developer';
+        url.hash = 'apps';
 
         return res.redirect(url.toString());
       }
@@ -97,7 +97,7 @@ export class ApplicationRegistrationClaimController {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-          pathname: getSettingsPath(SettingsPath.Applications),
+          pathname: getSettingsPath(SettingsPath.Developers),
         }),
       );
     }

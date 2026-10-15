@@ -4,7 +4,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useCoreAgents } from '@/object-core/agents/hooks/useCoreAgents';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { shouldShowSystemCoreAgentsState } from '@/object-core/agents/states/shouldShowSystemCoreAgentsState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -69,9 +69,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </JotaiProvider>
 );
 
-const renderCoreAgents = (isAdvancedModeEnabled: boolean) => {
+const renderCoreAgents = (includeSystem: boolean) => {
   resetJotaiStore();
-  jotaiStore.set(isAdvancedModeEnabledState.atom, isAdvancedModeEnabled);
+  jotaiStore.set(shouldShowSystemCoreAgentsState.atom, includeSystem);
 
   return renderHook(() => useCoreAgents({ tableId: 'core-agents-test' }), {
     wrapper: Wrapper,
@@ -79,7 +79,7 @@ const renderCoreAgents = (isAdvancedModeEnabled: boolean) => {
 };
 
 describe('useCoreAgents', () => {
-  it('leaves system agents out outside developer mode', async () => {
+  it('leaves system agents out by default', async () => {
     const { result } = renderCoreAgents(false);
 
     await waitFor(() => expect(result.current.isInitialLoading).toBe(false));
@@ -87,9 +87,10 @@ describe('useCoreAgents', () => {
     expect(result.current.coreAgents.map(({ label }) => label)).toEqual([
       'Lead qualifier',
     ]);
+    expect(result.current.hasSystemAgents).toBe(true);
   });
 
-  it('lists system agents in developer mode, most recently updated first', async () => {
+  it('lists system agents once the system filter is removed, most recently updated first', async () => {
     const { result } = renderCoreAgents(true);
 
     await waitFor(() => expect(result.current.isInitialLoading).toBe(false));

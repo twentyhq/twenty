@@ -346,6 +346,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: { nickname: 'Apple' },
+      shouldKeepOpen: false,
     });
   });
 
@@ -414,6 +415,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: {},
+      shouldKeepOpen: false,
     });
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(
@@ -480,6 +482,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: {},
+      shouldKeepOpen: false,
     });
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
@@ -499,13 +502,42 @@ describe('SidePanelRecordCreationFormPage', () => {
     );
   });
 
-  it('hides the options menu from members without the layouts permission', () => {
+  it('leaves the form configuration out of the options menu for members without the layouts permission', async () => {
+    const user = userEvent.setup();
+
     mockHasPermissionFlag.mockReturnValue(false);
 
     renderPage();
 
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+
     expect(
-      screen.queryByRole('button', { name: 'Options' }),
+      await screen.findByRole('menuitem', { name: /Create another/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('menuitem', { name: 'Edit form' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('creates another record from the options menu and keeps an empty form open', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.type(screen.getByLabelText('Name'), 'Apple');
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: /Create another/ }),
+    );
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: { name: 'Apple' },
+      shouldKeepOpen: true,
+    });
+    expect(await screen.findByLabelText('Name')).toHaveValue('');
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'success' }),
+    );
   });
 });

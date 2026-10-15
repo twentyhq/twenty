@@ -555,6 +555,31 @@ describe('JwtAuthStrategy', () => {
       }
     });
 
+    it('should carry the agent an application token names', async () => {
+      const applicationId = randomUUID();
+      const workspaceId = randomUUID();
+      const workspace = new WorkspaceEntity();
+
+      workspace.id = workspaceId;
+      workspaceStore[workspaceId] = workspace;
+      applicationStore[workspaceId] = {
+        [applicationId]: { id: applicationId },
+      };
+
+      strategy = createStrategy();
+
+      const result = await strategy.validate({
+        sub: applicationId,
+        type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        applicationId,
+        workspaceId,
+        agentId: 'agent-id',
+      } as JwtPayload);
+
+      expect(result.application).toEqual({ id: applicationId });
+      expect(result.agentId).toBe('agent-id');
+    });
+
     it('should reject an application token bound to a user that cannot be resolved', async () => {
       const validApplicationId = randomUUID();
       const validWorkspaceId = randomUUID();

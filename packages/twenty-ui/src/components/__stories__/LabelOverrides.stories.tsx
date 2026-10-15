@@ -89,8 +89,6 @@ export const NativeNames: Story = {
         placeholder="Search everything"
         aria-label="Fallback search"
         aria-labelledby="search-label"
-        filterDropdown={(button) => button}
-        filterButtonAriaLabel="Filter contacts"
       />
       <Text id="avatar-label">Open profile</Text>
       <Avatar
@@ -119,9 +117,6 @@ export const NativeNames: Story = {
     expect(
       canvas.getByRole('textbox', { name: 'Find contacts' }),
     ).toHaveAttribute('placeholder', 'Search everything');
-    expect(
-      canvas.getByRole('button', { name: 'Filter contacts' }),
-    ).toBeVisible();
     expect(canvas.getByRole('button', { name: 'Open profile' })).toBeVisible();
     expect(
       canvas.getByRole('separator', { name: 'Resize details' }),

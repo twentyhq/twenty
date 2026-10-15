@@ -17,25 +17,15 @@ export const createDeleteWebhookTool = (
   description: `Delete a webhook by id. Use list_webhooks first if you don't know the id.`,
   inputSchema: deleteWebhookSchema,
   execute: async (parameters: DeleteWebhookParams) => {
-    try {
-      const webhook = await deps.webhookService.delete(
-        parameters.id,
-        context.workspaceId,
-      );
+    const webhook = await deps.webhookService.delete(
+      parameters.id,
+      context.workspaceId,
+    );
 
-      return {
-        success: true,
-        message: `Webhook ${webhook.id} deleted`,
-        result: { deletedWebhookId: webhook.id, targetUrl: webhook.targetUrl },
-      };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-
-      return {
-        success: false,
-        message: `Failed to delete webhook: ${message}`,
-        error: message,
-      };
-    }
+    return {
+      success: true,
+      message: `Webhook ${webhook.id} deleted`,
+      result: { deletedWebhookId: webhook.id, targetUrl: webhook.targetUrl },
+    };
   },
 });

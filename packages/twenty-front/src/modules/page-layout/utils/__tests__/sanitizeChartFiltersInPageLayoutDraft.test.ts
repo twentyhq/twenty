@@ -69,7 +69,9 @@ const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => {
 };
 
 const buildValidFieldsMap = (fieldIds: string[]) =>
-  new Map<string, Set<string>>([[TEST_OBJECT_METADATA_ID, new Set(fieldIds)]]);
+  new Map([
+    [TEST_OBJECT_METADATA_ID, fieldIds.map((id) => ({ id, isActive: true }))],
+  ]);
 
 describe('sanitizeChartFiltersInPageLayoutDraft', () => {
   it('should drop chart filter rules that reference deactivated or deleted fields on save', () => {
@@ -94,7 +96,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: buildValidFieldsMap([
+      fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
         ACTIVE_FIELD_ID,
       ]),
     });
@@ -122,7 +124,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: buildValidFieldsMap([
+      fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
         ACTIVE_FIELD_ID,
       ]),
     });
@@ -160,7 +162,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: buildValidFieldsMap([
+      fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
         ACTIVE_FIELD_ID,
       ]),
     });
@@ -181,7 +183,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: buildValidFieldsMap([
+      fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
         ACTIVE_FIELD_ID,
       ]),
     });
@@ -207,7 +209,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: new Map(),
+      fieldMetadataItemsByObjectMetadataId: new Map(),
     });
 
     const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {

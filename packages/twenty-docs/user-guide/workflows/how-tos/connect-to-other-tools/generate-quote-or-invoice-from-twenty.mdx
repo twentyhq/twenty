@@ -40,7 +40,7 @@ The Opportunity record may not include all Company fields you need for the invoi
 | Setting | Value |
 |---------|-------|
 | **Object** | Company |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| **Match by** | ID equals `{{trigger.properties.after.companyId}}` |
 
 This retrieves the full Company record with billing address, tax ID, etc.
 

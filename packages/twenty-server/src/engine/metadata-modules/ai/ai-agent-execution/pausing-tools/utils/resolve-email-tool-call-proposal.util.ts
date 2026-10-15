@@ -6,7 +6,7 @@ import { isEmailToolName } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { buildEmailProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/build-email-proposal.util';
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-resolution.type';
 
-// for proposers without registry tools (apps posting to the inbox, workflow steps without an agent):
+// for proposers without registry tools (apps posting to the inbox):
 // an email runs only once approved, with the approver's own permissions, so nothing is looked up here
 export const resolveEmailToolCallProposal = (
   input: ProposeToolCallToolInput,

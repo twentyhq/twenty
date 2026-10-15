@@ -204,7 +204,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 title={t`Google`}
                 description={t`Allow logins through Google's single sign-on functionality.`}
                 checked={currentWorkspace.isGoogleAuthEnabled}
-                advancedMode
                 divider
                 onChange={() =>
                   toggleAuthMethod(ConnectedAccountProvider.GOOGLE)
@@ -217,7 +216,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 title={t`Microsoft`}
                 description={t`Allow logins through Microsoft's single sign-on functionality.`}
                 checked={currentWorkspace.isMicrosoftAuthEnabled}
-                advancedMode
                 divider
                 onChange={() =>
                   toggleAuthMethod(ConnectedAccountProvider.MICROSOFT)
@@ -230,7 +228,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 title={t`Password`}
                 description={t`Allow users to sign in with an email and password.`}
                 checked={currentWorkspace.isPasswordAuthEnabled}
-                advancedMode
                 onChange={() => toggleAuthMethod('password')}
               />
             )}
@@ -241,7 +238,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               title={t`Invite by Link`}
               description={t`Allow the invitation of new users by sharing an invite link.`}
               checked={currentWorkspace.isPublicInviteLinkEnabled}
-              advancedMode
               divider
               onChange={() =>
                 handleChange(!currentWorkspace.isPublicInviteLinkEnabled)

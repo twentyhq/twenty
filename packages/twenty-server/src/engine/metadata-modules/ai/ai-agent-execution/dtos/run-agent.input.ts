@@ -1,6 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
+import GraphQLJSON from 'graphql-type-json';
+import { type AgentResponseFormat } from 'twenty-shared/ai';
 import {
   ArrayMaxSize,
   ArrayNotEmpty,
@@ -19,8 +21,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 @InputType('RunAgentInput')
 export class RunAgentInputDTO {
-  @IsString()
-  @IsNotEmpty()
+  @IsUUID()
   @Field()
   agentUniversalIdentifier: string;
 
@@ -61,6 +62,10 @@ export class RunAgentInputDTO {
   @IsNotEmpty()
   @Field({ nullable: true })
   additionalInstructions?: string;
+
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  responseFormat?: AgentResponseFormat;
 
   @IsOptional()
   @ValidateNested()

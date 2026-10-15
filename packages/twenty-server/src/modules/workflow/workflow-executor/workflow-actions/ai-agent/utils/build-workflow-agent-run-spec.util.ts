@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-base-system-prompt.constant';
@@ -14,12 +15,13 @@ export const buildWorkflowAgentRunSpec = ({
   step: WorkflowAiAgentAction;
   isApplicationBound: boolean;
 }): AgentRunSpec => {
-  const { agentId, humanInputInstructions } = step.settings.input;
+  const { agentId, humanInputInstructions, responseFormat } =
+    step.settings.input;
   const trimmedHumanInputInstructions = humanInputInstructions?.trim();
   const canAskHumans = isNonEmptyString(trimmedHumanInputInstructions);
 
   return {
-    agentId: isNonEmptyString(agentId) ? agentId : null,
+    agentId,
     title: step.name,
     baseSystemPrompt: WORKFLOW_BASE_SYSTEM_PROMPT,
     instructions: canAskHumans
@@ -28,6 +30,7 @@ export const buildWorkflowAgentRunSpec = ({
     capabilities: {
       canAskHumans,
     },
+    ...(isDefined(responseFormat) ? { responseFormat } : {}),
     ...(isApplicationBound
       ? {
           additionalExcludedToolNames: [

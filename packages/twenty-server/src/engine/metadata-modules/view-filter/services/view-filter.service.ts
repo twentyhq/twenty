@@ -10,6 +10,7 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util';
+import { MorphRelationReferenceVisibilityService } from 'src/engine/metadata-modules/morph-relation-head/services/morph-relation-reference-visibility.service';
 import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
 import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
 import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
@@ -33,6 +34,7 @@ export class ViewFilterService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly morphRelationReferenceVisibilityService: MorphRelationReferenceVisibilityService,
   ) {}
 
   async createOne({
@@ -265,13 +267,15 @@ export class ViewFilterService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find(workspaceId, {
+    const viewFilters = await this.viewFilterRepository.find(workspaceId, {
       where: {
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
+
+    return this.filterVisibleViewFilters({ workspaceId, viewFilters });
   }
 
   async findManyPaginated({
@@ -290,10 +294,14 @@ export class ViewFilterService {
           flatMapsKeys: ['flatViewFilterMaps'],
         },
       );
-    const flatViewFilters = Object.values(
-      flatViewFilterMaps.byUniversalIdentifier,
+    const flatViewFilters = (
+      await this.filterVisibleViewFilters({
+        workspaceId,
+        viewFilters: Object.values(
+          flatViewFilterMaps.byUniversalIdentifier,
+        ).filter(isDefined),
+      })
     )
-      .filter(isDefined)
       .filter(
         (flatViewFilter) =>
           flatViewFilter.workspaceId === workspaceId &&
@@ -322,7 +330,7 @@ export class ViewFilterService {
     workspaceId: string,
     viewId: string,
   ): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find(workspaceId, {
+    const viewFilters = await this.viewFilterRepository.find(workspaceId, {
       where: {
         viewId,
         deletedAt: IsNull(),
@@ -330,6 +338,34 @@ export class ViewFilterService {
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
+
+    return this.filterVisibleViewFilters({ workspaceId, viewFilters });
+  }
+
+  private async filterVisibleViewFilters<
+    TViewFilter extends Pick<
+      ViewFilterEntity,
+      'fieldMetadataId' | 'relationTargetFieldMetadataId'
+    >,
+  >({
+    workspaceId,
+    viewFilters,
+  }: {
+    workspaceId: string;
+    viewFilters: TViewFilter[];
+  }): Promise<TViewFilter[]> {
+    const isMorphRelationReferenceVisible =
+      await this.morphRelationReferenceVisibilityService.getIsMorphRelationReferenceVisible(
+        workspaceId,
+      );
+
+    return viewFilters.filter(
+      (viewFilter) =>
+        isMorphRelationReferenceVisible(viewFilter.fieldMetadataId) &&
+        isMorphRelationReferenceVisible(
+          viewFilter.relationTargetFieldMetadataId,
+        ),
+    );
   }
 
   async findById(

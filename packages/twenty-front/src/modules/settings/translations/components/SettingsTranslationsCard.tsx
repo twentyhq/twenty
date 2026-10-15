@@ -1,5 +1,4 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -33,7 +32,9 @@ export const SettingsTranslationsCard = ({
   }
 
   return (
-    <UndecoratedLink
+    <SettingsCard
+      Icon={icon}
+      title={t`Edit translations`}
       to={
         isDefined(fieldName)
           ? getSettingsPath(SettingsPath.ObjectFieldTranslations, {
@@ -44,8 +45,6 @@ export const SettingsTranslationsCard = ({
               objectNamePlural,
             })
       }
-    >
-      <SettingsCard Icon={icon} title={t`Edit translations`} />
-    </UndecoratedLink>
+    />
   );
 };

@@ -36,6 +36,7 @@ import {
   type FindAllApplicationRegistrationsQuery,
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 type AdminApplicationRegistration =
   FindAllApplicationRegistrationsQuery['findAllApplicationRegistrations']['registrations'][number];
@@ -187,12 +188,12 @@ export const SettingsAdminApps = () => {
           placeholder={t`Search registrations...`}
           value={searchQuery}
           onValueChange={setSearchQuery}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot
               dropdownId="settings-admin-apps-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger />
               <DropdownContent align="end" sideOffset={8}>
                 <Dropdown.Section>
                   <SettingsRow
@@ -252,7 +253,7 @@ export const SettingsAdminApps = () => {
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
         {loading && registrations.length === 0 ? (
           <SettingsEmptyPlaceholder>{t`Loading apps...`}</SettingsEmptyPlaceholder>

@@ -7,6 +7,7 @@ const baseTurn = {
   hasText: true,
   isAborted: false,
   isAwaitingUserAnswer: false,
+  isSilent: false,
   outOfCredits: false,
 };
 
@@ -46,6 +47,22 @@ describe('classifyAgentChatTurnOutcome', () => {
         isAborted: true,
       }),
     ).toEqual({ kind: 'cancelled', reason: 'user_cancelled' });
+  });
+
+  it('counts a turn that chose not to reply as silent rather than failed', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...baseTurn,
+        hasText: false,
+        isSilent: true,
+      }),
+    ).toEqual({ kind: 'completed', outcome: 'silent' });
+  });
+
+  it('counts a reply as answered even when it also chose silence', () => {
+    expect(
+      classifyAgentChatTurnOutcome({ ...baseTurn, isSilent: true }),
+    ).toEqual({ kind: 'completed', outcome: 'answered' });
   });
 
   it('counts an empty reply as a no_text failure', () => {

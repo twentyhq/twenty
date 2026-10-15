@@ -27,12 +27,12 @@ export const DashboardColorSelectionMenu = ({
         {BLOCKNOTE_COLORS.map((colorName) => (
           <Dropdown.OptionItem
             key={colorName}
-            aria-label={BLOCKNOTE_COLOR_DISPLAY_NAMES[colorName]}
+            aria-label={t(BLOCKNOTE_COLOR_DISPLAY_NAMES[colorName])}
             selected={currentTextColor === colorName}
             startIcon={<DashboardColorIcon textColor={colorName} />}
             onSelect={() => onTextColorSelect(colorName)}
           >
-            {BLOCKNOTE_COLOR_DISPLAY_NAMES[colorName]}
+            {t(BLOCKNOTE_COLOR_DISPLAY_NAMES[colorName])}
           </Dropdown.OptionItem>
         ))}
       </Dropdown.Section>
@@ -41,12 +41,12 @@ export const DashboardColorSelectionMenu = ({
         {BLOCKNOTE_COLORS.map((colorName) => (
           <Dropdown.OptionItem
             key={colorName}
-            aria-label={BLOCKNOTE_COLOR_DISPLAY_NAMES[colorName]}
+            aria-label={t(BLOCKNOTE_COLOR_DISPLAY_NAMES[colorName])}
             selected={currentBackgroundColor === colorName}
             startIcon={<DashboardColorIcon backgroundColor={colorName} />}
             onSelect={() => onBackgroundColorSelect(colorName)}
           >
-            {BLOCKNOTE_COLOR_DISPLAY_NAMES[colorName]}
+            {t(BLOCKNOTE_COLOR_DISPLAY_NAMES[colorName])}
           </Dropdown.OptionItem>
         ))}
       </Dropdown.Section>

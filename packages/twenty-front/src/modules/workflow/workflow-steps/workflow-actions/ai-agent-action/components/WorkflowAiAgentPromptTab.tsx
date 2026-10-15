@@ -1,7 +1,6 @@
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
-import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
 import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
 import { schemaToFields } from '@/ai/utils/schemaToFields';
@@ -23,7 +22,6 @@ import {
 } from 'twenty-shared/ai';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
-import { useDebouncedCallback } from 'use-debounce';
 import {
   FeatureFlagKey,
   UpdateOneAgentDocument,
@@ -41,7 +39,7 @@ type WorkflowAiAgentPromptTabProps = {
   onRecipientChange: (workspaceMemberId: string | undefined) => void;
   conversation: WorkflowConversation | undefined;
   onConversationChange: (conversation: WorkflowConversation) => void;
-  onActionUpdate?: (action: WorkflowAiAgentAction) => void;
+  onResponseSchemaChange: (responseSchema: AgentResponseSchema) => void;
 };
 
 export const WorkflowAiAgentPromptTab = ({
@@ -55,7 +53,7 @@ export const WorkflowAiAgentPromptTab = ({
   onRecipientChange,
   conversation,
   onConversationChange,
-  onActionUpdate,
+  onResponseSchemaChange,
 }: WorkflowAiAgentPromptTabProps) => {
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
@@ -67,8 +65,13 @@ export const WorkflowAiAgentPromptTab = ({
   const [outputSchemaFields, setOutputSchemaFields] = useState<
     OutputSchemaField[]
   >(() => {
-    const schema: AgentResponseSchema = workflowAiAgentActionAgent
-      ?.responseFormat?.schema || {
+    // steps saved before the format moved to them still carry it on their agent
+    const responseFormat =
+      action.settings.input.responseFormat ??
+      workflowAiAgentActionAgent?.responseFormat;
+    const schema: AgentResponseSchema = (responseFormat?.type === 'json'
+      ? responseFormat.schema
+      : undefined) || {
       type: 'object' as const,
       properties: {},
       required: [],
@@ -107,25 +110,6 @@ export const WorkflowAiAgentPromptTab = ({
     );
   };
 
-  const updateResponseSchema = async (schema: AgentResponseSchema) => {
-    await updateAgentField({
-      responseFormat: { type: 'json' as const, schema },
-    });
-
-    onActionUpdate?.({
-      ...action,
-      settings: {
-        ...action.settings,
-        outputSchema: agentResponseSchemaToOutputSchema(schema),
-      },
-    });
-  };
-
-  const debouncedUpdateResponseSchema = useDebouncedCallback(
-    updateResponseSchema,
-    300,
-  );
-
   if (!workflowAiAgentActionAgent) {
     return null;
   }
@@ -148,7 +132,7 @@ export const WorkflowAiAgentPromptTab = ({
 
   const handleOutputSchemaChange = (updatedFields: OutputSchemaField[]) => {
     setOutputSchemaFields(updatedFields);
-    void debouncedUpdateResponseSchema(fieldsToSchema(updatedFields));
+    onResponseSchemaChange(fieldsToSchema(updatedFields));
   };
 
   return (
