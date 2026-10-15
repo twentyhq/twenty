@@ -23,6 +23,7 @@
           "^(?:autoplay;|color:|background:|font-|opacity:|transform:|transition:|animation:)",
           "^\\d+(?:\\.\\d+)?s(?:,|$)",
           "^Bearer(?:\\s|$)",
+          "^use (client|server)$",
           "^Aa$",
           "^Twenty$",
           "^Twenty-DPA-",
