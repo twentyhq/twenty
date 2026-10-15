@@ -95,7 +95,7 @@ Relation fields only expose the related record's ID, for example `{{trigger.prop
 3. **Search Records**: Find the opportunity owner's manager
 
 4. **Send Email #1**: To opportunity owner
-   - To: `{{Find Owner.first.userEmail}}`
+   - To: `{{Find Owner.first.userEmail}}` (select it from the variable picker; typing the step name does not work)
    - Subject: `Congratulations on closing {{trigger.properties.after.name}}!`
 
 5. **Send Email #2**: To manager

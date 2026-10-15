@@ -51,7 +51,7 @@ Create a workflow that handles all post-win activities automatically.
 | **First Deal Date** | `{{trigger.properties.after.closeDate}}` |
 | **Account Owner** | `{{trigger.properties.after.ownerId}}` |
 
-Name this step "Update Company". Its output is the updated company, so later steps can use `{{Update Company.name}}`.
+Name this step "Update Company". Its output is the updated company, so later steps can insert its fields from the variable picker, shown below as `{{Update Company.name}}`. Pick them from the picker rather than typing them: variables point to the step's ID, not its name.
 
 ### Step 5: Create Onboarding Task
 
@@ -112,6 +112,8 @@ Let's give them a great start!
 | **To** | `{{Find Owner.first.userEmail}}` |
 | **Subject** | `✅ Deal Closed: {{trigger.properties.after.name}}` |
 | **Body** | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
+
+Select the **To** value from the variable picker under the "Find Owner" step.
 
 ### Step 8: Test and Activate
 
