@@ -5,18 +5,23 @@ import { fileURLToPath } from 'node:url';
 import { createStringDiagnosticFilter } from './filter-unlocalized-strings.mjs';
 
 const FRONTEND_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const PACKAGE_ROOT = process.argv[2]
+  ? resolve(process.cwd(), process.argv[2])
+  : FRONTEND_ROOT;
+const SOURCE_DIRECTORIES = process.argv.slice(3);
 const RULE_CODE = 'lingui(no-unlocalized-strings)';
 const MAX_FILE_ARGUMENT_BYTES = 64 * 1024;
 
 const isProductionSource = (path) =>
   /\.tsx?$/.test(path) &&
-  !/(^|\/)(__mocks__|__tests__|__stories__|testing|generated[^/]*)\//.test(
+  !/(^|\/)(__mocks__|__tests__|__stories__|testing|locales|generated[^/]*)\//.test(
     path,
   ) &&
+  !/\.d\.tsx?$/.test(path) &&
   !/\.(test|spec|stories|mock)\.tsx?$/.test(path);
 
 const getProductionSourceFiles = (directory) =>
-  readdirSync(resolve(FRONTEND_ROOT, directory), {
+  readdirSync(resolve(PACKAGE_ROOT, directory), {
     withFileTypes: true,
   }).flatMap((entry) => {
     const path = `${directory}/${entry.name}`;
@@ -38,10 +43,12 @@ const parseDiagnosticsOrThrow = (lint) => {
   }
 };
 
-const filesToLint = getProductionSourceFiles('src');
+const filesToLint = (
+  SOURCE_DIRECTORIES.length > 0 ? SOURCE_DIRECTORIES : ['src']
+).flatMap(getProductionSourceFiles);
 
 if (filesToLint.length === 0) {
-  console.log('No production frontend source files to check for translations.');
+  console.log('No production source files to check for translations.');
   process.exit(0);
 }
 
@@ -73,14 +80,14 @@ for (const batch of fileBatches) {
   const lint = spawnSync(
     process.execPath,
     [
-      '../../node_modules/oxlint/bin/oxlint',
+      resolve(FRONTEND_ROOT, '../../node_modules/oxlint/bin/oxlint'),
       '-c',
-      '.oxlintrc.i18n.json',
+      resolve(FRONTEND_ROOT, '.oxlintrc.i18n.json'),
       '--format=json',
       ...batch,
     ],
     {
-      cwd: FRONTEND_ROOT,
+      cwd: PACKAGE_ROOT,
       encoding: 'utf8',
       maxBuffer: 32 * 1024 * 1024,
     },
@@ -124,7 +131,7 @@ const violations = diagnostics.filter((diagnostic) => {
   if (!filter) {
     filter = createStringDiagnosticFilter(
       diagnostic.filename,
-      readFileSync(resolve(FRONTEND_ROOT, diagnostic.filename)),
+      readFileSync(resolve(PACKAGE_ROOT, diagnostic.filename)),
     );
     diagnosticFilters.set(diagnostic.filename, filter);
   }
@@ -144,5 +151,5 @@ if (violations.length > 0) {
   );
   process.exitCode = 1;
 } else {
-  console.log('No untranslated production frontend strings.');
+  console.log('No untranslated production strings.');
 }

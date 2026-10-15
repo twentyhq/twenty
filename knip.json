@@ -75,6 +75,7 @@
         "@babel/preset-typescript",
         "buffer",
         "esbuild",
+        "eslint",
         "playwright",
         "rollup-plugin-node-polyfills"
       ]

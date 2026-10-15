@@ -21,6 +21,8 @@ jobs:
         yarn.lock
         packages/twenty-website/**
         packages/twenty-front/.oxlintrc.i18n.json
+        packages/twenty-front/scripts/check-unlocalized-strings.mjs
+        packages/twenty-front/scripts/filter-unlocalized-strings.mjs
         packages/twenty-shared/**
         packages/twenty-ui/**
   website-task:

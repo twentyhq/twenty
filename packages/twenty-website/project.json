@@ -39,7 +39,9 @@
       "executor": "nx:run-commands",
       "inputs": [
         "default",
-        "{workspaceRoot}/packages/twenty-front/.oxlintrc.i18n.json"
+        "{workspaceRoot}/packages/twenty-front/.oxlintrc.i18n.json",
+        "{workspaceRoot}/packages/twenty-front/scripts/check-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-front/scripts/filter-unlocalized-strings.mjs"
       ],
       "options": {
         "cwd": "{projectRoot}",
