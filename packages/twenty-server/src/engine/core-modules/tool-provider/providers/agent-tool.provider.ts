@@ -3,7 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -22,9 +24,19 @@ export class AgentToolProvider implements ToolProvider {
   constructor(
     private readonly agentToolWorkspaceService: AgentToolWorkspaceService,
     private readonly permissionsService: PermissionsService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      context.workspaceId,
+    );
+
+    if (!isAiChatInboxEnabled) {
+      return false;
+    }
+
     return this.permissionsService.checkRolesPermissions(
       context.rolePermissionConfig,
       context.workspaceId,
