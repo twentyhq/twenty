@@ -22,14 +22,9 @@ import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPa
 import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
+import { useAgentChatInboxShownThreads } from '@/ai/hooks/useAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
-import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
-import { agentChatChannelVisibleThreadsSelector } from '@/ai/states/selectors/agentChatChannelVisibleThreadsSelector';
-import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
@@ -98,18 +93,7 @@ const AiChatInboxPageContent = () => {
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
-  const agentChatShownChannelThreadList = useAtomStateValue(
-    agentChatShownChannelThreadListSelector,
-  );
-  const { threads, loading: isThreadListLoading } = useChatThreads(
-    isDefined(agentChatShownChannelView)
-      ? agentChatChannelVisibleThreadsSelector
-      : agentChatVisibleThreadsSelector,
-  );
-  const loading =
-    isThreadListLoading ||
-    (isDefined(agentChatShownChannelView) &&
-      !isDefined(agentChatShownChannelThreadList));
+  const { threads, isLoading, fetchMore } = useAgentChatInboxShownThreads();
 
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
@@ -117,8 +101,6 @@ const AiChatInboxPageContent = () => {
   const { toggleRecordSelection } = useToggleRecordSelection();
   const threadListContainerRef = useRef<HTMLDivElement>(null);
   const { resetRecordSelection } = useResetRecordSelection();
-  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
-  const { loadAgentChatChannelThreads } = useLoadAgentChatChannelThreads();
 
   // Rows hold a menu and a rename input, which a link cannot contain
   const selectThread = (nextThreadId: string | null) =>
@@ -159,14 +141,7 @@ const AiChatInboxPageContent = () => {
     selectableItemsContainerRef: threadListContainerRef,
     activeRecordId: selectedThreadId,
     onActiveRecordChange: selectThread,
-    onEndReached: () => {
-      if (isDefined(agentChatShownChannelView)) {
-        void loadAgentChatChannelThreads('fetch-more');
-        return;
-      }
-
-      void fetchMoreAgentChatThreads();
-    },
+    onEndReached: fetchMore,
   });
 
   const handleThreadCheckboxClick = (
@@ -250,7 +225,7 @@ const AiChatInboxPageContent = () => {
                 )}
                 <StyledThreadListContainer ref={threadListContainerRef}>
                   <StyledThreadList>
-                    {loading && threads.length === 0 ? (
+                    {isLoading && threads.length === 0 ? (
                       <SkeletonLoader />
                     ) : threads.length === 0 ? (
                       <EmptyState.Root>
