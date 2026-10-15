@@ -6,7 +6,7 @@ import {
   Observable,
 } from '@apollo/client';
 
-import { workflowRunStaleResponseGuardLink } from '@/workflow/utils/workflowRunStaleResponseGuardLink';
+import { workflowRunStaleResponseLink } from '@/workflow/utils/workflowRunStaleResponseLink';
 
 const FIND_ONE_WORKFLOW_RUN = gql`
   query FindOneWorkflowRun($objectRecordId: UUID!) {
@@ -36,7 +36,7 @@ const setup = ({ response }: { response: Record<string, unknown> }) => {
   const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: ApolloLink.from([
-      workflowRunStaleResponseGuardLink,
+      workflowRunStaleResponseLink,
       new ApolloLink(
         () =>
           new Observable((observer) => {
@@ -89,7 +89,7 @@ const queryWorkflowRun = async ({ client }: { client: ApolloClient }) => {
   return data?.workflowRun;
 };
 
-describe('workflowRunStaleResponseGuardLink', () => {
+describe('workflowRunStaleResponseLink', () => {
   it('should keep the cached run when an older response lands after it', async () => {
     const { client } = setup({
       response: {

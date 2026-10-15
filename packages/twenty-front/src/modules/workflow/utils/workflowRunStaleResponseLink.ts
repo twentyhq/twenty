@@ -1,4 +1,4 @@
-import { ApolloLink } from '@apollo/client';
+import { ApolloLink, gql } from '@apollo/client';
 import { type ApolloCache } from '@apollo/client/cache';
 import { isNonEmptyString } from '@sniptt/guards';
 import { parse } from 'graphql';
@@ -6,6 +6,12 @@ import { map } from 'rxjs';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 const WORKFLOW_RUN_TYPENAME = 'WorkflowRun';
+
+const CACHED_WORKFLOW_RUN_UPDATED_AT_FRAGMENT = gql`
+  fragment CachedWorkflowRunUpdatedAt on WorkflowRun {
+    updatedAt
+  }
+`;
 
 const isGraphqlObject = (value: unknown): value is Record<string, unknown> =>
   isPlainObject(value) && isNonEmptyString(value.__typename);
@@ -28,6 +34,20 @@ const keepNewerCachedFields = ({
     return workflowRun;
   }
 
+  const cacheId = `${WORKFLOW_RUN_TYPENAME}:${workflowRun.id}`;
+
+  const cachedUpdatedAt = cache.readFragment<{ updatedAt?: string }>({
+    id: cacheId,
+    fragment: CACHED_WORKFLOW_RUN_UPDATED_AT_FRAGMENT,
+  })?.updatedAt;
+
+  if (
+    !isNonEmptyString(cachedUpdatedAt) ||
+    Date.parse(cachedUpdatedAt) <= Date.parse(workflowRun.updatedAt)
+  ) {
+    return workflowRun;
+  }
+
   const plainFieldNames = Object.keys(workflowRun).filter(
     (fieldName) =>
       fieldName !== '__typename' &&
@@ -36,18 +56,14 @@ const keepNewerCachedFields = ({
   );
 
   const cachedWorkflowRun = cache.readFragment<Record<string, unknown>>({
-    id: `${WORKFLOW_RUN_TYPENAME}:${workflowRun.id}`,
+    id: cacheId,
     fragment: parse(
       `fragment CachedWorkflowRunFields on ${WORKFLOW_RUN_TYPENAME} { ${plainFieldNames.join(' ')} }`,
     ),
     returnPartialData: true,
   });
 
-  if (
-    !isDefined(cachedWorkflowRun) ||
-    !isNonEmptyString(cachedWorkflowRun.updatedAt) ||
-    Date.parse(cachedWorkflowRun.updatedAt) <= Date.parse(workflowRun.updatedAt)
-  ) {
+  if (!isDefined(cachedWorkflowRun)) {
     return workflowRun;
   }
 
@@ -113,22 +129,24 @@ const keepNewerCachedWorkflowRuns = ({
   });
 };
 
-export const workflowRunStaleResponseGuardLink = new ApolloLink(
+export const workflowRunStaleResponseLink = new ApolloLink(
   (operation, forward) =>
-    forward(operation).pipe(
-      map((result) => {
-        if (!isPlainObject(result.data)) {
-          return result;
-        }
+    operation.operationName?.includes(WORKFLOW_RUN_TYPENAME) !== true
+      ? forward(operation)
+      : forward(operation).pipe(
+          map((result) => {
+            if (!isPlainObject(result.data)) {
+              return result;
+            }
 
-        const patchedData = keepNewerCachedWorkflowRunsInFields({
-          node: result.data,
-          cache: operation.client.cache,
-        });
+            const patchedData = keepNewerCachedWorkflowRunsInFields({
+              node: result.data,
+              cache: operation.client.cache,
+            });
 
-        return patchedData === result.data
-          ? result
-          : { ...result, data: patchedData };
-      }),
-    ),
+            return patchedData === result.data
+              ? result
+              : { ...result, data: patchedData };
+          }),
+        ),
 );

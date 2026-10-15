@@ -178,7 +178,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
-          "iterationCount": 0,
           "name": "Company created",
           "nodeType": "trigger",
           "position": {
@@ -199,7 +198,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 0,
           "name": "Step 1",
           "nodeType": "action",
           "position": {
@@ -219,7 +217,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 0,
           "name": "Step 2",
           "nodeType": "action",
           "position": {
@@ -239,7 +236,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": false,
-          "iterationCount": 0,
           "name": "Step 3",
           "nodeType": "action",
           "position": {
@@ -418,7 +414,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
-          "iterationCount": 0,
           "name": "Company created",
           "nodeType": "trigger",
           "position": {
@@ -439,7 +434,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 1,
           "name": "Step 1",
           "nodeType": "action",
           "position": {
@@ -459,7 +453,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 1,
           "name": "Step 2",
           "nodeType": "action",
           "position": {
@@ -479,7 +472,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": false,
-          "iterationCount": 1,
           "name": "Step 3",
           "nodeType": "action",
           "position": {
@@ -658,7 +650,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
-          "iterationCount": 0,
           "name": "Company created",
           "nodeType": "trigger",
           "position": {
@@ -679,7 +670,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 0,
           "name": "Step 1",
           "nodeType": "action",
           "position": {
@@ -699,7 +689,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 0,
           "name": "Step 2",
           "nodeType": "action",
           "position": {
@@ -719,7 +708,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": false,
-          "iterationCount": 0,
           "name": "Step 3",
           "nodeType": "action",
           "position": {
@@ -934,7 +922,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
-          "iterationCount": 0,
           "name": "Company created",
           "nodeType": "trigger",
           "position": {
@@ -955,7 +942,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 1,
           "name": "Step 1",
           "nodeType": "action",
           "position": {
@@ -975,7 +961,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 0,
           "name": "Step 2",
           "nodeType": "action",
           "position": {
@@ -995,7 +980,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": true,
-          "iterationCount": 0,
           "name": "Step 3",
           "nodeType": "action",
           "position": {
@@ -1015,7 +999,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "CODE",
           "hasNextStepIds": false,
-          "iterationCount": 0,
           "name": "Step 4",
           "nodeType": "action",
           "position": {
@@ -1127,7 +1110,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
-          "iterationCount": 0,
           "name": "Company created",
           "nodeType": "trigger",
           "position": {
@@ -1148,7 +1130,6 @@ describe('generateWorkflowRunDiagram', () => {
         "data": {
           "actionType": "FORM",
           "hasNextStepIds": false,
-          "iterationCount": 0,
           "name": "Step 1",
           "nodeType": "action",
           "position": {
@@ -1170,7 +1151,6 @@ describe('generateWorkflowRunDiagram', () => {
     "data": {
       "actionType": "FORM",
       "hasNextStepIds": false,
-      "iterationCount": 0,
       "name": "Step 1",
       "nodeType": "action",
       "position": {

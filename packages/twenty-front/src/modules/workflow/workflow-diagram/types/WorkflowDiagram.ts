@@ -84,7 +84,6 @@ export type WorkflowRunDiagramStepNodeData = Exclude<
   'runStatus'
 > & {
   runStatus: WorkflowRunStepStatus;
-  iterationCount: number;
 };
 
 export type WorkflowDiagramEmptyTriggerNodeData = {
@@ -102,7 +101,7 @@ export type WorkflowDiagramNodeData =
 export type WorkflowRunDiagramNodeData = Exclude<
   WorkflowDiagramStepNodeData,
   'runStatus'
-> & { runStatus: WorkflowRunStepStatus; iterationCount: number };
+> & { runStatus: WorkflowRunStepStatus };
 
 export type WorkflowDiagramEdgeLabelOptions = {
   position: Position;

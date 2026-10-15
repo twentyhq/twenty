@@ -4,6 +4,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
@@ -22,6 +23,7 @@ import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-node
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useWorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useWorkflowNodeLabel';
+import { getNodeIterationCount } from '@/workflow/workflow-diagram/workflow-nodes/utils/getNodeIterationCount';
 import { styled } from '@linaria/react';
 import { Position } from '@xyflow/react';
 import { useContext } from 'react';
@@ -106,6 +108,15 @@ export const WorkflowRunDiagramStepNode = ({
     sidePanelNavigationStackState,
   );
 
+  const workflowRun = useWorkflowRun({ workflowRunId });
+
+  const stepInfo = workflowRun?.state?.stepInfos[data.stepId];
+
+  const iterationCount =
+    data.nodeType === 'action' && isDefined(stepInfo)
+      ? getNodeIterationCount({ stepInfo })
+      : 0;
+
   const nodeLabel = useWorkflowNodeLabel(data);
 
   const handleClick = () => {
@@ -150,9 +161,9 @@ export const WorkflowRunDiagramStepNode = ({
             </WorkflowNodeLabel>
 
             <StyledRightPartContainer>
-              {data.iterationCount > 0 && (
+              {iterationCount > 0 && (
                 <StyledIterationCounter runStatus={data.runStatus}>
-                  {data.iterationCount}
+                  {iterationCount}
                 </StyledIterationCounter>
               )}
 

@@ -1,7 +1,7 @@
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { workflowRunStaleResponseGuardLink } from '@/workflow/utils/workflowRunStaleResponseGuardLink';
+import { workflowRunStaleResponseLink } from '@/workflow/utils/workflowRunStaleResponseLink';
 
 export const ApolloCoreProvider = ({
   children,
@@ -9,7 +9,7 @@ export const ApolloCoreProvider = ({
   children: React.ReactNode;
 }) => {
   const apolloCoreClient = useApolloFactory({
-    extraLinks: [workflowRunStaleResponseGuardLink],
+    extraLinks: [workflowRunStaleResponseLink],
   });
 
   return (
