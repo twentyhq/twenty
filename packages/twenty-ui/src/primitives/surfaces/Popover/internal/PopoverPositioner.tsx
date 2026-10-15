@@ -8,7 +8,6 @@ import { type PopoverPositionerProps } from '../types/PopoverPositionerProps';
 
 export const PopoverPositioner = ({
   className,
-  positionMethod = 'fixed',
   sideOffset = 8,
   ...props
 }: PopoverPositionerProps) => {
@@ -17,7 +16,6 @@ export const PopoverPositioner = ({
   return (
     <PopoverPrimitive.Positioner
       dir={direction}
-      positionMethod={positionMethod}
       sideOffset={sideOffset}
       {...props}
       className={mergeClassNames(styles.positioner, className)}

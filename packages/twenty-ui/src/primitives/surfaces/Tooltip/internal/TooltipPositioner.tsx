@@ -8,7 +8,6 @@ import { type TooltipPositionerProps } from '../types/TooltipPositionerProps';
 
 export const TooltipPositioner = ({
   className,
-  positionMethod = 'fixed',
   ...props
 }: TooltipPositionerProps) => {
   const direction = useProvidedTextDirection();
@@ -16,7 +15,6 @@ export const TooltipPositioner = ({
   return (
     <TooltipPrimitive.Positioner
       dir={direction}
-      positionMethod={positionMethod}
       {...props}
       className={mergeClassNames(styles.positioner, className)}
     />
