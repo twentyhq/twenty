@@ -29,50 +29,40 @@ export const createUpdateWebhookTool = (
   description: `Update an existing webhook. Only the fields you pass are modified; everything else is preserved.`,
   inputSchema: updateWebhookSchema,
   execute: async (parameters: UpdateWebhookParams) => {
-    try {
-      const update: {
-        targetUrl?: string;
-        operations?: string[];
-        description?: string;
-        secret?: string;
-      } = {};
+    const update: {
+      targetUrl?: string;
+      operations?: string[];
+      description?: string;
+      secret?: string;
+    } = {};
 
-      if (parameters.targetUrl !== undefined) {
-        update.targetUrl = parameters.targetUrl;
-      }
-      if (parameters.operations !== undefined) {
-        update.operations = compileWebhookOperations(parameters.operations);
-      }
-      if (parameters.description !== undefined) {
-        update.description = parameters.description;
-      }
-      if (parameters.secret !== undefined) {
-        update.secret = parameters.secret;
-      }
-
-      const webhook = await deps.webhookService.update(
-        { id: parameters.id, update },
-        context.workspaceId,
-      );
-
-      return {
-        success: true,
-        message: `Webhook ${webhook.id} updated`,
-        result: {
-          id: webhook.id,
-          targetUrl: webhook.targetUrl,
-          operations: webhook.operations,
-          description: webhook.description,
-        },
-      };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-
-      return {
-        success: false,
-        message: `Failed to update webhook: ${message}`,
-        error: message,
-      };
+    if (parameters.targetUrl !== undefined) {
+      update.targetUrl = parameters.targetUrl;
     }
+    if (parameters.operations !== undefined) {
+      update.operations = compileWebhookOperations(parameters.operations);
+    }
+    if (parameters.description !== undefined) {
+      update.description = parameters.description;
+    }
+    if (parameters.secret !== undefined) {
+      update.secret = parameters.secret;
+    }
+
+    const webhook = await deps.webhookService.update(
+      { id: parameters.id, update },
+      context.workspaceId,
+    );
+
+    return {
+      success: true,
+      message: `Webhook ${webhook.id} updated`,
+      result: {
+        id: webhook.id,
+        targetUrl: webhook.targetUrl,
+        operations: webhook.operations,
+        description: webhook.description,
+      },
+    };
   },
 });

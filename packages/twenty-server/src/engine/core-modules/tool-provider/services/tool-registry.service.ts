@@ -179,7 +179,6 @@ export class ToolRegistryService {
 
   async buildToolIndex(
     workspaceId: string,
-    roleId: string,
     options: {
       userId?: string;
       userWorkspaceId?: string;
@@ -192,7 +191,6 @@ export class ToolRegistryService {
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
       workspaceId,
-      roleId,
       rolePermissionConfig: options.rolePermissionConfig,
       userId: options.userId,
       userWorkspaceId: options.userWorkspaceId,
@@ -506,7 +504,6 @@ export class ToolRegistryService {
             )
         : undefined,
       workspaceId: context.workspaceId,
-      roleId: context.roleId,
       rolePermissionConfig: context.rolePermissionConfig,
       authContext: context.authContext,
       application: context.application,
