@@ -1,7 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
-import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
+import { RecordFormFieldInput } from '@/object-record/record-form/components/RecordFormFieldInput';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type UpdateMultipleRecordsState } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
@@ -78,14 +77,13 @@ export const UpdateMultipleRecordsForm = ({
         };
 
         return (
-          <FormFieldInput
+          <RecordFormFieldInput
             key={fieldDefinition.metadata.fieldName}
             readonly={disabled}
             field={fieldDefinition}
             defaultValue={value}
             onChange={handleValueChange}
             onClear={() => onChange(fieldNameOrRelationIdName, undefined)}
-            settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
           />
         );
       })}

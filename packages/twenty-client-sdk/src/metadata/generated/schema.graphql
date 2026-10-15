@@ -797,15 +797,20 @@ type BillingPaymentIntent {
 
 type BillingPlan {
   baseProducts: [BillingLicensedProduct!]!
+  downgradePlanKeys: [BillingPlanKey!]!
+  isSellable: Boolean!
   meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
   resourceCreditProducts: [BillingLicensedProduct!]!
+  upgradePlanKeys: [BillingPlanKey!]!
 }
 
 """The different billing plans available"""
 enum BillingPlanKey {
   ENTERPRISE
+  ORGANIZATION_V2
   PRO
+  PRO_V2
 }
 
 type BillingPriceLicensed {
@@ -3166,7 +3171,7 @@ type Mutation {
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   stopImpersonation: StopImpersonation!
-  switchBillingPlan: BillingUpdate!
+  switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
@@ -5387,6 +5392,7 @@ type UsageQuotaWithConsumption {
 
 enum UsageResourceType {
   AI
+  ALL
   API
   APP
   EMAIL

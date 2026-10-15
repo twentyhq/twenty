@@ -189,7 +189,7 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
   stepSchema(
     'AI_AGENT',
     z.strictObject({
-      agentUniversalIdentifier: z.uuid().optional(),
+      agentUniversalIdentifier: z.uuid(),
       prompt: z.string(),
       responseFormat: agentResponseFormatSchema.optional(),
     }),
