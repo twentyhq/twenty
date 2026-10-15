@@ -307,6 +307,22 @@ describe('AgentRunSuspensionService', () => {
       );
     });
 
+    it('tries a delivery again when the caller cannot be read', async () => {
+      const { service, onOutcome, getWaitingState, messageQueueService } =
+        buildService();
+
+      getWaitingState.mockRejectedValue(new Error('database unavailable'));
+
+      await service.deliverOutcome(DELIVERY);
+
+      expect(onOutcome).not.toHaveBeenCalled();
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        'DeliverAgentRunOutcomeJob',
+        { ...DELIVERY, attempt: 1 },
+        { delay: 1_000 },
+      );
+    });
+
     it('hands the outcome of a caller that stopped waiting to what may still wait on the run', async () => {
       const {
         service,

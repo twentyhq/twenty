@@ -213,6 +213,27 @@ describe('AgentRunnerService', () => {
     );
   });
 
+  it('does not run a started run whose caller stopped waiting while it was queued', async () => {
+    const {
+      service,
+      callerHandler,
+      agentAsyncExecutorService,
+      agentRunSuspensionService,
+    } = buildService();
+
+    callerHandler.getWaitingState.mockResolvedValue('GONE');
+
+    await service.runStarted(JOB_DATA);
+
+    expect(callerHandler.buildExecutionContext).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: expect.objectContaining({ status: 'FAILED' }),
+      }),
+    );
+  });
+
   it('shows the caller where a started run waits, without handing it an outcome', async () => {
     const {
       service,

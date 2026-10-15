@@ -10,10 +10,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
-import {
-  AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS,
-  AGENT_RUN_OUTCOME_DELIVERY_RETRY_DELAY_MS,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-outcome-delivery.const';
+import { AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-outcome-delivery-max-attempts.const';
+import { AGENT_RUN_OUTCOME_DELIVERY_RETRY_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-outcome-delivery-retry-delay-ms.const';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { DELIVER_AGENT_RUN_OUTCOME_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/deliver-agent-run-outcome-job-name.constant';
 import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
@@ -158,8 +156,7 @@ export class AgentRunSuspensionService {
     });
   }
 
-  // A caller that started its run only waits once it handed the run off, such as a workflow step
-  // marked pending after its executor returns, so an outcome that comes sooner is delivered again later
+  // a workflow step is marked pending only after its executor returns, so an outcome that comes sooner is delivered later
   async deliverOutcome(
     delivery: AgentRunOutcomeDelivery,
     attempt = 0,
@@ -171,26 +168,38 @@ export class AgentRunSuspensionService {
       return;
     }
 
-    const waitingState = await handler.getWaitingState({
-      workspaceId,
-      caller,
-    });
+    let isDelivered = false;
 
-    if (waitingState === 'GONE') {
-      await handler.onCallerGone?.(delivery);
+    try {
+      const waitingState = await handler.getWaitingState({
+        workspaceId,
+        caller,
+      });
 
-      return;
+      if (waitingState === 'GONE') {
+        await handler.onCallerGone?.(delivery);
+
+        return;
+      }
+
+      if (waitingState === 'WAITING') {
+        await handler.onOutcome(delivery);
+        isDelivered = true;
+      }
+    } catch (error) {
+      // the run already ended, so a failed delivery is tried again rather than lost with the job
+      this.logger.warn(
+        `Could not deliver the outcome of the run in thread ${delivery.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
 
-    if (waitingState === 'WAITING') {
-      await handler.onOutcome(delivery);
-
+    if (isDelivered) {
       return;
     }
 
     if (attempt + 1 >= AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS) {
       this.logger.error(
-        `Dropped the outcome of the run in thread ${delivery.threadId}: its ${caller.type} caller never started waiting on it`,
+        `Dropped the outcome of the run in thread ${delivery.threadId}: its ${caller.type} caller never took it`,
       );
 
       return;

@@ -66,8 +66,7 @@ export class AgentRunnerService {
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
 
-  // The run goes on in a job, so its caller is never held while the agent works: the caller's
-  // handler gets the outcome, as it does for a run that paused and went on later
+  // the caller's handler gets the outcome, as it does for a run that paused and went on later
   async start(input: RunAgentJobData): Promise<void> {
     await this.messageQueueService.add<RunAgentJobData>(
       RUN_AGENT_JOB_NAME,
@@ -75,8 +74,7 @@ export class AgentRunnerService {
     );
   }
 
-  // The run acts as its caller lets it act now, read again like a continued run does, and its
-  // tools see that same actor as the one making the request
+  // the run acts as its caller lets it act now, read again like a continued run does
   async runStarted({
     workspaceId,
     conversation,
@@ -84,12 +82,30 @@ export class AgentRunnerService {
     spec,
     prompt,
   }: RunAgentJobData): Promise<void> {
+    const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
     let result: AgentRunnerResult;
 
+    // a caller that stopped waiting while the run was queued, such as a stopped workflow, must not have it act
+    if ((await handler.getWaitingState({ workspaceId, caller })) === 'GONE') {
+      await this.agentRunSuspensionService.deliverOutcome({
+        workspaceId,
+        caller,
+        threadId: conversation.threadId,
+        outcome: {
+          status: 'FAILED',
+          error: 'The caller stopped waiting before the run started',
+        },
+        summary: null,
+      });
+
+      return;
+    }
+
     try {
-      const executionContext = await this.callerHandlerRegistry
-        .getHandlerOrThrow(caller.type)
-        .buildExecutionContext({ workspaceId, caller });
+      const executionContext = await handler.buildExecutionContext({
+        workspaceId,
+        caller,
+      });
       const agent = await this.findAgentOrThrow({
         workspaceId,
         agentId: spec.agentId,
