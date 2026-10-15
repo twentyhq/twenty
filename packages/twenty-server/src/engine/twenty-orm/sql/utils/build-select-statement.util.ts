@@ -1,4 +1,4 @@
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -65,8 +65,6 @@ export type OrderByClause = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-export type SelectLockMode = 'for_key_share' | 'pessimistic_write';
-
 export type SelectStatementState = {
   alias: string;
   tableShape: WorkspaceTableShape;
@@ -85,7 +83,6 @@ export type SelectStatementState = {
   allowPlainToManyJoins: boolean;
   limitValue?: number;
   offsetValue?: number;
-  lockMode?: SelectLockMode;
 };
 
 export const quoteColumn = (alias: string, columnName: string): string =>
@@ -562,23 +559,6 @@ const buildDistinctOnClause = (state: SelectStatementState): string => {
     .join(', ')}) `;
 };
 
-const buildLockClause = (state: SelectStatementState): string => {
-  if (!isDefined(state.lockMode)) {
-    return '';
-  }
-
-  const lockedAlias = escapeIdentifier(state.alias);
-
-  switch (state.lockMode) {
-    case 'for_key_share':
-      return `FOR KEY SHARE OF ${lockedAlias}`;
-    case 'pessimistic_write':
-      return `FOR UPDATE OF ${lockedAlias}`;
-    default:
-      return assertUnreachable(state.lockMode);
-  }
-};
-
 export const buildSelectStatement = (state: SelectStatementState): string => {
   const whereExpression = buildWhereExpression(state);
 
@@ -591,7 +571,6 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
     buildOrderByClause(state),
     isDefined(state.limitValue) ? `LIMIT :${LIMIT_PARAMETER_NAME}` : '',
     isDefined(state.offsetValue) ? `OFFSET :${OFFSET_PARAMETER_NAME}` : '',
-    buildLockClause(state),
   ]
     .filter((part) => part.length > 0)
     .join(' ');

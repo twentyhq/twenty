@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -77,8 +76,6 @@ export class CalendarEventCleanerService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const sortedCalendarEventIds = [...calendarEventIds].sort();
-
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
@@ -96,19 +93,31 @@ export class CalendarEventCleanerService {
 
             for (
               let index = 0;
-              index < sortedCalendarEventIds.length;
+              index < calendarEventIds.length;
               index += CALENDAR_CLEANUP_PAGE_SIZE
             ) {
-              const pageIds = sortedCalendarEventIds.slice(
+              const pageIds = calendarEventIds.slice(
                 index,
                 index + CALENDAR_CLEANUP_PAGE_SIZE,
               );
 
-              await this.deleteCalendarEventsWithoutAssociations({
-                calendarEventIds: pageIds,
-                calendarEventRepository,
-                calendarChannelEventAssociationRepository,
-              });
+              const associations =
+                await calendarChannelEventAssociationRepository.find({
+                  where: { calendarEventId: In(pageIds) },
+                  select: { calendarEventId: true },
+                });
+
+              const referencedEventIds = new Set(
+                associations.map(({ calendarEventId }) => calendarEventId),
+              );
+
+              const orphanEventIds = pageIds.filter(
+                (eventId) => !referencedEventIds.has(eventId),
+              );
+
+              if (orphanEventIds.length > 0) {
+                await calendarEventRepository.delete(orphanEventIds);
+              }
             }
           },
         );
@@ -154,79 +163,29 @@ export class CalendarEventCleanerService {
 
               const pageIds = page.map(({ id }) => id);
 
-              await this.deleteCalendarEventsWithoutAssociations({
-                calendarEventIds: pageIds,
-                calendarEventRepository,
-                calendarChannelEventAssociationRepository,
-              });
+              const associations =
+                await calendarChannelEventAssociationRepository.find({
+                  where: { calendarEventId: In(pageIds) },
+                  select: { calendarEventId: true },
+                });
+
+              const referencedEventIds = new Set(
+                associations.map(({ calendarEventId }) => calendarEventId),
+              );
+
+              const orphanEventIds = pageIds.filter(
+                (eventId) => !referencedEventIds.has(eventId),
+              );
+
+              if (orphanEventIds.length > 0) {
+                await calendarEventRepository.delete(orphanEventIds);
+              }
             }
           },
         );
       },
       authContext,
       { lite: true },
-    );
-  }
-
-  private async deleteCalendarEventsWithoutAssociations({
-    calendarEventIds,
-    calendarEventRepository,
-    calendarChannelEventAssociationRepository,
-  }: {
-    calendarEventIds: string[];
-    calendarEventRepository: WorkspaceRepository<CalendarEventWorkspaceEntity>;
-    calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>;
-  }) {
-    const orphanEventIds = await this.findCalendarEventIdsWithoutAssociations({
-      calendarEventIds,
-      calendarChannelEventAssociationRepository,
-    });
-
-    if (orphanEventIds.length === 0) {
-      return;
-    }
-
-    const lockedOrphanEvents = await calendarEventRepository.find({
-      where: { id: In(orphanEventIds) },
-      select: { id: true },
-      order: { id: 'ASC' },
-      lock: { mode: 'pessimistic_write' },
-    });
-
-    const eventIdsToDelete = await this.findCalendarEventIdsWithoutAssociations(
-      {
-        calendarEventIds: lockedOrphanEvents.map(({ id }) => id),
-        calendarChannelEventAssociationRepository,
-      },
-    );
-
-    if (eventIdsToDelete.length > 0) {
-      await calendarEventRepository.delete(eventIdsToDelete);
-    }
-  }
-
-  private async findCalendarEventIdsWithoutAssociations({
-    calendarEventIds,
-    calendarChannelEventAssociationRepository,
-  }: {
-    calendarEventIds: string[];
-    calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>;
-  }): Promise<string[]> {
-    if (calendarEventIds.length === 0) {
-      return [];
-    }
-
-    const associations = await calendarChannelEventAssociationRepository.find({
-      where: { calendarEventId: In(calendarEventIds) },
-      select: { calendarEventId: true },
-    });
-
-    const referencedEventIds = new Set(
-      associations.map(({ calendarEventId }) => calendarEventId),
-    );
-
-    return calendarEventIds.filter(
-      (eventId) => !referencedEventIds.has(eventId),
     );
   }
 }

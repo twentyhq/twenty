@@ -66,14 +66,6 @@ export class CalendarSaveEventsService {
       async () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
-            await this.calendarEventSharingService.lockCalendarEventSharingKeys(
-              {
-                transactionScope,
-                provider: connectedAccount.provider,
-                fetchedCalendarEvents,
-              },
-            );
-
             const calendarEventRepository =
               transactionScope.getRepository<CalendarEventWorkspaceEntity>(
                 'calendarEvent',

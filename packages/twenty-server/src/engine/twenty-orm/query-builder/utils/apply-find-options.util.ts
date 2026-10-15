@@ -7,10 +7,7 @@ import {
   type OrderByConditionLike,
   type OrderByValueLike,
 } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
-import {
-  type SelectLockMode,
-  type ToManyDedupOrder,
-} from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import { type ToManyDedupOrder } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 export type WorkspaceFindOptionsRelations = {
@@ -31,7 +28,6 @@ export type WorkspaceFindOptions = {
   skip?: number;
   withDeleted?: boolean;
   relations?: WorkspaceFindOptionsRelations | string[];
-  lock?: { mode: SelectLockMode };
 };
 
 export const normalizeFindOptionsRelations = (
@@ -220,10 +216,6 @@ export const applyFindOptionsToQueryBuilder = (
 
   if (isDefined(options.skip)) {
     queryBuilder.offset(options.skip);
-  }
-
-  if (isDefined(options.lock)) {
-    queryBuilder.setLock(options.lock.mode);
   }
 
   return queryBuilder;

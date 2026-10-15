@@ -46,45 +46,6 @@ export class CalendarEventSharingService {
     });
   }
 
-  public async lockCalendarEventSharingKeys({
-    transactionScope,
-    provider,
-    fetchedCalendarEvents,
-  }: {
-    transactionScope: WorkspaceTransactionScope;
-    provider: ConnectedAccountProvider;
-    fetchedCalendarEvents: FetchedCalendarEvent[];
-  }): Promise<void> {
-    const lockNames = [
-      ...new Set(
-        fetchedCalendarEvents
-          .map((fetchedCalendarEvent) =>
-            computeCalendarEventSharingKey({
-              provider,
-              eventExternalId: fetchedCalendarEvent.id,
-              iCalUid: fetchedCalendarEvent.iCalUid,
-            }),
-          )
-          .filter(isDefined)
-          .map(
-            (sharingKey) =>
-              `calendar-event-sharing:${transactionScope.workspaceId}:${provider}:${sharingKey}`,
-          ),
-      ),
-    ].sort();
-
-    if (lockNames.length === 0) {
-      return;
-    }
-
-    await transactionScope.executeRawQuery(
-      `SELECT pg_advisory_xact_lock(hashtextextended("lockName", 0))
-       FROM unnest($1::text[]) WITH ORDINALITY AS "locks"("lockName", "ordinality")
-       ORDER BY "ordinality"`,
-      [lockNames],
-    );
-  }
-
   public async findCalendarEventIdsToLink({
     transactionScope,
     provider,
@@ -153,7 +114,7 @@ export class CalendarEventSharingService {
       return new Map();
     }
 
-    const lockedCalendarEvents = await transactionScope
+    const calendarEvents = await transactionScope
       .getRepository<CalendarEventWorkspaceEntity>('calendarEvent', {
         shouldBypassPermissionChecks: true,
       })
@@ -168,11 +129,9 @@ export class CalendarEventSharingService {
           ]),
         },
         select: { id: true, iCalUid: true },
-        order: { id: 'ASC' },
-        lock: { mode: 'for_key_share' },
       });
     const iCalUidByCalendarEventId = new Map(
-      lockedCalendarEvents.map(({ id, iCalUid }) => [id, iCalUid]),
+      calendarEvents.map(({ id, iCalUid }) => [id, iCalUid]),
     );
 
     const calendarEventIdBySharingKey = new Map<string, string>();
