@@ -5,6 +5,7 @@ import {
   type QuotaConsumptionScope,
 } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { fromRecordUsageInputToUsageConsumptionRow } from 'src/engine/core-modules/usage/utils/from-record-usage-input-to-usage-consumption-row.util';
@@ -29,7 +30,11 @@ export const buildQuotaDebits = ({
       counter.kind === 'limit'
         ? computeQuotaConsumed({
             rows: events
-              .filter((event) => event.resourceType === counter.resourceType)
+              .filter(
+                (event) =>
+                  counter.resourceType === UsageResourceType.ALL ||
+                  event.resourceType === counter.resourceType,
+              )
               .map(fromRecordUsageInputToUsageConsumptionRow),
             scope: counter,
           })

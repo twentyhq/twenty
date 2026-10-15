@@ -34,19 +34,30 @@ const meta = {
   args: {
     billingInterval: SubscriptionInterval.Year,
     onBillingIntervalChange: fn(),
-    planActions: {
-      [BillingPlanKey.PRO]: { title: 'Choose Pro', variant: 'solid' },
-      [BillingPlanKey.ENTERPRISE]: {
-        title: 'Choose Organization',
-        variant: 'outline',
+    comparedPlans: [
+      {
+        action: { title: 'Choose Pro', variant: 'solid' },
+        planKey: BillingPlanKey.PRO,
       },
-    },
+      {
+        action: { title: 'Choose Organization', variant: 'outline' },
+        planKey: BillingPlanKey.ENTERPRISE,
+      },
+    ],
     planPrices: {
       [BillingPlanKey.PRO]: {
         [SubscriptionInterval.Year]: 9,
         [SubscriptionInterval.Month]: 12,
       },
       [BillingPlanKey.ENTERPRISE]: {
+        [SubscriptionInterval.Year]: 19,
+        [SubscriptionInterval.Month]: 25,
+      },
+      [BillingPlanKey.PRO_V2]: {
+        [SubscriptionInterval.Year]: 9,
+        [SubscriptionInterval.Month]: 12,
+      },
+      [BillingPlanKey.ORGANIZATION_V2]: {
         [SubscriptionInterval.Year]: 19,
         [SubscriptionInterval.Month]: 25,
       },

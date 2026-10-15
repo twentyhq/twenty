@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type AskQuestionItem } from 'twenty-shared/ai';
+import {
+  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  type AskQuestionItem,
+} from 'twenty-shared/ai';
 import { FieldActorSource } from 'twenty-shared/types';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { v5 } from 'uuid';
@@ -12,6 +15,7 @@ import {
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import {
   AiException,
   AiExceptionCode,
@@ -159,6 +163,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly agentService: AgentService,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
@@ -173,13 +178,28 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     applicationId: string;
   }): Promise<void> {
     for (const agentWorkflow of AGENT_WORKFLOWS_TO_SEED) {
+      const stepId = seedId(agentWorkflow.stepKey, workspaceId);
+      const agent = await this.agentService.createOneAgent(
+        {
+          label: 'Workflow Agent ' + stepId.substring(0, 4),
+          icon: 'IconLego',
+          description: '',
+          prompt:
+            'You are a helpful AI assistant. Complete the task based on the workflow context.',
+          modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+          responseFormat: { type: 'text' },
+          isSystem: true,
+        },
+        workspaceId,
+      );
       const step: WorkflowAiAgentAction = {
-        id: seedId(agentWorkflow.stepKey, workspaceId),
+        id: stepId,
         name: agentWorkflow.stepName,
         type: WorkflowActionType.AI_AGENT,
         valid: true,
         settings: {
           input: {
+            agentId: agent.id,
             prompt: agentWorkflow.stepPrompt,
             humanInputInstructions: agentWorkflow.humanInputInstructions,
           },
@@ -260,7 +280,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             workspaceId,
             threadId,
             title: workflow.step.name,
-            agentId: null,
+            agentId: agent.id,
             senderUserWorkspaceId: null,
             senderApplicationId: null,
             messages: [{ role: 'user', content: agentWorkflow.runPrompt }],
@@ -294,7 +314,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             threadId,
             turnId,
             title: workflow.step.name,
-            agentId: null,
+            agentId: agent.id,
             execution: {
               isPaused: true,
               steps: [{ content }],

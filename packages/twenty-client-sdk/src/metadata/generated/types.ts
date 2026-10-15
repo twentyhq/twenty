@@ -1758,6 +1758,12 @@ export default {
             "baseProducts": [
                 87
             ],
+            "downgradePlanKeys": [
+                91
+            ],
+            "isSellable": [
+                4
+            ],
             "meteredProducts": [
                 88
             ],
@@ -1766,6 +1772,9 @@ export default {
             ],
             "resourceCreditProducts": [
                 87
+            ],
+            "upgradePlanKeys": [
+                91
             ],
             "__typename": [
                 1
@@ -7933,7 +7942,12 @@ export default {
                 464
             ],
             "switchBillingPlan": [
-                107
+                107,
+                {
+                    "plan": [
+                        91
+                    ]
+                }
             ],
             "switchSubscriptionInterval": [
                 107
