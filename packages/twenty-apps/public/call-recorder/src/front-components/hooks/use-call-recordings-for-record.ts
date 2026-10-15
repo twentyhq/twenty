@@ -38,7 +38,8 @@ export const useCallRecordingsForRecord = ({
     };
 
     const loadCallRecordings = () => {
-      fetchCallRecordingsForRecord(new CoreApiClient(), {
+      fetchCallRecordingsForRecord({
+        client: new CoreApiClient(),
         calendarEventTargetFieldName,
         recordId,
         maxCount: CALL_RECORDINGS_WIDGET_MAX_COUNT,

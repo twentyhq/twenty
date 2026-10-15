@@ -23,9 +23,7 @@ type BuildCallParticipantDisplayItemsResult = {
   hiddenUnmatchedCount: number;
 };
 
-// With relations loaded, a null relation next to its id means the record is
-// deleted or unreadable, so the id must not be trusted. Without them (the
-// fallback query), the id is all there is.
+// A null relation next to its id means the record is deleted or unreadable.
 const getMatchedRecordId = ({
   recordId,
   relatedRecord,

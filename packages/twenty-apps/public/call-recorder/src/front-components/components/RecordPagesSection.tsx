@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
@@ -13,9 +13,15 @@ export const RecordPagesSection = () => {
     isShowUnmatchedAttendeesEnabled,
   );
 
+  const savedIsShowUnmatchedAttendeesRef = useRef(isShowUnmatchedAttendees);
+
   const { saveImmediately } = useAutosaveApplicationVariable({
     variableKey: CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ROW.variableKey,
-    onSaveError: (value) => setIsShowUnmatchedAttendees(value !== 'true'),
+    onSaveSuccess: (value) => {
+      savedIsShowUnmatchedAttendeesRef.current = value === 'true';
+    },
+    onSaveError: () =>
+      setIsShowUnmatchedAttendees(savedIsShowUnmatchedAttendeesRef.current),
   });
 
   const handleShowUnmatchedAttendeesChange = (checked: boolean) => {

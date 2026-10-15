@@ -71,16 +71,16 @@ const PARTICIPANT_RELATION_FIELDS = {
   },
 };
 
-// The API returns one-to-many relations nested under a many-to-one as empty,
-// so participants are read flat by calendarEventId instead of through
-// callRecording.calendarEvent.
-const fetchParticipantsForCalendarEvent = async (
-  client: CoreApiClient,
-  {
-    calendarEventId,
-    areRelationsLoaded,
-  }: { calendarEventId: string; areRelationsLoaded: boolean },
-): Promise<CallParticipantNode[]> => {
+// The API returns one-to-many relations nested under a many-to-one as empty.
+const fetchParticipantsForCalendarEvent = async ({
+  client,
+  calendarEventId,
+  areRelationsLoaded,
+}: {
+  client: CoreApiClient;
+  calendarEventId: string;
+  areRelationsLoaded: boolean;
+}): Promise<CallParticipantNode[]> => {
   let fetchedParticipantCount = 0;
 
   return fetchAllNodes<CallParticipantNode>(
@@ -117,10 +117,13 @@ const fetchParticipantsForCalendarEvent = async (
   );
 };
 
-export const fetchCallParticipants = async (
-  client: CoreApiClient,
-  { callRecordingId }: { callRecordingId: string },
-): Promise<CallParticipantsResult> => {
+export const fetchCallParticipants = async ({
+  client,
+  callRecordingId,
+}: {
+  client: CoreApiClient;
+  callRecordingId: string;
+}): Promise<CallParticipantsResult> => {
   const callRecordingNode = await fetchCallRecordingCalendarEventNode({
     client,
     callRecordingId,
@@ -139,7 +142,8 @@ export const fetchCallParticipants = async (
   try {
     return {
       kind: 'loaded',
-      participants: await fetchParticipantsForCalendarEvent(client, {
+      participants: await fetchParticipantsForCalendarEvent({
+        client,
         calendarEventId,
         areRelationsLoaded: true,
       }),
@@ -150,11 +154,10 @@ export const fetchCallParticipants = async (
       throw error;
     }
 
-    // A viewer who cannot read people or workspace members fails the whole
-    // query; the participants' own fields still give names and ids.
     return {
       kind: 'loaded',
-      participants: await fetchParticipantsForCalendarEvent(client, {
+      participants: await fetchParticipantsForCalendarEvent({
+        client,
         calendarEventId,
         areRelationsLoaded: false,
       }),

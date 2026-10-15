@@ -136,22 +136,18 @@ const fetchListedCallRecordingsForCalendarEventIds = async ({
   );
 };
 
-// Meetings are read newest first, a page at a time, until enough recordings
-// are found; a record's latest meetings are often upcoming ones that have no
-// recording yet. The final order and cap use the date the widget shows, so a
-// live call without a start time is not cut.
-export const fetchCallRecordingsForRecord = async (
-  client: CoreApiClient,
-  {
-    calendarEventTargetFieldName,
-    recordId,
-    maxCount,
-  }: {
-    calendarEventTargetFieldName: CalendarEventTargetFieldName;
-    recordId: string;
-    maxCount: number;
-  },
-): Promise<CallRecordingNode[]> => {
+// A record's newest meetings are often upcoming ones without a recording yet.
+export const fetchCallRecordingsForRecord = async ({
+  client,
+  calendarEventTargetFieldName,
+  recordId,
+  maxCount,
+}: {
+  client: CoreApiClient;
+  calendarEventTargetFieldName: CalendarEventTargetFieldName;
+  recordId: string;
+  maxCount: number;
+}): Promise<CallRecordingNode[]> => {
   const seenCalendarEventIds = new Set<string>();
   const callRecordings: CallRecordingNode[] = [];
   let orderBy = BY_MEETING_DATE_ORDER_BY;
@@ -190,8 +186,7 @@ export const fetchCallRecordingsForRecord = async (
         throw error;
       }
 
-      // Ordering through the meeting needs read access to it; without it, fall
-      // back to target creation order, which only roughly follows meeting dates.
+      // Ordering through the meeting needs read access to it.
       orderBy = BY_TARGET_CREATION_ORDER_BY;
       isCalendarEventLoaded = false;
       targetPage = await fetchTargetPage();
@@ -222,8 +217,6 @@ export const fetchCallRecordingsForRecord = async (
           throw error;
         }
 
-        // A viewer who cannot read calendar events fails the whole query; the
-        // recordings still list without the meeting title fallback.
         isCalendarEventLoaded = false;
         callRecordings.push(...(await fetchRecordings(newCalendarEventIds)));
       }

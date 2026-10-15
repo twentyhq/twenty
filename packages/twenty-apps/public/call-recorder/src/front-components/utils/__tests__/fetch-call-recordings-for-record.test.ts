@@ -72,7 +72,8 @@ const getCallRecordingQueries = (query: ReturnType<typeof vi.fn>) =>
     );
 
 const fetchForPerson = (query: ReturnType<typeof vi.fn>, maxCount = 20) =>
-  fetchCallRecordingsForRecord({ query } as never, {
+  fetchCallRecordingsForRecord({
+    client: { query } as never,
     calendarEventTargetFieldName: 'targetPersonId',
     recordId: 'person',
     maxCount,
@@ -106,14 +107,12 @@ describe('fetchCallRecordingsForRecord', () => {
         ]),
       );
 
-    const callRecordings = await fetchCallRecordingsForRecord(
-      { query } as never,
-      {
-        calendarEventTargetFieldName: 'targetCompanyId',
-        recordId: 'company',
-        maxCount: 20,
-      },
-    );
+    const callRecordings = await fetchCallRecordingsForRecord({
+      client: { query } as never,
+      calendarEventTargetFieldName: 'targetCompanyId',
+      recordId: 'company',
+      maxCount: 20,
+    });
 
     expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
       'newer',

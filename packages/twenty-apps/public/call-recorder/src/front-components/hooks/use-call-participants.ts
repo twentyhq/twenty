@@ -26,7 +26,7 @@ export const useCallParticipants = (
 
     setState({ status: 'loading' });
 
-    fetchCallParticipants(new CoreApiClient(), { callRecordingId })
+    fetchCallParticipants({ client: new CoreApiClient(), callRecordingId })
       .then((result) => {
         if (isCancelled) {
           return;

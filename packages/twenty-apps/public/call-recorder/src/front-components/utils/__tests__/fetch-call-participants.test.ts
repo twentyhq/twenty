@@ -42,7 +42,8 @@ describe('fetchCallParticipants', () => {
       .mockResolvedValueOnce(buildCallRecordingConnection(undefined));
 
     await expect(
-      fetchCallParticipants({ query } as never, {
+      fetchCallParticipants({
+        client: { query } as never,
         callRecordingId: 'call-recording',
       }),
     ).resolves.toEqual({ kind: 'callRecordingNotFound' });
@@ -58,7 +59,8 @@ describe('fetchCallParticipants', () => {
     );
 
     await expect(
-      fetchCallParticipants({ query } as never, {
+      fetchCallParticipants({
+        client: { query } as never,
         callRecordingId: 'call-recording',
       }),
     ).resolves.toEqual({ kind: 'notLinkedToMeeting' });
@@ -79,7 +81,8 @@ describe('fetchCallParticipants', () => {
       )
       .mockResolvedValueOnce(buildParticipantConnection(['participant-2']));
 
-    const result = await fetchCallParticipants({ query } as never, {
+    const result = await fetchCallParticipants({
+      client: { query } as never,
       callRecordingId: 'call-recording',
     });
 
@@ -122,7 +125,8 @@ describe('fetchCallParticipants', () => {
       .mockRejectedValueOnce(buildPermissionDeniedError())
       .mockResolvedValueOnce(buildParticipantConnection(['participant-1']));
 
-    const result = await fetchCallParticipants({ query } as never, {
+    const result = await fetchCallParticipants({
+      client: { query } as never,
       callRecordingId: 'call-recording',
     });
 
@@ -156,7 +160,8 @@ describe('fetchCallParticipants', () => {
       .mockRejectedValueOnce(buildPermissionDeniedError());
 
     await expect(
-      fetchCallParticipants({ query } as never, {
+      fetchCallParticipants({
+        client: { query } as never,
         callRecordingId: 'call-recording',
       }),
     ).rejects.toThrow('Permission denied');
@@ -175,7 +180,8 @@ describe('fetchCallParticipants', () => {
       .mockRejectedValueOnce(new Error('Network failure'));
 
     await expect(
-      fetchCallParticipants({ query } as never, {
+      fetchCallParticipants({
+        client: { query } as never,
         callRecordingId: 'call-recording',
       }),
     ).rejects.toThrow('Network failure');
