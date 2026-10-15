@@ -104,6 +104,10 @@ export const NavigationDrawerAiChatChannelItem = ({
   )?.name;
   const channelName = channel.name;
   const openCount = summary?.openCount ?? 0;
+  const openCountLabel = openCount > 0 ? `${openCount}` : undefined;
+  const secondaryLabel = channel.isAccessible
+    ? openCountLabel
+    : t`Not open to you`;
   const channelColor = channel.color ?? AGENT_CHAT_CHANNEL_DEFAULT_COLOR;
   const coloredIcon = <AgentChatChannelIcon channel={channel} />;
 
@@ -147,13 +151,7 @@ export const NavigationDrawerAiChatChannelItem = ({
       >
         <NavigationDrawerItem
           label={channel.name}
-          secondaryLabel={
-            !channel.isAccessible
-              ? t`Not open to you`
-              : openCount > 0
-                ? `${openCount}`
-                : undefined
-          }
+          secondaryLabel={secondaryLabel}
           variant={channel.isAccessible ? 'default' : 'tertiary'}
           isUnread={summary?.hasUnreadOpen}
           active={
