@@ -1842,6 +1842,24 @@ type EmailingDomain {
   verifiedAt: DateTime
 }
 
+enum EmailingDomainExceptionCode {
+  EMAILING_DOMAIN_ALREADY_REGISTERED
+  EMAILING_DOMAIN_NOT_VERIFIED
+  EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY
+  MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS
+  MESSAGE_CAMPAIGN_NOT_CANCELABLE
+  MESSAGE_CAMPAIGN_NOT_FOUND
+  MESSAGE_CAMPAIGN_NOT_SENDABLE
+  MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS
+  MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN
+  MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE
+  MESSAGE_CAMPAIGN_SUBSCRIPTION_INACTIVE
+  MESSAGE_CAMPAIGN_UNKNOWN_VARIABLES
+  MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED
+  MESSAGE_SUPPRESSION_NOT_FOUND
+  MESSAGE_SUPPRESSION_NOT_REMOVABLE
+}
+
 enum EmailingDomainStatus {
   FAILED
   PENDING
@@ -2747,6 +2765,11 @@ type MessageCampaignBodyConfiguration {
 
 type MessageCampaignDetailsConfiguration {
   configurationType: WidgetConfigurationType!
+}
+
+type MessageCampaignSendBlockerDTO {
+  code: EmailingDomainExceptionCode!
+  message: String!
 }
 
 type MessageChannel {
@@ -3693,6 +3716,16 @@ input PreviewMessageCampaignAudienceInput {
   unsubscribeTopicId: String
 }
 
+input PreviewMessageCampaignSendInput {
+  campaignId: String!
+  scheduledAt: DateTime
+}
+
+type PreviewMessageCampaignSendOutputDTO {
+  audience: CampaignAudiencePreviewDTO
+  blockers: [MessageCampaignSendBlockerDTO!]!
+}
+
 type PublicApplicationRegistration {
   id: UUID!
   logoUrl: String
@@ -3890,6 +3923,7 @@ type Query {
   ): ObjectConnection!
   pieChartData(input: PieChartDataInput!): PieChartData!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!

@@ -182,6 +182,8 @@ export class MessageCampaignLifecycleService {
       },
     });
 
+    await this.finalizeCampaignIfComplete({ workspaceId, campaignId });
+
     await this.messageCampaignStatisticsService.scheduleRefresh({
       workspaceId,
       campaignId,
@@ -332,9 +334,22 @@ export class MessageCampaignLifecycleService {
         { shouldBypassPermissionChecks: true },
       );
 
-      await campaignRepository.update(
+      const { affected } = await campaignRepository.update(
         { id: campaignId, status: In(correctableStatuses) },
         { status: terminalStatus, sentAt: new Date() },
+      );
+
+      if (affected === 1 || counts.sentCount === 0) {
+        return;
+      }
+
+      await campaignRepository.update(
+        {
+          id: campaignId,
+          status: MessageCampaignStatus.CANCELED,
+          sentAt: IsNull(),
+        },
+        { sentAt: new Date() },
       );
     }, buildSystemAuthContext(workspaceId));
 
