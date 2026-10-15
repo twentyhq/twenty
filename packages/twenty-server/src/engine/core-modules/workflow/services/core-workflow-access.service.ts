@@ -100,27 +100,15 @@ export class CoreWorkflowAccessService {
       return;
     }
 
-    const [
-      workflows,
-      { workspaceCustomFlatApplication, twentyStandardFlatApplication },
-    ] = await Promise.all([
-      this.coreWorkflowRepository.find(workspaceId, {
-        where: { id: In(coreWorkflowIds) },
-        select: { id: true, applicationId: true },
-      }),
-      this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      ),
-    ]);
+    const workflows = await this.coreWorkflowRepository.find(workspaceId, {
+      where: { id: In(coreWorkflowIds) },
+      select: { id: true, applicationId: true },
+    });
 
     const isStartable = workflows.every((workflow) =>
       canApplicationStartCoreWorkflow({
         callerApplicationId,
         workflowApplicationId: workflow.applicationId,
-        workspaceOwnedApplicationIds: [
-          workspaceCustomFlatApplication.id,
-          twentyStandardFlatApplication.id,
-        ],
       }),
     );
 
@@ -133,37 +121,6 @@ export class CoreWorkflowAccessService {
         },
       );
     }
-  }
-
-  async assertWorkspaceWorkflowVersionsAreStartableByApplicationOrThrow({
-    workspaceId,
-    callerApplicationId,
-    workspaceWorkflowVersionIds,
-  }: {
-    workspaceId: string;
-    callerApplicationId: string | undefined;
-    workspaceWorkflowVersionIds: string[];
-  }): Promise<void> {
-    if (
-      !isDefined(callerApplicationId) ||
-      workspaceWorkflowVersionIds.length === 0
-    ) {
-      return;
-    }
-
-    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
-        select: { id: true },
-      },
-    );
-
-    await this.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow({
-      workspaceId,
-      callerApplicationId,
-      coreWorkflowVersionIds: coreWorkflowVersions.map(({ id }) => id),
-    });
   }
 
   async assertCoreWorkflowsAreAccessibleOrThrow({
@@ -233,84 +190,32 @@ export class CoreWorkflowAccessService {
     });
   }
 
-  // Legacy resolvers use the workspace mirror's ids, so the same rule is reached from that side.
-  async assertWorkspaceWorkflowVersionsAreAccessibleOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    workspaceWorkflowVersionIds,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    workspaceWorkflowVersionIds: string[];
-  }): Promise<void> {
-    if (workspaceWorkflowVersionIds.length === 0) {
-      return;
-    }
-
-    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
-        select: { id: true, coreWorkflowId: true },
-      },
-    );
-
-    await this.assertCoreWorkflowsAreAccessibleOrThrow({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowIds: [
-        ...new Set(
-          coreWorkflowVersions
-            .map(({ coreWorkflowId }) => coreWorkflowId)
-            .filter(isDefined),
-        ),
-      ],
-    });
-  }
-
-  async assertWorkspaceWorkflowsAreAccessibleOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    workspaceWorkflowIds,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    workspaceWorkflowIds: string[];
-  }): Promise<void> {
-    if (workspaceWorkflowIds.length === 0) {
-      return;
-    }
-
-    const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
-      where: { workspaceWorkflowId: In(workspaceWorkflowIds) },
-      select: { id: true },
-    });
-
-    await this.assertCoreWorkflowsAreAccessibleOrThrow({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowIds: coreWorkflows.map(({ id }) => id),
-    });
-  }
-
   // The command menu lists every member's manual triggers in one read, so the rule comes back as a filter.
-  async findInaccessibleWorkspaceWorkflowVersionIds({
+  async findInaccessibleWorkflowVersionIds({
     workspaceId,
     userWorkspaceId,
+    coreWorkflowVersionIds,
     workspaceWorkflowVersionIds,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
+    coreWorkflowVersionIds: string[];
     workspaceWorkflowVersionIds: string[];
   }): Promise<Set<string>> {
-    if (workspaceWorkflowVersionIds.length === 0) {
+    if (
+      coreWorkflowVersionIds.length === 0 &&
+      workspaceWorkflowVersionIds.length === 0
+    ) {
       return new Set();
     }
 
     const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
-        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
+        where: [
+          { id: In(coreWorkflowVersionIds) },
+          { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
+        ],
         select: {
           id: true,
           coreWorkflowId: true,
@@ -337,11 +242,10 @@ export class CoreWorkflowAccessService {
 
     return new Set(
       coreWorkflowVersions.flatMap(
-        ({ coreWorkflowId, workspaceWorkflowVersionId }) =>
+        ({ id, coreWorkflowId, workspaceWorkflowVersionId }) =>
           isDefined(coreWorkflowId) &&
-          isDefined(workspaceWorkflowVersionId) &&
           inaccessibleCoreWorkflowIds.has(coreWorkflowId)
-            ? [workspaceWorkflowVersionId]
+            ? [id, workspaceWorkflowVersionId].filter(isDefined)
             : [],
       ),
     );

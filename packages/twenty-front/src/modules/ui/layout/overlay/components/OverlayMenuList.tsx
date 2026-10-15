@@ -3,6 +3,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { styled } from '@linaria/react';
 import { type ReactNode, type Ref } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ widthInPixels: number }>`
   display: flex;
@@ -36,19 +37,27 @@ const StyledItems = styled.div`
 `;
 
 type OverlayMenuListProps = {
-  children: ReactNode;
+  children?: ReactNode;
+  header?: ReactNode;
+  footer?: ReactNode;
   width?: number;
   ref?: Ref<HTMLDivElement>;
 };
 
 export const OverlayMenuList = ({
   children,
+  header,
+  footer,
   width = GenericDropdownContentWidth.Medium,
   ref,
 }: OverlayMenuListProps) => (
   <StyledContainer ref={ref} widthInPixels={width}>
-    <StyledScrollableContainer>
-      <StyledItems>{children}</StyledItems>
-    </StyledScrollableContainer>
+    {header}
+    {isDefined(children) && (
+      <StyledScrollableContainer>
+        <StyledItems>{children}</StyledItems>
+      </StyledScrollableContainer>
+    )}
+    {footer}
   </StyledContainer>
 );

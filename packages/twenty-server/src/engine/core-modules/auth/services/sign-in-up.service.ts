@@ -187,6 +187,7 @@ export class SignInUpService {
       throw new AuthException(
         'Invitation not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        { userFriendlyMessage: msg`Invitation not found` },
       );
     }
 
@@ -215,6 +216,7 @@ export class SignInUpService {
       throw new AuthException(
         'Invitation not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        { userFriendlyMessage: msg`Invitation not found` },
       );
     }
 
@@ -307,7 +309,6 @@ export class SignInUpService {
         user,
         workspace: params.workspace,
         shouldShowConnectAccountStep: true,
-        shouldShowInstallAppsStep: false,
       });
 
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
@@ -340,12 +341,10 @@ export class SignInUpService {
       user,
       workspace,
       shouldShowConnectAccountStep,
-      shouldShowInstallAppsStep,
     }: {
       user: Pick<UserEntity, 'id' | 'firstName' | 'lastName'>;
       workspace: WorkspaceEntity;
       shouldShowConnectAccountStep: boolean;
-      shouldShowInstallAppsStep: boolean;
     },
     queryRunner?: QueryRunner,
   ) {
@@ -368,17 +367,6 @@ export class SignInUpService {
       },
       queryRunner,
     );
-
-    if (shouldShowInstallAppsStep) {
-      await this.onboardingService.setOnboardingInstallAppsPending(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
-    }
   }
 
   private async saveNewUser(
@@ -449,6 +437,7 @@ export class SignInUpService {
       throw new AuthException(
         'New workspace setup is disabled',
         AuthExceptionCode.SIGNUP_DISABLED,
+        { userFriendlyMessage: msg`New workspace setup is disabled` },
       );
     }
   }
@@ -481,6 +470,7 @@ export class SignInUpService {
     throw new AuthException(
       'New workspace setup is disabled',
       AuthExceptionCode.SIGNUP_DISABLED,
+      { userFriendlyMessage: msg`New workspace setup is disabled` },
     );
   }
 
@@ -653,7 +643,7 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
-    options?: { displayName?: string; subdomain?: string },
+    options?: { displayName?: string; subdomain?: string; partner?: string },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -763,7 +753,6 @@ export class SignInUpService {
               user,
               workspace,
               shouldShowConnectAccountStep: true,
-              shouldShowInstallAppsStep: true,
             },
             queryRunner,
           );
@@ -825,6 +814,7 @@ export class SignInUpService {
           userEmail: email,
           workspaceId: workspace.id,
           workspaceDisplayName: workspace.displayName,
+          partner: options?.partner,
         });
       }
 

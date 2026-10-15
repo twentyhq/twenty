@@ -4,12 +4,9 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconButton,
-  JsonTree,
-  LightButton,
-  Section,
-} from 'twenty-ui/components';
+import { JsonTree } from 'twenty-ui/components/data-display';
+import { IconButton, LightButton } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconCopy,
   IconId,
@@ -22,7 +19,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { StyledLogConsoleFieldsCard } from '@/log-console/components/StyledLogConsoleFieldsCard';
+import { LogConsoleFieldsCard } from '@/log-console/components/LogConsoleFieldsCard';
 import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
@@ -37,7 +34,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const COLLAPSED_MESSAGE_STACK_LINE_COUNT = 1;
@@ -254,7 +251,7 @@ export const LogConsoleDetailPanel = () => {
           <Section.Root>
             <Section.Header
               title={t`Message`}
-              adornment={
+              actions={
                 <LightButton
                   startIcon={<IconCopy />}
                   onClick={() => copyToClipboard(message)}
@@ -286,18 +283,18 @@ export const LogConsoleDetailPanel = () => {
         {source.renderDetailContent?.(entry)}
         <Section.Root>
           <Section.Header title={t`Details`} />
-          <StyledLogConsoleFieldsCard>
+          <LogConsoleFieldsCard>
             {detailItems.map(({ Icon, label, value }) => (
               <BillingFieldRow key={label} Icon={Icon} label={label}>
                 {value}
               </BillingFieldRow>
             ))}
-          </StyledLogConsoleFieldsCard>
+          </LogConsoleFieldsCard>
         </Section.Root>
         <Section.Root>
           <Section.Header
             title={t`Raw event`}
-            adornment={
+            actions={
               <LightButton
                 startIcon={<IconCopy />}
                 onClick={() =>

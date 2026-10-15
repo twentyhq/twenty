@@ -9,10 +9,12 @@ import {
 import { SCHEDULE_RECALL_BOT_ON_CALL_RECORDING_UPDATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import {
   resumePendingCallRecording,
   type ResumePendingCallRecordingResult,
 } from 'src/logic-functions/flows/resume-pending-call-recording.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 const CALL_RECORDING_OBJECT_NAME = 'callRecording';
@@ -43,8 +45,8 @@ type CallRecordingDatabaseEvent = DatabaseEventPayload<
 // creations here would race that run into duplicate Recall creates. This
 // trigger only resumes rows that fall back to pending later (a bot cleared
 // after vanishing at Recall, a canceled request re-requested, a failed row
-// reset by calendar reconciliation), which the recovery cron would otherwise
-// pick up minutes later.
+// reset by calendar reconciliation), which their follow-up would otherwise
+// only pick up half an hour later.
 export const scheduleRecallBotOnCallRecordingUpdateHandler = async (
   event: CallRecordingDatabaseEvent,
 ): Promise<
@@ -69,6 +71,18 @@ export const scheduleRecallBotOnCallRecordingUpdateHandler = async (
 
   if (contradictsPendingCallRecording(event.properties)) {
     return { skipped: true, reason: 'call recording is not pending' };
+  }
+
+  // Writes from outside the app (API, workflows) arm no follow-up of their own.
+  try {
+    await enqueueCallRecordingRequestFollowUps({
+      callRecordingIds: [event.recordId],
+    });
+  } catch (error) {
+    throw buildRetryableStepFailure(
+      'call recording request follow-up enqueueing',
+      error,
+    );
   }
 
   const result = await resumePendingCallRecording({
@@ -121,7 +135,7 @@ export default defineLogicFunction({
     SCHEDULE_RECALL_BOT_ON_CALL_RECORDING_UPDATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'schedule-recall-bot-on-call-recording-update',
   description:
-    'Resumes Recall bot scheduling as soon as a call recording transitions back to pending instead of waiting for the recovery cron.',
+    'Resumes Recall bot scheduling as soon as a call recording transitions back to pending, and arms its follow-up in case that fails.',
   timeoutSeconds: 60,
   handler: scheduleRecallBotOnCallRecordingUpdateHandler,
   databaseEventTriggerSettings: {

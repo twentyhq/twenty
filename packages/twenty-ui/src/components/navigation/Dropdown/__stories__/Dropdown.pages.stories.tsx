@@ -189,7 +189,8 @@ const playResetsToRootPageAfterDismissal = async ({
 };
 
 const meta: Meta = {
-  title: 'UI/Components/Dropdown/Interactions/Pages',
+  id: 'ui-components-dropdown-interactions-pages',
+  title: 'UI/Components/Navigation/Dropdown/Interactions/Pages',
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },

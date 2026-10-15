@@ -19,7 +19,9 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconEye,
   IconPlus,
@@ -171,7 +173,7 @@ export const SettingsObjectSearchSection = ({
 
     if (result.status === 'successful') {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: value
           ? t`Field added to search`
           : t`Field removed from search`,
@@ -188,7 +190,6 @@ export const SettingsObjectSearchSection = ({
             title={t`Global search`}
             description={t`Show this object's records in the command menu (${formatShortcut({ shortcut: ['Mod', 'K'] })}).`}
             checked={isSearchable}
-            advancedMode
             onChange={handleToggleSearchable}
           />
         </Card.Root>

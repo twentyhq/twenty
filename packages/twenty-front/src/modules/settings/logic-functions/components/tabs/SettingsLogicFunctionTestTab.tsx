@@ -11,7 +11,7 @@ import {
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   IconClock,
@@ -96,7 +96,11 @@ export const SettingsLogicFunctionTestTab = ({
     triggerButtons.push({ kind: 'tool', label: t`AI tool`, Icon: IconTool });
   }
 
-  const onChange = (value: string) => {
+  const onChange = (value: string | undefined) => {
+    if (!isDefined(value)) {
+      return;
+    }
+
     try {
       updateLogicFunctionInput(JSON.parse(value));
     } catch {
@@ -154,7 +158,7 @@ export const SettingsLogicFunctionTestTab = ({
         <StyledCodeEditorContainer>
           <CodeEditorHeader
             title={t`Input`}
-            rightNodes={[
+            endElement={
               <Button
                 size="sm"
                 startIcon={<IconPlayerPlay />}
@@ -162,8 +166,8 @@ export const SettingsLogicFunctionTestTab = ({
                 disabled={isTesting}
                 variant="solid"
                 color="accent"
-              >{t`Run Function`}</Button>,
-            ]}
+              >{t`Run Function`}</Button>
+            }
           />
           <CodeEditor
             value={JSON.stringify(logicFunctionTestData.input, null, 4)}

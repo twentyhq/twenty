@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharing/constants/RecordShareAccessLevelOptions';
 import { type RecordShareAccessLevel } from '~/generated-metadata/graphql';

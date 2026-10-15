@@ -57,6 +57,24 @@ Removed members lose access immediately. Their data (records, notes, tasks) rema
 Emails and calendar events of the deleted member are archived and available for other members.
 </Note>
 
+### Reset a Member's Two-Factor Authentication
+If a member lost access to their authenticator app, an admin can give them a one-time recovery code.
+
+You need the **Security** permission and two-factor authentication set up on your own account.
+
+1. Click on the member to open their profile
+2. In the **Two-factor authentication** section, click **Generate recovery code**
+3. Enter the code from your own authenticator app to confirm
+4. Copy the code and share it with the member through a channel you trust
+
+The code works once and expires after 1 hour by default. It is only shown once. Generating a new code replaces the previous one, and you can click **Revoke** to cancel a pending code. The member gets an email when a code is issued.
+
+When the member uses the code, their authenticator for this workspace is removed and they are signed out of their other sessions. If the workspace enforces two-factor authentication, they are asked to set up a new authenticator right away. If they leave before finishing, generate a new code for them: until that setup is done, the member can only set up an authenticator through a recovery code.
+
+<Note>
+You can't generate a recovery code for yourself. Only a server administrator can generate one for another server administrator.
+</Note>
+
 ## Pending Invitations
 
 Manage invitations that haven't been accepted:

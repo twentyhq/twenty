@@ -24,9 +24,26 @@ export default defineConfig({
           include: [
             'src/**/*.{test,spec}.{ts,tsx}',
             'design-tokens/**/*.{test,spec}.{ts,tsx}',
+            'build-tools/**/*.{test,spec}.{ts,tsx}',
           ],
+          exclude: ['src/**/*.reduced-motion.test.tsx'],
           setupFiles: ['./setupTests.ts'],
           css: { modules: { classNameStrategy: 'non-scoped' } },
+        },
+      },
+      {
+        extends: './vite.config.ts',
+        test: {
+          name: 'reduced-motion',
+          include: ['src/**/*.reduced-motion.test.tsx'],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({
+              contextOptions: { reducedMotion: 'reduce' },
+            }),
+            instances: [{ browser: 'chromium' }],
+          },
         },
       },
       {

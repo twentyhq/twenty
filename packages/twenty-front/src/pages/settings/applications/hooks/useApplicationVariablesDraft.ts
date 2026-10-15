@@ -3,7 +3,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type ApplicationVariable,
   FindOneApplicationDocument,
@@ -87,7 +87,7 @@ export const useApplicationVariablesDraft = ({
       );
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to save the app settings.`,
       });
     } finally {

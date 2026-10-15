@@ -17,6 +17,7 @@ env:
   # restore-cache action adds 'v4-' prefix and '-<branch>-<sha>' suffix to the key
   STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-ubuntu-latest-8-cores-runner
   STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v4-storybook-build-ubuntu-latest-8-cores-runner-${{ github.ref_name }}-${{ github.sha }}
+  FRONT_TEST_SHARD_COUNTER: 3
 
 jobs:
   changed-files-check:
@@ -49,6 +50,10 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Restore storybook build cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
       - name: Diagnostic disk space issue
         run: df -h
       - name: Front / Write .env
@@ -65,118 +70,56 @@ jobs:
         uses: ./.github/actions/save-cache
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
-  front-sb-test:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    needs: front-sb-build
-    if: always() && needs.front-sb-build.result == 'success'
+  front-sb-test-modules:
+    needs: changed-files-check
+    if: >-
+      always() &&
+      (github.event_name == 'push' ||
+      needs.changed-files-check.outputs.any_changed == 'true')
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+    uses: ./.github/workflows/ci-front-storybook-test.yaml
+    with:
+      scope: modules
+      shard: ${{ matrix.shard }}
+      shard-count: ${{ strategy.job-total }}
+  front-sb-test-pages:
+    needs: changed-files-check
+    if: >-
+      always() &&
+      (github.event_name == 'push' ||
+      needs.changed-files-check.outputs.any_changed == 'true')
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
-        storybook_scope: ${{ github.event_name == 'push' && fromJSON('["modules", "pages"]') || fromJSON('["modules", "pages", "performance"]') }}
-    env:
-      SHARD_COUNTER: 4
-      REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      STORYBOOK_URL: http://localhost:6006
-    steps:
-      - name: Fetch local actions
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          fetch-depth: 10
-      - name: Install dependencies
-        uses: ./.github/actions/yarn-install
-      - name: Restore storybook build cache
-        uses: ./.github/actions/restore-cache
-        with:
-          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
-      - name: Clean stale storybook vitest cache
-        run: rm -rf packages/twenty-front/node_modules/.cache/storybook
-      - name: Build dependencies
-        run: |
-          npx nx build twenty-shared
-          npx nx build twenty-ui
-          npx nx build twenty-front-component-renderer
-      - name: Download storybook build
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: storybook-static
-          path: packages/twenty-front/storybook-static
-      - name: Resolve Playwright version
-        id: playwright-version
-        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: v4-playwright-browsers-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
-      - name: Install Playwright
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: |
-          cd packages/twenty-front
-          npx playwright install chromium
-      - name: Front / Write .env
-        run: npx nx reset:env twenty-front
-      - name: Serve storybook & run tests
-        run: |
-          npx http-server packages/twenty-front/storybook-static --port 6006 --silent &
-          timeout 30 bash -c 'until curl -sf http://localhost:6006 > /dev/null 2>&1; do sleep 1; done'
-          npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
-      - name: Upload screenshots for visual regression
-        if: always() && !cancelled() && matrix.storybook_scope != 'performance'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: argos-screenshots-twenty-front-${{ matrix.storybook_scope }}-${{ matrix.shard }}
-          path: packages/twenty-front/screenshots
-          retention-days: 1
-          overwrite: true
-      # - name: Rename coverage file
-      #   run: |
-      #     if [ -f "packages/twenty-front/coverage/storybook/coverage-final.json" ]; then
-      #       mv packages/twenty-front/coverage/storybook/coverage-final.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
-      #     else
-      #       echo "Error: coverage-final.json not found"
-      #       ls -la packages/twenty-front/coverage/storybook/ || echo "Coverage directory does not exist"
-      #       exit 1
-      #     fi
-      # - name: Upload coverage artifact
-      #   uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-      #   with:
-      #     retention-days: 1
-      #     name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-${{ matrix.shard }}
-      #     path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
-  # merge-reports-and-check-coverage:
-  #   timeout-minutes: 30
-  #   runs-on: ubuntu-latest
-  #   needs: front-sb-test
-  #   env:
-  #     PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
-  #   strategy:
-  #     matrix:
-  #       storybook_scope: [modules, pages, performance]
-  #   steps:
-  #     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-  #       with:
-  #         fetch-depth: 10
-  #     - name: Install dependencies
-  #       uses: ./.github/actions/yarn-install
-  #     - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-  #       with:
-  #         pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
-  #         merge-multiple: true
-  #         path: coverage-artifacts
-  #     - name: Merge coverage reports
-  #       run: |
-  #         mkdir -p ${{ env.PATH_TO_COVERAGE }}
-  #         npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
-  #     - name: Checking coverage
-  #       run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
+    uses: ./.github/workflows/ci-front-storybook-test.yaml
+    with:
+      scope: pages
+      shard: ${{ matrix.shard }}
+      shard-count: ${{ strategy.job-total }}
+  front-sb-test-performance:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    uses: ./.github/workflows/ci-front-storybook-test.yaml
+    with:
+      scope: performance
+      shard: ${{ matrix.shard }}
+      shard-count: ${{ strategy.job-total }}
   front-sb-screenshots:
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: front-sb-test
-    if: always() && needs.front-sb-test.result == 'success'
+    needs: [front-sb-test-modules, front-sb-test-pages]
+    if: >-
+      always() &&
+      needs.front-sb-test-modules.result == 'success' &&
+      needs.front-sb-test-pages.result == 'success'
     steps:
       - name: Download shard screenshot artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
@@ -198,10 +141,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: '--max-old-space-size=6144'
-      TASK_CACHE_KEY: front-task-${{ matrix.task }}
+      TASK_CACHE_KEY: front-task-${{ matrix.name }}${{ matrix.shard && format('-{0}', matrix.shard) || '' }}
     strategy:
+      fail-fast: false
       matrix:
-        task: [lint, typecheck, test, lingui:extract, lingui:compile]
+        include:
+          - { name: lint, tasks: lint }
+          - { name: typecheck, tasks: typecheck }
+          - { name: lingui-extract, tasks: 'lingui:extract' }
+          - { name: lingui-compile, tasks: 'lingui:compile' }
+          - { name: test, tasks: test, shard: 1 }
+          - { name: test, tasks: test, shard: 2 }
+          - { name: test, tasks: test, shard: 3 }
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -209,7 +160,7 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore ${{ matrix.task }} cache
+      - name: Restore ${{ matrix.name }} cache
         id: restore-task-cache
         uses: ./.github/actions/restore-cache
         with:
@@ -219,13 +170,14 @@ jobs:
         with:
           tag: scope:frontend
           tasks: reset:env
-      - name: Run ${{ matrix.task }} task
+      - name: Run ${{ matrix.tasks }} task
         id: run-task
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:frontend
-          tasks: ${{ matrix.task }}
-      - name: Save ${{ matrix.task }} cache
+          tasks: ${{ matrix.tasks }}
+          args: ${{ matrix.shard && format('--shard={0}/{1}', matrix.shard, env.FRONT_TEST_SHARD_COUNTER) || '' }}
+      - name: Save ${{ matrix.name }} cache
         uses: ./.github/actions/save-cache
         with:
           key: ${{ steps.restore-task-cache.outputs.cache-primary-key }}
@@ -263,8 +215,9 @@ jobs:
         changed-files-check,
         front-task,
         front-build,
-        # merge-reports-and-check-coverage,
-        front-sb-test,
+        front-sb-test-modules,
+        front-sb-test-pages,
+        front-sb-test-performance,
         front-sb-build,
         front-sb-screenshots,
       ]

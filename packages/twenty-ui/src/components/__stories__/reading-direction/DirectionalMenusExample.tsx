@@ -1,10 +1,10 @@
 import { Dropdown } from '@ui/components';
 import { Button } from '@ui/primitives/input';
 import { IconInfoCircle } from '@ui/icon';
-import { Menu, Tooltip } from '@ui/primitives/surfaces';
+import { Tooltip } from '@ui/primitives/surfaces';
 import { ThemeProvider } from '@ui/theme';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 
 export const DirectionalMenusExample = ({
   direction,
@@ -13,7 +13,7 @@ export const DirectionalMenusExample = ({
   direction: 'ltr' | 'rtl';
   scoped?: boolean;
 }) => (
-  <TextDirectionProvider direction={direction}>
+  <DirectionProvider direction={direction}>
     <ThemeProvider colorScheme="dark" applyToRoot={!scoped}>
       <div
         dir={direction}
@@ -26,17 +26,6 @@ export const DirectionalMenusExample = ({
           background: 'var(--t-background-primary)',
         }}
       >
-        <Menu.Root>
-          <Menu.Trigger render={<Button>Open menu</Button>} />
-          <Menu.Popup>
-            <Menu.SubmenuRoot>
-              <Menu.SubmenuTrigger>Menu export</Menu.SubmenuTrigger>
-              <Menu.Popup>
-                <Menu.Item>Menu CSV</Menu.Item>
-              </Menu.Popup>
-            </Menu.SubmenuRoot>
-          </Menu.Popup>
-        </Menu.Root>
         <Dropdown.Root type="menu">
           <Dropdown.Trigger render={<Button>Open dropdown</Button>} />
           <Dropdown.Content>
@@ -63,9 +52,13 @@ export const DirectionalMenusExample = ({
         </Dropdown.Root>
         <Tooltip.Root>
           <Tooltip.Trigger render={<Button>Tooltip target</Button>} />
-          <Tooltip.Popup>Directional tooltip</Tooltip.Popup>
+          <Tooltip.Portal>
+            <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
+              <Tooltip.Popup>Directional tooltip</Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
         </Tooltip.Root>
       </div>
     </ThemeProvider>
-  </TextDirectionProvider>
+  </DirectionProvider>
 );

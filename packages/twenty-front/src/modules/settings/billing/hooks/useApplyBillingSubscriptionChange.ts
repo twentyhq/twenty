@@ -9,7 +9,7 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   CancelSwitchBillingIntervalDocument,
   CancelSwitchBillingPlanDocument,
@@ -135,13 +135,13 @@ export const useApplyBillingSubscriptionChange = () => {
       );
 
       if (!isBillingUpdateApplied) {
-        enqueueToast({ variant: 'error', children: getErrorMessage(change) });
+        enqueueToast({ status: 'error', children: getErrorMessage(change) });
         return;
       }
 
-      enqueueToast({ variant: 'success', children: getSuccessMessage(change) });
+      enqueueToast({ status: 'success', children: getSuccessMessage(change) });
     } catch (error) {
-      enqueueToast({ variant: 'error', children: getErrorMessage(change) });
+      enqueueToast({ status: 'error', children: getErrorMessage(change) });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;

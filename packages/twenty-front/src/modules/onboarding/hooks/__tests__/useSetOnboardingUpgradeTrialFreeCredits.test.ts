@@ -57,7 +57,6 @@ describe('useSetOnboardingUpgradeTrialFreeCredits', () => {
     jotaiStore.set(onboardingConfigState.atom, {
       importContactsCreditsReward: 2,
       inviteTeamCreditsRewardPerUser: 0.5,
-      installAppsCreditsReward: 1,
       createProfileCreditsReward: 0.5,
       upgradeCreditsReward: 4,
       inviteTeamMaxInvites: 4,

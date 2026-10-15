@@ -1,12 +1,12 @@
 import { OnboardingFreeCreditsAnimatedCount } from '@/onboarding/components/free-credits/OnboardingFreeCreditsAnimatedCount';
+import { OnboardingFreeCreditsProgressBar } from '@/onboarding/components/free-credits/OnboardingFreeCreditsProgressBar';
 import { StyledOnboardingFreeCreditsCount } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsCount';
 import { StyledOnboardingFreeCreditsLabel } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsLabel';
 import { StyledOnboardingFreeCreditsText } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsText';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
-import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -44,18 +44,13 @@ export const OnboardingFreeCreditsProgress = ({
   return (
     <>
       <StyledProgressBarContainer>
-        <ProgressBar
-          value={Math.min(100, (displayedCredits / goalCredits) * 100)}
-          size="sm"
-          ariaLabel={t`Free credits earned`}
-          backgroundColor={themeCssVariables.background.transparent.medium}
-          barColor={themeCssVariables.color.green9}
-          withBorderRadius
-          withGrowIn={!hasTrackGrown}
-          withGlint={hasTrackGrown && hasNewlyEarnedCredits}
-          withSpringFill
-          withMinimumFillWidth={false}
-          onGrowInComplete={onTrackGrown}
+        <OnboardingFreeCreditsProgressBar
+          value={displayedCredits}
+          max={goalCredits}
+          aria-label={t`Free credits earned`}
+          hasTrackGrown={hasTrackGrown}
+          hasNewlyEarnedCredits={hasNewlyEarnedCredits}
+          onTrackGrown={onTrackGrown}
         />
       </StyledProgressBarContainer>
       <StyledOnboardingFreeCreditsText>
@@ -65,7 +60,7 @@ export const OnboardingFreeCreditsProgress = ({
           <OnboardingFreeCreditsAnimatedCount credits={goalCredits} />
         </StyledOnboardingFreeCreditsCount>
         {isMobile ? (
-          <VisibilityHidden>{goalCreditsLabel}</VisibilityHidden>
+          <VisuallyHidden>{goalCreditsLabel}</VisuallyHidden>
         ) : (
           <StyledOnboardingFreeCreditsLabel>
             {goalCreditsLabel}

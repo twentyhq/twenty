@@ -17,10 +17,6 @@ jest.mock(
   }),
 );
 jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState',
-  () => ({ useAtomComponentFamilyState: () => [false, jest.fn()] }),
-);
-jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({ useAtomComponentStateValue: () => false }),
 );
@@ -68,13 +64,11 @@ jest.mock('@/object-record/record-card/components/RecordCard', () => ({
   ),
 }));
 jest.mock('twenty-ui/primitives/layout', () => ({
-  Collapsible: ({
-    children,
-    isExpanded,
-  }: {
-    children: React.ReactNode;
-    isExpanded: boolean;
-  }) => (isExpanded ? children : null),
+  Collapsible: {
+    Root: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
+      open ? children : null,
+    Panel: ({ children }: { children: React.ReactNode }) => children,
+  },
 }));
 
 describe('RecordCalendarCard', () => {

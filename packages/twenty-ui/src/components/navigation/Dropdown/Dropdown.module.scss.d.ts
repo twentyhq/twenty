@@ -2,6 +2,8 @@ declare const classNames: {
   readonly header: 'header';
   readonly content: 'content';
   readonly page: 'page';
+  readonly group: 'group';
+  readonly groupLabel: 'groupLabel';
   readonly section: 'section';
   readonly separator: 'separator';
   readonly back: 'back';
@@ -10,5 +12,9 @@ declare const classNames: {
   readonly search: 'search';
   readonly status: 'status';
   readonly title: 'title';
+  readonly itemWithActions: 'itemWithActions';
+  readonly itemWithActionsPrimary: 'itemWithActionsPrimary';
+  readonly itemActions: 'itemActions';
+  readonly itemDecoration: 'itemDecoration';
 };
 export default classNames;

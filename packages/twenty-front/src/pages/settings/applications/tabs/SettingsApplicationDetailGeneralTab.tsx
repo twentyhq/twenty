@@ -1,14 +1,14 @@
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { IconArrowUp, IconShoppingBag } from 'twenty-ui/icon';
+import { IconArrowUp, IconInfoCircle, IconShoppingBag } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   type Application,
   PermissionFlagType,
@@ -27,6 +27,7 @@ type SettingsApplicationDetailGeneralTabProps = {
     | 'logoUrl'
     | 'autoUpgrade'
     | 'canBeUninstalled'
+    | 'isUninstallBlockedByOtherWorkspaceInstallations'
     | 'applicationRegistration'
     | 'logicFunctions'
   >;
@@ -34,12 +35,15 @@ type SettingsApplicationDetailGeneralTabProps = {
   description?: string;
   coverImageUrl?: string;
   marketplaceUniversalIdentifier?: string;
+  isMarketplaceApplication: boolean;
   hasUpdate: boolean;
   latestAvailableVersion?: string;
   onUpgrade: () => void;
   isUpgrading: boolean;
+  upgradeProgress?: number;
   onUninstall: () => void;
   isUninstalling: boolean;
+  uninstallProgress?: number;
 };
 
 export const SettingsApplicationDetailGeneralTab = ({
@@ -48,12 +52,15 @@ export const SettingsApplicationDetailGeneralTab = ({
   description,
   coverImageUrl,
   marketplaceUniversalIdentifier,
+  isMarketplaceApplication,
   hasUpdate,
   latestAvailableVersion,
   onUpgrade,
   isUpgrading,
+  upgradeProgress,
   onUninstall,
   isUninstalling,
+  uninstallProgress,
 }: SettingsApplicationDetailGeneralTabProps) => {
   const navigateSettings = useNavigateSettings();
 
@@ -65,12 +72,22 @@ export const SettingsApplicationDetailGeneralTab = ({
     application.applicationRegistration?.sourceType,
   );
 
+  const displayedUpgradeProgress = formatQueueJobProgressLabel(
+    upgradeProgress ?? 0,
+  );
+
   const actions = [
     ...(isNonEmptyString(marketplaceUniversalIdentifier)
       ? [
           <Button
             key="see"
-            startIcon={<IconShoppingBag />}
+            startIcon={
+              isMarketplaceApplication ? (
+                <IconShoppingBag />
+              ) : (
+                <IconInfoCircle />
+              )
+            }
             variant="outline"
             size="sm"
             onClick={() =>
@@ -78,7 +95,11 @@ export const SettingsApplicationDetailGeneralTab = ({
                 availableApplicationId: marketplaceUniversalIdentifier,
               })
             }
-          >{t`See`}</Button>,
+          >
+            {isMarketplaceApplication
+              ? t`View in marketplace`
+              : t`See app page`}
+          </Button>,
         ]
       : []),
     ...(canManageApplications && hasUpdate
@@ -89,10 +110,11 @@ export const SettingsApplicationDetailGeneralTab = ({
             variant="outline"
             size="sm"
             onClick={onUpgrade}
-            disabled={isUpgrading}
+            loading={isUpgrading}
+            loadingPosition="end"
           >
             {isUpgrading
-              ? t`Upgrading...`
+              ? t`Upgrading ${displayedUpgradeProgress}`
               : t`Upgrade to ${latestAvailableVersion ?? ''}`}
           </Button>,
         ]
@@ -103,6 +125,12 @@ export const SettingsApplicationDetailGeneralTab = ({
             key="uninstall"
             onUninstall={onUninstall}
             isUninstalling={isUninstalling}
+            uninstallProgress={uninstallProgress}
+            disabledReason={
+              application.isUninstallBlockedByOtherWorkspaceInstallations
+                ? t`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here.`
+                : undefined
+            }
           />,
         ]
       : []),
@@ -127,11 +155,9 @@ export const SettingsApplicationDetailGeneralTab = ({
         />
       )}
       {applicationHasHttpTriggeredFunctions(application) && (
-        <AdvancedSettingsWrapper>
-          <SettingsApplicationFunctionDomainSection
-            applicationId={application.id}
-          />
-        </AdvancedSettingsWrapper>
+        <SettingsApplicationFunctionDomainSection
+          applicationId={application.id}
+        />
       )}
       <SettingsApplicationConnectionsSection applicationId={application.id} />
     </>

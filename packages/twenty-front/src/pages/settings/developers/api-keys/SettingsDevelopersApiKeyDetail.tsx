@@ -20,7 +20,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -33,7 +34,7 @@ import {
   RevokeApiKeyDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 
 const StyledInfo = styled.span`
   color: ${themeCssVariables.font.color.light};
@@ -121,12 +122,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
         },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Role updated successfully`,
       });
       setSelectedRoleId(roleId);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error updating role` });
+      enqueueToast({ status: 'error', children: t`Error updating role` });
     } finally {
       setIsLoading(false);
     }
@@ -145,15 +146,15 @@ export const SettingsDevelopersApiKeyDetail = () => {
       });
       if (redirect) {
         navigate(
-          SettingsPath.ApiWebhooks,
+          SettingsPath.Developers,
           undefined,
           undefined,
           undefined,
-          SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+          SETTINGS_DEVELOPERS_TABS.TABS_IDS.API,
         );
       }
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error deleting api key.` });
+      enqueueToast({ status: 'error', children: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
     }
@@ -167,7 +168,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
     if (!roleIdToUse) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`A role must be selected for the API key`,
       });
       return;
@@ -211,7 +212,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       if (isDefined(apiKey)) {
         if (!isNonEmptyString(apiKeyName)) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`API key name cannot be empty`,
           });
           return;
@@ -232,7 +233,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       }
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error regenerating api key.`,
       });
     } finally {
@@ -257,12 +258,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.General),
             },
             {
-              children: t`MCP & APIs`,
+              children: t`Developers`,
               href: getSettingsPath(
-                SettingsPath.ApiWebhooks,
+                SettingsPath.Developers,
                 undefined,
                 undefined,
-                SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+                SETTINGS_DEVELOPERS_TABS.TABS_IDS.API,
               ),
             },
             { children: apiKey.name || t`Unnamed API Key` },

@@ -25,6 +25,8 @@ export default defineFrontComponent({
 });
 ```
 
+Set `widgetAvailability` to offer a non-headless component in a widget picker while a page layout is edited. It is a single object, because a component is built either for record pages or for dashboards: `{ pageLayoutType: PageLayoutType.RECORD_PAGE }` offers it on every record page, adding `objectUniversalIdentifiers` (non-empty) narrows it to those objects' record pages, and `{ pageLayoutType: PageLayoutType.DASHBOARD }` offers it on dashboards. Omitted, the component is offered in no widget picker, which is right for components opened only from a command, a settings menu item or a timeline row. `widgetAvailability` never limits where a component is displayed: commands, settings menu items and the app's own page layouts render it whatever its value.
+
 Do not import or call `react-dom/client` in the component source. The SDK renderer mounts front components.
 
 ## Runtime Imports
@@ -48,6 +50,7 @@ Prefer Twenty UI icons from `twenty-ui/icon` when one exists. Use inline SVG onl
 For record-page components, read selection from front component context:
 
 - Use `useSelectedRecordIds()` for single, bulk, or empty selection; derive one id only when the array length is 1.
+- Under Select all, `useSelectedRecordIds()` is empty. Use `useSelectedRecordsFilter()` for bulk commands: it returns a filter matching exactly the selection in every case; query records with it or pass it to a logic function.
 - Use `useSelectedObjectMetadata()` from `twenty-sdk/front-component` to identify the object for a record-page widget, a custom timeline row, an object-scoped command, or a front component opened in the side panel with an object (from a command, or through `openSidePanelPage` with an `objectNameSingular`). It returns `{ id, nameSingular, namePlural }` or `null`. The `id` is the workspace's object-metadata UUID, and the names are metadata names such as `person` and `people`, not display labels.
 
 Object metadata belongs to the front component's own context, so a side panel can expose a different object from the main page. It can be available even when no records are selected and updates when that context changes. The hook returns `null` when no object context is supplied, when the object cannot be resolved, or when an older host does not provide object metadata. Use it to select object-specific templates or configuration without searching every object for a record ID.

@@ -59,8 +59,10 @@ const expectTargetsPopupInsideLightThemePortalScope = async ({
 };
 
 const expectTargetsPopupListsInitialTargets = async ({
+  canvasElement,
   reviewersTrigger,
   targetsPopup,
+  targetsTrigger,
 }: OpenTargetsPopupScenario) => {
   const targets = within(targetsPopup);
   for (const targetName of INITIAL_TARGET_NAMES) {
@@ -68,6 +70,18 @@ const expectTargetsPopupListsInitialTargets = async ({
       expect(targets.getByRole('button', { name: targetName })).toBeVisible(),
     );
   }
+  await expect(targets.getAllByRole('button')).toHaveLength(4);
+  for (const targetName of ['Alpha', 'Bravo']) {
+    const renderedTargets = within(canvasElement).getAllByRole('button', {
+      name: targetName,
+    });
+    await expect(renderedTargets).toHaveLength(2);
+
+    for (const renderedTarget of renderedTargets) {
+      await expect(renderedTarget).toBeVisible();
+    }
+  }
+  await expect(targetsTrigger).toHaveTextContent('+2');
   await expect(reviewersTrigger).toHaveAttribute('aria-expanded', 'false');
 };
 
@@ -126,7 +140,10 @@ const expectAddedTargetAppearsInTargetsPopup = async ({
   await expect(within(updatedTargetsPopup).getAllByRole('button')).toHaveLength(
     5,
   );
-  await userEvent.keyboard('{Escape}');
+  await expectEscapeClosesPopupAndRestoresTriggerFocus({
+    popup: updatedTargetsPopup,
+    trigger: targetsTrigger,
+  });
 };
 
 const openReviewersPopupWhileTargetsPopupStaysClosed = async ({

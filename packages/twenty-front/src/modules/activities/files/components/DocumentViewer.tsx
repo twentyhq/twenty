@@ -1,6 +1,6 @@
 import { UnavailableFilePreview } from '@/activities/files/components/UnavailableFilePreview';
 import { VideoPreview } from '@/activities/files/components/VideoPreview';
-import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/constants/PreviewableExtensions';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import {
   type CsvPreviewData,

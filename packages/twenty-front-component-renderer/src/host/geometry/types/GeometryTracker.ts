@@ -11,6 +11,7 @@ export type GeometryTracker = {
   observe: (remoteElementIds: unknown) => void;
   unobserve: (remoteElementIds: unknown) => void;
   setRoot: ElementRefCallback;
+  setPortalLayer: (element: HTMLElement | null) => void;
   setPushGeometryUpdates: (
     pushGeometryUpdates: PushGeometryUpdates | null,
   ) => void;

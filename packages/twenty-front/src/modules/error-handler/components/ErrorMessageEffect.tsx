@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const ErrorMessageEffect = () => {
   const { enqueueToast } = useToast();
@@ -12,7 +12,7 @@ export const ErrorMessageEffect = () => {
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: errorMessage,
         dedupeKey: 'error-message-dedupe-key',
       });

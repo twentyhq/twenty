@@ -1,3 +1,4 @@
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -14,7 +15,8 @@ import { ViewType } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconEyeOff, useIcons } from 'twenty-ui/icon';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
@@ -88,7 +90,12 @@ export const ViewFieldsVisibleDropdownSection = () => {
       <DropdownMenuItemsContainer>
         {fieldMetadataItemLabelIdentifier && (
           <MenuItemDraggable
-            LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+            LeftComponent={
+              <ApplicationStackIcon
+                Icon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+                applicationId={fieldMetadataItemLabelIdentifier.applicationId}
+              />
+            }
             text={fieldMetadataItemLabelIdentifier.label}
             accent="placeholder"
             gripMode="always"
@@ -113,7 +120,12 @@ export const ViewFieldsVisibleDropdownSection = () => {
                       itemComponent={
                         <MenuItemDraggable
                           key={recordField.fieldMetadataItemId}
-                          LeftIcon={getIcon(fieldMetadataItem.icon)}
+                          LeftComponent={
+                            <ApplicationStackIcon
+                              Icon={getIcon(fieldMetadataItem.icon)}
+                              applicationId={fieldMetadataItem.applicationId}
+                            />
+                          }
                           iconButtons={
                             <LightIconButton
                               aria-label={t`Hide field`}

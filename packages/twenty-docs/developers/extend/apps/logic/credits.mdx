@@ -126,7 +126,7 @@ Notes:
 
 ## Checking before you spend
 
-A workspace can run out of credits. When that happens your function is refused before your code starts, and the platform's own work stops too: `runAgent` returns an error instead of running, and the other AI entry points refuse outright. `sendInboxMessage` runs no model and adds no AI charge of its own, though the function calling it is refused like any other; the member's reply is charged like any chat turn. Uninstall and disconnect hooks are the exception and always run, so an app can still be removed cleanly. An execution that does get through can still fail late, on a platform call it did not write, if the workspace runs out mid-run.
+A workspace can run out of credits. When that happens your function is refused before your code starts, and the platform's own work stops too: `runAgent` returns an error instead of running, and the other AI entry points refuse outright. `sendInboxMessage` runs no model and adds no AI charge of its own, though the function calling it is refused like any other; a member's reply is charged like any chat turn. Uninstall and disconnect hooks are the exception and always run, so an app can still be removed cleanly. An execution that does get through can still fail late, on a platform call it did not write, if the workspace runs out mid-run.
 
 Ask first:
 
@@ -151,7 +151,7 @@ Notes:
 
 ## Telling people what it costs
 
-Declaring charges tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `billing.description` for that — one short, friendly line rendered next to the install button on your marketplace listing, before anyone installs.
+Declaring charges tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `billing.description` for that — one short, friendly line shown on your marketplace listing, before anyone installs.
 
 ```ts src/application-config.ts
 billing: {
@@ -159,7 +159,9 @@ billing: {
 },
 ```
 
-It is free text on purpose: real pricing has tiers, minimums and per-unit rates that a single number cannot express. Keep it to a line — it renders in a narrow column.
+It is free text on purpose: real pricing has tiers, minimums and per-unit rates that a single number cannot express. Keep it to a line.
+
+An app that declares `operations` or `recurring` also asks the installing admin for consent: the install screen lists "Bill credits to your workspace", and the app page shows "Bills credits", with your `description` on hover.
 
 ## Attribution
 

@@ -1,11 +1,11 @@
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedirectEnabledState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useVerifyLogin = () => {
@@ -26,7 +26,7 @@ export const useVerifyLogin = () => {
       enqueueToast(
         CombinedGraphQLErrors.is(error)
           ? getToastOptionsFromError({ error })
-          : { variant: 'error', children: t`Authentication failed` },
+          : { status: 'error', children: t`Authentication failed` },
       );
       navigate(AppPath.SignInUp);
     } finally {

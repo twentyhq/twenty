@@ -25,7 +25,7 @@ import {
   IconPlayerPlay,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -50,11 +50,10 @@ const StyledRoot = styled.div`
   width: 100%;
 `;
 
-const StyledCardContent = styled.div`
+const StyledCardContent = styled(Card.Content)`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledSelectorRow = styled.div`
@@ -111,9 +110,12 @@ export const SettingsLogs = () => {
   const [filters, setFilters] = useState<EventLogFiltersState>({});
   const [isPaused, setIsPaused] = useState(false);
 
-  const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
+  const isAvailableOnEveryPlan =
+    selectedTable === EventLogTable.APPLICATION_LOG ||
+    selectedTable === EventLogTable.OBJECT_EVENT;
   const canQuery =
-    isClickHouseConfigured && (isApplicationLog || hasAuditLogsEntitlement);
+    isClickHouseConfigured &&
+    (isAvailableOnEveryPlan || hasAuditLogsEntitlement);
 
   const { records, totalCount, hasNextPage, loading, error, loadMore } =
     useEventLogs(
@@ -168,7 +170,7 @@ export const SettingsLogs = () => {
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
-        description={t`Only application logs are available on your current plan. Other log types require an Organization subscription.`}
+        description={t`Record changes and app logs are available on your current plan. Other log types require an Organization subscription.`}
         Button={
           <Button
             size="sm"
@@ -189,7 +191,7 @@ export const SettingsLogs = () => {
   );
 
   const renderResults = () => {
-    if (!isApplicationLog && !hasAuditLogsEntitlement) {
+    if (!isAvailableOnEveryPlan && !hasAuditLogsEntitlement) {
       return renderUpgradeCard();
     }
 

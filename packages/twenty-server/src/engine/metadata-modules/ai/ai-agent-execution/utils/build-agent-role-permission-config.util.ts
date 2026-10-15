@@ -1,19 +1,12 @@
-import { isDefined } from 'twenty-shared/utils';
-
+import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export const buildAgentRolePermissionConfig = ({
   agentRoleId,
-  runAsRoleId,
-  additionalRoleRestrictionIds = [],
+  agentRunRoleIds = {},
 }: {
-  agentRoleId: string;
-  runAsRoleId?: string;
-  additionalRoleRestrictionIds?: string[];
-}): RolePermissionConfig => {
-  const baseRoleId = isDefined(runAsRoleId) ? runAsRoleId : agentRoleId;
-
-  return {
-    intersectionOf: [...new Set([baseRoleId, ...additionalRoleRestrictionIds])],
-  };
-};
+  agentRoleId: string | undefined;
+  agentRunRoleIds?: AgentRunRoleIds;
+}): RolePermissionConfig => ({
+  intersectionOf: { ...agentRunRoleIds, agentRoleId: agentRoleId ?? null },
+});

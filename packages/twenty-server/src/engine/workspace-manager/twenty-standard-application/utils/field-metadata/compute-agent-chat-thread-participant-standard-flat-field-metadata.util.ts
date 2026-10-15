@@ -244,4 +244,53 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  isSubscribed: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'isSubscribed',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({ message: 'Subscribed', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Whether new activity brings the thread back to the inbox',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconBell',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: false,
+        defaultValue: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  lastMentionedAt: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'lastMentionedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: 'Last mentioned at', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'When the member was last mentioned in the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconAt',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
 });

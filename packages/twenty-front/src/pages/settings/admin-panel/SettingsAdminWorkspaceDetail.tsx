@@ -38,7 +38,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -81,11 +82,6 @@ const WORKSPACE_DETAIL_TAB_IDS = {
   FEATURE_FLAGS: 'feature-flags',
   CHATS: 'chats',
 };
-
-const StyledTabPanel = styled.div`
-  height: 100%;
-  min-height: 0;
-`;
 
 export const SettingsAdminWorkspaceDetail = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -169,7 +165,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: `Failed to update feature flag. ${error.message}`,
         });
       },
@@ -338,7 +334,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           />
         }
       >
-        <Tabs.Panel value={effectiveTabId} render={<StyledTabPanel />}>
+        <Tabs.Panel value={effectiveTabId}>
           <SettingsPageContainer>
             {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
               <SettingsAdminWorkspaceContent

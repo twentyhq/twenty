@@ -1,12 +1,14 @@
 import { useCallback } from 'react';
 
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { partnerCookieState } from '@/auth/states/partnerCookieState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
-import deepEqual from 'deep-equal';
 import { useStore } from 'jotai';
+import { isDefined, normalizePartner } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useInitializeQueryParamState = () => {
   const store = useStore();
@@ -26,7 +28,7 @@ export const useInitializeQueryParamState = () => {
             'plan' in parsedValue &&
             'interval' in parsedValue &&
             'requirePaymentMethod' in parsedValue &&
-            !deepEqual(billingCheckoutSession, parsedValue)
+            !isDeeplyEqual(billingCheckoutSession, parsedValue)
           ) {
             store.set(
               billingCheckoutSessionState.atom,
@@ -48,6 +50,13 @@ export const useInitializeQueryParamState = () => {
       returnToPath: (value: string) => {
         if (isValidReturnToPath(value)) {
           store.set(returnToPathState.atom, value);
+        }
+      },
+      partner: (value: string) => {
+        const partner = normalizePartner(value);
+
+        if (isDefined(partner)) {
+          store.set(partnerCookieState.atom, { partner });
         }
       },
     };

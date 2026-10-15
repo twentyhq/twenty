@@ -3,9 +3,9 @@ import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportData
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useCallback, useState } from 'react';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
@@ -38,7 +38,7 @@ export const SpreadsheetImportStepper = ({
 
   const handleError = useCallback(
     (description: string) => {
-      enqueueToast({ variant: 'error', children: description });
+      enqueueToast({ status: 'error', children: description });
     },
     [enqueueToast],
   );
@@ -123,18 +123,13 @@ export const SpreadsheetImportStepper = ({
     case SpreadsheetImportStepType.loading:
     default:
       return (
-        <Dialog.Body
-          style={{
-            display: 'flex',
-            flex: '1 1 0%',
-            flexDirection: 'column',
-            padding: 'var(--t-spacing-10)',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+        <SpreadsheetImportStepBody
+          padding="large"
+          isCenteredHorizontally
+          isCenteredVertically
         >
           <Loader />
-        </Dialog.Body>
+        </SpreadsheetImportStepBody>
       );
   }
 };

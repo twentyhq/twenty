@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFilter } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 

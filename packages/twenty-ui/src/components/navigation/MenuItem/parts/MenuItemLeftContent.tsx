@@ -15,6 +15,7 @@ import { type MenuItemDraggableGripMode } from '@ui/components/navigation/MenuIt
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { IconGripVertical, type IconComponent } from '@ui/icon';
 import { type ThemeColor, themeCssVariables, useTheme } from '@ui/theme';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './MenuItemLeftContent.module.scss';
 
@@ -30,6 +31,25 @@ type MenuItemLeftContentProps = {
   text: ReactNode;
   contextualText?: ReactNode;
   contextualTextPosition?: 'left' | 'right';
+};
+
+const getLeadingContent = ({
+  LeftComponent,
+  LeftIcon,
+  iconThemeColor,
+}: Pick<
+  MenuItemLeftContentProps,
+  'LeftComponent' | 'LeftIcon' | 'iconThemeColor'
+>): ReactNode => {
+  if (isDefined(LeftComponent)) {
+    return LeftComponent;
+  }
+
+  if (isDefined(LeftIcon)) {
+    return <MenuItemIcon Icon={LeftIcon} iconThemeColor={iconThemeColor} />;
+  }
+
+  return undefined;
 };
 
 export const MenuItemLeftContent = ({
@@ -53,6 +73,15 @@ export const MenuItemLeftContent = ({
       ? themeCssVariables.font.color.extraLight
       : themeCssVariables.font.color.light;
 
+  const leadingContent = getLeadingContent({
+    LeftComponent,
+    LeftIcon,
+    iconThemeColor,
+  });
+
+  const withLeadingContentContainer =
+    withIconContainer && !isDefined(iconThemeColor);
+
   return (
     <StyledMenuItemLeftContent className={className}>
       {gripMode === 'always' &&
@@ -75,22 +104,33 @@ export const MenuItemLeftContent = ({
             />
           </StyledDraggableItem>
         ))}
-      {gripMode === 'onHover' ? (
+      {gripMode === 'always' &&
+        (withLeadingContentContainer && isDefined(leadingContent) ? (
+          <MenuItemIconBoxContainer hasBackground={withIconContainerBackground}>
+            {leadingContent}
+          </MenuItemIconBoxContainer>
+        ) : (
+          leadingContent
+        ))}
+      {gripMode === 'onHover' && (
         <MenuItemIconWithGripSwap
-          LeftIcon={LeftIcon}
-          iconThemeColor={iconThemeColor}
-          withIconContainer={withIconContainer}
+          leadingContent={leadingContent}
+          withIconContainer={withLeadingContentContainer}
+          withIconContainerBackground={withIconContainerBackground}
           gripIconColor={gripIconColor}
         />
-      ) : (
-        <MenuItemIcon
-          Icon={LeftIcon}
-          iconThemeColor={iconThemeColor}
-          withContainer={withIconContainer}
-          withContainerBackground={withIconContainerBackground}
-        />
       )}
-      {LeftComponent}
+      {gripMode === 'never' && (
+        <>
+          <MenuItemIcon
+            Icon={LeftIcon}
+            iconThemeColor={iconThemeColor}
+            withContainer={withIconContainer}
+            withContainerBackground={withIconContainerBackground}
+          />
+          {LeftComponent}
+        </>
+      )}
       <StyledMenuItemLabel>
         {isString(text) ? (
           <div className={styles.mainText}>

@@ -1,4 +1,4 @@
-import { DateFormat } from '~/modules/localization/constants/DateFormat';
+import { DateFormat } from '@/localization/constants/DateFormat';
 
 export const getDateMask = (dateFormat: DateFormat): string => {
   switch (dateFormat) {

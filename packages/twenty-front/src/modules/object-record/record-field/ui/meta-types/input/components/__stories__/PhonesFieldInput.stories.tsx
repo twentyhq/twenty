@@ -210,19 +210,20 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     await userEvent.hover(primaryPhone);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButtons[0]);
 
     const editOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Edit');
+    ).findByRole('menuitem', { name: 'Edit' });
 
     expect(editOption).toBeVisible();
 
     const setPrimaryOption = within(
       canvasElement.ownerDocument.body,
-    ).queryByText('Set as Primary');
+    ).queryByRole('menuitem', { name: 'Set as Primary' });
 
     expect(setPrimaryOption).not.toBeInTheDocument();
   },

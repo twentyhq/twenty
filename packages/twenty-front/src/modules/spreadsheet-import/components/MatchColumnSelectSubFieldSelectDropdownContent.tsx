@@ -5,7 +5,7 @@ import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
 type MatchColumnSelectSubFieldSelectDropdownContentProps = {

@@ -44,6 +44,14 @@ export const buildQuotaDefinitions = (): UsageQuotaDefinitionDTO[] =>
               definition,
             }),
             allowedSpenderTypes: definition.allowedSpenderTypes,
+            operatorOnlyScopes: definition.defaults
+              .filter(({ isOverridable }) => isOverridable)
+              .map(({ operationType, spenderType, unit, periodUnit }) => ({
+                operationType,
+                spenderType,
+                unit,
+                periodUnit,
+              })),
           },
         ]
       : [];

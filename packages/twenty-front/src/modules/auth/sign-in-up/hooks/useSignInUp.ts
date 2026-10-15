@@ -11,7 +11,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { SignInUpMode } from '@/auth/types/SignInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
@@ -25,7 +25,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
@@ -73,11 +73,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
     if (!form.getValues('email')) {
-      return enqueueToast({ variant: 'error', children: t`Email is required` });
+      return enqueueToast({ status: 'error', children: t`Email is required` });
     }
     if (!isCaptchaReady) {
       return enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Captcha (anti-bot check) is still loading, try again`,
       });
     }
@@ -102,7 +102,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       );
       setSignInUpStep(SignInUpStep.Password);
     } catch {
-      enqueueToast({ variant: 'error', children: errorMsgUserAlreadyExist });
+      enqueueToast({ status: 'error', children: errorMsgUserAlreadyExist });
     }
   }, [
     readCaptchaToken,
@@ -124,7 +124,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
       if (!isCaptchaReady) {
         return enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Captcha (anti-bot check) is still loading, try again`,
         });
       }

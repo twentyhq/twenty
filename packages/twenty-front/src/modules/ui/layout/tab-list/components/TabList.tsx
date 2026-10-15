@@ -1,4 +1,3 @@
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
@@ -71,6 +70,7 @@ export const TabList = ({
   behaveAsLinks = true,
   className,
   componentInstanceId,
+  defaultActiveTabId,
   onChangeTab,
   onClickTab,
   rightComponent,
@@ -93,11 +93,15 @@ export const TabList = ({
     behaveAsLinks &&
     workspaceSurface.ownsRouteLocation &&
     visibleTabs.some((tab) => tab.id === routeTabId);
+  const defaultTabId =
+    visibleTabs.find((tab) => tab.id === defaultActiveTabId)?.id ??
+    visibleTabs[0]?.id ??
+    null;
   const nextActiveTabId = shouldSelectRouteTab
     ? routeTabId
     : activeTabExists
       ? activeTabId
-      : (visibleTabs[0]?.id ?? null);
+      : defaultTabId;
 
   const {
     visibleTabCount,
@@ -124,7 +128,6 @@ export const TabList = ({
   });
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
-  const { closeDropdown } = useCloseDropdown();
 
   const isActiveTabHidden = useMemo(() => {
     if (!hasHiddenTabs) return false;
@@ -225,9 +228,6 @@ export const TabList = ({
                 <StyledDropdownContainer>
                   <TabListDropdown
                     dropdownId={dropdownId}
-                    onClose={() => {
-                      closeDropdown(dropdownId);
-                    }}
                     overflow={{
                       hiddenTabsCount,
                       isActiveTabHidden,

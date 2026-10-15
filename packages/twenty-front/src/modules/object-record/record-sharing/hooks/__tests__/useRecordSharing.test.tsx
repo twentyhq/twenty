@@ -19,7 +19,7 @@ import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
+jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 

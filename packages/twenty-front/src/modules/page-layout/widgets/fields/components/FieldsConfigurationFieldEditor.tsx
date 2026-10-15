@@ -1,7 +1,9 @@
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
 import { t } from '@lingui/core/macro';
-import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
 
 type FieldsConfigurationFieldEditorProps = {
@@ -21,7 +23,12 @@ export const FieldsConfigurationFieldEditor = ({
 
   return (
     <MenuItemDraggable
-      LeftIcon={FieldIcon}
+      LeftComponent={
+        <ApplicationStackIcon
+          Icon={FieldIcon}
+          applicationId={fieldMetadata.applicationId}
+        />
+      }
       text={fieldMetadata.label}
       gripMode="onHover"
       withIconContainer

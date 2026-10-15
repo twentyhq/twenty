@@ -12,7 +12,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { OTPInput } from 'input-otp';
 import { useState } from 'react';
-import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -123,7 +125,7 @@ export const SettingsAdminServerAdminAccess = ({
       });
       await refetch();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Server administrator access updated.`,
       });
     } catch (error) {
@@ -131,7 +133,7 @@ export const SettingsAdminServerAdminAccess = ({
         CombinedGraphQLErrors.is(error)
           ? getToastOptionsFromError({ error })
           : {
-              variant: 'error',
+              status: 'error',
               children: t`Failed to update server administrator access.`,
             },
       );

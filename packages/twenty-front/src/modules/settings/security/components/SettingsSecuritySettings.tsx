@@ -20,18 +20,21 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
+import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 import {
   BillingEntitlementKey,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -141,9 +144,14 @@ export const SettingsSecuritySettings = () => {
     !hasDirectAuthEnabled &&
     hasBypassProviderAvailable;
 
-  const hasEnterpriseAccess =
-    currentWorkspace?.hasValidEnterpriseValidityToken === true;
-  const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
+  const hasAuditLogsEntitlement = checkIfBillingEntitlementIsEnabledOnWorkspace(
+    BillingEntitlementKey.AUDIT_LOGS,
+    currentWorkspace,
+  );
+  const isEventLogsEnabled = hasAuditLogsEntitlement && isClickHouseConfigured;
+  const minEventLogRetentionInDays = EVENT_LOG_RETENTION.minInDays;
+  const maxEventLogRetentionInDays = EVENT_LOG_RETENTION.maxInDays;
+  const proPlanEventLogRetentionInHours = EVENT_LOG_RETENTION.proPlanInHours;
   const hasSsoEntitlement =
     currentWorkspace?.billingEntitlements?.some(
       (entitlement) =>
@@ -159,7 +167,7 @@ export const SettingsSecuritySettings = () => {
             <Section.Header
               title={t`SSO`}
               description={t`Configure an SSO connection`}
-              adornment={<OrganizationAdornment />}
+              actions={<OrganizationAdornment />}
             />
             {hasSsoEntitlement ? (
               <SettingsSsoIdentitiesProvidersListCard />
@@ -217,19 +225,22 @@ export const SettingsSecuritySettings = () => {
           <Section.Header
             title={t`Audit Logs`}
             description={t`Configure how long audit logs are retained`}
-            adornment={<OrganizationAdornment />}
+            actions={<OrganizationAdornment />}
           />
-          {hasEnterpriseAccess ? (
+          {hasAuditLogsEntitlement ? (
             <Card.Root rounded>
               {isEventLogsEnabled ? (
                 <SettingsOptionCardContentCounter
                   Icon={IconClockHour8}
                   title={t`Log retention`}
-                  description={t`Number of days to retain audit logs (30-1095 days)`}
-                  value={currentWorkspace?.eventLogRetentionDays ?? 90}
+                  description={t`Number of days to retain logs (${minEventLogRetentionInDays}-${maxEventLogRetentionInDays} days)`}
+                  value={
+                    currentWorkspace?.eventLogRetentionDays ??
+                    EVENT_LOG_RETENTION.defaultInDays
+                  }
                   onChange={handleEventLogRetentionDaysChange}
-                  minValue={30}
-                  maxValue={1095}
+                  minValue={minEventLogRetentionInDays}
+                  maxValue={maxEventLogRetentionInDays}
                   showButtons={false}
                 />
               ) : (
@@ -243,7 +254,7 @@ export const SettingsSecuritySettings = () => {
           ) : (
             <SettingsEnterpriseFeatureGateCard
               title={t`Organization feature`}
-              description={t`Upgrade to Organization to access audit logs.`}
+              description={t`Logs are kept ${proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention.`}
               buttonTitle={t`Activate`}
             />
           )}

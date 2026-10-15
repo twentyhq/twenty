@@ -9,14 +9,11 @@ import { stepsOutputSchemaFamilyState } from '@/workflow/workflow-variables/stat
 const mockMutate = jest.fn();
 const mockClient = { mutate: mockMutate };
 const mockEnqueueToast = jest.fn();
-jest.mock('@/workflow/hooks/useIsWorkflowCoreEnabled', () => ({
-  useIsWorkflowCoreEnabled: () => true,
-}));
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => mockClient,
 }));
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 

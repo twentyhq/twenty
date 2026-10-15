@@ -10,7 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconEye } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
@@ -64,7 +65,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
       }
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to create unsubscribe topic.`,
       });
     }

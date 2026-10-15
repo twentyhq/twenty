@@ -1,5 +1,5 @@
 import { type ComponentProps, useContext } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { DropdownClickOutsideListenerExclusion } from '@/ui/layout/dropdown/components/DropdownClickOutsideListenerExclusion';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
@@ -14,9 +14,10 @@ type DropdownContentProps = Pick<
   | 'anchor'
   | 'collisionPadding'
   | 'width'
+  | 'onKeyDown'
+  | 'onClick'
   | 'initialFocus'
   | 'finalFocus'
-  | 'className'
   | 'aria-label'
   | 'ref'
 >;
@@ -30,9 +31,10 @@ export const DropdownContent = ({
   anchor,
   collisionPadding,
   width,
+  onKeyDown,
+  onClick,
   initialFocus,
   finalFocus,
-  className,
   'aria-label': ariaLabel,
   ref,
 }: DropdownContentProps) => {
@@ -49,9 +51,10 @@ export const DropdownContent = ({
       anchor={anchor}
       collisionPadding={collisionPadding}
       width={width}
+      onKeyDown={onKeyDown}
+      onClick={onClick}
       initialFocus={initialFocus}
       finalFocus={finalFocus}
-      className={className}
       aria-label={ariaLabel}
     >
       <DropdownClickOutsideListenerExclusion>

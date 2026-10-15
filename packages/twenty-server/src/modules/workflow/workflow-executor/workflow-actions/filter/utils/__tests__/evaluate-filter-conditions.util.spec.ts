@@ -1480,6 +1480,53 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
+    describe('raw JSON operands', () => {
+      const jsonValue = { name: 'Acme', tags: ['vip-gold'] };
+
+      const evaluateRawJson = (
+        operand: ViewFilterOperand,
+        leftOperand: unknown,
+        rightOperand: unknown = '',
+      ) =>
+        evaluateFilterConditions({
+          filters: [
+            createFilter(operand, leftOperand, rightOperand, 'RAW_JSON'),
+          ],
+        });
+
+      it('should search inside JSON values case-insensitively', () => {
+        expect(
+          evaluateRawJson(ViewFilterOperand.CONTAINS, jsonValue, 'acme'),
+        ).toBe(true);
+        expect(
+          evaluateRawJson(
+            ViewFilterOperand.CONTAINS,
+            JSON.stringify(jsonValue),
+            'VIP',
+          ),
+        ).toBe(true);
+        expect(
+          evaluateRawJson(
+            ViewFilterOperand.DOES_NOT_CONTAIN,
+            jsonValue,
+            'Acme',
+          ),
+        ).toBe(false);
+      });
+
+      it('should treat missing values and a stringified null as empty', () => {
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, 'null')).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, null)).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, '')).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_NOT_EMPTY, jsonValue)).toBe(
+          true,
+        );
+        expect(
+          evaluateRawJson(ViewFilterOperand.DOES_NOT_CONTAIN, null, 'Acme'),
+        ).toBe(true);
+      });
+    });
+
     describe('error cases', () => {
       it('should throw error for unknown operand', () => {
         const filter = createFilter(

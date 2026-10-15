@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -183,7 +183,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           ? t`Connection successfully updated`
           : t`Connection successfully created`;
 
-        enqueueToast({ variant: 'success', children: successMessage });
+        enqueueToast({ status: 'success', children: successMessage });
 
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};

@@ -5,8 +5,9 @@ import {
   LightIconButton,
   MainButton,
   SearchInput,
-  TabButton,
-} from 'twenty-ui/components';
+  SegmentedControl,
+} from 'twenty-ui/components/input';
+import { TabButton } from 'twenty-ui/components/navigation';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
@@ -15,11 +16,11 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
-  SegmentedControl,
   Slider,
   Switch,
 } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme';
+import { Text } from 'twenty-ui/primitives/typography';
 import {
   ComponentGallery,
   type GalleryEntry,
@@ -60,7 +61,14 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'CodeEditorHeader',
-    node: <CodeEditorHeader title="Editor" />,
+    node: (
+      <CodeEditorHeader
+        title={<Text>Editor</Text>}
+        endElement={<Button size="sm">Format</Button>}
+        render={<header />}
+        aria-label="Code editor"
+      />
+    ),
   },
   {
     name: 'IconButton (elevated)',

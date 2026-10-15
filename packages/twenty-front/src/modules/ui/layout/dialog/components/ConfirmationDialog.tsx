@@ -10,7 +10,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -20,12 +20,10 @@ const StyledCenteredButton = styled(Button)`
 `;
 
 const StyledDescription = styled(Dialog.Description)`
-  && {
-    color: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    margin-bottom: ${themeCssVariables.spacing[6]};
-  }
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 const defaultConfirmButtonText = msg`Confirm`;
@@ -34,6 +32,7 @@ export const ConfirmationDialog = ({
   dialogId,
   title,
   loading,
+  isConfirmButtonDisabled = false,
   subtitle,
   onConfirmClick,
   onClose,
@@ -51,8 +50,9 @@ export const ConfirmationDialog = ({
     useState<string>('');
 
   const isValidValue =
-    !isNonEmptyString(confirmationValue) ||
-    inputConfirmationValue === confirmationValue;
+    !isConfirmButtonDisabled &&
+    (!isNonEmptyString(confirmationValue) ||
+      inputConfirmationValue === confirmationValue);
 
   const { closeDialog } = useDialog();
 
@@ -88,9 +88,9 @@ export const ConfirmationDialog = ({
       onEnter={handleEnter}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           data-globally-prevent-click-outside
           style={{
             padding: 'var(--t-spacing-6)',

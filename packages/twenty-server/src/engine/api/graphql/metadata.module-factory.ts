@@ -22,6 +22,7 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ModulesModule } from 'src/modules/modules.module';
 
 export const metadataModuleFactory = async (
   twentyConfigService: TwentyConfigService,
@@ -35,7 +36,7 @@ export const metadataModuleFactory = async (
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
-    include: [MetadataGraphQLApiModule],
+    include: [MetadataGraphQLApiModule, ModulesModule],
     resolverSchemaScope: 'metadata',
     buildSchemaOptions: {
       orphanedTypes: [ClientConfig],

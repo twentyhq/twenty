@@ -4,11 +4,9 @@ import { msg } from '@lingui/core/macro';
 import { FeatureFlagKey } from '~/generated-admin/graphql';
 
 // Public flags use server-provided client config metadata to stay consistent with the lab.
-export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
-  Record<
-    FeatureFlagKey,
-    { label: MessageDescriptor; description: MessageDescriptor }
-  >
+export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
+  FeatureFlagKey,
+  { label: MessageDescriptor; description: MessageDescriptor }
 > = {
   [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
     label: msg`Async CSV export`,
@@ -26,6 +24,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Email campaigns`,
     description: msg`Enable email campaigns, lists, and unsubscribe management.`,
   },
+  [FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED]: {
+    label: msg`Morph relation heads`,
+    description: msg`Expose each relation to several objects as one field with a stable id.`,
+  },
   [FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT]: {
     label: msg`Direct REST metadata responses`,
     description: msg`Return metadata directly instead of wrapping it in the legacy response envelope.`,
@@ -34,17 +36,13 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Application workflows`,
     description: msg`Allow applications to install workflows and start new workflow runs.`,
   },
-  [FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED]: {
-    label: msg`Workflow index page`,
-    description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
-  },
-  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
-    label: msg`AI chat sharing dropdown`,
-    description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
-  },
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
+  },
+  [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: {
+    label: msg`Record sharing visibility`,
+    description: msg`Apply record sharing visibility rules when accessing records.`,
   },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,
@@ -52,26 +50,22 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records.`,
+    description: msg`Use a dedicated form when creating records, and enable validation rules.`,
   },
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
     label: msg`Logs console`,
     description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
   },
-  [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: {
-    label: msg`Conversations tab`,
-    description: msg`Show a Conversations tab listing the AI conversations attached to the record, on record pages of new workspaces.`,
-  },
-  [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: {
-    label: msg`Validation rules`,
-    description: msg`Let admins add conditions a record must meet to be saved, checked on every write.`,
-  },
-  [FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED]: {
-    label: msg`Workflow inbox messages`,
-    description: msg`Add a workflow step that sends a message, and optionally an action to approve, to a member's inbox.`,
-  },
   [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
     label: msg`Skip unchanged calendar records`,
     description: msg`Only write calendar events and participants that changed since the last sync.`,
+  },
+  [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
+    label: msg`AI chat inbox`,
+    description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages.`,
+  },
+  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
+    label: msg`App preferences`,
+    description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
 };

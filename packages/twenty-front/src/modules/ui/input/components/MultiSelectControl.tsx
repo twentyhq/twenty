@@ -5,7 +5,7 @@ import {
 import { styled } from '@linaria/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown, type IconComponent } from 'twenty-ui/icon';
 import { type ThemeColor, useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -60,10 +60,14 @@ export const MultiSelectControl = ({
       ) : isDefined(firstSelectedOption?.Icon) ? (
         isDefined(firstSelectedOption.iconThemeColor) ? (
           <TintedIconTile
-            Icon={firstSelectedOption.Icon}
+            icon={
+              <firstSelectedOption.Icon
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
             color={firstSelectedOption.iconThemeColor}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
+            style={{ width: theme.icon.size.md, height: theme.icon.size.md }}
           />
         ) : (
           <firstSelectedOption.Icon

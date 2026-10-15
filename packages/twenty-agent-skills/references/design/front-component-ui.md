@@ -380,7 +380,7 @@ Empty example:
 
 ```tsx
 <Callout
-  variant="secondary"
+  status="neutral"
   title="No activity yet"
   description="Activity will appear here once this record has timeline events."
 />

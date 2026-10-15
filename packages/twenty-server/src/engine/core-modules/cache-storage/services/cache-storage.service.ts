@@ -3,13 +3,19 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
+import { v4 } from 'uuid';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import {
   CacheStorageException,
   CacheStorageExceptionCode,
 } from 'src/engine/core-modules/cache-storage/exceptions/cache-storage.exception';
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { type CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { escapeRedisGlob } from 'src/engine/core-modules/cache-storage/utils/escape-redis-glob.util';
+import { getCacheStorageKey } from 'src/engine/core-modules/cache-storage/utils/get-cache-storage-key.util';
 
 @Injectable()
 export class CacheStorageService {
@@ -17,6 +23,7 @@ export class CacheStorageService {
     @Inject(CACHE_MANAGER)
     private readonly cache: Cache,
     private readonly namespace: CacheStorageNamespace,
+    private readonly keyPrefix: string = '',
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
@@ -125,6 +132,37 @@ export class CacheStorageService {
     }
   }
 
+  async msetAndMdel<T = unknown>({
+    entries,
+    keysToDelete,
+  }: {
+    entries: Array<{ key: string; value: T; ttl?: Milliseconds }>;
+    keysToDelete: string[];
+  }): Promise<void> {
+    if (!this.isRedisCache(this.cache)) {
+      throw new CacheStorageException(
+        'msetAndMdel is only supported with Redis cache',
+        CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
+      );
+    }
+
+    const transaction = this.cache.store.client.multi();
+
+    for (const { key, value, ttl } of entries) {
+      transaction.set(
+        this.getKey(key),
+        JSON.stringify(value),
+        isDefined(ttl) && ttl > 0 ? { PX: ttl } : {},
+      );
+    }
+
+    if (keysToDelete.length > 0) {
+      transaction.del(keysToDelete.map((key) => this.getKey(key)));
+    }
+
+    await transaction.exec();
+  }
+
   async setAdd(key: string, value: string[], ttl?: Milliseconds) {
     if (value.length === 0) {
       return;
@@ -222,12 +260,12 @@ export class CacheStorageService {
     }
 
     const redisClient = this.cache.store.client;
+    const scanKeyPrefix = escapeRedisGlob(this.getKey(''));
     let cursor = 0;
 
     do {
       const result = await redisClient.scan(cursor, {
-        // Through getKey: under NODE_ENV=test keys carry an extra prefix, so a raw namespace match flushes nothing.
-        MATCH: this.getKey(scanPattern),
+        MATCH: `${scanKeyPrefix}${scanPattern}`,
         COUNT: 100,
       });
 
@@ -294,27 +332,58 @@ export class CacheStorageService {
     return count as number;
   }
 
-  async acquireLock(key: string, ttl = 1000): Promise<boolean> {
+  async acquireLock({
+    key,
+    ttl = 1000,
+  }: {
+    key: string;
+    ttl?: number;
+  }): Promise<string | null> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error('acquireLock is only supported with Redis cache');
     }
 
     const redisClient = this.cache.store.client;
+    const ownerToken = v4();
 
-    const result = await redisClient.set(this.getKey(key), 'lock', {
+    const result = await redisClient.set(this.getKey(key), ownerToken, {
       NX: true,
       PX: ttl,
     });
 
-    return result === 'OK';
+    return result === 'OK' ? ownerToken : null;
   }
 
-  async releaseLock(key: string): Promise<void> {
-    if (!this.isRedisCache(this.cache)) {
-      throw new Error('releaseLock is only supported with Redis cache');
-    }
+  async extendLock({
+    key,
+    ownerToken,
+    ttl,
+  }: {
+    key: string;
+    ownerToken: string;
+    ttl: number;
+  }): Promise<boolean> {
+    const extended = await this.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [key],
+      args: [ownerToken, String(ttl)],
+    });
 
-    await this.del(key);
+    return extended === 1;
+  }
+
+  async releaseLock({
+    key,
+    ownerToken,
+  }: {
+    key: string;
+    ownerToken: string;
+  }): Promise<void> {
+    await this.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [key],
+      args: [ownerToken, '0'],
+    });
   }
 
   async incrBy(key: string, increment: number): Promise<number> {
@@ -478,12 +547,11 @@ end`;
   }
 
   private getKey(key: string) {
-    const formattedKey = `${this.namespace}:${key}`;
-
-    if (process.env.NODE_ENV === 'test') {
-      return `${CacheStorageNamespace.IntegrationTests}:${formattedKey}`;
-    }
-
-    return formattedKey;
+    return getCacheStorageKey({
+      key,
+      namespace: this.namespace,
+      keyPrefix: this.keyPrefix,
+      isTestEnvironment: process.env.NODE_ENV === 'test',
+    });
   }
 }

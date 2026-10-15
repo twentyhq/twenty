@@ -27,6 +27,7 @@ import {
   listSkillsInputSchema,
 } from 'src/engine/api/mcp/tools/list-skills.tool';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
+import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -58,7 +59,7 @@ import {
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
+import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -159,7 +160,7 @@ export class McpProtocolService {
 
       return {
         roleId: apiKeyRoleId,
-        rolePermissionConfig: { unionOf: [apiKeyRoleId] },
+        rolePermissionConfig: { intersectionOf: { apiKeyRoleId } },
       };
     }
 
@@ -178,9 +179,9 @@ export class McpProtocolService {
     return {
       roleId: userRoleId,
       rolePermissionConfig: {
-        intersectionOf: resolveRoleIdsForUser({
+        intersectionOf: buildUserRoleIdsBySource({
           userRoleId,
-          applicationRoleId: application?.defaultRoleId,
+          application,
         }),
       },
     };
@@ -454,25 +455,35 @@ export class McpProtocolService {
           ...nativeTools
         } = toolSet;
 
-        const registryTools = await Sentry.startSpan(
+        const annotatedRegistryTools = await Sentry.startSpan(
           {
             name: 'mcp list registry tools',
             op: 'mcp.tools',
             onlyIfParent: true,
           },
-          () =>
-            this.toolRegistry.getToolsByCategories(toolContext, {
-              excludeTools: [...MCP_EXCLUDED_TOOL_NAMES],
-            }),
-        );
+          async () => {
+            const descriptors =
+              await this.toolRegistry.getDescriptorsByCategories(toolContext, {
+                excludeTools: [...MCP_EXCLUDED_TOOL_NAMES],
+              });
 
-        const annotatedRegistryTools = Object.fromEntries(
-          Object.entries(registryTools).map(
-            ([toolName, registryTool]): [string, McpAnnotatedTool] => [
-              toolName,
-              { ...registryTool, annotations: MCP_EXECUTE_TOOL_ANNOTATIONS },
-            ],
-          ),
+            const registryTools = this.toolRegistry.hydrateToolSet(
+              descriptors,
+              toolContext,
+            );
+
+            return Object.fromEntries(
+              descriptors.map((descriptor): [string, McpAnnotatedTool] => [
+                descriptor.name,
+                {
+                  ...registryTools[descriptor.name],
+                  annotations: getMcpRegistryToolAnnotations(
+                    descriptor.executionRef,
+                  ),
+                },
+              ]),
+            );
+          },
         );
 
         return this.mcpToolExecutorService.handleToolsListing(id, {

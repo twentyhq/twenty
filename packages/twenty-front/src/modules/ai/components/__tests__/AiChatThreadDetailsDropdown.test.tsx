@@ -173,10 +173,12 @@ const buildWorkspaceMember = (id: string, firstName: string) => ({
 
 const renderDetails = async ({
   permissions = EDITABLE_PERMISSIONS,
-  isConversationsTabEnabled = true,
+  isAiChatInboxEnabled = true,
+  shouldOpenDetails = true,
 }: {
   permissions?: typeof EDITABLE_PERMISSIONS;
-  isConversationsTabEnabled?: boolean;
+  isAiChatInboxEnabled?: boolean;
+  shouldOpenDetails?: boolean;
 } = {}) => {
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems: [
@@ -188,8 +190,8 @@ const renderDetails = async ({
         ...mockCurrentWorkspace,
         featureFlags: [
           {
-            key: FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
-            value: isConversationsTabEnabled,
+            key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+            value: isAiChatInboxEnabled,
           },
         ],
       });
@@ -222,6 +224,10 @@ const renderDetails = async ({
   render(<AiChatThreadDetailsDropdown threadId={THREAD_ID} />, {
     wrapper: Wrapper,
   });
+
+  if (!shouldOpenDetails) {
+    return;
+  }
 
   await userEvent.click(
     await screen.findByRole('button', { name: 'Chat details' }),
@@ -373,9 +379,14 @@ describe('AiChatThreadDetailsDropdown', () => {
     expect(refetchThread).toHaveBeenCalledTimes(1);
   });
 
-  it('leaves out the linked records until the conversations tab is enabled', async () => {
-    await renderDetails({ isConversationsTabEnabled: false });
+  it('hides the chat details while the inbox feature flag is off', async () => {
+    await renderDetails({
+      isAiChatInboxEnabled: false,
+      shouldOpenDetails: false,
+    });
 
-    expect(screen.queryByText('Acme')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Chat details' }),
+    ).not.toBeInTheDocument();
   });
 });

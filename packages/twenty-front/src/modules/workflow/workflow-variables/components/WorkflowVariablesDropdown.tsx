@@ -14,7 +14,7 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconVariablePlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -23,7 +23,6 @@ const StyledDropdownVariableButtonContainer = styled.div<{
   disabled?: boolean;
 }>`
   align-items: center;
-  background-color: transparent;
   border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
   border-top-right-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};

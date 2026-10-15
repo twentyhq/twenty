@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import {
   currentWorkspaceState,
@@ -46,7 +46,7 @@ export const useSettingsAiModelsActions = () => {
     } catch {
       setCurrentWorkspace(previousWorkspace);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update model settings`,
       });
     }

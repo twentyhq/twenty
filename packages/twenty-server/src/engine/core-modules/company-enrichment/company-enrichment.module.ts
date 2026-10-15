@@ -26,6 +26,5 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
     PeopleDataLabsClientService,
     PersonEnrichmentService,
   ],
-  exports: [CompanyEnrichmentService, PersonEnrichmentService],
 })
 export class CompanyEnrichmentModule {}

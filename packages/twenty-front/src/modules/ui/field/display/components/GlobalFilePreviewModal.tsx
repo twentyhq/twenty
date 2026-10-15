@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type JSX, lazy, Suspense, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const DocumentViewer = lazy(() =>
@@ -20,6 +20,10 @@ const DocumentViewer = lazy(() =>
 );
 
 const GLOBAL_FILE_PREVIEW_MODAL_ID = 'global-file-preview-modal';
+
+const StyledPreviewPopup = styled(Dialog.Popup)`
+  padding: ${themeCssVariables.spacing[4]};
+`;
 
 const StyledModalHeader = styled.div`
   align-items: center;
@@ -104,12 +108,11 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
-        <Dialog.Popup
+      {({ onKeyDown }) => (
+        <StyledPreviewPopup
           aria-label={filePreview.label ?? t`File preview`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="lg"
-          style={{ padding: 'var(--t-spacing-4)' }}
         >
           <StyledModalHeader>
             <StyledHeader>
@@ -153,7 +156,7 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
               </Suspense>
             </StyledModalContent>
           </ScrollWrapper>
-        </Dialog.Popup>
+        </StyledPreviewPopup>
       )}
     </DialogInstance>
   );

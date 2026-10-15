@@ -1,0 +1,1 @@
+export const AI_CHAT_INBOX_SELECTION_PILE_MAX_CARDS = 3;

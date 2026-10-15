@@ -7,7 +7,8 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { read, type WorkBook } from 'xlsx-ugnis';
 
@@ -136,7 +137,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       fileRejections.forEach((fileRejection) => {
         const fileName = fileRejection.file.name;
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`${fileName} upload rejected`,
           description: fileRejection.errors[0].message,
         });

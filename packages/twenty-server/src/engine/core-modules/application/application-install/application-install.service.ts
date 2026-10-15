@@ -35,8 +35,14 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import {
+  APPLICATION_INSTALL_STEPS,
+  type ApplicationInstallStep,
+} from 'src/engine/core-modules/application/application-install/constants/application-install-steps.constant';
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
+import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
+import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -52,6 +58,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job-constants';
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -88,6 +95,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     hasUserApprovedCapabilities?: boolean;
+    updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -121,15 +129,24 @@ export class ApplicationInstallService {
       return true;
     }
 
+    const progressReporter = createApplicationLifecycleProgressReporter({
+      steps: APPLICATION_INSTALL_STEPS,
+      updateProgress: params.updateProgress,
+    });
+
     return this.cacheLockService.withLock(
       () =>
-        this.doInstallApplication(appRegistration, {
-          version: params.version,
-          workspaceId: params.workspaceId,
-          skipWorkspaceCompatibilityCheck:
-            params.skipWorkspaceCompatibilityCheck,
-          hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
-        }),
+        this.doInstallApplication(
+          appRegistration,
+          {
+            version: params.version,
+            workspaceId: params.workspaceId,
+            skipWorkspaceCompatibilityCheck:
+              params.skipWorkspaceCompatibilityCheck,
+            hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
+          },
+          progressReporter,
+        ),
       buildApplicationLifecycleLockKey({
         workspaceId: params.workspaceId,
         universalIdentifier: appRegistration.universalIdentifier,
@@ -146,6 +163,7 @@ export class ApplicationInstallService {
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
     },
+    progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>,
   ): Promise<boolean> {
     // Re-read inside the lock so a concurrent tarball upload cannot make us
     // resolve a stale package.
@@ -170,6 +188,8 @@ export class ApplicationInstallService {
       return true;
     }
 
+    await progressReporter.reportStepCompleted('RESOLVE_PACKAGE');
+
     try {
       const existingApplication =
         await this.applicationLookupService.findByUniversalIdentifier({
@@ -182,6 +202,7 @@ export class ApplicationInstallService {
         params,
         resolvedPackage,
         existingApplication,
+        progressReporter,
       });
     } finally {
       await this.applicationPackageFetcherService.cleanupExtractedDir(
@@ -195,6 +216,7 @@ export class ApplicationInstallService {
     params,
     resolvedPackage,
     existingApplication,
+    progressReporter,
   }: {
     appRegistration: ApplicationRegistrationEntity;
     params: {
@@ -205,6 +227,7 @@ export class ApplicationInstallService {
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
+    progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>;
   }): Promise<boolean> {
     const isVersionUpgrade = isDefined(existingApplication);
 
@@ -221,6 +244,7 @@ export class ApplicationInstallService {
         params,
         resolvedPackage,
         existingApplication,
+        progressReporter,
       });
 
       this.metricsService.incrementCounterBy({
@@ -254,6 +278,7 @@ export class ApplicationInstallService {
     params,
     resolvedPackage,
     existingApplication,
+    progressReporter,
   }: {
     appRegistration: ApplicationRegistrationEntity;
     params: {
@@ -264,6 +289,7 @@ export class ApplicationInstallService {
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
+    progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>;
   }): Promise<boolean> {
     const universalIdentifier = appRegistration.universalIdentifier;
 
@@ -319,14 +345,12 @@ export class ApplicationInstallService {
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
       grantedCapabilities,
-      logo:
-        resolvedPackage.manifest.application.logo ??
-        resolvedPackage.manifest.application.logoUrl ??
-        null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
     });
+
+    await progressReporter.reportStepCompleted('CREATE_APPLICATION');
 
     const incomingVersion = resolvedPackage.packageJson.version;
 
@@ -371,19 +395,27 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
+      const logo =
+        resolvedPackage.manifest.application.logo ??
+        resolvedPackage.manifest.application.logoUrl ??
+        null;
+
       const logoFileId = await this.importLogoFile({
         extractedDir: resolvedPackage.extractedDir,
-        manifest: resolvedPackage.manifest,
+        logo,
         applicationUniversalIdentifier: universalIdentifier,
         workspaceId: params.workspaceId,
       });
 
-      if (application.logoFileId !== logoFileId) {
+      if (application.logo !== logo || application.logoFileId !== logoFileId) {
         await this.applicationService.update(application.id, {
-          logoFileId: logoFileId ?? null,
+          logo,
+          logoFileId,
           workspaceId: params.workspaceId,
         });
       }
+
+      await progressReporter.reportStepCompleted('WRITE_FILES');
 
       await this.runPreInstallHook({
         manifest: resolvedPackage.manifest,
@@ -395,6 +427,8 @@ export class ApplicationInstallService {
         universalIdentifier,
       });
 
+      await progressReporter.reportStepCompleted('PRE_INSTALL_HOOK');
+
       const { workspaceMigration } =
         await this.applicationManifestApplyService.applyManifestToWorkspace({
           workspaceId: params.workspaceId,
@@ -404,6 +438,8 @@ export class ApplicationInstallService {
           forceSdkClientGeneration: true,
           persistVersion: false,
         });
+
+      await progressReporter.reportStepCompleted('APPLY_MANIFEST');
 
       const isPostInstallHookSynchronous =
         resolvedPackage.manifest.application.postInstallLogicFunction
@@ -434,6 +470,8 @@ export class ApplicationInstallService {
         });
       }
 
+      await progressReporter.reportStepCompleted('POST_INSTALL_HOOK');
+
       await this.applicationManifestApplyService.refreshRegistrationFromManifest(
         {
           applicationRegistrationId: appRegistration.id,
@@ -449,6 +487,8 @@ export class ApplicationInstallService {
         logicFunctionUniversalIdentifiers:
           findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration),
       });
+
+      await progressReporter.reportStepCompleted('FINALIZE');
 
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
@@ -760,17 +800,15 @@ export class ApplicationInstallService {
 
   private async importLogoFile({
     extractedDir,
-    manifest,
+    logo,
     applicationUniversalIdentifier,
     workspaceId,
   }: {
     extractedDir: string;
-    manifest: Manifest;
+    logo: string | null;
     applicationUniversalIdentifier: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const logo = manifest.application.logo ?? manifest.application.logoUrl;
-
     if (
       !isDefined(logo) ||
       logo.startsWith('http://') ||
@@ -818,7 +856,6 @@ export class ApplicationInstallService {
     universalIdentifier,
     name,
     grantedCapabilities,
-    logo,
     workspaceId,
     applicationRegistrationId,
     sourceType,
@@ -827,7 +864,6 @@ export class ApplicationInstallService {
     universalIdentifier: string;
     name: string;
     grantedCapabilities: ApplicationCapability[];
-    logo: string | null;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
@@ -840,7 +876,6 @@ export class ApplicationInstallService {
       universalIdentifier,
       name,
       grantedCapabilities,
-      logo,
       sourcePath: universalIdentifier,
       sourceType,
       applicationRegistrationId,

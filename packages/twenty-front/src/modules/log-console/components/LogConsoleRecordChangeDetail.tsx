@@ -4,7 +4,7 @@ import { useId } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUpRight, useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -12,7 +12,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { EventFieldDiffValue } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValue';
 import { EventFieldDiffValueEffect } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
 import { EventRelationFieldDiffValues } from '@/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues';
-import { StyledLogConsoleFieldsCard } from '@/log-console/components/StyledLogConsoleFieldsCard';
+import { LogConsoleFieldsCard } from '@/log-console/components/LogConsoleFieldsCard';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
 import { getLogConsoleRecordChangeFieldDiffs } from '@/log-console/utils/getLogConsoleRecordChangeFieldDiffs';
 import { isLogConsoleFieldValueEmpty } from '@/log-console/utils/isLogConsoleFieldValueEmpty';
@@ -131,7 +131,7 @@ export const LogConsoleRecordChangeDetail = ({
               }
             />
             {isNonEmptyArray(fieldDiffs) && (
-              <StyledLogConsoleFieldsCard>
+              <LogConsoleFieldsCard>
                 {fieldDiffs.map((fieldDiff) => (
                   <BillingFieldRow
                     key={fieldDiff.key}
@@ -146,7 +146,7 @@ export const LogConsoleRecordChangeDetail = ({
                     </ErrorBoundary>
                   </BillingFieldRow>
                 ))}
-              </StyledLogConsoleFieldsCard>
+              </LogConsoleFieldsCard>
             )}
           </Section.Root>
         )}

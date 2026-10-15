@@ -53,8 +53,8 @@ jest.mock('~/hooks/useNavigateApp', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -117,7 +117,7 @@ describe('VerifyEmail', () => {
       expect(navigateMock).toHaveBeenCalledWith(AppPath.SignInUp);
     });
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'success' }),
+      expect.objectContaining({ status: 'success' }),
     );
   });
 
@@ -130,7 +130,7 @@ describe('VerifyEmail', () => {
 
     await waitFor(() => {
       expect(mockEnqueueToast).toHaveBeenCalledWith(
-        expect.objectContaining({ variant: 'error' }),
+        expect.objectContaining({ status: 'error' }),
       );
     });
     expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);

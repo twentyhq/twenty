@@ -2,7 +2,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ToastOptions } from 'twenty-ui/components';
+import { type ToastOptions } from 'twenty-ui/components/feedback';
 
 const getGraphQLErrorCode = (
   error: CombinedGraphQLErrors,
@@ -24,7 +24,7 @@ export const getTwoFactorAuthenticationErrorToastOptions = ({
 }): ToastOptions | undefined => {
   if (!CombinedGraphQLErrors.is(error)) {
     return {
-      variant: 'error',
+      status: 'error',
       children: fallbackMessage,
       dedupeKey,
     };

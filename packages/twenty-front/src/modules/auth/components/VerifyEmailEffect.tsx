@@ -1,4 +1,4 @@
-import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast, type ToastOptions } from 'twenty-ui/components';
+import { useToast, type ToastOptions } from 'twenty-ui/components/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
@@ -54,7 +54,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Invalid email verification link.`,
           dedupeKey: 'email-verification-link-dedupe-key',
         });
@@ -62,7 +62,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
       }
 
       const successToastOptions = {
-        variant: 'success',
+        status: 'success',
         children: t`Email verified.`,
         dedupeKey: 'email-verification-dedupe-key',
       } satisfies ToastOptions;
@@ -106,7 +106,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
                 dedupeKey: EMAIL_VERIFICATION_ERROR_DEDUPE_KEY,
               })
             : {
-                variant: 'error',
+                status: 'error',
                 children: t`Email verification failed`,
                 dedupeKey: EMAIL_VERIFICATION_ERROR_DEDUPE_KEY,
               },

@@ -3,7 +3,8 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, normalizeAllowedIframeOrigin } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -92,7 +93,7 @@ export const SettingsSecurityIframeOrigins = () => {
     <Section.Root>
       <Section.Header
         title={t`Iframe embedding`}
-        description={t`Allow trusted websites to display this workspace in an iframe. Users who are already signed in may see their workspace inside those websites, so only add origins you fully trust. Leave the list empty to block external embedding.`}
+        description={t`Websites allowed to embed this workspace. Only add ones you fully trust.`}
       />
       <StyledList>
         {isDefined(policyError) && (

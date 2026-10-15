@@ -9,7 +9,7 @@ import { IconLifebuoy } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const ImpersonationSwitch = () => {
   const { enqueueToast } = useToast();
@@ -49,7 +49,6 @@ export const ImpersonationSwitch = () => {
         description={t`Grant access to your workspace so we can troubleshoot problems.`}
         checked={currentWorkspace?.allowImpersonation ?? false}
         onChange={handleChange}
-        advancedMode
       />
     </Card.Root>
   );

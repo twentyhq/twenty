@@ -7,7 +7,7 @@ import { SettingsBillingLimitsTable } from '@/settings/billing/components/Settin
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
 import { hasKnownUsageLimitSpender } from '@/settings/billing/utils/hasKnownUsageLimitSpender';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsBillingLimitsContent = () => {
   const { t } = useLingui();

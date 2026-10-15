@@ -5,12 +5,10 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { FlatWebhookModule } from 'src/engine/metadata-modules/flat-webhook/flat-webhook.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WebhookController } from 'src/engine/metadata-modules/webhook/controllers/webhook.controller';
-import { WebhookGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/webhook/interceptors/webhook-graphql-api-exception.interceptor';
 import { WebhookToolWorkspaceService } from 'src/engine/metadata-modules/webhook/tools/services/webhook-tool.workspace-service';
 import { WebhookResolver } from 'src/engine/metadata-modules/webhook/webhook.resolver';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
@@ -24,13 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FlatWebhookModule,
   ],
   controllers: [WebhookController],
-  providers: [
-    WebhookService,
-    WebhookResolver,
-    WebhookGraphqlApiExceptionInterceptor,
-    WorkspaceMigrationGraphqlApiExceptionInterceptor,
-    WebhookToolWorkspaceService,
-  ],
-  exports: [WebhookService, WebhookToolWorkspaceService],
+  providers: [WebhookService, WebhookResolver, WebhookToolWorkspaceService],
+  exports: [WebhookToolWorkspaceService],
 })
 export class WebhookModule {}

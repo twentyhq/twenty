@@ -42,6 +42,17 @@ export const Installing: Story = {
   },
 };
 
+export const InstallingWithProgress: Story = {
+  args: { isInstalling: true, installProgress: 60 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('button', { name: 'Installing (60%)' }),
+    ).toBeDisabled();
+  },
+};
+
 export const Installed: Story = {
   args: { installedApplicationId: INSTALLED_APPLICATION_ID },
   play: async ({ canvasElement }) => {

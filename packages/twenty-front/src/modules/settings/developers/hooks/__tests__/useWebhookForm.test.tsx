@@ -10,7 +10,7 @@ import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWe
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
-import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
+import { WEBHOOK_EMPTY_OPERATION } from '@/settings/developers/constants/WebhookEmptyOperation';
 
 const mockNavigateSettings = jest.fn();
 
@@ -20,8 +20,8 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -172,7 +172,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'success',
+        status: 'success',
         children: 'Webhook https://test.com/webhook created successfully',
       });
     });
@@ -218,7 +218,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'An error occurred.',
       });
     });
@@ -256,7 +256,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'success',
+        status: 'success',
         children: 'Webhook https://test.com/webhook created successfully',
       });
     });
@@ -315,7 +315,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'success',
+        status: 'success',
         children: 'Webhook https://updated.com/webhook updated successfully',
       });
     });
@@ -369,7 +369,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'An error occurred.',
       });
     });
@@ -444,7 +444,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'success',
+        status: 'success',
         children: 'Webhook deleted successfully',
       });
     });
@@ -460,7 +460,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'Webhook ID is required for deletion',
       });
     });
@@ -498,7 +498,7 @@ describe('useWebhookForm', () => {
       });
 
       expect(mockEnqueueToast).toHaveBeenCalledWith({
-        variant: 'error',
+        status: 'error',
         children: 'An error occurred.',
       });
     });

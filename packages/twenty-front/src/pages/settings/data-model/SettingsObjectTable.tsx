@@ -22,20 +22,22 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Dropdown, SearchInput, SettingsRow } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledIconChevronRightContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -70,13 +72,11 @@ export const SettingsObjectTable = ({
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const navigate = useNavigateSettings();
 
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
-  const [showSystemObjects, setShowSystemObjects] = useState(true);
-  const shouldShowSystemObjects = isAdvancedModeEnabled && showSystemObjects;
+  const [showSystemObjects, setShowSystemObjects] = useState(false);
 
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
 
@@ -139,18 +139,13 @@ export const SettingsObjectTable = ({
         }
 
         const isSystem = item.objectMetadataItem.isSystem;
-        if (isSystem && !shouldShowSystemObjects) {
+        if (isSystem && !showSystemObjects) {
           return false;
         }
 
         return true;
       }),
-    [
-      sortedObjectSettingsItems,
-      searchTerm,
-      showDeactivated,
-      shouldShowSystemObjects,
-    ],
+    [sortedObjectSettingsItems, searchTerm, showDeactivated, showSystemObjects],
   );
 
   return (
@@ -161,12 +156,12 @@ export const SettingsObjectTable = ({
             placeholder={t`Search for an object...`}
             value={searchTerm}
             onValueChange={setSearchTerm}
-            filterDropdown={(filterButton) => (
+            actions={
               <DropdownRoot
                 dropdownId="settings-objects-filter-dropdown"
                 type="panel"
               >
-                <Dropdown.Trigger render={filterButton} />
+                <SettingsSearchFilterTrigger />
                 <DropdownContent
                   side="bottom"
                   align="end"
@@ -175,25 +170,23 @@ export const SettingsObjectTable = ({
                 >
                   <Dropdown.Section>
                     <SettingsRow
-                      startIcon={<IconArchive />}
+                      startElement={<IconArchive />}
                       onCheckedChange={() =>
                         setShowDeactivated(!showDeactivated)
                       }
                       checked={showDeactivated}
                     >{t`Deactivated`}</SettingsRow>
-                    {isAdvancedModeEnabled && (
-                      <SettingsRow
-                        startIcon={<IconSettings />}
-                        onCheckedChange={() =>
-                          setShowSystemObjects(!showSystemObjects)
-                        }
-                        checked={showSystemObjects}
-                      >{t`System objects`}</SettingsRow>
-                    )}
+                    <SettingsRow
+                      startElement={<IconSettings />}
+                      onCheckedChange={() =>
+                        setShowSystemObjects(!showSystemObjects)
+                      }
+                      checked={showSystemObjects}
+                    >{t`System objects`}</SettingsRow>
                   </Dropdown.Section>
                 </DropdownContent>
               </DropdownRoot>
-            )}
+            }
           />
         </StyledSearchInputContainer>
       )}

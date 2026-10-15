@@ -27,7 +27,7 @@ import { Temporal } from 'temporal-polyfill';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
 export const useCalendarEventComposer = ({
@@ -274,7 +274,7 @@ export const useCalendarEventComposer = ({
           await refetchTimelineCalendarEvents();
         } else {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Failed to link the related records to this event`,
           });
         }

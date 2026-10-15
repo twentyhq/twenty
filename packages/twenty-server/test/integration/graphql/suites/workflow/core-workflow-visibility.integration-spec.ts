@@ -11,19 +11,30 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
+import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
 import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
-import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import {
+  activateCoreWorkflowVersion,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  findCoreWorkflowVersion,
+  linkCoreWorkflowToLegacyWorkspaceIds,
+  runCoreWorkflowVersion,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { type AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
-import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -49,9 +60,6 @@ const metadataRequestAs = (
 
 const asOtherMember = (query: string, variables?: object) =>
   graphqlRequestAs(APPLE_JONY_MEMBER_ACCESS_TOKEN, query, variables);
-
-const asApiKey = (query: string, variables?: object) =>
-  graphqlRequestAs(API_KEY_ACCESS_TOKEN, query, variables);
 
 const CORE_WORKFLOW_BY_ID_QUERY = `
   query CoreWorkflowById($coreWorkflowId: UUID!) {
@@ -86,6 +94,14 @@ const CORE_WORKFLOW_VERSION_QUERY = `
   }
 `;
 
+const CORE_WORKFLOW_VERSIONS_QUERY = `
+  query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
+    coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
+      workspaceWorkflowVersionId
+    }
+  }
+`;
+
 const COMPUTE_STEP_OUTPUT_SCHEMA_MUTATION = `
   mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
     computeStepOutputSchema(input: $input)
@@ -103,26 +119,11 @@ const UPDATE_VISIBILITY_MUTATION = `
   }
 `;
 
-const LEGACY_RUN_MUTATION = `
-  mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
-    runWorkflowVersion(input: $input) {
+const RUN_MUTATION = `
+  mutation RunCoreWorkflowVersion($input: RunCoreWorkflowVersionInput!) {
+    runCoreWorkflowVersion(input: $input) {
       workflowRunId
     }
-  }
-`;
-
-const CREATE_CORE_WORKFLOW_MUTATION = `
-  mutation CreateCoreWorkflow($input: CreateCoreWorkflowInput!) {
-    createCoreWorkflow(input: $input) {
-      id
-      workspaceWorkflowId
-    }
-  }
-`;
-
-const ACTIVATE_VERSION_MUTATION = `
-  mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-    activateWorkflowVersion(workflowVersionId: $workflowVersionId)
   }
 `;
 
@@ -146,49 +147,30 @@ const listCoreWorkflowIds = async (
   );
 };
 
-const DESTROY_WORKFLOW_MUTATION = `
-  mutation DestroyWorkflow($id: UUID!) {
-    destroyWorkflow(id: $id) {
-      id
-    }
-  }
-`;
-
-const createActiveManualWorkflow = async (name: string) => {
-  const createResponse = await workflowGraphqlRequest(
-    CREATE_CORE_WORKFLOW_MUTATION,
-    { input: { name } },
-  );
-
-  expect(createResponse.body.errors).toBeUndefined();
-
-  const coreWorkflowId: string = createResponse.body.data.createCoreWorkflow.id;
-  const workspaceWorkflowId: string =
-    createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
-
-  const versions = await pollWorkflowGraphqlRequest<
-    {
-      coreWorkflowVersions: { workspaceWorkflowVersionId: string | null }[];
-    },
-    { workspaceWorkflowVersionId: string | null }[] | undefined
-  >({
-    query: `
-      query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
-        coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
-          workspaceWorkflowVersionId
-        }
-      }
-    `,
-    variables: { workspaceWorkflowId },
-    extract: (data) => data?.coreWorkflowVersions,
-    until: (coreWorkflowVersions) =>
-      isDefined(coreWorkflowVersions?.[0]?.workspaceWorkflowVersionId),
+const createWorkflowWithLegacyIds = async (name: string) => {
+  const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
+    name,
   });
 
-  const workspaceWorkflowVersionId = versions![0].workspaceWorkflowVersionId!;
+  const { workspaceWorkflowId } = await linkCoreWorkflowToLegacyWorkspaceIds({
+    coreWorkflowId,
+  });
 
-  await updateWorkflowVersionTrigger({
-    workflowVersionId: workspaceWorkflowVersionId,
+  const { workspaceWorkflowVersionId } = await findCoreWorkflowVersion({
+    coreWorkflowVersionId,
+  });
+
+  return {
+    coreWorkflowId,
+    coreWorkflowVersionId,
+    workspaceWorkflowId,
+    workspaceWorkflowVersionId: workspaceWorkflowVersionId!,
+  };
+};
+
+const activateManualTrigger = async (coreWorkflowVersionId: string) => {
+  await updateCoreWorkflowVersionTrigger({
+    coreWorkflowVersionId,
     trigger: {
       name: 'Manual Trigger',
       type: 'MANUAL',
@@ -198,36 +180,20 @@ const createActiveManualWorkflow = async (name: string) => {
     },
   });
 
-  const stepResponse = await workflowGraphqlRequest(
-    `
-      mutation CreateWorkflowVersionStep(
-        $input: CreateWorkflowVersionStepInput!
-      ) {
-        createWorkflowVersionStep(input: $input) {
-          stepsDiff
-        }
-      }
-    `,
-    {
-      input: {
-        workflowVersionId: workspaceWorkflowVersionId,
-        stepType: 'FIND_RECORDS',
-        parentStepId: 'trigger',
-        position: { x: 200, y: 0 },
-      },
-    },
-  );
+  await createCoreWorkflowVersionStep({
+    coreWorkflowVersionId,
+    stepType: 'FIND_RECORDS',
+  });
 
-  expect(stepResponse.body.errors).toBeUndefined();
+  await activateCoreWorkflowVersion({ coreWorkflowVersionId });
+};
 
-  const activateResponse = await workflowGraphqlRequest(
-    ACTIVATE_VERSION_MUTATION,
-    { workflowVersionId: workspaceWorkflowVersionId },
-  );
+const createActiveManualWorkflow = async (name: string) => {
+  const createdWorkflow = await createCoreWorkflow({ name });
 
-  expect(activateResponse.body.errors).toBeUndefined();
+  await activateManualTrigger(createdWorkflow.coreWorkflowVersionId);
 
-  return { coreWorkflowId, workspaceWorkflowId, workspaceWorkflowVersionId };
+  return createdWorkflow;
 };
 
 // The record API the run pages read, not the core workflow API #26243 already gates.
@@ -261,6 +227,7 @@ const findRecordIds = async (
 describe('core workflow visibility (e2e)', () => {
   let workspaceWorkflowId: string;
   let coreWorkflowId: string;
+  let coreWorkflowVersionId: string;
   let workspaceWorkflowVersionId: string;
   let originalMemberRoleId: string;
   let workflowsRoleId: string;
@@ -308,51 +275,18 @@ describe('core workflow visibility (e2e)', () => {
       },
     });
 
-    const createResponse = await workflowGraphqlRequest(
-      CREATE_CORE_WORKFLOW_MUTATION,
-      { input: { name: 'Private Workflow Access' } },
-    );
-
-    expect(createResponse.body.errors).toBeUndefined();
-    coreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
-    workspaceWorkflowId =
-      createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
-
-    const versions = await pollWorkflowGraphqlRequest<
-      {
-        coreWorkflowVersions: { workspaceWorkflowVersionId: string | null }[];
-      },
-      { workspaceWorkflowVersionId: string | null }[] | undefined
-    >({
-      query: `
-        query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
-          coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
-            workspaceWorkflowVersionId
-          }
-        }
-      `,
-      variables: { workspaceWorkflowId },
-      extract: (data) => data?.coreWorkflowVersions,
-      until: (coreWorkflowVersions) =>
-        isDefined(coreWorkflowVersions?.[0]?.workspaceWorkflowVersionId),
-    });
-
-    workspaceWorkflowVersionId = versions![0].workspaceWorkflowVersionId!;
+    ({
+      coreWorkflowId,
+      coreWorkflowVersionId,
+      workspaceWorkflowId,
+      workspaceWorkflowVersionId,
+    } = await createWorkflowWithLegacyIds('Private Workflow Access'));
   });
 
   afterAll(async () => {
-    if (isDefined(workspaceWorkflowId)) {
+    if (isDefined(coreWorkflowId)) {
       await setVisibility(coreWorkflowId, WorkflowVisibility.WORKSPACE);
-      await workflowGraphqlRequest(
-        `
-          mutation DestroyWorkflow($id: UUID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        { id: workspaceWorkflowId },
-      );
+      await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
 
     if (isDefined(workflowsRoleId)) {
@@ -397,51 +331,25 @@ describe('core workflow visibility (e2e)', () => {
   // Pre-visibility workflows and those whose creator left (owner FK is ON DELETE SET NULL) have no owner,
   // and without a claim nobody could reach them while they still run.
   describe('an ownerless workflow', () => {
-    let ownerlessWorkspaceWorkflowId: string;
     let ownerlessCoreWorkflowId: string;
 
     beforeAll(async () => {
-      const createResponse = await workflowGraphqlRequest(`
-        mutation {
-          createWorkflow(data: { name: "Ownerless Workflow" }) {
-            id
-          }
-        }
-      `);
+      ({ coreWorkflowId: ownerlessCoreWorkflowId } = await createCoreWorkflow({
+        name: 'Ownerless Workflow',
+      }));
 
-      expect(createResponse.body.errors).toBeUndefined();
-      ownerlessWorkspaceWorkflowId = createResponse.body.data.createWorkflow.id;
-
-      const coreWorkflow = await pollWorkflowGraphqlRequest<
-        { coreWorkflow: { id: string } | null },
-        { id: string } | null | undefined
-      >({
-        query: `
-          query CoreWorkflow($workspaceWorkflowId: UUID!) {
-            coreWorkflow(workspaceWorkflowId: $workspaceWorkflowId) {
-              id
-            }
-          }
-        `,
-        variables: { workspaceWorkflowId: ownerlessWorkspaceWorkflowId },
-        extract: (data) => data?.coreWorkflow,
-        until: isDefined,
-      });
-
-      ownerlessCoreWorkflowId = coreWorkflow!.id;
+      await global.testDataSource.query(
+        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL WHERE id = $1`,
+        [ownerlessCoreWorkflowId],
+      );
     });
 
     afterAll(async () => {
-      await workflowGraphqlRequest(
-        `
-          mutation DestroyWorkflow($id: UUID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        { id: ownerlessWorkspaceWorkflowId },
-      );
+      if (isDefined(ownerlessCoreWorkflowId)) {
+        await deleteCoreWorkflows({
+          coreWorkflowIds: [ownerlessCoreWorkflowId],
+        });
+      }
     });
 
     it('is claimable by any member who can already edit it', async () => {
@@ -551,6 +459,57 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.coreWorkflowVersion ?? null).toBeNull();
     });
 
+    it('returns no versions for a legacy id that no core workflow carries', async () => {
+      await global.testDataSource.query(
+        `UPDATE core."workflow" SET "workspaceWorkflowId" = NULL WHERE id = $1`,
+        [coreWorkflowId],
+      );
+
+      try {
+        const response = await asOtherMember(CORE_WORKFLOW_VERSIONS_QUERY, {
+          workspaceWorkflowId,
+        });
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.coreWorkflowVersions).toEqual([]);
+      } finally {
+        await global.testDataSource.query(
+          `UPDATE core."workflow" SET "workspaceWorkflowId" = $2 WHERE id = $1`,
+          [coreWorkflowId, workspaceWorkflowId],
+        );
+      }
+    });
+
+    it('lists versions through their core workflow, not their legacy workflow id', async () => {
+      await global.testDataSource.query(
+        `UPDATE core."workflowVersion" SET "workflowId" = NULL WHERE "coreWorkflowId" = $1`,
+        [coreWorkflowId],
+      );
+
+      try {
+        const response = await workflowGraphqlRequest(
+          CORE_WORKFLOW_VERSIONS_QUERY,
+          { workspaceWorkflowId },
+        );
+
+        expect(response.body.errors).toBeUndefined();
+        expect(
+          response.body.data.coreWorkflowVersions.map(
+            ({
+              workspaceWorkflowVersionId,
+            }: {
+              workspaceWorkflowVersionId: string;
+            }) => workspaceWorkflowVersionId,
+          ),
+        ).toContain(workspaceWorkflowVersionId);
+      } finally {
+        await global.testDataSource.query(
+          `UPDATE core."workflowVersion" SET "workflowId" = $2 WHERE "coreWorkflowId" = $1`,
+          [coreWorkflowId, workspaceWorkflowId],
+        );
+      }
+    });
+
     // This resolver reads version content straight from its id, bypassing the workflow lookup.
     it('refuses to compute a step output schema from its version for another member', async () => {
       const response = await asOtherMember(
@@ -558,7 +517,7 @@ describe('core workflow visibility (e2e)', () => {
         {
           input: {
             step: { type: 'MANUAL', settings: { outputSchema: {} } },
-            workflowVersionId: workspaceWorkflowVersionId,
+            coreWorkflowVersionId,
           },
         },
       );
@@ -567,24 +526,13 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.computeStepOutputSchema ?? null).toBeNull();
     });
 
-    // The legacy resolver uses the mirror's ids and never goes through CoreWorkflowIdResolutionService.
-    it('refuses to run it from the legacy API for another member', async () => {
-      const response = await asOtherMember(LEGACY_RUN_MUTATION, {
-        input: { workflowVersionId: workspaceWorkflowVersionId },
+    it('refuses to run it for another member', async () => {
+      const response = await asOtherMember(RUN_MUTATION, {
+        input: { coreWorkflowVersionId },
       });
 
       expect(response.body.errors).toBeDefined();
-      expect(response.body.data?.runWorkflowVersion ?? null).toBeNull();
-    });
-
-    // Unlike the core workflow API, WorkflowTriggerResolver's AuthPrincipalGuard accepts API keys.
-    it('refuses to activate it for an API key', async () => {
-      const response = await asApiKey(ACTIVATE_VERSION_MUTATION, {
-        workflowVersionId: workspaceWorkflowVersionId,
-      });
-
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.data?.activateWorkflowVersion ?? null).toBeNull();
+      expect(response.body.data?.runCoreWorkflowVersion ?? null).toBeNull();
     });
 
     it('refuses to let another member publish it back to the workspace', async () => {
@@ -610,11 +558,13 @@ describe('core workflow visibility (e2e)', () => {
 
   // Activating a manual trigger writes a workspace-wide command menu item carrying the workflow name.
   describe('a workflow with an active manual trigger', () => {
-    let manualWorkspaceWorkflowId: string;
     let manualCoreWorkflowId: string;
     let manualWorkspaceWorkflowVersionId: string;
 
-    const listCommandMenuItemWorkflowVersionIds = async (token: string) => {
+    const listCommandMenuItemValues = async (
+      token: string,
+      field: 'id' | 'workflowVersionId' = 'workflowVersionId',
+    ) => {
       const { data } = await findCommandMenuItems({
         expectToFail: false,
         gqlFields: 'id workflowVersionId',
@@ -623,39 +573,32 @@ describe('core workflow visibility (e2e)', () => {
       });
 
       return data.commandMenuItems.map(
-        ({ workflowVersionId }) => workflowVersionId,
+        (commandMenuItem) => commandMenuItem[field],
       );
     };
 
     beforeAll(async () => {
-      ({
-        coreWorkflowId: manualCoreWorkflowId,
-        workspaceWorkflowId: manualWorkspaceWorkflowId,
-        workspaceWorkflowVersionId: manualWorkspaceWorkflowVersionId,
-      } = await createActiveManualWorkflow('Manual Trigger Workflow'));
+      const createdWorkflow = await createWorkflowWithLegacyIds(
+        'Manual Trigger Workflow',
+      );
+
+      await activateManualTrigger(createdWorkflow.coreWorkflowVersionId);
+
+      manualCoreWorkflowId = createdWorkflow.coreWorkflowId;
+      manualWorkspaceWorkflowVersionId =
+        createdWorkflow.workspaceWorkflowVersionId;
     });
 
     afterAll(async () => {
-      if (isDefined(manualWorkspaceWorkflowId)) {
+      if (isDefined(manualCoreWorkflowId)) {
         await setVisibility(manualCoreWorkflowId, WorkflowVisibility.WORKSPACE);
-        await workflowGraphqlRequest(
-          `
-            mutation DestroyWorkflow($id: UUID!) {
-              destroyWorkflow(id: $id) {
-                id
-              }
-            }
-          `,
-          { id: manualWorkspaceWorkflowId },
-        );
+        await deleteCoreWorkflows({ coreWorkflowIds: [manualCoreWorkflowId] });
       }
     });
 
     it('puts its command menu item in every member command menu', async () => {
       expect(
-        await listCommandMenuItemWorkflowVersionIds(
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        ),
+        await listCommandMenuItemValues(APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).toContain(manualWorkspaceWorkflowVersionId);
     });
 
@@ -668,50 +611,73 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
 
       expect(
-        await listCommandMenuItemWorkflowVersionIds(
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        ),
+        await listCommandMenuItemValues(APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).not.toContain(manualWorkspaceWorkflowVersionId);
       expect(
-        await listCommandMenuItemWorkflowVersionIds(
-          APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        ),
+        await listCommandMenuItemValues(APPLE_JANE_ADMIN_ACCESS_TOKEN),
       ).toContain(manualWorkspaceWorkflowVersionId);
+    });
+
+    it('takes out an item that only carries the core version id', async () => {
+      await setVisibility(manualCoreWorkflowId, WorkflowVisibility.PRIVATE);
+
+      const versionResponse = await workflowGraphqlRequest(
+        CORE_WORKFLOW_VERSION_QUERY,
+        { workspaceWorkflowVersionId: manualWorkspaceWorkflowVersionId },
+      );
+      const coreWorkflowVersionId: string =
+        versionResponse.body.data.coreWorkflowVersion.id;
+
+      const { data } = await createCommandMenuItem({
+        expectToFail: false,
+        input: {
+          coreWorkflowVersionId,
+          engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+          label: 'Core-only manual trigger',
+        },
+        gqlFields: 'id',
+      });
+      const coreOnlyCommandMenuItemId = data.createCommandMenuItem.id;
+
+      try {
+        expect(
+          await listCommandMenuItemValues(APPLE_JONY_MEMBER_ACCESS_TOKEN, 'id'),
+        ).not.toContain(coreOnlyCommandMenuItemId);
+        expect(
+          await listCommandMenuItemValues(APPLE_JANE_ADMIN_ACCESS_TOKEN, 'id'),
+        ).toContain(coreOnlyCommandMenuItemId);
+      } finally {
+        await deleteCommandMenuItem({
+          expectToFail: false,
+          input: { id: coreOnlyCommandMenuItemId },
+        });
+      }
     });
   });
 
   describe('the runs of a workflow', () => {
     let runsCoreWorkflowId: string;
-    let runsWorkspaceWorkflowId: string;
-    let runsWorkspaceWorkflowVersionId: string;
+    let runsCoreWorkflowVersionId: string;
     let workflowRunId: string;
 
-    const runWorkflow = async () => {
-      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
-        input: { workflowVersionId: runsWorkspaceWorkflowVersionId },
+    const runWorkflow = () =>
+      runCoreWorkflowVersion({
+        coreWorkflowVersionId: runsCoreWorkflowVersionId,
       });
-
-      expect(runResponse.body.errors).toBeUndefined();
-
-      return runResponse.body.data.runWorkflowVersion.workflowRunId as string;
-    };
 
     beforeAll(async () => {
       ({
         coreWorkflowId: runsCoreWorkflowId,
-        workspaceWorkflowId: runsWorkspaceWorkflowId,
-        workspaceWorkflowVersionId: runsWorkspaceWorkflowVersionId,
+        coreWorkflowVersionId: runsCoreWorkflowVersionId,
       } = await createActiveManualWorkflow('Workflow With Runs'));
 
       workflowRunId = await runWorkflow();
     });
 
     afterAll(async () => {
-      if (isDefined(runsWorkspaceWorkflowId)) {
+      if (isDefined(runsCoreWorkflowId)) {
         await setVisibility(runsCoreWorkflowId, WorkflowVisibility.WORKSPACE);
-        await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
-          id: runsWorkspaceWorkflowId,
-        });
+        await deleteCoreWorkflows({ coreWorkflowIds: [runsCoreWorkflowId] });
       }
     });
 
@@ -774,7 +740,6 @@ describe('core workflow visibility (e2e)', () => {
   // An agent step's conversation belongs to its recipient, or else the workflow's creator, whatever the workflow's visibility.
   describe('the conversation an agent step records on a run', () => {
     let conversationCoreWorkflowId: string;
-    let conversationWorkspaceWorkflowId: string;
     let workflowRunId: string;
     let threadId: string;
 
@@ -796,20 +761,16 @@ describe('core workflow visibility (e2e)', () => {
       );
 
     beforeAll(async () => {
-      let workspaceWorkflowVersionId: string;
+      let conversationCoreWorkflowVersionId: string;
 
       ({
         coreWorkflowId: conversationCoreWorkflowId,
-        workspaceWorkflowId: conversationWorkspaceWorkflowId,
-        workspaceWorkflowVersionId,
+        coreWorkflowVersionId: conversationCoreWorkflowVersionId,
       } = await createActiveManualWorkflow('Workflow With A Conversation'));
 
-      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
-        input: { workflowVersionId: workspaceWorkflowVersionId },
+      workflowRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: conversationCoreWorkflowVersionId,
       });
-
-      expect(runResponse.body.errors).toBeUndefined();
-      workflowRunId = runResponse.body.data.runWorkflowVersion.workflowRunId;
 
       const conversationService =
         getAppProviderByClassName<WorkflowAgentConversationWorkspaceService>(
@@ -824,22 +785,32 @@ describe('core workflow visibility (e2e)', () => {
         threadKey: `${workflowRunId}:trigger`,
       }));
 
-      const turnId = await conversationService.openTurn({
-        runInfo: { workspaceId: SEED_APPLE_WORKSPACE_ID, workflowRunId },
+      const runConversationService =
+        getAppProviderByClassName<AgentRunConversationService>(
+          'AgentRunConversationService',
+        );
+
+      const turnId = await runConversationService.openTurn({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
+        title: 'Summarize the lead',
         agentId: null,
-        prompt: 'Summarize the lead',
-        initiatorUserWorkspaceId: null,
+        senderUserWorkspaceId: null,
+        senderApplicationId: null,
+        messages: [{ role: 'user', content: 'Summarize the lead' }],
+        createdBy: await conversationService.findTurnCreatedBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workflowRunId,
+        }),
       });
 
-      await conversationService.closeTurn({
+      await runConversationService.closeTurn({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
         turnId,
-        workflowStep: { workflowRunId, stepId: 'trigger' },
         title: 'Summarize the lead',
         agentId: null,
-        executionResult: {
+        execution: {
           steps: [
             { content: [{ type: 'text', text: 'A warm lead.' }] },
           ] as AgentExecutionResult['steps'],
@@ -848,34 +819,18 @@ describe('core workflow visibility (e2e)', () => {
     });
 
     afterAll(async () => {
-      if (isDefined(conversationWorkspaceWorkflowId)) {
+      if (isDefined(conversationCoreWorkflowId)) {
         await setVisibility(
           conversationCoreWorkflowId,
           WorkflowVisibility.WORKSPACE,
         );
-        await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
-          id: conversationWorkspaceWorkflowId,
+        await deleteCoreWorkflows({
+          coreWorkflowIds: [conversationCoreWorkflowId],
         });
       }
     });
 
-    it('points the step at the conversation, which holds the prompt and the reply', async () => {
-      const runResponse = await workflowGraphqlRequest(
-        `
-          query FindRun($id: UUID!) {
-            workflowRun(filter: { id: { eq: $id } }) {
-              state
-            }
-          }
-        `,
-        { id: workflowRunId },
-      );
-
-      expect(runResponse.body.errors).toBeUndefined();
-      expect(
-        runResponse.body.data.workflowRun.state.stepInfos.trigger.threadId,
-      ).toBe(threadId);
-
+    it('records the conversation, which holds the prompt and the reply', async () => {
       const response = await readConversation(APPLE_JANE_ADMIN_ACCESS_TOKEN);
 
       expect(response.body.errors).toBeUndefined();
@@ -906,49 +861,21 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.chatThread ?? null).toBeNull();
       expect(response.body.errors).toBeDefined();
     });
-
-    it('keeps the conversation of an attempt that is retried in the step history', async () => {
-      await getAppProviderByClassName<WorkflowRunWorkspaceService>(
-        'WorkflowRunWorkspaceService',
-      ).moveStepToRetry({
-        stepId: 'trigger',
-        error: 'The agent failed',
-        workflowRunId,
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-      });
-
-      const [{ state }] = await global.testDataSource.query(
-        `SELECT state FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workflowRun" WHERE id = $1`,
-        [workflowRunId],
-      );
-
-      expect(state.stepInfos.trigger.status).toBe('PENDING');
-      expect(state.stepInfos.trigger.threadId).toBeUndefined();
-      const { history } = state.stepInfos.trigger;
-
-      expect(history[history.length - 1]).toMatchObject({
-        status: 'FAILED',
-        error: 'The agent failed',
-        threadId,
-      });
-    });
   });
 
   // Removing a member deletes the membership, which nulls the creator of every workflow they created.
   describe('the runs of a private workflow whose creator is removed from the workspace', () => {
     const removedUserId = randomUUID();
     const removedUserWorkspaceId = randomUUID();
-    let orphanedWorkflowId: string;
     let orphanedCoreWorkflowId: string;
     let orphanedRunId: string;
 
     beforeAll(async () => {
-      let orphanedWorkflowVersionId: string;
+      let orphanedCoreWorkflowVersionId: string;
 
       ({
         coreWorkflowId: orphanedCoreWorkflowId,
-        workspaceWorkflowId: orphanedWorkflowId,
-        workspaceWorkflowVersionId: orphanedWorkflowVersionId,
+        coreWorkflowVersionId: orphanedCoreWorkflowVersionId,
       } = await createActiveManualWorkflow('Workflow Of A Removed Member'));
 
       expect(
@@ -960,12 +887,9 @@ describe('core workflow visibility (e2e)', () => {
         ).body.errors,
       ).toBeUndefined();
 
-      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
-        input: { workflowVersionId: orphanedWorkflowVersionId },
+      orphanedRunId = await runCoreWorkflowVersion({
+        coreWorkflowVersionId: orphanedCoreWorkflowVersionId,
       });
-
-      expect(runResponse.body.errors).toBeUndefined();
-      orphanedRunId = runResponse.body.data.runWorkflowVersion.workflowRunId;
 
       await global.testDataSource.query(
         `INSERT INTO core."user" (id, email) VALUES ($1, $2)`,
@@ -982,11 +906,6 @@ describe('core workflow visibility (e2e)', () => {
     });
 
     afterAll(async () => {
-      if (isDefined(orphanedWorkflowId)) {
-        await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
-          id: orphanedWorkflowId,
-        });
-      }
       await global.testDataSource.query(
         `DELETE FROM core."userWorkspace" WHERE id = $1`,
         [removedUserWorkspaceId],
@@ -995,6 +914,12 @@ describe('core workflow visibility (e2e)', () => {
         `DELETE FROM core."user" WHERE id = $1`,
         [removedUserId],
       );
+
+      if (isDefined(orphanedCoreWorkflowId)) {
+        await deleteCoreWorkflows({
+          coreWorkflowIds: [orphanedCoreWorkflowId],
+        });
+      }
     });
 
     it('become readable to the workspace, as core now shows the workflow', async () => {

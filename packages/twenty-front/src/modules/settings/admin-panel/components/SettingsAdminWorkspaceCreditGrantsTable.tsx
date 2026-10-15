@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -101,7 +101,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
         variables: { workspaceId, creditGrantId },
       });
 
-      enqueueToast({ variant: 'success', children: t`Credit grant revoked.` });
+      enqueueToast({ status: 'success', children: t`Credit grant revoked.` });
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     } finally {

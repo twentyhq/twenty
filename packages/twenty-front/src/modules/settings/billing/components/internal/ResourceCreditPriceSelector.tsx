@@ -13,7 +13,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   IconAdjustments,
   IconArrowUp,
@@ -307,13 +307,13 @@ export const ResourceCreditPriceSelector = ({
         },
       );
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Resource credits updated.`,
       });
       setSelectedPriceId(undefined);
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update resource credits.`,
       });
 

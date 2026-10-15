@@ -9,10 +9,6 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-
-  & > :first-child {
-    flex: 1;
-  }
 `;
 
 const StyledUnitSelect = styled.select`

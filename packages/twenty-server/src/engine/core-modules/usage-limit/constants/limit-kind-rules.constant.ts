@@ -8,17 +8,20 @@ export const LIMIT_KIND_RULES: Record<LimitKind, LimitKindRule> = {
     allowedPeriodUnits: ['second'],
     requiredPeriodCount: null,
     isBurstValueAllowed: true,
+    isZeroLimitValueAllowed: false,
   },
   quota: {
     isAllOperationTypeAllowed: true,
     allowedPeriodUnits: ANCHORED_PERIOD_UNITS,
     requiredPeriodCount: 1,
     isBurstValueAllowed: false,
+    isZeroLimitValueAllowed: true,
   },
   stock: {
     isAllOperationTypeAllowed: false,
     allowedPeriodUnits: ['lifetime'],
     requiredPeriodCount: 1,
     isBurstValueAllowed: false,
+    isZeroLimitValueAllowed: false,
   },
 };

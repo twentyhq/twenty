@@ -1,3 +1,4 @@
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -13,9 +14,12 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import {
+  ListItemButton,
+  MenuItemDraggable,
+} from 'twenty-ui/components/navigation';
 import { IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {
@@ -96,7 +100,12 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
       <DropdownMenuItemsContainer>
         {isDefined(fieldMetadataItemLabelIdentifier) && (
           <MenuItemDraggable
-            LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+            LeftComponent={
+              <ApplicationStackIcon
+                Icon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+                applicationId={fieldMetadataItemLabelIdentifier.applicationId}
+              />
+            }
             text={fieldMetadataItemLabelIdentifier.label}
             accent="placeholder"
             gripMode="always"
@@ -120,7 +129,12 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                       index={index}
                       itemComponent={
                         <MenuItemDraggable
-                          LeftIcon={getIcon(fieldMetadataItem.icon)}
+                          LeftComponent={
+                            <ApplicationStackIcon
+                              Icon={getIcon(fieldMetadataItem.icon)}
+                              applicationId={fieldMetadataItem.applicationId}
+                            />
+                          }
                           iconButtons={
                             <LightIconButton
                               aria-label={t`Hide field`}
@@ -145,12 +159,11 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
-        <ListItem
+        <ListItemButton
           onClick={onShowHiddenFields}
           startIcon={<IconEyeOff />}
-          render={<button type="button" />}
           hasSubmenu
-        >{t`Hidden Fields`}</ListItem>
+        >{t`Hidden Fields`}</ListItemButton>
       </DropdownMenuItemsContainer>
     </LegacyDropdownContent>
   );

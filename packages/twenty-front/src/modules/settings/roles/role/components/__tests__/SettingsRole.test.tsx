@@ -24,7 +24,7 @@ jest.mock('@/settings/roles/components/SettingsRolesQueryEffect', () => ({
   SettingsRolesQueryEffect: () => null,
 }));
 
-jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
+jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div>Role unavailable</div>,
 }));
 
@@ -40,8 +40,8 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
 }));
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -103,6 +103,7 @@ const PERSISTED_ROLE: RoleWithPartialMembers = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
+  applicationId: 'application-id',
   isEditable: true,
   workspaceMembers: [],
   agents: [],
@@ -212,7 +213,7 @@ describe('SettingsRole', () => {
 
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        variant: 'error',
+        status: 'error',
         children: 'Role name cannot be empty',
       }),
     );
@@ -265,7 +266,7 @@ describe('SettingsRole', () => {
       expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     });
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error' }),
+      expect.objectContaining({ status: 'error' }),
     );
     expect(mockLoadCurrentUser).not.toHaveBeenCalled();
     expect(saveButton).not.toHaveAttribute('aria-busy', 'true');

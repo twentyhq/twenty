@@ -4,7 +4,7 @@ export const getSyncErrorRecoveryHint = (
   const normalizedMessage = (message ?? '').toLowerCase();
 
   if (normalizedMessage.includes('not installed')) {
-    return 'Hint: run `yarn twenty dev --once` to register the app in this workspace, then retry.';
+    return 'Hint: run `yarn twenty apply` to register the app in this workspace, then retry.';
   }
 
   if (
@@ -12,7 +12,7 @@ export const getSyncErrorRecoveryHint = (
     normalizedMessage.includes('universalidentifier') ||
     /migration action .* failed/.test(normalizedMessage)
   ) {
-    return 'Hint: a metadata conflict was detected. Preview the plan with `yarn twenty dev --once --dry-run`; if it persists, run `yarn twenty app:uninstall -y` then sync again.';
+    return 'Hint: a metadata conflict was detected. Preview the plan with `yarn twenty plan`; if it persists, run `yarn twenty app:uninstall -y` then sync again.';
   }
 
   return undefined;

@@ -23,8 +23,8 @@ import {
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
-import { Section } from 'twenty-ui/components';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
@@ -138,12 +138,12 @@ export const SettingsDevelopersApiKeysNew = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`MCP & APIs`,
+          children: t`Developers`,
           href: getSettingsPath(
-            SettingsPath.ApiWebhooks,
+            SettingsPath.Developers,
             undefined,
             undefined,
-            SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+            SETTINGS_DEVELOPERS_TABS.TABS_IDS.API,
           ),
         },
         { children: t`New Key` },
@@ -153,11 +153,11 @@ export const SettingsDevelopersApiKeysNew = () => {
           isSaveDisabled={!canSave}
           onCancel={() => {
             navigateSettings(
-              SettingsPath.ApiWebhooks,
+              SettingsPath.Developers,
               undefined,
               undefined,
               undefined,
-              SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+              SETTINGS_DEVELOPERS_TABS.TABS_IDS.API,
             );
           }}
           onSave={handleSave}

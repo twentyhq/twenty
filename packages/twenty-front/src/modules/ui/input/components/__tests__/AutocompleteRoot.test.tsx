@@ -66,6 +66,54 @@ const AutocompleteExample = ({
 };
 
 describe('AutocompleteRoot', () => {
+  it('dismisses a picker before activating the outside target on a later click', async () => {
+    const user = userEvent.setup();
+    const store = createStore();
+    const onOutsideClick = jest.fn();
+
+    render(
+      <JotaiProvider store={store}>
+        <AutocompleteExample />
+        <button onClick={onOutsideClick}>Outside action</button>
+      </JotaiProvider>,
+    );
+
+    const outsideButton = screen.getByRole('button', {
+      name: 'Outside action',
+    });
+    await user.type(screen.getByRole('combobox'), 'Pa');
+    await user.click(outsideButton);
+
+    await waitFor(() =>
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
+    expect(onOutsideClick).not.toHaveBeenCalled();
+    expect(store.get(focusStackState.atom)).toEqual([]);
+
+    await user.click(outsideButton);
+
+    expect(onOutsideClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('allows an outside target to activate after keyboard dismissal', async () => {
+    const user = userEvent.setup();
+    const store = createStore();
+    const onOutsideClick = jest.fn();
+
+    render(
+      <JotaiProvider store={store}>
+        <AutocompleteExample />
+        <button onClick={onOutsideClick}>Outside action</button>
+      </JotaiProvider>,
+    );
+
+    await user.type(screen.getByRole('combobox'), 'Pa');
+    await user.keyboard('{Escape}');
+    await user.click(screen.getByRole('button', { name: 'Outside action' }));
+
+    expect(onOutsideClick).toHaveBeenCalledTimes(1);
+  });
+
   it('keeps input focus while navigating and restores the focus stack on Escape', async () => {
     const user = userEvent.setup();
     const store = createStore();
@@ -288,11 +336,13 @@ describe('AutocompleteRoot', () => {
     expect(screen.getByRole('listbox')).toBeVisible();
     unmount();
 
-    expect(
-      store.get(
-        isDropdownOpenComponentState.atomFamily({ instanceId: DROPDOWN_ID }),
-      ),
-    ).toBe(false);
+    await waitFor(() =>
+      expect(
+        store.get(
+          isDropdownOpenComponentState.atomFamily({ instanceId: DROPDOWN_ID }),
+        ),
+      ).toBe(false),
+    );
     expect(store.get(focusStackState.atom)).toEqual([]);
   });
 });

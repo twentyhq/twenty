@@ -2,7 +2,7 @@ import { useActiveStyles, useBlockNoteEditor } from '@blocknote/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DashboardColorIcon } from '@/page-layout/widgets/standalone-rich-text/components/DashboardColorIcon';
@@ -14,10 +14,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 const StyledColorButton = styled.button`
   align-items: center;
-  background: transparent;
-  border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
   display: flex;
   height: 24px;
   justify-content: center;
@@ -70,7 +67,6 @@ export const DashboardFormattingToolbarColorButton = () => {
       />
       <DropdownContent
         sideOffset={8}
-        className="bn-ui-container"
         aria-label={t`Text and background colors`}
         finalFocus={() => {
           editor.focus();

@@ -5,7 +5,7 @@ import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -54,7 +54,7 @@ export const useCreateCoreAgent = () => {
     } catch (error) {
       logError(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to create agent`,
       });
 
@@ -65,7 +65,7 @@ export const useCreateCoreAgent = () => {
 
     if (!isDefined(coreAgentId)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to create agent`,
       });
 

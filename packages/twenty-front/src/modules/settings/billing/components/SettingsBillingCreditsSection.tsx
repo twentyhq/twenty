@@ -23,7 +23,7 @@ import { t } from '@lingui/core/macro';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconChartBar,
   IconCoins,
@@ -37,8 +37,7 @@ import {
   PermissionFlagType,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-
-const MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE = 4;
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledSettingsBillingCardBody = styled.div`
   display: flex;
@@ -182,10 +181,6 @@ export const SettingsBillingCreditsSection = ({
     100,
     Math.max(0, remainingCreditsPercentage),
   );
-  const isCreditsEmpty = clampedRemainingCreditsPercentage === 0;
-  const displayedProgressBarValue = isCreditsEmpty
-    ? MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE
-    : clampedRemainingCreditsPercentage;
 
   // rolloverCredits sums every active grant, not just the rolled-over ones
   const extraCredits = rolloverCredits;
@@ -258,13 +253,10 @@ export const SettingsBillingCreditsSection = ({
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>
           <ProgressBar
-            value={displayedProgressBarValue}
+            value={clampedRemainingCreditsPercentage}
+            aria-label={t`Remaining credits`}
             backgroundColor={themeCssVariables.background.tertiary}
-            barColor={
-              isCreditsEmpty
-                ? themeCssVariables.color.red9
-                : themeCssVariables.color.green9
-            }
+            barColor={themeCssVariables.color.green9}
             withBorderRadius
           />
           <StyledCreditsFooter>
@@ -314,13 +306,7 @@ export const SettingsBillingCreditsSection = ({
         <Button
           startIcon={<IconExternalLink />}
           size="sm"
-          onClick={() =>
-            window.open(
-              creditsDocumentationUrl,
-              '_blank',
-              'noopener,noreferrer',
-            )
-          }
+          onClick={() => openUrlInNewTab(creditsDocumentationUrl)}
           variant="outline"
         >{t`How credits work`}</Button>
       </StyledCreditUsageFooterActions>

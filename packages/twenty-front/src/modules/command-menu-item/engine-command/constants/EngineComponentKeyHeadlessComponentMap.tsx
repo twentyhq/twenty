@@ -14,6 +14,8 @@ import { EditLayoutCommand } from '@/command-menu-item/engine-command/global/com
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
+import { AddRecordsToMessageListCommand } from '@/command-menu-item/engine-command/record/components/AddRecordsToMessageListCommand';
+import { AddViewToMessageListNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/AddViewToMessageListNoSelectionRecordCommand';
 import { RestoreRecordsCommand } from '@/command-menu-item/engine-command/record/components/RestoreRecordsCommand';
 import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
 import { MergeMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/MergeMultipleRecordsCommand';
@@ -60,7 +62,10 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
 import { IconSearch, IconSparkles } from 'twenty-ui/icon';
-import { EngineComponentKey } from '~/generated-metadata/graphql';
+import {
+  AgentChatInboxAction,
+  EngineComponentKey,
+} from '~/generated-metadata/graphql';
 
 export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   EngineComponentKey,
@@ -78,6 +83,10 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.DUPLICATE_MESSAGE_LIST]: (
     <DuplicateMessageListSingleRecordCommand />
+  ),
+  [EngineComponentKey.ADD_TO_MESSAGE_LIST]: <AddRecordsToMessageListCommand />,
+  [EngineComponentKey.ADD_VIEW_TO_MESSAGE_LIST]: (
+    <AddViewToMessageListNoSelectionRecordCommand />
   ),
   [EngineComponentKey.DUPLICATE_WORKFLOW]: (
     <DuplicateWorkflowSingleRecordCommand />
@@ -261,19 +270,28 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatSingleRecordCommand />,
   [EngineComponentKey.SHARE_RECORD]: <ShareRecordCommand />,
   [EngineComponentKey.MARK_AI_CHAT_AS_READ]: (
-    <AgentChatThreadInboxCommand action="read" />
+    <AgentChatThreadInboxCommand action={AgentChatInboxAction.READ} />
   ),
   [EngineComponentKey.MARK_AI_CHAT_AS_UNREAD]: (
-    <AgentChatThreadInboxCommand action="unread" />
+    <AgentChatThreadInboxCommand action={AgentChatInboxAction.UNREAD} />
   ),
   [EngineComponentKey.MARK_AI_CHAT_AS_DONE]: (
-    <AgentChatThreadInboxCommand action="done" />
+    <AgentChatThreadInboxCommand action={AgentChatInboxAction.ARCHIVE} />
   ),
   [EngineComponentKey.REOPEN_AI_CHAT]: (
-    <AgentChatThreadInboxCommand action="reopen" />
+    <AgentChatThreadInboxCommand action={AgentChatInboxAction.MOVE_TO_INBOX} />
   ),
   [EngineComponentKey.SNOOZE_AI_CHAT]: (
-    <AgentChatThreadInboxCommand action="snooze" />
+    <AgentChatThreadInboxCommand action={AgentChatInboxAction.SNOOZE} />
+  ),
+  [EngineComponentKey.SUBSCRIBE_TO_AI_CHAT]: (
+    <AgentChatThreadInboxCommand action={AgentChatInboxAction.SUBSCRIBE} />
+  ),
+  [EngineComponentKey.UNSUBSCRIBE_FROM_AI_CHAT]: (
+    <AgentChatThreadInboxCommand action={AgentChatInboxAction.UNSUBSCRIBE} />
+  ),
+  [EngineComponentKey.ASSIGN_AI_CHAT]: (
+    <AgentChatThreadInboxCommand action="assign" />
   ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,

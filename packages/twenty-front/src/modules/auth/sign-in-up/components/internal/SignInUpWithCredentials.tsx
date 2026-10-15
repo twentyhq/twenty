@@ -11,7 +11,7 @@ import { LastUsedPill } from '@/auth/sign-in-up/components/internal/LastUsedPill
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
 import { StyledSsoButtonContainer } from '@/auth/sign-in-up/components/internal/SignInUpSsoButtonStyles';
-import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { SignInUpMode } from '@/auth/types/SignInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
@@ -24,8 +24,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
-import { Loader } from 'twenty-ui/primitives/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -164,7 +163,8 @@ export const SignInUpWithCredentials = ({
           <StyledSsoButtonContainer>
             <MainButton
               type="submit"
-              startIcon={form.formState.isSubmitting ? <Loader /> : null}
+              loading={form.formState.isSubmitting}
+              loadingPosition="start"
               disabled={isSubmitButtonDisabled}
               fullWidth
               variant={signInUpStep === SignInUpStep.Init ? 'outline' : 'solid'}

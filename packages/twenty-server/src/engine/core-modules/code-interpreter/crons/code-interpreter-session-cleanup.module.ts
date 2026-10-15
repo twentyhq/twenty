@@ -8,6 +8,5 @@ import { CodeInterpreterSessionCleanupCronJob } from 'src/engine/core-modules/co
     CodeInterpreterSessionCleanupCronJob,
     CodeInterpreterSessionCleanupCronCommand,
   ],
-  exports: [CodeInterpreterSessionCleanupCronCommand],
 })
 export class CodeInterpreterSessionCleanupModule {}

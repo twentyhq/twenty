@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
-import { TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import { IconBuildingSkyscraper, IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -36,7 +36,10 @@ export const BackgroundMockViewBar = () => {
     <TopBar
       leftComponent={
         <StyledViewPicker>
-          <TintedIconTile Icon={IconBuildingSkyscraper} color="blue" />
+          <TintedIconTile
+            icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+            color="blue"
+          />
           <span>All Companies</span>
           <StyledViewPickerCount>· 599</StyledViewPickerCount>
           <IconChevronDown

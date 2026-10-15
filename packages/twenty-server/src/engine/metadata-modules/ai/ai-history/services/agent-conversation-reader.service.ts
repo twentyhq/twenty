@@ -6,7 +6,8 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
@@ -14,6 +15,7 @@ import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-hi
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
@@ -27,7 +29,44 @@ export class AgentConversationReaderService {
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     private readonly fileUrlService: FileUrlService,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
   ) {}
+
+  // tool call ids are only unique within a conversation
+  async findToolPart({
+    threadId,
+    toolCallId,
+    workspaceId,
+  }: {
+    threadId: string;
+    toolCallId: string;
+    workspaceId: string;
+  }): Promise<Pick<
+    AgentMessagePartWorkspaceEntity,
+    'id' | 'messageId' | 'toolName' | 'toolInput' | 'toolOutput'
+  > | null> {
+    const parts = await this.messagePartRepository.find(workspaceId, {
+      where: { toolCallId },
+      select: ['id', 'messageId', 'toolName', 'toolInput', 'toolOutput'],
+    });
+
+    if (!isNonEmptyArray(parts)) {
+      return null;
+    }
+
+    const message = await this.messageRepository.findOne(workspaceId, {
+      where: {
+        id: In(parts.map((part) => part.messageId)),
+        threadId,
+      },
+      select: ['id'],
+    });
+
+    return (
+      parts.find((candidate) => candidate.messageId === message?.id) ?? null
+    );
+  }
 
   async loadMessages({
     workspaceId,

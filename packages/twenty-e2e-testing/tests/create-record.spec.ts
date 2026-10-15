@@ -137,8 +137,8 @@ test('Create and update record', async ({ page }) => {
     .getByText('Work Preference', { exact: true })
     .nth(1)
     .click({ force: true });
-  const options = page.getByRole('listbox');
-  await options.getByText('Hybrid').first().click({ force: true });
+  const options = page.getByRole('dialog', { name: 'Work Preference' });
+  await options.getByRole('button', { name: 'Hybrid', exact: true }).click();
   await recordFieldList
     .getByText('Work Preference', { exact: true })
     .first()

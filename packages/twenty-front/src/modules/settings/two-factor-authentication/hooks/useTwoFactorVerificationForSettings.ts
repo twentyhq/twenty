@@ -7,7 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useTwoFactorVerificationForSettings = () => {
@@ -34,7 +34,7 @@ export const useTwoFactorVerificationForSettings = () => {
 
   const handleVerificationSuccess = async () => {
     enqueueToast({
-      variant: 'success',
+      status: 'success',
       children: t`Two-factor authentication setup completed successfully!`,
     });
 

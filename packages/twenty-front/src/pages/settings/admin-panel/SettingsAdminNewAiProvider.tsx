@@ -6,7 +6,7 @@ import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getA
 import { GET_MODELS_DEV_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getModelsDevProviders';
 import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
-import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';
+import { getProviderIcon } from '@/ai/utils/getProviderIcon';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -22,10 +22,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { slugify } from 'transliteration';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { InlineBanner, Section, useToast } from 'twenty-ui/components';
+import { capitalize, getSettingsPath } from 'twenty-shared/utils';
+import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
@@ -79,7 +80,7 @@ export const SettingsAdminNewAiProvider = () => {
     () =>
       modelsDevProviders.map((provider) => ({
         value: provider.id,
-        label: `${provider.id.charAt(0).toUpperCase() + provider.id.slice(1)} (${provider.modelCount} models)`,
+        label: `${capitalize(provider.id)} (${provider.modelCount} models)`,
         Icon: getProviderIcon(provider.id),
       })),
     [modelsDevProviders],
@@ -115,10 +116,7 @@ export const SettingsAdminNewAiProvider = () => {
 
     form.setValue('npm', suggestion?.npm ?? '@ai-sdk/openai-compatible');
 
-    form.setValue(
-      'label',
-      providerId.charAt(0).toUpperCase() + providerId.slice(1),
-    );
+    form.setValue('label', capitalize(providerId));
   };
 
   const handleCustomMode = () => {
@@ -179,8 +177,21 @@ export const SettingsAdminNewAiProvider = () => {
       }
       config.region = values.region.trim();
 
+      const apiKey = values.apiKey.trim();
       const accessKeyId = values.accessKeyId.trim();
       const secretAccessKey = values.secretAccessKey.trim();
+
+      if (
+        isNonEmptyString(apiKey) &&
+        (isNonEmptyString(accessKeyId) || isNonEmptyString(secretAccessKey))
+      ) {
+        form.setError('apiKey', {
+          type: 'manual',
+          message: t`Use either an API key or an access key pair, not both`,
+        });
+
+        return;
+      }
 
       // Role auth ignores both fields, so half a key pair would run under an identity nobody chose
       if (isNonEmptyString(accessKeyId) !== isNonEmptyString(secretAccessKey)) {
@@ -195,7 +206,9 @@ export const SettingsAdminNewAiProvider = () => {
         return;
       }
 
-      if (isNonEmptyString(accessKeyId)) {
+      if (isNonEmptyString(apiKey)) {
+        config.apiKey = apiKey;
+      } else if (isNonEmptyString(accessKeyId)) {
         config.accessKeyId = accessKeyId;
         config.secretAccessKey = secretAccessKey;
       } else {
@@ -236,12 +249,12 @@ export const SettingsAdminNewAiProvider = () => {
       });
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Provider "${values.label.trim()}" added`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to add provider` });
+      enqueueToast({ status: 'error', children: t`Failed to add provider` });
     } finally {
       setIsSubmitting(false);
     }
@@ -271,26 +284,30 @@ export const SettingsAdminNewAiProvider = () => {
         <SettingsPageContainer>
           {!hasCustomAiProviderAccess && (
             <InlineBanner
-              variant="compact"
-              color="danger"
-              message={customAiProviderGateDescription}
-              button={{
-                title: t`Activate`,
-                href: getSettingsPath(SettingsPath.AdminPanelOrganization),
-                render: (
-                  <Link
-                    to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
-                  />
-                ),
-              }}
-            />
+              layout="compact"
+              status="error"
+              action={
+                <InlineBanner.Action
+                  href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  nativeButton={false}
+                  role="link"
+                  render={
+                    <Link
+                      to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                    />
+                  }
+                >{t`Activate`}</InlineBanner.Action>
+              }
+            >
+              {customAiProviderGateDescription}
+            </InlineBanner>
           )}
 
           <Section.Root>
             <Section.Header
               title={t`Provider`}
               description={t`Select a known provider or create a custom one`}
-              adornment={
+              actions={
                 <OrganizationAdornment
                   tooltipContent={customAiProviderTooltipContent}
                 />
@@ -313,10 +330,9 @@ export const SettingsAdminNewAiProvider = () => {
 
           {isModelsDevWithoutNativeSdk && (
             <InlineBanner
-              variant="compact"
-              color="blue"
-              message={t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}
-            />
+              layout="compact"
+              status="info"
+            >{t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}</InlineBanner>
           )}
 
           {hasSelected && (
@@ -441,6 +457,29 @@ export const SettingsAdminNewAiProvider = () => {
                           onChange={onChange}
                           placeholder={t`us-east-1`}
                           fullWidth
+                          error={error?.message}
+                        />
+                      )}
+                    />
+                  </Section.Root>
+
+                  <Section.Root>
+                    <Section.Header
+                      title={t`API Key`}
+                      description={t`Optional — a Bedrock API key, used instead of an access key pair or the IAM role`}
+                    />
+                    <Controller
+                      name="apiKey"
+                      control={form.control}
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
+                        <TextInput
+                          value={value}
+                          onChange={onChange}
+                          fullWidth
+                          type="password"
                           error={error?.message}
                         />
                       )}

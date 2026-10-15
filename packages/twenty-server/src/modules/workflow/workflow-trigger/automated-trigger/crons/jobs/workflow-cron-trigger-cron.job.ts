@@ -21,6 +21,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isApplicationInstallPending } from 'src/engine/core-modules/application/utils/is-application-install-pending.util';
 import { isCachedCronTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -84,13 +85,18 @@ export class WorkflowCronTriggerCronJob {
   private async getAndRunTriggersFromCache(cachedValues: string[], now: Date) {
     for (const serialized of cachedValues) {
       try {
-        const trigger = await this.normalizeCachedTrigger(
+        const normalizedTrigger = await this.normalizeCachedTrigger(
           JSON.parse(serialized) as CachedCronTrigger,
         );
 
-        if (!isDefined(trigger)) {
+        if (
+          !isDefined(normalizedTrigger) ||
+          !normalizedTrigger.isApplicationInstalled
+        ) {
           continue;
         }
+
+        const { trigger } = normalizedTrigger;
 
         const shouldDispatch = await this.shouldDispatch({ trigger, now });
 
@@ -179,7 +185,7 @@ export class WorkflowCronTriggerCronJob {
           continue;
         }
 
-        const cachedTrigger = await this.normalizeCachedTrigger({
+        const normalizedTrigger = await this.normalizeCachedTrigger({
           workspaceId,
           workflowId,
           legacyWorkflowId: cronTrigger.legacyWorkflowId,
@@ -187,11 +193,18 @@ export class WorkflowCronTriggerCronJob {
           pattern,
         });
 
-        if (!isDefined(cachedTrigger)) {
+        if (!isDefined(normalizedTrigger)) {
           continue;
         }
 
+        const { trigger: cachedTrigger, isApplicationInstalled } =
+          normalizedTrigger;
+
         triggersToCache.push(cachedTrigger);
+
+        if (!isApplicationInstalled) {
+          continue;
+        }
 
         const shouldDispatch = await this.shouldDispatch({
           trigger: cachedTrigger,
@@ -252,9 +265,10 @@ export class WorkflowCronTriggerCronJob {
       }));
   }
 
-  private async normalizeCachedTrigger(
-    trigger: CachedCronTrigger,
-  ): Promise<CachedCronTrigger | null> {
+  private async normalizeCachedTrigger(trigger: CachedCronTrigger): Promise<{
+    trigger: CachedCronTrigger;
+    isApplicationInstalled: boolean;
+  } | null> {
     const workflow =
       await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
         trigger.workspaceId,
@@ -264,6 +278,11 @@ export class WorkflowCronTriggerCronJob {
     if (!isDefined(workflow?.lastPublishedCoreWorkflowVersionId)) {
       return null;
     }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(trigger.workspaceId, [
+        'flatApplicationMaps',
+      ]);
 
     const version =
       await this.workflowVersionCoreSyncService.findCoreVersionById(
@@ -282,14 +301,20 @@ export class WorkflowCronTriggerCronJob {
     }
 
     return {
-      workspaceId: trigger.workspaceId,
-      workflowId: workflow.id,
-      legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
-      ...buildCoreDispatchIds({
-        coreWorkflowVersionId: version.id,
-        workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
-      }),
-      pattern: computeCronPatternFromSchedule(definition),
+      trigger: {
+        workspaceId: trigger.workspaceId,
+        workflowId: workflow.id,
+        legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
+        ...buildCoreDispatchIds({
+          coreWorkflowVersionId: version.id,
+          workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
+        }),
+        pattern: computeCronPatternFromSchedule(definition),
+      },
+      isApplicationInstalled: !isApplicationInstallPending(
+        flatApplicationMaps,
+        workflow.applicationId,
+      ),
     };
   }
 

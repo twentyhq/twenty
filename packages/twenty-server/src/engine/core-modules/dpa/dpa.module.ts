@@ -18,6 +18,5 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
   ],
   providers: [DpaService, DpaRegionService, DpaResolver],
-  exports: [DpaService, DpaRegionService],
 })
 export class DpaModule {}

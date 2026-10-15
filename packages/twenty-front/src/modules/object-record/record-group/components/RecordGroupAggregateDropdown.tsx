@@ -1,13 +1,12 @@
-import { useDropdownContextCurrentContentId } from '@/dropdown-context-state-management/hooks/useDropdownContextCurrentContentId';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordGroupAggregateDropdownButton } from '@/object-record/record-group/components/RecordGroupAggregateDropdownButton';
 import { RecordGroupAggregateDropdownContent } from '@/object-record/record-group/components/RecordGroupAggregateDropdownContent';
 import { RecordGroupAggregateDropdownComponentInstanceContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownComponentInstanceContext';
-import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
-import { type RecordGroupAggregateContentId } from '@/object-record/record-group/types/RecordGroupAggregateContentId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type Nullable } from 'twenty-shared/types';
 
 type RecordGroupAggregateDropdownProps = {
@@ -27,44 +26,27 @@ export const RecordGroupAggregateDropdown = ({
   aggregateLabel,
   dropdownId,
 }: RecordGroupAggregateDropdownProps) => {
-  const {
-    currentContentId,
-    handleContentChange,
-    handleResetContent,
-    previousContentId,
-  } = useDropdownContextCurrentContentId<RecordGroupAggregateContentId>();
-
   return (
     <RecordGroupAggregateDropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
     >
       <StyledContainer>
-        <Dropdown
-          onClose={handleResetContent}
-          dropdownId={dropdownId}
-          dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
-          clickableComponent={
-            <RecordGroupAggregateDropdownButton
-              dropdownId={dropdownId}
-              value={aggregateValue}
-              tooltip={aggregateLabel}
+        <DropdownRoot dropdownId={dropdownId} type="picker">
+          <RecordGroupAggregateDropdownButton
+            dropdownId={dropdownId}
+            value={aggregateValue}
+            tooltip={aggregateLabel}
+          />
+          <DropdownContent
+            aria-label={t`Aggregate`}
+            align="end"
+            sideOffset={DROPDOWN_OFFSET_Y}
+          >
+            <RecordGroupAggregateDropdownContent
+              objectMetadataItem={objectMetadataItem}
             />
-          }
-          dropdownComponents={
-            <RecordGroupAggregateDropdownContext.Provider
-              value={{
-                currentContentId,
-                onContentChange: handleContentChange,
-                resetContent: handleResetContent,
-                previousContentId,
-                objectMetadataItem: objectMetadataItem,
-                dropdownId: dropdownId,
-              }}
-            >
-              <RecordGroupAggregateDropdownContent />
-            </RecordGroupAggregateDropdownContext.Provider>
-          }
-        />
+          </DropdownContent>
+        </DropdownRoot>
       </StyledContainer>
     </RecordGroupAggregateDropdownComponentInstanceContext.Provider>
   );

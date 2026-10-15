@@ -4,7 +4,8 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Dispatch, type SetStateAction, useState } from 'react';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -20,10 +21,6 @@ const StyledRow = styled.div`
   align-items: flex-end;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledButtonContainer = styled(ButtonGroup)`
-  display: flex;
 `;
 
 type ConfigVariableEditProps = {
@@ -70,11 +67,11 @@ export const ConfigVariableEdit = ({
       setIsSubmitting(true);
       await onSave?.();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Variable ${title} updated`,
       });
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error updating variable` });
+      enqueueToast({ status: 'error', children: t`Error updating variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
@@ -86,11 +83,11 @@ export const ConfigVariableEdit = ({
       setIsSubmitting(true);
       await onConfirmReset?.();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Variable ${title} reset`,
       });
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error resetting variable` });
+      enqueueToast({ status: 'error', children: t`Error resetting variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
@@ -138,7 +135,7 @@ export const ConfigVariableEdit = ({
               variant="outline"
             />
           ) : (
-            <StyledButtonContainer aria-label={t`Edit variable`}>
+            <ButtonGroup aria-label={t`Edit variable`}>
               <Button
                 startIcon={<IconCheck />}
                 aria-label={t`Save`}
@@ -155,7 +152,7 @@ export const ConfigVariableEdit = ({
                 disabled={isSubmitting}
                 variant="outline"
               />
-            </StyledButtonContainer>
+            </ButtonGroup>
           )}
           <ConfirmationDialog
             dialogId={RESET_VARIABLE_MODAL_ID}

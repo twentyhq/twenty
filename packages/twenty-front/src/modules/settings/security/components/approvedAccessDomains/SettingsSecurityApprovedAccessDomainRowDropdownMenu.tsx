@@ -5,7 +5,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import {
   type ApprovedAccessDomain,
@@ -45,7 +47,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
     });
     if (isDefined(result.error)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Could not delete approved access domain`,
         duration: 2000,
       });

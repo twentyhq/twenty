@@ -10,13 +10,13 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
+import { TriggerAddPeopleToMessageListJobResultDTO } from 'src/modules/emailing/dtos/trigger-add-people-to-message-list-job-result.dto';
+import { TriggerAddPeopleToMessageListJobInput } from 'src/modules/emailing/dtos/trigger-add-people-to-message-list-job.input';
+import { AddPeopleToMessageListJobService } from 'src/modules/emailing/services/add-people-to-message-list-job.service';
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils/message-list-graphql-api-exception.filter';
 
@@ -39,17 +39,17 @@ import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils
     oauthClient: true,
     application: true,
   }),
-  FeatureFlagGuard,
+  FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED),
 )
 @UsePipes(ResolverValidationPipe)
 export class MessageListResolver {
   constructor(
     private readonly messageListDuplicationService: MessageListDuplicationService,
+    private readonly addPeopleToMessageListJobService: AddPeopleToMessageListJobService,
   ) {}
 
   @Mutation(() => DuplicatedMessageListDTO)
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async duplicateMessageList(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -61,5 +61,28 @@ export class MessageListResolver {
       userWorkspaceId,
       authContext,
     });
+  }
+
+  @Mutation(() => TriggerAddPeopleToMessageListJobResultDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
+  async triggerAddPeopleToMessageListJob(
+    @Args('input') input: TriggerAddPeopleToMessageListJobInput,
+  ): Promise<TriggerAddPeopleToMessageListJobResultDTO> {
+    return this.addPeopleToMessageListJobService.triggerAddPeopleToMessageListJob(
+      { ...input, authContext: getWorkspaceAuthContext() },
+    );
   }
 }

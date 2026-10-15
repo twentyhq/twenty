@@ -1,5 +1,4 @@
 import { DeleteCoreWorkflowsCommand } from '@/object-core/workflows/components/DeleteCoreWorkflowsCommand';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationFilter,
@@ -81,10 +80,9 @@ const DeleteWorkspaceRecordsCommand = () => {
 };
 
 export const DeleteRecordsCommand = () => {
-  const isCore = useIsWorkflowCoreEnabled();
   const { objectMetadataItem } = useHeadlessCommandContextApi();
-  return isCore &&
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Workflow ? (
+  return objectMetadataItem?.nameSingular ===
+    CoreObjectNameSingular.Workflow ? (
     <DeleteCoreWorkflowsCommand />
   ) : (
     <DeleteWorkspaceRecordsCommand />

@@ -8,7 +8,8 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
@@ -24,9 +25,9 @@ const StyledRefreshButtonContainer = styled.div`
 `;
 
 const StyledAccordionCardsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: ${themeCssVariables.spacing[3]};
+  grid-template-columns: minmax(0, 1fr);
 `;
 
 export const SettingsAdminWorkspacesStatus = () => {
@@ -55,12 +56,12 @@ export const SettingsAdminWorkspacesStatus = () => {
       await refreshUpgradeStatus();
       await refetch();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Upgrade status refreshed`,
       });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message

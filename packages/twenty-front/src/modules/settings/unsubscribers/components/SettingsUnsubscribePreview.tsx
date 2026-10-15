@@ -2,14 +2,14 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   Button,
   Checkbox,
   Radio,
   RadioGroup,
 } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { LabeledDivider } from '@/ui/layout/line/components/LabeledDivider';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
@@ -25,14 +25,11 @@ const StyledViewport = styled.div`
 `;
 
 const StyledCard = styled(Card.Root)`
-  --card-background-color: ${themeCssVariables.background.primary};
-
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[5]};
   max-width: 420px;
   padding: ${themeCssVariables.spacing[8]};
-  width: 100%;
 `;
 
 const StyledHeader = styled.div`
@@ -92,7 +89,11 @@ export const SettingsUnsubscribePreview = () => {
       />
       <StyledViewport>
         {!loading && (
-          <StyledCard rounded>
+          <StyledCard
+            rounded
+            fullWidth
+            backgroundColor={themeCssVariables.background.primary}
+          >
             <StyledHeader>
               <Section.Header
                 title={t`Do you want to unsubscribe?`}
@@ -142,7 +143,7 @@ export const SettingsUnsubscribePreview = () => {
             <Button fullWidth variant="solid" color="accent">
               {t`Update`}
             </Button>
-            <HorizontalSeparator text={t`Or`} noMargin />
+            <LabeledDivider noMargin>{t`Or`}</LabeledDivider>
             <Button fullWidth variant="outline">
               {t`Unsubscribe all`}
             </Button>

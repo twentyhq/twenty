@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconFrame, IconSquare } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -12,14 +12,11 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-
-  & > :first-child {
-    flex: 1;
-  }
 `;
 
 const StyledSidesGrid = styled.div`
   display: grid;
+  flex: 1;
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: repeat(4, 1fr);
   margin-top: ${themeCssVariables.spacing[1]};

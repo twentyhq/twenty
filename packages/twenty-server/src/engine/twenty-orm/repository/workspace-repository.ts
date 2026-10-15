@@ -45,7 +45,6 @@ import {
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { compileRowAccessExpression } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
-import { resolveRecordShareFeatureFlags } from 'src/engine/core-modules/record-share/utils/resolve-record-share-feature-flags.util';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
@@ -55,7 +54,7 @@ import {
   type RowAccessRecord,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
 import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
-import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -67,9 +66,10 @@ import {
 import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
-import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-child-links.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { getActiveValidationRules } from 'src/engine/twenty-orm/utils/get-active-validation-rules.util';
@@ -143,6 +143,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   authContext: WorkspaceAuthContext;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
+  rolePermissionConfig: RolePermissionConfig;
   shouldBypassPermissionChecks: boolean;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
   // and timeline activities will NOT fire
@@ -198,7 +199,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         tableShape: this.options.tableShape,
         executor: this.options.executor,
         objectRecordsPermissions: this.options.objectRecordsPermissions,
-        isRecordSharingEnabled: this.isRecordSharingEnabled,
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
@@ -705,7 +706,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return updateResult;
   }
 
-  async delete(criteria: MutationCriteria): Promise<DeleteResult> {
+  async delete(
+    criteria: MutationCriteria,
+    options?: { columnsToReturn?: string[] },
+  ): Promise<DeleteResult> {
     const records = await this.runMutation({
       selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
         this.createQueryBuilder(),
@@ -713,7 +717,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       rowLevelPermissionsApplied: false,
       kind: 'delete',
-      columnsToReturn: ['id'],
+      columnsToReturn: options?.columnsToReturn ?? ['id'],
     });
 
     const deleteResult = new DeleteResult();
@@ -1068,6 +1072,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectMetadata: this.options.flatObjectMetadata,
       internalContext: this.options.internalContext,
       authContext: this.options.authContext,
+      rolePermissionConfig: this.options.rolePermissionConfig,
       shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
     });
 
@@ -1461,7 +1466,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShape: this.options.tableShape,
       executor: this.options.executor,
       objectRecordsPermissions: this.options.objectRecordsPermissions,
-      isRecordSharingEnabled: this.isRecordSharingEnabled,
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
       formatResult: (records) => this.formatResult(records),
@@ -1926,7 +1931,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       selectedColumns: columnsToReturn,
       updatedColumns,
       authContext: this.options.authContext,
-      isRecordSharingEnabled: this.isRecordSharingEnabled,
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
     });
   }
 
@@ -2127,7 +2132,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.internalContext.flatFieldMetadataMaps,
         objectIdByNameSingular:
           this.options.internalContext.objectIdByNameSingular,
-        isRecordSharingEnabled: this.isRecordSharingEnabled,
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
         selectedColumns: columnNames,
         updatedColumns: [],
       });
@@ -2231,11 +2236,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (
       isMainAlias &&
       !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
-      !isRecordGrantBeyondRoleAllowed({
+      !resolveObjectSharing({
         flatObjectMetadata,
-        operationType,
-        isRecordSharingEnabled: this.isRecordSharingEnabled,
-      })
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      }).operationTypesGrantedBeyondRole.includes(operationType)
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
@@ -2484,7 +2488,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectsPermissions: this.options.objectRecordsPermissions,
       principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
       canAccessAllRecords: canRolesAccessAllRecords({
-        roleIds: resolveRoleIdsFromAuthContext(roleMaps),
+        roleIds: getRoleIdsFromRolePermissionConfig(
+          this.options.rolePermissionConfig,
+        ),
         roleIdsWithAllRecordsAccess:
           this.options.internalContext.roleIdsWithAllRecordsAccess,
       }),
@@ -2497,6 +2503,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         resolveRowLevelPermissionRecordFilter({
           internalContext: this.options.internalContext,
           authContext: this.options.authContext,
+          rolePermissionConfig: this.options.rolePermissionConfig,
           objectMetadata,
         }),
     };
@@ -2513,20 +2520,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
-      ...this.recordShareFeatureFlags,
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
     };
-  }
-
-  private get recordShareFeatureFlags(): ReturnType<
-    typeof resolveRecordShareFeatureFlags
-  > {
-    return resolveRecordShareFeatureFlags(
-      this.options.internalContext.featureFlagsMap,
-    );
-  }
-
-  private get isRecordSharingEnabled(): boolean {
-    return this.recordShareFeatureFlags.isRecordSharingEnabled;
   }
 
   private resolveInheritedReadabilityParents(

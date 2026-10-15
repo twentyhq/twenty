@@ -17,7 +17,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type DeleteCoreWorkflowsMutation,
   type DeleteCoreWorkflowsMutationVariables,
@@ -75,7 +75,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
     } catch (error) {
       logError(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to delete workflows`,
       });
 
@@ -84,7 +84,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
 
     if (!isNonEmptyArray(deletedCoreWorkflows)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`No workflows were deleted`,
       });
 

@@ -14,7 +14,8 @@ import {
 } from '@ui/testing';
 
 const meta: Meta<typeof MenuItem> = {
-  title: 'UI/Navigation/Menu/MenuItem/MenuItem',
+  id: 'ui-navigation-menu-menuitem-menuitem',
+  title: 'UI/Components/Navigation/MenuItem/MenuItem',
   component: MenuItem,
 };
 

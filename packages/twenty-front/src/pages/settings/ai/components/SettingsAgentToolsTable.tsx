@@ -1,4 +1,4 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -56,14 +56,7 @@ export const SettingsAgentToolsTable = ({
       </StyledTableHeaderRowContainer>
       {isLoading
         ? Array.from({ length: 3 }).map((_, index) => (
-            <SkeletonTheme
-              key={index}
-              baseColor={theme.background.tertiary}
-              highlightColor={theme.background.transparent.lighter}
-              borderRadius={4}
-            >
-              <Skeleton height={32} borderRadius={4} />
-            </SkeletonTheme>
+            <SkeletonLine height={32} key={index} />
           ))
         : tools.map((tool) => {
             const application = isDefined(tool.applicationId)

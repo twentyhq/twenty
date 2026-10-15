@@ -18,7 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const FilesFieldInput = () => {
@@ -85,7 +85,7 @@ export const FilesFieldInput = () => {
           files.length > 0
         ) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Cannot upload more than ${maxNumberOfValues} files`,
           });
           return;

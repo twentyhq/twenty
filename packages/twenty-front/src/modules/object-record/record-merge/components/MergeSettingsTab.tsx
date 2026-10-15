@@ -5,7 +5,7 @@ import { getPositionWordLabel } from '@/object-record/record-merge/utils/getPosi
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSectionContainer = styled.div`

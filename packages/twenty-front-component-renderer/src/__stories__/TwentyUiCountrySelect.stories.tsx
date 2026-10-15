@@ -5,7 +5,7 @@ import {
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
-import { createCountrySelectTest } from '@/__stories__/twenty-ui-gallery/utils/createCountrySelectTest';
+import { countrySelectTest } from '@/__stories__/twenty-ui-gallery/utils/countrySelectTest';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
@@ -21,11 +21,11 @@ export default meta;
 export const CountrySelectReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-country-select',
   runtime: 'react',
-  play: createCountrySelectTest('react'),
+  play: countrySelectTest,
 });
 
 export const CountrySelectPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-country-select',
   runtime: 'preact',
-  play: createCountrySelectTest('preact'),
+  play: countrySelectTest,
 });

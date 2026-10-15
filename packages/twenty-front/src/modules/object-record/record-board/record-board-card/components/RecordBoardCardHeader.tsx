@@ -21,7 +21,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';

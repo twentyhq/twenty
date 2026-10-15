@@ -13,7 +13,7 @@ import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/commo
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export type NewNavigationMenuItemInput = {
   type: NavigationMenuItemType;
@@ -117,13 +117,13 @@ export const useNavigationMenuItemEditController = (
         },
       ]).catch(() =>
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Couldn't add to favorites`,
         }),
       );
     } else {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Couldn't add to favorites`,
       });
     }
@@ -149,7 +149,7 @@ export const useNavigationMenuItemEditController = (
     try {
       await updateManyNavigationMenuItems([{ id, update }]);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Couldn't update favorite` });
+      enqueueToast({ status: 'error', children: t`Couldn't update favorite` });
     }
   };
 
@@ -166,7 +166,7 @@ export const useNavigationMenuItemEditController = (
     try {
       await deleteManyNavigationMenuItems(ids);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Couldn't remove favorite` });
+      enqueueToast({ status: 'error', children: t`Couldn't remove favorite` });
     }
   };
 

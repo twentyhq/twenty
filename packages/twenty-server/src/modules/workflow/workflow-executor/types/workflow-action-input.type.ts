@@ -1,5 +1,3 @@
-import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
-
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export type WorkflowRunInfo = {
@@ -12,7 +10,4 @@ export type WorkflowActionInput = {
   steps: WorkflowAction[];
   context: Record<string, unknown>;
   runInfo: WorkflowRunInfo;
-  // Set only when the step resumes after its question was answered
-  resumedThreadId?: string;
-  previousStepLog?: WorkflowRunStepLog;
 };

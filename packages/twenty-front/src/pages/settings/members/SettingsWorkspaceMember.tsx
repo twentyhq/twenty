@@ -16,7 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { IconInfoCircle, IconLock } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -57,6 +57,8 @@ export const SettingsWorkspaceMember = () => {
   const isImpersonating = useAtomStateValue(isImpersonatingState);
   const canImpersonate =
     useHasPermissionFlag(PermissionFlagType.IMPERSONATE) && !isImpersonating;
+  const canManageTwoFactorAuthenticationRecovery =
+    useHasPermissionFlag(PermissionFlagType.SECURITY) && !isImpersonating;
 
   const {
     roles,
@@ -107,7 +109,7 @@ export const SettingsWorkspaceMember = () => {
         });
       } catch (error) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             error instanceof Error
               ? error.message
@@ -125,14 +127,14 @@ export const SettingsWorkspaceMember = () => {
         variables: { workspaceMemberIdToDelete: member.id },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Member removed from workspace`,
       });
       closeDialog(DELETE_MEMBER_MODAL_ID);
       navigateSettings(SettingsPath.WorkspaceMembersPage);
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -144,7 +146,7 @@ export const SettingsWorkspaceMember = () => {
   const handleImpersonate = async () => {
     if (!member?.userId || !currentWorkspace?.id) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Cannot impersonate selected user`,
         duration: 2000,
       });
@@ -153,7 +155,7 @@ export const SettingsWorkspaceMember = () => {
 
     if (!isDefined(currentUser?.id) || member.userId === currentUser.id) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`You cannot impersonate your own account`,
         duration: 2000,
       });
@@ -173,7 +175,7 @@ export const SettingsWorkspaceMember = () => {
       },
       onError: () => {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Cannot impersonate selected user`,
           duration: 2000,
         });
@@ -235,6 +237,14 @@ export const SettingsWorkspaceMember = () => {
                 }
                 onNameChange={debouncedUpdateName}
                 onDelete={() => openDialog(DELETE_MEMBER_MODAL_ID)}
+                twoFactorAuthenticationRecoveryUserId={
+                  canManageTwoFactorAuthenticationRecovery &&
+                  isDefined(member.userId) &&
+                  isDefined(currentUser?.id) &&
+                  member.userId !== currentUser.id
+                    ? member.userId
+                    : undefined
+                }
               />
             )}
 

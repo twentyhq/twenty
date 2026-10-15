@@ -1,5 +1,5 @@
 import { useRender } from '@base-ui/react/use-render';
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useId } from 'react';
 
@@ -11,7 +11,7 @@ import { type MetricRowProps } from './types/MetricRowProps';
 
 export const MetricRow = ({
   children,
-  startIcon: StartIcon,
+  startIcon,
   value,
   progress,
   progressColor,
@@ -22,6 +22,7 @@ export const MetricRow = ({
   ...props
 }: MetricRowProps) => {
   const labelId = useId();
+  const accessibleValueText = progressValueText ?? value;
 
   return useRender({
     render,
@@ -32,7 +33,11 @@ export const MetricRow = ({
       children: (
         <>
           <div className={styles.label}>
-            {isDefined(StartIcon) && <StartIcon size={14} aria-hidden={true} />}
+            {isDefined(startIcon) && (
+              <span className={styles.icon} aria-hidden="true">
+                {startIcon}
+              </span>
+            )}
             <span id={labelId}>{children}</span>
           </div>
           {isDefined(progress) ? (
@@ -41,9 +46,9 @@ export const MetricRow = ({
               size="sm"
               barColor={progressColor}
               aria-labelledby={labelId}
-              aria-valuetext={
-                progressValueText ?? (isString(value) ? value : undefined)
-              }
+              {...(isNonEmptyString(accessibleValueText)
+                ? { 'aria-valuetext': accessibleValueText }
+                : {})}
             >
               {value}
             </ProgressRing>

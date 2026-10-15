@@ -13,7 +13,7 @@ import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   IconLock,
   IconSend,
@@ -148,7 +148,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
     if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`${invitationCount} invitations sent`,
         duration: 2000,
       });
@@ -158,7 +158,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
     if (!data.sendInvitations.success) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: data.sendInvitations.errors.join(', '),
         duration: 5000,
       });

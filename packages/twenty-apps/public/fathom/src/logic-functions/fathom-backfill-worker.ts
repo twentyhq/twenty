@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { getConnection } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
@@ -7,6 +6,7 @@ import { isDefined } from 'src/utils/is-defined';
 import {
   FATHOM_BACKFILL_BATCH_SIZE,
   MAX_FATHOM_BACKFILL_PAGES,
+  MAX_FATHOM_BACKFILL_REQUEUE_ATTEMPTS,
   MILLISECONDS_PER_DAY,
 } from 'src/constants/fathom.constant';
 import {
@@ -14,12 +14,16 @@ import {
   FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type FathomBackfillWorkerPayload } from 'src/logic-functions/types/fathom-backfill-worker-payload.type';
+import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
+import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { excludeDeletedFathomMeetings } from 'src/logic-functions/utils/exclude-deleted-fathom-meetings.util';
 import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
+import { getFathomRequeueDelay } from 'src/logic-functions/utils/get-fathom-requeue-delay.util';
 import { listFathomMeetingPage } from 'src/logic-functions/utils/list-fathom-meeting-page.util';
 import { reserveFathomImportSlots } from 'src/logic-functions/utils/reserve-fathom-import-slots.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 import { chunkIntoBatches } from 'src/utils/chunk-into-batches.util';
 
 const getCreatedAfter = ({
@@ -50,14 +54,59 @@ export const fathomBackfillWorkerHandler = async (
   const createdAfter = getCreatedAfter({ payload, now: Date.now() });
   const pageIndex = payload.pageIndex ?? 0;
   const connection = await getConnection(payload.connectedAccountId);
-  const meetingPage = await listFathomMeetingPage({
-    fathomClient: createFathomClient(connection.accessToken),
-    createdAfter,
-    cursor: payload.cursor,
-  });
+  const requeueAttempt = payload.requeueAttempt ?? 0;
+  const listOperation = `list meetings for connected account ${payload.connectedAccountId}`;
+  let meetingPage: Awaited<ReturnType<typeof listFathomMeetingPage>>;
+
+  try {
+    meetingPage = await listFathomMeetingPage({
+      fathomClient: createFathomClient(connection.accessToken),
+      createdAfter,
+      cursor: payload.cursor,
+    });
+  } catch (error) {
+    const delay = getFathomRequeueDelay({ error, now: new Date() });
+
+    if (!isDefined(delay)) {
+      throw error;
+    }
+
+    if (requeueAttempt >= MAX_FATHOM_BACKFILL_REQUEUE_ATTEMPTS) {
+      throw buildRetryableFathomError({ operation: listOperation, error });
+    }
+
+    try {
+      await enqueueFathomJobsOrThrow({
+        logicFunctionUniversalIdentifier:
+          FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+        payloads: [
+          {
+            connectedAccountId: payload.connectedAccountId,
+            createdAfter,
+            cursor: payload.cursor,
+            pageIndex,
+            requeueAttempt: requeueAttempt + 1,
+          },
+        ],
+        delayMs: delay,
+      });
+    } catch (enqueueError) {
+      throw buildRetryableFathomError({
+        operation: `re-enqueue after ${listOperation}`,
+        error: enqueueError,
+      });
+    }
+
+    console.warn(
+      `[fathom] ${listOperation} failed, re-enqueued in ${delay}ms: ${toErrorMessage(error)}`,
+    );
+
+    return { success: true, createdAfter, requeueDelay: delay };
+  }
+
   const serializedMeetings = meetingPage.meetings.map(serializeFathomMeeting);
   const importableMeetings = await excludeDeletedFathomMeetings({
-    coreApiClient: new CoreApiClient({ runAs: 'application' }),
+    coreApiClient: createFathomCoreApiClient(),
     meetings: serializedMeetings,
   });
   const meetingBatches = chunkIntoBatches(
@@ -123,6 +172,6 @@ export default defineLogicFunction({
   name: 'fathom-backfill-worker',
   description:
     "Discovers one page of Fathom meetings, schedules paced import batches, and continues from Fathom's cursor.",
-  timeoutSeconds: 120,
+  timeoutSeconds: 300,
   handler: fathomBackfillWorkerHandler,
 });

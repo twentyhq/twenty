@@ -6,7 +6,7 @@ import {
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -120,10 +120,9 @@ export const CampaignDetailsFields = ({
           <StyledWarningContainer>
             <InlineBanner
               embedded
-              color="danger"
-              LeftIcon={IconAlertTriangle}
-              message={t`No sending address. Connect a verified domain in Settings.`}
-            />
+              status="error"
+              icon={<IconAlertTriangle aria-hidden="true" />}
+            >{t`No sending address. Connect a verified domain in Settings.`}</InlineBanner>
           </StyledWarningContainer>
         )
       }

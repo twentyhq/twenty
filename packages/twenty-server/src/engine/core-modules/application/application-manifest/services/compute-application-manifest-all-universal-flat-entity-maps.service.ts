@@ -212,6 +212,16 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
+    const identifyAccountLogicFunctionUniversalIdentifiers = new Set(
+      (manifest.connectionProviders ?? [])
+        .map(
+          (connectionProviderManifest) =>
+            connectionProviderManifest.identifyAccountLogicFunction
+              ?.universalIdentifier,
+        )
+        .filter(isDefined),
+    );
+
     for (const logicFunctionManifest of manifest.logicFunctions) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
@@ -221,6 +231,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             applicationSourceType,
             existingFlatLogicFunctionMaps:
               fromAllFlatEntityMaps.flatLogicFunctionMaps,
+            identifyAccountLogicFunctionUniversalIdentifiers,
             now,
           }),
         universalFlatEntityMapsToMutate:
@@ -228,8 +239,15 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    const settingsFrontComponentUniversalIdentifier =
-      manifest.application.settingsFrontComponent?.universalIdentifier;
+    const settingsFrontComponentUniversalIdentifiers = new Set(
+      [
+        manifest.application.settingsFrontComponent?.universalIdentifier,
+        ...(manifest.settingsMenuItems ?? []).map(
+          (settingsMenuItemManifest) =>
+            settingsMenuItemManifest.frontComponentUniversalIdentifier,
+        ),
+      ].filter(isDefined),
+    );
 
     for (const frontComponentManifest of manifest.frontComponents) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
@@ -238,8 +256,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             frontComponentManifest,
             applicationUniversalIdentifier,
             isSettingsFrontComponent:
-              frontComponentManifest.universalIdentifier ===
-              settingsFrontComponentUniversalIdentifier,
+              settingsFrontComponentUniversalIdentifiers.has(
+                frontComponentManifest.universalIdentifier,
+              ),
             now,
           }),
         universalFlatEntityMapsToMutate:
@@ -595,17 +614,27 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       manifest.application.applicationVariables ?? {},
     )) {
       const type = applicationVariableManifest.type ?? FieldMetadataType.TEXT;
+      const isSecret = applicationVariableManifest.isSecret;
 
-      const plaintextValue =
-        'value' in applicationVariableManifest
+      const defaultValue =
+        !isSecret &&
+        'value' in applicationVariableManifest &&
+        isDefined(applicationVariableManifest.value)
           ? serializeApplicationVariableValue(
               applicationVariableManifest.value,
               type,
             )
-          : '';
+          : null;
 
-      const isSecret = applicationVariableManifest.isSecret;
-      const rawValue = isSecret ? '' : plaintextValue;
+      // A user variable's values belong to each member, so it has no
+      // workspace value: the manifest value is only its default.
+      const encryptedValue =
+        applicationVariableManifest.scope === 'USER'
+          ? null
+          : this.secretEncryptionService.encryptVersioned(
+              (defaultValue ?? '') as PlaintextString,
+              { workspaceId },
+            );
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
@@ -613,10 +642,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             key,
             universalIdentifier:
               applicationVariableManifest.universalIdentifier,
-            encryptedValue: this.secretEncryptionService.encryptVersioned(
-              rawValue as PlaintextString,
-              { workspaceId },
-            ),
+            encryptedValue,
+            defaultValue,
             description: applicationVariableManifest.description,
             label: applicationVariableManifest.label,
             isSecret,
@@ -624,6 +651,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             isRequired: applicationVariableManifest.isRequired,
             type,
             options: applicationVariableManifest.options,
+            scope: applicationVariableManifest.scope,
             applicationUniversalIdentifier,
             now,
           }),

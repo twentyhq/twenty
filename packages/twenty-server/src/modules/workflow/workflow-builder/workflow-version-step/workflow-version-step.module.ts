@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -15,12 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
 import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
-import { WorkflowVersionStepCreationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-creation.workspace-service';
-import { WorkflowVersionStepDeletionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-deletion.workspace-service';
-import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import { WorkflowVersionStepUpdateWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-update.workspace-service';
-import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 
 @Module({
@@ -33,29 +27,16 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
     AiAgentRoleModule,
     AiAgentModule,
     WorkspaceCacheModule,
-    TypeOrmModule.forFeature([
-      ObjectMetadataEntity,
-      RoleTargetEntity,
-      WorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity, RoleTargetEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkflowVersionCoreModule,
     RecordCrudModule,
   ],
   providers: [
-    WorkflowVersionStepWorkspaceService,
     WorkflowVersionStepOperationsWorkspaceService,
-    WorkflowVersionStepHelpersWorkspaceService,
-    WorkflowVersionStepCreationWorkspaceService,
-    WorkflowVersionStepUpdateWorkspaceService,
-    WorkflowVersionStepDeletionWorkspaceService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
   ],
-  exports: [
-    WorkflowVersionStepWorkspaceService,
-    WorkflowVersionStepOperationsWorkspaceService,
-    WorkflowVersionStepHelpersWorkspaceService,
-  ],
+  exports: [WorkflowVersionStepOperationsWorkspaceService],
 })
 export class WorkflowVersionStepModule {}

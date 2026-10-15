@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
-import { SearchInput } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -213,10 +213,8 @@ export const SettingsBillingLimitsTable = ({
               placeholder={t`Search a limit`}
               value={searchText}
               onValueChange={setSearchText}
-              filterButtonAriaLabel={t`Filter limits`}
-              filterDropdown={(filterButton) => (
+              actions={
                 <SettingsBillingLimitsFilterDropdown
-                  filterButton={filterButton}
                   resourceTypes={resourceTypes}
                   spenderTypes={spenderTypes}
                   selectedResourceType={resourceType}
@@ -224,7 +222,7 @@ export const SettingsBillingLimitsTable = ({
                   onSelectResourceType={setResourceType}
                   onSelectSpenderType={setSpenderType}
                 />
-              )}
+              }
             />
           </StyledToolbar>
         }

@@ -1,14 +1,9 @@
 import { Global, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
-import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
@@ -23,22 +18,20 @@ import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-reco
 import { QueueJobEventListener } from 'src/engine/subscriptions/queue-job-event/queue-job-event.listener';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Global()
 @Module({
   imports: [
-    RedisClientModule,
-    CacheStorageModule,
     CacheLockModule,
     MetricsModule,
-    TypeOrmModule.forFeature([WorkspaceEntity]),
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     NavigationMenuItemModule,
-    I18nModule,
     ApplicationTranslationCatalogModule,
     RecordShareModule,
+    FeatureFlagModule,
   ],
   providers: [
     SubscriptionService,

@@ -108,7 +108,7 @@ to `defineAgent()`, and pass what you want it to work on as `input`:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { result, error, success } = await runAgent({
+const { threadId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -121,6 +121,11 @@ Key points:
   `thread` rather than replaying earlier turns yourself.
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
+- The agent can also pause until a record changes or some time has passed.
+  `runAgent()` then resolves with `success: true`, `status: 'SUSPENDED'` and
+  `result: null`; the agent goes on by itself later, and its reply lands in the
+  `threadId` conversation. A call to a `thread` whose agent is still waiting
+  fails until it finishes.
 - Every call is stored with its input and status, plus its reply and usage
   when it completes, so it shows up in the agent's runs. Without a `thread`, a call gets a conversation of its
   own: `threadId` names it, and a later call never sees it.
@@ -131,9 +136,10 @@ Key points:
   Without it, `runAgent()` fails with a permission error.
 - Set a generous `timeoutSeconds` on the logic function — agent runs can take
   several seconds.
-- `success` is `true` and `result` is non-null when the run completes; on
-  failure `success` is `false`, `result` is `null`, and `error` holds the
-  reason (for example, when the workspace ran out of AI credits mid-run).
+- `status` is `COMPLETED` with a non-null `result` when the run completes
+  without waiting; `SUSPENDED` with `success: true` and `result: null` while it
+  waits; `FAILED` with `success: false` and `error` holding the reason (for
+  example, when the workspace ran out of AI credits mid-run).
 
 ```ts src/roles/default-role.ts
 import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
@@ -258,17 +264,17 @@ name a member at all.
 </Warning>
 
 </Accordion>
-<Accordion title="sendInboxMessage" description="Start or continue a conversation in a member's chats">
+<Accordion title="sendInboxMessage" description="Start or continue a conversation in members' chats">
 
-`sendInboxMessage()` posts a message from your app in a workspace member's
-chats. It can end on a tool call the member answers from the chat, after which
+`sendInboxMessage()` posts a message from your app in the chats of one or more
+workspace members. It can end on a tool call the member answers from the chat, after which
 the conversation continues with Twenty's assistant.
 
 ```ts src/logic-functions/notify-first-recording.ts
 import { sendInboxMessage } from 'twenty-sdk/logic-function';
 
 const { threadId } = await sendInboxMessage({
-  workspaceMemberId,
+  workspaceMemberIds: [workspaceMemberId],
   threadKey: 'first-call-recording',
   idempotencyKey: 'first-call-recording',
   title: 'Your first call recording is ready',
@@ -285,9 +291,13 @@ const { threadId } = await sendInboxMessage({
 ```
 
 Key points:
-- `threadKey` picks the conversation for this app and member. A new key starts
-  a conversation titled `title`; a key you used before adds the message to that
-  conversation.
+- `workspaceMemberIds` lists the members who receive the conversation, at least
+  one. The first member of a new conversation owns it, and the others follow it
+  as participants. A later send under the same key that lists new members adds
+  them; members it leaves out keep the conversation.
+- `threadKey` picks the conversation for this app, shared by every member it is
+  sent to. A new key starts a conversation titled `title`; a key you used before
+  adds the message to that conversation.
 - `idempotencyKey` identifies the message within the conversation. Sending
   again with the same keys writes nothing new, so retries and concurrent runs
   never duplicate a message.
@@ -308,8 +318,12 @@ Key points:
 - Only one call the member answers can wait in a conversation at a time:
   sending another before they answer fails with `THREAD_AWAITING_ANSWER`. Plain
   messages and app tool calls are still accepted.
-- A conversation the member deleted is not recreated, and nothing is added to it.
-- The member must have the `AI` permission, and your app's
+- Only the member who owns a conversation can delete it, and a deleted
+  conversation is gone for every member: it is not recreated, and nothing is
+  added to it. The other members can unsubscribe to take it out of their own
+  inbox.
+- Every member must have the `AI` permission, and the call fails without
+  writing the message when one of them cannot have the conversation. Your app's
   [default role](/developers/extend/apps/config/roles) must grant
   `SystemPermissionFlag.AI`.
 

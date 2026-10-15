@@ -10,7 +10,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { ImpersonateDocument } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -28,7 +28,7 @@ export const useHandleImpersonate = () => {
   const handleImpersonate = async (userId: string, workspaceId: string) => {
     if (!isDefined(currentUser?.id) || userId === currentUser.id) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`You cannot impersonate your own account`,
       });
 
@@ -58,7 +58,7 @@ export const useHandleImpersonate = () => {
       },
       onError: (error) => {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: `Failed to impersonate user. ${error.message}`,
         });
       },

@@ -6,7 +6,7 @@ import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { MAX_ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/maxAttachmentSize';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { logError } from '~/utils/logError';
 
 export const useUploadEmailImage = () => {
@@ -19,7 +19,7 @@ export const useUploadEmailImage = () => {
         file.type as (typeof EMAIL_IMAGE_MIME_TYPES)[number],
       )
     ) {
-      enqueueToast({ variant: 'error', children: t`Unsupported image format` });
+      enqueueToast({ status: 'error', children: t`Unsupported image format` });
 
       throw new Error(`Unsupported email image MIME type: ${file.type}`);
     }
@@ -29,7 +29,7 @@ export const useUploadEmailImage = () => {
       const maxUploadSize = formatFileSize(MAX_ATTACHMENT_SIZE);
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Image "${fileName}" exceeds ${maxUploadSize}`,
       });
 
@@ -47,7 +47,7 @@ export const useUploadEmailImage = () => {
 
       logError(`Failed to upload email image "${fileName}": ${error}`);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to upload "${fileName}"`,
       });
 

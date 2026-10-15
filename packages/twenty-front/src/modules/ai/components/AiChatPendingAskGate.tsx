@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 

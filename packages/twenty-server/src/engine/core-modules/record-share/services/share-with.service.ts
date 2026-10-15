@@ -10,6 +10,7 @@ import { RecordSharePrincipalService } from 'src/engine/core-modules/record-shar
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { buildRecordShareInputsForCreatedRecords } from 'src/engine/core-modules/record-share/utils/build-record-share-inputs-for-created-records.util';
+import { type ObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 import { validateShareWithArgOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util';
@@ -57,8 +58,7 @@ export class ShareWithService {
   async insertRecordSharesForCreatedRecords({
     authContext,
     flatObjectMetadata,
-    sharingMode,
-    isRecordSharingEnabled,
+    objectSharing,
     recordIds,
     apiKeyRoleMap,
     shareWith,
@@ -66,8 +66,7 @@ export class ShareWithService {
   }: {
     authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
-    sharingMode: RecordSharingMode;
-    isRecordSharingEnabled: boolean;
+    objectSharing: ObjectSharing;
     recordIds: string[];
     apiKeyRoleMap: Record<string, string>;
     shareWith: ShareWithInput[];
@@ -91,7 +90,8 @@ export class ShareWithService {
         authContext,
         apiKeyRoleMap,
         shareWith,
-        isOpenByDefault: sharingMode === RecordSharingMode.OPEN_BY_DEFAULT,
+        isOpenByDefault:
+          objectSharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT,
       }),
       transactionScope,
     });
@@ -100,7 +100,7 @@ export class ShareWithService {
       workspaceId,
       transactionScope,
       flatObjectMetadata,
-      isRecordSharingEnabled,
+      canShareBeyondRole: objectSharing.canShareBeyondRole,
       principals: shareWith.map(resolveShareWithPrincipalOrThrow),
       recordIds,
     });

@@ -17,7 +17,7 @@ import { isNumber } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;

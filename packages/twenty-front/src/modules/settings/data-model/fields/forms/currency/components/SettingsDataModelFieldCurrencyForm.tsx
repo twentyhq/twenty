@@ -7,16 +7,16 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldDefaultValueSchema';
 import { currencyFieldSettingsSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldSettingsSchema';
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheckbox, IconCurrencyDollar, IconDecimal } from 'twenty-ui/icon';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
@@ -82,7 +82,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
           </SettingsOptionCardContentSelect>
         )}
       />
-      <Separator />
+      <SettingsCardSeparator />
       <Controller
         name="settings"
         control={control}
@@ -121,7 +121,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
                   withSearchInput={false}
                 />
               </SettingsOptionCardContentSelect>
-              <Separator />
+              <SettingsCardSeparator />
               {format === 'full' && (
                 <SettingsOptionCardContentCounter
                   Icon={IconDecimal}

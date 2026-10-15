@@ -6,10 +6,11 @@ import {
 } from '~/generated-metadata/graphql';
 import {
   FindAdminApplicationRegistrationVariablesDocument,
+  FindOneAdminApplicationRegistrationDocument,
   UpdateAdminApplicationRegistrationVariableDocument,
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -110,7 +111,10 @@ export const SettingsApplicationRegistrationConfigTab = ({
     UpdateAdminApplicationRegistrationVariableDocument,
     {
       client: apolloAdminClient,
-      refetchQueries: [FindAdminApplicationRegistrationVariablesDocument],
+      refetchQueries: [
+        FindAdminApplicationRegistrationVariablesDocument,
+        FindOneAdminApplicationRegistrationDocument,
+      ],
     },
   );
 

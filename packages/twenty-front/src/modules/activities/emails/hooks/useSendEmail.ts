@@ -6,7 +6,7 @@ import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { t } from '@lingui/core/macro';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type SendEmailMutation,
   type SendEmailMutationVariables,
@@ -62,7 +62,7 @@ export const useSendEmail = () => {
 
         if (result.data?.sendEmail.success) {
           enqueueToast({
-            variant: 'success',
+            status: 'success',
             children: t`Email sent successfully`,
           });
 
@@ -82,13 +82,13 @@ export const useSendEmail = () => {
         }
 
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: result.data?.sendEmail.error ?? t`Failed to send email`,
         });
 
         return { success: false, messageThreadId: null };
       } catch {
-        enqueueToast({ variant: 'error', children: t`Failed to send email` });
+        enqueueToast({ status: 'error', children: t`Failed to send email` });
 
         return { success: false, messageThreadId: null };
       }

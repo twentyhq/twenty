@@ -6,7 +6,9 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
+import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { isLinkNavigationMenuItemActive } from '@/navigation-menu-item/display/link/utils/isLinkNavigationMenuItemActive';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -14,8 +16,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useIdentifyActiveNavigationMenuItems = (): {
   activeNavigationMenuItemIds: string[];
@@ -29,9 +29,6 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-  );
   const { activeObjectMetadataItems, objectMetadataItems } =
     useFilteredObjectMetadataItems();
 
@@ -42,6 +39,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   } = useParams();
 
   const currentPath = location.pathname;
+  const currentSearch = location.search;
   const currentPathWithSearch = location.pathname + location.search;
 
   const currentObjectMetadataItem = activeObjectMetadataItems.find(
@@ -78,7 +76,6 @@ export const useIdentifyActiveNavigationMenuItems = (): {
               objectMetadataItems,
               views,
               lastVisitedViewPerObjectMetadataItem,
-              isInitialObjectViewEnabled,
             });
           const lastClickedObjectMetadataId =
             getObjectMetadataForNavigationMenuItem(
@@ -105,6 +102,17 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         }
       }
 
+      const matchingLinkNavigationMenuItemIds = navigationMenuItems
+        .filter(
+          (item) =>
+            item.type === NavigationMenuItemType.LINK &&
+            isLinkNavigationMenuItemActive({
+              computedLink: getLinkNavigationMenuItemComputedLink(item),
+              location: { pathname: currentPath, search: currentSearch },
+            }),
+        )
+        .map((item) => item.id);
+
       if (isOnRecordShowPage) {
         const matchingRecordNavigationMenuItemIds = navigationMenuItems
           .filter((item) => {
@@ -116,7 +124,6 @@ export const useIdentifyActiveNavigationMenuItems = (): {
               objectMetadataItems,
               views,
               lastVisitedViewPerObjectMetadataItem,
-              isInitialObjectViewEnabled,
             });
             return link === currentPath;
           })
@@ -138,6 +145,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
 
         const activeNavigationMenuItemIds = [
           ...matchingRecordNavigationMenuItemIds,
+          ...matchingLinkNavigationMenuItemIds,
           ...matchingObjectNavigationMenuItemIds,
         ];
 
@@ -166,6 +174,13 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         };
       }
 
+      if (matchingLinkNavigationMenuItemIds.length > 0) {
+        return {
+          activeNavigationMenuItemIds: matchingLinkNavigationMenuItemIds,
+          objectMetadataIdForOpenedSection: null,
+        };
+      }
+
       const matchingObjectNavigationMenuItemIds = navigationMenuItems
         .filter(
           (item) =>
@@ -190,10 +205,10 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       lastVisitedViewPerObjectMetadataItem,
       currentPathWithSearch,
       currentPath,
+      currentSearch,
       currentObjectMetadataItem,
       isOnRecordShowPage,
       contextStoreCurrentViewId,
-      isInitialObjectViewEnabled,
     ]);
 
   return { activeNavigationMenuItemIds, objectMetadataIdForOpenedSection };

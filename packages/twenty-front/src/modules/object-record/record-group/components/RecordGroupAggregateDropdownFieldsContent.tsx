@@ -1,32 +1,23 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
 import { aggregateOperationComponentState } from '@/object-record/record-group/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-group/states/availableFieldIdsForAggregateOperationComponentState';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { isDefined } from 'twenty-shared/utils';
-import { Icon123, IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { Icon123, useIcons } from 'twenty-ui/icon';
 
-export const RecordGroupAggregateDropdownFieldsContent = () => {
-  const {
-    closeDropdown,
-    objectMetadataItem,
-    onContentChange,
-    resetContent,
-    previousContentId,
-  } = useDropdownContextStateManagement({
-    context: RecordGroupAggregateDropdownContext,
-  });
+type RecordGroupAggregateDropdownFieldsContentProps = {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+};
 
+export const RecordGroupAggregateDropdownFieldsContent = ({
+  objectMetadataItem,
+}: RecordGroupAggregateDropdownFieldsContentProps) => {
   const { updateViewAggregate } = useUpdateViewAggregate();
 
   const { getIcon } = useIcons();
@@ -52,35 +43,24 @@ export const RecordGroupAggregateDropdownFieldsContent = () => {
   }
 
   return (
-    <LegacyDropdownContent>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={() =>
-              previousContentId
-                ? onContentChange(previousContentId)
-                : resetContent()
-            }
-            Icon={IconChevronLeft}
-          />
-        }
-      >
+    <>
+      <Dropdown.Back>
         {getAggregateOperationLabel(aggregateOperation)}
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
+      </Dropdown.Back>
+      <Dropdown.Section>
         {availableFieldIdsForAggregateOperation.map((fieldId) => {
           const fieldMetadata = objectMetadataItem.fields.find(
             (field) => field.id === fieldId,
           );
 
-          if (!fieldMetadata) return null;
+          if (!isDefined(fieldMetadata)) return null;
 
           const isSelected =
             recordIndexGroupAggregateFieldMetadataItem?.id === fieldId &&
             recordIndexGroupAggregateOperation === aggregateOperation;
 
           return (
-            <ListItem
+            <Dropdown.OptionItem
               key={fieldId}
               onClick={() => {
                 updateViewAggregate({
@@ -88,23 +68,20 @@ export const RecordGroupAggregateDropdownFieldsContent = () => {
                   kanbanAggregateOperation: aggregateOperation,
                   objectMetadataItem,
                 });
-                closeDropdown();
               }}
               startIcon={
                 <SelectOptionIcon
                   Icon={getIcon(fieldMetadata.icon) ?? Icon123}
                 />
               }
-              role="option"
-              aria-selected={isSelected}
               indicator="check"
               selected={isSelected}
             >
               {fieldMetadata.label}
-            </ListItem>
+            </Dropdown.OptionItem>
           );
         })}
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

@@ -8,7 +8,8 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconKey, IconRefresh, IconShield } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -71,11 +72,11 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           },
         },
       });
-      enqueueToast({ variant: 'success', children: t`Redirect URIs updated` });
+      enqueueToast({ status: 'success', children: t`Redirect URIs updated` });
       setFormRedirectUris(newFormRedirectUris);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error updating redirect URIs`,
       });
     } finally {
@@ -95,13 +96,13 @@ export const SettingsApplicationRegistrationOAuthTab = ({
       if (isNonEmptyString(secret)) {
         setRotatedSecret(secret);
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Client secret rotated. Copy it now — it won't be shown again.`,
         });
       }
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error rotating client secret`,
       });
     } finally {

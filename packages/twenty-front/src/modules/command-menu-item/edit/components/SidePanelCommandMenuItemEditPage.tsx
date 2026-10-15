@@ -1,3 +1,5 @@
+import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
 import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
@@ -21,11 +23,8 @@ import { useLingui } from '@lingui/react/macro';
 import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  LightIconButton,
-  MenuItem,
-  MenuItemDraggable,
-} from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/components/navigation';
 import {
   IconDotsVertical,
   IconPin,
@@ -35,7 +34,7 @@ import {
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -226,7 +225,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
                       >
                         <MenuItemDraggable
                           withIconContainer
-                          LeftIcon={ItemIcon}
+                          LeftComponent={
+                            <ApplicationStackIcon
+                              Icon={ItemIcon}
+                              applicationId={item.applicationId}
+                            />
+                          }
                           text={getDisplayLabel(item)}
                           gripMode="onHover"
                           isIconDisplayedOnHoverOnly={false}
@@ -281,8 +285,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
                   onEnter={() => handleTogglePin(item.id, false)}
                 >
                   <MenuItem
-                    withIconContainer
-                    LeftIcon={ItemIcon}
+                    LeftComponent={
+                      <AppMenuItemIcon
+                        Icon={ItemIcon}
+                        applicationId={item.applicationId}
+                      />
+                    }
                     text={getDisplayLabel(item)}
                     isIconDisplayedOnHoverOnly={false}
                     iconButtons={

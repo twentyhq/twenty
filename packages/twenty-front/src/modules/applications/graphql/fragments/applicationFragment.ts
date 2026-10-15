@@ -23,6 +23,7 @@ export const APPLICATION_FRAGMENT = gql`
     }
     canBeUninstalled
     autoUpgrade
+    createdAt
     defaultRoleId
     settingsCustomTabFrontComponentId
     healthCheckLogicFunctionId
@@ -38,6 +39,7 @@ export const APPLICATION_FRAGMENT = gql`
       isRequired
       type
       options
+      scope
     }
     agents {
       ...AgentFields

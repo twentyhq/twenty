@@ -8,7 +8,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconButton, JsonTree } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
+import { JsonTree } from 'twenty-ui/components/data-display';
+import { IconButton } from 'twenty-ui/components/input';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { IconPencil } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -101,7 +103,11 @@ export const RawJsonFieldInput = () => {
     onShiftTab?.({ newValue: value, skipPersist: !success });
   };
 
-  const handleChange = (newText: string) => {
+  const handleChange = (newText: string | undefined) => {
+    if (!isDefined(newText)) {
+      return;
+    }
+
     setDraftValue(newText);
   };
 

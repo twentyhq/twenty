@@ -11,7 +11,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   type CreateOneLogicFunctionMutation,
   type CreateOneLogicFunctionMutationVariables,
@@ -67,7 +67,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.CREATE,
           });
         } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ status: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -103,7 +103,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ status: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -143,7 +143,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.DELETE,
           });
         } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ status: 'error', children: t`An error occurred.` });
         }
 
         return {

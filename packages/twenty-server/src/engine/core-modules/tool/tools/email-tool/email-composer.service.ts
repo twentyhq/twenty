@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
@@ -10,6 +11,7 @@ import {
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
+  convertEmailBodyToEmailDocument,
   getEmailProvidersForOperation,
   isDefined,
   isNonEmptyArray,
@@ -179,6 +181,7 @@ export class EmailComposerService {
       throw new EmailToolException(
         'No recipients specified',
         EmailToolExceptionCode.INVALID_EMAIL,
+        { userFriendlyMessage: msg`No recipients specified` },
       );
     }
 
@@ -188,6 +191,7 @@ export class EmailComposerService {
       throw new EmailToolException(
         'No valid recipients specified',
         EmailToolExceptionCode.INVALID_EMAIL,
+        { userFriendlyMessage: msg`No valid recipients specified` },
       );
     }
 
@@ -231,6 +235,9 @@ export class EmailComposerService {
       throw new EmailToolException(
         `Too many recipients: ${total}. Maximum allowed is ${MAX_EMAIL_RECIPIENTS}.`,
         EmailToolExceptionCode.TOO_MANY_RECIPIENTS,
+        {
+          userFriendlyMessage: msg`Too many recipients: ${total}. Maximum allowed is ${MAX_EMAIL_RECIPIENTS}.`,
+        },
       );
     }
   }
@@ -377,29 +384,23 @@ export class EmailComposerService {
       recipients = this.normalizeRecipients(parameters);
       this.assertRecipientCountWithinLimit(recipients);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Invalid recipients';
-
       return {
         success: false,
-        output: {
-          success: false,
-          message: errorMessage,
-          error: errorMessage,
-        },
+        error:
+          error instanceof EmailToolException
+            ? error.userFriendlyMessage
+            : msg`Invalid recipients`,
       };
     }
 
     const invalidEmails = this.validateEmails(recipients);
 
     if (invalidEmails.length > 0) {
+      const invalidEmailList = invalidEmails.join(', ');
+
       return {
         success: false,
-        output: {
-          success: false,
-          message: `Invalid email addresses: ${invalidEmails.join(', ')}`,
-          error: `Invalid email addresses: ${invalidEmails.join(', ')}`,
-        },
+        error: msg`Invalid email addresses: ${invalidEmailList}`,
       };
     }
 
@@ -439,8 +440,17 @@ export class EmailComposerService {
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 
+    const bodyConversionResult = convertEmailBodyToEmailDocument(body ?? '');
+
+    if (!bodyConversionResult.success) {
+      throw new EmailToolException(
+        `Invalid outbound email document: ${bodyConversionResult.error}`,
+        EmailToolExceptionCode.INVALID_EMAIL_BODY,
+      );
+    }
+
     const { html: sanitizedHtmlBody, plainText: plainTextBody } =
-      await compileOutboundEmailContent(body ?? '');
+      await compileOutboundEmailContent(bodyConversionResult.document);
     const sanitizedSubject = await sanitizeOutboundEmailSubject(subject || '');
 
     const { threadExternalId, references } =

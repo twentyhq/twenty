@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { formatShortcut } from 'twenty-ui/primitives/typography';
 
 import { useSidePanelExpandTarget } from '@/side-panel/hooks/useSidePanelExpandTarget';

@@ -13,10 +13,12 @@ import {
   compileValidationRuleExpression,
   isDefined,
 } from 'twenty-shared/utils';
+import { Field } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
+import { SettingsValidationRuleAskAiButton } from '@/validation-rules/components/SettingsValidationRuleAskAiButton';
 import { SettingsValidationRuleHelperPanel } from '@/validation-rules/components/SettingsValidationRuleHelperPanel';
 import { VALIDATION_RULE_HIGHLIGHT_COLORS } from '@/validation-rules/constants/ValidationRuleHighlightColors';
 import { ValidationRuleExpressionExtension } from '@/validation-rules/extensions/ValidationRuleExpressionExtension';
@@ -36,10 +38,10 @@ import { insertValidationRuleHelperItem } from '@/validation-rules/utils/insertV
 
 const SingleParagraphDocument = Document.extend({ content: 'paragraph' });
 
-const StyledEditorContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledAskAiButtonContainer = styled.div`
+  position: absolute;
+  right: ${themeCssVariables.spacing[1]};
+  top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledEditor = styled.div<{ hasError: boolean }>`
@@ -53,6 +55,7 @@ const StyledEditor = styled.div<{ hasError: boolean }>`
   color: ${themeCssVariables.font.color.primary};
   font-family: ${themeCssVariables.code.font.family};
   font-size: ${themeCssVariables.font.size.md};
+  position: relative;
 
   &:focus-within {
     border-color: ${themeCssVariables.color.blue};
@@ -62,7 +65,8 @@ const StyledEditor = styled.div<{ hasError: boolean }>`
     line-height: 24px;
     min-height: 56px;
     outline: none;
-    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[8]}
+      ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
     white-space: pre-wrap;
     word-break: break-word;
 
@@ -100,11 +104,6 @@ const StyledEditor = styled.div<{ hasError: boolean }>`
   }
 `;
 
-const StyledError = styled.div`
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
 type SettingsValidationRuleExpressionEditorProps = {
   value: string;
   fields: ValidationRuleFieldDescriptor[];
@@ -129,7 +128,7 @@ export const SettingsValidationRuleExpressionEditor = ({
       }),
     );
   const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const [hasNavigatedHelper, setHasNavigatedHelper] = useState(false);
+  const [isHelperFocused, setIsHelperFocused] = useState(false);
 
   const getFieldNodeAttributes = (
     path: string,
@@ -153,7 +152,7 @@ export const SettingsValidationRuleExpressionEditor = ({
       }),
     );
     setHighlightedIndex(0);
-    setHasNavigatedHelper(false);
+    setIsHelperFocused(false);
   };
 
   const initialContent: JSONContent = {
@@ -223,17 +222,6 @@ export const SettingsValidationRuleExpressionEditor = ({
     });
   };
 
-  const getIsWordBeingTyped = () => {
-    return (
-      isDefined(editor) &&
-      helperContext.replaceFromOffset <
-        getValidationRuleEditorText(
-          editor.state.doc,
-          editor.state.selection.from,
-        ).length
-    );
-  };
-
   const handleEditorKeyDown = (event: KeyboardEvent): boolean => {
     const { items } = helperContext;
 
@@ -244,10 +232,14 @@ export const SettingsValidationRuleExpressionEditor = ({
 
       const step = event.key === 'ArrowDown' ? 1 : -1;
 
-      setHighlightedIndex(
-        (index) => (index + step + items.length) % items.length,
-      );
-      setHasNavigatedHelper(true);
+      if (isHelperFocused) {
+        setHighlightedIndex(
+          (index) => (index + step + items.length) % items.length,
+        );
+      } else {
+        setHighlightedIndex(step === 1 ? 0 : items.length - 1);
+        setIsHelperFocused(true);
+      }
 
       return true;
     }
@@ -258,10 +250,7 @@ export const SettingsValidationRuleExpressionEditor = ({
 
     const highlightedItem = items[highlightedIndex];
 
-    if (
-      isDefined(highlightedItem) &&
-      (hasNavigatedHelper || getIsWordBeingTyped())
-    ) {
+    if (isHelperFocused && isDefined(highlightedItem)) {
       insertHelperItem(highlightedItem);
     }
 
@@ -280,19 +269,24 @@ export const SettingsValidationRuleExpressionEditor = ({
   return (
     <>
       <Card.Content divider>
-        <StyledEditorContent>
+        <Field.Root>
           <StyledEditor hasError={isDefined(errorMessage)}>
             <EditorContent editor={editor} />
+            <StyledAskAiButtonContainer>
+              <SettingsValidationRuleAskAiButton />
+            </StyledAskAiButtonContainer>
           </StyledEditor>
           {isDefined(errorMessage) && (
-            <StyledError role="alert">{errorMessage}</StyledError>
+            <Field.Error match role="alert">
+              {errorMessage}
+            </Field.Error>
           )}
-        </StyledEditorContent>
+        </Field.Root>
       </Card.Content>
       <SettingsValidationRuleHelperPanel
         items={helperContext.items}
         highlightedIndex={highlightedIndex}
-        isEnterHintVisible={hasNavigatedHelper || getIsWordBeingTyped()}
+        isFocused={isHelperFocused}
         editorFields={editorFields}
         onHighlight={setHighlightedIndex}
         onSelect={insertHelperItem}

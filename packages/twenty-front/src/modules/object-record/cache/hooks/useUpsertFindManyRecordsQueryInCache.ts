@@ -3,7 +3,10 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
-import { type RecordGqlOperationVariables } from 'twenty-shared/types';
+import {
+  type RecordGqlOperationVariables,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
@@ -28,7 +31,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
   }: {
     queryVariables: RecordGqlOperationVariables;
     objectRecordsToOverwrite: T[];
-    recordGqlFields?: Record<string, any>;
+    recordGqlFields?: RecordGqlFields;
     computeReferences?: boolean;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({

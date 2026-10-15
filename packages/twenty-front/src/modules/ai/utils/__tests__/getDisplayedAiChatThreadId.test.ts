@@ -9,6 +9,7 @@ describe('getDisplayedAiChatThreadId', () => {
       getDisplayedAiChatThreadId({
         urlThreadId: URL_CHAT_ID,
         currentAiChatThread: CURRENT_CHAT_ID,
+        isOnNewAiChatSlot: false,
       }),
     ).toBe(URL_CHAT_ID);
   });
@@ -18,6 +19,7 @@ describe('getDisplayedAiChatThreadId', () => {
       getDisplayedAiChatThreadId({
         urlThreadId: undefined,
         currentAiChatThread: CURRENT_CHAT_ID,
+        isOnNewAiChatSlot: false,
       }),
     ).toBe(CURRENT_CHAT_ID);
   });
@@ -25,8 +27,9 @@ describe('getDisplayedAiChatThreadId', () => {
   it('shows no record for a new chat', () => {
     expect(
       getDisplayedAiChatThreadId({
-        urlThreadId: 'new',
-        currentAiChatThread: 'new-thread-draft',
+        urlThreadId: undefined,
+        currentAiChatThread: CURRENT_CHAT_ID,
+        isOnNewAiChatSlot: true,
       }),
     ).toBeNull();
   });

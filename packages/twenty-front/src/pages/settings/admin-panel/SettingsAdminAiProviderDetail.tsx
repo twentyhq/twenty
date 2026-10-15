@@ -9,7 +9,7 @@ import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getA
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
-import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
+import { getDataResidencyDisplay } from '@/ai/utils/getDataResidencyDisplay';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -24,7 +24,9 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SearchInput, Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { SearchInput } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import {
   type IconComponent,
   IconFlag,
@@ -101,13 +103,13 @@ export const SettingsAdminAiProviderDetail = () => {
         ],
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Provider "${provider?.label ?? providerName}" removed`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to remove provider`,
       });
     }
@@ -131,12 +133,12 @@ export const SettingsAdminAiProviderDetail = () => {
       });
       await refetchClientConfig();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Model "${modelToRemove.label}" removed`,
       });
       setModelToRemove(null);
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to remove model` });
+      enqueueToast({ status: 'error', children: t`Failed to remove model` });
     }
   };
 
@@ -185,7 +187,7 @@ export const SettingsAdminAiProviderDetail = () => {
       await refetchClientConfig();
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update model availability`,
       });
     }
@@ -380,7 +382,7 @@ export const SettingsAdminAiProviderDetail = () => {
                   });
                 } catch {
                   enqueueToast({
-                    variant: 'error',
+                    status: 'error',
                     children: t`Failed to update model availability`,
                   });
                 } finally {

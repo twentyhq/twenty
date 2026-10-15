@@ -13,6 +13,7 @@ export const TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
   navigationMenuItem: ['name'],
   timelineActivityType: ['label'],
   settingsMenuItem: ['title'],
+  skill: ['label', 'description'],
 } as const satisfies Partial<Record<AllMetadataName, readonly string[]>>;
 
 export type TranslatableMetadataName =

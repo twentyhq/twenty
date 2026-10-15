@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -9,11 +10,11 @@ import {
   Toaster,
   ToastProvider,
 } from '@ui/components';
+import { DROPDOWN_STORY_A11Y_PARAMETERS } from '@ui/components/navigation/Dropdown/__stories__/dropdownStoryA11yParameters';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
-import { Menu } from '@ui/primitives/surfaces/Menu/Menu';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
@@ -27,17 +28,22 @@ export default meta;
 type Story = StoryObj;
 
 export const CalloutDismissal: Story = {
-  render: () => (
-    <>
-      <Callout variant="info" title="Default notice" isClosable />
-      <Callout
-        variant="info"
-        title="Supplied notice"
-        isClosable
-        closeLabel="Dismiss notice"
-      />
-    </>
-  ),
+  render: function CalloutDismissal() {
+    const [isSuppliedVisible, setIsSuppliedVisible] = useState(true);
+    return (
+      <>
+        <Callout status="info" title="Default notice" onDismiss={() => {}} />
+        {isSuppliedVisible && (
+          <Callout
+            status="info"
+            title="Supplied notice"
+            onDismiss={() => setIsSuppliedVisible(false)}
+            closeLabel="Dismiss notice"
+          />
+        )}
+      </>
+    );
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -83,12 +89,10 @@ export const NativeNames: Story = {
         placeholder="Search everything"
         aria-label="Fallback search"
         aria-labelledby="search-label"
-        filterDropdown={(button) => button}
-        filterButtonAriaLabel="Filter contacts"
       />
       <Text id="avatar-label">Open profile</Text>
       <Avatar
-        onClick={fn()}
+        render={<button type="button" onClick={fn()} />}
         aria-label="Fallback avatar"
         aria-labelledby="avatar-label"
       />
@@ -113,9 +117,6 @@ export const NativeNames: Story = {
     expect(
       canvas.getByRole('textbox', { name: 'Find contacts' }),
     ).toHaveAttribute('placeholder', 'Search everything');
-    expect(
-      canvas.getByRole('button', { name: 'Filter contacts' }),
-    ).toBeVisible();
     expect(canvas.getByRole('button', { name: 'Open profile' })).toBeVisible();
     expect(
       canvas.getByRole('separator', { name: 'Resize details' }),
@@ -126,40 +127,50 @@ export const NativeNames: Story = {
   },
 };
 
-export const MenuShortcutLabels: Story = {
+export const DropdownShortcutLabels: Story = {
+  parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
   render: () => (
-    <Menu.Root>
-      <Menu.Trigger render={<Button>Open shortcuts</Button>} />
-      <Menu.Popup aria-label="Shortcuts">
-        <Menu.Item shortcut={[['G'], ['D']]}>Default</Menu.Item>
-        <Menu.Item shortcut={[['G'], ['A']]} shortcutJoinLabel="followed by">
+    <Dropdown.Root type="menu">
+      <Dropdown.Trigger render={<Button>Open shortcuts</Button>} />
+      <Dropdown.Content aria-label="Shortcuts">
+        <Dropdown.ActionItem shortcut={[['G'], ['D']]}>
+          Default
+        </Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          shortcut={[['G'], ['A']]}
+          shortcutJoinLabel="followed by"
+        >
           Action
-        </Menu.Item>
-        <Menu.CheckboxItem shortcut={[['G'], ['C']]} shortcutJoinLabel="next">
-          Checkbox
-        </Menu.CheckboxItem>
-        <Menu.RadioGroup value="radio">
-          <Menu.RadioItem
-            value="radio"
-            shortcut={[['G'], ['R']]}
-            shortcutJoinLabel="afterwards"
-          >
-            Radio
-          </Menu.RadioItem>
-        </Menu.RadioGroup>
-        <Menu.SubmenuRoot>
-          <Menu.SubmenuTrigger
+        </Dropdown.ActionItem>
+        <Dropdown.OptionItem
+          selected={false}
+          indicator="checkbox"
+          shortcut={[['G'], ['C']]}
+          shortcutJoinLabel="next"
+        >
+          Unselected option
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem
+          selected
+          closeOnSelect={false}
+          shortcut={[['G'], ['R']]}
+          shortcutJoinLabel="afterwards"
+        >
+          Selected option
+        </Dropdown.OptionItem>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger
             shortcut={[['G'], ['S']]}
             shortcutJoinLabel="and"
           >
             Submenu
-          </Menu.SubmenuTrigger>
-          <Menu.Popup>
-            <Menu.Item>Nested action</Menu.Item>
-          </Menu.Popup>
-        </Menu.SubmenuRoot>
-      </Menu.Popup>
-    </Menu.Root>
+          </Dropdown.SubmenuTrigger>
+          <Dropdown.Content>
+            <Dropdown.ActionItem>Nested action</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Content>
+    </Dropdown.Root>
   ),
   play: async ({ canvasElement }) => {
     await userEvent.click(

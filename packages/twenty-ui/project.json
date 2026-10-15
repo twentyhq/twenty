@@ -161,12 +161,12 @@
     },
     "storybook:test": {
       "options": {
-        "command": "vitest run --coverage --shard={args.shard} --project storybook"
+        "command": "vitest run --coverage --shard={args.shard} --project storybook --project reduced-motion"
       }
     },
     "storybook:test:no-coverage": {
       "options": {
-        "command": "vitest run --shard={args.shard} --project storybook"
+        "command": "vitest run --shard={args.shard} --project storybook --project reduced-motion"
       }
     },
     "storybook:visual-diff": {

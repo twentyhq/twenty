@@ -1,3 +1,7 @@
+import {
+  deleteCoreWorkflows,
+  linkCoreWorkflowToLegacyWorkspaceIds,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 
 const CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID = `
@@ -46,7 +50,6 @@ describe('core workflow id native queries (e2e)', () => {
       mutation {
         createCoreWorkflow(input: { name: "Core Id Native Queries" }) {
           id
-          workspaceWorkflowId
         }
       }
     `);
@@ -54,24 +57,16 @@ describe('core workflow id native queries (e2e)', () => {
     expect(createResponse.body.errors).toBeUndefined();
 
     coreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
-    workspaceWorkflowId =
-      createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
+    ({ workspaceWorkflowId } = await linkCoreWorkflowToLegacyWorkspaceIds({
+      coreWorkflowId,
+    }));
   });
 
   afterAll(async () => {
-    await workflowGraphqlRequest(
-      `
-        mutation DestroyWorkflow($id: ID!) {
-          destroyWorkflow(id: $id) {
-            id
-          }
-        }
-      `,
-      { id: workspaceWorkflowId },
-    );
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 
-  it('lists the versions by core workflow id, mirror ids included', async () => {
+  it('lists the versions by core workflow id, legacy workspace ids included', async () => {
     const response = await workflowGraphqlRequest(
       CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID,
       { coreWorkflowId },

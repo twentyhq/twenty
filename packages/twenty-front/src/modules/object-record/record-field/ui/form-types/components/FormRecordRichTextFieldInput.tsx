@@ -4,7 +4,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { LightIconButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconMaximize } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -97,7 +98,7 @@ export const FormRecordRichTextFieldInput = ({
 
   const handleUploadFile = async (): Promise<string> => {
     enqueueToast({
-      variant: 'error',
+      status: 'error',
       children: t`Save the record before attaching a file`,
     });
 
@@ -145,7 +146,7 @@ export const FormRecordRichTextFieldInput = ({
   useEffect(() => {
     if (hasUnreadableStoredValue) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`This content was saved in an older format and cannot be edited here`,
       });
     }

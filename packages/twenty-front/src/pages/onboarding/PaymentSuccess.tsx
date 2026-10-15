@@ -9,7 +9,8 @@ import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
@@ -59,7 +60,7 @@ export const PaymentSuccess = () => {
       if (attempts >= SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS) {
         setHasTimedOut(true);
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`We're still waiting for a confirmation from our payment provider (Stripe). Please refresh in a few seconds.`,
         });
         return;

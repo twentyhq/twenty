@@ -1,13 +1,16 @@
+import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
 
 import { type AvatarShape } from '@ui/primitives/data-display/Avatar/types/AvatarShape';
 
-export type AvatarGroupProps = {
+export type AvatarGroupProps = Omit<
+  useRender.ComponentProps<'div'>,
+  'children'
+> & {
   avatars: ReactNode[];
-  className?: string;
   maxVisible?: number;
-  overflowAvatar?: ReactNode;
-  overflowCount?: number;
+  total?: number;
+  renderOverflow?: (hiddenCount: number) => ReactNode;
   overflowShape?: AvatarShape;
   overlap?: 'left' | 'right';
   overlapOffset?: string;

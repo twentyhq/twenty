@@ -1,7 +1,7 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
 import { useIcons } from 'twenty-ui/icon';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type WorkflowVariableSearchResultItemsProps = {
   searchResults: WorkflowVariableSearchResult[];

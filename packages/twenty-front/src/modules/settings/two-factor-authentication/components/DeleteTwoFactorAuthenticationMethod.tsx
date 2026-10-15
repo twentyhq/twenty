@@ -11,7 +11,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { DeleteTwoFactorAuthenticationMethodDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -50,7 +51,7 @@ export const DeleteTwoFactorAuthentication = () => {
       )
     ) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Invalid 2FA information.`,
         dedupeKey: '2fa-dedupe-key',
       });
@@ -67,7 +68,7 @@ export const DeleteTwoFactorAuthentication = () => {
     });
 
     enqueueToast({
-      variant: 'success',
+      status: 'success',
       children: t`2FA Method has been deleted successfully.`,
       dedupeKey: '2fa-dedupe-key',
     });

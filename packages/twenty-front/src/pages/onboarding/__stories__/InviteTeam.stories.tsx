@@ -5,7 +5,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { AppPath } from 'twenty-shared/types';
 
 import { OnboardingStatus } from '~/generated-metadata/graphql';
-import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import {
   PageDecorator,

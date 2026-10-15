@@ -2,7 +2,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 import { createPortal } from 'react-dom';
 
-import { useProvidedTextDirection } from '@ui/primitives/layout/TextDirectionProvider/internal/useProvidedTextDirection';
+import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
