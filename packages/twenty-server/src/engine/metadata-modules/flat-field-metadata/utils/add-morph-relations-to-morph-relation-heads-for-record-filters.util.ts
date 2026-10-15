@@ -5,6 +5,7 @@ import {
   type RecordFilter,
 } from 'twenty-shared/utils';
 
+import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -20,7 +21,7 @@ export const addMorphRelationsToMorphRelationHeadsForRecordFilters = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   recordFilters: Pick<RecordFilter, 'fieldMetadataId'>[];
-}) => {
+}): (FlatFieldMetadata & { morphRelations?: RelationDTO[] })[] => {
   const filteredMorphRelationHeadIds = new Set(
     recordFilters
       .map(({ fieldMetadataId }) =>
