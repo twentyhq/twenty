@@ -13,11 +13,12 @@ export const SegmentedControl = <TValue extends string>({
   className,
   itemWidth = 'equal',
   options,
+  size = 'md',
   ...props
 }: SegmentedControlProps<TValue>) => (
   <RadioGroupPrimitive
     {...props}
-    className={mergeClassNames(styles.container, className)}
+    className={mergeClassNames(clsx(styles.container, styles[size]), className)}
     data-item-width={itemWidth}
   >
     {options.map(

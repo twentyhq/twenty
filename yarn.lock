@@ -20104,6 +20104,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-drag-handle@patch:@tiptap/extension-drag-handle@npm%3A3.30.5#~/.yarn/patches/@tiptap-extension-drag-handle-npm-3.30.5-e53a22740d.patch":
+  version: 3.30.5
+  resolution: "@tiptap/extension-drag-handle@patch:@tiptap/extension-drag-handle@npm%3A3.30.5#~/.yarn/patches/@tiptap-extension-drag-handle-npm-3.30.5-e53a22740d.patch::version=3.30.5&hash=5e94fb"
+  dependencies:
+    "@floating-ui/dom": "npm:^1.6.13"
+  peerDependencies:
+    "@tiptap/core": 3.30.5
+    "@tiptap/extension-collaboration": 3.30.5
+    "@tiptap/extension-node-range": 3.30.5
+    "@tiptap/pm": 3.30.5
+    "@tiptap/y-tiptap": ^3.0.7
+  checksum: 10c0/d3e012e5b834178549ad8b08650d8c90d5ba0cca71c2dde3e8caccbca3339e36e1a54554ee550f10b7e17f418e32f84ddede521ee2b6f8cf4bf304534c60f8da
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-floating-menu@npm:^3.30.5, @tiptap/extension-floating-menu@npm:^3.31.3":
   version: 3.31.3
   resolution: "@tiptap/extension-floating-menu@npm:3.31.3"
@@ -50416,7 +50431,7 @@ __metadata:
     "@tiptap/extension-bold": "npm:3.30.5"
     "@tiptap/extension-collaboration": "npm:3.30.5"
     "@tiptap/extension-document": "npm:3.30.5"
-    "@tiptap/extension-drag-handle": "npm:3.30.5"
+    "@tiptap/extension-drag-handle": "patch:@tiptap/extension-drag-handle@npm%3A3.30.5#~/.yarn/patches/@tiptap-extension-drag-handle-npm-3.30.5-e53a22740d.patch"
     "@tiptap/extension-drag-handle-react": "npm:3.30.5"
     "@tiptap/extension-hard-break": "npm:3.30.5"
     "@tiptap/extension-heading": "npm:3.30.5"

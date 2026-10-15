@@ -50,11 +50,10 @@ const StyledRoot = styled.div`
   width: 100%;
 `;
 
-const StyledCardContent = styled.div`
+const StyledCardContent = styled(Card.Content)`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledSelectorRow = styled.div`

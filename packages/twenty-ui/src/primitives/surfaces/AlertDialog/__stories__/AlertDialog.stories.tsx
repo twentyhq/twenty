@@ -32,6 +32,13 @@ export const Default: Story = {
     expect(dialog).toHaveAccessibleDescription(
       'This record will be permanently deleted. This action cannot be undone.',
     );
+    expect(
+      getComputedStyle(
+        within(dialog).getByText(
+          'This record will be permanently deleted. This action cannot be undone.',
+        ),
+      ).textAlign,
+    ).toBe('start');
     expect(dialog).toHaveAttribute(
       'aria-labelledby',
       body.getByRole('heading', { name: 'Delete this record?' }).id,
