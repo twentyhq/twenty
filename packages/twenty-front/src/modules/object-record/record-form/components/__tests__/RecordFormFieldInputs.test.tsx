@@ -85,6 +85,37 @@ describe('RecordFormFieldInputs', () => {
     });
   });
 
+  it('seeds the draft once the field list arrives after an empty first render', () => {
+    const onFieldValueChange = jest.fn();
+
+    const { rerender } = render(
+      <RecordFormFieldInputs
+        objectMetadataItem={objectMetadataItem}
+        fieldMetadataItems={[]}
+        draftRecord={{}}
+        onFieldValueChange={onFieldValueChange}
+        onFieldValueClear={jest.fn()}
+      />,
+    );
+
+    expect(onFieldValueChange).not.toHaveBeenCalled();
+
+    rerender(
+      <RecordFormFieldInputs
+        objectMetadataItem={objectMetadataItem}
+        fieldMetadataItems={[currencyFieldMetadataItem]}
+        draftRecord={{}}
+        onFieldValueChange={onFieldValueChange}
+        onFieldValueClear={jest.fn()}
+      />,
+    );
+
+    expect(onFieldValueChange).toHaveBeenCalledWith('amount', {
+      amountMicros: null,
+      currencyCode: CurrencyCode.USD,
+    });
+  });
+
   it('does not seed the draft when it already has a value', () => {
     const onFieldValueChange = renderInputs({
       amount: { amountMicros: 1500000000, currencyCode: CurrencyCode.EUR },
