@@ -13,6 +13,7 @@ import {
 } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
 import {
+  type AgentResponseFormat,
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
@@ -25,6 +26,7 @@ import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -63,7 +65,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
 export type AgentRunTurnInput = {
-  agent: AgentEntity | null;
+  agent: AgentEntity;
+  responseFormat?: AgentResponseFormat;
   messages: RunAgentMessage[];
   // a continued conversation, with the tool calls and results plain run messages cannot carry
   priorMessages?: ExtendedUIMessage[];
@@ -89,6 +92,7 @@ export class AgentRunTurnService {
 
   async runTurn({
     agent,
+    responseFormat,
     messages,
     baseSystemPrompt,
     workspaceId,
@@ -106,14 +110,19 @@ export class AgentRunTurnService {
       );
     }
 
-    assertAgentResponseFormatHasOutputFieldsOrThrow(agent?.responseFormat);
+    assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
     const { userWorkspaceId, usageOperationType } = executionContext;
+    const spenders: UsageSpenders = {
+      userWorkspaceId,
+      agentId: agent.id,
+      applicationId: agent.applicationId,
+    };
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
       operationType: usageOperationType,
-      spenders: { userWorkspaceId, agentId: agent?.id },
+      spenders,
     });
 
     try {
@@ -129,21 +138,19 @@ export class AgentRunTurnService {
 
       const turn = await this.agentTurnService.start({
         workspace: workspace ?? undefined,
-        modelId: agent?.modelId,
+        modelId: agent.modelId,
         toolset: {
           registryAccess,
           nativeToolOptions: {
-            webSearch: agent?.modelConfiguration?.webSearch?.enabled === true,
+            webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
             twitterSearch:
-              agent?.modelConfiguration?.twitterSearch?.enabled === true,
+              agent.modelConfiguration?.twitterSearch?.enabled === true,
           },
           canAskHumans,
-          // a step without an agent has no tools of its own, so it may only propose emails
-          canProposeEmails: !isDefined(agent),
           waitTools: pausingTools,
         },
         buildContext: async ({ modelConfig, toolset }) => ({
-          systemPrompt: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${
+          systemPrompt: `${baseSystemPrompt}\n\n${tipTapDocumentToMarkdown(agent.prompt)}${
             registryAccess.type === 'catalog'
               ? buildToolCatalogSection(toolset.toolCatalog, [])
               : ''
@@ -163,18 +170,17 @@ export class AgentRunTurnService {
             })),
           ],
         }),
-        promptCacheKey: agent?.id,
+        promptCacheKey: agent.id,
         billing: {
           workspaceId,
           operationType: usageOperationType,
-          userWorkspaceId: userWorkspaceId ?? null,
-          agentId: agent?.id ?? null,
+          spenders,
         },
         telemetry: {
           functionId: 'agent-execution',
           workspaceId,
           userWorkspaceId,
-          agentId: agent?.id,
+          agentId: agent.id,
         },
         // nobody resends a background run, so a provider error after streaming started is retried here
         streamRetries: 2,
@@ -194,9 +200,7 @@ export class AgentRunTurnService {
         offeredToolNames: toolset.offeredPausingToolNames,
       });
       const agentSchema =
-        agent?.responseFormat?.type === 'json'
-          ? agent.responseFormat.schema
-          : undefined;
+        responseFormat?.type === 'json' ? responseFormat.schema : undefined;
 
       const hasNoMoreAvailableCredits = turn.hasNoMoreAvailableCredits();
       let result: object = { response: text };
@@ -218,29 +222,28 @@ export class AgentRunTurnService {
           providerOptions: getCallLevelProviderOptions({
             sdkPackage: registeredModel.sdkPackage,
             providerOptions: undefined,
-            promptCacheKey: agent?.id,
+            promptCacheKey: agent.id,
           }),
           ...buildAiTelemetry({
             functionId: 'agent-structured-output',
             workspaceId,
             userWorkspaceId,
-            agentId: agent?.id,
+            agentId: agent.id,
           }),
         });
 
-        void this.aiBillingService.calculateAndBillUsage(
-          registeredModel.modelId,
-          {
+        void this.aiBillingService.calculateAndBillUsage({
+          modelId: registeredModel.modelId,
+          billingInput: {
             usage: structuredResult.usage,
             cacheCreationTokens: extractCacheCreationTokensFromSteps(
               structuredResult.steps,
             ),
           },
           workspaceId,
-          usageOperationType,
-          agent?.id,
-          userWorkspaceId,
-        );
+          operationType: usageOperationType,
+          spenders,
+        });
 
         usage = mergeLanguageModelUsage(usage, structuredResult.usage);
         steps = [...steps, ...structuredResult.steps];
@@ -306,10 +309,6 @@ export class AgentRunTurnService {
     | 'additionalExcludedToolNames'
     | 'toolLoadingStrategy'
   >): Promise<AgentRegistryAccess> {
-    if (!isDefined(agent)) {
-      return { type: 'none' };
-    }
-
     const agentRoleId = await this.aiAgentRoleService.findAgentRoleId({
       workspaceId: agent.workspaceId,
       agentId: agent.id,
@@ -321,7 +320,7 @@ export class AgentRunTurnService {
 
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
-      roleId: agentRoleId,
+      agentId: agent.id,
       authContext,
       actorContext,
       rolePermissionConfig: buildAgentRolePermissionConfig({
@@ -352,6 +351,7 @@ export class AgentRunTurnService {
       : {
           type: 'granted',
           toolContext,
+          agentRoleId,
           categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
           excludedToolNames,
         };

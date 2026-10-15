@@ -8,6 +8,8 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FeatureFlagKey,
+  FieldMetadataType,
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
   type RestrictedFieldsPermissions,
@@ -16,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
+import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
 import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
 import { type RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -52,6 +55,24 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     'universalIdentifier',
     'labelIdentifierFieldMetadataId',
   ],
+  fieldMetadata: {
+    columns: [
+      'id',
+      'type',
+      'universalIdentifier',
+      'morphId',
+      'isActive',
+      'isSystem',
+      'overrides',
+      'applicationId',
+    ],
+    where: { type: FieldMetadataType.MORPH_RELATION },
+  },
+  application: ['id', 'universalIdentifier'],
+  featureFlag: {
+    columns: ['key', 'value'],
+    where: { key: FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED },
+  },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
@@ -73,7 +94,28 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       objectMetadata: workspaceObjectMetadataCollection,
+      fieldMetadata: morphRelationFieldMetadatas,
+      featureFlag: morphRelationHeadFeatureFlags,
+      application: applications,
     } = rows;
+
+    const isMorphRelationHeadEnabled = morphRelationHeadFeatureFlags.some(
+      ({ value }) => value,
+    );
+
+    const {
+      isMorphRelationHeadFieldId,
+      resolveMorphRelationPermissionFieldIds,
+    } = buildResolveMorphRelationPermissionFieldIds({
+      morphRelationFieldMetadatas,
+      applicationUniversalIdentifierById: new Map(
+        applications.map(({ id, universalIdentifier }) => [
+          id,
+          universalIdentifier,
+        ]),
+      ),
+      isMorphRelationHeadEnabled,
+    });
 
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
@@ -182,10 +224,16 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             );
           }
 
-          const fieldPermissionsForObject = roleFieldPermissions.filter(
-            (fieldPermission) =>
-              fieldPermission.objectMetadataId === objectMetadataId,
-          );
+          const fieldPermissionsForObject = roleFieldPermissions
+            .filter(
+              (fieldPermission) =>
+                fieldPermission.objectMetadataId === objectMetadataId,
+            )
+            .sort(
+              (first, second) =>
+                Number(isMorphRelationHeadFieldId(second.fieldMetadataId)) -
+                Number(isMorphRelationHeadFieldId(first.fieldMetadataId)),
+            );
 
           for (const fieldPermission of fieldPermissionsForObject) {
             const isFieldLabelIdentifier =
@@ -196,12 +244,18 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
               isDefined(fieldPermission.canReadFieldValue) ||
               isDefined(fieldPermission.canUpdateFieldValue)
             ) {
-              restrictedFields[fieldPermission.fieldMetadataId] = {
+              const fieldRestriction = {
                 canRead: isFieldLabelIdentifier
                   ? true
                   : fieldPermission.canReadFieldValue,
                 canUpdate: fieldPermission.canUpdateFieldValue,
               };
+
+              for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
+                fieldPermission.fieldMetadataId,
+              )) {
+                restrictedFields[restrictedFieldId] = fieldRestriction;
+              }
             }
           }
         }

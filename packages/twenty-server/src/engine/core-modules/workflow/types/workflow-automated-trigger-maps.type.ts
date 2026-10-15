@@ -11,6 +11,7 @@ export type CoreDispatchIds =
 export type CachedWorkflowAutomatedTrigger = {
   workflowId: string;
   legacyWorkflowId?: string;
+  applicationId: string;
   type: AutomatedTriggerType;
   settings: AutomatedTriggerSettings;
 } & CoreDispatchIds;

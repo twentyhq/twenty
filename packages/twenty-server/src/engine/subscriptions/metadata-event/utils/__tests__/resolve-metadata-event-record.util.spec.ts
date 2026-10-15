@@ -73,13 +73,14 @@ describe('resolveMetadataEventRecord', () => {
     expect(resolved.shortLabel).toBeNull();
   });
 
-  it('should return custom-application values untouched when no catalog applies', () => {
+  it("should keep custom-application values that Twenty's catalog does not know", () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'view',
       record: { name: 'My custom view' },
       i18nContext: buildI18nContext({
         isStandardApp: false,
         applicationCatalog: undefined,
+        i18nInstance: { _: (messageId: string) => messageId },
       }),
     });
 

@@ -4,6 +4,8 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 
 const CREATED_BY = {
   source: 'WORKFLOW',
@@ -15,6 +17,8 @@ const CREATED_BY = {
 const PRIOR_MESSAGES = [{ id: 'message-id', role: 'assistant', parts: [] }];
 
 const MESSAGES = [{ role: 'user' as const, content: 'Draft a quote' }];
+
+const AGENT = { id: 'agent-id' } as AgentEntity;
 
 const buildExecution = (
   overrides: Partial<AgentExecutionResult> = {},
@@ -45,6 +49,9 @@ const buildExecution = (
   ...overrides,
 });
 
+const buildAgent = (responseFormat: AgentResponseFormat): AgentEntity =>
+  Object.assign(new AgentEntity(), { id: 'agent-id', responseFormat });
+
 const RUN_INPUT: AgentRunnerRunInput = {
   workspaceId: 'workspace-id',
   conversation: { threadId: 'thread-id', isCreated: false },
@@ -53,7 +60,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
     ref: { workflowRunId: 'run', stepId: 'step' },
   },
   spec: {
-    agentId: null,
+    agentId: 'agent-id',
     title: 'Draft the quote',
     baseSystemPrompt: 'base prompt',
     instructions: null,
@@ -61,7 +68,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
       canAskHumans: false,
     },
   },
-  agent: null,
+  agent: AGENT,
   prompt: {
     messages: MESSAGES,
     senderUserWorkspaceId: 'user-workspace-id',
@@ -141,7 +148,7 @@ const buildService = (execution = buildExecution()) => {
     { getHandlerOrThrow: () => callerHandler } as never,
     pendingWakeUpService as never,
     messageQueueService as never,
-    {} as never,
+    { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
   );
 
   return {
@@ -288,7 +295,7 @@ describe('AgentRunnerService', () => {
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       title: 'Draft the quote',
-      agentId: null,
+      agentId: 'agent-id',
       senderUserWorkspaceId: 'user-workspace-id',
       senderApplicationId: null,
       createdBy: CREATED_BY,
@@ -309,6 +316,49 @@ describe('AgentRunnerService', () => {
         turnId: 'turn-id',
         title: 'Draft the quote',
       }),
+    );
+  });
+
+  it("asks for the caller's output format over the agent's own", async () => {
+    const { service, agentRunTurnService } = buildService();
+    const callerResponseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    await service.run({
+      ...RUN_INPUT,
+      agent: buildAgent({ type: 'text' }),
+      spec: { ...RUN_INPUT.spec, responseFormat: callerResponseFormat },
+    });
+
+    expect(agentRunTurnService.runTurn).toHaveBeenCalledTimes(1);
+    expect(agentRunTurnService.runTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ responseFormat: callerResponseFormat }),
+    );
+  });
+
+  it("falls back to the agent's output format when the caller gives none", async () => {
+    const { service, agentRunTurnService } = buildService();
+    const agentResponseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    await service.run({
+      ...RUN_INPUT,
+      agent: buildAgent(agentResponseFormat),
+    });
+
+    expect(agentRunTurnService.runTurn).toHaveBeenCalledTimes(1);
+    expect(agentRunTurnService.runTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ responseFormat: agentResponseFormat }),
     );
   });
 

@@ -51,6 +51,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/onboarding/components/OnboardingSkipDialog.tsx',
+    reason: 'Dialog.Header centers the visual and anchors the close button',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsPasswordController.tsx',
     reason: 'Button placement in its parent column',
   },

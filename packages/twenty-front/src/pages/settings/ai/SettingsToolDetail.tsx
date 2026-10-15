@@ -1,3 +1,4 @@
+import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
@@ -21,10 +22,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useDebouncedCallback } from 'use-debounce';
-import {
-  GetToolIndexDocument,
-  GetToolInputSchemaDocument,
-} from '~/generated-metadata/graphql';
+import { GetToolInputSchemaDocument } from '~/generated-metadata/graphql';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import { SettingsToolParameterTable } from '@/settings/ai/components/SettingsToolParameterTable';
 
@@ -52,14 +50,11 @@ export const SettingsToolDetail = () => {
       skip: !isCustomTool,
     });
 
-  const { data: toolIndexData, loading: toolIndexLoading } = useQuery(
-    GetToolIndexDocument,
-    { skip: isCustomTool },
-  );
+  const { toolIndex, loading: toolIndexLoading } = useGetToolIndex({
+    skip: isCustomTool,
+  });
 
-  const systemTool = toolIndexData?.getToolIndex.find(
-    (entry) => entry.name === toolIdentifier,
-  );
+  const systemTool = toolIndex.find((entry) => entry.name === toolIdentifier);
 
   const { data: schemaData, loading: schemaLoading } = useQuery(
     GetToolInputSchemaDocument,

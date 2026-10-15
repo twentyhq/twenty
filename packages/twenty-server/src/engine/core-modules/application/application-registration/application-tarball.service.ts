@@ -484,22 +484,20 @@ export class ApplicationTarballService {
     packageJsonVersion: string | null;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
-    return this.appRegistrationRepository.save(
-      this.appRegistrationRepository.create({
-        universalIdentifier,
-        name: manifest.application?.displayName ?? 'Unknown App',
-        sourceType: ApplicationRegistrationSourceType.TARBALL,
-        manifest,
-        ...fromManifestApplicationToDisplayFields(manifest.application),
-        latestAvailableVersion: packageJsonVersion,
-        isListed: false,
-        isVetted: false,
-        oAuthClientId: v4(),
-        oAuthRedirectUris: [],
-        oAuthScopes: [],
-        ownerWorkspaceId,
-      }),
-    );
+    return this.applicationRegistrationService.create({
+      universalIdentifier,
+      name: manifest.application?.displayName ?? 'Unknown App',
+      sourceType: ApplicationRegistrationSourceType.TARBALL,
+      manifest,
+      ...fromManifestApplicationToDisplayFields(manifest.application),
+      latestAvailableVersion: packageJsonVersion,
+      isListed: false,
+      isVetted: false,
+      oAuthClientId: v4(),
+      oAuthRedirectUris: [],
+      oAuthScopes: [],
+      ownerWorkspaceId,
+    });
   }
 
   private async findOwnerCustomApplicationUniversalIdentifier(

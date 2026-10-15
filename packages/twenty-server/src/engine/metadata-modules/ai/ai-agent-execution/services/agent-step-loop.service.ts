@@ -24,6 +24,7 @@ import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/g
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import {
   getCacheProviderOptions,
@@ -91,8 +92,7 @@ export type AgentStepLoopInput = {
   billing: {
     workspaceId: string;
     operationType: UsageOperationType;
-    userWorkspaceId: string | null;
-    agentId: string | null;
+    spenders: UsageSpenders;
   };
   telemetry: Parameters<typeof buildAiTelemetry>[0];
   providerOptions?: ProviderOptions;
@@ -169,10 +169,7 @@ export class AgentStepLoopService {
         steps,
         workspaceId: billing.workspaceId,
         operationType: billing.operationType,
-        spenders: {
-          userWorkspaceId: billing.userWorkspaceId,
-          agentId: billing.agentId,
-        },
+        spenders: billing.spenders,
       });
 
       if (metricsScope !== 'chat') {
@@ -303,10 +300,7 @@ export class AgentStepLoopService {
             },
             workspaceId: billing.workspaceId,
             operationType: billing.operationType,
-            spenders: {
-              userWorkspaceId: billing.userWorkspaceId,
-              agentId: billing.agentId,
-            },
+            spenders: billing.spenders,
           });
 
         hasNoMoreAvailableCredits ||= isExhausted;
@@ -335,8 +329,7 @@ export class AgentStepLoopService {
             aiBillingService: this.aiBillingService,
             modelId: registeredModel.modelId,
             workspaceId: billing.workspaceId,
-            userWorkspaceId: billing.userWorkspaceId,
-            agentId: billing.agentId,
+            spenders: billing.spenders,
             operationType: billing.operationType,
           },
         }),

@@ -58,14 +58,13 @@ export class AiEvaluationService {
       abortSignal,
     });
 
-    await this.aiBillingService.calculateAndBillUsage(
+    await this.aiBillingService.calculateAndBillUsage({
       modelId,
-      { usage },
+      billingInput: { usage },
       workspaceId,
-      UsageOperationType.AI_WORKFLOW_TOKEN,
-      null,
-      userWorkspaceId,
-    );
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     return { modelId, answers, usage };
   }

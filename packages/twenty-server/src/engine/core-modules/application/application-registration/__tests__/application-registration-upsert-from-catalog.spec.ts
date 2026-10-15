@@ -1,10 +1,14 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  type Manifest,
+} from 'twenty-shared/application';
 
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -54,7 +58,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
   beforeEach(async () => {
     applicationRegistrationRepository = {
       findOne: jest.fn(),
-      save: jest.fn(),
+      save: jest.fn(async (entity) => entity),
       create: jest.fn((entity) => entity),
     };
 
@@ -247,5 +251,20 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({ isListed: true }),
     );
+  });
+
+  it('should refuse a catalog entry claiming the standard application identifier', async () => {
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      service.upsertFromCatalog({
+        ...catalogParams,
+        universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      }),
+    ).rejects.toMatchObject({
+      code: ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
+    });
+
+    expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
   });
 });

@@ -21,7 +21,6 @@ import {
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
@@ -50,6 +49,7 @@ export type AgentRegistryAccess =
   | {
       type: 'granted';
       toolContext: ToolContext;
+      agentRoleId: string;
       categories: readonly ToolCategory[];
       excludedToolNames: readonly string[];
     }
@@ -60,8 +60,6 @@ export type AgentToolsetInput = {
   registeredModel: RegisteredAiModel;
   nativeToolOptions: NativeModelToolOptions;
   canAskHumans: boolean;
-  // without registry tools, an agentless run may still propose an email, which runs only once approved
-  canProposeEmails?: boolean;
   isWorkspaceSetupThread?: boolean;
   waitTools?: ToolSet;
   extraTools?: ToolSet;
@@ -100,7 +98,6 @@ export class AgentToolsetService {
     registeredModel,
     nativeToolOptions,
     canAskHumans,
-    canProposeEmails = false,
     isWorkspaceSetupThread = false,
     waitTools = {},
     extraTools = {},
@@ -108,14 +105,11 @@ export class AgentToolsetService {
     const { directTools, metaTools, toolCatalog, isToolAllowed } =
       await this.buildRegistryToolset(registryAccess);
 
-    const resolveProposal = async (input: ProposeToolCallToolInput) => {
-      if (registryAccess.type === 'none') {
-        return resolveEmailToolCallProposal(input);
-      }
-
-      const { toolContext } = registryAccess;
-
-      return resolveProposedToolCall({
+    const resolveProposal = async (
+      input: ProposeToolCallToolInput,
+      toolContext: ToolContext,
+    ) =>
+      resolveProposedToolCall({
         input,
         findTool: async (toolName) => {
           if (!isToolAllowed(toolName)) {
@@ -131,9 +125,6 @@ export class AgentToolsetService {
             ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
             : buildUnavailableToolOutput(toolName),
       });
-    };
-    const canPropose =
-      canAskHumans && (registryAccess.type !== 'none' || canProposeEmails);
 
     const pausingTools: ToolSet = {
       ...waitTools,
@@ -145,10 +136,11 @@ export class AgentToolsetService {
             [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
           }
         : {}),
-      ...(canPropose
+      ...(canAskHumans && registryAccess.type !== 'none'
         ? {
             [PROPOSE_TOOL_CALL_TOOL_NAME]: createProposeToolCallTool({
-              resolveProposal,
+              resolveProposal: (input) =>
+                resolveProposal(input, registryAccess.toolContext),
             }),
           }
         : {}),
@@ -185,15 +177,13 @@ export class AgentToolsetService {
     }
 
     const { toolContext } = registryAccess;
-    const { workspaceId, roleId, userId, userWorkspaceId, locale } =
-      toolContext;
+    const { workspaceId, userId, userWorkspaceId, locale } = toolContext;
 
     switch (registryAccess.type) {
       case 'assistant': {
         const { excludedToolNames, preloadedToolNames } = registryAccess;
         const toolCatalog = await this.toolRegistry.buildToolIndex(
           workspaceId,
-          roleId,
           {
             userId,
             userWorkspaceId,
@@ -233,7 +223,7 @@ export class AgentToolsetService {
         const allowedCategories = new Set(registryAccess.categories);
         const excludedToolNames = new Set(registryAccess.excludedToolNames);
         const toolCatalog = (
-          await this.toolRegistry.buildToolIndex(workspaceId, roleId, {
+          await this.toolRegistry.buildToolIndex(workspaceId, {
             userId,
             userWorkspaceId,
             rolePermissionConfig: toolContext.rolePermissionConfig,
@@ -258,7 +248,10 @@ export class AgentToolsetService {
       }
       case 'granted': {
         const directTools = await this.toolRegistry.getToolsByCategories(
-          { ...toolContext, requireExplicitObjectGrants: true },
+          {
+            ...toolContext,
+            explicitObjectGrantsRoleId: registryAccess.agentRoleId,
+          },
           {
             categories: [...registryAccess.categories],
             excludeTools: [...registryAccess.excludedToolNames],

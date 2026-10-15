@@ -29,7 +29,7 @@ export const EditLinkDropdown = ({
           <LightIconButton
             aria-label={isActive ? t`Edit link` : t`Add link`}
             aria-pressed={isActive}
-            emphasis={isActive ? 'standard' : 'subtle'}
+            variant={isActive ? 'soft' : 'ghost'}
             size="sm"
           >
             {isActive ? <IconPencil /> : <IconLink />}

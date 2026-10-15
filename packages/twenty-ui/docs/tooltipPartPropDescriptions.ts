@@ -29,6 +29,8 @@ export const TOOLTIP_PART_PROP_DESCRIPTIONS = {
       'Content rendered as supplied. Does not create a portal, positioner, title layout or arrow.',
     ref: 'Ref to the popup div. Native props, styles and render target this element.',
     withExitAnimation: 'Enables the optional Twenty exit transition.',
+    maxWidth:
+      'Maximum popup width, still capped by the space available beside the anchor.',
   },
   Arrow: {
     ref: 'Ref to the arrow div. Compose inside Popup.',

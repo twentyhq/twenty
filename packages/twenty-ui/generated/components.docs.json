@@ -1470,6 +1470,13 @@
         "description": "Whether the user must choose a value before submitting a form."
       },
       {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Control height: `sm` (24px) or `md` (32px)."
+      },
+      {
         "name": "style",
         "type": "CSSProperties | ((state: RadioGroupState) => CSSProperties | undefined)",
         "required": false,
@@ -9717,6 +9724,13 @@
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "maxWidth",
+            "type": "MaxWidth<string | number>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Maximum popup width, still capped by the space available beside the anchor."
           },
           {
             "name": "ref",

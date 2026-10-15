@@ -8,15 +8,18 @@ import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util'
 export const markSlackAssistantRequestDone = async ({
   requestId,
   responseText,
+  agentChatThreadId,
 }: {
   requestId: string;
   responseText: string;
+  agentChatThreadId?: string;
 }): Promise<boolean> => {
   try {
     await updateSlackAssistantRequest(new CoreApiClient(), {
       id: requestId,
       status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
       responseText,
+      agentChatThreadId,
     });
 
     return true;

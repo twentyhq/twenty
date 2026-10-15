@@ -249,6 +249,50 @@ describe('parseEmailDocument', () => {
     expect(result.success).toBe(false);
   });
 
+  it('should accept a styled blockquote of paragraphs', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'blockquote',
+          attrs: { style: { color: '#555555' } },
+          content: [paragraph('Quoted'), paragraph('Second line')],
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject a blockquote with a non-paragraph child', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'blockquote',
+          content: [
+            {
+              type: 'heading',
+              attrs: { level: 2 },
+              content: [{ type: 'text', text: 'Quoted heading' }],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject an empty blockquote', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [{ type: 'blockquote', content: [] }],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('should reject an image without src', () => {
     const result = parseEmailDocument({
       type: 'doc',

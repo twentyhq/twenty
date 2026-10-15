@@ -186,6 +186,7 @@ export class WorkspaceResolver {
         userWorkspaceId,
         apiKey,
         application,
+        agentId: undefined,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
