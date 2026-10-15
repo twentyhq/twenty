@@ -1,10 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
+import {
+  MarketplaceService,
+  type RegistryPackageInfo,
+} from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
+import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { areRegistrationAssetsStored } from 'src/engine/core-modules/application/application-registration/utils/are-registration-assets-stored.util';
@@ -17,7 +24,9 @@ export class MarketplaceCatalogSyncService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
+    private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly marketplaceService: MarketplaceService,
+    private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
   ) {}
 
   async syncCatalog(): Promise<void> {
@@ -75,6 +84,8 @@ export class MarketplaceCatalogSyncService {
           continue;
         }
 
+        await this.recordCatalogVersion({ registration, registryPackage: pkg });
+
         // Rehost the logo and gallery images from the registry CDN so display
         // urls are served from fileIds like every other source. Skipped when
         // the version is unchanged and the files are already stored; the
@@ -107,5 +118,60 @@ export class MarketplaceCatalogSyncService {
         );
       }
     }
+  }
+
+  private async recordCatalogVersion({
+    registration,
+    registryPackage,
+  }: {
+    registration: Pick<ApplicationRegistrationEntity, 'id'>;
+    registryPackage: RegistryPackageInfo;
+  }): Promise<void> {
+    if (!isNonEmptyString(registryPackage.version)) {
+      return;
+    }
+
+    const recordedVersion =
+      await this.applicationRegistrationVersionService.findOneByApplicationRegistrationIdAndVersion(
+        {
+          applicationRegistrationId: registration.id,
+          version: registryPackage.version,
+        },
+      );
+
+    if (isDefined(recordedVersion?.tarballUrl)) {
+      return;
+    }
+
+    const registryTarball =
+      await this.applicationPackageFetcherService.findRegistryTarball({
+        packageName: registryPackage.name,
+        version: registryPackage.version,
+      });
+
+    if (!isDefined(registryTarball)) {
+      this.logger.warn(
+        `Version ${registryPackage.version} of ${registryPackage.name} left incomplete: registry gave no artifact details, retrying on the next sync`,
+      );
+
+      return;
+    }
+
+    if (isDefined(recordedVersion)) {
+      await this.applicationRegistrationVersionService.fillMissingTarball({
+        id: recordedVersion.id,
+        tarballUrl: registryTarball.tarballUrl,
+      });
+
+      return;
+    }
+
+    await this.applicationRegistrationVersionService.recordPublishedVersion({
+      applicationRegistrationId: registration.id,
+      version: registryPackage.version,
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      sourcePackage: registryPackage.name,
+      tarballUrl: registryTarball.tarballUrl,
+    });
   }
 }

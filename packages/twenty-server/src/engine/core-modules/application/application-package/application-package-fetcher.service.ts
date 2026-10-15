@@ -20,6 +20,9 @@ import { extractTarballSecurely } from 'src/engine/core-modules/application/appl
 import { assertValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
+import { assertSriIntegrityMatches } from 'src/engine/core-modules/application/application-registration-version/utils/assert-sri-integrity-matches.util';
+import { pickSha512Integrity } from 'src/engine/core-modules/application/application-registration-version/utils/pick-sha512-integrity.util';
+import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -40,16 +43,28 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 const APP_FETCHER_TMPDIR = join(tmpdir(), 'twenty-app-fetcher');
 const RESOLUTION_TIMEOUT_MS = 30_000;
 
+export type RegistryTarball = {
+  tarballUrl: string;
+  integrity: string | null;
+};
+
 export type ResolvedPackage = {
   extractedDir: string;
   cleanupDir: string;
   manifest: Manifest;
   packageJson: PackageJson;
+  integrity: string;
+  registryTarballUrl?: string;
 };
 
 const registryVersionMetadataSchema = z.object({
   name: z.string(),
-  dist: z.object({ tarball: z.string().optional() }).optional(),
+  dist: z
+    .object({
+      tarball: z.string().optional(),
+      integrity: z.string().nullish(),
+    })
+    .optional(),
 });
 
 @Injectable()
@@ -129,6 +144,36 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
+  async findRegistryTarball({
+    packageName,
+    version,
+  }: {
+    packageName: string;
+    version: string;
+  }): Promise<RegistryTarball | null> {
+    try {
+      assertValidNpmPackageName(packageName);
+      assertValidNpmVersionSpec(version);
+
+      return await this.fetchRegistryTarball(
+        this.twentyConfigService.get('APP_REGISTRY_URL'),
+        packageName,
+        version,
+        this.twentyConfigService.get('APP_REGISTRY_TOKEN'),
+      );
+    } catch (error) {
+      if (!(error instanceof ApplicationException)) {
+        throw error;
+      }
+
+      this.logger.warn(
+        `No registry artifact for ${packageName}@${version}: ${error.message}`,
+      );
+
+      return null;
+    }
+  }
+
   async cleanupExtractedDir(extractedDir: string): Promise<void> {
     try {
       await fs.rm(extractedDir, { recursive: true, force: true });
@@ -155,7 +200,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
       assertValidNpmVersionSpec(versionSpec);
 
-      const tarballUrl = await this.fetchTarballUrl(
+      const registryTarball = await this.fetchRegistryTarball(
         registryUrl,
         sourcePackage,
         versionSpec,
@@ -163,10 +208,21 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       );
 
       const tarballBuffer = await this.downloadTarball(
-        tarballUrl,
+        registryTarball.tarballUrl,
         registryUrl,
         authToken,
       );
+
+      const integrity = computeSriIntegrity({ source: tarballBuffer });
+      const registryIntegrity = pickSha512Integrity(registryTarball.integrity);
+
+      if (isDefined(registryIntegrity)) {
+        assertSriIntegrityMatches({
+          expected: registryIntegrity,
+          actual: integrity,
+          subject: `Tarball downloaded for ${sourcePackage}@${versionSpec}`,
+        });
+      }
 
       const tarballPath = join(workDir, 'package.tgz');
 
@@ -196,6 +252,8 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
+        integrity,
+        registryTarballUrl: registryTarball.tarballUrl,
       };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
@@ -274,6 +332,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
+        integrity: computeSriIntegrity({ source: tarballBuffer }),
       };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
@@ -289,12 +348,12 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
-  private async fetchTarballUrl(
+  private async fetchRegistryTarball(
     registryUrl: string,
     sourcePackage: string,
     versionSpec: string,
     authToken?: string,
-  ): Promise<string> {
+  ): Promise<RegistryTarball> {
     const encodedName = encodeURIComponent(sourcePackage);
     const encodedVersionSpec = encodeURIComponent(versionSpec);
     const baseUrl = registryUrl.replace(/\/$/, '');
@@ -355,7 +414,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       );
     }
 
-    return tarballUrl;
+    return { tarballUrl, integrity: metadata.dist?.integrity ?? null };
   }
 
   private async downloadTarball(
@@ -364,7 +423,6 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     authToken?: string,
   ): Promise<Buffer> {
     const headers: Record<string, string> = {};
-
     const isSameHost = new URL(tarballUrl).host === new URL(registryUrl).host;
 
     if (authToken && isSameHost) {

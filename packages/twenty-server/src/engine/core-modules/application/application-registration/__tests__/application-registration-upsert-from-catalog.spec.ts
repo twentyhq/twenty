@@ -11,6 +11,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -65,6 +66,10 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationRegistrationService,
+        {
+          provide: ApplicationRegistrationVersionService,
+          useValue: { deleteTarballFilesOfRegistration: jest.fn() },
+        },
         ApplicationRegistrationLookupService,
         {
           provide: getRepositoryToken(ApplicationRegistrationEntity),

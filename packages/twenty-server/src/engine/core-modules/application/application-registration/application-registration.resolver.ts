@@ -417,10 +417,12 @@ export class ApplicationRegistrationResolver {
   async completeAppTarballUpload(
     @Args({ name: 'fileId', type: () => UUIDScalarType }) fileId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ): Promise<ApplicationRegistrationEntity> {
     return this.applicationTarballService.completeTarballUpload({
       ownerWorkspaceId: workspaceId,
       fileId,
+      publishedByUserId: user?.id ?? null,
     });
   }
 
@@ -453,6 +455,7 @@ export class ApplicationRegistrationResolver {
     })
     _universalIdentifier: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ): Promise<ApplicationRegistrationEntity> {
     const maxSize = this.twentyConfigService.get(
       'MAX_TARBALL_UPLOAD_SIZE_BYTES',
@@ -466,6 +469,7 @@ export class ApplicationRegistrationResolver {
       return this.applicationTarballService.uploadTarball({
         tarballBuffer,
         ownerWorkspaceId: workspaceId,
+        publishedByUserId: user?.id ?? null,
       });
     } catch (error) {
       if (error instanceof StreamSizeExceededError) {

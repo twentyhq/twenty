@@ -27,6 +27,7 @@ import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/app
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
@@ -125,6 +126,7 @@ export class ApplicationRegistrationService {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly serverFileStorageService: ServerFileStorageService,
+    private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
@@ -779,6 +781,10 @@ export class ApplicationRegistrationService {
         error,
       );
     }
+
+    await this.applicationRegistrationVersionService.deleteTarballFilesOfRegistration(
+      applicationRegistrationId,
+    );
 
     await this.applicationRegistrationRepository.delete(
       applicationRegistrationId,

@@ -17,6 +17,7 @@ export enum ApplicationExceptionCode {
   INVALID_INPUT = 'INVALID_INPUT',
   SOURCE_CHANNEL_MISMATCH = 'SOURCE_CHANNEL_MISMATCH',
   PACKAGE_RESOLUTION_FAILED = 'PACKAGE_RESOLUTION_FAILED',
+  PACKAGE_INTEGRITY_MISMATCH = 'PACKAGE_INTEGRITY_MISMATCH',
   TARBALL_EXTRACTION_FAILED = 'TARBALL_EXTRACTION_FAILED',
   UPGRADE_FAILED = 'UPGRADE_FAILED',
   PRE_INSTALL_ERROR = 'PRE_INSTALL_ERROR',
@@ -61,6 +62,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Source channel mismatch.`;
     case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
       return msg`Unable to retrieve the application package.`;
+    case ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH:
+      return msg`The application package does not match the fingerprint recorded for this version.`;
     case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       return msg`Failed to extract tarball.`;
     case ApplicationExceptionCode.UPGRADE_FAILED:

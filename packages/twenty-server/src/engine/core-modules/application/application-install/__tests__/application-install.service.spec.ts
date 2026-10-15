@@ -114,6 +114,7 @@ describe('ApplicationInstallService', () => {
       cleanupDir: extractedDir,
       manifest: MANIFEST,
       packageJson: { version: '1.1.0' },
+      integrity: 'sha512-integrity',
     };
 
     applicationPackageFetcherService.resolvePackage.mockResolvedValue(
