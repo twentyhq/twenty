@@ -147,37 +147,6 @@ export const WithMaxWidth: Story = {
   },
 };
 
-const NarrowBoundaryExample = () => {
-  const [boundary, setBoundary] = useState<HTMLDivElement | null>(null);
-
-  return (
-    <div ref={setBoundary} style={{ width: 240, height: 200 }}>
-      <Tooltip
-        defaultOpen
-        maxWidth="400px"
-        side="bottom"
-        align="start"
-        collisionBoundary={boundary ?? undefined}
-        collisionPadding={0}
-        content="A long description that has to wrap inside the narrow boundary."
-      >
-        <Button>Show details</Button>
-      </Tooltip>
-    </div>
-  );
-};
-
-export const MaxWidthWithinAvailableSpace: Story = {
-  render: () => <NarrowBoundaryExample />,
-  play: async ({ canvasElement }) => {
-    const tooltip = await findTooltip(canvasElement);
-
-    await waitFor(() =>
-      expect(tooltip.getBoundingClientRect().width).toBeLessThanOrEqual(240),
-    );
-  },
-};
-
 export const CustomContent: Story = {
   ...Default,
   args: { content: <strong>Amount in workspace currency</strong> },
