@@ -340,6 +340,30 @@ export type ApplicationRegistrationVariable = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+export type ApplicationRegistrationVersion = {
+  __typename?: 'ApplicationRegistrationVersion';
+  applicationRegistrationId: Scalars['UUID']['output'];
+  checksum?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  publishedAt: Scalars['DateTime']['output'];
+  publishedByUserId?: Maybe<Scalars['UUID']['output']>;
+  publishedByWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  reviewState: ApplicationRegistrationVersionReviewState;
+  sourcePackage?: Maybe<Scalars['String']['output']>;
+  sourceType: ApplicationRegistrationSourceType;
+  tarballFileId?: Maybe<Scalars['UUID']['output']>;
+  tarballUrl?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  version: Scalars['String']['output'];
+};
+
+export enum ApplicationRegistrationVersionReviewState {
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  UNREVIEWED = 'UNREVIEWED'
+}
+
 /** The origin of a batch of credits granted to a workspace */
 export enum BillingCreditGrantType {
   COMPENSATION = 'COMPENSATION',
@@ -758,6 +782,7 @@ export type Query = {
   findAdminApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces;
   findAdminApplicationRegistrationStats: ApplicationRegistrationStats;
   findAdminApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
+  findAdminApplicationRegistrationVersions: Array<ApplicationRegistrationVersion>;
   findAllApplicationRegistrations: PaginatedApplicationRegistrations;
   findOneAdminApplicationRegistration: ApplicationRegistration;
   getAdminAiModels: AdminAiModels;
@@ -813,6 +838,11 @@ export type QueryFindAdminApplicationRegistrationStatsArgs = {
 
 
 export type QueryFindAdminApplicationRegistrationVariablesArgs = {
+  applicationRegistrationId: Scalars['String']['input'];
+};
+
+
+export type QueryFindAdminApplicationRegistrationVersionsArgs = {
   applicationRegistrationId: Scalars['String']['input'];
 };
 
