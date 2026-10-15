@@ -160,7 +160,9 @@ export const createOnboardingConstructionSiteRenderer = ({
     return null;
   }
 
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These are WebGL extension identifiers.
   const parallelShaderCompile = gl.getExtension('KHR_parallel_shader_compile');
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These are WebGL extension identifiers.
   const debugRendererInfo = gl.getExtension('WEBGL_debug_renderer_info');
   const shouldReduceMotion =
     prefersReducedMotion ||

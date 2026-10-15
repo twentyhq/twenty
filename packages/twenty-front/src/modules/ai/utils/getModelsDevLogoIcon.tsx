@@ -26,6 +26,7 @@ export const getModelsDevLogoIcon = (providerId: string): IconComponent => {
     />
   );
 
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- React DevTools needs a stable component display name.
   LogoIcon.displayName = `ModelsDevLogo(${providerId})`;
 
   logoIconCache.set(providerId, LogoIcon);

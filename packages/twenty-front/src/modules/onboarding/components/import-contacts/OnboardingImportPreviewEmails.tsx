@@ -7,6 +7,7 @@ import {
   IMPORT_CONTACTS_PREVIEW_EMAILS,
 } from '@/onboarding/constants/ImportContactsPreviewEmails';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
@@ -180,7 +181,7 @@ const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => (
       {email.sender}
     </StyledEmailSender>
     {isDefined(email.subject) && (
-      <StyledEmailSubject>{email.subject}</StyledEmailSubject>
+      <StyledEmailSubject>{t(email.subject)}</StyledEmailSubject>
     )}
   </StyledEmailRow>
 );
@@ -200,6 +201,7 @@ const EventCard = ({
           top: position.top,
           left: position.left,
           '--event-card-transform': `rotate(${position.rotate}deg)`,
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a CSS value or browser media query, not UI copy.
           '--event-card-entry-transform': `translate(${position.entry.x}px, ${position.entry.y}px) rotate(${position.entry.rotate}deg) scale(${position.entry.scale})`,
         } as React.CSSProperties
       }

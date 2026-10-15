@@ -1,7 +1,11 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Fixture sender names are proper names.
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
 export type ImportContactsPreviewEmail = {
   id: string;
   sender: string;
-  subject?: string;
+  subject?: MessageDescriptor;
   senderColor: 'primary' | 'secondary' | 'tertiary';
   isSenderMedium: boolean;
   isSelected: boolean;
@@ -11,7 +15,7 @@ export const IMPORT_CONTACTS_PREVIEW_EMAILS = [
   {
     id: 'acme',
     sender: 'Acme Inc.',
-    subject: 'Insights: The latest in industrial equipment and tools',
+    subject: msg`Insights: The latest in industrial equipment and tools`,
     senderColor: 'secondary',
     isSenderMedium: true,
     isSelected: false,
@@ -19,8 +23,7 @@ export const IMPORT_CONTACTS_PREVIEW_EMAILS = [
   {
     id: 'dylan-field',
     sender: 'Dylan Field',
-    subject:
-      'Lorem ipsum dolor sit amet consectetur. Ac eget eu eget ullamcorper tellus sem scelerisque sit ante.',
+    subject: msg`Lorem ipsum dolor sit amet consectetur. Ac eget eu eget ullamcorper tellus sem scelerisque sit ante.`,
     senderColor: 'primary',
     isSenderMedium: false,
     isSelected: false,
@@ -35,7 +38,7 @@ export const IMPORT_CONTACTS_PREVIEW_EMAILS = [
   {
     id: 'ivan-zhao',
     sender: 'Ivan Zhao',
-    subject: 'Our latest Adventures and Destinations',
+    subject: msg`Our latest Adventures and Destinations`,
     senderColor: 'tertiary',
     isSenderMedium: true,
     isSelected: false,
@@ -43,7 +46,7 @@ export const IMPORT_CONTACTS_PREVIEW_EMAILS = [
   {
     id: 'brian-chesky',
     sender: 'Brian Chesky',
-    subject: 'Insights: Industry trends and best practices',
+    subject: msg`Insights: Industry trends and best practices`,
     senderColor: 'tertiary',
     isSenderMedium: true,
     isSelected: false,
@@ -51,7 +54,7 @@ export const IMPORT_CONTACTS_PREVIEW_EMAILS = [
   {
     id: 'stewart-butterfield',
     sender: 'Stewart Butterfield',
-    subject: 'Our Complete list of Recipe Ideas and Restaurant Reviews!',
+    subject: msg`Our Complete list of Recipe Ideas and Restaurant Reviews!`,
     senderColor: 'secondary',
     isSenderMedium: true,
     isSelected: false,
