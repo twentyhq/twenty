@@ -4,6 +4,7 @@ import { parseLegacyMarkdownDocument } from '@/advanced-text-editor/utils/parseL
 
 export const AI_INSTRUCTIONS_EDITOR_PROFILE = {
   chrome: 'field',
+  variant: 'app',
   minHeight: 120,
   enableFullScreen: true,
   parseLegacyDocument: parseLegacyMarkdownDocument,

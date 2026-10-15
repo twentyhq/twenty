@@ -83,7 +83,7 @@ const enrichResultWithNextStep = ({
       return {
         ...result,
         nextStep:
-          'This AI_AGENT step was created with a default placeholder agent. You MUST now call update_agent with the agentId from this step\'s settings.input.agentId to set the agent\'s system prompt (and optionally its model and responseFormat). Use responseFormat { type: "json", schema: { ... } } when downstream steps need to reference structured fields via {{stepId.fieldName}}, otherwise the output is referenced as {{stepId.response}}. If the step needs a task-specific prompt, also set it via update_workflow_version_step on settings.input.prompt.',
+          'This AI_AGENT step was created with a default placeholder agent. You MUST now call update_workflow_agent with the agentId from this step\'s settings.input.agentId to set the agent\'s system prompt (and optionally its model and responseFormat). Use responseFormat { type: "json", schema: { ... } } when downstream steps need to reference structured fields via {{stepId.fieldName}}, otherwise the output is referenced as {{stepId.response}}. If the step needs a task-specific prompt, also set it via update_workflow_version_step on settings.input.prompt.',
       };
     default:
       return result;

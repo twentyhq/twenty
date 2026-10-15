@@ -4,5 +4,7 @@ declare const classNames: {
   readonly iconOnly: 'iconOnly';
   readonly item: 'item';
   readonly label: 'label';
+  readonly md: 'md';
+  readonly sm: 'sm';
 };
 export default classNames;

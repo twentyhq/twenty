@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type WaitForEventOutputSchema } from '@/workflow/workflow-variables/types/WaitForEventOutputSchema';
 import { generateRecordOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordOutputSchema';
+import { t } from '@lingui/core/macro';
 import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
 export const generateWaitForEventOutputSchema = (
@@ -18,14 +19,14 @@ export const generateWaitForEventOutputSchema = (
       isLeaf: true,
       icon: 'IconId',
       type: 'string',
-      label: 'Record ID',
+      label: t`Record ID`,
       value: '',
     },
     hasTimedOut: {
       isLeaf: true,
       icon: 'IconClockX',
       type: 'boolean',
-      label: 'Has Timed Out',
+      label: t`Has Timed Out`,
       value: false,
     },
   };
@@ -37,19 +38,21 @@ export const generateWaitForEventOutputSchema = (
     return outputSchema;
   }
 
+  const objectLabelSingular = objectMetadataItem.labelSingular;
+
   return {
     ...outputSchema,
     before: {
       isLeaf: false,
       icon: 'IconHistory',
-      label: `${objectMetadataItem.labelSingular} Before Update`,
+      label: t`${objectLabelSingular} Before Update`,
       value: generateRecordOutputSchema(objectMetadataItem),
     },
     updatedFields: {
       isLeaf: true,
       icon: 'IconListDetails',
       type: 'array',
-      label: 'Updated Fields',
+      label: t`Updated Fields`,
       value: [],
     },
   };
