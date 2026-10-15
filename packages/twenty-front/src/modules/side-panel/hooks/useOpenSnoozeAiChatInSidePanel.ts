@@ -15,7 +15,13 @@ export const useOpenSnoozeAiChatInSidePanel = () => {
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
   const openSnoozeAiChatInSidePanel = useCallback(
-    (threadIds: string[], { isInChannel = false } = {}) => {
+    ({
+      threadIds,
+      isInChannel = false,
+    }: {
+      threadIds: string[];
+      isInChannel?: boolean;
+    }) => {
       const pageId = v4();
 
       store.set(

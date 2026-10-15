@@ -34,7 +34,7 @@ export const AgentChatThreadInboxCommand = ({
     );
 
     if (action === AgentChatInboxAction.SNOOZE) {
-      return openSnoozeAiChatInSidePanel(threadIds, { isInChannel });
+      return openSnoozeAiChatInSidePanel({ threadIds, isInChannel });
     }
 
     if (action === 'assign') {
