@@ -37,11 +37,17 @@ export const buildMorphRelationHeadViewFieldCopies = ({
 
     viewFieldKeys.add(headKey);
 
-    const { isVisible, size, position, aggregateOperation, viewFieldGroupId } =
-      resolveEffectiveFlatEntity({
-        metadataName: 'viewField',
-        flatEntity: viewField,
-      });
+    const {
+      isVisible,
+      size,
+      position,
+      aggregateOperation,
+      viewFieldGroupId,
+      isActive,
+    } = resolveEffectiveFlatEntity({
+      metadataName: 'viewField',
+      flatEntity: viewField,
+    });
 
     return [
       {
@@ -51,6 +57,7 @@ export const buildMorphRelationHeadViewFieldCopies = ({
         position,
         aggregateOperation,
         viewFieldGroupId,
+        isActive,
         viewFieldGroupUniversalIdentifier: isDefined(viewFieldGroupId)
           ? (flatViewFieldGroupMaps.universalIdentifierById[
               viewFieldGroupId
