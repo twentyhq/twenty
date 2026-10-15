@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
@@ -62,10 +62,12 @@ export class WorkspaceMigrationRunnerService {
           getMetadataFlatEntityMapsKey(metadataName),
         ),
     ),
+    hasMorphRelationFieldBeenCreated = false,
   }: {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
     workspaceId: string;
     hasSchemaMetadataChanged?: boolean;
+    hasMorphRelationFieldBeenCreated?: boolean;
   }): Promise<void> {
     this.logger.perfTime(
       'Runner',
@@ -78,8 +80,7 @@ export class WorkspaceMigrationRunnerService {
         flatEntityMapsKey === 'flatRoleTargetMaps' ||
         flatEntityMapsKey === 'flatObjectPermissionMaps' ||
         flatEntityMapsKey === 'flatFieldPermissionMaps' ||
-        flatEntityMapsKey === 'flatRolePermissionFlagMaps' ||
-        flatEntityMapsKey === 'flatFieldMetadataMaps',
+        flatEntityMapsKey === 'flatRolePermissionFlagMaps',
     );
 
     const hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(
@@ -93,7 +94,9 @@ export class WorkspaceMigrationRunnerService {
     const cacheKeyNamesToInvalidate: WorkspaceCacheKeyName[] = [
       ...new Set([
         ...withDerivedFieldMetadataMaps(allFlatEntityMapsKeys),
-        ...(hasRolesPermissionsChanged ? ['rolesPermissions' as const] : []),
+        ...(hasRolesPermissionsChanged || hasMorphRelationFieldBeenCreated
+          ? ['rolesPermissions' as const]
+          : []),
         ...(hasWorkflowVersionsChanged
           ? ['workflowAutomatedTriggerMaps' as const]
           : []),
@@ -264,6 +267,13 @@ export class WorkspaceMigrationRunnerService {
     ];
     const hasSchemaMetadataChanged =
       isSchemaAffectingWorkspaceMigration(actions);
+
+    const hasMorphRelationFieldBeenCreated = actions.some(
+      (action) =>
+        action.metadataName === 'fieldMetadata' &&
+        action.type === 'create' &&
+        action.flatEntity.type === FieldMetadataType.MORPH_RELATION,
+    );
 
     const hasSearchVectorRebuildAction = actions.some(
       (action) =>
@@ -516,6 +526,7 @@ export class WorkspaceMigrationRunnerService {
           allFlatEntityMapsKeys,
           workspaceId,
           hasSchemaMetadataChanged,
+          hasMorphRelationFieldBeenCreated,
         });
       } catch (cacheError) {
         this.logger.error(
@@ -546,6 +557,7 @@ export class WorkspaceMigrationRunnerService {
         allFlatEntityMapsKeys,
         workspaceId,
         hasSchemaMetadataChanged,
+        hasMorphRelationFieldBeenCreated,
       });
 
       this.recordRunPhaseMetric({

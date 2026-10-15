@@ -9,15 +9,20 @@ import { pickMorphRelationRepresentative } from 'src/engine/metadata-modules/fla
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util';
+import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 type MorphRelationField = FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
 
 export type MorphRelationHeadSwitchOperations = {
+  morphIdsWithoutHead: string[];
   viewFieldsToCreate: FlatViewField[];
+  viewFieldsToUpdate: UniversalFlatViewField[];
   viewFieldsToDelete: FlatViewField[];
   viewFiltersToUpdate: FlatViewFilter[];
   viewSortsToUpdate: FlatViewSort[];
@@ -25,7 +30,7 @@ export type MorphRelationHeadSwitchOperations = {
   pageLayoutWidgetsToUpdate: FlatPageLayoutWidget[];
 };
 
-const findReadsRepresentative = (
+const findLegacyMorphRelationRepresentative = (
   targets: MorphRelationField[],
 ): MorphRelationField | undefined => {
   const representative = pickMorphRelationRepresentative({
@@ -46,6 +51,7 @@ export const buildMorphRelationHeadSwitchOperations = ({
   workspaceCustomApplicationUniversalIdentifier,
   flatFieldMetadataMaps,
   flatViewFieldMaps,
+  flatViewFieldGroupMaps,
   flatViewFilterMaps,
   flatViewSortMaps,
   flatFieldPermissionMaps,
@@ -55,6 +61,7 @@ export const buildMorphRelationHeadSwitchOperations = ({
   workspaceCustomApplicationUniversalIdentifier: string;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
+  flatViewFieldGroupMaps: FlatEntityMaps<FlatViewFieldGroup>;
   flatViewFilterMaps: FlatEntityMaps<FlatViewFilter>;
   flatViewSortMaps: FlatEntityMaps<FlatViewSort>;
   flatFieldPermissionMaps: FlatEntityMaps<FlatFieldPermission>;
@@ -77,15 +84,21 @@ export const buildMorphRelationHeadSwitchOperations = ({
   }
 
   const destinationFieldByOriginFieldId = new Map<string, MorphRelationField>();
+  const morphIdsWithoutHead: string[] = [];
 
   for (const morphRelationFields of morphRelationFieldsByMorphId.values()) {
     const head: MorphRelationField | undefined =
       morphRelationFields.find(isMorphRelationHead);
-    const representative = findReadsRepresentative(
+    const representative = findLegacyMorphRelationRepresentative(
       morphRelationFields.filter((field) => !isMorphRelationHead(field)),
     );
 
-    if (!isDefined(head) || !isDefined(representative)) {
+    if (!isDefined(representative)) {
+      continue;
+    }
+
+    if (!isDefined(head)) {
+      morphIdsWithoutHead.push(representative.morphId);
       continue;
     }
 
@@ -104,13 +117,15 @@ export const buildMorphRelationHeadSwitchOperations = ({
   const viewFields = Object.values(flatViewFieldMaps.byUniversalIdentifier)
     .filter(isDefined)
     .filter((viewField) => !isDefined(viewField.deletedAt));
-  const viewFieldKeys = new Set(
-    viewFields.map(
-      (viewField) => `${viewField.viewId}:${viewField.fieldMetadataId}`,
-    ),
+  const viewFieldByViewAndFieldId = new Map(
+    viewFields.map((viewField) => [
+      `${viewField.viewId}:${viewField.fieldMetadataId}`,
+      viewField,
+    ]),
   );
 
   const viewFieldsToCreate: FlatViewField[] = [];
+  const viewFieldsToUpdate: UniversalFlatViewField[] = [];
   const viewFieldsToDelete: FlatViewField[] = [];
 
   for (const viewField of viewFields) {
@@ -125,21 +140,62 @@ export const buildMorphRelationHeadSwitchOperations = ({
     }
 
     const destinationKey = `${viewField.viewId}:${destination.id}`;
+    const destinationViewField = viewFieldByViewAndFieldId.get(destinationKey);
+    const { isVisible, size, position, aggregateOperation, viewFieldGroupId } =
+      resolveEffectiveFlatEntity({
+        metadataName: 'viewField',
+        flatEntity: viewField,
+      });
+    const presentation = {
+      isVisible,
+      size,
+      position,
+      aggregateOperation,
+      viewFieldGroupId,
+    };
 
-    if (viewFieldKeys.has(destinationKey)) {
+    if (isDefined(destinationViewField)) {
+      viewFieldsToUpdate.push(
+        fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow({
+          updateViewFieldInput: {
+            id: destinationViewField.id,
+            update: {
+              ...presentation,
+              aggregateOperation: aggregateOperation ?? undefined,
+            },
+          },
+          flatViewFieldMaps,
+          flatViewFieldGroupMaps,
+          callerApplicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        }),
+      );
       continue;
     }
 
-    viewFieldKeys.add(destinationKey);
-    viewFieldsToCreate.push({
+    const createdViewField = {
       ...viewField,
+      ...presentation,
+      viewFieldGroupUniversalIdentifier: isDefined(
+        presentation.viewFieldGroupId,
+      )
+        ? (flatViewFieldGroupMaps.universalIdentifierById[
+            presentation.viewFieldGroupId
+          ] ?? null)
+        : null,
+      overrides: null,
+      universalOverrides: null,
       id: v4(),
       universalIdentifier: v4(),
       fieldMetadataId: destination.id,
       fieldMetadataUniversalIdentifier: destination.universalIdentifier,
       applicationUniversalIdentifier:
         workspaceCustomApplicationUniversalIdentifier,
-    });
+    };
+
+    viewFieldByViewAndFieldId.set(destinationKey, createdViewField);
+    viewFieldsToCreate.push(createdViewField);
   }
 
   const viewFiltersToUpdate = Object.values(
@@ -261,12 +317,14 @@ export const buildMorphRelationHeadSwitchOperations = ({
             ...universalConfiguration,
             fieldMetadataId: destination.universalIdentifier,
           },
-        } as FlatPageLayoutWidget,
+        },
       ];
     });
 
   return {
+    morphIdsWithoutHead,
     viewFieldsToCreate,
+    viewFieldsToUpdate,
     viewFieldsToDelete,
     viewFiltersToUpdate,
     viewSortsToUpdate,
