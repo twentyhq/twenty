@@ -24,7 +24,7 @@ type MorphRelationHeadReferences = {
   fieldPermissions: FlatFieldPermission[];
 };
 
-@RegisteredWorkspaceCommand('2.48.0', 1792066971134)
+@RegisteredWorkspaceCommand('2.48.0', 1792070263989)
 @Command({
   name: 'upgrade:2-48:copy-morph-relation-references-to-heads',
   description:

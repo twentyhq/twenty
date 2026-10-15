@@ -1,4 +1,4 @@
-import { createUpdateAgentTool } from 'src/modules/workflow/workflow-tools/tools/update-agent.tool';
+import { createUpdateWorkflowAgentTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-agent.tool';
 
 const AGENT_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const WORKSPACE_ID = 'workspace-id';
@@ -31,7 +31,7 @@ const buildTool = ({
     invalidateFlatEntityMaps: jest.fn().mockResolvedValue(undefined),
   };
 
-  const tool = createUpdateAgentTool(
+  const tool = createUpdateWorkflowAgentTool(
     {
       agentService,
       coreWorkflowVersionMutationService,
@@ -53,7 +53,7 @@ const buildTool = ({
   };
 };
 
-describe('createUpdateAgentTool', () => {
+describe('createUpdateWorkflowAgentTool', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
