@@ -55,6 +55,10 @@ const DELETE_CHANNEL = parse(
   `mutation DeleteChannel($channelId: UUID!, $destinationChannelId: UUID) { deleteAgentChatChannel(channelId: $channelId, destinationChannelId: $destinationChannelId) }`,
 );
 
+const CHANNEL_ROLES = parse(
+  `query ChannelRoles { agentChatChannelRoles { id } }`,
+);
+
 const CHANNELS = parse(
   `query Channels { agentChatChannels { id name isCustom isAccessible } }`,
 );
@@ -428,8 +432,17 @@ describe('Chat channels through the authenticated API', () => {
       { query: DELETE_CHANNEL, variables: { channelId } },
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
+    const rolesResponse = await makeMetadataApiRequest(
+      { query: CHANNEL_ROLES },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
 
-    for (const response of [createResponse, updateResponse, deleteResponse]) {
+    for (const response of [
+      createResponse,
+      updateResponse,
+      deleteResponse,
+      rolesResponse,
+    ]) {
       expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
     }
   });

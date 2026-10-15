@@ -117,6 +117,7 @@ export class AgentChatChannelResolver {
   }
 
   @Query(() => [AgentChatChannelRoleDTO])
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async agentChatChannelRoles(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatChannelRoleDTO[]> {
