@@ -79,8 +79,13 @@ describe('AiChatMessageReactions', () => {
         {
           emoji: '👍',
           workspaceMemberIds: [OTHER_MEMBER_ID, CURRENT_MEMBER_ID],
+          hasAssistantReacted: false,
         },
-        { emoji: '🎉', workspaceMemberIds: [OTHER_MEMBER_ID] },
+        {
+          emoji: '🎉',
+          workspaceMemberIds: [OTHER_MEMBER_ID],
+          hasAssistantReacted: false,
+        },
       ],
     );
 
@@ -99,7 +104,13 @@ describe('AiChatMessageReactions', () => {
       agentChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
-      [{ emoji: '🎉', workspaceMemberIds: [OTHER_MEMBER_ID] }],
+      [
+        {
+          emoji: '🎉',
+          workspaceMemberIds: [OTHER_MEMBER_ID],
+          hasAssistantReacted: false,
+        },
+      ],
     );
 
     renderReactions();
@@ -112,5 +123,21 @@ describe('AiChatMessageReactions', () => {
       messageId: MESSAGE_ID,
       emoji: '🎉',
     });
+  });
+
+  it('names the assistant among those who used an emoji', () => {
+    jotaiStore.set(
+      agentChatMessageReactionsFamilyState.atomFamily({
+        messageId: MESSAGE_ID,
+      }),
+      [{ emoji: '👍', workspaceMemberIds: [], hasAssistantReacted: true }],
+    );
+
+    renderReactions();
+
+    expect(screen.getByRole('button', { name: '👍 by Ada' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
   });
 });

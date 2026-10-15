@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
 import { useToggleAgentChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
 import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
@@ -69,38 +70,44 @@ export const AiChatMessageReactions = ({
 
   return (
     <StyledReactions>
-      {agentChatMessageReactions.map(({ emoji, workspaceMemberIds }) => {
-        const reactorNames = workspaceMemberIds
-          .map((workspaceMemberId) =>
-            getAgentChatSenderLabel({
-              sender: currentWorkspaceMembers.find(
-                ({ id }) => id === workspaceMemberId,
-              ),
-              isCurrentWorkspaceMember:
-                workspaceMemberId === currentWorkspaceMember?.id,
-            }),
-          )
-          .join(', ');
-        const isSelected =
-          isDefined(currentWorkspaceMember) &&
-          workspaceMemberIds.includes(currentWorkspaceMember.id);
-        const reactionCount = workspaceMemberIds.length;
+      {agentChatMessageReactions.map(
+        ({ emoji, workspaceMemberIds, hasAssistantReacted }) => {
+          const reactorNameList = [
+            ...workspaceMemberIds.map((workspaceMemberId) =>
+              getAgentChatSenderLabel({
+                sender: currentWorkspaceMembers.find(
+                  ({ id }) => id === workspaceMemberId,
+                ),
+                isCurrentWorkspaceMember:
+                  workspaceMemberId === currentWorkspaceMember?.id,
+              }),
+            ),
+            ...(hasAssistantReacted ? [AGENT_CHAT_ASSISTANT_NAME] : []),
+          ];
+          const reactorNames = reactorNameList.join(', ');
+          const isSelected =
+            isDefined(currentWorkspaceMember) &&
+            workspaceMemberIds.includes(currentWorkspaceMember.id);
+          const reactionCount = reactorNameList.length;
 
-        return (
-          <StyledReaction
-            key={emoji}
-            type="button"
-            isSelected={isSelected}
-            aria-pressed={isSelected}
-            title={reactorNames}
-            aria-label={t`${emoji} by ${reactorNames}`}
-            onClick={() => toggleAgentChatMessageReaction({ messageId, emoji })}
-          >
-            <span aria-hidden>{emoji}</span>
-            <span aria-hidden>{reactionCount}</span>
-          </StyledReaction>
-        );
-      })}
+          return (
+            <StyledReaction
+              key={emoji}
+              type="button"
+              isSelected={isSelected}
+              aria-pressed={isSelected}
+              title={reactorNames}
+              aria-label={t`${emoji} by ${reactorNames}`}
+              onClick={() =>
+                toggleAgentChatMessageReaction({ messageId, emoji })
+              }
+            >
+              <span aria-hidden>{emoji}</span>
+              <span aria-hidden>{reactionCount}</span>
+            </StyledReaction>
+          );
+        },
+      )}
     </StyledReactions>
   );
 };

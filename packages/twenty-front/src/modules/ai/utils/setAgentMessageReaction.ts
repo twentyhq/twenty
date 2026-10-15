@@ -18,7 +18,14 @@ export const setAgentMessageReaction = ({
 
   if (!isDefined(existingReaction)) {
     return isReacted
-      ? [...reactions, { emoji, workspaceMemberIds: [workspaceMemberId] }]
+      ? [
+          ...reactions,
+          {
+            emoji,
+            workspaceMemberIds: [workspaceMemberId],
+            hasAssistantReacted: false,
+          },
+        ]
       : reactions;
   }
 
@@ -34,7 +41,7 @@ export const setAgentMessageReaction = ({
       reaction.emoji !== emoji
         ? reaction
         : {
-            emoji,
+            ...reaction,
             workspaceMemberIds: isReacted
               ? [...reaction.workspaceMemberIds, workspaceMemberId]
               : reaction.workspaceMemberIds.filter(
@@ -42,5 +49,8 @@ export const setAgentMessageReaction = ({
                 ),
           },
     )
-    .filter((reaction) => reaction.workspaceMemberIds.length > 0);
+    .filter(
+      (reaction) =>
+        reaction.workspaceMemberIds.length > 0 || reaction.hasAssistantReacted,
+    );
 };

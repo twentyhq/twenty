@@ -20,6 +20,7 @@ import {
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
   PROPOSE_TOOL_CALL_TOOL_NAME,
+  REACT_TO_MESSAGE_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -72,10 +73,12 @@ import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-c
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
+import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
@@ -153,6 +156,7 @@ export class ChatExecutionService {
     private readonly metricsService: MetricsService,
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
+    private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -288,6 +292,10 @@ export class ChatExecutionService {
         workspace.id,
       ));
 
+    const latestMemberMessageId = [...messages]
+      .reverse()
+      .find((message) => message.role === 'user')?.id;
+
     const isToolAllowed = (toolName: string) =>
       !AI_CHAT_EXCLUDED_TOOL_NAMES.has(toolName);
 
@@ -323,6 +331,18 @@ export class ChatExecutionService {
                 agentChatThreadTargetService: this.agentChatThreadTargetService,
                 toolContext,
               }),
+          }
+        : {}),
+      ...(canAttachConversationToRecords && isDefined(latestMemberMessageId)
+        ? {
+            [REACT_TO_MESSAGE_TOOL_NAME]: createReactToMessageTool({
+              reactToLatestMemberMessage: (emoji) =>
+                this.agentChatMessageReactionService.addAssistantReaction({
+                  messageId: latestMemberMessageId,
+                  emoji,
+                  workspaceId: workspace.id,
+                }),
+            }),
           }
         : {}),
     };

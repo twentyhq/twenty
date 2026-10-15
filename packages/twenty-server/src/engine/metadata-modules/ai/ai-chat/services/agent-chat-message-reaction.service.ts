@@ -37,11 +37,12 @@ type AgentMessageReactionSummaryRow = AgentMessageReactionSummary & {
 
 type BuildReactionWriteQuery = (reactionTable: string) => string;
 
+// Without a target, so the member and assistant unique indexes both dedupe
 const buildAddReactionQuery: BuildReactionWriteQuery = (reactionTable) =>
   `WITH inserted AS (
      INSERT INTO ${reactionTable} ("messageId", "workspaceMemberId", emoji)
      VALUES ($1, $2, $3)
-     ON CONFLICT ("messageId", "workspaceMemberId", emoji) WHERE "deletedAt" IS NULL DO NOTHING
+     ON CONFLICT DO NOTHING
      RETURNING id
    )
    SELECT COUNT(*)::int AS "changedCount" FROM inserted`;
@@ -82,6 +83,16 @@ export class AgentChatMessageReactionService {
     });
   }
 
+  addAssistantReaction(
+    args: Omit<AgentMessageReactionArgs, 'workspaceMemberId'>,
+  ): Promise<AgentMessageReactionSummary[]> {
+    return this.writeReaction({
+      ...args,
+      workspaceMemberId: null,
+      buildQuery: buildAddReactionQuery,
+    });
+  }
+
   async findReactionsByMessageId({
     workspaceId,
     messageIds,
@@ -109,7 +120,8 @@ export class AgentChatMessageReactionService {
     workspaceMemberId,
     workspaceId,
     buildQuery,
-  }: AgentMessageReactionArgs & {
+  }: Omit<AgentMessageReactionArgs, 'workspaceMemberId'> & {
+    workspaceMemberId: string | null;
     buildQuery: BuildReactionWriteQuery;
   }): Promise<AgentMessageReactionSummary[]> {
     if (!isValidAgentMessageReactionEmoji(emoji)) {
@@ -129,11 +141,14 @@ export class AgentChatMessageReactionService {
       return throwAgentChatMessageNotFound();
     }
 
-    await this.sharingService.getReadableThread({
-      threadId: message.threadId,
-      workspaceMemberId,
-      workspaceId,
-    });
+    // The assistant reacts from inside a turn the thread already allowed
+    if (isDefined(workspaceMemberId)) {
+      await this.sharingService.getReadableThread({
+        threadId: message.threadId,
+        workspaceMemberId,
+        workspaceId,
+      });
+    }
 
     // Created by an upgrade command that may not have reached this workspace yet
     if (!(await this.isReactionObjectProvisioned(workspaceId))) {
@@ -204,7 +219,12 @@ export class AgentChatMessageReactionService {
   }): Promise<Map<string, AgentMessageReactionSummary[]>> {
     const rows = await manager.query<AgentMessageReactionSummaryRow[]>(
       `SELECT "messageId", emoji,
-         array_agg("workspaceMemberId" ORDER BY "createdAt", "workspaceMemberId") AS "workspaceMemberIds"
+         COALESCE(
+           array_agg("workspaceMemberId" ORDER BY "createdAt", "workspaceMemberId")
+             FILTER (WHERE "workspaceMemberId" IS NOT NULL),
+           '{}'
+         ) AS "workspaceMemberIds",
+         bool_or("workspaceMemberId" IS NULL) AS "hasAssistantReacted"
        FROM ${getAgentMessageReactionTable(workspaceId)}
        WHERE "messageId" = ANY($1::uuid[]) AND "deletedAt" IS NULL
        GROUP BY "messageId", emoji
@@ -217,10 +237,15 @@ export class AgentChatMessageReactionService {
       AgentMessageReactionSummary[]
     >();
 
-    for (const { messageId, emoji, workspaceMemberIds } of rows) {
+    for (const {
+      messageId,
+      emoji,
+      workspaceMemberIds,
+      hasAssistantReacted,
+    } of rows) {
       const reactions = reactionsByMessageId.get(messageId) ?? [];
 
-      reactions.push({ emoji, workspaceMemberIds });
+      reactions.push({ emoji, workspaceMemberIds, hasAssistantReacted });
       reactionsByMessageId.set(messageId, reactions);
     }
 

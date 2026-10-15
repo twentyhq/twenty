@@ -5,6 +5,7 @@ export const ADD_AGENT_CHAT_MESSAGE_REACTION = gql`
     addAgentChatMessageReaction(messageId: $messageId, emoji: $emoji) {
       emoji
       workspaceMemberIds
+      hasAssistantReacted
     }
   }
 `;

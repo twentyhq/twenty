@@ -6,7 +6,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 export class AgentMessageReactionWorkspaceEntity extends BaseWorkspaceEntity {
   message: EntityRelation<AgentMessageWorkspaceEntity>;
   messageId: string;
-  workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity>;
-  workspaceMemberId: string;
+  workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
+  workspaceMemberId: string | null;
   emoji: string;
 }

@@ -9,4 +9,7 @@ export class AgentMessageReactionSummaryDTO {
 
   @Field(() => [UUIDScalarType])
   workspaceMemberIds: string[];
+
+  @Field(() => Boolean)
+  hasAssistantReacted: boolean;
 }

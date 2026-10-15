@@ -152,13 +152,14 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
         ),
         description: i18nLabel(
           msg({
-            message: 'Workspace member who reacted',
+            message:
+              'Workspace member who reacted, empty when the assistant did',
             context: 'fieldMetadata.description',
           }),
         ),
         icon: 'IconUser',
         isUIEditable: false,
-        isNullable: false,
+        isNullable: true,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'agentMessageReactions',
         morphId: null,

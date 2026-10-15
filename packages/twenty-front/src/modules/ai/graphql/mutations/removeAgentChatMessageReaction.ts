@@ -5,6 +5,7 @@ export const REMOVE_AGENT_CHAT_MESSAGE_REACTION = gql`
     removeAgentChatMessageReaction(messageId: $messageId, emoji: $emoji) {
       emoji
       workspaceMemberIds
+      hasAssistantReacted
     }
   }
 `;

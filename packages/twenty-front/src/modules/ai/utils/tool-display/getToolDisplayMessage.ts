@@ -1,7 +1,10 @@
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString, isObject } from '@sniptt/guards';
-import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
+import {
+  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+  REACT_TO_MESSAGE_TOOL_NAME,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -22,6 +25,7 @@ const LoadSkillsSchema = z.object({ skillNames: z.array(z.string()) });
 const AttachConversationToRecordSchema = z.object({
   objectNameSingular: z.string(),
 });
+const ReactToMessageSchema = z.object({ emoji: z.string() });
 
 export const getToolDisplayMessage = ({
   input,
@@ -162,6 +166,20 @@ const buildToolDisplayMessage = ({
           ? t`Could not attach this conversation to a record`
           : t`Attached this conversation to a record`,
         loadingLabel: t`Attaching this conversation to a record`,
+      });
+    }
+    case REACT_TO_MESSAGE_TOOL_NAME: {
+      const parsed = ReactToMessageSchema.safeParse(toolInput);
+      const emoji = parsed.success ? parsed.data.emoji : '';
+      const hasFailed =
+        isObject(output) && 'success' in output && output.success === false;
+
+      return pickStatusLabel({
+        isFinished,
+        completedLabel: hasFailed
+          ? t`Could not react with ${emoji}`
+          : t`Reacted with ${emoji}`,
+        loadingLabel: t`Reacting with ${emoji}`,
       });
     }
     default:
