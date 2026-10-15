@@ -79,6 +79,8 @@ export const slackAssistantWorkerHandler = async (
     parentMessageTimestamp,
   };
 
+  let agentChatThreadId: string | undefined;
+
   const stopStatusUpdates = startSlackAssistantStatusUpdates({
     slackChannelId,
     threadTimestamp: parentMessageTimestamp,
@@ -229,10 +231,9 @@ export const slackAssistantWorkerHandler = async (
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());
 
-    const agentRunFailureContext = {
-      ...failureContext,
-      agentChatThreadId: agentResult.threadId ?? undefined,
-    };
+    agentChatThreadId = agentResult.threadId ?? undefined;
+
+    const agentRunFailureContext = { ...failureContext, agentChatThreadId };
 
     if (!agentResult.success) {
       return await finishSlackAssistantRequestWithFailure({
@@ -321,6 +322,7 @@ export const slackAssistantWorkerHandler = async (
 
     return await finishSlackAssistantRequestWithFailure({
       ...failureContext,
+      agentChatThreadId,
       errorMessage:
         error instanceof Error ? error.message : 'Unexpected worker error',
     });
