@@ -15,6 +15,7 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { type WorkflowVersionEdge } from 'src/modules/workflow/workflow-builder/utils/assemble-workflow-version-content.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
@@ -57,6 +58,13 @@ type CreateCompleteWorkflowToolDeps = Pick<
   WorkflowToolDependencies,
   'coreWorkflowMutationService' | 'coreWorkflowLifecycleService'
 >;
+
+type CreateCompleteWorkflowFailure = {
+  success: false;
+  message: string;
+  error: string;
+  result?: { coreWorkflowId: string };
+};
 
 export const createCreateCompleteWorkflowTool = (
   deps: CreateCompleteWorkflowToolDeps,
@@ -116,38 +124,20 @@ Call validate_workflow once when the workflow is complete, before activating.`,
     }>;
     activate?: boolean;
   }) => {
-    let createdWorkflow: CreatedCoreWorkflow;
+    const creation = await createWorkflowOrBuildFailure({
+      deps,
+      workspaceId: context.workspaceId,
+      name: parameters.name,
+      trigger: parameters.trigger,
+      steps: parameters.steps,
+      edges: parameters.edges ?? [],
+    });
 
-    try {
-      assertStepTypesAreSupported(parameters.steps);
-
-      createdWorkflow =
-        await deps.coreWorkflowMutationService.createWorkflowWithContent({
-          workspaceId: context.workspaceId,
-          userWorkspaceId: undefined,
-          name: parameters.name,
-          trigger: parameters.trigger,
-          steps: parameters.steps,
-          edges: parameters.edges ?? [],
-        });
-    } catch (error) {
-      if (error instanceof CoreWorkflowCreationRollbackError) {
-        return {
-          success: false,
-          message: `Failed to create workflow "${parameters.name}" and a partial workflow remains (coreWorkflowId ${error.coreWorkflow.id}). Delete it with delete_workflow before creating the workflow again.`,
-          error: error.message,
-          result: { coreWorkflowId: error.coreWorkflow.id },
-        };
-      }
-
-      return {
-        success: false,
-        message: `Failed to create workflow "${parameters.name}", nothing was created: ${error.message}`,
-        error: error.message,
-      };
+    if ('failure' in creation) {
+      return creation.failure;
     }
 
-    const { coreWorkflow, coreWorkflowVersionId } = createdWorkflow;
+    const { coreWorkflow, coreWorkflowVersionId } = creation.createdWorkflow;
 
     const result = {
       coreWorkflowId: coreWorkflow.id,
@@ -193,6 +183,60 @@ Call validate_workflow once when the workflow is complete, before activating.`,
     };
   },
 });
+
+const createWorkflowOrBuildFailure = async ({
+  deps,
+  workspaceId,
+  name,
+  trigger,
+  steps,
+  edges,
+}: {
+  deps: CreateCompleteWorkflowToolDeps;
+  workspaceId: string;
+  name: string;
+  trigger: WorkflowTrigger;
+  steps: WorkflowAction[];
+  edges: WorkflowVersionEdge[];
+}): Promise<
+  | { createdWorkflow: CreatedCoreWorkflow }
+  | { failure: CreateCompleteWorkflowFailure }
+> => {
+  try {
+    assertStepTypesAreSupported(steps);
+
+    return {
+      createdWorkflow:
+        await deps.coreWorkflowMutationService.createWorkflowWithContent({
+          workspaceId,
+          userWorkspaceId: undefined,
+          name,
+          trigger,
+          steps,
+          edges,
+        }),
+    };
+  } catch (error) {
+    if (error instanceof CoreWorkflowCreationRollbackError) {
+      return {
+        failure: {
+          success: false,
+          message: `Failed to create workflow "${name}" and a partial workflow remains (coreWorkflowId ${error.coreWorkflow.id}). Delete it with delete_workflow before creating the workflow again.`,
+          error: error.message,
+          result: { coreWorkflowId: error.coreWorkflow.id },
+        },
+      };
+    }
+
+    return {
+      failure: {
+        success: false,
+        message: `Failed to create workflow "${name}", nothing was created: ${error.message}`,
+        error: error.message,
+      },
+    };
+  }
+};
 
 const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
   if (steps.some((step) => step.type === WorkflowActionType.CODE)) {
