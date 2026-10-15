@@ -7631,6 +7631,9 @@ export default {
                         254,
                         "[FileAttachmentInput!]"
                     ],
+                    "isAssistantMentioned": [
+                        4
+                    ],
                     "mentionedWorkspaceMemberIds": [
                         493,
                         "[UUID!]"

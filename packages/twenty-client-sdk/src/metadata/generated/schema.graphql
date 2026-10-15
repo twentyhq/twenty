@@ -3144,7 +3144,7 @@ type Mutation {
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
-  sendChatMessage(browsingContext: JSON, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, text: String!, threadId: UUID!): SendChatMessageResult!
+  sendChatMessage(browsingContext: JSON, fileAttachments: [FileAttachmentInput!], isAssistantMentioned: Boolean, mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, text: String!, threadId: UUID!): SendChatMessageResult!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!

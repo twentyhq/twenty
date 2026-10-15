@@ -412,6 +412,32 @@ export class AgentChatThreadParticipantService {
 
   // Over the chats the member can open and follows, the way the inbox lists
   // them
+  async countMembers({
+    workspaceId,
+    threadId,
+    workspaceMemberIds,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    workspaceMemberIds: string[];
+  }): Promise<number> {
+    const [{ memberCount }] = await this.threadRepository.query(
+      workspaceId,
+      ({ manager }) =>
+        manager.query<{ memberCount: number }[]>(
+          `SELECT COUNT(DISTINCT member)::int AS "memberCount" FROM (
+             SELECT "workspaceMemberId" AS member
+             FROM ${getAgentChatThreadParticipantTable(workspaceId)}
+             WHERE "threadId" = $1
+             UNION SELECT unnest($2::uuid[])
+           ) members`,
+          [threadId, workspaceMemberIds],
+        ),
+    );
+
+    return memberCount;
+  }
+
   async findOpenThreadsSummary({
     workspaceId,
     workspaceMemberId,

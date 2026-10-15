@@ -34,6 +34,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -84,6 +85,7 @@ export class AgentChatResolver {
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly replyPolicyService: AgentChatReplyPolicyService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -199,6 +201,8 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('isAssistantMentioned', { type: () => Boolean, nullable: true })
+    isAssistantMentioned?: boolean | null,
   ): Promise<SendChatMessageResultDTO> {
     await this.threadService.createThreadIfMissing({
       threadId,
@@ -216,6 +220,8 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceMemberId,
       workspace,
+      isAssistantMentioned: isAssistantMentioned ?? false,
+      mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
     });
 
     const mentionedParticipantWorkspaceMemberIds =
@@ -239,6 +245,8 @@ export class AgentChatResolver {
     userWorkspaceId,
     workspaceMemberId,
     workspace,
+    isAssistantMentioned,
+    mentionedWorkspaceMemberIds,
   }: {
     threadId: string;
     text: string;
@@ -249,14 +257,32 @@ export class AgentChatResolver {
     userWorkspaceId: string;
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
+    isAssistantMentioned: boolean;
+    mentionedWorkspaceMemberIds: string[];
   }): Promise<SendChatMessageResultDTO> {
-    const thread = await this.turnPreflightService.assertCanStartChatTurn({
+    const thread = await this.threadService.getWritableThread({
       threadId,
-      modelId,
-      userWorkspaceId,
       workspaceMemberId,
-      workspace,
+      workspaceId: workspace.id,
     });
+
+    const shouldAssistantReply =
+      await this.replyPolicyService.shouldAssistantReply({
+        thread,
+        workspaceId: workspace.id,
+        workspaceMemberId,
+        isAssistantMentioned,
+        mentionedWorkspaceMemberIds,
+      });
+
+    // People can keep talking when the assistant cannot run
+    if (shouldAssistantReply) {
+      await this.turnPreflightService.assertCanRunAgentTurn({
+        modelId,
+        userWorkspaceId,
+        workspace,
+      });
+    }
 
     if (isDefined(thread.deletedAt)) {
       await this.agentChatService.restoreThread({
@@ -267,6 +293,21 @@ export class AgentChatResolver {
     }
 
     await this.reapDeadStream(thread, workspace.id);
+
+    if (!shouldAssistantReply) {
+      const savedMessage =
+        await this.agentChatStreamingService.saveMessageWithoutReply({
+          thread,
+          userWorkspaceId,
+          workspaceMemberId,
+          workspace,
+          text,
+          messageId,
+          fileAttachments: fileAttachments ?? undefined,
+        });
+
+      return { messageId: savedMessage.messageId, queued: false };
+    }
 
     if (isNonEmptyString(thread.activeStreamId)) {
       const queuedMessage = await this.agentChatService.queueMessage({

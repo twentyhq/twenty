@@ -32,6 +32,7 @@ import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamil
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
+import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -202,8 +203,20 @@ export const useAgentChat = () => {
                   ({ workspaceMemberId }) => workspaceMemberId,
                 )
               : undefined,
+          isAssistantMentioned:
+            isAgentChatAssistantMentionedInSerializedDocument(
+              serializedContentToSend,
+            ),
         },
       });
+
+      // The assistant was not asked, so no reply is on its way
+      if (
+        data?.sendChatMessage.queued === false &&
+        !isDefined(data.sendChatMessage.streamId)
+      ) {
+        store.set(isAwaitingFirstChunkAtom, false);
+      }
 
       // The stream may already have set a newer credits-exhausted error; don't clear it.
       if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {

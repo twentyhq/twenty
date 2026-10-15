@@ -89,6 +89,9 @@ const buildResolver = () => {
     streamAgentChat: jest
       .fn()
       .mockResolvedValue({ queued: false, messageId: 'message' }),
+    saveMessageWithoutReply: jest
+      .fn()
+      .mockResolvedValue({ messageId: 'message' }),
   };
   const streamRecovery = { reapDeadStream: jest.fn().mockResolvedValue(null) };
   const events = {
@@ -98,6 +101,9 @@ const buildResolver = () => {
       .mockResolvedValue({ chunks: [], maxSeq: 0 }),
   };
   const redis = { getClient: jest.fn() };
+  const replyPolicy = {
+    shouldAssistantReply: jest.fn().mockResolvedValue(true),
+  };
   const threadLifecycle = new AgentChatThreadLifecycleService(
     threadRepository as never,
     redis as never,
@@ -132,12 +138,14 @@ const buildResolver = () => {
         },
       }),
     } as never,
+    replyPolicy as never,
   );
   return {
     resolver,
     chatService,
     threadService,
     threadRepository,
+    replyPolicy,
     messages,
     sharing,
     streaming,
@@ -345,6 +353,38 @@ describe('Shared conversation API boundaries', () => {
         text: 'My request',
       }),
     );
+  });
+
+  it('saves a message nobody asked the assistant about without starting a turn', async () => {
+    const { resolver, streaming, replyPolicy } = buildResolver();
+
+    replyPolicy.shouldAssistantReply.mockResolvedValue(false);
+
+    const result = await resolver.sendChatMessage(
+      THREAD_ID,
+      'Tim, can you take this one?',
+      'message',
+      null,
+      undefined,
+      null,
+      ['tim'],
+      'owner-user',
+      'owner',
+      workspace,
+    );
+
+    expect(replyPolicy.shouldAssistantReply).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isAssistantMentioned: false,
+        mentionedWorkspaceMemberIds: ['tim'],
+      }),
+    );
+    expect(streaming.saveMessageWithoutReply).toHaveBeenCalled();
+    expect(streaming.streamAgentChat).not.toHaveBeenCalled();
+    expect(result).toEqual(
+      expect.objectContaining({ messageId: 'message', queued: false }),
+    );
+    expect(result.streamId).toBeUndefined();
   });
 
   it('adds the mentioned members once the message is sent', async () => {
