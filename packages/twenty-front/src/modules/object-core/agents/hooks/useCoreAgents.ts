@@ -3,11 +3,11 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
+import { shouldShowSystemCoreAgentsState } from '@/object-core/agents/states/shouldShowSystemCoreAgentsState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
 
@@ -28,7 +28,9 @@ export const useCoreAgents = ({
 }: {
   tableId?: string;
 } = {}) => {
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const shouldShowSystemCoreAgents = useAtomStateValue(
+    shouldShowSystemCoreAgentsState,
+  );
 
   // Workflow steps and the agent page create and delete agents without touching this query's cache
   const { data, loading, error } = useQuery(FindManyAgentsDocument, {
@@ -38,9 +40,13 @@ export const useCoreAgents = ({
   const listedAgents = useMemo(
     () =>
       (data?.findManyAgents ?? []).filter(
-        (agent) => !agent.isSystem || isAdvancedModeEnabled,
+        (agent) => !agent.isSystem || shouldShowSystemCoreAgents,
       ),
-    [data?.findManyAgents, isAdvancedModeEnabled],
+    [data?.findManyAgents, shouldShowSystemCoreAgents],
+  );
+
+  const hasSystemAgents = (data?.findManyAgents ?? []).some(
+    (agent) => agent.isSystem,
   );
 
   const tableMetadata = useMemo(
@@ -56,6 +62,7 @@ export const useCoreAgents = ({
 
   return {
     coreAgents,
+    hasSystemAgents,
     isInitialLoading: loading && !isDefined(data),
     error,
   };
