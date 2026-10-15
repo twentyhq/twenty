@@ -413,18 +413,23 @@ export class AgentChatThreadParticipantService {
   async countMembers({
     workspaceId,
     threadId,
+    additionalWorkspaceMemberIds,
   }: {
     workspaceId: string;
     threadId: string;
+    additionalWorkspaceMemberIds: string[];
   }): Promise<number> {
     const [{ memberCount }] = await this.threadRepository.query(
       workspaceId,
       ({ manager }) =>
         manager.query<{ memberCount: number }[]>(
-          `SELECT COUNT(DISTINCT "workspaceMemberId")::int AS "memberCount"
-           FROM ${getAgentChatThreadParticipantTable(workspaceId)}
-           WHERE "threadId" = $1`,
-          [threadId],
+          `SELECT COUNT(DISTINCT member)::int AS "memberCount" FROM (
+             SELECT "workspaceMemberId" AS member
+             FROM ${getAgentChatThreadParticipantTable(workspaceId)}
+             WHERE "threadId" = $1
+             UNION SELECT unnest($2::uuid[])
+           ) members`,
+          [threadId, additionalWorkspaceMemberIds],
         ),
     );
 

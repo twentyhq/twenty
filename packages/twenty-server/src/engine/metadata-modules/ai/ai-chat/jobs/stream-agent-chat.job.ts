@@ -776,7 +776,6 @@ export class StreamAgentChatJob {
       return resolveSupersededTurnOutcome(outcome);
     }
 
-    // Kept even when silent, so the model sees its choice next turn
     await this.agentChatService.upsertAssistantMessage({
       id: assistantMessageId,
       threadId,
@@ -799,11 +798,11 @@ export class StreamAgentChatJob {
       },
     });
 
-    if (!totalsUpdate.affected) {
-      if (isSilent) {
-        return resolveSupersededTurnOutcome(outcome);
-      }
+    if (!totalsUpdate.affected && isSilent) {
+      return resolveSupersededTurnOutcome(outcome);
+    }
 
+    if (!totalsUpdate.affected) {
       // The reply is saved even though a newer stream owns the thread. That
       // activity is best-effort and must not turn the saved reply into an error
       await this.threadService

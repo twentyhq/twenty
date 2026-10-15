@@ -22,9 +22,14 @@ import {
   NO_REPLY_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
+  extractRecordReferenceIds,
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
 import { getAppPath, isDefined, sortKeysDeeply } from 'twenty-shared/utils';
 
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
@@ -84,6 +89,7 @@ import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai
 import { createNoReplyTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/no-reply.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
+import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
@@ -288,12 +294,20 @@ export class ChatExecutionService {
         workspace.id,
       ));
 
-    // Ada hears every message, so with several members some are not for her
+    const latestUserMessage = [...messages]
+      .reverse()
+      .find((message) => message.role === 'user');
+
+    // Members mentioned in this message are only added once the turn is queued
     const isGroupConversation =
       isInboxConversation &&
       (await this.agentChatThreadParticipantService.countMembers({
         workspaceId: workspace.id,
         threadId,
+        additionalWorkspaceMemberIds: extractRecordReferenceIds({
+          text: findLastMessageText(latestUserMessage?.parts ?? []) ?? '',
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+        }),
       })) > 1;
 
     const isToolAllowed = (toolName: string) =>

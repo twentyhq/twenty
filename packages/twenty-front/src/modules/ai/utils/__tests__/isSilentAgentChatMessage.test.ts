@@ -58,4 +58,37 @@ describe('isSilentAgentChatMessage', () => {
       ),
     ).toBe(false);
   });
+
+  it('shows an assistant message that also ran another tool', () => {
+    expect(
+      isSilentAgentChatMessage(
+        buildMessage('assistant', [
+          {
+            type: 'tool-execute_tool',
+            toolCallId: 'call-2',
+            state: 'output-available',
+            input: { toolName: 'update_one_company', arguments: {} },
+            output: { success: true },
+          },
+          NO_REPLY_PART,
+        ]),
+      ),
+    ).toBe(false);
+  });
+
+  it('shows an assistant message whose no_reply call failed', () => {
+    expect(
+      isSilentAgentChatMessage(
+        buildMessage('assistant', [
+          {
+            type: 'tool-no_reply',
+            toolCallId: 'call-1',
+            state: 'output-error',
+            input: {},
+            errorText: 'Invalid input',
+          },
+        ]),
+      ),
+    ).toBe(false);
+  });
 });

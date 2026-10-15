@@ -1,16 +1,24 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 import { type ExtendedUIMessagePart } from '../types/ExtendedUIMessagePart';
 import { isNoReplyToolPart } from './is-no-reply-tool-part.util';
-import { isPausingToolPart } from './is-pausing-tool-part.util';
 
-// A question asked in the same step still waits on the member, so it must stay visible
+const isSucceededNoReplyToolPart = (part: ExtendedUIMessagePart): boolean =>
+  isNoReplyToolPart(part) &&
+  part.state === 'output-available' &&
+  isObject(part.output) &&
+  'success' in part.output &&
+  part.output.success === true;
+
+// Anything else the turn did, such as a tool call or a question, is shown, so
+// the turn only counts as silent when nothing else would be
+const isHiddenInSilentTurn = (part: ExtendedUIMessagePart): boolean =>
+  isNoReplyToolPart(part) ||
+  part.type === 'step-start' ||
+  part.type === 'reasoning' ||
+  (part.type === 'text' && !isNonEmptyString(part.text));
+
 export const isSilentAgentChatMessageParts = (
   parts: ExtendedUIMessagePart[],
 ): boolean =>
-  parts.some(isNoReplyToolPart) &&
-  !parts.some(
-    (part) =>
-      (part.type === 'text' && isNonEmptyString(part.text)) ||
-      isPausingToolPart(part),
-  );
+  parts.some(isSucceededNoReplyToolPart) && parts.every(isHiddenInSilentTurn);

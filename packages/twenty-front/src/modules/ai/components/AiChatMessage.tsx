@@ -217,7 +217,7 @@ export const AiChatMessage = ({
 
   if (
     !isDefined(agentChatMessage) ||
-    isSilentAgentChatMessage(agentChatMessage)
+    (isSilentAgentChatMessage(agentChatMessage) && !isDefined(error))
   ) {
     return null;
   }
