@@ -8,7 +8,6 @@ Match the surrounding code — the adjacent files in the directory you are editi
 
 Where this repo differs from your defaults:
 
-- Short-form `//` comments, never JSDoc blocks; comment only WHY (a constraint the code cannot express, still true for a reader who never saw your change), never WHAT.
 - Types over interfaces (except when extending third-party interfaces); string literals over enums (except GraphQL enums); no `any`; descriptive generics (`TData`, not `T`).
 - Named exports only. Functional components only.
 - Prefer event handlers over `useEffect` for state updates.
@@ -18,6 +17,15 @@ Where this repo differs from your defaults:
 - For Twenty product concepts, consult `packages/twenty-ui/src/icon/icon-dictionary.md` and use the canonical icon.
 - Import icons from `twenty-ui/icon`, never directly from `@tabler/icons-react`; action and status concepts should use their action or status icons.
 - Test behavior, not implementation: query by user-visible text/roles, `@testing-library/user-event` for interactions.
+
+## Comments
+
+Most code needs none. A comment that narrates what the code does is noise to read and debt to keep accurate. Comment only what the code cannot say: a non-obvious why, a workaround, a subtle invariant, a deliberate deviation from the obvious approach. Write it so it stays true for a reader who never saw your change.
+
+- Short-form `//` only, never JSDoc blocks.
+- Two or three lines, hard ceiling of five. Much of this repo predates the rule and carries paragraph-length comments, so the file you are editing is not the standard: write lean even in a verbose file. This overrides "match the surrounding code".
+- If the why does not fit in five lines, it belongs in a README or a `docs/` page, and the comment is one line pointing there.
+- State a fact once, where a reader hits it first. Do not repeat it across the Dockerfile, the config and the code that reads it.
 
 ## Commands
 
