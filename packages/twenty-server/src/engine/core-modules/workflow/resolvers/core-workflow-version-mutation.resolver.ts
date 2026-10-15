@@ -81,6 +81,19 @@ export class CoreWorkflowVersionMutationResolver {
   ) {}
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async activateCoreWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -99,6 +112,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async deactivateCoreWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -189,6 +215,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => CoreWorkflowVersionDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async createDraftFromCoreWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -211,6 +250,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async createCoreWorkflowVersionStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -226,6 +278,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => WorkflowActionDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async updateCoreWorkflowVersionStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -243,6 +308,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => WorkflowVersionTriggerDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async updateCoreWorkflowVersionTrigger(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -260,6 +338,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async deleteCoreWorkflowVersionStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -277,6 +368,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async duplicateCoreWorkflowVersionStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -294,6 +398,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async createCoreWorkflowVersionEdge(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -318,6 +435,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async deleteCoreWorkflowVersionEdge(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -342,6 +472,19 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async updateCoreWorkflowVersionPositions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
