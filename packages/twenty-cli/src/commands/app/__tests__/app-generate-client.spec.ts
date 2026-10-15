@@ -121,6 +121,7 @@ describe('app generate-client', () => {
     expect(parseSingleJsonLine(stdout).data).toMatchObject({
       app: { path: appPath, name: 'generate-app' },
       sdk: { version: '9.9.9' },
+      client: { path: join(appPath, 'node_modules', 'twenty-client-sdk') },
       application: { displayName: 'Generate App' },
     });
     expect(server.requests).toHaveLength(1);
@@ -143,6 +144,9 @@ describe('app generate-client', () => {
     expect(exitCode).toBe(0);
     expect(stdout).toContain(
       `Generated the typed API client for Generate App from ${server.url}`,
+    );
+    expect(stdout).toContain(
+      `Saved in ${join(appPath, 'node_modules', 'twenty-client-sdk')}`,
     );
     expectIdentityReadOnce();
   });
