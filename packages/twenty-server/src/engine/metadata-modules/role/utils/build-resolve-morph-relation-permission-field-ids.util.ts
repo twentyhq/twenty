@@ -1,12 +1,11 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
-type MorphRelationFieldMetadata = {
-  id: string;
-  type: FieldMetadataType;
-  universalIdentifier: string;
-  morphId: string | null;
-};
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+
+type MorphRelationFieldMetadata = Pick<
+  FieldMetadataEntity,
+  'id' | 'type' | 'universalIdentifier' | 'morphId'
+>;
 
 export const buildResolveMorphRelationPermissionFieldIds = ({
   morphRelationFieldMetadatas,
