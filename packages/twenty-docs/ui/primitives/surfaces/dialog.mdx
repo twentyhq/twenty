@@ -138,7 +138,9 @@ To open one dialog from triggers outside `Root`, create a handle once with `Dial
 
 Imperative actions take effect only while the associated Root is mounted. Root's `actionsRef` also exposes `close()` and `unmount()` for explicit transition control. To control an external closing animation, call `eventDetails.preventUnmountOnClose()` in `onOpenChange`, then call the `unmount()` action when the animation finishes.
 
-`Title` uses `Heading` and defaults to an `h2` with large type, primary text color, centered alignment, and spacing-4 below it. Use `level` to change the heading level independently of `size`, or `color` to change its text color. Native `className`, `style`, refs, and `render` are forwarded to the heading. Keep a heading element when using `render`.
+`Title` uses `Heading` and defaults to an `h2` with large type, primary text color, centered alignment, and spacing-4 below it. Use `level` to change the heading level independently of `size`, or `color` to change its text color. Native `className`, `style`, refs, and `render` are forwarded to the heading. Keep a heading element when using `render`. `Description` is centered like `Title`; AlertDialog keeps both left-aligned.
+
+`Popup` has no padding. `Header`, `Body` and `Footer` provide the inset, so content placed directly in `Popup` sits against its edges.
 
 ## Focus, scrolling, and dismissal
 

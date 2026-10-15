@@ -1,5 +1,8 @@
+import { msg } from '@lingui/core/macro';
+
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { type AllStandardSkillName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-skill-name.type';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   type CreateStandardSkillArgs,
   createStandardSkillFlatMetadata,
@@ -12,9 +15,15 @@ export const STANDARD_FLAT_SKILL_METADATA_BUILDERS_BY_SKILL_NAME = {
       context: {
         skillName: 'workflow-building',
         name: 'workflow-building',
-        label: 'Workflow Building',
-        description:
-          'Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y',
+        label: i18nLabel(
+          msg({ message: `Workflow Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconSettingsAutomation',
         content: `# Workflow Building Skill
 
@@ -156,9 +165,15 @@ Prioritize user understanding and workflow effectiveness.`,
       context: {
         skillName: 'data-manipulation',
         name: 'data-manipulation',
-        label: 'Data Manipulation',
-        description:
-          'Use when finding, filtering, creating, updating or importing records, and whenever a request needs sorting or touches more than a handful of rows',
+        label: i18nLabel(
+          msg({ message: `Data Manipulation`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when finding, filtering, creating, updating or importing records, and whenever a request needs sorting or touches more than a handful of rows`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconDatabase',
         content: `# Data Manipulation Skill
 
@@ -286,9 +301,15 @@ Prioritize data integrity and provide clear feedback on operations performed.`,
       context: {
         skillName: 'workspace-demo-seeding',
         name: 'workspace-demo-seeding',
-        label: 'Workspace Demo Seeding',
-        description:
-          'Use only when explicitly asked to fill a workspace with demonstration data for a given industry',
+        label: i18nLabel(
+          msg({ message: `Workspace Demo Seeding`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use only when explicitly asked to fill a workspace with demonstration data for a given industry`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconDatabase',
         content: `# Workspace Demo Seeding Skill
 You will transform the existing standard workspace into a fully custom demo tailored to the user's business type.
@@ -408,9 +429,15 @@ Loop STEP 6 for all the custom objects
       context: {
         skillName: 'dashboard-building',
         name: 'dashboard-building',
-        label: 'Dashboard Building',
-        description:
-          'Use when the user asks for a dashboard, a chart, a metric tile or a report page, or wants to change one that exists',
+        label: i18nLabel(
+          msg({ message: `Dashboard Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks for a dashboard, a chart, a metric tile or a report page, or wants to change one that exists`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconLayoutDashboard',
         content: `# Dashboard Building Skill
 
@@ -566,9 +593,15 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
       context: {
         skillName: 'metadata-building',
         name: 'metadata-building',
-        label: 'Metadata Building',
-        description:
-          'Use when the data model itself changes: adding or editing objects, fields, relations or select options',
+        label: i18nLabel(
+          msg({ message: `Metadata Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the data model itself changes: adding or editing objects, fields, relations or select options`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconBuildingSkyscraper',
         content: `# Metadata Building Skill
 
@@ -647,9 +680,15 @@ Prioritize data model integrity and user understanding.`,
       context: {
         skillName: 'code-interpreter',
         name: 'code-interpreter',
-        label: 'Code Interpreter',
-        description:
-          'Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes',
+        label: i18nLabel(
+          msg({ message: `Code Interpreter`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconCode',
         content: `# Code Interpreter Skill
 
@@ -813,9 +852,15 @@ For importing CSV/Excel/spreadsheet data, load the \`data-manipulation\` skill f
       context: {
         skillName: 'xlsx',
         name: 'xlsx',
-        label: 'Excel & Spreadsheets',
-        description:
-          'Use whenever a spreadsheet is the input or the output, including formulas, formatting, charts and CSV conversion',
+        label: i18nLabel(
+          msg({ message: `Excel & Spreadsheets`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use whenever a spreadsheet is the input or the output, including formulas, formatting, charts and CSV conversion`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconFileSpreadsheet',
         content: `# Excel Processing Skill
 
@@ -951,9 +996,15 @@ If errors found, fix them and recalculate again.
       context: {
         skillName: 'pdf',
         name: 'pdf',
-        label: 'PDF Processing',
-        description:
-          'Use whenever a PDF is involved: reading text or tables, filling a form, creating, merging or splitting one',
+        label: i18nLabel(
+          msg({ message: `PDF Processing`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use whenever a PDF is involved: reading text or tables, filling a form, creating, merging or splitting one`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconFileTypePdf',
         content: `# PDF Processing Skill
 
@@ -1089,9 +1140,15 @@ writer.write('/home/user/output/page1.pdf')
       context: {
         skillName: 'docx',
         name: 'docx',
-        label: 'Word Documents',
-        description:
-          'Use whenever a Word document is the input or the output, including templates, styles and tracked changes',
+        label: i18nLabel(
+          msg({ message: `Word Documents`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use whenever a Word document is the input or the output, including templates, styles and tracked changes`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconFileTypeDocx',
         content: `# Word Document Processing Skill
 
@@ -1248,9 +1305,15 @@ para.paragraph_format.space_after = Pt(12)
       context: {
         skillName: 'view-building',
         name: 'view-building',
-        label: 'View Building',
-        description:
-          'Use when creating or changing a view of any type, table, kanban or calendar, including the columns, filters, sorts and grouping on it',
+        label: i18nLabel(
+          msg({ message: `View Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when creating or changing a view of any type, table, kanban or calendar, including the columns, filters, sorts and grouping on it`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconLayoutBoard',
         content: `# View Building Skill
 
@@ -1385,9 +1448,15 @@ Some fields carry sub-fields you filter on directly:
       context: {
         skillName: 'pptx',
         name: 'pptx',
-        label: 'PowerPoint',
-        description:
-          'Use whenever a PowerPoint deck is the input or the output, including slides, templates, tables and charts',
+        label: i18nLabel(
+          msg({ message: `PowerPoint`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use whenever a PowerPoint deck is the input or the output, including slides, templates, tables and charts`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconPresentation',
         content: `# PowerPoint Processing Skill
 
@@ -1562,9 +1631,13 @@ python /home/user/scripts/pptx/replace.py input.pptx '{"{{company}}": "Acme Corp
       context: {
         skillName: 'roles',
         name: 'roles',
-        label: 'Roles',
-        description:
-          'Use when the user asks who can see or change what: creating a role, editing permissions, or assigning a role to someone',
+        label: i18nLabel(msg({ message: `Roles`, context: 'skill.label' })),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks who can see or change what: creating a role, editing permissions, or assigning a role to someone`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconLockAccess',
         content: `# Roles Skill
 
@@ -1663,9 +1736,15 @@ Report what changed in plain terms: which role, what it can now do, and who is a
       context: {
         skillName: 'meeting-prep',
         name: 'meeting-prep',
-        label: 'Meeting Prep',
-        description:
-          'Use before a call or a meeting, and whenever the user asks who am I talking to, brief me on this account, or what do I need to know before this conversation',
+        label: i18nLabel(
+          msg({ message: `Meeting Prep`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use before a call or a meeting, and whenever the user asks who am I talking to, brief me on this account, or what do I need to know before this conversation`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconCalendarEvent',
         content: `# Meeting Prep Skill
 
@@ -1711,9 +1790,15 @@ Reference every record you name so the user can click through to it.
       context: {
         skillName: 'deal-review',
         name: 'deal-review',
-        label: 'Deal Review',
-        description:
-          'Use when the user asks how a deal is doing, which deals are at risk, what is stuck or going quiet, or asks for a pipeline review',
+        label: i18nLabel(
+          msg({ message: `Deal Review`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks how a deal is doing, which deals are at risk, what is stuck or going quiet, or asks for a pipeline review`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconTargetArrow',
         content: `# Deal Review Skill
 
@@ -1757,9 +1842,15 @@ Say which signals you could not evaluate and why. A review that hides its gaps i
       context: {
         skillName: 'crm-hygiene',
         name: 'crm-hygiene',
-        label: 'CRM Hygiene',
-        description:
-          'Use when the user asks to clean up the CRM, find duplicates, fill in missing fields, or asks why the data is messy or which records are stale',
+        label: i18nLabel(
+          msg({ message: `CRM Hygiene`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks to clean up the CRM, find duplicates, fill in missing fields, or asks why the data is messy or which records are stale`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconListCheck',
         content: `# CRM Hygiene Skill
 
@@ -1805,9 +1896,13 @@ Always confirm before writing. Show what you will change and wait.
       context: {
         skillName: 'enrich',
         name: 'enrich',
-        label: 'Enrich',
-        description:
-          'Use when the user asks to research or enrich a company or a person, fill in what the CRM does not know about them, or find out what a company actually does',
+        label: i18nLabel(msg({ message: `Enrich`, context: 'skill.label' })),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks to research or enrich a company or a person, fill in what the CRM does not know about them, or find out what a company actually does`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconSearch',
         content: `# Enrich Skill
 
