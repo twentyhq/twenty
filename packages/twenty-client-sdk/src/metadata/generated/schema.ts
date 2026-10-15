@@ -345,6 +345,7 @@ export interface ApplicationConnectionProvider {
     logoUrl?: Scalars['String']
     name: Scalars['String']
     oauth?: ApplicationConnectionProviderOAuthConfig
+    scope: ConnectionProviderScope
     type: Scalars['String']
     __typename: 'ApplicationConnectionProvider'
 }
@@ -1130,6 +1131,8 @@ export interface ConnectedImapSmtpCaldavAccount {
     userWorkspaceId: Scalars['UUID']
     __typename: 'ConnectedImapSmtpCaldavAccount'
 }
+
+export type ConnectionProviderScope = 'USER' | 'WORKSPACE'
 
 export interface CreateApplicationFileUploadsResult {
     errors: ApplicationFileUploadError[]
@@ -4316,6 +4319,7 @@ export interface ApplicationConnectionProviderGenqlSelection{
     logoUrl?: boolean | number
     name?: boolean | number
     oauth?: ApplicationConnectionProviderOAuthConfigGenqlSelection
+    scope?: boolean | number
     type?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -11433,6 +11437,11 @@ export const enumCommandMenuItemAvailabilityType = {
    GLOBAL: 'GLOBAL' as const,
    GLOBAL_OBJECT_CONTEXT: 'GLOBAL_OBJECT_CONTEXT' as const,
    RECORD_SELECTION: 'RECORD_SELECTION' as const
+}
+
+export const enumConnectionProviderScope = {
+   USER: 'USER' as const,
+   WORKSPACE: 'WORKSPACE' as const
 }
 
 export const enumDatabaseEventAction = {
