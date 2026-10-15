@@ -41,10 +41,8 @@ import {
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import {
-  dropLegacyWorkflowRunVersionColumn,
-  restoreLegacyWorkflowRunVersionColumn,
-} from 'test/integration/utils/restore-legacy-workflow-run-version-column.util';
+import { dropLegacyWorkflowRunVersionColumn } from 'test/integration/utils/drop-legacy-workflow-run-version-column.util';
+import { restoreLegacyWorkflowRunVersionColumn } from 'test/integration/utils/restore-legacy-workflow-run-version-column.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
