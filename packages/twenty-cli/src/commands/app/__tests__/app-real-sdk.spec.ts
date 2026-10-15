@@ -90,6 +90,7 @@ const server = await startTestServer((request, response) => {
         syncApplication: {
           applicationUniversalIdentifier: readManifestIdentifier(variables),
           actions: [],
+          translationActions: [],
         },
       },
     });
