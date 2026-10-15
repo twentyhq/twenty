@@ -1,7 +1,7 @@
 import { AggregateOperations, ViewFilterOperand } from 'twenty-shared/types';
 
+import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { getChartFieldMetadataIds } from 'src/engine/metadata-modules/page-layout-widget/utils/get-chart-field-metadata-ids.util';
 
 describe('getChartFieldMetadataIds', () => {
@@ -13,6 +13,7 @@ describe('getChartFieldMetadataIds', () => {
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisGroupByFieldMetadataId: 'stage-id',
         secondaryAxisGroupByFieldMetadataId: 'company-id',
+        layout: BarChartLayout.VERTICAL,
         filter: {
           recordFilters: [
             {
@@ -21,7 +22,7 @@ describe('getChartFieldMetadataIds', () => {
             },
           ],
         },
-      } as AllPageLayoutWidgetConfiguration),
+      }),
     ).toEqual(['amount-id', 'stage-id', 'company-id', 'close-date-id']);
   });
 
@@ -32,16 +33,17 @@ describe('getChartFieldMetadataIds', () => {
         aggregateFieldMetadataId: 'amount-id',
         aggregateOperation: AggregateOperations.SUM,
         groupByFieldMetadataId: 'stage-id',
-      } as AllPageLayoutWidgetConfiguration),
+      }),
     ).toEqual(['amount-id', 'stage-id']);
   });
 
-  it('should return no field for configurations that are not charts', () => {
+  it('should return the aggregate field of an aggregate chart', () => {
     expect(
       getChartFieldMetadataIds({
-        configurationType: WidgetConfigurationType.IFRAME,
-        url: 'https://example.com',
-      } as AllPageLayoutWidgetConfiguration),
-    ).toEqual([]);
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataId: 'amount-id',
+        aggregateOperation: AggregateOperations.SUM,
+      }),
+    ).toEqual(['amount-id']);
   });
 });

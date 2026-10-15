@@ -27,6 +27,7 @@ import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/p
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { getChartFieldMetadataIds } from 'src/engine/metadata-modules/page-layout-widget/utils/get-chart-field-metadata-ids.util';
 import { haveSameChartFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/have-same-chart-field-references.util';
+import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
@@ -896,9 +897,7 @@ export class PageLayoutUpdateService {
     );
   }
 
-  // An untouched chart whose fields were deactivated since is not re-validated,
-  // so it does not block saving the rest of the layout. Deleted fields are still
-  // validated, as the widget could not be persisted with them anyway.
+  // Deleted fields are still validated: the widget could not be persisted with them
   private isUntouchedChartWithExistingFields({
     widgetInput,
     existingWidget,
@@ -908,7 +907,11 @@ export class PageLayoutUpdateService {
     existingWidget?: FlatPageLayoutWidget;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }): boolean {
-    if (!isDefined(existingWidget)) {
+    if (
+      !isDefined(existingWidget) ||
+      !isChartReferencingFieldInConfiguration(widgetInput.configuration) ||
+      !isChartReferencingFieldInConfiguration(existingWidget.configuration)
+    ) {
       return false;
     }
 
@@ -918,10 +921,10 @@ export class PageLayoutUpdateService {
 
     return (
       isObjectUnchanged &&
-      haveSameChartFieldReferences(
-        widgetInput.configuration,
-        existingWidget.configuration,
-      ) &&
+      haveSameChartFieldReferences({
+        configuration: widgetInput.configuration,
+        otherConfiguration: existingWidget.configuration,
+      }) &&
       getChartFieldMetadataIds(widgetInput.configuration).every(
         (fieldMetadataId) =>
           isDefined(

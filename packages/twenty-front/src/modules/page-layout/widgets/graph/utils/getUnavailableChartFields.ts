@@ -1,18 +1,22 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { getChartConfigurationFieldMetadataIds } from '@/page-layout/widgets/graph/utils/getChartConfigurationFieldMetadataIds';
+import { isDefined } from 'twenty-shared/utils';
+
+type ChartFieldMetadataItem = Pick<
+  FieldMetadataItem,
+  'id' | 'isActive' | 'label'
+>;
 
 export type UnavailableChartField = {
   fieldMetadataId: string;
-  fieldMetadataItem?: FieldMetadataItem;
+  fieldMetadataItem?: ChartFieldMetadataItem;
 };
 
 export const getUnavailableChartFields = ({
-  configuration,
+  fieldMetadataIds,
   fieldMetadataItems,
 }: {
-  configuration: PageLayoutWidget['configuration'];
-  fieldMetadataItems: FieldMetadataItem[];
+  fieldMetadataIds: string[];
+  fieldMetadataItems: ChartFieldMetadataItem[];
 }): UnavailableChartField[] => {
   const fieldMetadataItemsById = new Map(
     fieldMetadataItems.map((fieldMetadataItem) => [
@@ -21,10 +25,13 @@ export const getUnavailableChartFields = ({
     ]),
   );
 
-  return [...new Set(getChartConfigurationFieldMetadataIds(configuration))]
+  return [...new Set(fieldMetadataIds)]
     .map((fieldMetadataId) => ({
       fieldMetadataId,
       fieldMetadataItem: fieldMetadataItemsById.get(fieldMetadataId),
     }))
-    .filter(({ fieldMetadataItem }) => fieldMetadataItem?.isActive !== true);
+    .filter(
+      ({ fieldMetadataItem }) =>
+        !isDefined(fieldMetadataItem) || !fieldMetadataItem.isActive,
+    );
 };

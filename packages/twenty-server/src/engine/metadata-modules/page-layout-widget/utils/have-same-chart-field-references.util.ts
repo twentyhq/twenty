@@ -1,8 +1,7 @@
 import { fastDeepEqual, isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { type ChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/chart-referencing-field-in-configuration.type';
 import { getChartFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/get-chart-field-references.util';
-import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 
 // Clients send explicit nulls where the stored configuration omits the key
 const removeNullishValues = (value: unknown): unknown => {
@@ -21,19 +20,14 @@ const removeNullishValues = (value: unknown): unknown => {
   );
 };
 
-export const haveSameChartFieldReferences = (
-  configuration: AllPageLayoutWidgetConfiguration,
-  otherConfiguration: AllPageLayoutWidgetConfiguration,
-): boolean => {
-  if (
-    !isChartReferencingFieldInConfiguration(configuration) ||
-    !isChartReferencingFieldInConfiguration(otherConfiguration)
-  ) {
-    return false;
-  }
-
-  return fastDeepEqual(
+export const haveSameChartFieldReferences = ({
+  configuration,
+  otherConfiguration,
+}: {
+  configuration: ChartReferencingFieldInConfiguration;
+  otherConfiguration: ChartReferencingFieldInConfiguration;
+}): boolean =>
+  fastDeepEqual(
     removeNullishValues(getChartFieldReferences(configuration)),
     removeNullishValues(getChartFieldReferences(otherConfiguration)),
   );
-};

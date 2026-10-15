@@ -1,5 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { GraphWidget } from '@/page-layout/widgets/graph/components/GraphWidget';
 import { GraphWidgetUnavailableFieldsDisplay } from '@/page-layout/widgets/graph/components/GraphWidgetUnavailableFieldsDisplay';
@@ -28,7 +29,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
 
   const unavailableFields = isDefined(objectMetadataItem)
     ? getUnavailableChartFields({
-        configuration: widget.configuration,
+        fieldMetadataIds: extractFieldMetadataIdsFromWidget(widget),
         fieldMetadataItems: objectMetadataItem.fields,
       })
     : [];
