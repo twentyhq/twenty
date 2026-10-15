@@ -124,7 +124,7 @@ export class AgentRunnerService {
       );
     } catch (error) {
       this.logger.error(
-        `Agent run in thread ${conversation.threadId} failed`,
+        `Agent run in thread ${conversation.threadId} of workspace ${workspaceId} failed`,
         error instanceof Error ? error.stack : error,
       );
 

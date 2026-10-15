@@ -184,13 +184,13 @@ export class AgentRunSuspensionService {
     } catch (error) {
       // the run already ended, so a failed delivery is tried again rather than lost with the job
       this.logger.warn(
-        `Could not deliver the outcome of the run in thread ${delivery.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Could not deliver the outcome of the run in thread ${delivery.threadId} of workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 
     if (attempt + 1 >= AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS) {
       this.logger.error(
-        `Dropped the outcome of the run in thread ${delivery.threadId}: its ${caller.type} caller never took it`,
+        `Dropped the outcome of the run in thread ${delivery.threadId} of workspace ${workspaceId}: its ${caller.type} caller never took it`,
       );
 
       return;
