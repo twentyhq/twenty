@@ -182,8 +182,6 @@ export const CONNECTED_ACCOUNTS = [
   }),
 ];
 
-// What the server returns under the App preferences filter: the caller's own
-// accounts, without their workspace-shared app connections
 export const APP_PREFERENCES_CONNECTED_ACCOUNTS = CONNECTED_ACCOUNTS.filter(
   (account) =>
     account.userWorkspaceId === MY_USER_WORKSPACE_ID &&

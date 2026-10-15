@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsBoolean, IsIn, IsOptional } from 'class-validator';
 
+import { CONNECTED_ACCOUNT_VISIBILITIES } from 'src/engine/metadata-modules/connected-account/constants/connected-account-visibilities.constant';
 import { type ConnectedAccountVisibility } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @InputType('MyConnectedAccountsFilterInput')
@@ -15,7 +16,7 @@ export class MyConnectedAccountsFilterInput {
   })
   ownedByCaller?: boolean | null;
 
-  @IsIn(['user', 'workspace'])
+  @IsIn(CONNECTED_ACCOUNT_VISIBILITIES)
   @IsOptional()
   @Field(() => String, {
     nullable: true,

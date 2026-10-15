@@ -19,7 +19,7 @@ export const buildMyConnectedAccountsWhere = ({
   const { ownedByCaller, appConnectionVisibility } = filter ?? {};
 
   const ownershipWhere: FindOptionsWhere<ConnectedAccountEntity>[] =
-    ownedByCaller === true
+    ownedByCaller
       ? [{ workspaceId, userWorkspaceId }]
       : buildConnectedAccountUsableByCallerWhere({
           baseWhere: { workspaceId },
@@ -30,13 +30,16 @@ export const buildMyConnectedAccountsWhere = ({
     return ownershipWhere;
   }
 
-  // A clause already pinned to the other visibility cannot match an app
-  // connection, and spreading over it would widen it to accounts the caller
-  // cannot use.
+  const isClausePinnedToOtherVisibility = (
+    clause: FindOptionsWhere<ConnectedAccountEntity>,
+  ) =>
+    isDefined(clause.visibility) &&
+    clause.visibility !== appConnectionVisibility;
+
+  // Spreading over a pinned clause would widen it to accounts the caller cannot use
   return ownershipWhere.flatMap((clause) => [
     { ...clause, provider: Not(ConnectedAccountProvider.APP) },
-    ...(isDefined(clause.visibility) &&
-    clause.visibility !== appConnectionVisibility
+    ...(isClausePinnedToOtherVisibility(clause)
       ? []
       : [
           {

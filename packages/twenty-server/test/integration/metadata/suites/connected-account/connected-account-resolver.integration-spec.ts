@@ -4,6 +4,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
+import { type MyConnectedAccountsFilterInput } from 'src/engine/metadata-modules/connected-account/dtos/my-connected-accounts-filter.input';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
@@ -21,7 +22,7 @@ const JONY_SHARED_APP_CONNECTION_ID = uuidv4();
 const TIM_PRIVATE_APP_CONNECTION_ID = uuidv4();
 
 const queryMyConnectedAccountIdsAsMember = async (
-  filter?: Record<string, unknown> | null,
+  filter?: MyConnectedAccountsFilterInput | null,
 ): Promise<string[]> => {
   const response = await makeMetadataApiRequestWithMemberRole({
     query: MY_CONNECTED_ACCOUNTS_WITH_FILTER_QUERY,

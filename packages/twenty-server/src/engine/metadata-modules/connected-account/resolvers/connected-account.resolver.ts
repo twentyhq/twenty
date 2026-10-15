@@ -71,7 +71,7 @@ export class ConnectedAccountResolver {
       await this.connectedAccountMetadataService.findUsableByCaller({
         userWorkspaceId,
         workspaceId: workspace.id,
-        filter: filter ?? {},
+        filter,
       });
 
     return accounts.map((account) => buildPublicConnectedAccount(account));
