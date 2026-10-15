@@ -1,6 +1,5 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
-import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
-import { useId, useRef } from 'react';
+import { useId } from 'react';
 import { clsx } from 'clsx';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
@@ -11,10 +10,9 @@ import styles from '../Dropdown.module.scss';
 import { DropdownItemOwner } from './DropdownItemOwner';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
-import { DropdownRowRegistrationEffect } from './DropdownRowRegistrationEffect';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
 import { useDropdownContext } from './useDropdownContext';
-import { useDropdownRow } from './useDropdownRow';
+import { useDropdownItemFocus } from './useDropdownItemFocus';
 
 export const DropdownOptionItem = ({
   selected,
@@ -37,7 +35,6 @@ export const DropdownOptionItem = ({
   nativeButton = !isDefined(render),
   onClick,
   id,
-  ref,
   ...props
 }: DropdownOptionItemProps) => {
   const { type, multiple, closeTree, searchTargetId } = useDropdownContext();
@@ -56,9 +53,7 @@ export const DropdownOptionItem = ({
   const selectionIndicator = multiple ? 'checkbox' : 'check';
   const generatedId = useId();
   const itemId = id ?? generatedId;
-  const row = useDropdownRow({ id: itemId, kind: 'option', disabled });
-  const primaryRef = useRef<HTMLElement>(null);
-  const mergedRef = useMergedRefs(ref, primaryRef);
+  const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
   const hasActions = isRenderableSlot(actions);
   const isFocused = searchTargetId === itemId;
@@ -70,7 +65,6 @@ export const DropdownOptionItem = ({
   const item = (
     <ButtonPrimitive
       {...props}
-      ref={mergedRef}
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
@@ -80,8 +74,9 @@ export const DropdownOptionItem = ({
         isPressableOption && hasSelectionState ? selected : undefined
       }
       aria-current={isCurrentOption ? 'true' : undefined}
-      tabIndex={row.tabIndex}
+      tabIndex={itemFocus.tabIndex}
       data-dropdown-item=""
+      data-dropdown-option-item=""
       onClick={(event) => {
         onClick?.(event);
 
@@ -134,32 +129,20 @@ export const DropdownOptionItem = ({
     />
   );
 
-  return (
-    <>
-      {hasActions ? (
-        <DropdownItemWithActions
-          primaryRef={primaryRef}
-          actions={actions}
-          actionsVisibility={actionsVisibility}
-          color={color}
-          selected={selected}
-          focused={isFocused}
-          indicator={resolvedIndicator}
-          disabled={disabled}
-          hasSubmenu={hasSubmenu}
-        >
-          {item}
-        </DropdownItemWithActions>
-      ) : (
-        item
-      )}
-      <DropdownRowRegistrationEffect
-        elementRef={primaryRef}
-        id={itemId}
-        kind="option"
-        disabled={disabled}
-        ariaDisabled={props['aria-disabled']}
-      />
-    </>
+  return hasActions ? (
+    <DropdownItemWithActions
+      actions={actions}
+      actionsVisibility={actionsVisibility}
+      color={color}
+      selected={selected}
+      focused={isFocused}
+      indicator={resolvedIndicator}
+      disabled={disabled}
+      hasSubmenu={hasSubmenu}
+    >
+      {item}
+    </DropdownItemWithActions>
+  ) : (
+    item
   );
 };

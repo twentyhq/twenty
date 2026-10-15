@@ -4,9 +4,11 @@ import { useState, type KeyboardEvent } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { getDropdownItemLabel } from './getDropdownItemLabel';
-import { getDropdownRowCollection } from './getDropdownRowCollection';
+import { getDropdownItems } from './getDropdownItems';
+import { getDropdownRows } from './getDropdownRows';
+import { getDropdownSearch } from './getDropdownSearch';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
-import { getEnabledDropdownRows } from './getEnabledDropdownRows';
+import { getDropdownTrigger } from './getDropdownTrigger';
 import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 import { getNextDropdownItem } from './getNextDropdownItem';
 import { useDropdownContext } from './useDropdownContext';
@@ -14,8 +16,7 @@ import { useDropdownContext } from './useDropdownContext';
 const TYPEAHEAD_RESET_DELAY = 500;
 
 export const useDropdownKeyboardNavigation = () => {
-  const { type, isSubmenu, setOpen, closeTree, registry, submenuTriggerRef } =
-    useDropdownContext();
+  const { type, isSubmenu, setOpen, closeTree } = useDropdownContext();
   const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
@@ -45,7 +46,7 @@ export const useDropdownKeyboardNavigation = () => {
       isSubmenuBackwardKey && type !== 'panel'
         ? getNextDropdownGridItem({
             key: event.key,
-            items: getEnabledDropdownRows(registry).map((row) => row.element),
+            items: getDropdownItems(content),
             currentItem: target,
             search: null,
             isRightToLeft,
@@ -62,7 +63,7 @@ export const useDropdownKeyboardNavigation = () => {
     if (shouldCloseSubmenu) {
       event.preventDefault();
       event.stopPropagation();
-      submenuTriggerRef.current?.focus();
+      getDropdownTrigger(content)?.focus();
       setOpen(false);
       return;
     }
@@ -77,22 +78,21 @@ export const useDropdownKeyboardNavigation = () => {
       return;
     }
 
-    const { search, enabledRows, rovingRows } =
-      getDropdownRowCollection(registry);
+    const search = getDropdownSearch(content);
     const isSearch = target === search;
     if (isEditable && !isSearch) {
       return;
     }
 
-    const items = rovingRows.map((row) => row.element);
+    const items = getDropdownRows(content);
     const searchTarget =
       isSearch && event.key === 'Enter' && !event.nativeEvent.isComposing
-        ? getDropdownSearchTarget({ enabledRows, search, type })
+        ? getDropdownSearchTarget(content)
         : undefined;
 
     if (isDefined(searchTarget)) {
       event.preventDefault();
-      searchTarget.element.click();
+      searchTarget.click();
       return;
     }
 

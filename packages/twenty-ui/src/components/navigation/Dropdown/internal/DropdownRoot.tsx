@@ -1,23 +1,16 @@
-import {
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { preventDismissingClickActivation } from '@ui/utilities/utils/preventDismissingClickActivation';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownRootProps } from '../types/DropdownRootProps';
+import { type DropdownType } from '../types/DropdownType';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
-import { createDropdownRegistry } from './createDropdownRegistry';
-import { getDropdownPageType } from './getDropdownPageType';
-import { subscribeToDropdownRegistry } from './subscribeToDropdownRegistry';
+import { getDropdownTabStopRowId } from './getDropdownTabStopRowId';
 import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { useRegisteredElementId } from './useRegisteredElementId';
 
@@ -50,19 +43,13 @@ export const DropdownRoot = ({
   const [pageHistory, setPageHistory] = useState<PageHistoryEntry[]>([
     { id: defaultPage },
   ]);
-  const [registry] = useState(createDropdownRegistry);
-  const subscribeToRegistry = useCallback(
-    (listener: () => void) =>
-      subscribeToDropdownRegistry({ registry, listener }),
-    [registry],
-  );
-  const contentRef = useRef<HTMLDivElement>(null);
-  const submenuTriggerRef = useRef<HTMLElement>(null);
+  const [activePage, setActivePage] = useState<{
+    id: string;
+    type: DropdownType;
+  }>();
+  const [rowIds, setRowIds] = useState<string[]>();
   const [focusedRowId, setFocusedRowId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
-  const pageType = useSyncExternalStore(subscribeToRegistry, () =>
-    getDropdownPageType({ registry, pageId }),
-  );
   const [pageFocusRequest, setPageFocusRequest] =
     useState<DropdownPageFocusRequest>();
   const [initialFocusEdge, setInitialFocusEdge] = useState<'first' | 'last'>(
@@ -82,6 +69,7 @@ export const DropdownRoot = ({
 
   if (isOpening) {
     setPageHistory([{ id: defaultPage }]);
+    setActivePage(undefined);
     setPageFocusRequest(undefined);
     setFocusedRowId(undefined);
   }
@@ -146,6 +134,23 @@ export const DropdownRoot = ({
     setPageHistory((history) => history.slice(0, -1));
   };
 
+  const registerPage = useCallback(
+    ({ id, type: pageType }: { id: string; type?: DropdownType }) => {
+      if (!open) {
+        return;
+      }
+
+      const resolvedType = pageType ?? type;
+
+      setActivePage((previousPage) =>
+        previousPage?.id === id && previousPage.type === resolvedType
+          ? previousPage
+          : { id, type: resolvedType },
+      );
+    },
+    [open, type],
+  );
+
   return (
     <Popover.Root
       open={open}
@@ -187,17 +192,22 @@ export const DropdownRoot = ({
     >
       <DropdownContext.Provider
         value={{
-          type: pageType ?? type,
+          type:
+            isDefined(activePage) && activePage.id === pageId
+              ? activePage.type
+              : type,
           rootType: type,
           open,
           multiple,
           isSubmenu,
           parentType: parent?.type,
-          registry,
-          contentRef,
-          submenuTriggerRef,
-          focusedRowId,
-          setFocusedRowId,
+          rowFocus: {
+            rowIds,
+            tabStopRowId: getDropdownTabStopRowId({ rowIds, focusedRowId }),
+            focusRow: setFocusedRowId,
+          },
+          parentRowFocus: parent?.rowFocus,
+          setRowIds,
           pageId,
           pageFocusRequest,
           setPageFocusRequest,
@@ -210,6 +220,7 @@ export const DropdownRoot = ({
           closeTree,
           goToPage,
           goBack,
+          registerPage,
           registerOpenNestedRoot,
           searchTargetId,
           setSearchTargetId,

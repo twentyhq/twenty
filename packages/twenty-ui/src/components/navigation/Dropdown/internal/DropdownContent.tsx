@@ -1,6 +1,6 @@
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { isFunction } from '@sniptt/guards';
-import { useMemo, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
@@ -9,15 +9,11 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../Dropdown.module.scss';
 import { type DropdownContentProps } from '../types/DropdownContentProps';
 import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
-import { DropdownRowOrderEffect } from './DropdownRowOrderEffect';
-import { DropdownRowScopeContext } from './DropdownRowScopeContext';
 import { DropdownRowsEffect } from './DropdownRowsEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
-import { getDropdownSearch } from './getDropdownSearch';
-import { getDropdownTabStopRowId } from './getDropdownTabStopRowId';
-import { isRovingDropdownRow } from './isRovingDropdownRow';
+import { getDropdownSearchTarget } from './getDropdownSearchTarget';
+import { isDropdownRow } from './isDropdownRow';
 import { isUnhandledModifierShortcut } from './isUnhandledModifierShortcut';
-import { notifyDropdownRegistryListeners } from './notifyDropdownRegistryListeners';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownKeyboardNavigation } from './useDropdownKeyboardNavigation';
 
@@ -49,25 +45,17 @@ export const DropdownContent = ({
   const {
     type,
     isSubmenu,
-    pageId,
-    registry,
-    contentRef,
-    focusedRowId,
-    setFocusedRowId,
+    rowFocus,
     initialFocusEdge,
     focusOnOpen,
     triggerId,
     titleId,
+    setSearchTargetId,
   } = useDropdownContext();
+  const contentRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<HTMLDivElement | null>(null);
-  const [rowIds, setRowIds] = useState<string[]>();
   const mergedRef = useMergedRefs(contentRef, ref, setContent);
   const handleNavigation = useDropdownKeyboardNavigation();
-  const tabStopRowId = getDropdownTabStopRowId({ rowIds, focusedRowId });
-  const rowScope = useMemo(
-    () => ({ registry, rowIds, tabStopRowId }),
-    [registry, rowIds, tabStopRowId],
-  );
   const defaultAriaLabelledBy = isDefined(ariaLabel)
     ? undefined
     : (titleId ?? triggerId);
@@ -90,6 +78,7 @@ export const DropdownContent = ({
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledBy ?? defaultAriaLabelledBy}
             data-dropdown-content=""
+            data-type={type}
             className={mergeClassNames(styles.content, className)}
             style={(state) => ({
               width,
@@ -108,10 +97,8 @@ export const DropdownContent = ({
 
                 return getDropdownFocusTarget({
                   content: contentRef.current,
-                  registry,
-                  pageId,
-                  type,
                   edge: initialFocusEdge,
+                  type,
                 });
               })
             }
@@ -126,24 +113,20 @@ export const DropdownContent = ({
             onFocus={(event) => {
               onFocus?.(event);
 
-              const row = Array.from(registry.rows).find(
-                (registration) =>
-                  registration.elementRef.current === event.target,
-              );
+              const { target } = event;
 
               if (
-                isDefined(row) &&
-                isRovingDropdownRow({
-                  row,
-                  search: getDropdownSearch(registry),
-                })
+                target instanceof HTMLElement &&
+                isDropdownRow({ content: event.currentTarget, item: target })
               ) {
-                setFocusedRowId(row.id);
+                rowFocus.focusRow(target.id);
               }
             }}
             onInput={(event) => {
               onInput?.(event);
-              notifyDropdownRegistryListeners(registry);
+              setSearchTargetId(
+                getDropdownSearchTarget(event.currentTarget)?.id,
+              );
             }}
             onClick={(event) => {
               event.stopPropagation();
@@ -158,15 +141,12 @@ export const DropdownContent = ({
               onPointerDown?.(event);
             }}
           >
-            <DropdownRowScopeContext.Provider value={rowScope}>
-              {children}
-            </DropdownRowScopeContext.Provider>
+            {children}
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>
-      <DropdownPageFocusEffect />
-      <DropdownRowsEffect content={content} setRowIds={setRowIds} />
-      <DropdownRowOrderEffect content={content} />
+      <DropdownPageFocusEffect contentRef={contentRef} />
+      <DropdownRowsEffect content={content} />
     </>
   );
 };

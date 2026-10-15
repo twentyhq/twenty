@@ -1,9 +1,9 @@
-import { type RefObject } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 
 import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
-import { type DropdownRegistry } from './DropdownRegistry';
+import { type DropdownRowFocus } from './DropdownRowFocus';
 
 export type DropdownContextValue = {
   type: DropdownType;
@@ -12,11 +12,9 @@ export type DropdownContextValue = {
   multiple: boolean;
   isSubmenu: boolean;
   parentType?: DropdownType;
-  registry: DropdownRegistry;
-  contentRef: RefObject<HTMLDivElement | null>;
-  submenuTriggerRef: RefObject<HTMLElement | null>;
-  focusedRowId?: string;
-  setFocusedRowId: (id: string) => void;
+  rowFocus: DropdownRowFocus;
+  parentRowFocus?: DropdownRowFocus;
+  setRowIds: Dispatch<SetStateAction<string[] | undefined>>;
   pageId?: string;
   pageFocusRequest?: DropdownPageFocusRequest;
   setPageFocusRequest: (request: DropdownPageFocusRequest | undefined) => void;
@@ -29,6 +27,7 @@ export type DropdownContextValue = {
   closeTree: (tabOutEvent?: Event) => void;
   goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
+  registerPage: (page: { id: string; type?: DropdownType }) => void;
   registerOpenNestedRoot: () => () => void;
   searchTargetId?: string;
   setSearchTargetId: (id: string | undefined) => void;

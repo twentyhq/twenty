@@ -1,6 +1,5 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
-import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
-import { useContext, useId, useRef } from 'react';
+import { useId } from 'react';
 import { clsx } from 'clsx';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
@@ -8,16 +7,14 @@ import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
-import { DropdownBackContext } from './DropdownBackContext';
 import { DropdownItemOwner } from './DropdownItemOwner';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
-import { DropdownRowRegistrationEffect } from './DropdownRowRegistrationEffect';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
-import { getEnabledDropdownRows } from './getEnabledDropdownRows';
+import { getDropdownItems } from './getDropdownItems';
 import { useDropdownContext } from './useDropdownContext';
-import { useDropdownRow } from './useDropdownRow';
+import { useDropdownItemFocus } from './useDropdownItemFocus';
 
 export const DropdownActionItem = ({
   color,
@@ -38,17 +35,12 @@ export const DropdownActionItem = ({
   onClick,
   page,
   id,
-  ref,
   ...props
 }: DropdownActionItemProps) => {
   const { type, closeTree, goToPage } = useDropdownContext();
-  const isBack = useContext(DropdownBackContext);
   const generatedId = useId();
   const itemId = id ?? generatedId;
-  const kind = isBack ? 'back' : 'action';
-  const row = useDropdownRow({ id: itemId, kind, disabled });
-  const primaryRef = useRef<HTMLElement>(null);
-  const mergedRef = useMergedRefs(ref, primaryRef);
+  const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
   const hasActions = isRenderableSlot(actions);
   const resolvedHasSubmenu = hasSubmenu ?? isDefined(page);
@@ -56,13 +48,13 @@ export const DropdownActionItem = ({
   const item = (
     <ButtonPrimitive
       {...props}
-      ref={mergedRef}
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
       role={props.role ?? (type === 'menu' ? 'menuitem' : undefined)}
-      tabIndex={row.tabIndex}
+      tabIndex={itemFocus.tabIndex}
       data-dropdown-item=""
+      data-dropdown-page={page}
       onClick={(event) => {
         onClick?.(event);
 
@@ -71,14 +63,15 @@ export const DropdownActionItem = ({
         }
 
         if (isDefined(page)) {
-          if (!isDefined(row.registry)) {
+          const content = event.currentTarget.closest<HTMLElement>(
+            '[data-dropdown-content]',
+          );
+
+          if (!isDefined(content)) {
             return;
           }
 
-          const { currentTarget } = event;
-          const index = getEnabledDropdownRows(row.registry).findIndex(
-            (enabledRow) => enabledRow.element === currentTarget,
-          );
+          const index = getDropdownItems(content).indexOf(event.currentTarget);
 
           goToPage({
             id: page,
@@ -130,30 +123,17 @@ export const DropdownActionItem = ({
     />
   );
 
-  return (
-    <>
-      {hasActions ? (
-        <DropdownItemWithActions
-          primaryRef={primaryRef}
-          actions={actions}
-          actionsVisibility={actionsVisibility}
-          color={color}
-          disabled={disabled}
-          hasSubmenu={resolvedHasSubmenu}
-        >
-          {item}
-        </DropdownItemWithActions>
-      ) : (
-        item
-      )}
-      <DropdownRowRegistrationEffect
-        elementRef={primaryRef}
-        id={itemId}
-        kind={kind}
-        disabled={disabled}
-        ariaDisabled={props['aria-disabled']}
-        page={page}
-      />
-    </>
+  return hasActions ? (
+    <DropdownItemWithActions
+      actions={actions}
+      actionsVisibility={actionsVisibility}
+      color={color}
+      disabled={disabled}
+      hasSubmenu={resolvedHasSubmenu}
+    >
+      {item}
+    </DropdownItemWithActions>
+  ) : (
+    item
   );
 };
