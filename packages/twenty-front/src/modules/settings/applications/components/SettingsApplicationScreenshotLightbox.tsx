@@ -111,7 +111,6 @@ export const SettingsApplicationScreenshotLightbox = ({
           aria-label={displayName}
           onKeyDown={onKeyDown}
           size="fullscreen"
-          style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >
           <StyledContainer>
             <StyledCloseButton>

@@ -9,11 +9,18 @@ import { checkNodeRequirement } from '@/app/project/check-node-requirement';
 import { resolveInstalledSdk } from '@/app/project/resolve-installed-sdk';
 import { resolveInsideSdk } from '@/app/project/resolve-inside-sdk';
 import { CliError } from '@/output/cli-error';
+import { type CliWarning } from '@/output/types/cli-warning.type';
 
 const SOURCE_SDK_RANGE = '>=1.23.0';
 const SOURCE_ENTRY_POINTS = ['twenty-sdk/define', 'twenty-sdk/front-component'];
 
-export const resolveSourceSdk = async ({ appPath }: { appPath: string }) => {
+export const resolveSourceSdk = async ({
+  appPath,
+  warn,
+}: {
+  appPath: string;
+  warn?: (warning: CliWarning) => void;
+}) => {
   const sdk = await resolveInstalledSdk(appPath);
   const version = isString(sdk.packageJson.version)
     ? sdk.packageJson.version
@@ -55,7 +62,12 @@ export const resolveSourceSdk = async ({ appPath }: { appPath: string }) => {
         })
       : 'invalid';
 
-    if (requirement !== 'satisfied') {
+    if (requirement === 'outsideRange') {
+      warn?.({
+        code: 'NODE_VERSION_UNTESTED',
+        message: `twenty-sdk ${version} declares Node ${String(requiredNode)}; continuing on Node ${process.versions.node}, which is outside that range.`,
+      });
+    } else if (requirement !== 'satisfied') {
       throw new CliError({
         code:
           requirement === 'invalid'

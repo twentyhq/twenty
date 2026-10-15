@@ -73,13 +73,7 @@ export const ChartRatioOptionSelectSelectableListItem = ({
         selected={isSelected}
         indicator="check"
       >
-        <Tag
-          color={color ?? 'transparent'}
-          borderStyle="dashed"
-          variant={'soft'}
-        >
-          {label}
-        </Tag>
+        <Tag color={color ?? 'transparent'}>{label}</Tag>
       </ListItemButton>
     </SelectableListItem>
   );
