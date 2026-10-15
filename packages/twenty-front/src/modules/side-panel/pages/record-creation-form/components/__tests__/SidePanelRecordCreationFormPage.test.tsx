@@ -540,4 +540,23 @@ describe('SidePanelRecordCreationFormPage', () => {
       expect.objectContaining({ status: 'success' }),
     );
   });
+
+  it('collapses the hidden fields again after creating another record', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: /Create another/ }),
+    );
+
+    expect(
+      await screen.findByRole('button', { name: 'All fields (3)' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Hide fields' }),
+    ).not.toBeInTheDocument();
+  });
 });
