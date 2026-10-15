@@ -15,7 +15,7 @@ type PermissionFlagRelabel = {
   next: PermissionFlagPresentation;
 };
 
-export const PERMISSION_FLAG_RELABELS: PermissionFlagRelabel[] = [
+const PERMISSION_FLAG_RELABELS: PermissionFlagRelabel[] = [
   {
     universalIdentifier: SystemPermissionFlag.APPLICATIONS,
     previous: {

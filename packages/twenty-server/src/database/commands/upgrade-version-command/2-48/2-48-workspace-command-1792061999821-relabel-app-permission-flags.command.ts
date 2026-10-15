@@ -31,17 +31,18 @@ export class RelabelAppPermissionFlagsCommand extends ProvisionedWorkspaceComman
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.relabel(args, 'up');
+    await this.relabel({ ...args, direction: 'up' });
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.relabel(args, 'down');
+    await this.relabel({ ...args, direction: 'down' });
   }
 
-  private async relabel(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    direction: 'up' | 'down',
-  ): Promise<void> {
+  private async relabel({
+    workspaceId,
+    options,
+    direction,
+  }: RunOnWorkspaceArgs & { direction: 'up' | 'down' }): Promise<void> {
     const { flatPermissionFlagMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatPermissionFlagMaps',

@@ -1,14 +1,37 @@
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  buildPermissionFlagRelabelUpdates,
-  PERMISSION_FLAG_RELABELS,
-} from 'src/database/commands/upgrade-version-command/2-48/utils/build-permission-flag-relabel-updates.util';
+import { buildPermissionFlagRelabelUpdates } from 'src/database/commands/upgrade-version-command/2-48/utils/build-permission-flag-relabel-updates.util';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const NOW = '2026-10-14T12:00:00.000Z';
+
+const PREVIOUS_PRESENTATIONS = {
+  [SystemPermissionFlag.APPLICATIONS]: {
+    label: 'Applications',
+    description: 'Install and manage applications',
+    icon: 'IconApps',
+  },
+  [SystemPermissionFlag.CONNECTED_ACCOUNTS]: {
+    label: 'Sync Account',
+    description: 'Sync email and calendar accounts',
+    icon: 'IconAt',
+  },
+};
+
+const NEXT_PRESENTATIONS = {
+  [SystemPermissionFlag.APPLICATIONS]: {
+    label: 'Workspace Apps',
+    description: 'Install and manage workspace apps',
+    icon: 'IconApps',
+  },
+  [SystemPermissionFlag.CONNECTED_ACCOUNTS]: {
+    label: 'User Apps',
+    description: 'Manage own app preferences and accounts',
+    icon: 'IconApps',
+  },
+};
 
 const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
   {
@@ -34,32 +57,34 @@ const getStandardPermissionFlag = (
 };
 
 const buildPermissionFlagsByUniversalIdentifier = (
-  presentation: 'previous' | 'next',
+  presentations: typeof PREVIOUS_PRESENTATIONS,
 ) =>
   Object.fromEntries(
-    PERMISSION_FLAG_RELABELS.map((relabel) => [
-      relabel.universalIdentifier,
+    Object.entries(presentations).map(([universalIdentifier, presentation]) => [
+      universalIdentifier,
       {
-        ...getStandardPermissionFlag(relabel.universalIdentifier),
-        ...relabel[presentation],
+        ...getStandardPermissionFlag(universalIdentifier),
+        ...presentation,
       },
     ]),
   );
 
 describe('buildPermissionFlagRelabelUpdates', () => {
   it('matches the standard application permission flags', () => {
-    for (const { universalIdentifier, next } of PERMISSION_FLAG_RELABELS) {
+    for (const [universalIdentifier, presentation] of Object.entries(
+      NEXT_PRESENTATIONS,
+    )) {
       const { label, description, icon } =
         getStandardPermissionFlag(universalIdentifier);
 
-      expect({ label, description, icon }).toEqual(next);
+      expect({ label, description, icon }).toEqual(presentation);
     }
   });
 
   it('relabels Applications and Sync Account on up', () => {
     const updates = buildPermissionFlagRelabelUpdates({
       flatPermissionFlagsByUniversalIdentifier:
-        buildPermissionFlagsByUniversalIdentifier('previous'),
+        buildPermissionFlagsByUniversalIdentifier(PREVIOUS_PRESENTATIONS),
       now: NOW,
       direction: 'up',
     });
@@ -91,7 +116,7 @@ describe('buildPermissionFlagRelabelUpdates', () => {
   it('restores the previous labels on down', () => {
     const updates = buildPermissionFlagRelabelUpdates({
       flatPermissionFlagsByUniversalIdentifier:
-        buildPermissionFlagsByUniversalIdentifier('next'),
+        buildPermissionFlagsByUniversalIdentifier(NEXT_PRESENTATIONS),
       now: NOW,
       direction: 'down',
     });
@@ -120,7 +145,7 @@ describe('buildPermissionFlagRelabelUpdates', () => {
     expect(
       buildPermissionFlagRelabelUpdates({
         flatPermissionFlagsByUniversalIdentifier:
-          buildPermissionFlagsByUniversalIdentifier('next'),
+          buildPermissionFlagsByUniversalIdentifier(NEXT_PRESENTATIONS),
         now: NOW,
         direction: 'up',
       }),
@@ -129,7 +154,7 @@ describe('buildPermissionFlagRelabelUpdates', () => {
 
   it('skips permission flags owned by another application', () => {
     const permissionFlagsByUniversalIdentifier =
-      buildPermissionFlagsByUniversalIdentifier('previous');
+      buildPermissionFlagsByUniversalIdentifier(PREVIOUS_PRESENTATIONS);
 
     expect(
       buildPermissionFlagRelabelUpdates({
