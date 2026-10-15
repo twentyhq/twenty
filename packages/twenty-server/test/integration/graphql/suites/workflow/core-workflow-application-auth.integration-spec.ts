@@ -2,11 +2,13 @@ import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
 import request from 'supertest';
+import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
+import { ToolCategory } from 'twenty-shared/ai';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import {
@@ -197,6 +199,16 @@ const CORE_WORKFLOW_WRITE_FIELDS = [
   'updateCoreWorkflowVersionTrigger',
   'activateCoreWorkflowVersion',
 ];
+
+const getMcpToolCatalog = async (
+  token: string,
+): Promise<Record<string, { name: string }[]>> => {
+  const result = await callMcpTool({ toolName: 'get_tool_catalog', token });
+
+  expect(result.isError).toBe(false);
+
+  return JSON.parse(result.content[0].text).catalog;
+};
 
 const createCoreWorkflowAsMember = async (name: string) => {
   const createResponse = await graphqlAs(
@@ -443,6 +455,18 @@ describe('core workflow API with application credentials (integration)', () => {
     for (const fieldName of CORE_WORKFLOW_WRITE_FIELDS) {
       expect(mutationFieldNames).not.toContain(fieldName);
     }
+  });
+
+  it('should not offer workflow tools to an application over MCP', async () => {
+    const applicationCatalog = await getMcpToolCatalog(
+      authorizedApplication.accessToken,
+    );
+    const memberCatalog = await getMcpToolCatalog(
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(applicationCatalog[ToolCategory.WORKFLOW]).toBeUndefined();
+    expect(memberCatalog[ToolCategory.WORKFLOW]?.length).toBeGreaterThan(0);
   });
 
   it('should let the application read a workflow a member created', async () => {
