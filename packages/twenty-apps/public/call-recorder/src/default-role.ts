@@ -11,7 +11,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events to decide whether the call recorder should attend a meeting; writes the resulting CallRecording records, uploads recording media, and fills transcripts and summaries.',
+    'Reads calendar events to decide whether the call recorder should attend a meeting and sets their Recording Bot field; writes the resulting CallRecording records, uploads recording media, and fills transcripts and summaries.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -25,7 +25,7 @@ export default defineApplicationRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent.universalIdentifier,
       canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
+      canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },

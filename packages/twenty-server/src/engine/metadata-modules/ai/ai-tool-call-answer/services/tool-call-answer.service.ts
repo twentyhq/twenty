@@ -516,7 +516,6 @@ export class ToolCallAnswerService {
 
     const rolePermissions = await this.actorService.resolveRolePermissions({
       workspaceId,
-      userWorkspaceId,
       authContext,
     });
 

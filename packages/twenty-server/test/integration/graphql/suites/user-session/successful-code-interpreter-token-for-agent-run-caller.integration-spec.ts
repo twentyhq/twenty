@@ -33,7 +33,6 @@ const captureSandboxTokenForAgentRun = async ({
         token,
       })
     ).executionContext.authContext,
-    roleId: globalTestContext.applicationRoleId,
     rolePermissionConfig: {
       intersectionOf: {
         applicationRoleId: globalTestContext.applicationRoleId,

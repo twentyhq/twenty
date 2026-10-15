@@ -15,6 +15,7 @@ import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   ASK_QUESTION_TOOL_NAME,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  type AgentResponseFormat,
   type ExtendedUIMessage,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
@@ -109,7 +110,6 @@ type ProposableTools = {
 type RegistryToolContext = Pick<
   ToolContext,
   | 'workspaceId'
-  | 'roleId'
   | 'authContext'
   | 'application'
   | 'actorContext'
@@ -181,21 +181,23 @@ export class AgentAsyncExecutorService {
   // preloading the few granted object schemas saves the model a learn_tools round trip
   private async buildPreloadedRegistryTools({
     toolContext,
+    agentRoleId,
     agentRunRoleIds,
     additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
+    agentRoleId: string;
     agentRunRoleIds?: AgentRunRoleIds;
     additionalExcludedToolNames?: readonly string[];
   }): Promise<{ tools: ToolSet; proposableTools: ProposableTools }> {
     const rolePermissionConfig = buildAgentRolePermissionConfig({
-      agentRoleId: toolContext.roleId,
+      agentRoleId,
       agentRunRoleIds,
     });
     const preloadedToolContext = { ...toolContext, rolePermissionConfig };
 
     const tools = await this.toolRegistry.getToolsByCategories(
-      { ...preloadedToolContext, requireExplicitObjectGrants: true },
+      { ...preloadedToolContext, explicitObjectGrantsRoleId: agentRoleId },
       {
         categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
         excludeTools: [
@@ -227,10 +229,12 @@ export class AgentAsyncExecutorService {
   // learn_tools / execute_tool instead, scoped by composed role permissions rather than explicit grants only
   private async buildLazyRegistryTools({
     toolContext: baseToolContext,
+    agentRoleId,
     agentRunRoleIds,
     additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
+    agentRoleId: string;
     agentRunRoleIds?: AgentRunRoleIds;
     additionalExcludedToolNames?: readonly string[];
   }): Promise<{
@@ -241,24 +245,24 @@ export class AgentAsyncExecutorService {
     const toolContext: ToolContext = {
       ...baseToolContext,
       rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId: baseToolContext.roleId,
+        agentRoleId,
         agentRunRoleIds,
       }),
     };
     const {
       workspaceId,
-      roleId,
       userId,
       userWorkspaceId,
       rolePermissionConfig,
       application,
     } = toolContext;
 
-    const fullCatalog = await this.toolRegistry.buildToolIndex(
-      workspaceId,
-      roleId,
-      { userId, userWorkspaceId, rolePermissionConfig, application },
-    );
+    const fullCatalog = await this.toolRegistry.buildToolIndex(workspaceId, {
+      userId,
+      userWorkspaceId,
+      rolePermissionConfig,
+      application,
+    });
 
     const allowedCategories = new Set(
       OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES,
@@ -347,8 +351,10 @@ export class AgentAsyncExecutorService {
     priorMessages = [],
     pausingTools = {},
     canAskHumans = false,
+    responseFormat,
   }: {
     agent: AgentEntity | null;
+    responseFormat?: AgentResponseFormat;
     messages: RunAgentMessage[];
     // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorMessages?: ExtendedUIMessage[];
@@ -367,7 +373,7 @@ export class AgentAsyncExecutorService {
       );
     }
 
-    assertAgentResponseFormatHasOutputFieldsOrThrow(agent?.responseFormat);
+    assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
@@ -427,7 +433,6 @@ export class AgentAsyncExecutorService {
         if (isDefined(agentRoleId)) {
           const toolContext: RegistryToolContext = {
             workspaceId: agent.workspaceId,
-            roleId: agentRoleId,
             agentId: agent.id,
             authContext,
             application: this.resolveCallingApplication(authContext),
@@ -438,12 +443,14 @@ export class AgentAsyncExecutorService {
             toolLoadingStrategy === 'lazy'
               ? await this.buildLazyRegistryTools({
                   toolContext,
+                  agentRoleId,
                   agentRunRoleIds,
                   additionalExcludedToolNames,
                 })
               : {
                   ...(await this.buildPreloadedRegistryTools({
                     toolContext,
+                    agentRoleId,
                     agentRunRoleIds,
                     additionalExcludedToolNames,
                   })),
@@ -628,9 +635,7 @@ export class AgentAsyncExecutorService {
       executionSteps = textResponse.steps;
 
       const agentSchema =
-        agent?.responseFormat?.type === 'json'
-          ? agent.responseFormat.schema
-          : undefined;
+        responseFormat?.type === 'json' ? responseFormat.schema : undefined;
 
       let result: object = { response: textResponse.text };
 
