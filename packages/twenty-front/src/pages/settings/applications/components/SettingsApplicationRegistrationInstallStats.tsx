@@ -1,60 +1,39 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import {
+  SettingsTableCard,
+  type TableItem,
+} from '@/settings/components/SettingsTableCard';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
+  IconBrandDocker,
   IconChartBar,
-  IconCheck,
   IconCoins,
-  IconDownload,
+  IconPlayerPause,
   IconRefresh,
   IconVersions,
-  IconWorld,
 } from 'twenty-ui/icon';
-import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
 import {
   type ApplicationRegistration,
   FindApplicationRegistrationStatsDocument,
 } from '~/generated-metadata/graphql';
 
-const StyledStatsGrid = styled.dl`
+const StyledStatsLayout = styled.div`
+  align-items: start;
   display: grid;
-  gap: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]};
+  gap: ${themeCssVariables.spacing[4]};
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  margin: 0;
-  padding: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledStat = styled.div`
+const StyledStatsColumn = styled.div`
   min-width: 0;
-`;
-
-const StyledLabel = styled.dt`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  line-height: 1.5;
-
-  svg {
-    flex-shrink: 0;
-  }
-`;
-
-const StyledValue = styled.dd`
-  color: ${themeCssVariables.font.color.primary};
-  margin: ${themeCssVariables.spacing[1]} 0 0;
-  overflow-wrap: anywhere;
-`;
-
-const StyledDetail = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 type SettingsApplicationRegistrationInstallStatsProps = {
@@ -67,7 +46,6 @@ export const SettingsApplicationRegistrationInstallStats = ({
   isAdminView = false,
 }: SettingsApplicationRegistrationInstallStatsProps) => {
   const { t, i18n } = useLingui();
-  const theme = useTheme();
   const apolloAdminClient = useApolloAdminClient();
   const applicationRegistrationId = registration.id;
 
@@ -88,64 +66,45 @@ export const SettingsApplicationRegistrationInstallStats = ({
   const stats = isAdminView
     ? adminData?.findAdminApplicationRegistrationStats
     : data?.findApplicationRegistrationStats;
-  const total = stats?.activeInstalls;
-  const formatCount = (count: number) => i18n.number(count);
-  const formatRatio = (count?: number | null) =>
-    isDefined(count) && isDefined(total)
-      ? `${formatCount(count)} / ${formatCount(total)}`
+  const formatCount = (count?: number | null) =>
+    isDefined(count) ? i18n.number(count) : '—';
+  const formatCredits = (credits?: number | null) =>
+    isDefined(credits)
+      ? i18n.number(credits, { maximumFractionDigits: 2 })
       : '—';
-  const latestVersionPercentage =
-    isDefined(stats?.onLatestVersion) && isDefined(total) && total > 0
-      ? i18n.number(stats.onLatestVersion / total, {
-          style: 'percent',
-          maximumFractionDigits: 0,
-        })
-      : null;
+  const versionDistribution =
+    stats?.versionDistribution
+      .map(({ version, count }) => `${version} (${formatCount(count)})`)
+      .join(', ') || '—';
 
-  const statsItems = [
+  const statsItems: TableItem[] = [
     {
-      Icon: IconWorld,
-      label: t`Installed workspaces`,
-      value: isDefined(total) ? formatCount(total) : '—',
-      detail: isDefined(stats?.suspendedInstalls)
-        ? t`${formatCount(stats.suspendedInstalls)} on suspended workspaces`
-        : undefined,
-    },
-    {
-      Icon: IconCheck,
-      label: t`On latest version`,
-      value: isDefined(latestVersionPercentage)
-        ? `${formatRatio(stats?.onLatestVersion)} · ${latestVersionPercentage}`
-        : formatRatio(stats?.onLatestVersion),
-    },
-    {
-      Icon: IconDownload,
-      label: t`Updates available`,
-      value: isDefined(stats?.updatesAvailable)
-        ? formatCount(stats.updatesAvailable)
-        : '—',
+      Icon: IconBrandDocker,
+      label: t`Installs`,
+      value: formatCount(stats?.activeInstalls),
     },
     {
       Icon: IconRefresh,
-      label: t`Auto-update enabled`,
-      value: formatRatio(stats?.autoUpdateEnabled),
+      label: t`Auto update enabled`,
+      value: formatCount(stats?.autoUpdateEnabled),
     },
     {
       Icon: IconAlertTriangle,
-      label: t`Needs configuration or reconnection`,
-      value: formatRatio(stats?.workspacesNeedingAttention),
-      detail: isDefined(stats)
-        ? t`${formatCount(stats.healthCheckedWorkspaces)} / ${formatCount(stats.activeInstalls)} checked in the last 24 hours`
-        : undefined,
-      description: t`Workspaces with a connection authentication failure or a recent app health warning or error. Unchecked workspaces have unknown health. Apps must report their configuration issues through a health check.`,
+      label: t`Needs configuration`,
+      value: (
+        <Tooltip
+          content={t`Based on connection authentication failures and recent app health warnings or errors. Unchecked workspaces have unknown health.`}
+        >
+          <span tabIndex={0}>
+            {formatCount(stats?.workspacesNeedingAttention)}
+          </span>
+        </Tooltip>
+      ),
     },
     {
-      Icon: IconCoins,
-      label: t`Total credits consumed`,
-      value: isDefined(stats?.totalCreditsConsumed)
-        ? i18n.number(stats.totalCreditsConsumed, { maximumFractionDigits: 2 })
-        : '—',
-      description: t`App-attributed credits across available usage history in non-deleted workspaces, including previous installations. Unavailable when usage storage cannot be queried.`,
+      Icon: IconPlayerPause,
+      label: t`On suspended workspaces`,
+      value: formatCount(stats?.suspendedInstalls),
     },
     {
       Icon: IconVersions,
@@ -155,35 +114,56 @@ export const SettingsApplicationRegistrationInstallStats = ({
     {
       Icon: IconChartBar,
       label: t`Distribution`,
-      value:
-        stats?.versionDistribution
-          .map(({ version, count }) => `${version} (${formatCount(count)})`)
-          .join(', ') || '—',
+      value: <OverflowingTextWithTooltip text={versionDistribution} />,
+    },
+  ];
+  const creditItems: TableItem[] = [
+    {
+      Icon: IconCoins,
+      label: t`Total credits consumed`,
+      value: (
+        <Tooltip
+          content={t`App-attributed credits across available usage history in non-deleted workspaces, including previous installations.`}
+        >
+          <span tabIndex={0}>{formatCredits(stats?.totalCreditsConsumed)}</span>
+        </Tooltip>
+      ),
+    },
+    { label: t`Agent`, value: formatCredits(stats?.creditBreakdown?.agent) },
+    { label: t`Logic`, value: formatCredits(stats?.creditBreakdown?.logic) },
+    {
+      label: t`Workflow`,
+      value: formatCredits(stats?.creditBreakdown?.workflow),
+    },
+    {
+      label: t`chargeCredit`,
+      value: formatCredits(stats?.creditBreakdown?.chargeCredits),
     },
   ];
 
+  if (isDefined(stats?.creditBreakdown) && stats.creditBreakdown.other !== 0) {
+    creditItems.push({
+      label: t`Other`,
+      value: formatCredits(stats.creditBreakdown.other),
+    });
+  }
+
   return (
-    <Card.Root rounded backgroundColor={themeCssVariables.background.secondary}>
-      <StyledStatsGrid>
-        {statsItems.map(({ Icon, label, value, detail, description }) => (
-          <StyledStat key={label}>
-            <StyledLabel>
-              <Icon size={theme.icon.size.md} aria-hidden="true" />
-              {label}
-            </StyledLabel>
-            <StyledValue>
-              {isDefined(description) ? (
-                <Tooltip content={description}>
-                  <span tabIndex={0}>{value}</span>
-                </Tooltip>
-              ) : (
-                value
-              )}
-              {isDefined(detail) && <StyledDetail>{detail}</StyledDetail>}
-            </StyledValue>
-          </StyledStat>
-        ))}
-      </StyledStatsGrid>
-    </Card.Root>
+    <StyledStatsLayout>
+      <StyledStatsColumn role="group" aria-label={t`Install statistics`}>
+        <SettingsTableCard
+          rounded
+          items={statsItems}
+          gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
+        />
+      </StyledStatsColumn>
+      <StyledStatsColumn role="group" aria-label={t`Credit consumption`}>
+        <SettingsTableCard
+          rounded
+          items={creditItems}
+          gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
+        />
+      </StyledStatsColumn>
+    </StyledStatsLayout>
   );
 };

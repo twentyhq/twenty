@@ -64,7 +64,13 @@ describe('ApplicationRegistrationStatsService', () => {
     getRawMany.mockResolvedValue([]);
     getStatuses.mockResolvedValue([]);
     getMainClient.mockReturnValue({});
-    selectOrThrow.mockResolvedValue([{ creditsUsedMicro: '12500000' }]);
+    selectOrThrow.mockResolvedValue([
+      {
+        resourceType: 'LOGIC_FUNCTION',
+        operationType: 'CODE_EXECUTION',
+        creditsUsedMicro: '12500000',
+      },
+    ]);
     service = new ApplicationRegistrationStatsService(
       {
         createQueryBuilder: () => queryBuilder,
@@ -145,6 +151,74 @@ describe('ApplicationRegistrationStatsService', () => {
     expect(await service.computeStats(registration)).toMatchObject({
       workspacesNeedingAttention: 2,
       healthCheckedWorkspaces: 3,
+    });
+  });
+
+  it('splits credits by billed resource without double counting explicit charges or workflow AI', async () => {
+    getRawMany.mockResolvedValue([buildApplication()]);
+    selectOrThrow.mockResolvedValue([
+      {
+        resourceType: 'AI',
+        operationType: 'AI_CHAT_TOKEN',
+        creditsUsedMicro: '50000000',
+      },
+      {
+        resourceType: 'LOGIC_FUNCTION',
+        operationType: 'CODE_EXECUTION',
+        creditsUsedMicro: '3000000',
+      },
+      {
+        resourceType: 'WORKFLOW',
+        operationType: 'WORKFLOW_EXECUTION',
+        creditsUsedMicro: '1000000',
+      },
+      {
+        resourceType: 'AI',
+        operationType: 'AI_WORKFLOW_TOKEN',
+        creditsUsedMicro: '1000000',
+      },
+      {
+        resourceType: 'APP',
+        operationType: 'CODE_EXECUTION',
+        creditsUsedMicro: '49300000',
+      },
+      {
+        resourceType: 'APP',
+        operationType: 'SUBSCRIPTION',
+        creditsUsedMicro: '1000000',
+      },
+      {
+        resourceType: 'API',
+        operationType: 'API_REQUEST',
+        creditsUsedMicro: '2000000',
+      },
+    ]);
+
+    expect(await service.computeStats(registration)).toMatchObject({
+      totalCreditsConsumed: 107.3,
+      creditBreakdown: {
+        agent: 50,
+        logic: 3,
+        workflow: 2,
+        chargeCredits: 49.3,
+        other: 3,
+      },
+    });
+  });
+
+  it('shows zero credit usage when the query succeeds with no recorded charges', async () => {
+    getRawMany.mockResolvedValue([buildApplication()]);
+    selectOrThrow.mockResolvedValue([]);
+
+    expect(await service.computeStats(registration)).toMatchObject({
+      totalCreditsConsumed: 0,
+      creditBreakdown: {
+        agent: 0,
+        logic: 0,
+        workflow: 0,
+        chargeCredits: 0,
+        other: 0,
+      },
     });
   });
 

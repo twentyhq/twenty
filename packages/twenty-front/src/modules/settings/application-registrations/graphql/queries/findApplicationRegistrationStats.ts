@@ -5,12 +5,16 @@ export const FIND_APPLICATION_REGISTRATION_STATS = gql`
     findApplicationRegistrationStats(id: $id) {
       activeInstalls
       suspendedInstalls
-      onLatestVersion
-      updatesAvailable
       autoUpdateEnabled
       workspacesNeedingAttention
-      healthCheckedWorkspaces
       totalCreditsConsumed
+      creditBreakdown {
+        agent
+        logic
+        workflow
+        chargeCredits
+        other
+      }
       mostInstalledVersion
       versionDistribution {
         version
