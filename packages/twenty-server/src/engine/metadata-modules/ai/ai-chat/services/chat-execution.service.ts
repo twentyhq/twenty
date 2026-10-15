@@ -19,6 +19,7 @@ import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
+  NO_REPLY_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
@@ -79,6 +80,7 @@ import { createAttachConversationToRecordTool } from 'src/engine/metadata-module
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
+import { createNoReplyTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/no-reply.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
@@ -281,7 +283,7 @@ export class ChatExecutionService {
     });
 
     // judged on the conversation, not setup status: onboarding continues here after setup completes
-    const canAttachConversationToRecords =
+    const isInboxConversation =
       !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -316,8 +318,9 @@ export class ChatExecutionService {
               createCompleteWorkspaceSetupTool(),
           }
         : {}),
-      ...(canAttachConversationToRecords
+      ...(isInboxConversation
         ? {
+            [NO_REPLY_TOOL_NAME]: createNoReplyTool(),
             [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
               createAttachConversationToRecordTool({
                 agentChatThreadTargetService: this.agentChatThreadTargetService,
@@ -418,7 +421,7 @@ export class ChatExecutionService {
       userWorkspaceId,
       workspaceId: workspace.id,
       isWorkspaceSetupThread,
-      canAttachConversationToRecords,
+      canAttachConversationToRecords: isInboxConversation,
     });
 
     this.logger.log(
@@ -547,6 +550,7 @@ export class ChatExecutionService {
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
         endsOnPausingToolCall({ steps: step.steps }) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
+        hasToolCall(NO_REPLY_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
       ...buildAiTelemetry({
         functionId: isWorkspaceSetupThread

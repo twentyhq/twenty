@@ -19,6 +19,7 @@ import {
 import {
   type CodeExecutionData,
   type ExtendedUIMessage,
+  isNoReplyToolPart,
 } from 'twenty-shared/ai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -718,6 +719,7 @@ export class StreamAgentChatJob {
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
+    const isSilent = responseMessage.parts.some(isNoReplyToolPart);
 
     const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
     // without an answerable call nothing can resume the turn, so fail rather than wait forever
@@ -725,7 +727,7 @@ export class StreamAgentChatJob {
       awaitingParts.length > 0 &&
       awaitingParts.every(({ isAnswerable }) => isAnswerable);
 
-    if ((isAborted || !hasText) && awaitingParts.length === 0) {
+    if ((isAborted || !hasText) && awaitingParts.length === 0 && !isSilent) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -749,8 +751,14 @@ export class StreamAgentChatJob {
       hasText,
       isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0,
+      isSilent,
       outOfCredits,
     });
+
+    // A turn that chose not to reply keeps its hidden message, so the model
+    // sees that choice next turn, but must not mark the chat as active
+    const isSilentTurn =
+      outcome.kind === 'completed' && outcome.outcome === 'silent';
 
     if (responseMessage.parts.length === 0) {
       await this.finishTurn({
@@ -787,6 +795,7 @@ export class StreamAgentChatJob {
       threadId,
       streamId,
       lastMessageText: replyText,
+      recordsActivity: !isSilentTurn,
       usage: {
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: usageTotals.conversationSize,
@@ -795,6 +804,10 @@ export class StreamAgentChatJob {
     });
 
     if (!totalsUpdate.affected) {
+      if (isSilentTurn) {
+        return resolveSupersededTurnOutcome(outcome);
+      }
+
       // The reply is saved even though a newer stream owns the thread. That
       // activity is best-effort and must not turn the saved reply into an error
       await this.threadService

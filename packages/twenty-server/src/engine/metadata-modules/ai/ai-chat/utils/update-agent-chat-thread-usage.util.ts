@@ -15,6 +15,7 @@ export const updateAgentChatThreadUsage = async ({
   streamId,
   usage,
   lastMessageText,
+  recordsActivity,
 }: {
   repository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
   workspaceId: string;
@@ -22,6 +23,7 @@ export const updateAgentChatThreadUsage = async ({
   streamId: string;
   usage: ThreadUsageUpdate;
   lastMessageText: string | null;
+  recordsActivity: boolean;
 }): Promise<{ affected: number }> =>
   repository.query(workspaceId, async ({ manager, table }) => {
     const rows = await manager.query<{ id: string }[]>(
@@ -30,7 +32,7 @@ export const updateAgentChatThreadUsage = async ({
       UPDATE ${table('agentChatThread')} SET
         "contextWindowTokens" = $3, "conversationSize" = $4,
         "pendingQuestionMessageId" = $5,
-        ${buildAgentChatThreadActivitySetClause({ textParameter: '$6' })},
+        ${recordsActivity ? `${buildAgentChatThreadActivitySetClause({ textParameter: '$6' })},` : ''}
         "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2
       RETURNING id
@@ -41,7 +43,7 @@ export const updateAgentChatThreadUsage = async ({
         usage.contextWindowTokens,
         usage.conversationSize,
         usage.pendingQuestionMessageId,
-        lastMessageText,
+        ...(recordsActivity ? [lastMessageText] : []),
       ],
     );
     return { affected: rows.length };
