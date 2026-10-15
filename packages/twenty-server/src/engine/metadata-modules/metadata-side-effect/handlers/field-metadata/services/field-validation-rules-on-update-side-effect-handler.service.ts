@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { buildValidationRuleUpdatesAfterFieldChangesSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-validation-rule-updates-after-field-changes-side-effect.util';
+import { getFlatValidationRulesAfterPendingOperations } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/get-flat-validation-rules-after-pending-operations.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -23,13 +24,14 @@ export class FieldValidationRulesOnUpdateSideEffectHandlerService extends Metada
     metadataName: 'fieldMetadata',
     name: 'fieldValidationRulesOnUpdate',
     description:
-      'Keep object validation rules in step with a field they read, on any object: a rename rewrites the rule expression and its bindings to the new name, a type change or a deactivation disables the rules that read the field, and a deactivation moves errors shown on that field to the record level. A rename to a word reserved by the rule language fails while an active rule reads the field, since the rule could no longer reference it.',
+      'Keep object validation rules in step with a field they read, on any object: a rename rewrites the rule expression and its bindings to the new name, a type change or a deactivation disables the rules that read the field, and a deactivation moves errors shown on that field to the record level. A rename to a word reserved by the rule language fails while an active rule owned by the application making the change reads the field, since the rule could no longer reference it; rules owned by another application are disabled instead, so they cannot block that application.',
   },
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
+    context,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     const existingFlatFieldMetadata =
       relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
@@ -42,11 +44,16 @@ export class FieldValidationRulesOnUpdateSideEffectHandlerService extends Metada
     ) {
       const blockingValidationRule =
         findActiveValidationRuleBlockingFieldRename({
-          validationRules: Object.values(
-            relatedFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier,
-          ).filter(isDefined),
+          validationRules: getFlatValidationRulesAfterPendingOperations({
+            allFlatEntityOperationRecordByMetadataName,
+            flatValidationRuleByUniversalIdentifier:
+              relatedFlatEntityMaps.flatValidationRuleMaps
+                .byUniversalIdentifier,
+          }),
           fieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
           newFieldName: flatFieldMetadata.name,
+          applicationUniversalIdentifier:
+            context.buildOptions.applicationUniversalIdentifier,
         });
 
       if (isDefined(blockingValidationRule)) {
