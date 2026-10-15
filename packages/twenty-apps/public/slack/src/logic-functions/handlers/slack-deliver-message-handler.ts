@@ -55,6 +55,7 @@ export const slackDeliverMessageHandler = async (
       slackChannelId: message.slackChannelId,
       parentMessageTimestamp: message.parentMessageTimestamp,
       errorMessage: failureMessage,
+      responseText: message.messageText,
     });
   }
 

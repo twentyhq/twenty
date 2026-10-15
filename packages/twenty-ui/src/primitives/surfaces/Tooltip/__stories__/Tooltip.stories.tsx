@@ -8,6 +8,7 @@ import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Tooltip } from '../Tooltip';
+import styles from './Tooltip.stories.module.scss';
 
 const findTooltip = async (canvasElement: HTMLElement) => {
   const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
@@ -195,6 +196,44 @@ export const Hidden: Story = {
     expect(
       within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
     ).not.toBeInTheDocument();
+  },
+};
+
+const ACTIVITY_LOG_ENTRIES = Array.from(
+  { length: 12 },
+  (_, index) => `Activity entry ${index + 1}`,
+);
+
+export const AnchorScrolledOut: Story = {
+  args: { open: true },
+  render: (args) => (
+    <div
+      role="region"
+      aria-label="Activity log"
+      tabIndex={0}
+      className={styles.scrollArea}
+    >
+      <Tooltip {...args}>
+        <Button>Show details</Button>
+      </Tooltip>
+      {ACTIVITY_LOG_ENTRIES.map((entry) => (
+        <p key={entry}>{entry}</p>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const activityLog = within(canvasElement).getByRole('region', {
+      name: 'Activity log',
+    });
+    const tooltip = await findTooltip(canvasElement);
+
+    activityLog.scrollTop = activityLog.scrollHeight;
+
+    await waitFor(() => expect(tooltip).not.toBeVisible());
+
+    activityLog.scrollTop = 0;
+
+    await waitFor(() => expect(tooltip).toBeVisible());
   },
 };
 

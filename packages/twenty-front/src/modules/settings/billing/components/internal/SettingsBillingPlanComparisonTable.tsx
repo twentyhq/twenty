@@ -185,10 +185,6 @@ const StyledPriceSuffix = styled.span`
 const StyledActionSlot = styled.div`
   min-width: 0;
 
-  > * {
-    max-width: 100%;
-  }
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
 

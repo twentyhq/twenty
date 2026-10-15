@@ -10047,6 +10047,9 @@ export default {
             "findInstallApplicationJobStatus": [
                 293,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"
@@ -10127,6 +10130,9 @@ export default {
             "findUninstallApplicationJobStatus": [
                 293,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"
@@ -10136,6 +10142,9 @@ export default {
             "findUpgradeApplicationJobStatus": [
                 293,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"

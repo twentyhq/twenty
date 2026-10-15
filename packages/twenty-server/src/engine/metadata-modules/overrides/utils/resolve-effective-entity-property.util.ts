@@ -86,10 +86,15 @@ const resolveEffectiveProperty = ({
     }
   }
 
-  // Custom (non-standard) entities without a catalog have no standard label
-  // to resolve or translate, and property renames live in base columns.
   if (!isStandardApp && !isDefined(applicationCatalog)) {
-    return safeBaseValue;
+    return isTranslatable && !isDefined(overrideValue)
+      ? translateStandardLabel({
+          sourceValue: safeBaseValue,
+          context: `${metadataName}.${property}`,
+          applicationCatalog,
+          i18nInstance,
+        })
+      : safeBaseValue;
   }
 
   if (!isTranslatable && isDefined(overrideValue)) {
@@ -103,7 +108,6 @@ const resolveEffectiveProperty = ({
   return translateStandardLabel({
     sourceValue: safeBaseValue,
     context: `${metadataName}.${property}`,
-    isStandardApp,
     applicationCatalog,
     i18nInstance,
   });
