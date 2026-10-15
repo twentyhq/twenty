@@ -164,6 +164,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
           <SettingsTextInput
             instanceId="unsubscribe-topic-name"
             label={t`Name`}
+            placeholder={t`Newsletters`}
             value={name}
             onChange={setName}
             onBlur={handleNameBlur}
@@ -178,6 +179,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
           <SettingsTextInput
             instanceId="unsubscribe-topic-description"
             label={t`Description`}
+            placeholder={t`Product news and tips, once a month`}
             value={description}
             onChange={setDescription}
             onBlur={handleDescriptionBlur}
