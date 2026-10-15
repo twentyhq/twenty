@@ -229,16 +229,14 @@ export const slackAssistantWorkerHandler = async (
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());
 
-    if (isNonEmptyString(agentResult.threadId)) {
-      await updateSlackAssistantRequest(client, {
-        id: record.id,
-        agentChatThreadId: agentResult.threadId,
-      });
-    }
+    const agentRunFailureContext = {
+      ...failureContext,
+      agentChatThreadId: agentResult.threadId ?? undefined,
+    };
 
     if (!agentResult.success) {
       return await finishSlackAssistantRequestWithFailure({
-        ...failureContext,
+        ...agentRunFailureContext,
         errorMessage: agentResult.error ?? 'Agent execution failed',
       });
     }
@@ -247,7 +245,7 @@ export const slackAssistantWorkerHandler = async (
 
     if (responseText === undefined) {
       return await finishSlackAssistantRequestWithFailure({
-        ...failureContext,
+        ...agentRunFailureContext,
         errorMessage: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
       });
     }
@@ -276,7 +274,7 @@ export const slackAssistantWorkerHandler = async (
 
     if (!deliveryResult.success && !isDefined(deferredRetryAfterSeconds)) {
       return await finishSlackAssistantRequestWithFailure({
-        ...failureContext,
+        ...agentRunFailureContext,
         errorMessage: buildSlackAnswerDeliveryFailureMessage(deliveryResult),
         responseText,
       });
@@ -284,7 +282,11 @@ export const slackAssistantWorkerHandler = async (
 
     if (isDefined(deferredRetryAfterSeconds)) {
       await enqueueSlackMessageDelivery({
-        payload: { ...answerMessage, slackAssistantRequestId: record.id },
+        payload: {
+          ...answerMessage,
+          slackAssistantRequestId: record.id,
+          agentChatThreadId: agentResult.threadId,
+        },
         retryAfterSeconds: deferredRetryAfterSeconds,
       });
     } else {
@@ -292,6 +294,7 @@ export const slackAssistantWorkerHandler = async (
         id: record.id,
         status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
         responseText,
+        agentChatThreadId: agentResult.threadId,
       });
     }
 

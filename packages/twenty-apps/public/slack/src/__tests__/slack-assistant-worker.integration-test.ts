@@ -479,6 +479,7 @@ describe('Slack assistant worker', () => {
     });
 
     appRuntime.setAgentResult({
+      threadId: AGENT_CHAT_THREAD_ID,
       success: false,
       result: null,
       error: 'Agent is not available',
@@ -513,6 +514,7 @@ describe('Slack assistant worker', () => {
       expect.objectContaining({
         status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
         errorMessage: 'Agent is not available',
+        agentChatThreadId: AGENT_CHAT_THREAD_ID,
       }),
     );
   });
