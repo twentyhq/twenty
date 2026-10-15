@@ -25,9 +25,9 @@ const StyledRefreshButtonContainer = styled.div`
 `;
 
 const StyledAccordionCardsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: ${themeCssVariables.spacing[3]};
+  grid-template-columns: minmax(0, 1fr);
 `;
 
 export const SettingsAdminWorkspacesStatus = () => {

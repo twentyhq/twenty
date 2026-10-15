@@ -6,8 +6,18 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/activities/components/ActivityList.tsx',
+    reason: 'Card.Root scrolls inside a full-height activity list',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/activities/emails/components/EmailsCardContent.tsx',
     reason: 'Section.Root fills the widget height',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx',
+    reason: 'Separator spacing inside the sign-in form',
   },
   {
     filePath:
@@ -36,8 +46,23 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsForm.tsx',
+    reason: 'Section.Root laid out as the padded column of bulk edit fields',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/onboarding/components/OnboardingSkipDialog.tsx',
+    reason: 'Dialog.Header centers the visual and anchors the close button',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsPasswordController.tsx',
     reason: 'Button placement in its parent column',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesByHealthAccordion.tsx',
+    reason: 'Card.Content laid out as the accordion header row',
   },
   {
     filePath:
@@ -46,18 +71,29 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/components/SettingsCard.tsx',
+    reason:
+      'Compact Card.Content column for the settings card header and description',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/components/SettingsListCard.tsx',
     reason: 'Card.Footer laid out around the add button',
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/settings/components/SettingsOptions/SettingsOptionCardContentSwitch.tsx',
-    reason: 'Advanced mode color on the Switch',
+      'packages/twenty-front/src/modules/settings/components/SettingsOptions/SettingsCardContentBase.tsx',
+    reason: 'Card.Content laid out as a settings option row',
   },
   {
     filePath:
       'packages/twenty-front/src/modules/settings/components/SettingsTableCard.tsx',
     reason: 'Forwards the caller className to Card.Root',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/config-variables/components/ConfigVariableEdit.tsx',
+    reason: 'Section.Header without trailing margin above the variable input',
   },
   {
     filePath:
@@ -71,6 +107,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx',
+    reason: 'Card.Footer laid out around the add option button',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx',
     reason: 'React Flow panel classes on ButtonGroup',
   },
@@ -81,7 +122,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/settings/mcp-and-apis/components/SettingsMcpSetupCard.tsx',
+      'packages/twenty-front/src/modules/settings/event-logs/components/SettingsLogs.tsx',
+    reason: 'Card.Content laid out as the column of log filters and results',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/settings/mcp/components/SettingsMcpSetupCard.tsx',
     reason: 'One-off Card.Content row layout',
   },
   {
@@ -96,6 +142,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/spreadsheet-import/components/StepNavigationButton.tsx',
+    reason: 'Dialog.Footer laid out as the import step navigation bar',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/ui/feedback/skeleton/components/SkeletonLine.tsx',
     reason: 'Forwards the caller className and style to Skeleton',
   },
@@ -103,11 +154,6 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/ui/feedback/toast/components/AppToaster.tsx',
     reason: 'Toaster stacking order above the app layers',
-  },
-  {
-    filePath:
-      'packages/twenty-front/src/modules/ui/input/components/AdvancedSettingsSwitch.tsx',
-    reason: 'Advanced mode color on the Switch',
   },
   {
     filePath:

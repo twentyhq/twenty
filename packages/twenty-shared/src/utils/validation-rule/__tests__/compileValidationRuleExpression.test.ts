@@ -1,3 +1,4 @@
+import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRuleExpressionMaxLength';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { RelationType } from '@/types/RelationType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
@@ -87,6 +88,8 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('closeDate > now')).toEqual({
       isValid: false,
       errorMessage: 'Unknown field "closeDate"',
+      errorCode: 'UNKNOWN_FIELD',
+      errorParams: { fieldName: 'closeDate' },
     });
   });
 
@@ -94,6 +97,8 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('amount.value > 0')).toEqual({
       isValid: false,
       errorMessage: '"value" is not a subfield of "amount"',
+      errorCode: 'UNKNOWN_SUBFIELD',
+      errorParams: { subfieldName: 'value', fieldName: 'amount' },
     });
   });
 
@@ -101,6 +106,8 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('arrayLength(pointOfContacts) > 0')).toEqual({
       isValid: false,
       errorMessage: '"pointOfContacts" is not a to-one relation',
+      errorCode: 'NOT_A_TO_ONE_RELATION',
+      errorParams: { fieldName: 'pointOfContacts' },
     });
   });
 
@@ -108,6 +115,8 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('isDefined(company.people)')).toEqual({
       isValid: false,
       errorMessage: '"company.people" goes more than one relation deep',
+      errorCode: 'RELATION_TOO_DEEP',
+      errorParams: { path: 'company.people' },
     });
   });
 
@@ -115,6 +124,8 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('random() > 1')).toEqual({
       isValid: false,
       errorMessage: 'Unknown field "random"',
+      errorCode: 'UNKNOWN_FIELD',
+      errorParams: { fieldName: 'random' },
     });
   });
 
@@ -122,6 +133,7 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('stage')).toEqual({
       isValid: false,
       errorMessage: 'Expression did not return true or false',
+      errorCode: 'NON_BOOLEAN_RESULT',
     });
     expect(compile('amount.amountMicros + 1').isValid).toBe(false);
   });
@@ -130,6 +142,7 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('company["industry"] == "SaaS"')).toEqual({
       isValid: false,
       errorMessage: 'Bracket access is not supported, use dot access instead',
+      errorCode: 'BRACKET_ACCESS',
     });
     expect(
       compile('stage == "WON" and amount["amountMicros"] > 0').isValid,
@@ -140,6 +153,8 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('company . industry == "SaaS"')).toEqual({
       isValid: false,
       errorMessage: 'Write company.industry without spaces around the dot',
+      errorCode: 'SPACED_MEMBER_DOT',
+      errorParams: { path: 'company.industry' },
     });
     expect(
       compile('company.industry == "SaaS" or company . industry == "B2B"')
@@ -181,10 +196,16 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('   ')).toEqual({
       isValid: false,
       errorMessage: 'Expression is empty',
+      errorCode: 'EMPTY_EXPRESSION',
     });
   });
 
   it('should reject an expression over the length cap', () => {
-    expect(compile(`stage == "${'x'.repeat(2000)}"`).isValid).toBe(false);
+    expect(compile(`stage == "${'x'.repeat(2000)}"`)).toEqual({
+      isValid: false,
+      errorMessage: `Expression is longer than ${VALIDATION_RULE_EXPRESSION_MAX_LENGTH} characters`,
+      errorCode: 'EXPRESSION_TOO_LONG',
+      errorParams: { maxLength: VALIDATION_RULE_EXPRESSION_MAX_LENGTH },
+    });
   });
 });

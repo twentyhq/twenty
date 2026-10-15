@@ -137,7 +137,7 @@ describe('buildSlackAssistantMessages', () => {
       requesterName: 'Jane',
       conversationMessages: [
         { role: 'user', content: '<@U123>: Find the ACME account' },
-        { role: 'assistant', content: 'ACME is a company record.' },
+        { role: 'user', content: '<@U456>: Is it still active?' },
       ],
       runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
@@ -154,12 +154,12 @@ describe('buildSlackAssistantMessages', () => {
       content: '<@U123>: Find the ACME account',
     });
     expect(messages[1]).toEqual({
-      role: 'assistant',
-      content: 'ACME is a company record.',
+      role: 'user',
+      content: '<@U456>: Is it still active?',
     });
     expect(messages[2].role).toBe('user');
     expect(messages[2].content).toContain(
-      'recent Slack history for context only',
+      'never reached you as requests, for context only',
     );
     expect(messages[2].content).toContain(
       'Jane asks from Slack:\nAnd who owns it?',
