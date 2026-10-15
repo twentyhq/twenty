@@ -88,7 +88,6 @@ const buildProvider = (options?: { hasRolesPermission?: boolean }) => {
 
 const context: ToolProviderContext = {
   workspaceId,
-  roleId: callerRoleId,
   rolePermissionConfig: {
     intersectionOf: { userWorkspaceRoleId: callerRoleId },
   },
@@ -306,6 +305,53 @@ describe('RoleToolProvider', () => {
         },
         actingRoleIds: [callerRoleId],
       });
+    });
+
+    it('forwards every role of the caller config for lockout protection', async () => {
+      const { provider, roleService } = buildProvider();
+
+      roleService.updateRole.mockResolvedValue({ id: 'other-role-id' });
+
+      await provider.executeStaticTool(
+        'update_role',
+        { roleId: 'other-role-id', update: { canUpdateAllSettings: false } },
+        {
+          ...context,
+          rolePermissionConfig: {
+            intersectionOf: {
+              userWorkspaceRoleId: callerRoleId,
+              applicationRoleId: 'application-role-id',
+            },
+          },
+        },
+      );
+
+      expect(roleService.updateRole).toHaveBeenCalledTimes(1);
+      expect(roleService.updateRole).toHaveBeenCalledWith(
+        expect.objectContaining({
+          actingRoleIds: [callerRoleId, 'application-role-id'],
+        }),
+      );
+    });
+
+    it('forwards no caller role when the config bypasses permission checks', async () => {
+      const { provider, roleService } = buildProvider();
+
+      roleService.updateRole.mockResolvedValue({ id: 'other-role-id' });
+
+      await provider.executeStaticTool(
+        'update_role',
+        { roleId: 'other-role-id', update: { canUpdateAllSettings: false } },
+        {
+          ...context,
+          rolePermissionConfig: { shouldBypassPermissionChecks: true },
+        },
+      );
+
+      expect(roleService.updateRole).toHaveBeenCalledTimes(1);
+      expect(roleService.updateRole).toHaveBeenCalledWith(
+        expect.objectContaining({ actingRoleIds: [] }),
+      );
     });
   });
 
