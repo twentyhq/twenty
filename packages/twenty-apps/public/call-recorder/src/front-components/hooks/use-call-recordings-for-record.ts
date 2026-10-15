@@ -30,6 +30,13 @@ export const useCallRecordingsForRecord = ({
     let hasLoaded = false;
     let refreshTimeout: ReturnType<typeof setTimeout> | undefined;
 
+    const scheduleRefresh = () => {
+      refreshTimeout = setTimeout(
+        loadCallRecordings,
+        CALL_RECORDINGS_WIDGET_REFRESH_INTERVAL_MILLISECONDS,
+      );
+    };
+
     const loadCallRecordings = () => {
       fetchCallRecordingsForRecord(new CoreApiClient(), {
         calendarEventTargetFieldName,
@@ -45,14 +52,17 @@ export const useCallRecordingsForRecord = ({
           setState({ status: 'loaded', callRecordings });
 
           if (callRecordings.some(isCallRecordingInProgress)) {
-            refreshTimeout = setTimeout(
-              loadCallRecordings,
-              CALL_RECORDINGS_WIDGET_REFRESH_INTERVAL_MILLISECONDS,
-            );
+            scheduleRefresh();
           }
         })
         .catch(() => {
-          if (!isCancelled && !hasLoaded) {
+          if (isCancelled) {
+            return;
+          }
+
+          if (hasLoaded) {
+            scheduleRefresh();
+          } else {
             setState({ status: 'error' });
           }
         });
