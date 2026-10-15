@@ -99,7 +99,7 @@ export class PermissionsService {
     applicationId,
     agentId,
   }: {
-    userWorkspaceId?: string;
+    userWorkspaceId: string | undefined;
     workspaceId: string;
     setting: PermissionFlagType;
     apiKeyId?: string;

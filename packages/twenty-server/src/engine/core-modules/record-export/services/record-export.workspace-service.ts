@@ -517,7 +517,7 @@ export class RecordExportWorkspaceService {
       !(await this.permissionsService.userHasWorkspaceSettingPermission({
         workspaceId: authContext.workspace.id,
         ...(isApiKeyAuthContext(authContext)
-          ? { apiKeyId: authContext.apiKey.id }
+          ? { apiKeyId: authContext.apiKey.id, userWorkspaceId: undefined }
           : { userWorkspaceId: authContext.userWorkspaceId }),
         applicationId: isUserAuthContext(authContext)
           ? authContext.application?.id
