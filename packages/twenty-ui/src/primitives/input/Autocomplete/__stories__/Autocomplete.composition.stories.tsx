@@ -67,6 +67,9 @@ export const CallbackDetails: Story = {
       false,
       expect.objectContaining({ reason: 'item-press' }),
     );
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
   },
 };
 
@@ -119,6 +122,9 @@ export const CompositionConfirmation: Story = {
     await userEvent.keyboard('{Enter}');
     await expect(input).toHaveValue('Cherry');
     await expect(input).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
   },
 };
 
