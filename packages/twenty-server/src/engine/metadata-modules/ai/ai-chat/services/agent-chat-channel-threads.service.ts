@@ -104,8 +104,10 @@ export class AgentChatChannelThreadsService {
     const rows = await this.queryReadableThreads<{
       id: string;
       lastActivityAt: string | null;
-    }>(args, ({ fromClause, parameters }) => ({
-      sql: `SELECT thread.id,
+    }>({
+      ...args,
+      buildQuery: ({ fromClause, parameters }) => ({
+        sql: `SELECT thread.id,
               to_char(thread."lastActivityAt" AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS "lastActivityAt"
             ${fromClause}
             AND thread."channelId" = :channelThreadsChannelId::uuid
@@ -114,14 +116,15 @@ export class AgentChatChannelThreadsService {
             ${buildCursorFilter(cursor)}
             ORDER BY thread."lastActivityAt" DESC NULLS LAST, thread.id DESC
             LIMIT :channelThreadsLimit`,
-      parameters: {
-        ...parameters,
-        channelThreadsChannelId: channelId,
-        channelThreadsCursorLastActivityAt: cursor?.lastActivityAt,
-        channelThreadsCursorId: cursor?.id,
-        channelThreadsLimit: pageSize + 1,
-      },
-    }));
+        parameters: {
+          ...parameters,
+          channelThreadsChannelId: channelId,
+          channelThreadsCursorLastActivityAt: cursor?.lastActivityAt,
+          channelThreadsCursorId: cursor?.id,
+          channelThreadsLimit: pageSize + 1,
+        },
+      }),
+    });
 
     const pageRows = rows.slice(0, pageSize);
     const lastRow = pageRows[pageRows.length - 1];
@@ -151,18 +154,21 @@ export class AgentChatChannelThreadsService {
       channelId: string;
       openCount: number;
       hasUnreadOpen: boolean;
-    }>(args, ({ fromClause, parameters }) => ({
-      sql: `SELECT thread."channelId",
+    }>({
+      ...args,
+      buildQuery: ({ fromClause, parameters }) => ({
+        sql: `SELECT thread."channelId",
               count(*) FILTER (WHERE ${STATUS.OPEN})::int AS "openCount",
               COALESCE(bool_or(${STATUS.OPEN} AND ${IS_UNREAD}), false) AS "hasUnreadOpen"
             ${fromClause}
             AND thread."channelId" = ANY(:channelThreadsChannelIds::uuid[])
             GROUP BY thread."channelId"`,
-      parameters: {
-        ...parameters,
-        channelThreadsChannelIds: channels.map(({ id }) => id),
-      },
-    }));
+        parameters: {
+          ...parameters,
+          channelThreadsChannelIds: channels.map(({ id }) => id),
+        },
+      }),
+    });
 
     const countByChannelId = new Map(
       counts.map((count) => [count.channelId, count]),
@@ -177,10 +183,10 @@ export class AgentChatChannelThreadsService {
 
   // The readable chats come from the record API's row level permissions,
   // compiled into a subquery so the list is filtered and paged in one query
-  private async queryReadableThreads<TRow extends Record<string, unknown>>(
-    args: MemberArgs,
-    buildQuery: ReadableThreadsQuery,
-  ): Promise<TRow[]> {
+  private async queryReadableThreads<TRow extends Record<string, unknown>>({
+    buildQuery,
+    ...args
+  }: MemberArgs & { buildQuery: ReadableThreadsQuery }): Promise<TRow[]> {
     const authContext = await this.sharingService.getAuthContext(args);
     const schema = escapeIdentifier(getWorkspaceSchemaName(args.workspaceId));
 
