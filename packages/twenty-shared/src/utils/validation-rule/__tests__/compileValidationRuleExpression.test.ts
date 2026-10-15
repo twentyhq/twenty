@@ -194,7 +194,9 @@ describe('compileValidationRuleExpression', () => {
       errorMessage: 'Expression is incomplete',
       errorCode: 'INCOMPLETE_EXPRESSION',
     });
-    expect(compile('(stage == "WON"').errorCode).toBe('INCOMPLETE_EXPRESSION');
+    expect(compile('(stage == "WON"')).toMatchObject({
+      errorCode: 'INCOMPLETE_EXPRESSION',
+    });
   });
 
   it('should report a text value missing its closing quote', () => {
@@ -212,8 +214,8 @@ describe('compileValidationRuleExpression', () => {
       errorCode: 'INVALID_SYNTAX',
       errorParams: { token: '=' },
     });
-    expect(compile('stage == and "WON"').errorParams).toEqual({
-      token: 'and',
+    expect(compile('stage == and "WON"')).toMatchObject({
+      errorParams: { token: 'and' },
     });
   });
 
