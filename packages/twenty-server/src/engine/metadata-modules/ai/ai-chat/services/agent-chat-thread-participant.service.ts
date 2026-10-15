@@ -410,6 +410,27 @@ export class AgentChatThreadParticipantService {
     return rows[0];
   }
 
+  async countMembers({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<number> {
+    const [{ memberCount }] = await this.threadRepository.query(
+      workspaceId,
+      ({ manager }) =>
+        manager.query<{ memberCount: number }[]>(
+          `SELECT COUNT(DISTINCT "workspaceMemberId")::int AS "memberCount"
+           FROM ${getAgentChatThreadParticipantTable(workspaceId)}
+           WHERE "threadId" = $1`,
+          [threadId],
+        ),
+    );
+
+    return memberCount;
+  }
+
   // Over the chats the member can open and follows, the way the inbox lists
   // them
   async findOpenThreadsSummary({

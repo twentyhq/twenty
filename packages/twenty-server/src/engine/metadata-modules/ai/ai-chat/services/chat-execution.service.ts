@@ -73,6 +73,7 @@ import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-c
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
@@ -155,6 +156,7 @@ export class ChatExecutionService {
     private readonly metricsService: MetricsService,
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
+    private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -290,6 +292,14 @@ export class ChatExecutionService {
         workspace.id,
       ));
 
+    // Ada hears every message, so with several members some are not for her
+    const isGroupConversation =
+      isInboxConversation &&
+      (await this.agentChatThreadParticipantService.countMembers({
+        workspaceId: workspace.id,
+        threadId,
+      })) > 1;
+
     const isToolAllowed = (toolName: string) =>
       !AI_CHAT_EXCLUDED_TOOL_NAMES.has(toolName);
 
@@ -318,9 +328,11 @@ export class ChatExecutionService {
               createCompleteWorkspaceSetupTool(),
           }
         : {}),
+      ...(isGroupConversation
+        ? { [NO_REPLY_TOOL_NAME]: createNoReplyTool() }
+        : {}),
       ...(isInboxConversation
         ? {
-            [NO_REPLY_TOOL_NAME]: createNoReplyTool(),
             [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
               createAttachConversationToRecordTool({
                 agentChatThreadTargetService: this.agentChatThreadTargetService,

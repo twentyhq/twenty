@@ -3,5 +3,8 @@ import {
   isSilentAgentChatMessageParts,
 } from 'twenty-shared/ai';
 
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
+
 export const isSilentAgentChatMessage = (message: ExtendedUIMessage): boolean =>
-  message.role === 'assistant' && isSilentAgentChatMessageParts(message.parts);
+  message.role === AGENT_MESSAGE_ROLE.ASSISTANT &&
+  isSilentAgentChatMessageParts(message.parts);
