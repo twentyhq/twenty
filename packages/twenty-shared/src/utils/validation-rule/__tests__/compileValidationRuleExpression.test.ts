@@ -234,34 +234,47 @@ describe('compileValidationRuleExpression', () => {
       errorCode: 'UNKNOWN_OPTION_VALUE',
       errorParams: { fieldName: 'stage', optionValue: 'won' },
     });
-    expect(compile('"DONE" != stage').errorParams).toEqual({
-      fieldName: 'stage',
-      optionValue: 'DONE',
+    expect(compile('"DONE" != stage')).toMatchObject({
+      errorParams: {
+        fieldName: 'stage',
+        optionValue: 'DONE',
+      },
     });
-    expect(compile('stage in ["WON", "DONE"]').errorParams).toEqual({
-      fieldName: 'stage',
-      optionValue: 'DONE',
+    expect(compile('stage in ["WON", "DONE"]')).toMatchObject({
+      errorParams: {
+        fieldName: 'stage',
+        optionValue: 'DONE',
+      },
     });
-    expect(compile('isQualified or (stage == "DONE")').errorCode).toBe(
-      'UNKNOWN_OPTION_VALUE',
-    );
+    expect(compile('isQualified or (stage == "DONE")')).toMatchObject({
+      errorCode: 'UNKNOWN_OPTION_VALUE',
+    });
+    expect(compile('stage in ["won", company.industry]')).toMatchObject({
+      errorParams: { fieldName: 'stage', optionValue: 'won' },
+    });
   });
 
   it('should reject a value that is not an option of a multi-select field', () => {
-    expect(compile('"URGENT" in tags').errorParams).toEqual({
-      fieldName: 'tags',
-      optionValue: 'URGENT',
+    expect(compile('"URGENT" in tags')).toMatchObject({
+      errorParams: {
+        fieldName: 'tags',
+        optionValue: 'URGENT',
+      },
     });
-    expect(compile('includes(tags, "URGENT")').errorParams).toEqual({
-      fieldName: 'tags',
-      optionValue: 'URGENT',
+    expect(compile('includes(tags, "URGENT")')).toMatchObject({
+      errorParams: {
+        fieldName: 'tags',
+        optionValue: 'URGENT',
+      },
     });
   });
 
   it('should reject a value that is not an option of a related select field', () => {
-    expect(compile('company.tier == "BRONZE"').errorParams).toEqual({
-      fieldName: 'company.tier',
-      optionValue: 'BRONZE',
+    expect(compile('company.tier == "BRONZE"')).toMatchObject({
+      errorParams: {
+        fieldName: 'company.tier',
+        optionValue: 'BRONZE',
+      },
     });
     expect(compile('company.tier == "GOLD"').isValid).toBe(true);
   });
