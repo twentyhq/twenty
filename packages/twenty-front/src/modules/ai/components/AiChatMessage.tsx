@@ -17,6 +17,7 @@ import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/age
 import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
@@ -214,7 +215,10 @@ export const AiChatMessage = ({
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
-  if (!isDefined(agentChatMessage)) {
+  if (
+    !isDefined(agentChatMessage) ||
+    (isSilentAgentChatMessage(agentChatMessage) && !isDefined(error))
+  ) {
     return null;
   }
 
