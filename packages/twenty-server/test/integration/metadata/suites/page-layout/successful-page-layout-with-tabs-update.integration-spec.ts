@@ -383,26 +383,35 @@ describe('Page layout with tabs update should succeed', () => {
       tabs,
     };
 
-    await updateOnePageLayoutWithTabsAndWidgets({ expectToFail: false, input });
+    const deactivateAggregateField = () =>
+      updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: aggregateFieldMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
 
-    await updateOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: aggregateFieldMetadataId,
-        updatePayload: { isActive: false },
-      },
-    });
+    try {
+      await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: false,
+        input,
+      });
 
-    const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
-      expectToFail: false,
-      input,
-    });
+      await deactivateAggregateField();
 
-    expect(errors).toBeUndefined();
+      const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: false,
+        input,
+      });
 
-    await deleteOneFieldMetadata({
-      expectToFail: false,
-      input: { idToDelete: aggregateFieldMetadataId },
-    });
+      expect(errors).toBeUndefined();
+    } finally {
+      await deactivateAggregateField();
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: aggregateFieldMetadataId },
+      });
+    }
   });
 });
