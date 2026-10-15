@@ -83,7 +83,6 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
       content={content}
       Icon={Icon}
       label={label}
-      onDrop={closeSidePanelMenu}
     >
       <MenuItem
         withIconContainer
