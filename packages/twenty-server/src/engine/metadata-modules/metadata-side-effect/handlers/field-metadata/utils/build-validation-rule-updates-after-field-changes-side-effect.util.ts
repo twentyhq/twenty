@@ -38,11 +38,20 @@ export const buildValidationRuleUpdatesAfterFieldChangesSideEffect = ({
     return { status: 'noop' };
   }
 
-  const flatValidationRules = getFlatValidationRulesAfterPendingOperations({
-    allFlatEntityOperationRecordByMetadataName,
-    flatValidationRuleByUniversalIdentifier:
-      relatedFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier,
-  });
+  const flatValidationRules =
+    getFlatValidationRulesAfterPendingOperations<UniversalFlatValidationRule>({
+      flatValidationRuleByUniversalIdentifier:
+        relatedFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier,
+      flatValidationRuleToUpdateByUniversalIdentifier:
+        allFlatEntityOperationRecordByMetadataName.validationRule
+          ?.flatEntityToUpdate,
+      flatValidationRuleToDeleteByUniversalIdentifier:
+        allFlatEntityOperationRecordByMetadataName.validationRule
+          ?.flatEntityToDelete,
+      flatObjectMetadataToDeleteByUniversalIdentifier:
+        allFlatEntityOperationRecordByMetadataName.objectMetadata
+          ?.flatEntityToDelete,
+    });
 
   for (const { fieldUniversalIdentifier, newFieldName } of fieldChanges) {
     if (!isDefined(newFieldName)) {

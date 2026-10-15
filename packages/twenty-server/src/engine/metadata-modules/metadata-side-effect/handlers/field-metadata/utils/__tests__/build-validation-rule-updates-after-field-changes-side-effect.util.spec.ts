@@ -34,7 +34,7 @@ const buildRelatedFlatEntityMaps = () => {
     ] = { ...field, isActive: true } as FlatFieldMetadata;
   }
 
-  maps.flatValidationRuleMaps.byUniversalIdentifier['stage-rule'] = {
+  const stageRule: Partial<FlatValidationRule> = {
     universalIdentifier: 'stage-rule',
     objectMetadataUniversalIdentifier: 'opportunity',
     applicationUniversalIdentifier: WORKSPACE_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -43,7 +43,10 @@ const buildRelatedFlatEntityMaps = () => {
     bindings: { stage: 'stage' },
     isActive: true,
     errorFieldMetadataUniversalIdentifier: null,
-  } as FlatValidationRule;
+  };
+
+  maps.flatValidationRuleMaps.byUniversalIdentifier['stage-rule'] =
+    stageRule as FlatValidationRule;
 
   return maps;
 };
