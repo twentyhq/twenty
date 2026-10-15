@@ -128,7 +128,6 @@ export class CreateCalendarEventResolver {
         };
       }
 
-      // Without an error the client shows its own translated fallback
       return { success: false };
     }
   }

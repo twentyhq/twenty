@@ -6,7 +6,6 @@ import { AggregateOperations } from 'twenty-shared/types';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getAggregateValueLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util';
 
-// Same message and placeholder names as the util, so this is the id Lingui extracts
 const operationLabel = '';
 const aggregateFieldLabel = '';
 const VALUE_LABEL_MESSAGE_ID = msg`${operationLabel} of ${aggregateFieldLabel}`

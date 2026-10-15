@@ -12,7 +12,6 @@ const WORKSPACE_ID = '33333333-3333-4333-8333-333333333333';
 const STANDARD_APPLICATION_ID = '44444444-4444-4444-8444-444444444444';
 const CUSTOM_APPLICATION_ID = '55555555-5555-4555-8555-555555555555';
 
-// A real standard skill, so the messages below add nothing new to the extracted catalog
 const SKILL_LABEL = 'Workflow Building';
 const SKILL_DESCRIPTION =
   'Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y';
