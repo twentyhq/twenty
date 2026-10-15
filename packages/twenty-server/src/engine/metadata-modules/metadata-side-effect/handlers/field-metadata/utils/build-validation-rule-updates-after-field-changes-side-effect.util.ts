@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-side-effect.type';
+import { getFlatValidationRulesAfterPendingOperations } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/get-flat-validation-rules-after-pending-operations.util';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { computeValidationRuleAfterFieldChanges } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-after-field-changes.util';
 import { computeValidationRuleFieldChanges } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-field-changes.util';
@@ -33,47 +34,25 @@ export const buildValidationRuleUpdatesAfterFieldChangesSideEffect = ({
     return { status: 'noop' };
   }
 
-  const validationRuleOperations =
-    allFlatEntityOperationRecordByMetadataName.validationRule;
-  const deletedFlatObjectMetadatas =
-    allFlatEntityOperationRecordByMetadataName.objectMetadata
-      ?.flatEntityToDelete ?? {};
+  const flatValidationRules = getFlatValidationRulesAfterPendingOperations({
+    allFlatEntityOperationRecordByMetadataName,
+    flatValidationRuleByUniversalIdentifier:
+      relatedFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier,
+  });
 
   const flatValidationRuleToUpdate: Record<
     string,
     UniversalFlatValidationRule
   > = {};
 
-  for (const existingFlatValidationRule of Object.values(
-    relatedFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier,
-  )) {
-    if (!isDefined(existingFlatValidationRule)) {
-      continue;
-    }
-
-    const { universalIdentifier, objectMetadataUniversalIdentifier } =
-      existingFlatValidationRule;
-
-    if (
-      isDefined(
-        validationRuleOperations?.flatEntityToDelete[universalIdentifier],
-      ) ||
-      isDefined(deletedFlatObjectMetadatas[objectMetadataUniversalIdentifier])
-    ) {
-      continue;
-    }
-
-    const flatValidationRule: UniversalFlatValidationRule =
-      validationRuleOperations?.flatEntityToUpdate[universalIdentifier] ??
-      existingFlatValidationRule;
-
+  for (const flatValidationRule of flatValidationRules) {
     const updatedFlatValidationRule = computeValidationRuleAfterFieldChanges({
       validationRule: flatValidationRule,
       fieldChanges,
     });
 
     if (updatedFlatValidationRule !== flatValidationRule) {
-      flatValidationRuleToUpdate[universalIdentifier] =
+      flatValidationRuleToUpdate[flatValidationRule.universalIdentifier] =
         updatedFlatValidationRule;
     }
   }
