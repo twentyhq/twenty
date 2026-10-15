@@ -49,6 +49,10 @@ export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-
 export { reportConnectionAuthFailure } from '@/sdk/logic-function/connections/report-connection-auth-failure';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+export type {
+  IdentifyAccountPayload,
+  IdentifyAccountResult,
+} from 'twenty-shared/application';
 
 export { createMessageChannel } from '@/sdk/logic-function/messaging/create-message-channel';
 export type { CreateMessageChannelInput } from '@/sdk/logic-function/messaging/create-message-channel';

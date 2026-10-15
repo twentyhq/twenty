@@ -227,6 +227,53 @@ export const KeepMounted: Story = {
   },
 };
 
+const ACTIVITY_LOG_ENTRIES = Array.from(
+  { length: 12 },
+  (_, index) => `Activity entry ${index + 1}`,
+);
+
+export const FixedHeight: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 360 } },
+  args: { value: 'activity', children: 'Activity' },
+  render: (args) => (
+    <Tabs.Root defaultValue="activity" className={styles.fixedHeightRoot}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab {...args} />
+        <Tabs.Tab value="notes">Notes</Tabs.Tab>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Panel value="activity" className={styles.scrollingPanel}>
+        <div
+          role="region"
+          aria-label="Activity log"
+          tabIndex={0}
+          className={styles.scrollArea}
+        >
+          {ACTIVITY_LOG_ENTRIES.map((entry) => (
+            <p key={entry}>{entry}</p>
+          ))}
+        </div>
+      </Tabs.Panel>
+      <Tabs.Panel value="notes" className={styles.panel}>
+        Record notes
+      </Tabs.Panel>
+    </Tabs.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const activityLog = canvas.getByRole('region', { name: 'Activity log' });
+
+    await expect(activityLog.scrollHeight).toBeGreaterThan(
+      activityLog.clientHeight,
+    );
+
+    activityLog.scrollTop = activityLog.scrollHeight;
+
+    await waitFor(() => expect(activityLog.scrollTop).toBeGreaterThan(0));
+  },
+};
+
 export const RightToLeft: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 300 } },

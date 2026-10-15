@@ -30,9 +30,11 @@ export const createToastCountdown = ({
   let startedAt: number | undefined;
   let timeout: ReturnType<typeof setTimeout> | undefined;
   let revision = 0;
+  let timerRevision = 0;
   let isClosed = false;
 
   const stop = () => {
+    timerRevision += 1;
     if (isDefined(startedAt)) {
       remainingDuration = Math.max(
         0,
@@ -85,8 +87,13 @@ export const createToastCountdown = ({
     }
 
     startedAt = performance.now();
+    const scheduledRevision = timerRevision;
     timeout = setTimeout(
       () => {
+        if (scheduledRevision !== timerRevision) {
+          return;
+        }
+
         stop();
 
         if (remainingDuration > 0) {

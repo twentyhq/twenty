@@ -15,7 +15,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledHeader = styled(Dialog.Header)`
   align-items: center;
   position: relative;
-  text-align: center;
 `;
 
 const StyledCloseButton = styled.div`

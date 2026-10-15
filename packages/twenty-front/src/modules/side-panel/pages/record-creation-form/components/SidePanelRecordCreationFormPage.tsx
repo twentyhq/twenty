@@ -127,6 +127,7 @@ const SidePanelRecordCreationForm = ({
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formResetCount, setFormResetCount] = useState(0);
   const optionsDropdownId = useId();
   const [draftValidationRuleViolations, setDraftValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
@@ -165,6 +166,7 @@ const SidePanelRecordCreationForm = ({
     .map((recordFormField) => recordFormField.fieldMetadataItem);
 
   const hiddenFieldsCount = hiddenFieldMetadataItems.length;
+  const editableFieldsCount = editableRecordFormFields.length;
 
   const { violationsByFieldMetadataId, recordViolations } =
     groupValidationRuleViolationsByField({
@@ -226,7 +228,11 @@ const SidePanelRecordCreationForm = ({
     }
   };
 
-  const handleCreateClick = async () => {
+  const submitDraftRecord = async ({
+    shouldKeepOpen,
+  }: {
+    shouldKeepOpen: boolean;
+  }) => {
     if (isSubmitting) {
       return;
     }
@@ -256,9 +262,22 @@ const SidePanelRecordCreationForm = ({
           fieldMetadataItems: objectMetadataItem.fields,
           objectMetadataItems,
         }),
+        shouldKeepOpen,
       });
 
       if (!isDefined(error)) {
+        if (shouldKeepOpen) {
+          setRecordCreationFormDraft(null);
+          setDraftValidationRuleViolations([]);
+          setFormResetCount(
+            (previousFormResetCount) => previousFormResetCount + 1,
+          );
+          enqueueToast({
+            status: 'success',
+            children: t`${objectMetadataItem.labelSingular} created`,
+          });
+        }
+
         return;
       }
 
@@ -279,11 +298,21 @@ const SidePanelRecordCreationForm = ({
     }
   };
 
+  const handleCreateClick = () => submitDraftRecord({ shouldKeepOpen: false });
+
+  const handleCreateAnotherClick = () =>
+    submitDraftRecord({ shouldKeepOpen: true });
+
   const containerRef = useHotkeysOnFocusedElement({
-    keys: [`${Key.Meta}+${Key.Enter}`, `${Key.Control}+${Key.Enter}`],
+    keys: [
+      `${Key.Meta}+${Key.Enter}`,
+      `${Key.Control}+${Key.Enter}`,
+      `${Key.Alt}+${Key.Enter}`,
+    ],
     focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
-    callback: handleCreateClick,
-    dependencies: [currentFocusId, handleCreateClick],
+    callback: (keyboardEvent) =>
+      keyboardEvent.altKey ? handleCreateAnotherClick() : handleCreateClick(),
+    dependencies: [currentFocusId, handleCreateClick, handleCreateAnotherClick],
   });
 
   return (
@@ -302,7 +331,7 @@ const SidePanelRecordCreationForm = ({
           />
         }
       />
-      <StyledContent>
+      <StyledContent key={formResetCount}>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={visibleFieldMetadataItems}
@@ -330,8 +359,8 @@ const SidePanelRecordCreationForm = ({
               }
             >
               {recordCreationFormAreHiddenFieldsShown
-                ? t`Collapse hidden fields`
-                : t`Show hidden fields (${hiddenFieldsCount})`}
+                ? t`Hide fields`
+                : t`All fields (${editableFieldsCount})`}
             </LightButton>
           </StyledHiddenFieldsToggle>
         )}
@@ -359,23 +388,25 @@ const SidePanelRecordCreationForm = ({
       )}
       <SidePanelFooter
         actions={[
-          ...(hasLayoutsPermission
-            ? [
-                <SidePanelOptionsDropdown
-                  key="options"
-                  dropdownId={optionsDropdownId}
-                >
-                  <Dropdown.ActionItem
-                    startIcon={<IconEdit />}
-                    onClick={() =>
-                      openRecordCreationFormSettingsInSidePanel(
-                        objectMetadataItem,
-                      )
-                    }
-                  >{t`Edit form`}</Dropdown.ActionItem>
-                </SidePanelOptionsDropdown>,
-              ]
-            : []),
+          <SidePanelOptionsDropdown
+            key="options"
+            dropdownId={optionsDropdownId}
+          >
+            <Dropdown.ActionItem
+              startIcon={<IconPlus />}
+              shortcut={['Alt', 'Enter']}
+              disabled={isSubmitting}
+              onClick={handleCreateAnotherClick}
+            >{t`Create another`}</Dropdown.ActionItem>
+            {hasLayoutsPermission && (
+              <Dropdown.ActionItem
+                startIcon={<IconEdit />}
+                onClick={() =>
+                  openRecordCreationFormSettingsInSidePanel(objectMetadataItem)
+                }
+              >{t`Edit form`}</Dropdown.ActionItem>
+            )}
+          </SidePanelOptionsDropdown>,
           <Button
             key="create-record"
             startIcon={<IconPlus />}

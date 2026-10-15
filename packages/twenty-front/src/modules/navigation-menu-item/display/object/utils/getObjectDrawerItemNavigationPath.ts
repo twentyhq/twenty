@@ -12,14 +12,12 @@ export const getObjectDrawerItemNavigationPath = ({
   objectMetadataItems,
   views,
   lastVisitedViewPerObjectMetadataItem,
-  isInitialObjectViewEnabled = false,
 }: {
   navigationMenuItem?: NavigationMenuItem;
   objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'id' | 'namePlural'>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type' | 'position'>[];
   lastVisitedViewPerObjectMetadataItem: Record<string, string> | null;
-  isInitialObjectViewEnabled?: boolean;
 }): string => {
   const hasNavigationMenuItem =
     isDefined(navigationMenuItem) &&
@@ -31,7 +29,6 @@ export const getObjectDrawerItemNavigationPath = ({
       objectMetadataItems,
       views,
       lastVisitedViewPerObjectMetadataItem,
-      isInitialObjectViewEnabled,
     });
   }
 
@@ -41,6 +38,5 @@ export const getObjectDrawerItemNavigationPath = ({
     views,
     lastVisitedViewId:
       lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id],
-    isInitialObjectViewEnabled,
   });
 };

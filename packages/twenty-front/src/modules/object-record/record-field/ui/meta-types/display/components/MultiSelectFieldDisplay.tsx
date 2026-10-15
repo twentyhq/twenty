@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectFieldDisplay';
 import { OverflowingList } from 'twenty-ui/components/layout';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { MultiSelectFieldDisplayTag } from '@/object-record/record-field/ui/meta-types/display/components/MultiSelectFieldDisplayTag';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MultiSelectFieldDisplay = () => {
@@ -12,7 +12,7 @@ export const MultiSelectFieldDisplay = () => {
 
   const { isFocused } = useFieldFocus();
 
-  const selectedOptions = fieldValue
+  const selectedOptions = isDefined(fieldValue)
     ? fieldDefinition.metadata.options?.filter((option) =>
         fieldValue.includes(option.value),
       )
@@ -26,9 +26,9 @@ export const MultiSelectFieldDisplay = () => {
       showOverflowCount={isFocused}
     >
       {selectedOptions.map((selectedOption, index) => (
-        <Tag key={index} color={selectedOption.color}>
+        <MultiSelectFieldDisplayTag key={index} color={selectedOption.color}>
           {selectedOption.label}
-        </Tag>
+        </MultiSelectFieldDisplayTag>
       ))}
     </OverflowingList>
   );
