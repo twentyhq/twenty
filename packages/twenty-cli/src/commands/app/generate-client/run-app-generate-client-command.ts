@@ -1,11 +1,10 @@
-import { join } from 'node:path';
-
 import { isDefined } from 'twenty-shared/utils';
 
 import { createAppNotInstalledError } from '@/app/create-app-not-installed-error';
 import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
 import { generateAppClient } from '@/app/generate-app-client';
 import { getClientGenerationSkipReason } from '@/app/get-client-generation-skip-reason';
+import { getClientSdkPackagePath } from '@/app/get-client-sdk-package-path';
 import { isApplicationNotFoundError } from '@/app/is-application-not-found-error';
 import { resolveAppProject } from '@/app/project/resolve-app-project';
 import { resolveSourceSdk } from '@/app/project/resolve-source-sdk';
@@ -82,7 +81,7 @@ export const runAppGenerateClientCommand: CommandRun<
 
     throw error;
   });
-  const clientPath = join(project.path, 'node_modules', 'twenty-client-sdk');
+  const clientPath = getClientSdkPackagePath({ appPath: project.path });
   const clientDisplayPath = formatDisplayPath({
     workingDirectory,
     targetPath: clientPath,

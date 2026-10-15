@@ -3,7 +3,7 @@ import { writeTestSourceSdk } from '@/app/__tests__/utils/write-test-source-sdk'
 import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 
 import { readGraphqlRequest } from '@/__tests__/utils/read-graphql-request';
 import {
@@ -138,7 +138,10 @@ describe('app generate-client', () => {
     expectIdentityReadOnce();
   });
 
-  it('confirms the generated client in human output', async () => {
+  it('confirms the generated client and its location in cyan in human output', async () => {
+    vi.stubEnv('NO_COLOR', undefined);
+    vi.stubEnv('FORCE_COLOR', '1');
+
     const { stdout, exitCode } = await run();
 
     expect(exitCode).toBe(0);
@@ -146,9 +149,36 @@ describe('app generate-client', () => {
       `Generated the typed API client for Generate App from ${server.url}`,
     );
     expect(stdout).toContain(
-      `Saved in ${join(appPath, 'node_modules', 'twenty-client-sdk')}`,
+      `Saved in \u001b[36m${join(appPath, 'node_modules', 'twenty-client-sdk')}\u001b[39m`,
     );
     expectIdentityReadOnce();
+  });
+
+  it('shows the client location relative to the current folder when the app is inside it', async () => {
+    vi.stubEnv('FORCE_COLOR', undefined);
+    vi.stubEnv('NO_COLOR', '1');
+    const workingDirectory = vi.spyOn(process, 'cwd');
+
+    try {
+      workingDirectory.mockReturnValue(appPath);
+      const fromApp = await run();
+      const fromAppJson = await run('--json');
+
+      workingDirectory.mockReturnValue(dirname(appPath));
+      const fromParent = await run();
+
+      expect(fromApp.stdout).toContain(
+        `Saved in ${join('node_modules', 'twenty-client-sdk')}`,
+      );
+      expect(fromParent.stdout).toContain(
+        `Saved in ${join(basename(appPath), 'node_modules', 'twenty-client-sdk')}`,
+      );
+      expect(parseSingleJsonLine(fromAppJson.stdout).data.client).toEqual({
+        path: join(appPath, 'node_modules', 'twenty-client-sdk'),
+      });
+    } finally {
+      workingDirectory.mockRestore();
+    }
   });
 
   it('refuses an app without its own twenty-client-sdk before contacting the workspace', async () => {
