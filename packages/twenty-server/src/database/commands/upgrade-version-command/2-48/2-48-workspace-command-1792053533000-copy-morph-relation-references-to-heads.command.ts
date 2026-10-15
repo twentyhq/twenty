@@ -7,14 +7,12 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { buildMorphRelationHeadFieldPermissionCopies } from 'src/database/commands/upgrade-version-command/2-48/utils/build-morph-relation-head-field-permission-copies.util';
 import { buildMorphRelationHeadViewFieldCopies } from 'src/database/commands/upgrade-version-command/2-48/utils/build-morph-relation-head-view-field-copies.util';
 import { buildMorphRelationHeadViewFilterCopies } from 'src/database/commands/upgrade-version-command/2-48/utils/build-morph-relation-head-view-filter-copies.util';
-import { buildMorphRelationHeadViewSortCopies } from 'src/database/commands/upgrade-version-command/2-48/utils/build-morph-relation-head-view-sort-copies.util';
 import { computeMorphRelationHeadByRepresentativeId } from 'src/database/commands/upgrade-version-command/2-48/utils/compute-morph-relation-head-by-representative-id.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
-import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -23,7 +21,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 type MorphRelationHeadReferences = {
   viewFields: FlatViewField[];
   viewFilters: FlatViewFilter[];
-  viewSorts: FlatViewSort[];
   fieldPermissions: FlatFieldPermission[];
 };
 
@@ -31,7 +28,7 @@ type MorphRelationHeadReferences = {
 @Command({
   name: 'upgrade:2-48:copy-morph-relation-references-to-heads',
   description:
-    'Copy the view fields, filters, sorts and field permissions of each morph relation onto its head',
+    'Copy the view fields, filters and field permissions of each morph relation onto its head',
 })
 export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -53,14 +50,12 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
       flatViewFieldMaps,
       flatViewFieldGroupMaps,
       flatViewFilterMaps,
-      flatViewSortMaps,
       flatFieldPermissionMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatFieldMetadataMaps',
       'flatViewFieldMaps',
       'flatViewFieldGroupMaps',
       'flatViewFilterMaps',
-      'flatViewSortMaps',
       'flatFieldPermissionMaps',
     ]);
 
@@ -86,11 +81,6 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
         workspaceCustomApplicationUniversalIdentifier,
         flatViewFilterMaps,
       }),
-      viewSorts: buildMorphRelationHeadViewSortCopies({
-        headByRepresentativeId,
-        workspaceCustomApplicationUniversalIdentifier,
-        flatViewSortMaps,
-      }),
       fieldPermissions: buildMorphRelationHeadFieldPermissionCopies({
         headByRepresentativeId,
         flatFieldPermissionMaps,
@@ -110,13 +100,11 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
       flatFieldMetadataMaps,
       flatViewFieldMaps,
       flatViewFilterMaps,
-      flatViewSortMaps,
       flatFieldPermissionMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatFieldMetadataMaps',
       'flatViewFieldMaps',
       'flatViewFilterMaps',
-      'flatViewSortMaps',
       'flatFieldPermissionMaps',
     ]);
 
@@ -144,9 +132,6 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
               isHeadId(viewFilter.fieldMetadataId) ||
               isHeadId(viewFilter.relationTargetFieldMetadataId),
           ),
-        viewSorts: Object.values(flatViewSortMaps.byUniversalIdentifier)
-          .filter(isDefined)
-          .filter((viewSort) => isHeadId(viewSort.fieldMetadataId)),
         fieldPermissions: Object.values(
           flatFieldPermissionMaps.byUniversalIdentifier,
         )
@@ -169,13 +154,9 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
     references: MorphRelationHeadReferences;
     operation: 'create' | 'delete';
   }): Promise<void> {
-    const { viewFields, viewFilters, viewSorts, fieldPermissions } =
-      references;
+    const { viewFields, viewFilters, fieldPermissions } = references;
     const referenceCount =
-      viewFields.length +
-      viewFilters.length +
-      viewSorts.length +
-      fieldPermissions.length;
+      viewFields.length + viewFilters.length + fieldPermissions.length;
 
     if (referenceCount === 0) {
       return;
@@ -183,14 +164,14 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
 
     if (dryRun) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: would ${operation} ${viewFields.length} view field(s), ${viewFilters.length} view filter(s), ${viewSorts.length} view sort(s) and ${fieldPermissions.length} field permission(s) on morph relation heads`,
+        `[DRY RUN] Workspace ${workspaceId}: would ${operation} ${viewFields.length} view field(s), ${viewFilters.length} view filter(s) and ${fieldPermissions.length} field permission(s) on morph relation heads`,
       );
 
       return;
     }
 
     const applicationUniversalIdentifiers = new Set(
-      [...viewFields, ...viewFilters, ...viewSorts, ...fieldPermissions].map(
+      [...viewFields, ...viewFilters, ...fieldPermissions].map(
         ({ applicationUniversalIdentifier }) => applicationUniversalIdentifier,
       ),
     );
@@ -221,7 +202,6 @@ export class CopyMorphRelationReferencesToHeadsCommand extends ProvisionedWorksp
         allFlatEntityOperationByMetadataName: {
           viewField: ownedBy(viewFields),
           viewFilter: ownedBy(viewFilters),
-          viewSort: ownedBy(viewSorts),
           fieldPermission: ownedBy(fieldPermissions),
         },
       };

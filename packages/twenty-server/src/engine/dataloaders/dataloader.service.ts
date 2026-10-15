@@ -830,10 +830,6 @@ export class DataloaderService {
             flatMapsKeys: ['flatViewMaps', 'flatViewSortMaps'],
           },
         );
-      const isMorphRelationReferenceVisible =
-        await this.morphRelationReferenceVisibilityService.getIsMorphRelationReferenceVisible(
-          workspaceId,
-        );
 
       return dataLoaderParams.map(({ viewId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
@@ -849,11 +845,7 @@ export class DataloaderService {
           flatEntityIds: flatView.viewSortIds,
           flatEntityMaps: flatViewSortMaps,
         })
-          .filter(
-            (flatViewSort) =>
-              flatViewSort.deletedAt === null &&
-              isMorphRelationReferenceVisible(flatViewSort.fieldMetadataId),
-          )
+          .filter((flatViewSort) => flatViewSort.deletedAt === null)
           .map(fromFlatViewSortToViewSortDto);
       });
     });

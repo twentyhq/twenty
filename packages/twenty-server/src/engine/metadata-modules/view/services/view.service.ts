@@ -490,11 +490,7 @@ export class ViewService {
         flatEntityIds: flatView.viewSortIds,
         flatEntityMaps: flatViewSortMaps,
       })
-        .filter(
-          (flatEntity) =>
-            flatEntity.deletedAt === null &&
-            isMorphRelationReferenceVisible(flatEntity.fieldMetadataId),
-        )
+        .filter((flatEntity) => flatEntity.deletedAt === null)
         .map(fromFlatViewSortToViewSortDto);
 
       viewDto.viewGroups = findManyFlatEntityByIdInFlatEntityMaps({

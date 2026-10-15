@@ -27,7 +27,6 @@ export const METADATA_GRAPHQL_OPERATIONS_TO_CACHE: Record<
       'flatViewSortMaps',
       'flatViewGroupMaps',
       'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
       'flatApplicationMaps',
       'featureFlagsMap',
     ],

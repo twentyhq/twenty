@@ -6,7 +6,6 @@ import { IconAddressBook, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -43,11 +42,6 @@ export const SettingsValidationRuleForm = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
-  const errorFieldMetadataItem = findFieldMetadataItemByFieldMetadataId({
-    fieldMetadataItems: objectMetadataItem.fields,
-    fieldMetadataId: values.errorFieldMetadataId,
-  });
-
   const errorFieldOptions = [
     {
       label: t`Whole record`,
@@ -58,7 +52,7 @@ export const SettingsValidationRuleForm = ({
       .filter(
         (field) =>
           !field.isSystem &&
-          (field.isActive || field.id === errorFieldMetadataItem?.id),
+          (field.isActive || field.id === values.errorFieldMetadataId),
       )
       .map((field) => ({
         label: field.label,
@@ -121,11 +115,7 @@ export const SettingsValidationRuleForm = ({
             dropdownId="validation-rule-error-field"
             label={t`Show on`}
             fullWidth
-            value={
-              errorFieldMetadataItem?.id ??
-              values.errorFieldMetadataId ??
-              RECORD_LEVEL_OPTION_VALUE
-            }
+            value={values.errorFieldMetadataId ?? RECORD_LEVEL_OPTION_VALUE}
             options={errorFieldOptions}
             onChange={(value) =>
               onChange({
