@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatFirstLiveSeqFamilyState } from '@/ai/states/agentChatFirstLiveSeqFamilyState';
@@ -72,6 +73,15 @@ export const AgentChatMessagesFetchEffect = () => {
         return;
       }
       const uiMessages = mapDBMessagesToUIMessages(data.chatMessages ?? []);
+
+      for (const message of data.chatMessages ?? []) {
+        store.set(
+          agentChatMessageReactionsFamilyState.atomFamily({
+            messageId: message.id,
+          }),
+          message.reactions,
+        );
+      }
       setAgentChatFetchedMessages(
         uiMessages.filter((message) => message.status !== 'queued'),
       );
