@@ -198,7 +198,7 @@ const findRecordsThroughGraphql = ({
     token,
   );
 
-// The application and the member can read people and the application can upload files; the agent's role only reads companies whose name holds a token and has no permission flag
+// The application and the member can read people and the application can upload files and edit layouts; the agent's role only reads companies whose name holds a token and has no permission flag
 describe('Code interpreter sandbox token beyond the agent role should be refused', () => {
   let application: ApplicationWithResources;
   let globalTestContext: GlobalTestContext;
@@ -210,6 +210,7 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
       permissionFlagUniversalIdentifiers: [
         ...DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
         SystemPermissionFlag.UPLOAD_FILE,
+        SystemPermissionFlag.LAYOUTS,
       ],
     });
 
@@ -361,6 +362,23 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
     const sandboxToken = await captureSandboxTokenForAgentRun({
       globalTestContext,
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      isAgentPassed: false,
+    });
+
+    const payload = await createWorkspaceFolderThroughMcp(sandboxToken);
+
+    expect(payload.success).toBe(true);
+
+    await deleteNavigationMenuItem({
+      input: { id: payload.result.id },
+      expectToFail: false,
+    });
+  });
+
+  it('should let the application own run create a workspace navigation item through MCP when no agent restricts it', async () => {
+    const sandboxToken = await captureSandboxTokenForAgentRun({
+      globalTestContext,
+      token: globalTestContext.applicationToken,
       isAgentPassed: false,
     });
 

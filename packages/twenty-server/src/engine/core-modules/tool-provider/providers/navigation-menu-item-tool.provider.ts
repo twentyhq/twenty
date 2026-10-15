@@ -53,6 +53,7 @@ export class NavigationMenuItemToolProvider implements ToolProvider {
     return this.navigationMenuItemToolService.generateNavigationMenuItemTools({
       workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
+      applicationId: context.application?.id,
       agentId: context.agentId,
     });
   }
