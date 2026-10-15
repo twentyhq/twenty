@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
@@ -122,27 +121,10 @@ export class CampaignVariableService {
       .slice(0, MAX_VARIABLES_IN_ERROR_MESSAGE)
       .join(', ');
 
-    const listedUnknownVariables = unknownVariables.slice(
-      0,
-      MAX_VARIABLES_IN_ERROR_MESSAGE,
-    );
-    const unlistedUnknownVariableCount =
-      unknownVariables.length - listedUnknownVariables.length;
-
-    const unknownVariableList = listedUnknownVariables
-      .map((variableName) => `{{${variableName}}}`)
-      .join(', ');
-
     throw new EmailingDomainException(
-      `Unknown campaign variables: ${listedUnknownVariables.join(', ')}. ` +
+      `Unknown campaign variables: ${unknownVariables.join(', ')}. ` +
         `Available variables: ${availableList}`,
-      EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_UNKNOWN_VARIABLES,
-      {
-        userFriendlyMessage:
-          unlistedUnknownVariableCount > 0
-            ? msg`This campaign uses variables that do not exist: ${unknownVariableList} and ${unlistedUnknownVariableCount} more. Remove or replace them before sending.`
-            : msg`This campaign uses variables that do not exist: ${unknownVariableList}. Remove or replace them before sending.`,
-      },
+      EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
     );
   }
 
