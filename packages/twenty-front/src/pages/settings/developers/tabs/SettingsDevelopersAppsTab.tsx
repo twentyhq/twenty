@@ -1,5 +1,7 @@
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { TWENTY_CLI_CREATE_APP_COMMANDS } from '@/settings/developers/constants/TwentyCliCreateAppCommands';
+import { TWENTY_CLI_LOGIN_COMMAND } from '@/settings/developers/constants/TwentyCliLoginCommand';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -67,10 +69,8 @@ export const SettingsDevelopersAppsTab = () => {
     data?.findManyApplicationRegistrations ?? [];
 
   const createCommands = [
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    'npx create-twenty-app@latest my-twenty-app',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    'cd my-twenty-app',
+    TWENTY_CLI_LOGIN_COMMAND,
+    ...TWENTY_CLI_CREATE_APP_COMMANDS,
   ];
 
   const createCopyButton = (

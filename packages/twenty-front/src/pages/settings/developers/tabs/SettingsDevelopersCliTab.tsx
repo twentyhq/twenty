@@ -1,4 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { TWENTY_CLI_CREATE_APP_COMMANDS } from '@/settings/developers/constants/TwentyCliCreateAppCommands';
+import { TWENTY_CLI_LOGIN_COMMAND } from '@/settings/developers/constants/TwentyCliLoginCommand';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -9,7 +11,6 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUpRight, IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
@@ -69,20 +70,12 @@ export const SettingsDevelopersCliTab = () => {
   return (
     <>
       <SettingsDevelopersCliCommandSection
-        title={t`Install`}
-        description={t`Install the Twenty CLI globally. Requires Node.js 24.5 or later.`}
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        commands={['npm install -g twenty']}
-      />
-
-      <SettingsDevelopersCliCommandSection
         title={t`Connect to this workspace`}
-        description={t`Sign in from your browser and make this workspace your default connection.`}
+        description={t`Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later.`}
         commands={[
+          TWENTY_CLI_LOGIN_COMMAND,
           // oxlint-disable-next-line lingui/no-unlocalized-strings
-          `twenty auth login --url ${REACT_APP_SERVER_BASE_URL} --use`,
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          'twenty auth status',
+          'npx twenty@latest auth status',
         ]}
       />
 
@@ -91,29 +84,18 @@ export const SettingsDevelopersCliTab = () => {
         description={t`Inspect the data model, query records and send raw API requests.`}
         commands={[
           // oxlint-disable-next-line lingui/no-unlocalized-strings
-          'twenty metadata object list',
+          'npx twenty@latest metadata object list',
           // oxlint-disable-next-line lingui/no-unlocalized-strings
-          'twenty data list companies --limit 5',
+          'npx twenty@latest data list companies --limit 5',
           // oxlint-disable-next-line lingui/no-unlocalized-strings
-          "twenty api rest '/rest/people?limit=5'",
+          "npx twenty@latest api rest '/rest/people?limit=5'",
         ]}
       />
 
       <SettingsDevelopersCliCommandSection
         title={t`Build an app`}
         description={t`Scaffold an app, register it in this workspace and sync your changes as you code.`}
-        commands={[
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          'twenty app init my-app',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          'cd my-app',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          'yarn install',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          'twenty app apply --create',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          'twenty app dev',
-        ]}
+        commands={TWENTY_CLI_CREATE_APP_COMMANDS}
       >
         <StyledButtonContainer>
           <Button
