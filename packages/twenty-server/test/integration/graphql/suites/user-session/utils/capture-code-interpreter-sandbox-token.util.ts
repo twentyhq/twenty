@@ -9,12 +9,10 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 
 export const captureCodeInterpreterSandboxToken = async ({
   authContext,
-  roleId,
   rolePermissionConfig,
   agentId,
 }: {
   authContext: WorkspaceAuthContext;
-  roleId: string;
   rolePermissionConfig: RolePermissionConfig;
   agentId?: string;
 }): Promise<string | undefined> => {
@@ -41,7 +39,6 @@ export const captureCodeInterpreterSandboxToken = async ({
       { code: 'pass' },
       {
         workspaceId: authContext.workspace.id,
-        roleId,
         rolePermissionConfig,
         authContext,
         agentId,

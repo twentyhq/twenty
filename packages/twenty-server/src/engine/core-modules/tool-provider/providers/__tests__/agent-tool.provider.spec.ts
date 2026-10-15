@@ -85,7 +85,6 @@ const otherApplication = {
 
 const context: ToolProviderContext = {
   workspaceId,
-  roleId: 'caller-role-id',
   rolePermissionConfig: {
     intersectionOf: { userWorkspaceRoleId: 'caller-role-id' },
   },

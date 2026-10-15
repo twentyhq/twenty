@@ -15,13 +15,13 @@ export const installRegisteredApp = async ({
   completedPhases,
   target,
   signal,
-  onQueued,
+  onProgress,
 }: {
   universalIdentifier: string;
   completedPhases: AppInstallPhase[];
   target: ResolvedTarget;
   signal: AbortSignal;
-  onQueued: (jobId: string) => void;
+  onProgress: (percentage: number) => void;
 }) => {
   const timeout = AbortSignal.timeout(APP_INSTALL.TIMEOUT_MILLISECONDS);
   const installSignal = AbortSignal.any([signal, timeout]);
@@ -71,13 +71,13 @@ export const installRegisteredApp = async ({
     });
 
   completedPhases.push('start');
-  onQueued(jobId);
 
   await waitForAppInstall({
     universalIdentifier,
     jobId,
     target,
     signal: installSignal,
+    onProgress,
   }).catch((error: unknown) => {
     throw fail(error, 'wait', jobId);
   });

@@ -27,6 +27,7 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import {
   activateCoreWorkflowVersion,
@@ -40,6 +41,8 @@ import {
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
+import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -980,6 +983,25 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   });
 
   describe('an agent step that asks a question', () => {
+    let agentId: string;
+
+    beforeAll(async () => {
+      const { data } = await createOneAgent({
+        expectToFail: false,
+        input: {
+          label: 'Quote Agent',
+          prompt: 'Draft the quote',
+          modelId: TEST_AI_MODEL_ID,
+        },
+      });
+
+      agentId = data.createOneAgent.id;
+    });
+
+    afterAll(async () => {
+      await deleteOneAgent({ expectToFail: false, input: { id: agentId } });
+    });
+
     const QUESTION = {
       header: 'Quote',
       question: 'Send the quote to the customer?',
@@ -995,6 +1017,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         settings: {
           ...settings,
           input: {
+            agentId,
             prompt: 'Draft the quote',
             humanInputInstructions: 'Ask before choosing a plan.',
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,

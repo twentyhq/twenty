@@ -9,6 +9,7 @@ import { BackfillMorphRelationHeadsCommand } from 'src/database/commands/upgrade
 import { RemoveWorkflowRunIndexWorkflowVersionColumnCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792051845780-remove-workflow-run-index-workflow-version-column.command';
 import { SyncCampaignComposerStandardMetadataCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792064982496-sync-campaign-composer-standard-metadata.command';
 import { FlushWorkflowAutomatedTriggerMapsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792068879353-flush-workflow-automated-trigger-maps.command';
+import { CopyMorphRelationReferencesToHeadsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792070263989-copy-morph-relation-references-to-heads.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -29,6 +30,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RemoveWorkflowRunIndexWorkflowVersionColumnCommand,
     SyncCampaignComposerStandardMetadataCommand,
     FlushWorkflowAutomatedTriggerMapsCommand,
+    CopyMorphRelationReferencesToHeadsCommand,
   ],
 })
 export class V2_48_UpgradeVersionCommandModule {}

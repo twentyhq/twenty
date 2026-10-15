@@ -9,7 +9,13 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
 type FormCurrencyAmountFieldInputProps = Pick<
   ComponentProps<typeof FormNumberFieldInput>,
-  'label' | 'defaultValue' | 'onChange' | 'VariablePicker' | 'readonly' | 'hint'
+  | 'label'
+  | 'defaultValue'
+  | 'onChange'
+  | 'VariablePicker'
+  | 'readonly'
+  | 'hint'
+  | 'placeholder'
 >;
 
 const getAmountFromAmountMicros = (
@@ -37,6 +43,7 @@ export const FormCurrencyAmountFieldInput = ({
   VariablePicker,
   readonly,
   hint,
+  placeholder,
 }: FormCurrencyAmountFieldInputProps) => {
   return (
     <FormNumberFieldInput
@@ -44,6 +51,7 @@ export const FormCurrencyAmountFieldInput = ({
       VariablePicker={VariablePicker}
       readonly={readonly}
       hint={hint}
+      placeholder={placeholder}
       defaultValue={getAmountFromAmountMicros(defaultValue)}
       onChange={(newAmount) =>
         onChange(

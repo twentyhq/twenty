@@ -1,7 +1,10 @@
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessagePart,
+  isPausingToolPart,
+} from 'twenty-shared/ai';
 
 import { type AssistantMessageRenderItem } from '@/ai/types/AssistantMessageRenderItem';
-import { isPausingToolPart } from '@/ai/utils/isPausingToolPart';
+
 import { isThinkingStepPart } from '@/ai/utils/isThinkingStepPart';
 import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
