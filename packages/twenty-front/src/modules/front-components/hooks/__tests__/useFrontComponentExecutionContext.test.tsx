@@ -5,13 +5,11 @@ import { getDefaultStore } from 'jotai';
 import { type AppLocale } from 'twenty-shared/translations';
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 
-import {
-  currentWorkspaceMemberState,
-  type CurrentWorkspaceMember,
-} from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
@@ -230,9 +228,9 @@ const parentViewAtom =
 
 const setOpenRecordInPreference = (openRecordIn: OpenRecordIn) =>
   getDefaultStore().set(currentWorkspaceMemberState.atom, {
-    id: 'workspace-member-1',
+    ...mockedWorkspaceMemberData,
     openRecordIn,
-  } as CurrentWorkspaceMember);
+  });
 
 const createParentView = (parentViewObjectNameSingular: string) => ({
   parentViewComponentId: 'parent-view-component-id',
@@ -826,6 +824,7 @@ describe('useFrontComponentExecutionContext', () => {
 
         await openLeadRecord();
 
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
         expect(mockNavigateApp).toHaveBeenCalledWith(
           AppPath.RecordShowPage,
           { objectNameSingular: 'lead', objectRecordId: 'lead-1' },
@@ -840,6 +839,7 @@ describe('useFrontComponentExecutionContext', () => {
 
         await openLeadRecord();
 
+        expect(mockOpenRecordInSidePanel).toHaveBeenCalledTimes(1);
         expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
           recordId: 'lead-1',
           objectNameSingular: 'lead',
@@ -854,6 +854,7 @@ describe('useFrontComponentExecutionContext', () => {
 
         await openLeadRecord();
 
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
         expect(mockNavigateApp).toHaveBeenCalledWith(
           AppPath.RecordShowPage,
           { objectNameSingular: 'lead', objectRecordId: 'lead-1' },
@@ -880,6 +881,7 @@ describe('useFrontComponentExecutionContext', () => {
           );
         });
 
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
         expect(mockNavigateApp).toHaveBeenCalledWith(
           AppPath.RecordShowPage,
           { objectNameSingular: 'workflow', objectRecordId: 'workflow-1' },
