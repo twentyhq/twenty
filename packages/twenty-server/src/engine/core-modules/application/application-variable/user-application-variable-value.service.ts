@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
@@ -219,9 +220,8 @@ export class UserApplicationVariableValueService {
         key,
       });
 
-    // A stored empty value would hide the default forever, so clearing a
-    // value removes the member's row instead, and is a no-op without one.
-    if (plainTextValue === '') {
+    // A stored empty value would hide the default forever
+    if (!isNonEmptyString(plainTextValue)) {
       await this.userApplicationVariableValueRepository.delete(workspaceId, {
         applicationVariableId: flatApplicationVariable.id,
         userWorkspaceId,

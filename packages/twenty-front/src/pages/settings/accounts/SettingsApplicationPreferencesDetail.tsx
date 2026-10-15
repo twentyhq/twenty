@@ -4,6 +4,8 @@ import { getApplicationDisplayName } from '@/applications/utils/getApplicationDi
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
+import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
+import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
 import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -30,8 +32,6 @@ import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useA
 import { SettingsApplicationCustomSettingsSection } from '@/settings/applications/components/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/components/SettingsApplicationDetailVariablesTab';
 import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
-
-const VARIABLES_TAB_ID = 'variables';
 
 type SettingsApplicationPreferencesDetailProps = {
   applicationWithPreferences: ApplicationWithPreferences;
@@ -84,7 +84,13 @@ export const SettingsApplicationPreferencesDetail = ({
 
   const tabs: SingleTabProps[] = [
     ...(hasVariablesTab
-      ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
+      ? [
+          {
+            id: APPLICATION_VARIABLES_TAB_ID,
+            title: t`Variables`,
+            Icon: IconVariable,
+          },
+        ]
       : []),
     ...settingsMenuItems.map((settingsMenuItem) => ({
       id: settingsMenuItem.universalIdentifier,
@@ -105,9 +111,10 @@ export const SettingsApplicationPreferencesDetail = ({
     currentWorkspace,
   });
 
-  const configurationTabId = hasVariablesTab
-    ? VARIABLES_TAB_ID
-    : settingsMenuItems.at(0)?.universalIdentifier;
+  const configurationTabId = getApplicationConfigurationTabId({
+    hasVariablesTab,
+    settingsMenuItems,
+  });
 
   const activeSettingsMenuItem = settingsMenuItems.find(
     (settingsMenuItem) => settingsMenuItem.universalIdentifier === activeTabId,
@@ -130,7 +137,7 @@ export const SettingsApplicationPreferencesDetail = ({
           { children: appName },
         ]}
         actionButton={
-          activeTabId === VARIABLES_TAB_ID ? (
+          activeTabId === APPLICATION_VARIABLES_TAB_ID ? (
             <Button
               startIcon={<IconDeviceFloppy />}
               variant="solid"
@@ -168,7 +175,7 @@ export const SettingsApplicationPreferencesDetail = ({
                 }
               />
             )}
-          {activeTabId === VARIABLES_TAB_ID && (
+          {activeTabId === APPLICATION_VARIABLES_TAB_ID && (
             <SettingsApplicationDetailVariablesTab
               applicationVariables={draftApplicationVariables}
               onVariableChange={setApplicationVariableValue}

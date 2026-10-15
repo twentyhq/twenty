@@ -9,6 +9,8 @@ import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
+import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
+import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
 import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -69,7 +71,6 @@ import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/u
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
 const GENERAL_TAB_ID = 'general';
-const VARIABLES_TAB_ID = 'variables';
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
@@ -236,7 +237,13 @@ export const SettingsApplicationDetails = () => {
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
     ...(hasVariablesTab
-      ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
+      ? [
+          {
+            id: APPLICATION_VARIABLES_TAB_ID,
+            title: t`Variables`,
+            Icon: IconVariable,
+          },
+        ]
       : []),
     ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
       id: settingsMenuItem.universalIdentifier,
@@ -254,9 +261,10 @@ export const SettingsApplicationDetails = () => {
     tabs.map((tab) => tab.id),
   );
 
-  const configurationTabId = hasVariablesTab
-    ? VARIABLES_TAB_ID
-    : workspaceSettingsMenuItems.at(0)?.universalIdentifier;
+  const configurationTabId = getApplicationConfigurationTabId({
+    hasVariablesTab,
+    settingsMenuItems: workspaceSettingsMenuItems,
+  });
 
   const configurationTabLocation = isDefined(configurationTabId)
     ? getSettingsPath(
@@ -335,7 +343,7 @@ export const SettingsApplicationDetails = () => {
             uninstallProgress={uninstallProgress}
           />
         );
-      case VARIABLES_TAB_ID:
+      case APPLICATION_VARIABLES_TAB_ID:
         return (
           <SettingsApplicationDetailVariablesTab
             applicationVariables={draftApplicationVariables}
@@ -390,7 +398,7 @@ export const SettingsApplicationDetails = () => {
           { children: displayName },
         ]}
         actionButton={
-          activeTabId === VARIABLES_TAB_ID ? (
+          activeTabId === APPLICATION_VARIABLES_TAB_ID ? (
             <Button
               startIcon={<IconDeviceFloppy />}
               variant="solid"

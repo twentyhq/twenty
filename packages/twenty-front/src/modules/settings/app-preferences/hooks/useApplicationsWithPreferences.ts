@@ -15,14 +15,17 @@ export const useApplicationsWithPreferences = () => {
     },
   );
 
+  // A failed refetch keeps the previous list, so an error can come with data
+  const hasLoadedApplicationsWithPreferences = isDefined(data);
+
   return {
     applicationsWithPreferences: getApplicationsWithPreferences({
       applicationPreferences: data?.myApplicationPreferences ?? [],
       installedApplications: currentWorkspace?.installedApplications ?? [],
     }),
     loading,
-    // A failed refetch keeps the previous list, so an error can come with data
-    hasLoadedApplicationsWithPreferences: isDefined(data),
+    hasApplicationsLoadError:
+      isDefined(error) && !hasLoadedApplicationsWithPreferences,
     error,
     refetch,
   };

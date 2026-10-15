@@ -8,7 +8,6 @@ import { SettingsTableListSection } from '@/settings/components/SettingsTableLis
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -20,12 +19,8 @@ export const SettingsAppPreferencesAppsSection = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
-  const {
-    applicationsWithPreferences,
-    hasLoadedApplicationsWithPreferences,
-    error,
-    refetch,
-  } = useApplicationsWithPreferences();
+  const { applicationsWithPreferences, hasApplicationsLoadError, refetch } =
+    useApplicationsWithPreferences();
 
   const apps: AppPreferencesApp[] = [
     ...enabledNativeAccountApps.map((nativeAccountApp): AppPreferencesApp => ({
@@ -47,7 +42,7 @@ export const SettingsAppPreferencesAppsSection = () => {
       title={t`App preferences`}
       description={t`Choose your preferences for the apps installed on your workspace by the admin`}
       toolbar={
-        isDefined(error) && !hasLoadedApplicationsWithPreferences ? (
+        hasApplicationsLoadError ? (
           <StyledToolbar>
             <SettingsApplicationLoadErrorBanner
               message={t`Your installed apps could not be loaded. Check your connection and try again.`}

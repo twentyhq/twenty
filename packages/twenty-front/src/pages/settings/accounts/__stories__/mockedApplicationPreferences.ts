@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { HttpResponse, graphql } from 'msw';
 import { fn } from 'storybook/test';
 
@@ -178,7 +179,7 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
     updateMyUserApplicationVariable(variables);
 
     // Like the server, an empty value resets the variable to its default
-    if (variables.value === '') {
+    if (!isNonEmptyString(variables.value)) {
       savedValueByKey.delete(variables.key);
     } else {
       savedValueByKey.set(variables.key, variables.value);
