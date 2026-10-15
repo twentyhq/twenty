@@ -16,6 +16,7 @@ import {
   DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
+import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -138,6 +139,25 @@ const findCompanyIdsThroughMcp = async ({
   return payload.result.records.map((record: { id: string }) => record.id);
 };
 
+const createWorkspaceFolderThroughMcp = async (
+  token: string,
+): Promise<{ success: boolean; result: { id: string } }> => {
+  const result = await callMcpTool({
+    toolName: 'execute_tool',
+    toolArguments: {
+      toolName: 'create_navigation_menu_item',
+      arguments: {
+        type: 'FOLDER',
+        scope: 'workspace',
+        name: 'Agent role restriction probe folder',
+      },
+    },
+    token,
+  });
+
+  return JSON.parse(result.content[0].text);
+};
+
 const createCompany = async (name: string): Promise<string> => {
   const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
@@ -178,7 +198,7 @@ const findRecordsThroughGraphql = ({
     token,
   );
 
-// The application and the member can read people and the application can upload files; the agent's role only reads companies whose name holds a token
+// The application and the member can read people and the application can upload files; the agent's role only reads companies whose name holds a token and has no permission flag
 describe('Code interpreter sandbox token beyond the agent role should be refused', () => {
   let application: ApplicationWithResources;
   let globalTestContext: GlobalTestContext;
@@ -335,6 +355,34 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
         toolName: 'find_many_companies',
       }),
     ).toBe(true);
+  });
+
+  it('should let an admin run create a workspace navigation item through MCP when no agent restricts it', async () => {
+    const sandboxToken = await captureSandboxTokenForAgentRun({
+      globalTestContext,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      isAgentPassed: false,
+    });
+
+    const payload = await createWorkspaceFolderThroughMcp(sandboxToken);
+
+    expect(payload.success).toBe(true);
+
+    await deleteNavigationMenuItem({
+      input: { id: payload.result.id },
+      expectToFail: false,
+    });
+  });
+
+  it('should refuse an admin run a workspace navigation item through MCP when the agent role lacks layouts', async () => {
+    const sandboxToken = await captureSandboxTokenForAgentRun({
+      globalTestContext,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    const payload = await createWorkspaceFolderThroughMcp(sandboxToken);
+
+    expect(payload.success).toBe(false);
   });
 
   it('should let a member run read companies through GraphQL and REST when no agent restricts it', async () => {

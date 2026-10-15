@@ -24,6 +24,7 @@ export const createDeleteNavigationMenuItemTool = (
         id: parameters.id,
         workspaceId: context.workspaceId,
         authUserWorkspaceId: context.userWorkspaceId,
+        authAgentId: context.agentId,
       });
 
       return {
