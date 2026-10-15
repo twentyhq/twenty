@@ -56,7 +56,7 @@ export const Keyboard: Story = {
     await expect(trigger).toHaveTextContent('Cherry');
     await expect(args.onValueChange).toHaveBeenCalledTimes(1);
     await expect(args.onOpenChange).toHaveBeenCalledTimes(2);
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.keyboard(' ');
     await waitForSelectPopup(canvasElement);
     await expect(args.onOpenChange).toHaveBeenCalledTimes(3);

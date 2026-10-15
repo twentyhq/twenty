@@ -179,7 +179,6 @@ export const ObjectFilterDropdownOptionSelect = ({
           optionsInDropdown?.map((option) => (
             <ListItemButton
               key={option.id}
-              className=""
               focused={option.id === selectedItemId}
               role="option"
               aria-selected={option.isSelected}

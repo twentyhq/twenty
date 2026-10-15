@@ -3,6 +3,7 @@ import {
   type MorphOrRelationFieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FieldMetadataType } from 'twenty-shared/types';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -17,7 +18,7 @@ export const isMorphOrRelationFlatFieldMetadata = <
   FlatFieldMetadata<MorphOrRelationFieldMetadataType> =>
   isFlatFieldMetadataOfTypes(flatFieldMetadata, [
     ...MORPH_OR_RELATION_FIELD_TYPES,
-  ]);
+  ]) && !isMorphRelationHead(flatFieldMetadata);
 
 export const isMorphOrRelationUniversalFlatFieldMetadata = (
   universalFlatFieldMetadata: UniversalFlatFieldMetadata,

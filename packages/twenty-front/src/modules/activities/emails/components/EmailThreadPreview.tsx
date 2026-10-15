@@ -77,6 +77,7 @@ const StyledReceivedAt = styled.div`
 
 type EmailThreadPreviewProps = {
   thread: TimelineThread;
+  divider?: boolean;
 };
 
 type LastAvatar = {
@@ -86,7 +87,10 @@ type LastAvatar = {
   placeholderColorSeed: string | undefined;
 };
 
-export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
+export const EmailThreadPreview = ({
+  thread,
+  divider = false,
+}: EmailThreadPreviewProps) => {
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -145,11 +149,15 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
     isSubjectVisible && isNonEmptyString(thread.subject)
       ? thread.subject
       : t`Email thread`;
+  const draftTag = thread.lastMessageIsDraft ? (
+    <Tag color="orange">{t`Draft`}</Tag>
+  ) : null;
 
   return (
     <ActivityRow
       onClick={handleThreadClick}
       disabled={isDisabled}
+      divider={divider}
       label={label}
     >
       <StyledHeading unread={!thread.read}>
@@ -198,17 +206,21 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
 
       <StyledSubjectAndBody>
         {visibility === MessageChannelVisibility.METADATA && (
-          <EmailThreadNotShared visibility={visibility} />
+          <>
+            {draftTag}
+            <EmailThreadNotShared visibility={visibility} />
+          </>
         )}
         {visibility === MessageChannelVisibility.SUBJECT && (
           <>
+            {draftTag}
             <StyledSubject>{thread.subject}</StyledSubject>
             <EmailThreadNotShared visibility={visibility} />
           </>
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <>
-            {thread.lastMessageIsDraft && <Tag color="orange">{t`Draft`}</Tag>}
+            {draftTag}
             <StyledSubject>{thread.subject}</StyledSubject>
             <StyledBody>{thread.lastMessageBody}</StyledBody>
           </>

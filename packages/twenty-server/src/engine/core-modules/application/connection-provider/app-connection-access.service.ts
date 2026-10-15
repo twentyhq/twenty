@@ -21,12 +21,14 @@ export class AppConnectionAccessService {
     userWorkspaceId,
     apiKeyId,
     applicationId,
+    agentId,
   }: {
     isWorkspaceShared: boolean;
     workspaceId: string;
     userWorkspaceId?: string;
     apiKeyId?: string;
     applicationId?: string;
+    agentId?: string;
   }): Promise<void> {
     if (!isWorkspaceShared) {
       return;
@@ -41,6 +43,7 @@ export class AppConnectionAccessService {
         ),
         apiKeyId,
         applicationId,
+        agentId,
       });
 
     if (!hasPermission) {

@@ -7,7 +7,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
+import { type SidePanelContextChipProps } from '@/side-panel/types/SidePanelContextChipProps';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {

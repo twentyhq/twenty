@@ -1,4 +1,5 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
+import { t } from '@lingui/core/macro';
 
 import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
@@ -16,8 +17,8 @@ import {
   IconListCheck,
   IconListNumbers,
   IconMoodSmile,
-  IconPilcrow,
   IconTable,
+  IconTextSize,
 } from 'twenty-ui/icon';
 
 const Icons: Record<string, IconComponent> = {
@@ -35,7 +36,7 @@ const Icons: Record<string, IconComponent> = {
   'Bullet List': IconList,
   'Check List': IconListCheck,
   'Code Block': IconCode,
-  Paragraph: IconPilcrow,
+  Paragraph: IconTextSize,
   Table: IconTable,
   Emoji: IconMoodSmile,
 };
@@ -49,6 +50,7 @@ export const getDashboardSlashMenu = (
     .filter((item) => !EXCLUDED_BLOCK_TYPES.includes(item.title))
     .map((item) => ({
       ...item,
+      title: item.title === 'Paragraph' ? t`Text` : item.title,
       Icon: Icons[item.title],
     }));
 

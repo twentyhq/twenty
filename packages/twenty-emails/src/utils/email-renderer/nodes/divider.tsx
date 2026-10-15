@@ -4,5 +4,5 @@ import { type ReactNode } from 'react';
 import { blockStyle } from 'src/utils/email-renderer/utils/block-style';
 
 export const divider = (node: JSONContent): ReactNode => {
-  return <Hr style={blockStyle(node.attrs?.style)} />;
+  return <Hr style={{ width: 'auto', ...blockStyle(node.attrs?.style) }} />;
 };

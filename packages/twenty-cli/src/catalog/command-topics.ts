@@ -8,6 +8,10 @@ export const COMMAND_TOPICS: CommandTopicDefinition[] = [
     helpGroup: HELP_GROUP.APP,
   },
   {
+    path: ['app', 'translations'],
+    description: 'Manage app translation catalogs',
+  },
+  {
     path: ['data'],
     description: 'Read workspace records',
     helpGroup: HELP_GROUP.WORKSPACE,

@@ -8,12 +8,10 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
-const StyledFooterContainer = styled.div`
-  > div {
-    align-items: center;
-    display: flex;
-    padding: ${themeCssVariables.spacing[1]};
-  }
+const StyledFooter = styled(Card.Footer)`
+  align-items: center;
+  display: flex;
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledButton = styled.button`
@@ -93,14 +91,12 @@ export const SettingsListCard = <
         />
       ))}
       {hasFooter && (
-        <StyledFooterContainer>
-          <Card.Footer divider={!!items.length}>
-            <StyledButton onClick={onFooterButtonClick}>
-              <IconPlus size={theme.icon.size.md} />
-              {footerButtonLabel}
-            </StyledButton>
-          </Card.Footer>
-        </StyledFooterContainer>
+        <StyledFooter divider={!!items.length}>
+          <StyledButton onClick={onFooterButtonClick}>
+            <IconPlus size={theme.icon.size.md} />
+            {footerButtonLabel}
+          </StyledButton>
+        </StyledFooter>
       )}
     </Card.Root>
   );

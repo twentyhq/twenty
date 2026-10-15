@@ -18,6 +18,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { filterMarketplaceApps } from '~/pages/settings/applications/utils/filterMarketplaceApps';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -136,12 +137,11 @@ export const SettingsApplicationsAvailableTab = () => {
       <StyledSearchInputContainer>
         <SearchInput
           placeholder={t`Search an application`}
-          filterButtonAriaLabel={t`Filter applications`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger ariaLabel={t`Filter applications`} />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -157,7 +157,7 @@ export const SettingsApplicationsAvailableTab = () => {
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchInputContainer>
 
