@@ -65,7 +65,7 @@
     "@tiptap/extension-bold": "3.30.5",
     "@tiptap/extension-collaboration": "3.30.5",
     "@tiptap/extension-document": "3.30.5",
-    "@tiptap/extension-drag-handle": "3.30.5",
+    "@tiptap/extension-drag-handle": "patch:@tiptap/extension-drag-handle@npm%3A3.30.5#~/.yarn/patches/@tiptap-extension-drag-handle-npm-3.30.5-e53a22740d.patch",
     "@tiptap/extension-drag-handle-react": "3.30.5",
     "@tiptap/extension-hard-break": "3.30.5",
     "@tiptap/extension-heading": "3.30.5",

@@ -50,6 +50,10 @@ export const EMAIL_DOCUMENT_NODE_CATALOG = {
     renderMode: 'node',
     stringAttributes: {},
   },
+  [TIPTAP_NODE_TYPES.BLOCKQUOTE]: {
+    renderMode: 'node',
+    stringAttributes: {},
+  },
   [TIPTAP_NODE_TYPES.HARD_BREAK]: {
     renderMode: 'node',
     stringAttributes: {},
