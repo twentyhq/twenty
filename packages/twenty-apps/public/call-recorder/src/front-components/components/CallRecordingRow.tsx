@@ -1,42 +1,51 @@
 import styled from '@emotion/styled';
-import { AppPath, navigate } from 'twenty-sdk/front-component';
-import { IconVideo } from 'twenty-ui/icon';
+import { isUndefined } from '@sniptt/guards';
+import { Tag } from 'twenty-ui/data-display';
+import { IconCalendar, IconClock, IconVideo } from 'twenty-ui/icon';
 import { ICON } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRowButton = styled.button`
-  align-items: center;
+import { StyledCallRecordingRowLayout } from 'src/front-components/components/StyledCallRecordingRowLayout';
+import { type CallRecordingStatusTag } from 'src/front-components/types/call-recording-status-tag.type';
+import { openRecord } from 'src/front-components/utils/open-record.util';
+
+const StyledRowButton = styled(
+  StyledCallRecordingRowLayout.withComponent('button'),
+)`
+  appearance: none;
   background: none;
   border: none;
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  color: ${() => themeCssVariables.font.color.primary};
+  border-radius: 0;
+  color: inherit;
   cursor: pointer;
-  display: flex;
   font-family: inherit;
   font-size: ${() => themeCssVariables.font.size.md};
-  gap: ${() => themeCssVariables.spacing[2]};
-  padding: ${() => themeCssVariables.spacing[1]}
-    ${() => themeCssVariables.spacing[2]};
   text-align: left;
-  width: 100%;
 
   &:hover {
-    background: ${() => themeCssVariables.background.transparent.light};
+    background: ${() => themeCssVariables.background.transparent.lighter};
   }
 
   &:focus-visible {
-    outline: 1px solid ${() => themeCssVariables.border.color.blue};
+    outline: 2px solid ${() => themeCssVariables.color.blue};
+    outline-offset: -2px;
   }
 `;
 
-const StyledIconContainer = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
+// Mirrors Twenty's FileIcon tile, in the VIDEO file category color.
+const StyledVideoTile = styled.span`
+  align-items: center;
+  background: ${() => themeCssVariables.color.purple};
+  border-radius: ${() => themeCssVariables.border.radius.sm};
+  color: ${() => themeCssVariables.grayScale.gray1};
   display: flex;
   flex-shrink: 0;
+  justify-content: center;
+  padding: 5px;
 `;
 
 const StyledTitle = styled.span`
+  color: ${() => themeCssVariables.font.color.primary};
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -44,37 +53,76 @@ const StyledTitle = styled.span`
   white-space: nowrap;
 `;
 
-const StyledDate = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
+const StyledRightContent = styled.span`
+  align-items: center;
+  display: flex;
   flex-shrink: 0;
+  gap: ${() => themeCssVariables.spacing[2]};
   white-space: nowrap;
+`;
+
+const StyledMetadata = styled.span`
+  align-items: center;
+  display: flex;
+  gap: ${() => themeCssVariables.spacing['0.5']};
+`;
+
+const StyledMetadataIconContainer = styled.span`
+  align-items: center;
+  color: ${() => themeCssVariables.font.color.light};
+  display: flex;
 `;
 
 type CallRecordingRowProps = {
   callRecordingId: string;
   title: string;
   formattedDate: string | undefined;
+  formattedDuration: string | undefined;
+  statusTag: CallRecordingStatusTag | undefined;
 };
 
 export const CallRecordingRow = ({
   callRecordingId,
   title,
   formattedDate,
+  formattedDuration,
+  statusTag,
 }: CallRecordingRowProps) => {
   const handleClick = () => {
-    void navigate(AppPath.RecordShowPage, {
+    void openRecord({
       objectNameSingular: 'callRecording',
-      objectRecordId: callRecordingId,
+      recordId: callRecordingId,
     });
   };
 
   return (
-    <StyledRowButton type="button" title={title} onClick={handleClick}>
-      <StyledIconContainer>
-        <IconVideo size={ICON.size.md} stroke={ICON.stroke.md} />
-      </StyledIconContainer>
-      <StyledTitle>{title}</StyledTitle>
-      {formattedDate && <StyledDate>{formattedDate}</StyledDate>}
+    <StyledRowButton type="button" aria-label={title} onClick={handleClick}>
+      <StyledVideoTile>
+        <IconVideo size={ICON.size.sm} stroke={ICON.stroke.sm} />
+      </StyledVideoTile>
+      <StyledTitle title={title}>{title}</StyledTitle>
+      <StyledRightContent>
+        {!isUndefined(statusTag) ? (
+          <Tag color={statusTag.color} text={statusTag.text} />
+        ) : (
+          !isUndefined(formattedDuration) && (
+            <StyledMetadata>
+              <StyledMetadataIconContainer>
+                <IconClock size={ICON.size.md} />
+              </StyledMetadataIconContainer>
+              {formattedDuration}
+            </StyledMetadata>
+          )
+        )}
+        {!isUndefined(formattedDate) && (
+          <StyledMetadata>
+            <StyledMetadataIconContainer>
+              <IconCalendar size={ICON.size.md} />
+            </StyledMetadataIconContainer>
+            {formattedDate}
+          </StyledMetadata>
+        )}
+      </StyledRightContent>
     </StyledRowButton>
   );
 };

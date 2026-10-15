@@ -1,0 +1,17 @@
+import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+// Mirrors Twenty's ActivityList card used by the Files widget.
+export const StyledCallRecordingCard = styled.div`
+  background: ${() => themeCssVariables.background.primary};
+  border: 1px solid ${() => themeCssVariables.border.color.medium};
+  border-radius: ${() => themeCssVariables.border.radius.md};
+  box-sizing: border-box;
+  color: ${() => themeCssVariables.font.color.secondary};
+  overflow: hidden;
+  width: 100%;
+
+  & > :not(:last-child) {
+    border-bottom: 1px solid ${() => themeCssVariables.border.color.light};
+  }
+`;

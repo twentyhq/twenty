@@ -1,6 +1,5 @@
 import 'twenty-ui/style.css';
 
-import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import {
   useLocale,
@@ -9,20 +8,21 @@ import {
 } from 'twenty-sdk/front-component';
 
 import { CallRecordingRow } from 'src/front-components/components/CallRecordingRow';
+import { CallRecordingRowSkeleton } from 'src/front-components/components/CallRecordingRowSkeleton';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
+import { StyledCallRecordingCard } from 'src/front-components/components/StyledCallRecordingCard';
 import { StyledWidgetContainer } from 'src/front-components/components/StyledWidgetContainer';
 import { WidgetMessage } from 'src/front-components/components/WidgetMessage';
 import { useCallRecordingsForRecord } from 'src/front-components/hooks/use-call-recordings-for-record';
 import { type CalendarEventTargetFieldName } from 'src/front-components/types/calendar-event-target-field-name.type';
 import { getCallRecordingDisplayDate } from 'src/front-components/utils/get-call-recording-display-date.util';
 import { formatCallRecordingDate } from 'src/front-components/utils/format-call-recording-date.util';
+import { formatCallRecordingDuration } from 'src/front-components/utils/format-call-recording-duration.util';
+import { getCallRecordingStatusTag } from 'src/front-components/utils/get-call-recording-status-tag.util';
 import { getCalendarEventTargetFieldName } from 'src/front-components/utils/get-calendar-event-target-field-name.util';
 import { resolveCallRecordingDisplayTitle } from 'src/front-components/utils/resolve-call-recording-display-title.util';
 
-const StyledRowList = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+const CALL_RECORDING_SKELETON_ROW_COUNT = 3;
 
 type CallRecordingListProps = {
   calendarEventTargetFieldName: CalendarEventTargetFieldName;
@@ -41,7 +41,16 @@ const CallRecordingList = ({
 
   switch (callRecordingsState.status) {
     case 'loading':
-      return <WidgetMessage message="Loading call recordings…" />;
+      return (
+        <StyledCallRecordingCard aria-busy>
+          {Array.from(
+            { length: CALL_RECORDING_SKELETON_ROW_COUNT },
+            (_, skeletonRowIndex) => (
+              <CallRecordingRowSkeleton key={skeletonRowIndex} />
+            ),
+          )}
+        </StyledCallRecordingCard>
+      );
     case 'error':
       return <WidgetMessage message="Could not load call recordings." />;
     case 'loaded':
@@ -50,7 +59,7 @@ const CallRecordingList = ({
       }
 
       return (
-        <StyledRowList>
+        <StyledCallRecordingCard>
           {callRecordingsState.callRecordings.map((callRecording) => (
             <CallRecordingRow
               key={callRecording.id}
@@ -60,9 +69,14 @@ const CallRecordingList = ({
                 dateTime: getCallRecordingDisplayDate(callRecording),
                 locale,
               })}
+              formattedDuration={formatCallRecordingDuration({
+                startedAt: callRecording.startedAt,
+                endedAt: callRecording.endedAt,
+              })}
+              statusTag={getCallRecordingStatusTag(callRecording.status)}
             />
           ))}
-        </StyledRowList>
+        </StyledCallRecordingCard>
       );
   }
 };
@@ -79,7 +93,9 @@ export const CallRecordingsWidget = () => {
 
   const renderContent = () => {
     if (isUndefined(calendarEventTargetFieldName)) {
-      return <WidgetMessage message="Not available on this page." />;
+      return (
+        <WidgetMessage message="Call recordings are only available on person, company and opportunity pages." />
+      );
     }
 
     if (isUndefined(recordId)) {

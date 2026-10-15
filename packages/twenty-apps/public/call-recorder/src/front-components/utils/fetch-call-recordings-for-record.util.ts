@@ -158,7 +158,9 @@ const fetchListedCallRecordingsForCalendarEventIds = async (
             node: {
               id: true,
               title: true,
+              status: true,
               startedAt: true,
+              endedAt: true,
               createdAt: true,
               calendarEventId: true,
               ...(isCalendarEventLoaded

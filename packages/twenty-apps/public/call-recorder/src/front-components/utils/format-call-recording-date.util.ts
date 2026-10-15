@@ -2,10 +2,9 @@ import { isUndefined } from '@sniptt/guards';
 
 import { getTimestamp } from 'src/front-components/utils/get-timestamp.util';
 
+// Matches Twenty's file rows (formatToHumanReadableDate).
 const CALL_RECORDING_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
+  dateStyle: 'medium',
 };
 
 const dateTimeFormatByLocale = new Map<string, Intl.DateTimeFormat>();

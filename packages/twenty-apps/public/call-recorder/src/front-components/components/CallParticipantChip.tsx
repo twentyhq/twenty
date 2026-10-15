@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { AppPath, navigate } from 'twenty-sdk/front-component';
 import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type CallParticipantDisplayItem } from 'src/front-components/types/call-participant-display-item.type';
+import { openRecord } from 'src/front-components/utils/open-record.util';
 
 const StyledChipButton = styled.button`
   background: none;
@@ -30,9 +30,9 @@ export const CallParticipantChip = ({
   switch (participant.kind) {
     case 'person': {
       const handleClick = () => {
-        void navigate(AppPath.RecordShowPage, {
+        void openRecord({
           objectNameSingular: 'person',
-          objectRecordId: participant.personId,
+          recordId: participant.personId,
         });
       };
 
