@@ -51,7 +51,7 @@ export class BillingCreditRolloverService {
 
     // Outside the lock: no credit write changes ClickHouse usage, and its latency would stall grants
     const usageMicro =
-      await this.billingUsageService.getCreditsUsedBetweenOrNull({
+      await this.billingUsageService.getWorkspaceCreditsUsedMicroBetweenOrNull({
         workspaceId,
         from: closingPeriodStart,
         to: closingPeriodEnd,

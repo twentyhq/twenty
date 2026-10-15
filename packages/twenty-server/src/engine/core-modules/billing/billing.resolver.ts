@@ -21,7 +21,9 @@ import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingUpdateUserCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
@@ -404,6 +406,31 @@ export class BillingResolver {
     };
   }
 
+  @Mutation(() => BillingCustomerEntity)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async updateUserCreditsFallback(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { userCreditsFallback }: BillingUpdateUserCreditsFallbackInput,
+  ): Promise<BillingCustomerEntity> {
+    return this.billingService.updateUserCreditsFallbackOrThrow({
+      workspaceId: workspace.id,
+      userCreditsFallback,
+    });
+  }
+
   @Query(() => [BillingPlanDTO])
   @UseGuards(
     AuthPrincipalGuard({
@@ -498,10 +525,15 @@ export class BillingResolver {
 
     return usageData.map((item) => ({
       ...item,
-      usedCredits: toDisplayCredits(item.usedCredits),
-      grantedCredits: toDisplayCredits(item.grantedCredits),
-      rolloverCredits: toDisplayCredits(item.rolloverCredits),
-      totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
+      workspaceCreditsUsed: toDisplayCredits(item.workspaceCreditsUsed),
+      userCreditsUsed: toDisplayCredits(item.userCreditsUsed),
+      workspaceCreditsGranted: toDisplayCredits(item.workspaceCreditsGranted),
+      workspaceCreditsRolledOver: toDisplayCredits(
+        item.workspaceCreditsRolledOver,
+      ),
+      workspaceCreditsTotalGranted: toDisplayCredits(
+        item.workspaceCreditsTotalGranted,
+      ),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     }));
   }

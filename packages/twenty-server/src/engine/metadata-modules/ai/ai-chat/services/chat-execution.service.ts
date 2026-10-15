@@ -62,6 +62,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import {
@@ -126,12 +127,16 @@ export type ChatExecutionOptions = {
   modelId?: string;
   abortSignal: AbortSignal;
   conversationSizeTokens: number;
+  onUserCreditsExhausted: (notice: {
+    renewsAt: Date;
+    isFallingBackToWorkspaceCredits: boolean;
+  }) => Promise<void>;
 };
 
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
-  hasNoMoreAvailableCredits: () => boolean;
+  getStopReason: () => StepDebitResult['stopReason'];
   getStreamError: () => unknown;
 };
 
@@ -171,6 +176,7 @@ export class ChatExecutionService {
     modelId,
     abortSignal,
     conversationSizeTokens,
+    onUserCreditsExhausted,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const getAuthorization = createTurnAuthorizer({
       authorize: () =>
@@ -460,12 +466,25 @@ export class ChatExecutionService {
 
     const modelMessages = pruningResult.messages;
 
-    let hasNoMoreAvailableCredits = false;
+    let stopReason: StepDebitResult['stopReason'] = null;
+    let turnUserCreditsUsedMicro = 0;
     const streamStartedAt = performance.now();
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
     let stepIndex = 0;
     let lastUnderlyingStreamError: unknown;
+
+    const notifyUserCreditsCrossing = async (debit: StepDebitResult) => {
+      if (
+        isDefined(debit.userAllowanceExhaustedUntil) &&
+        debit.userCreditsUsedMicro > 0
+      ) {
+        await onUserCreditsExhausted({
+          renewsAt: debit.userAllowanceExhaustedUntil,
+          isFallingBackToWorkspaceCredits: debit.stopReason === null,
+        });
+      }
+    };
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce(
@@ -496,13 +515,20 @@ export class ChatExecutionService {
         UsageOperationType.AI_CHAT_TOKEN,
         null,
         userWorkspaceId,
+        Math.min(turnUserCreditsUsedMicro, creditsUsedMicro),
       );
 
-      void this.aiBillingService.billNativeWebSearchUsage(
-        countNativeWebSearchCallsFromSteps(steps),
-        workspace.id,
-        userWorkspaceId,
-      );
+      void this.aiBillingService
+        .billNativeWebSearchUsage(
+          countNativeWebSearchCallsFromSteps(steps),
+          workspace.id,
+          userWorkspaceId,
+        )
+        .then(async (webSearchDebit) => {
+          if (isDefined(webSearchDebit) && stopReason !== 'userAllowance') {
+            await notifyUserCreditsCrossing(webSearchDebit);
+          }
+        });
 
       const modelAttr = { model: registeredModel.modelId };
 
@@ -547,7 +573,7 @@ export class ChatExecutionService {
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
         endsOnPausingToolCall({ steps: step.steps }) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
-        hasNoMoreAvailableCredits,
+        isDefined(stopReason),
       ...buildAiTelemetry({
         functionId: isWorkspaceSetupThread
           ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
@@ -619,7 +645,7 @@ export class ChatExecutionService {
           bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
         });
 
-        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+        const stepDebit =
           await this.aiBillingService.decrementAndCheckAvailableCredits({
             modelId: registeredModel.modelId,
             billingInput: {
@@ -633,9 +659,10 @@ export class ChatExecutionService {
             spenders: { userWorkspaceId },
           });
 
-        if (stepHasNoMoreAvailableCredits) {
-          hasNoMoreAvailableCredits = true;
-        }
+        stopReason ??= stepDebit.stopReason;
+        turnUserCreditsUsedMicro += stepDebit.userCreditsUsedMicro;
+
+        await notifyUserCreditsCrossing(stepDebit);
 
         this.logger.log(
           `[AI_CHAT_TOKENS] step #${++stepIndex} — ` +
@@ -736,7 +763,7 @@ export class ChatExecutionService {
     return {
       stream,
       modelConfig,
-      hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
+      getStopReason: () => stopReason,
       getStreamError: () => lastUnderlyingStreamError,
     };
   }

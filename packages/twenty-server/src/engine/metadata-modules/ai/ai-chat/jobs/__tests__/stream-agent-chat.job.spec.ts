@@ -257,7 +257,7 @@ describe('StreamAgentChatJob', () => {
         : jest.fn().mockResolvedValue({
             stream: chatStream,
             modelConfig,
-            hasNoMoreAvailableCredits: () => false,
+            getStopReason: () => null,
             getStreamError: () => chatStream.streamError,
           }),
     };

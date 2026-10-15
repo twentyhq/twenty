@@ -10,17 +10,23 @@ export const fromRecordUsageInputToUsageConsumptionRow = ({
   spenders,
   creditsUsedMicro = 0,
   quantity,
-}: RecordUsageInput): UsageConsumptionRow => ({
-  operationType,
-  unit,
-  userWorkspaceId: spenders?.userWorkspaceId ?? '',
-  apiKeyId: spenders?.apiKeyId ?? '',
-  applicationId: spenders?.applicationId ?? '',
-  agentId: spenders?.agentId ?? '',
-  workflowId: spenders?.workflowId ?? '',
-  logicFunctionId: spenders?.logicFunctionId ?? '',
-  creditsUsedMicro: isValidCreditAmountMicro(creditsUsedMicro)
+}: RecordUsageInput): UsageConsumptionRow => {
+  const validCreditsUsedMicro = isValidCreditAmountMicro(creditsUsedMicro)
     ? creditsUsedMicro
-    : 0,
-  quantity,
-});
+    : 0;
+
+  return {
+    operationType,
+    unit,
+    userWorkspaceId: spenders?.userWorkspaceId ?? '',
+    apiKeyId: spenders?.apiKeyId ?? '',
+    applicationId: spenders?.applicationId ?? '',
+    agentId: spenders?.agentId ?? '',
+    workflowId: spenders?.workflowId ?? '',
+    logicFunctionId: spenders?.logicFunctionId ?? '',
+    creditsUsedMicro: validCreditsUsedMicro,
+    userCreditsUsedMicro: 0,
+    workspaceCreditsUsedMicro: validCreditsUsedMicro,
+    quantity,
+  };
+};
