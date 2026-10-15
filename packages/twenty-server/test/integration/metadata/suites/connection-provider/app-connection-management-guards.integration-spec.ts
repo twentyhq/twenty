@@ -95,27 +95,27 @@ describe('app connection management guards (e2e)', () => {
     return data.generateTransientToken.transientToken.token;
   };
 
+  const transientTokenGenerators = {
+    admin: generateTransientToken,
+    member: generateMemberTransientToken,
+    guest: generateGuestTransientToken,
+  };
+
   const startAuthorizeAndGetErrorMessage = async ({
     reconnectingConnectedAccountId,
     visibility,
-    asMember = false,
-    asGuest = false,
+    as = 'admin',
   }: {
     reconnectingConnectedAccountId?: string;
     visibility?: 'user' | 'workspace';
-    asMember?: boolean;
-    asGuest?: boolean;
+    as?: keyof typeof transientTokenGenerators;
   }): Promise<string> => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
       .query({
         applicationId: applicationDbId,
         providerName: 'slack',
-        transientToken: asGuest
-          ? await generateGuestTransientToken()
-          : asMember
-            ? await generateMemberTransientToken()
-            : await generateTransientToken(),
+        transientToken: await transientTokenGenerators[as](),
         ...(isDefined(reconnectingConnectedAccountId)
           ? { reconnectingConnectedAccountId }
           : {}),
@@ -225,7 +225,7 @@ describe('app connection management guards (e2e)', () => {
   it('refuses a member without the Applications permission to reconnect a workspace-shared connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
-      asMember: true,
+      as: 'member',
     });
 
     expect(errorMessage).toContain('does not have permission');
@@ -234,7 +234,7 @@ describe('app connection management guards (e2e)', () => {
   it('refuses a member without the Applications permission to create a workspace-shared connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       visibility: 'workspace',
-      asMember: true,
+      as: 'member',
     });
 
     expect(errorMessage).toContain('does not have permission');
@@ -244,7 +244,7 @@ describe('app connection management guards (e2e)', () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
       visibility: 'workspace',
-      asMember: true,
+      as: 'member',
     });
 
     expect(errorMessage).toContain('does not have permission');
@@ -253,7 +253,7 @@ describe('app connection management guards (e2e)', () => {
   it('lets a member without the Applications permission reconnect their own private connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
-      asMember: true,
+      as: 'member',
     });
 
     expect(errorMessage).not.toContain('Cannot reconnect connectedAccount');
@@ -263,7 +263,7 @@ describe('app connection management guards (e2e)', () => {
   it('refuses a guest without the Connected accounts permission to reconnect their own private connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_PHIL_ID,
-      asGuest: true,
+      as: 'guest',
     });
 
     expect(errorMessage).toContain('does not have permission');
@@ -327,7 +327,7 @@ describe('app connection management guards (e2e)', () => {
       const errorMessage = await startAuthorizeAndGetErrorMessage({
         reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
         visibility: 'workspace',
-        asMember: true,
+        as: 'member',
       });
 
       expect(errorMessage).not.toContain('Cannot reconnect connectedAccount');
@@ -337,7 +337,7 @@ describe('app connection management guards (e2e)', () => {
     it('refuses the member to turn a workspace-shared connection into a private one', async () => {
       const errorMessage = await startAuthorizeAndGetErrorMessage({
         reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
-        asMember: true,
+        as: 'member',
       });
 
       expect(errorMessage).toContain('does not have permission');
