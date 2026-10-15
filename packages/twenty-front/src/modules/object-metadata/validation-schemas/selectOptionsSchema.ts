@@ -22,7 +22,7 @@ const selectOptionSchema = z
       }
     },
     {
-      error: t`Label is not transliterable`,
+      error: () => t`Label is not transliterable`,
     },
   );
 
@@ -35,7 +35,7 @@ export const selectOptionsSchema = z
       return new Set(optionIds).size === options.length;
     },
     {
-      error: t`Options must have unique ids`,
+      error: () => t`Options must have unique ids`,
     },
   )
   .refine(
@@ -44,13 +44,13 @@ export const selectOptionsSchema = z
       return new Set(optionValues).size === options.length;
     },
     {
-      error: t`Options must have unique values`,
+      error: () => t`Options must have unique values`,
     },
   )
   .refine(
     (options) =>
       [...options].sort().every((option, index) => option.position === index),
     {
-      error: t`Options positions must be sequential`,
+      error: () => t`Options positions must be sequential`,
     },
   );

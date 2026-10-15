@@ -7,6 +7,6 @@ export const simpleQuotesStringSchema = z
     (value: string): value is `'${string}'` =>
       value.startsWith("'") && value.endsWith("'"),
     {
-      error: t`String should be wrapped in simple quotes`,
+      error: () => t`String should be wrapped in simple quotes`,
     },
   );
