@@ -91,4 +91,48 @@ describe('useToggleAgentChatMessageReaction', () => {
     ]);
     expect(enqueueToast).toHaveBeenCalledTimes(1);
   });
+
+  it('sends changes to one emoji in order and keeps the newest choice when an older one fails', async () => {
+    let refuseAdd: (error: Error) => void = () => undefined;
+
+    mutate
+      .mockReturnValueOnce(
+        new Promise((_resolve, reject) => {
+          refuseAdd = reject;
+        }),
+      )
+      .mockResolvedValueOnce({ data: {} });
+
+    const { result, getReactions } = renderToggleReaction();
+
+    let addToggle: Promise<void> = Promise.resolve();
+    let removeToggle: Promise<void> = Promise.resolve();
+
+    await act(async () => {
+      addToggle = result.current.toggleAgentChatMessageReaction({
+        messageId: MESSAGE_ID,
+        emoji: '👍',
+      });
+      removeToggle = result.current.toggleAgentChatMessageReaction({
+        messageId: MESSAGE_ID,
+        emoji: '👍',
+      });
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(1);
+    expect(getReactions()).toEqual([]);
+
+    await act(async () => {
+      refuseAdd(new Error('Network error'));
+      await Promise.all([addToggle, removeToggle]);
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(2);
+    expect(mutate.mock.calls[1][0].variables).toEqual({
+      messageId: MESSAGE_ID,
+      emoji: '👍',
+    });
+    expect(getReactions()).toEqual([]);
+    expect(enqueueToast).toHaveBeenCalledTimes(1);
+  });
 });

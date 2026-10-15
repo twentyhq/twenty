@@ -13,6 +13,14 @@ import {
   RemoveAgentChatMessageReactionDocument,
 } from '~/generated-metadata/graphql';
 
+type ReactionRequestQueue = {
+  lastRequest: Promise<void>;
+  isConfirmedReacted: boolean;
+};
+
+// Shared by every caller so one emoji's changes reach the server in the order they were made
+const reactionRequestQueues = new Map<string, ReactionRequestQueue>();
+
 export const useToggleAgentChatMessageReaction = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
@@ -51,16 +59,37 @@ export const useToggleAgentChatMessageReaction = () => {
 
       setOwnReaction(!hasReacted);
 
-      try {
-        await apolloClient.mutate({
-          mutation: hasReacted
-            ? RemoveAgentChatMessageReactionDocument
-            : AddAgentChatMessageReactionDocument,
-          variables: { messageId, emoji },
-        });
-      } catch (error) {
-        setOwnReaction(hasReacted);
-        enqueueToast(getToastOptionsFromError({ error }));
+      const queueKey = `${messageId}:${emoji}`;
+      const queue = reactionRequestQueues.get(queueKey) ?? {
+        lastRequest: Promise.resolve(),
+        isConfirmedReacted: hasReacted,
+      };
+
+      const request = queue.lastRequest.then(async () => {
+        try {
+          await apolloClient.mutate({
+            mutation: hasReacted
+              ? RemoveAgentChatMessageReactionDocument
+              : AddAgentChatMessageReactionDocument,
+            variables: { messageId, emoji },
+          });
+          queue.isConfirmedReacted = !hasReacted;
+        } catch (error) {
+          // A newer change is still on its way and will settle the reaction
+          if (queue.lastRequest === request) {
+            setOwnReaction(queue.isConfirmedReacted);
+          }
+          enqueueToast(getToastOptionsFromError({ error }));
+        }
+      });
+
+      queue.lastRequest = request;
+      reactionRequestQueues.set(queueKey, queue);
+
+      await request;
+
+      if (queue.lastRequest === request) {
+        reactionRequestQueues.delete(queueKey);
       }
     },
     [apolloClient, enqueueToast, store],

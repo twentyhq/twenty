@@ -54,8 +54,6 @@ export class AddAgentMessageReactionObjectCommand extends ProvisionedWorkspaceCo
         'flatIndexMaps',
       ]);
 
-    // A reaction needs a message to point at, and workspaces without chat
-    // history have none
     if (
       !isDefined(
         flatObjectMetadataMaps.byUniversalIdentifier[
