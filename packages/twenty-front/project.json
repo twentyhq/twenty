@@ -85,12 +85,14 @@
         "{projectRoot}/src/**/*.{ts,tsx}",
         "{projectRoot}/.oxlintrc.i18n.json",
         "{projectRoot}/scripts/check-unlocalized-strings.mjs",
+        "{projectRoot}/scripts/filter-unlocalized-strings.mjs",
+        "{projectRoot}/scripts/filter-unlocalized-strings.test.mjs",
         "{projectRoot}/package.json",
         "{workspaceRoot}/yarn.lock"
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node scripts/check-unlocalized-strings.mjs"
+        "command": "node --test scripts/filter-unlocalized-strings.test.mjs && node scripts/check-unlocalized-strings.mjs"
       }
     },
     "lint:i18n": {

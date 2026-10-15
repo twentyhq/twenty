@@ -62,7 +62,8 @@
         "vitest.config.ts",
         "lingui.config.ts",
         "nyc.config.cjs",
-        "jest-failures-only-reporter.cjs"
+        "jest-failures-only-reporter.cjs",
+        "scripts/**/*.mjs"
       ],
       "graphql-codegen": [
         "codegen.cjs",

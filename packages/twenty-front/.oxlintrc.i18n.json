@@ -9,8 +9,6 @@
       "error",
       {
         "ignore": [
-          "^(?![A-Z])\\S+$",
-          "^(?![A-Z]{1,3}$)[A-Z0-9_-]+$",
           "^\\s*$",
           "^\\d+(\\.\\d+)?(px|rem|em|%|vh|vw|s|ms)?$",
           "^#[0-9a-fA-F]{3,8}$",
@@ -25,6 +23,8 @@
           "^Bearer(?:\\s|$)",
           "^use (client|server)$",
           "^Aa$",
+          "^Ada$",
+          "^(stdout|stderr|SOC2|GDPR|OIDC|SAML)$",
           "^Twenty$",
           "^Twenty-DPA-",
           "^(?:M{1,4}\\s+d{1,4}|d{1,4}\\s+M{1,4})$",

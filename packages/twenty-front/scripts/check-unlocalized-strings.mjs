@@ -1,7 +1,8 @@
 import { spawnSync } from 'node:child_process';
-import { readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createStringDiagnosticFilter } from './filter-unlocalized-strings.mjs';
 
 const FRONTEND_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const RULE_CODE = 'lingui(no-unlocalized-strings)';
@@ -111,9 +112,25 @@ if (unexpectedErrors.length > 0) {
   );
 }
 
-const violations = diagnostics.filter(
-  (diagnostic) => diagnostic.code === RULE_CODE,
-);
+const diagnosticFilters = new Map();
+
+const violations = diagnostics.filter((diagnostic) => {
+  if (diagnostic.code !== RULE_CODE) {
+    return false;
+  }
+
+  let filter = diagnosticFilters.get(diagnostic.filename);
+
+  if (!filter) {
+    filter = createStringDiagnosticFilter(
+      diagnostic.filename,
+      readFileSync(resolve(FRONTEND_ROOT, diagnostic.filename)),
+    );
+    diagnosticFilters.set(diagnostic.filename, filter);
+  }
+
+  return filter(diagnostic.labels[0]?.span);
+});
 
 for (const violation of violations) {
   console.error(

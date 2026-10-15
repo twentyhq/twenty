@@ -130,7 +130,7 @@ export const SettingsAiModelHoverCard = ({
             label: t`Context`,
             value: (
               <StyledValueText>
-                {`${formatNumber(model.contextWindowTokens, {
+                {t`${formatNumber(model.contextWindowTokens, {
                   abbreviate: true,
                   decimals: 1,
                 })} tokens`}
@@ -146,7 +146,7 @@ export const SettingsAiModelHoverCard = ({
             label: t`Max output`,
             value: (
               <StyledValueText>
-                {`${formatNumber(model.maxOutputTokens, {
+                {t`${formatNumber(model.maxOutputTokens, {
                   abbreviate: true,
                   decimals: 1,
                 })} tokens`}
