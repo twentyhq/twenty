@@ -38,7 +38,6 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
@@ -64,7 +63,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewSortModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    CoreEntityCacheModule,
     NavigationMenuItemModule,
     WebhookModule,
     RoleModule,

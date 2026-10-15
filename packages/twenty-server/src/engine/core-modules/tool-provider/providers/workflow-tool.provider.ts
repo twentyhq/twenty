@@ -2,10 +2,8 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { isInstalledApplication } from 'src/engine/core-modules/application/utils/is-installed-application.util';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -33,13 +31,13 @@ export class WorkflowToolProvider implements ToolProvider {
     private readonly workflowToolService: WorkflowToolWorkspaceService | null,
     private readonly permissionsService: PermissionsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
     if (
       !this.workflowToolService ||
-      (await this.isCalledByInstalledApplication(context))
+      getScopedCallingApplication(context.application)?.canBeUninstalled ===
+        true
     ) {
       return false;
     }
@@ -92,24 +90,6 @@ export class WorkflowToolProvider implements ToolProvider {
       args,
       ToolCategory.WORKFLOW,
     );
-  }
-
-  private async isCalledByInstalledApplication(
-    context: ToolProviderContext,
-  ): Promise<boolean> {
-    if (!isDefined(context.application)) {
-      return false;
-    }
-
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      context.workspaceId,
-    );
-
-    return isInstalledApplication({
-      application: context.application,
-      workspaceCustomApplicationId: workspace?.workspaceCustomApplicationId,
-    });
   }
 
   private async buildToolSet(
