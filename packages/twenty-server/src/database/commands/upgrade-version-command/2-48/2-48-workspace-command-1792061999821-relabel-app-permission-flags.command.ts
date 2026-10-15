@@ -11,7 +11,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.48.0', 1792011687120)
+@RegisteredWorkspaceCommand('2.48.0', 1792061999821)
 @Command({
   name: 'upgrade:2-48:relabel-app-permission-flags',
   description:
