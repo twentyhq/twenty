@@ -8,6 +8,7 @@ import { type TeamsTranscriptHistoryPageCounts } from 'src/features/transcripts/
 import { type TeamsTranscriptHistoryRunningPhase } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-running-phase.type';
 import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
 import { getTeamsTranscriptHistoryChunkWindow } from 'src/features/transcripts/logic-functions/utils/get-teams-transcript-history-chunk-window';
+import { getTeamsTranscriptHistoryToImportCount } from 'src/features/transcripts/utils/get-teams-transcript-history-to-import-count';
 
 const getNextJob = ({
   state,
@@ -51,21 +52,25 @@ const getPhaseAfterPage = ({
   nextJob,
   importedCount,
   isImportLimitReachedOnPage,
+  isCountedRun,
 }: {
   phase: TeamsTranscriptHistoryRunningPhase;
   nextJob: TeamsTranscriptHistoryJobPayload | undefined;
   importedCount: number;
   isImportLimitReachedOnPage: boolean;
+  isCountedRun: boolean;
 }): Pick<
   TeamsTranscriptHistoryState,
   'phase' | 'errorCode' | 'isImportLimitReached'
 > => {
   if (
     phase === 'importing' &&
-    importedCount >= TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT &&
-    (isImportLimitReachedOnPage || isDefined(nextJob))
+    importedCount >= TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT
   ) {
-    return { phase: 'imported', isImportLimitReached: true };
+    // A counted run is refused above the limit, so reaching it means everything counted is in.
+    return isImportLimitReachedOnPage || (isDefined(nextJob) && !isCountedRun)
+      ? { phase: 'imported', isImportLimitReached: true }
+      : { phase: 'imported' };
   }
 
   if (!isDefined(nextJob)) {
@@ -106,6 +111,7 @@ export const getTeamsTranscriptHistoryPageTransition = ({
     nextJob,
     importedCount,
     isImportLimitReachedOnPage,
+    isCountedRun: getTeamsTranscriptHistoryToImportCount(state) > 0,
   });
 
   return {
