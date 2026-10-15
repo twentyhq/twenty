@@ -5,7 +5,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
-import { useRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelAccess';
+import { useSaveRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleAgentChatChannelAccess';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
 import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/SettingsRoleLabelContainer';
@@ -66,7 +66,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
   const { isChannelAccessDirty, saveChannelAccess, resetChannelAccess } =
-    useRoleAgentChatChannelAccess(roleId);
+    useSaveRoleAgentChatChannelAccess(roleId);
 
   const { enqueueToast } = useToast();
 

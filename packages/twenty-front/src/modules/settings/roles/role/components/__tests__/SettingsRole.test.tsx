@@ -33,9 +33,9 @@ jest.mock('@/settings/roles/role/hooks/useSaveDraftRoleToDB', () => ({
 }));
 
 jest.mock(
-  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelAccess',
+  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleAgentChatChannelAccess',
   () => ({
-    useRoleAgentChatChannelAccess: () => ({
+    useSaveRoleAgentChatChannelAccess: () => ({
       isChannelAccessDirty: false,
       saveChannelAccess: jest.fn(),
       resetChannelAccess: jest.fn(),

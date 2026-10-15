@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAgentChatChannelActions } from '@/ai/hooks/useAgentChatChannelActions';
 import { settingsDraftRoleAgentChatChannelIdsFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelIdsFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -15,7 +14,7 @@ export const useRoleAgentChatChannelAccess = (roleId: string) => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const { data, loading } = useQuery(GetAgentChatChannelsDocument, {
+  const { data } = useQuery(GetAgentChatChannelsDocument, {
     fetchPolicy: 'cache-and-network',
     skip: !isAiChatInboxEnabled,
   });
@@ -27,7 +26,6 @@ export const useRoleAgentChatChannelAccess = (roleId: string) => {
     settingsDraftRoleAgentChatChannelIdsFamilyState,
     roleId,
   );
-  const { updateAgentChatChannel } = useAgentChatChannelActions();
 
   const channels = data?.agentChatChannels ?? [];
   const checkedChannelIds =
@@ -52,30 +50,10 @@ export const useRoleAgentChatChannelAccess = (roleId: string) => {
         : [...checkedChannelIds, channelId],
     );
 
-  const saveChannelAccess = async () => {
-    for (const channel of changedChannels) {
-      await updateAgentChatChannel({
-        channelId: channel.id,
-        input: {
-          roleIds: channel.roleIds.includes(roleId)
-            ? channel.roleIds.filter(
-                (channelRoleId) => channelRoleId !== roleId,
-              )
-            : [...channel.roleIds, roleId],
-        },
-      });
-    }
-
-    setSettingsDraftRoleAgentChatChannelIds(null);
-  };
-
   return {
     channels,
-    isLoading: loading && channels.length === 0,
     checkedChannelIds,
-    isChannelAccessDirty: changedChannels.length > 0,
+    changedChannels,
     toggleChannel,
-    saveChannelAccess,
-    resetChannelAccess: () => setSettingsDraftRoleAgentChatChannelIds(null),
   };
 };
