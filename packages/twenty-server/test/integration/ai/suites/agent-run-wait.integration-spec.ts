@@ -181,8 +181,13 @@ describe('agent runs that wait (integration)', () => {
     await deleteOneAgent({ expectToFail: false, input: { id: agentId } });
   });
 
-  const runTrigger = () =>
-    getAppProviderByClassName<AgentTriggerRunnerService>(
+  // a trigger starts its run in a job, so the run is awaited until its first turn is no longer running
+  const runTrigger = async () => {
+    const [{ startedAt }] = await global.testDataSource.query(
+      `SELECT now() AS "startedAt"`,
+    );
+
+    await getAppProviderByClassName<AgentTriggerRunnerService>(
       'AgentTriggerRunnerService',
     ).run({
       workspaceId,
@@ -190,6 +195,17 @@ describe('agent runs that wait (integration)', () => {
       triggerId,
       payload: { type: 'CRON', firedAt: new Date().toISOString() },
     });
+
+    await expectEventually(async () => {
+      const [turn] = await global.testDataSource.query(
+        `SELECT status FROM "${schema}"."agentTurn"
+         WHERE "agentId" = $1 AND "createdAt" >= $2 ORDER BY "createdAt" LIMIT 1`,
+        [agentId, startedAt],
+      );
+
+      expect(turn?.status ?? 'running').not.toBe('running');
+    });
+  };
 
   it('lets a triggered agent wait for a duration and go on once the wake-up resolves', async () => {
     const executeAgent = mockAgent(waitingResult(), replyingResult);

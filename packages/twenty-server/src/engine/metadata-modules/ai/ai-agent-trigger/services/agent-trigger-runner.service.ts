@@ -74,9 +74,9 @@ export class AgentTriggerRunnerService
       return;
     }
 
-    const { agent, trigger, executionContext } = triggeredRun;
+    const { agent, trigger } = triggeredRun;
 
-    await this.agentRunnerService.run({
+    await this.agentRunnerService.start({
       workspaceId,
       conversation: {
         threadId: buildAgentRunThreadId({
@@ -98,7 +98,6 @@ export class AgentTriggerRunnerService
         },
         toolLoadingStrategy: 'lazy',
       },
-      agent,
       prompt: {
         messages: buildAgentTriggerMessages({
           instructions: trigger.instructions,
@@ -107,7 +106,6 @@ export class AgentTriggerRunnerService
         senderUserWorkspaceId: null,
         senderApplicationId: agent.applicationId,
       },
-      executionContext,
     });
   }
 

@@ -12,6 +12,14 @@ export type AgentRunCallerHandler = {
 
   getWaitingState(input: AgentRunCallerInput): Promise<OwnerWaitingState>;
 
+  // a run that paused goes on later; its caller can show where it waits meanwhile
+  onSuspended?(
+    input: AgentRunCallerInput & {
+      threadId: string;
+      summary: AgentRunSummary;
+    },
+  ): Promise<void>;
+
   // absent for a caller that only records the run, whose outcome is already in its conversation
   onOutcome?(
     input: AgentRunCallerInput & {

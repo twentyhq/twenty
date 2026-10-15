@@ -10,14 +10,21 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
+import {
+  AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS,
+  AGENT_RUN_OUTCOME_DELIVERY_RETRY_DELAY_MS,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-outcome-delivery.const';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
+import { DELIVER_AGENT_RUN_OUTCOME_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/deliver-agent-run-outcome-job-name.constant';
 import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
 import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
+import { type AgentRunOutcomeDelivery } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-outcome-delivery.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
+import { type DeliverAgentRunOutcomeJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/deliver-agent-run-outcome-job-data.type';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -142,9 +149,56 @@ export class AgentRunSuspensionService {
   }): Promise<void> {
     await this.closeAwaitedCalls({ workspaceId, threadId, isAwaitingAnswer });
 
-    await this.callerHandlerRegistry
-      .getHandlerOrThrow(caller.type)
-      .onOutcome?.({ workspaceId, caller, threadId, outcome, summary });
+    await this.deliverOutcome({
+      workspaceId,
+      caller,
+      threadId,
+      outcome,
+      summary: summary ?? null,
+    });
+  }
+
+  // A caller that started its run only waits once it handed the run off, such as a workflow step
+  // marked pending after its executor returns, so an outcome that comes sooner is delivered again later
+  async deliverOutcome(
+    delivery: AgentRunOutcomeDelivery,
+    attempt = 0,
+  ): Promise<void> {
+    const { workspaceId, caller } = delivery;
+    const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
+
+    if (!isDefined(handler.onOutcome)) {
+      return;
+    }
+
+    const waitingState = await handler.getWaitingState({
+      workspaceId,
+      caller,
+    });
+
+    if (waitingState === 'GONE') {
+      return;
+    }
+
+    if (waitingState === 'WAITING') {
+      await handler.onOutcome(delivery);
+
+      return;
+    }
+
+    if (attempt + 1 >= AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS) {
+      this.logger.error(
+        `Dropped the outcome of the run in thread ${delivery.threadId}: its ${caller.type} caller never started waiting on it`,
+      );
+
+      return;
+    }
+
+    await this.messageQueueService.add<DeliverAgentRunOutcomeJobData>(
+      DELIVER_AGENT_RUN_OUTCOME_JOB_NAME,
+      { ...delivery, attempt: attempt + 1 },
+      { delay: AGENT_RUN_OUTCOME_DELIVERY_RETRY_DELAY_MS },
+    );
   }
 
   // A caller that stops waiting drops its suspended runs, such as every step of a run that ended
