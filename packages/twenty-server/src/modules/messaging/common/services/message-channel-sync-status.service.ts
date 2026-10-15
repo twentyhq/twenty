@@ -333,14 +333,19 @@ export class MessageChannelSyncStatusService {
     );
   }
 
-  public async markAsFailed(
-    messageChannelIds: string[],
-    workspaceId: string,
+  public async markAsFailed({
+    messageChannelIds,
+    workspaceId,
+    syncStatus,
+    authFailedReason = null,
+  }: {
+    messageChannelIds: string[];
+    workspaceId: string;
     syncStatus:
       | MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
-      | MessageChannelSyncStatus.FAILED_UNKNOWN,
-    authFailedReason: string | null = null,
-  ) {
+      | MessageChannelSyncStatus.FAILED_UNKNOWN;
+    authFailedReason?: string | null;
+  }) {
     if (!messageChannelIds.length) {
       return;
     }
