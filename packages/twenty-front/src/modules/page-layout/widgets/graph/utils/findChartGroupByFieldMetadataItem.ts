@@ -14,17 +14,18 @@ export const findChartGroupByFieldMetadataItem = ({
     fieldMetadataId: groupByFieldMetadataId,
   });
 
-  const matchingMorphRelation = fieldMetadataItem?.morphRelations?.find(
+  if (!isDefined(fieldMetadataItem)) {
+    return undefined;
+  }
+
+  const morphRelationTargetField = fieldMetadataItem.morphRelations?.find(
     ({ sourceFieldMetadata }) =>
       sourceFieldMetadata.id === groupByFieldMetadataId,
-  );
+  )?.sourceFieldMetadata;
 
-  if (!isDefined(fieldMetadataItem) || !isDefined(matchingMorphRelation)) {
+  if (!isDefined(morphRelationTargetField)) {
     return fieldMetadataItem;
   }
 
-  return {
-    ...fieldMetadataItem,
-    name: matchingMorphRelation.sourceFieldMetadata.name,
-  };
+  return { ...fieldMetadataItem, name: morphRelationTargetField.name };
 };
