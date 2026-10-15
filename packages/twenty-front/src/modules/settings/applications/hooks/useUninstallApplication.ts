@@ -3,7 +3,12 @@ import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
+import {
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
@@ -25,6 +30,7 @@ export const useUninstallApplication = ({
   onCompleted,
 }: UseUninstallApplicationArgs = {}) => {
   const { enqueueToast } = useToast();
+  const apolloClient = useApolloClient();
   const [triggerUninstallApplication, { loading: isTriggeringUninstall }] =
     useMutation(TriggerUninstallApplicationDocument);
   const [findUninstallApplicationJobStatus] = useLazyQuery(
@@ -66,6 +72,12 @@ export const useUninstallApplication = ({
         return;
       }
 
+      apolloClient.cache.evict({
+        id: 'ROOT_QUERY',
+        fieldName: 'findOneApplication',
+        args: { universalIdentifier: trackedUninstallIdentifier },
+      });
+
       setCurrentWorkspace((currentWorkspace) =>
         isDefined(currentWorkspace)
           ? {
@@ -86,7 +98,7 @@ export const useUninstallApplication = ({
       });
       onCompleted?.();
     },
-    [enqueueToast, onCompleted, setCurrentWorkspace],
+    [apolloClient, enqueueToast, onCompleted, setCurrentWorkspace],
   );
 
   const fetchUninstallJobStatus = useCallback(
