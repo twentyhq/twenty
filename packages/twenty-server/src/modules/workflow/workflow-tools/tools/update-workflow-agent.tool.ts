@@ -1,32 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  agentResponseFormatSchema,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-
-const agentResponseFormatSchema = z.union([
-  z.object({ type: z.literal('text') }),
-  z.object({
-    type: z.literal('json'),
-    schema: z.object({
-      type: z.literal('object'),
-      properties: z.record(
-        z.string(),
-        z.object({
-          type: z.enum(['string', 'number', 'boolean']),
-          description: z.string().optional(),
-        }),
-      ),
-      required: z.array(z.string()).optional(),
-      additionalProperties: z.literal(false).optional(),
-    }),
-  }),
-]);
 
 const updateAgentSchema = z.object({
   agentId: z
@@ -54,27 +39,24 @@ const updateAgentSchema = z.object({
     ),
 });
 
-const resyncAiAgentStepOutputSchemas = async (
+const setAiAgentStepsResponseFormat = async (
   deps: Pick<
     WorkflowToolDependencies,
-    | 'coreWorkflowVersionListService'
-    | 'coreWorkflowVersionMutationService'
-    | 'flatEntityMapsCacheService'
+    'coreWorkflowVersionListService' | 'coreWorkflowVersionMutationService'
   >,
   {
     workspaceId,
     userWorkspaceId,
     agentId,
+    responseFormat,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     agentId: string;
+    responseFormat: AgentResponseFormat;
   },
-): Promise<void> => {
-  await deps.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-    workspaceId,
-    flatMapsKeys: ['flatAgentMaps'],
-  });
+): Promise<number> => {
+  let updatedStepCount = 0;
 
   const draftCoreVersions =
     await deps.coreWorkflowVersionListService.findDraftCoreWorkflowVersions({
@@ -82,43 +64,50 @@ const resyncAiAgentStepOutputSchemas = async (
     });
 
   for (const draftCoreVersion of draftCoreVersions) {
-    const matchingStep = draftCoreVersion.steps?.find(
-      (step) =>
+    const matchingSteps = (draftCoreVersion.steps ?? []).filter(
+      (step): step is WorkflowAiAgentAction =>
         step.type === WorkflowActionType.AI_AGENT &&
         step.settings?.input?.agentId === agentId,
     );
 
-    if (!isDefined(matchingStep)) {
-      continue;
-    }
+    for (const matchingStep of matchingSteps) {
+      await deps.coreWorkflowVersionMutationService.updateStep({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionId: draftCoreVersion.id,
+        step: {
+          ...matchingStep,
+          settings: {
+            ...matchingStep.settings,
+            input: { ...matchingStep.settings.input, responseFormat },
+          },
+        },
+      });
 
-    await deps.coreWorkflowVersionMutationService.updateStep({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowVersionId: draftCoreVersion.id,
-      step: matchingStep,
-    });
+      updatedStepCount++;
+    }
   }
+
+  return updatedStepCount;
 };
 
-export const createUpdateAgentTool = (
+export const createUpdateWorkflowAgentTool = (
   deps: Pick<
     WorkflowToolDependencies,
     | 'agentService'
     | 'coreWorkflowVersionListService'
     | 'coreWorkflowVersionMutationService'
-    | 'flatEntityMapsCacheService'
   >,
   context: WorkflowToolContext,
 ) => ({
-  name: 'update_agent' as const,
+  name: 'update_workflow_agent' as const,
   description: `Update the agent used by a workflow AI_AGENT step.
 
-Use this tool to configure the agent created when an AI_AGENT step is added: set its system prompt, the model it should use, and the format of its output.
+Use this tool to configure the agent created when an AI_AGENT step is added: set its system prompt, the model it should use, and the format of the step's output.
 
 - prompt: the agent's system prompt (its role, behavior and task).
 - modelId: optional model id; omit to keep the auto-selected model.
-- responseFormat: { type: "text" } for free-form text (referenced as {{stepId.response}}), or { type: "json", schema: { ... } } for structured output whose fields can be referenced as {{stepId.fieldName}}.
+- responseFormat: set on the draft AI_AGENT steps using this agent. { type: "text" } for free-form text (referenced as {{stepId.response}}), or { type: "json", schema: { ... } } for structured output whose fields can be referenced as {{stepId.fieldName}}.
 
 To find the agentId, look at the AI_AGENT step's settings.input.agentId field.`,
   inputSchema: updateAgentSchema,
@@ -132,36 +121,46 @@ To find the agentId, look at the AI_AGENT step's settings.input.agentId field.`,
       const { agentId, prompt, modelId, responseFormat } = parameters;
       const { workspaceId } = context;
 
-      const updatedAgent = await deps.agentService.updateOneAgent({
-        input: {
-          id: agentId,
-          ...(isDefined(prompt) ? { prompt } : {}),
-          ...(isDefined(modelId) ? { modelId: modelId as ModelId } : {}),
-          ...(isDefined(responseFormat) ? { responseFormat } : {}),
-        },
+      if (isDefined(prompt) || isDefined(modelId)) {
+        await deps.agentService.updateOneAgent({
+          input: {
+            id: agentId,
+            ...(isDefined(prompt) ? { prompt } : {}),
+            ...(isDefined(modelId) ? { modelId: modelId as ModelId } : {}),
+          },
+          workspaceId,
+        });
+      }
+
+      if (!isDefined(responseFormat)) {
+        return {
+          success: true,
+          message: `Successfully updated agent ${agentId}`,
+          agentId,
+        };
+      }
+
+      const updatedStepCount = await setAiAgentStepsResponseFormat(deps, {
         workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
+        agentId,
+        responseFormat,
       });
 
-      if (isDefined(responseFormat)) {
-        try {
-          await resyncAiAgentStepOutputSchemas(deps, {
-            workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
-            agentId,
-          });
-        } catch (resyncError) {
-          return {
-            success: true,
-            message: `Successfully updated agent ${agentId}, but failed to resync workflow step output schema: ${resyncError.message}`,
-            agentId: updatedAgent.id,
-          };
-        }
+      if (updatedStepCount === 0) {
+        return {
+          success: false,
+          error: 'No draft AI_AGENT step uses this agent',
+          message: `The response format was not applied: no draft AI_AGENT step uses agent ${agentId}. Create a draft version first.`,
+          agentId,
+        };
       }
 
       return {
         success: true,
-        message: `Successfully updated agent ${agentId}`,
-        agentId: updatedAgent.id,
+        message: `Successfully updated agent ${agentId} and the response format of ${updatedStepCount} draft step(s)`,
+        agentId,
+        updatedStepCount,
       };
     } catch (error) {
       return {

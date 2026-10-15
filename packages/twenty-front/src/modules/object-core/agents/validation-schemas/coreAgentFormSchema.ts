@@ -1,4 +1,3 @@
-import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { AGENT_TRIGGER_LIMITS } from 'twenty-shared/application';
 import { t } from '@lingui/core/macro';
 import { z } from 'zod';
@@ -28,12 +27,6 @@ export const coreAgentFormSchema = z.object({
           configuration: z.record(z.string(), z.unknown()).optional(),
         })
         .optional(),
-    })
-    .optional(),
-  responseFormat: z
-    .object({
-      type: z.enum(['text', 'json']),
-      schema: z.custom<AgentResponseSchema>().optional(),
     })
     .optional(),
   triggers: z

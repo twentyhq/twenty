@@ -45,7 +45,6 @@ export const useCreateCoreAgent = () => {
             icon: 'IconLego',
             prompt: t`You are a helpful AI assistant.`,
             modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-            responseFormat: { type: 'text' },
           },
         },
       });
