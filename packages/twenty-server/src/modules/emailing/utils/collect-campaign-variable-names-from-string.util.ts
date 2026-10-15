@@ -1,4 +1,15 @@
-import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campaign-variable-pattern.constant';
+import { msg } from '@lingui/core/macro';
+import {
+  findMalformedTemplateVariable,
+  isDefined,
+  parseTemplateVariableWithFallback,
+  TEMPLATE_VARIABLE_PATTERN,
+} from 'twenty-shared/utils';
+
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 
 export const collectCampaignVariableNamesFromString = (
   value: unknown,
@@ -9,8 +20,29 @@ export const collectCampaignVariableNamesFromString = (
     return names;
   }
 
-  for (const match of value.matchAll(CAMPAIGN_VARIABLE_PATTERN)) {
-    names.add(match[1]);
+  const malformedTemplateVariable = findMalformedTemplateVariable(value);
+
+  if (isDefined(malformedTemplateVariable)) {
+    const expectedSyntax = '{{jobTitle}} or {{jobTitle | default: "there"}}';
+
+    throw new EmailingDomainException(
+      `Malformed campaign variable: ${malformedTemplateVariable}. Expected ${expectedSyntax}`,
+      EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      {
+        userFriendlyMessage: msg`This campaign has a variable written in the wrong format: ${malformedTemplateVariable}. Write it as ${expectedSyntax}.`,
+      },
+    );
+  }
+
+  for (const [rawTemplateVariable] of value.matchAll(
+    TEMPLATE_VARIABLE_PATTERN,
+  )) {
+    const campaignVariable =
+      parseTemplateVariableWithFallback(rawTemplateVariable);
+
+    if (isDefined(campaignVariable)) {
+      names.add(campaignVariable.name);
+    }
   }
 
   return names;

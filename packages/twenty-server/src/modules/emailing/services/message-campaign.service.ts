@@ -256,6 +256,14 @@ export class MessageCampaignService {
       fromAddress,
     });
 
+    await this.campaignVariableService.assertKnownVariables(
+      workspaceId,
+      collectCampaignVariableNamesFromTemplates({
+        subject,
+        bodyTemplate: html,
+      }),
+    );
+
     const variables =
       await this.campaignVariableService.buildVariablesForPerson(
         workspaceId,
