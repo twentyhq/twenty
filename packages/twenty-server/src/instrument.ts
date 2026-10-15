@@ -93,8 +93,8 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
         },
       }),
       Sentry.vercelAIIntegration({
-        recordInputs: true,
-        recordOutputs: true,
+        recordInputs: false,
+        recordOutputs: false,
       }),
       nodeProfilingIntegration(),
     ],
@@ -108,7 +108,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       fallback: 0.01,
     }),
     maxValueLength: 8192,
-    sendDefaultPii: true,
+    sendDefaultPii: false,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
       const twentyContext = Sentry.getIsolationScope().getScopeData().contexts

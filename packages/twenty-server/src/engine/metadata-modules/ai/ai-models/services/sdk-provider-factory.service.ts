@@ -31,6 +31,7 @@ import {
   AI_SDK_TYPESAFE_AI,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { createDisableResponseStorageMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/disable-response-storage.middleware';
 import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
 import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
@@ -121,7 +122,9 @@ export class SdkProviderFactoryService {
   ): AiSdkProviderInstance {
     switch (config.npm) {
       case AI_SDK_OPENAI:
-        return this.buildStandardProvider(config, createOpenAI);
+        return this.buildStandardProvider(config, createOpenAI, {
+          middleware: createDisableResponseStorageMiddleware('openai'),
+        });
       case AI_SDK_ANTHROPIC:
         return this.buildStandardProvider(config, createAnthropic);
       case AI_SDK_GOOGLE:
@@ -259,7 +262,10 @@ export class SdkProviderFactoryService {
     });
 
     return this.toProviderInstance(provider, AI_SDK_AZURE, (modelId: string) =>
-      provider(modelId),
+      wrapLanguageModel({
+        model: provider(modelId),
+        middleware: createDisableResponseStorageMiddleware('azure'),
+      }),
     );
   }
 }
