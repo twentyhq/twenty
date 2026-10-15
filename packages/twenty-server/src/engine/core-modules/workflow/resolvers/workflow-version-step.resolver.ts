@@ -106,16 +106,7 @@ export class WorkflowVersionStepResolver {
     @Args('input')
     { workflowRunId, step }: UpdateWorkflowRunStepInput,
   ): Promise<WorkflowActionDTO> {
-    if (
-      !(await this.workflowRunWorkspaceService.isWorkflowRunReadableByRequester(
-        workflowRunId,
-      ))
-    ) {
-      throw new WorkflowVersionStepException(
-        'Workflow run not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+    await this.assertWorkflowRunIsReadableByRequesterOrThrow(workflowRunId);
 
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -154,16 +145,7 @@ export class WorkflowVersionStepResolver {
       );
     }
 
-    if (
-      !(await this.workflowRunWorkspaceService.isWorkflowRunReadableByRequester(
-        workflowRunId,
-      ))
-    ) {
-      throw new WorkflowVersionStepException(
-        'Workflow run not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+    await this.assertWorkflowRunIsReadableByRequesterOrThrow(workflowRunId);
 
     await this.workflowRunnerWorkspaceService.submitFormStep({
       workspaceId,
@@ -190,5 +172,20 @@ export class WorkflowVersionStepResolver {
       },
       { workspaceId: workspace.id },
     );
+  }
+
+  private async assertWorkflowRunIsReadableByRequesterOrThrow(
+    workflowRunId: string,
+  ): Promise<void> {
+    if (
+      !(await this.workflowRunWorkspaceService.isWorkflowRunReadableByRequester(
+        workflowRunId,
+      ))
+    ) {
+      throw new WorkflowVersionStepException(
+        'Workflow run not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
   }
 }
