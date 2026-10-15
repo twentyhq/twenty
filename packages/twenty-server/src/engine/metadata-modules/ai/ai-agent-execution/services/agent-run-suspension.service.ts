@@ -164,8 +164,6 @@ export class AgentRunSuspensionService {
       return;
     }
 
-    let isDelivered = false;
-
     try {
       const waitingState = await handler.getWaitingState({
         workspaceId,
@@ -180,17 +178,14 @@ export class AgentRunSuspensionService {
 
       if (waitingState === 'WAITING') {
         await handler.onOutcome(delivery);
-        isDelivered = true;
+
+        return;
       }
     } catch (error) {
       // the run already ended, so a failed delivery is tried again rather than lost with the job
       this.logger.warn(
         `Could not deliver the outcome of the run in thread ${delivery.threadId}: ${error instanceof Error ? error.message : String(error)}`,
       );
-    }
-
-    if (isDelivered) {
-      return;
     }
 
     if (attempt + 1 >= AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS) {
