@@ -64,6 +64,13 @@ const ASSISTANT_MESSAGE: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T08:00:05.000Z' },
 };
 
+const MESSAGE_WITHOUT_SENDER: ExtendedUIMessage = {
+  id: 'message-without-sender',
+  role: 'user',
+  parts: [{ type: 'text', text: 'Draft the October newsletter' }],
+  metadata: { createdAt: '2026-10-15T07:00:00.000Z' },
+};
+
 const renderMessage = ({
   messageId,
   isAiChatInboxEnabled,
@@ -94,7 +101,7 @@ const renderMessage = ({
   jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
   jotaiStore.set(
     agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
-    [USER_MESSAGE, ASSISTANT_MESSAGE],
+    [USER_MESSAGE, ASSISTANT_MESSAGE, MESSAGE_WITHOUT_SENDER],
   );
 
   render(
@@ -140,5 +147,17 @@ describe('AiChatMessage', () => {
     });
 
     expect(screen.queryByText('Ada')).not.toBeInTheDocument();
+  });
+
+  it('keeps the time of a member message whose sender is unknown', () => {
+    renderMessage({
+      messageId: MESSAGE_WITHOUT_SENDER.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(
+      screen.getByText('Draft the October newsletter'),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/ago$/)).toBeInTheDocument();
   });
 });

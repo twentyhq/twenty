@@ -229,6 +229,8 @@ export const AiChatMessage = ({
   });
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
   const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
+  // Without a known sender there is no header, so the footer keeps the time
+  const hasHeader = isAiChatInboxEnabled && (!isUser || isDefined(senderId));
   const shouldShowError =
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
@@ -304,9 +306,9 @@ export const AiChatMessage = ({
         {agentChatMessage.parts.length > 0 && (
           <StyledMessageFooter
             className="message-footer"
-            hasTimestamp={!isAiChatInboxEnabled}
+            hasTimestamp={!hasHeader}
           >
-            {!isAiChatInboxEnabled && (
+            {!hasHeader && (
               <StyledMessageTimestamp>
                 {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
               </StyledMessageTimestamp>
