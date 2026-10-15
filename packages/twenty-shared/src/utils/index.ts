@@ -329,6 +329,7 @@ export { buildValidationRuleEvaluationContext } from './validation-rule/buildVal
 export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
 export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
+export { findValidationRuleUnknownOptionValue } from './validation-rule/findValidationRuleUnknownOptionValue';
 export { getValidationRuleSyntaxError } from './validation-rule/getValidationRuleSyntaxError';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';

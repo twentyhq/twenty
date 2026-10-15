@@ -7,4 +7,5 @@ export type ValidationRuleFieldDescriptor = {
   universalIdentifier: string;
   relationType?: RelationType;
   relationTargetFields?: ValidationRuleFieldDescriptor[];
+  optionValues?: string[];
 };

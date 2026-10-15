@@ -6,10 +6,12 @@ import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleComp
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evaluateValidationRuleExpression';
+import { findValidationRuleUnknownOptionValue } from '@/utils/validation-rule/findValidationRuleUnknownOptionValue';
 import { getValidationRuleSyntaxError } from '@/utils/validation-rule/getValidationRuleSyntaxError';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const compileValidationRuleExpression = ({
   expression,
@@ -93,6 +95,22 @@ export const compileValidationRuleExpression = ({
     }
 
     bindings = { ...bindings, ...resolution.bindings };
+  }
+
+  const unknownOptionValue = findValidationRuleUnknownOptionValue({
+    instructions: parsedExpression.tokens,
+    fields,
+  });
+
+  if (isDefined(unknownOptionValue)) {
+    const { fieldName, optionValue } = unknownOptionValue;
+
+    return {
+      isValid: false,
+      errorMessage: `"${optionValue}" is not an option of "${fieldName}"`,
+      errorCode: 'UNKNOWN_OPTION_VALUE',
+      errorParams: { fieldName, optionValue },
+    };
   }
 
   const emptyRecordEvaluation = evaluateValidationRuleExpression({

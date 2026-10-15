@@ -5,7 +5,7 @@ import {
   RelationType as SharedRelationType,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataEnumKind } from 'twenty-shared/utils';
 
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -16,6 +16,10 @@ const toScalarFieldDescriptor = (
   type: fieldMetadataItem.type,
   universalIdentifier:
     fieldMetadataItem.universalIdentifier ?? fieldMetadataItem.id,
+  ...(isFieldMetadataEnumKind(fieldMetadataItem.type) &&
+  isDefined(fieldMetadataItem.options)
+    ? { optionValues: fieldMetadataItem.options.map(({ value }) => value) }
+    : {}),
 });
 
 export const buildValidationRuleFieldDescriptors = ({

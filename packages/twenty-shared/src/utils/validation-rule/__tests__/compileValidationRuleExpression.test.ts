@@ -11,6 +11,12 @@ const COMPANY_FIELDS: ValidationRuleFieldDescriptor[] = [
     universalIdentifier: 'company-industry',
   },
   {
+    name: 'tier',
+    type: FieldMetadataType.SELECT,
+    universalIdentifier: 'company-tier',
+    optionValues: ['GOLD', 'SILVER'],
+  },
+  {
     name: 'people',
     type: FieldMetadataType.RELATION,
     universalIdentifier: 'company-people',
@@ -23,6 +29,7 @@ const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
     name: 'stage',
     type: FieldMetadataType.SELECT,
     universalIdentifier: 'opportunity-stage',
+    optionValues: ['NEW', 'WON', 'LOST'],
   },
   {
     name: 'amount',
@@ -38,6 +45,7 @@ const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
     name: 'tags',
     type: FieldMetadataType.MULTI_SELECT,
     universalIdentifier: 'opportunity-tags',
+    optionValues: ['PRIORITY', 'VIP'],
   },
   {
     name: 'company',
@@ -215,6 +223,50 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('stage == and "WON"').errorParams).toEqual({
       token: 'and',
     });
+  });
+
+  it('should reject a value that is not an option of a select field', () => {
+    expect(compile('stage == "won"')).toEqual({
+      isValid: false,
+      errorMessage: '"won" is not an option of "stage"',
+      errorCode: 'UNKNOWN_OPTION_VALUE',
+      errorParams: { fieldName: 'stage', optionValue: 'won' },
+    });
+    expect(compile('"DONE" != stage').errorParams).toEqual({
+      fieldName: 'stage',
+      optionValue: 'DONE',
+    });
+    expect(compile('stage in ["WON", "DONE"]').errorParams).toEqual({
+      fieldName: 'stage',
+      optionValue: 'DONE',
+    });
+    expect(compile('isQualified or (stage == "DONE")').errorCode).toBe(
+      'UNKNOWN_OPTION_VALUE',
+    );
+  });
+
+  it('should reject a value that is not an option of a multi-select field', () => {
+    expect(compile('"URGENT" in tags').errorParams).toEqual({
+      fieldName: 'tags',
+      optionValue: 'URGENT',
+    });
+    expect(compile('includes(tags, "URGENT")').errorParams).toEqual({
+      fieldName: 'tags',
+      optionValue: 'URGENT',
+    });
+  });
+
+  it('should reject a value that is not an option of a related select field', () => {
+    expect(compile('company.tier == "BRONZE"').errorParams).toEqual({
+      fieldName: 'company.tier',
+      optionValue: 'BRONZE',
+    });
+    expect(compile('company.tier == "GOLD"').isValid).toBe(true);
+  });
+
+  it('should not check values compared to fields without options', () => {
+    expect(compile('company.industry == "anything"').isValid).toBe(true);
+    expect(compile('includes(company.industry, "Soft")').isValid).toBe(true);
   });
 
   it('should reject an empty expression', () => {

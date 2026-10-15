@@ -13,4 +13,5 @@ export type ValidationRuleErrorCode =
   | 'NON_BOOLEAN_RESULT'
   | 'INCOMPLETE_EXPRESSION'
   | 'UNCLOSED_TEXT'
-  | 'INVALID_SYNTAX';
+  | 'INVALID_SYNTAX'
+  | 'UNKNOWN_OPTION_VALUE';

@@ -11,6 +11,7 @@ const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
     name: 'stage',
     type: FieldMetadataType.SELECT,
     universalIdentifier: 'opportunity-stage',
+    optionValues: ['WON', 'LOST'],
   },
   {
     name: 'amount',
@@ -92,6 +93,7 @@ describe('getValidationRuleErrorMessage', () => {
       'stage == "WON',
       'stage = "WON"',
       'amount amount',
+      'stage == "won"',
     ];
 
     for (const expression of expressions) {

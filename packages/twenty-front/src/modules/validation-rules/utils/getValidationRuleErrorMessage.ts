@@ -20,6 +20,7 @@ export const getValidationRuleErrorMessage = ({
   const relationFieldName = errorParams?.relationFieldName ?? '';
   const subfieldName = errorParams?.subfieldName ?? '';
   const token = errorParams?.token;
+  const optionValue = errorParams?.optionValue ?? '';
 
   switch (errorCode) {
     case 'EMPTY_EXPRESSION':
@@ -54,6 +55,8 @@ export const getValidationRuleErrorMessage = ({
       return isDefined(token)
         ? t`Unexpected "${token}"`
         : t`Expression is not valid`;
+    case 'UNKNOWN_OPTION_VALUE':
+      return t`"${optionValue}" is not an option of "${fieldName}"`;
     default:
       return errorMessage;
   }

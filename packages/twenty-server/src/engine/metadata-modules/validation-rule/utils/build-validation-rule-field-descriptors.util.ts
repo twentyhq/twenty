@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -50,6 +51,10 @@ const toScalarFieldDescriptor = (
   name: flatFieldMetadata.name,
   type: flatFieldMetadata.type,
   universalIdentifier: flatFieldMetadata.universalIdentifier,
+  ...(isEnumFieldMetadataType(flatFieldMetadata.type) &&
+  isDefined(flatFieldMetadata.options)
+    ? { optionValues: flatFieldMetadata.options.map(({ value }) => value) }
+    : {}),
 });
 
 export const buildValidationRuleFieldDescriptors = (
