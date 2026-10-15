@@ -27,7 +27,6 @@ import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
@@ -48,10 +47,7 @@ import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
-import {
-  FieldMetadataType,
-  ViewCalendarLayout,
-} from '~/generated-metadata/graphql';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const useLoadRecordIndexStates = () => {
   const store = useStore();
@@ -275,13 +271,10 @@ export const useLoadRecordIndexStates = () => {
       let convertedAggregateOperation = undefined;
       if (isDefined(view.kanbanAggregateOperation)) {
         convertedAggregateOperation =
-          recordIndexGroupAggregateFieldMetadataItemValue?.type ===
-          FieldMetadataType.MORPH_RELATION
-            ? AggregateOperations.COUNT
-            : convertAggregateOperationToExtendedAggregateOperation(
-                view.kanbanAggregateOperation,
-                recordIndexGroupAggregateFieldMetadataItemValue?.type,
-              );
+          convertAggregateOperationToExtendedAggregateOperation(
+            view.kanbanAggregateOperation,
+            recordIndexGroupAggregateFieldMetadataItemValue?.type,
+          );
       }
 
       const recordIndexId =

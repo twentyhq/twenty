@@ -26,7 +26,6 @@ import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/serv
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { filterOutUnresolvedRelationBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-unresolved-relation-buckets.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
-import { resolveMorphRelationAggregateAsCount } from 'src/modules/dashboard/chart-data/utils/resolve-morph-relation-aggregate-as-count.util';
 import { wrapChartDataQueryError } from 'src/modules/dashboard/chart-data/utils/wrap-chart-data-query-error.util';
 import { transformToOneDimensionalBarChartData } from 'src/modules/dashboard/chart-data/utils/transform-to-one-dimensional-bar-chart-data.util';
 import { transformToTwoDimensionalBarChartData } from 'src/modules/dashboard/chart-data/utils/transform-to-two-dimensional-bar-chart-data.util';
@@ -51,7 +50,7 @@ export class BarChartDataService {
   async getBarChartData({
     workspaceId,
     objectMetadataId,
-    configuration: rawConfiguration,
+    configuration,
     authContext,
     locale,
   }: GetBarChartDataParams): Promise<BarChartDataDTO> {
@@ -63,10 +62,6 @@ export class BarChartDataService {
             flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
           },
         );
-      const configuration = resolveMorphRelationAggregateAsCount({
-        configuration: rawConfiguration,
-        flatFieldMetadataMaps,
-      });
 
       if (!isDefined(objectMetadataId)) {
         throw new ChartDataException(

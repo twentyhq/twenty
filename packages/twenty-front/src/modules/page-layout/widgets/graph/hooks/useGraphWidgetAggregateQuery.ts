@@ -15,10 +15,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type AggregateChartConfiguration,
-  FieldMetadataType,
-} from '~/generated-metadata/graphql';
+import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 export const useGraphWidgetAggregateQuery = ({
@@ -34,10 +31,7 @@ export const useGraphWidgetAggregateQuery = ({
       configuration,
     });
 
-  const aggregateOperation =
-    aggregateField.type === FieldMetadataType.MORPH_RELATION
-      ? AggregateOperations.COUNT
-      : configuration.aggregateOperation;
+  const aggregateOperation = configuration.aggregateOperation;
   const ratioConfig = configuration.ratioAggregateConfig;
   const isRatioQuery = isDefined(ratioConfig);
 
