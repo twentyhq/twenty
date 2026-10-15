@@ -6,6 +6,8 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildIsMorphRelationReferenceVisible } from 'src/engine/metadata-modules/morph-relation-head/utils/build-is-morph-relation-reference-visible.util';
 
+// TODO: once IS_MORPH_RELATION_HEAD_ENABLED is removed, delete the target
+// references and drop this service
 @Injectable()
 export class MorphRelationReferenceVisibilityService {
   constructor(
