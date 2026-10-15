@@ -52,6 +52,7 @@ import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-t
 import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import { type WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -1013,6 +1014,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         hasNoMoreAvailableCredits: false,
         modelId: 'test-model',
         ...overrides,
+        replyParts: mapAiStepsToUIMessageParts(overrides.steps ?? []),
       }) as AgentExecutionResult;
 
     const askingResult = agentResult({
