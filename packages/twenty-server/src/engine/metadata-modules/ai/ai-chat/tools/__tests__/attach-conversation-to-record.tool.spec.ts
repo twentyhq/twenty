@@ -31,7 +31,6 @@ const buildUserAuthContext = (workspaceMemberId: string) =>
 const buildToolContext = (overrides: Partial<ToolContext> = {}) =>
   ({
     workspaceId: WORKSPACE_ID,
-    roleId: 'role-id',
     threadId: THREAD_ID,
     authContext: buildUserAuthContext('member-at-turn-start'),
     ...overrides,

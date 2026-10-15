@@ -14,6 +14,7 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
       lastSignedInAt
       userWorkspaceId
       connectionProviderId
+      applicationId
       name
       visibility
       lastCredentialsRefreshedAt

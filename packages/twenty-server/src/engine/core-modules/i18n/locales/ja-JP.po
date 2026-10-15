@@ -1520,10 +1520,10 @@ msgctxt "fieldMetadata.description"
 msgid "Audio-only recording"
 msgstr "音声のみの録音"
 
-#. js-lingui-id: aepsXP
+#. js-lingui-id: 5bRlXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
-msgid "Audit logs require an Enterprise subscription."
-msgstr "監査ログには Enterprise サブスクリプションが必要です。"
+msgid "Audit logs require an Organization subscription."
+msgstr "監査ログには Organization サブスクリプションが必要です。"
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -2472,6 +2472,11 @@ msgstr "標準スキルのプロパティは更新できません（有効化/�
 msgctxt "fieldMetadata.label"
 msgid "Cc"
 msgstr "Cc"
+
+#. js-lingui-id: abq5Mk
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Changing log retention requires an Organization subscription."
+msgstr "ログ保持期間を変更するには Organization サブスクリプションが必要です。"
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -6778,18 +6783,6 @@ msgctxt "fieldMetadata.label"
 msgid "Is Full Day"
 msgstr "終日イベントかどうか"
 
-#. js-lingui-id: tiNFAr
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Is Hidden"
-msgstr "非表示"
-
-#. js-lingui-id: q42yQK
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Is Hidden"
-msgstr "非表示"
-
 #. js-lingui-id: fenRdq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -7059,18 +7052,6 @@ msgstr "最後に公開されたバージョンID"
 msgctxt "fieldMetadata.label"
 msgid "Last read at"
 msgstr "最終既読日時"
-
-#. js-lingui-id: 2zq4LZ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Last Stream Error"
-msgstr "最後のストリームエラー"
-
-#. js-lingui-id: 9/jQvG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Last Stream Error"
-msgstr "最後のストリームエラー"
 
 #. js-lingui-id: 94QD51
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -9839,11 +9820,6 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "読み取りと書き込み"
 
-#. js-lingui-id: e2WMO+
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Read, archive and snooze are not available yet. Try again in a few minutes."
-msgstr "既読、アーカイブ、スヌーズはまだ利用できません。数分後にもう一度お試しください。"
-
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10878,18 +10854,6 @@ msgstr "送信元アプリケーションID"
 msgctxt "fieldMetadata.label"
 msgid "Sender application ID"
 msgstr "送信元アプリケーションID"
-
-#. js-lingui-id: kfnrYJ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Sender workspace membership ID"
-msgstr "送信者ワークスペースメンバーシップID"
-
-#. js-lingui-id: YDV32g
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Sender workspace membership ID"
-msgstr "送信者ワークスペースメンバーシップID"
 
 #. js-lingui-id: ZYK68w
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -12533,7 +12497,7 @@ msgid "The workflow automated trigger type"
 msgstr "ワークフロー自動トリガータイプ"
 
 #. js-lingui-id: yf0hmT
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "ワークフローフィールドは参照先のオブジェクトに属していません。"
 
@@ -12555,9 +12519,14 @@ msgid "The workflow record picker must reference an object."
 msgstr "ワークフローのレコードピッカーはオブジェクトを参照する必要があります。"
 
 #. js-lingui-id: R6vHYk
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "ワークフローは、このアプリケーションで利用できないメタデータを参照しています。"
+
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "ワークフローのスケジュールが無効です。"
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -14258,18 +14227,6 @@ msgstr "ユーザーのタイムゾーン"
 #: src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util.ts
 msgid "User was not created with email/password"
 msgstr "ユーザーはメール/パスワードで作成されていません"
-
-#. js-lingui-id: 2S1QaS
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "User Workspace ID"
-msgstr "ユーザーワークスペースID"
-
-#. js-lingui-id: UBndQ2
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "User Workspace ID"
-msgstr "ユーザーワークスペースID"
 
 #. js-lingui-id: lUEEso
 #: src/engine/core-modules/auth/auth.exception.ts

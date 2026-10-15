@@ -8,7 +8,6 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
-import { type Request } from 'express';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
@@ -244,7 +243,7 @@ export class ApplicationRegistrationResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ): Promise<CreateApplicationRegistrationDTO> {
-    return this.applicationRegistrationService.create({
+    return this.applicationRegistrationService.createWithClientSecret({
       input,
       ownerWorkspaceId: workspaceId,
       createdByUserId: user?.id ?? null,
@@ -603,21 +602,12 @@ export class ApplicationRegistrationResolver {
     { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
-    @Context() context: { req: Request },
   ): Promise<string> {
-    if (!isDefined(context.req.res)) {
-      throw new ApplicationRegistrationException(
-        'Cannot start a GitHub claim without a response to bind it to',
-        ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH,
-      );
-    }
-
     return this.applicationRegistrationClaimService.buildGithubAuthorizationUrl(
       {
         applicationRegistrationId,
         workspaceId,
         userId: user?.id ?? null,
-        response: context.req.res,
       },
     );
   }
@@ -662,9 +652,12 @@ export class ApplicationRegistrationResolver {
     @Parent() registration: ApplicationRegistrationEntity,
     @Context() context: { loaders: IDataloaders },
   ): Promise<boolean> {
-    return context.loaders.isConfiguredLoader.load({
-      applicationRegistrationId: registration.id,
-    });
+    const configurationIssues =
+      await context.loaders.applicationRegistrationConfigurationIssuesLoader.load(
+        { applicationRegistrationId: registration.id },
+      );
+
+    return configurationIssues.length === 0;
   }
 
   @ResolveField(() => String, { nullable: true })

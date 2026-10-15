@@ -12,21 +12,6 @@ const CORE_STATUS_BY_WORKSPACE_STATUS: Record<
   [WorkspaceWorkflowVersionStatus.ARCHIVED]: CoreWorkflowVersionStatus.ARCHIVED,
 };
 
-const WORKSPACE_STATUS_BY_CORE_STATUS: Record<
-  CoreWorkflowVersionStatus,
-  WorkspaceWorkflowVersionStatus
-> = {
-  [CoreWorkflowVersionStatus.DRAFT]: WorkspaceWorkflowVersionStatus.DRAFT,
-  [CoreWorkflowVersionStatus.ACTIVE]: WorkspaceWorkflowVersionStatus.ACTIVE,
-  [CoreWorkflowVersionStatus.DEACTIVATED]:
-    WorkspaceWorkflowVersionStatus.DEACTIVATED,
-  [CoreWorkflowVersionStatus.ARCHIVED]: WorkspaceWorkflowVersionStatus.ARCHIVED,
-};
-
 export const toCoreWorkflowVersionStatus = (
   status: WorkspaceWorkflowVersionStatus,
 ): CoreWorkflowVersionStatus => CORE_STATUS_BY_WORKSPACE_STATUS[status];
-
-export const toWorkspaceWorkflowVersionStatus = (
-  status: CoreWorkflowVersionStatus,
-): WorkspaceWorkflowVersionStatus => WORKSPACE_STATUS_BY_CORE_STATUS[status];

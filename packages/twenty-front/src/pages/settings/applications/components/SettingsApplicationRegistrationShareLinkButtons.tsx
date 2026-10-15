@@ -75,6 +75,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
           <Button
             startIcon={<IconDownload />}
             onClick={requestInstall}
+            disabled={!isDefined(detail)}
             loading={isInstalling}
             loadingPosition="end"
             variant="outline"
@@ -88,7 +89,10 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
             appDisplayName={displayName}
             appLogoUrl={detail?.logoUrl ?? undefined}
             defaultRole={defaultRole}
+            appObjects={detail?.objects ?? undefined}
             requestedCapabilities={detail?.requestedCapabilities}
+            billsCredits={detail?.billsCredits}
+            isVetted={detail?.isVetted}
             onAuthorize={install}
             isInstalling={isInstalling}
           />

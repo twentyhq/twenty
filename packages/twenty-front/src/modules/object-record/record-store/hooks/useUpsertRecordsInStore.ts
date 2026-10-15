@@ -1,11 +1,10 @@
 import { filterRecordOnGqlFields } from '@/object-record/cache/utils/filterRecordOnGqlFields';
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 type UpsertRecordsInStoreProps = {
   partialRecords: ObjectRecord[];
@@ -49,7 +48,7 @@ export const useUpsertRecordsInStore = () => {
             })
           : currentRecord;
 
-        if (!isDeeplyEqual(filteredCurrentRecord, filteredPartialRecord)) {
+        if (!fastDeepEqual(filteredCurrentRecord, filteredPartialRecord)) {
           const updatedRecord = {
             ...currentRecord,
             ...filteredPartialRecord,

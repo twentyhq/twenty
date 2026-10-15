@@ -19,12 +19,18 @@ import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
+  NO_REPLY_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
+  extractRecordReferenceIds,
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
+import { getAppPath, isDefined, sortKeysDeeply } from 'twenty-shared/utils';
 
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -72,6 +78,7 @@ import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-c
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
@@ -79,8 +86,10 @@ import { createAttachConversationToRecordTool } from 'src/engine/metadata-module
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
+import { createNoReplyTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/no-reply.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
+import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
@@ -110,6 +119,7 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -153,6 +163,7 @@ export class ChatExecutionService {
     private readonly metricsService: MetricsService,
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
+    private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -187,7 +198,7 @@ export class ChatExecutionService {
       ...(await getAuthorization()),
       resolveExecutionContext: undefined,
     });
-    const { actorContext, roleId, userId, userContext } =
+    const { actorContext, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
@@ -207,17 +218,13 @@ export class ChatExecutionService {
       resolveExecutionContext,
     };
 
-    const toolCatalog = await this.toolRegistry.buildToolIndex(
-      workspace.id,
-      roleId,
-      {
-        userId,
-        userWorkspaceId,
-        locale,
-        excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
-        rolePermissionConfig: toolContext.rolePermissionConfig,
-      },
-    );
+    const toolCatalog = await this.toolRegistry.buildToolIndex(workspace.id, {
+      userId,
+      userWorkspaceId,
+      locale,
+      excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
+      rolePermissionConfig: toolContext.rolePermissionConfig,
+    });
 
     const skillCatalog = await this.skillService.findAllFlatSkills(
       workspace.id,
@@ -281,12 +288,28 @@ export class ChatExecutionService {
     });
 
     // judged on the conversation, not setup status: onboarding continues here after setup completes
-    const canAttachConversationToRecords =
+    const isInboxConversation =
       !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace.id,
       ));
+
+    const latestUserMessage = [...messages]
+      .reverse()
+      .find((message) => message.role === AgentMessageRole.USER);
+
+    // Members mentioned in this message are only added once the turn is queued
+    const isGroupConversation =
+      isInboxConversation &&
+      (await this.agentChatThreadParticipantService.countMembers({
+        workspaceId: workspace.id,
+        threadId,
+        additionalWorkspaceMemberIds: extractRecordReferenceIds({
+          text: findLastMessageText(latestUserMessage?.parts ?? []) ?? '',
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+        }),
+      })) > 1;
 
     const isToolAllowed = (toolName: string) =>
       !AI_CHAT_EXCLUDED_TOOL_NAMES.has(toolName);
@@ -316,7 +339,10 @@ export class ChatExecutionService {
               createCompleteWorkspaceSetupTool(),
           }
         : {}),
-      ...(canAttachConversationToRecords
+      ...(isGroupConversation
+        ? { [NO_REPLY_TOOL_NAME]: createNoReplyTool() }
+        : {}),
+      ...(isInboxConversation
         ? {
             [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
               createAttachConversationToRecordTool({
@@ -400,7 +426,7 @@ export class ChatExecutionService {
 
     processedMessages = injectChatMessageSenders({
       messages: processedMessages,
-      currentUserWorkspaceId: userWorkspaceId,
+      currentWorkspaceMemberId: authorization.authContext.workspaceMemberId,
     });
     processedMessages = injectMessageTimestamps(
       processedMessages,
@@ -418,7 +444,7 @@ export class ChatExecutionService {
       userWorkspaceId,
       workspaceId: workspace.id,
       isWorkspaceSetupThread,
-      canAttachConversationToRecords,
+      canAttachConversationToRecords: isInboxConversation,
     });
 
     this.logger.log(
@@ -428,7 +454,7 @@ export class ChatExecutionService {
     const systemMessage: SystemModelMessage = {
       role: 'system',
       content: systemPrompt,
-      providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
+      providerOptions: getCacheProviderOptions(modelConfig),
     };
 
     const sanitizedMessages = this.sanitizeMessagePartsForModel(
@@ -488,21 +514,20 @@ export class ChatExecutionService {
       );
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
-      await this.aiBillingService.emitAiTokenUsageEvent(
-        workspace.id,
+      await this.aiBillingService.emitAiTokenUsageEvent({
+        workspaceId: workspace.id,
         creditsUsedMicro,
         totalTokens,
-        registeredModel.modelId,
-        UsageOperationType.AI_CHAT_TOKEN,
-        null,
-        userWorkspaceId,
-      );
+        modelId: registeredModel.modelId,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        spenders: { userWorkspaceId },
+      });
 
-      void this.aiBillingService.billNativeWebSearchUsage(
-        countNativeWebSearchCallsFromSteps(steps),
-        workspace.id,
-        userWorkspaceId,
-      );
+      void this.aiBillingService.billNativeWebSearchUsage({
+        nativeWebSearchCallCount: countNativeWebSearchCallsFromSteps(steps),
+        workspaceId: workspace.id,
+        spenders: { userWorkspaceId },
+      });
 
       const modelAttr = { model: registeredModel.modelId };
 
@@ -547,6 +572,7 @@ export class ChatExecutionService {
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
         endsOnPausingToolCall({ steps: step.steps }) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
+        hasToolCall(NO_REPLY_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
       ...buildAiTelemetry({
         functionId: isWorkspaceSetupThread
@@ -571,7 +597,10 @@ export class ChatExecutionService {
         stepStartedAt = performance.now();
 
         return {
-          messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
+          messages: injectCacheBreakpoint(
+            messages.map(sortKeysDeeply),
+            modelConfig,
+          ),
         };
       },
       onChunk: ({ chunk }) => {
@@ -699,8 +728,7 @@ export class ChatExecutionService {
             aiBillingService: this.aiBillingService,
             modelId: registeredModel.modelId,
             workspaceId: workspace.id,
-            userWorkspaceId,
-            agentId: null,
+            spenders: { userWorkspaceId },
             operationType: UsageOperationType.AI_CHAT_TOKEN,
           },
         });
@@ -794,6 +822,8 @@ export class ChatExecutionService {
         );
       case 'listView':
         return this.buildListViewContext(browsingContext);
+      case 'settingsPage':
+        return this.buildSettingsPageContext(workspace, browsingContext.path);
       default:
         // browsing context comes from unvalidated client JSON
         return '';
@@ -847,5 +877,17 @@ export class ChatExecutionService {
     context += `\nUse get_view_query_parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
 
     return context;
+  }
+
+  private buildSettingsPageContext(
+    workspace: WorkspaceEntity,
+    path: string,
+  ): string {
+    const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+      pathname: path,
+    });
+
+    return `The user is on the settings page ${resourceUrl}. When they talk about what this page shows (for example "this rule" or "my rule"), they mean the item at this path.`;
   }
 }

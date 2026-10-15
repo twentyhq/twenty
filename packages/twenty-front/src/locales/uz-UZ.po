@@ -479,6 +479,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} ta API kalit} other {{apiKeyCou
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} quyidagilarni qilishni xohlaydi:"
 
+#. js-lingui-id: ST9xGf
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+msgid "{appName} preferences"
+msgstr "{appName} sozlamalari"
+
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} would like to:"
@@ -808,9 +813,14 @@ msgid "{queuedMessage}, skipping {skipReasons}"
 msgstr "{queuedMessage}, {skipReasons} o‘tkazib yuborilmoqda"
 
 #. js-lingui-id: r4MTJW
-#: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
+#: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "{retentionInDays, plural, one {# day} other {# days}}"
 msgstr "{retentionInDays, plural, one {# kun} other {# kun}}"
+
+#. js-lingui-id: HlXLUQ
+#: src/modules/log-console/hooks/useLogConsoleRetention.ts
+msgid "{retentionInHours, plural, one {# hour} other {# hours}}"
+msgstr "{retentionInHours, plural, one {# soat} other {# soat}}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -1135,6 +1145,11 @@ msgstr "12 soat"
 msgid "2 Columns"
 msgstr "2 ta ustun"
 
+#. js-lingui-id: Ur5nZV
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+msgid "2 hours"
+msgstr "2 soat"
+
 #. js-lingui-id: 0HAF12
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
@@ -1363,13 +1378,14 @@ msgstr "Sevimli MCP mijozingiz (masalan, Claude, Codex yoki Cursor) orqali ish m
 
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/ui/navigation/bread-crumb/components/__stories__/Breadcrumb.interactions.stories.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
-#: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Account"
 msgstr "Hisob"
 
@@ -1388,7 +1404,13 @@ msgstr "Hisob muvaffaqiyatli qo‘shildi. Sinxronlashtirish boshlandi."
 msgid "Account Deletion"
 msgstr "Hisobni o‘chirish"
 
+#. js-lingui-id: T3FM0r
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+msgid "Account settings"
+msgstr "Hisob sozlamalari"
+
 #. js-lingui-id: bPwFdf
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -1641,6 +1663,7 @@ msgstr "A’zo kiruvchi xabarlar qutisiga xabar va, ixtiyoriy ravishda, tasdiqla
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -3107,6 +3130,7 @@ msgstr "Apostrof va nuqta"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -3123,13 +3147,19 @@ msgstr "Ilova muvaffaqiyatli o‘chirildi"
 
 #. js-lingui-id: Oh+wHS
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "App logs"
 msgstr "Ilova jurnallari"
 
-#. js-lingui-id: ZGfGyx
-#: src/modules/log-console/hooks/useLogConsoleRetention.ts
-msgid "App logs are kept {retentionInDays} days."
-msgstr "Ilova jurnallari {retentionInDays} kun saqlanadi."
+#. js-lingui-id: MAyGac
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+msgid "App preferences"
+msgstr "Ilova sozlamalari"
 
 #. js-lingui-id: hIGwzP
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
@@ -3166,6 +3196,7 @@ msgid "Applicability"
 msgstr "Qo‘llanish sohasi"
 
 #. js-lingui-id: IrC12v
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupUsedBy.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -3694,11 +3725,6 @@ msgstr "Audit jurnallari"
 msgid "Audit Logs"
 msgstr "Audit jurnallari"
 
-#. js-lingui-id: APXe7E
-#: src/modules/log-console/hooks/useLogConsoleRetention.ts
-msgid "Audit logs are kept {retentionInDays} days."
-msgstr "Audit jurnallari {retentionInDays} kun saqlanadi."
-
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Augment Code"
@@ -3812,6 +3838,7 @@ msgstr "Odamlar uchun kontaktlar avtomatik yaratiladi."
 
 #. js-lingui-id: RpExX0
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Xatlarni qabul qilganingiz yoki yuborganingizda odamlar yozuvlari avtomatik yaratiladi"
 
@@ -4174,6 +4201,11 @@ msgstr "Barcha ish maydonlaridagi AI chat mavzularini, onboarding chatlarini ham
 msgid "Browse partners"
 msgstr "Hamkorlarni ko‘rish"
 
+#. js-lingui-id: 8nmCIQ
+#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
+msgid "Browse record changes, security events, app logs and more"
+msgstr "Yozuv o‘zgarishlari, xavfsizlik hodisalari, ilova jurnallari va boshqalarni ko‘rib chiqing"
+
 #. js-lingui-id: GsXRxc
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 msgid "BTREE (default, good for sorting and equality)"
@@ -4338,6 +4370,8 @@ msgstr "caldav.example.com"
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Calendar"
 msgstr "Kalendar"
 
@@ -4455,11 +4489,6 @@ msgstr "Harakatga undovchi tugma"
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
 msgid "Calling Code"
 msgstr "Qo‘ng‘iroq kodi"
-
-#. js-lingui-id: 9rnFEa
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Calls"
-msgstr "Qo‘ng‘iroqlar"
 
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
@@ -5016,6 +5045,11 @@ msgstr "Yozuvlarni qidirishda qaysi maydonlardan foydalanilishini tanlang."
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
 msgstr "\"Profilni tahrirlash\" ruxsatiga ega foydalanuvchilar o‘zgartirishi mumkin bo‘lgan profil maydonlarini tanlang"
 
+#. js-lingui-id: 22LF79
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
+msgid "Choose your preferences for the apps installed on your workspace by the admin"
+msgstr "Administrator tomonidan ish joyingizga o‘rnatilgan ilovalar uchun afzalliklaringizni tanlang"
+
 #. js-lingui-id: 3wV73y
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
@@ -5523,6 +5557,7 @@ msgstr "Shikoyat"
 
 #. js-lingui-id: 3WrMP5
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Complete setup"
 msgstr "Sozlashni yakunlash"
 
@@ -5712,6 +5747,7 @@ msgstr "Maydonlarni ko‘rsatish uchun bu vidjetni sozlang"
 
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
 msgstr "Qaysi elektron pochta xabarlari sinxronlashtirilishini sozlang"
 
@@ -5823,16 +5859,19 @@ msgstr "Google, Microsoft yoki CalDAV-ni ulang va tadbir yaratishdan oldin kalen
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "IMAP/SMTP orqali ulash"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Google"
 msgstr "Google orqali ulang"
 
 #. js-lingui-id: IOfqM8
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Microsoft orqali ulang"
 
@@ -5848,7 +5887,7 @@ msgid "Connected"
 msgstr "Ulangan"
 
 #. js-lingui-id: 9TzudL
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Connected accounts"
 msgstr "Ulangan akkauntlar"
 
@@ -5876,6 +5915,7 @@ msgstr "Ulanish provayderlari"
 
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Connection settings"
 msgstr "Ulanish sozlamalari"
 
@@ -5890,7 +5930,7 @@ msgid "Connection successfully updated"
 msgstr "Ulanish muvaffaqiyatli yangilandi"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/components/AgentChatStreamKeepAliveEffect.tsx
+#: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Yordamchi bilan aloqa uzildi. Javobni ko‘rish uchun sahifani qayta yuklang."
 
@@ -5912,6 +5952,7 @@ msgstr "Administrator bilan bog‘lanish"
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Contact auto-creation"
 msgstr "Kontaktlarni avtomatik yaratish"
 
@@ -7160,6 +7201,11 @@ msgstr "Moslashtirilgan ko‘rinish"
 msgid "Custom views"
 msgstr "Moslashtirilgan ko‘rinishlar"
 
+#. js-lingui-id: T8n/Qf
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+msgid "Custom, up to 3 years"
+msgstr "Moslashtirilgan, 3 yilgacha"
+
 #. js-lingui-id: 876pfE
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Customer"
@@ -7635,6 +7681,7 @@ msgstr "Ushbu asbob nima qilishini aniqlang"
 #. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Define what will be visible to other users in your workspace"
 msgstr "Ish maydoningizda boshqa foydalanuvchilarga nimalar ko‘rinishini belgilang"
 
@@ -7752,16 +7799,19 @@ msgstr "Akkaunt va u bilan bog‘liq barcha ma’lumotlarni o‘chirish yoki ish
 
 #. js-lingui-id: 452Oso
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and data"
 msgstr "Akkaunt va ma’lumotlarni o‘chirish"
 
 #. js-lingui-id: bwUbrT
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data"
 msgstr "Akkaunt va sinxronlangan ma’lumotlarni o‘chirish"
 
 #. js-lingui-id: nmosf7
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Delete account and synced data?"
 msgstr "Akkaunt va sinxronlangan ma’lumotlar o‘chirilsinmi?"
 
@@ -8249,6 +8299,9 @@ msgstr "Uzib qo‘yish"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Disconnect account"
 msgstr "Akkauntni uzish"
 
@@ -8412,11 +8465,13 @@ msgstr "Kontaktlarni avtomatik yaratmang."
 
 #. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "Gmail va Outlook elektron xatlaridan kontaktlar yaratmang"
 
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
 msgstr "team@ support@ noreply@... manzillaridan elektron pochta xabarlarini import qilmang"
 
@@ -9070,9 +9125,10 @@ msgstr "email xabarlari"
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "Emails"
 msgstr "Email xabarlari"
 
@@ -9085,6 +9141,11 @@ msgstr "Elektron pochta va Kalendar"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
 msgstr "Provayderga allaqachon topshirilgan elektron pochta xabarlarini qaytarib bo‘lmaydi. Bu hali yuborilishini kutayotgan hamma narsani to‘xtatadi."
+
+#. js-lingui-id: USBKh+
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Emails from the blocklist will be ignored regardless of this setting."
+msgstr "Blok ro‘yxatidagi elektron xatlar ushbu sozlamadan qat’i nazar e’tiborsiz qoldiriladi."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -9878,11 +9939,13 @@ msgstr "Hammasi"
 
 #. js-lingui-id: QQlMid
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude group emails"
 msgstr "Guruh elektron pochtalarini istisno qilish"
 
 #. js-lingui-id: +tk2yZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Exclude non-professional emails"
 msgstr "Shaxsiy elektron xatlarni istisno qilish"
 
@@ -11398,6 +11461,7 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -11527,6 +11591,11 @@ msgstr "GitHub avtorizatsiyasi amalga oshmadi yoki rad etildi. Iltimos, GitHub h
 msgid "Global search"
 msgstr "Global qidiruv"
 
+#. js-lingui-id: DSJEta
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Gmail"
+msgstr "Gmail"
+
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent.tsx
@@ -11577,6 +11646,11 @@ msgstr "Mart oyidagi hodisadan so‘ng yaxshi niyat tariqasidagi kompensatsiya"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Google"
 msgstr "Google"
+
+#. js-lingui-id: ebIDwV
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Google Calendar"
+msgstr "Google Taqvim"
 
 #. js-lingui-id: CQwSng
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -12270,6 +12344,11 @@ msgstr "Rasm"
 msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "\"{fileName}\" rasmi hajmi {maxUploadSize} dan katta"
 
+#. js-lingui-id: Grur3I
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "IMAP"
+msgstr "IMAP protokoli"
+
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Configuration"
@@ -12368,6 +12447,7 @@ msgstr "Joriy etish bo‘yicha hamkorlar"
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 msgid "Import"
 msgstr "Import qilish"
 
@@ -12414,6 +12494,7 @@ msgstr "Import qilingan maʼlumotlar"
 #. js-lingui-id: RqSvT0
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing"
 msgstr "Import qilinyapti"
 
@@ -14075,6 +14156,11 @@ msgstr "Diagrammani qulflash"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Yangi kelishuvni jurnalga yozing (kompaniya, miqdor, bosqich, kutilayotgan yopilish). Tafsilotlar: "
 
+#. js-lingui-id: qLzdcJ
+#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
+msgid "Log console"
+msgstr "Jurnallar konsoli"
+
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -14095,6 +14181,7 @@ msgid "Log out all other devices"
 msgstr "Boshqa barcha qurilmalardan chiqish"
 
 #. js-lingui-id: qakNlV
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Log retention"
 msgstr "Jurnalni saqlash muddati"
@@ -14176,6 +14263,16 @@ msgstr "loglar"
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Logs"
 msgstr "Loglar"
+
+#. js-lingui-id: FBD/J1
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+msgid "Logs are kept {proPlanEventLogRetentionInHours} hours on your plan. Upgrade to customize retention."
+msgstr "Jurnallar tarifingizda {proPlanEventLogRetentionInHours} soat saqlanadi. Saqlash muddatini moslashtirish uchun tarifni yangilang."
+
+#. js-lingui-id: 6SoluV
+#: src/modules/log-console/hooks/useLogConsoleRetention.ts
+msgid "Logs are kept {retentionLabel}."
+msgstr "Jurnallar {retentionLabel} saqlanadi."
 
 #. js-lingui-id: vOd7ZN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -14277,6 +14374,12 @@ msgstr "Hisob-kitob maʼlumotlarini boshqarish"
 msgid "Manage connections used by this app to call {0}."
 msgstr "Bu ilova {0} ga murojaat qilish uchun ishlatadigan ulanishlarni boshqaring."
 
+#. js-lingui-id: bjuasY
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Manage events"
+msgstr "Hodisalarni boshqarish"
+
 #. js-lingui-id: Dt05oz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Manage feature flags for this workspace"
@@ -14348,7 +14451,7 @@ msgid "Manage workflows"
 msgstr "Ish jarayonlarini boshqarish"
 
 #. js-lingui-id: FyFNsd
-#: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsLegacySections.tsx
 msgid "Manage your internet accounts."
 msgstr "Internet akkauntlaringizni boshqaring."
 
@@ -14756,6 +14859,11 @@ msgstr "Daqiqalar"
 msgid "Minutes between triggers"
 msgstr "Triggerlar orasidagi daqiqalar soni"
 
+#. js-lingui-id: G40We3
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppStatusCell.tsx
+msgid "Missing account"
+msgstr "Hisob topilmadi"
+
 #. js-lingui-id: cOFpUq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Missing calendar permission."
@@ -14941,6 +15049,7 @@ msgstr "Koʻproq amallar"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -16578,6 +16687,7 @@ msgstr "{notSharedByFullName} tomonidan ulashilmagan"
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Sinxronlanmagan"
 
@@ -16654,10 +16764,10 @@ msgstr "Raqam formati"
 msgid "Number of dashboards"
 msgstr "Dashboardlar soni"
 
-#. js-lingui-id: +cbzNC
+#. js-lingui-id: n13TAo
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-msgid "Number of days to retain audit logs (30-1095 days)"
-msgstr "Audit jurnallarini saqlash kunlari soni (30-1095 kun)"
+msgid "Number of days to retain logs ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} days)"
+msgstr "Jurnallarni saqlash uchun kunlar soni ({minEventLogRetentionInDays}-{maxEventLogRetentionInDays} kun)"
 
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -16955,11 +17065,6 @@ msgstr "Har bir ishga tushirish uchun bittadan"
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
 msgstr "Bitta obuna bitta ishlab chiqarish instansiyasini va bitta ehtimoliy steyjing yoki test instansiyasini ishga tushiradigan bitta Tashkilot kalitini taqdim etadi. Steyjing yoki test muhitini ishga tushirish uchun Twenty’ni ikkinchi serverga o‘rnating, uni shu Tashkilot kaliti bilan faollashtiring, so‘ng bu serverni ishlab chiqish instansiyasi sifatida ro‘yxatdan o‘tkazing. Ishlab chiqish instansiyalari qo‘shimcha to‘lovlarsiz premium funksiyalarni ochadi va ishlab chiqarish o‘rinlaringiz soniga kiritilmaydi."
 
-#. js-lingui-id: JEtonz
-#: src/modules/settings/event-logs/components/SettingsLogs.tsx
-msgid "Only application logs are available on your current plan. Other log types require an Organization subscription."
-msgstr "Joriy rejangizda faqat ilova jurnallari mavjud. Boshqa jurnal turlari uchun Organization obunasi talab etiladi."
-
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
@@ -17152,6 +17257,11 @@ msgstr "Yon panelda ochish"
 msgid "Open link"
 msgstr "Havolani ochish"
 
+#. js-lingui-id: MQAnOH
+#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
+msgid "Open log console"
+msgstr "Jurnallar konsolini ochish"
+
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
@@ -17287,6 +17397,7 @@ msgstr "Webhook yuklamalari uchun HMAC imzosini hisoblashda ishlatiladigan ixtiy
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/side-panel/components/SidePanelOptionsDropdown.tsx
@@ -17444,6 +17555,11 @@ msgstr "OTP aynan 6 xonali boʻlishi kerak"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
 msgid "Outage"
 msgstr "Nosozlik"
+
+#. js-lingui-id: gdC3cZ
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Outlook"
+msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
@@ -17844,6 +17960,7 @@ msgid "permission flag"
 msgstr "ruxsat belgisi"
 
 #. js-lingui-id: 9cDpsw
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -17856,6 +17973,11 @@ msgstr "Ruxsatlar"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Permissions · {objectLabelSingular}"
 msgstr "Ruxsatlar · {objectLabelSingular}"
+
+#. js-lingui-id: JFI3iH
+#: src/modules/localization/hooks/useLocaleOptions.ts
+msgid "Persian"
+msgstr "Forscha"
 
 #. js-lingui-id: qrGMTi
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
@@ -18592,6 +18714,12 @@ msgstr "O‘zgarishlar jurnalini o‘qing"
 msgid "Read documentation"
 msgstr "Hujjatlarni o‘qing"
 
+#. js-lingui-id: BksH/i
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Read emails"
+msgstr "Elektron xatlarni o‘qish"
+
 #. js-lingui-id: U26cMX
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
@@ -18720,6 +18848,7 @@ msgstr "Tavsiya etilgan"
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect"
 msgstr "Qayta ulash"
@@ -18776,6 +18905,11 @@ msgstr "Yozuv (ixtiyoriy)"
 msgid "Record {displayedRecordNumber} of {recordCount}"
 msgstr "{recordCount} tadan {displayedRecordNumber}-yozuv"
 
+#. js-lingui-id: v5nqef
+#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+msgid "Record change logs"
+msgstr "Yozuv o‘zgarishlari jurnallari"
+
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Record changes"
@@ -18783,6 +18917,7 @@ msgstr "Yozuv o‘zgarishlari"
 
 #. js-lingui-id: tpEWQj
 #: src/modules/log-console/components/LogConsole.tsx
+#: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Yozuv o‘zgarishlari va ilova jurnallari joriy rejangizda mavjud. Boshqa jurnal turlari uchun Organization obunasi talab etiladi."
 
@@ -19144,7 +19279,7 @@ msgstr "{address} manzilini olib tashlash"
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
-msgstr ""
+msgstr "{displayName} manzilini olib tashlash"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
@@ -19382,6 +19517,11 @@ msgstr "Maydonni qayta tartiblash"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
 msgid "Reorder options"
 msgstr "Variantlarni qayta tartiblash"
+
+#. js-lingui-id: Jtm0TT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Replace the Accounts settings with App preferences, built around accounts and the apps that use them."
+msgstr "Hisoblar sozlamalarini hisoblar va ulardan foydalanadigan ilovalar asosida yaratilgan Ilova sozlamalari bilan almashtiring."
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -21081,6 +21221,12 @@ msgstr "Elektron xat yuborish"
 msgid "Send Email"
 msgstr "Xat yuborish"
 
+#. js-lingui-id: YUviZE
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+msgid "Send emails"
+msgstr "Elektron xatlarni yuborish"
+
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
@@ -21369,6 +21515,7 @@ msgstr "sozlamalar menyusi elementi"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Setup incomplete"
 msgstr "Sozlash tugallanmagan"
 
@@ -21427,6 +21574,11 @@ msgstr "Ish maydoni bilan ulashing?"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Share your app to other workspaces without pushing it on the marketplace"
 msgstr "Ilovangizni bozorda joylashtirmasdan boshqa ish maydonlari bilan ulashing"
+
+#. js-lingui-id: fX13zr
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Shared accounts between apps"
+msgstr "Ilovalar o‘rtasida ulashilgan hisoblar"
 
 #. js-lingui-id: SmARy0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -21951,8 +22103,6 @@ msgstr "Ushbu sahifani yuklashda nimadir noto‘g‘ri bo‘ldi."
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Soon"
 msgstr "Tez orada"
 
@@ -22215,6 +22365,7 @@ msgstr "Barcha yozuv sahifalari bo‘ylab umumiy statik matn"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+#: src/modules/settings/app-preferences/components/SettingsNativeAccountAppsSection.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -22674,6 +22825,7 @@ msgstr "Har bir xabarni sinxronlash"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync failed"
 msgstr "Sinxronlash muvaffaqiyatsiz tugadi"
 
@@ -22689,11 +22841,13 @@ msgstr "{mailboxHandle} pochta qutisi bilan sinxronlashuv yo‘qoldi. Yangilanis
 
 #. js-lingui-id: U6wmNc
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Sync paused"
 msgstr "Sinxronlash to‘xtatib turildi"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Synced"
 msgstr "Sinxronlangan"
 
@@ -22719,6 +22873,7 @@ msgstr "Obyekt yorliqlari va API nomlarini sinxronlash"
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
 msgstr "Sinxronlash to‘xtaydi va ushbu hisobning hisob ma’lumotlari o‘chiriladi. Elektron xatlaringiz va tadbirlaringiz saqlanib qoladi hamda qayta ulangandan keyin mavjud bo‘ladi."
 
@@ -23638,6 +23793,7 @@ msgstr "Ushbu sahifa mavjud emas."
 
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
 msgstr "Bu {accountHandle} va uning barcha sinxronlangan elektron xatlari hamda tadbirlarini butunlay o‘chiradi. Bu amalni ortga qaytarib bo‘lmaydi."
 
@@ -25169,11 +25325,6 @@ msgstr "Yillik hisob-kitobga yangilaysizmi?"
 msgid "Upgrade to Organization"
 msgstr "Tashkilot rejasiga yangilash"
 
-#. js-lingui-id: q10MiT
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-msgid "Upgrade to Organization to access audit logs."
-msgstr "Audit jurnallariga kirish uchun Organization rejasiga o‘ting."
-
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to configure SSO."
@@ -25481,6 +25632,11 @@ msgstr "Mikrofoningizdan foydalanish"
 msgid "Used"
 msgstr "Ishlatilgan"
 
+#. js-lingui-id: xUOPoQ
+#: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
+msgid "Used by"
+msgstr "Foydalanuvchi"
+
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Useful for pivot/junction tables"
@@ -25492,6 +25648,7 @@ msgstr "Pivot/junction jadvallari uchun foydali"
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -25499,6 +25656,7 @@ msgstr "Pivot/junction jadvallari uchun foydali"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -25951,6 +26109,7 @@ msgstr "To‘q binafsha"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
@@ -26367,11 +26526,6 @@ msgstr "Ushbu API nimalar qilishi mumkin: uning ruxsatlarini belgilash uchun foy
 msgid "What's installed and being used in your workspace"
 msgstr "Ish joyingizda nima o‘rnatilgan va nimalardan foydalanilayotganini ko‘ring"
 
-#. js-lingui-id: RlSr4h
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Whatsapp"
-msgstr "WhatsApp"
-
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
@@ -26699,11 +26853,6 @@ msgstr "Ish maydoni"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Workspace access is also managed by an application."
 msgstr "Ish maydoniga kirish huquqi ilova tomonidan ham boshqariladi."
-
-#. js-lingui-id: rxazlH
-#: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
-msgid "Workspace communications"
-msgstr "Ish maydoni kommunikatsiyalari"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts

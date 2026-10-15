@@ -51,12 +51,34 @@ export const App = () => (
 
 The component stylesheet includes a global reset. Review its effect when adding Twenty UI to an existing application.
 
+## Override styles
+
+Twenty UI puts every rule of its stylesheets, including the reset, in the `twenty-ui` cascade layer. Styles you write outside a layer, such as a `className`, a CSS module, or a CSS-in-JS rule, override Twenty UI whatever their selector specificity or import order.
+
+Global element resets in your application are unlayered too, so they would override Twenty UI components. Declare a layer for them before Twenty UI's stylesheet loads:
+
+```css
+@layer reset, twenty-ui;
+
+@layer reset {
+  button {
+    font: inherit;
+  }
+}
+```
+
+With Tailwind CSS v4, place Twenty UI between Tailwind's base and utility layers:
+
+```css
+@layer theme, base, twenty-ui, components, utilities;
+```
+
 ## Choose an entry point
 
 Import components from their public subpath to keep imports focused:
 
 Primitives are foundational controls, including compound controls such as Select,
-Menu, and AlertDialog. Shared components combine primitives into recurring
+Popover, and AlertDialog. Shared components combine primitives into recurring
 design presets and reusable app building blocks. Both receive data and callbacks
 from the application.
 
@@ -75,7 +97,7 @@ Each primitive and shared component family has a matching public entry point, su
 | `twenty-ui/components`               | All shared component families except the optional editor              |
 | `twenty-ui/components/data-display`  | Avatar groups, JSON trees, metrics, counters, and icon tiles          |
 | `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                           |
-| `twenty-ui/components/input`         | Button presets, search and image inputs, and country/currency pickers |
+| `twenty-ui/components/input`         | Button and radio presets, search and image inputs, and country/currency pickers |
 | `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                     |
 | `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                         |
 | `twenty-ui/components/settings`      | Settings rows and settings-specific compositions                      |

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
@@ -82,6 +84,10 @@ export class FlatValidationRuleValidatorService {
         message: t`Validation rule name is required`,
         userFriendlyMessage: msg`Validation rule name is required`,
       });
+    }
+
+    if (!universalFlatValidationRule.isActive) {
+      return errors;
     }
 
     if (!isNonEmptyString(universalFlatValidationRule.message.trim())) {

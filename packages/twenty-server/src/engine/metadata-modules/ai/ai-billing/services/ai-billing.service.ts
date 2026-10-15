@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -31,7 +31,7 @@ export class AiBillingService {
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
@@ -44,7 +44,7 @@ export class AiBillingService {
     operationType: UsageOperationType;
     spenders: UsageSpenders;
   }): Promise<void> {
-    await this.billingUsageService.assertUsageAllowed({
+    await this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
@@ -108,14 +108,19 @@ export class AiBillingService {
     return breakdown.totalCostInDollars;
   }
 
-  async calculateAndBillUsage(
-    modelId: ModelId,
-    billingInput: BillingUsageInput,
-    workspaceId: string,
-    operationType: UsageOperationType,
-    agentId?: string | null,
-    userWorkspaceId?: string | null,
-  ): Promise<void> {
+  async calculateAndBillUsage({
+    modelId,
+    billingInput,
+    workspaceId,
+    operationType,
+    spenders,
+  }: {
+    modelId: ModelId;
+    billingInput: BillingUsageInput;
+    workspaceId: string;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<void> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -131,7 +136,7 @@ export class AiBillingService {
           totalTokens,
           modelId,
           operationType,
-          spenders: { userWorkspaceId, agentId },
+          spenders,
         }),
       ],
     });
@@ -172,11 +177,15 @@ export class AiBillingService {
     return { hasNoMoreAvailableCredits: exhaustedKind === 'allowance' };
   }
 
-  async billNativeWebSearchUsage(
-    nativeWebSearchCallCount: number,
-    workspaceId: string,
-    userWorkspaceId?: string | null,
-  ): Promise<void> {
+  async billNativeWebSearchUsage({
+    nativeWebSearchCallCount,
+    workspaceId,
+    spenders,
+  }: {
+    nativeWebSearchCallCount: number;
+    workspaceId: string;
+    spenders: UsageSpenders;
+  }): Promise<void> {
     if (nativeWebSearchCallCount <= 0) {
       return;
     }
@@ -198,28 +207,34 @@ export class AiBillingService {
           creditsUsedMicro,
           quantity: nativeWebSearchCallCount,
           unit: UsageUnit.INVOCATION,
-          spenders: { userWorkspaceId },
+          spenders,
         },
       ],
     });
   }
 
-  async emitAiTokenUsageEvent(
-    workspaceId: string,
-    creditsUsedMicro: number,
-    totalTokens: number,
-    modelId: ModelId,
-    operationType: UsageOperationType,
-    agentId?: string | null,
-    userWorkspaceId?: string | null,
-  ): Promise<void> {
+  async emitAiTokenUsageEvent({
+    workspaceId,
+    creditsUsedMicro,
+    totalTokens,
+    modelId,
+    operationType,
+    spenders,
+  }: {
+    workspaceId: string;
+    creditsUsedMicro: number;
+    totalTokens: number;
+    modelId: ModelId;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<void> {
     await this.usageRecorderService.record(workspaceId, [
       this.buildAiTokenUsageEvent({
         creditsUsedMicro,
         totalTokens,
         modelId,
         operationType,
-        spenders: { userWorkspaceId, agentId },
+        spenders,
       }),
     ]);
   }

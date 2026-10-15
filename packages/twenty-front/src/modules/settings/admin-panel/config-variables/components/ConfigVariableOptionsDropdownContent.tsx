@@ -41,18 +41,10 @@ export const ConfigVariableOptionsDropdownContent = ({
       <Dropdown.Page id="root">
         <Dropdown.Section>
           <Dropdown.ActionItem page="source" hasSubmenu={false}>
-            <Tag
-              color={'transparent'}
-              borderStyle="dashed"
-              variant={'soft'}
-            >{t`Source`}</Tag>
+            <Tag color={'transparent'}>{t`Source`}</Tag>
           </Dropdown.ActionItem>
           <Dropdown.ActionItem page="group" hasSubmenu={false}>
-            <Tag
-              color={'transparent'}
-              borderStyle="dashed"
-              variant={'soft'}
-            >{t`Group`}</Tag>
+            <Tag color={'transparent'}>{t`Group`}</Tag>
           </Dropdown.ActionItem>
         </Dropdown.Section>
         <Dropdown.Separator />
@@ -81,9 +73,7 @@ export const ConfigVariableOptionsDropdownContent = ({
                 goBack();
               }}
             >
-              <Tag color={option.color} borderStyle="dashed" variant={'soft'}>
-                {option.label}
-              </Tag>
+              <Tag color={option.color}>{option.label}</Tag>
             </Dropdown.OptionItem>
           ))}
         </Dropdown.Section>
@@ -101,9 +91,7 @@ export const ConfigVariableOptionsDropdownContent = ({
                 goBack();
               }}
             >
-              <Tag color={'transparent'} borderStyle="dashed" variant={'soft'}>
-                {option.label}
-              </Tag>
+              <Tag color={'transparent'}>{option.label}</Tag>
             </Dropdown.OptionItem>
           ))}
         </Dropdown.Section>

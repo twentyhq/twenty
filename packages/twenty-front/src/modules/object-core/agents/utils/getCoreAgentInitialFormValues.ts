@@ -24,8 +24,6 @@ export const getCoreAgentInitialFormValues = (
     prompt: agent.prompt,
     isCustom: agent.isCustom,
     modelConfiguration: agent.modelConfiguration || {},
-    // TODO: Fallback can be removed once all text response format agents are migrated.
-    responseFormat: agent.responseFormat || { type: 'text' },
     triggers: parseAgentTriggers(agent.triggers ?? []),
   };
 };

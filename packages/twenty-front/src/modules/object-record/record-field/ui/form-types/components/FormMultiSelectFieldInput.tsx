@@ -58,11 +58,8 @@ const StyledDisplayModeReadonlyContainer = styled.div`
 
 const StyledDisplayModeContainer = styled.div`
   align-items: center;
-  background: transparent;
-  border: none;
   cursor: pointer;
   display: flex;
-  font-family: inherit;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 `;

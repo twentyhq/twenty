@@ -124,7 +124,56 @@ describe('AgentTriggerRunnerService', () => {
             type: 'application',
             actingAgent: { id: AGENT_ID, label: 'Enricher' },
           }),
-          rolePermissionConfig: { intersectionOf: [AGENT_ROLE_ID] },
+          rolePermissionConfig: {
+            intersectionOf: { agentRoleId: AGENT_ROLE_ID },
+          },
+        }),
+      }),
+    );
+  });
+
+  it("should keep the agent's role alone when its application has no role", async () => {
+    findApplication.mockResolvedValue({
+      id: 'application-id',
+      name: 'App',
+      defaultRoleId: null,
+    });
+
+    await service.run(JOB_DATA);
+
+    expect(runAgent).toHaveBeenCalledTimes(1);
+    expect(runAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        executionContext: expect.objectContaining({
+          rolePermissionConfig: {
+            intersectionOf: { agentRoleId: AGENT_ROLE_ID },
+          },
+          agentRunRoleIds: {},
+        }),
+      }),
+    );
+  });
+
+  it("should restrict the agent's role to its application's default role", async () => {
+    findApplication.mockResolvedValue({
+      id: 'application-id',
+      name: 'App',
+      defaultRoleId: 'application-role-id',
+    });
+
+    await service.run(JOB_DATA);
+
+    expect(runAgent).toHaveBeenCalledTimes(1);
+    expect(runAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        executionContext: expect.objectContaining({
+          rolePermissionConfig: {
+            intersectionOf: {
+              agentRoleId: AGENT_ROLE_ID,
+              applicationRoleId: 'application-role-id',
+            },
+          },
+          agentRunRoleIds: { applicationRoleId: 'application-role-id' },
         }),
       }),
     );

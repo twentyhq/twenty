@@ -5,6 +5,7 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
@@ -43,15 +44,20 @@ export const agentChatFirstUnreadMessageIdSelector = createAtomSelector<
     const firstUnreadMessage = messages.find((message) => {
       const createdAt = message.metadata?.createdAt;
 
-      if (message.role === AGENT_MESSAGE_ROLE.SYSTEM || !isDefined(createdAt)) {
+      if (
+        message.role === AGENT_MESSAGE_ROLE.SYSTEM ||
+        isSilentAgentChatMessage(message) ||
+        !isDefined(createdAt)
+      ) {
         return false;
       }
 
       if (message.role === AGENT_MESSAGE_ROLE.USER) {
-        const senderUserWorkspaceId = message.metadata?.senderUserWorkspaceId;
+        const senderWorkspaceMemberId =
+          message.metadata?.senderWorkspaceMemberId;
 
-        const isOwnMessage = isDefined(senderUserWorkspaceId)
-          ? senderUserWorkspaceId === currentWorkspaceMember?.userWorkspaceId
+        const isOwnMessage = isDefined(senderWorkspaceMemberId)
+          ? senderWorkspaceMemberId === currentWorkspaceMember?.id
           : isSenderlessMessageOwn;
 
         if (isOwnMessage) {

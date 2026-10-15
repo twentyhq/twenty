@@ -150,6 +150,10 @@ export class WorkflowSchemaWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
+        if (isDefined(step.settings.input.responseFormat)) {
+          return computeAiAgentOutputSchema(step.settings.input.responseFormat);
+        }
+
         return this.computeAiAgentActionOutputSchema({
           agentId: step.settings.input.agentId,
           workspaceId,

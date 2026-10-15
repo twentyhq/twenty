@@ -203,9 +203,12 @@ export class WorkspaceDataSource {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
+    const repositoryRolePermissionConfig: RolePermissionConfig =
+      rolePermissionConfig ?? { intersectionOf: {} };
+
     const { objectRecordsPermissions, shouldBypassPermissionChecks } =
       resolveObjectRecordsPermissions({
-        rolePermissionConfig,
+        rolePermissionConfig: repositoryRolePermissionConfig,
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
       });
 
@@ -216,6 +219,7 @@ export class WorkspaceDataSource {
       authContext: this.authContext,
       executor,
       objectRecordsPermissions,
+      rolePermissionConfig: repositoryRolePermissionConfig,
       shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>

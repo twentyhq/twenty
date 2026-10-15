@@ -1,3 +1,4 @@
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useState } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -23,7 +24,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   type BarChartConfiguration,
   GraphOrderBy,
@@ -99,9 +100,10 @@ export const ChartSortBySelectionDropdownContent = () => {
       barOrLineChartConfiguration.primaryAxisGroupBySubFieldName;
   }
 
-  const primaryAxisField = objectMetadataItem?.fields.find(
-    (field) => field.id === groupByFieldMetadataId,
-  );
+  const primaryAxisField = findFieldMetadataItemByFieldMetadataId({
+    fieldMetadataItems: objectMetadataItem?.fields,
+    fieldMetadataId: groupByFieldMetadataId,
+  });
 
   if (!isDefined(primaryAxisField)) {
     return null;
@@ -184,7 +186,7 @@ export const ChartSortBySelectionDropdownContent = () => {
                 handleSelect(sortOption.value);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === sortOption.value}
                 onClick={() => {
                   handleSelect(sortOption.value);
@@ -219,7 +221,7 @@ export const ChartSortBySelectionDropdownContent = () => {
                       configuration.aggregateOperation ?? undefined,
                   })}
                 />
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           );
         })}

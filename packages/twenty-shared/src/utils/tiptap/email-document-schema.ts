@@ -84,6 +84,12 @@ const orderedListNodeSchema = z.looseObject({
   content: z.array(listItemNodeSchema).min(1),
 });
 
+const blockquoteNodeSchema = z.looseObject({
+  type: z.literal(TIPTAP_NODE_TYPES.BLOCKQUOTE),
+  attrs: z.looseObject({ style: styleAttributeSchema.nullable() }).optional(),
+  content: z.array(paragraphNodeSchema).min(1),
+});
+
 const imageNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.IMAGE),
   attrs: z.looseObject({
@@ -141,17 +147,24 @@ const htmlNodeSchema = z.looseObject({
   attrs: z.looseObject({ html: z.string().max(100_000) }),
 });
 
+const htmlDocumentNodeSchema = z.looseObject({
+  type: z.literal(TIPTAP_NODE_TYPES.HTML_DOCUMENT),
+  attrs: z.looseObject({ html: z.string() }),
+});
+
 const blockNodeSchema = z.discriminatedUnion('type', [
   paragraphNodeSchema,
   headingNodeSchema,
   bulletListNodeSchema,
   orderedListNodeSchema,
+  blockquoteNodeSchema,
   imageNodeSchema,
   sectionNodeSchema,
   columnsNodeSchema,
   buttonNodeSchema,
   dividerNodeSchema,
   htmlNodeSchema,
+  htmlDocumentNodeSchema,
 ]);
 
 const canvasThemeAttributeSchema = z.looseObject({

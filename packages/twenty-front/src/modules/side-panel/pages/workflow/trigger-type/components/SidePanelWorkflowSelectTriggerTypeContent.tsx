@@ -7,6 +7,7 @@ import {
   type WorkflowTrigger,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
 import { SidePanelWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepTitle';
@@ -66,7 +67,7 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
 
       openWorkflowEditStepInSidePanel({
         workflowId,
-        title: defaultLabel,
+        title: getWorkflowStepDisplayName({ name: defaultLabel, type }),
         icon: getIcon(icon),
         stepId: TRIGGER_STEP_ID,
       });
@@ -85,7 +86,10 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
             withIconContainer={true}
             key={action.defaultLabel}
             LeftIcon={() => <Icon color={theme.color.blue} size={16} />}
-            text={action.defaultLabel}
+            text={getWorkflowStepDisplayName({
+              name: action.defaultLabel,
+              type: action.type,
+            })}
             onClick={handleTriggerTypeClick(action)}
           />
         );
@@ -101,7 +105,10 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
             withIconContainer={true}
             key={action.defaultLabel}
             LeftIcon={() => <Icon color={theme.color.purple} size={16} />}
-            text={action.defaultLabel}
+            text={getWorkflowStepDisplayName({
+              name: action.defaultLabel,
+              type: action.type,
+            })}
             onClick={handleTriggerTypeClick(action)}
           />
         );

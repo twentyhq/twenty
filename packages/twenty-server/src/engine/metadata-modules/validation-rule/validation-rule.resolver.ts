@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import {
   UseFilters,
   UseGuards,
@@ -51,7 +53,7 @@ export class ValidationRuleResolver {
 
   @Query(() => [ValidationRuleDTO])
   @UseGuards(
-    FeatureFlagGuard(FeatureFlagKey.IS_VALIDATION_RULES_ENABLED),
+    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
     NoPermissionGuard,
   )
   async validationRules(
@@ -67,7 +69,7 @@ export class ValidationRuleResolver {
 
   @Mutation(() => ValidationRuleDTO)
   @UseGuards(
-    FeatureFlagGuard(FeatureFlagKey.IS_VALIDATION_RULES_ENABLED),
+    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
     SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
   )
   async createValidationRule(
@@ -82,7 +84,7 @@ export class ValidationRuleResolver {
 
   @Mutation(() => ValidationRuleDTO)
   @UseGuards(
-    FeatureFlagGuard(FeatureFlagKey.IS_VALIDATION_RULES_ENABLED),
+    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
     SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
   )
   async updateValidationRule(
@@ -97,7 +99,7 @@ export class ValidationRuleResolver {
 
   @Mutation(() => ValidationRuleDTO)
   @UseGuards(
-    FeatureFlagGuard(FeatureFlagKey.IS_VALIDATION_RULES_ENABLED),
+    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
     SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
   )
   async deleteValidationRule(

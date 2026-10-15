@@ -33,11 +33,11 @@ Create the destination fields in **Settings → Data Model → Opportunities** b
 
 3. **Search Records**: Find the linked person
    - Object: People
-   - Filter: ID equals `{{trigger.object.pointOfContact.id}}`
+   - Filter: ID equals `{{trigger.properties.after.pointOfContactId}}`
 
 4. **Update Record**:
    - Object: Opportunities
-   - Record: `{{trigger.object.id}}`
+   - Record: `{{trigger.properties.after.id}}`
    - Contact Email: `{{searchRecords[0].email}}`
    - Contact Phone: `{{searchRecords[0].phone}}`
 
@@ -54,16 +54,16 @@ Create the destination fields in **Settings → Data Model → Opportunities** b
 
 2. **Search Records**: Find all opportunities for this company
    - Object: Opportunities
-   - Filter: Company ID equals `{{trigger.object.id}}`
+   - Filter: Company ID equals `{{trigger.properties.after.id}}`
 
 3. **Iterator**: Loop through each opportunity
 
 4. **Update Record** (inside iterator):
    - Object: Opportunities
    - Record: `{{iterator.currentItem.id}}`
-   - Company Industry: `{{trigger.object.industry}}`
-   - Company Size: `{{trigger.object.companySize}}`
-   - Company ARR: `{{trigger.object.annualRevenue}}`
+   - Company Industry: `{{trigger.properties.after.industry}}`
+   - Company Size: `{{trigger.properties.after.companySize}}`
+   - Company ARR: `{{trigger.properties.after.annualRevenue}}`
 
 ## Copy on Record Creation
 
@@ -84,11 +84,11 @@ Create the destination fields in **Settings → Data Model → Opportunities**:
 
 2. **Search Records**: Get the linked company's details
    - Object: Companies
-   - Filter: ID equals `{{trigger.object.company.id}}`
+   - Filter: ID equals `{{trigger.properties.after.companyId}}`
 
 3. **Update Record**:
    - Object: Opportunities
-   - Record: `{{trigger.object.id}}`
+   - Record: `{{trigger.properties.after.id}}`
    - Company Industry: `{{searchRecords[0].industry}}`
    - Company Size: `{{searchRecords[0].employees}}`
 

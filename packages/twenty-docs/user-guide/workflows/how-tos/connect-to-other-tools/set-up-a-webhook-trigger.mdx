@@ -63,10 +63,10 @@ Now add actions that use the webhook data:
 
 | Field | Value |
 |-------|-------|
-| First Name | `{{trigger.body.firstName}}` |
-| Last Name | `{{trigger.body.lastName}}` |
-| Email | `{{trigger.body.email}}` |
-| Company | Search or create based on `{{trigger.body.company}}` |
+| First Name | `{{trigger.firstName}}` |
+| Last Name | `{{trigger.lastName}}` |
+| Email | `{{trigger.email}}` |
+| Company | Search or create based on `{{trigger.company}}` |
 
 ### Step 5: Test the Webhook
 
@@ -104,7 +104,7 @@ If your webhook sends nested data:
 }
 ```
 
-Reference with: `{{trigger.body.contact.email}}`
+Reference with: `{{trigger.contact.email}}`
 
 ### Arrays
 

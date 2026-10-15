@@ -1,7 +1,9 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
+import { getCurrencyFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getCurrencyFilterDisplayValue';
 import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
@@ -9,6 +11,7 @@ import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDro
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -19,7 +22,6 @@ import { isDefined, parseJson } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
-export const MAX_ITEMS_TO_DISPLAY = 3;
 
 export const ObjectFilterDropdownCurrencySelect = () => {
   const [searchText, setSearchText] = useState('');
@@ -35,7 +37,9 @@ export const ObjectFilterDropdownCurrencySelect = () => {
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const currenciesAsSelectableItems = CURRENCIES.map(
+  const currencies = useCurrencies();
+
+  const currenciesAsSelectableItems = currencies.map(
     turnCurrencyIntoSelectableItem,
   );
 
@@ -76,16 +80,11 @@ export const ObjectFilterDropdownCurrencySelect = () => {
       );
     }
 
-    const selectedItemNames = currenciesAsSelectableItems
-      .filter((option) => newSelectedItemIds.includes(option.id))
-      .map((option) => option.name);
+    const selectedItemNames = CURRENCIES.filter((currency) =>
+      newSelectedItemIds.includes(currency.value),
+    ).map((currency) => currency.label);
 
-    const currenciesLabel = t`currencies`;
-
-    const filterDisplayValue =
-      selectedItemNames.length > MAX_ITEMS_TO_DISPLAY
-        ? `${selectedItemNames.length} ${currenciesLabel}`
-        : selectedItemNames.join(', ');
+    const filterDisplayValue = getCurrencyFilterDisplayValue(selectedItemNames);
 
     const newFilterValue =
       newSelectedItemIds.length > 0
@@ -117,8 +116,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
       <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {filteredSelectedItems?.map((item) => {
           return (
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               key={item.id}
               role="option"
               aria-selected={true}
@@ -130,13 +128,12 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               startIcon={item.AvatarIcon && <item.AvatarIcon size="16" />}
             >
               {item.name}
-            </ListItem>
+            </ListItemButton>
           );
         })}
         {filteredSelectableItems?.map((item) => {
           return (
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               key={item.id}
               role="option"
               aria-selected={false}
@@ -148,7 +145,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               startIcon={item.AvatarIcon && <item.AvatarIcon size="16" />}
             >
               {item.name}
-            </ListItem>
+            </ListItemButton>
           );
         })}
         {showNoResult && <ListItem disabled>{t`No results`}</ListItem>}

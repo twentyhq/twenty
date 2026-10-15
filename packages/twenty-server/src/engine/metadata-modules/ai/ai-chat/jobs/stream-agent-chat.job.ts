@@ -19,6 +19,7 @@ import {
 import {
   type CodeExecutionData,
   type ExtendedUIMessage,
+  isSilentAgentChatMessageParts,
 } from 'twenty-shared/ai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -42,7 +43,6 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -108,7 +108,6 @@ export class StreamAgentChatJob {
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
-    private readonly sharingService: AgentChatSharingService,
     private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
@@ -720,6 +719,7 @@ export class StreamAgentChatJob {
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
+    const isSilent = isSilentAgentChatMessageParts(responseMessage.parts);
 
     const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
     // without an answerable call nothing can resume the turn, so fail rather than wait forever
@@ -727,7 +727,7 @@ export class StreamAgentChatJob {
       awaitingParts.length > 0 &&
       awaitingParts.every(({ isAnswerable }) => isAnswerable);
 
-    if ((isAborted || !hasText) && awaitingParts.length === 0) {
+    if ((isAborted || !hasText) && awaitingParts.length === 0 && !isSilent) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -751,6 +751,7 @@ export class StreamAgentChatJob {
       hasText,
       isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0,
+      isSilent,
       outOfCredits,
     });
 
@@ -788,15 +789,18 @@ export class StreamAgentChatJob {
       workspaceId,
       threadId,
       streamId,
-      recordedActivity: (await this.sharingService.hasInboxState(workspaceId))
-        ? { lastMessageText: replyText }
-        : null,
+      lastMessageText: replyText,
+      shouldRecordActivity: !isSilent,
       usage: {
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: usageTotals.conversationSize,
         pendingQuestionMessageId: isAwaitingAnswer ? assistantMessageId : null,
       },
     });
+
+    if (!totalsUpdate.affected && isSilent) {
+      return resolveSupersededTurnOutcome(outcome);
+    }
 
     if (!totalsUpdate.affected) {
       // The reply is saved even though a newer stream owns the thread. That

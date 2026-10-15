@@ -9,11 +9,14 @@ import { CancelMessageCampaignSingleRecordCommand } from '@/command-menu-item/en
 import { DuplicateMessageCampaignSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/DuplicateMessageCampaignSingleRecordCommand';
 import { SendMessageCampaignTestSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignTestSingleRecordCommand';
 import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailBlockSettingsSingleRecordCommand';
+import { OpenEmailPageStyleSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailPageStyleSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { EditLayoutCommand } from '@/command-menu-item/engine-command/global/components/EditLayoutCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
+import { AddRecordsToMessageListCommand } from '@/command-menu-item/engine-command/record/components/AddRecordsToMessageListCommand';
+import { AddViewToMessageListNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/AddViewToMessageListNoSelectionRecordCommand';
 import { RestoreRecordsCommand } from '@/command-menu-item/engine-command/record/components/RestoreRecordsCommand';
 import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
 import { MergeMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/MergeMultipleRecordsCommand';
@@ -81,6 +84,10 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.DUPLICATE_MESSAGE_LIST]: (
     <DuplicateMessageListSingleRecordCommand />
+  ),
+  [EngineComponentKey.ADD_TO_MESSAGE_LIST]: <AddRecordsToMessageListCommand />,
+  [EngineComponentKey.ADD_VIEW_TO_MESSAGE_LIST]: (
+    <AddViewToMessageListNoSelectionRecordCommand />
   ),
   [EngineComponentKey.DUPLICATE_WORKFLOW]: (
     <DuplicateWorkflowSingleRecordCommand />
@@ -303,6 +310,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.EMAIL_BLOCK_SETTINGS]: (
     <OpenEmailBlockSettingsSingleRecordCommand />
+  ),
+  [EngineComponentKey.EMAIL_PAGE_STYLE]: (
+    <OpenEmailPageStyleSingleRecordCommand />
   ),
 
   // Deprecated keys kept for backward compatibility until migration runs

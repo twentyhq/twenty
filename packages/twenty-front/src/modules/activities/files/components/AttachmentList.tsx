@@ -72,9 +72,15 @@ const StyledLoadingText = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
+const StyledPreviewPopup = styled(Dialog.Popup)`
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   justify-content: space-between;
   min-height: 40px;
   width: 100%;
@@ -88,6 +94,12 @@ const StyledButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledPreviewContent = styled.div`
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
 `;
 
 const PREVIEW_MODAL_ID = 'preview-modal';
@@ -158,10 +170,11 @@ export const AttachmentList = ({
               />
             ) : (
               <ActivityList>
-                {attachmentsWithFile.map((attachment) => (
+                {attachmentsWithFile.map((attachment, index) => (
                   <AttachmentRow
                     key={attachment.id}
                     attachment={attachment}
+                    divider={index < attachmentsWithFile.length - 1}
                     onPreview={
                       isAttachmentPreviewEnabled ? handlePreview : undefined
                     }
@@ -180,58 +193,36 @@ export const AttachmentList = ({
           renderInDocumentBody
         >
           {({ onKeyDown }) => (
-            <Dialog.Popup
+            <StyledPreviewPopup
               aria-label={previewedAttachment.name}
               onKeyDown={onKeyDown}
               size="lg"
-              style={{
-                padding: 'var(--t-spacing-2)',
-                gap: 'var(--t-spacing-2)',
-              }}
             >
-              <Dialog.Header
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 'auto',
-                  padding: 0,
-                }}
-              >
-                <StyledHeader>
-                  <StyledModalTitle>
-                    {previewedAttachment.name}
-                  </StyledModalTitle>
-                  <StyledButtonContainer>
-                    {hasDownloadPermission && (
-                      <IconButton
-                        aria-label={t`Download attachment`}
-                        onClick={handleDownload}
-                        size="sm"
-                      >
-                        <IconDownload />
-                      </IconButton>
-                    )}
+              <StyledHeader>
+                <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>
+                <StyledButtonContainer>
+                  {hasDownloadPermission && (
                     <IconButton
-                      aria-label={t`Close preview`}
-                      onClick={handleClosePreview}
+                      aria-label={t`Download attachment`}
+                      onClick={handleDownload}
                       size="sm"
                     >
-                      <IconX />
+                      <IconDownload />
                     </IconButton>
-                  </StyledButtonContainer>
-                </StyledHeader>
-              </Dialog.Header>
+                  )}
+                  <IconButton
+                    aria-label={t`Close preview`}
+                    onClick={handleClosePreview}
+                    size="sm"
+                  >
+                    <IconX />
+                  </IconButton>
+                </StyledButtonContainer>
+              </StyledHeader>
               <ScrollWrapper
                 componentInstanceId={`preview-modal-${previewedAttachment.id}`}
               >
-                <Dialog.Body
-                  style={{
-                    display: 'flex',
-                    flex: '1 1 0%',
-                    flexDirection: 'column',
-                    padding: 0,
-                  }}
-                >
+                <StyledPreviewContent>
                   <Suspense
                     fallback={
                       <StyledLoadingContainer>
@@ -248,9 +239,9 @@ export const AttachmentList = ({
                       })}
                     />
                   </Suspense>
-                </Dialog.Body>
+                </StyledPreviewContent>
               </ScrollWrapper>
-            </Dialog.Popup>
+            </StyledPreviewPopup>
           )}
         </DialogInstance>
       )}

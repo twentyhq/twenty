@@ -1,3 +1,4 @@
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useState } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -22,7 +23,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   GraphOrderBy,
   type GraphOrderBy as GraphOrderByType,
@@ -64,9 +65,14 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
-  const secondaryAxisField = objectMetadataItem?.fields.find(
-    (field) => field.id === configuration.secondaryAxisGroupByFieldMetadataId,
-  );
+  const secondaryAxisField = isDefined(
+    configuration.secondaryAxisGroupByFieldMetadataId,
+  )
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: configuration.secondaryAxisGroupByFieldMetadataId,
+      })
+    : undefined;
 
   const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
     objectMetadataId: widgetInEditMode.objectMetadataId,
@@ -137,7 +143,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                 handleSelectSortOption(sortOption.value);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === sortOption.value}
                 onClick={() => {
                   handleSelectSortOption(sortOption.value);
@@ -170,7 +176,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                       configuration.secondaryAxisGroupByFieldMetadataId ?? '',
                   })}
                 />
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           );
         })}

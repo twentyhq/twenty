@@ -5,7 +5,7 @@ import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic
 import { buildTeamsTranscriptSubscriptionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-subscription-kv-key';
 import { buildTeamsTranscriptsConnectionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcripts-connection-kv-key';
 import { deleteTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/delete-teams-transcript-subscription';
-import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message';
+import { toErrorMessage } from 'src/utils/to-error-message';
 
 export const unregisterTeamsTranscriptSubscription = async ({
   connectedAccountId,

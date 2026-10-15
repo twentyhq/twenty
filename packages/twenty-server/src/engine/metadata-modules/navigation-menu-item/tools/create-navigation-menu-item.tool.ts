@@ -169,6 +169,8 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         input: toServiceInput(parameters, context.userWorkspaceId),
         workspaceId: context.workspaceId,
         authUserWorkspaceId: context.userWorkspaceId,
+        authApplicationId: context.applicationId,
+        authAgentId: context.agentId,
       });
 
       return {

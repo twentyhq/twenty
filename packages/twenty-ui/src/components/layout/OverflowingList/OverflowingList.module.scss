@@ -46,6 +46,10 @@
   }
 }
 
+.popupItem {
+  display: contents;
+}
+
 .trigger {
   @include focus-ring;
 

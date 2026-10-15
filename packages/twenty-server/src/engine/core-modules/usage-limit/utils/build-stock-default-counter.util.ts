@@ -1,7 +1,7 @@
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
 import { type StockLimitDefault } from 'src/engine/core-modules/usage-limit/types/stock-limit-default.type';
 import { type StockResourceType } from 'src/engine/core-modules/usage-limit/types/stock-resource-type.type';
-import { buildStockDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-default-counter-key.util';
+import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 export const buildStockDefaultCounter = ({
@@ -14,20 +14,16 @@ export const buildStockDefaultCounter = ({
   resourceType: StockResourceType;
   operationType: UsageOperationType;
   stockLimitDefault: StockLimitDefault;
-}): StockCounter => ({
-  key: buildStockDefaultCounterKey({
-    workspaceId,
+}): StockCounter => {
+  const counter: Omit<StockCounter, 'key'> = {
+    isDefault: true,
+    limitValue: stockLimitDefault.limitValue,
+    unit: stockLimitDefault.unit,
     resourceType,
     operationType,
     spenderType: stockLimitDefault.spenderType,
-    unit: stockLimitDefault.unit,
-    limitValue: stockLimitDefault.limitValue,
-  }),
-  isDefault: true,
-  limitValue: stockLimitDefault.limitValue,
-  unit: stockLimitDefault.unit,
-  resourceType,
-  operationType,
-  spenderType: stockLimitDefault.spenderType,
-  spenderId: null,
-});
+    spenderId: null,
+  };
+
+  return { ...counter, key: buildStockCounterKey({ workspaceId, counter }) };
+};

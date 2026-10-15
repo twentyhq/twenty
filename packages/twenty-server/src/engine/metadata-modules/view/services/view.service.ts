@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -14,6 +13,7 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
+import { MorphRelationReferenceVisibilityService } from 'src/engine/metadata-modules/morph-relation-head/services/morph-relation-reference-visibility.service';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
@@ -46,7 +46,7 @@ export class ViewService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly morphRelationReferenceVisibilityService: MorphRelationReferenceVisibilityService,
   ) {}
 
   async createOne({
@@ -344,12 +344,6 @@ export class ViewService {
         },
       );
 
-    const isInitialObjectViewEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-        workspaceId,
-      );
-
     return Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatView) => flatView.workspaceId === workspaceId)
@@ -364,11 +358,7 @@ export class ViewService {
           viewTypes.includes(flatView.type),
       )
       .filter((flatView) =>
-        isViewAvailableToUser({
-          flatView,
-          userWorkspaceId,
-          isInitialObjectViewEnabled,
-        }),
+        isViewAvailableToUser({ flatView, userWorkspaceId }),
       )
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
@@ -449,6 +439,10 @@ export class ViewService {
           ],
         },
       );
+    const isMorphRelationReferenceVisible =
+      await this.morphRelationReferenceVisibilityService.getIsMorphRelationReferenceVisible(
+        workspaceId,
+      );
 
     return flatViews.map((flatView) => {
       const viewDto = fromFlatViewToViewDto(flatView);
@@ -457,7 +451,11 @@ export class ViewService {
         flatEntityIds: flatView.viewFieldIds,
         flatEntityMaps: flatViewFieldMaps,
       })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .filter(
+          (flatEntity) =>
+            flatEntity.deletedAt === null &&
+            isMorphRelationReferenceVisible(flatEntity.fieldMetadataId),
+        )
         .map(fromFlatViewFieldToViewFieldDto);
 
       viewDto.viewFieldGroups = findManyFlatEntityByIdInFlatEntityMaps({
@@ -471,7 +469,14 @@ export class ViewService {
         flatEntityIds: flatView.viewFilterIds,
         flatEntityMaps: flatViewFilterMaps,
       })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .filter(
+          (flatEntity) =>
+            flatEntity.deletedAt === null &&
+            isMorphRelationReferenceVisible(flatEntity.fieldMetadataId) &&
+            isMorphRelationReferenceVisible(
+              flatEntity.relationTargetFieldMetadataId,
+            ),
+        )
         .map(fromFlatViewFilterToViewFilterDto);
 
       viewDto.viewFilterGroups = findManyFlatEntityByIdInFlatEntityMaps({

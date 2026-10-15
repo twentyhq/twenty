@@ -18,7 +18,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
@@ -111,7 +111,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
                 setSelectedFieldMetadataId(fieldMetadataItem.id);
               }}
             >
-              <ListItem
+              <ListItemButton
                 focused={selectedItemId === fieldMetadataItem.id}
                 onClick={() => {
                   setIsSubMenuOpen(true);
@@ -127,7 +127,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
                 }
               >
                 {fieldMetadataItem.label}
-              </ListItem>
+              </ListItemButton>
             </SelectableListItem>
           ))}
         </SelectableList>

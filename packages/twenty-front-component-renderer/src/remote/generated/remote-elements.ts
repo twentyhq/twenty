@@ -11,6 +11,7 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 export type HtmlCommonProperties = {
   id?: string;
   dir?: string;
+  lang?: string;
   className?: string;
   style?: string;
   title?: string;
@@ -135,6 +136,7 @@ const HTML_COMMON_EVENTS_CONFIG = Object.fromEntries(
 const HTML_COMMON_PROPERTIES_CONFIG = {
   id: { type: String },
   dir: { type: String },
+  lang: { type: String },
   className: { type: String },
   style: { type: String },
   title: { type: String },
@@ -532,6 +534,7 @@ export type HtmlInputProperties = HtmlCommonProperties & {
   disabled?: boolean;
   checked?: boolean;
   readOnly?: boolean;
+  required?: boolean;
   accept?: string;
   multiple?: boolean;
   capture?: string;
@@ -560,6 +563,7 @@ export const HtmlInputElement = createRemoteElement<
     disabled: { type: Boolean },
     checked: { type: Boolean },
     readOnly: { type: Boolean },
+    required: { type: Boolean },
     accept: { type: String },
     multiple: { type: Boolean },
     capture: { type: String },

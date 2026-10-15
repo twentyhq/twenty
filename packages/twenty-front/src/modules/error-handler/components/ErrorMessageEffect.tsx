@@ -12,7 +12,7 @@ export const ErrorMessageEffect = () => {
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: errorMessage,
         dedupeKey: 'error-message-dedupe-key',
       });

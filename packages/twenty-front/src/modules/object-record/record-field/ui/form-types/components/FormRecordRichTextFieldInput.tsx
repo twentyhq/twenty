@@ -98,7 +98,7 @@ export const FormRecordRichTextFieldInput = ({
 
   const handleUploadFile = async (): Promise<string> => {
     enqueueToast({
-      variant: 'error',
+      status: 'error',
       children: t`Save the record before attaching a file`,
     });
 
@@ -146,7 +146,7 @@ export const FormRecordRichTextFieldInput = ({
   useEffect(() => {
     if (hasUnreadableStoredValue) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`This content was saved in an older format and cannot be edited here`,
       });
     }

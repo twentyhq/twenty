@@ -259,7 +259,7 @@ export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOptio
 export type { QueryCursorDirection } from './QueryCursorDirection';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
-export type { RecordGqlFieldsDeprecated } from './RecordGqlFieldsDeprecated';
+export type { RecordGqlFields } from './RecordGqlFields';
 export type {
   UUIDFilterValue,
   IsFilter,
@@ -294,7 +294,6 @@ export type {
   LeafObjectRecordFilter,
   RecordGqlOperationFilter,
 } from './RecordGqlOperationFilter';
-export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlRecordFields';
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
@@ -335,6 +334,8 @@ export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrate
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
+export type { ValidationRuleErrorCode } from './ValidationRuleErrorCode';
+export type { ValidationRuleErrorParams } from './ValidationRuleErrorParams';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';
 export type { ValidationRuleExpressionToken } from './ValidationRuleExpressionToken';
 export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescriptor';

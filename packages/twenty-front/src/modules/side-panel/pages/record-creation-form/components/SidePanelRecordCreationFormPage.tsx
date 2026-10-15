@@ -2,6 +2,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { SidePanelOptionsDropdown } from '@/side-panel/components/SidePanelOptionsDropdown';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -26,18 +27,25 @@ import { type ValidationRuleViolation } from '@/validation-rules/types/Validatio
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { getValidationRuleViolationsFromError } from '@/validation-rules/utils/getValidationRuleViolationsFromError';
+import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/groupValidationRuleViolationsByField';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
+import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
-import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconEdit,
+  IconPlus,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -45,14 +53,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-`;
-
-const StyledValidationRuleError = styled.div`
-  background: ${themeCssVariables.background.danger};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledValidationRuleErrors = styled.div`
@@ -127,6 +127,8 @@ const SidePanelRecordCreationForm = ({
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formResetCount, setFormResetCount] = useState(0);
+  const optionsDropdownId = useId();
   const [draftValidationRuleViolations, setDraftValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
   const [serverValidationRuleViolations, setServerValidationRuleViolations] =
@@ -164,11 +166,21 @@ const SidePanelRecordCreationForm = ({
     .map((recordFormField) => recordFormField.fieldMetadataItem);
 
   const hiddenFieldsCount = hiddenFieldMetadataItems.length;
+  const editableFieldsCount = editableRecordFormFields.length;
 
-  const validationRuleViolations = [
-    ...draftValidationRuleViolations,
-    ...serverValidationRuleViolations,
-  ];
+  const { violationsByFieldMetadataId, recordViolations } =
+    groupValidationRuleViolationsByField({
+      violations: [
+        ...draftValidationRuleViolations,
+        ...serverValidationRuleViolations,
+      ],
+      displayedFieldMetadataIds: [
+        ...visibleFieldMetadataItems,
+        ...(recordCreationFormAreHiddenFieldsShown
+          ? hiddenFieldMetadataItems
+          : []),
+      ].map((fieldMetadataItem) => fieldMetadataItem.id),
+    });
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
     computeDraftValidationRuleViolations({
@@ -216,7 +228,11 @@ const SidePanelRecordCreationForm = ({
     }
   };
 
-  const handleCreateClick = async () => {
+  const submitDraftRecord = async ({
+    shouldKeepOpen,
+  }: {
+    shouldKeepOpen: boolean;
+  }) => {
     if (isSubmitting) {
       return;
     }
@@ -246,9 +262,22 @@ const SidePanelRecordCreationForm = ({
           fieldMetadataItems: objectMetadataItem.fields,
           objectMetadataItems,
         }),
+        shouldKeepOpen,
       });
 
       if (!isDefined(error)) {
+        if (shouldKeepOpen) {
+          setRecordCreationFormDraft(null);
+          setDraftValidationRuleViolations([]);
+          setFormResetCount(
+            (previousFormResetCount) => previousFormResetCount + 1,
+          );
+          enqueueToast({
+            status: 'success',
+            children: t`${objectMetadataItem.labelSingular} created`,
+          });
+        }
+
         return;
       }
 
@@ -269,11 +298,21 @@ const SidePanelRecordCreationForm = ({
     }
   };
 
+  const handleCreateClick = () => submitDraftRecord({ shouldKeepOpen: false });
+
+  const handleCreateAnotherClick = () =>
+    submitDraftRecord({ shouldKeepOpen: true });
+
   const containerRef = useHotkeysOnFocusedElement({
-    keys: [`${Key.Meta}+${Key.Enter}`, `${Key.Control}+${Key.Enter}`],
+    keys: [
+      `${Key.Meta}+${Key.Enter}`,
+      `${Key.Control}+${Key.Enter}`,
+      `${Key.Alt}+${Key.Enter}`,
+    ],
     focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
-    callback: handleCreateClick,
-    dependencies: [currentFocusId, handleCreateClick],
+    callback: (keyboardEvent) =>
+      keyboardEvent.altKey ? handleCreateAnotherClick() : handleCreateClick(),
+    dependencies: [currentFocusId, handleCreateClick, handleCreateAnotherClick],
   });
 
   return (
@@ -292,11 +331,14 @@ const SidePanelRecordCreationForm = ({
           />
         }
       />
-      <StyledContent>
+      <StyledContent key={formResetCount}>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={visibleFieldMetadataItems}
           draftRecord={draftRecord}
+          validationRuleViolationsByFieldMetadataId={
+            violationsByFieldMetadataId
+          }
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
         />
@@ -317,8 +359,8 @@ const SidePanelRecordCreationForm = ({
               }
             >
               {recordCreationFormAreHiddenFieldsShown
-                ? t`Collapse hidden fields`
-                : t`Show hidden fields (${hiddenFieldsCount})`}
+                ? t`Hide fields`
+                : t`All fields (${editableFieldsCount})`}
             </LightButton>
           </StyledHiddenFieldsToggle>
         )}
@@ -327,35 +369,44 @@ const SidePanelRecordCreationForm = ({
             objectMetadataItem={objectMetadataItem}
             fieldMetadataItems={hiddenFieldMetadataItems}
             draftRecord={draftRecord}
+            validationRuleViolationsByFieldMetadataId={
+              violationsByFieldMetadataId
+            }
             onFieldValueChange={handleFieldValueChange}
             onFieldValueClear={handleFieldValueClear}
           />
         )}
       </StyledContent>
-      {validationRuleViolations.length > 0 && (
+      {recordViolations.length > 0 && (
         <StyledValidationRuleErrors>
-          {validationRuleViolations.map((violation) => (
-            <StyledValidationRuleError key={violation.ruleId} role="alert">
+          {recordViolations.map((violation) => (
+            <InlineBanner key={violation.ruleId} status="error" role="alert">
               {violation.message}
-            </StyledValidationRuleError>
+            </InlineBanner>
           ))}
         </StyledValidationRuleErrors>
       )}
       <SidePanelFooter
         actions={[
-          ...(hasLayoutsPermission
-            ? [
-                <Button
-                  key="edit-form"
-                  size="sm"
-                  onClick={() =>
-                    openRecordCreationFormSettingsInSidePanel(
-                      objectMetadataItem,
-                    )
-                  }
-                >{t`Edit`}</Button>,
-              ]
-            : []),
+          <SidePanelOptionsDropdown
+            key="options"
+            dropdownId={optionsDropdownId}
+          >
+            <Dropdown.ActionItem
+              startIcon={<IconPlus />}
+              shortcut={['Alt', 'Enter']}
+              disabled={isSubmitting}
+              onClick={handleCreateAnotherClick}
+            >{t`Create another`}</Dropdown.ActionItem>
+            {hasLayoutsPermission && (
+              <Dropdown.ActionItem
+                startIcon={<IconEdit />}
+                onClick={() =>
+                  openRecordCreationFormSettingsInSidePanel(objectMetadataItem)
+                }
+              >{t`Edit form`}</Dropdown.ActionItem>
+            )}
+          </SidePanelOptionsDropdown>,
           <Button
             key="create-record"
             startIcon={<IconPlus />}

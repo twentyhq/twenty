@@ -33,7 +33,7 @@ export const useSendMessageCampaign = () => {
   const { enqueueToast } = useToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { formatNumber } = useNumberFormat();
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { timeFormat, timeZone } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const sendMessageCampaign = async ({
@@ -50,7 +50,7 @@ export const useSendMessageCampaign = () => {
 
       if (!queued) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to send campaign`,
         });
 
@@ -82,20 +82,19 @@ export const useSendMessageCampaign = () => {
         const sendTime = formatCampaignSendTime({
           value: scheduledAt,
           timeZone,
-          dateFormat,
           timeFormat,
           localeCatalog,
         });
 
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: wasAlreadyScheduled
             ? t`Campaign moved to ${sendTime}`
             : t`Campaign scheduled for ${sendTime}`,
         });
       } else if (queuedCount === 0) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`No recipients to send to (${skipReasons})`,
         });
       } else {
@@ -105,7 +104,7 @@ export const useSendMessageCampaign = () => {
         });
 
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children:
             skipReasons.length > 0
               ? t`${queuedMessage}, skipping ${skipReasons}`

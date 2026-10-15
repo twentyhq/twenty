@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -15,6 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (
   objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
+  const { i18n } = useLingui();
   const getRelationMetadata = useGetRelationMetadata();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -42,14 +44,20 @@ export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (
 
     const fieldMetadataType = fieldMetadataItem.type as FieldType;
 
+    const fieldTypeConfig = getSettingsFieldTypeConfig(
+      fieldMetadataType as SettingsFieldType,
+    );
+    const translatedFieldTypeLabel = isDefined(fieldTypeConfig)
+      ? i18n._(fieldTypeConfig.label)
+      : '';
+
     return {
       fieldMetadataItem,
       fieldType: fieldType ?? '',
       dataType:
         isDefined(relationObjectMetadataItem?.labelPlural) ||
         isFieldTypeSupportedInSettings(fieldMetadataType)
-          ? getSettingsFieldTypeConfig(fieldMetadataType as SettingsFieldType)
-              ?.label
+          ? translatedFieldTypeLabel
           : '',
       label: fieldMetadataItem.label,
       identifierType: identifierType,

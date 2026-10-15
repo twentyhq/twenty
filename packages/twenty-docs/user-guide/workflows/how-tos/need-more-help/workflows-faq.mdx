@@ -91,7 +91,7 @@ description: Frequently asked questions about workflows in Twenty.
     - Or type `{{stepName.fieldName}}` directly
 
     **Examples**:
-    - Trigger data: `{{trigger.object.email}}`
+    - Trigger data: `{{trigger.properties.after.name}}` for a record trigger, `{{trigger.payload.name}}` for a manual trigger on a selected record
     - Search results: `{{searchRecords[0].name}}`
     - Code output: `{{code.calculatedValue}}`
 
