@@ -3971,6 +3971,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "workflow": {
         "universalIdentifier": "20202020-8c57-4e7f-84f5-f373f68e1b82",
       },
+      "workflowVersion": {
+        "universalIdentifier": "20202020-2f52-4ba8-8dc4-d0d6adb9578d",
+      },
     },
     "indexes": {
       "searchVectorGinIndex": {
@@ -3978,6 +3981,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "workflowIdIndex": {
         "universalIdentifier": "9294d9e3-0225-4c7f-9d6e-23b4c25b6b25",
+      },
+      "workflowVersionIdIndex": {
+        "universalIdentifier": "8183c8d2-9114-4b6e-8c5d-12a3b14a5a14",
       },
     },
     "universalIdentifier": "20202020-4e28-4e95-a9d7-6c00874f843c",
@@ -4040,6 +4046,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "workflow": {
             "universalIdentifier": "b4533c40-0bdd-5059-8105-d4174e40d7e9",
           },
+          "workflowVersion": {
+            "universalIdentifier": "725c75f2-a07e-5740-8b6b-62574e5f3acf",
+          },
         },
       },
     },
@@ -4066,6 +4075,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "position": {
         "universalIdentifier": "bb0c73bd-d371-5e72-b2a0-05d8be1668f1",
+      },
+      "runs": {
+        "universalIdentifier": "20202020-1d08-46df-901a-85045f18099a",
       },
       "searchVector": {
         "universalIdentifier": "19e1428c-2e0e-5a3d-a4f2-099856164cd8",
@@ -4108,6 +4120,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "name": {
             "universalIdentifier": "84a34cf6-7fd8-5972-894d-bc21e026f334",
           },
+          "runs": {
+            "universalIdentifier": "255ab204-2ebe-582c-bfbd-4a846490d721",
+          },
           "status": {
             "universalIdentifier": "6ec4080f-d57e-5837-8f99-b36cebbb2fde",
           },
@@ -4135,6 +4150,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "createdBy": {
             "universalIdentifier": "2885fb8d-a2c0-5198-bbc3-c6b77bfdd570",
+          },
+          "runs": {
+            "universalIdentifier": "cd54fd1a-bd06-5c9a-ab49-5569ec37f12f",
           },
           "status": {
             "universalIdentifier": "73f2e3f5-38b3-541e-9d96-797f0ae6455a",

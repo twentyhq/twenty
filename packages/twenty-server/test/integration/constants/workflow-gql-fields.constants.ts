@@ -6,6 +6,7 @@ export const WORKFLOW_RUN_GQL_FIELDS = `
     endedAt
     createdAt
     updatedAt
+    workflowVersionId
     coreWorkflowVersionId
     state
 `;

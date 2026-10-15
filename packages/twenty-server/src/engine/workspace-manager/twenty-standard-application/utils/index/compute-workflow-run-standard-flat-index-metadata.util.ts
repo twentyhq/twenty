@@ -17,6 +17,18 @@ export const buildWorkflowRunStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'workflowRun'>,
   FlatIndexMetadata
 > => ({
+  workflowVersionIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'workflowVersionIdIndex',
+      relatedFieldNames: ['workflowVersion'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   workflowIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

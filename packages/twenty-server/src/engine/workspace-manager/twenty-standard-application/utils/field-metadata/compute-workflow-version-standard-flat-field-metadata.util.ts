@@ -433,6 +433,36 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  runs: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'runs',
+      label: i18nLabel(
+        msg({ message: `Runs`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workflow runs linked to the version.`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconRun',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'workflowRun',
+      targetFieldName: 'workflowVersion',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

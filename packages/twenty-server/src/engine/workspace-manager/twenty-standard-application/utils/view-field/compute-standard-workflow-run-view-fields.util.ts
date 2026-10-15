@@ -71,6 +71,20 @@ export const computeStandardWorkflowRunViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
+    workflowRunRecordPageFieldsWorkflowVersion:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'workflowRun',
+        context: {
+          viewName: 'workflowRunRecordPageFields',
+          viewFieldName: 'workflowVersion',
+          fieldName: 'workflowVersion',
+          position: 3,
+          isVisible: true,
+          size: 150,
+          viewFieldGroupName: 'general',
+        },
+      }),
     workflowRunRecordPageFieldsStartedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'workflowRun',

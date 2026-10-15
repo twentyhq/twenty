@@ -1506,6 +1506,9 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
     ),
     name: { universalIdentifier: '20202020-b840-4253-aef9-4e5013694587' },
+    workflowVersion: {
+      universalIdentifier: '20202020-2f52-4ba8-8dc4-d0d6adb9578d',
+    },
     workflow: {
       universalIdentifier: '20202020-8c57-4e7f-84f5-f373f68e1b82',
     },
@@ -1552,6 +1555,7 @@ export const STANDARD_OBJECT_FIELDS = {
     status: {
       universalIdentifier: '20202020-5a34-440e-8a25-39d8c3d1d4cf',
     },
+    runs: { universalIdentifier: '20202020-1d08-46df-901a-85045f18099a' },
     steps: { universalIdentifier: '20202020-5988-4a64-b94a-1f9b7b989039' },
     coreWorkflowVersionId: {
       universalIdentifier: '20202020-58b4-46e8-b6d2-f1f3c74cf7f4',
