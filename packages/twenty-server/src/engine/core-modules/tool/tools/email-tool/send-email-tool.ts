@@ -1,6 +1,9 @@
 import { EmailOperation } from 'twenty-shared/types';
 import { Injectable, Logger } from '@nestjs/common';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
 import { EmailToolException } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
@@ -22,6 +25,7 @@ export class SendEmailTool implements Tool {
   constructor(
     private readonly emailComposerService: EmailComposerService,
     private readonly sendEmailService: SendEmailService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async execute(
@@ -36,7 +40,11 @@ export class SendEmailTool implements Tool {
       });
 
       if (!result.success) {
-        return result.output;
+        const errorMessage = this.i18nService
+          .getI18nInstance(SOURCE_LOCALE)
+          ._(result.error);
+
+        return { success: false, message: errorMessage, error: errorMessage };
       }
 
       const { data } = result;

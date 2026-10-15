@@ -7,7 +7,7 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldDefaultValueSchema';
 import { currencyFieldSettingsSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldSettingsSchema';
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
@@ -83,7 +83,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
           </SettingsOptionCardContentSelect>
         )}
       />
-      <Separator />
+      <SettingsCardSeparator />
       <Controller
         name="settings"
         control={control}
@@ -122,7 +122,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
                   withSearchInput={false}
                 />
               </SettingsOptionCardContentSelect>
-              <Separator />
+              <SettingsCardSeparator />
               {format === 'full' && (
                 <SettingsOptionCardContentCounter
                   Icon={IconDecimal}

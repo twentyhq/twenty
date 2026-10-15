@@ -84,7 +84,6 @@ export const SettingsDataModelFieldDateForm = ({
           <SettingsOptionCardContentSelect
             Icon={IconSlash}
             title={t`Display Format`}
-            disabled={disabled}
             description={displayFormatSelectDescription}
           >
             <Select<FieldDateDisplayFormat>

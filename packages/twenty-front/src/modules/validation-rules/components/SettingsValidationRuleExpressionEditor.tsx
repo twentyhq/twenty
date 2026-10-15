@@ -45,11 +45,6 @@ const StyledAskAiButtonContainer = styled.div`
   top: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledEditorContent = styled(Field.Root)`
-  display: flex;
-  flex-direction: column;
-`;
-
 const StyledEditor = styled.div<{ hasError: boolean }>`
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid
@@ -275,7 +270,7 @@ export const SettingsValidationRuleExpressionEditor = ({
   return (
     <>
       <Card.Content divider>
-        <StyledEditorContent>
+        <Field.Root>
           <StyledEditor hasError={isDefined(errorMessage)}>
             <EditorContent editor={editor} />
             <StyledAskAiButtonContainer>
@@ -287,7 +282,7 @@ export const SettingsValidationRuleExpressionEditor = ({
               {errorMessage}
             </Field.Error>
           )}
-        </StyledEditorContent>
+        </Field.Root>
       </Card.Content>
       <SettingsValidationRuleHelperPanel
         items={helperContext.items}
