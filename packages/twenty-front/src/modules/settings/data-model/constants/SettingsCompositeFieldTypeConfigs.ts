@@ -444,7 +444,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR].source,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR].source,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
+            .source,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
@@ -453,7 +454,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR].name,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR].name,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
+            .name,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
@@ -474,7 +476,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR]
             .context,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR].context,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
+            .context,
         isImportable: true,
         isFilterable: false,
         isIncludedInUniqueConstraint: false,
