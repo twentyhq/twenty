@@ -4,7 +4,6 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -260,10 +259,9 @@ export const useLoadRecordIndexStates = () => {
       }
 
       const recordIndexGroupAggregateFieldMetadataItemValue =
-        findFieldMetadataItemByFieldMetadataId({
-          fieldMetadataItems: objectMetadataItem.fields,
-          fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
-        });
+        objectMetadataItem.fields?.find(
+          (field) => field.id === view.kanbanAggregateOperationFieldMetadataId,
+        );
 
       let convertedAggregateOperation = undefined;
       if (isDefined(view.kanbanAggregateOperation)) {
