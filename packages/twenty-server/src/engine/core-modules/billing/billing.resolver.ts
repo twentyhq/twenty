@@ -34,7 +34,6 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthAgentId } from 'src/engine/decorators/auth/auth-agent-id.decorator';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -125,14 +124,12 @@ export class BillingResolver {
     }: BillingCheckoutSessionInput,
     @AuthApiKey() apiKey?: ApiKeyEntity,
     @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
-    @AuthAgentId() agentId?: string,
   ) {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
       apiKeyId: apiKey?.id,
       applicationId: application?.id,
-      agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -196,14 +193,12 @@ export class BillingResolver {
     @Args('idempotencyKey', { type: () => String }) idempotencyKey: string,
     @AuthApiKey() apiKey?: ApiKeyEntity,
     @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
-    @AuthAgentId() agentId?: string,
   ): Promise<BillingPaymentIntentDTO> {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
       apiKeyId: apiKey?.id,
       applicationId: application?.id,
-      agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -550,14 +545,12 @@ export class BillingResolver {
     userWorkspaceId,
     apiKeyId,
     applicationId,
-    agentId,
     workspaceActivationStatus,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     apiKeyId?: string;
     applicationId?: string;
-    agentId: string | undefined;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
@@ -578,7 +571,7 @@ export class BillingResolver {
         setting: PermissionFlagType.BILLING,
         apiKeyId,
         applicationId,
-        agentId,
+        agentId: undefined,
       });
 
     if (!userHasPermission) {

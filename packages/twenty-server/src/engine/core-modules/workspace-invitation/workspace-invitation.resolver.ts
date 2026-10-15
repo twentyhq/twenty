@@ -15,7 +15,6 @@ import { SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthAgentId } from 'src/engine/decorators/auth/auth-agent-id.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -158,8 +157,6 @@ export class WorkspaceInvitationResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @AuthAgentId()
-    agentId: string | undefined,
   ): Promise<SendInvitationsDTO> {
     if (isDefined(sendInviteLinkInput.roleId)) {
       const canAssignRoles =
@@ -168,7 +165,7 @@ export class WorkspaceInvitationResolver {
           workspaceId: workspace.id,
           setting: PermissionFlagType.ROLES,
           applicationId: application?.id,
-          agentId,
+          agentId: undefined,
         });
 
       if (!canAssignRoles) {

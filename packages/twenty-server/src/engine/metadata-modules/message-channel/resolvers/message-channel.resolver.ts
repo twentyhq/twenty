@@ -8,7 +8,6 @@ import { Not } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { AuthAgentId } from 'src/engine/decorators/auth/auth-agent-id.decorator';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -159,7 +158,6 @@ export class MessageChannelResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
-    @AuthAgentId() agentId?: string,
   ): Promise<MessageChannelDTO> {
     const messageChannel =
       await this.messageChannelMetadataService.verifyAdministrableByCaller({
@@ -167,7 +165,7 @@ export class MessageChannelResolver {
         userWorkspaceId,
         workspaceId: workspace.id,
         applicationId: application?.id,
-        agentId,
+        agentId: undefined,
       });
 
     // app channel settings belong to the creating app and go through updateAppMessageChannel

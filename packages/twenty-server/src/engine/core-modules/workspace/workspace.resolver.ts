@@ -58,7 +58,6 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { AuthAgentId } from 'src/engine/decorators/auth/auth-agent-id.decorator';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -177,8 +176,6 @@ export class WorkspaceResolver {
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @AuthAgentId()
-    agentId: string | undefined,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
@@ -189,7 +186,7 @@ export class WorkspaceResolver {
         userWorkspaceId,
         apiKey,
         application,
-        agentId,
+        agentId: undefined,
       });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);

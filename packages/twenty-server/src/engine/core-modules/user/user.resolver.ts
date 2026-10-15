@@ -48,7 +48,6 @@ import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/c
 import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthAgentId } from 'src/engine/decorators/auth/auth-agent-id.decorator';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthAuthenticatedAt } from 'src/engine/decorators/auth/auth-authenticated-at.decorator';
@@ -437,8 +436,6 @@ export class UserResolver {
     @AuthIsUserSession() isUserSession: boolean,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @AuthAgentId()
-    agentId: string | undefined,
   ) {
     if (!workspace) {
       throw new AuthException(
@@ -486,7 +483,7 @@ export class UserResolver {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
-        agentId,
+        agentId: undefined,
       }));
 
     if (!canDeleteUserFromWorkspace) {
@@ -531,8 +528,6 @@ export class UserResolver {
     @AuthUser({ allowUndefined: true }) user?: AuthContextUser | null,
     @AuthApplication({ allowUndefined: true })
     application?: FlatApplication,
-    @AuthAgentId()
-    agentId?: string,
   ): Promise<boolean> {
     let isUpdatingSelf =
       isDefined(authenticatedWorkspaceMemberId) &&
@@ -557,7 +552,7 @@ export class UserResolver {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
-        agentId,
+        agentId: undefined,
       }));
 
     if (!canUpdateWorkspaceMember) {
