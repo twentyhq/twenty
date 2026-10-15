@@ -8,6 +8,7 @@ import { TEAMS_TRANSCRIPT_HISTORY_COUNT_ROUTE_PATH } from 'src/features/transcri
 import { TEAMS_TRANSCRIPT_HISTORY_IMPORT_ROUTE_PATH } from 'src/features/transcripts/constants/teams-transcript-history-import-route-path';
 import { TEAMS_TRANSCRIPT_HISTORY_INITIAL_IMPORT_DAYS } from 'src/features/transcripts/constants/teams-transcript-history-initial-import-days';
 import { TEAMS_TRANSCRIPT_HISTORY_MAX_DAYS } from 'src/features/transcripts/constants/teams-transcript-history-max-days';
+import { TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT } from 'src/features/transcripts/constants/teams-transcript-history-max-import-count';
 import { TEAMS_TRANSCRIPT_HISTORY_STATUS_ROUTE_PATH } from 'src/features/transcripts/constants/teams-transcript-history-status-route-path';
 import { TranscriptImportHistoryCountSummary } from 'src/features/transcripts/front-components/TranscriptImportHistoryCountSummary';
 import { TranscriptImportHistoryProgress } from 'src/features/transcripts/front-components/TranscriptImportHistoryProgress';
@@ -290,9 +291,13 @@ export const TranscriptImportHistorySection = () => {
             </p>
           )}
           <StyledSettingsHint>
-            {t('Connecting imports the last {days} days.', {
-              days: TEAMS_TRANSCRIPT_HISTORY_INITIAL_IMPORT_DAYS,
-            })}
+            {t(
+              'Connecting imports up to {maxImportCount} transcripts from the last {days} days.',
+              {
+                maxImportCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT,
+                days: TEAMS_TRANSCRIPT_HISTORY_INITIAL_IMPORT_DAYS,
+              },
+            )}
           </StyledSettingsHint>
         </>
       )}

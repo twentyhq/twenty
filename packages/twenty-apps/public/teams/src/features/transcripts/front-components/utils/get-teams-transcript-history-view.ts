@@ -66,6 +66,7 @@ export const getTeamsTranscriptHistoryView = ({
         unavailableCount: state.unavailableCount,
         toImportCount: toImportCount > 0 ? toImportCount : undefined,
         checkedThrough: state.checkedThrough,
+        isImportLimitReached: state.isImportLimitReached === true,
       };
     case 'failed':
       return { kind: 'failed', errorCode: state.errorCode ?? 'unknown' };

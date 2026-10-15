@@ -1,6 +1,7 @@
 import { t } from 'twenty-sdk/front-component';
 
 import { TEAMS_TRANSCRIPT_HISTORY_MAX_DAYS } from 'src/features/transcripts/constants/teams-transcript-history-max-days';
+import { getTeamsTranscriptHistoryImportLimitMessage } from 'src/features/transcripts/front-components/utils/get-teams-transcript-history-import-limit-message';
 import { type TeamsTranscriptHistoryRouteErrorCode } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-route-error-code.type';
 
 export const getTeamsTranscriptHistoryRouteErrorMessage = ({
@@ -27,6 +28,8 @@ export const getTeamsTranscriptHistoryRouteErrorMessage = ({
       return t('Transcripts are already being counted or imported.');
     case 'count-required':
       return t('Count the transcripts again before importing them.');
+    case 'import-limit-exceeded':
+      return getTeamsTranscriptHistoryImportLimitMessage();
     case 'unknown':
       return unknownErrorMessage;
   }

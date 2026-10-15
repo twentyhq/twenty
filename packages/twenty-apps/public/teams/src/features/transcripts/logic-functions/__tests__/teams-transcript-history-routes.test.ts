@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT } from 'src/features/transcripts/constants/teams-transcript-history-max-import-count';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { teamsTranscriptHistoryCountHandler } from 'src/features/transcripts/logic-functions/teams-transcript-history-count';
 import { teamsTranscriptHistoryImportHandler } from 'src/features/transcripts/logic-functions/teams-transcript-history-import';
@@ -167,6 +168,39 @@ describe('Teams transcript history routes', () => {
         OWNER_CONTEXT,
       ),
     ).resolves.toEqual({ success: false, errorCode: 'count-required' });
+  });
+
+  it('should refuse to import a count over the import limit', async () => {
+    const overLimitState = {
+      ...COUNTED_STATE,
+      transcriptCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT + 4,
+    };
+
+    kvStore.set(STATE_KV_KEY, overLimitState);
+
+    await expect(
+      teamsTranscriptHistoryImportHandler(
+        buildRoutePayload({ runId: 'counted-run' }),
+        OWNER_CONTEXT,
+      ),
+    ).resolves.toEqual({ success: false, errorCode: 'import-limit-exceeded' });
+    expect(kvStore.get(STATE_KV_KEY)).toEqual(overLimitState);
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
+  });
+
+  it('should import a count of exactly the import limit', async () => {
+    kvStore.set(STATE_KV_KEY, {
+      ...COUNTED_STATE,
+      transcriptCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT + 3,
+    });
+
+    await expect(
+      teamsTranscriptHistoryImportHandler(
+        buildRoutePayload({ runId: 'counted-run' }),
+        OWNER_CONTEXT,
+      ),
+    ).resolves.toMatchObject({ success: true, state: { phase: 'importing' } });
+    expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
   });
 
   it('should keep the count when the import cannot be scheduled', async () => {

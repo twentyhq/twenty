@@ -23,4 +23,5 @@ export type TeamsTranscriptHistoryView =
       unavailableCount: number;
       toImportCount?: number;
       checkedThrough?: string;
+      isImportLimitReached: boolean;
     };

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT } from 'src/features/transcripts/constants/teams-transcript-history-max-import-count';
 import { TEAMS_TRANSCRIPT_HISTORY_MAX_PAGES } from 'src/features/transcripts/logic-functions/constants/teams-transcript-history-max-pages';
 import { getTeamsTranscriptHistoryPageTransition } from 'src/features/transcripts/logic-functions/utils/get-teams-transcript-history-page-transition';
 
@@ -140,6 +141,28 @@ describe('getTeamsTranscriptHistoryPageTransition', () => {
       skippedCount: 2,
       unavailableCount: 1,
       checkedThrough: '2026-07-01T00:00:00.000Z',
+    });
+  });
+
+  it('should end the import at the import limit without marking the cut page as checked', () => {
+    const transition = getTeamsTranscriptHistoryPageTransition({
+      state: {
+        ...STATE,
+        phase: 'importing',
+        importedCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT - 3,
+      },
+      job: { ...JOB, nextPageUrl: NEXT_PAGE_URL },
+      phase: 'importing',
+      pageCounts: { ...EMPTY_PAGE_COUNTS, importedCount: 3 },
+      now: NOW,
+    });
+
+    expect(transition.nextJob).toBeUndefined();
+    expect(transition.state).toMatchObject({
+      phase: 'imported',
+      isImportLimitReached: true,
+      importedCount: TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT,
+      checkedThrough: STATE.checkedThrough,
     });
   });
 

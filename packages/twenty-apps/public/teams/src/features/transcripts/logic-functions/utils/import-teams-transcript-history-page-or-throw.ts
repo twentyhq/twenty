@@ -44,12 +44,14 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
   coreApiClient,
   transcripts,
   importedSince,
+  importLimit,
   isRunActive,
 }: {
   accessToken: string;
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   transcripts: TeamsOccurrenceTranscript[];
   importedSince: string;
+  importLimit: number;
   isRunActive: () => Promise<boolean>;
 }): Promise<TeamsTranscriptHistoryPageCounts> => {
   const pageTranscripts = [
@@ -96,6 +98,10 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
     importableTranscripts,
     TEAMS_TRANSCRIPT_HISTORY_UPSERT_BATCH_SIZE,
   )) {
+    if (importedCount >= importLimit) {
+      break;
+    }
+
     const callRecordings: (ReturnType<typeof toCallRecordingData> & {
       id: string;
     })[] = [];
@@ -106,6 +112,10 @@ export const importTeamsTranscriptHistoryPageOrThrow = async ({
       calendarReference,
       callRecordingId,
     } of transcriptBatch) {
+      if (importedCount + callRecordings.length >= importLimit) {
+        break;
+      }
+
       const transcriptContent = await downloadAvailableTranscriptContentOrThrow(
         {
           accessToken,

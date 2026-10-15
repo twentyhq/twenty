@@ -9,6 +9,7 @@ const IMPORTING_VIEW = {
   importedCount: 0,
   skippedCount: 0,
   unavailableCount: 0,
+  isImportLimitReached: false,
 };
 
 describe('getTeamsTranscriptHistoryPollDelayMilliseconds', () => {

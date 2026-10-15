@@ -123,6 +123,43 @@ describe('TranscriptImportHistorySection', () => {
     expect(screen.getByText('Imported 0 of 25')).toBeTruthy();
   });
 
+  it('should not offer to import a count over the import limit', async () => {
+    postMock.mockResolvedValue(
+      toSuccess({ ...COUNTED_STATE, transcriptCount: 1_016 }),
+    );
+
+    render(<TranscriptImportHistorySection />);
+    await advanceTime();
+
+    expect(screen.getByText('To import: 1001')).toBeTruthy();
+    expect(screen.getByRole('alert').textContent).toBe(
+      'You can import up to 1000 transcripts at a time. Count fewer days, or use the API to import more.',
+    );
+    expect(
+      screen.queryByRole('button', { name: 'Import transcripts' }),
+    ).toBeNull();
+  });
+
+  it('should say when an import stopped at the import limit', async () => {
+    postMock.mockResolvedValue(
+      toSuccess({
+        ...BASE_STATE,
+        phase: 'imported',
+        importedCount: 1_000,
+        isImportLimitReached: true,
+      }),
+    );
+
+    render(<TranscriptImportHistorySection />);
+    await advanceTime();
+
+    expect(
+      screen.getByText(
+        'Import stopped at the limit of 1000 transcripts. Count again to see what is left.',
+      ),
+    ).toBeTruthy();
+  });
+
   it('should stop polling and offer Retry when the connection is gone', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 

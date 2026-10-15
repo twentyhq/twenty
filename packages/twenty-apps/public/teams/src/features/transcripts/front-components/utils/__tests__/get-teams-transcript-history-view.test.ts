@@ -141,6 +141,7 @@ describe('getTeamsTranscriptHistoryView', () => {
       skippedCount: 4,
       unavailableCount: 1,
       toImportCount: 25,
+      isImportLimitReached: false,
     });
   });
 
@@ -163,7 +164,22 @@ describe('getTeamsTranscriptHistoryView', () => {
       skippedCount: 4,
       unavailableCount: 1,
       checkedThrough: '2026-08-15T00:00:00.000Z',
+      isImportLimitReached: false,
     });
+  });
+
+  it('should report an import that stopped at the import limit', () => {
+    expect(
+      getTeamsTranscriptHistoryView({
+        state: {
+          ...STATE,
+          phase: 'imported',
+          importedCount: 1_000,
+          isImportLimitReached: true,
+        },
+        isStalled: false,
+      }),
+    ).toMatchObject({ kind: 'imported', isImportLimitReached: true });
   });
 
   it('should keep the failure code and treat a missing one as unknown', () => {

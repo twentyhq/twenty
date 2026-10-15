@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TEAMS_TRANSCRIPT_HISTORY_IMPORT_PAGE_DELAY_MILLISECONDS } from 'src/features/transcripts/constants/teams-transcript-history-import-page-delay-milliseconds';
+import { TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT } from 'src/features/transcripts/constants/teams-transcript-history-max-import-count';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { GRAPH_ACCESS_TO_TRANSCRIPTS_DISABLED_ERROR_CODE } from 'src/features/transcripts/logic-functions/constants/graph-access-to-transcripts-disabled-error-code';
 import { TEAMS_TRANSCRIPT_HISTORY_RETRY_DELAYS_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-transcript-history-retry-delays-milliseconds';
@@ -147,6 +148,8 @@ const processPageOrThrow = async ({
           coreApiClient,
           transcripts,
           importedSince: state.windowEnd,
+          importLimit:
+            TEAMS_TRANSCRIPT_HISTORY_MAX_IMPORT_COUNT - state.importedCount,
           isRunActive: async () =>
             isDefined(await findStateForJob({ job, phase })),
         });

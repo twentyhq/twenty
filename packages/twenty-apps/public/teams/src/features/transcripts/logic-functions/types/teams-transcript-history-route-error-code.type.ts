@@ -5,4 +5,5 @@ export type TeamsTranscriptHistoryRouteErrorCode =
   | 'invalid-days'
   | 'run-already-active'
   | 'count-required'
+  | 'import-limit-exceeded'
   | 'unknown';

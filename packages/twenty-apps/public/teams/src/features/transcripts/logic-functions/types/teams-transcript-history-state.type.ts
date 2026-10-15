@@ -18,5 +18,6 @@ export type TeamsTranscriptHistoryState = {
   checkedThrough?: string;
   updatedAt: string;
   errorCode?: TeamsTranscriptHistoryErrorCode;
+  isImportLimitReached?: boolean;
   nextJob?: TeamsTranscriptHistoryJobPayload;
 };
