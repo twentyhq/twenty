@@ -179,7 +179,7 @@ export class AgentAsyncExecutorService {
     const preloadedToolContext = { ...toolContext, rolePermissionConfig };
 
     const tools = await this.toolRegistry.getToolsByCategories(
-      { ...preloadedToolContext, requireExplicitObjectGrants: true },
+      { ...preloadedToolContext, explicitObjectGrantsRoleId: agentRoleId },
       {
         categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
         excludeTools: [

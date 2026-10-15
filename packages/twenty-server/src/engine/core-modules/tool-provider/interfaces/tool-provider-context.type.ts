@@ -19,5 +19,6 @@ export type ToolProviderContext = {
   threadId?: string;
   locale?: keyof typeof APP_LOCALES;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
-  requireExplicitObjectGrants?: boolean;
+  // database tools then only cover the objects this role explicitly grants
+  explicitObjectGrantsRoleId?: string;
 };

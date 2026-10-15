@@ -46,7 +46,7 @@ type ExplicitPermissionRow = {
 };
 
 type GenerateDescriptorsTestOptions = {
-  requireExplicitObjectGrants?: boolean;
+  explicitObjectGrantsRoleId?: string;
   explicitPermissionRows?: ExplicitPermissionRow[];
   composedObjectPermissions?: Partial<ObjectPermissions>;
   explicitPermissionRowsRoleId?: string;
@@ -149,7 +149,7 @@ describe('DatabaseToolProvider', () => {
         rolePermissionConfig: options?.rolePermissionConfig ?? {
           intersectionOf: { agentRoleId: roleId },
         },
-        requireExplicitObjectGrants: options?.requireExplicitObjectGrants,
+        explicitObjectGrantsRoleId: options?.explicitObjectGrantsRoleId,
       },
       { includeSchemas: false },
     )) as (ToolIndexEntry | ToolDescriptor)[];
@@ -336,7 +336,7 @@ describe('DatabaseToolProvider', () => {
     }
   });
 
-  describe('requireExplicitObjectGrants', () => {
+  describe('explicitObjectGrantsRoleId', () => {
     const personObject = createFlatObject({
       nameSingular: 'person',
       namePlural: 'people',
@@ -350,7 +350,7 @@ describe('DatabaseToolProvider', () => {
       const descriptorNames = await generateDescriptorNames(
         [personObject, companyObject],
         {
-          requireExplicitObjectGrants: true,
+          explicitObjectGrantsRoleId: roleId,
           explicitPermissionRows: [
             {
               objectMetadataId: personObject.id,
@@ -366,7 +366,7 @@ describe('DatabaseToolProvider', () => {
 
     it('emits only the verbs granted by the explicit row', async () => {
       const descriptorNames = await generateDescriptorNames([personObject], {
-        requireExplicitObjectGrants: true,
+        explicitObjectGrantsRoleId: roleId,
         explicitPermissionRows: [
           {
             objectMetadataId: personObject.id,
@@ -384,7 +384,7 @@ describe('DatabaseToolProvider', () => {
 
     it('drops the verbs the composed permissions deny even with an explicit row', async () => {
       const descriptorNames = await generateDescriptorNames([personObject], {
-        requireExplicitObjectGrants: true,
+        explicitObjectGrantsRoleId: roleId,
         composedObjectPermissions: {
           canUpdateObjectRecords: false,
           canSoftDeleteObjectRecords: false,
@@ -396,9 +396,9 @@ describe('DatabaseToolProvider', () => {
       expect(descriptorNames).not.toContain('delete_one_person');
     });
 
-    it('ignores explicit rows of the other roles in the config', async () => {
+    it('ignores explicit rows of the other roles', async () => {
       const descriptorNames = await generateDescriptorNames([personObject], {
-        requireExplicitObjectGrants: true,
+        explicitObjectGrantsRoleId: roleId,
         explicitPermissionRowsRoleId: userRoleId,
         rolePermissionConfig: {
           intersectionOf: {
@@ -411,18 +411,7 @@ describe('DatabaseToolProvider', () => {
       expect(descriptorNames).toEqual([]);
     });
 
-    it('emits no tools when the config has no agent role', async () => {
-      const descriptorNames = await generateDescriptorNames([personObject], {
-        requireExplicitObjectGrants: true,
-        rolePermissionConfig: {
-          intersectionOf: { userWorkspaceRoleId: roleId },
-        },
-      });
-
-      expect(descriptorNames).toEqual([]);
-    });
-
-    it('keeps composed permissions when the flag is not set even without explicit rows', async () => {
+    it('keeps composed permissions without a grants role even without explicit rows', async () => {
       const descriptorNames = await generateDescriptorNames([personObject], {
         explicitPermissionRows: [],
       });
