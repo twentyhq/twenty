@@ -86,6 +86,7 @@ export const FormCallingCodeSelectInput = ({
       onChange={handleChange}
       options={options}
       defaultValue={defaultValue}
+      placeholder={t`Select a calling code`}
       readonly={readonly}
       VariablePicker={VariablePicker}
     />
