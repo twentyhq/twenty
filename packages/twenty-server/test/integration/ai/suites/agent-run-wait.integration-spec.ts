@@ -48,7 +48,7 @@ const waitingResult = ({
   toolName = 'wait_for_duration',
   wait = {
     type: 'TIME',
-    resumeAt: new Date(Date.now() + 1_000).toISOString(),
+    resumeAt: new Date(Date.now() + 3_000).toISOString(),
   },
 }: {
   toolName?: string;
@@ -376,9 +376,9 @@ describe('agent runs that wait (integration)', () => {
       expect(
         await findTurnStatuses(response.body.data.runAgent.threadId),
       ).toEqual(['completed', 'completed']);
+      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
     });
 
-    expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
     expect(executeAgent).toHaveBeenCalledTimes(2);
   });
 
@@ -432,14 +432,14 @@ describe('agent runs that wait (integration)', () => {
 
       expect(status).toBe('SUSPENDED');
 
+      // the wake-up goes once the run went on, just after its turn closes
       await expectEventually(async () => {
         expect(await findTurnStatuses(threadId)).toEqual([
           'completed',
           'completed',
         ]);
+        expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
       });
-
-      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
       expect(
         executeAgent.mock.calls.map(
           ([execution]) => execution.executionContext.authContext,
