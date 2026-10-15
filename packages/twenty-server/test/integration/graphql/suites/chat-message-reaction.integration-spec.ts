@@ -185,6 +185,7 @@ describe('Chat message reactions through the authenticated API', () => {
           type: 'message-reactions-updated',
           messageId,
           reactions: added.body.data.addAgentChatMessageReaction,
+          revision: expect.any(Number),
         },
       },
     ]);
@@ -203,10 +204,11 @@ describe('Chat message reactions through the authenticated API', () => {
   });
 
   it('removes a reaction, and removing it again changes nothing', async () => {
+    const findPublishedReactions = spyOnPublishedReactions();
+
     await addReaction(messageId, '👍');
     await addReaction(messageId, '🎉');
 
-    const findPublishedReactions = spyOnPublishedReactions();
     const removed = await removeReaction(messageId, '👍');
 
     expect(removed.body.errors).toBeUndefined();
@@ -216,7 +218,13 @@ describe('Chat message reactions through the authenticated API', () => {
         workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
       },
     ]);
-    expect(findPublishedReactions()).toHaveLength(1);
+    const revisions = findPublishedReactions().map(({ event }) =>
+      event.type === 'message-reactions-updated' ? event.revision : 0,
+    );
+
+    expect(revisions).toHaveLength(3);
+    expect([...revisions].sort((a, b) => a - b)).toEqual(revisions);
+    expect(new Set(revisions).size).toBe(3);
 
     const removedAgain = await removeReaction(messageId, '👍');
 
@@ -224,7 +232,7 @@ describe('Chat message reactions through the authenticated API', () => {
     expect(removedAgain.body.data.removeAgentChatMessageReaction).toEqual(
       removed.body.data.removeAgentChatMessageReaction,
     );
-    expect(findPublishedReactions()).toHaveLength(1);
+    expect(findPublishedReactions()).toHaveLength(3);
     expect(await findMessageReactions(threadId, messageId)).toEqual(
       removed.body.data.removeAgentChatMessageReaction,
     );

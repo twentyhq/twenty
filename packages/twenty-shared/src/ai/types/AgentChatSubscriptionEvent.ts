@@ -10,6 +10,7 @@ export type AgentChatSubscriptionEvent =
       type: 'message-reactions-updated';
       messageId: string;
       reactions: AgentMessageReactionSummary[];
+      revision: number;
     }
   | { type: 'stream-error'; code: string; message: string }
   | { type: 'credits-exhausted' }

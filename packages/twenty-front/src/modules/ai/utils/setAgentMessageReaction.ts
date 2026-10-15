@@ -1,24 +1,32 @@
 import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
 
-export const toggleAgentMessageReaction = ({
+export const setAgentMessageReaction = ({
   reactions,
   emoji,
   workspaceMemberId,
+  isReacted,
 }: {
   reactions: AgentMessageReactionSummary[];
   emoji: string;
   workspaceMemberId: string;
+  isReacted: boolean;
 }): AgentMessageReactionSummary[] => {
   const existingReaction = reactions.find(
     (reaction) => reaction.emoji === emoji,
   );
 
   if (!existingReaction) {
-    return [...reactions, { emoji, workspaceMemberIds: [workspaceMemberId] }];
+    return isReacted
+      ? [...reactions, { emoji, workspaceMemberIds: [workspaceMemberId] }]
+      : reactions;
   }
 
-  const hasReacted =
-    existingReaction.workspaceMemberIds.includes(workspaceMemberId);
+  if (
+    existingReaction.workspaceMemberIds.includes(workspaceMemberId) ===
+    isReacted
+  ) {
+    return reactions;
+  }
 
   return reactions
     .map((reaction) =>
@@ -26,11 +34,11 @@ export const toggleAgentMessageReaction = ({
         ? reaction
         : {
             emoji,
-            workspaceMemberIds: hasReacted
-              ? reaction.workspaceMemberIds.filter(
+            workspaceMemberIds: isReacted
+              ? [...reaction.workspaceMemberIds, workspaceMemberId]
+              : reaction.workspaceMemberIds.filter(
                   (id) => id !== workspaceMemberId,
-                )
-              : [...reaction.workspaceMemberIds, workspaceMemberId],
+                ),
           },
     )
     .filter((reaction) => reaction.workspaceMemberIds.length > 0);

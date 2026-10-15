@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
+import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
@@ -278,5 +279,55 @@ describe('Stream liveness', () => {
     act(() => subscribe.mock.calls[3][1].next(keepalive));
 
     expect(jotaiStore.get(errorAtom)).toBeNull();
+  });
+});
+
+describe('Message reactions', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    resetJotaiStore();
+    subscribe.mockReturnValue(disconnect);
+    jotaiStore.set(sseClientState.atom, { subscribe } as never);
+  });
+
+  it('keeps the newest snapshot when snapshots arrive out of order', () => {
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+    const sendReactions = (
+      revision: number,
+      reactions: { emoji: string; workspaceMemberIds: string[] }[],
+    ) =>
+      subscribe.mock.calls[0][1].next({
+        data: {
+          onAgentChatEvent: {
+            threadId: 'thread',
+            event: {
+              type: 'message-reactions-updated',
+              messageId: 'message',
+              reactions,
+              revision,
+            },
+          },
+        },
+      });
+    const newerReactions = [
+      { emoji: '👍', workspaceMemberIds: ['julia'] },
+      { emoji: '🎉', workspaceMemberIds: ['tom'] },
+    ];
+
+    act(() => {
+      sendReactions(2, newerReactions);
+      sendReactions(1, [{ emoji: '👍', workspaceMemberIds: ['julia'] }]);
+    });
+
+    expect(
+      jotaiStore.get(
+        agentChatMessageReactionsFamilyState.atomFamily({
+          messageId: 'message',
+        }),
+      ),
+    ).toEqual(newerReactions);
+    unmount();
   });
 });

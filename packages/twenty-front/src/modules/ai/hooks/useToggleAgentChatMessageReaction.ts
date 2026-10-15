@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { toggleAgentMessageReaction } from '@/ai/utils/toggleAgentMessageReaction';
+import { setAgentMessageReaction } from '@/ai/utils/setAgentMessageReaction';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
@@ -18,7 +18,8 @@ export const useToggleAgentChatMessageReaction = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
 
-  // The reaction shows right away and is put back if the server refuses it
+  // The reaction shows right away. The live snapshots that follow carry the
+  // server's state, so a refused change only takes back its own reaction
   const toggleAgentChatMessageReaction = useCallback(
     async ({ messageId, emoji }: { messageId: string; emoji: string }) => {
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
@@ -30,46 +31,36 @@ export const useToggleAgentChatMessageReaction = () => {
       const reactionsAtom = agentChatMessageReactionsFamilyState.atomFamily({
         messageId,
       });
-      const previousReactions = store.get(reactionsAtom);
-      const hasReacted = previousReactions.some(
-        (reaction) =>
-          reaction.emoji === emoji &&
-          reaction.workspaceMemberIds.includes(workspaceMemberId),
-      );
+      const hasReacted = store
+        .get(reactionsAtom)
+        .some(
+          (reaction) =>
+            reaction.emoji === emoji &&
+            reaction.workspaceMemberIds.includes(workspaceMemberId),
+        );
 
-      store.set(
-        reactionsAtom,
-        toggleAgentMessageReaction({
-          reactions: previousReactions,
-          emoji,
-          workspaceMemberId,
-        }),
-      );
+      const setOwnReaction = (isReacted: boolean) =>
+        store.set(
+          reactionsAtom,
+          setAgentMessageReaction({
+            reactions: store.get(reactionsAtom),
+            emoji,
+            workspaceMemberId,
+            isReacted,
+          }),
+        );
+
+      setOwnReaction(!hasReacted);
 
       try {
-        if (hasReacted) {
-          const { data } = await apolloClient.mutate({
-            mutation: RemoveAgentChatMessageReactionDocument,
-            variables: { messageId, emoji },
-          });
-
-          if (isDefined(data)) {
-            store.set(reactionsAtom, data.removeAgentChatMessageReaction);
-          }
-
-          return;
-        }
-
-        const { data } = await apolloClient.mutate({
-          mutation: AddAgentChatMessageReactionDocument,
+        await apolloClient.mutate({
+          mutation: hasReacted
+            ? RemoveAgentChatMessageReactionDocument
+            : AddAgentChatMessageReactionDocument,
           variables: { messageId, emoji },
         });
-
-        if (isDefined(data)) {
-          store.set(reactionsAtom, data.addAgentChatMessageReaction);
-        }
       } catch (error) {
-        store.set(reactionsAtom, previousReactions);
+        setOwnReaction(hasReacted);
         enqueueToast(getToastOptionsFromError({ error }));
       }
     },

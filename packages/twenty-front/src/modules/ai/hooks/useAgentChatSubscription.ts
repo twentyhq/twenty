@@ -2,6 +2,7 @@ import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgent
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { agentChatMessageReactionsRevisionFamilyState } from '@/ai/states/agentChatMessageReactionsRevisionFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
@@ -262,6 +263,17 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'message-reactions-updated': {
+          const revisionAtom =
+            agentChatMessageReactionsRevisionFamilyState.atomFamily({
+              messageId: event.messageId,
+            });
+          const appliedRevision = store.get(revisionAtom);
+
+          if (isDefined(appliedRevision) && event.revision < appliedRevision) {
+            break;
+          }
+
+          store.set(revisionAtom, event.revision);
           store.set(
             agentChatMessageReactionsFamilyState.atomFamily({
               messageId: event.messageId,

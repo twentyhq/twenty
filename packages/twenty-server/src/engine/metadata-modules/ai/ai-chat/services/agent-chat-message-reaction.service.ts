@@ -143,7 +143,7 @@ export class AgentChatMessageReactionService {
       return throwAgentChatMessageNotFound();
     }
 
-    const { changedCount, reactions } = await this.storageService.run(
+    const { changedCount, reactions, revision } = await this.storageService.run(
       workspaceId,
       async ({ manager, table }) => {
         // Serializes the reactions to one message, so each change reads every
@@ -156,6 +156,12 @@ export class AgentChatMessageReactionService {
         if (lockedMessages.length === 0) {
           return throwAgentChatMessageNotFound();
         }
+
+        // Read while the lock is held, so it orders the snapshots even when
+        // they are published out of order
+        const [{ revision }] = await manager.query<{ revision: string }[]>(
+          `SELECT floor(extract(epoch FROM clock_timestamp()) * 1000000)::bigint AS revision`,
+        );
 
         const [{ changedCount }] = await manager.query<
           { changedCount: number }[]
@@ -174,6 +180,7 @@ export class AgentChatMessageReactionService {
         return {
           changedCount,
           reactions: reactionsByMessageId.get(messageId) ?? [],
+          revision: Number(revision),
         };
       },
     );
@@ -183,6 +190,7 @@ export class AgentChatMessageReactionService {
         threadId: message.threadId,
         messageId,
         reactions,
+        revision,
         workspaceId,
       });
     }
@@ -246,18 +254,25 @@ export class AgentChatMessageReactionService {
     threadId,
     messageId,
     reactions,
+    revision,
     workspaceId,
   }: {
     threadId: string;
     messageId: string;
     reactions: AgentMessageReactionSummary[];
+    revision: number;
     workspaceId: string;
   }): Promise<void> {
     try {
       await this.eventPublisherService.publish({
         threadId,
         workspaceId,
-        event: { type: 'message-reactions-updated', messageId, reactions },
+        event: {
+          type: 'message-reactions-updated',
+          messageId,
+          reactions,
+          revision,
+        },
       });
     } catch (error) {
       this.logger.error(
