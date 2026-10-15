@@ -3,20 +3,23 @@ import { createStore } from 'jotai';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 
-const buildThread = (id: string, channelId: string | null) =>
-  ({
-    __typename: 'AgentChatThread',
-    id,
-    title: id,
-    deletedAt: null,
-    channelId,
-    createdAt: LAST_ACTIVITY_AT,
-    updatedAt: LAST_ACTIVITY_AT,
-    lastActivityAt: LAST_ACTIVITY_AT,
-  }) as never;
+const buildThread = (
+  id: string,
+  channelId: string | null,
+): AgentChatThreadRecord => ({
+  __typename: 'AgentChatThread',
+  id,
+  title: id,
+  deletedAt: null,
+  channelId,
+  createdAt: LAST_ACTIVITY_AT,
+  updatedAt: LAST_ACTIVITY_AT,
+  lastActivityAt: LAST_ACTIVITY_AT,
+});
 
 describe('agentChatRecentThreadsSelector', () => {
   it('lists own chats and followed channel chats, not channel chats only read', () => {

@@ -4,6 +4,7 @@ import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThr
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatChannelVisibleThreadsSelector } from '@/ai/states/selectors/agentChatChannelVisibleThreadsSelector';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
@@ -17,20 +18,22 @@ const CHANNEL_VIEW = {
   assignment: AgentChatChannelAssignmentFilter.ANY,
 };
 
-const buildThread = (id: string, lastActivityAt: string) =>
-  ({
-    __typename: 'AgentChatThread',
-    id,
-    title: id,
-    deletedAt: null,
-    channelId: CHANNEL_VIEW.channelId,
-    channelArchivedAt: null,
-    channelSnoozedUntil: null,
-    assigneeId: null,
-    createdAt: lastActivityAt,
-    updatedAt: lastActivityAt,
-    lastActivityAt,
-  }) as never;
+const buildThread = (
+  id: string,
+  lastActivityAt: string,
+): AgentChatThreadRecord => ({
+  __typename: 'AgentChatThread',
+  id,
+  title: id,
+  deletedAt: null,
+  channelId: CHANNEL_VIEW.channelId,
+  channelArchivedAt: null,
+  channelSnoozedUntil: null,
+  assigneeId: null,
+  createdAt: lastActivityAt,
+  updatedAt: lastActivityAt,
+  lastActivityAt,
+});
 
 describe('agentChatChannelVisibleThreadsSelector', () => {
   it('keeps the chats of the channel pages loaded so far when the main list is refreshed', () => {
