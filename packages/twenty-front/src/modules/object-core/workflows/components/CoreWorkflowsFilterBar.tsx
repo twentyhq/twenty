@@ -4,9 +4,11 @@ import { IconFilter } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { CoreObjectSystemFilterChip } from '@/object-core/components/CoreObjectSystemFilterChip';
 import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
 import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { shouldShowSystemCoreWorkflowsState } from '@/object-core/workflows/states/shouldShowSystemCoreWorkflowsState';
 import { getCoreWorkflowFilterChipLabel } from '@/object-core/workflows/utils/getCoreWorkflowFilterChipLabel';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { MAX_CORE_WORKFLOW_FILTER_RULES } from 'twenty-shared/constants';
@@ -30,6 +32,8 @@ export const CoreWorkflowsFilterBar = () => {
 
   const [coreWorkflowsFilterSettings, setCoreWorkflowsFilterSettings] =
     useAtomState(coreWorkflowsFilterSettingsState);
+  const [shouldShowSystemCoreWorkflows, setShouldShowSystemCoreWorkflows] =
+    useAtomState(shouldShowSystemCoreWorkflowsState);
   const { userTimezone } = useUserTimezone();
 
   const appliedStepFilters = (coreWorkflowsFilterSettings.stepFilters ?? [])
@@ -38,6 +42,11 @@ export const CoreWorkflowsFilterBar = () => {
 
   return (
     <StyledContainer>
+      {!shouldShowSystemCoreWorkflows && (
+        <CoreObjectSystemFilterChip
+          onRemove={() => setShouldShowSystemCoreWorkflows(true)}
+        />
+      )}
       {appliedStepFilters.map((stepFilter) => (
         <SortOrFilterChip
           key={stepFilter.id}

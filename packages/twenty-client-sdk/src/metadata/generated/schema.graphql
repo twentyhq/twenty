@@ -3865,7 +3865,7 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
-  findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findInstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findManyAgents: [Agent!]!
   findManyApplicationRegistrations: [ApplicationRegistration!]!
   findManyApplications: [Application!]!
@@ -3877,8 +3877,8 @@ type Query {
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
-  findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
-  findUpgradeApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUninstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
+  findUpgradeApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   findWorkspaceInvitations: [WorkspaceInvitation!]!

@@ -49,7 +49,6 @@ export const ImpersonationSwitch = () => {
         description={t`Grant access to your workspace so we can troubleshoot problems.`}
         checked={currentWorkspace?.allowImpersonation ?? false}
         onChange={handleChange}
-        advancedMode
       />
     </Card.Root>
   );
