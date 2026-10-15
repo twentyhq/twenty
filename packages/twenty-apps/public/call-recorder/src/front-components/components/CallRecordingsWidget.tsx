@@ -11,8 +11,7 @@ import { CallRecordingRow } from 'src/front-components/components/CallRecordingR
 import { CallRecordingRowSkeleton } from 'src/front-components/components/CallRecordingRowSkeleton';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { StyledCallRecordingCard } from 'src/front-components/components/StyledCallRecordingCard';
-import { StyledWidgetContainer } from 'src/front-components/components/StyledWidgetContainer';
-import { WidgetMessage } from 'src/front-components/components/WidgetMessage';
+import { WidgetEmptyState } from 'src/front-components/components/WidgetEmptyState';
 import { useCallRecordingsForRecord } from 'src/front-components/hooks/use-call-recordings-for-record';
 import { type CalendarEventTargetFieldName } from 'src/front-components/types/calendar-event-target-field-name.type';
 import { getCallRecordingDisplayDate } from 'src/front-components/utils/get-call-recording-display-date.util';
@@ -53,13 +52,19 @@ const CallRecordingList = ({
       );
     case 'error':
       return (
-        <StyledWidgetContainer>
-          <WidgetMessage message="Could not load call recordings." />
-        </StyledWidgetContainer>
+        <WidgetEmptyState
+          title="Could Not Load Recordings"
+          description="Something went wrong while loading call recordings."
+        />
       );
     case 'loaded':
       if (callRecordingsState.callRecordings.length === 0) {
-        return null;
+        return (
+          <WidgetEmptyState
+            title="No Call Recordings"
+            description="No calls with this record have been recorded yet."
+          />
+        );
       }
 
       return (
@@ -98,18 +103,15 @@ export const CallRecordingsWidget = () => {
   const renderContent = () => {
     if (isUndefined(calendarEventTargetFieldName)) {
       return (
-        <StyledWidgetContainer>
-          <WidgetMessage message="Call recordings are only available on person, company and opportunity pages." />
-        </StyledWidgetContainer>
+        <WidgetEmptyState
+          title="Not Available Here"
+          description="Add this widget to a person, company or opportunity page."
+        />
       );
     }
 
     if (isUndefined(recordId)) {
-      return (
-        <StyledWidgetContainer>
-          <WidgetMessage message="No record selected." />
-        </StyledWidgetContainer>
-      );
+      return <WidgetEmptyState title="No Record Selected" />;
     }
 
     return (

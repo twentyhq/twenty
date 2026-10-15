@@ -1,5 +1,5 @@
 import { isUndefined } from '@sniptt/guards';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, type Mock, vi } from 'vitest';
 
 import { CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGET_PAGES } from 'src/front-components/constants/call-recordings-widget-max-calendar-event-target-pages.constant';
 import { fetchCallRecordingsForRecord } from 'src/front-components/utils/fetch-call-recordings-for-record.util';
@@ -64,16 +64,16 @@ const buildCallRecordingConnection = (
 const isCalendarEventTargetQuery = (request: QueryRequest) =>
   'calendarEventTargets' in request;
 
-const getCallRecordingQueries = (query: ReturnType<typeof vi.fn>) =>
+const getCallRecordingQueries = (query: Mock) =>
   query.mock.calls
     .map(([request]) => request as QueryRequest)
     .flatMap((request) =>
       isUndefined(request.callRecordings) ? [] : [request.callRecordings],
     );
 
-const fetchForPerson = (query: ReturnType<typeof vi.fn>, maxCount = 20) =>
+const fetchForPerson = (query: Mock, maxCount = 20) =>
   fetchCallRecordingsForRecord({
-    client: { query } as never,
+    client: { query },
     calendarEventTargetFieldName: 'targetPersonId',
     recordId: 'person',
     maxCount,
@@ -108,7 +108,7 @@ describe('fetchCallRecordingsForRecord', () => {
       );
 
     const callRecordings = await fetchCallRecordingsForRecord({
-      client: { query } as never,
+      client: { query },
       calendarEventTargetFieldName: 'targetCompanyId',
       recordId: 'company',
       maxCount: 20,

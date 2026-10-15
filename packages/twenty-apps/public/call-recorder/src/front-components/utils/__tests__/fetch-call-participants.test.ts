@@ -43,7 +43,7 @@ describe('fetchCallParticipants', () => {
 
     await expect(
       fetchCallParticipants({
-        client: { query } as never,
+        client: { query },
         callRecordingId: 'call-recording',
       }),
     ).resolves.toEqual({ kind: 'callRecordingNotFound' });
@@ -60,7 +60,7 @@ describe('fetchCallParticipants', () => {
 
     await expect(
       fetchCallParticipants({
-        client: { query } as never,
+        client: { query },
         callRecordingId: 'call-recording',
       }),
     ).resolves.toEqual({ kind: 'notLinkedToMeeting' });
@@ -82,7 +82,7 @@ describe('fetchCallParticipants', () => {
       .mockResolvedValueOnce(buildParticipantConnection(['participant-2']));
 
     const result = await fetchCallParticipants({
-      client: { query } as never,
+      client: { query },
       callRecordingId: 'call-recording',
     });
 
@@ -126,7 +126,7 @@ describe('fetchCallParticipants', () => {
       .mockResolvedValueOnce(buildParticipantConnection(['participant-1']));
 
     const result = await fetchCallParticipants({
-      client: { query } as never,
+      client: { query },
       callRecordingId: 'call-recording',
     });
 
@@ -161,7 +161,7 @@ describe('fetchCallParticipants', () => {
 
     await expect(
       fetchCallParticipants({
-        client: { query } as never,
+        client: { query },
         callRecordingId: 'call-recording',
       }),
     ).rejects.toThrow('Permission denied');
@@ -181,7 +181,7 @@ describe('fetchCallParticipants', () => {
 
     await expect(
       fetchCallParticipants({
-        client: { query } as never,
+        client: { query },
         callRecordingId: 'call-recording',
       }),
     ).rejects.toThrow('Network failure');

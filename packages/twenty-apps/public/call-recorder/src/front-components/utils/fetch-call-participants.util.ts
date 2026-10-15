@@ -12,6 +12,8 @@ import {
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
 
+type QueryClient = Pick<CoreApiClient, 'query'>;
+
 type CallRecordingCalendarEventNode = {
   id: string;
   calendarEventId?: string | null;
@@ -21,7 +23,7 @@ const fetchCallRecordingCalendarEventNode = async ({
   client,
   callRecordingId,
 }: {
-  client: CoreApiClient;
+  client: QueryClient;
   callRecordingId: string;
 }): Promise<CallRecordingCalendarEventNode | undefined> => {
   const queryResult = await client.query({
@@ -77,7 +79,7 @@ const fetchParticipantsForCalendarEvent = async ({
   calendarEventId,
   areRelationsLoaded,
 }: {
-  client: CoreApiClient;
+  client: QueryClient;
   calendarEventId: string;
   areRelationsLoaded: boolean;
 }): Promise<CallParticipantNode[]> => {
@@ -121,7 +123,7 @@ export const fetchCallParticipants = async ({
   client,
   callRecordingId,
 }: {
-  client: CoreApiClient;
+  client: QueryClient;
   callRecordingId: string;
 }): Promise<CallParticipantsResult> => {
   const callRecordingNode = await fetchCallRecordingCalendarEventNode({
