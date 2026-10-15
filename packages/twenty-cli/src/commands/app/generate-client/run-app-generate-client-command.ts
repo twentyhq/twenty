@@ -1,3 +1,5 @@
+import { join } from 'node:path';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { createAppNotInstalledError } from '@/app/create-app-not-installed-error';
@@ -13,16 +15,18 @@ import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
-import { formatSuccessLine } from '@/output/style';
+import { formatDisplayPath } from '@/output/format-display-path';
+import { colorText, formatSuccessLine } from '@/output/style';
 
 export const runAppGenerateClientCommand: CommandRun<
   TargetCommandContext
 > = async (context) => {
   const { options, output, outputMode, signal, target } = context;
   const startedAt = performance.now();
+  const workingDirectory = process.cwd();
   const project = await resolveAppProject({
     explicitPath: readStringOption(options, 'path'),
-    workingDirectory: process.cwd(),
+    workingDirectory,
   });
   const skipReason = await getClientGenerationSkipReason({
     appPath: project.path,
@@ -78,17 +82,26 @@ export const runAppGenerateClientCommand: CommandRun<
 
     throw error;
   });
+  const clientPath = join(project.path, 'node_modules', 'twenty-client-sdk');
+  const clientDisplayPath = formatDisplayPath({
+    workingDirectory,
+    targetPath: clientPath,
+  });
 
   return {
     data: {
       app: { path: project.path, name: project.name },
       sdk: { version: sdk.version },
+      client: { path: clientPath },
       application: identity.application,
       diagnostics: [...identity.diagnostics, ...generationDiagnostics],
       durationMilliseconds: Math.round(performance.now() - startedAt),
     },
-    human: formatSuccessLine(
-      `Generated the typed API client for ${identity.application.displayName ?? project.name} from ${target.apiUrl}`,
-    ),
+    human: [
+      formatSuccessLine(
+        `Generated the typed API client for ${identity.application.displayName ?? project.name} from ${target.apiUrl}`,
+      ),
+      `  Saved in ${colorText('cyan', clientDisplayPath)}`,
+    ].join('\n'),
   };
 };
