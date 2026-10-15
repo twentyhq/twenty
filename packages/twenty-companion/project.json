@@ -26,6 +26,19 @@
       },
       "inputs": ["default", "^default"]
     },
+    "lint:unlocalized-strings": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "packages/twenty-companion",
+        "command": "yarn lint:unlocalized-strings"
+      },
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "{workspaceRoot}/packages/twenty-front/.oxlintrc.i18n.json",
+        "{workspaceRoot}/yarn.lock"
+      ]
+    },
     "test": {
       "executor": "nx:run-commands",
       "cache": true,

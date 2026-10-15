@@ -1,4 +1,5 @@
 import { type CompanionState } from '../../shared/types/CompanionState';
+import { i18n } from '../../shared/i18n';
 
 export const previewState = (initial: CompanionState): CompanionState => {
   const now = Date.now();
@@ -8,6 +9,8 @@ export const previewState = (initial: CompanionState): CompanionState => {
   const state: CompanionState = {
     ...initial,
     connection: 'connected',
+    // Sample identities are proper names, not UI copy.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     workspace: { id: 'preview', name: 'Acme' },
     calendarConnected: true,
     settings: {
@@ -31,7 +34,7 @@ export const previewState = (initial: CompanionState): CompanionState => {
     meetings: [
       {
         id: '00000000-0000-4000-8000-000000000001',
-        title: 'Design sync',
+        title: i18n._('Design sync'),
         startsAt: at(7),
         endsAt: at(37),
         url: 'https://meet.google.com/example',
@@ -40,7 +43,7 @@ export const previewState = (initial: CompanionState): CompanionState => {
       },
       {
         id: '00000000-0000-4000-8000-000000000002',
-        title: 'Customer conversation',
+        title: i18n._('Customer conversation'),
         startsAt: at(67),
         endsAt: at(97),
         url: 'https://meet.google.com/example-two',
@@ -49,7 +52,7 @@ export const previewState = (initial: CompanionState): CompanionState => {
       },
       {
         id: '00000000-0000-4000-8000-000000000003',
-        title: 'Weekly team check-in',
+        title: i18n._('Weekly team check-in'),
         startsAt: at(127),
         endsAt: at(157),
         url: 'https://meet.google.com/example-three',
@@ -58,7 +61,7 @@ export const previewState = (initial: CompanionState): CompanionState => {
       },
       {
         id: '00000000-0000-4000-8000-000000000007',
-        title: 'Project planning',
+        title: i18n._('Project planning'),
         startsAt: at(187),
         endsAt: at(217),
         url: 'https://meet.google.com/example-four',
@@ -67,7 +70,7 @@ export const previewState = (initial: CompanionState): CompanionState => {
       },
       {
         id: '00000000-0000-4000-8000-000000000008',
-        title: 'Customer onboarding',
+        title: i18n._('Customer onboarding'),
         startsAt: at(247),
         endsAt: at(277),
         url: 'https://meet.google.com/example-five',
@@ -78,27 +81,33 @@ export const previewState = (initial: CompanionState): CompanionState => {
     recordings: [
       {
         id: '00000000-0000-4000-8000-000000000004',
-        title: 'A new way to organize your day',
+        title: i18n._('A new way to organize your day'),
         status: 'COMPLETED',
         startedAt: at(-90),
         endedAt: at(-60),
         participants: [
+          // Sample identities are proper names, not UI copy.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           { id: 'email:alex@example.com', name: 'Alex Martin' },
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           { id: 'email:sam@example.com', name: 'Sam Lee' },
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           { id: 'email:jules@example.com', name: 'Jules Garcia' },
         ],
       },
       {
         id: '00000000-0000-4000-8000-000000000005',
-        title: 'Product catch-up',
+        title: i18n._('Product catch-up'),
         status: 'PROCESSING',
         startedAt: at(-45),
         endedAt: at(-10),
+        // Sample identities are proper names, not UI copy.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         participants: [{ id: 'email:morgan@example.com', name: 'Morgan Chen' }],
       },
       {
         id: '00000000-0000-4000-8000-000000000009',
-        title: 'Unscheduled conversation',
+        title: i18n._('Unscheduled conversation'),
         status: 'COMPLETED',
         startedAt: at(-180),
         endedAt: at(-160),
@@ -113,13 +122,16 @@ export const previewState = (initial: CompanionState): CompanionState => {
   if (scenario === 'error') {
     state.connection = 'disconnected';
     state.error = {
-      message: 'Could not unlock your Twenty connection. Reconnect to Twenty.',
+      message: i18n._(
+        'Could not unlock your Twenty connection. Reconnect to Twenty.',
+      ),
     };
   }
   if (scenario === 'missing-integration') {
     state.error = {
-      message:
+      message: i18n._(
         'Desktop Recorder is unavailable in this workspace. Install it to continue.',
+      ),
       recovery: {
         type: 'open-desktop-installation',
         serverUrl: state.serverUrl,
@@ -134,7 +146,7 @@ export const previewState = (initial: CompanionState): CompanionState => {
     state.activeRecording = {
       id: '00000000-0000-4000-8000-000000000006',
       windowId: 'preview-call',
-      title: 'Customer conversation',
+      title: i18n._('Customer conversation'),
       startedAt: at(-4),
       status: 'recording',
     };

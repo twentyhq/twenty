@@ -12,6 +12,8 @@ const ANIMATION_PERIOD_MS = 8_000;
 
 const FRAME_INTERVAL_MS = 1_000 / 24;
 
+// Shader source is executable GLSL and must remain byte-for-byte stable.
+// oxlint-disable-next-line lingui/no-unlocalized-strings
 const VERTEX_SHADER = `#version 300 es
   in vec2 position;
   out vec2 imagePosition;
@@ -21,6 +23,8 @@ const VERTEX_SHADER = `#version 300 es
   }
 `;
 
+// Shader source is executable GLSL and must remain byte-for-byte stable.
+// oxlint-disable-next-line lingui/no-unlocalized-strings
 const FRAGMENT_SHADER = `#version 300 es
   precision highp float;
   uniform sampler2D sourceImage;
@@ -101,12 +105,16 @@ const compileShader = (
   source: string,
 ) => {
   const shader = context.createShader(shaderType);
+  // Shader errors are renderer diagnostics, never UI copy.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   if (!shader) throw new Error('Could not create the halftone shader.');
   context.shaderSource(shader, source);
   context.compileShader(shader);
   if (!context.getShaderParameter(shader, context.COMPILE_STATUS)) {
     const message = context.getShaderInfoLog(shader);
     context.deleteShader(shader);
+    // Shader errors are renderer diagnostics, never UI copy.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error(message ?? 'Could not compile the halftone shader.');
   }
   return shader;
@@ -137,6 +145,8 @@ export const createHalftone = (
 
   try {
     if (!program || !buffer || !texture)
+      // Shader errors are renderer diagnostics, never UI copy.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Could not allocate the halftone renderer.');
     shaders.push(compileShader(context, context.VERTEX_SHADER, VERTEX_SHADER));
     shaders.push(
@@ -147,6 +157,8 @@ export const createHalftone = (
     if (!context.getProgramParameter(program, context.LINK_STATUS))
       throw new Error(
         context.getProgramInfoLog(program) ??
+          // Shader errors are renderer diagnostics, never UI copy.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           'Could not link the halftone shader.',
       );
     context.useProgram(program);
@@ -220,6 +232,8 @@ export const createHalftone = (
     'accentRegion',
   );
   const edgeFadeUniform = context.getUniformLocation(program, 'edgeFade');
+  // CSS media queries are browser syntax and cannot be translated.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let animationFrame = 0;
   let previousFrame = 0;

@@ -37,6 +37,8 @@ jobs:
       - uses: ./.github/actions/yarn-install
       - name: Typecheck
         run: yarn workspace @twentyhq/companion typecheck
+      - name: Lingui strings
+        run: yarn workspace @twentyhq/companion lint:unlocalized-strings
       - name: Test
         run: yarn workspace @twentyhq/companion test
       - name: Build
