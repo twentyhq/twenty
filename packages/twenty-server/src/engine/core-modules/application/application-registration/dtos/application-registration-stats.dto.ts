@@ -2,20 +2,20 @@ import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('ApplicationRegistrationCreditBreakdown')
 export class ApplicationRegistrationCreditBreakdownDTO {
-  @Field(() => Float)
-  agent: number;
+  @Field(() => String)
+  key: string;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => String)
+  operationType: string;
+
+  @Field(() => Boolean)
+  isAppDefined: boolean;
 
   @Field(() => Float)
-  logic: number;
-
-  @Field(() => Float)
-  workflow: number;
-
-  @Field(() => Float)
-  chargeCredits: number;
-
-  @Field(() => Float)
-  other: number;
+  creditsConsumed: number;
 }
 
 @ObjectType('VersionDistributionEntry')
@@ -59,6 +59,6 @@ export class ApplicationRegistrationStatsDTO {
   @Field(() => Float, { nullable: true })
   totalCreditsConsumed: number | null;
 
-  @Field(() => ApplicationRegistrationCreditBreakdownDTO, { nullable: true })
-  creditBreakdown: ApplicationRegistrationCreditBreakdownDTO | null;
+  @Field(() => [ApplicationRegistrationCreditBreakdownDTO], { nullable: true })
+  creditBreakdown: ApplicationRegistrationCreditBreakdownDTO[] | null;
 }

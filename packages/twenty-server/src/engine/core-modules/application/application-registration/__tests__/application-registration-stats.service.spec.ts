@@ -5,6 +5,7 @@ import { type Repository } from 'typeorm';
 import { type ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { type ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
 import { ApplicationRegistrationStatsService } from 'src/engine/core-modules/application/application-registration/application-registration-stats.service';
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 jest.mock('src/database/clickhouse/clickhouse.service', () => ({
@@ -13,6 +14,10 @@ jest.mock('src/database/clickhouse/clickhouse.service', () => ({
 jest.mock(
   'src/engine/core-modules/application/application-health/application-health-cache.service',
   () => ({ ApplicationHealthCacheService: class {} }),
+);
+jest.mock(
+  'src/engine/core-modules/application/application-registration/application-registration.entity',
+  () => ({ ApplicationRegistrationEntity: class {} }),
 );
 jest.mock('src/engine/core-modules/application/application.entity', () => ({
   ApplicationEntity: class {},
@@ -45,6 +50,7 @@ describe('ApplicationRegistrationStatsService', () => {
     latestAvailableVersion: '2.0.0',
   };
   const getRawMany = jest.fn();
+  const getRegistrationBilling = jest.fn();
   const getStatuses = jest.fn();
   const getMainClient = jest.fn();
   const selectOrThrow = jest.fn();
@@ -60,8 +66,10 @@ describe('ApplicationRegistrationStatsService', () => {
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
       getRawMany,
+      getRawOne: getRegistrationBilling,
     };
     getRawMany.mockResolvedValue([]);
+    getRegistrationBilling.mockResolvedValue({ billing: null });
     getStatuses.mockResolvedValue([]);
     getMainClient.mockReturnValue({});
     selectOrThrow.mockResolvedValue([
@@ -77,6 +85,9 @@ describe('ApplicationRegistrationStatsService', () => {
       } as unknown as Repository<ApplicationEntity>,
       { getStatuses } as unknown as ApplicationHealthCacheService,
       { getMainClient, selectOrThrow } as unknown as ClickHouseService,
+      {
+        createQueryBuilder: () => queryBuilder,
+      } as unknown as Repository<ApplicationRegistrationEntity>,
     );
   });
 
@@ -154,71 +165,67 @@ describe('ApplicationRegistrationStatsService', () => {
     });
   });
 
-  it('splits credits by billed resource without double counting explicit charges or workflow AI', async () => {
-    getRawMany.mockResolvedValue([buildApplication()]);
+  it('uses named operations from the registration and older installation billing definitions', async () => {
+    getRawMany.mockResolvedValue([
+      buildApplication({
+        billing: {
+          operations: {
+            oldOperation: {
+              label: 'Legacy operation',
+              operationType: 'WEB_SEARCH',
+            },
+          },
+        },
+      }),
+    ]);
+    getRegistrationBilling.mockResolvedValue({
+      billing: {
+        operations: {
+          recordCall: {
+            label: 'Recorded calls',
+            operationType: 'CALL_RECORDING',
+          },
+        },
+      },
+    });
     selectOrThrow.mockResolvedValue([
       {
-        resourceType: 'AI',
-        operationType: 'AI_CHAT_TOKEN',
-        creditsUsedMicro: '50000000',
-      },
-      {
-        resourceType: 'LOGIC_FUNCTION',
-        operationType: 'CODE_EXECUTION',
-        creditsUsedMicro: '3000000',
-      },
-      {
-        resourceType: 'WORKFLOW',
-        operationType: 'WORKFLOW_EXECUTION',
-        creditsUsedMicro: '1000000',
-      },
-      {
-        resourceType: 'AI',
-        operationType: 'AI_WORKFLOW_TOKEN',
-        creditsUsedMicro: '1000000',
-      },
-      {
         resourceType: 'APP',
-        operationType: 'CODE_EXECUTION',
+        operationType: 'CALL_RECORDING',
+        resourceContext: 'recordCall',
         creditsUsedMicro: '49300000',
       },
       {
         resourceType: 'APP',
-        operationType: 'SUBSCRIPTION',
-        creditsUsedMicro: '1000000',
+        operationType: 'WEB_SEARCH',
+        resourceContext: 'oldOperation',
+        creditsUsedMicro: '2000000',
       },
       {
-        resourceType: 'API',
-        operationType: 'API_REQUEST',
-        creditsUsedMicro: '2000000',
+        resourceType: 'LOGIC_FUNCTION',
+        operationType: 'CODE_EXECUTION',
+        resourceContext: '',
+        creditsUsedMicro: '3000000',
       },
     ]);
 
     expect(await service.computeStats(registration)).toMatchObject({
-      totalCreditsConsumed: 107.3,
-      creditBreakdown: {
-        agent: 50,
-        logic: 3,
-        workflow: 2,
-        chargeCredits: 49.3,
-        other: 3,
-      },
+      totalCreditsConsumed: 54.3,
+      creditBreakdown: [
+        { label: 'Recorded calls', creditsConsumed: 49.3, isAppDefined: true },
+        { label: 'CODE_EXECUTION', creditsConsumed: 3, isAppDefined: false },
+        { label: 'Legacy operation', creditsConsumed: 2, isAppDefined: true },
+      ],
     });
   });
 
-  it('shows zero credit usage when the query succeeds with no recorded charges', async () => {
+  it('shows zero total with no operation rows when no charges were recorded', async () => {
     getRawMany.mockResolvedValue([buildApplication()]);
     selectOrThrow.mockResolvedValue([]);
 
     expect(await service.computeStats(registration)).toMatchObject({
       totalCreditsConsumed: 0,
-      creditBreakdown: {
-        agent: 0,
-        logic: 0,
-        workflow: 0,
-        chargeCredits: 0,
-        other: 0,
-      },
+      creditBreakdown: [],
     });
   });
 

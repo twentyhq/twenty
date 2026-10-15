@@ -9,11 +9,11 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_STATS = gql`
       workspacesNeedingAttention
       totalCreditsConsumed
       creditBreakdown {
-        agent
-        logic
-        workflow
-        chargeCredits
-        other
+        key
+        label
+        operationType
+        isAppDefined
+        creditsConsumed
       }
       mostInstalledVersion
       versionDistribution {

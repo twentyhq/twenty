@@ -2,22 +2,23 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import semver from 'semver';
-import { ApplicationHealthStatus } from 'twenty-shared/application';
+import {
+  type ApplicationBilling,
+  ApplicationHealthStatus,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
-import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   type ApplicationRegistrationCreditBreakdownDTO,
   type ApplicationRegistrationStatsDTO,
 } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { buildApplicationCreditBreakdown } from 'src/engine/core-modules/application/application-registration/utils/build-application-credit-breakdown.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 type ApplicationStatsRow = Pick<
@@ -28,6 +29,7 @@ type ApplicationStatsRow = Pick<
   | 'autoUpgrade'
   | 'healthCheckLogicFunctionId'
   | 'deletedAt'
+  | 'billing'
 > & {
   activationStatus: WorkspaceActivationStatus;
   needsReconnection: boolean;
@@ -46,6 +48,8 @@ export class ApplicationRegistrationStatsService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationHealthCacheService: ApplicationHealthCacheService,
     private readonly clickHouseService: ClickHouseService,
+    @InjectRepository(ApplicationRegistrationEntity)
+    private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
   ) {}
 
   async computeStats(
@@ -67,6 +71,7 @@ export class ApplicationRegistrationStatsService {
         'healthCheckLogicFunctionId',
       )
       .addSelect('application.deletedAt', 'deletedAt')
+      .addSelect('application.billing', 'billing')
       .addSelect('workspace.activationStatus', 'activationStatus')
       .addSelect(
         (query) =>
@@ -91,9 +96,9 @@ export class ApplicationRegistrationStatsService {
     const installedApplications = applications.filter(
       (application) => !isDefined(application.deletedAt),
     );
-    const [healthStatuses, creditBreakdown] = await Promise.all([
+    const [healthStatuses, creditUsage] = await Promise.all([
       this.applicationHealthCacheService.getStatuses(installedApplications),
-      this.getCreditBreakdown(applications),
+      this.getCreditBreakdown(applications, registration.id),
     ]);
     const versionCounts = new Map<string, number>();
 
@@ -160,79 +165,65 @@ export class ApplicationRegistrationStatsService {
           ? workspacesNeedingAttention
           : null,
       healthCheckedWorkspaces: knownHealthStatuses.length,
-      totalCreditsConsumed: isDefined(creditBreakdown)
-        ? Object.values(creditBreakdown).reduce(
-            (total, credits) => total + credits,
-            0,
-          )
-        : null,
-      creditBreakdown,
+      totalCreditsConsumed: creditUsage?.totalCreditsConsumed ?? null,
+      creditBreakdown: creditUsage?.creditBreakdown ?? null,
     };
   }
 
   private async getCreditBreakdown(
-    applications: Pick<ApplicationStatsRow, 'id' | 'workspaceId'>[],
-  ): Promise<ApplicationRegistrationCreditBreakdownDTO | null> {
+    applications: Pick<ApplicationStatsRow, 'id' | 'workspaceId' | 'billing'>[],
+    applicationRegistrationId: string,
+  ): Promise<{
+    totalCreditsConsumed: number;
+    creditBreakdown: ApplicationRegistrationCreditBreakdownDTO[];
+  } | null> {
     if (!isDefined(this.clickHouseService.getMainClient())) {
       return null;
     }
 
-    const breakdown: ApplicationRegistrationCreditBreakdownDTO = {
-      agent: 0,
-      logic: 0,
-      workflow: 0,
-      chargeCredits: 0,
-      other: 0,
-    };
-
     if (applications.length === 0) {
-      return breakdown;
+      return { totalCreditsConsumed: 0, creditBreakdown: [] };
     }
 
     try {
-      const rows = await this.clickHouseService.selectOrThrow<{
-        resourceType: string;
-        operationType: string;
-        creditsUsedMicro: string;
-      }>(
-        `SELECT resourceType, operationType, sum(creditsUsedMicro) AS creditsUsedMicro
-         FROM usageEvent
-         WHERE workspaceId IN ({workspaceIds:Array(String)})
-           AND applicationId IN ({applicationIds:Array(String)})
-         GROUP BY resourceType, operationType`,
-        {
-          workspaceIds: [
-            ...new Set(applications.map(({ workspaceId }) => workspaceId)),
-          ],
-          applicationIds: applications.map(({ id }) => id),
-        },
-      );
+      const [rows, registration] = await Promise.all([
+        this.clickHouseService.selectOrThrow<{
+          resourceType: string;
+          operationType: string;
+          resourceContext: string;
+          creditsUsedMicro: string;
+        }>(
+          `SELECT resourceType, operationType, resourceContext, sum(creditsUsedMicro) AS creditsUsedMicro
+           FROM usageEvent
+           WHERE workspaceId IN ({workspaceIds:Array(String)})
+             AND applicationId IN ({applicationIds:Array(String)})
+           GROUP BY resourceType, operationType, resourceContext`,
+          {
+            workspaceIds: [
+              ...new Set(applications.map(({ workspaceId }) => workspaceId)),
+            ],
+            applicationIds: applications.map(({ id }) => id),
+          },
+        ),
+        this.applicationRegistrationRepository
+          .createQueryBuilder('registration')
+          .select(
+            "registration.manifest -> 'application' -> 'billing'",
+            'billing',
+          )
+          .where('registration.id = :applicationRegistrationId', {
+            applicationRegistrationId,
+          })
+          .getRawOne<{ billing: ApplicationBilling | null }>(),
+      ]);
 
-      for (const { resourceType, operationType, creditsUsedMicro } of rows) {
-        const credits = toDisplayCredits(Number(creditsUsedMicro));
-
-        if (resourceType === UsageResourceType.APP) {
-          if (operationType === UsageOperationType.SUBSCRIPTION) {
-            breakdown.other += credits;
-          } else {
-            breakdown.chargeCredits += credits;
-          }
-        } else if (resourceType === UsageResourceType.LOGIC_FUNCTION) {
-          breakdown.logic += credits;
-        } else if (
-          resourceType === UsageResourceType.WORKFLOW ||
-          (resourceType === UsageResourceType.AI &&
-            operationType === UsageOperationType.AI_WORKFLOW_TOKEN)
-        ) {
-          breakdown.workflow += credits;
-        } else if (resourceType === UsageResourceType.AI) {
-          breakdown.agent += credits;
-        } else {
-          breakdown.other += credits;
-        }
-      }
-
-      return breakdown;
+      return buildApplicationCreditBreakdown({
+        billingDefinitions: [
+          registration?.billing,
+          ...applications.map(({ billing }) => billing),
+        ],
+        usageRows: rows,
+      });
     } catch (error) {
       this.logger.warn('Failed to load application credit usage', error);
 

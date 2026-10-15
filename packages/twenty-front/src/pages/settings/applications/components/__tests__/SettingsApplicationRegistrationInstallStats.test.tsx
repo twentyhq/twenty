@@ -20,13 +20,36 @@ const STATS: ApplicationRegistrationStats = {
   workspacesNeedingAttention: 1,
   healthCheckedWorkspaces: 2,
   totalCreditsConsumed: 104.3,
-  creditBreakdown: {
-    agent: 50,
-    logic: 3,
-    workflow: 2,
-    chargeCredits: 49.3,
-    other: 0,
-  },
+  creditBreakdown: [
+    {
+      key: 'type:WORKFLOW_EXECUTION',
+      label: 'WORKFLOW_EXECUTION',
+      operationType: 'WORKFLOW_EXECUTION',
+      isAppDefined: false,
+      creditsConsumed: 2,
+    },
+    {
+      key: 'app:recordCall',
+      label: 'Recorded calls',
+      operationType: 'CALL_RECORDING',
+      isAppDefined: true,
+      creditsConsumed: 49.3,
+    },
+    {
+      key: 'type:AI_CHAT_TOKEN',
+      label: 'AI_CHAT_TOKEN',
+      operationType: 'AI_CHAT_TOKEN',
+      isAppDefined: false,
+      creditsConsumed: 50,
+    },
+    {
+      key: 'type:CODE_EXECUTION',
+      label: 'CODE_EXECUTION',
+      operationType: 'CODE_EXECUTION',
+      isAppDefined: false,
+      creditsConsumed: 3,
+    },
+  ],
   mostInstalledVersion: '1.2.3',
   versionDistribution: [
     { version: '1.2.3', count: 2 },
@@ -84,10 +107,10 @@ describe('SettingsApplicationRegistrationInstallStats', () => {
         ['On suspended workspaces', '2'],
         ['Most installed version', '1.2.3'],
         ['Total credits consumed', '104.3'],
-        ['Agent', '50'],
-        ['Logic', '3'],
-        ['Workflow', '2'],
-        ['chargeCredit', '49.3'],
+        ['Chats', '50'],
+        ['Code Execution', '3'],
+        ['Workflow Execution', '2'],
+        ['Recorded calls', '49.3'],
       ]) {
         expect(
           getRow(label).getByText(value, { exact: true }),
@@ -119,14 +142,7 @@ describe('SettingsApplicationRegistrationInstallStats', () => {
     });
 
     await screen.findByText('1.2.3 (2), 1.2.2 (2)');
-    for (const label of [
-      'Needs configuration',
-      'Total credits consumed',
-      'Agent',
-      'Logic',
-      'Workflow',
-      'chargeCredit',
-    ]) {
+    for (const label of ['Needs configuration', 'Total credits consumed']) {
       expect(getRow(label).getByText('—')).toBeInTheDocument();
     }
   });
@@ -140,13 +156,7 @@ describe('SettingsApplicationRegistrationInstallStats', () => {
         autoUpdateEnabled: 0,
         workspacesNeedingAttention: 0,
         totalCreditsConsumed: 0,
-        creditBreakdown: {
-          agent: 0,
-          logic: 0,
-          workflow: 0,
-          chargeCredits: 0,
-          other: 0,
-        },
+        creditBreakdown: [],
         mostInstalledVersion: null,
         versionDistribution: [],
       },
@@ -162,16 +172,56 @@ describe('SettingsApplicationRegistrationInstallStats', () => {
     expect(getRow('Distribution').getByText('—')).toBeInTheDocument();
   });
 
-  it('includes remaining credit categories when present so the total reconciles', async () => {
+  it('shows only non-zero operations, sorted by consumption descending', async () => {
     renderStats({
       stats: {
         ...STATS,
-        totalCreditsConsumed: 109.3,
-        creditBreakdown: { ...STATS.creditBreakdown!, other: 5 },
+        creditBreakdown: [
+          ...STATS.creditBreakdown!,
+          {
+            key: 'type:WEB_SEARCH',
+            operationType: 'WEB_SEARCH',
+            label: 'WEB_SEARCH',
+            isAppDefined: false,
+            creditsConsumed: 0,
+          },
+        ],
       },
     });
 
-    expect(await screen.findByText('109.3')).toBeInTheDocument();
-    expect(getRow('Other').getByText('5')).toBeInTheDocument();
+    await screen.findByText('Recorded calls');
+    const rows = screen
+      .getByRole('group', { name: 'Credit consumption' })
+      .querySelectorAll('[data-table-row]');
+
+    expect([...rows].map((row) => row.firstElementChild?.textContent)).toEqual([
+      'Total credits consumed',
+      'Chats',
+      'Recorded calls',
+      'Code Execution',
+      'Workflow Execution',
+    ]);
+    expect(screen.queryByText('Web Search')).not.toBeInTheDocument();
+  });
+
+  it('keeps very small non-zero charges visible', async () => {
+    renderStats({
+      stats: {
+        ...STATS,
+        totalCreditsConsumed: 0.000001,
+        creditBreakdown: [
+          {
+            key: 'type:EMAIL_SEND',
+            operationType: 'EMAIL_SEND',
+            label: 'EMAIL_SEND',
+            isAppDefined: false,
+            creditsConsumed: 0.000001,
+          },
+        ],
+      },
+    });
+
+    await screen.findByText('Email Send');
+    expect(getRow('Email Send').getByText('0.000001')).toBeInTheDocument();
   });
 });

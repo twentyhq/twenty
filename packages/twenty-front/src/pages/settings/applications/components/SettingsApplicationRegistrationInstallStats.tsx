@@ -1,3 +1,4 @@
+import { USAGE_OPERATION_TYPE_LABELS } from '@/settings/usage/constants/UsageOperationTypeLabels';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import {
   SettingsTableCard,
@@ -70,7 +71,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
     isDefined(count) ? i18n.number(count) : '—';
   const formatCredits = (credits?: number | null) =>
     isDefined(credits)
-      ? i18n.number(credits, { maximumFractionDigits: 2 })
+      ? i18n.number(credits, { maximumFractionDigits: 6 })
       : '—';
   const versionDistribution =
     stats?.versionDistribution
@@ -129,24 +130,30 @@ export const SettingsApplicationRegistrationInstallStats = ({
         </Tooltip>
       ),
     },
-    { label: t`Agent`, value: formatCredits(stats?.creditBreakdown?.agent) },
-    { label: t`Logic`, value: formatCredits(stats?.creditBreakdown?.logic) },
-    {
-      label: t`Workflow`,
-      value: formatCredits(stats?.creditBreakdown?.workflow),
-    },
-    {
-      label: t`chargeCredit`,
-      value: formatCredits(stats?.creditBreakdown?.chargeCredits),
-    },
-  ];
+    ...(stats?.creditBreakdown ?? [])
+      .filter(
+        ({ creditsConsumed }) =>
+          isDefined(creditsConsumed) && creditsConsumed !== 0,
+      )
+      .sort(
+        (left, right) =>
+          right.creditsConsumed - left.creditsConsumed ||
+          left.key.localeCompare(right.key),
+      )
+      .map((operation) => {
+        const standardLabel = Object.entries(USAGE_OPERATION_TYPE_LABELS).find(
+          ([operationType]) => operationType === operation.operationType,
+        )?.[1];
 
-  if (isDefined(stats?.creditBreakdown) && stats.creditBreakdown.other !== 0) {
-    creditItems.push({
-      label: t`Other`,
-      value: formatCredits(stats.creditBreakdown.other),
-    });
-  }
+        return {
+          label:
+            operation.isAppDefined || !isDefined(standardLabel)
+              ? operation.label
+              : i18n._(standardLabel),
+          value: formatCredits(operation.creditsConsumed),
+        };
+      }),
+  ];
 
   return (
     <StyledStatsLayout>
