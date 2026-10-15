@@ -124,13 +124,14 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   }
 `;
 
-const StyledMessageFooter = styled.div<{ hasTimestamp: boolean }>`
+const StyledMessageFooter = styled.div<{ isSpreadOut: boolean }>`
   align-items: center;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
-  justify-content: ${({ hasTimestamp }) =>
-    hasTimestamp ? 'space-between' : 'flex-start'};
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: ${({ isSpreadOut }) =>
+    isSpreadOut ? 'space-between' : 'flex-start'};
   margin-top: ${themeCssVariables.spacing[1]};
   opacity: 0;
   pointer-events: none;
@@ -229,7 +230,6 @@ export const AiChatMessage = ({
   });
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
   const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
-  // Without a known sender there is no header, so the footer keeps the time
   const hasHeader = isAiChatInboxEnabled && (!isUser || isDefined(senderId));
   const shouldShowError =
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
@@ -306,7 +306,7 @@ export const AiChatMessage = ({
         {agentChatMessage.parts.length > 0 && (
           <StyledMessageFooter
             className="message-footer"
-            hasTimestamp={!hasHeader}
+            isSpreadOut={!isAiChatInboxEnabled}
           >
             {!hasHeader && (
               <StyledMessageTimestamp>
