@@ -1,3 +1,5 @@
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
 import { createDropdownRegistry } from '../internal/createDropdownRegistry';
 import { type DropdownRowRegistration } from '../internal/DropdownRowRegistration';
 import { getDropdownPageType } from '../internal/getDropdownPageType';
@@ -39,7 +41,7 @@ describe('Dropdown registry', () => {
     const detached = createRegistration({ label: 'Detached' });
 
     for (const registration of [first, disabled, last]) {
-      if (registration.elementRef.current) {
+      if (isDefined(registration.elementRef.current)) {
         document.body.append(registration.elementRef.current);
       }
     }
