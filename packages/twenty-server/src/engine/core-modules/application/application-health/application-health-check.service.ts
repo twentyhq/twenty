@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -56,13 +57,17 @@ export class ApplicationHealthCheckService {
     healthCheckLogicFunctionId: string;
     workspaceId: string;
   }): Promise<ApplicationHealthCheckResultDTO> {
-    const executionResult = await this.logicFunctionExecutorService
-      .execute({
-        logicFunctionId: healthCheckLogicFunctionId,
-        workspaceId,
-        payload: {},
-      })
-      .catch(() => null);
+    const executionResult = await Promise.resolve(
+      withSystemAuthorizationScope(
+        { workspaceId, reason: 'application health check' },
+        () =>
+          this.logicFunctionExecutorService.execute({
+            logicFunctionId: healthCheckLogicFunctionId,
+            workspaceId,
+            payload: {},
+          }),
+      ),
+    ).catch(() => null);
 
     if (!isDefined(executionResult) || isDefined(executionResult.error)) {
       return UNKNOWN_HEALTH;

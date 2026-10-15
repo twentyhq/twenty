@@ -12,6 +12,7 @@ import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-pro
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
+import { OperationAuthorizationService } from 'src/engine/core-modules/authorization/services/operation-authorization.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
@@ -37,6 +38,7 @@ export class ToolRegistryService {
     private readonly toolExecutorService: ToolExecutorService,
     private readonly toolOutputSpillService: ToolOutputSpillService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly operationAuthorizationService: OperationAuthorizationService,
   ) {}
 
   async getCatalog(
@@ -55,19 +57,47 @@ export class ToolRegistryService {
           return [];
         }
 
-        if (await provider.isAvailable(executionContext)) {
-          return this.generateProviderDescriptors(provider, executionContext, {
-            includeSchemas: false,
-          });
+        if (!(await provider.isAvailable(executionContext))) {
+          return [];
         }
 
-        return [];
+        const entries = await this.generateProviderDescriptors(
+          provider,
+          executionContext,
+          { includeSchemas: false },
+        );
+
+        return this.filterAllowedEntries(provider, entries);
       }),
     );
 
     const excludeTools = options?.excludeTools;
 
     return results.flat().filter((entry) => !excludeTools?.has(entry.name));
+  }
+
+  private async filterAllowedEntries<TEntry extends ToolIndexEntry>(
+    provider: ToolProvider,
+    entries: TEntry[],
+  ): Promise<TEntry[]> {
+    if (!isDefined(provider.getToolPolicy)) {
+      return entries;
+    }
+
+    const isAllowedByToolName = await Promise.all(
+      entries.map(async (entry) => {
+        const policy = provider.getToolPolicy?.(entry.name);
+
+        return (
+          !isDefined(policy) ||
+          (await this.operationAuthorizationService.isCurrentFlowAllowed(
+            policy,
+          ))
+        );
+      }),
+    );
+
+    return entries.filter((_, index) => isAllowedByToolName[index]);
   }
 
   async resolveSchemas({
@@ -437,13 +467,17 @@ export class ToolRegistryService {
           (provider) => !categorySet || categorySet.has(provider.category),
         )
         .map(async (provider) => {
-          if (await provider.isAvailable(context)) {
-            return this.generateProviderDescriptors(provider, context, {
-              includeSchemas: true,
-            });
+          if (!(await provider.isAvailable(context))) {
+            return [];
           }
 
-          return [];
+          const descriptors = await this.generateProviderDescriptors(
+            provider,
+            context,
+            { includeSchemas: true },
+          );
+
+          return this.filterAllowedEntries(provider, descriptors);
         }),
     );
 

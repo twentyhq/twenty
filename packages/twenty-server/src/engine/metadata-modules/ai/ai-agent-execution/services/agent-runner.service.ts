@@ -5,6 +5,8 @@ import { type AgentRunSummary } from 'twenty-shared/ai';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 
+import { startWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { getRunPrincipalFromAuthContext } from 'src/engine/core-modules/auth/utils/get-run-principal-from-auth-context.util';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
@@ -247,25 +249,36 @@ export class AgentRunnerService {
     try {
       // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
       execution = await withDedicatedAiTrace(() =>
-        this.agentAsyncExecutorService.executeAgent({
-          agent,
-          messages: prompt?.messages ?? [],
-          priorMessages,
-          // every run here goes on in the background, unlike a chat, so it can wait. The wait tools are
-          // the engine's, so it explains them; the caller's own instructions come last
-          baseSystemPrompt: [
-            spec.baseSystemPrompt,
-            AGENT_WAIT_PROMPT,
-            ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
-          ].join('\n\n'),
-          pausingTools: createAgentWaitTools(),
-          canAskHumans: spec.capabilities.canAskHumans,
-          responseFormat: spec.responseFormat ?? agent.responseFormat,
-          workspaceId,
-          executionContext,
-          additionalExcludedToolNames: spec.additionalExcludedToolNames,
-          toolLoadingStrategy: spec.toolLoadingStrategy,
-        }),
+        startWorkspaceAuthContext(
+          {
+            authContext: executionContext.authContext,
+            principal: getRunPrincipalFromAuthContext(
+              executionContext.authContext,
+            ),
+          },
+          () =>
+            this.agentAsyncExecutorService.executeAgent({
+              agent,
+              messages: prompt?.messages ?? [],
+              priorMessages,
+              // every run here goes on in the background, unlike a chat, so it can wait. The wait tools are
+              // the engine's, so it explains them; the caller's own instructions come last
+              baseSystemPrompt: [
+                spec.baseSystemPrompt,
+                AGENT_WAIT_PROMPT,
+                ...(isNonEmptyString(spec.instructions)
+                  ? [spec.instructions]
+                  : []),
+              ].join('\n\n'),
+              pausingTools: createAgentWaitTools(),
+              canAskHumans: spec.capabilities.canAskHumans,
+              responseFormat: spec.responseFormat ?? agent.responseFormat,
+              workspaceId,
+              executionContext,
+              additionalExcludedToolNames: spec.additionalExcludedToolNames,
+              toolLoadingStrategy: spec.toolLoadingStrategy,
+            }),
+        ),
       );
     } catch (error) {
       if (isDefined(turnId)) {

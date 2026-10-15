@@ -1,5 +1,6 @@
 import { type ToolCategory } from 'twenty-shared/ai';
 
+import { type OperationPolicy } from 'src/engine/core-modules/authorization/types/operation-policy.type';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
@@ -10,6 +11,9 @@ export interface ToolProvider {
   readonly category: ToolCategory;
 
   isAvailable(context: ToolProviderContext): Promise<boolean>;
+
+  // Checked on dispatch, and a tool the caller may not call is left out of the catalog
+  getToolPolicy?(toolName: string): OperationPolicy | undefined;
 
   generateDescriptors(
     context: ToolProviderContext,

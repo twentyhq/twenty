@@ -9,6 +9,8 @@ import { Repository } from 'typeorm';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
+import { type ApplicationTargetAccess } from 'src/engine/core-modules/authorization/application-reach/types/application-target-access.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
@@ -34,22 +36,49 @@ export class LogicFunctionFromSourceHelperService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    private readonly applicationReachService: ApplicationReachService,
   ) {}
+
+  async findManyLogicFunctions({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<FlatLogicFunction[]> {
+    const flatLogicFunctionMaps =
+      await this.applicationReachService.getReachableFlatEntityMaps({
+        workspaceId,
+        metadataName: 'logicFunction',
+        access: 'read',
+      });
+
+    return Object.values(flatLogicFunctionMaps.byUniversalIdentifier).filter(
+      (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
+        isDefined(flatLogicFunction) && !isDefined(flatLogicFunction.deletedAt),
+    );
+  }
 
   async findLogicFunctionAndApplicationOrThrow({
     id,
     workspaceId,
+    access,
   }: {
     id: string;
     workspaceId: string;
+    access: ApplicationTargetAccess;
   }) {
     const [
-      { flatLogicFunctionMaps, flatApplicationMaps },
+      flatLogicFunctionMaps,
+      { flatApplicationMaps },
       { workspaceCustomFlatApplication },
     ] = await Promise.all([
+      this.applicationReachService.getReachableFlatEntityMaps({
+        workspaceId,
+        metadataName: 'logicFunction',
+        access,
+      }),
       this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
         workspaceId,
-        flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        flatMapsKeys: ['flatApplicationMaps'],
       }),
       this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -89,7 +118,11 @@ export class LogicFunctionFromSourceHelperService {
       flatLogicFunction,
       ownerFlatApplication,
       workspaceCustomFlatApplication,
-    } = await this.findLogicFunctionAndApplicationOrThrow({ id, workspaceId });
+    } = await this.findLogicFunctionAndApplicationOrThrow({
+      id,
+      workspaceId,
+      access: 'manage',
+    });
 
     if (ownerFlatApplication.id !== workspaceCustomFlatApplication.id) {
       throw new LogicFunctionException(
@@ -112,7 +145,11 @@ export class LogicFunctionFromSourceHelperService {
       flatLogicFunction,
       ownerFlatApplication,
       workspaceCustomFlatApplication,
-    } = await this.findLogicFunctionAndApplicationOrThrow({ id, workspaceId });
+    } = await this.findLogicFunctionAndApplicationOrThrow({
+      id,
+      workspaceId,
+      access: 'trigger',
+    });
 
     const isRunnableOnDemand = await this.isRunnableOnDemand({
       flatLogicFunction,
@@ -142,7 +179,11 @@ export class LogicFunctionFromSourceHelperService {
       flatLogicFunction,
       ownerFlatApplication,
       workspaceCustomFlatApplication,
-    } = await this.findLogicFunctionAndApplicationOrThrow({ id, workspaceId });
+    } = await this.findLogicFunctionAndApplicationOrThrow({
+      id,
+      workspaceId,
+      access: 'read',
+    });
 
     return this.isRunnableOnDemand({
       flatLogicFunction,

@@ -57,31 +57,25 @@ export class CodeWorkflowAction implements WorkflowAction {
 
     const { workspaceId } = runInfo;
 
-    const { flatLogicFunction } =
-      await this.logicFunctionFromSourceHelperService.findLogicFunctionRunnableOnDemandOrThrow(
-        {
-          id: workflowActionInput.logicFunctionId,
-          workspaceId,
+    const result =
+      await this.workflowExecutionContextService.runInExecutionContext(
+        runInfo,
+        async ({ authContext }) => {
+          await this.logicFunctionFromSourceHelperService.findLogicFunctionRunnableOnDemandOrThrow(
+            {
+              id: workflowActionInput.logicFunctionId,
+              workspaceId,
+            },
+          );
+
+          return this.logicFunctionExecutorService.execute({
+            logicFunctionId: workflowActionInput.logicFunctionId,
+            workspaceId,
+            payload: workflowActionInput.logicFunctionInput,
+            ...getUserFromAuthContext(authContext),
+          });
         },
       );
-
-    const { authContext, application } =
-      await this.workflowExecutionContextService.getExecutionContext(runInfo);
-
-    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
-      {
-        application,
-        targetApplicationId: flatLogicFunction.applicationId,
-        targetLabel: `Logic function "${flatLogicFunction.name}"`,
-      },
-    );
-
-    const result = await this.logicFunctionExecutorService.execute({
-      logicFunctionId: workflowActionInput.logicFunctionId,
-      workspaceId,
-      payload: workflowActionInput.logicFunctionInput,
-      ...getUserFromAuthContext(authContext),
-    });
 
     await this.persistStepLog({
       workflowRunId: runInfo.workflowRunId,

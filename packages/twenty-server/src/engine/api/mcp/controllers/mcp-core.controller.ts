@@ -27,6 +27,7 @@ import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { startWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 import { FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -39,6 +40,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 
 @Controller(ApiPath.Mcp)
@@ -96,7 +98,7 @@ export class McpCoreController {
       ...(isDefined(mcpToolName) && { 'mcp.tool_name': mcpToolName }),
     });
 
-    // The guard authenticates after WorkspaceAuthContextMiddleware has run, so the context is built here
+    // The guard authenticates after WorkspaceAuthContextMiddleware has run, so the flow starts here
     const queryContext: McpCoreQueryContext = {
       authContext: buildWorkspaceAuthContextFromRequest(request),
       workspace,
@@ -108,6 +110,26 @@ export class McpCoreController {
       isDirectMode: mode === 'direct',
     };
 
+    return startWorkspaceAuthContext(
+      {
+        authContext: queryContext.authContext,
+        principal: classifyAuthPrincipal(request) ?? { kind: 'unattested' },
+      },
+      () => this.handleMcpQuery({ body, queryContext, acceptHeader, res }),
+    );
+  }
+
+  private async handleMcpQuery({
+    body,
+    queryContext,
+    acceptHeader,
+    res,
+  }: {
+    body: JsonRpc;
+    queryContext: McpCoreQueryContext;
+    acceptHeader: string | undefined;
+    res: Response;
+  }) {
     // JSON-RPC notifications (no id) expect no response body regardless of Accept
     if (!isDefined(body.id)) {
       await this.mcpProtocolService.handleMCPCoreQuery(body, queryContext);

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AuthorizationModule } from 'src/engine/core-modules/authorization/authorization.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
@@ -49,6 +50,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
 @Module({
   imports: [
     AiAgentModule,
+    AuthorizationModule,
     ApplicationTranslationCatalogModule,
     ToolModule,
     RecordCrudModule,

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationReachModule } from 'src/engine/core-modules/authorization/application-reach/application-reach.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 
 @Module({
   imports: [
+    ApplicationReachModule,
     FeatureFlagModule,
     WorkspaceMetadataVersionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

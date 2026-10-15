@@ -1,5 +1,5 @@
 import {
-  workspaceAuthContextStorage,
+  findWorkspaceAuthContext,
   withWorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -213,7 +213,7 @@ export class AgentChatActorService {
       threadId,
       turnId: toolCallMessage.turnId,
     });
-    const request = workspaceAuthContextStorage.getStore();
+    const request = findWorkspaceAuthContext();
     if (
       !isDefined(request) ||
       !isUserAuthContext(request) ||
@@ -234,7 +234,7 @@ export class AgentChatActorService {
     userWorkspaceId: string;
   }) {
     const execution = await this.authorizeJob(args);
-    const request = workspaceAuthContextStorage.getStore();
+    const request = findWorkspaceAuthContext();
     if (
       isDefined(request) &&
       isUserAuthContext(request) &&

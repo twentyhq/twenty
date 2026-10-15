@@ -9,6 +9,7 @@ import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
+import { OperationAuthorizationService } from 'src/engine/core-modules/authorization/services/operation-authorization.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
@@ -54,6 +55,7 @@ export class ToolExecutorService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly operationAuthorizationService: OperationAuthorizationService,
   ) {}
 
   async dispatch(
@@ -71,8 +73,15 @@ export class ToolExecutorService {
           userRepository: this.userRepository,
           workspaceCacheService: this.workspaceCacheService,
         },
-        (contextWithAuth) =>
-          this.dispatchByExecutionRef(descriptor, args ?? {}, contextWithAuth),
+        async (contextWithAuth) => {
+          await this.authorizeToolOrThrow(descriptor);
+
+          return this.dispatchByExecutionRef(
+            descriptor,
+            args ?? {},
+            contextWithAuth,
+          );
+        },
       );
     } catch (error) {
       const { output, shouldCapture } = buildToolExecutionFailure({
@@ -87,6 +96,18 @@ export class ToolExecutorService {
       }
 
       return output;
+    }
+  }
+
+  private async authorizeToolOrThrow(
+    descriptor: ToolIndexEntry | ToolDescriptor,
+  ): Promise<void> {
+    const policy = this.providers
+      .find((provider) => provider.category === descriptor.category)
+      ?.getToolPolicy?.(descriptor.name);
+
+    if (isDefined(policy)) {
+      await this.operationAuthorizationService.authorizeOrThrow(policy);
     }
   }
 

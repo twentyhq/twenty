@@ -6,7 +6,8 @@ import {
   DEFAULT_TOOL_INPUT_SCHEMA,
 } from 'twenty-shared/logic-function';
 
-import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
+import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
+import { type OperationPolicy } from 'src/engine/core-modules/authorization/types/operation-policy.type';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -16,6 +17,7 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { LOGIC_FUNCTION_OPERATIONS } from 'src/engine/metadata-modules/logic-function/constants/logic-function-operations.constant';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
 
@@ -25,10 +27,17 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationReachService: ApplicationReachService,
   ) {}
 
-  async isAvailable(_context: ToolProviderContext): Promise<boolean> {
-    return true;
+  async isAvailable(context: ToolProviderContext): Promise<boolean> {
+    return isDefined(
+      await this.applicationReachService.findCurrentReach(context.workspaceId),
+    );
+  }
+
+  getToolPolicy(_toolName: string): OperationPolicy {
+    return LOGIC_FUNCTION_OPERATIONS.executeAsTool;
   }
 
   // Unreachable: logic function descriptors are dispatched inline by ToolExecutorService.
@@ -48,21 +57,20 @@ export class LogicFunctionToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
 
-    const {
+    const [
+      { flatObjectMetadataMaps, flatFrontComponentMaps },
       flatLogicFunctionMaps,
-      flatObjectMetadataMaps,
-      flatFrontComponentMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: context.workspaceId,
-          flatMapsKeys: [
-            'flatLogicFunctionMaps',
-            'flatObjectMetadataMaps',
-            'flatFrontComponentMaps',
-          ],
-        },
-      );
+    ] = await Promise.all([
+      this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
+        workspaceId: context.workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFrontComponentMaps'],
+      }),
+      this.applicationReachService.getReachableFlatEntityMaps({
+        workspaceId: context.workspaceId,
+        metadataName: 'logicFunction',
+        access: 'trigger',
+      }),
+    ]);
 
     const resolveWidgetFrontComponentId = (
       frontComponentUniversalIdentifier: string | undefined,
@@ -83,11 +91,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
       (fn): fn is FlatLogicFunction =>
         isDefined(fn) &&
         isDefined(fn.toolTriggerSettings) &&
-        fn.deletedAt === null &&
-        canCallerReachApplication({
-          callingApplication: context.application,
-          applicationId: fn.applicationId,
-        }),
+        fn.deletedAt === null,
     );
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];

@@ -13,6 +13,8 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
+import { OPERATION_POLICY_METADATA_KEY } from 'src/engine/core-modules/authorization/constants/operation-policy-metadata-key.constant';
+import { type OperationPolicy } from 'src/engine/core-modules/authorization/types/operation-policy.type';
 import { AUTH_PRINCIPAL_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/auth-principal-guard-config-key.constant';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
@@ -38,6 +40,10 @@ type AcceptedAuthPrincipals = {
 type EndpointPermissionDeclarations = {
   authPrincipalGuards: AcceptedAuthPrincipals[];
   applicationTarget: ApplicationTarget | null;
+  // Left out when the endpoint declares none, so other endpoints read as before
+  operationPolicy?: Omit<OperationPolicy, 'authPrincipal'> & {
+    authPrincipal: AcceptedAuthPrincipals;
+  };
 };
 
 type EndpointClass = Type<object>;
@@ -159,6 +165,16 @@ const toAcceptedAuthPrincipals = (
   };
 };
 
+const toOperationPolicyDeclaration = (
+  operationPolicy: OperationPolicy | undefined,
+): EndpointPermissionDeclarations['operationPolicy'] =>
+  isDefined(operationPolicy)
+    ? {
+        ...operationPolicy,
+        authPrincipal: toAcceptedAuthPrincipals(operationPolicy.authPrincipal),
+      }
+    : undefined;
+
 const compareCodePoints = (left: string, right: string): number =>
   left < right ? -1 : left > right ? 1 : 0;
 
@@ -218,6 +234,12 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
             APPLICATION_TARGET_METADATA_KEY,
             handler,
           ) ?? null,
+        operationPolicy: toOperationPolicyDeclaration(
+          reflector.get<OperationPolicy | undefined>(
+            OPERATION_POLICY_METADATA_KEY,
+            handler,
+          ),
+        ),
       });
     }
   }

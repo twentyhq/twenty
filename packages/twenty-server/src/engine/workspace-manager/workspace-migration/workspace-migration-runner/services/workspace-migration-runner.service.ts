@@ -6,6 +6,7 @@ import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
@@ -33,6 +34,7 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
+import { groupApplicationReachOwnersByMetadataName } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/group-application-reach-owners-by-metadata-name.util';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
@@ -51,6 +53,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
     private readonly inFlightDeferredWorkspaceMigrationActionsService: InFlightDeferredWorkspaceMigrationActionsService,
+    private readonly applicationReachService: ApplicationReachService,
   ) {}
 
   async invalidateCache({
@@ -356,6 +359,21 @@ export class WorkspaceMigrationRunnerService {
       throw new WorkspaceMigrationRunnerException({
         message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
         code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
+      });
+    }
+
+    for (const [
+      metadataName,
+      flatEntities,
+    ] of groupApplicationReachOwnersByMetadataName({
+      actions,
+      cachedAllFlatEntityMaps,
+      flatApplicationMaps,
+    })) {
+      await this.applicationReachService.assertCanManageFlatEntitiesOrThrow({
+        workspaceId,
+        metadataName,
+        flatEntities,
       });
     }
 

@@ -12,6 +12,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
@@ -583,11 +584,15 @@ export class ApplicationInstallService {
       JSON.stringify(payload),
     );
 
-    const result = await this.logicFunctionExecutorService.execute({
-      logicFunctionId: flatLogicFunction.id,
-      workspaceId,
-      payload,
-    });
+    const result = await withSystemAuthorizationScope(
+      { workspaceId, reason: 'install hook' },
+      () =>
+        this.logicFunctionExecutorService.execute({
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload,
+        }),
+    );
 
     if (!isDefined(result)) {
       this.logger.log('Pre-install hook executed successfully');
@@ -714,11 +719,15 @@ export class ApplicationInstallService {
       return;
     }
 
-    const result = await this.logicFunctionExecutorService.execute({
-      logicFunctionId: flatLogicFunction.id,
-      workspaceId,
-      payload,
-    });
+    const result = await withSystemAuthorizationScope(
+      { workspaceId, reason: 'install hook' },
+      () =>
+        this.logicFunctionExecutorService.execute({
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload,
+        }),
+    );
 
     if (!isDefined(result)) {
       this.logger.log('Post-install hook executed successfully');

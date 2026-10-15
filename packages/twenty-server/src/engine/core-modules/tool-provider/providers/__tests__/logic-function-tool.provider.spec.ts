@@ -1,5 +1,4 @@
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -26,10 +25,7 @@ const createFlatLogicFunction = (
     ...overrides,
   }) as FlatLogicFunction;
 
-const generateDescriptors = async (
-  logicFunctions: FlatLogicFunction[],
-  application?: FlatApplication,
-) => {
+const generateDescriptors = async (logicFunctions: FlatLogicFunction[]) => {
   const flatLogicFunctionMaps =
     createEmptyFlatEntityMaps() as FlatEntityMaps<FlatLogicFunction>;
 
@@ -55,27 +51,38 @@ const generateDescriptors = async (
 
   const flatEntityMapsCacheService = {
     getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-      flatLogicFunctionMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       flatFrontComponentMaps,
     }),
   } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService;
 
-  const provider = new LogicFunctionToolProvider(flatEntityMapsCacheService);
+  const applicationReachService = {
+    getReachableFlatEntityMaps: jest
+      .fn()
+      .mockResolvedValue(flatLogicFunctionMaps),
+  } as unknown as ApplicationReachService;
 
-  return (await provider.generateDescriptors(
+  const provider = new LogicFunctionToolProvider(
+    flatEntityMapsCacheService,
+    applicationReachService,
+  );
+
+  const descriptors = (await provider.generateDescriptors(
     {
       workspaceId,
       rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: roleId } },
-      application,
     },
     { includeSchemas: false },
   )) as ToolIndexEntry[];
+
+  return { descriptors, applicationReachService };
 };
 
 describe('LogicFunctionToolProvider', () => {
   it('should resolve the declared front component to the id the chat renders', async () => {
-    const [descriptor] = await generateDescriptors([
+    const {
+      descriptors: [descriptor],
+    } = await generateDescriptors([
       createFlatLogicFunction({
         name: 'generate-invoice',
         toolTriggerSettings: {
@@ -90,7 +97,9 @@ describe('LogicFunctionToolProvider', () => {
   });
 
   it('should leave the front component unset when the app declares none', async () => {
-    const [descriptor] = await generateDescriptors([
+    const {
+      descriptors: [descriptor],
+    } = await generateDescriptors([
       createFlatLogicFunction({ name: 'generate-invoice' }),
     ]);
 
@@ -98,7 +107,9 @@ describe('LogicFunctionToolProvider', () => {
   });
 
   it('should leave the front component unset when the declared identifier matches nothing', async () => {
-    const [descriptor] = await generateDescriptors([
+    const {
+      descriptors: [descriptor],
+    } = await generateDescriptors([
       createFlatLogicFunction({
         name: 'generate-invoice',
         toolTriggerSettings: {
@@ -111,7 +122,7 @@ describe('LogicFunctionToolProvider', () => {
   });
 
   it('should skip logic functions that are not exposed as tools', async () => {
-    const descriptors = await generateDescriptors([
+    const { descriptors } = await generateDescriptors([
       createFlatLogicFunction({
         name: 'internal-helper',
         toolTriggerSettings: null,
@@ -121,53 +132,18 @@ describe('LogicFunctionToolProvider', () => {
     expect(descriptors).toEqual([]);
   });
 
-  it('should only expose the calling application tools to an application token', async () => {
-    const logicFunctions = [
-      createFlatLogicFunction({
-        name: 'own-tool',
-        applicationId: 'calling-application-id',
-      }),
-      createFlatLogicFunction({
-        name: 'other-tool',
-        applicationId: 'other-application-id',
-      }),
-    ];
-
-    const sessionDescriptors = await generateDescriptors(logicFunctions);
-    const applicationDescriptors = await generateDescriptors(logicFunctions, {
-      id: 'calling-application-id',
-    } as FlatApplication);
-
-    expect(sessionDescriptors.map(({ name }) => name)).toEqual([
-      'app_own_tool',
-      'app_other_tool',
+  it('should list the functions the caller can trigger', async () => {
+    const { descriptors, applicationReachService } = await generateDescriptors([
+      createFlatLogicFunction({ name: 'own-tool' }),
     ]);
-    expect(applicationDescriptors.map(({ name }) => name)).toEqual([
-      'app_own_tool',
-    ]);
-  });
 
-  it('should expose every application tool to an OAuth-only client', async () => {
-    const descriptors = await generateDescriptors(
-      [
-        createFlatLogicFunction({
-          name: 'first-tool',
-          applicationId: 'first-application-id',
-        }),
-        createFlatLogicFunction({
-          name: 'second-tool',
-          applicationId: 'second-application-id',
-        }),
-      ],
-      {
-        id: 'mcp-client-application-id',
-        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      } as FlatApplication,
-    );
-
-    expect(descriptors.map(({ name }) => name)).toEqual([
-      'app_first_tool',
-      'app_second_tool',
-    ]);
+    expect(descriptors.map(({ name }) => name)).toEqual(['app_own_tool']);
+    expect(
+      applicationReachService.getReachableFlatEntityMaps,
+    ).toHaveBeenCalledWith({
+      workspaceId,
+      metadataName: 'logicFunction',
+      access: 'trigger',
+    });
   });
 });

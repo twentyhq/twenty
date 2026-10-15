@@ -1,6 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { RecordPermissionsResolver } from 'src/engine/metadata-modules/record-permissions/record-permissions.resolver';
 
 const denied = {
@@ -47,7 +47,7 @@ const buildResolver = () => {
     targets: { objectMetadataId: string; recordId: string }[],
     type = 'user',
   ) =>
-    workspaceAuthContextStorage.run(
+    withWorkspaceAuthContext(
       {
         type,
         workspace: { id: 'workspace' },

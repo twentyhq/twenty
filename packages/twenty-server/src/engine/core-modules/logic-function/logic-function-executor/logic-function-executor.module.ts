@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationReachModule } from 'src/engine/core-modules/authorization/application-reach/application-reach.module';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -30,6 +31,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceDomainsModule,
     ApplicationModule,
     ApplicationVariableEntityModule,
+    ApplicationReachModule,
     UsageLimitModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationVariableEntity,

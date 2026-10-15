@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
+import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import {
@@ -46,13 +47,17 @@ export class LogicFunctionTriggerService {
       userWorkspaceId: userWorkspaceId ?? null,
     });
 
-    const result = await this.logicFunctionExecutorService.execute({
-      logicFunctionId: logicFunction.id,
-      workspaceId: logicFunction.workspaceId,
-      payload: event,
-      ...(isDefined(userId) ? { userId } : {}),
-      ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
-    });
+    const result = await withSystemAuthorizationScope(
+      { workspaceId: logicFunction.workspaceId, reason: 'route trigger' },
+      () =>
+        this.logicFunctionExecutorService.execute({
+          logicFunctionId: logicFunction.id,
+          workspaceId: logicFunction.workspaceId,
+          payload: event,
+          ...(isDefined(userId) ? { userId } : {}),
+          ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+        }),
+    );
 
     if (!isDefined(result)) {
       return { kind: 'response', response: buildRouteTriggerResponse(result) };

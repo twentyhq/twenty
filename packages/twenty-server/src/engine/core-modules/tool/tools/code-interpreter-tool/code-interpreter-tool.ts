@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { findWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable, Logger } from '@nestjs/common';
 
@@ -117,7 +117,7 @@ export class CodeInterpreterTool implements Tool {
 
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
       const sandboxPrincipal = await this.resolveSandboxPrincipal(
-        workspaceAuthContextStorage.getStore(),
+        findWorkspaceAuthContext(),
       );
       const sandboxToken = isDefined(sandboxPrincipal)
         ? await this.generateSandboxToken({

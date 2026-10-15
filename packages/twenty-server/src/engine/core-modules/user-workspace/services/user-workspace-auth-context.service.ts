@@ -1,4 +1,4 @@
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { findWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Injectable } from '@nestjs/common';
@@ -125,7 +125,7 @@ export class UserWorkspaceAuthContextService {
         AuthExceptionCode.UNAUTHENTICATED,
       );
     }
-    const requestContext = workspaceAuthContextStorage.getStore();
+    const requestContext = findWorkspaceAuthContext();
     const matchingUserContext =
       isDefined(requestContext) &&
       isUserAuthContext(requestContext) &&

@@ -28,7 +28,9 @@ export const withResolvedToolAuthContext = async <T>(
     return dispatch(context);
   }
 
-  return await withWorkspaceAuthContext(authContext, () =>
-    dispatch({ ...context, authContext }),
+  return await withWorkspaceAuthContext(
+    authContext,
+    () => dispatch({ ...context, authContext }),
+    { rolePermissionConfig: context.rolePermissionConfig },
   );
 };

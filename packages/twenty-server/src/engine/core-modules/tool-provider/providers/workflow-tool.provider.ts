@@ -3,6 +3,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { type OperationPolicy } from 'src/engine/core-modules/authorization/types/operation-policy.type';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -17,8 +18,15 @@ import { resolveObjectIcon } from 'src/engine/core-modules/tool-provider/utils/r
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { LOGIC_FUNCTION_OPERATIONS } from 'src/engine/metadata-modules/logic-function/constants/logic-function-operations.constant';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
+
+const WORKFLOW_TOOL_POLICIES: Partial<Record<string, OperationPolicy>> = {
+  get_logic_function_source: LOGIC_FUNCTION_OPERATIONS.readSource,
+  update_logic_function_source: LOGIC_FUNCTION_OPERATIONS.updateSource,
+  list_logic_function_tools: LOGIC_FUNCTION_OPERATIONS.list,
+};
 
 @Injectable()
 export class WorkflowToolProvider implements ToolProvider {
@@ -42,6 +50,10 @@ export class WorkflowToolProvider implements ToolProvider {
       context.workspaceId,
       PermissionFlagType.WORKFLOWS,
     );
+  }
+
+  getToolPolicy(toolName: string): OperationPolicy | undefined {
+    return WORKFLOW_TOOL_POLICIES[toolName];
   }
 
   async generateDescriptors(

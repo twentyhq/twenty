@@ -3,6 +3,7 @@ import { Logger, Scope } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 
+import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -149,10 +150,14 @@ export class RunWorkflowJob {
       );
     }
 
-    await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
-      workspaceId,
-      steps,
-    });
+    await withSystemAuthorizationScope(
+      { workspaceId, reason: 'build code steps before a workflow run' },
+      () =>
+        this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
+          workspaceId,
+          steps,
+        }),
+    );
 
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,

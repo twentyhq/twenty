@@ -1,4 +1,6 @@
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { startWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { getRunPrincipalFromAuthContext } from 'src/engine/core-modules/auth/utils/get-run-principal-from-auth-context.util';
 import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-awaiting-call-text.util';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
@@ -223,16 +225,23 @@ export class StreamAgentChatJob {
             })
             .catch(() => null);
 
-      await this.buildAndPublishStream({
-        workspace,
-        data,
-        turnId,
-        sender,
-        authorization,
-        titlePromise,
-        abortSignal: abortController.signal,
-        turnModelId,
-      });
+      await startWorkspaceAuthContext(
+        {
+          authContext: authorization.authContext,
+          principal: getRunPrincipalFromAuthContext(authorization.authContext),
+        },
+        () =>
+          this.buildAndPublishStream({
+            workspace,
+            data,
+            turnId,
+            sender,
+            authorization,
+            titlePromise,
+            abortSignal: abortController.signal,
+            turnModelId,
+          }),
+      );
     } catch (error) {
       this.logger.error(
         `[AI_CHAT_TURN_FAILED] failurePhase=execution, model=${turnModelId}, threadId=${data.threadId}, workspaceId=${data.workspaceId}, streamId=${data.streamId}: ${formatErrorWithCause(error)}`,

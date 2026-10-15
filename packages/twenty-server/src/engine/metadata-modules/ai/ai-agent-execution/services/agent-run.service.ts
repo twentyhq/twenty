@@ -29,7 +29,7 @@ import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/fr
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { findWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -534,7 +534,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       return buildCreatedByFromApplication({ application: callerApplication });
     }
 
-    const requestAuthContext = workspaceAuthContextStorage.getStore();
+    const requestAuthContext = findWorkspaceAuthContext();
 
     return isDefined(requestAuthContext)
       ? buildActorMetadataFromAuthContext(requestAuthContext)

@@ -4,7 +4,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { findWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 
 import { WorkspaceAuthContextMiddleware } from '../workspace-auth-context.middleware';
 
@@ -59,7 +59,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     middleware.use(req, mockResponse, mockNext);
 
     expect(mockNext).toHaveBeenCalled();
-    expect(workspaceAuthContextStorage.getStore()).toBeUndefined();
+    expect(findWorkspaceAuthContext()).toBeUndefined();
   });
 
   it('should create an apiKey auth context when apiKey is present', () => {
@@ -67,7 +67,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     let capturedContext: unknown;
 
     (mockNext as jest.Mock).mockImplementation(() => {
-      capturedContext = workspaceAuthContextStorage.getStore();
+      capturedContext = findWorkspaceAuthContext();
     });
 
     middleware.use(req, mockResponse, mockNext);
@@ -88,7 +88,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     let capturedContext: unknown;
 
     (mockNext as jest.Mock).mockImplementation(() => {
-      capturedContext = workspaceAuthContextStorage.getStore();
+      capturedContext = findWorkspaceAuthContext();
     });
 
     middleware.use(req, mockResponse, mockNext);
@@ -115,7 +115,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     let capturedContext: unknown;
 
     (mockNext as jest.Mock).mockImplementation(() => {
-      capturedContext = workspaceAuthContextStorage.getStore();
+      capturedContext = findWorkspaceAuthContext();
     });
 
     middleware.use(req, mockResponse, mockNext);
@@ -128,7 +128,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     let capturedContext: unknown;
 
     (mockNext as jest.Mock).mockImplementation(() => {
-      capturedContext = workspaceAuthContextStorage.getStore();
+      capturedContext = findWorkspaceAuthContext();
     });
 
     middleware.use(req, mockResponse, mockNext);
@@ -150,7 +150,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     let capturedContext: unknown;
 
     (mockNext as jest.Mock).mockImplementation(() => {
-      capturedContext = workspaceAuthContextStorage.getStore();
+      capturedContext = findWorkspaceAuthContext();
     });
 
     middleware.use(req, mockResponse, mockNext);
@@ -173,7 +173,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     let capturedContext: unknown;
 
     (mockNext as jest.Mock).mockImplementation(() => {
-      capturedContext = workspaceAuthContextStorage.getStore();
+      capturedContext = findWorkspaceAuthContext();
     });
 
     middleware.use(req, mockResponse, mockNext);
@@ -195,7 +195,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     let capturedContext: unknown;
 
     (mockNext as jest.Mock).mockImplementation(() => {
-      capturedContext = workspaceAuthContextStorage.getStore();
+      capturedContext = findWorkspaceAuthContext();
     });
 
     middleware.use(req, mockResponse, mockNext);
@@ -232,7 +232,7 @@ describe('WorkspaceAuthContextMiddleware', () => {
     let capturedContext: unknown;
 
     (mockNext as jest.Mock).mockImplementation(() => {
-      capturedContext = workspaceAuthContextStorage.getStore();
+      capturedContext = findWorkspaceAuthContext();
     });
 
     middleware.use(req, mockResponse, mockNext);

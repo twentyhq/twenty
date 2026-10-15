@@ -5,6 +5,7 @@ import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
+import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import {
   LogicFunctionExecutionException,
@@ -311,11 +312,15 @@ export class ServerRouteTriggerService {
     });
 
     try {
-      return await this.logicFunctionExecutorService.execute({
-        logicFunctionId: logicFunction.id,
-        workspaceId,
-        payload,
-      });
+      return await withSystemAuthorizationScope(
+        { workspaceId, reason: 'server route trigger' },
+        () =>
+          this.logicFunctionExecutorService.execute({
+            logicFunctionId: logicFunction.id,
+            workspaceId,
+            payload,
+          }),
+      );
     } catch (error) {
       if (isUsageRefusedError(error)) {
         throw error;

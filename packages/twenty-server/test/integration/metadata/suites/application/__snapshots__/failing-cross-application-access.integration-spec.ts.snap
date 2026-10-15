@@ -128,30 +128,6 @@ exports[`Application token access to another application should fail with a user
 }
 `;
 
-exports[`Application token access to another application should fail with a user-bound application token should refuse findOneLogicFunction on another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only reach its own application",
-  "name": "ForbiddenError",
-}
-`;
-
-exports[`Application token access to another application should fail with a user-bound application token should refuse getLogicFunctionSourceCode on another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only reach its own application",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`Application token access to another application should fail with a user-bound application token should refuse installApplication on another application 1`] = `
 {
   "extensions": {
@@ -206,18 +182,6 @@ exports[`Application token access to another application should fail with a user
 }
 `;
 
-exports[`Application token access to another application should fail with a user-bound application token should refuse to run a workflow action of another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only reach its own application",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`Application token access to another application should fail with a user-bound application token should refuse triggerInstallApplication on another application 1`] = `
 {
   "extensions": {
@@ -269,18 +233,6 @@ exports[`Application token access to another application should fail with a user
 `;
 
 exports[`Application token access to another application should fail with a user-bound application token should refuse updateOneAgent on another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only reach its own application",
-  "name": "ForbiddenError",
-}
-`;
-
-exports[`Application token access to another application should fail with a user-bound application token should refuse updateOneLogicFunction on another application 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -440,30 +392,6 @@ exports[`Application token access to another application should fail with an app
 }
 `;
 
-exports[`Application token access to another application should fail with an application token without user binding should refuse findOneLogicFunction on another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only reach its own application",
-  "name": "ForbiddenError",
-}
-`;
-
-exports[`Application token access to another application should fail with an application token without user binding should refuse getLogicFunctionSourceCode on another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only reach its own application",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`Application token access to another application should fail with an application token without user binding should refuse installApplication on another application 1`] = `
 {
   "extensions": {
@@ -518,18 +446,6 @@ exports[`Application token access to another application should fail with an app
 }
 `;
 
-exports[`Application token access to another application should fail with an application token without user binding should refuse to run a workflow action of another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only reach its own application",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`Application token access to another application should fail with an application token without user binding should refuse triggerInstallApplication on another application 1`] = `
 {
   "extensions": {
@@ -581,18 +497,6 @@ exports[`Application token access to another application should fail with an app
 `;
 
 exports[`Application token access to another application should fail with an application token without user binding should refuse updateOneAgent on another application 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "An application token can only reach its own application",
-  "name": "ForbiddenError",
-}
-`;
-
-exports[`Application token access to another application should fail with an application token without user binding should refuse updateOneLogicFunction on another application 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

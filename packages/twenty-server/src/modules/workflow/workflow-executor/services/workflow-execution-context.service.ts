@@ -7,7 +7,9 @@ import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { startWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getRunPrincipalFromAuthContext } from 'src/engine/core-modules/auth/utils/get-run-principal-from-auth-context.util';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
@@ -51,6 +53,23 @@ export class WorkflowExecutionContextService {
     });
 
     return this.buildExecutionContext(workflowRun, runInfo.workspaceId);
+  }
+
+  // Opens the run's auth context entry, so what the step reaches is decided by who the run acts as
+  async runInExecutionContext<TResult>(
+    runInfo: WorkflowRunInfo,
+    callback: (executionContext: WorkflowExecutionContext) => Promise<TResult>,
+  ): Promise<TResult> {
+    const executionContext = await this.getExecutionContext(runInfo);
+
+    return startWorkspaceAuthContext(
+      {
+        authContext: executionContext.authContext,
+        principal: getRunPrincipalFromAuthContext(executionContext.authContext),
+        rolePermissionConfig: executionContext.rolePermissionConfig,
+      },
+      () => callback(executionContext),
+    );
   }
 
   async getApplicationBoundExecutionContext({

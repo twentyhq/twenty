@@ -7,10 +7,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
+import { OperationAuthorizationService } from 'src/engine/core-modules/authorization/services/operation-authorization.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { LOGIC_FUNCTION_OPERATIONS } from 'src/engine/metadata-modules/logic-function/constants/logic-function-operations.constant';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
@@ -37,6 +40,8 @@ export class LogicFunctionFromSourceService {
     private readonly helperService: LogicFunctionFromSourceHelperService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly operationAuthorizationService: OperationAuthorizationService,
+    private readonly applicationReachService: ApplicationReachService,
   ) {}
 
   async createOneFromSource({
@@ -46,10 +51,20 @@ export class LogicFunctionFromSourceService {
     input: CreateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<LogicFunctionDTO> {
+    await this.operationAuthorizationService.ensureAuthorized(
+      LOGIC_FUNCTION_OPERATIONS.create,
+    );
+
     const { workspaceCustomFlatApplication: ownerFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
+
+    await this.applicationReachService.assertCanCreateOrThrow({
+      workspaceId,
+      metadataName: 'logicFunction',
+      ownerApplicationId: ownerFlatApplication.id,
+    });
 
     const logicFunctionId = input.id ?? v4();
 
@@ -134,11 +149,21 @@ export class LogicFunctionFromSourceService {
     existingLogicFunctionId: string;
     workspaceId: string;
   }): Promise<{ id: string }> {
+    await this.operationAuthorizationService.ensureAuthorized(
+      LOGIC_FUNCTION_OPERATIONS.create,
+    );
+
     const { flatLogicFunction: existingLogicFunction, ownerFlatApplication } =
       await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
         id: existingLogicFunctionId,
         workspaceId,
       });
+
+    await this.applicationReachService.assertCanCreateOrThrow({
+      workspaceId,
+      metadataName: 'logicFunction',
+      ownerApplicationId: ownerFlatApplication.id,
+    });
 
     const newId = v4();
 
@@ -208,6 +233,10 @@ export class LogicFunctionFromSourceService {
     updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<void> {
+    await this.operationAuthorizationService.ensureAuthorized(
+      LOGIC_FUNCTION_OPERATIONS.updateSource,
+    );
+
     const { flatLogicFunction, ownerFlatApplication } =
       await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
         id: updateLogicFunctionFromSourceInput.id,
@@ -251,10 +280,14 @@ export class LogicFunctionFromSourceService {
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
   }): Promise<LogicFunctionDTO> {
+    await this.operationAuthorizationService.ensureAuthorized(
+      LOGIC_FUNCTION_OPERATIONS.delete,
+    );
+
     const {
       flatLogicFunction: existingFlatLogicFunction,
-      workspaceCustomFlatApplication,
-    } = await this.helperService.findLogicFunctionAndApplicationOrThrow({
+      ownerFlatApplication: workspaceCustomFlatApplication,
+    } = await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
       id,
       workspaceId,
     });
@@ -298,6 +331,10 @@ export class LogicFunctionFromSourceService {
     id: string;
     workspaceId: string;
   }): Promise<void> {
+    await this.operationAuthorizationService.ensureAuthorized(
+      LOGIC_FUNCTION_OPERATIONS.updateSource,
+    );
+
     const { flatLogicFunction, ownerFlatApplication } =
       await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
         id,
@@ -357,6 +394,10 @@ export class LogicFunctionFromSourceService {
     userId?: string;
     userWorkspaceId?: string;
   }): Promise<LogicFunctionExecutionResultDTO> {
+    await this.operationAuthorizationService.ensureAuthorized(
+      LOGIC_FUNCTION_OPERATIONS.execute,
+    );
+
     const { flatLogicFunction } =
       await this.helperService.findLogicFunctionRunnableOnDemandOrThrow({
         id,
@@ -400,6 +441,10 @@ export class LogicFunctionFromSourceService {
     id: string;
     workspaceId: string;
   }): Promise<string | null> {
+    await this.operationAuthorizationService.ensureAuthorized(
+      LOGIC_FUNCTION_OPERATIONS.readSource,
+    );
+
     const { flatLogicFunction, ownerFlatApplication } =
       await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
         id,

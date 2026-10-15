@@ -1,4 +1,4 @@
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { findWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -62,7 +62,7 @@ export class AgentChatService {
     workspaceId: string;
     userWorkspaceId?: string;
   }) {
-    const context = workspaceAuthContextStorage.getStore();
+    const context = findWorkspaceAuthContext();
     const applicationId =
       isDefined(context) &&
       isUserAuthContext(context) &&
@@ -83,7 +83,7 @@ export class AgentChatService {
     workspaceId: string;
     userWorkspaceId?: string;
   }): ActorMetadata | undefined {
-    const context = workspaceAuthContextStorage.getStore();
+    const context = findWorkspaceAuthContext();
 
     return isDefined(context) &&
       isUserAuthContext(context) &&

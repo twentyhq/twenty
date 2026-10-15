@@ -1,6 +1,6 @@
 import {
   getWorkspaceAuthContext,
-  workspaceAuthContextStorage,
+  findWorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -68,7 +68,7 @@ describe('withResolvedToolAuthContext', () => {
         ...dependencies,
       },
       async (contextWithAuth) => {
-        storeDuringDispatch = workspaceAuthContextStorage.getStore();
+        storeDuringDispatch = findWorkspaceAuthContext();
         contextDuringDispatch = contextWithAuth;
       },
     );
@@ -104,7 +104,7 @@ describe('withResolvedToolAuthContext', () => {
         ...dependencies,
       },
       async () => {
-        storeDuringDispatch = workspaceAuthContextStorage.getStore();
+        storeDuringDispatch = findWorkspaceAuthContext();
       },
     );
 
@@ -122,7 +122,7 @@ describe('withResolvedToolAuthContext', () => {
     await withResolvedToolAuthContext(
       { context, ...dependencies },
       async (contextWithAuth) => {
-        storeDuringDispatch = workspaceAuthContextStorage.getStore();
+        storeDuringDispatch = findWorkspaceAuthContext();
         contextDuringDispatch = contextWithAuth;
       },
     );

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { AuthorizationModule } from 'src/engine/core-modules/authorization/authorization.module';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -22,6 +23,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ApplicationRegistrationLookupModule,
     TypeOrmModule.forFeature([ApplicationRegistrationEntity]),
     ApplicationModule,
+    AuthorizationModule,
     EventLogLiveModule,
     FeatureFlagModule,
     PermissionsModule,

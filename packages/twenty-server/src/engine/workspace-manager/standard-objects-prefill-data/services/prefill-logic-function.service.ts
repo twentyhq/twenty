@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
@@ -39,18 +40,22 @@ export class PrefillLogicFunctionService {
         continue;
       }
 
-      await this.logicFunctionFromSourceService.createOneFromSource({
-        workspaceId,
-        input: {
-          id: definition.id,
-          name: definition.name,
-          description: definition.description,
-          source: {
-            sourceHandlerCode: definition.sourceHandlerCode,
-            handlerName: 'main',
-          },
-        },
-      });
+      await withSystemAuthorizationScope(
+        { workspaceId, reason: 'prefill workflow code step logic functions' },
+        () =>
+          this.logicFunctionFromSourceService.createOneFromSource({
+            workspaceId,
+            input: {
+              id: definition.id,
+              name: definition.name,
+              description: definition.description,
+              source: {
+                sourceHandlerCode: definition.sourceHandlerCode,
+                handlerName: 'main',
+              },
+            },
+          }),
+      );
     }
   }
 }

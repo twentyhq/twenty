@@ -6,7 +6,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { findWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
@@ -505,7 +505,7 @@ export class ToolCallAnswerService {
     userWorkspaceId: string;
     threadId: string;
   }): Promise<ToolContext> {
-    const authContext = workspaceAuthContextStorage.getStore();
+    const authContext = findWorkspaceAuthContext();
 
     if (!isDefined(authContext) || !isUserAuthContext(authContext)) {
       throw new AiException(
@@ -553,7 +553,7 @@ export class ToolCallAnswerService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const requestAuthContext = workspaceAuthContextStorage.getStore();
+    const requestAuthContext = findWorkspaceAuthContext();
     const requestUserAuthContext =
       isDefined(requestAuthContext) && isUserAuthContext(requestAuthContext)
         ? requestAuthContext
