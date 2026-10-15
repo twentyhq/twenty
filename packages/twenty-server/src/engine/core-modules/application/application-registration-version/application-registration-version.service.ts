@@ -9,7 +9,9 @@ import { ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/ap
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 
+import { type ResolvedPackage } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { assertSriIntegrityMatches } from 'src/engine/core-modules/application/application-registration-version/utils/assert-sri-integrity-matches.util';
 
 export type RecordPublishedVersionParams = {
   applicationRegistrationId: string;
@@ -73,6 +75,66 @@ export class ApplicationRegistrationVersionService {
         version: params.version,
       },
     });
+  }
+
+  async resolveInstalledVersionId({
+    appRegistration,
+    resolvedPackage,
+    version,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    resolvedPackage: ResolvedPackage;
+    version: string;
+  }): Promise<string | null> {
+    let recordedVersion =
+      await this.findOneByApplicationRegistrationIdAndVersion({
+        applicationRegistrationId: appRegistration.id,
+        version,
+      });
+
+    if (!isDefined(recordedVersion)) {
+      if (
+        appRegistration.sourceType !== ApplicationRegistrationSourceType.NPM ||
+        !isDefined(resolvedPackage.registryTarballUrl)
+      ) {
+        return null;
+      }
+
+      recordedVersion = await this.recordPublishedVersion({
+        applicationRegistrationId: appRegistration.id,
+        version,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: appRegistration.sourcePackage,
+        tarballUrl: resolvedPackage.registryTarballUrl,
+      });
+    }
+
+    if (
+      recordedVersion.sourceType === ApplicationRegistrationSourceType.TARBALL
+    ) {
+      if (isDefined(recordedVersion.checksum)) {
+        assertSriIntegrityMatches({
+          expected: recordedVersion.checksum,
+          actual: resolvedPackage.integrity,
+          subject: `Package resolved for ${appRegistration.universalIdentifier}@${version}`,
+        });
+      } else {
+        await this.applicationRegistrationVersionRepository.update(
+          { id: recordedVersion.id, checksum: IsNull() },
+          { checksum: resolvedPackage.integrity },
+        );
+      }
+    } else if (
+      !isDefined(recordedVersion.tarballUrl) &&
+      isDefined(resolvedPackage.registryTarballUrl)
+    ) {
+      await this.fillMissingTarball({
+        id: recordedVersion.id,
+        tarballUrl: resolvedPackage.registryTarballUrl,
+      });
+    }
+
+    return recordedVersion.id;
   }
 
   async fillMissingTarball({

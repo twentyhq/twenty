@@ -25,6 +25,7 @@ import {
   VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE,
   VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE,
 } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
@@ -76,6 +77,7 @@ export class ApplicationInstallService {
     private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
+    private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationManifestApplyService: ApplicationManifestApplyService,
     private readonly fileStorageService: FileStorageService,
@@ -381,6 +383,15 @@ export class ApplicationInstallService {
         }
       }
 
+      const applicationRegistrationVersionId =
+        await this.applicationRegistrationVersionService.resolveInstalledVersionId(
+          {
+            appRegistration,
+            resolvedPackage,
+            version: newVersion,
+          },
+        );
+
       if (isVersionUpgrade && shouldApplyApprovedCapabilities) {
         await this.applicationService.update(application.id, {
           grantedCapabilities,
@@ -449,6 +460,7 @@ export class ApplicationInstallService {
         await this.markInstallCompleted({
           applicationId: application.id,
           version: newVersion,
+          applicationRegistrationVersionId,
           workspaceId: params.workspaceId,
         });
       }
@@ -466,6 +478,7 @@ export class ApplicationInstallService {
         await this.markInstallCompleted({
           applicationId: application.id,
           version: newVersion,
+          applicationRegistrationVersionId,
           workspaceId: params.workspaceId,
         });
       }
@@ -626,14 +639,17 @@ export class ApplicationInstallService {
   private async markInstallCompleted({
     applicationId,
     version,
+    applicationRegistrationVersionId,
     workspaceId,
   }: {
     applicationId: string;
     version: string;
+    applicationRegistrationVersionId: string | null;
     workspaceId: string;
   }): Promise<void> {
     await this.applicationService.update(applicationId, {
       version,
+      applicationRegistrationVersionId,
       workspaceId,
     });
   }
