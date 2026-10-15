@@ -6262,6 +6262,7 @@ export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
   input?: InputMaybe<Array<RunAgentMessageInput>>;
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
   thread?: InputMaybe<RunAgentThreadInput>;
 };

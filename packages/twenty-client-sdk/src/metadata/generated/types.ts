@@ -11266,6 +11266,9 @@ export default {
             "prompt": [
                 1
             ],
+            "responseFormat": [
+                290
+            ],
             "runAsWorkspaceMemberId": [
                 494
             ],

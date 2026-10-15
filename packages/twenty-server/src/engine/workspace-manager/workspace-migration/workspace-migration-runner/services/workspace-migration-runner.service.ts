@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
@@ -62,10 +62,12 @@ export class WorkspaceMigrationRunnerService {
           getMetadataFlatEntityMapsKey(metadataName),
         ),
     ),
+    hasMorphRelationFieldChanged = false,
   }: {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
     workspaceId: string;
     hasSchemaMetadataChanged?: boolean;
+    hasMorphRelationFieldChanged?: boolean;
   }): Promise<void> {
     this.logger.perfTime(
       'Runner',
@@ -92,7 +94,9 @@ export class WorkspaceMigrationRunnerService {
     const cacheKeyNamesToInvalidate: WorkspaceCacheKeyName[] = [
       ...new Set([
         ...withDerivedFieldMetadataMaps(allFlatEntityMapsKeys),
-        ...(hasRolesPermissionsChanged ? ['rolesPermissions' as const] : []),
+        ...(hasRolesPermissionsChanged || hasMorphRelationFieldChanged
+          ? ['rolesPermissions' as const]
+          : []),
         ...(hasWorkflowVersionsChanged
           ? ['workflowAutomatedTriggerMaps' as const]
           : []),
@@ -293,6 +297,16 @@ export class WorkspaceMigrationRunnerService {
       });
 
     this.logger.perfTimeEnd('Runner', 'Initial cache retrieval');
+
+    const hasMorphRelationFieldChanged = actions.some(
+      (action) =>
+        action.metadataName === 'fieldMetadata' &&
+        (action.type === 'create'
+          ? action.flatEntity
+          : cachedAllFlatEntityMaps.flatFieldMetadataMaps
+              ?.byUniversalIdentifier[action.universalIdentifier]
+        )?.type === FieldMetadataType.MORPH_RELATION,
+    );
 
     const initialCacheRetrievalMs =
       performance.now() - initialCacheRetrievalStart;
@@ -515,6 +529,7 @@ export class WorkspaceMigrationRunnerService {
           allFlatEntityMapsKeys,
           workspaceId,
           hasSchemaMetadataChanged,
+          hasMorphRelationFieldChanged,
         });
       } catch (cacheError) {
         this.logger.error(
@@ -545,6 +560,7 @@ export class WorkspaceMigrationRunnerService {
         allFlatEntityMapsKeys,
         workspaceId,
         hasSchemaMetadataChanged,
+        hasMorphRelationFieldChanged,
       });
 
       this.recordRunPhaseMetric({
