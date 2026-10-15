@@ -23,7 +23,9 @@ export const runAppUninstallCommand: CommandRun<TargetCommandContext> = async (
 
   const universalIdentifier = await readApplicationIdentifier({
     context,
-    onBuild: () => completedPhases.push('build'),
+    onIdentityRead: () => completedPhases.push('identity'),
+  }).catch((error: unknown) => {
+    throw fail(error, 'identity');
   });
 
   output.progress(`Checking the app on ${target.apiUrl}…`);

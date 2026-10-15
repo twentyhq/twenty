@@ -1,7 +1,9 @@
 import { isValidUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { runAppBuild } from '@/app/run-app-operation';
+import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
+import { resolveAppProject } from '@/app/project/resolve-app-project';
+import { readAppIdentity } from '@/app/read-app-identity';
 import { readStringOption } from '@/catalog/read-command-values';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
 import { CliError } from '@/output/cli-error';
@@ -9,10 +11,10 @@ import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 
 export const readApplicationIdentifier = async ({
   context,
-  onBuild,
+  onIdentityRead,
 }: {
   context: TargetCommandContext;
-  onBuild: () => void;
+  onIdentityRead: () => void;
 }) => {
   const universalIdentifier = readStringOption(
     context.options,
@@ -31,9 +33,32 @@ export const readApplicationIdentifier = async ({
     return universalIdentifier.toLowerCase();
   }
 
-  const { data: build } = await runAppBuild({ context });
+  const { options, output, outputMode, signal } = context;
+  const project = await resolveAppProject({
+    explicitPath: readStringOption(options, 'path'),
+    workingDirectory: process.cwd(),
+  });
+  const identity = await readAppIdentity({
+    appPath: project.path,
+    signal,
+    warn: output.warn,
+  });
 
-  onBuild();
+  if (!isDefined(identity.application)) {
+    throw new CliError({
+      code: 'INVALID_INPUT',
+      exitCode: EXIT_CODE.USAGE,
+      message: 'This project has no application definition.',
+    });
+  }
 
-  return build.application.universalIdentifier.toLowerCase();
+  if (outputMode === 'human') {
+    for (const diagnostic of identity.diagnostics) {
+      output.progress(formatToolingDiagnostic(diagnostic));
+    }
+  }
+
+  onIdentityRead();
+
+  return identity.application.universalIdentifier.toLowerCase();
 };

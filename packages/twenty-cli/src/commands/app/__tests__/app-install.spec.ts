@@ -16,12 +16,18 @@ import {
 } from '@/__tests__/utils/run-cli-for-test';
 import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 
-const build = vi.hoisted(() => vi.fn());
+const readIdentity = vi.hoisted(() => vi.fn());
 const timing = vi.hoisted(() => ({
   POLL_INTERVAL_MILLISECONDS: 1,
   TIMEOUT_MILLISECONDS: 5_000,
 }));
-vi.mock('@/app/run-app-operation', () => ({ runAppBuild: build }));
+vi.mock('@/app/read-app-identity', () => ({ readAppIdentity: readIdentity }));
+vi.mock('@/app/project/resolve-app-project', () => ({
+  resolveAppProject: async ({ explicitPath }: { explicitPath?: string }) => ({
+    path: explicitPath ?? '/app/source',
+    name: 'Billing App',
+  }),
+}));
 vi.mock('@/app/deployment/constants/app-install.constant', () => ({
   APP_INSTALL: timing,
 }));
@@ -112,8 +118,9 @@ const installByIdentifier = (...args: string[]) =>
 
 describe('app install', () => {
   beforeEach(() => {
-    build.mockReset().mockResolvedValue({
-      data: { application: { universalIdentifier: UNIVERSAL_IDENTIFIER } },
+    readIdentity.mockReset().mockResolvedValue({
+      application: { universalIdentifier: UNIVERSAL_IDENTIFIER },
+      diagnostics: [],
     });
     timing.TIMEOUT_MILLISECONDS = 5_000;
     Object.assign(state, {
@@ -138,7 +145,7 @@ describe('app install', () => {
   });
   afterAll(() => server.close());
 
-  it('waits for its queued job and verifies the installation without building', async () => {
+  it('waits for its queued job and verifies the installation without reading local source', async () => {
     state.statuses = [
       jobStatus('WAITING'),
       jobStatus('ACTIVE'),
@@ -155,7 +162,7 @@ describe('app install', () => {
       installed: true,
       jobId: JOB_ID,
     });
-    expect(build).not.toHaveBeenCalled();
+    expect(readIdentity).not.toHaveBeenCalled();
     expect(server.requests).toHaveLength(5);
     expect(readGraphqlRequest(server.requests[0]).arguments).toEqual({
       input: { universalIdentifier: UNIVERSAL_IDENTIFIER },
@@ -175,22 +182,20 @@ describe('app install', () => {
     ).toBe(true);
   });
 
-  it('uses the local build identifier without uploading or syncing source', async () => {
+  it('reads the local app identifier without uploading or syncing source', async () => {
     const { exitCode } = await runJson('--path', '/app/source');
     expect(exitCode).toBe(0);
-    expect(build).toHaveBeenCalledTimes(1);
-    expect(build).toHaveBeenCalledWith({
-      context: expect.objectContaining({
-        options: expect.objectContaining({ path: '/app/source' }),
-      }),
-    });
+    expect(readIdentity).toHaveBeenCalledTimes(1);
+    expect(readIdentity).toHaveBeenCalledWith(
+      expect.objectContaining({ appPath: '/app/source' }),
+    );
     expect(server.requests).toHaveLength(3);
     expect(readGraphqlRequest(server.requests[0]).arguments).toEqual({
       input: { universalIdentifier: UNIVERSAL_IDENTIFIER },
     });
   });
 
-  it('includes a completed local build in installation failure details', async () => {
+  it('includes the completed identity read in installation failure details', async () => {
     state.statuses = [jobStatus('FAILED')];
     const { envelope, exitCode } = await runJson();
     expect(exitCode).toBe(1);
@@ -200,25 +205,47 @@ describe('app install', () => {
         phase: 'wait',
         outcome: 'failed',
         jobId: JOB_ID,
-        completedPhases: ['build', 'start'],
+        completedPhases: ['identity', 'start'],
       },
     });
-    expect(build).toHaveBeenCalledTimes(1);
+    expect(readIdentity).toHaveBeenCalledTimes(1);
   });
 
-  it('does not start an install if the build fails', async () => {
-    build.mockRejectedValue(new Error('Broken app source'));
+  it('does not start an install if reading the identity fails', async () => {
+    readIdentity.mockRejectedValue(new Error('Broken app source'));
     const { envelope, exitCode } = await runJson();
     expect(exitCode).toBe(1);
     expect(envelope.error).toMatchObject({
       code: 'INTERNAL_ERROR',
       message: 'Broken app source',
-      details: { phase: 'build', outcome: 'not-started', completedPhases: [] },
+      details: {
+        phase: 'identity',
+        outcome: 'not-started',
+        completedPhases: [],
+      },
     });
     expect(envelope.error.details).not.toHaveProperty('universalIdentifier');
     expect(envelope.error.details).not.toHaveProperty('jobId');
     expect(envelope.error.hint).toContain('No installation was started');
-    expect(build).toHaveBeenCalledTimes(1);
+    expect(readIdentity).toHaveBeenCalledTimes(1);
+    expect(server.requests).toHaveLength(0);
+  });
+
+  it('does not start an install if the project has no application definition', async () => {
+    readIdentity.mockResolvedValue({ application: null, diagnostics: [] });
+
+    const { envelope, exitCode } = await runJson();
+
+    expect(exitCode).toBe(2);
+    expect(envelope.error).toMatchObject({
+      code: 'INVALID_INPUT',
+      message: 'This project has no application definition.',
+      details: {
+        phase: 'identity',
+        outcome: 'not-started',
+        completedPhases: [],
+      },
+    });
     expect(server.requests).toHaveLength(0);
   });
 
@@ -233,7 +260,7 @@ describe('app install', () => {
     });
   });
 
-  it('rejects invalid identifiers before building or requesting an install', async () => {
+  it('rejects invalid identifiers before reading local source or requesting an install', async () => {
     const { envelope, exitCode } = await runJson(
       '--universal-identifier',
       'wrong',
@@ -241,9 +268,13 @@ describe('app install', () => {
     expect(exitCode).toBe(2);
     expect(envelope.error).toMatchObject({
       code: 'INVALID_INPUT',
-      details: { phase: 'build', outcome: 'not-started', completedPhases: [] },
+      details: {
+        phase: 'identity',
+        outcome: 'not-started',
+        completedPhases: [],
+      },
     });
-    expect(build).not.toHaveBeenCalled();
+    expect(readIdentity).not.toHaveBeenCalled();
     expect(server.requests).toHaveLength(0);
   });
 
@@ -302,7 +333,7 @@ describe('app install', () => {
         completedPhases: ['start'],
       },
     });
-    expect(envelope.error.hint).toContain('partly run');
+    expect(envelope.error.hint).toContain('Run twenty app install again');
     expect(
       operationNames().some((query) => query.includes('findOneApplication')),
     ).toBe(false);
@@ -382,6 +413,7 @@ describe('app install', () => {
       },
     });
     expect(envelope.error.hint).toContain('does not cancel');
+    expect(envelope.error.hint).toContain('Run twenty app install again');
   });
 
   it('reports cancellation during polling with the queued job identifier', async () => {
@@ -399,6 +431,32 @@ describe('app install', () => {
         jobId: JOB_ID,
         completedPhases: ['start'],
       },
+    });
+  });
+
+  it('resumes waiting for the same job when rerun after cancellation', async () => {
+    state.statuses = [jobStatus('ACTIVE')];
+    const pending = installByIdentifier();
+    await vi.waitFor(() => expect(server.requests.length).toBeGreaterThan(1));
+    process.emit('SIGINT');
+    const cancelled = await pending;
+    expect(cancelled.exitCode).toBe(130);
+    expect(cancelled.envelope.error.hint).toContain(
+      'Run twenty app install again',
+    );
+
+    server.requests.length = 0;
+    state.statuses = [jobStatus('COMPLETED')];
+    const resumed = await installByIdentifier();
+
+    expect(resumed.exitCode).toBe(0);
+    expect(resumed.envelope.data).toMatchObject({
+      installed: true,
+      jobId: JOB_ID,
+    });
+    expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
+      universalIdentifier: UNIVERSAL_IDENTIFIER,
+      jobId: JOB_ID,
     });
   });
 

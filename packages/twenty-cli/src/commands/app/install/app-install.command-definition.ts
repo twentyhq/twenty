@@ -11,7 +11,8 @@ export const APP_INSTALL_COMMAND_DEFINITION: TargetCommandDefinition = {
     },
     {
       flags: '--universal-identifier <id>',
-      description: 'Registered app universal identifier, skips the local build',
+      description:
+        'Registered app universal identifier, works without a local project',
     },
   ],
   examples: [

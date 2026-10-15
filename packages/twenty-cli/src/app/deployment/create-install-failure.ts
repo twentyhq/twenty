@@ -23,7 +23,7 @@ const getOutcome = ({
   code: CliErrorCode;
 }): AppInstallOutcome => {
   if (
-    phase === 'build' ||
+    phase === 'identity' ||
     (phase === 'start' && REJECTED_BEFORE_INSTALL_CODES.has(code))
   ) {
     return 'not-started';
@@ -43,7 +43,7 @@ const getRecoveryHint = ({
   outcome: AppInstallOutcome;
   phase: AppInstallPhase;
 }) => {
-  if (phase === 'build') {
+  if (phase === 'identity') {
     return 'Fix the app source or identifier, then retry. No installation was started.';
   }
 
@@ -51,7 +51,7 @@ const getRecoveryHint = ({
     return 'Check the target workspace, registration and APPLICATIONS permission before retrying.';
   }
 
-  return 'The installation may have partly run or may still be running on the server. Check the app in workspace settings before retrying; stopping the CLI does not cancel the server job.';
+  return 'Run twenty app install again to retry or resume waiting for the current installation. Stopping the CLI does not cancel the server job.';
 };
 
 export const createInstallFailure = ({

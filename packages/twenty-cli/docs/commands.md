@@ -442,13 +442,13 @@ twenty app install --path ./apps/billing --json
 twenty app install --universal-identifier <id> --remote staging --json
 ```
 
-`app install` installs a package already registered on the target server. It builds the local app only to find its universal identifier; `--universal-identifier` skips the build and works without a local project. Identifiers are sent in lowercase. It requires `APPLICATIONS` permission.
+`app install` installs a package already registered on the target server. It reads the local app definition to find its universal identifier, without building or typechecking the app; `--universal-identifier` works without a local project. Identifiers are sent in lowercase. It requires `APPLICATIONS` permission.
 
 The server selects the registered package and version. Local source changes are not uploaded. For a private package, run `app publish --private` first; publishing to npm alone does not create a server registration. Installation can run app hooks and update an existing installation. Use `app apply` to sync local source instead.
 
 The command waits up to ten minutes for its server installation job to complete, then verifies that the app is installed. JSON returns `application`, `installed: true` and `jobId`. Failed jobs return `INSTALL_FAILED`; missing or mismatched job status is an error, not a successful installation.
 
-Identifier resolution and installation errors include `details.phase`, `details.completedPhases` and `details.outcome`, plus the universal identifier and job identifier when available. Build failures report `phase: "build"` and `outcome: "not-started"`. Ctrl+C or a timeout stops waiting but does not cancel the server job. An installation may have partly run; check the app in workspace settings before retrying. The command requires the server's `triggerInstallApplication` and `findInstallApplicationJobStatus` APIs, including lookup by `jobId`.
+Identifier resolution and installation errors include `details.phase`, `details.completedPhases` and `details.outcome`, plus the universal identifier and job identifier when available. Identifier resolution failures report `phase: "identity"` and `outcome: "not-started"`. Ctrl+C or a timeout stops waiting but does not cancel the server job. Run the same command again to retry or resume waiting for an installation that is still running. The command requires the server's `triggerInstallApplication` and `findInstallApplicationJobStatus` APIs, including lookup by `jobId`.
 
 ## Uninstall an app
 
@@ -458,7 +458,7 @@ twenty app uninstall --yes --json
 twenty app uninstall --universal-identifier <id> --yes
 ```
 
-`app uninstall` builds the app to find its universal identifier, checks that the app is installed on the target and that the workspace allows uninstalling it, then uninstalls it. `--universal-identifier` skips the build, so an app whose source no longer builds can still be uninstalled. It needs the server's `APPLICATIONS` permission.
+`app uninstall` reads the local app definition to find its universal identifier, without building or typechecking the app. It checks that the app is installed on the target and that the workspace allows uninstalling it, then uninstalls it. `--universal-identifier` works without a local project. It needs the server's `APPLICATIONS` permission.
 
 Uninstalling runs the app's uninstall hook and deletes everything the app owns, including its objects, fields and their data. It always needs `--yes`, or a yes at the prompt in an interactive terminal; otherwise it stops with `CONFIRMATION_REQUIRED` (exit 2) before changing anything. An app that is not installed returns `APP_NOT_INSTALLED` (exit 4), and one the workspace does not allow to uninstall returns `APP_NOT_UNINSTALLABLE` (exit 6).
 

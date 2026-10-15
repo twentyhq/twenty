@@ -14,11 +14,11 @@ export const runAppInstallCommand: CommandRun<TargetCommandContext> = async (
   const completedPhases: AppInstallPhase[] = [];
   const universalIdentifier = await readApplicationIdentifier({
     context,
-    onBuild: () => completedPhases.push('build'),
+    onIdentityRead: () => completedPhases.push('identity'),
   }).catch((error: unknown) => {
     throw createInstallFailure({
       error,
-      phase: 'build',
+      phase: 'identity',
       completedPhases,
       signal,
     });
