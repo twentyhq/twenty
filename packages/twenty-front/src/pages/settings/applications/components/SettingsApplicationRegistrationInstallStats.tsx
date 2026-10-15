@@ -16,10 +16,10 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 
 export const SettingsApplicationRegistrationInstallStats = ({
   registration,
-  fromAdmin = false,
+  isAdminView = false,
 }: {
   registration: ApplicationRegistration;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
@@ -31,16 +31,16 @@ export const SettingsApplicationRegistrationInstallStats = ({
     {
       client: apolloAdminClient,
       variables: { id: applicationRegistrationId },
-      skip: !fromAdmin || !applicationRegistrationId,
+      skip: !isAdminView || !applicationRegistrationId,
     },
   );
 
   const { data } = useQuery(FindApplicationRegistrationStatsDocument, {
     variables: { id: applicationRegistrationId },
-    skip: fromAdmin || !applicationRegistrationId,
+    skip: isAdminView || !applicationRegistrationId,
   });
 
-  const stats = fromAdmin
+  const stats = isAdminView
     ? adminData?.findAdminApplicationRegistrationStats
     : data?.findApplicationRegistrationStats;
 
