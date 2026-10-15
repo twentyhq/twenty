@@ -186,7 +186,6 @@ export const useGetRecordFilterDisplayValue = () => {
       return `${optionLabels.join(', ')}`;
     }
 
-    // The saved display value holds the English names, so these filters are displayed from their values
     if (
       !operandIsEmptiness &&
       !recordFilterIsEmpty &&
@@ -196,11 +195,15 @@ export const useGetRecordFilterDisplayValue = () => {
       const sourceIds = parseJson<string[]>(recordFilter.value);
 
       if (Array.isArray(sourceIds)) {
-        return getActorSourceFilterDisplayValue(
-          getActorSourceMultiSelectOptions(sourceIds)
-            .filter((sourceOption) => sourceOption.isSelected)
-            .map((sourceOption) => sourceOption.name),
-        );
+        const selectedSourceOptions = getActorSourceMultiSelectOptions(
+          sourceIds,
+        ).filter((sourceOption) => sourceOption.isSelected);
+
+        if (selectedSourceOptions.length === sourceIds.length) {
+          return getActorSourceFilterDisplayValue(
+            selectedSourceOptions.map((sourceOption) => sourceOption.name),
+          );
+        }
       }
     }
 
