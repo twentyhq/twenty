@@ -108,7 +108,6 @@ export class WorkflowWaitingStepWorkspaceService
       : 'GONE';
   }
 
-  // the conversation the run waits in is linked from the step while it waits
   async onSuspended({
     workspaceId,
     caller,

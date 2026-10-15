@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
@@ -24,6 +23,7 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
+import { getWorkflowRunUserWorkspaceId } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/get-workflow-run-user-workspace-id.util';
 import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
@@ -139,13 +139,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       workflowRunId: runInfo.workflowRunId,
       workspaceId,
       stepId: currentStepId,
-      summary: buildStartedAgentRunSummary(
-        agent?.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-      ),
+      summary: buildStartedAgentRunSummary(agent.modelId),
       threadId: conversation.threadId,
     });
 
-    // the agent runs on its own and calls the step back with its outcome, so the step only waits
     await this.agentRunnerService.start({
       workspaceId,
       conversation,
@@ -161,9 +158,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         ? {
             messages: [{ role: 'user', content: resolvedPrompt }],
             senderUserWorkspaceId:
-              executionContext.authContext.type === 'user'
-                ? executionContext.authContext.userWorkspaceId
-                : null,
+              getWorkflowRunUserWorkspaceId(executionContext),
             senderApplicationId: null,
           }
         : null,
