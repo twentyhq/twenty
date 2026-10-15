@@ -11,7 +11,7 @@ import {
 } from '@/settings/developers/utils/createWebhookInput';
 import { parseOperationsFromStrings } from '@/settings/developers/utils/parseOperationsFromStrings';
 import {
-  webhookFormSchema,
+  getWebhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -51,7 +51,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const formConfig = useForm<WebhookFormValues>({
     mode: isCreationMode ? 'onSubmit' : 'onTouched',
-    resolver: zodResolver(webhookFormSchema),
+    resolver: zodResolver(getWebhookFormSchema()),
     defaultValues: DEFAULT_FORM_VALUES,
   });
 

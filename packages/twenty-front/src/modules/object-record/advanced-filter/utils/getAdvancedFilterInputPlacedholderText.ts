@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -5,6 +6,10 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const getAdvancedFilterInputPlaceholderText = (
   fieldMetadataItem: FieldMetadataItem,
 ) => {
+  const fieldLabel = fieldMetadataItem.label;
+  const targetObjectNameSingular =
+    fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ?? '';
+
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.TEXT:
     case FieldMetadataType.ADDRESS:
@@ -15,21 +20,21 @@ export const getAdvancedFilterInputPlaceholderText = (
     case FieldMetadataType.PHONES:
     case FieldMetadataType.ARRAY:
     case FieldMetadataType.FULL_NAME:
-      return `Enter value for ${fieldMetadataItem.label}`;
+      return t`Enter value for ${fieldLabel}`;
     case FieldMetadataType.NUMBER:
-      return 'Enter number';
+      return t`Enter number`;
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME:
-      return 'Enter date';
+      return t`Enter date`;
     case FieldMetadataType.ACTOR:
-      return 'Select actor';
+      return t`Select actor`;
     case FieldMetadataType.RELATION:
-      return `Select ${fieldMetadataItem.relation?.targetObjectMetadata.nameSingular}`;
+      return t`Select ${targetObjectNameSingular}`;
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
-      return `Select ${fieldMetadataItem.label}`;
+      return t`Select ${fieldLabel}`;
 
     default:
-      return 'Enter value';
+      return t`Enter value`;
   }
 };
