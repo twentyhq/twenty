@@ -8,12 +8,25 @@ import {
   type RestrictedFieldsPermissions,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
+import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+export type FieldSelectionFlatFieldMetadata = Pick<
+  OrmFlatFieldMetadata,
+  | 'id'
+  | 'universalIdentifier'
+  | 'applicationId'
+  | 'workspaceId'
+  | 'type'
+  | 'name'
+  | 'settings'
+  | 'morphId'
+>;
 
 type SelectableFieldsStructured = Record<
   string,
@@ -34,24 +47,18 @@ export const buildFieldSelection = ({
     | 'labelIdentifierFieldMetadataId'
     | 'imageIdentifierFieldMetadataId'
   >;
-  flatFields: ReadonlyArray<
-    Pick<
-      OrmFlatFieldMetadata,
-      | 'id'
-      | 'universalIdentifier'
-      | 'applicationId'
-      | 'workspaceId'
-      | 'type'
-      | 'name'
-      | 'settings'
-    >
-  >;
+  flatFields: ReadonlyArray<FieldSelectionFlatFieldMetadata>;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
 
   for (const flatField of flatFields) {
-    if (restrictedFields[flatField.id]?.canRead === false) continue;
+    if (
+      restrictedFields[flatField.id]?.canRead === false ||
+      isMorphRelationHead(flatField)
+    ) {
+      continue;
+    }
 
     if (onlyUseLabelIdentifierFieldsInRelations) {
       const fieldIsLabelIdentifier = checkIfFieldIsLabelIdentifier(

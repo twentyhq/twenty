@@ -42,6 +42,33 @@ it('preserves the original expiry through repeated unchanged updates and uses th
   );
 });
 
+it.each([
+  { state: 'persistent', configuration: { duration: 0 } },
+  { state: 'inactive', configuration: { isActive: false } },
+])(
+  'keeps unchanged $state snapshots while refreshing the close callback',
+  ({ configuration }) => {
+    const onChange = vi.fn();
+    const onClose = vi.fn();
+    const updatedClose = vi.fn();
+    const countdown = createToastCountdown({ onChange });
+    countdown.update({ ...DEFAULT_CONFIGURATION, ...configuration, onClose });
+
+    vi.advanceTimersByTime(400);
+    countdown.update({
+      ...DEFAULT_CONFIGURATION,
+      ...configuration,
+      onClose: updatedClose,
+    });
+
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(vi.getTimerCount()).toBe(0);
+    countdown.close();
+    expect(updatedClose).toHaveBeenCalledOnce();
+    expect(onClose).not.toHaveBeenCalled();
+  },
+);
+
 it('restarts every explicit duration revision even when the duration stays unchanged', () => {
   const onChange = vi.fn();
   const onClose = vi.fn();

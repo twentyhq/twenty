@@ -1,4 +1,4 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { type WorkBook } from 'xlsx-ugnis';
@@ -110,15 +110,8 @@ export const UploadStep = ({
   );
 
   return (
-    <Dialog.Body
-      style={{
-        display: 'flex',
-        flex: '1 1 0%',
-        flexDirection: 'column',
-        padding: 'var(--t-spacing-6)',
-      }}
-    >
+    <SpreadsheetImportStepBody padding="medium">
       <DropZone onContinue={handleOnContinue} isLoading={isLoading} />
-    </Dialog.Body>
+    </SpreadsheetImportStepBody>
   );
 };

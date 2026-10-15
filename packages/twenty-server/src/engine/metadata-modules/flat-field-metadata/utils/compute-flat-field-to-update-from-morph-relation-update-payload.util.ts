@@ -2,8 +2,12 @@ import {
   FieldMetadataType,
   type RelationUpdatePayload,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeMorphRelationFlatFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-flat-field-name.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -11,6 +15,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -50,30 +55,49 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
 
   const morphRelationsCommonLabel = fieldMetadataToUpdate.label;
 
+  const existingMorphTargetFlatFieldMetadata = isMorphRelationHead(
+    fieldMetadataToUpdate,
+  )
+    ? findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
+        flatFieldMetadata: fieldMetadataToUpdate,
+        flatFieldMetadataMaps,
+        flatObjectMetadata: sourceObjectMetadata,
+      }).find((flatFieldMetadata) => !isMorphRelationHead(flatFieldMetadata))
+    : fieldMetadataToUpdate;
+
+  if (!isDefined(existingMorphTargetFlatFieldMetadata)) {
+    throw new FieldMetadataException(
+      'Morph relation head has no target to add destinations from',
+      FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+    );
+  }
+
   const initialFlatFieldMetadataTargetObjectMetadata =
     findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: fieldMetadataToUpdate.relationTargetObjectMetadataId,
+      flatEntityId:
+        existingMorphTargetFlatFieldMetadata.relationTargetObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
   const morphNameWithoutObjectName = getMorphNameFromMorphFieldMetadataName({
     morphRelationFlatFieldMetadata: {
-      name: fieldMetadataToUpdate.name,
-      universalSettings: fieldMetadataToUpdate.universalSettings,
+      name: existingMorphTargetFlatFieldMetadata.name,
+      universalSettings: existingMorphTargetFlatFieldMetadata.universalSettings,
     },
     nameSingular: initialFlatFieldMetadataTargetObjectMetadata.nameSingular,
     namePlural: initialFlatFieldMetadataTargetObjectMetadata.namePlural,
   });
 
   const initialTargetFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityId: fieldMetadataToUpdate.relationTargetFieldMetadataId,
+    flatEntityId:
+      existingMorphTargetFlatFieldMetadata.relationTargetFieldMetadataId,
     flatEntityMaps: flatFieldMetadataMaps,
   });
   const commonTargetFieldLabel = initialTargetFieldMetadata.label;
   const commonTargetFieldName = initialTargetFieldMetadata.name;
 
   const { junctionTargetFieldId } = extractJunctionTargetSettingsFromSettings(
-    fieldMetadataToUpdate.settings,
+    existingMorphTargetFlatFieldMetadata.settings,
   );
   const junctionTargetFlatFieldMetadata = isDefined(junctionTargetFieldId)
     ? findFlatEntityByIdInFlatEntityMaps({
@@ -92,7 +116,7 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
 
     const computedMorphName = computeMorphRelationFlatFieldName({
       fieldName: morphNameWithoutObjectName,
-      relationType: fieldMetadataToUpdate.settings.relationType,
+      relationType: existingMorphTargetFlatFieldMetadata.settings.relationType,
       targetObjectMetadataNameSingular: newTargetObjectMetadata.nameSingular,
       targetObjectMetadataNamePlural: newTargetObjectMetadata.namePlural,
     });
@@ -104,10 +128,11 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
           name: computedMorphName,
           label: morphRelationsCommonLabel,
           relationCreationPayload: {
-            type: fieldMetadataToUpdate.settings.relationType,
+            type: existingMorphTargetFlatFieldMetadata.settings.relationType,
             targetObjectMetadataId,
             targetFieldLabel: commonTargetFieldLabel,
-            targetFieldIcon: fieldMetadataToUpdate.icon ?? 'Icon123',
+            targetFieldIcon:
+              existingMorphTargetFlatFieldMetadata.icon ?? 'Icon123',
           },
         },
         sourceFlatObjectMetadata: sourceObjectMetadata,
@@ -118,7 +143,7 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
           computeMorphOrRelationFieldJoinColumnName({
             name: computedMorphName,
           }),
-        morphId: fieldMetadataToUpdate.morphId,
+        morphId: existingMorphTargetFlatFieldMetadata.morphId,
         targetFieldName: commonTargetFieldName,
         junctionTargetFlatFieldMetadata,
       });

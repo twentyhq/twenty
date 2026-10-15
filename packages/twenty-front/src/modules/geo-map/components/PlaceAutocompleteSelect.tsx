@@ -20,9 +20,7 @@ export const PlaceAutocompleteSelect = ({
           value={place}
           onClick={() => onChange(place.placeId)}
         >
-          <Tag color="transparent" borderStyle="dashed" variant="soft">
-            {place.text}
-          </Tag>
+          <Tag color="transparent">{place.text}</Tag>
         </Autocomplete.Item>
       ))}
     </Autocomplete.List>

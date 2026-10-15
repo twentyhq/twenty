@@ -69,7 +69,7 @@ yarn twenty app:publish --private
 
 Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
 
-1. Go to **Settings > Applications > Registrations** and open your app
+1. Go to **Settings > Developers > Apps** and open your app under **My apps**
 2. In the **Distribution** tab, click **Copy share link**
 3. Share this link with users on other workspaces — it takes them directly to the app's install page
 
@@ -296,7 +296,7 @@ After the package has synced into the catalog, continue with [Claiming your app]
 
 ## Claiming your app
 
-Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Applications** and **MCP & APIs** permissions to claim through the **Developer** tab.
+Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Applications** and **Developers** permissions to claim through the **Apps** tab of **Settings > Developers**.
 
 Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the app on a separate self-hosted server. Other workspaces on the same instance install your app without claiming it themselves.
 
@@ -309,7 +309,7 @@ Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the ap
 
 ### Claim with GitHub
 
-1. In your intended owner workspace, go to **Settings > Applications > Developer** (`/settings/applications#developer`).
+1. In your intended owner workspace, go to **Settings > Developers > Apps** (`/settings/developers#apps`).
 2. In **Claim an application**, enter the exact npm package name, including its scope (for example, `@your-org/twenty-app`), or the app's `universalIdentifier`.
 3. Click **Look up** and check that the result is your app. If it is not found, click **Sync catalog** if available, wait for the sync to finish, then look it up again.
 4. Click **Claim with GitHub** and authorize Twenty. For an organization-owned repository, grant access to that organization in GitHub's **Organization access** section. Personal repositories do not need an organization grant.

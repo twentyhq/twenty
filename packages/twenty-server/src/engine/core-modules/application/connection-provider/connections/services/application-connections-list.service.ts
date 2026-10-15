@@ -245,6 +245,7 @@ export class ApplicationConnectionsListService {
         providerName: provider.name,
         name: account.name ?? account.handle,
         handle: account.handle,
+        externalAccountId: account.externalAccountId,
         visibility: account.visibility as 'user' | 'workspace',
         userWorkspaceId: account.userWorkspaceId,
         workspaceMemberId,
