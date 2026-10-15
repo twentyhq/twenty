@@ -9,6 +9,8 @@ import { In, Not, type EntityManager, type Repository } from 'typeorm';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
+import { getApplicationRegistrationConfigurationIssues } from 'src/engine/core-modules/application/application-registration/utils/get-application-registration-configuration-issues.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationRegistrationException,
@@ -174,13 +176,30 @@ export class ApplicationRegistrationVariableService {
   async isConfiguredBatch(
     applicationRegistrationIds: string[],
   ): Promise<Map<string, boolean>> {
+    const configurationIssuesByRegistrationId =
+      await this.findConfigurationIssuesBatch(applicationRegistrationIds);
+
+    return new Map(
+      Array.from(
+        configurationIssuesByRegistrationId,
+        ([applicationRegistrationId, configurationIssues]) => [
+          applicationRegistrationId,
+          configurationIssues.length === 0,
+        ],
+      ),
+    );
+  }
+
+  async findConfigurationIssuesBatch(
+    applicationRegistrationIds: string[],
+  ): Promise<Map<string, ApplicationRegistrationConfigurationIssue[]>> {
     if (!isNonEmptyArray(applicationRegistrationIds)) {
       return new Map();
     }
 
     const [
       requiredVariables,
-      registrationIdsExposingServerRoute,
+      ownerWorkspaceIdByRegistrationIdExposingServerRoute,
       registrationIdsInstalledOnOwnerWorkspace,
     ] = await Promise.all([
       this.variableRepository.find({
@@ -189,7 +208,9 @@ export class ApplicationRegistrationVariableService {
           isRequired: true,
         },
       }),
-      this.findRegistrationIdsExposingServerRoute(applicationRegistrationIds),
+      this.findOwnerWorkspaceIdByRegistrationIdExposingServerRoute(
+        applicationRegistrationIds,
+      ),
       this.findRegistrationIdsInstalledOnOwnerWorkspace(
         applicationRegistrationIds,
       ),
@@ -204,28 +225,42 @@ export class ApplicationRegistrationVariableService {
     return new Map(
       applicationRegistrationIds.map((applicationRegistrationId) => [
         applicationRegistrationId,
-        !registrationIdsWithUnfilledRequiredVariable.has(
-          applicationRegistrationId,
-        ) &&
-          (!registrationIdsExposingServerRoute.has(applicationRegistrationId) ||
+        getApplicationRegistrationConfigurationIssues({
+          hasUnfilledRequiredServerVariable:
+            registrationIdsWithUnfilledRequiredVariable.has(
+              applicationRegistrationId,
+            ),
+          exposesServerRoute:
+            ownerWorkspaceIdByRegistrationIdExposingServerRoute.has(
+              applicationRegistrationId,
+            ),
+          hasOwnerWorkspace: isDefined(
+            ownerWorkspaceIdByRegistrationIdExposingServerRoute.get(
+              applicationRegistrationId,
+            ),
+          ),
+          isInstalledOnOwnerWorkspace:
             registrationIdsInstalledOnOwnerWorkspace.has(
               applicationRegistrationId,
-            )),
+            ),
+        }),
       ]),
     );
   }
 
-  private async findRegistrationIdsExposingServerRoute(
+  private async findOwnerWorkspaceIdByRegistrationIdExposingServerRoute(
     applicationRegistrationIds: string[],
-  ): Promise<Set<string>> {
-    const rows: { id: string }[] = await this.applicationRegistrationRepository
-      .createQueryBuilder('registration')
-      .select('registration.id', 'id')
-      .where('registration.id IN (:...applicationRegistrationIds)', {
-        applicationRegistrationIds,
-      })
-      .andWhere(
-        `EXISTS (
+  ): Promise<Map<string, string | null>> {
+    const rows: { id: string; ownerWorkspaceId: string | null }[] =
+      await this.applicationRegistrationRepository
+        .createQueryBuilder('registration')
+        .select('registration.id', 'id')
+        .addSelect('registration.ownerWorkspaceId', 'ownerWorkspaceId')
+        .where('registration.id IN (:...applicationRegistrationIds)', {
+          applicationRegistrationIds,
+        })
+        .andWhere(
+          `EXISTS (
           SELECT 1
           FROM jsonb_array_elements(
             COALESCE(registration."manifest" -> 'logicFunctions', '[]'::jsonb)
@@ -233,10 +268,10 @@ export class ApplicationRegistrationVariableService {
           WHERE logic_function -> 'serverRouteTriggerSettings' IS NOT NULL
             AND jsonb_typeof(logic_function -> 'serverRouteTriggerSettings') <> 'null'
         )`,
-      )
-      .getRawMany();
+        )
+        .getRawMany();
 
-    return new Set(rows.map((row) => row.id));
+    return new Map(rows.map((row) => [row.id, row.ownerWorkspaceId]));
   }
 
   private async findRegistrationIdsInstalledOnOwnerWorkspace(

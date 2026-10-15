@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
+import { type IdentifiedAccount } from 'twenty-shared/application';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -196,9 +197,17 @@ export class ConnectionProviderOAuthFlowService {
       );
     }
 
+    const identifiedAccount =
+      await this.connectionProviderLifecycleHookService.runIdentifyAccount({
+        provider,
+        workspaceId: statePayload.workspaceId,
+        accessToken: tokenResponse.accessToken,
+      });
+
     const connectedAccount = await this.persistConnectedAccount({
       provider,
       tokenResponse,
+      identifiedAccount,
       workspaceId: statePayload.workspaceId,
       userId: statePayload.userId,
       userWorkspaceId: statePayload.userWorkspaceId,
@@ -284,6 +293,7 @@ export class ConnectionProviderOAuthFlowService {
   private async persistConnectedAccount({
     provider,
     tokenResponse,
+    identifiedAccount,
     workspaceId,
     userId,
     userWorkspaceId,
@@ -292,6 +302,7 @@ export class ConnectionProviderOAuthFlowService {
   }: {
     provider: OAuthConnectionProvider;
     tokenResponse: TokenExchangeResponse;
+    identifiedAccount: IdentifiedAccount | null;
     workspaceId: string;
     userId: string;
     userWorkspaceId: string;
@@ -307,10 +318,12 @@ export class ConnectionProviderOAuthFlowService {
         workspaceId,
       });
 
-    const handle = await this.resolveConnectedAccountHandle({
-      tokenResponse,
-      userId,
-    });
+    const handle =
+      identifiedAccount?.handle ??
+      (await this.resolveConnectedAccountHandle({
+        tokenResponse,
+        userId,
+      }));
 
     const sharedFields = {
       accessToken: encryptedAccessToken,
@@ -321,18 +334,43 @@ export class ConnectionProviderOAuthFlowService {
       authFailedReason: null,
       visibility,
       handle,
+      externalAccountId: identifiedAccount?.externalAccountId ?? null,
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {
-      await this.connectedAccountRepository.update(
-        { id: reconnectingConnectedAccountId, workspaceId },
+      const reconnectTarget = {
+        id: reconnectingConnectedAccountId,
+        workspaceId,
+      };
+
+      // Compared and written in one statement so overlapping reconnects cannot pin different accounts.
+      const updateResult = await this.connectedAccountRepository.update(
+        isDefined(identifiedAccount)
+          ? [
+              { ...reconnectTarget, externalAccountId: IsNull() },
+              {
+                ...reconnectTarget,
+                externalAccountId: identifiedAccount.externalAccountId,
+              },
+            ]
+          : reconnectTarget,
         { ...sharedFields, userWorkspaceId },
       );
 
-      return this.connectedAccountRepository.findOneByOrFail({
-        id: reconnectingConnectedAccountId,
-        workspaceId,
-      });
+      const connectedAccount =
+        await this.connectedAccountRepository.findOneByOrFail(reconnectTarget);
+
+      if (updateResult.affected === 0 && isDefined(identifiedAccount)) {
+        const authorizedAccountHandle =
+          identifiedAccount.handle ?? identifiedAccount.externalAccountId;
+
+        throw new ConnectionProviderException(
+          `You authorized ${authorizedAccountHandle}, but this connection belongs to ${connectedAccount.handle}. Reconnect with ${connectedAccount.handle}, or add a new connection for ${authorizedAccountHandle}.`,
+          ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH,
+        );
+      }
+
+      return connectedAccount;
     }
 
     const existingCount = await this.connectedAccountRepository.count({

@@ -243,7 +243,7 @@ export class ApplicationRegistrationResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ): Promise<CreateApplicationRegistrationDTO> {
-    return this.applicationRegistrationService.create({
+    return this.applicationRegistrationService.createWithClientSecret({
       input,
       ownerWorkspaceId: workspaceId,
       createdByUserId: user?.id ?? null,
@@ -652,9 +652,12 @@ export class ApplicationRegistrationResolver {
     @Parent() registration: ApplicationRegistrationEntity,
     @Context() context: { loaders: IDataloaders },
   ): Promise<boolean> {
-    return context.loaders.isConfiguredLoader.load({
-      applicationRegistrationId: registration.id,
-    });
+    const configurationIssues =
+      await context.loaders.applicationRegistrationConfigurationIssuesLoader.load(
+        { applicationRegistrationId: registration.id },
+      );
+
+    return configurationIssues.length === 0;
   }
 
   @ResolveField(() => String, { nullable: true })

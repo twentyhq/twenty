@@ -60,7 +60,6 @@ export const TwoFactorAuthenticationSwitch = () => {
           description={t`Enforce two-step verification for every user login.`}
           checked={currentWorkspace.isTwoFactorAuthenticationEnforced}
           onChange={handleChange}
-          advancedMode
         />
       )}
     </>

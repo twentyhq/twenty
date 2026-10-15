@@ -1,7 +1,7 @@
 import { captureAgentRunExecution } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-execution.util';
 import { captureCodeInterpreterSandboxToken } from 'test/integration/graphql/suites/user-session/utils/capture-code-interpreter-sandbox-token.util';
 import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
-import { pingMcp } from 'test/integration/graphql/suites/user-session/utils/ping-mcp.util';
+import { listMcpTools } from 'test/integration/graphql/suites/user-session/utils/list-mcp-tools.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -122,9 +122,10 @@ describe('Code interpreter sandbox token for an agent run should follow the call
       throw new Error('Expected the sandbox to receive a token');
     }
 
-    const { status, body } = await pingMcp({ token: sandboxToken });
+    const { status, body } = await listMcpTools({ token: sandboxToken });
 
     expect(status).toBe(200);
-    expect(body.result).toEqual({});
+    expect(body.error).toBeUndefined();
+    expect(body.result.tools).toEqual(expect.any(Array));
   });
 });

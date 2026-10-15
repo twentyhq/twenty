@@ -34,6 +34,8 @@ export const createToolingFailure = ({
   };
 
   switch (error.code) {
+    case 'INVALID_INPUT':
+    case 'APP_PATH_UNAVAILABLE':
     case 'SDK_SOURCE_UNSUPPORTED':
     case 'TYPESCRIPT_NOT_INSTALLED':
     case 'TOOLING_UNSUPPORTED':

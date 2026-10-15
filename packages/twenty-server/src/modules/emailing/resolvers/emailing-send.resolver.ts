@@ -7,10 +7,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
 import { CancelMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign.input';
 import { CancelMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign-output.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
 import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
+import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
 import { PreviewMessageCampaignSendInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-send.input';
 import { PreviewMessageCampaignSendOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-send-output.dto';
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
@@ -34,6 +36,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
@@ -70,6 +73,7 @@ export class EmailingSendResolver {
   constructor(
     private readonly messageCampaignService: MessageCampaignService,
     private readonly messageCampaignScheduleService: MessageCampaignScheduleService,
+    private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
     private readonly emailBillingService: EmailBillingService,
@@ -163,6 +167,23 @@ export class EmailingSendResolver {
     });
 
     return { messageId: result.messageId };
+  }
+
+  @Query(() => CampaignAudiencePreviewDTO)
+  @UseGuards(FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED))
+  async previewMessageCampaignAudience(
+    @Args('input') input: PreviewMessageCampaignAudienceInput,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<CampaignAudiencePreviewDTO> {
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+
+    return this.messageCampaignAudienceService.previewAudience({
+      workspaceId: currentWorkspace.id,
+      userWorkspaceId,
+      listId: input.listId,
+      unsubscribeTopicId: input.unsubscribeTopicId,
+    });
   }
 
   @Query(() => PreviewMessageCampaignSendOutputDTO)

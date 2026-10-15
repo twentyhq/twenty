@@ -7,6 +7,7 @@
 - **A Microsoft connection** for your work or school account
 - **List My Teams Transcripts**, an AI and workflow action for the meetings you organized
 - **Sync Teams Transcript**, an AI and workflow action that imports one of those transcripts into a Call Recording
+- **Import history**, a settings section that imports the transcripts of up to the last year
 
 ## 📌 Heads up
 

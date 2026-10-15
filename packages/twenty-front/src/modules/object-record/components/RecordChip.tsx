@@ -16,7 +16,6 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
-  className?: string;
   variant?: 'soft' | 'ghost';
   forceDisableClick?: boolean;
   isBold?: boolean;
@@ -32,7 +31,6 @@ type RecordChipProps = {
 export const RecordChip = ({
   objectNameSingular,
   record,
-  className,
   variant,
   isBold = false,
   maxWidth,
@@ -77,7 +75,6 @@ export const RecordChip = ({
         weight={isBold ? 'medium' : 'regular'}
         size={size}
         maxWidth={maxWidth}
-        className={className}
         variant="ghost"
         startElement={
           isIconHidden ? null : (
@@ -112,7 +109,6 @@ export const RecordChip = ({
           />
         )
       }
-      className={className}
       variant={variant ?? 'soft'}
       clickable={variant !== 'ghost'}
       style={variant === 'ghost' ? { paddingInlineStart: 0 } : undefined}

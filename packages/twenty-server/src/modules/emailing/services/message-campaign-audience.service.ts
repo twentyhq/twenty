@@ -9,6 +9,7 @@ import { resolveCampaignAudience } from 'src/engine/core-modules/emailing-domain
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
@@ -20,6 +21,7 @@ export class MessageCampaignAudienceService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly messageSuppressionService: MessageSuppressionService,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   async resolveNormalizedAudience({
@@ -103,6 +105,35 @@ export class MessageCampaignAudienceService {
       topicSuppressedEmails,
       trackingRefusedEmails,
     });
+  }
+
+  async previewAudience({
+    workspaceId,
+    userWorkspaceId,
+    listId,
+    unsubscribeTopicId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    listId: string;
+    unsubscribeTopicId?: string;
+  }): Promise<CampaignAudienceResolution['audience']> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    const { audience } =
+      await this.workspaceOrmManager.executeInWorkspaceContext(() =>
+        this.resolveAudience({
+          workspaceId,
+          listId,
+          roleId,
+          unsubscribeTopicId,
+        }),
+      );
+
+    return audience;
   }
 
   private async resolveRecipientsFromList({

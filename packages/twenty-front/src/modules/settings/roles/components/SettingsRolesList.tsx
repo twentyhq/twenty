@@ -7,6 +7,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -27,16 +28,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
-
-const StyledCreateRoleSectionContainer = styled.div`
-  > * {
-    border-top: 1px solid ${themeCssVariables.border.color.light};
-    display: flex;
-    justify-content: flex-end;
-    padding-bottom: ${themeCssVariables.spacing[2]};
-    padding-top: ${themeCssVariables.spacing[2]};
-  }
-`;
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -159,25 +150,19 @@ export const SettingsRolesList = () => {
             </TableCell>
           ) : (
             filteredRoles.map((role) => (
-              <SettingsRolesTableRow
-                key={role.id}
-                role={role}
-                application={installedApplicationByDefaultRoleId.get(role.id)}
-              />
+              <SettingsRolesTableRow key={role.id} role={role} />
             ))
           )}
         </StyledTableRows>
       </Table>
-      <StyledCreateRoleSectionContainer>
-        <Section.Root>
-          <Button
-            startIcon={<IconPlus />}
-            size="sm"
-            onClick={() => navigateSettings(SettingsPath.RoleCreate)}
-            variant="outline"
-          >{t`Create Role`}</Button>
-        </Section.Root>
-      </StyledCreateRoleSectionContainer>
+      <TableFooter>
+        <Button
+          startIcon={<IconPlus />}
+          size="sm"
+          onClick={() => navigateSettings(SettingsPath.RoleCreate)}
+          variant="outline"
+        >{t`Create Role`}</Button>
+      </TableFooter>
     </Section.Root>
   );
 };

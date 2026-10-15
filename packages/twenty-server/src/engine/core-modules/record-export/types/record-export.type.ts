@@ -1,11 +1,8 @@
+import { type RecordExportSession } from 'src/engine/core-modules/record-export/types/record-export-session.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 
-export type RecordExport = {
+export type RecordExport = RecordExportSession & {
   id: string;
-  workspaceId: string;
-  userWorkspaceId: string;
-  workspaceMemberId: string;
-  requestTokenHash: string;
   permissionsHash: string;
   parameters: RecordExportParameters;
   filename: string;

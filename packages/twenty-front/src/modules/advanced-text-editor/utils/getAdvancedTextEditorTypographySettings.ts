@@ -1,5 +1,6 @@
 import { type AdvancedTextEditorBlockSetting } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { msg } from '@lingui/core/macro';
+import { EMAIL_TYPOGRAPHY } from 'twenty-shared/utils';
 
 export function getAdvancedTextEditorTypographySettings() {
   return [
@@ -21,7 +22,7 @@ export function getAdvancedTextEditorTypographySettings() {
       kind: 'style',
       property: 'lineHeight',
       input: 'text',
-      placeholder: '1.5',
+      placeholder: EMAIL_TYPOGRAPHY.lineHeight,
     },
     {
       label: msg`Letter spacing`,

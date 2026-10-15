@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,6 +29,7 @@ export const useCampaignSendPreview = ({
       },
     },
     fetchPolicy: 'cache-and-network',
+    skip: !isNonEmptyString(campaignId),
   });
 
   return {
