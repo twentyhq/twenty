@@ -3244,6 +3244,9 @@ export default {
             ]
         },
         "CreateNavigationMenuItemInput": {
+            "agentChatChannelId": [
+                500
+            ],
             "color": [
                 1
             ],
@@ -7781,6 +7784,9 @@ export default {
                     "browsingContext": [
                         296
                     ],
+                    "channelId": [
+                        500
+                    ],
                     "fileAttachments": [
                         261,
                         "[FileAttachmentInput!]"
@@ -8903,6 +8909,9 @@ export default {
             ]
         },
         "NavigationMenuItem": {
+            "agentChatChannelId": [
+                500
+            ],
             "applicationId": [
                 500
             ],

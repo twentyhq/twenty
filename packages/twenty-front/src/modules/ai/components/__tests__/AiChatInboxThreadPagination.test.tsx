@@ -5,11 +5,18 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
+import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
+import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadStatus,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
@@ -19,6 +26,12 @@ const fetchMoreAgentChatThreads = jest.fn();
 
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads }),
+}));
+
+const loadAgentChatChannelThreads = jest.fn();
+
+jest.mock('@/ai/hooks/useLoadAgentChatChannelThreads', () => ({
+  useLoadAgentChatChannelThreads: () => ({ loadAgentChatChannelThreads }),
 }));
 
 const THREADS = [{ id: 'thread-1' }, { id: 'thread-2' }, { id: 'thread-3' }];
@@ -55,6 +68,7 @@ describe('AiChatInboxThreadPagination', () => {
   beforeEach(() => {
     resetJotaiStore();
     fetchMoreAgentChatThreads.mockClear();
+    loadAgentChatChannelThreads.mockClear();
   });
 
   it('moves to the previous and next chats', () => {
@@ -119,5 +133,29 @@ describe('AiChatInboxThreadPagination', () => {
     });
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('loads more chats of the channel on screen', () => {
+    const channelView = {
+      channelId: 'channel-id',
+      channelStatus: AgentChatChannelThreadStatus.OPEN,
+      assignment: AgentChatChannelAssignmentFilter.ANY,
+    };
+
+    jotaiStore.set(agentChatChannelViewState.atom, channelView);
+    jotaiStore.set(agentChatChannelThreadListState.atom, {
+      viewKey: getAgentChatChannelViewKey(channelView),
+      threadIds: THREADS.map(({ id }) => id),
+      hasNextPage: true,
+      endCursor: null,
+      lastLoadedActivityAt: null,
+    });
+
+    renderPagination({ threadId: 'thread-3', hasNextPage: false });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
+
+    expect(loadAgentChatChannelThreads).toHaveBeenCalledWith('fetch-more');
+    expect(fetchMoreAgentChatThreads).not.toHaveBeenCalled();
   });
 });

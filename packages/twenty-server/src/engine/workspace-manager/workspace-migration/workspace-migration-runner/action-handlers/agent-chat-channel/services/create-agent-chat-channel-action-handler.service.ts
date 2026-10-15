@@ -41,6 +41,7 @@ export class CreateAgentChatChannelActionHandlerService extends WorkspaceMigrati
         id: action.id ?? v4(),
         workspaceId,
         channelRoleIds: [],
+        navigationMenuItemIds: [],
         ...emptyUniversalForeignKeyAggregators,
       },
     };

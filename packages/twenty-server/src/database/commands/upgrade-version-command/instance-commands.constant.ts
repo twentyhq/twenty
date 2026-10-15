@@ -244,6 +244,7 @@ import { AddWidgetAvailabilityToFrontComponentFastInstanceCommand } from 'src/da
 import { AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1791975194413-add-identify-account-logic-function-and-external-account-id';
 import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1791989212468-add-agent-chat-channel';
 import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-slow-1791989330417-backfill-role-agent-chat-channel-access';
+import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1791989388762-add-agent-chat-channel-navigation-menu-item';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -490,4 +491,5 @@ export const INSTANCE_COMMANDS = [
   AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand,
   AddAgentChatChannelFastInstanceCommand,
   BackfillRoleAgentChatChannelAccessSlowInstanceCommand,
+  AddAgentChatChannelNavigationMenuItemFastInstanceCommand,
 ];

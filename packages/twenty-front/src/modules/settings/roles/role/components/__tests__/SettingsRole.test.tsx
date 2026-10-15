@@ -32,6 +32,21 @@ jest.mock('@/settings/roles/role/hooks/useSaveDraftRoleToDB', () => ({
   useSaveDraftRoleToDB: () => ({ saveDraftRoleToDB: mockSaveDraftRoleToDB }),
 }));
 
+jest.mock(
+  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelAccess',
+  () => ({
+    useRoleAgentChatChannelAccess: () => ({
+      isChannelAccessDirty: false,
+      saveChannelAccess: jest.fn(),
+      resetChannelAccess: jest.fn(),
+    }),
+  }),
+);
+
+jest.mock('@/ai/hooks/useRefreshAgentChatChannels', () => ({
+  useRefreshAgentChatChannels: () => ({ refreshAgentChatChannels: jest.fn() }),
+}));
+
 jest.mock('@/users/hooks/useLoadCurrentUser', () => ({
   useLoadCurrentUser: () => ({ loadCurrentUser: mockLoadCurrentUser }),
 }));

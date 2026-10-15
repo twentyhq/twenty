@@ -71,6 +71,11 @@ export class NavigationMenuItemDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   pageLayoutId?: string | null;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  agentChatChannelId?: string | null;
+
   @IsNumber()
   @IsNotEmpty()
   @Field()

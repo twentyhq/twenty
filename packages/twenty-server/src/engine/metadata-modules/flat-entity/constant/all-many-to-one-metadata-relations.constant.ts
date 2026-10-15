@@ -135,6 +135,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'pageLayoutUniversalIdentifier',
     },
+    agentChatChannel: {
+      metadataName: 'agentChatChannel',
+      foreignKey: 'agentChatChannelId',
+      inverseOneToManyProperty: 'navigationMenuItems',
+      isNullable: true,
+      universalForeignKey: 'agentChatChannelUniversalIdentifier',
+    },
   },
   fieldMetadata: {
     object: {

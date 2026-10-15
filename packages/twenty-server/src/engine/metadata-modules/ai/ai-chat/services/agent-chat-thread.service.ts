@@ -72,7 +72,7 @@ export class AgentChatThreadService {
   async createThreadIfMissing({
     threadId,
     ...args
-  }: AgentChatThreadAccessArgs): Promise<void> {
+  }: AgentChatThreadAccessArgs & { channelId?: string }): Promise<void> {
     if (
       await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
     ) {

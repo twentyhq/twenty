@@ -29,6 +29,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
@@ -202,6 +203,9 @@ export const useAgentChat = () => {
                   ({ workspaceMemberId }) => workspaceMemberId,
                 )
               : undefined,
+          channelId: isNewChat
+            ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
+            : undefined,
         },
       });
 
@@ -235,6 +239,7 @@ export const useAgentChat = () => {
       if (isNewChat) {
         await refreshAgentChatThreadPermissions([threadId]);
         store.set(newAiChatThreadIdState.atom, v4());
+        store.set(agentChatNewThreadChannelIdState.atom, null);
 
         if (store.get(currentAiChatThreadState.atom) === threadId) {
           projectAiChatThreadToUrl(threadId);
