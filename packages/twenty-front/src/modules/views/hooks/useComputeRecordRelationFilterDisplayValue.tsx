@@ -2,13 +2,11 @@ import { useMemo } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
-import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { computeRelationFilterDisplayValue } from '@/views/utils/computeRelationFilterDisplayValue';
 
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
@@ -86,30 +84,11 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     return { displayValue: t`Loading...`, loading };
   }
 
-  const selectedRecordNames = targetObjectMetadataItems.flatMap(
-    (targetObjectMetadataItem) =>
-      (result[targetObjectMetadataItem.namePlural] ?? []).map((record) =>
-        getLabelIdentifierFieldValue(
-          record,
-          getLabelIdentifierFieldMetadataItem(targetObjectMetadataItem),
-        ),
-      ),
-  );
-
-  const labelValueItems = [
-    ...(isCurrentWorkspaceMemberSelected ? [t`Me`] : []),
-    ...selectedRecordNames,
-  ];
-
-  const relationObjectLabelPlural =
-    targetObjectMetadataItems.length === 1
-      ? targetObjectMetadataItems[0].labelPlural.toLowerCase()
-      : t`records`;
-
-  const displayValue =
-    labelValueItems.length > MAX_RECORDS_TO_DISPLAY
-      ? `${labelValueItems.length} ${relationObjectLabelPlural}`
-      : labelValueItems.join(', ');
+  const displayValue = computeRelationFilterDisplayValue({
+    targetObjectMetadataItems,
+    selectedRecordsByObjectNamePlural: result,
+    isCurrentWorkspaceMemberSelected: isCurrentWorkspaceMemberSelected ?? false,
+  });
 
   return { displayValue, loading };
 };
