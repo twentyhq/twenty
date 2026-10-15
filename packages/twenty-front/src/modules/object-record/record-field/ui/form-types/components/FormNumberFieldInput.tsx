@@ -8,7 +8,7 @@ import { Field } from 'twenty-ui/primitives/input';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
-import { useId, useState } from 'react';
+import { type ReactNode, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   canBeCastAsNumberOrNull,
@@ -26,6 +26,7 @@ type FormNumberFieldInputProps = {
   placeholder?: string;
   error?: string;
   onError?: (error: string | undefined) => void;
+  leftElement?: ReactNode;
 };
 
 type FormNumberFieldInputValue =
@@ -49,6 +50,7 @@ export const FormNumberFieldInput = ({
   hint,
   readonly,
   error: errorFromProps,
+  leftElement,
 }: FormNumberFieldInputProps) => {
   const instanceId = useId();
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
@@ -123,6 +125,7 @@ export const FormNumberFieldInput = ({
           hasRightElement={isDefined(VariablePicker) && !readonly}
           onBlur={onBlur}
         >
+          {leftElement}
           {draftValue.type === 'static' ? (
             <StyledTextInput
               id={instanceId}

@@ -7,7 +7,7 @@ import { useTextVariableEditor } from '@/object-record/record-field/ui/form-type
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { Field } from 'twenty-ui/primitives/input';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
-import { useId } from 'react';
+import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type FormTextFieldInputProps = {
@@ -21,6 +21,7 @@ type FormTextFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
+  leftElement?: ReactNode;
 };
 
 export const FormTextFieldInput = ({
@@ -34,6 +35,7 @@ export const FormTextFieldInput = ({
   multiline,
   readonly,
   VariablePicker,
+  leftElement,
 }: FormTextFieldInputProps) => {
   const instanceId = useId();
   const labelId = `${instanceId}-label`;
@@ -77,6 +79,7 @@ export const FormTextFieldInput = ({
           multiline={multiline}
           onBlur={onBlur}
         >
+          {leftElement}
           <TextVariableEditor
             editor={editor}
             multiline={multiline}
