@@ -1,4 +1,5 @@
 import { msg, plural, t } from '@lingui/core/macro';
+import { lazy, Suspense } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -19,6 +20,7 @@ import {
   IconGauge,
   IconHistory,
   IconKey,
+  IconLayoutDashboard,
   IconLink,
   IconStatusChange,
   IconSum,
@@ -54,6 +56,7 @@ import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import {
   EventLogFilterOperand,
   EventLogTable,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { formatNumber } from '@/localization/utils/formatNumber';
 
@@ -62,6 +65,13 @@ const TIME_DETAIL_FIELD: LogConsoleDetailField = {
   Icon: IconClock,
   renderValue: (_entry, { formattedTimestamp }) => formattedTimestamp,
 };
+
+// Loaded on demand so importing the source list does not pull the chart library into every console consumer
+const LogConsoleAppAnalytics = lazy(() =>
+  import('@/log-console/components/LogConsoleAppAnalytics').then((module) => ({
+    default: module.LogConsoleAppAnalytics,
+  })),
+);
 
 export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
@@ -200,6 +210,21 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     getSeverity: (entry) =>
       LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
     getDetailTitle: (entry) => entry.event,
+  },
+  {
+    id: 'app-analytics',
+    label: msg`App analytics`,
+    Icon: IconLayoutDashboard,
+    requiresAuditLogs: false,
+    requiredPermissionFlags: [
+      PermissionFlagType.APPLICATIONS,
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+    ],
+    renderContent: () => (
+      <Suspense fallback={null}>
+        <LogConsoleAppAnalytics />
+      </Suspense>
+    ),
   },
   {
     id: 'webhooks',

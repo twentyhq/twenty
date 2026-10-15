@@ -20,7 +20,7 @@ import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersSt
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { type LogConsoleFilter } from '@/log-console/types/LogConsoleFilter';
-import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { type LogConsoleEventLogSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleTimeRange } from '@/log-console/types/LogConsoleTimeRange';
 import { getLogConsoleFieldFilters } from '@/log-console/utils/getLogConsoleFieldFilters';
 import { getLogConsoleTimeRangeBounds } from '@/log-console/utils/getLogConsoleTimeRangeBounds';
@@ -46,7 +46,7 @@ const StyledResults = styled.div`
 `;
 
 type LogConsoleResultsProps = {
-  source: LogConsoleSource;
+  source: LogConsoleEventLogSource;
 };
 
 export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {

@@ -6808,31 +6808,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/utils@npm:0.2.10, @floating-ui/utils@npm:^0.2.10":
+"@floating-ui/utils@npm:0.2.10":
   version: 0.2.10
   resolution: "@floating-ui/utils@npm:0.2.10"
   checksum: 10c0/e9bc2a1730ede1ee25843937e911ab6e846a733a4488623cd353f94721b05ec2c9ec6437613a2ac9379a94c2fd40c797a2ba6fa1df2716f5ce4aa6ddb1cf9ea4
   languageName: node
   linkType: hard
 
-"@floating-ui/utils@npm:^0.2.11, @floating-ui/utils@npm:^0.2.8":
-  version: 0.2.11
-  resolution: "@floating-ui/utils@npm:0.2.11"
-  checksum: 10c0/f4bcea1559bdbb721ecc8e8ead423ac58d6a5b6e70b602cf0810ba6ad4ed1c77211b207faa88b278a9042f0c743133de08a203ed6741c1b6443423332884d5b3
-  languageName: node
-  linkType: hard
-
-"@floating-ui/utils@npm:^0.2.12":
+"@floating-ui/utils@npm:^0.2.10, @floating-ui/utils@npm:^0.2.11, @floating-ui/utils@npm:^0.2.12, @floating-ui/utils@npm:^0.2.7, @floating-ui/utils@npm:^0.2.8, @floating-ui/utils@npm:^0.2.9":
   version: 0.2.12
   resolution: "@floating-ui/utils@npm:0.2.12"
   checksum: 10c0/bb910b90d56991a62011afaf5f8e0c4b7fb6dab69403f4dd17fbd6eb25560b28d533dff9791f270b4f459852e9006a1077b5d73cbedb5e34d9424afc6a828314
-  languageName: node
-  linkType: hard
-
-"@floating-ui/utils@npm:^0.2.7, @floating-ui/utils@npm:^0.2.9":
-  version: 0.2.9
-  resolution: "@floating-ui/utils@npm:0.2.9"
-  checksum: 10c0/48bbed10f91cb7863a796cc0d0e917c78d11aeb89f98d03fc38d79e7eb792224a79f538ed8a2d5d5584511d4ca6354ef35f1712659fd569868e342df4398ad6f
   languageName: node
   linkType: hard
 

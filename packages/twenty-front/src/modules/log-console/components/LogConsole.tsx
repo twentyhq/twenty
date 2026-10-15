@@ -34,9 +34,11 @@ import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersSt
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { isLogConsoleEventLogSource } from '@/log-console/utils/isLogConsoleEventLogSource';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -264,6 +266,7 @@ export const LogConsole = () => {
   const isLogConsoleEnabled = useAtomStateValue(isLogConsoleEnabledState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
   const [logConsoleDisplayMode, setLogConsoleDisplayMode] = useAtomState(
     logConsoleDisplayModeState,
@@ -396,9 +399,15 @@ export const LogConsole = () => {
   const isSourceLocked = (source: LogConsoleSource) =>
     source.requiresAuditLogs && !hasAuditLogsEntitlement;
 
+  const isSourceAllowed = (source: LogConsoleSource) =>
+    !isDefined(source.requiredPermissionFlags) ||
+    source.requiredPermissionFlags.some((flag) => permissionFlagMap[flag]);
+
+  const allowedSources = LOG_CONSOLE_SOURCES.filter(isSourceAllowed);
+
   const sources = [
-    ...LOG_CONSOLE_SOURCES.filter((source) => !isSourceLocked(source)),
-    ...LOG_CONSOLE_SOURCES.filter(isSourceLocked),
+    ...allowedSources.filter((source) => !isSourceLocked(source)),
+    ...allowedSources.filter(isSourceLocked),
   ];
 
   const activeSource =
@@ -581,6 +590,10 @@ export const LogConsole = () => {
           />
         </StyledUpgradeCardContainer>
       );
+    }
+
+    if (!isLogConsoleEventLogSource(activeSource)) {
+      return activeSource.renderContent();
     }
 
     return <LogConsoleResults key={activeSource.id} source={activeSource} />;

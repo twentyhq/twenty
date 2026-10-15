@@ -4,7 +4,15 @@ import { type ExecutionResult, print } from 'graphql';
 import { type RequestParams, type Sink } from 'graphql-sse';
 import { http, HttpResponse } from 'msw';
 import { type ReactNode, useEffect } from 'react';
-import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  screen,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -15,12 +23,18 @@ import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
+import { logConsoleAppAnalyticsApplicationIdState } from '@/log-console/states/logConsoleAppAnalyticsApplicationIdState';
+import { logConsoleAppAnalyticsRegistrationIdState } from '@/log-console/states/logConsoleAppAnalyticsRegistrationIdState';
+import { logConsoleAppAnalyticsScopeState } from '@/log-console/states/logConsoleAppAnalyticsScopeState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { FIND_APPLICATION_ANALYTICS } from '@/settings/application-registrations/graphql/queries/findApplicationAnalytics';
+import { FIND_APPLICATION_REGISTRATION_ANALYTICS } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationAnalytics';
+import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 import { EVENT_LOGS_LIVE_SUBSCRIPTION } from '@/settings/event-logs/graphql/subscriptions/EventLogsLiveSubscription';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
@@ -179,6 +193,9 @@ const meta: Meta<PageDecoratorArgs> = {
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
     jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
+    jotaiStore.set(logConsoleAppAnalyticsRegistrationIdState.atom, null);
+    jotaiStore.set(logConsoleAppAnalyticsApplicationIdState.atom, null);
+    jotaiStore.set(logConsoleAppAnalyticsScopeState.atom, 'current-workspace');
   },
   parameters: {
     layout: 'fullscreen',
@@ -794,5 +811,337 @@ export const ClickHouseMissing: Story = {
   },
   parameters: {
     msw: graphqlMocks,
+  },
+};
+
+const APP_ANALYTICS_REGISTRATION = {
+  __typename: 'ApplicationRegistration',
+  id: '20202020-7c1e-4a0b-9f3d-5b2a8c4d6e01',
+  universalIdentifier: '20202020-7c1e-4a0b-9f3d-5b2a8c4d6e02',
+  name: 'Lead scoring',
+  sourceType: 'LOCAL',
+  logoUrl: null,
+  createdAt: '2026-09-20T15:45:00.000Z',
+};
+
+const buildAppAnalyticsPoint = ({
+  date,
+  functionExecutions,
+  functionErrors,
+}: {
+  date: string;
+  functionExecutions: number;
+  functionErrors: number;
+}) => ({
+  __typename: 'ApplicationRegistrationAnalyticsTimeSeriesPoint',
+  date,
+  installSucceeded: 1,
+  installFailed: 0,
+  upgradeSucceeded: 0,
+  upgradeFailed: 0,
+  uninstallSucceeded: 0,
+  uninstallFailed: 0,
+  functionExecutions,
+  functionErrors,
+  apiRateLimited: 0,
+  jobRateLimited: 0,
+  creditsCharged: 12.5,
+});
+
+const buildAppAnalyticsVersion = ({
+  version,
+  installSucceeded,
+  upgradeSucceeded,
+  functionExecutions,
+  functionErrors,
+  dailyActiveWorkspaces,
+}: {
+  version: string;
+  installSucceeded: number;
+  upgradeSucceeded: number;
+  functionExecutions: number;
+  functionErrors: number;
+  dailyActiveWorkspaces: number[];
+}) => ({
+  __typename: 'ApplicationRegistrationAnalyticsVersion',
+  version,
+  activeWorkspaces: Math.max(...dailyActiveWorkspaces),
+  installSucceeded,
+  installFailed: 0,
+  upgradeSucceeded,
+  upgradeFailed: 0,
+  functionExecutions,
+  functionErrors,
+  timeSeries: ['2026-09-21', '2026-09-22', '2026-09-23'].map((date, index) => ({
+    __typename: 'ApplicationRegistrationAnalyticsVersionTimeSeriesPoint',
+    date,
+    activeWorkspaces: dailyActiveWorkspaces[index],
+  })),
+});
+
+const APP_ANALYTICS = {
+  __typename: 'ApplicationRegistrationAnalytics',
+  periodStart: '2026-08-25T00:00:00.000Z',
+  periodEnd: '2026-09-24T00:00:00.000Z',
+  totals: {
+    __typename: 'ApplicationRegistrationAnalyticsTotals',
+    installSucceeded: 12,
+    installFailed: 1,
+    upgradeSucceeded: 4,
+    upgradeFailed: 0,
+    uninstallSucceeded: 2,
+    uninstallFailed: 0,
+    functionExecutions: 1840,
+    functionErrors: 23,
+    apiRateLimited: 6,
+    jobRateLimited: 0,
+    creditsCharged: 37.5,
+    activeWorkspaces: 9,
+  },
+  timeSeries: [
+    buildAppAnalyticsPoint({
+      date: '2026-09-21',
+      functionExecutions: 610,
+      functionErrors: 8,
+    }),
+    buildAppAnalyticsPoint({
+      date: '2026-09-22',
+      functionExecutions: 590,
+      functionErrors: 6,
+    }),
+    buildAppAnalyticsPoint({
+      date: '2026-09-23',
+      functionExecutions: 640,
+      functionErrors: 9,
+    }),
+  ],
+  functionErrorsByType: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'TIMEOUT',
+      value: 15,
+    },
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'THROWN',
+      value: 8,
+    },
+  ],
+  functionErrorsByFunction: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'scoreLead',
+      value: 23,
+    },
+  ],
+  functionExecutionsByFunction: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'scoreLead',
+      value: 1840,
+    },
+  ],
+  lifecycleFailuresByErrorCode: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'APPLICATION_NOT_FOUND',
+      value: 1,
+    },
+  ],
+  creditsChargedByOperation: [
+    {
+      __typename: 'ApplicationRegistrationAnalyticsBreakdownItem',
+      key: 'enrich',
+      value: 37.5,
+    },
+  ],
+  versions: [
+    buildAppAnalyticsVersion({
+      version: '1.3.0',
+      installSucceeded: 2,
+      upgradeSucceeded: 4,
+      functionExecutions: 900,
+      functionErrors: 18,
+      dailyActiveWorkspaces: [1, 3, 4],
+    }),
+    buildAppAnalyticsVersion({
+      version: '1.2.0',
+      installSucceeded: 10,
+      upgradeSucceeded: 0,
+      functionExecutions: 940,
+      functionErrors: 5,
+      dailyActiveWorkspaces: [6, 4, 2],
+    }),
+  ],
+};
+
+export const AppAnalyticsOpen: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-analytics',
+    );
+    jotaiStore.set(logConsoleAppAnalyticsScopeState.atom, 'all-workspaces');
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query(
+          getOperationName(FIND_MANY_APPLICATION_REGISTRATIONS) ?? '',
+          () =>
+            HttpResponse.json({
+              data: {
+                findManyApplicationRegistrations: [APP_ANALYTICS_REGISTRATION],
+              },
+            }),
+        ),
+        metadataGraphql.query(
+          getOperationName(FIND_APPLICATION_REGISTRATION_ANALYTICS) ?? '',
+          () =>
+            HttpResponse.json({
+              data: { findApplicationRegistrationAnalytics: APP_ANALYTICS },
+            }),
+        ),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Active workspaces', {}, { timeout: 5000 });
+    await canvas.findByText('Lead scoring');
+    await canvas.findByText('TIMEOUT');
+    await canvas.findByText('Version adoption');
+    await canvas.findByText('18 (2%)');
+  },
+};
+
+export const AppAnalyticsRangeMenu: Story = {
+  ...AppAnalyticsOpen,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Active workspaces', {}, { timeout: 5000 });
+
+    await userEvent.click(canvas.getByText('Last 30 days'));
+
+    await screen.findByRole('option', { name: 'Last year' });
+    await screen.findByRole('option', { name: 'All time' });
+
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Custom range' }),
+    );
+
+    await screen.findByText('Start date');
+  },
+};
+
+export const AppAnalyticsChartTooltip: Story = {
+  ...AppAnalyticsOpen,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Active workspaces', {}, { timeout: 5000 });
+
+    const chartContainer = canvasElement.querySelector(
+      '#log-console-app-analytics-executions-line-chart',
+    );
+
+    if (!(chartContainer instanceof HTMLElement)) {
+      throw new Error('Executions chart not found');
+    }
+
+    chartContainer.scrollIntoView();
+
+    const tooltip = await within(chartContainer).findByRole('tooltip');
+
+    // nivo measures the chart and remounts its hover area after mount, so the hover is retried on whatever sits under the pointer
+    await waitFor(
+      () => {
+        const chartSvg = chartContainer.querySelector('svg');
+
+        if (!(chartSvg instanceof SVGElement)) {
+          throw new Error('Executions chart is not drawn yet');
+        }
+
+        const chartSvgRect = chartSvg.getBoundingClientRect();
+        const hoverX = chartSvgRect.left + chartSvgRect.width * 0.6;
+        const hoverY = chartSvgRect.top + chartSvgRect.height / 2;
+        const hoveredElement = document.elementFromPoint(hoverX, hoverY);
+
+        if (!isDefined(hoveredElement)) {
+          throw new Error('Nothing under the pointer');
+        }
+
+        fireEvent.mouseMove(hoveredElement, {
+          clientX: hoverX,
+          clientY: hoverY,
+        });
+
+        expect(tooltip).toHaveStyle({ opacity: '1' });
+      },
+      { timeout: 5000 },
+    );
+
+    // The tooltip is fixed-positioned under a container-type ancestor, where a stale floating-ui copy used to render it far above the chart
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const chartRect = chartContainer.getBoundingClientRect();
+
+    expect(tooltipRect.left).toBeGreaterThanOrEqual(chartRect.left);
+    expect(tooltipRect.right).toBeLessThanOrEqual(chartRect.right);
+    expect(tooltipRect.top).toBeGreaterThanOrEqual(chartRect.top);
+    expect(tooltipRect.bottom).toBeLessThanOrEqual(chartRect.bottom);
+  },
+};
+
+export const AppAnalyticsCurrentWorkspace: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-analytics',
+    );
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query(
+          getOperationName(FIND_MANY_APPLICATION_REGISTRATIONS) ?? '',
+          () =>
+            HttpResponse.json({
+              data: {
+                findManyApplicationRegistrations: [APP_ANALYTICS_REGISTRATION],
+              },
+            }),
+        ),
+        metadataGraphql.query(
+          getOperationName(FIND_APPLICATION_ANALYTICS) ?? '',
+          () =>
+            HttpResponse.json({
+              data: { findApplicationAnalytics: APP_ANALYTICS },
+            }),
+        ),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      'Aggregated per UTC day for this workspace only. The current day is still accumulating.',
+      {},
+      { timeout: 5000 },
+    );
+    expect(canvas.getByText('This workspace')).toBeVisible();
+    expect(canvas.getByText('Lead Scoring')).toBeVisible();
+    expect(canvas.queryByText('Active workspaces')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Version adoption')).not.toBeInTheDocument();
   },
 };
