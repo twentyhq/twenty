@@ -141,6 +141,39 @@ export const SearchAndAddColumn: Story = {
   },
 };
 
+export const AddColumnThroughRelation: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Add column' }),
+    );
+    const popup = await body.findByRole('dialog', { name: 'Add column' });
+    await userEvent.type(
+      within(popup).getByPlaceholderText('Search fields'),
+      'Account Owner',
+    );
+    await userEvent.click(
+      await within(popup).findByRole('button', { name: 'Account Owner' }),
+    );
+    await within(popup).findByRole('button', {
+      name: 'Account Owner, back to fields',
+    });
+    await userEvent.click(
+      await within(popup).findByRole('button', { name: 'Time zone' }),
+    );
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(onCreateManyViewFields).toHaveBeenCalledWith([
+        expect.objectContaining({
+          isVisible: true,
+          relationTargetFieldMetadataId: expect.stringMatching(/^[0-9a-f-]+$/),
+        }),
+      ]),
+    );
+  },
+};
+
 export const EmptySearchAndCustomizeFields: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -175,11 +208,15 @@ export const AllFieldsVisible: Story = {
       await canvas.findByRole('button', { name: 'Add column' }),
     );
     const popup = await body.findByRole('dialog', { name: 'Add column' });
+    // Relations stay listed so their target fields remain reachable; plain fields are gone.
     expect(
-      within(popup).getByText('All fields are already visible'),
+      within(popup).getByRole('button', { name: 'Account Owner' }),
     ).toBeVisible();
     expect(
-      within(popup).queryByPlaceholderText('Search fields'),
+      within(popup).queryByRole('button', { name: 'Name' }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(popup).queryByText('All fields are already visible'),
     ).not.toBeInTheDocument();
     await userEvent.keyboard('{Escape}');
   },

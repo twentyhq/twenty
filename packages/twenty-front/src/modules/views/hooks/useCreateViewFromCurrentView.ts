@@ -168,6 +168,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         inputs: sourceView.viewFields.map((viewField) => ({
           id: v4(),
           fieldMetadataId: viewField.fieldMetadataId,
+          relationTargetFieldMetadataId:
+            viewField.relationTargetFieldMetadataId ?? null,
           position: viewField.position,
           isVisible: viewField.isVisible,
           size: viewField.size,
