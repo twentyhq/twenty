@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 export enum errors {
   LabelNotUnique = 'LABEL_NOT_UNIQUE',
   LabelNotFormattable = 'LABEL_NOT_FORMATTABLE',
@@ -7,11 +9,11 @@ export enum errors {
 export const getErrorMessageFromError = (error?: string) => {
   switch (error) {
     case errors.LabelEmpty:
-      return 'Name cannot be empty.';
+      return t`Name cannot be empty.`;
     case errors.LabelNotFormattable:
-      return 'Name should start with a letter.';
+      return t`Name should start with a letter.`;
     case errors.LabelNotUnique:
-      return 'This name is already used.';
+      return t`This name is already used.`;
     default:
       return '';
   }

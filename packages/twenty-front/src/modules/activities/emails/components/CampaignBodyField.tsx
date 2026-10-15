@@ -1,7 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { type Editor } from '@tiptap/core';
-import { useCallback } from 'react';
 
 import { useCampaignBodyState } from '@/activities/emails/hooks/useCampaignBodyState';
 import { EmailEditorCanvas } from '@/activities/emails/editor/components/EmailEditorCanvas';
@@ -21,27 +18,14 @@ const StyledContainer = styled.div`
 
 type CampaignBodyFieldProps = {
   campaign: MessageCampaign;
-  // Exposes the editor so the envelope block can follow the per-campaign canvas width.
-  onEditorReady?: (editor: Editor | null) => void;
 };
 
-export const CampaignBodyField = ({
-  campaign,
-  onEditorReady,
-}: CampaignBodyFieldProps) => {
+export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   const { body, setBody, flush, draftResyncKey } = useCampaignBodyState({
     campaign,
   });
   const setActiveEmailEditor = useSetAtomState(activeEmailEditorState);
   const { uploadEmailImage } = useUploadEmailImage();
-
-  const handleEditorReady = useCallback(
-    (editor: Editor | null) => {
-      setActiveEmailEditor(editor);
-      onEditorReady?.(editor);
-    },
-    [setActiveEmailEditor, onEditorReady],
-  );
 
   return (
     <StyledContainer onBlur={() => flush()}>
@@ -49,10 +33,9 @@ export const CampaignBodyField = ({
         key={draftResyncKey}
         defaultValue={body}
         onChange={setBody}
-        placeholder={t`Type something or press "/" to see commands`}
         profile={CAMPAIGN_BODY_EDITOR_PROFILE}
         EditorComponent={EmailEditorCanvas}
-        onEditorReady={handleEditorReady}
+        onEditorReady={setActiveEmailEditor}
         onImageUpload={uploadEmailImage}
       />
     </StyledContainer>

@@ -97,6 +97,10 @@ export const IconOnly: Story = {
   },
 };
 
+export const Small: Story = {
+  args: { size: 'sm' },
+};
+
 export const ContentWidth: Story = {
   args: { itemWidth: 'content' },
   play: async ({ canvasElement }) => {

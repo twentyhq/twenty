@@ -107,11 +107,11 @@ type ProposableTools = {
 type RegistryToolContext = Pick<
   ToolContext,
   | 'workspaceId'
-  | 'roleId'
   | 'authContext'
   | 'actorContext'
   | 'userId'
   | 'userWorkspaceId'
+  | 'agentId'
 >;
 
 const EMPTY_USAGE: LanguageModelUsage = {
@@ -163,21 +163,23 @@ export class AgentAsyncExecutorService {
   // preloading the few granted object schemas saves the model a learn_tools round trip
   private async buildPreloadedRegistryTools({
     toolContext,
+    agentRoleId,
     agentRunRoleIds,
     additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
+    agentRoleId: string;
     agentRunRoleIds?: AgentRunRoleIds;
     additionalExcludedToolNames?: readonly string[];
   }): Promise<{ tools: ToolSet; proposableTools: ProposableTools }> {
     const rolePermissionConfig = buildAgentRolePermissionConfig({
-      agentRoleId: toolContext.roleId,
+      agentRoleId,
       agentRunRoleIds,
     });
     const preloadedToolContext = { ...toolContext, rolePermissionConfig };
 
     const tools = await this.toolRegistry.getToolsByCategories(
-      { ...preloadedToolContext, requireExplicitObjectGrants: true },
+      { ...preloadedToolContext, explicitObjectGrantsRoleId: agentRoleId },
       {
         categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
         excludeTools: [
@@ -209,10 +211,12 @@ export class AgentAsyncExecutorService {
   // learn_tools / execute_tool instead, scoped by composed role permissions rather than explicit grants only
   private async buildLazyRegistryTools({
     toolContext: baseToolContext,
+    agentRoleId,
     agentRunRoleIds,
     additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
+    agentRoleId: string;
     agentRunRoleIds?: AgentRunRoleIds;
     additionalExcludedToolNames?: readonly string[];
   }): Promise<{
@@ -223,23 +227,18 @@ export class AgentAsyncExecutorService {
     const toolContext: ToolContext = {
       ...baseToolContext,
       rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId: baseToolContext.roleId,
+        agentRoleId,
         agentRunRoleIds,
       }),
     };
-    const {
-      workspaceId,
-      roleId,
+    const { workspaceId, userId, userWorkspaceId, rolePermissionConfig } =
+      toolContext;
+
+    const fullCatalog = await this.toolRegistry.buildToolIndex(workspaceId, {
       userId,
       userWorkspaceId,
       rolePermissionConfig,
-    } = toolContext;
-
-    const fullCatalog = await this.toolRegistry.buildToolIndex(
-      workspaceId,
-      roleId,
-      { userId, userWorkspaceId, rolePermissionConfig },
-    );
+    });
 
     const allowedCategories = new Set(
       OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES,
@@ -408,7 +407,7 @@ export class AgentAsyncExecutorService {
         if (isDefined(agentRoleId)) {
           const toolContext: RegistryToolContext = {
             workspaceId: agent.workspaceId,
-            roleId: agentRoleId,
+            agentId: agent.id,
             authContext,
             actorContext,
             ...this.resolveUserIdentity(authContext),
@@ -417,12 +416,14 @@ export class AgentAsyncExecutorService {
             toolLoadingStrategy === 'lazy'
               ? await this.buildLazyRegistryTools({
                   toolContext,
+                  agentRoleId,
                   agentRunRoleIds,
                   additionalExcludedToolNames,
                 })
               : {
                   ...(await this.buildPreloadedRegistryTools({
                     toolContext,
+                    agentRoleId,
                     agentRunRoleIds,
                     additionalExcludedToolNames,
                   })),

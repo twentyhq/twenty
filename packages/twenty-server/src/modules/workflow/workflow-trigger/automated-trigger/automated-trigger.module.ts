@@ -4,6 +4,8 @@ import { Module } from '@nestjs/common';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
@@ -15,6 +17,8 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
 
 @Module({
   imports: [
+    ApplicationModule,
+    CoreEntityCacheModule,
     WorkflowVersionCoreModule,
     WorkflowCoreModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
