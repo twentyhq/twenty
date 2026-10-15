@@ -4,7 +4,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 @ObjectType('AgentChatChannelThreadIds')
 export class AgentChatChannelThreadIdsDTO {
-  // Ordered by last activity, most recent first
   @Field(() => [UUIDScalarType])
   threadIds: string[];
 
