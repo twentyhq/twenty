@@ -61,7 +61,6 @@ import {
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100;
-const MEMOIZER_TTL_MS = 10_000;
 const STALE_VERSION_TTL_MS = 5_000;
 const MAX_LOCAL_STALE_VERSIONS = 5;
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling.
@@ -121,7 +120,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     number
   >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
-    MEMOIZER_TTL_MS,
+    LOCAL_TTL_MS,
   );
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
