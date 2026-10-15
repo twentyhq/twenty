@@ -27,16 +27,11 @@ const buildTool = ({
       .fn()
       .mockResolvedValue(draftCoreVersions),
   };
-  const flatEntityMapsCacheService = {
-    invalidateFlatEntityMaps: jest.fn().mockResolvedValue(undefined),
-  };
-
   const tool = createUpdateWorkflowAgentTool(
     {
       agentService,
       coreWorkflowVersionMutationService,
       coreWorkflowVersionListService,
-      flatEntityMapsCacheService,
     } as never,
     {
       workspaceId: WORKSPACE_ID,
@@ -49,7 +44,6 @@ const buildTool = ({
     agentService,
     coreWorkflowVersionMutationService,
     coreWorkflowVersionListService,
-    flatEntityMapsCacheService,
   };
 };
 
@@ -58,45 +52,72 @@ describe('createUpdateWorkflowAgentTool', () => {
     jest.clearAllMocks();
   });
 
-  it('should resync the linked AI_AGENT step output schema when responseFormat changes', async () => {
+  it('should set the response format on the linked AI_AGENT steps rather than on the agent', async () => {
     const step = buildAiAgentStep(AGENT_ID);
-    const {
-      tool,
-      coreWorkflowVersionMutationService,
-      flatEntityMapsCacheService,
-    } = buildTool({
-      draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
-    });
+    const responseFormat = {
+      type: 'json',
+      schema: {
+        type: 'object',
+        properties: { summary: { type: 'string' } },
+      },
+    };
+    const { tool, agentService, coreWorkflowVersionMutationService } =
+      buildTool({
+        draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
+      });
 
     const result = (await tool.execute({
       agentId: AGENT_ID,
-      responseFormat: {
-        type: 'json',
-        schema: {
-          type: 'object',
-          properties: { summary: { type: 'string' } },
-        },
-      },
+      responseFormat,
     } as never)) as Record<string, unknown>;
 
     expect(result.success).toBe(true);
-    expect(
-      flatEntityMapsCacheService.invalidateFlatEntityMaps,
-    ).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      flatMapsKeys: ['flatAgentMaps'],
-    });
+    expect(agentService.updateOneAgent).not.toHaveBeenCalled();
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledTimes(
+      1,
+    );
     expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       coreWorkflowVersionId: 'core-version-1',
-      step,
+      step: {
+        ...step,
+        settings: {
+          ...step.settings,
+          input: { agentId: AGENT_ID, responseFormat },
+        },
+      },
     });
   });
 
-  it('should not resync when responseFormat is not provided', async () => {
+  it('should set the response format on every step using the agent in a draft', async () => {
+    const firstStep = buildAiAgentStep(AGENT_ID, 'step-1');
+    const secondStep = buildAiAgentStep(AGENT_ID, 'step-2');
+    const { tool, coreWorkflowVersionMutationService } = buildTool({
+      draftCoreVersions: [
+        { id: 'core-version-1', steps: [firstStep, secondStep] },
+      ],
+    });
+
+    await tool.execute({
+      agentId: AGENT_ID,
+      responseFormat: { type: 'text' },
+    } as never);
+
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledTimes(
+      2,
+    );
+    expect(
+      coreWorkflowVersionMutationService.updateStep.mock.calls.map(
+        ([{ step }]) => step.id,
+      ),
+    ).toEqual(['step-1', 'step-2']);
+  });
+
+  it('should only update the agent when responseFormat is not provided', async () => {
     const step = buildAiAgentStep(AGENT_ID);
     const {
       tool,
+      agentService,
       coreWorkflowVersionMutationService,
       coreWorkflowVersionListService,
     } = buildTool({
@@ -109,6 +130,11 @@ describe('createUpdateWorkflowAgentTool', () => {
     } as never)) as Record<string, unknown>;
 
     expect(result.success).toBe(true);
+    expect(agentService.updateOneAgent).toHaveBeenCalledTimes(1);
+    expect(agentService.updateOneAgent).toHaveBeenCalledWith({
+      input: { id: AGENT_ID, prompt: 'You are a helpful assistant' },
+      workspaceId: WORKSPACE_ID,
+    });
     expect(
       coreWorkflowVersionListService.findDraftCoreWorkflowVersions,
     ).not.toHaveBeenCalled();
@@ -127,7 +153,7 @@ describe('createUpdateWorkflowAgentTool', () => {
       ],
     });
 
-    await tool.execute({
+    const result = await tool.execute({
       agentId: AGENT_ID,
       responseFormat: { type: 'text' },
     } as never);
@@ -135,9 +161,11 @@ describe('createUpdateWorkflowAgentTool', () => {
     expect(
       coreWorkflowVersionMutationService.updateStep,
     ).not.toHaveBeenCalled();
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('no draft AI_AGENT step uses agent');
   });
 
-  it('should still report agent update success when the resync fails', async () => {
+  it('should report a failure when the steps cannot be updated', async () => {
     const step = buildAiAgentStep(AGENT_ID);
     const { tool, coreWorkflowVersionMutationService } = buildTool({
       draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
@@ -152,7 +180,7 @@ describe('createUpdateWorkflowAgentTool', () => {
       responseFormat: { type: 'text' },
     } as never)) as Record<string, unknown>;
 
-    expect(result.success).toBe(true);
-    expect(result.message).toContain('failed to resync');
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('boom');
   });
 });
