@@ -1,4 +1,5 @@
 import { isDefined } from '@/utils/validation/isDefined';
+import { isValidUuid } from '@/utils/validation/isValidUuid';
 
 const RECORD_REFERENCE_PATTERN = /\[\[record:([^:\]]+):([^:\]]+):/g;
 
@@ -15,7 +16,11 @@ export const extractRecordReferenceIds = ({
   for (const [, referenceObjectName, recordId] of text.matchAll(
     RECORD_REFERENCE_PATTERN,
   )) {
-    if (referenceObjectName === objectNameSingular && isDefined(recordId)) {
+    if (
+      referenceObjectName === objectNameSingular &&
+      isDefined(recordId) &&
+      isValidUuid(recordId)
+    ) {
       recordIds.add(recordId);
     }
   }

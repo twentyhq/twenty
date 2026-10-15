@@ -38,4 +38,13 @@ describe('extractRecordReferenceIds', () => {
       }),
     ).toEqual([]);
   });
+
+  it('ignores references whose id is not a uuid', () => {
+    expect(
+      extractRecordReferenceIds({
+        text: `[[record:workspaceMember:not-a-uuid:Jony]] and [[record:workspaceMember:${TIM_ID}:Tim]]`,
+        objectNameSingular: 'workspaceMember',
+      }),
+    ).toEqual([TIM_ID]);
+  });
 });
