@@ -117,7 +117,8 @@
       "PhoneCountryPickerTriggerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerTriggerProps",
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
-      "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps"
+      "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
     }
   },
   "components/layout": {
@@ -651,6 +652,7 @@
       "IconUserPin": "icon/components/TablerIcons",
       "IconUserPlus": "icon/components/TablerIcons",
       "IconUsers": "icon/components/TablerIcons",
+      "IconUsersGroup": "icon/components/TablerIcons",
       "IconVariable": "icon/components/TablerIcons",
       "IconVariablePlus": "icon/components/TablerIcons",
       "IconVersions": "icon/components/TablerIcons",

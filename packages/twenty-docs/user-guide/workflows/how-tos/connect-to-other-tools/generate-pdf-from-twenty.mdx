@@ -41,7 +41,7 @@ With a Manual Trigger, users can run this workflow using a button that appears o
 
 | Parameter | Value |
 |-----------|-------|
-| `companyId` | `{{trigger.object.id}}` |
+| `companyId` | `{{trigger.payload.id}}` |
 
 <Note>
 If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.

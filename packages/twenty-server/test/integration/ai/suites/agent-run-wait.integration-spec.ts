@@ -358,9 +358,9 @@ describe('agent runs that wait (integration)', () => {
       expect(
         await findTurnStatuses(response.body.data.runAgent.threadId),
       ).toEqual(['completed', 'completed']);
+      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
     });
 
-    expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
     expect(executeAgent).toHaveBeenCalledTimes(2);
   });
 
@@ -419,9 +419,9 @@ describe('agent runs that wait (integration)', () => {
           'completed',
           'completed',
         ]);
+        expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
       });
 
-      expect(await findSuspensions('AGENT_API_RUN', agentId)).toEqual([]);
       expect(
         executeAgent.mock.calls.map(
           ([execution]) => execution.executionContext.authContext,

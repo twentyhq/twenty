@@ -106,6 +106,7 @@ export class AgentChatChannelResolver {
         userWorkspaceId,
         setting: PermissionFlagType.AI_SETTINGS,
         applicationId: undefined,
+        agentId: undefined,
       });
 
     return this.channelService.findChannels({

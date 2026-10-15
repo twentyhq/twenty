@@ -1,7 +1,8 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
+import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   computeRecordGqlOperationFilter,
@@ -31,9 +32,10 @@ export const useGraphWidgetQueryCommon = ({
 
   const aggregateFieldId = configuration.aggregateFieldMetadataId;
 
-  const aggregateField = objectMetadataItem.readableFields.find(
-    (field: { id: string }) => field.id === aggregateFieldId,
-  );
+  const aggregateField = findFieldMetadataItemByFieldMetadataId({
+    fieldMetadataItems: objectMetadataItem.readableFields,
+    fieldMetadataId: aggregateFieldId,
+  });
 
   if (!isDefined(aggregateField)) {
     throw new Error('Aggregate field not found');
@@ -45,17 +47,10 @@ export const useGraphWidgetQueryCommon = ({
     flattenedFieldMetadataItemsSelector,
   );
 
-  const objectFieldMetadataIds = new Set(
-    objectMetadataItem.fields
-      .filter((field) => field.isActive)
-      .map((field) => field.id),
-  );
-
-  const { recordFilters: sanitizedRecordFilters } =
-    dropChartRecordFiltersWithDeletedFields({
-      chartFilters: configuration.filter ?? {},
-      validFieldMetadataIds: objectFieldMetadataIds,
-    });
+  const { recordFilters: sanitizedRecordFilters } = sanitizeChartRecordFilters({
+    chartFilters: configuration.filter ?? {},
+    fieldMetadataItems: objectMetadataItem.fields,
+  });
 
   const gqlOperationFilter = computeRecordGqlOperationFilter({
     fieldMetadataItems: flattenedFieldMetadataItems,

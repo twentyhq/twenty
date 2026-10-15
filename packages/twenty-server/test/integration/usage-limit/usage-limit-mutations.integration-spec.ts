@@ -176,6 +176,17 @@ describe('Usage limit mutations', () => {
         'EMAIL EMAIL_SEND quota limits cannot count MILLISECOND, only CREDIT, INVOCATION',
       );
     });
+
+    it('refuses a quota over all usage for the workspace', async () => {
+      const response = await createUsageLimitRequest({
+        resourceType: UsageResourceType.ALL,
+        operationType: UsageOperationType.ALL,
+      });
+
+      expect(response.body.errors?.[0]?.message).toBe(
+        'ALL quota limits cannot be scoped to workspace',
+      );
+    });
   });
 
   describe('updateUsageLimit', () => {

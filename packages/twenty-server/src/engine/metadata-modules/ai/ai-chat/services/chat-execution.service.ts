@@ -187,7 +187,7 @@ export class ChatExecutionService {
       ...(await getAuthorization()),
       resolveExecutionContext: undefined,
     });
-    const { actorContext, roleId, userId, userContext } =
+    const { actorContext, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
@@ -207,17 +207,13 @@ export class ChatExecutionService {
       resolveExecutionContext,
     };
 
-    const toolCatalog = await this.toolRegistry.buildToolIndex(
-      workspace.id,
-      roleId,
-      {
-        userId,
-        userWorkspaceId,
-        locale,
-        excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
-        rolePermissionConfig: toolContext.rolePermissionConfig,
-      },
-    );
+    const toolCatalog = await this.toolRegistry.buildToolIndex(workspace.id, {
+      userId,
+      userWorkspaceId,
+      locale,
+      excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
+      rolePermissionConfig: toolContext.rolePermissionConfig,
+    });
 
     const skillCatalog = await this.skillService.findAllFlatSkills(
       workspace.id,
@@ -488,21 +484,20 @@ export class ChatExecutionService {
       );
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
-      await this.aiBillingService.emitAiTokenUsageEvent(
-        workspace.id,
+      await this.aiBillingService.emitAiTokenUsageEvent({
+        workspaceId: workspace.id,
         creditsUsedMicro,
         totalTokens,
-        registeredModel.modelId,
-        UsageOperationType.AI_CHAT_TOKEN,
-        null,
-        userWorkspaceId,
-      );
+        modelId: registeredModel.modelId,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        spenders: { userWorkspaceId },
+      });
 
-      void this.aiBillingService.billNativeWebSearchUsage(
-        countNativeWebSearchCallsFromSteps(steps),
-        workspace.id,
-        userWorkspaceId,
-      );
+      void this.aiBillingService.billNativeWebSearchUsage({
+        nativeWebSearchCallCount: countNativeWebSearchCallsFromSteps(steps),
+        workspaceId: workspace.id,
+        spenders: { userWorkspaceId },
+      });
 
       const modelAttr = { model: registeredModel.modelId };
 
@@ -702,8 +697,7 @@ export class ChatExecutionService {
             aiBillingService: this.aiBillingService,
             modelId: registeredModel.modelId,
             workspaceId: workspace.id,
-            userWorkspaceId,
-            agentId: null,
+            spenders: { userWorkspaceId },
             operationType: UsageOperationType.AI_CHAT_TOKEN,
           },
         });

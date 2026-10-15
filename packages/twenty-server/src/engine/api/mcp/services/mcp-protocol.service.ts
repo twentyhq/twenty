@@ -26,6 +26,7 @@ import {
   LIST_SKILLS_TOOL_NAME,
   listSkillsInputSchema,
 } from 'src/engine/api/mcp/tools/list-skills.tool';
+import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
@@ -33,7 +34,6 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -58,7 +58,11 @@ import {
   loadSkillInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import {
+  type RoleIdsBySource,
+  type RolePermissionConfig,
+} from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { buildAgentRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-agent-role-ids-by-source.util';
 import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
@@ -109,12 +113,10 @@ export class McpProtocolService {
     requestId: string | number,
     {
       workspaceId,
-      roleId,
       rolePermissionConfig,
       isDirectMode,
     }: {
       workspaceId: string;
-      roleId: string;
       rolePermissionConfig: RolePermissionConfig;
       isDirectMode: boolean;
     },
@@ -122,7 +124,6 @@ export class McpProtocolService {
     const instructions =
       await this.mcpInstructionBuilderService.buildInstructions({
         workspaceId,
-        roleId,
         rolePermissionConfig,
         isDirectMode,
       });
@@ -146,12 +147,14 @@ export class McpProtocolService {
     userWorkspaceId,
     apiKey,
     application,
+    agentId,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
     apiKey?: FlatApiKey;
     application?: FlatApplication;
-  }): Promise<{ roleId: string; rolePermissionConfig: RolePermissionConfig }> {
+    agentId?: string;
+  }): Promise<{ rolePermissionConfig: RolePermissionConfig }> {
     if (isDefined(apiKey)) {
       const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         apiKey.id,
@@ -159,8 +162,30 @@ export class McpProtocolService {
       );
 
       return {
-        roleId: apiKeyRoleId,
         rolePermissionConfig: { intersectionOf: { apiKeyRoleId } },
+      };
+    }
+
+    const agentRoleIdsBySource = await this.resolveAgentRoleIdsBySource({
+      workspaceId,
+      agentId,
+    });
+
+    if (!userWorkspaceId && isDefined(application)) {
+      if (!isDefined(application.defaultRoleId)) {
+        throw new HttpException(
+          'Application has no role',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      return {
+        rolePermissionConfig: {
+          intersectionOf: {
+            applicationRoleId: application.defaultRoleId,
+            ...agentRoleIdsBySource,
+          },
+        },
       };
     }
 
@@ -177,14 +202,32 @@ export class McpProtocolService {
     });
 
     return {
-      roleId: userRoleId,
       rolePermissionConfig: {
-        intersectionOf: buildUserRoleIdsBySource({
-          userRoleId,
-          application,
-        }),
+        intersectionOf: {
+          ...buildUserRoleIdsBySource({ userRoleId, application }),
+          ...agentRoleIdsBySource,
+        },
       },
     };
+  }
+
+  private async resolveAgentRoleIdsBySource({
+    workspaceId,
+    agentId,
+  }: {
+    workspaceId: string;
+    agentId: string | undefined;
+  }): Promise<Pick<RoleIdsBySource, 'agentRoleId'>> {
+    if (!isDefined(agentId)) {
+      return {};
+    }
+
+    const { flatRoleTargetByAgentIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleTargetByAgentIdMaps',
+      ]);
+
+    return buildAgentRoleIdsBySource({ agentId, flatRoleTargetByAgentIdMaps });
   }
 
   private async buildActorContext(
@@ -233,7 +276,6 @@ export class McpProtocolService {
 
   private async buildMcpToolSet(
     workspace: FlatWorkspace,
-    roleId: string,
     rolePermissionConfig: RolePermissionConfig,
     options?: {
       authContext?: WorkspaceAuthContext;
@@ -241,6 +283,7 @@ export class McpProtocolService {
       userWorkspaceId?: string;
       apiKey?: FlatApiKey;
       application?: FlatApplication;
+      agentId?: string;
     },
   ): Promise<{ toolSet: ToolSet; toolContext: ToolProviderContext }> {
     const actorContext = await this.buildActorContext(
@@ -251,12 +294,12 @@ export class McpProtocolService {
 
     const toolContext: ToolProviderContext = {
       workspaceId: workspace.id,
-      roleId,
       rolePermissionConfig,
       authContext: options?.authContext,
       application: options?.application,
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
+      agentId: options?.agentId,
       actorContext,
     };
 
@@ -268,7 +311,7 @@ export class McpProtocolService {
     const toolSet: ToolSet = {
       ...annotatePreloadedMcpTools(preloadedTools),
       [GET_TOOL_CATALOG_TOOL_NAME]: {
-        ...createGetToolCatalogTool(this.toolRegistry, workspace.id, roleId, {
+        ...createGetToolCatalogTool(this.toolRegistry, workspace.id, {
           rolePermissionConfig,
           userId: options?.userId,
           userWorkspaceId: options?.userWorkspaceId,
@@ -329,20 +372,15 @@ export class McpProtocolService {
   async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
+      authContext,
       workspace,
       userId,
       userWorkspaceId,
       apiKey,
       application,
+      agentId,
       isDirectMode,
-    }: {
-      workspace: FlatWorkspace;
-      userId?: string;
-      userWorkspaceId?: string;
-      apiKey: FlatApiKey | undefined;
-      application?: FlatApplication;
-      isDirectMode: boolean;
-    },
+    }: McpCoreQueryContext,
     sseWriter?: (data: Record<string, unknown>) => void,
   ): Promise<Record<string, unknown> | null> {
     try {
@@ -351,17 +389,25 @@ export class McpProtocolService {
         return null;
       }
 
+      // No tool runs without a workspace member, so a user still onboarding is refused upfront
+      if (authContext.type === 'pendingActivationUser') {
+        throw new HttpException(
+          'Finish signing up before using MCP',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
       if (method === 'initialize') {
-        const { roleId, rolePermissionConfig } = await this.resolveCallerRoles({
+        const { rolePermissionConfig } = await this.resolveCallerRoles({
           workspaceId: workspace.id,
           userWorkspaceId,
           apiKey,
           application,
+          agentId,
         });
 
         return this.handleInitialize(id, {
           workspaceId: workspace.id,
-          roleId,
           rolePermissionConfig,
           isDirectMode,
         });
@@ -392,26 +438,24 @@ export class McpProtocolService {
         });
       }
 
-      const { roleId, rolePermissionConfig } = await this.resolveCallerRoles({
+      const { rolePermissionConfig } = await this.resolveCallerRoles({
         workspaceId: workspace.id,
         userWorkspaceId,
         apiKey,
         application,
+        agentId,
       });
-
-      const authContext = isDefined(apiKey)
-        ? buildApiKeyAuthContext({ workspace, apiKey })
-        : undefined;
 
       const { toolSet, toolContext } = await Sentry.startSpan(
         { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
         () =>
-          this.buildMcpToolSet(workspace, roleId, rolePermissionConfig, {
+          this.buildMcpToolSet(workspace, rolePermissionConfig, {
             authContext,
             application,
             userId,
             userWorkspaceId,
             apiKey,
+            agentId,
           }),
       );
 

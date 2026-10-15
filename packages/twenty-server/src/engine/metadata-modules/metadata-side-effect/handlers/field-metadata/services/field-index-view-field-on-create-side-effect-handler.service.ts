@@ -10,6 +10,7 @@ import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
+import { withMorphRelationHeadViewField } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/with-morph-relation-head-view-field.util';
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
 import {
   computeSameBatchViewFieldPositionByFieldUniversalIdentifier,
@@ -94,10 +95,11 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       status: 'success',
       operations: {
         viewField: {
-          flatEntityToCreate: {
-            [flatIndexViewFieldToCreate.universalIdentifier]:
-              flatIndexViewFieldToCreate,
-          },
+          flatEntityToCreate: withMorphRelationHeadViewField({
+            sourceFlatFieldMetadata,
+            flatViewFieldToCreate: flatIndexViewFieldToCreate,
+            relatedFlatEntityMaps,
+          }),
         },
       },
     };

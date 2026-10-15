@@ -4,6 +4,7 @@ import { createAppNotInstalledError } from '@/app/create-app-not-installed-error
 import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
 import { generateAppClient } from '@/app/generate-app-client';
 import { getClientGenerationSkipReason } from '@/app/get-client-generation-skip-reason';
+import { getClientSdkPackagePath } from '@/app/get-client-sdk-package-path';
 import { isApplicationNotFoundError } from '@/app/is-application-not-found-error';
 import { resolveAppProject } from '@/app/project/resolve-app-project';
 import { resolveSourceSdk } from '@/app/project/resolve-source-sdk';
@@ -13,16 +14,18 @@ import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
-import { formatSuccessLine } from '@/output/style';
+import { formatDisplayPath } from '@/output/format-display-path';
+import { colorText, formatSuccessLine } from '@/output/style';
 
 export const runAppGenerateClientCommand: CommandRun<
   TargetCommandContext
 > = async (context) => {
   const { options, output, outputMode, signal, target } = context;
   const startedAt = performance.now();
+  const workingDirectory = process.cwd();
   const project = await resolveAppProject({
     explicitPath: readStringOption(options, 'path'),
-    workingDirectory: process.cwd(),
+    workingDirectory,
   });
   const skipReason = await getClientGenerationSkipReason({
     appPath: project.path,
@@ -52,7 +55,7 @@ export const runAppGenerateClientCommand: CommandRun<
 
   if (outputMode === 'human') {
     for (const diagnostic of identity.diagnostics) {
-      output.progress(formatToolingDiagnostic(diagnostic));
+      output.progress({ message: formatToolingDiagnostic(diagnostic) });
     }
   }
 
@@ -78,17 +81,26 @@ export const runAppGenerateClientCommand: CommandRun<
 
     throw error;
   });
+  const clientPath = getClientSdkPackagePath({ appPath: project.path });
+  const clientDisplayPath = formatDisplayPath({
+    workingDirectory,
+    targetPath: clientPath,
+  });
 
   return {
     data: {
       app: { path: project.path, name: project.name },
       sdk: { version: sdk.version },
+      client: { path: clientPath },
       application: identity.application,
       diagnostics: [...identity.diagnostics, ...generationDiagnostics],
       durationMilliseconds: Math.round(performance.now() - startedAt),
     },
-    human: formatSuccessLine(
-      `Generated the typed API client for ${identity.application.displayName ?? project.name} from ${target.apiUrl}`,
-    ),
+    human: [
+      formatSuccessLine(
+        `Generated the typed API client for ${identity.application.displayName ?? project.name} from ${target.apiUrl}`,
+      ),
+      `  Saved in ${colorText('cyan', clientDisplayPath)}`,
+    ].join('\n'),
   };
 };

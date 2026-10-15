@@ -1819,6 +1819,12 @@ export default {
             "baseProducts": [
                 92
             ],
+            "downgradePlanKeys": [
+                96
+            ],
+            "isSellable": [
+                4
+            ],
             "meteredProducts": [
                 93
             ],
@@ -1827,6 +1833,9 @@ export default {
             ],
             "resourceCreditProducts": [
                 92
+            ],
+            "upgradePlanKeys": [
+                96
             ],
             "__typename": [
                 1
@@ -8063,7 +8072,12 @@ export default {
                 470
             ],
             "switchBillingPlan": [
-                112
+                112,
+                {
+                    "plan": [
+                        96
+                    ]
+                }
             ],
             "switchSubscriptionInterval": [
                 112
@@ -11447,6 +11461,9 @@ export default {
             ],
             "prompt": [
                 1
+            ],
+            "responseFormat": [
+                296
             ],
             "runAsWorkspaceMemberId": [
                 500

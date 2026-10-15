@@ -841,15 +841,20 @@ type BillingPaymentIntent {
 
 type BillingPlan {
   baseProducts: [BillingLicensedProduct!]!
+  downgradePlanKeys: [BillingPlanKey!]!
+  isSellable: Boolean!
   meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
   resourceCreditProducts: [BillingLicensedProduct!]!
+  upgradePlanKeys: [BillingPlanKey!]!
 }
 
 """The different billing plans available"""
 enum BillingPlanKey {
   ENTERPRISE
+  ORGANIZATION_V2
   PRO
+  PRO_V2
 }
 
 type BillingPriceLicensed {
@@ -1941,6 +1946,7 @@ enum EngineComponentKey {
   EDIT_DASHBOARD_LAYOUT
   EDIT_RECORD_PAGE_LAYOUT
   EMAIL_BLOCK_SETTINGS
+  EMAIL_PAGE_STYLE
   EXPORT_FROM_RECORD_INDEX
   EXPORT_FROM_RECORD_SHOW
   EXPORT_MULTIPLE_RECORDS
@@ -3224,7 +3230,7 @@ type Mutation {
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   stopImpersonation: StopImpersonation!
-  switchBillingPlan: BillingUpdate!
+  switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
@@ -4228,6 +4234,7 @@ input RunAgentInput {
   input: [RunAgentMessageInput!]
   messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
   prompt: String @deprecated(reason: "Use input instead.")
+  responseFormat: JSON
   runAsWorkspaceMemberId: UUID
   thread: RunAgentThreadInput
 }
@@ -5461,6 +5468,7 @@ type UsageQuotaWithConsumption {
 
 enum UsageResourceType {
   AI
+  ALL
   API
   APP
   EMAIL

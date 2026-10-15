@@ -24,7 +24,7 @@ export const runAppLogsCommand: CommandRun<TargetCommandContext> = async (
   const { options, output, outputMode, signal, target } = context;
   const warn = (warning: CliWarning) => {
     if (outputMode === 'human') {
-      output.progress(formatWarningLine(warning.message));
+      output.progress({ message: formatWarningLine(warning.message) });
     } else {
       output.warn(warning);
     }
@@ -62,11 +62,11 @@ export const runAppLogsCommand: CommandRun<TargetCommandContext> = async (
   );
   if (outputMode === 'human') {
     for (const diagnostic of identity.diagnostics) {
-      output.progress(formatToolingDiagnostic(diagnostic));
+      output.progress({ message: formatToolingDiagnostic(diagnostic) });
     }
-    output.progress(
-      `Watching ${formatDataValue(identity.application.displayName ?? applicationUniversalIdentifier)} logs on ${target.apiUrl}. New executions only. Press Ctrl+C to stop.`,
-    );
+    output.progress({
+      message: `Watching ${formatDataValue(identity.application.displayName ?? applicationUniversalIdentifier)} logs on ${target.apiUrl}. New executions only. Press Ctrl+C to stop.`,
+    });
   }
 
   try {
