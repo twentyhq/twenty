@@ -1,11 +1,13 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 export const DELAY_ACTION: {
-  defaultLabel: string;
+  defaultLabel: MessageDescriptor;
   type: Extract<WorkflowActionType, 'DELAY'>;
   icon: string;
 } = {
-  defaultLabel: 'Delay',
+  defaultLabel: msg`Delay`,
   type: 'DELAY',
   icon: 'IconPlayerPause',
 };
