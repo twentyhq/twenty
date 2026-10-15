@@ -152,7 +152,7 @@ Setting `disabled` on shorthand or Root suppresses the tooltip itself. Trigger `
 
 ## Placement and overflowing text
 
-Shorthand defaults to `side="top"`, `align="center"`, `sideOffset={10}`, and a maximum width of `300` pixels. Placement adjusts to available space. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
+Shorthand defaults to `side="top"`, `align="center"`, `sideOffset={10}`, and a maximum width of `300` pixels. Placement adjusts to available space. An open tooltip hides while its anchor is scrolled out of view, including out of a scroll container. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
 
 Use [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) when a text label should show its full value only when truncated. Its existing `text`, `tooltipContent`, and `tooltipPlace` props remain available.
 

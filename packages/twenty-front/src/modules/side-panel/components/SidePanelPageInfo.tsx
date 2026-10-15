@@ -9,7 +9,7 @@ import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWork
 import { SidePanelPages } from 'twenty-shared/types';
 import { useTheme } from 'twenty-ui/theme';
 
-import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
+import { type SidePanelContextChipProps } from '@/side-panel/types/SidePanelContextChipProps';
 
 type SidePanelPageInfoProps = {
   pageChip: SidePanelContextChipProps | undefined;

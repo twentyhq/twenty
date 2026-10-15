@@ -18,6 +18,7 @@ import {
   IconApps,
   IconAt,
   IconCalendarEvent,
+  IconCode,
   IconColorSwatch,
   type IconComponent,
   IconCreditCard,
@@ -27,7 +28,6 @@ import {
   IconMail,
   IconMessage,
   IconMessageCircle,
-  IconPlug,
   IconServer,
   IconSettings2,
   IconSparkles,
@@ -43,7 +43,6 @@ import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 export type SettingsNavigationSection = {
   label: string;
   items: SettingsNavigationItem[];
-  isAdvanced?: boolean;
 };
 
 export type SettingsNavigationItem = {
@@ -55,7 +54,6 @@ export type SettingsNavigationItem = {
   matchSubPages?: boolean;
   isHidden?: boolean;
   subItems?: SettingsNavigationItem[];
-  isAdvanced?: boolean;
   modifier?: NavigationDrawerItemModifier;
 };
 
@@ -157,9 +155,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !permissionFlagMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`MCP & APIs`,
-          path: SettingsPath.ApiWebhooks,
-          Icon: IconPlug,
+          label: t`Developers`,
+          path: SettingsPath.Developers,
+          Icon: IconCode,
           isHidden:
             !permissionFlagMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },

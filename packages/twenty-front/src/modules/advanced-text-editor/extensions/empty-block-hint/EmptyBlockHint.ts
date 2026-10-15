@@ -8,17 +8,24 @@ import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import { isDefined } from 'twenty-shared/utils';
 
+const getHeadingHintText = (headingLevel: number | null) => {
+  switch (headingLevel) {
+    case 2:
+      return t`Heading 2`;
+    case 3:
+      return t`Heading 3`;
+    default:
+      return t`Heading 1`;
+  }
+};
+
 const getEmptyBlockHintText = ({
   kind,
   headingLevel,
 }: EmptyBlockHintTarget) => {
   switch (kind) {
     case 'heading':
-      return headingLevel === 3
-        ? t`Heading 3`
-        : headingLevel === 2
-          ? t`Heading 2`
-          : t`Heading 1`;
+      return getHeadingHintText(headingLevel);
     case 'listItem':
       return t`List`;
     case 'blockquote':

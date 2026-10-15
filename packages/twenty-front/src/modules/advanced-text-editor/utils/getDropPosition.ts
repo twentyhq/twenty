@@ -54,11 +54,17 @@ const getHoveredBlockBoundary = (
     : blockPosition + block.nodeSize;
 };
 
-export const getDropPosition = (
-  view: EditorView,
-  coordinates: DropCoordinates,
-  slice: Slice | undefined,
-) => {
+type GetDropPositionArgs = {
+  view: EditorView;
+  coordinates: DropCoordinates;
+  slice: Slice | undefined;
+};
+
+export const getDropPosition = ({
+  view,
+  coordinates,
+  slice,
+}: GetDropPositionArgs) => {
   const position = view.posAtCoords(coordinates);
 
   if (!isDefined(position)) {

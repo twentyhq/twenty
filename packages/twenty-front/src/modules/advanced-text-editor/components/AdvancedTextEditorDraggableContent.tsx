@@ -12,7 +12,6 @@ type AdvancedTextEditorDraggableContentProps = {
   Icon: IconComponent;
   label: string;
   children: ReactNode;
-  onDrop?: () => void;
 };
 
 export const AdvancedTextEditorDraggableContent = ({
@@ -21,7 +20,6 @@ export const AdvancedTextEditorDraggableContent = ({
   Icon,
   label,
   children,
-  onDrop,
 }: AdvancedTextEditorDraggableContentProps) => {
   const dragPreviewRef = useRef<HTMLDivElement>(null);
 
@@ -54,12 +52,8 @@ export const AdvancedTextEditorDraggableContent = ({
     <div
       draggable
       onDragStart={handleDragStart}
-      onDragEnd={(event) => {
+      onDragEnd={() => {
         editor.view.dragging = null;
-
-        if (event.dataTransfer.dropEffect !== 'none') {
-          onDrop?.();
-        }
       }}
     >
       {children}

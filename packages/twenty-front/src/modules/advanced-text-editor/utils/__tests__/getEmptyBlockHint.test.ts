@@ -55,6 +55,21 @@ describe('getEmptyBlockHint', () => {
     editor.destroy();
   });
 
+  it('should hint an empty heading that its custom placeholder does not cover', () => {
+    const editor = createEditor(
+      [{ type: 'heading', attrs: { level: 1 } }],
+      'Write the email',
+    );
+
+    expect(getEmptyBlockHint(editor)).toEqual({
+      from: 0,
+      to: 2,
+      kind: 'heading',
+      headingLevel: 1,
+    });
+    editor.destroy();
+  });
+
   it('should only hint other empty blocks while the editor is focused', () => {
     const editor = createEditor([HELLO_PARAGRAPH, { type: 'paragraph' }]);
 

@@ -264,6 +264,26 @@ describe('parseEmailDocument', () => {
     expect(result.success).toBe(true);
   });
 
+  it('should reject a blockquote with a non-paragraph child', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'blockquote',
+          content: [
+            {
+              type: 'heading',
+              attrs: { level: 2 },
+              content: [{ type: 'text', text: 'Quoted heading' }],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('should reject an empty blockquote', () => {
     const result = parseEmailDocument({
       type: 'doc',

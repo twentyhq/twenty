@@ -11,7 +11,7 @@ import {
 } from '@/settings/developers/utils/createWebhookInput';
 import { parseOperationsFromStrings } from '@/settings/developers/utils/parseOperationsFromStrings';
 import {
-  webhookFormSchema,
+  getWebhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -25,7 +25,7 @@ import {
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '@/settings/developers/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 
 type UseWebhookFormProps = {
   webhookId?: string;
@@ -51,7 +51,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const formConfig = useForm<WebhookFormValues>({
     mode: isCreationMode ? 'onSubmit' : 'onTouched',
-    resolver: zodResolver(webhookFormSchema),
+    resolver: zodResolver(getWebhookFormSchema()),
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
@@ -106,13 +106,11 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
 
       navigate(
-        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.ApiWebhooks,
+        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.Developers,
         createdWebhook ? { webhookId: createdWebhook.id } : undefined,
         undefined,
         undefined,
-        createdWebhook
-          ? undefined
-          : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
+        createdWebhook ? undefined : SETTINGS_DEVELOPERS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
@@ -202,11 +200,11 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
 
       navigate(
-        SettingsPath.ApiWebhooks,
+        SettingsPath.Developers,
         undefined,
         undefined,
         undefined,
-        SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
+        SETTINGS_DEVELOPERS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));

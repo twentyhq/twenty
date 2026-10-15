@@ -87,7 +87,7 @@ const orderedListNodeSchema = z.looseObject({
 const blockquoteNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.BLOCKQUOTE),
   attrs: z.looseObject({ style: styleAttributeSchema.nullable() }).optional(),
-  content: blockContentSchema.min(1),
+  content: z.array(paragraphNodeSchema).min(1),
 });
 
 const imageNodeSchema = z.looseObject({

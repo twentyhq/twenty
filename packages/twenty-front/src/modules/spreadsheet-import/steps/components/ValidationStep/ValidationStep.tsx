@@ -1,4 +1,4 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
@@ -53,12 +53,6 @@ const StyledToolbar = styled.div`
   transform: translateX(-50%);
   width: 400px;
   z-index: 1;
-`;
-
-const StyledButtonContainer = styled.div`
-  button {
-    height: 24px;
-  }
 `;
 
 const StyledErrorSwitch = styled.div`
@@ -288,14 +282,7 @@ export const ValidationStep = ({
 
   return (
     <>
-      <Dialog.Body
-        style={{
-          display: 'flex',
-          flex: '1 1 0%',
-          flexDirection: 'column',
-          padding: 0,
-        }}
-      >
+      <SpreadsheetImportStepBody>
         <StyledContentWrapper>
           {filterByErrors && tableData.length === 0 ? (
             <StyledNoRowsWithErrorsContainer>
@@ -335,16 +322,15 @@ export const ValidationStep = ({
                 <Trans>Show only rows with errors</Trans>
               </StyledErrorSwitchDescription>
             </StyledErrorSwitch>
-            <StyledButtonContainer>
-              <Button
-                startIcon={<IconTrash />}
-                onClick={deleteSelectedRows}
-                disabled={selectedRows.size === 0}
-              >{t`Remove`}</Button>
-            </StyledButtonContainer>
+            <Button
+              startIcon={<IconTrash />}
+              size="sm"
+              onClick={deleteSelectedRows}
+              disabled={selectedRows.size === 0}
+            >{t`Remove`}</Button>
           </StyledToolbar>
         </StyledContentWrapper>
-      </Dialog.Body>
+      </SpreadsheetImportStepBody>
       <StepNavigationButton
         onContinue={onContinue}
         onBack={onBack}

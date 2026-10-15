@@ -1586,15 +1586,15 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'ed2c2fde-1e7a-4a42-ba63-221eaa7c9759',
     label: i18nLabel(
       msg({
-        message: `Go to MCP & APIs Settings`,
+        message: `Go to Developers Settings`,
         context: 'commandMenuItem.label',
       }),
     ),
-    icon: 'IconPlug',
+    icon: 'IconCode',
     isPinned: false,
     position: 58,
     shortLabel: i18nLabel(
-      msg({ message: `MCP & APIs`, context: 'commandMenuItem.shortLabel' }),
+      msg({ message: `Developers`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'permissionFlags.API_KEYS_AND_WEBHOOKS',
@@ -1602,7 +1602,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     hotKeys: null,
-    payload: { path: '/settings/api-webhooks' },
+    payload: { path: '/settings/developers' },
   },
   goToSettingsApplications: {
     universalIdentifier: '44db6d7a-79ac-485e-b3da-da8776bd7777',

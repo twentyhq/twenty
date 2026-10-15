@@ -54,10 +54,15 @@ const getBlockDecorationOwner = (blockElement: HTMLElement) => {
   );
 };
 
-export const getBlockHandleAnchorRect = (
-  blockElement: HTMLElement,
-  handleHeight: number,
-) => {
+type GetBlockHandleAnchorRectArgs = {
+  blockElement: HTMLElement;
+  handleHeight: number;
+};
+
+export const getBlockHandleAnchorRect = ({
+  blockElement,
+  handleHeight,
+}: GetBlockHandleAnchorRectArgs) => {
   const blockRect = blockElement.getBoundingClientRect();
   const left =
     getBlockDecorationOwner(blockElement).getBoundingClientRect().left;

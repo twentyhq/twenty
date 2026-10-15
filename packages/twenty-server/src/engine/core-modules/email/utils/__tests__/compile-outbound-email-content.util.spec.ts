@@ -172,7 +172,34 @@ describe('compileOutboundEmailContent', () => {
     });
 
     expect(html).toMatch(/<li style="[^"]*color:#999999/);
-    expect(html).toContain('<span style="color:#333333">First item</span>');
+    expect(html).toContain('<div style="color:#333333">First item</div>');
+  });
+
+  it('should keep paragraph alignment inside list items', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'bulletList',
+          content: [
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: { style: { textAlign: 'center' } },
+                  content: [{ type: 'text', text: 'Centered item' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(html).toContain(
+      '<div style="color:#333333;text-align:center">Centered item</div>',
+    );
   });
 
   it('should apply text block styles to headings and paragraphs', async () => {

@@ -36,10 +36,15 @@ const stepInsertsNodeOfType = (
   return insertsNode;
 };
 
-export const getInsertedNodePosition = (
-  transaction: Transaction,
-  nodeTypeName: string,
-) => {
+type GetInsertedNodePositionArgs = {
+  transaction: Transaction;
+  nodeTypeName: string;
+};
+
+export const getInsertedNodePosition = ({
+  transaction,
+  nodeTypeName,
+}: GetInsertedNodePositionArgs) => {
   if (
     !transaction.docChanged ||
     isDefined(transaction.getMeta(HISTORY_PLUGIN_META_KEY)) ||

@@ -1,4 +1,4 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
 
@@ -99,16 +99,11 @@ export const SelectSheetStep = ({
 
   return (
     <>
-      <Dialog.Body
-        style={{
-          display: 'flex',
-          flex: '1 1 0%',
-          flexDirection: 'column',
-          padding: 'var(--t-spacing-10)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 'var(--t-spacing-8)',
-        }}
+      <SpreadsheetImportStepBody
+        padding="large"
+        isCenteredHorizontally
+        isCenteredVertically
+        hasLargeGap
       >
         <Heading title={t`Select the sheet to use`} />
         <RadioGroup
@@ -123,7 +118,7 @@ export const SelectSheetStep = ({
             </StyledRadioItemContainer>
           ))}
         </RadioGroup>
-      </Dialog.Body>
+      </SpreadsheetImportStepBody>
       <StepNavigationButton
         onContinue={() => handleOnContinue(value)}
         onBack={onBack}

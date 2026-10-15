@@ -68,16 +68,16 @@ export class MetadataToolProvider implements ToolProvider {
   }
 
   private async buildToolSet(context: ToolProviderContext): Promise<ToolSet> {
-    const isValidationRulesEnabled =
+    const isRecordCreationFormEnabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+        FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
         context.workspaceId,
       );
 
     return {
       ...this.objectMetadataToolsFactory.generateTools(context.workspaceId),
       ...this.fieldMetadataToolsFactory.generateTools(context.workspaceId),
-      ...(isValidationRulesEnabled
+      ...(isRecordCreationFormEnabled
         ? this.validationRuleToolsFactory.generateTools(context.workspaceId)
         : {}),
     };

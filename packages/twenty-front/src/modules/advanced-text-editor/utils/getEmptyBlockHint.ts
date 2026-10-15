@@ -36,8 +36,11 @@ export const getEmptyBlockHint = (
   }
 
   const isDocumentEmpty = doc.childCount === 1 && doc.firstChild === block;
+  const isShownByCustomPlaceholder =
+    block.type.name === TIPTAP_NODE_TYPES.PARAGRAPH &&
+    hasCustomPlaceholder(editor);
 
-  if (isDocumentEmpty ? hasCustomPlaceholder(editor) : !editor.isFocused) {
+  if (isDocumentEmpty ? isShownByCustomPlaceholder : !editor.isFocused) {
     return null;
   }
 
