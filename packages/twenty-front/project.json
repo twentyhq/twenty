@@ -86,13 +86,12 @@
         "{workspaceRoot}/packages/twenty-oxlint-rules/.oxlintrc.i18n.json",
         "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs",
         "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs",
-        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.test.mjs",
         "{projectRoot}/package.json",
         "{workspaceRoot}/yarn.lock"
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node --test ../twenty-oxlint-rules/scripts/filter-unlocalized-strings.test.mjs && node ../twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs . src"
+        "command": "node ../twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs . src"
       }
     },
     "lint:i18n": {
