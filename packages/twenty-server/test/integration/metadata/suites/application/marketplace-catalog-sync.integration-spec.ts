@@ -7,9 +7,11 @@ import { gql } from 'graphql-tag';
 import request from 'supertest';
 import * as tar from 'tar';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { buildNpmRegistryPackage } from 'test/integration/metadata/suites/application/utils/build-npm-registry-package.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { findApplicationRegistrationByUniversalIdentifier } from 'test/integration/metadata/suites/application/utils/find-application-registration-by-universal-identifier.util';
 import { insertCatalogApplicationRegistration } from 'test/integration/metadata/suites/application/utils/insert-catalog-application-registration.util';
+import { stubNpmRegistry } from 'test/integration/metadata/suites/application/utils/stub-npm-registry.util';
 import { syncMarketplaceCatalogFromRegistryPackage } from 'test/integration/metadata/suites/application/utils/sync-marketplace-catalog-from-registry-package.util';
 import { upsertApplicationRegistrationFromCatalog } from 'test/integration/metadata/suites/application/utils/upsert-application-registration-from-catalog.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
@@ -17,10 +19,11 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { type DataSource } from 'typeorm';
 
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
-import { type RegistryPackageVersionDist } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
+import { type RegistryArtifact } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
@@ -801,7 +804,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         latestAvailableVersion: '1.0.0',
       });
       const recordedTarballUrl = `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`;
-      const syncVersionTwo = (dist: RegistryPackageVersionDist) =>
+      const syncVersionTwo = (dist: RegistryArtifact) =>
         syncMarketplaceCatalogFromRegistryPackage({
           packageName: SOURCE_PACKAGE,
           version: '2.0.0',
@@ -847,7 +850,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         sourcePackage: SOURCE_PACKAGE,
         latestAvailableVersion: '1.0.0',
       });
-      const syncVersionTwo = (dist: RegistryPackageVersionDist | null) =>
+      const syncVersionTwo = (dist: RegistryArtifact | null) =>
         syncMarketplaceCatalogFromRegistryPackage({
           packageName: SOURCE_PACKAGE,
           version: '2.0.0',
@@ -882,6 +885,85 @@ describe('Marketplace Catalog Sync (integration)', () => {
       });
 
       expect(await countVersionRows()).toBe(1);
+    });
+
+    it('does not record a fingerprint the server cannot verify', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+      const tarballUrl = `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`;
+
+      await syncMarketplaceCatalogFromRegistryPackage({
+        packageName: SOURCE_PACKAGE,
+        version: '2.0.0',
+        manifest: buildBaseManifest({
+          appId: universalIdentifier,
+          roleId: crypto.randomUUID(),
+        }),
+        dist: { tarballUrl, integrity: 'sha1-c2hhMQ==' },
+      });
+
+      expect(
+        await ds.query(
+          `SELECT "artifactUrl", checksum FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        ),
+      ).toEqual([{ artifactUrl: tarballUrl, checksum: null }]);
+    });
+
+    it('leaves a version unrecorded when the registry metadata describes another package', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+      const registryBaseUrl = getAppProviderByClassName<TwentyConfigService>(
+        'TwentyConfigService',
+      )
+        .get('APP_REGISTRY_URL')
+        .replace(/\/$/, '');
+      const manifest = buildBaseManifest({
+        appId: universalIdentifier,
+        roleId: crypto.randomUUID(),
+      });
+      const registryStub = stubNpmRegistry(
+        await buildNpmRegistryPackage({
+          registryBaseUrl,
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifestJson: JSON.stringify(manifest),
+          metadataName: '@test/substitute-app',
+        }),
+      );
+
+      try {
+        await syncMarketplaceCatalogFromRegistryPackage({
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifest,
+          stubRegistryArtifact: false,
+        });
+      } finally {
+        registryStub.restore();
+      }
+
+      expect(registryStub.requestedUrls).toEqual([
+        `${registryBaseUrl}/${encodeURIComponent(SOURCE_PACKAGE)}/2.0.0`,
+      ]);
+      expect(
+        await ds.query(
+          `SELECT id FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        ),
+      ).toEqual([]);
     });
 
     it('sets the version on a registration that has none', async () => {

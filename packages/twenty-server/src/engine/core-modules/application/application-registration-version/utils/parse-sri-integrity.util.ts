@@ -1,8 +1,6 @@
-export const SUPPORTED_SRI_ALGORITHMS = ['sha512', 'sha384', 'sha256'] as const;
-
-export type SriAlgorithm = (typeof SUPPORTED_SRI_ALGORITHMS)[number];
-
-export type SriDigest = { algorithm: SriAlgorithm; digest: string };
+import { SUPPORTED_SRI_ALGORITHMS } from 'src/engine/core-modules/application/application-registration-version/constants/supported-sri-algorithms.constant';
+import { type SriAlgorithm } from 'src/engine/core-modules/application/application-registration-version/types/sri-algorithm.type';
+import { type SriDigest } from 'src/engine/core-modules/application/application-registration-version/types/sri-digest.type';
 
 const isSupportedSriAlgorithm = (
   algorithm: string,

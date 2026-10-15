@@ -1,9 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  parseSriIntegrity,
-  SUPPORTED_SRI_ALGORITHMS,
-} from 'src/engine/core-modules/application/application-registration-version/utils/parse-sri-integrity.util';
+import { SUPPORTED_SRI_ALGORITHMS } from 'src/engine/core-modules/application/application-registration-version/constants/supported-sri-algorithms.constant';
+import { parseSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/parse-sri-integrity.util';
 
 export type SriIntegrityComparison = 'match' | 'mismatch' | 'incomparable';
 

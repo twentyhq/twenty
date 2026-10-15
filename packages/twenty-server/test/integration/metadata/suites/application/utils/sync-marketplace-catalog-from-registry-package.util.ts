@@ -2,25 +2,29 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { type Manifest } from 'twenty-shared/application';
 
 import { type MarketplaceCatalogSyncService } from 'src/engine/core-modules/application/application-marketplace/marketplace-catalog-sync.service';
+import { type MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
 import {
-  type MarketplaceService,
-  type RegistryPackageVersionDist,
-} from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
+  type ApplicationPackageFetcherService,
+  type RegistryArtifact,
+} from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 
 // Runs the catalog sync against a registry that serves a single package, so
-// the test never reaches npm.
+// the test never reaches npm. With stubRegistryArtifact false, the version
+// metadata lookup runs for real and the caller stubs the registry client.
 export const syncMarketplaceCatalogFromRegistryPackage = async ({
   packageName,
   version,
   manifest,
   asset = null,
   dist = null,
+  stubRegistryArtifact = true,
 }: {
   packageName: string;
   version: string;
   manifest: Manifest;
   asset?: Buffer | null;
-  dist?: RegistryPackageVersionDist | null;
+  dist?: RegistryArtifact | null;
+  stubRegistryArtifact?: boolean;
 }): Promise<void> => {
   const marketplaceService =
     getAppProviderByClassName<MarketplaceService>('MarketplaceService');
@@ -36,9 +40,16 @@ export const syncMarketplaceCatalogFromRegistryPackage = async ({
   const fetchAssetFromRegistryCdnSpy = jest
     .spyOn(marketplaceService, 'fetchAssetFromRegistryCdn')
     .mockResolvedValue(asset);
-  const fetchPackageVersionDistFromRegistrySpy = jest
-    .spyOn(marketplaceService, 'fetchPackageVersionDistFromRegistry')
-    .mockResolvedValue(dist);
+  const findRegistryArtifactSpy = stubRegistryArtifact
+    ? jest
+        .spyOn(
+          getAppProviderByClassName<ApplicationPackageFetcherService>(
+            'ApplicationPackageFetcherService',
+          ),
+          'findRegistryArtifact',
+        )
+        .mockResolvedValue(dist)
+    : undefined;
 
   try {
     await getAppProviderByClassName<MarketplaceCatalogSyncService>(
@@ -48,6 +59,6 @@ export const syncMarketplaceCatalogFromRegistryPackage = async ({
     fetchAppsFromRegistrySpy.mockRestore();
     fetchManifestFromRegistryCdnSpy.mockRestore();
     fetchAssetFromRegistryCdnSpy.mockRestore();
-    fetchPackageVersionDistFromRegistrySpy.mockRestore();
+    findRegistryArtifactSpy?.mockRestore();
   }
 };

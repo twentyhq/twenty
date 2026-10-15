@@ -1,5 +1,5 @@
 import { SRI_ALGORITHM } from 'src/engine/core-modules/application/application-registration-version/constants/sri-algorithm.constant';
-import { type SriAlgorithm } from 'src/engine/core-modules/application/application-registration-version/utils/parse-sri-integrity.util';
+import { type SriAlgorithm } from 'src/engine/core-modules/application/application-registration-version/types/sri-algorithm.type';
 
 export const toSriString = ({
   digest,

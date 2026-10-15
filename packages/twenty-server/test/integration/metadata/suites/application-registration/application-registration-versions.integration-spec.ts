@@ -12,6 +12,7 @@ import { createAppTarball } from 'test/integration/metadata/suites/application/u
 import { insertCatalogApplicationRegistration } from 'test/integration/metadata/suites/application/utils/insert-catalog-application-registration.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { type DataSource } from 'typeorm';
 
@@ -159,6 +160,27 @@ describe('Application registration versions', () => {
 
     expect(application).toEqual({
       version: LATEST_PUBLISHED_VERSION,
+      applicationRegistrationVersionId: latestVersion?.id,
+    });
+
+    const response = await makeMetadataApiRequest({
+      query: gql`
+        query CurrentWorkspaceInstalledApplications {
+          currentWorkspace {
+            installedApplications {
+              universalIdentifier
+              applicationRegistrationVersionId
+            }
+          }
+        }
+      `,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.currentWorkspace.installedApplications,
+    ).toContainEqual({
+      universalIdentifier,
       applicationRegistrationVersionId: latestVersion?.id,
     });
   });

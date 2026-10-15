@@ -45,7 +45,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 const APP_FETCHER_TMPDIR = join(tmpdir(), 'twenty-app-fetcher');
 const RESOLUTION_TIMEOUT_MS = 30_000;
 
-type RegistryArtifact = {
+export type RegistryArtifact = {
   tarballUrl: string;
   integrity: string | null;
 };
@@ -139,6 +139,36 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       case ApplicationRegistrationSourceType.LOCAL:
       case ApplicationRegistrationSourceType.OAUTH_ONLY:
         return null;
+    }
+  }
+
+  async findRegistryArtifact({
+    packageName,
+    version,
+  }: {
+    packageName: string;
+    version: string;
+  }): Promise<RegistryArtifact | null> {
+    try {
+      assertValidNpmPackageName(packageName);
+      assertValidNpmVersionSpec(version);
+
+      return await this.fetchRegistryArtifact(
+        this.twentyConfigService.get('APP_REGISTRY_URL'),
+        packageName,
+        version,
+        this.twentyConfigService.get('APP_REGISTRY_TOKEN'),
+      );
+    } catch (error) {
+      if (!(error instanceof ApplicationException)) {
+        throw error;
+      }
+
+      this.logger.warn(
+        `No registry artifact for ${packageName}@${version}: ${error.message}`,
+      );
+
+      return null;
     }
   }
 

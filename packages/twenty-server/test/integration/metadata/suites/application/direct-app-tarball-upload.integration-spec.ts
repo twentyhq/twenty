@@ -349,6 +349,28 @@ describe('Direct app tarball upload', () => {
     ]);
   });
 
+  it('refuses a first upload whose version is not semver and drops the promoted file', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const { uploadTarget, completion } = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: 'banana' }),
+      { expectToFail: true },
+    );
+
+    expect(
+      completion.errors?.some((error: { message: string }) =>
+        error.message.includes('Must be a valid semver version'),
+      ),
+    ).toBe(true);
+    expect(await findFileRow(uploadTarget.fileId)).toBeNull();
+    expect(
+      await ds.query(
+        `SELECT id FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+        [universalIdentifier],
+      ),
+    ).toEqual([]);
+  });
+
   it('refuses a version that does not progress and drops the promoted file', async () => {
     const universalIdentifier = crypto.randomUUID();
 

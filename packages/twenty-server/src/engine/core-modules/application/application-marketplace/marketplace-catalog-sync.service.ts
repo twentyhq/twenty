@@ -7,7 +7,9 @@ import {
   MarketplaceService,
   type RegistryPackageInfo,
 } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
+import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
+import { pickVerifiableSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/pick-verifiable-sri-integrity.util';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -25,6 +27,7 @@ export class MarketplaceCatalogSyncService {
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly marketplaceService: MarketplaceService,
+    private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
   ) {}
 
   async syncCatalog(): Promise<void> {
@@ -146,13 +149,13 @@ export class MarketplaceCatalogSyncService {
       return;
     }
 
-    const dist =
-      await this.marketplaceService.fetchPackageVersionDistFromRegistry({
+    const registryArtifact =
+      await this.applicationPackageFetcherService.findRegistryArtifact({
         packageName: registryPackage.name,
         version: registryPackage.version,
       });
 
-    if (!isDefined(dist?.tarballUrl)) {
+    if (!isDefined(registryArtifact)) {
       this.logger.warn(
         `Version ${registryPackage.version} of ${registryPackage.name} left incomplete: registry gave no artifact details, retrying on the next sync`,
       );
@@ -163,8 +166,8 @@ export class MarketplaceCatalogSyncService {
     if (isDefined(recordedVersion)) {
       await this.applicationRegistrationVersionService.fillMissingArtifact({
         id: recordedVersion.id,
-        artifactUrl: dist.tarballUrl,
-        checksum: dist.integrity,
+        artifactUrl: registryArtifact.tarballUrl,
+        checksum: pickVerifiableSriIntegrity(registryArtifact.integrity),
       });
 
       return;
@@ -175,8 +178,8 @@ export class MarketplaceCatalogSyncService {
       version: registryPackage.version,
       sourceType: ApplicationRegistrationSourceType.NPM,
       sourcePackage: registryPackage.name,
-      artifactUrl: dist.tarballUrl,
-      checksum: dist.integrity,
+      artifactUrl: registryArtifact.tarballUrl,
+      checksum: pickVerifiableSriIntegrity(registryArtifact.integrity),
     });
   }
 }

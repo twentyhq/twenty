@@ -6,6 +6,7 @@ import { tmpdir } from 'os';
 import { isAbsolute, join, relative, resolve } from 'path';
 import { pipeline } from 'stream/promises';
 
+import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Like, Repository } from 'typeorm';
@@ -513,6 +514,16 @@ export class ApplicationTarballService {
     if (reservedVariableNames.length > 0) {
       throw new ApplicationRegistrationException(
         `Variable names are reserved: ${reservedVariableNames.join(', ')}`,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (
+      isDefined(packageJson?.version) &&
+      !isDefined(semver.valid(packageJson.version))
+    ) {
+      throw new ApplicationRegistrationException(
+        `Invalid version "${packageJson.version}" in package.json. Must be a valid semver version.`,
         ApplicationRegistrationExceptionCode.INVALID_INPUT,
       );
     }
