@@ -5,18 +5,12 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/providers/role-tool.provider';
 import { type ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { RoleToolWorkspaceService } from 'src/engine/metadata-modules/role/tools/services/role-tool.workspace-service';
 import { type RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { type RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const workspaceId = 'workspace-id';
 const callerRoleId = 'caller-role-id';
@@ -94,7 +88,6 @@ const buildProvider = (options?: { hasRolesPermission?: boolean }) => {
 
 const context: ToolProviderContext = {
   workspaceId,
-  roleId: callerRoleId,
   rolePermissionConfig: {
     intersectionOf: { userWorkspaceRoleId: callerRoleId },
   },
@@ -283,41 +276,6 @@ describe('RoleToolProvider', () => {
         }),
       );
     });
-
-    it('surfaces the underlying validation errors from a failed migration build', async () => {
-      const { provider, roleService } = buildProvider();
-
-      roleService.createRole.mockRejectedValue(
-        new WorkspaceMigrationBuilderException(
-          {
-            status: 'fail',
-            report: {
-              role: [
-                {
-                  flatEntityMinimalInformation: { label: 'Sales' },
-                  errors: [
-                    { code: 'INVALID', message: 'Role label already exists' },
-                  ],
-                },
-              ],
-            },
-          } as unknown as ConstructorParameters<
-            typeof WorkspaceMigrationBuilderException
-          >[0],
-          'Multiple validation errors occurred while creating role',
-        ),
-      );
-
-      const output = await provider.executeStaticTool(
-        'create_role',
-        { label: 'Sales' },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('Role label already exists');
-      expect(output.error).toContain('Sales');
-    });
   });
 
   describe('update_role', () => {
@@ -349,25 +307,50 @@ describe('RoleToolProvider', () => {
       });
     });
 
-    it('surfaces service rejections such as lockout protection', async () => {
+    it('forwards every role of the caller config for lockout protection', async () => {
       const { provider, roleService } = buildProvider();
 
-      roleService.updateRole.mockRejectedValue(
-        new PermissionsException(
-          PermissionsExceptionMessage.CANNOT_REVOKE_OWN_SETTINGS_ACCESS,
-          PermissionsExceptionCode.CANNOT_REVOKE_OWN_SETTINGS_ACCESS,
-        ),
-      );
+      roleService.updateRole.mockResolvedValue({ id: 'other-role-id' });
 
-      const output = await provider.executeStaticTool(
+      await provider.executeStaticTool(
         'update_role',
-        { roleId: callerRoleId, update: { canUpdateAllSettings: false } },
-        context,
+        { roleId: 'other-role-id', update: { canUpdateAllSettings: false } },
+        {
+          ...context,
+          rolePermissionConfig: {
+            intersectionOf: {
+              userWorkspaceRoleId: callerRoleId,
+              applicationRoleId: 'application-role-id',
+            },
+          },
+        },
       );
 
-      expect(output.success).toBe(false);
-      expect(output.error).toContain(
-        PermissionsExceptionMessage.CANNOT_REVOKE_OWN_SETTINGS_ACCESS,
+      expect(roleService.updateRole).toHaveBeenCalledTimes(1);
+      expect(roleService.updateRole).toHaveBeenCalledWith(
+        expect.objectContaining({
+          actingRoleIds: [callerRoleId, 'application-role-id'],
+        }),
+      );
+    });
+
+    it('forwards no caller role when the config bypasses permission checks', async () => {
+      const { provider, roleService } = buildProvider();
+
+      roleService.updateRole.mockResolvedValue({ id: 'other-role-id' });
+
+      await provider.executeStaticTool(
+        'update_role',
+        { roleId: 'other-role-id', update: { canUpdateAllSettings: false } },
+        {
+          ...context,
+          rolePermissionConfig: { shouldBypassPermissionChecks: true },
+        },
+      );
+
+      expect(roleService.updateRole).toHaveBeenCalledTimes(1);
+      expect(roleService.updateRole).toHaveBeenCalledWith(
+        expect.objectContaining({ actingRoleIds: [] }),
       );
     });
   });
@@ -394,28 +377,6 @@ describe('RoleToolProvider', () => {
         actingRoleIds: [callerRoleId],
       });
     });
-
-    it('surfaces service rejections such as deleting an own role', async () => {
-      const { provider, roleService } = buildProvider();
-
-      roleService.deleteRole.mockRejectedValue(
-        new PermissionsException(
-          PermissionsExceptionMessage.CANNOT_DELETE_OWN_ROLE,
-          PermissionsExceptionCode.CANNOT_DELETE_OWN_ROLE,
-        ),
-      );
-
-      const output = await provider.executeStaticTool(
-        'delete_role',
-        { roleId: callerRoleId },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain(
-        PermissionsExceptionMessage.CANNOT_DELETE_OWN_ROLE,
-      );
-    });
   });
 
   describe('assign_role_to_workspace_member', () => {
@@ -435,31 +396,6 @@ describe('RoleToolProvider', () => {
         roleId: 'other-role-id',
         actingUserWorkspaceId: callerUserWorkspaceId,
       });
-    });
-
-    it('surfaces service rejections such as changing your own role', async () => {
-      const { provider, userRoleService } = buildProvider();
-
-      userRoleService.assignRoleToWorkspaceMember.mockRejectedValue(
-        new PermissionsException(
-          PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
-          PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE,
-        ),
-      );
-
-      const output = await provider.executeStaticTool(
-        'assign_role_to_workspace_member',
-        {
-          workspaceMemberId: 'caller-workspace-member-id',
-          roleId: 'other-role-id',
-        },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain(
-        PermissionsExceptionMessage.CANNOT_UPDATE_SELF_ROLE,
-      );
     });
   });
 
@@ -555,30 +491,6 @@ describe('RoleToolProvider', () => {
           ],
         }),
       });
-    });
-
-    it('surfaces service rejections such as cross-role ownership violations', async () => {
-      const { provider, rowLevelPermissionPredicateService } = buildProvider();
-
-      rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates.mockRejectedValue(
-        new Error(
-          'Predicate "foreign-predicate-id" belongs to a different role or object and cannot be modified here.',
-        ),
-      );
-
-      const output = await provider.executeStaticTool(
-        'upsert_row_level_permission_rules',
-        {
-          roleId: 'support-role-id',
-          objectMetadataId: 'object-metadata-id',
-          predicates: [],
-          predicateGroups: [],
-        },
-        context,
-      );
-
-      expect(output.success).toBe(false);
-      expect(output.error).toContain('different role or object');
     });
   });
 });

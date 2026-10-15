@@ -3,4 +3,5 @@ export type BlocklistMutationContext = {
   userWorkspaceId: string;
   workspaceMemberId: string;
   applicationId: string | undefined;
+  agentId: string | undefined;
 };
