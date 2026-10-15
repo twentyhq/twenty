@@ -1,3 +1,5 @@
+import { type AgentResponseFormat } from '@/ai/types/AgentResponseFormat';
+
 import { type RunAgentMessageAttachment } from './runAgentMessageAttachmentType';
 
 export type RunAgentMessageRole = 'user' | 'assistant';
@@ -16,6 +18,7 @@ export type RunAgentThread = {
 export type RunAgentInput = {
   agentUniversalIdentifier: string;
   additionalInstructions?: string;
+  responseFormat?: AgentResponseFormat;
   thread?: RunAgentThread;
   runAsWorkspaceMemberId?: string;
 } & (
