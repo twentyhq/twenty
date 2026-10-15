@@ -1,16 +1,18 @@
 /* @license Enterprise */
 
+import { t } from '@lingui/core/macro';
 import { z } from 'zod';
 
 const HTTP_REDIRECT_BINDING =
   'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
 const HTTP_POST_BINDING = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
 
-const validator = z.object({
-  entityID: z.url('entityID is not a valid URL'),
-  ssoUrl: z.url('SingleSignOnService Location is not a valid URL'),
-  certificate: z.string().min(1),
-});
+const getValidator = () =>
+  z.object({
+    entityID: z.url(t`entityID is not a valid URL`),
+    ssoUrl: z.url(t`SingleSignOnService Location is not a valid URL`),
+    certificate: z.string().min(1),
+  });
 
 const allPrefix = ['md', 'ns0', 'ns2', 'dsig', 'ds'];
 
@@ -55,44 +57,44 @@ const formatErrorReason = (error: unknown): string => {
       .join('; ');
   }
   if (error instanceof Error) return error.message;
-  return 'Unknown parsing error';
+  return t`Unknown parsing error`;
 };
 
 export const parseSamlMetadataFromXmlFile = (
   xmlString: string,
 ):
-  | { success: true; data: z.infer<typeof validator> }
+  | { success: true; data: z.infer<ReturnType<typeof getValidator>> }
   | { success: false; reason: string } => {
   try {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
     if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
-      throw new Error('File is not valid XML');
+      throw new Error(t`File is not valid XML`);
     }
 
     const entityDescriptor = getByPrefixAndKey(xmlDoc, 'EntityDescriptor');
     if (!entityDescriptor)
-      throw new Error('EntityDescriptor element is missing');
+      throw new Error(t`EntityDescriptor element is missing`);
 
     const idpSsoDescriptor = getByPrefixAndKey(xmlDoc, 'IDPSSODescriptor');
     if (!idpSsoDescriptor)
-      throw new Error('IDPSSODescriptor element is missing');
+      throw new Error(t`IDPSSODescriptor element is missing`);
 
     const keyDescriptors = getByPrefixAndKey(idpSsoDescriptor, 'KeyDescriptor');
-    if (!keyDescriptors) throw new Error('KeyDescriptor element is missing');
+    if (!keyDescriptors) throw new Error(t`KeyDescriptor element is missing`);
 
     const keyInfo = getByPrefixAndKey(keyDescriptors, 'KeyInfo');
-    if (!keyInfo) throw new Error('KeyInfo element is missing');
+    if (!keyInfo) throw new Error(t`KeyInfo element is missing`);
 
     const x509Data = getByPrefixAndKey(keyInfo, 'X509Data');
-    if (!x509Data) throw new Error('X509Data element is missing');
+    if (!x509Data) throw new Error(t`X509Data element is missing`);
 
     const x509Certificate = getByPrefixAndKey(
       x509Data,
       'X509Certificate',
     )?.textContent?.trim();
     if (!x509Certificate)
-      throw new Error('X509Certificate is missing or empty');
+      throw new Error(t`X509Certificate is missing or empty`);
 
     const singleSignOnServices = getAllByPrefixAndKey(
       idpSsoDescriptor,
@@ -111,7 +113,7 @@ export const parseSamlMetadataFromXmlFile = (
 
     if (!ssoUrl) {
       throw new Error(
-        'No SingleSignOnService with HTTP-Redirect or HTTP-POST binding was found',
+        t`No SingleSignOnService with HTTP-Redirect or HTTP-POST binding was found`,
       );
     }
 
@@ -121,7 +123,7 @@ export const parseSamlMetadataFromXmlFile = (
       entityID: entityDescriptor?.getAttribute('entityID'),
     };
 
-    return { success: true, data: validator.parse(result) };
+    return { success: true, data: getValidator().parse(result) };
   } catch (error) {
     return { success: false, reason: formatErrorReason(error) };
   }

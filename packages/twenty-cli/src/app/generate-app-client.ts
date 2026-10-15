@@ -17,7 +17,7 @@ export const fetchAppClientSchema = async ({
   applicationUniversalIdentifier: string;
   context: TargetCommandContext;
 }) => {
-  output.progress('Fetching the application schema…');
+  output.progress({ message: 'Fetching the application schema…' });
 
   const data = await createMetadataClient({ target, signal }).query({
     __name: 'ApplicationCoreGraphqlSchema',
@@ -48,7 +48,7 @@ export const generateAppClientFromSchema = async ({
   sdk: ProjectSdk;
   context: TargetCommandContext;
 }) => {
-  output.progress('Generating the typed API client…');
+  output.progress({ message: 'Generating the typed API client…' });
 
   const workerRun = await runAppWorker({
     request: { type: 'generateSourceClient', appPath, schema },
@@ -65,7 +65,7 @@ export const generateAppClientFromSchema = async ({
 
   if (outputMode === 'human') {
     for (const diagnostic of diagnostics) {
-      output.progress(formatToolingDiagnostic(diagnostic));
+      output.progress({ message: formatToolingDiagnostic(diagnostic) });
     }
   }
 

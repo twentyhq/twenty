@@ -5,9 +5,15 @@ import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
+  NO_REPLY_TOOL_NAME,
+  extractRecordReferenceIds,
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
@@ -32,10 +38,12 @@ import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-ch
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
+import { createNoReplyTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/no-reply.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
@@ -44,6 +52,7 @@ import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-cha
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
+import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
@@ -51,6 +60,7 @@ import { injectChatMessageSenders } from 'src/engine/metadata-modules/ai/ai-chat
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import { splitContextInstructions } from 'src/engine/metadata-modules/ai/ai-chat/utils/split-context-instructions.util';
 import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-execution-scope.util';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
@@ -96,6 +106,7 @@ export class ChatExecutionService {
     private readonly messagePruningService: MessagePruningService,
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
+    private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly agentTurnService: AgentTurnService,
   ) {}
@@ -166,12 +177,28 @@ export class ChatExecutionService {
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
 
     // judged on the conversation, not setup status: onboarding continues here after setup completes
-    const canAttachConversationToRecords =
+    const isInboxConversation =
       !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspace.id,
       ));
+
+    const latestUserMessage = [...messages]
+      .reverse()
+      .find((message) => message.role === AgentMessageRole.USER);
+
+    // Members mentioned in this message are only added once the turn is queued
+    const isGroupConversation =
+      isInboxConversation &&
+      (await this.agentChatThreadParticipantService.countMembers({
+        workspaceId: workspace.id,
+        threadId,
+        additionalWorkspaceMemberIds: extractRecordReferenceIds({
+          text: findLastMessageText(latestUserMessage?.parts ?? []) ?? '',
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+        }),
+      })) > 1;
 
     let lastUnderlyingStreamError: unknown;
 
@@ -194,7 +221,10 @@ export class ChatExecutionService {
                   createCompleteWorkspaceSetupTool(),
               }
             : {}),
-          ...(canAttachConversationToRecords
+          ...(isGroupConversation
+            ? { [NO_REPLY_TOOL_NAME]: createNoReplyTool() }
+            : {}),
+          ...(isInboxConversation
             ? {
                 [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
                   createAttachConversationToRecordTool({
@@ -271,7 +301,7 @@ export class ChatExecutionService {
             userWorkspaceId,
             workspaceId: workspace.id,
             isWorkspaceSetupThread,
-            canAttachConversationToRecords,
+            canAttachConversationToRecords: isInboxConversation,
           }),
           contextMessages: contexts,
           messages: pruningResult.messages,
@@ -282,12 +312,14 @@ export class ChatExecutionService {
       // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.
       toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
       abortSignal,
-      shouldStopAfterStep: hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME),
+      shouldStopAfterStep: hasToolCall(
+        COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
+        NO_REPLY_TOOL_NAME,
+      ),
       billing: {
         workspaceId: workspace.id,
         operationType: UsageOperationType.AI_CHAT_TOKEN,
-        userWorkspaceId,
-        agentId: null,
+        spenders: { userWorkspaceId },
       },
       telemetry: {
         functionId: isWorkspaceSetupThread

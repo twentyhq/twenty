@@ -111,8 +111,7 @@ const buildLoop = ({
     billing: {
       workspaceId: 'workspace-id',
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      userWorkspaceId: null,
-      agentId: 'agent-id',
+      spenders: { agentId: 'agent-id' },
     },
     telemetry: { functionId: 'test' },
     metricsScope: 'agent',

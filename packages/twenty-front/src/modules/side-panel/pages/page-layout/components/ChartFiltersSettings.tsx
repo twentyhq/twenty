@@ -4,7 +4,7 @@ import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hoo
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidget';
 import { type ChartWidgetConfiguration } from '@/side-panel/pages/page-layout/types/ChartWidgetConfiguration';
-import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
+import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
 import { getChartFiltersSettingsInstanceId } from '@/side-panel/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -79,12 +79,12 @@ export const ChartFiltersSettings = ({
     const {
       recordFilters: sanitizedRecordFilters,
       recordFilterGroups: sanitizedRecordFilterGroups,
-    } = dropChartRecordFiltersWithDeletedFields({
+    } = sanitizeChartRecordFilters({
       chartFilters: {
         recordFilters: existingRecordFilters,
         recordFilterGroups: existingRecordFilterGroups,
       },
-      validFieldMetadataIds,
+      fieldMetadataItems: objectMetadataItem.fields,
     });
 
     updateCurrentWidgetConfig({

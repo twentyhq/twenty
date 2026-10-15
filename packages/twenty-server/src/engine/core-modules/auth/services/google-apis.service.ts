@@ -329,11 +329,12 @@ export class GoogleAPIsService {
         });
 
         if (!isMessagingAvailable && messageChannels.length > 0) {
-          await this.messagingChannelSyncStatusService.markAsFailed(
-            messageChannels.map((channel) => channel.id),
+          await this.messagingChannelSyncStatusService.markAsFailed({
+            messageChannelIds: messageChannels.map((channel) => channel.id),
             workspaceId,
-            MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-          );
+            syncStatus:
+              MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+          });
         }
 
         if (isMessagingAvailable) {

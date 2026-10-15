@@ -22,7 +22,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 
 const MAX_ASK_ATTEMPTS = 10;
 
@@ -275,7 +274,6 @@ export class AgentCallerConversationService {
 
     const toolContext = {
       workspaceId,
-      roleId: getRoleIdsFromRolePermissionConfig(rolePermissionConfig)[0] ?? '',
       rolePermissionConfig,
       authContext,
       application,

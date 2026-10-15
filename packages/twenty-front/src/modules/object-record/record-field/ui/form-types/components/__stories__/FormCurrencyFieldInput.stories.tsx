@@ -88,3 +88,16 @@ export const Disabled: Story = {
     expect(variablePickers).toHaveLength(0);
   },
 };
+
+export const WithSubFieldPlaceholders: Story = {
+  args: {
+    label: 'Amount',
+    amountUnit: 'units',
+    subFieldPlaceholders: { amountMicros: '2000' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByPlaceholderText('2000')).toBeVisible();
+  },
+};

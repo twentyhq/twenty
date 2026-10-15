@@ -15,6 +15,7 @@ import {
   generateAppClientFromSchema,
 } from '@/app/generate-app-client';
 import { getClientGenerationSkipReason } from '@/app/get-client-generation-skip-reason';
+import { getClientSdkPackagePath } from '@/app/get-client-sdk-package-path';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
 import { withPhaseDetails } from '@/app/deployment/with-phase-details';
 import { toCliError } from '@/output/to-cli-error';
@@ -23,9 +24,7 @@ export const createDevClientGenerator = ({ appPath }: { appPath: string }) => {
   let generatedKey: string | undefined;
   let generatedOutputStamp: string | undefined;
   const readGeneratedOutputStamp = () =>
-    readGeneratedClientStamp(
-      join(appPath, 'node_modules', 'twenty-client-sdk'),
-    );
+    readGeneratedClientStamp(getClientSdkPackagePath({ appPath }));
 
   return async ({
     snapshot,
@@ -64,9 +63,7 @@ export const createDevClientGenerator = ({ appPath }: { appPath: string }) => {
         applicationUniversalIdentifier: applied.acknowledgedUniversalIdentifier,
         context,
       });
-      const packageRoot = await realpath(
-        join(appPath, 'node_modules', 'twenty-client-sdk'),
-      );
+      const packageRoot = await realpath(getClientSdkPackagePath({ appPath }));
       const packageJson = await readFile(join(packageRoot, 'package.json'));
 
       const generatorPath = resolveInsideSdk({

@@ -306,7 +306,6 @@ export class AgentRunnerService {
       prompt,
       executionContext,
     } = input;
-    const agentId = agent?.id ?? null;
 
     if (!isCreated && !isDefined(suspension)) {
       await this.agentRunSuspensionService.assertConversationNotSuspended({
@@ -330,7 +329,7 @@ export class AgentRunnerService {
           workspaceId,
           threadId,
           title: spec.title,
-          agentId,
+          agentId: agent.id,
           senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
           senderApplicationId: prompt?.senderApplicationId ?? null,
           createdBy: executionContext.turnCreatedBy,
@@ -358,6 +357,7 @@ export class AgentRunnerService {
           ].join('\n\n'),
           pausingTools: createAgentWaitTools(),
           canAskHumans: spec.capabilities.canAskHumans,
+          responseFormat: spec.responseFormat ?? agent.responseFormat,
           workspaceId,
           executionContext,
           additionalExcludedToolNames: spec.additionalExcludedToolNames,
@@ -391,7 +391,7 @@ export class AgentRunnerService {
               threadId,
               turnId,
               title: spec.title,
-              agentId,
+              agentId: agent.id,
               execution,
             }),
         )
@@ -538,12 +538,8 @@ export class AgentRunnerService {
     agentId,
   }: {
     workspaceId: string;
-    agentId: string | null;
-  }): Promise<AgentEntity | null> {
-    if (!isDefined(agentId)) {
-      return null;
-    }
-
+    agentId: string;
+  }): Promise<AgentEntity> {
     const agent = await this.agentRepository.findOne(workspaceId, {
       where: { id: agentId },
     });

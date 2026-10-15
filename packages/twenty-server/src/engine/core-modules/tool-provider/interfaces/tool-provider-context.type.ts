@@ -9,15 +9,16 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export type ToolProviderContext = {
   resolveExecutionContext?: () => Promise<ToolProviderContext>;
   workspaceId: string;
-  roleId: string;
   rolePermissionConfig: RolePermissionConfig;
   authContext?: WorkspaceAuthContext;
   application?: FlatApplication;
   actorContext?: ActorMetadata;
   userId?: string;
   userWorkspaceId?: string;
+  agentId?: string;
   threadId?: string;
   locale?: keyof typeof APP_LOCALES;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
-  requireExplicitObjectGrants?: boolean;
+  // database tools then only cover the objects this role explicitly grants
+  explicitObjectGrantsRoleId?: string;
 };

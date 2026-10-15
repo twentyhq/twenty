@@ -4,7 +4,6 @@ import { rolePermissionsSchema } from 'src/engine/metadata-modules/role/tools/sc
 import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
 import { toRoleSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
-import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const createRoleSchema = rolePermissionsSchema.extend({
   label: z.string().min(1).describe('Display name of the role'),
@@ -29,31 +28,21 @@ After creating the role, use upsert_object_permissions to set per-object overrid
 Granting write access on an object without read access is invalid.`,
   inputSchema: createRoleSchema,
   execute: async (parameters: CreateRoleParams) => {
-    try {
-      const { workspaceCustomFlatApplication } =
-        await deps.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-          { workspaceId: context.workspaceId },
-        );
+    const { workspaceCustomFlatApplication } =
+      await deps.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId: context.workspaceId },
+      );
 
-      const role = await deps.roleService.createRole({
-        workspaceId: context.workspaceId,
-        input: parameters,
-        ownerFlatApplication: workspaceCustomFlatApplication,
-      });
+    const role = await deps.roleService.createRole({
+      workspaceId: context.workspaceId,
+      input: parameters,
+      ownerFlatApplication: workspaceCustomFlatApplication,
+    });
 
-      return {
-        success: true,
-        message: `Role "${role.label}" created`,
-        result: toRoleSummary(role),
-      };
-    } catch (error) {
-      const message = toRoleToolErrorMessage(error);
-
-      return {
-        success: false,
-        message: `Failed to create role: ${message}`,
-        error: message,
-      };
-    }
+    return {
+      success: true,
+      message: `Role "${role.label}" created`,
+      result: toRoleSummary(role),
+    };
   },
 });
