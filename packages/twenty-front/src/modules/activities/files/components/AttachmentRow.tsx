@@ -86,11 +86,13 @@ const StyledTextInputContainer = styled.div`
 type AttachmentRowProps = {
   attachment: AttachmentWithFile;
   onPreview?: (attachment: AttachmentWithFile) => void;
+  divider?: boolean;
 };
 
 export const AttachmentRow = ({
   attachment,
   onPreview,
+  divider = false,
 }: AttachmentRowProps) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
@@ -203,6 +205,7 @@ export const AttachmentRow = ({
       <ActivityRow
         onClick={handleRowClick}
         disabled={isEditing}
+        divider={divider}
         label={`${attachmentFileName}${attachmentFileExtension}`}
       >
         <StyledLeftContent>

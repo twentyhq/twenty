@@ -948,6 +948,9 @@ export class AuthService {
       throw new AuthException(
         'Public invite link is disabled for this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`Public invite link is disabled for this workspace`,
+        },
       );
     }
 
