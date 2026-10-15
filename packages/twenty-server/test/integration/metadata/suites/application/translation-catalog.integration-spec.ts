@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
+import { ApplicationTranslationNotificationService } from 'src/engine/core-modules/application/application-translation/application-translation-notification.service';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { type ApplicationTranslationEntity } from 'src/engine/core-modules/application/application-translation/application-translation.entity';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -71,8 +72,6 @@ describe('Application translation catalog', () => {
     const createCache = () =>
       new ApplicationTranslationCacheService(
         translationRepository,
-        applicationRepository,
-        broadcaster,
         app.get(CacheStorageNamespace.ModuleApplications),
       );
     cache = createCache();
@@ -207,15 +206,15 @@ describe('Application translation catalog', () => {
     await cache.getCurrentCatalog(input());
     await otherProcessCache.getCurrentCatalog(input());
     const broadcast = jest.spyOn(broadcaster, 'broadcast');
-    const notificationCache =
-      getAppProviderByClassName<ApplicationTranslationCacheService>(
-        'ApplicationTranslationCacheService',
+    const notificationService =
+      getAppProviderByClassName<ApplicationTranslationNotificationService>(
+        'ApplicationTranslationNotificationService',
       );
     const originalNotify =
-      notificationCache.notifyCatalogUpdated.bind(notificationCache);
+      notificationService.notifyCatalogUpdated.bind(notificationService);
     const catalogsAtNotification: Record<string, string>[] = [];
     const notification = jest
-      .spyOn(notificationCache, 'notifyCatalogUpdated')
+      .spyOn(notificationService, 'notifyCatalogUpdated')
       .mockImplementation(async (registrationId) => {
         catalogsAtNotification.push(
           await otherProcessCache.getCurrentCatalog(input()),

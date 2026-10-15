@@ -38,7 +38,6 @@ export const getApplicationTranslationCatalogStore = ({
     return existingStore;
   }
 
-  // An ordered request stream keeps in-flight invalidations from being lost.
   const store = createApplicationTranslationCatalogStore({
     load: async () => {
       if (locale === SOURCE_LOCALE) {

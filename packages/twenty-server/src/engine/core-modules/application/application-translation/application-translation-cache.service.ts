@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -6,7 +6,6 @@ import {
   type AppLocale,
   type APP_LOCALES,
 } from 'twenty-shared/translations';
-import chunk from 'lodash.chunk';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,8 +14,6 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { ApplicationTranslationEntity } from 'src/engine/core-modules/application/application-translation/application-translation.entity';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { type CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
@@ -26,13 +23,11 @@ type ApplicationCatalogsByLocale = Partial<
 >;
 
 const CACHE_TTL_MS = 30_000;
-const BROADCAST_BATCH_SIZE = 50;
 
 const EMPTY_CATALOG: Record<string, string> = {};
 
 @Injectable()
 export class ApplicationTranslationCacheService {
-  private readonly logger = new Logger(ApplicationTranslationCacheService.name);
   private readonly catalogsMemoizer =
     new PromiseMemoizer<ApplicationCatalogsByLocale>(CACHE_TTL_MS);
 
@@ -41,11 +36,6 @@ export class ApplicationTranslationCacheService {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationTranslationEntity)
     private readonly applicationTranslationRepository: Repository<ApplicationTranslationEntity>,
-    // A registration's catalog is shared by installations in every workspace.
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     @InjectCacheStorage(CacheStorageNamespace.ModuleApplications)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
@@ -128,43 +118,6 @@ export class ApplicationTranslationCacheService {
     await this.catalogsMemoizer.clearKeys(
       this.getCacheKey(applicationRegistrationId),
     );
-  }
-
-  async notifyCatalogUpdated(applicationRegistrationId: string): Promise<void> {
-    try {
-      const applications = await this.applicationRepository.find({
-        where: { applicationRegistrationId },
-        select: { id: true, workspaceId: true },
-      });
-      for (const batch of chunk(applications, BROADCAST_BATCH_SIZE)) {
-        await Promise.all(
-          batch.map((application) =>
-            this.workspaceEventBroadcaster.broadcast({
-              workspaceId: application.workspaceId,
-              events: [
-                {
-                  type: 'updated',
-                  entityName: 'application',
-                  recordId: application.id,
-                  properties: {
-                    updatedFields: ['translationCatalog'],
-                    after: {
-                      id: application.id,
-                      translationCatalogUpdated: true,
-                    },
-                  },
-                },
-              ],
-            }),
-          ),
-        );
-      }
-    } catch (error) {
-      this.logger.warn(
-        `Failed to broadcast application translation changes for registration ${applicationRegistrationId}`,
-        error,
-      );
-    }
   }
 
   private getCacheKey(applicationRegistrationId: string): CacheKey {

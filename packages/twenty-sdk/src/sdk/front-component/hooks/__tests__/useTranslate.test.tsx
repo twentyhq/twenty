@@ -57,7 +57,7 @@ afterEach(() => {
     FRONT_COMPONENT_LISTENERS_KEY,
     FRONT_COMPONENT_TRANSLATIONS_KEY,
   ]) {
-    delete (globalThis as Record<string, unknown>)[key];
+    Reflect.deleteProperty(globalThis, key);
   }
 });
 
