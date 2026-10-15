@@ -4,7 +4,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { applyInterfaceScale, ComponentDecorator } from '@ui/testing';
+import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Select } from '../Select';
@@ -289,6 +289,20 @@ export const PositioningDocumentation: Story = {
   decorators: AdvancedPositioning.decorators,
   parameters: AdvancedPositioning.parameters,
   render: () => <SelectPositioningExample defaultValue="apple" />,
+};
+
+const applyInterfaceScale = (scale: number) => {
+  const rootStyle = document.documentElement.style;
+  const previousZoom = rootStyle.getPropertyValue('zoom');
+  const previousScale = rootStyle.getPropertyValue('--t-zoom');
+
+  rootStyle.setProperty('--t-zoom', String(scale));
+  rootStyle.setProperty('zoom', 'var(--t-zoom)');
+
+  return () => {
+    rootStyle.setProperty('zoom', previousZoom);
+    rootStyle.setProperty('--t-zoom', previousScale);
+  };
 };
 
 export const InterfaceScale: Story = {

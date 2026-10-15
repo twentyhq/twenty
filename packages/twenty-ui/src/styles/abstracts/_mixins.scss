@@ -45,7 +45,6 @@
 
   @at-root :global(body) > :global([data-base-ui-portal]) > #{&} {
     --tw-unzoomed-anchor-width: calc(var(--anchor-width) / var(--t-zoom, 1));
-    --tw-unzoomed-anchor-height: calc(var(--anchor-height) / var(--t-zoom, 1));
     --tw-unzoomed-available-width: calc(
       var(--available-width) / var(--t-zoom, 1)
     );
@@ -55,7 +54,6 @@
 
     > * {
       --anchor-width: var(--tw-unzoomed-anchor-width);
-      --anchor-height: var(--tw-unzoomed-anchor-height);
       --available-width: var(--tw-unzoomed-available-width);
       --available-height: var(--tw-unzoomed-available-height);
 

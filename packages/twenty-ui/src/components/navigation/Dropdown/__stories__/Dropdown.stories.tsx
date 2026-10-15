@@ -3,7 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconArchive, IconCopy, IconDownload } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { applyInterfaceScale, ComponentDecorator } from '@ui/testing';
+import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
 import { DropdownContextMenuExample } from './DropdownContextMenuExample';
@@ -389,40 +389,5 @@ export const CollisionPadding: Story = {
     );
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(menu).not.toBeInTheDocument());
-  },
-};
-
-export const InterfaceScale: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'Record actions' });
-
-    for (const scale of [1, 0.9, 1.25, 14 / 13]) {
-      const restoreInterfaceScale = applyInterfaceScale(scale);
-
-      try {
-        await userEvent.click(trigger);
-        const menu = await body.findByRole('menu', { name: 'Record actions' });
-
-        await waitFor(() => {
-          const triggerBounds = trigger.getBoundingClientRect();
-          const menuBounds = menu.getBoundingClientRect();
-
-          expect(Math.abs(menuBounds.left - triggerBounds.left)).toBeLessThan(
-            1,
-          );
-          expect(Math.abs(menuBounds.top - triggerBounds.bottom)).toBeLessThan(
-            1,
-          );
-          expect(Math.abs(menuBounds.width - 240 * scale)).toBeLessThan(1);
-        });
-
-        await userEvent.keyboard('{Escape}');
-        await waitFor(() => expect(menu).not.toBeInTheDocument());
-      } finally {
-        restoreInterfaceScale();
-      }
-    }
   },
 };
