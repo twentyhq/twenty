@@ -16,12 +16,14 @@ export const finishSlackAssistantRequestWithFailure = async ({
   slackChannelId,
   parentMessageTimestamp,
   errorMessage,
+  responseText,
 }: {
   client: CoreApiClient;
   requestId: string;
   slackChannelId: string;
   parentMessageTimestamp: string;
   errorMessage: string;
+  responseText?: string;
 }): Promise<SlackAssistantRequestFailureResult> => {
   await slackPostMessageHandler({
     slackChannelId,
@@ -33,6 +35,7 @@ export const finishSlackAssistantRequestWithFailure = async ({
     id: requestId,
     status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
     errorMessage,
+    responseText,
   });
 
   return { failed: true, reason: errorMessage };

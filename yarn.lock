@@ -51037,6 +51037,7 @@ __metadata:
     cjs-module-lexer: "npm:^2.2.0"
     commander: "npm:^14.0.3"
     esbuild: "npm:^0.28.1"
+    execa: "npm:^5.1.1"
     lodash.startcase: "npm:^4.4.0"
     npm-pick-manifest: "npm:^11.0.1"
     semver: "npm:7.6.3"

@@ -64,6 +64,7 @@ import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/
 import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
@@ -239,7 +240,11 @@ export const SettingsApplicationDetails = () => {
       : []),
     ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
       id: settingsMenuItem.universalIdentifier,
-      title: settingsMenuItem.title,
+      title: getSettingsMenuItemDisplayTitle({
+        applicationUniversalIdentifier: application?.universalIdentifier ?? '',
+        frontComponents: application?.frontComponents ?? [],
+        settingsMenuItem,
+      }),
       Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
     })),
   ];
