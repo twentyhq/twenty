@@ -126,41 +126,49 @@ export class ApplicationSyncService {
       throw enrichApplicationManifestSyncError({ error, manifest });
     }
 
-    let translationActions: ApplicationTranslationSyncAction[] | null = [];
-    const translationRegistrationId =
-      ownerFlatApplication.applicationRegistrationId ??
-      (dryRun ? applicationRegistrationId : undefined);
-
-    if (isDefined(translationRegistrationId)) {
-      const translationInput = {
-        applicationRegistrationId: translationRegistrationId,
-        translations: manifest.translations,
-      };
-
-      // Translation failures must not discard the successful metadata result.
-      try {
-        translationActions = dryRun
-          ? await this.applicationTranslationSyncService.getSyncActions(
-              translationInput,
-            )
-          : await this.applicationTranslationSyncService.syncFromManifest(
-              translationInput,
-            );
-      } catch (error) {
-        translationActions = null;
-        this.logger.warn(
-          `Failed to ${dryRun ? 'preview' : 'sync'} application translations for registration ${translationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
-    } else if (isDefined(manifest.translations)) {
-      translationActions = null;
-    }
+    const translationActions = await this.computeTranslationActions({
+      applicationRegistrationId:
+        ownerFlatApplication.applicationRegistrationId ??
+        (dryRun ? applicationRegistrationId : undefined),
+      translations: manifest.translations,
+      dryRun,
+    });
 
     this.logger.log(
       `Application sync from manifest ${dryRun ? 'plan computed (dry run)' : 'completed'}`,
     );
 
     return { ...syncResult, translationActions };
+  }
+
+  private async computeTranslationActions({
+    applicationRegistrationId,
+    translations,
+    dryRun,
+  }: {
+    applicationRegistrationId: string | undefined;
+    translations: Manifest['translations'];
+    dryRun: boolean;
+  }): Promise<ApplicationTranslationSyncAction[] | null> {
+    if (!isDefined(applicationRegistrationId)) {
+      return isDefined(translations) ? null : [];
+    }
+    const input = { applicationRegistrationId, translations };
+    try {
+      if (dryRun) {
+        return await this.applicationTranslationSyncService.getSyncActions(
+          input,
+        );
+      }
+      return await this.applicationTranslationSyncService.syncFromManifest(
+        input,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to ${dryRun ? 'preview' : 'sync'} application translations for registration ${applicationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return null;
+    }
   }
 
   private async resolveDryRunOwnerFlatApplication({

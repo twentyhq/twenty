@@ -65,25 +65,19 @@ export class ApplicationTranslationSyncService {
             where: { applicationRegistrationId },
             withDeleted: true,
           });
-          const actions = computeApplicationTranslationSyncActions({
-            existingRows,
-            translations,
-          });
-          const { rowsToUpdate, rowsToInsert, rowIdsToSoftDelete } =
+          const { actions, rowsToUpdate, rowsToInsert, rowIdsToSoftDelete } =
             computeApplicationTranslationSyncPlan({
               existingRows,
               translations,
             });
 
-          for (const { id, messages } of rowsToUpdate) {
-            await repository.update(id, { messages, deletedAt: null });
-          }
-          for (const { locale, messages } of rowsToInsert) {
-            await repository.insert({
-              applicationRegistrationId,
-              locale,
-              messages,
-            });
+          const rowsToWrite = [...rowsToUpdate, ...rowsToInsert].map((row) => ({
+            ...row,
+            applicationRegistrationId,
+            deletedAt: null,
+          }));
+          if (rowsToWrite.length > 0) {
+            await repository.upsert(rowsToWrite, ['id']);
           }
           if (rowIdsToSoftDelete.length > 0) {
             await repository.softDelete(rowIdsToSoftDelete);

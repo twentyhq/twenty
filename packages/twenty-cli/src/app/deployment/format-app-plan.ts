@@ -184,7 +184,7 @@ const formatTranslationLines = (
   action: AppTranslationPlanAction,
   stream: NodeJS.WriteStream,
 ) =>
-  Object.entries(action.diff ?? {})
+  Object.entries(action.diff)
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([messageId, change]) => {
       const label = formatDataValue(

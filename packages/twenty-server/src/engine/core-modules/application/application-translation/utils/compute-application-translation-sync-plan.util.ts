@@ -2,14 +2,23 @@ import { type TranslationsManifest } from 'twenty-shared/application';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
+import { computeApplicationTranslationSyncActions } from 'src/engine/core-modules/application/application-translation/utils/compute-application-translation-sync-actions.util';
+
 type StoredTranslationRow = {
   id: string;
   locale: keyof typeof APP_LOCALES;
   deletedAt: Date | null;
+  messages: Record<string, string>;
 };
 
 export type ApplicationTranslationSyncPlan = {
-  rowsToUpdate: { id: string; messages: Record<string, string> }[];
+  actions: ApplicationTranslationSyncAction[];
+  rowsToUpdate: {
+    id: string;
+    locale: keyof typeof APP_LOCALES;
+    messages: Record<string, string>;
+  }[];
   rowsToInsert: {
     locale: keyof typeof APP_LOCALES;
     messages: Record<string, string>;
@@ -46,31 +55,44 @@ export const computeApplicationTranslationSyncPlan = ({
   translations: TranslationsManifest;
 }): ApplicationTranslationSyncPlan => {
   const rowByLocale = pickRowByLocale(existingRows);
-  const manifestEntries = Object.entries(translations) as [
-    keyof typeof APP_LOCALES,
-    Record<string, string>,
-  ][];
-  const manifestLocales = new Set(manifestEntries.map(([locale]) => locale));
+  const actions = computeApplicationTranslationSyncActions({
+    existingRows,
+    translations,
+  });
+  const plan: ApplicationTranslationSyncPlan = {
+    actions,
+    rowsToUpdate: [],
+    rowsToInsert: [],
+    rowIdsToSoftDelete: [],
+  };
 
-  const rowsToUpdate = manifestEntries
-    .map(([locale, messages]) => {
-      const existingRow = rowByLocale.get(locale);
+  for (const action of actions) {
+    if (action.type === 'delete') {
+      plan.rowIdsToSoftDelete.push(
+        ...existingRows
+          .filter(
+            (row) => row.locale === action.locale && !isDefined(row.deletedAt),
+          )
+          .map((row) => row.id),
+      );
+      continue;
+    }
 
-      return isDefined(existingRow)
-        ? { id: existingRow.id, messages }
-        : undefined;
-    })
-    .filter(isDefined);
+    const messages = translations[action.locale];
+    if (!isDefined(messages)) {
+      continue;
+    }
+    const existingRow = rowByLocale.get(action.locale);
+    if (isDefined(existingRow)) {
+      plan.rowsToUpdate.push({
+        id: existingRow.id,
+        locale: action.locale,
+        messages,
+      });
+    } else {
+      plan.rowsToInsert.push({ locale: action.locale, messages });
+    }
+  }
 
-  const rowsToInsert = manifestEntries
-    .filter(([locale]) => !isDefined(rowByLocale.get(locale)))
-    .map(([locale, messages]) => ({ locale, messages }));
-
-  const rowIdsToSoftDelete = existingRows
-    .filter(
-      (row) => !manifestLocales.has(row.locale) && !isDefined(row.deletedAt),
-    )
-    .map((row) => row.id);
-
-  return { rowsToUpdate, rowsToInsert, rowIdsToSoftDelete };
+  return plan;
 };

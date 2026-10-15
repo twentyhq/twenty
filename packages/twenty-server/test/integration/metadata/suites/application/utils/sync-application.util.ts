@@ -1,3 +1,4 @@
+import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
 import { type Manifest } from 'twenty-shared/application';
 import { type SyncAction } from 'twenty-shared/metadata';
 import { syncApplicationQueryFactory } from 'test/integration/metadata/suites/application/utils/sync-application-query-factory.util';
@@ -9,6 +10,7 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 type WorkspaceMigration = {
   applicationUniversalIdentifier: string;
   actions: SyncAction[];
+  translationActions: ApplicationTranslationSyncAction[] | null;
 };
 
 export const syncApplication = async ({
