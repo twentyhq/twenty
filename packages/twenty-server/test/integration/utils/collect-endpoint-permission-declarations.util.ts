@@ -15,9 +15,28 @@ import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/applica
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { AUTH_PRINCIPAL_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/auth-principal-guard-config-key.constant';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
+import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
+import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
+
+type UserSessionVariant = Extract<
+  AuthPrincipalVariant,
+  { kind: 'userSession' }
+>['variant'];
+
+type UserVariant = Extract<
+  AuthPrincipalVariant,
+  { kind: 'application' }
+>['variant'];
+
+type AcceptedAuthPrincipals = {
+  userSession: Record<UserSessionVariant, boolean>;
+  apiKey: boolean;
+  oauthClient: Record<UserVariant, boolean>;
+  application: Record<UserVariant | 'withAgent', boolean>;
+};
 
 type EndpointPermissionDeclarations = {
-  authPrincipalGuards: AuthPrincipalGuardConfig[];
+  authPrincipalGuards: AcceptedAuthPrincipals[];
   applicationTarget: ApplicationTarget | null;
 };
 
@@ -85,6 +104,61 @@ const readAuthPrincipalGuardConfigs = ({
     )
     .filter(isDefined);
 
+// The guard's own decisions, so a shorthand such as `application: true`
+// shows what it leaves out
+const toAcceptedAuthPrincipals = (
+  authPrincipalGuardConfig: AuthPrincipalGuardConfig,
+): AcceptedAuthPrincipals => {
+  const isAccepted = (authPrincipalVariant: AuthPrincipalVariant): boolean =>
+    isAuthPrincipalVariantAccepted({
+      authPrincipalGuardConfig,
+      authPrincipalVariant,
+    });
+
+  return {
+    userSession: {
+      standard: isAccepted({ kind: 'userSession', variant: 'standard' }),
+      impersonated: isAccepted({
+        kind: 'userSession',
+        variant: 'impersonated',
+      }),
+      playground: isAccepted({ kind: 'userSession', variant: 'playground' }),
+      workspaceAgnostic: isAccepted({
+        kind: 'userSession',
+        variant: 'workspaceAgnostic',
+      }),
+    },
+    apiKey: isAccepted({ kind: 'apiKey' }),
+    oauthClient: {
+      withUser: isAccepted({ kind: 'oauthClient', variant: 'withUser' }),
+      withoutUser: isAccepted({ kind: 'oauthClient', variant: 'withoutUser' }),
+    },
+    application: {
+      withUser: isAccepted({
+        kind: 'application',
+        variant: 'withUser',
+        withAgent: false,
+      }),
+      withoutUser: isAccepted({
+        kind: 'application',
+        variant: 'withoutUser',
+        withAgent: false,
+      }),
+      withAgent:
+        isAccepted({
+          kind: 'application',
+          variant: 'withUser',
+          withAgent: true,
+        }) ||
+        isAccepted({
+          kind: 'application',
+          variant: 'withoutUser',
+          withAgent: true,
+        }),
+    },
+  };
+};
+
 const compareCodePoints = (left: string, right: string): number =>
   left < right ? -1 : left > right ? 1 : 0;
 
@@ -138,7 +212,7 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
             guardsOwner: endpointClass,
           }),
           ...readAuthPrincipalGuardConfigs({ reflector, guardsOwner: handler }),
-        ],
+        ].map(toAcceptedAuthPrincipals),
         applicationTarget:
           reflector.get<ApplicationTarget | undefined>(
             APPLICATION_TARGET_METADATA_KEY,

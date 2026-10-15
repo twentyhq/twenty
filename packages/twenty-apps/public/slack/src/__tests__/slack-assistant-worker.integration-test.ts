@@ -15,6 +15,7 @@ import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constant
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
+import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
@@ -22,9 +23,6 @@ const CHANNEL_ID = 'C0WORKERTEST';
 const DIRECT_MESSAGE_CHANNEL_ID = 'D0WORKERTEST';
 const REQUESTER_USER_ID = 'U0REQUESTER';
 const CONFIRMED_MEMBER_EMAIL = 'jane.austen@apple.dev';
-
-type SlackAssistantRequestStatus =
-  (typeof SLACK_ASSISTANT_REQUEST_STATUS)[keyof typeof SLACK_ASSISTANT_REQUEST_STATUS];
 
 type SlackAssistantRequestRecordFields = {
   id?: string;
@@ -61,6 +59,8 @@ describe('Slack assistant worker', () => {
     requestText: string;
     slackChannelType?: string;
     slackThreadTimestamp?: string;
+    status?: SlackAssistantRequestStatus;
+    responseText?: string;
   }): Promise<{ id: string }> => {
     const mutationResult = await coreClient.mutation({
       createSlackAssistantRequest: {
@@ -214,14 +214,14 @@ describe('Slack assistant worker', () => {
     slack.addMessage({
       channelId: CHANNEL_ID,
       threadTimestamp: slackMessageTimestamp,
-      userId: 'U0COLLEAGUE',
-      text: 'good question',
+      userId: slack.botUserId,
+      text: 'Acme has 2 open deals.',
     });
     slack.addMessage({
       channelId: CHANNEL_ID,
       threadTimestamp: slackMessageTimestamp,
-      userId: slack.botUserId,
-      text: 'Acme has 2 open deals.\n\n_Answered in 4s_',
+      userId: 'U0COLLEAGUE',
+      text: 'good question',
     });
 
     appRuntime.setAgentResult({
@@ -252,7 +252,6 @@ describe('Slack assistant worker', () => {
         role: 'user',
         content: '@unknown Slack user U0COLLEAGUE: good question',
       },
-      { role: 'assistant', content: 'Acme has 2 open deals.' },
       {
         role: 'user',
         content: expect.stringContaining(
@@ -260,6 +259,14 @@ describe('Slack assistant worker', () => {
         ),
       },
     ]);
+    expect(appRuntime.agentRuns[appRuntime.agentRuns.length - 1]).toEqual(
+      expect.objectContaining({
+        thread: {
+          key: `${CHANNEL_ID}:${slackMessageTimestamp}`,
+          title: 'how many open deals does Acme have?',
+        },
+      }),
+    );
     const agentMessages = appRuntime.lastAgentMessages;
     const agentRuns = appRuntime.agentRuns;
     const runAsWorkspaceMemberId =
@@ -320,6 +327,91 @@ describe('Slack assistant worker', () => {
         'WORKSPACE',
       ),
     ).toEqual({ expiresAt: expect.any(Number) });
+  });
+
+  it('should continue the thread conversation with only the Slack messages the agent has not seen', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    addConfirmedRequester();
+    const rootMessageTimestamp = nextMessageTimestamp();
+    const followUpMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: rootMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('who owns Acme?'),
+    });
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      threadTimestamp: rootMessageTimestamp,
+      userId: slack.botUserId,
+      text: 'Sarah owns Acme.',
+    });
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      threadTimestamp: rootMessageTimestamp,
+      userId: 'U0COLLEAGUE',
+      text: 'they moved to London',
+    });
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: followUpMessageTimestamp,
+      threadTimestamp: rootMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('update their address'),
+    });
+
+    await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp: rootMessageTimestamp,
+      requestText: 'who owns Acme?',
+      status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+      responseText: 'Sarah owns Acme.',
+    });
+    const followUpRequest = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp: followUpMessageTimestamp,
+      slackThreadTimestamp: rootMessageTimestamp,
+      requestText: 'update their address',
+    });
+
+    appRuntime.setAgentResult({
+      success: true,
+      result: { response: 'Address updated.' },
+      error: null,
+    });
+
+    const result = await slackAssistantWorkerHandler(
+      buildPendingRequest({
+        ...followUpRequest,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp: followUpMessageTimestamp,
+        slackThreadTimestamp: rootMessageTimestamp,
+        requestText: 'update their address',
+      }),
+    );
+
+    expect(result).toEqual({ done: true });
+    expect(appRuntime.lastAgentMessages).toEqual([
+      {
+        role: 'user',
+        content: '@unknown Slack user U0COLLEAGUE: they moved to London',
+      },
+      {
+        role: 'user',
+        content: expect.stringContaining(
+          'Ada asks from Slack:\nupdate their address',
+        ),
+      },
+    ]);
+    expect(appRuntime.agentRuns[appRuntime.agentRuns.length - 1]).toEqual(
+      expect.objectContaining({
+        thread: {
+          key: `${CHANNEL_ID}:${rootMessageTimestamp}`,
+          title: 'update their address',
+        },
+      }),
+    );
   });
 
   it('should title the assistant thread of a first direct message instead of subscribing it', async () => {
@@ -657,7 +749,7 @@ describe('Slack assistant worker', () => {
     ]);
     await expect(readRequest(request.id)).resolves.toEqual(
       expect.objectContaining({
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: SLACK_ACCESS_DENIED_TEXT,
       }),
     );

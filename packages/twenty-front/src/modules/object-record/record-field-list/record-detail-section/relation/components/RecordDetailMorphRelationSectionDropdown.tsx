@@ -13,7 +13,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailMorphRelationSectionDropdownProps = {
   loading: boolean;
-  dropdownTriggerClickableComponent?: ReactNode;
+  dropdownTriggerClickableComponent: ReactNode;
 };
 
 export const RecordDetailMorphRelationSectionDropdown = ({

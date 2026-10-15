@@ -27,7 +27,7 @@ type KeyboardMenuItemProps = {
 
 export const KeyboardMenuItem = ({ shortcut }: KeyboardMenuItemProps) => (
   <StyledItem>
-    {shortcut.label}
+    {t(shortcut.label)}
     <StyledShortcuts>
       {shortcut.shortcuts.map((definition, index) => (
         <Fragment key={index}>

@@ -1,6 +1,4 @@
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-
-const ROLES_PERMISSION_FLAG = 'ROLES';
+import { MetadataApiClient, MetadataSchema } from 'twenty-client-sdk/metadata';
 
 export const currentUserHasRolesPermission = async (): Promise<boolean> => {
   try {
@@ -13,7 +11,7 @@ export const currentUserHasRolesPermission = async (): Promise<boolean> => {
     });
 
     return (currentUser.currentUserWorkspace?.permissionFlags ?? []).includes(
-      ROLES_PERMISSION_FLAG,
+      MetadataSchema.enumPermissionFlagType.ROLES,
     );
   } catch {
     return false;

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import { type ActorMetadata } from 'twenty-shared/types';
 
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
@@ -77,18 +76,15 @@ export class WorkflowToolWorkspaceService {
   generateWorkflowTools({
     workspaceId,
     rolePermissionConfig,
-    actorContext,
     userWorkspaceId,
   }: {
     workspaceId: string;
     rolePermissionConfig: RolePermissionConfig;
-    actorContext?: ActorMetadata;
     userWorkspaceId?: string;
   }): ToolSet {
     const context: WorkflowToolContext = {
       workspaceId,
       rolePermissionConfig,
-      actorContext,
       userWorkspaceId,
     };
 

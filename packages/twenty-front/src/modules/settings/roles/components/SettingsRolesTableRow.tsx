@@ -1,6 +1,4 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
-import { getCustomApplicationLogoUrl } from '@/applications/utils/getCustomApplicationLogoUrl';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -42,15 +40,11 @@ const StyledTableRowContainer = styled.div`
 
 type SettingsRolesTableRowProps = {
   role: RoleWithPartialMembers;
-  application?: ApplicationWithoutRelation;
 };
 
 const MAX_VISIBLE_ROLE_MEMBER_AVATARS = 5;
 
-export const SettingsRolesTableRow = ({
-  role,
-  application,
-}: SettingsRolesTableRowProps) => {
+export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
@@ -90,14 +84,7 @@ export const SettingsRolesTableRow = ({
           </StyledNameCell>
         </TableCell>
         <TableCell>
-          <AppChip
-            applicationId={application?.id}
-            size="md"
-            fallbackApplicationData={{
-              name: t`Workspace app`,
-              logoUrl: getCustomApplicationLogoUrl(),
-            }}
-          />
+          <AppChip applicationId={role.applicationId} size="md" />
         </TableCell>
         <TableCell align="right">
           <StyledAssignedToCell>

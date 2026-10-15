@@ -226,6 +226,7 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId,
     workspaceId,
     applicationId,
+    agentId,
   }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
@@ -234,6 +235,7 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
     applicationId?: string;
+    agentId?: string;
   }): Promise<boolean> {
     if (connectedAccount.userWorkspaceId === userWorkspaceId) {
       return true;
@@ -245,6 +247,7 @@ export class ConnectedAccountMetadataService {
           userWorkspaceId,
           workspaceId,
           applicationId,
+          agentId,
           setting: getConnectedAccountAdministrationPermissionFlag(
             connectedAccount.provider,
           ),
@@ -261,11 +264,13 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId,
     workspaceId,
     applicationId,
+    agentId,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
     applicationId?: string;
+    agentId?: string;
   }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
 
@@ -274,6 +279,7 @@ export class ConnectedAccountMetadataService {
       userWorkspaceId,
       workspaceId,
       applicationId,
+      agentId,
     });
 
     if (!isAdministrableByCaller) {

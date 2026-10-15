@@ -12,7 +12,6 @@ type MentionRecordChipProps = {
   objectNameSingular: string;
   label: string;
   imageUrl: string;
-  className?: string;
 };
 
 export const MentionRecordChip = ({
@@ -20,7 +19,6 @@ export const MentionRecordChip = ({
   objectNameSingular,
   label,
   imageUrl,
-  className,
 }: MentionRecordChipProps) => {
   if (!isNonEmptyString(objectNameSingular)) {
     return (
@@ -50,7 +48,6 @@ export const MentionRecordChip = ({
     <LinkChip
       to={linkToShowPage}
       variant="soft"
-      className={className}
       startElement={
         <AvatarOrIcon
           name={label}

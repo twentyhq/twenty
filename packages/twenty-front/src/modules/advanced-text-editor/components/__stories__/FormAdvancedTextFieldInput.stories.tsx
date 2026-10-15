@@ -19,6 +19,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 
 const STORY_FORM_EDITOR_PROFILE = {
   chrome: 'field',
+  variant: 'app',
   minHeight: 340,
   enableFullScreen: true,
   buildExtensions: buildFullRichTextWithVariableTagExtensions,

@@ -1,9 +1,11 @@
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import {
   type EventLogRecord,
   EventLogTable,
 } from '~/generated-metadata/graphql';
+import { workspaceLogoUrl } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 type MockedLogicFunction = {
@@ -47,6 +49,17 @@ export const mockedEventLogApplications: Pick<
     name: 'Company Enrichment',
   },
 ];
+
+export const mockedEventLogInstalledApplications: CurrentWorkspace['installedApplications'] =
+  [
+    {
+      id: ENRICH_COMPANY_FROM_DOMAIN.applicationId,
+      name: 'Company Enrichment',
+      universalIdentifier: '5b0e7c2a-8f4d-4a91-b3e6-1d2c9f7a4e80',
+      logoUrl: workspaceLogoUrl,
+      createdAt: '2026-09-01T00:00:00.000Z',
+    },
+  ];
 
 const SYNC_STRIPE_INVOICES_EXECUTION_ID =
   '88637fa4-e95f-4901-85f1-4227b6e3a1c2';
@@ -147,6 +160,13 @@ const ZAPIER_SYNC_API_KEY_ACTOR = {
   context: {},
 };
 
+const COMPANY_ENRICHMENT_APPLICATION_ACTOR = {
+  source: 'APPLICATION',
+  workspaceMemberId: null,
+  name: 'Company Enrichment',
+  context: { applicationId: ENRICH_COMPANY_FROM_DOMAIN.applicationId },
+};
+
 const LUMEN_HEALTH_PILOT_BEFORE_UPDATE = {
   id: 'f46932b8-6725-4931-aa5b-ea0144bdb789',
   name: 'Lumen Health - Pilot',
@@ -161,6 +181,13 @@ const OAKRIDGE_FOODS_BEFORE_UPDATE = {
   name: 'Oakridge Foods',
   employees: 120,
   updatedBy: ZAPIER_SYNC_API_KEY_ACTOR,
+};
+
+const NORTHWIND_LOGISTICS_BEFORE_UPDATE = {
+  id: '2c7e9b41-6d3a-4f8e-a1b5-0e9d4c2f7a68',
+  name: 'Northwind Logistics',
+  employees: 480,
+  updatedBy: COMPANY_ENRICHMENT_APPLICATION_ACTOR,
 };
 
 const ETHAN_BROOKS_AFTER_CREATION = {
@@ -286,6 +313,20 @@ export const mockedEventLogRecordsByTable: Partial<
         after: { ...OAKRIDGE_FOODS_BEFORE_UPDATE, employees: 135 },
         updatedFields: ['employees'],
         diff: { employees: { before: 120, after: 135 } },
+      },
+    },
+    {
+      __typename: 'EventLogRecord',
+      event: 'Object Record Updated',
+      timestamp: '2026-09-24T11:38:20.715Z',
+      userId: null,
+      recordId: NORTHWIND_LOGISTICS_BEFORE_UPDATE.id,
+      objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+      properties: {
+        before: NORTHWIND_LOGISTICS_BEFORE_UPDATE,
+        after: { ...NORTHWIND_LOGISTICS_BEFORE_UPDATE, employees: 520 },
+        updatedFields: ['employees'],
+        diff: { employees: { before: 480, after: 520 } },
       },
     },
     {
