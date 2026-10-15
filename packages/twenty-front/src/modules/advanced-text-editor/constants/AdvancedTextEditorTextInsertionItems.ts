@@ -1,4 +1,5 @@
 import {
+  createBlockquoteBlockContent,
   createHeadingBlockContent,
   createListBlockContent,
   createParagraphBlockContent,
@@ -7,12 +8,13 @@ import { type AdvancedTextEditorBlockInsertionItem } from '@/advanced-text-edito
 import { msg } from '@lingui/core/macro';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import {
+  IconBlockquote,
   IconH1,
   IconH2,
   IconH3,
   IconList,
   IconListNumbers,
-  IconPilcrow,
+  IconTextSize,
 } from 'twenty-ui/icon';
 
 export const ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS: Pick<
@@ -22,7 +24,7 @@ export const ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS: Pick<
   {
     id: 'paragraph',
     title: msg`Text`,
-    icon: IconPilcrow,
+    icon: IconTextSize,
     createContent: createParagraphBlockContent,
   },
   {
@@ -54,5 +56,11 @@ export const ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS: Pick<
     title: msg`Ordered List`,
     icon: IconListNumbers,
     createContent: () => createListBlockContent(TIPTAP_NODE_TYPES.ORDERED_LIST),
+  },
+  {
+    id: 'blockquote',
+    title: msg`Quote`,
+    icon: IconBlockquote,
+    createContent: createBlockquoteBlockContent,
   },
 ];

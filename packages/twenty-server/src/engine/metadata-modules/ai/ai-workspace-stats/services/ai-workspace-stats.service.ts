@@ -29,7 +29,7 @@ export class AiWorkspaceStatsService {
         flatMapsKeys: ['flatSkillMaps'],
       }),
       // the full role-scoped catalog, to match the Tools tab
-      this.toolRegistryService.buildToolIndex(workspaceId, userRoleId, {
+      this.toolRegistryService.buildToolIndex(workspaceId, {
         rolePermissionConfig: {
           intersectionOf: { userWorkspaceRoleId: userRoleId },
         },

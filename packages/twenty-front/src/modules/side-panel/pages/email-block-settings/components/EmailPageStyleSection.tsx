@@ -9,6 +9,8 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
+import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
+import { SidePanelGroupFormContainer } from '@/side-panel/components/SidePanelGroupFormContainer';
 import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
 import {
   EmailBoxSidesInput,
@@ -16,63 +18,28 @@ import {
 } from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
 import { EMAIL_BODY_THEME_FIELDS } from '@/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields';
 import { EMAIL_PAGE_THEME_FIELDS } from '@/side-panel/pages/email-block-settings/constants/EmailPageThemeFields';
+import { themeBoxValueToSides } from '@/side-panel/pages/email-block-settings/utils/themeBoxValueToSides';
 import { type EmailThemeField } from '@/side-panel/pages/email-block-settings/types/EmailThemeField';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledGroupTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-
-  &:not(:first-child) {
-    margin-top: ${themeCssVariables.spacing[3]};
-  }
+const StyledFields = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledHint = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
 `;
-
-const themeBoxValueToSides = (value: string): CssBoxSides => {
-  const tokens = value.trim().split(/\s+/);
-
-  if (tokens.length === 4) {
-    return {
-      top: tokens[0],
-      right: tokens[1],
-      bottom: tokens[2],
-      left: tokens[3],
-    };
-  }
-
-  if (tokens.length === 3) {
-    return {
-      top: tokens[0],
-      right: tokens[1],
-      bottom: tokens[2],
-      left: tokens[1],
-    };
-  }
-
-  if (tokens.length === 2) {
-    return {
-      top: tokens[0],
-      right: tokens[1],
-      bottom: tokens[0],
-      left: tokens[1],
-    };
-  }
-
-  return { top: value, right: value, bottom: value, left: value };
-};
 
 const sidesToThemeBoxValue = ({ top, right, bottom, left }: CssBoxSides) =>
   top === right && right === bottom && bottom === left
@@ -140,11 +107,20 @@ export const EmailPageStyleSection = ({
 
   return (
     <StyledContainer>
-      <StyledGroupTitle>{t`Page style`}</StyledGroupTitle>
-      {EMAIL_PAGE_THEME_FIELDS.map(renderThemeField)}
-
-      <StyledGroupTitle>{t`Body`}</StyledGroupTitle>
-      {EMAIL_BODY_THEME_FIELDS.map(renderThemeField)}
+      <CommandMenuItemSectionGroup heading={t`Page`}>
+        <SidePanelGroupFormContainer>
+          <StyledFields>
+            {EMAIL_PAGE_THEME_FIELDS.map(renderThemeField)}
+          </StyledFields>
+        </SidePanelGroupFormContainer>
+      </CommandMenuItemSectionGroup>
+      <CommandMenuItemSectionGroup heading={t`Body`}>
+        <SidePanelGroupFormContainer>
+          <StyledFields>
+            {EMAIL_BODY_THEME_FIELDS.map(renderThemeField)}
+          </StyledFields>
+        </SidePanelGroupFormContainer>
+      </CommandMenuItemSectionGroup>
     </StyledContainer>
   );
 };
