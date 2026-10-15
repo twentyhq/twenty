@@ -101,7 +101,7 @@ const resyncAiAgentStepOutputSchemas = async (
   }
 };
 
-export const createUpdateAgentTool = (
+export const createUpdateWorkflowAgentTool = (
   deps: Pick<
     WorkflowToolDependencies,
     | 'agentService'
@@ -111,7 +111,7 @@ export const createUpdateAgentTool = (
   >,
   context: WorkflowToolContext,
 ) => ({
-  name: 'update_agent' as const,
+  name: 'update_workflow_agent' as const,
   description: `Update the agent used by a workflow AI_AGENT step.
 
 Use this tool to configure the agent created when an AI_AGENT step is added: set its system prompt, the model it should use, and the format of its output.

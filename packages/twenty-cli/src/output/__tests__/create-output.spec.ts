@@ -138,7 +138,10 @@ describe('terminal progress', () => {
   });
 
   it.each([
-    new CliError({ code: 'EXPORT_FAILED', message: 'Export failed.' }),
+    new CliError({
+      code: 'NETWORK_ERROR',
+      message: 'The connection was lost.',
+    }),
     createCancelledError(),
   ])('clears the bar before $code', (error) => {
     const output = createOutput({ mode: 'human', command: 'data export' });
