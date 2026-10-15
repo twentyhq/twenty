@@ -12,7 +12,7 @@ Workflow execution uses `core.workflow`, `core.workflowVersion`, and the persist
 | `core.workflowVersion.workspaceWorkflowVersionId` | Durable alias for legacy run requests and pinned queued payloads. Keep it while any legacy callers or queued jobs can exist. |
 | `core.workflowVersion.workflowId` | Nullable legacy parent alias, equal to the workflow's `workspaceWorkflowId`. Null on workflows created without a workspace alias. It is not the execution parent. |
 | `workflowRun.coreWorkflowId`, `workflowRun.coreWorkflowVersionId` | Authoritative identities recorded when a run is created and backfilled for existing runs. |
-| `workflowRun.workflowId`, `workflowRun.workflowVersionId` | Nullable projection relations. Mirrorless runs leave both null. |
+| `workflowRun.workflowId` | Nullable projection relation. Mirrorless runs leave it null. |
 | `workflowRun.state.flow` | Captured trigger and steps. Startup, retry, delay, and form continuation use this snapshot rather than a subsequently edited definition. |
 
 Legacy and core run mutations delegate to the same core runner. Core-owned mappings determine projection relation values and billing spenders. Missing or conflicting tenant, parent, or version mappings fail explicitly. A webhook alias can resolve only a workflow in the requested workspace, and its published version must belong to that workflow, be active, and have a webhook trigger.

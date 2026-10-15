@@ -41,6 +41,10 @@ import {
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  dropLegacyWorkflowRunVersionColumn,
+  restoreLegacyWorkflowRunVersionColumn,
+} from 'test/integration/utils/restore-legacy-workflow-run-version-column.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -249,6 +253,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     return workflowRunId;
   };
 
+  beforeAll(async () => {
+    await restoreLegacyWorkflowRunVersionColumn(workspaceId);
+  });
+
   afterEach(() => jest.restoreAllMocks());
 
   afterAll(async () => {
@@ -278,6 +286,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       workspaceId,
       ['workflowAutomatedTriggerMaps'],
     );
+    await dropLegacyWorkflowRunVersionColumn(workspaceId);
   });
 
   it('completes a mirrorless run with core ids, a supplied run id, actor, and payload', async () => {
@@ -2539,7 +2548,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
   });
 
-  it('provisions a fresh workspace with core-only workflows and nullable run relations', async () => {
+  it('provisions a fresh workspace with core-only workflows and a nullable run workflow relation', async () => {
     const services = global.workflowTestServices;
     const freshWorkspaceId = randomUUID();
     const applicationId = randomUUID();
@@ -2613,12 +2622,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         `SELECT f.name, f."isNullable" FROM core."fieldMetadata" f JOIN core."objectMetadata" o ON o.id = f."objectMetadataId" WHERE o."workspaceId" = $1 AND o."nameSingular" = 'workflowRun' AND f.name IN ('workflow', 'workflowVersion')`,
         [freshWorkspaceId],
       );
-      expect(relationFields).toHaveLength(2);
-      expect(
-        relationFields.every(
-          (field: { isNullable: boolean }) => field.isNullable,
-        ),
-      ).toBe(true);
+      expect(relationFields).toEqual([{ name: 'workflow', isNullable: true }]);
     } finally {
       if (await workspaces.existsBy({ id: freshWorkspaceId })) {
         await services.workspace.deleteWorkspace(freshWorkspaceId);

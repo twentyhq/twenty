@@ -2,6 +2,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { LEGACY_WORKFLOW_RUN_WORKFLOW_VERSION_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-48/constants/legacy-workflow-run-workflow-version-universal-identifiers.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -28,8 +29,7 @@ export const findStandardWorkflowRunIndexWorkflowVersionViewFields = ({
   }).filter(
     (flatViewField) =>
       flatViewField.fieldMetadataUniversalIdentifier ===
-        STANDARD_OBJECTS.workflowRun.fields.workflowVersion
-          .universalIdentifier &&
+        LEGACY_WORKFLOW_RUN_WORKFLOW_VERSION_FIELD_UNIVERSAL_IDENTIFIER &&
       flatViewField.applicationUniversalIdentifier ===
         TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   );

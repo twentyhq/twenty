@@ -47,7 +47,6 @@ export class WorkflowRunWorkspaceService {
     coreWorkflowId,
     coreWorkflowVersionId,
     workspaceWorkflowId,
-    workspaceWorkflowVersionId,
     workflowName,
     trigger,
     steps,
@@ -61,7 +60,6 @@ export class WorkflowRunWorkspaceService {
     coreWorkflowId: string;
     coreWorkflowVersionId: string;
     workspaceWorkflowId: string | null;
-    workspaceWorkflowVersionId: string | null;
     workflowName: string | null;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
@@ -101,7 +99,6 @@ export class WorkflowRunWorkspaceService {
       await workflowRunRepository.insert({
         id,
         name: `#${workflowRunCount + 1} - ${workflowName ?? 'Workflow'}`,
-        workflowVersionId: workspaceWorkflowVersionId,
         workflowId: workspaceWorkflowId,
         coreWorkflowId,
         coreWorkflowVersionId,

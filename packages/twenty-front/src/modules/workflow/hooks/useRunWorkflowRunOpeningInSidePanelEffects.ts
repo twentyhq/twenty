@@ -52,9 +52,7 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
 
       const workflowId =
         workflowRunRecord.coreWorkflowId ?? workflowRunRecord.workflowId;
-      const workflowVersionId =
-        workflowRunRecord.coreWorkflowVersionId ??
-        workflowRunRecord.workflowVersionId;
+      const workflowVersionId = workflowRunRecord.coreWorkflowVersionId;
       if (!isDefined(workflowId) || !isDefined(workflowVersionId)) {
         return;
       }

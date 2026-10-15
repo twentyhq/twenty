@@ -56,18 +56,6 @@ export const computeStandardWorkflowVersionViewFields = (
         size: 150,
       },
     }),
-    allWorkflowVersionsRuns: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'workflowVersion',
-      context: {
-        viewName: 'allWorkflowVersions',
-        viewFieldName: 'runs',
-        fieldName: 'runs',
-        position: 4,
-        isVisible: true,
-        size: 150,
-      },
-    }),
 
     workflowVersionRecordPageFieldsStatus: createStandardViewFieldFlatMetadata({
       ...args,
@@ -180,19 +168,6 @@ export const computeStandardWorkflowVersionViewFields = (
           viewFieldGroupName: 'system',
         },
       }),
-    workflowVersionRecordPageFieldsRuns: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'workflowVersion',
-      context: {
-        viewName: 'workflowVersionRecordPageFields',
-        viewFieldName: 'runs',
-        fieldName: 'runs',
-        position: 4,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     workflowVersionRecordPageFieldsTimelineActivities:
       createStandardViewFieldFlatMetadata({
         ...args,

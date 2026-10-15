@@ -39,7 +39,6 @@ export type WorkflowRunResponse = {
   id: string;
   status: WorkflowRunStatusType;
   state: WorkflowRunState;
-  workflowVersionId: string | null;
   coreWorkflowVersionId: string | null;
 };
 

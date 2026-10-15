@@ -156,10 +156,9 @@ describe('Wait for event workflow (e2e)', () => {
   });
 
   it('pauses on the event and resumes with the record once it happens', async () => {
-    const { trigger, steps, workspaceWorkflowVersionId } =
-      await findCoreWorkflowVersion({
-        coreWorkflowVersionId: coreWorkflowVersionId!,
-      });
+    const { trigger, steps } = await findCoreWorkflowVersion({
+      coreWorkflowVersionId: coreWorkflowVersionId!,
+    });
 
     createdWorkflowRunId = v4();
 
@@ -175,12 +174,11 @@ describe('Wait for event workflow (e2e)', () => {
 
     // Inserted directly so no start job is enqueued and the test drives the run
     await global.testDataSource.query(
-      `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, state, position, "enqueuedAt")
-       VALUES ($1, 'Wait for event run', $2, $3, $4, $5, 'ENQUEUED', $6, 0, now())`,
+      `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "coreWorkflowId", "coreWorkflowVersionId", status, state, position, "enqueuedAt")
+       VALUES ($1, 'Wait for event run', $2, $3, $4, 'ENQUEUED', $5, 0, now())`,
       [
         createdWorkflowRunId,
         workspaceWorkflowId,
-        workspaceWorkflowVersionId,
         coreWorkflowId,
         coreWorkflowVersionId,
         JSON.stringify(state),

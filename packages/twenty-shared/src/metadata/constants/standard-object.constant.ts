@@ -1341,9 +1341,6 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
     fields: STANDARD_OBJECT_FIELDS.workflowRun,
     indexes: {
-      workflowVersionIdIndex: {
-        universalIdentifier: '8183c8d2-9114-4b6e-8c5d-12a3b14a5a14',
-      },
       workflowIdIndex: {
         universalIdentifier: '9294d9e3-0225-4c7f-9d6e-23b4c25b6b25',
       },
@@ -1365,7 +1362,6 @@ export const STANDARD_OBJECTS = {
         viewFieldNames: [
           'status',
           'workflow',
-          'workflowVersion',
           'startedAt',
           'endedAt',
           'createdAt',
@@ -1399,7 +1395,7 @@ export const STANDARD_OBJECTS = {
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
         fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-        viewFieldNames: ['name', 'workflow', 'status', 'updatedAt', 'runs'],
+        viewFieldNames: ['name', 'workflow', 'status', 'updatedAt'],
       }),
       workflowVersionRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
@@ -1414,7 +1410,6 @@ export const STANDARD_OBJECTS = {
           'createdBy',
           'updatedAt',
           'updatedBy',
-          'runs',
           'timelineActivities',
         ],
         viewFieldGroupNames: {

@@ -81,15 +81,6 @@ export class CoreWorkflowRunnerService {
       workflowVersion.coreWorkflowId,
     );
 
-    const workspaceWorkflowVersionId =
-      workflowVersion.workspaceWorkflowVersionId ??
-      (isDefined(workflow?.workspaceWorkflowId)
-        ? await this.workflowVersionCoreSyncService.findWorkspaceVersionIdByCoreVersionId(
-            workspaceId,
-            workflowVersion.id,
-          )
-        : null);
-
     if (
       !isDefined(workflow) ||
       workflowVersion.workflowId !== workflow.workspaceWorkflowId
@@ -131,7 +122,6 @@ export class CoreWorkflowRunnerService {
         coreWorkflowId: workflow.id,
         coreWorkflowVersionId: workflowVersion.id,
         workspaceWorkflowId: workflow.workspaceWorkflowId,
-        workspaceWorkflowVersionId,
         workflowName: workflow.name,
         trigger: workflowVersion.triggers[0],
         steps: workflowVersion.steps,
