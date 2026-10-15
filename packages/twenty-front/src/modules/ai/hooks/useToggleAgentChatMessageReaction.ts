@@ -4,7 +4,9 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
+import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
 import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { setAgentMessageReaction } from '@/ai/utils/setAgentMessageReaction';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -65,7 +67,15 @@ export const useToggleAgentChatMessageReaction = () => {
         isConfirmedReacted: hasReacted,
       };
 
+      const liveRevisionsAtom =
+        agentChatLiveReactionRevisionsFamilyState.atomFamily({
+          threadId: store.get(currentAiChatThreadState.atom),
+        });
+      const readLiveRevision = () => store.get(liveRevisionsAtom)[messageId];
+
       const request = queue.lastRequest.then(async () => {
+        const liveRevisionBeforeRequest = readLiveRevision();
+
         try {
           await apolloClient.mutate({
             mutation: hasReacted
@@ -75,8 +85,11 @@ export const useToggleAgentChatMessageReaction = () => {
           });
           queue.isConfirmedReacted = !hasReacted;
         } catch (error) {
-          // A newer change is still on its way and will settle the reaction
-          if (queue.lastRequest === request) {
+          // A newer change, or a live snapshot of the server's state, settles the reaction instead
+          if (
+            queue.lastRequest === request &&
+            readLiveRevision() === liveRevisionBeforeRequest
+          ) {
             setOwnReaction(queue.isConfirmedReacted);
           }
           enqueueToast(getToastOptionsFromError({ error }));

@@ -3,9 +3,12 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useToggleAgentChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
+import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
 import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
+const THREAD_ID = 'thread-id';
 const MESSAGE_ID = 'message-id';
 const WORKSPACE_MEMBER_ID = 'julia';
 
@@ -28,6 +31,7 @@ const renderToggleReaction = () => {
   store.set(currentWorkspaceMemberState.atom, {
     id: WORKSPACE_MEMBER_ID,
   } as never);
+  store.set(currentAiChatThreadState.atom, THREAD_ID);
 
   const { result } = renderHook(() => useToggleAgentChatMessageReaction(), {
     wrapper: ({ children }: { children: ReactNode }) => (
@@ -42,7 +46,7 @@ const renderToggleReaction = () => {
       }),
     );
 
-  return { result, getReactions };
+  return { result, getReactions, store };
 };
 
 describe('useToggleAgentChatMessageReaction', () => {
@@ -133,6 +137,50 @@ describe('useToggleAgentChatMessageReaction', () => {
       emoji: '👍',
     });
     expect(getReactions()).toEqual([]);
+    expect(enqueueToast).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the state a live snapshot showed when the request then fails', async () => {
+    let failAdd: (error: Error) => void = () => undefined;
+
+    mutate.mockReturnValueOnce(
+      new Promise((_resolve, reject) => {
+        failAdd = reject;
+      }),
+    );
+
+    const { result, getReactions, store } = renderToggleReaction();
+    const confirmedReactions = [
+      { emoji: '👍', workspaceMemberIds: [WORKSPACE_MEMBER_ID] },
+    ];
+
+    let addToggle: Promise<void> = Promise.resolve();
+
+    await act(async () => {
+      addToggle = result.current.toggleAgentChatMessageReaction({
+        messageId: MESSAGE_ID,
+        emoji: '👍',
+      });
+    });
+
+    await act(async () => {
+      store.set(
+        agentChatLiveReactionRevisionsFamilyState.atomFamily({
+          threadId: THREAD_ID,
+        }),
+        { [MESSAGE_ID]: 1 },
+      );
+      store.set(
+        agentChatMessageReactionsFamilyState.atomFamily({
+          messageId: MESSAGE_ID,
+        }),
+        confirmedReactions,
+      );
+      failAdd(new Error('Network error'));
+      await addToggle;
+    });
+
+    expect(getReactions()).toEqual(confirmedReactions);
     expect(enqueueToast).toHaveBeenCalledTimes(1);
   });
 });
