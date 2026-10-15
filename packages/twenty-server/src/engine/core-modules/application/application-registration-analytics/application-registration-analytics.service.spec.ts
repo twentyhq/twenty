@@ -1,4 +1,5 @@
 import { type ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
+import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationRegistrationAnalyticsService } from 'src/engine/core-modules/application/application-registration-analytics/application-registration-analytics.service';
 import { hashWorkspaceIdForApplicationRegistrationMetric } from 'src/engine/core-modules/application/application-registration-analytics/utils/hash-workspace-id-for-application-registration-metric.util';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -13,6 +14,7 @@ const buildService = () => {
     {
       get: jest.fn().mockReturnValue(APP_SECRET),
     } as unknown as TwentyConfigService,
+    {} as ApplicationLookupService,
   );
 
   return { service, selectOrThrow };

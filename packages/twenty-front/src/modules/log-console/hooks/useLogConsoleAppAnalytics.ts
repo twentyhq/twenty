@@ -46,26 +46,25 @@ export const useLogConsoleAppAnalytics = ({
       : skipToken,
   );
 
-  const { analytics, loading, error } =
-    target.scope === 'all-workspaces'
-      ? {
-          analytics: (
-            allWorkspacesResult.data ?? allWorkspacesResult.previousData
-          )?.findApplicationRegistrationAnalytics,
-          loading: allWorkspacesResult.loading,
-          error: allWorkspacesResult.error,
-        }
-      : {
-          analytics: (
-            currentWorkspaceResult.data ?? currentWorkspaceResult.previousData
-          )?.findApplicationAnalytics,
-          loading: currentWorkspaceResult.loading,
-          error: currentWorkspaceResult.error,
-        };
+  if (target.scope === 'all-workspaces') {
+    const analytics = (
+      allWorkspacesResult.data ?? allWorkspacesResult.previousData
+    )?.findApplicationRegistrationAnalytics;
+
+    return {
+      analytics,
+      isInitialLoading: allWorkspacesResult.loading && !isDefined(analytics),
+      error: allWorkspacesResult.error,
+    };
+  }
+
+  const analytics = (
+    currentWorkspaceResult.data ?? currentWorkspaceResult.previousData
+  )?.findApplicationAnalytics;
 
   return {
     analytics,
-    isInitialLoading: loading && !isDefined(analytics),
-    error,
+    isInitialLoading: currentWorkspaceResult.loading && !isDefined(analytics),
+    error: currentWorkspaceResult.error,
   };
 };

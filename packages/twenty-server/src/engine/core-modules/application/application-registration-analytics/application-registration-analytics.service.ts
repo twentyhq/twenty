@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type ApplicationRegistrationAnalyticsDTO } from 'src/engine/core-modules/application/application-registration-analytics/dtos/application-registration-analytics.dto';
 import { type ApplicationRegistrationDailyVersionActiveWorkspacesRow } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-daily-version-active-workspaces-row.type';
 import { type ApplicationRegistrationMetricCellRow } from 'src/engine/core-modules/application/application-registration-analytics/types/application-registration-metric-cell-row.type';
@@ -13,6 +14,10 @@ import { buildApplicationRegistrationAnalyticsTimeSeries } from 'src/engine/core
 import { buildApplicationRegistrationAnalyticsTotals } from 'src/engine/core-modules/application/application-registration-analytics/utils/build-application-registration-analytics-totals.util';
 import { buildApplicationRegistrationAnalyticsVersions } from 'src/engine/core-modules/application/application-registration-analytics/utils/build-application-registration-analytics-versions.util';
 import { hashWorkspaceIdForApplicationRegistrationMetric } from 'src/engine/core-modules/application/application-registration-analytics/utils/hash-workspace-id-for-application-registration-metric.util';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
@@ -53,7 +58,40 @@ export class ApplicationRegistrationAnalyticsService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly applicationLookupService: ApplicationLookupService,
   ) {}
+
+  async getAnalyticsForApplicationOrThrow({
+    applicationId,
+    workspaceId,
+    periodStart,
+    periodEnd,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    periodStart: Date;
+    periodEnd: Date;
+  }): Promise<ApplicationRegistrationAnalyticsDTO> {
+    const application = await this.applicationLookupService.findById({
+      id: applicationId,
+      workspaceId,
+    });
+
+    if (!isDefined(application?.applicationRegistrationId)) {
+      throw new ApplicationException(
+        `Application ${applicationId} not found or not linked to a registration in this workspace`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    // The installing workspace only ever sees its own activity, never the app's other installs
+    return this.getAnalytics({
+      applicationRegistrationId: application.applicationRegistrationId,
+      workspaceId,
+      periodStart,
+      periodEnd,
+    });
+  }
 
   async getAnalytics(
     params: AnalyticsPeriodParams,
