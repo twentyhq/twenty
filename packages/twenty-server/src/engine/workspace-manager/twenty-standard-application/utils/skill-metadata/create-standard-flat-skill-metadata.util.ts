@@ -1736,9 +1736,15 @@ Report what changed in plain terms: which role, what it can now do, and who is a
       context: {
         skillName: 'agent-building',
         name: 'agent-building',
-        label: 'Agent Building',
-        description:
-          'Use when the user wants an AI agent that runs on its own on a schedule or when records change, using judgment on each run: creating, changing, pausing or deleting such an agent',
+        label: i18nLabel(
+          msg({ message: `Agent Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user wants an AI agent that runs on its own on a schedule or when records change, using judgment on each run: creating, changing, pausing or deleting such an agent`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconLego',
         content: `# Agent Building Skill
 
