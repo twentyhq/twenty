@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { MorphRelationHeadModule } from 'src/engine/metadata-modules/morph-relation-head/morph-relation-head.module';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewSortController } from 'src/engine/metadata-modules/view-sort/controllers/view-sort.controller';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
@@ -19,6 +20,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ViewPermissionsModule,
+    MorphRelationHeadModule,
   ],
   controllers: [ViewSortController],
   providers: [

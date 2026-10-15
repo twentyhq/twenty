@@ -9,6 +9,7 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { fromCreateViewSortInputToFlatViewSortToCreate } from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
 import { fromDestroyViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
 import { fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util';
+import { MorphRelationReferenceVisibilityService } from 'src/engine/metadata-modules/morph-relation-head/services/morph-relation-reference-visibility.service';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
@@ -29,6 +30,7 @@ export class ViewSortService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly morphRelationReferenceVisibilityService: MorphRelationReferenceVisibilityService,
   ) {}
 
   async createOne({
@@ -243,20 +245,22 @@ export class ViewSortService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewSortEntity[]> {
-    return this.viewSortRepository.find(workspaceId, {
+    const viewSorts = await this.viewSortRepository.find(workspaceId, {
       where: {
         deletedAt: IsNull(),
       },
       order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
+
+    return this.filterVisibleViewSorts({ workspaceId, viewSorts });
   }
 
   async findByViewId(
     workspaceId: string,
     viewId: string,
   ): Promise<ViewSortEntity[]> {
-    return this.viewSortRepository.find(workspaceId, {
+    const viewSorts = await this.viewSortRepository.find(workspaceId, {
       where: {
         viewId,
         deletedAt: IsNull(),
@@ -264,6 +268,25 @@ export class ViewSortService {
       order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
+
+    return this.filterVisibleViewSorts({ workspaceId, viewSorts });
+  }
+
+  private async filterVisibleViewSorts({
+    workspaceId,
+    viewSorts,
+  }: {
+    workspaceId: string;
+    viewSorts: ViewSortEntity[];
+  }): Promise<ViewSortEntity[]> {
+    const isMorphRelationReferenceVisible =
+      await this.morphRelationReferenceVisibilityService.getIsMorphRelationReferenceVisible(
+        workspaceId,
+      );
+
+    return viewSorts.filter((viewSort) =>
+      isMorphRelationReferenceVisible(viewSort.fieldMetadataId),
+    );
   }
 
   async findById(

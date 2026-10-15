@@ -1,14 +1,15 @@
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 
-export const buildMorphRelationHeadFieldPermissionUpdates = ({
-  destinationFieldByOriginFieldId,
+export const buildMorphRelationHeadFieldPermissionCopies = ({
+  headByRepresentativeId,
   flatFieldPermissionMaps,
 }: {
-  destinationFieldByOriginFieldId: Map<string, FlatFieldMetadata>;
+  headByRepresentativeId: Map<string, FlatFieldMetadata>;
   flatFieldPermissionMaps: FlatEntityMaps<FlatFieldPermission>;
 }): FlatFieldPermission[] => {
   const fieldPermissions = Object.values(
@@ -22,22 +23,22 @@ export const buildMorphRelationHeadFieldPermissionUpdates = ({
   );
 
   return fieldPermissions.flatMap((fieldPermission) => {
-    const destination = destinationFieldByOriginFieldId.get(
-      fieldPermission.fieldMetadataId,
-    );
-    const destinationKey = `${fieldPermission.roleId}:${destination?.id}`;
+    const head = headByRepresentativeId.get(fieldPermission.fieldMetadataId);
+    const headKey = `${fieldPermission.roleId}:${head?.id}`;
 
-    if (!isDefined(destination) || fieldPermissionKeys.has(destinationKey)) {
+    if (!isDefined(head) || fieldPermissionKeys.has(headKey)) {
       return [];
     }
 
-    fieldPermissionKeys.add(destinationKey);
+    fieldPermissionKeys.add(headKey);
 
     return [
       {
         ...fieldPermission,
-        fieldMetadataId: destination.id,
-        fieldMetadataUniversalIdentifier: destination.universalIdentifier,
+        id: v4(),
+        universalIdentifier: v4(),
+        fieldMetadataId: head.id,
+        fieldMetadataUniversalIdentifier: head.universalIdentifier,
       },
     ];
   });
