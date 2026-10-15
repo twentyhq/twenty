@@ -9,6 +9,9 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
   it('should correctly format a billing plan with licensed and metered products', () => {
     const mockPlan = {
       planKey: BillingPlanKey.PRO,
+      isSellable: true,
+      upgradePlanKeys: [BillingPlanKey.ENTERPRISE],
+      downgradePlanKeys: [],
       baseProducts: [
         {
           id: 'product-1',
@@ -54,6 +57,9 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
 
     expect(result).toEqual({
       planKey: BillingPlanKey.PRO,
+      isSellable: true,
+      upgradePlanKeys: [BillingPlanKey.ENTERPRISE],
+      downgradePlanKeys: [],
       baseProducts: [
         {
           id: 'product-1',
@@ -162,5 +168,27 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
     expect(meteredPrices![0].tiers[1]).toEqual(
       expect.objectContaining({ upTo: null }),
     );
+  });
+
+  it('should carry the sale status and plan switches of a plan that is no longer sold', () => {
+    const plan: BillingGetPlanResult = {
+      planKey: BillingPlanKey.ENTERPRISE,
+      isSellable: false,
+      upgradePlanKeys: [BillingPlanKey.ORGANIZATION_V2],
+      downgradePlanKeys: [BillingPlanKey.PRO_V2],
+      baseProducts: [],
+      resourceCreditProducts: [],
+      meteredProducts: [],
+    };
+
+    expect(formatBillingDatabaseProductToGraphqlDTO(plan)).toEqual({
+      planKey: BillingPlanKey.ENTERPRISE,
+      isSellable: false,
+      upgradePlanKeys: [BillingPlanKey.ORGANIZATION_V2],
+      downgradePlanKeys: [BillingPlanKey.PRO_V2],
+      baseProducts: [],
+      resourceCreditProducts: [],
+      meteredProducts: [],
+    });
   });
 });

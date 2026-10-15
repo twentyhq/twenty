@@ -9,6 +9,8 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_PLAN_SWITCHES } from 'src/engine/core-modules/billing/constants/billing-plan-switches.constant';
+import { BILLING_SELLABLE_PLAN_KEYS } from 'src/engine/core-modules/billing/constants/billing-sellable-plan-keys.constant';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -26,7 +28,12 @@ export class BillingPlanService {
   ) {}
 
   async listPlans(): Promise<BillingGetPlanResult[]> {
-    const planKeys = Object.values(BillingPlanKey);
+    const planKeys = [
+      ...BILLING_SELLABLE_PLAN_KEYS,
+      ...Object.values(BillingPlanKey).filter(
+        (planKey) => !BILLING_SELLABLE_PLAN_KEYS.includes(planKey),
+      ),
+    ];
 
     const products = await this.billingProductRepository.find({
       where: {
@@ -58,6 +65,9 @@ export class BillingPlanService {
 
       return {
         planKey,
+        isSellable: BILLING_SELLABLE_PLAN_KEYS.includes(planKey),
+        upgradePlanKeys: BILLING_PLAN_SWITCHES[planKey].upgradePlanKeys,
+        downgradePlanKeys: BILLING_PLAN_SWITCHES[planKey].downgradePlanKeys,
         meteredProducts,
         baseProducts,
         resourceCreditProducts,
