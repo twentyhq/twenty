@@ -141,15 +141,13 @@ export class AgentRunnerService {
         outcome: outcome.type === 'ANSWERED' ? { type: 'CANCELLED' } : outcome,
       });
 
-      const agent = isNonEmptyString(runSpec.agentId)
-        ? await this.agentRepository.findOne(workspaceId, {
-            where: { id: runSpec.agentId },
-          })
-        : null;
+      const agent = await this.agentRepository.findOne(workspaceId, {
+        where: { id: runSpec.agentId },
+      });
 
       if (!isDefined(agent)) {
         throw new AiException(
-          `Agent step "${runSpec.title}" has no agent. Delete this step and add a new AI step.`,
+          `Agent with id ${runSpec.agentId} not found`,
           AiExceptionCode.AGENT_NOT_FOUND,
         );
       }

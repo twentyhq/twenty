@@ -441,36 +441,6 @@ describe('AgentRunnerService', () => {
     );
   });
 
-  it('fails a continued run whose suspension has no agent', async () => {
-    const {
-      service,
-      pendingWakeUpService,
-      agentRunSuspensionService,
-      agentAsyncExecutorService,
-    } = buildService();
-
-    pendingWakeUpService.find.mockResolvedValue({
-      condition: { type: 'ANSWER', threadId: 'thread-id' },
-      payload: {
-        ...SUSPENSION,
-        runSpec: { ...SUSPENSION.runSpec, agentId: null },
-      },
-    });
-
-    await service.continue(CONTINUATION);
-
-    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
-    expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
-      expect.objectContaining({
-        outcome: {
-          status: 'FAILED',
-          error:
-            'Agent step "Draft the quote" has no agent. Delete this step and add a new AI step.',
-        },
-      }),
-    );
-  });
-
   it('fails a claimed run whose caller cannot be read, rather than dropping it', async () => {
     const { service, callerHandler, agentRunSuspensionService } =
       buildService();

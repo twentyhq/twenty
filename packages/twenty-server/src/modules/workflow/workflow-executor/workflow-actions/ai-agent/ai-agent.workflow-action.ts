@@ -87,15 +87,13 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const agent = isNonEmptyString(agentId)
-      ? await this.agentRepository.findOne(workspaceId, {
-          where: { id: agentId },
-        })
-      : null;
+    const agent = await this.agentRepository.findOne(workspaceId, {
+      where: { id: agentId },
+    });
 
     if (!isDefined(agent)) {
       throw new WorkflowStepExecutorException(
-        `Agent step "${step.name}" has no agent. Delete this step and add a new AI step.`,
+        `Agent with id ${agentId} not found`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
@@ -149,7 +147,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       }),
       spec: buildWorkflowAgentRunSpec({
         step,
-        agentId: agent.id,
         isApplicationBound: isDefined(application),
       }),
       agent,
