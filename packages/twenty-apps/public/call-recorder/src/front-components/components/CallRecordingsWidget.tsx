@@ -52,10 +52,18 @@ const CallRecordingList = ({
         </StyledCallRecordingCard>
       );
     case 'error':
-      return <WidgetMessage message="Could not load call recordings." />;
+      return (
+        <StyledWidgetContainer>
+          <WidgetMessage message="Could not load call recordings." />
+        </StyledWidgetContainer>
+      );
     case 'loaded':
       if (callRecordingsState.callRecordings.length === 0) {
-        return <WidgetMessage message="No call recordings yet." />;
+        return (
+          <StyledWidgetContainer>
+            <WidgetMessage message="No call recordings yet." />
+          </StyledWidgetContainer>
+        );
       }
 
       return (
@@ -94,12 +102,18 @@ export const CallRecordingsWidget = () => {
   const renderContent = () => {
     if (isUndefined(calendarEventTargetFieldName)) {
       return (
-        <WidgetMessage message="Call recordings are only available on person, company and opportunity pages." />
+        <StyledWidgetContainer>
+          <WidgetMessage message="Call recordings are only available on person, company and opportunity pages." />
+        </StyledWidgetContainer>
       );
     }
 
     if (isUndefined(recordId)) {
-      return <WidgetMessage message="No record selected." />;
+      return (
+        <StyledWidgetContainer>
+          <WidgetMessage message="No record selected." />
+        </StyledWidgetContainer>
+      );
     }
 
     return (
@@ -111,8 +125,6 @@ export const CallRecordingsWidget = () => {
   };
 
   return (
-    <FrontComponentThemeProvider>
-      <StyledWidgetContainer>{renderContent()}</StyledWidgetContainer>
-    </FrontComponentThemeProvider>
+    <FrontComponentThemeProvider>{renderContent()}</FrontComponentThemeProvider>
   );
 };

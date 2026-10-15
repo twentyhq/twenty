@@ -2,36 +2,55 @@ import { isUndefined } from '@sniptt/guards';
 
 import { getTimestamp } from 'src/front-components/utils/get-timestamp.util';
 
-// Matches Twenty's file rows (formatToHumanReadableDate).
-const CALL_RECORDING_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
-  dateStyle: 'medium',
+// Rows sit in a narrow record-page column, so the year is only spent on dates
+// that need it.
+const CURRENT_YEAR_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: 'short',
+  day: 'numeric',
 };
 
-const dateTimeFormatByLocale = new Map<string, Intl.DateTimeFormat>();
+const OTHER_YEAR_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+};
 
-const createDateTimeFormat = (locale: string | undefined) => {
+const dateTimeFormatByKey = new Map<string, Intl.DateTimeFormat>();
+
+const createDateTimeFormat = (
+  locale: string | undefined,
+  formatOptions: Intl.DateTimeFormatOptions,
+) => {
   try {
-    return new Intl.DateTimeFormat(locale, CALL_RECORDING_DATE_FORMAT_OPTIONS);
+    return new Intl.DateTimeFormat(locale, formatOptions);
   } catch {
     // Host locales such as pseudo-locales are not always valid BCP 47 tags.
-    return new Intl.DateTimeFormat(
-      undefined,
-      CALL_RECORDING_DATE_FORMAT_OPTIONS,
-    );
+    return new Intl.DateTimeFormat(undefined, formatOptions);
   }
 };
 
-const getDateTimeFormat = (locale: string | undefined) => {
-  const localeKey = locale ?? '';
-  const cachedDateTimeFormat = dateTimeFormatByLocale.get(localeKey);
+const getDateTimeFormat = ({
+  locale,
+  isCurrentYear,
+}: {
+  locale: string | undefined;
+  isCurrentYear: boolean;
+}) => {
+  const formatKey = `${locale ?? ''}:${isCurrentYear}`;
+  const cachedDateTimeFormat = dateTimeFormatByKey.get(formatKey);
 
   if (!isUndefined(cachedDateTimeFormat)) {
     return cachedDateTimeFormat;
   }
 
-  const dateTimeFormat = createDateTimeFormat(locale);
+  const dateTimeFormat = createDateTimeFormat(
+    locale,
+    isCurrentYear
+      ? CURRENT_YEAR_DATE_FORMAT_OPTIONS
+      : OTHER_YEAR_DATE_FORMAT_OPTIONS,
+  );
 
-  dateTimeFormatByLocale.set(localeKey, dateTimeFormat);
+  dateTimeFormatByKey.set(formatKey, dateTimeFormat);
 
   return dateTimeFormat;
 };
@@ -39,9 +58,11 @@ const getDateTimeFormat = (locale: string | undefined) => {
 export const formatCallRecordingDate = ({
   dateTime,
   locale,
+  now = new Date(),
 }: {
   dateTime: string | null | undefined;
   locale: string | undefined;
+  now?: Date;
 }): string | undefined => {
   const timestamp = getTimestamp(dateTime);
 
@@ -49,5 +70,7 @@ export const formatCallRecordingDate = ({
     return undefined;
   }
 
-  return getDateTimeFormat(locale).format(timestamp);
+  const isCurrentYear = new Date(timestamp).getFullYear() === now.getFullYear();
+
+  return getDateTimeFormat({ locale, isCurrentYear }).format(timestamp);
 };

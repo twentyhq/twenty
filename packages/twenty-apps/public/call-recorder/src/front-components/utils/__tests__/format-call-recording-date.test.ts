@@ -3,13 +3,24 @@ import { describe, expect, it, vi } from 'vitest';
 import { formatCallRecordingDate } from 'src/front-components/utils/format-call-recording-date.util';
 
 describe('formatCallRecordingDate', () => {
-  it('formats the date in the viewer locale', () => {
+  it('leaves the year out for dates in the current year', () => {
     expect(
       formatCallRecordingDate({
         dateTime: '2026-03-15T12:00:00.000Z',
         locale: 'en-US',
+        now: new Date('2026-10-15T12:00:00.000Z'),
       }),
-    ).toBe('Mar 15, 2026');
+    ).toBe('Mar 15');
+  });
+
+  it('shows the year for dates in another year', () => {
+    expect(
+      formatCallRecordingDate({
+        dateTime: '2025-03-15T12:00:00.000Z',
+        locale: 'en-US',
+        now: new Date('2026-10-15T12:00:00.000Z'),
+      }),
+    ).toBe('Mar 15, 2025');
   });
 
   it('does not throw on a locale the runtime rejects', () => {
@@ -50,6 +61,10 @@ describe('formatCallRecordingDate', () => {
       });
       formatCallRecordingDate({
         dateTime: '2026-03-16T12:00:00.000Z',
+        locale: 'en-GB',
+      });
+      formatCallRecordingDate({
+        dateTime: '2026-03-17T12:00:00.000Z',
         locale: 'en-GB',
       });
     } finally {

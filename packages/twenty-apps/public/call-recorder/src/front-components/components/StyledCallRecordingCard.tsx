@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Mirrors Twenty's ActivityList card used by the Files widget.
+// The host's widget frame already draws the card border, as ActivityList's
+// parent does for the Files widget.
 export const StyledCallRecordingCard = styled.div`
   background: ${() => themeCssVariables.background.primary};
-  border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${() => themeCssVariables.font.color.secondary};
