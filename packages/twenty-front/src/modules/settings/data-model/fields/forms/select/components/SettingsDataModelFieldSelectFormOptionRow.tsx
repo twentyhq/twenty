@@ -1,5 +1,4 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -17,6 +16,7 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { MAIN_COLOR_NAMES, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
@@ -52,6 +52,7 @@ const useColorLabels = (): ColorLabels => ({
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
   isDefault?: boolean;
+  isApiValueVisible: boolean;
   onChange: (value: FieldMetadataItemOption) => void;
   onRemove?: () => void;
   onSetAsDefault?: () => void;
@@ -103,6 +104,7 @@ const StyledLightIconButtonContainer = styled.span`
 export const SettingsDataModelFieldSelectFormOptionRow = ({
   className,
   isDefault,
+  isApiValueVisible,
   onChange,
   onRemove,
   onSetAsDefault,
@@ -135,22 +137,24 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           color={theme.font.color.extraLight}
         />
       </StyledIconGripVerticalContainer>
-      <AdvancedSettingsWrapper animationDimension="width" hideDot>
-        <StyledOptionInputContainer>
-          <SettingsTextInput
-            instanceId={`select-option-value-${option.id}`}
-            value={option.value}
-            onChange={(input) =>
-              onChange({
-                ...option,
-                value: computeOptionValueFromLabel(input),
-              })
-            }
-            RightIcon={isDefault ? IconCheck : undefined}
-            maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
-          />
-        </StyledOptionInputContainer>
-      </AdvancedSettingsWrapper>
+      <Collapsible.Root open={isApiValueVisible}>
+        <Collapsible.Panel dimension="width" containAnimation={false}>
+          <StyledOptionInputContainer>
+            <SettingsTextInput
+              instanceId={`select-option-value-${option.id}`}
+              value={option.value}
+              onChange={(input) =>
+                onChange({
+                  ...option,
+                  value: computeOptionValueFromLabel(input),
+                })
+              }
+              RightIcon={isDefault ? IconCheck : undefined}
+              maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+            />
+          </StyledOptionInputContainer>
+        </Collapsible.Panel>
+      </Collapsible.Root>
       <DropdownRoot dropdownId={SELECT_COLOR_DROPDOWN_ID} type="picker">
         <Dropdown.Trigger
           render={<StyledColorSampleContainer />}

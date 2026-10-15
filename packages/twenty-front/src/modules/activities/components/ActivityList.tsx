@@ -1,7 +1,6 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledListContainer = styled.div`
   width: 100%;
@@ -10,13 +9,6 @@ const StyledListContainer = styled.div`
     flex: 1;
     height: 100%;
     min-height: 0;
-  }
-
-  > * {
-    & > :not(:last-child) {
-      border-bottom: 1px solid ${themeCssVariables.border.color.light};
-    }
-    width: calc(100% - 2px);
   }
 `;
 

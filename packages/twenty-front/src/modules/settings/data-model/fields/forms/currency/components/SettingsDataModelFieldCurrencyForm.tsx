@@ -7,12 +7,12 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldDefaultValueSchema';
 import { currencyFieldSettingsSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldSettingsSchema';
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
+import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheckbox, IconCurrencyDollar, IconDecimal } from 'twenty-ui/icon';
@@ -38,6 +38,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
   existingFieldMetadataId,
 }: SettingsDataModelFieldCurrencyFormProps) => {
   const { t } = useLingui();
+  const currencies = useCurrencies();
   const {
     initialAmountMicrosValue,
     initialCurrencyCodeValue,
@@ -72,7 +73,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
               onChange={onChange}
               disabled={disabled}
               dropdownId="object-field-default-value-select-currency"
-              options={CURRENCIES.map(({ value, ...rest }) => ({
+              options={currencies.map(({ value, ...rest }) => ({
                 ...rest,
                 value: applySimpleQuotesToString(value),
               }))}
@@ -82,7 +83,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
           </SettingsOptionCardContentSelect>
         )}
       />
-      <Separator />
+      <SettingsCardSeparator />
       <Controller
         name="settings"
         control={control}
@@ -114,14 +115,14 @@ export const SettingsDataModelFieldCurrencyForm = ({
                   disabled={disabled}
                   dropdownId="object-field-format-select"
                   options={[
-                    { label: 'Short', value: fieldMetadataCurrencyFormat[0] },
-                    { label: 'Full', value: fieldMetadataCurrencyFormat[1] },
+                    { label: t`Short`, value: fieldMetadataCurrencyFormat[0] },
+                    { label: t`Full`, value: fieldMetadataCurrencyFormat[1] },
                   ]}
                   selectSizeVariant="small"
                   withSearchInput={false}
                 />
               </SettingsOptionCardContentSelect>
-              <Separator />
+              <SettingsCardSeparator />
               {format === 'full' && (
                 <SettingsOptionCardContentCounter
                   Icon={IconDecimal}
