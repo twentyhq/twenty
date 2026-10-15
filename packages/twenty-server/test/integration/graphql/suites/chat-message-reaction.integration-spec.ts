@@ -189,7 +189,13 @@ describe('Chat message reactions through the authenticated API', () => {
         event: {
           type: 'message-reactions-updated',
           messageId,
-          reactions: added.body.data.addAgentChatMessageReaction,
+          reactions: [
+            {
+              emoji: '👍',
+              workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+              hasAssistantReacted: false,
+            },
+          ],
           revision: expect.any(Number),
         },
       },
