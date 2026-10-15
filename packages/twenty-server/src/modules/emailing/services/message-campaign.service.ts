@@ -28,6 +28,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { buildCampaignNotSendableExceptions } from 'src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util';
 import { buildCampaignSendRefusalException } from 'src/modules/emailing/utils/build-campaign-send-refusal-exception.util';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
@@ -355,12 +356,12 @@ export class MessageCampaignService {
     const sendableCampaign = sendableCampaignSchema.safeParse(campaign);
 
     if (!sendableCampaign.success) {
-      throw new EmailingDomainException(
-        `Campaign ${campaignId} is not sendable: ${sendableCampaign.error.issues
-          .map((issue) => `${issue.path.join('.')} ${issue.message}`)
-          .join(', ')}`,
-        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
-      );
+      const [firstNotSendableException] = buildCampaignNotSendableExceptions({
+        campaignId,
+        issues: sendableCampaign.error.issues,
+      });
+
+      throw firstNotSendableException;
     }
 
     await this.campaignVariableService.assertKnownVariables(
