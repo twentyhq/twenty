@@ -1,16 +1,21 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
-import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
+import { useMemo } from 'react';
 
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
+import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
+import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
+import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
+import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+
 import { t } from '@lingui/core/macro';
+import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
+  isNonEmptyArray,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 
@@ -22,10 +27,6 @@ type UseComputeRecordRelationFilterDisplayValueParams = {
 export const useComputeRecordRelationFilterDisplayValue = ({
   recordFilter,
 }: UseComputeRecordRelationFilterDisplayValueParams) => {
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
-  );
-
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
@@ -40,56 +41,74 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     objectMetadataItems,
   });
 
-  const relationObjectMetadataNameSingular =
-    getRelationObjectMetadataNameSingular({
-      field: fieldMetadataItem,
-    });
+  const targetObjectMetadataItems = useMemo(() => {
+    const targetObjectMetadataIds =
+      getTargetObjectMetadataIdsFromField(fieldMetadataItem);
 
-  if (!isDefined(relationObjectMetadataNameSingular)) {
-    throw new Error('relationObjectMetadataNameSingular is not defined');
-  }
+    return objectMetadataItems.filter((objectMetadataItem) =>
+      targetObjectMetadataIds.includes(objectMetadataItem.id),
+    );
+  }, [fieldMetadataItem, objectMetadataItems]);
 
-  const relationObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === relationObjectMetadataNameSingular,
+  const { isCurrentWorkspaceMemberSelected, selectedRecordIds } = useMemo(
+    () =>
+      jsonRelationFilterValueSchema
+        .catch({
+          isCurrentWorkspaceMemberSelected: false,
+          selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
+            recordFilter.value,
+          ),
+        })
+        .parse(recordFilter.value),
+    [recordFilter.value],
   );
 
-  if (!isDefined(relationObjectMetadataItem)) {
-    throw new Error('relationObjectMetadataItem is not defined');
-  }
+  const operationSignatures = useMemo(
+    () =>
+      isNonEmptyArray(selectedRecordIds)
+        ? targetObjectMetadataItems.map(
+            (targetObjectMetadataItem): RecordGqlOperationSignature => ({
+              objectNameSingular: targetObjectMetadataItem.nameSingular,
+              variables: { filter: { id: { in: selectedRecordIds } } },
+              fields: buildIdentifierGqlFields(targetObjectMetadataItem),
+            }),
+          )
+        : [],
+    [selectedRecordIds, targetObjectMetadataItems],
+  );
 
-  const relationObjectLabelPlural = relationObjectMetadataItem.labelPlural;
-
-  const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-    jsonRelationFilterValueSchema
-      .catch({
-        isCurrentWorkspaceMemberSelected: false,
-        selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
-          recordFilter.value,
-        ),
-      })
-      .parse(recordFilter.value);
-
-  const { selectedRecords, loading } = useRecordsForSelect({
-    searchFilterText: '',
-    selectedIds: selectedRecordIds,
-    objectNameSingular: relationObjectMetadataNameSingular,
-    limit: 10,
-    allowRequestsToTwentyIcons,
+  const { result, loading } = useCombinedFindManyRecords({
+    operationSignatures,
+    skip: !isNonEmptyArray(operationSignatures),
   });
 
   if (loading) {
     return { displayValue: t`Loading...`, loading };
   }
 
+  const selectedRecordNames = targetObjectMetadataItems.flatMap(
+    (targetObjectMetadataItem) =>
+      (result[targetObjectMetadataItem.namePlural] ?? []).map((record) =>
+        getLabelIdentifierFieldValue(
+          record,
+          getLabelIdentifierFieldMetadataItem(targetObjectMetadataItem),
+        ),
+      ),
+  );
+
   const labelValueItems = [
     ...(isCurrentWorkspaceMemberSelected ? [t`Me`] : []),
-    ...selectedRecords.map((record) => record.name),
+    ...selectedRecordNames,
   ];
+
+  const relationObjectLabelPlural =
+    targetObjectMetadataItems.length === 1
+      ? targetObjectMetadataItems[0].labelPlural.toLowerCase()
+      : t`records`;
 
   const displayValue =
     labelValueItems.length > MAX_RECORDS_TO_DISPLAY
-      ? `${labelValueItems.length} ${relationObjectLabelPlural.toLowerCase()}`
+      ? `${labelValueItems.length} ${relationObjectLabelPlural}`
       : labelValueItems.join(', ');
 
   return { displayValue, loading };
