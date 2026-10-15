@@ -5,7 +5,7 @@ import { CallParticipantsWidget } from 'src/front-components/components/CallPart
 
 export default defineFrontComponent({
   universalIdentifier: CALL_PARTICIPANTS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-  name: 'call-participants',
+  name: 'Call participants',
   description:
     'Shows the participants of the meeting a call recording belongs to.',
   component: CallParticipantsWidget,

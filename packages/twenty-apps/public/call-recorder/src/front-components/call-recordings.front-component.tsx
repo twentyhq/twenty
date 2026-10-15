@@ -5,7 +5,7 @@ import { CallRecordingsWidget } from 'src/front-components/components/CallRecord
 
 export default defineFrontComponent({
   universalIdentifier: CALL_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-  name: 'call-recordings',
+  name: 'Call recordings',
   description:
     'Lists the most recent call recordings of the meetings linked to a person, company or opportunity.',
   component: CallRecordingsWidget,

@@ -96,7 +96,7 @@ export const CallRecordingRow = ({
   };
 
   return (
-    <StyledRowButton type="button" aria-label={title} onClick={handleClick}>
+    <StyledRowButton type="button" onClick={handleClick}>
       <StyledVideoTile>
         <IconVideo size={ICON.size.sm} stroke={ICON.stroke.sm} />
       </StyledVideoTile>

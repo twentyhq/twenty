@@ -42,7 +42,7 @@ const CallRecordingList = ({
   switch (callRecordingsState.status) {
     case 'loading':
       return (
-        <StyledCallRecordingCard aria-busy>
+        <StyledCallRecordingCard aria-busy aria-label="Loading call recordings">
           {Array.from(
             { length: CALL_RECORDING_SKELETON_ROW_COUNT },
             (_, skeletonRowIndex) => (

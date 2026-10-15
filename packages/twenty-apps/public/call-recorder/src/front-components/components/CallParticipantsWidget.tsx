@@ -77,7 +77,9 @@ export const CallParticipantsWidget = () => {
 
   const renderContent = () => {
     if (selectedObjectMetadata?.nameSingular !== 'callRecording') {
-      return <WidgetMessage message="Not available on this page." />;
+      return (
+        <WidgetMessage message="Call participants are only available on call recording pages." />
+      );
     }
 
     if (isUndefined(callRecordingId)) {
