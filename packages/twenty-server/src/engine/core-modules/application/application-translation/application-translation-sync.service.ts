@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { ApplicationTranslationEntity } from 'src/engine/core-modules/application/application-translation/application-translation.entity';
+import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
+import { computeApplicationTranslationSyncActions } from 'src/engine/core-modules/application/application-translation/utils/compute-application-translation-sync-actions.util';
 import { computeApplicationTranslationSyncPlan } from 'src/engine/core-modules/application/application-translation/utils/compute-application-translation-sync-plan.util';
 
 @Injectable()
@@ -19,50 +21,80 @@ export class ApplicationTranslationSyncService {
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
   ) {}
 
+  async getSyncActions({
+    applicationRegistrationId,
+    translations,
+  }: {
+    applicationRegistrationId: string;
+    translations: TranslationsManifest | undefined;
+  }): Promise<ApplicationTranslationSyncAction[]> {
+    if (!isDefined(translations)) {
+      return [];
+    }
+
+    const existingRows = await this.applicationTranslationRepository.find({
+      where: { applicationRegistrationId },
+    });
+
+    return computeApplicationTranslationSyncActions({
+      existingRows,
+      translations,
+    });
+  }
+
   async syncFromManifest({
     applicationRegistrationId,
     translations,
   }: {
     applicationRegistrationId: string;
     translations: TranslationsManifest | undefined;
-  }): Promise<void> {
+  }): Promise<ApplicationTranslationSyncAction[]> {
     // Absence must not prune: this cross-workspace table would lose the app's locales everywhere
     if (!isDefined(translations)) {
-      return;
+      return [];
     }
 
-    const existingRows = await this.applicationTranslationRepository.find({
-      where: { applicationRegistrationId },
-      withDeleted: true,
-    });
+    try {
+      return await this.applicationTranslationRepository.manager.transaction(
+        async (manager) => {
+          const repository = manager.getRepository(
+            ApplicationTranslationEntity,
+          );
+          const existingRows = await repository.find({
+            where: { applicationRegistrationId },
+            withDeleted: true,
+          });
+          const actions = computeApplicationTranslationSyncActions({
+            existingRows,
+            translations,
+          });
+          const { rowsToUpdate, rowsToInsert, rowIdsToSoftDelete } =
+            computeApplicationTranslationSyncPlan({
+              existingRows,
+              translations,
+            });
 
-    const { rowsToUpdate, rowsToInsert, rowIdsToSoftDelete } =
-      computeApplicationTranslationSyncPlan({ existingRows, translations });
+          for (const { id, messages } of rowsToUpdate) {
+            await repository.update(id, { messages, deletedAt: null });
+          }
+          for (const { locale, messages } of rowsToInsert) {
+            await repository.insert({
+              applicationRegistrationId,
+              locale,
+              messages,
+            });
+          }
+          if (rowIdsToSoftDelete.length > 0) {
+            await repository.softDelete(rowIdsToSoftDelete);
+          }
 
-    await Promise.all([
-      ...rowsToUpdate.map(({ id, messages }) =>
-        this.applicationTranslationRepository.update(id, {
-          messages,
-          deletedAt: null,
-        }),
-      ),
-      ...rowsToInsert.map(({ locale, messages }) =>
-        this.applicationTranslationRepository.insert({
-          applicationRegistrationId,
-          locale,
-          messages,
-        }),
-      ),
-    ]);
-
-    if (rowIdsToSoftDelete.length > 0) {
-      await this.applicationTranslationRepository.softDelete(
-        rowIdsToSoftDelete,
+          return actions;
+        },
+      );
+    } finally {
+      await this.applicationTranslationCacheService.invalidate(
+        applicationRegistrationId,
       );
     }
-
-    await this.applicationTranslationCacheService.invalidate(
-      applicationRegistrationId,
-    );
   }
 }

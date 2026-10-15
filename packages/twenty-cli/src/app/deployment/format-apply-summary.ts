@@ -2,7 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { formatBytes, isDefined } from 'twenty-shared/utils';
 
 import { formatAppDuration } from '@/app/format-app-duration';
-import { type AppPlanSummary } from '@/app/deployment/types/app-plan.type';
+import { formatTranslationSummary } from '@/app/deployment/format-translation-summary';
+import {
+  type AppPlanSummary,
+  type AppTranslationPlanAction,
+} from '@/app/deployment/types/app-plan.type';
 import { type AppUploadProgress } from '@/app/deployment/types/app-upload-progress.type';
 import { formatDataValue } from '@/data/format-data-value';
 import { colorText, dimText, formatSuccessLine } from '@/output/style';
@@ -25,6 +29,7 @@ export const formatApplySummary = ({
   applicationName,
   apiUrl,
   summary,
+  translationActions,
   upload,
   isRegistrationCreated,
   clientGeneration,
@@ -33,6 +38,7 @@ export const formatApplySummary = ({
   applicationName: string;
   apiUrl: string;
   summary: AppPlanSummary | undefined;
+  translationActions?: AppTranslationPlanAction[] | null;
   upload: AppUploadProgress;
   isRegistrationCreated: boolean;
   clientGeneration: 'generated' | 'skipped';
@@ -64,6 +70,9 @@ export const formatApplySummary = ({
       `Applied ${formatDataValue(applicationName)} to ${apiUrl} ${dimText(`in ${formatAppDuration(durationMilliseconds)}`)}`,
     ),
     `  ${changes}${dimText(` · ${upload.fileCount} ${fileLabel} uploaded (${formatBytes(upload.byteCount)})`)}`,
+    translationActions?.length
+      ? `  ${formatTranslationSummary(translationActions)}`
+      : '',
     isRegistrationCreated
       ? dimText('  Registered the app and installed it in this workspace.')
       : '',

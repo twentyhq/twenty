@@ -3926,6 +3926,7 @@ export type WorkspaceMemberTimeFormatEnum = 'HOUR_12' | 'HOUR_24' | 'SYSTEM'
 export interface WorkspaceMigration {
     actions: Scalars['JSON']
     applicationUniversalIdentifier: Scalars['String']
+    translationActions?: Scalars['JSON']
     __typename: 'WorkspaceMigration'
 }
 
@@ -8520,6 +8521,7 @@ export interface WorkspaceMemberApplicationVariablesGenqlSelection{
 export interface WorkspaceMigrationGenqlSelection{
     actions?: boolean | number
     applicationUniversalIdentifier?: boolean | number
+    translationActions?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -45,13 +46,14 @@ export class ApplicationManifestApplyService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
+    translationActions: ApplicationTranslationSyncAction[] | null;
   }> {
     // The application version is only persisted by a successful sync: no
     // version means no sync ever completed, so the SDK client must be
     // generated regardless of schema changes.
     const isFirstApply = !isDefined(application.version);
 
-    const { workspaceMigration, hasSchemaMetadataChanged } =
+    const { workspaceMigration, hasSchemaMetadataChanged, translationActions } =
       await this.applicationSyncService.synchronizeFromManifest({
         workspaceId,
         manifest,
@@ -69,7 +71,7 @@ export class ApplicationManifestApplyService {
       });
     }
 
-    return { workspaceMigration, hasSchemaMetadataChanged };
+    return { workspaceMigration, hasSchemaMetadataChanged, translationActions };
   }
 
   async refreshRegistrationFromManifest({

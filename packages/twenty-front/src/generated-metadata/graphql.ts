@@ -8122,6 +8122,7 @@ export type WorkspaceMigration = {
   __typename?: 'WorkspaceMigration';
   actions: Scalars['JSON']['output'];
   applicationUniversalIdentifier: Scalars['String']['output'];
+  translationActions?: Maybe<Scalars['JSON']['output']>;
 };
 
 export type WorkspaceNameAndId = {

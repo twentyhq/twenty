@@ -206,6 +206,7 @@ const syncResponse = (variables: Record<string, unknown>) => ({
     syncApplication: {
       applicationUniversalIdentifier: readUniversalIdentifier(variables),
       actions: state.previewActions,
+      translationActions: [],
     },
   },
 });
@@ -1735,6 +1736,40 @@ describe('app apply', () => {
     expect(operations()).not.toContain('export');
     expect(operations()).not.toContain('workspace');
   });
+
+  it.each([
+    [null, 'TRANSLATION_REPORT_UNAVAILABLE', 'translation sync failed'],
+    [
+      undefined,
+      'TRANSLATION_REPORT_UNSUPPORTED',
+      'does not report translation changes',
+    ],
+  ])(
+    'keeps metadata success but warns for translation reporting: %s',
+    async (translationActions, code, message) => {
+      state.syncResponseOverride = {
+        data: {
+          syncApplication: {
+            applicationUniversalIdentifier: APPLICATION.universalIdentifier,
+            actions: [],
+            translationActions,
+          },
+        },
+      };
+      const { envelope, exitCode } = await runJson();
+      expect(exitCode).toBe(0);
+      expect(envelope.data.translationActions).toBe(translationActions);
+      expect(envelope.warnings).toContainEqual(
+        expect.objectContaining({
+          code,
+          message: expect.stringContaining(message),
+        }),
+      );
+      expect(
+        operations().filter((operation) => operation === 'sync'),
+      ).toHaveLength(1);
+    },
+  );
 
   it('reports an unknown outcome when the sync fails', async () => {
     state.syncError = 'BAD_USER_INPUT';

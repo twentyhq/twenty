@@ -46,17 +46,21 @@ const context: TargetCommandContext = {
 };
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(fetchAppPlan).mockResolvedValue([
-    {
-      type: 'delete',
-      metadataName: 'objectMetadata',
-      flatEntity: { nameSingular: 'invoice' },
-    },
-  ]);
+  vi.mocked(fetchAppPlan).mockResolvedValue({
+    translationActions: [],
+    actions: [
+      {
+        type: 'delete',
+        metadataName: 'objectMetadata',
+        flatEntity: { nameSingular: 'invoice' },
+      },
+    ],
+  });
   vi.mocked(installDevelopmentApp).mockResolvedValue({ applicationId: 'id' });
   vi.mocked(uploadAppFiles).mockResolvedValue(undefined);
   vi.mocked(syncAppManifest).mockResolvedValue({
     actions: [],
+    translationActions: [],
     acknowledgedUniversalIdentifier: 'id',
   });
 });
@@ -96,7 +100,10 @@ describe('dev apply approvals', () => {
   });
 
   it('checks freshness after output backpressure, immediately before the first remote write', async () => {
-    vi.mocked(fetchAppPlan).mockResolvedValue([]);
+    vi.mocked(fetchAppPlan).mockResolvedValue({
+      actions: [],
+      translationActions: [],
+    });
     const controller = new AbortController();
     await expect(
       applyAppBuild({
@@ -116,7 +123,10 @@ describe('dev apply approvals', () => {
     expect(installDevelopmentApp).not.toHaveBeenCalled();
   });
   it('keeps completed phases when output is interrupted between remote operations', async () => {
-    vi.mocked(fetchAppPlan).mockResolvedValue([]);
+    vi.mocked(fetchAppPlan).mockResolvedValue({
+      actions: [],
+      translationActions: [],
+    });
     const controller = new AbortController();
     const cancelledContext = { ...context, signal: controller.signal };
     let flushes = 0;

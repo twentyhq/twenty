@@ -12,3 +12,16 @@ export type AppPlanSummary = {
   delete: number;
   destructive: number;
 };
+
+export type AppTranslationPlanAction = {
+  type: AppPlanAction['type'];
+  messageLabels?: Record<string, string>;
+  metadataName: 'applicationTranslation';
+  locale: string;
+  diff: Record<string, { before: string | null; after: string | null }>;
+};
+
+export type AppPlan = {
+  actions: AppPlanAction[];
+  translationActions: AppTranslationPlanAction[] | null | undefined;
+};

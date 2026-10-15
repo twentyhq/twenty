@@ -273,6 +273,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           completedPhases: applied.completedPhases,
           clientGeneration,
           actions: applied.appliedActions ?? null,
+          translationActions: applied.translationActions,
         },
         signal,
       );

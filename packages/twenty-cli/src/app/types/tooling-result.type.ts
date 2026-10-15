@@ -27,6 +27,7 @@ export type ToolingBuild = {
   manifestFormat: string;
   manifest: Record<string, unknown>;
   files: ToolingArtifact[];
+  translationLabels?: Record<string, string>;
 };
 
 export type ToolingResult<TData> =

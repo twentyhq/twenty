@@ -7,6 +7,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { collectTranslationLabels } from '@/app/translations/collect-translation-labels';
 import { type BuiltFileInfo } from '@/app/bundles/build-application';
 import {
   type ToolingArtifact,
@@ -113,5 +114,9 @@ export const collectBuildSnapshot = async ({
     manifestFormat: 'twenty-application',
     manifest,
     files: sortedFiles,
+    translationLabels: await collectTranslationLabels({
+      manifest,
+      appPath,
+    }),
   };
 };

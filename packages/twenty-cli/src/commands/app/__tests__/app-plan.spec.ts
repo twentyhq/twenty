@@ -75,8 +75,15 @@ const ACTIONS = [
 const planResponse = (
   actions: unknown = ACTIONS,
   applicationUniversalIdentifier = 'app-id',
+  translationActions: unknown = [],
 ) => ({
-  data: { syncApplication: { applicationUniversalIdentifier, actions } },
+  data: {
+    syncApplication: {
+      applicationUniversalIdentifier,
+      actions,
+      translationActions,
+    },
+  },
 });
 
 const state: { response: unknown; status: number } = {
@@ -158,6 +165,90 @@ describe('app plan', () => {
   });
 
   afterEach(() => vi.unstubAllEnvs());
+
+  it('reports translation changes with source labels and retains unknown message IDs', async () => {
+    await writeBuild({
+      translationLabels: { layout: 'pageLayout.name["Something"]' },
+    });
+    state.response = planResponse([], 'app-id', [
+      {
+        type: 'update',
+        metadataName: 'applicationTranslation',
+        locale: 'fr-FR',
+        diff: {
+          layout: { before: 'Ancien nom', after: 'Nouveau nom' },
+          unknown: { before: 'Supprimé', after: null },
+          added: { before: null, after: 'Ajouté' },
+        },
+      },
+    ]);
+    const result = await run();
+    expect(result.exitCode, result.stdout + result.stderr).toBe(0);
+    expect(result.stdout).toContain(
+      '# applicationTranslation "fr-FR" will be updated',
+    );
+    expect(result.stdout).toContain(
+      'pageLayout.name["Something"] = "Ancien nom" -> "Nouveau nom"',
+    );
+    expect(result.stdout).toContain(
+      '- message "unknown" (source unavailable) = "Supprimé"',
+    );
+    expect(result.stdout).toContain(
+      '+ message "added" (source unavailable) = "Ajouté"',
+    );
+    expect(result.stdout).toContain('0 to add, 0 to change, 0 to destroy');
+    expect(server.requests).toHaveLength(1);
+  });
+
+  it.each([
+    [null, 'Translation changes could not be computed. Retry app plan.'],
+    [undefined, 'This server does not report translation changes.'],
+  ])(
+    'distinguishes failed and unsupported translation reports: %s',
+    async (translationActions, warning) => {
+      state.response = {
+        data: {
+          syncApplication: {
+            applicationUniversalIdentifier: 'app-id',
+            actions: [],
+            translationActions,
+          },
+        },
+      };
+      const result = await run();
+      expect(result.exitCode, result.stderr).toBe(0);
+      expect(result.stdout).toContain(warning);
+    },
+  );
+
+  it('reports locale removal without suggesting --no-delete preserves translations', async () => {
+    state.response = planResponse([], 'app-id', [
+      {
+        type: 'delete',
+        metadataName: 'applicationTranslation',
+        locale: 'fr-FR',
+        diff: { layout: { before: 'Nom', after: null } },
+      },
+    ]);
+    const result = await run();
+    expect(result.exitCode, result.stdout + result.stderr).toBe(0);
+    expect(result.stdout).toContain(
+      '# applicationTranslation "fr-FR" will be destroyed',
+    );
+    expect(result.stdout).not.toContain('Re-run with --no-delete');
+    const jsonResult = await runJson();
+    expect(jsonResult.envelope.data.summary).toEqual({
+      create: 0,
+      update: 0,
+      delete: 0,
+      destructive: 0,
+    });
+    expect(jsonResult.envelope.data.translationActions[0].diff.layout).toEqual({
+      before: 'Nom',
+      after: null,
+    });
+  });
+
   afterAll(() => server.close());
 
   it.each([true, false])(
