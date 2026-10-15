@@ -35,6 +35,22 @@ describe('isSilentAgentChatMessage', () => {
     ).toBe(false);
   });
 
+  it('shows an assistant message that also asked a question', () => {
+    expect(
+      isSilentAgentChatMessage(
+        buildMessage('assistant', [
+          NO_REPLY_PART,
+          {
+            type: 'tool-ask_question',
+            toolCallId: 'call-2',
+            state: 'input-available',
+            input: { question: 'Which company?' },
+          },
+        ]),
+      ),
+    ).toBe(false);
+  });
+
   it('shows an ordinary assistant reply', () => {
     expect(
       isSilentAgentChatMessage(

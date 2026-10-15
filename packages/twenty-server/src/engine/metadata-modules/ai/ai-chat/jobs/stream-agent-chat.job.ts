@@ -19,7 +19,7 @@ import {
 import {
   type CodeExecutionData,
   type ExtendedUIMessage,
-  isNoReplyToolPart,
+  isSilentAgentChatMessageParts,
 } from 'twenty-shared/ai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -719,7 +719,7 @@ export class StreamAgentChatJob {
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
-    const isSilent = responseMessage.parts.some(isNoReplyToolPart);
+    const isSilent = isSilentAgentChatMessageParts(responseMessage.parts);
 
     const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
     // without an answerable call nothing can resume the turn, so fail rather than wait forever
@@ -755,11 +755,6 @@ export class StreamAgentChatJob {
       outOfCredits,
     });
 
-    // A turn that chose not to reply keeps its hidden message, so the model
-    // sees that choice next turn, but must not mark the chat as active
-    const isSilentTurn =
-      outcome.kind === 'completed' && outcome.outcome === 'silent';
-
     if (responseMessage.parts.length === 0) {
       await this.finishTurn({
         workspaceId,
@@ -781,6 +776,7 @@ export class StreamAgentChatJob {
       return resolveSupersededTurnOutcome(outcome);
     }
 
+    // Kept even when silent, so the model sees its choice next turn
     await this.agentChatService.upsertAssistantMessage({
       id: assistantMessageId,
       threadId,
@@ -795,7 +791,7 @@ export class StreamAgentChatJob {
       threadId,
       streamId,
       lastMessageText: replyText,
-      recordsActivity: !isSilentTurn,
+      shouldRecordActivity: !isSilent,
       usage: {
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: usageTotals.conversationSize,
@@ -804,7 +800,7 @@ export class StreamAgentChatJob {
     });
 
     if (!totalsUpdate.affected) {
-      if (isSilentTurn) {
+      if (isSilent) {
         return resolveSupersededTurnOutcome(outcome);
       }
 

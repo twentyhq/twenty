@@ -1072,7 +1072,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           workspaceId: WORKSPACE_ID,
           threadId: THREAD_ID,
           lastMessageText: null,
-          recordsActivity: true,
+          shouldRecordActivity: true,
           usage: {
             totalInputTokens: 1,
             totalOutputTokens: 2,
