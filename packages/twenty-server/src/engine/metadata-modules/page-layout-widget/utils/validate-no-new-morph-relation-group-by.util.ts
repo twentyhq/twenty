@@ -9,24 +9,25 @@ import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
-
-const GROUP_BY_FIELD_METADATA_ID_KEYS = [
-  'primaryAxisGroupByFieldMetadataId',
-  'secondaryAxisGroupByFieldMetadataId',
-  'groupByFieldMetadataId',
-] as const;
 
 const getGroupByFieldMetadataIds = (
   configuration: AllPageLayoutWidgetConfiguration | null | undefined,
-): string[] =>
-  GROUP_BY_FIELD_METADATA_ID_KEYS.flatMap((key) => {
-    const fieldMetadataId = (
-      configuration as Partial<Record<string, unknown>> | null | undefined
-    )?.[key];
-
-    return typeof fieldMetadataId === 'string' ? [fieldMetadataId] : [];
-  });
+): string[] => {
+  switch (configuration?.configurationType) {
+    case WidgetConfigurationType.BAR_CHART:
+    case WidgetConfigurationType.LINE_CHART:
+      return [
+        configuration.primaryAxisGroupByFieldMetadataId,
+        configuration.secondaryAxisGroupByFieldMetadataId,
+      ].filter(isDefined);
+    case WidgetConfigurationType.PIE_CHART:
+      return [configuration.groupByFieldMetadataId].filter(isDefined);
+    default:
+      return [];
+  }
+};
 
 export const validateNoNewMorphRelationGroupByOrThrow = ({
   configuration,
