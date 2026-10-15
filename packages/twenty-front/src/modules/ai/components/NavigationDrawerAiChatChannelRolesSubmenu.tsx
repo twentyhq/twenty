@@ -11,8 +11,7 @@ type NavigationDrawerAiChatChannelRolesSubmenuProps = {
   onChange: (roleIds: string[]) => void;
 };
 
-// Everyone holding a checked role reads the channel. Roles with access to all
-// channels read it either way, so they stay checked
+// Roles with access to all channels read it either way, so they stay checked
 export const NavigationDrawerAiChatChannelRolesSubmenu = ({
   roleIds,
   onChange,

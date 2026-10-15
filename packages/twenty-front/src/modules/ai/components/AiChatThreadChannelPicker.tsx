@@ -16,8 +16,7 @@ type AiChatThreadChannelPickerProps = {
   dropdownId: string;
 };
 
-// Chats move between the channels open to the member. A chat without an owner
-// has no one to fall back to, so it stays in a channel
+// A chat without an owner has no one to fall back to, so it stays in a channel
 export const AiChatThreadChannelPicker = ({
   thread,
   dropdownId,

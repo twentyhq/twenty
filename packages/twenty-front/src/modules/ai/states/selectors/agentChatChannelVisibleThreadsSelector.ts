@@ -10,8 +10,7 @@ import { isAgentChatThreadInChannelView } from '@/ai/utils/isAgentChatThreadInCh
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-// Chats loaded for other lists can sort past the channel's loaded pages, and
-// wait there until the pages reach them so the list has no gaps
+// Chats past the loaded pages wait for them, so the list has no gaps
 export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
   AgentChatThreadRecord[]
 >({
@@ -26,8 +25,7 @@ export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
     const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
     const channelThreadList = get(agentChatShownChannelThreadListSelector);
 
-    // The channel's loaded pages are read on their own, as a refresh of the
-    // main list replaces it with its first page
+    // Read on their own, as a refresh replaces the main list with its first page
     const channelThreads = isDefined(channelThreadList)
       ? channelThreadList.threadIds
           .map((threadId) => get(agentChatThreadRecordFamilySelector, threadId))

@@ -10,8 +10,6 @@ import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agent
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { MoveAgentChatThreadToChannelDocument } from '~/generated-metadata/graphql';
 
-// The chat shows in its new channel right away, and goes back if the server
-// refuses the move
 export const useMoveAgentChatThreadToChannel = () => {
   const client = useApolloClient();
   const store = useStore();

@@ -4,8 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 
-// The channel's copy of a chat's triage, shared by its members. Activity
-// after it was filed reopens it, as for a member's own copy
+// Activity after the chat was filed reopens it, as for a member's own copy
 export const getAgentChatThreadChannelStatus = ({
   lastActivityAt,
   channelArchivedAt,

@@ -16,9 +16,6 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 // Changes come in bursts, as a message updates a chat and its members' rows
 const AGENT_CHAT_CHANNELS_REFRESH_DEBOUNCE_MS = 1000;
 
-// Channels and their counts follow changes made anywhere: a channel or its
-// roles changing reloads the list, a chat or a member's row changing reloads
-// the counts
 export const AgentChatChannelsEffect = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(

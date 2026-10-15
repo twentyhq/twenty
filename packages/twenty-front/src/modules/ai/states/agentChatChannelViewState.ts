@@ -7,7 +7,6 @@ import {
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
-// The channel the inbox shows, instead of a triage list. Null shows triage
 export const agentChatChannelViewState =
   createAtomState<AgentChatChannelView | null>({
     key: 'agentChatChannelViewState',

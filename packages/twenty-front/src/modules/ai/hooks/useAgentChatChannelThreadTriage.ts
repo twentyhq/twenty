@@ -20,8 +20,6 @@ type AgentChatThreadChannelCopy = Pick<
   'channelArchivedAt' | 'channelSnoozedUntil'
 >;
 
-// Files a chat for its whole channel. The change shows right away, and is put
-// back if the server refuses it
 export const useAgentChatChannelThreadTriage = () => {
   const client = useApolloClient();
   const store = useStore();

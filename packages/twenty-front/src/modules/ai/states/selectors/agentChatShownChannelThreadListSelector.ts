@@ -8,8 +8,6 @@ import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentCh
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-// The loaded pages of the channel view on screen, null while they are still
-// those of another view
 export const agentChatShownChannelThreadListSelector =
   createAtomSelector<AgentChatChannelThreadList | null>({
     key: 'agentChatShownChannelThreadListSelector',

@@ -17,7 +17,6 @@ export const useAgentChatChannelActions = () => {
   const { enqueueToast } = useToast();
   const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
 
-  // Resolves to the result, or undefined once the error is shown
   const runChannelMutation = useCallback(
     async <TData, TVariables extends Record<string, unknown>>(
       mutation: TypedDocumentNode<TData, TVariables>,
