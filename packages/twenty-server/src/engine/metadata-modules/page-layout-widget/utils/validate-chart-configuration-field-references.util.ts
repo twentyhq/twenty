@@ -140,15 +140,10 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
     );
   }
 
-  const allFields = Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
-    .filter(isDefined)
-    .filter((field) =>
-      resolveEffectiveFlatEntityProperty({
-        metadataName: 'fieldMetadata',
-        flatEntity: field,
-        property: 'isActive',
-      }),
-    );
+  // Deactivated fields stay valid references, as deactivation is reversible
+  const allFields = Object.values(
+    flatFieldMetadataMaps.byUniversalIdentifier,
+  ).filter(isDefined);
 
   const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
 
@@ -159,8 +154,6 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
     fieldsByObjectId.set(field.objectMetadataId, existing);
   });
 
-  // Deactivated fields stay valid references: deactivation is reversible and
-  // must not prevent saving dashboards whose charts use them
   const aggregateField = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: widgetConfiguration.aggregateFieldMetadataId,
     flatEntityMaps: flatFieldMetadataMaps,
