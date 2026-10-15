@@ -17,4 +17,5 @@ export { CatalogDecorator } from './decorators/CatalogDecorator';
 export { ComponentDecorator } from './decorators/ComponentDecorator';
 export { AVATAR_URL_MOCK } from './mocks/avatarUrlMock';
 export type { CatalogStory } from './types/CatalogStory';
+export { applyInterfaceScale } from './utils/applyInterfaceScale';
 export { overrideMediaQueryMatches } from './utils/overrideMediaQueryMatches';

@@ -8,6 +8,7 @@ import { type SelectPositionerProps } from '../types/SelectPositionerProps';
 
 export const SelectPositioner = ({
   className,
+  positionMethod = 'fixed',
   ...props
 }: SelectPositionerProps) => {
   const direction = useProvidedTextDirection();
@@ -15,6 +16,7 @@ export const SelectPositioner = ({
   return (
     <SelectPrimitive.Positioner
       dir={direction}
+      positionMethod={positionMethod}
       {...props}
       className={mergeClassNames(styles.positioner, className)}
     />

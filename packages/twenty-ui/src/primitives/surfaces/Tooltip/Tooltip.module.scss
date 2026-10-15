@@ -1,4 +1,6 @@
 .positioner {
+  @include viewport-positioned;
+
   z-index: var(--t-last-layer-z-index);
 }
 

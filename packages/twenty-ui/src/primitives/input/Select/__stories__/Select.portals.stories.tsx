@@ -4,7 +4,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { ComponentDecorator } from '@ui/testing';
+import { applyInterfaceScale, ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Select } from '../Select';
@@ -289,4 +289,43 @@ export const PositioningDocumentation: Story = {
   decorators: AdvancedPositioning.decorators,
   parameters: AdvancedPositioning.parameters,
   render: () => <SelectPositioningExample defaultValue="apple" />,
+};
+
+export const InterfaceScale: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <SelectExample defaultValue="apple" modal={false} sideOffset={0} />
+  ),
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('combobox');
+
+    for (const scale of [1, 0.9, 1.25, 14 / 13]) {
+      const restoreInterfaceScale = applyInterfaceScale(scale);
+
+      try {
+        await userEvent.click(trigger);
+        const popup = await waitForSelectPopup(canvasElement);
+
+        await waitFor(() => {
+          const triggerBounds = trigger.getBoundingClientRect();
+          const popupBounds = popup.getBoundingClientRect();
+
+          expect(Math.abs(popupBounds.left - triggerBounds.left)).toBeLessThan(
+            1,
+          );
+          expect(Math.abs(popupBounds.top - triggerBounds.bottom)).toBeLessThan(
+            1,
+          );
+          expect(
+            Math.abs(popupBounds.width - triggerBounds.width),
+          ).toBeLessThan(1);
+        });
+
+        await userEvent.keyboard('{Escape}');
+        await waitFor(() => expect(popup).not.toBeVisible());
+      } finally {
+        restoreInterfaceScale();
+      }
+    }
+  },
 };

@@ -264,9 +264,8 @@ export const OnboardingFreeCreditsPill = ({
             side="bottom"
             align="end"
             sideOffset={10}
-            style={{ maxWidth: '300px' }}
           >
-            <Tooltip.Popup withExitAnimation>
+            <Tooltip.Popup style={{ maxWidth: '300px' }} withExitAnimation>
               <StyledTooltipContents>
                 <AnimatePresence initial={false}>
                   {isDefined(tooltipContent) && (

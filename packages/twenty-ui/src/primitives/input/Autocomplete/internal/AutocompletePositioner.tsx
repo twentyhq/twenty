@@ -8,6 +8,7 @@ import { type AutocompletePositionerProps } from '../types/AutocompletePositione
 
 export const AutocompletePositioner = ({
   className,
+  positionMethod = 'fixed',
   align = 'start',
   sideOffset = 8,
   ...props
@@ -17,6 +18,7 @@ export const AutocompletePositioner = ({
   return (
     <AutocompletePrimitive.Positioner
       dir={direction}
+      positionMethod={positionMethod}
       align={align}
       sideOffset={sideOffset}
       {...props}

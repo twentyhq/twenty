@@ -127,11 +127,13 @@ export const SidePanelSearchRecordsPage = () => {
               side="left"
               align="start"
               sideOffset={16}
-              style={{
-                maxWidth: `${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`,
-              }}
             >
-              <Tooltip.Popup className={previewTooltipClass}>
+              <Tooltip.Popup
+                style={{
+                  maxWidth: `${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`,
+                }}
+                className={previewTooltipClass}
+              >
                 <SidePanelSearchRecordPreviewCard
                   key={previewedItem.recordId}
                   objectNameSingular={previewedItem.objectNameSingular}

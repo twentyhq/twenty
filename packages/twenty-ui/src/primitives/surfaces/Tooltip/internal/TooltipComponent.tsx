@@ -53,6 +53,7 @@ export const TooltipComponent = <TPayload,>({
   triggerProps,
   positionerProps,
   portalProps,
+  style,
   ...popupProps
 }: TooltipProps<TPayload>) => {
   const hasDescription = isRenderableSlot(description);
@@ -104,10 +105,15 @@ export const TooltipComponent = <TPayload,>({
             sticky={sticky}
             arrowPadding={arrowPadding}
             disableAnchorTracking={disableAnchorTracking}
-            style={{ maxWidth }}
             {...positionerProps}
           >
-            <TooltipPopup {...popupProps}>
+            <TooltipPopup
+              {...popupProps}
+              style={(state) => ({
+                maxWidth,
+                ...(isFunction(style) ? style(state) : style),
+              })}
+            >
               {hasTextLayout ? (
                 <TooltipBody description={description} startIcon={startIcon}>
                   {resolvedContent}

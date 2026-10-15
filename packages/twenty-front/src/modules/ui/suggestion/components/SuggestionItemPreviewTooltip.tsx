@@ -35,9 +35,11 @@ export const SuggestionItemPreviewTooltip = ({
         side="right"
         align="start"
         sideOffset={16}
-        style={{ maxWidth: `${width}px` }}
       >
-        <Tooltip.Popup className={previewTooltipClass}>
+        <Tooltip.Popup
+          style={{ maxWidth: `${width}px` }}
+          className={previewTooltipClass}
+        >
           {children}
         </Tooltip.Popup>
       </Tooltip.Positioner>

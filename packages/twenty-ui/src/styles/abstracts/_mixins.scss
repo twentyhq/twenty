@@ -30,3 +30,32 @@
     @content;
   }
 }
+
+// Base UI measures and positions in visual-viewport pixels, which the root
+// interface scale zoom would multiply a second time. The inverse zoom renders
+// those offsets one to one and the child rule restores the scale for the
+// popup. The measured sizes are exposed in the same visual pixels, so they are
+// converted back to design pixels for the zoomed popup. Fixed positioning is
+// required: a zoom that differs from the parent's turns the static portal into
+// the offsetParent, which floating-ui then mistakes for a scaled container.
+@mixin viewport-positioned {
+  --tw-unzoomed-anchor-width: calc(var(--anchor-width) / var(--t-zoom, 1));
+  --tw-unzoomed-anchor-height: calc(var(--anchor-height) / var(--t-zoom, 1));
+  --tw-unzoomed-available-width: calc(
+    var(--available-width) / var(--t-zoom, 1)
+  );
+  --tw-unzoomed-available-height: calc(
+    var(--available-height) / var(--t-zoom, 1)
+  );
+
+  zoom: calc(1 / var(--t-zoom, 1));
+
+  > * {
+    --anchor-width: var(--tw-unzoomed-anchor-width);
+    --anchor-height: var(--tw-unzoomed-anchor-height);
+    --available-width: var(--tw-unzoomed-available-width);
+    --available-height: var(--tw-unzoomed-available-height);
+
+    zoom: var(--t-zoom, 1);
+  }
+}
