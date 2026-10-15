@@ -1,4 +1,4 @@
-import { buildCampaignSendButtonTitle } from '@/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle';
+import { buildCampaignSendButtonTitle } from '@/activities/emails/utils/buildCampaignSendButtonTitle';
 
 describe('buildCampaignSendButtonTitle', () => {
   it('sends a draft', () => {
@@ -7,7 +7,7 @@ describe('buildCampaignSendButtonTitle', () => {
         deliveryTiming: 'NOW',
         isAlreadyScheduled: false,
       }),
-    ).toBe('Send campaign');
+    ).toBe('Send Campaign');
   });
 
   it('sends a scheduled campaign ahead of its time', () => {
@@ -16,7 +16,7 @@ describe('buildCampaignSendButtonTitle', () => {
         deliveryTiming: 'NOW',
         isAlreadyScheduled: true,
       }),
-    ).toBe('Send campaign');
+    ).toBe('Send Now');
   });
 
   it('schedules a draft', () => {
@@ -25,7 +25,7 @@ describe('buildCampaignSendButtonTitle', () => {
         deliveryTiming: 'LATER',
         isAlreadyScheduled: false,
       }),
-    ).toBe('Schedule campaign');
+    ).toBe('Schedule Campaign');
   });
 
   it('reschedules a campaign that already holds a time', () => {
@@ -34,6 +34,6 @@ describe('buildCampaignSendButtonTitle', () => {
         deliveryTiming: 'LATER',
         isAlreadyScheduled: true,
       }),
-    ).toBe('Reschedule campaign');
+    ).toBe('Reschedule Campaign');
   });
 });

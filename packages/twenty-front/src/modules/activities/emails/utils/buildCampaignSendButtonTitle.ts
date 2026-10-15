@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 
-import { type CampaignDeliveryTiming } from '@/side-panel/pages/send-campaign/types/CampaignDeliveryTiming';
+import { type CampaignDeliveryTiming } from '@/activities/emails/types/CampaignDeliveryTiming';
 
 export const buildCampaignSendButtonTitle = ({
   deliveryTiming,
@@ -10,8 +10,8 @@ export const buildCampaignSendButtonTitle = ({
   isAlreadyScheduled: boolean;
 }): string => {
   if (deliveryTiming === 'NOW') {
-    return t`Send campaign`;
+    return isAlreadyScheduled ? t`Send Now` : t`Send Campaign`;
   }
 
-  return isAlreadyScheduled ? t`Reschedule campaign` : t`Schedule campaign`;
+  return isAlreadyScheduled ? t`Reschedule Campaign` : t`Schedule Campaign`;
 };
