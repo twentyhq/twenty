@@ -7,6 +7,8 @@ import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
+// TODO: once IS_MORPH_RELATION_HEAD_ENABLED is removed, create the head view field
+// instead of the target one and drop this helper
 export const withMorphRelationHeadViewField = ({
   sourceFlatFieldMetadata,
   flatViewFieldToCreate,
