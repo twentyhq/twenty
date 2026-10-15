@@ -15,6 +15,7 @@ import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSend
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
+import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
@@ -41,14 +42,12 @@ import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowse
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   markWorkspaceCreditsAvailable,
   markWorkspaceCreditsExhausted,
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import {
-  FeatureFlagKey,
   SendChatMessageDocument,
   StopAgentChatStreamDocument,
 } from '~/generated-metadata/graphql';
@@ -56,9 +55,7 @@ import {
 export const useAgentChat = () => {
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
+  const canSendAgentChatMessage = useCanSendAgentChatMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -95,9 +92,7 @@ export const useAgentChat = () => {
       return;
     }
 
-    const hasNoAiModels = aiModels.length === 0;
-
-    if (hasNoAiModels && !isAiChatInboxEnabled) {
+    if (!canSendAgentChatMessage) {
       enqueueToast({
         status: 'error',
         children: t`No AI provider is configured on this instance.`,
@@ -212,7 +207,7 @@ export const useAgentChat = () => {
                 )
               : undefined,
           shouldAssistantReply:
-            !hasNoAiModels &&
+            aiModels.length > 0 &&
             (!store.get(agentChatIsAssistantOffState.atom) ||
               isAgentChatAssistantMentionedInSerializedDocument(
                 serializedContentToSend,
@@ -296,7 +291,7 @@ export const useAgentChat = () => {
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
     aiModels,
-    isAiChatInboxEnabled,
+    canSendAgentChatMessage,
     enqueueToast,
     setCurrentAiChatThread,
     projectAiChatThreadToUrl,
