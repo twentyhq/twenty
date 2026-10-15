@@ -118,8 +118,6 @@ export const SettingsDevelopersAppsTab = () => {
         </StyledButtonContainer>
       </Section.Root>
 
-      {canClaimApplications && <SettingsClaimApplicationSection />}
-
       {registrations.length > 0 && (
         <Section.Root>
           <Section.Header
@@ -164,6 +162,8 @@ export const SettingsDevelopersAppsTab = () => {
           </Table>
         </Section.Root>
       )}
+
+      {canClaimApplications && <SettingsClaimApplicationSection />}
     </>
   );
 };
