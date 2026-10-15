@@ -31,6 +31,7 @@ import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/g
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useId, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -230,14 +231,11 @@ const SidePanelRecordCreationForm = ({
     }
   };
 
-  const scrollToFirstFieldViolation = () => {
-    requestAnimationFrame(() => {
-      document
-        .getElementById(contentId)
-        ?.querySelector('[role="alert"]')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-  };
+  const scrollToFirstFieldViolation = () =>
+    document
+      .getElementById(contentId)
+      ?.querySelector('[role="alert"]')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   const submitDraftRecord = async ({
     shouldKeepOpen,
@@ -253,11 +251,13 @@ const SidePanelRecordCreationForm = ({
     if (validationRules.length > 0) {
       const draftViolations = computeViolations(draftRecord);
 
-      setDraftValidationRuleViolations(draftViolations);
+      flushSync(() => {
+        setDraftValidationRuleViolations(draftViolations);
 
-      revealHiddenFieldsIfTargeted(
-        draftViolations.map((violation) => violation.fieldMetadataId),
-      );
+        revealHiddenFieldsIfTargeted(
+          draftViolations.map((violation) => violation.fieldMetadataId),
+        );
+      });
 
       if (draftViolations.length > 0) {
         scrollToFirstFieldViolation();
@@ -296,16 +296,19 @@ const SidePanelRecordCreationForm = ({
 
       const serverViolations = getValidationRuleViolationsFromError(error);
 
-      setServerValidationRuleViolations(serverViolations);
+      flushSync(() => {
+        setServerValidationRuleViolations(serverViolations);
+
+        revealHiddenFieldsIfTargeted(
+          serverViolations.map((violation) => violation.fieldMetadataId),
+        );
+      });
 
       if (serverViolations.length === 0) {
         enqueueToast(getToastOptionsFromError({ error }));
         return;
       }
 
-      revealHiddenFieldsIfTargeted(
-        serverViolations.map((violation) => violation.fieldMetadataId),
-      );
       scrollToFirstFieldViolation();
     } finally {
       setIsSubmitting(false);
