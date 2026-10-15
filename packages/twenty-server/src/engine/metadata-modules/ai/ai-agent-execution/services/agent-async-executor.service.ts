@@ -11,7 +11,10 @@ import {
   type StepResult,
   type ToolSet,
 } from 'ai';
-import { type RunAgentMessage } from 'twenty-shared/application';
+import {
+  type RunAgentMessage,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 import {
   ASK_QUESTION_TOOL_NAME,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
@@ -167,15 +170,22 @@ export class AgentAsyncExecutorService {
   private resolveCallingApplication(
     authContext?: WorkspaceAuthContext,
   ): FlatApplication | undefined {
-    if (isDefined(authContext) && isUserAuthContext(authContext)) {
-      return authContext.application ?? authContext.viaApplication;
+    const application =
+      isDefined(authContext) && isUserAuthContext(authContext)
+        ? (authContext.application ?? authContext.viaApplication)
+        : isDefined(authContext) && isApplicationAuthContext(authContext)
+          ? authContext.application
+          : undefined;
+
+    if (
+      application?.id === authContext?.workspace.workspaceCustomApplicationId ||
+      application?.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+    ) {
+      return undefined;
     }
 
-    if (isDefined(authContext) && isApplicationAuthContext(authContext)) {
-      return authContext.application;
-    }
-
-    return undefined;
+    return application;
   }
 
   // preloading the few granted object schemas saves the model a learn_tools round trip

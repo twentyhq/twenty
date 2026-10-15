@@ -2,6 +2,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -36,8 +37,7 @@ export class WorkflowToolProvider implements ToolProvider {
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
     if (
       !this.workflowToolService ||
-      getScopedCallingApplication(context.application)?.canBeUninstalled ===
-        true
+      isDefined(getScopedCallingApplication(context.application))
     ) {
       return false;
     }
