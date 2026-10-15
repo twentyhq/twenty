@@ -229,6 +229,13 @@ export const slackAssistantWorkerHandler = async (
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());
 
+    if (isNonEmptyString(agentResult.threadId)) {
+      await updateSlackAssistantRequest(client, {
+        id: record.id,
+        agentChatThreadId: agentResult.threadId,
+      });
+    }
+
     if (!agentResult.success) {
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,

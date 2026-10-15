@@ -4,6 +4,8 @@ import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/sl
 import { raceSlackAssistantAgentDeadline } from 'src/logic-functions/utils/race-slack-assistant-agent-deadline';
 
 const AGENT_RESULT = {
+  threadId: '7e4b1d4a-2c3f-4a5b-9c8d-1e2f3a4b5c6d',
+  status: 'COMPLETED' as const,
   result: { text: 'Acme has 3 open deals' },
   error: null,
   success: true,
@@ -36,6 +38,7 @@ describe('raceSlackAssistantAgentDeadline', () => {
     await vi.advanceTimersByTimeAsync(10_000);
 
     await expect(race).resolves.toEqual({
+      threadId: null,
       result: null,
       error: SLACK_ASSISTANT_DEADLINE_ERROR,
       success: false,
@@ -73,6 +76,7 @@ describe('raceSlackAssistantAgentDeadline', () => {
     await vi.advanceTimersByTimeAsync(0);
 
     await expect(race).resolves.toEqual({
+      threadId: null,
       result: null,
       error: SLACK_ASSISTANT_DEADLINE_ERROR,
       success: false,

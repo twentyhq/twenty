@@ -110,6 +110,8 @@ vi.mock('src/logic-functions/utils/subscribe-slack-thread', () => ({
   subscribeSlackThread: subscribeSlackThreadMock,
 }));
 
+const AGENT_CHAT_THREAD_ID = '7e4b1d4a-2c3f-4a5b-9c8d-1e2f3a4b5c6d';
+
 const REQUEST_RECORD: SlackAssistantRequestRecord = {
   id: 'request-1',
   status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
@@ -176,7 +178,13 @@ describe('slackAssistantWorkerHandler', () => {
     runSlackAssistantAgentWithDeadlineMock.mockImplementation(async () => {
       callLog.push('agent:run');
 
-      return { success: true, error: null, result: { response: 'Two.' } };
+      return {
+        threadId: AGENT_CHAT_THREAD_ID,
+        status: 'COMPLETED',
+        success: true,
+        error: null,
+        result: { response: 'Two.' },
+      };
     });
     sendSlackMessageMock.mockImplementation(async () => {
       callLog.push('reply:answer');
@@ -324,6 +332,15 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
+  it('should store the agent chat thread on the request', async () => {
+    await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(updateSlackAssistantRequestMock).toHaveBeenCalledWith(
+      expect.anything(),
+      { id: REQUEST_RECORD.id, agentChatThreadId: AGENT_CHAT_THREAD_ID },
+    );
+  });
+
   it('should show the thinking status before fetching the Slack context', async () => {
     await slackAssistantWorkerHandler(REQUEST_RECORD);
 
@@ -365,7 +382,13 @@ describe('slackAssistantWorkerHandler', () => {
     runSlackAssistantAgentWithDeadlineMock.mockImplementation(async () => {
       callLog.push('agent:run');
 
-      return { success: false, error: 'Agent crashed', result: null };
+      return {
+        threadId: AGENT_CHAT_THREAD_ID,
+        status: 'FAILED',
+        success: false,
+        error: 'Agent crashed',
+        result: null,
+      };
     });
 
     const result = await slackAssistantWorkerHandler(REQUEST_RECORD);

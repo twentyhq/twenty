@@ -18,7 +18,13 @@ const BASE_INPUT = {
 
 describe('runSlackAssistantAgentWithDeadline', () => {
   beforeEach(() => {
-    runAgentMock.mockResolvedValue({ result: {}, error: null, success: true });
+    runAgentMock.mockResolvedValue({
+      threadId: '7e4b1d4a-2c3f-4a5b-9c8d-1e2f3a4b5c6d',
+      status: 'COMPLETED',
+      result: {},
+      error: null,
+      success: true,
+    });
   });
 
   afterEach(() => {
@@ -32,6 +38,7 @@ describe('runSlackAssistantAgentWithDeadline', () => {
     });
 
     expect(result).toEqual({
+      threadId: null,
       result: null,
       error: SLACK_ASSISTANT_DEADLINE_ERROR,
       success: false,

@@ -7,6 +7,7 @@ import {
 } from 'twenty-sdk/define';
 
 import {
+  SLACK_ASSISTANT_REQUEST_AGENT_CHAT_THREAD_ID_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_CHANNEL_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_ERROR_FIELD_UNIVERSAL_IDENTIFIER,
@@ -218,6 +219,17 @@ export default defineObject({
         },
       ],
       name: 'feedbackRating',
+    },
+    {
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_AGENT_CHAT_THREAD_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.UUID,
+      label: 'Agent chat thread ID',
+      description:
+        'Agent chat thread holding the conversation of the Slack thread',
+      icon: 'IconMessage',
+      name: 'agentChatThreadId',
+      isNullable: true,
     },
   ],
 });
