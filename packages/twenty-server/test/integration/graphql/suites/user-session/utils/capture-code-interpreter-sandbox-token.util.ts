@@ -11,10 +11,12 @@ export const captureCodeInterpreterSandboxToken = async ({
   authContext,
   roleId,
   rolePermissionConfig,
+  agentId,
 }: {
   authContext: WorkspaceAuthContext;
   roleId: string;
   rolePermissionConfig: RolePermissionConfig;
+  agentId?: string;
 }): Promise<string | undefined> => {
   const executeSpy = jest
     .spyOn(
@@ -42,6 +44,7 @@ export const captureCodeInterpreterSandboxToken = async ({
         roleId,
         rolePermissionConfig,
         authContext,
+        agentId,
         ...(isUserAuthContext(authContext)
           ? {
               userId: authContext.user.id,

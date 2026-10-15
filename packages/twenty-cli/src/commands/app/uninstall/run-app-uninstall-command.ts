@@ -1,16 +1,10 @@
-import { isValidUniversalIdentifier } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-
 import { createUninstallFailure } from '@/app/deployment/create-uninstall-failure';
 import { fetchInstalledApp } from '@/app/fetch-installed-app';
 import { requireApproval } from '@/app/deployment/require-approval';
-import { runAppBuild } from '@/app/run-app-operation';
+import { readApplicationIdentifier } from '@/app/read-application-identifier';
 import { type AppUninstallPhase } from '@/app/deployment/types/app-uninstall-phase.type';
 import { uninstallApp } from '@/app/deployment/uninstall-app';
-import {
-  readBooleanOption,
-  readStringOption,
-} from '@/catalog/read-command-values';
+import { readBooleanOption } from '@/catalog/read-command-values';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
 import { formatDataValue } from '@/data/format-data-value';
@@ -18,23 +12,6 @@ import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { dimText, formatSuccessLine } from '@/output/style';
 import { isInteractionAllowed } from '@/program/is-interaction-allowed';
-
-const readUniversalIdentifierOption = (options: Record<string, unknown>) => {
-  const universalIdentifier = readStringOption(options, 'universalIdentifier');
-
-  if (
-    isDefined(universalIdentifier) &&
-    !isValidUniversalIdentifier(universalIdentifier)
-  ) {
-    throw new CliError({
-      code: 'INVALID_INPUT',
-      exitCode: EXIT_CODE.USAGE,
-      message: `--universal-identifier must be a UUID of version 4 or later, not ${universalIdentifier}.`,
-    });
-  }
-
-  return universalIdentifier;
-};
 
 export const runAppUninstallCommand: CommandRun<TargetCommandContext> = async (
   context,
@@ -44,21 +21,12 @@ export const runAppUninstallCommand: CommandRun<TargetCommandContext> = async (
   const fail = (error: unknown, phase: AppUninstallPhase) =>
     createUninstallFailure({ error, phase, completedPhases, signal });
 
-  const readApplicationIdentifier = async () => {
-    const explicitIdentifier = readUniversalIdentifierOption(options);
-
-    if (isDefined(explicitIdentifier)) {
-      return explicitIdentifier;
-    }
-
-    const { data: build } = await runAppBuild({ context });
-
-    completedPhases.push('build');
-
-    return build.application.universalIdentifier;
-  };
-
-  const universalIdentifier = (await readApplicationIdentifier()).toLowerCase();
+  const universalIdentifier = await readApplicationIdentifier({
+    context,
+    onIdentityRead: () => completedPhases.push('identity'),
+  }).catch((error: unknown) => {
+    throw fail(error, 'identity');
+  });
 
   output.progress(`Checking the app on ${target.apiUrl}…`);
 

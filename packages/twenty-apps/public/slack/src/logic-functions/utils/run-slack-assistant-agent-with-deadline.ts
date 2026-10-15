@@ -14,6 +14,7 @@ type RunSlackAssistantAgentInput = Pick<
 > & {
   runAsWorkspaceMemberId: string;
   messages: SlackAssistantAgentMessage[];
+  thread: { key: string; title?: string };
   deadlineAtMs: number;
 };
 
@@ -21,6 +22,7 @@ export const runSlackAssistantAgentWithDeadline = async ({
   agentUniversalIdentifier,
   messages,
   runAsWorkspaceMemberId,
+  thread,
   deadlineAtMs,
 }: RunSlackAssistantAgentInput): Promise<RunAgentResult> => {
   if (deadlineAtMs - Date.now() <= 0) {
@@ -31,12 +33,15 @@ export const runSlackAssistantAgentWithDeadline = async ({
     };
   }
 
+  const input: RunAgentInput & Pick<RunSlackAssistantAgentInput, 'thread'> = {
+    agentUniversalIdentifier,
+    messages,
+    runAsWorkspaceMemberId,
+    thread,
+  };
+
   return await raceSlackAssistantAgentDeadline({
-    agentRun: runAgent({
-      agentUniversalIdentifier,
-      messages,
-      runAsWorkspaceMemberId,
-    }),
+    agentRun: runAgent(input),
     deadlineAtMs,
   });
 };

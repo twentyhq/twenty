@@ -7,9 +7,11 @@ import {
   NestBlockButton,
   TextAlignButton,
   UnnestBlockButton,
+  useBlockNoteEditor,
 } from '@blocknote/react';
 import { flip, offset, shift } from '@floating-ui/react';
 
+import { getBlockTypeSelectItems } from '@/blocknote-editor/utils/getBlockTypeSelectItems';
 import { DashboardFormattingToolbarColorButton } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton';
 import { FORMATTING_TOOLBAR_FLOATING_CONFIG } from '@/page-layout/widgets/standalone-rich-text/constants/FormattingToolbarFloatingConfig';
 import { styled } from '@linaria/react';
@@ -33,12 +35,17 @@ const StyledToolbarContainer = styled.div`
 `;
 
 export const DashboardFormattingToolbar = () => {
+  const editor = useBlockNoteEditor();
+
   return (
     <FormattingToolbarController
       formattingToolbar={() => (
         <StyledToolbarContainer>
           <FormattingToolbar>
-            <BlockTypeSelect key="blockTypeSelect" />
+            <BlockTypeSelect
+              key="blockTypeSelect"
+              items={getBlockTypeSelectItems(editor.dictionary)}
+            />
             <BasicTextStyleButton basicTextStyle="bold" key="boldStyleButton" />
             <BasicTextStyleButton
               basicTextStyle="italic"

@@ -125,7 +125,7 @@ export const FormAdvancedTextFieldInput = ({
   fullScreenBreadcrumbs,
   onEditorReady,
 }: FormAdvancedTextFieldInputProps) => {
-  const { chrome, minHeight: profileMinHeight } = profile;
+  const { chrome, variant, minHeight: profileMinHeight } = profile;
 
   const editorMinHeight = minHeight ?? profileMinHeight;
   const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
@@ -229,6 +229,7 @@ export const FormAdvancedTextFieldInput = ({
               editor={editor}
               readonly={readonly}
               minHeight={editorMinHeight}
+              variant={variant}
             />
           </StyledFullScreenEditorContainer>
         </div>,
@@ -259,6 +260,7 @@ export const FormAdvancedTextFieldInput = ({
                   editor={editor}
                   readonly={readonly}
                   minHeight={editorMinHeight}
+                  variant={variant}
                 />
               )}
 

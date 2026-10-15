@@ -19,7 +19,7 @@ const EXPECTED_IS_VIEWPORT_FILLING_BY_WIDGET_TYPE = {
   [WidgetType.FRONT_COMPONENT]: false,
   [WidgetType.GRAPH]: false,
   [WidgetType.IFRAME]: false,
-  [WidgetType.MESSAGE_CAMPAIGN_BODY]: false,
+  [WidgetType.MESSAGE_CAMPAIGN_BODY]: true,
   [WidgetType.MESSAGE_CAMPAIGN_DETAILS]: false,
   [WidgetType.NOTES]: true,
   [WidgetType.FORM_FIELD]: false,

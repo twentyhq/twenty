@@ -142,6 +142,7 @@ export class AgentChatActorService {
         workspaceId,
         userWorkspaceId: sender.userWorkspaceId,
         applicationId: sender.applicationId ?? undefined,
+        agentId: authContext.agentId,
         setting: PermissionFlagType.AI,
       }))
     ) {
@@ -184,6 +185,7 @@ export class AgentChatActorService {
       authContext,
       userWorkspaceRoleMap,
       apiKeyRoleMap: {},
+      flatRoleTargetByAgentIdMaps: {},
     });
     const roleId = userWorkspaceRoleMap[userWorkspaceId];
 
