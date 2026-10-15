@@ -1,11 +1,11 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { SSE_RESYNC_DEBOUNCE_TIME_IN_MS } from '@/sse-db-event/constants/SseResyncDebounceTimeInMs';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
+import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -35,16 +35,18 @@ export const SSEClientEffect = () => {
 
   const handleSSEClientConnected = useCallback(
     (reconnected: boolean) => {
+      if (reconnected) {
+        store.set(shouldDestroyEventStreamState.atom, true);
+
+        return;
+      }
+
       const currentActiveQueryListeners = store.get(
         activeQueryListenersState.atom,
       );
 
       if (isNonEmptyArray(currentActiveQueryListeners)) {
         store.set(activeQueryListenersState.atom, []);
-      }
-
-      if (reconnected) {
-        dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
       }
     },
     [store],
