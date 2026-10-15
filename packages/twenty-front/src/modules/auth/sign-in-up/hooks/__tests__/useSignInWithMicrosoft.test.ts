@@ -20,7 +20,7 @@ describe('useSignInWithMicrosoft', () => {
   });
 
   const mockBillingCheckoutSession = {
-    plan: 'PRO',
+    plan: 'PRO_V2',
     interval: 'Month',
     requirePaymentMethod: true,
   };

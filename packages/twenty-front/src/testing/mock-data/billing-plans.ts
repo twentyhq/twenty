@@ -1,12 +1,15 @@
-import type { ListPlansQuery } from '~/generated-metadata/graphql';
+import {
+  BillingPlanKey,
+  type ListPlansQuery,
+} from '~/generated-metadata/graphql';
 
-export const mockBillingPlans = {
+const legacyMockBillingPlans = {
   listPlans: [
     {
       __typename: 'BillingPlan',
       planKey: 'PRO',
-      isSellable: true,
-      upgradePlanKeys: ['ENTERPRISE'],
+      isSellable: false,
+      upgradePlanKeys: ['PRO_V2', 'ORGANIZATION_V2'],
       downgradePlanKeys: [],
       baseProducts: [
         {
@@ -305,9 +308,9 @@ export const mockBillingPlans = {
     {
       __typename: 'BillingPlan',
       planKey: 'ENTERPRISE',
-      isSellable: true,
-      upgradePlanKeys: [],
-      downgradePlanKeys: ['PRO'],
+      isSellable: false,
+      upgradePlanKeys: ['ORGANIZATION_V2'],
+      downgradePlanKeys: ['PRO_V2'],
       baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
@@ -602,25 +605,72 @@ export const mockBillingPlans = {
         },
       ],
     },
-    {
-      __typename: 'BillingPlan',
-      planKey: 'PRO_V2',
-      isSellable: false,
-      upgradePlanKeys: [],
+  ],
+} as ListPlansQuery;
+
+type MockBillingPlan = ListPlansQuery['listPlans'][number];
+
+const [mockProPlan, mockEnterprisePlan] = legacyMockBillingPlans.listPlans;
+
+const withPlanKey = <TProduct extends MockBillingPlan['baseProducts'][number]>(
+  product: TProduct,
+  planKey: BillingPlanKey,
+): TProduct => ({
+  ...product,
+  metadata: { ...product.metadata, planKey },
+  prices: product.prices?.map((price) => ({
+    ...price,
+    stripePriceId: `${price.stripePriceId}_${planKey}`,
+  })),
+});
+
+const buildMockV2BillingPlan = ({
+  legacyPlan,
+  planKey,
+  upgradePlanKeys,
+  downgradePlanKeys,
+}: {
+  legacyPlan: MockBillingPlan;
+  planKey: BillingPlanKey;
+  upgradePlanKeys: BillingPlanKey[];
+  downgradePlanKeys: BillingPlanKey[];
+}): MockBillingPlan => ({
+  ...legacyPlan,
+  planKey,
+  isSellable: true,
+  upgradePlanKeys,
+  downgradePlanKeys,
+  baseProducts: legacyPlan.baseProducts.map((product) =>
+    withPlanKey(product, planKey),
+  ),
+  resourceCreditProducts: legacyPlan.resourceCreditProducts.map((product) =>
+    withPlanKey(product, planKey),
+  ),
+  meteredProducts: legacyPlan.meteredProducts.map((product) => ({
+    ...product,
+    metadata: { ...product.metadata, planKey },
+    prices: product.prices?.map((price) => ({
+      ...price,
+      stripePriceId: `${price.stripePriceId}_${planKey}`,
+    })),
+  })),
+});
+
+export const mockBillingPlans = {
+  listPlans: [
+    mockProPlan,
+    mockEnterprisePlan,
+    buildMockV2BillingPlan({
+      legacyPlan: mockProPlan,
+      planKey: BillingPlanKey.PRO_V2,
+      upgradePlanKeys: [BillingPlanKey.ORGANIZATION_V2],
       downgradePlanKeys: [],
-      baseProducts: [],
-      resourceCreditProducts: [],
-      meteredProducts: [],
-    },
-    {
-      __typename: 'BillingPlan',
-      planKey: 'ORGANIZATION_V2',
-      isSellable: false,
+    }),
+    buildMockV2BillingPlan({
+      legacyPlan: mockEnterprisePlan,
+      planKey: BillingPlanKey.ORGANIZATION_V2,
       upgradePlanKeys: [],
-      downgradePlanKeys: [],
-      baseProducts: [],
-      resourceCreditProducts: [],
-      meteredProducts: [],
-    },
+      downgradePlanKeys: [BillingPlanKey.PRO_V2],
+    }),
   ],
 } as ListPlansQuery;

@@ -7,7 +7,7 @@ import { getCheckoutPlanKeyOrThrow } from 'src/engine/core-modules/billing/utils
 describe('getCheckoutPlanKeyOrThrow', () => {
   it('refuses a plan that is not on sale', () => {
     expect(() =>
-      getCheckoutPlanKeyOrThrow({ planKey: BillingPlanKey.PRO_V2 }),
+      getCheckoutPlanKeyOrThrow({ planKey: BillingPlanKey.PRO }),
     ).toThrow(
       expect.objectContaining({
         code: BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED,

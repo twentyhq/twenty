@@ -594,7 +594,7 @@ describe('workspace permissions', () => {
           variables: {
             recurringInterval: 'Month',
             successUrlPath: '/settings/billing',
-            plan: BillingPlanKey.PRO,
+            plan: BillingPlanKey.PRO_V2,
             requirePaymentMethod: true,
           },
         };

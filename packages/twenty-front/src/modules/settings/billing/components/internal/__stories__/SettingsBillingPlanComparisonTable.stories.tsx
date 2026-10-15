@@ -37,11 +37,11 @@ const meta = {
     comparedPlans: [
       {
         action: { title: 'Choose Pro', variant: 'solid' },
-        planKey: BillingPlanKey.PRO,
+        planKey: BillingPlanKey.PRO_V2,
       },
       {
         action: { title: 'Choose Organization', variant: 'outline' },
-        planKey: BillingPlanKey.ENTERPRISE,
+        planKey: BillingPlanKey.ORGANIZATION_V2,
       },
     ],
     planPrices: {

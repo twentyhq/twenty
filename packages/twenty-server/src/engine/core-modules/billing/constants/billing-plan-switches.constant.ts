@@ -5,19 +5,19 @@ import { type BillingPlanSwitches } from 'src/engine/core-modules/billing/types/
 
 export const BILLING_PLAN_SWITCHES: BillingPlanSwitches = {
   [BillingPlanKey.PRO]: {
-    upgradePlanKeys: [BillingPlanKey.ENTERPRISE],
+    upgradePlanKeys: [BillingPlanKey.PRO_V2, BillingPlanKey.ORGANIZATION_V2],
     downgradePlanKeys: [],
   },
   [BillingPlanKey.ENTERPRISE]: {
-    upgradePlanKeys: [],
-    downgradePlanKeys: [BillingPlanKey.PRO],
+    upgradePlanKeys: [BillingPlanKey.ORGANIZATION_V2],
+    downgradePlanKeys: [BillingPlanKey.PRO_V2],
   },
   [BillingPlanKey.PRO_V2]: {
-    upgradePlanKeys: [],
+    upgradePlanKeys: [BillingPlanKey.ORGANIZATION_V2],
     downgradePlanKeys: [],
   },
   [BillingPlanKey.ORGANIZATION_V2]: {
     upgradePlanKeys: [],
-    downgradePlanKeys: [],
+    downgradePlanKeys: [BillingPlanKey.PRO_V2],
   },
 };
