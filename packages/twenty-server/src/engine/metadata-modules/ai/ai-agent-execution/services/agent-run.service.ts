@@ -297,19 +297,23 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
   // a call that waits on the run gets how it settled; a run that goes on later lands in its conversation
   async onSuspended({ caller }: AgentRunCallerInput): Promise<void> {
-    await this.publishSettledRun(caller, { status: 'SUSPENDED' });
+    await this.publishSettledRun({
+      caller,
+      settledRun: { status: 'SUSPENDED' },
+    });
   }
 
   async onOutcome({
     caller,
     outcome,
   }: AgentRunCallerInput & { outcome: AgentRunCallerOutcome }): Promise<void> {
-    await this.publishSettledRun(
+    await this.publishSettledRun({
       caller,
-      outcome.status === 'COMPLETED'
-        ? { status: 'COMPLETED', result: outcome.result }
-        : { status: 'FAILED', error: outcome.error },
-    );
+      settledRun:
+        outcome.status === 'COMPLETED'
+          ? { status: 'COMPLETED', result: outcome.result }
+          : { status: 'FAILED', error: outcome.error },
+    });
   }
 
   // the request that waits on the run is still there when its agent or key went away meanwhile
@@ -317,29 +321,34 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     caller,
     outcome,
   }: AgentRunCallerInput & { outcome: AgentRunCallerOutcome }): Promise<void> {
-    await this.publishSettledRun(caller, {
-      status: 'FAILED',
-      error:
-        outcome.status === 'FAILED'
-          ? outcome.error
-          : 'The agent or the key that started this run is gone',
+    await this.publishSettledRun({
+      caller,
+      settledRun: {
+        status: 'FAILED',
+        error:
+          outcome.status === 'FAILED'
+            ? outcome.error
+            : 'The agent or the key that started this run is gone',
+      },
     });
   }
 
-  private async publishSettledRun(
-    caller: AgentRunCaller,
-    settledRun: Pick<SettledAgentRun, 'status'> & Partial<SettledAgentRun>,
-  ): Promise<void> {
+  private async publishSettledRun({
+    caller,
+    settledRun,
+  }: {
+    caller: AgentRunCaller;
+    settledRun: Pick<SettledAgentRun, 'status'> & Partial<SettledAgentRun>;
+  }): Promise<void> {
     const { runId } = agentApiRunCallerRefSchema.parse(caller.ref);
 
     if (!isDefined(runId)) {
       return;
     }
 
-    await this.agentRunSettlementService.publish(runId, {
-      result: null,
-      error: null,
-      ...settledRun,
+    await this.agentRunSettlementService.publish({
+      runId,
+      settledRun: { result: null, error: null, ...settledRun },
     });
   }
 

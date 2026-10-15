@@ -66,7 +66,6 @@ export class AgentRunnerService {
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
 
-  // the caller's handler gets the outcome, as it does for a run that paused and went on later
   async start(input: RunAgentJobData): Promise<void> {
     await this.messageQueueService.add<RunAgentJobData>(
       RUN_AGENT_JOB_NAME,
@@ -74,7 +73,6 @@ export class AgentRunnerService {
     );
   }
 
-  // the run acts as its caller lets it act now, read again like a continued run does
   async runStarted({
     workspaceId,
     conversation,

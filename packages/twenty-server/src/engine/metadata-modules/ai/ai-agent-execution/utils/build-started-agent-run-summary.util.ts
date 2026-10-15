@@ -1,6 +1,5 @@
 import { type AgentRunSummary } from 'twenty-shared/ai';
 
-// what a caller shows of a run that has started but not reported anything yet
 export const buildStartedAgentRunSummary = (
   modelId: string,
 ): AgentRunSummary => ({

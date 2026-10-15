@@ -9,10 +9,13 @@ import { type SettledAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-ex
 
 const getSettledRunKey = (runId: string) => `agent-run-settled:${runId}`;
 
-const waitAtMost = <TValue>(
-  promise: Promise<TValue>,
-  timeoutMs: number,
-): Promise<TValue | null> =>
+const waitAtMost = <TValue>({
+  promise,
+  timeoutMs,
+}: {
+  promise: Promise<TValue>;
+  timeoutMs: number;
+}): Promise<TValue | null> =>
   Promise.race([
     promise,
     new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
@@ -24,7 +27,13 @@ export class AgentRunSettlementService {
 
   constructor(private readonly redisClientService: RedisClientService) {}
 
-  async publish(runId: string, settledRun: SettledAgentRun): Promise<void> {
+  async publish({
+    runId,
+    settledRun,
+  }: {
+    runId: string;
+    settledRun: SettledAgentRun;
+  }): Promise<void> {
     await this.redisClientService
       .getClient()
       .set(
@@ -35,7 +44,6 @@ export class AgentRunSettlementService {
       );
   }
 
-  // resolves null once the run has gone on longer than the call waits
   async waitFor({
     runId,
     timeoutMs,
@@ -47,10 +55,10 @@ export class AgentRunSettlementService {
 
     while (Date.now() < deadline) {
       // Redis queues commands while it is down, so a read cannot hold the call past its deadline
-      const settledRun = await waitAtMost(
-        this.read(runId),
-        deadline - Date.now(),
-      );
+      const settledRun = await waitAtMost({
+        promise: this.read(runId),
+        timeoutMs: deadline - Date.now(),
+      });
 
       if (isDefined(settledRun)) {
         return settledRun;

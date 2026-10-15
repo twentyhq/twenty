@@ -577,10 +577,21 @@ describe('AgentRunService', () => {
     });
 
     expect(agentRunSettlementService.publish.mock.calls).toEqual([
-      [caller.ref.runId, { status: 'SUSPENDED', result: null, error: null }],
       [
-        caller.ref.runId,
-        { status: 'FAILED', result: null, error: 'provider down' },
+        {
+          runId: caller.ref.runId,
+          settledRun: { status: 'SUSPENDED', result: null, error: null },
+        },
+      ],
+      [
+        {
+          runId: caller.ref.runId,
+          settledRun: {
+            status: 'FAILED',
+            result: null,
+            error: 'provider down',
+          },
+        },
       ],
     ]);
   });
@@ -599,14 +610,14 @@ describe('AgentRunService', () => {
       outcome: { status: 'COMPLETED', result: { response: 'Done' } },
     });
 
-    expect(agentRunSettlementService.publish).toHaveBeenCalledWith(
-      caller.ref.runId,
-      {
+    expect(agentRunSettlementService.publish).toHaveBeenCalledWith({
+      runId: caller.ref.runId,
+      settledRun: {
         status: 'FAILED',
         result: null,
         error: 'The agent or the key that started this run is gone',
       },
-    );
+    });
   });
 
   it('refuses a thread without an application token', async () => {
