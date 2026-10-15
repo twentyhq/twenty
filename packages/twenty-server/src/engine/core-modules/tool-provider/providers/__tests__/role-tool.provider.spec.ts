@@ -326,6 +326,7 @@ describe('RoleToolProvider', () => {
         },
       );
 
+      expect(roleService.updateRole).toHaveBeenCalledTimes(1);
       expect(roleService.updateRole).toHaveBeenCalledWith(
         expect.objectContaining({
           actingRoleIds: [callerRoleId, 'application-role-id'],
@@ -347,6 +348,7 @@ describe('RoleToolProvider', () => {
         },
       );
 
+      expect(roleService.updateRole).toHaveBeenCalledTimes(1);
       expect(roleService.updateRole).toHaveBeenCalledWith(
         expect.objectContaining({ actingRoleIds: [] }),
       );
