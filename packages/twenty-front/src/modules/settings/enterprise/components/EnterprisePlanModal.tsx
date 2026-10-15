@@ -11,7 +11,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { MainButton } from 'twenty-ui/components/input';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -206,8 +205,8 @@ export const EnterprisePlanModal = () => {
 
             <StyledCheckoutButton
               onClick={handleContinue}
-              startIcon={isLoading && <Loader />}
-              disabled={isLoading}
+              loading={isLoading}
+              loadingPosition="start"
             >{t`Continue`}</StyledCheckoutButton>
           </StyledPricingDialogBody>
         </Dialog.Popup>

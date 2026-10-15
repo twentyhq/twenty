@@ -1,4 +1,4 @@
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import {
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
@@ -93,7 +93,7 @@ export const SettingsOptionCardContentSwitch = ({
           />
         </StyledSettingsCardSwitchButtonContainer>
       </StyledSettingsCardSwitchContent>
-      {divider && <Separator />}
+      {divider && <SettingsCardSeparator />}
     </>
   );
 };

@@ -77,6 +77,7 @@ const StyledReceivedAt = styled.div`
 
 type EmailThreadPreviewProps = {
   thread: TimelineThread;
+  divider?: boolean;
 };
 
 type LastAvatar = {
@@ -86,7 +87,10 @@ type LastAvatar = {
   placeholderColorSeed: string | undefined;
 };
 
-export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
+export const EmailThreadPreview = ({
+  thread,
+  divider = false,
+}: EmailThreadPreviewProps) => {
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -153,6 +157,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
     <ActivityRow
       onClick={handleThreadClick}
       disabled={isDisabled}
+      divider={divider}
       label={label}
     >
       <StyledHeading unread={!thread.read}>

@@ -53,10 +53,6 @@ const StyledFieldRow = styled.div`
 
 const StyledFieldGroup = styled.div`
   flex: 1;
-
-  & > * {
-    width: 100%;
-  }
 `;
 
 type SettingsAccountsConnectionFormProps = {
