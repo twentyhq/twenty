@@ -2,16 +2,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type QuotaDebit } from 'src/engine/core-modules/usage-limit/types/quota-debit.type';
 
-export const buildConsumeScriptArguments = (
+export const buildConsumeScriptArguments = ({
+  entries,
+  isUserCreditsFallbackEnabled = false,
+}: {
   entries: {
     amount: number;
     warm: { value: number; ttl: number } | null;
     split?: QuotaDebit['split'];
-  }[],
-  {
-    isUserCreditsFallbackEnabled = false,
-  }: { isUserCreditsFallbackEnabled?: boolean } = {},
-): string[] => {
+  }[];
+  isUserCreditsFallbackEnabled?: boolean;
+}): string[] => {
   for (const { amount, warm, split } of entries) {
     if (!(Number.isSafeInteger(amount) && amount >= 0)) {
       throw new Error(

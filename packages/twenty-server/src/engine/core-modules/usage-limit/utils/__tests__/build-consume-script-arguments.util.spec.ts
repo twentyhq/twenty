@@ -5,7 +5,7 @@ describe('buildConsumeScriptArguments', () => {
     'refuses the amount %s',
     (amount) => {
       expect(() =>
-        buildConsumeScriptArguments([{ amount, warm: null }]),
+        buildConsumeScriptArguments({ entries: [{ amount, warm: null }] }),
       ).toThrow(/^Counter amount .* is not a non-negative safe integer$/);
     },
   );
@@ -17,7 +17,9 @@ describe('buildConsumeScriptArguments', () => {
     { value: 10, ttl: -1 },
     { value: 10, ttl: 1.5 },
   ])('refuses the warm value $value with TTL $ttl', (warm) => {
-    expect(() => buildConsumeScriptArguments([{ amount: 1, warm }])).toThrow(
+    expect(() =>
+      buildConsumeScriptArguments({ entries: [{ amount: 1, warm }] }),
+    ).toThrow(
       /^Counter warm value .* is not a non-negative safe integer with a positive safe TTL$/,
     );
   });
@@ -26,17 +28,23 @@ describe('buildConsumeScriptArguments', () => {
     'refuses the user credits limit %s',
     (limitValue) => {
       expect(() =>
-        buildConsumeScriptArguments([
-          { amount: 1, warm: null, split: { kind: 'userCredits', limitValue } },
-        ]),
+        buildConsumeScriptArguments({
+          entries: [
+            {
+              amount: 1,
+              warm: null,
+              split: { kind: 'userCredits', limitValue },
+            },
+          ],
+        }),
       ).toThrow(/^User credits limit .* is not a non-negative safe integer$/);
     },
   );
 
   it('passes the split of each key, the user limits and the fallback', () => {
     expect(
-      buildConsumeScriptArguments(
-        [
+      buildConsumeScriptArguments({
+        entries: [
           { amount: 5, warm: null },
           {
             amount: 300,
@@ -45,8 +53,8 @@ describe('buildConsumeScriptArguments', () => {
           },
           { amount: 300, warm: null, split: { kind: 'workspaceCredits' } },
         ],
-        { isUserCreditsFallbackEnabled: true },
-      ),
+        isUserCreditsFallbackEnabled: true,
+      }),
     ).toEqual([
       '[5,300,300]',
       '[false,900,false]',

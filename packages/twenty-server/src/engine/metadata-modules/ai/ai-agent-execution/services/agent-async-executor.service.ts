@@ -713,15 +713,15 @@ export class AgentAsyncExecutorService {
         (accumulatedUsage.inputTokens ?? 0) +
         (accumulatedUsage.outputTokens ?? 0);
 
-      void this.aiBillingService.emitAiTokenUsageEvent(
+      void this.aiBillingService.emitAiTokenUsageEvent({
         workspaceId,
         creditsUsedMicro,
         totalTokens,
         modelId,
-        usageOperationType,
-        agent?.id ?? null,
+        operationType: usageOperationType,
+        agentId: agent?.id,
         userWorkspaceId,
-      );
+      });
 
       void this.aiBillingService.billNativeWebSearchUsage(
         nativeWebSearchCallCount,

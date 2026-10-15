@@ -122,7 +122,7 @@ export class BillingUsageService {
     periodStart: Date,
     periodEnd: Date,
   ): Promise<BillingResourceCreditUsageDTO> {
-    const [creditsUsed, workspaceCreditsRolledOver] = await Promise.all([
+    const [creditsUsed, workspaceCreditsExtraGranted] = await Promise.all([
       // Fails open: an unreadable usage total must never block a paying workspace
       this.usageAnalyticsService
         .getCreditsUsedMicroForBillingPeriod({ workspaceId, periodStart })
@@ -149,9 +149,9 @@ export class BillingUsageService {
       workspaceCreditsUsed: creditsUsed.workspaceCreditsUsedMicro,
       userCreditsUsed: creditsUsed.userCreditsUsedMicro,
       workspaceCreditsGranted,
-      workspaceCreditsRolledOver,
+      workspaceCreditsExtraGranted,
       workspaceCreditsTotalGranted:
-        workspaceCreditsGranted + workspaceCreditsRolledOver,
+        workspaceCreditsGranted + workspaceCreditsExtraGranted,
       unitPriceCents: item.unitPriceCents,
     };
   }

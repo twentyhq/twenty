@@ -224,12 +224,12 @@ export const SettingsAdminWorkspaceBillingContent = ({
               },
             ]
           : []),
-        ...(usage.workspaceCreditsRolledOver > 0
+        ...(usage.workspaceCreditsExtraGranted > 0
           ? [
               {
                 Icon: IconCoins,
                 label: t`Granted credits`,
-                value: formatCredits(usage.workspaceCreditsRolledOver),
+                value: formatCredits(usage.workspaceCreditsExtraGranted),
               },
             ]
           : []),

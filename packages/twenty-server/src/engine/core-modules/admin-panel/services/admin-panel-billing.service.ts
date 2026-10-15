@@ -278,8 +278,8 @@ export class AdminPanelBillingService {
       const workspaceCreditsGranted = toDisplayCredits(
         usage.workspaceCreditsGranted,
       );
-      const workspaceCreditsRolledOver = toDisplayCredits(
-        usage.workspaceCreditsRolledOver,
+      const workspaceCreditsExtraGranted = toDisplayCredits(
+        usage.workspaceCreditsExtraGranted,
       );
       const workspaceCreditsTotalGranted = toDisplayCredits(
         usage.workspaceCreditsTotalGranted,
@@ -290,7 +290,7 @@ export class AdminPanelBillingService {
         periodEnd: usage.periodEnd,
         workspaceCreditsUsed,
         workspaceCreditsGranted,
-        workspaceCreditsRolledOver,
+        workspaceCreditsExtraGranted,
         workspaceCreditsTotalGranted,
         workspaceCreditsRemaining:
           workspaceCreditsTotalGranted - workspaceCreditsUsed,

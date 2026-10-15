@@ -507,16 +507,18 @@ export class ChatExecutionService {
       );
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
-      await this.aiBillingService.emitAiTokenUsageEvent(
-        workspace.id,
+      await this.aiBillingService.emitAiTokenUsageEvent({
+        workspaceId: workspace.id,
         creditsUsedMicro,
         totalTokens,
-        registeredModel.modelId,
-        UsageOperationType.AI_CHAT_TOKEN,
-        null,
+        modelId: registeredModel.modelId,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         userWorkspaceId,
-        Math.min(turnUserCreditsUsedMicro, creditsUsedMicro),
-      );
+        userCreditsUsedMicro: Math.min(
+          turnUserCreditsUsedMicro,
+          creditsUsedMicro,
+        ),
+      });
 
       void this.aiBillingService
         .billNativeWebSearchUsage(

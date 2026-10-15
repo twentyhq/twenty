@@ -164,7 +164,7 @@ export const SettingsBillingCreditsSection = ({
     workspaceCreditsUsed,
     workspaceCreditsGranted,
     workspaceCreditsTotalGranted,
-    workspaceCreditsRolledOver,
+    workspaceCreditsExtraGranted,
   } = getResourceCreditUsage();
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
@@ -188,9 +188,7 @@ export const SettingsBillingCreditsSection = ({
     Math.max(0, remainingCreditsPercentage),
   );
 
-  // workspaceCreditsRolledOver sums every active grant, not just the rolled-over ones
-  const extraCredits = workspaceCreditsRolledOver;
-  const hasExtraCredits = extraCredits > 0;
+  const hasExtraCredits = workspaceCreditsExtraGranted > 0;
 
   const workspaceCreditsUsedDisplay = formatNumber(workspaceCreditsUsed, {
     decimals: 2,
@@ -204,7 +202,7 @@ export const SettingsBillingCreditsSection = ({
       decimals: 2,
     },
   );
-  const extraCreditsDisplay = formatNumber(extraCredits, {
+  const extraCreditsDisplay = formatNumber(workspaceCreditsExtraGranted, {
     decimals: 2,
   });
   const rolloverCapDisplay = formatNumber(displayedGrantedCredits * 2, {

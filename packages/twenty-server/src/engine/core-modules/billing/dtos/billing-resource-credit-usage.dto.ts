@@ -23,7 +23,7 @@ export class BillingResourceCreditUsageDTO {
   workspaceCreditsGranted: number;
 
   @Field(() => Float)
-  workspaceCreditsRolledOver: number;
+  workspaceCreditsExtraGranted: number;
 
   @Field(() => Float)
   workspaceCreditsTotalGranted: number;

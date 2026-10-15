@@ -22,7 +22,7 @@ export const GET_WORKSPACE_BILLING_ADMIN_PANEL = gql`
         periodEnd
         workspaceCreditsUsed
         workspaceCreditsGranted
-        workspaceCreditsRolledOver
+        workspaceCreditsExtraGranted
         workspaceCreditsTotalGranted
         workspaceCreditsRemaining
       }

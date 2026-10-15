@@ -213,16 +213,25 @@ export class AiBillingService {
     return this.toStepDebitResult(webSearchDebit);
   }
 
-  async emitAiTokenUsageEvent(
-    workspaceId: string,
-    creditsUsedMicro: number,
-    totalTokens: number,
-    modelId: ModelId,
-    operationType: UsageOperationType,
-    agentId?: string | null,
-    userWorkspaceId?: string | null,
+  async emitAiTokenUsageEvent({
+    workspaceId,
+    creditsUsedMicro,
+    totalTokens,
+    modelId,
+    operationType,
+    agentId,
+    userWorkspaceId,
     userCreditsUsedMicro = 0,
-  ): Promise<void> {
+  }: {
+    workspaceId: string;
+    creditsUsedMicro: number;
+    totalTokens: number;
+    modelId: ModelId;
+    operationType: UsageOperationType;
+    agentId?: string | null;
+    userWorkspaceId?: string | null;
+    userCreditsUsedMicro?: number;
+  }): Promise<void> {
     await this.usageRecorderService.record(workspaceId, [
       {
         ...this.buildAiTokenUsageEvent({

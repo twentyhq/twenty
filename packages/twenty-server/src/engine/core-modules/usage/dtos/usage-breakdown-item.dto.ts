@@ -13,8 +13,8 @@ export class UsageBreakdownItemDTO {
   @Field(() => Float)
   creditsUsed: number;
 
-  @Field(() => Float, { nullable: true })
-  userCreditsUsed?: number | null;
+  @Field(() => Float)
+  userCreditsUsed: number;
 
   @Field(() => Float)
   workspaceCreditsUsed: number;

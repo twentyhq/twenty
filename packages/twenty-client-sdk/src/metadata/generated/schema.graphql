@@ -864,8 +864,8 @@ type BillingResourceCreditUsage {
   productKey: BillingProductKey!
   unitPriceCents: Float!
   userCreditsUsed: Float!
+  workspaceCreditsExtraGranted: Float!
   workspaceCreditsGranted: Float!
-  workspaceCreditsRolledOver: Float!
   workspaceCreditsTotalGranted: Float!
   workspaceCreditsUsed: Float!
 }
@@ -5294,7 +5294,7 @@ type UsageBreakdownItem {
   creditsUsed: Float!
   key: String!
   label: String
-  userCreditsUsed: Float
+  userCreditsUsed: Float!
   workspaceCreditsUsed: Float!
 }
 

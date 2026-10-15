@@ -767,8 +767,8 @@ export interface BillingResourceCreditUsage {
     productKey: BillingProductKey
     unitPriceCents: Scalars['Float']
     userCreditsUsed: Scalars['Float']
+    workspaceCreditsExtraGranted: Scalars['Float']
     workspaceCreditsGranted: Scalars['Float']
-    workspaceCreditsRolledOver: Scalars['Float']
     workspaceCreditsTotalGranted: Scalars['Float']
     workspaceCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
@@ -3382,7 +3382,7 @@ export interface UsageBreakdownItem {
     creditsUsed: Scalars['Float']
     key: Scalars['String']
     label?: Scalars['String']
-    userCreditsUsed?: Scalars['Float']
+    userCreditsUsed: Scalars['Float']
     workspaceCreditsUsed: Scalars['Float']
     __typename: 'UsageBreakdownItem'
 }
@@ -4760,8 +4760,8 @@ export interface BillingResourceCreditUsageGenqlSelection{
     productKey?: boolean | number
     unitPriceCents?: boolean | number
     userCreditsUsed?: boolean | number
+    workspaceCreditsExtraGranted?: boolean | number
     workspaceCreditsGranted?: boolean | number
-    workspaceCreditsRolledOver?: boolean | number
     workspaceCreditsTotalGranted?: boolean | number
     workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number

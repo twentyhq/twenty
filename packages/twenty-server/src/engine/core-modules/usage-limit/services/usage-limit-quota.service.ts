@@ -900,7 +900,7 @@ export class UsageLimitQuotaService {
     userCreditsFallback,
   }: {
     counters: QuotaCounter[];
-    entries: Parameters<typeof buildConsumeScriptArguments>[0];
+    entries: Parameters<typeof buildConsumeScriptArguments>[0]['entries'];
     userCreditsFallback: UserCreditsFallback;
   }): Promise<{ consumedValues: (number | null)[]; userShare: number | null }> {
     if (counters.length === 0) {
@@ -910,7 +910,8 @@ export class UsageLimitQuotaService {
     const results = await this.cacheStorage.runScript<unknown[]>({
       script: WARM_AND_CONSUME_COUNTERS_SCRIPT,
       keys: counters.map((counter) => counter.key),
-      args: buildConsumeScriptArguments(entries, {
+      args: buildConsumeScriptArguments({
+        entries,
         isUserCreditsFallbackEnabled:
           userCreditsFallback === UserCreditsFallback.WORKSPACE_CREDITS,
       }),

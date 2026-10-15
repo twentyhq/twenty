@@ -1887,10 +1887,10 @@ export default {
             "userCreditsUsed": [
                 11
             ],
-            "workspaceCreditsGranted": [
+            "workspaceCreditsExtraGranted": [
                 11
             ],
-            "workspaceCreditsRolledOver": [
+            "workspaceCreditsGranted": [
                 11
             ],
             "workspaceCreditsTotalGranted": [
