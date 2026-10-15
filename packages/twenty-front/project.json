@@ -54,7 +54,11 @@
     "lint": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["twenty-oxlint-rules:build", "twenty-shared:build"],
+      "dependsOn": [
+        "twenty-oxlint-rules:build",
+        "twenty-shared:build",
+        "lint:unlocalized-strings"
+      ],
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
         "{projectRoot}/tsconfig*.json",
@@ -62,13 +66,11 @@
         "{projectRoot}/package.json",
         "{workspaceRoot}/yarn.lock",
         "{projectRoot}/.oxlintrc.json",
-        "{projectRoot}/.oxlintrc.i18n.json",
-        "{projectRoot}/scripts/check-unlocalized-strings.mjs",
         "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false)) && node scripts/check-unlocalized-strings.mjs --all"
+        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false))"
       },
       "configurations": {
         "fix": {
@@ -88,7 +90,7 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node scripts/check-unlocalized-strings.mjs --all"
+        "command": "node scripts/check-unlocalized-strings.mjs"
       }
     },
     "lint:i18n": {
@@ -106,10 +108,10 @@
     },
     "lint:diff-with-main": {
       "executor": "nx:run-commands",
-      "dependsOn": ["twenty-oxlint-rules:build"],
+      "dependsOn": ["twenty-oxlint-rules:build", "lint:unlocalized-strings"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-front --configuration=fix' && false))) && node scripts/check-unlocalized-strings.mjs"
+        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-front --configuration=fix' && false)))"
       },
       "configurations": {
         "fix": {

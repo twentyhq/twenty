@@ -141,7 +141,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: '--max-old-space-size=6144'
-      LINGUI_LINT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       TASK_CACHE_KEY: front-task-${{ matrix.name }}${{ matrix.shard && format('-{0}', matrix.shard) || '' }}
     strategy:
       fail-fast: false
