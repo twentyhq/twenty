@@ -3,9 +3,18 @@ import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  blockSpacing,
+  type EmailNodeRenderContext,
+} from 'src/utils/email-renderer/utils/block-spacing';
+import { type InheritedTypography } from 'src/utils/email-renderer/utils/inherited-typography';
 import { safeUrl } from 'src/utils/email-renderer/utils/safe-url';
 
-export const image = (node: JSONContent): ReactNode => {
+export const image = (
+  node: JSONContent,
+  _inherited: InheritedTypography,
+  context: EmailNodeRenderContext,
+): ReactNode => {
   const { src: rawSrc, alt, align = 'left', width, href } = node?.attrs || {};
   const src = safeUrl(rawSrc);
   if (!isDefined(src)) {
@@ -29,7 +38,7 @@ export const image = (node: JSONContent): ReactNode => {
   );
 
   return (
-    <Row>
+    <Row style={blockSpacing(context)}>
       <Column align={align}>
         {isDefined(safeUrl(href)) ? (
           <Link href={safeUrl(href)} target="_blank">

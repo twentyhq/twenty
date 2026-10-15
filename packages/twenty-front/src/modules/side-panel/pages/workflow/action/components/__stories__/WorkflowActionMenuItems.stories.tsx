@@ -1,4 +1,5 @@
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
+import { CLASSIFY_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/ClassifyAction';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -11,7 +12,7 @@ const meta = {
     actions: [
       {
         type: 'CLASSIFY',
-        defaultLabel: 'Classify (Jev)',
+        defaultLabel: CLASSIFY_ACTION.defaultLabel,
         icon: 'IconCategory',
       },
     ],
@@ -35,7 +36,7 @@ export const Unavailable: Story = {
     actions: [
       {
         type: 'CLASSIFY',
-        defaultLabel: 'Classify (Jev)',
+        defaultLabel: CLASSIFY_ACTION.defaultLabel,
         icon: 'IconCategory',
         disabled: true,
         contextualText: 'TypeSafe AI API key missing',

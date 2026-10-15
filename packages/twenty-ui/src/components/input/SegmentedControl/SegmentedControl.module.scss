@@ -10,12 +10,24 @@
   gap: 2px;
   grid-auto-columns: minmax(0, 1fr);
   grid-auto-flow: column;
-  block-size: var(--t-spacing-7);
-  padding: 3px;
+  block-size: var(--tw-segmented-control-block-size);
+  padding: var(--tw-segmented-control-padding);
 
   &[data-item-width='content'] {
     grid-auto-columns: max-content;
   }
+}
+
+.sm {
+  --tw-segmented-control-block-size: var(--t-spacing-6);
+  --tw-segmented-control-item-size: var(--t-spacing-5);
+  --tw-segmented-control-padding: 1px;
+}
+
+.md {
+  --tw-segmented-control-block-size: var(--t-spacing-8);
+  --tw-segmented-control-item-size: var(--t-spacing-6);
+  --tw-segmented-control-padding: 3px;
 }
 
 .item {
@@ -63,7 +75,7 @@
 }
 
 .iconOnly {
-  min-inline-size: var(--t-spacing-5);
+  min-inline-size: var(--tw-segmented-control-item-size);
   padding: 0;
 }
 
@@ -71,9 +83,9 @@
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  block-size: var(--t-spacing-5);
+  block-size: calc(var(--t-icon-size-md) * 1px);
   justify-content: center;
-  inline-size: var(--t-spacing-5);
+  inline-size: calc(var(--t-icon-size-md) * 1px);
 
   > svg,
   > :only-child > svg:only-child {

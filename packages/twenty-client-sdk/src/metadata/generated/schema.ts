@@ -232,6 +232,7 @@ export interface AppConnection {
     accessToken: Scalars['String']
     authFailedAt?: Scalars['String']
     authFailedReason?: Scalars['String']
+    externalAccountId?: Scalars['String']
     handle: Scalars['String']
     id: Scalars['ID']
     name: Scalars['String']
@@ -1259,7 +1260,7 @@ export interface EmailsConfiguration {
     __typename: 'EmailsConfiguration'
 }
 
-export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
+export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EMAIL_PAGE_STYLE' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
 
 export interface EnqueueJobResult {
     enqueued: Scalars['Boolean']
@@ -1336,7 +1337,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_VALIDATION_RULES_ENABLED'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_MORPH_RELATION_HEAD_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1496,6 +1497,7 @@ export interface FrontComponent {
     universalIdentifier?: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     usesSdkClient: Scalars['Boolean']
+    widgetAvailability: FrontComponentWidgetAvailability[]
     __typename: 'FrontComponent'
 }
 
@@ -1504,6 +1506,12 @@ export interface FrontComponentConfiguration {
     frontComponentId: Scalars['UUID']
     headerCommandMenuItemUniversalIdentifiers?: Scalars['UUID'][]
     __typename: 'FrontComponentConfiguration'
+}
+
+export interface FrontComponentWidgetAvailability {
+    objectMetadataId?: Scalars['UUID']
+    pageLayoutType: PageLayoutType
+    __typename: 'FrontComponentWidgetAvailability'
 }
 
 export interface FullName {
@@ -1795,6 +1803,7 @@ export interface MarketplaceAppDetail {
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: Scalars['JSON']
     name: Scalars['String']
+    objects?: MarketplaceAppObject[]
     pricingDescription?: Scalars['String']
     requestedCapabilities: Scalars['String'][]
     roles?: MarketplaceAppRole[]
@@ -1806,6 +1815,13 @@ export interface MarketplaceAppDetail {
     universalIdentifier: Scalars['String']
     websiteUrl?: Scalars['String']
     __typename: 'MarketplaceAppDetail'
+}
+
+export interface MarketplaceAppObject {
+    labelPlural: Scalars['String']
+    labelSingular: Scalars['String']
+    universalIdentifier: Scalars['String']
+    __typename: 'MarketplaceAppObject'
 }
 
 export interface MarketplaceAppRole {
@@ -2955,6 +2971,7 @@ export interface RichTextBody {
 export interface Role {
     agents: Agent[]
     apiKeys: ApiKeyForRole[]
+    applicationId: Scalars['UUID']
     canAccessAllTools: Scalars['Boolean']
     canBeAssignedToAgents: Scalars['Boolean']
     canBeAssignedToApiKeys: Scalars['Boolean']
@@ -4167,6 +4184,7 @@ export interface AppConnectionGenqlSelection{
     accessToken?: boolean | number
     authFailedAt?: boolean | number
     authFailedReason?: boolean | number
+    externalAccountId?: boolean | number
     handle?: boolean | number
     id?: boolean | number
     name?: boolean | number
@@ -5677,6 +5695,7 @@ export interface FrontComponentGenqlSelection{
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
     usesSdkClient?: boolean | number
+    widgetAvailability?: FrontComponentWidgetAvailabilityGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5685,6 +5704,13 @@ export interface FrontComponentConfigurationGenqlSelection{
     configurationType?: boolean | number
     frontComponentId?: boolean | number
     headerCommandMenuItemUniversalIdentifiers?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FrontComponentWidgetAvailabilityGenqlSelection{
+    objectMetadataId?: boolean | number
+    pageLayoutType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6007,6 +6033,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
     name?: boolean | number
+    objects?: MarketplaceAppObjectGenqlSelection
     pricingDescription?: boolean | number
     requestedCapabilities?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
@@ -6017,6 +6044,14 @@ export interface MarketplaceAppDetailGenqlSelection{
     termsUrl?: boolean | number
     universalIdentifier?: boolean | number
     websiteUrl?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MarketplaceAppObjectGenqlSelection{
+    labelPlural?: boolean | number
+    labelSingular?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6978,7 +7013,7 @@ export interface QueryGenqlSelection{
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
-    findInstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findInstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
     findManyAgents?: AgentGenqlSelection
     findManyApplicationRegistrations?: ApplicationRegistrationGenqlSelection
     findManyApplications?: ApplicationGenqlSelection
@@ -6990,8 +7025,8 @@ export interface QueryGenqlSelection{
     findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
     findOneApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
-    findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    findUpgradeApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
+    findUpgradeApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
@@ -7206,6 +7241,7 @@ export interface RichTextBodyGenqlSelection{
 export interface RoleGenqlSelection{
     agents?: AgentGenqlSelection
     apiKeys?: ApiKeyForRoleGenqlSelection
+    applicationId?: boolean | number
     canAccessAllTools?: boolean | number
     canBeAssignedToAgents?: boolean | number
     canBeAssignedToApiKeys?: boolean | number
@@ -9646,6 +9682,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const FrontComponentWidgetAvailability_possibleTypes: string[] = ['FrontComponentWidgetAvailability']
+    export const isFrontComponentWidgetAvailability = (obj?: { __typename?: any } | null): obj is FrontComponentWidgetAvailability => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentWidgetAvailability"')
+      return FrontComponentWidgetAvailability_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const FullName_possibleTypes: string[] = ['FullName']
     export const isFullName = (obj?: { __typename?: any } | null): obj is FullName => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFullName"')
@@ -9866,6 +9910,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isMarketplaceAppDetail = (obj?: { __typename?: any } | null): obj is MarketplaceAppDetail => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppDetail"')
       return MarketplaceAppDetail_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MarketplaceAppObject_possibleTypes: string[] = ['MarketplaceAppObject']
+    export const isMarketplaceAppObject = (obj?: { __typename?: any } | null): obj is MarketplaceAppObject => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppObject"')
+      return MarketplaceAppObject_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11405,6 +11457,7 @@ export const enumEngineComponentKey = {
    EDIT_DASHBOARD_LAYOUT: 'EDIT_DASHBOARD_LAYOUT' as const,
    EDIT_RECORD_PAGE_LAYOUT: 'EDIT_RECORD_PAGE_LAYOUT' as const,
    EMAIL_BLOCK_SETTINGS: 'EMAIL_BLOCK_SETTINGS' as const,
+   EMAIL_PAGE_STYLE: 'EMAIL_PAGE_STYLE' as const,
    EXPORT_FROM_RECORD_INDEX: 'EXPORT_FROM_RECORD_INDEX' as const,
    EXPORT_FROM_RECORD_SHOW: 'EXPORT_FROM_RECORD_SHOW' as const,
    EXPORT_MULTIPLE_RECORDS: 'EXPORT_MULTIPLE_RECORDS' as const,
@@ -11487,15 +11540,14 @@ export const enumFeatureFlagKey = {
    IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED: 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
-   IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
+   IS_MORPH_RELATION_HEAD_ENABLED: 'IS_MORPH_RELATION_HEAD_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED: 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' as const,
-   IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
-   IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const
+   IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const
 }
 
 export const enumFieldDisplayMode = {

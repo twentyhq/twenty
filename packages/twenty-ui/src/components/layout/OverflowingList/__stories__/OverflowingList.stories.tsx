@@ -6,6 +6,7 @@ import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { OverflowingList } from '../OverflowingList';
 import { OVERFLOWING_LIST_STORY_ITEMS } from './OVERFLOWING_LIST_STORY_ITEMS';
+import { OverflowingListControlledExample } from './OverflowingListControlledExample';
 
 const meta: Meta<typeof OverflowingList> = {
   id: 'ui-components-overflowinglist',
@@ -32,10 +33,22 @@ export const Documentation: Story = {
   render: (args) => (
     <Section.Root>
       <Section.Header title="Company tags" />
-      <Text>Open the count to see every tag.</Text>
+      <Text>Open the count to see all tags.</Text>
       <OverflowingList {...args} overflowLabel="Show all company tags" />
     </Section.Root>
   ),
+};
+
+export const Controlled: Story = {
+  render: () => <OverflowingListControlledExample />,
+};
+
+export const InitiallyOpen: Story = {
+  args: { defaultOpen: true, maxInlineCount: 1 },
+};
+
+export const Empty: Story = {
+  args: { children: [] },
 };
 
 export const CountOnHoverOrFocus: Story = {

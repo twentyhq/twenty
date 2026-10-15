@@ -67,33 +67,22 @@ export class WorkflowExecutionContextService {
     return this.buildExecutionContext(workflowRun, workspaceId);
   }
 
-  async assertStepTargetBelongsToRunApplicationOrThrow({
+  assertStepTargetBelongsToRunApplicationOrThrow({
     application,
-    workspaceId,
     targetApplicationId,
     targetLabel,
   }: {
     application: FlatApplication | null;
-    workspaceId: string;
     targetApplicationId: string;
     targetLabel: string;
-  }): Promise<void> {
-    if (!isDefined(application) || targetApplicationId === application.id) {
+  }): void {
+    if (!isDefined(application)) {
       return;
     }
-
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     assertStepTargetBelongsToRunApplication({
       application,
       targetApplicationId,
-      workspaceOwnedApplicationIds: [
-        workspaceCustomFlatApplication.id,
-        twentyStandardFlatApplication.id,
-      ],
       targetLabel,
     });
   }
@@ -124,6 +113,7 @@ export class WorkflowExecutionContextService {
       authContext,
       userWorkspaceRoleMap,
       apiKeyRoleMap: {},
+      flatRoleTargetByAgentIdMaps: {},
     });
 
     if (!isDefined(rolePermissionConfig)) {

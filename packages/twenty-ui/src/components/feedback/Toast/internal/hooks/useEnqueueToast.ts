@@ -9,6 +9,11 @@ import { useToastContext } from './useToastContext';
 
 let lastToastId = 0;
 
+const createToastId = () => {
+  lastToastId += 1;
+  return `toast-${lastToastId}`;
+};
+
 export const useEnqueueToast = () => {
   const store = useToastContext();
 
@@ -22,6 +27,10 @@ export const useEnqueueToast = () => {
         return;
       }
 
+      if (!store.lifecycle.isActive()) {
+        return createToastId();
+      }
+
       const { dedupeKey, ...toastProps } = options;
       const { toasts, limit } = store.state;
       const visibleToasts = toasts.filter(isToastVisible);
@@ -33,8 +42,7 @@ export const useEnqueueToast = () => {
         return existingToast.notification.id;
       }
 
-      lastToastId += 1;
-      const id = `toast-${lastToastId}`;
+      const id = createToastId();
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
 
       dismissToasts({

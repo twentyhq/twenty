@@ -16,7 +16,11 @@ import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Toast.module.scss';
+import { ToastCountdownEffect } from './internal/components/ToastCountdownEffect';
+import { ToastFocusEffect } from './internal/components/ToastFocusEffect';
+import { DEFAULT_TOAST_DURATION } from './internal/constants/DefaultToastDuration';
 import { ToastProgress } from './internal/components/ToastProgress';
+import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
 import { type ToastStatus } from './types/ToastStatus';
 
@@ -35,7 +39,7 @@ export const Toast = ({
   iconLabel,
   action,
   progress,
-  duration = 6000,
+  duration = DEFAULT_TOAST_DURATION,
   onCancel,
   onClose,
   cancelLabel = 'Cancel',
@@ -54,6 +58,13 @@ export const Toast = ({
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [toastElement, setToastElement] = useState<HTMLDivElement | null>(null);
+
+  const isPaused = isHovered || isFocused;
+  const { countdown, clock, setClock } = useToastCountdown({
+    duration,
+    isPaused,
+  });
   const Icon = TOAST_ICONS[status];
   const toastColors = theme.snackBar[status === 'neutral' ? 'default' : status];
   const toastIcon = isUndefined(icon) ? (
@@ -67,9 +78,9 @@ export const Toast = ({
     icon
   );
 
-  return useRender({
+  const element = useRender({
     render,
-    ref,
+    ref: [ref ?? null, setToastElement],
     props: {
       role,
       'aria-live': role === 'alert' ? 'assertive' : 'polite',
@@ -104,9 +115,10 @@ export const Toast = ({
             <ToastProgress
               barColor={toastColors.backgroundColor}
               progress={progress}
-              duration={duration}
-              isPaused={isHovered || isFocused}
-              onClose={onClose}
+              duration={countdown.duration}
+              remainingDuration={countdown.remainingDuration}
+              revision={countdown.revision}
+              isPaused={countdown.isPaused}
             />
           </div>
           <div className={styles.header}>
@@ -133,7 +145,7 @@ export const Toast = ({
                   className={styles.closeButton}
                   variant="ghost"
                   size="sm"
-                  onClick={onClose}
+                  onClick={clock.close}
                 />
               )}
             </div>
@@ -151,4 +163,23 @@ export const Toast = ({
       ),
     },
   });
+
+  return (
+    <>
+      {element}
+      <ToastFocusEffect
+        element={toastElement}
+        isFocused={isFocused}
+        onFocusChange={setIsFocused}
+      />
+      <ToastCountdownEffect
+        clock={clock}
+        onClockChange={setClock}
+        duration={duration}
+        progress={progress}
+        isPaused={isPaused}
+        onClose={onClose}
+      />
+    </>
+  );
 };

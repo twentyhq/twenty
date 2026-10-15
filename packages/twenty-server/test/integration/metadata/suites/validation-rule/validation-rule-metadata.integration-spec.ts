@@ -27,7 +27,7 @@ describe('Validation rule metadata', () => {
 
   beforeAll(async () => {
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+      featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
       value: true,
       expectToFail: false,
     });

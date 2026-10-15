@@ -7,16 +7,16 @@ export const SEARCH_INPUT_PROP_DESCRIPTIONS = {
   onValueChange: 'Called with the new text. The application owns filtering.',
   onChange: 'Native input change event handler.',
   ref: 'Ref to the native input element.',
-  size: 'Visual size of the input group and optional filter button.',
+  size: 'Visual size of the input group.',
   placeholder:
     'Hint shown when the input is empty. Also used as the accessible name if no explicit label is supplied.',
-  filterDropdown: 'Renders a filter popup around the supplied filter button.',
+  actions:
+    'Controls rendered after the search field, such as a filter Dropdown. Set their size and accessible names on the controls.',
   autoFocus: 'Focuses the input when mounted.',
   disabled:
-    'Disables the text input. Configure filter popup controls separately.',
+    'Disables the text input. Controls in actions keep their own state.',
   className: 'Class applied to the input.',
   id: 'Input ID, generated when omitted.',
-  filterButtonAriaLabel: 'Accessible label for the optional filter button.',
   'aria-label': 'Accessible name when aria-labelledby is absent.',
   'aria-labelledby':
     'ID of the element that labels the input. Takes precedence over aria-label.',

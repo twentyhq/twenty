@@ -19,6 +19,7 @@ import {
 import { msg } from '@lingui/core/macro';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import {
+  IconBlockquote,
   IconBox,
   IconClick,
   IconCode,
@@ -26,13 +27,13 @@ import {
   IconH1,
   IconMinus,
   IconPhoto,
-  IconPilcrow,
+  IconTextSize,
 } from 'twenty-ui/icon';
 
 export const ADVANCED_TEXT_EDITOR_BLOCK_CATALOG = {
   [TIPTAP_NODE_TYPES.PARAGRAPH]: {
     label: msg`Text`,
-    icon: IconPilcrow,
+    icon: IconTextSize,
     extension: TextBlockStyle,
     insertionRecipes: [],
     settingsFields: getAdvancedTextEditorTextBlockSettings(),
@@ -40,6 +41,13 @@ export const ADVANCED_TEXT_EDITOR_BLOCK_CATALOG = {
   [TIPTAP_NODE_TYPES.HEADING]: {
     label: msg`Heading`,
     icon: IconH1,
+    extension: null,
+    insertionRecipes: [],
+    settingsFields: getAdvancedTextEditorTextBlockSettings(),
+  },
+  [TIPTAP_NODE_TYPES.BLOCKQUOTE]: {
+    label: msg`Quote`,
+    icon: IconBlockquote,
     extension: null,
     insertionRecipes: [],
     settingsFields: getAdvancedTextEditorTextBlockSettings(),

@@ -328,11 +328,13 @@ export class WorkspaceService {
     userWorkspaceId,
     apiKey,
     application,
+    agentId,
   }: {
     payload: UpdateWorkspaceInput & { id: string };
     userWorkspaceId?: string;
     apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
+    agentId?: string;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -346,6 +348,7 @@ export class WorkspaceService {
       workspaceId: workspace.id,
       apiKey,
       application,
+      agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -1047,6 +1050,7 @@ export class WorkspaceService {
     workspaceId,
     apiKey,
     application,
+    agentId,
     workspaceActivationStatus,
   }: {
     payload: Partial<WorkspaceEntity>;
@@ -1054,6 +1058,7 @@ export class WorkspaceService {
     workspaceId: string;
     apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
+    agentId?: string;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
@@ -1139,6 +1144,7 @@ export class WorkspaceService {
           setting: permission,
           apiKeyId: apiKey?.id,
           applicationId: application?.id,
+          agentId,
         });
 
       if (!hasPermission) {

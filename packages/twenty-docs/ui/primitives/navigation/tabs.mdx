@@ -152,6 +152,10 @@ Use [DirectionProvider](/ui/primitives/layout/direction-provider) for RTL keyboa
 
 Use `keepMounted` when panel contents must retain their state while inactive. Inactive mounted panels remain hidden and do not occupy layout space.
 
+## Panel layout
+
+`Panel` fills the space left by the list and can shrink below its content on both axes, so it stays within a root of fixed height. To scroll its content, set `overflow: auto` on the panel, or on a child that fills it, such as a `flex: 1` child of a column flex panel.
+
 ## Native props, render composition, and refs
 
 All five parts preserve native props, event handlers, refs, and Base UI `render` composition. Their `className` and `style` can also be functions of the part's state. The default elements are a `div` for Root, List, and Panel, a `button` for Tab, and a `span` for Indicator. Refs point to the actual rendered elements.
