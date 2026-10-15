@@ -21,6 +21,8 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsAiModelTiersPreview } from '~/pages/settings/ai/components/SettingsAiModelTiersPreview';
+import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
+import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 
 export const SettingsAiModelsTab = () => {
@@ -127,6 +129,8 @@ export const SettingsAiModelsTab = () => {
       </Section.Root>
 
       <SettingsAiModelTiersPreview />
+      <SettingsAiWorkspaceInstructionsSection />
+      <SettingsAiSystemPromptsSection />
     </>
   );
 };

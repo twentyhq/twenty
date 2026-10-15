@@ -14,8 +14,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -24,7 +22,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
+import {
+  IconArchive,
+  IconFilter,
+  IconSearch,
+  IconSettings,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
@@ -109,8 +112,7 @@ export const SettingsObjectRelationsTable = ({
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
-
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const [showSystemRelations, setShowSystemRelations] = useState(false);
 
   const tableMetadata = SETTINGS_OBJECT_RELATION_TABLE_METADATA;
 
@@ -139,11 +141,11 @@ export const SettingsObjectRelationsTable = ({
       );
 
       return (
-        isAdvancedModeEnabled ||
+        showSystemRelations ||
         (!isHiddenSystemField(field) && !isRelationToSystemObject)
       );
     });
-  }, [objectMetadataItem.fields, isAdvancedModeEnabled, objectMetadataItems]);
+  }, [objectMetadataItem.fields, showSystemRelations, objectMetadataItems]);
 
   const sortedRelationFields = useSortedArray(relationFields, tableMetadata);
 
@@ -227,6 +229,13 @@ export const SettingsObjectRelationsTable = ({
                 onCheckedChange={() => setShowInactive(!showInactive)}
                 checked={showInactive}
               >{t`Inactive`}</SettingsRow>
+              <SettingsRow
+                startElement={<IconSettings />}
+                onCheckedChange={() =>
+                  setShowSystemRelations(!showSystemRelations)
+                }
+                checked={showSystemRelations}
+              >{t`System relations`}</SettingsRow>
             </Dropdown.Section>
           </DropdownContent>
         </DropdownRoot>

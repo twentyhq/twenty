@@ -1,7 +1,6 @@
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -156,11 +155,9 @@ export const SettingsApplicationDetailGeneralTab = ({
         />
       )}
       {applicationHasHttpTriggeredFunctions(application) && (
-        <AdvancedSettingsWrapper>
-          <SettingsApplicationFunctionDomainSection
-            applicationId={application.id}
-          />
-        </AdvancedSettingsWrapper>
+        <SettingsApplicationFunctionDomainSection
+          applicationId={application.id}
+        />
       )}
       <SettingsApplicationConnectionsSection applicationId={application.id} />
     </>
