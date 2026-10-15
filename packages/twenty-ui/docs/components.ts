@@ -22,6 +22,7 @@ import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescription
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
+import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
@@ -751,7 +752,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/input/PhoneCountryPicker/PhoneCountryPicker.tsx',
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/phone-country-picker',
-    parts: ['Trigger', 'Options'],
+    propDescriptions: PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS,
+    parts: ['Root', 'Trigger', 'Options'],
     partPropDescriptions: PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS,
   },
   {

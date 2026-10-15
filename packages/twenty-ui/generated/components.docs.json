@@ -10843,8 +10843,203 @@
     "name": "PhoneCountryPicker",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/phone-country-picker",
-    "props": [],
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required accessible name for the country selector trigger."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional trigger content replacing the default country flag or world icon and chevron."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "closeDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "closeOnSelect",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Closes the dropdown after an accepted selection. Defaults to true."
+      },
+      {
+        "name": "contentProps",
+        "type": "Omit<DropdownContentProps, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the internally assembled Dropdown.Content, including its accessible name, placement, width and popup ref."
+      },
+      {
+        "name": "countries",
+        "type": "readonly PhoneCountryOption[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Prepared choices with a unique stable value, localized label, digits-only calling code without a plus sign, decorative flag node and optional disabled state. Matching choices retain their supplied order after the selected country."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial uncontrolled country identifier. Omit it or use null to start empty."
+      },
+      {
+        "name": "delay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "300",
+        "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Disables the trigger, search and country selection."
+      },
+      {
+        "name": "dropdownProps",
+        "type": "Omit<DropdownRootProps, \"children\" | \"type\" | \"multiple\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the internally assembled Dropdown.Root, including controlled open state and open-change events. The picker fixes its type to picker."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the requested country identifier or null and Dropdown.SelectionGroup event details, including reason, event, trigger and cancel(). Cancel before updating controlled state to reject a selection."
+      },
+      {
+        "name": "openOnHover",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the popover should also open when the trigger is hovered."
+      },
+      {
+        "name": "optionsProps",
+        "type": "PhoneCountryPickerOptionsProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the options root div, including native attributes, ref, render, searchLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the trigger button, or the element composed through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Composes the trigger with an element or render callback. Native attributes, handlers, className, style and ref target the trigger."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled country identifier. Use null to clear the selection. Labels and calling codes do not replace this value."
+      }
+    ],
     "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "A Dropdown.Root with type=\"picker\", its Trigger, Content and Options. Root shares prepared data and selection and renders no DOM node."
+          },
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Closes the composed Dropdown after an accepted selection. Defaults to true."
+          },
+          {
+            "name": "countries",
+            "type": "readonly PhoneCountryOption[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Prepared choices shared by Trigger and Options, with unique stable values, localized labels, digits-only calling codes without a plus sign, decorative flag nodes and optional disabled states."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": "null",
+            "description": "Initial uncontrolled country identifier. Omit it or use null to start empty."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Disables the composed trigger, search and country selection."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Receives the requested identifier or null and Dropdown.SelectionGroup event details, including reason, event, trigger and cancel(). Cancel before updating controlled state to reject a selection."
+          },
+          {
+            "name": "value",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled country identifier shared by the parts. Use null to clear the selection."
+          }
+        ]
+      },
       {
         "name": "Trigger",
         "props": [
@@ -10854,6 +11049,13 @@
             "required": true,
             "defaultValue": null,
             "description": "Required accessible name for the country selector button."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional trigger content replacing the selected country flag or empty world icon and chevron. The selected label comes from Root."
           },
           {
             "name": "className",
@@ -10870,13 +11072,6 @@
             "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
           },
           {
-            "name": "country",
-            "type": "PhoneCountryOption",
-            "required": false,
-            "defaultValue": null,
-            "description": "Prepared country whose flag is displayed and whose label describes the trigger. Omit it to show a world icon."
-          },
-          {
             "name": "delay",
             "type": "number",
             "required": false,
@@ -10888,7 +11083,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Disables the native trigger button."
+            "description": "Disables the native trigger button in addition to Root.disabled."
           },
           {
             "name": "id",
@@ -10898,11 +11093,32 @@
             "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
           },
           {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+          },
+          {
             "name": "openOnHover",
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
             "description": "Whether the popover should also open when the trigger is hovered."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the trigger button, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the Dropdown trigger with an element or render callback. Native attributes, handlers, className, style and ref target this element."
           },
           {
             "name": "style",
@@ -10917,39 +11133,39 @@
         "name": "Options",
         "props": [
           {
-            "name": "countries",
-            "type": "readonly PhoneCountryOption[]",
-            "required": true,
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
             "defaultValue": null,
-            "description": "Prepared choices with a unique value, localized label, calling code without a plus sign, and flag node. The supplied order is preserved after the matching selected country."
+            "description": "Disables search and selection in addition to Root.disabled."
           },
           {
             "name": "emptyLabel",
             "type": "string",
             "required": false,
             "defaultValue": "No results",
-            "description": "Status message shown when no country names match. Defaults to No results."
+            "description": "Status message shown when no country label, identifier or calling code matches. Defaults to No results."
           },
           {
-            "name": "onValueChange",
-            "type": "(value: string) => void",
-            "required": true,
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
             "defaultValue": null,
-            "description": "Called with the chosen country value. The host owns the selected country and phone number."
+            "description": "Ref to the options root div, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the non-interactive options root with an element or render callback. Native attributes, handlers, className, style and ref target this element. searchLabel names the internal search input."
           },
           {
             "name": "searchLabel",
             "type": "string",
             "required": false,
             "defaultValue": "Search",
-            "description": "Accessible name and placeholder of the country search field. Defaults to Search."
-          },
-          {
-            "name": "value",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Selected country value. Its row appears first only while it matches the search."
+            "description": "Accessible name and placeholder of the country search field. Defaults to Search. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed."
           }
         ]
       }

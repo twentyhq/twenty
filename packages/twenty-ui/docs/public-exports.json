@@ -114,6 +114,8 @@
       "NumberStepperProps": "components/input/NumberStepper/types/NumberStepperProps",
       "PhoneCountryOption": "components/input/PhoneCountryPicker/types/PhoneCountryOption",
       "PhoneCountryPickerOptionsProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerOptionsProps",
+      "PhoneCountryPickerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerProps",
+      "PhoneCountryPickerRootProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerRootProps",
       "PhoneCountryPickerTriggerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerTriggerProps",
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",

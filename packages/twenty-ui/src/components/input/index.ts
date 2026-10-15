@@ -29,6 +29,8 @@ export type { NumberStepperProps } from './NumberStepper/types/NumberStepperProp
 export { PhoneCountryPicker } from './PhoneCountryPicker/PhoneCountryPicker';
 export type { PhoneCountryOption } from './PhoneCountryPicker/types/PhoneCountryOption';
 export type { PhoneCountryPickerOptionsProps } from './PhoneCountryPicker/types/PhoneCountryPickerOptionsProps';
+export type { PhoneCountryPickerProps } from './PhoneCountryPicker/types/PhoneCountryPickerProps';
+export type { PhoneCountryPickerRootProps } from './PhoneCountryPicker/types/PhoneCountryPickerRootProps';
 export type { PhoneCountryPickerTriggerProps } from './PhoneCountryPicker/types/PhoneCountryPickerTriggerProps';
 export { SearchInput } from './SearchInput/SearchInput';
 export type { SearchInputProps } from './SearchInput/types/SearchInputProps';
