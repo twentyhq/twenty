@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -66,6 +67,9 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       throw new MessageChannelException(
         `Cannot send from ${connectedAccount.handle}: domain ${emailingDomain.domain} is not verified for outbound (status: ${emailingDomain.status}).`,
         MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
+        {
+          userFriendlyMessage: msg`Cannot send from ${connectedAccount.handle}: domain ${emailingDomain.domain} is not verified for outbound.`,
+        },
       );
     }
 
@@ -133,6 +137,9 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     throw new MessageChannelException(
       'Email handle channels do not support drafts.',
       MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      {
+        userFriendlyMessage: msg`Email handle channels do not support drafts.`,
+      },
     );
   }
 
@@ -140,6 +147,9 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     throw new MessageChannelException(
       'Email handle channels do not support drafts.',
       MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      {
+        userFriendlyMessage: msg`Email handle channels do not support drafts.`,
+      },
     );
   }
 
@@ -152,6 +162,9 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       throw new MessageChannelException(
         `Email group ${connectedAccount.handle} has no domain.`,
         MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
+        {
+          userFriendlyMessage: msg`Email group ${connectedAccount.handle} has no domain.`,
+        },
       );
     }
 
@@ -166,6 +179,9 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       throw new MessageChannelException(
         `No outbound domain configured for ${handleDomain}. Verify it under Outbound Domains to send from ${connectedAccount.handle}.`,
         MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
+        {
+          userFriendlyMessage: msg`No outbound domain configured for ${handleDomain}. Verify it under Outbound Domains to send from ${connectedAccount.handle}.`,
+        },
       );
     }
 
@@ -203,6 +219,9 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     throw new ThrottlerException(
       `Email group send limit reached: ${EMAIL_GROUP_SEND_THROTTLE.maxRecipients} recipients per day.`,
       ThrottlerExceptionCode.LIMIT_REACHED,
+      {
+        userFriendlyMessage: msg`Email group send limit reached: ${EMAIL_GROUP_SEND_THROTTLE.maxRecipients} recipients per day.`,
+      },
     );
   }
 
