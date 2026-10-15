@@ -4,7 +4,6 @@ import { IsDateString } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AgentMessagePartDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message-part.dto';
-import { AgentMessageReactionSummaryDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message-reaction-summary.dto';
 
 @ObjectType('AgentMessage')
 export class AgentMessageDTO {
@@ -36,10 +35,6 @@ export class AgentMessageDTO {
 
   @Field(() => [AgentMessagePartDTO])
   parts: AgentMessagePartDTO[];
-
-  // Ordered by the first time each emoji was used on the message
-  @Field(() => [AgentMessageReactionSummaryDTO])
-  reactions: AgentMessageReactionSummaryDTO[];
 
   @IsDateString()
   @Field(() => Date, { nullable: true })

@@ -3,7 +3,6 @@ export const STANDARD_OBJECT_ICONS = {
   activity: 'IconCheckbox',
   agentChatThreadTarget: 'IconMessage',
   agentChatThreadParticipant: 'IconMessage',
-  agentMessageReaction: 'IconMoodSmile',
   apiKey: 'IconRobot',
   attachment: 'IconFileImport',
   blocklist: 'IconForbid2',

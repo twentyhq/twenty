@@ -32,14 +32,6 @@ jest.mock('@/ai/components/AiChatAssistantMessageRenderer', () => ({
   ),
 }));
 
-jest.mock('@/ai/components/AiChatMessageReactionPicker', () => ({
-  AiChatMessageReactionPicker: () => null,
-}));
-
-jest.mock('@/ai/components/AiChatMessageReactions', () => ({
-  AiChatMessageReactions: () => null,
-}));
-
 jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
   LightCopyIconButton: () => null,
 }));
