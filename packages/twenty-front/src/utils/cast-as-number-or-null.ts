@@ -53,6 +53,7 @@ export const castAsNumberOrNull = (
   probableNumberOrNull: string | undefined | number | null,
 ): number | null => {
   if (canBeCastAsNumberOrNull(probableNumberOrNull) === false) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only type invariant diagnostic.
     throw new Error('Cannot cast to number or null');
   }
 

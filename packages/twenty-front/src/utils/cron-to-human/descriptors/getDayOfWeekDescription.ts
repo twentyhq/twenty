@@ -42,7 +42,9 @@ export const getDayOfWeekDescription = (
   const dayOfWeekStartIndexZero = options.dayOfWeekStartIndexZero ?? true;
 
   // Last occurrence of a weekday in the month (e.g., "5L" = last Friday)
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- L is the cron last-weekday token.
   if (dayOfWeek.includes('L')) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- L is the cron last-weekday token.
     const day = dayOfWeek.replace('L', '');
     const dayNum = parseInt(day, 10);
     if (!isNaN(dayNum)) {
