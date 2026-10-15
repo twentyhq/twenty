@@ -1,11 +1,13 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 export const DRAFT_EMAIL_ACTION: {
-  defaultLabel: string;
+  defaultLabel: MessageDescriptor;
   type: Extract<WorkflowActionType, 'DRAFT_EMAIL'>;
   icon: string;
 } = {
-  defaultLabel: 'Draft Email',
+  defaultLabel: msg`Draft Email`,
   type: 'DRAFT_EMAIL',
   icon: 'IconMailPlus',
 };
