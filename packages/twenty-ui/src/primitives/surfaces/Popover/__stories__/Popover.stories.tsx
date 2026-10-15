@@ -460,7 +460,7 @@ const PopoverCatalogCell = ({ side = 'bottom', arrow }: PopoverStoryProps) => {
           Open
         </Popover.Trigger>
         <Popover.Portal container={cellElement}>
-          <Popover.Positioner side={side}>
+          <Popover.Positioner side={side} positionMethod="absolute">
             <Popover.Popup>
               {arrow && <Popover.Arrow />}
               <Popover.Title>Details</Popover.Title>

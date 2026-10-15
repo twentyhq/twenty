@@ -129,9 +129,7 @@ export const SidePanelSearchRecordsPage = () => {
               sideOffset={16}
             >
               <Tooltip.Popup
-                style={{
-                  maxWidth: `${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`,
-                }}
+                maxWidth={SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}
                 className={previewTooltipClass}
               >
                 <SidePanelSearchRecordPreviewCard

@@ -242,10 +242,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
               align="end"
               sideOffset={8}
             >
-              <Tooltip.Popup
-                style={{ maxWidth: '320px' }}
-                className={hoverCardTooltipClass}
-              >
+              <Tooltip.Popup maxWidth={320} className={hoverCardTooltipClass}>
                 <SettingsAiModelHoverCard model={hoveredModel} />
               </Tooltip.Popup>
             </Tooltip.Positioner>

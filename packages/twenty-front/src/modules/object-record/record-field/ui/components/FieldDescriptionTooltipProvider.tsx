@@ -53,7 +53,7 @@ export const FieldDescriptionTooltipProvider = ({
                 positionMethod="fixed"
                 sideOffset={10}
               >
-                <Tooltip.Popup style={{ maxWidth: '300px' }}>
+                <Tooltip.Popup maxWidth={300}>
                   <TooltipTextContent description={payload?.description}>
                     {payload?.title}
                   </TooltipTextContent>
