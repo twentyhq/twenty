@@ -41,12 +41,14 @@ import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowse
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   markWorkspaceCreditsAvailable,
   markWorkspaceCreditsExhausted,
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import {
+  FeatureFlagKey,
   SendChatMessageDocument,
   StopAgentChatStreamDocument,
 } from '~/generated-metadata/graphql';
@@ -54,6 +56,9 @@ import {
 export const useAgentChat = () => {
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -90,7 +95,9 @@ export const useAgentChat = () => {
       return;
     }
 
-    if (aiModels.length === 0) {
+    const hasNoAiModels = aiModels.length === 0;
+
+    if (hasNoAiModels && !isAiChatInboxEnabled) {
       enqueueToast({
         status: 'error',
         children: t`No AI provider is configured on this instance.`,
@@ -205,10 +212,11 @@ export const useAgentChat = () => {
                 )
               : undefined,
           shouldAssistantReply:
-            !store.get(agentChatIsAssistantOffState.atom) ||
-            isAgentChatAssistantMentionedInSerializedDocument(
-              serializedContentToSend,
-            ),
+            !hasNoAiModels &&
+            (!store.get(agentChatIsAssistantOffState.atom) ||
+              isAgentChatAssistantMentionedInSerializedDocument(
+                serializedContentToSend,
+              )),
         },
       });
 
@@ -288,6 +296,7 @@ export const useAgentChat = () => {
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
     aiModels,
+    isAiChatInboxEnabled,
     enqueueToast,
     setCurrentAiChatThread,
     projectAiChatThreadToUrl,
