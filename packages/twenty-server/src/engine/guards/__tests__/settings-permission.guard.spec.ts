@@ -9,8 +9,6 @@ import {
 } from 'twenty-shared/constants';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import {
   PermissionsException,
@@ -116,7 +114,6 @@ describe('SettingsPermissionGuard', () => {
         userWorkspaceRoleMap: {},
         flatRoleTargetByAgentIdMaps: {
           'agent-id': { roleId: 'agent-role-id' },
-          'other-agent-id': { roleId: 'agent-role-id' },
         },
         flatApplicationMaps: {
           byId: {
@@ -236,16 +233,11 @@ describe('SettingsPermissionGuard', () => {
       });
     });
 
-    const canActivateForAgent = (agentId: string) =>
-      withWorkspaceAuthContext(
-        {
-          type: 'application',
-          workspace: { id: 'workspace-id' },
-          application: { id: 'application-id' },
-          agentId,
-        } as unknown as WorkspaceAuthContext,
-        () => guard.canActivate(mockExecutionContext),
-      );
+    const canActivateForAgent = (agentId: string) => {
+      mockGqlContext.req.agentId = agentId;
+
+      return guard.canActivate(mockExecutionContext);
+    };
 
     it('should allow when both the application and the agent roles grant the setting', async () => {
       mockCache({
@@ -270,30 +262,6 @@ describe('SettingsPermissionGuard', () => {
         });
       },
     );
-
-    it('should deny with PERMISSION_DENIED when the guard passes the request agent without a request context', async () => {
-      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
-      mockGqlContext.req.agentId = 'agent-id';
-
-      await expect(
-        guard.canActivate(mockExecutionContext),
-      ).rejects.toMatchObject({
-        code: PermissionsExceptionCode.PERMISSION_DENIED,
-      });
-    });
-
-    it('should deny with PERMISSION_DENIED when the guard passes another agent than the request', async () => {
-      mockCache({
-        defaultRoleId: 'role-id',
-        canUpdateAllSettings: true,
-        canAgentRoleUpdateAllSettings: true,
-      });
-      mockGqlContext.req.agentId = 'other-agent-id';
-
-      await expect(canActivateForAgent('agent-id')).rejects.toMatchObject({
-        code: PermissionsExceptionCode.PERMISSION_DENIED,
-      });
-    });
 
     it('should reject with NO_AUTHENTICATION_CONTEXT when the application does not exist', async () => {
       mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });

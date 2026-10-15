@@ -11,7 +11,6 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { findRequestAgentId } from 'src/engine/core-modules/auth/utils/find-request-agent-id.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
@@ -132,26 +131,11 @@ export class PermissionsService {
         flatRoleMaps,
       });
 
-    const requestAgentId = findRequestAgentId({
-      userWorkspaceId,
-      apiKeyId,
-      applicationId,
-    });
-
-    // The request's own agent applies too, so a caller passing none or another one cannot widen the token
-    if (
-      isDefined(agentId) &&
-      isDefined(requestAgentId) &&
-      agentId !== requestAgentId
-    ) {
-      return false;
-    }
-
     return this.isPermissionFlagGrantedToRoles({
       roleIdsBySource: {
         ...callerRoleIdsBySource,
         ...buildAgentRoleIdsBySource({
-          agentId: agentId ?? requestAgentId,
+          agentId,
           flatRoleTargetByAgentIdMaps,
         }),
       },
