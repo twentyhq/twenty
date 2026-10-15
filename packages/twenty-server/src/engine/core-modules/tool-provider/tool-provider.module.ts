@@ -7,6 +7,7 @@ import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
+import { AgentToolProvider } from 'src/engine/core-modules/tool-provider/providers/agent-tool.provider';
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
@@ -20,6 +21,7 @@ import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provide
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -46,6 +48,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
 
 @Module({
   imports: [
+    AiAgentModule,
     ApplicationTranslationCatalogModule,
     ToolModule,
     RecordCrudModule,
@@ -74,6 +77,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     RecordFilesResolverService,
     provideWorkspaceScopedRepository(FileEntity),
     ActionToolProvider,
+    AgentToolProvider,
     DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
@@ -96,6 +100,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         webhookProvider: WebhookToolProvider,
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
+        agentProvider: AgentToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
@@ -107,6 +112,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         webhookProvider,
         workflowProvider,
         dashboardProvider,
+        agentProvider,
       ],
       inject: [
         ActionToolProvider,
@@ -119,6 +125,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         WebhookToolProvider,
         WorkflowToolProvider,
         DashboardToolProvider,
+        AgentToolProvider,
       ],
     },
     ToolRegistryService,

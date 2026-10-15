@@ -246,7 +246,7 @@ export class ApplicationRegistrationResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ): Promise<CreateApplicationRegistrationDTO> {
-    return this.applicationRegistrationService.create({
+    return this.applicationRegistrationService.createWithClientSecret({
       input,
       ownerWorkspaceId: workspaceId,
       createdByUserId: user?.id ?? null,
