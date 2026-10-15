@@ -1,13 +1,28 @@
 import { once } from 'node:events';
-import { isDefined } from 'twenty-shared/utils';
+
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
+import { formatProgressLine } from '@/output/format-progress-line';
 import { formatWarningLine } from '@/output/style';
 import { type Output } from '@/output/types/output.type';
 
+type DevOutputMessage = { message: string; code?: string; percentage?: number };
+
+const formatDevOutputMessage = ({
+  message,
+  code,
+  percentage,
+}: DevOutputMessage) => {
+  if (isNonEmptyString(code)) {
+    return formatWarningLine(message);
+  }
+
+  return formatProgressLine({ message, percentage });
+};
+
 export const createDevOutput = (context: TargetCommandContext) => {
-  const messages: { message: string; code?: string; percentage?: number }[] =
-    [];
+  const messages: DevOutputMessage[] = [];
   let delivery = Promise.resolve();
   let omittedMessages = 0;
   const output: Output = {
@@ -43,13 +58,7 @@ export const createDevOutput = (context: TargetCommandContext) => {
         );
       } else {
         const text = [
-          ...pendingMessages.map(({ message, code, percentage }) =>
-            code
-              ? formatWarningLine(message)
-              : isDefined(percentage)
-                ? `${message} ${percentage}%`
-                : message,
-          ),
+          ...pendingMessages.map(formatDevOutputMessage),
           event.message,
         ]
           .filter((message) => message.length > 0)
