@@ -5,13 +5,14 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
+import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { NavigationDrawerAiChatChannelActionsDropdown } from '@/ai/components/NavigationDrawerAiChatChannelActionsDropdown';
+import { AGENT_CHAT_CHANNEL_DEFAULT_COLOR } from '@/ai/constants/AgentChatChannelDefaultColor';
 import { useAgentChatChannelActions } from '@/ai/hooks/useAgentChatChannelActions';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
-import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -24,8 +25,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AgentChatChannel } from '~/generated-metadata/graphql';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
-
-const DEFAULT_CHANNEL_COLOR = 'gray';
 
 const StyledIconPickerTrigger = styled.div`
   align-items: center;
@@ -105,8 +104,8 @@ export const NavigationDrawerAiChatChannelItem = ({
   )?.name;
   const channelName = channel.name;
   const openCount = summary?.openCount ?? 0;
-  const channelColor = channel.color ?? DEFAULT_CHANNEL_COLOR;
-  const coloredIcon = <ColoredIcon Icon={ChannelIcon} color={channelColor} />;
+  const channelColor = channel.color ?? AGENT_CHAT_CHANNEL_DEFAULT_COLOR;
+  const coloredIcon = <AgentChatChannelIcon channel={channel} />;
 
   const icon = canManage ? (
     <StyledIconPickerTrigger
@@ -169,11 +168,12 @@ export const NavigationDrawerAiChatChannelItem = ({
           triggerEvent="CLICK"
           isRightOptionsDropdownOpen={isDropdownOpen}
           rightOptions={
-            canManage ? (
+            canManage || channel.isAccessible ? (
               <NavigationDrawerAiChatChannelActionsDropdown
                 channel={channel}
                 destinationChannels={destinationChannels}
                 dropdownId={dropdownId}
+                canManage={canManage}
                 onRename={() => setDraftName(channel.name)}
                 onChangeAppearance={() =>
                   openDropdown({

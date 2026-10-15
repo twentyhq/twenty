@@ -74,6 +74,7 @@ export const createListNavigationMenuItemsTool = (
             targetRecordId: item.targetRecordId,
             viewId: item.viewId,
             pageLayoutId: item.pageLayoutId,
+            agentChatChannelId: item.agentChatChannelId,
           })),
           count: items.length,
         },

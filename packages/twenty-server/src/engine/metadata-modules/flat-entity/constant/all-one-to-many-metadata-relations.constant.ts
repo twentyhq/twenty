@@ -322,6 +322,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'channelRoleUniversalIdentifiers',
     },
+    navigationMenuItems: {
+      metadataName: 'navigationMenuItem',
+      flatEntityForeignKeyAggregator: 'navigationMenuItemIds',
+      universalFlatEntityForeignKeyAggregator:
+        'navigationMenuItemUniversalIdentifiers',
+    },
   },
   agentChatChannelRole: {},
 } as const satisfies OneToManyMetadataRelationsProperties;

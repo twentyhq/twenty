@@ -6,12 +6,14 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
+import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatFavoriteChannelsSelector } from '@/ai/states/selectors/agentChatFavoriteChannelsSelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -39,7 +41,6 @@ const StyledSectionsContainer = styled.div`
 `;
 
 const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
-const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 // Triage and channels open the inbox page, which replaces the recent chats;
 // without the inbox the drawer lists them
@@ -61,6 +62,9 @@ export const NavigationDrawerAiChatContent = () => {
   const agentChatFavoriteThreads = useAtomStateValue(
     agentChatFavoriteThreadsSelector,
   );
+  const agentChatFavoriteChannels = useAtomStateValue(
+    agentChatFavoriteChannelsSelector,
+  );
 
   if (loading && threads.length === 0) {
     return (
@@ -81,21 +85,14 @@ export const NavigationDrawerAiChatContent = () => {
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
-          {isAiChatInboxEnabled && (
-            <>
-              <NavigationDrawerAiChatTriageSection />
-              <NavigationDrawerAiChatChannelsSection />
-            </>
-          )}
-          {agentChatFavoriteThreads.length > 0 && (
-            <NavigationDrawerAiChatThreadSection
-              sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
-              title={t`Favorites`}
-              threads={agentChatFavoriteThreads}
-              currentThreadId={currentAiChatThread}
-              onThreadClick={handleThreadClick}
-            />
-          )}
+          {isAiChatInboxEnabled && <NavigationDrawerAiChatTriageSection />}
+          <NavigationDrawerAiChatFavoritesSection
+            channels={isAiChatInboxEnabled ? agentChatFavoriteChannels : []}
+            threads={agentChatFavoriteThreads}
+            currentThreadId={currentAiChatThread}
+            onThreadClick={handleThreadClick}
+          />
+          {isAiChatInboxEnabled && <NavigationDrawerAiChatChannelsSection />}
           {recentThreads.length > 0 && (
             <NavigationDrawerAiChatThreadSection
               sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}

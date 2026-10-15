@@ -1468,6 +1468,7 @@ input CreateMessageSuppressionInput {
 }
 
 input CreateNavigationMenuItemInput {
+  agentChatChannelId: UUID
   color: String
   folderId: UUID
   icon: String
@@ -3311,6 +3312,7 @@ type NativeModelCapabilities {
 }
 
 type NavigationMenuItem {
+  agentChatChannelId: UUID
   applicationId: UUID
   color: String
   createdAt: DateTime!
@@ -3331,6 +3333,7 @@ type NavigationMenuItem {
 }
 
 enum NavigationMenuItemType {
+  AGENT_CHAT_CHANNEL
   FOLDER
   LINK
   OBJECT

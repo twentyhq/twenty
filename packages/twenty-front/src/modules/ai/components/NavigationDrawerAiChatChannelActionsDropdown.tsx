@@ -5,10 +5,13 @@ import {
   IconDotsVertical,
   IconEdit,
   IconColorSwatch,
+  IconHeart,
+  IconHeartOff,
   IconTrash,
 } from 'twenty-ui/icon';
 
 import { NavigationDrawerAiChatChannelRolesSubmenu } from '@/ai/components/NavigationDrawerAiChatChannelRolesSubmenu';
+import { useAgentChatChannelFavorite } from '@/ai/hooks/useAgentChatChannelFavorite';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import {
@@ -20,6 +23,7 @@ type NavigationDrawerAiChatChannelActionsDropdownProps = {
   channel: AgentChatChannel;
   destinationChannels: AgentChatChannel[];
   dropdownId: string;
+  canManage: boolean;
   onRename: () => void;
   onChangeAppearance: () => void;
   onUpdate: (input: UpdateAgentChatChannelInput) => void;
@@ -30,12 +34,15 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
   channel,
   destinationChannels,
   dropdownId,
+  canManage,
   onRename,
   onChangeAppearance,
   onUpdate,
   onDelete,
 }: NavigationDrawerAiChatChannelActionsDropdownProps) => {
   const { t } = useLingui();
+  const { isFavorite, addToFavorites, removeFromFavorites } =
+    useAgentChatChannelFavorite(channel.id);
 
   return (
     <DropdownRoot type="menu" dropdownId={dropdownId}>
@@ -48,50 +55,70 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
       />
       <DropdownContent side="right" align="start">
         <Dropdown.Section>
-          <Dropdown.ActionItem startIcon={<IconEdit />} onClick={onRename}>
-            {t`Rename`}
-          </Dropdown.ActionItem>
-          <Dropdown.ActionItem
-            startIcon={<IconColorSwatch />}
-            onClick={onChangeAppearance}
-          >
-            {t`Icon and color`}
-          </Dropdown.ActionItem>
-          <NavigationDrawerAiChatChannelRolesSubmenu
-            roleIds={channel.roleIds}
-            onChange={(roleIds) => onUpdate({ roleIds })}
-          />
-          {channel.isCustom &&
-            (destinationChannels.length === 0 ? (
+          {channel.isAccessible &&
+            (isFavorite ? (
               <Dropdown.ActionItem
-                color="danger"
-                startIcon={<IconTrash />}
-                onClick={() => onDelete(null)}
+                startIcon={<IconHeartOff />}
+                onClick={removeFromFavorites}
               >
-                {t`Delete channel`}
+                {t`Remove from favorites`}
               </Dropdown.ActionItem>
             ) : (
-              <Dropdown.Submenu>
-                <Dropdown.SubmenuTrigger
-                  color="danger"
-                  startIcon={<IconTrash />}
-                >
-                  {t`Delete channel`}
-                </Dropdown.SubmenuTrigger>
-                <Dropdown.Content aria-label={t`Move its chats to`}>
-                  <Dropdown.Section label={t`Move its chats to`}>
-                    {destinationChannels.map((destinationChannel) => (
-                      <Dropdown.ActionItem
-                        key={destinationChannel.id}
-                        onClick={() => onDelete(destinationChannel.id)}
-                      >
-                        {destinationChannel.name}
-                      </Dropdown.ActionItem>
-                    ))}
-                  </Dropdown.Section>
-                </Dropdown.Content>
-              </Dropdown.Submenu>
+              <Dropdown.ActionItem
+                startIcon={<IconHeart />}
+                onClick={addToFavorites}
+              >
+                {t`Add to favorites`}
+              </Dropdown.ActionItem>
             ))}
+          {canManage && (
+            <>
+              <Dropdown.ActionItem startIcon={<IconEdit />} onClick={onRename}>
+                {t`Rename`}
+              </Dropdown.ActionItem>
+              <Dropdown.ActionItem
+                startIcon={<IconColorSwatch />}
+                onClick={onChangeAppearance}
+              >
+                {t`Icon and color`}
+              </Dropdown.ActionItem>
+              <NavigationDrawerAiChatChannelRolesSubmenu
+                roleIds={channel.roleIds}
+                onChange={(roleIds) => onUpdate({ roleIds })}
+              />
+              {channel.isCustom &&
+                (destinationChannels.length === 0 ? (
+                  <Dropdown.ActionItem
+                    color="danger"
+                    startIcon={<IconTrash />}
+                    onClick={() => onDelete(null)}
+                  >
+                    {t`Delete channel`}
+                  </Dropdown.ActionItem>
+                ) : (
+                  <Dropdown.Submenu>
+                    <Dropdown.SubmenuTrigger
+                      color="danger"
+                      startIcon={<IconTrash />}
+                    >
+                      {t`Delete channel`}
+                    </Dropdown.SubmenuTrigger>
+                    <Dropdown.Content aria-label={t`Move its chats to`}>
+                      <Dropdown.Section label={t`Move its chats to`}>
+                        {destinationChannels.map((destinationChannel) => (
+                          <Dropdown.ActionItem
+                            key={destinationChannel.id}
+                            onClick={() => onDelete(destinationChannel.id)}
+                          >
+                            {destinationChannel.name}
+                          </Dropdown.ActionItem>
+                        ))}
+                      </Dropdown.Section>
+                    </Dropdown.Content>
+                  </Dropdown.Submenu>
+                ))}
+            </>
+          )}
         </Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>

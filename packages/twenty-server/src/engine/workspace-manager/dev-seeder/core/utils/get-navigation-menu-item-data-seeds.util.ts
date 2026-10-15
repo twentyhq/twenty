@@ -49,6 +49,8 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
         workspaceId,
         PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,
       ),
+      agentChatChannelId: null,
+      agentChatChannelUniversalIdentifier: null,
       createdAt: now,
       updatedAt: now,
     },

@@ -26,5 +26,9 @@ export const fromAgentChatChannelEntityToFlatAgentChatChannel = (
     channelRoleUniversalIdentifiers: entity.channelRoles.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
+    navigationMenuItemIds: entity.navigationMenuItems.map(({ id }) => id),
+    navigationMenuItemUniversalIdentifiers: entity.navigationMenuItems.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
   };
 };

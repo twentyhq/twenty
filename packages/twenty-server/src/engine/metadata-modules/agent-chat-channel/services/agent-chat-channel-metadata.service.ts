@@ -16,6 +16,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -127,6 +128,7 @@ export class AgentChatChannelMetadataService {
           position: lastPosition + 1,
           isCustom: true,
           channelRoleUniversalIdentifiers: [],
+          navigationMenuItemUniversalIdentifiers: [],
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
           createdAt: now,
@@ -263,6 +265,10 @@ export class AgentChatChannelMetadataService {
       );
     const { flatAgentChatChannelMaps, flatAgentChatChannelRoleMaps } =
       await this.getChannelMaps(workspaceId);
+    const { flatNavigationMenuItemMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatNavigationMenuItemMaps'] },
+      );
     const channel = findFlatAgentChatChannelOrThrow({
       flatAgentChatChannelMaps,
       channelId,
@@ -278,6 +284,14 @@ export class AgentChatChannelMetadataService {
           findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: channelRoleId,
             flatEntityMaps: flatAgentChatChannelRoleMaps,
+          }),
+        )
+        .filter(isDefined),
+      navigationMenuItemsToDelete: channel.navigationMenuItemIds
+        .map((navigationMenuItemId) =>
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: navigationMenuItemId,
+            flatEntityMaps: flatNavigationMenuItemMaps,
           }),
         )
         .filter(isDefined),
@@ -310,6 +324,7 @@ export class AgentChatChannelMetadataService {
     channelsToDelete = [],
     channelRolesToCreate = [],
     channelRolesToDelete = [],
+    navigationMenuItemsToDelete = [],
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
@@ -318,6 +333,7 @@ export class AgentChatChannelMetadataService {
     channelsToDelete?: FlatAgentChatChannel[];
     channelRolesToCreate?: FlatEntityToCreateDeleteUpdate<'agentChatChannelRole'>['flatEntityToCreate'];
     channelRolesToDelete?: FlatAgentChatChannelRole[];
+    navigationMenuItemsToDelete?: FlatNavigationMenuItem[];
   }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -332,6 +348,11 @@ export class AgentChatChannelMetadataService {
               flatEntityToCreate: channelRolesToCreate,
               flatEntityToUpdate: [],
               flatEntityToDelete: channelRolesToDelete,
+            },
+            navigationMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: [],
+              flatEntityToDelete: navigationMenuItemsToDelete,
             },
           },
           workspaceId,
