@@ -25,6 +25,8 @@ import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { getChartFieldMetadataIds } from 'src/engine/metadata-modules/page-layout-widget/utils/get-chart-field-metadata-ids.util';
+import { haveSameChartFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/have-same-chart-field-references.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
@@ -565,14 +567,6 @@ export class PageLayoutUpdateService {
     widgetsToUpdate: FlatPageLayoutWidget[];
     widgetsToDelete: FlatPageLayoutWidget[];
   } {
-    for (const widgetInput of widgets) {
-      this.validateConfigurationFieldReferences({
-        widgetInput,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-    }
-
     const widgetIdsInCurrentTabInput = new Set(
       widgets.map((widget) => widget.id),
     );
@@ -604,6 +598,23 @@ export class PageLayoutUpdateService {
       propertiesToCompare: FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
       isEntityIncluded: (entity) => entity.isActive,
     });
+
+    const resolvedExistingWidgetsById = new Map(
+      resolvedExistingWidgets.map((widget) => [widget.id, widget]),
+    );
+
+    for (const widgetInput of [
+      ...entitiesToCreate,
+      ...entitiesToUpdate,
+      ...entitiesToRestoreAndUpdate,
+    ]) {
+      this.validateConfigurationFieldReferences({
+        widgetInput,
+        existingWidget: resolvedExistingWidgetsById.get(widgetInput.id),
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
+    }
 
     const now = new Date();
 
@@ -885,12 +896,52 @@ export class PageLayoutUpdateService {
     );
   }
 
+  // An untouched chart whose fields were deactivated since is not re-validated,
+  // so it does not block saving the rest of the layout. Deleted fields are still
+  // validated, as the widget could not be persisted with them anyway.
+  private isUntouchedChartWithExistingFields({
+    widgetInput,
+    existingWidget,
+    flatFieldMetadataMaps,
+  }: {
+    widgetInput: UpdatePageLayoutWidgetWithIdInput;
+    existingWidget?: FlatPageLayoutWidget;
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+  }): boolean {
+    if (!isDefined(existingWidget)) {
+      return false;
+    }
+
+    const isObjectUnchanged =
+      (widgetInput.objectMetadataId ?? null) ===
+      (existingWidget.objectMetadataId ?? null);
+
+    return (
+      isObjectUnchanged &&
+      haveSameChartFieldReferences(
+        widgetInput.configuration,
+        existingWidget.configuration,
+      ) &&
+      getChartFieldMetadataIds(widgetInput.configuration).every(
+        (fieldMetadataId) =>
+          isDefined(
+            findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: fieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            }),
+          ),
+      )
+    );
+  }
+
   private validateConfigurationFieldReferences({
     widgetInput,
+    existingWidget,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
   }: {
     widgetInput: UpdatePageLayoutWidgetWithIdInput;
+    existingWidget?: FlatPageLayoutWidget;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   }): void {
@@ -898,13 +949,21 @@ export class PageLayoutUpdateService {
       return;
     }
 
-    validateChartConfigurationFieldReferencesOrThrow({
-      widgetConfiguration: widgetInput.configuration,
-      widgetObjectMetadataId: widgetInput.objectMetadataId,
-      widgetTitle: widgetInput.title,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    });
+    if (
+      !this.isUntouchedChartWithExistingFields({
+        widgetInput,
+        existingWidget,
+        flatFieldMetadataMaps,
+      })
+    ) {
+      validateChartConfigurationFieldReferencesOrThrow({
+        widgetConfiguration: widgetInput.configuration,
+        widgetObjectMetadataId: widgetInput.objectMetadataId,
+        widgetTitle: widgetInput.title,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
+    }
 
     validateFieldConfigurationNestedRelationOrThrow({
       widgetConfiguration: widgetInput.configuration,
