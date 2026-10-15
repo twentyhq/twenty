@@ -7,8 +7,10 @@ import { useValidationRuleSettingsObjectMetadataItem } from '@/validation-rules/
 import { NotFound } from '~/pages/not-found/NotFound';
 
 export const SettingsObjectValidationRuleEdit = () => {
-  const { validationRuleId = '' } = useParams();
-  const objectMetadataItem = useValidationRuleSettingsObjectMetadataItem();
+  const { objectNamePlural = '', validationRuleId = '' } = useParams();
+  const objectMetadataItem = useValidationRuleSettingsObjectMetadataItem({
+    objectNamePlural,
+  });
 
   const { validationRules, loading } = useValidationRules({
     objectMetadataId: objectMetadataItem?.id ?? '',
