@@ -22,6 +22,7 @@ type SettingsBillingPlansWithSubscriptionProps = {
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
   ) => void;
+  planKeys: BillingPlanKey[];
   planPrices: SettingsBillingPlanPrices;
 };
 
@@ -29,6 +30,7 @@ export const SettingsBillingPlansWithSubscription = ({
   billingInterval,
   currentPlanKey,
   onBillingIntervalChange,
+  planKeys,
   planPrices,
 }: SettingsBillingPlansWithSubscriptionProps) => {
   const { t } = useLingui();
@@ -49,6 +51,7 @@ export const SettingsBillingPlansWithSubscription = ({
       setPendingChange(change);
       openDialog(BILLING_MODAL_IDS.confirmSubscriptionChange);
     },
+    planKeys,
   });
 
   const pendingChangeWording = isDefined(pendingChange)
@@ -64,6 +67,7 @@ export const SettingsBillingPlansWithSubscription = ({
         billingInterval={billingInterval}
         onBillingIntervalChange={onBillingIntervalChange}
         planActions={planActions}
+        planKeys={planKeys}
         planPrices={planPrices}
       />
       {isDefined(pendingChange) && isDefined(pendingChangeWording) && (

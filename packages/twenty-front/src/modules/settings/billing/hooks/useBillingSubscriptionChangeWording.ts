@@ -8,7 +8,9 @@ import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import { type BillingSubscriptionChangeWording } from '@/settings/billing/types/BillingSubscriptionChangeWording';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/SettingsBillingPlanComparison';
+import { hasSameBillingPlanLabel } from '@/settings/billing/utils/hasSameBillingPlanLabel';
 import { isBillingSubscriptionChangeImmediate } from '@/settings/billing/utils/isBillingSubscriptionChangeImmediate';
+import { isBillingSubscriptionChangeUpgrade } from '@/settings/billing/utils/isBillingSubscriptionChangeUpgrade';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
@@ -18,7 +20,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import {
-  BillingPlanKey,
+  type BillingPlanKey,
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
@@ -92,28 +94,60 @@ export const useBillingSubscriptionChangeWording = () => {
     }
   };
 
+  const isImmediateChange = (change: BillingSubscriptionChange) =>
+    isBillingSubscriptionChangeImmediate({
+      change,
+      currentPlan,
+      subscriptionStatus,
+    });
+
   const getChargeTiming = (change: BillingSubscriptionChange): ChargeTiming => {
     if (isTrialing) {
       return 'AFTER_TRIAL';
     }
 
-    return isBillingSubscriptionChangeImmediate({ change, subscriptionStatus })
-      ? 'NOW'
-      : 'SCHEDULED';
+    return isImmediateChange(change) ? 'NOW' : 'SCHEDULED';
   };
 
-  const getSwitchPlanLeadSentence = (targetPlanKey: BillingPlanKey) => {
+  const getSwitchPlanLeadSentence = (
+    change: Extract<BillingSubscriptionChange, { type: 'SWITCH_PLAN' }>,
+  ) => {
+    const planLabel = getBillingPlanLabel(change.targetPlanKey);
+
     if (isTrialing) {
-      const planLabel = getBillingPlanLabel(targetPlanKey);
-
-      return t`Your plan switches to ${planLabel} immediately and your trial continues.`;
+      return hasSameBillingPlanLabel(change.targetPlanKey, currentPlanKey)
+        ? t`Your plan moves to the new ${planLabel} plan immediately and your trial continues.`
+        : t`Your plan switches to ${planLabel} immediately and your trial continues.`;
     }
 
-    if (targetPlanKey === BillingPlanKey.ENTERPRISE) {
-      return t`Your plan switches to Organization immediately, with a prorated charge for the rest of your current billing period.`;
+    if (!isImmediateChange(change)) {
+      return t`Your plan switches to ${planLabel} on ${getBeautifiedRenewDate()}, at the end of your current billing period.`;
     }
 
-    return t`Your plan switches to Pro on ${getBeautifiedRenewDate()}, at the end of your current billing period.`;
+    if (hasSameBillingPlanLabel(change.targetPlanKey, currentPlanKey)) {
+      return t`Your plan moves to the new ${planLabel} plan immediately, with a prorated charge for the rest of your current billing period.`;
+    }
+
+    return t`Your plan switches to ${planLabel} immediately, with a prorated charge for the rest of your current billing period.`;
+  };
+
+  const getSwitchPlanTitle = (
+    change: Extract<BillingSubscriptionChange, { type: 'SWITCH_PLAN' }>,
+  ) => {
+    const planLabel = getBillingPlanLabel(change.targetPlanKey);
+
+    if (hasSameBillingPlanLabel(change.targetPlanKey, currentPlanKey)) {
+      return t`Move to the new ${planLabel} plan?`;
+    }
+
+    const isUpgrade = isBillingSubscriptionChangeUpgrade({
+      change,
+      currentPlan,
+      upcomingInterval,
+      upcomingPlanKey,
+    });
+
+    return isUpgrade ? t`Upgrade to ${planLabel}?` : t`Switch to ${planLabel}?`;
   };
 
   const getSwitchIntervalLeadSentence = (
@@ -146,12 +180,9 @@ export const useBillingSubscriptionChangeWording = () => {
     change: Extract<BillingSubscriptionChange, { type: 'SWITCH_PLAN' }>;
     selectedInterval: SettingsBillingPlanInterval | undefined;
   }): BillingSubscriptionChangeWording => ({
-    title:
-      change.targetPlanKey === BillingPlanKey.ENTERPRISE
-        ? t`Upgrade to Organization?`
-        : t`Switch to Pro?`,
+    title: getSwitchPlanTitle(change),
     subtitle: [
-      getSwitchPlanLeadSentence(change.targetPlanKey),
+      getSwitchPlanLeadSentence(change),
       getChargeSentence({
         interval: upcomingInterval,
         planKey: change.targetPlanKey,

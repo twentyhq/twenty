@@ -7,75 +7,53 @@ import {
 } from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
+import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithoutSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
   ) => void;
+  planKeys: BillingPlanKey[];
   planPrices: SettingsBillingPlanPrices;
 };
 
 export const SettingsBillingPlansWithoutSubscription = ({
   billingInterval,
   onBillingIntervalChange,
+  planKeys,
   planPrices,
 }: SettingsBillingPlansWithoutSubscriptionProps) => {
   const { t } = useLingui();
-  const {
-    handleCheckoutSession: handleProCheckoutSession,
-    isSubmitting: isProCheckoutSessionSubmitting,
-  } = useHandleCheckoutSession({
+  const [checkoutPlanKey, setCheckoutPlanKey] = useState<BillingPlanKey | null>(
+    null,
+  );
+  const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
     recurringInterval: billingInterval,
-    plan: BillingPlanKey.PRO,
-    requirePaymentMethod: true,
-    successUrlPath: getSettingsPath(SettingsPath.Billing),
-  });
-  const {
-    handleCheckoutSession: handleEnterpriseCheckoutSession,
-    isSubmitting: isEnterpriseCheckoutSessionSubmitting,
-  } = useHandleCheckoutSession({
-    recurringInterval: billingInterval,
-    plan: BillingPlanKey.ENTERPRISE,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
   });
 
-  const createChoosePlanAction = ({
-    handleCheckoutSession,
-    isDisabled,
-    isLoading,
-  }: {
-    handleCheckoutSession: () => Promise<void>;
-    isDisabled: boolean;
-    isLoading: boolean;
-  }): SettingsBillingPlanAction => ({
+  const createChoosePlanAction = (
+    planKey: BillingPlanKey,
+  ): SettingsBillingPlanAction => ({
     color: 'accent',
-    disabled: isDisabled,
-    isLoading,
-    onClick: handleCheckoutSession,
+    disabled: isSubmitting,
+    isLoading: isSubmitting && checkoutPlanKey === planKey,
+    onClick: () => {
+      setCheckoutPlanKey(planKey);
+      void handleCheckoutSession(planKey);
+    },
     title: t`Choose plan`,
     variant: 'solid',
   });
 
-  const isAnyCheckoutSessionSubmitting =
-    isProCheckoutSessionSubmitting || isEnterpriseCheckoutSessionSubmitting;
-
-  const planActions: Record<BillingPlanKey, SettingsBillingPlanAction> = {
-    [BillingPlanKey.PRO]: createChoosePlanAction({
-      handleCheckoutSession: handleProCheckoutSession,
-      isDisabled: isAnyCheckoutSessionSubmitting,
-      isLoading: isProCheckoutSessionSubmitting,
-    }),
-    [BillingPlanKey.ENTERPRISE]: createChoosePlanAction({
-      handleCheckoutSession: handleEnterpriseCheckoutSession,
-      isDisabled: isAnyCheckoutSessionSubmitting,
-      isLoading: isEnterpriseCheckoutSessionSubmitting,
-    }),
-  };
+  const planActions = planKeys.map((planKey) =>
+    createChoosePlanAction(planKey),
+  );
 
   return (
     <SettingsPageContainer overflow="visible">
@@ -83,6 +61,7 @@ export const SettingsBillingPlansWithoutSubscription = ({
         billingInterval={billingInterval}
         onBillingIntervalChange={onBillingIntervalChange}
         planActions={planActions}
+        planKeys={planKeys}
         planPrices={planPrices}
       />
     </SettingsPageContainer>

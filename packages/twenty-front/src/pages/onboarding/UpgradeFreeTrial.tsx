@@ -161,7 +161,6 @@ const UpgradeFreeTrialContent = ({
   const { handleCheckoutSession, isSubmitting: isCheckoutSubmitting } =
     useHandleCheckoutSession({
       recurringInterval: billingCheckoutSession.interval,
-      plan: billingCheckoutSession.plan,
       requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
       successUrlPath: AppPath.PlanRequiredSuccess,
     });
@@ -177,7 +176,7 @@ const UpgradeFreeTrialContent = ({
       billingCheckoutSession.requirePaymentMethod,
     );
     setIsOnboardingCheckoutPending(true);
-    void handleCheckoutSession();
+    void handleCheckoutSession(billingCheckoutSession.plan);
   };
 
   const selectTrialPeriod = (withCreditCard: boolean) => {

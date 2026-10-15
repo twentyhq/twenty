@@ -34,19 +34,25 @@ const meta = {
   args: {
     billingInterval: SubscriptionInterval.Year,
     onBillingIntervalChange: fn(),
-    planActions: {
-      [BillingPlanKey.PRO]: { title: 'Choose Pro', variant: 'solid' },
-      [BillingPlanKey.ENTERPRISE]: {
-        title: 'Choose Organization',
-        variant: 'outline',
-      },
-    },
+    planActions: [
+      { title: 'Choose Pro', variant: 'solid' },
+      { title: 'Choose Organization', variant: 'outline' },
+    ],
+    planKeys: [BillingPlanKey.PRO, BillingPlanKey.ENTERPRISE],
     planPrices: {
       [BillingPlanKey.PRO]: {
         [SubscriptionInterval.Year]: 9,
         [SubscriptionInterval.Month]: 12,
       },
       [BillingPlanKey.ENTERPRISE]: {
+        [SubscriptionInterval.Year]: 19,
+        [SubscriptionInterval.Month]: 25,
+      },
+      [BillingPlanKey.PRO_V2]: {
+        [SubscriptionInterval.Year]: 9,
+        [SubscriptionInterval.Month]: 12,
+      },
+      [BillingPlanKey.ORGANIZATION_V2]: {
         [SubscriptionInterval.Year]: 19,
         [SubscriptionInterval.Month]: 25,
       },
@@ -107,5 +113,25 @@ export const MobileBillingPeriod: Story = {
     ).toBeLessThanOrEqual(headerCell?.getBoundingClientRect().right ?? 0);
 
     await playBillingPeriodToggle(context);
+  },
+};
+
+export const CurrentPlanNotOnSale: Story = {
+  args: {
+    planActions: [
+      { title: 'Move to the new Pro plan', variant: 'solid' },
+      { disabled: true, title: 'Unavailable', variant: 'outline' },
+    ],
+    planKeys: [BillingPlanKey.PRO_V2, BillingPlanKey.ORGANIZATION_V2],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByRole('button', { name: 'Move to the new Pro plan' }),
+    ).toBeEnabled();
+    await expect(
+      canvas.getByRole('button', { name: 'Unavailable' }),
+    ).toBeDisabled();
   },
 };

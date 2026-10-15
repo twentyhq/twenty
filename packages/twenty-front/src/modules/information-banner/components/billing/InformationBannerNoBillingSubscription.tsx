@@ -10,7 +10,6 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 export const InformationBannerNoBillingSubscription = () => {
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
     recurringInterval: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.interval,
-    plan: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.plan,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
   });
@@ -30,7 +29,9 @@ export const InformationBannerNoBillingSubscription = () => {
           : t`Your workspace doesn't have an active subscription. Please contact your admin.`
       }
       buttonTitle={hasPermissionToSubscribe ? t`Subscribe` : undefined}
-      buttonOnClick={() => handleCheckoutSession()}
+      buttonOnClick={() =>
+        handleCheckoutSession(BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.plan)
+      }
       isButtonDisabled={isSubmitting}
     />
   );
