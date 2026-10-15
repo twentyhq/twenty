@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -344,12 +345,27 @@ export class MessageCampaignService {
 
     const campaign = await campaignRepository.findOne({
       where: { id: campaignId },
+      relations: { list: true },
     });
 
     if (!isDefined(campaign)) {
       throw new EmailingDomainException(
         `Campaign ${campaignId} not found`,
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND,
+      );
+    }
+
+    const isListInTrash =
+      isDefined(campaign.listId) &&
+      (!isDefined(campaign.list) || isDefined(campaign.list.deletedAt));
+
+    if (isListInTrash) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} is not sendable: list ${campaign.listId} is in the trash`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+        {
+          userFriendlyMessage: msg`This campaign's list is in the trash. Restore it or pick another list in the To field.`,
+        },
       );
     }
 
