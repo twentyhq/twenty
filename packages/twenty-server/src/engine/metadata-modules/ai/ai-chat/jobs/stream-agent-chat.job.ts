@@ -932,7 +932,7 @@ export class StreamAgentChatJob {
         `isAborted=${isAborted}, outOfCredits=${outOfCredits}, hasText=${hasText}, ` +
         `streamError=${errorDetail}, ` +
         `inputTokens=${inputTokens},` +
-        `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`,
+        `responseMessage.partCount=${responseMessage.parts.length}`,
     );
 
     if (streamError instanceof Error && isDefined(streamError.stack)) {
