@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -9,6 +9,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import {
   mapChartWidgetRecordFilters,
   mapFindRecordsStepRecordFilters,
+  mapWorkflowRunStateRecordFilters,
 } from 'src/database/commands/upgrade-version-command/2-48/utils/map-stored-record-filters.util';
 import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/restore-derived-record-filter-properties.util';
 import { stripDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/strip-derived-record-filter-properties.util';
@@ -38,7 +39,7 @@ type RewriteRowsArgs = {
 };
 
 const NON_STRING_FIND_RECORDS_RECORD_FILTER_VALUE_JSON_PATH =
-  '$.flow.steps[*] ? (@.type == "FIND_RECORDS").settings.input.filter.recordFilters[*].value ? (@.type() != "string" && @.type() != "null")';
+  '$.flow.steps[*] ? (@.type == "FIND_RECORDS").settings.input.filter.recordFilters[*] ? (exists(@.value) && @.value.type() != "string" && @.value.type() != "null")';
 
 @RegisteredWorkspaceCommand('2.48.0', 1792139106098)
 @Command({
@@ -202,7 +203,11 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       columnName: 'state',
       whereClause: 'jsonb_path_exists(state, $1::jsonpath)',
       whereParameters: [NON_STRING_FIND_RECORDS_RECORD_FILTER_VALUE_JSON_PATH],
-      mapValue: (state) => this.mapWorkflowRunState(state),
+      mapValue: (state) =>
+        mapWorkflowRunStateRecordFilters({
+          state,
+          mapRecordFilter: stripDerivedRecordFilterProperties,
+        }),
     });
 
     if (workflowRunCount > 0) {
@@ -210,24 +215,6 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
         `${isDryRun ? '[DRY RUN] ' : ''}Rewrote ${workflowRunCount} workflow run(s) whose record filters held a non-string value in workspace ${workspaceId}`,
       );
     }
-  }
-
-  private mapWorkflowRunState(state: unknown): {
-    value: unknown;
-    hasChanged: boolean;
-  } {
-    if (!isPlainObject(state) || !isPlainObject(state.flow)) {
-      return { value: state, hasChanged: false };
-    }
-
-    const { value: steps, hasChanged } = mapFindRecordsStepRecordFilters({
-      steps: state.flow.steps,
-      mapRecordFilter: stripDerivedRecordFilterProperties,
-    });
-
-    return hasChanged
-      ? { value: { ...state, flow: { ...state.flow, steps } }, hasChanged }
-      : { value: state, hasChanged };
   }
 
   private async rewriteRows(

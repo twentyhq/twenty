@@ -78,6 +78,27 @@ export const mapFindRecordsStepRecordFilters = ({
   return toResult({ original: steps, mapped: mappedSteps });
 };
 
+export const mapWorkflowRunStateRecordFilters = ({
+  state,
+  mapRecordFilter,
+}: {
+  state: unknown;
+  mapRecordFilter: MapStoredRecordFilter;
+}): { value: unknown; hasChanged: boolean } => {
+  if (!isPlainObject(state) || !isPlainObject(state.flow)) {
+    return { value: state, hasChanged: false };
+  }
+
+  const { value: steps, hasChanged } = mapFindRecordsStepRecordFilters({
+    steps: state.flow.steps,
+    mapRecordFilter,
+  });
+
+  return hasChanged
+    ? { value: { ...state, flow: { ...state.flow, steps } }, hasChanged }
+    : { value: state, hasChanged };
+};
+
 export const mapChartWidgetRecordFilters = ({
   configuration,
   mapRecordFilter,
