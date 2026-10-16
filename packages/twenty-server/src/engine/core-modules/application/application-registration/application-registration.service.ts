@@ -1007,37 +1007,11 @@ export class ApplicationRegistrationService {
     });
 
     if (isDefined(existing)) {
-      const manifestUpdate = await this.updateFromManifest({
-        applicationRegistrationId: existing.id,
-        manifest: params.manifest,
-        sourceType: params.sourceType,
-        latestAvailableVersion: params.latestAvailableVersion,
-        preventVersionDowngrade: true,
-        registrationBeforeUpdate: existing,
+      return this.updateFromCatalog({
+        existing,
+        params,
         publishedVersion,
-        additionalFields: {
-          name: params.name,
-          sourcePackage: params.sourcePackage,
-        },
       });
-
-      if (!isDefined(manifestUpdate)) {
-        return null;
-      }
-
-      if (manifestUpdate.isNewerVersion) {
-        this.emitRegistrationPublishMetric({
-          isNewRegistration: false,
-          universalIdentifier: params.universalIdentifier,
-          name: params.name,
-          sourceType: params.sourceType,
-          version: params.latestAvailableVersion,
-        });
-
-        await this.enqueueAutoUpgradeApplications(existing.id);
-      }
-
-      return manifestUpdate.registration;
     }
 
     return this.createFromCatalog({
@@ -1045,6 +1019,48 @@ export class ApplicationRegistrationService {
       publishedVersion,
       isVetted: isDefined(officialSourcePackage),
     });
+  }
+
+  private async updateFromCatalog({
+    existing,
+    params,
+    publishedVersion,
+  }: {
+    existing: ApplicationRegistrationEntity;
+    params: UpsertApplicationRegistrationFromCatalogParams;
+    publishedVersion: PublishedApplicationRegistrationVersionParams | undefined;
+  }): Promise<ApplicationRegistrationEntity | null> {
+    const manifestUpdate = await this.updateFromManifest({
+      applicationRegistrationId: existing.id,
+      manifest: params.manifest,
+      sourceType: params.sourceType,
+      latestAvailableVersion: params.latestAvailableVersion,
+      preventVersionDowngrade: true,
+      registrationBeforeUpdate: existing,
+      publishedVersion,
+      additionalFields: {
+        name: params.name,
+        sourcePackage: params.sourcePackage,
+      },
+    });
+
+    if (!isDefined(manifestUpdate)) {
+      return null;
+    }
+
+    if (manifestUpdate.isNewerVersion) {
+      this.emitRegistrationPublishMetric({
+        isNewRegistration: false,
+        universalIdentifier: params.universalIdentifier,
+        name: params.name,
+        sourceType: params.sourceType,
+        version: params.latestAvailableVersion,
+      });
+
+      await this.enqueueAutoUpgradeApplications(existing.id);
+    }
+
+    return manifestUpdate.registration;
   }
 
   private async findCatalogPublishedVersion({
