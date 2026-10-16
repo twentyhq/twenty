@@ -155,6 +155,10 @@ export const DropdownRoot = ({
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
+        if (!nextOpen && !open) {
+          return;
+        }
+
         const isOutsideDismissal =
           eventDetails.reason === 'outside-press' ||
           eventDetails.reason === 'focus-out';
