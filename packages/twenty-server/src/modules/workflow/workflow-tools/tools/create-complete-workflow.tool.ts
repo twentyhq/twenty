@@ -164,7 +164,6 @@ Call validate_workflow once when the workflow is complete, before activating.`,
           coreWorkflowVersionId,
         });
       } catch (error) {
-        // the workflow exists at this point, so the ids are returned to fix it rather than create a duplicate
         return {
           success: false,
           message: `Workflow "${parameters.name}" was created as a draft but could not be activated: ${error.message}. Do not create it again: fix the draft (coreWorkflowVersionId ${coreWorkflowVersionId}), call validate_workflow, then activate_workflow_version.`,

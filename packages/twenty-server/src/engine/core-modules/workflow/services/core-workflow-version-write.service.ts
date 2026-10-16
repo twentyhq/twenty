@@ -164,8 +164,6 @@ export class CoreWorkflowVersionWriteService {
     };
   }
 
-  // Caller output schemas are not trusted for server-enriched step types: they derive from the rest of the
-  // version (e.g. what an iterator loops over), so they are recomputed against the content being written
   async writeContent({
     workspaceId,
     coreWorkflowVersionId,

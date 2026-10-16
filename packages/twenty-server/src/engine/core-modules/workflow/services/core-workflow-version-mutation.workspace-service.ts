@@ -17,7 +17,6 @@ import {
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import {
-  type CoreWorkflowVersionContent,
   CoreWorkflowVersionPostCommitError,
   CoreWorkflowVersionWriteService,
 } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
@@ -239,38 +238,35 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       updatedSteps.push(...additionalCreatedSteps);
     }
 
-    let persistedContent: CoreWorkflowVersionContent;
+    const persistedContent = await this.coreWorkflowVersionWriteService
+      .writeContent({
+        workspaceId,
+        coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
+        trigger,
+        steps: updatedSteps,
+      })
+      .catch(async (error: unknown) => {
+        if (isStepTypeChanged) {
+          const stepsToDelete =
+            error instanceof CoreWorkflowVersionPostCommitError
+              ? [existingStep]
+              : [updatedStep, ...(additionalCreatedSteps ?? [])];
 
-    try {
-      persistedContent =
-        await this.coreWorkflowVersionWriteService.writeContent({
-          workspaceId,
-          coreWorkflowVersionId,
-          expectedVersion: coreWorkflowVersion,
-          trigger,
-          steps: updatedSteps,
-        });
-    } catch (error) {
-      if (isStepTypeChanged) {
-        const stepsToDelete =
-          error instanceof CoreWorkflowVersionPostCommitError
-            ? [existingStep]
-            : [updatedStep, ...(additionalCreatedSteps ?? [])];
-
-        await Promise.allSettled(
-          stepsToDelete.map((stepToDelete) =>
-            this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
-              {
-                step: stepToDelete,
-                workspaceId,
-              },
+          await Promise.allSettled(
+            stepsToDelete.map((stepToDelete) =>
+              this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+                {
+                  step: stepToDelete,
+                  workspaceId,
+                },
+              ),
             ),
-          ),
-        );
-      }
+          );
+        }
 
-      throw error;
-    }
+        throw error;
+      });
 
     if (isStepTypeChanged) {
       await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
