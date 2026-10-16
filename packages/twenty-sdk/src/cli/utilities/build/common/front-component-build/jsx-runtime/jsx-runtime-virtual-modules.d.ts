@@ -21,6 +21,6 @@ declare module '__jsx_shared_helpers__' {
   export * from '@/cli/utilities/build/common/front-component-build/jsx-runtime/jsx-shared-helpers';
 }
 
-declare module '__reads_element_ref_from_vnode__' {
-  export const READS_ELEMENT_REF_FROM_VNODE: boolean;
+declare module '__uses_preact__' {
+  export const USES_PREACT: boolean;
 }

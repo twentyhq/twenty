@@ -76,6 +76,7 @@ describe('createCreateCompleteWorkflowTool', () => {
     ).toHaveBeenCalledWith(
       expect.objectContaining({
         workspaceId: 'workspace-id',
+        userWorkspaceId: 'user-workspace-id',
         name: 'My workflow',
         trigger,
         steps: [buildStep('SEND_EMAIL')],
