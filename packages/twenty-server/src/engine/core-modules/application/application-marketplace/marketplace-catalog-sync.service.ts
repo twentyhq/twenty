@@ -1,17 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import {
-  MarketplaceService,
-  type RegistryPackageInfo,
-} from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
-import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
-import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
+import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { areRegistrationAssetsStored } from 'src/engine/core-modules/application/application-registration/utils/are-registration-assets-stored.util';
@@ -24,9 +17,7 @@ export class MarketplaceCatalogSyncService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
-    private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly marketplaceService: MarketplaceService,
-    private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
   ) {}
 
   async syncCatalog(): Promise<void> {
@@ -78,11 +69,6 @@ export class MarketplaceCatalogSyncService {
             sourcePackage: pkg.name,
             latestAvailableVersion: pkg.version ?? null,
             manifest: fetchedManifest,
-            resolveTarballUrl: () =>
-              this.findCatalogTarballUrl({
-                registration: existingRegistration,
-                registryPackage: pkg,
-              }),
           });
 
         if (!isDefined(registration)) {
@@ -121,44 +107,5 @@ export class MarketplaceCatalogSyncService {
         );
       }
     }
-  }
-
-  private async findCatalogTarballUrl({
-    registration,
-    registryPackage,
-  }: {
-    registration: Pick<ApplicationRegistrationEntity, 'id'> | null;
-    registryPackage: RegistryPackageInfo;
-  }): Promise<string | null> {
-    if (!isNonEmptyString(registryPackage.version)) {
-      return null;
-    }
-
-    const recordedVersion = isDefined(registration)
-      ? await this.applicationRegistrationVersionService.findOneByApplicationRegistrationIdAndVersion(
-          {
-            applicationRegistrationId: registration.id,
-            version: registryPackage.version,
-          },
-        )
-      : null;
-
-    if (isDefined(recordedVersion?.tarballUrl)) {
-      return recordedVersion.tarballUrl;
-    }
-
-    const tarballUrl =
-      await this.applicationPackageFetcherService.findRegistryTarballUrl({
-        packageName: registryPackage.name,
-        version: registryPackage.version,
-      });
-
-    if (!isDefined(tarballUrl)) {
-      this.logger.warn(
-        `Version ${registryPackage.version} of ${registryPackage.name} left incomplete: registry gave no artifact details, retrying on the next sync`,
-      );
-    }
-
-    return tarballUrl;
   }
 }

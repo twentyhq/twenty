@@ -6,6 +6,7 @@ import {
   type Manifest,
 } from 'twenty-shared/application';
 
+import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
@@ -75,9 +76,18 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
       providers: [
         ApplicationRegistrationService,
         {
+          provide: ApplicationPackageFetcherService,
+          useValue: {
+            findRegistryTarballUrl: jest.fn().mockResolvedValue(null),
+          },
+        },
+        {
           provide: ApplicationRegistrationVersionService,
           useValue: {
             findTarballFilesOfRegistration: jest.fn().mockResolvedValue([]),
+            findOneByApplicationRegistrationIdAndVersion: jest
+              .fn()
+              .mockResolvedValue(null),
           },
         },
         ApplicationRegistrationLookupService,

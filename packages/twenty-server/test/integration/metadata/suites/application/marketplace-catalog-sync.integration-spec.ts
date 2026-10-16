@@ -22,7 +22,6 @@ import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/applica
 import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { type ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
-import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -240,10 +239,6 @@ describe('Marketplace Catalog Sync (integration)', () => {
     it.each([true, false])(
       'preserves the admin choice isVetted=%s',
       async (isVetted) => {
-        const applicationRegistrationService =
-          getAppProviderByClassName<ApplicationRegistrationService>(
-            'ApplicationRegistrationService',
-          );
         const applicationRegistrationLookupService =
           getAppProviderByClassName<ApplicationRegistrationLookupService>(
             'ApplicationRegistrationLookupService',
@@ -272,7 +267,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         ).toBeNull();
 
         try {
-          await applicationRegistrationService.upsertFromCatalog(catalogParams);
+          await upsertApplicationRegistrationFromCatalog(catalogParams);
 
           const registration =
             await applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
@@ -302,7 +297,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
             updateResponse.body.data.updateAdminApplicationRegistration,
           ).toMatchObject({ isVetted });
 
-          await applicationRegistrationService.upsertFromCatalog(catalogParams);
+          await upsertApplicationRegistrationFromCatalog(catalogParams);
 
           const refreshedResponse = await makeAdminPanelApiRequest({
             query: gql`
