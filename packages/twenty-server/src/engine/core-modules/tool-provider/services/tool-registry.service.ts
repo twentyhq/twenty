@@ -51,25 +51,35 @@ export class ToolRegistryService {
       ? new Set(options.categories)
       : undefined;
 
-    const results = await Promise.all(
-      this.providers.map(async (provider) => {
-        if (categorySet && !categorySet.has(provider.category)) {
+    const [providerDescriptors, definedToolDescriptors] = await Promise.all([
+      Promise.all(
+        this.providers.map(async (provider) => {
+          if (categorySet && !categorySet.has(provider.category)) {
+            return [];
+          }
+
+          if (await provider.isAvailable(executionContext)) {
+            return this.generateProviderDescriptors(
+              provider,
+              executionContext,
+              { includeSchemas: false },
+            );
+          }
+
           return [];
-        }
-
-        if (await provider.isAvailable(executionContext)) {
-          return this.generateProviderDescriptors(provider, executionContext, {
-            includeSchemas: false,
-          });
-        }
-
-        return [];
-      }),
-    );
+        }),
+      ),
+      this.definedToolRegistryService.getAvailableDescriptors(
+        executionContext,
+        { categories: options?.categories, includeSchemas: false },
+      ),
+    ]);
 
     const excludeTools = options?.excludeTools;
 
-    return results.flat().filter((entry) => !excludeTools?.has(entry.name));
+    return [...providerDescriptors.flat(), ...definedToolDescriptors].filter(
+      (entry) => !excludeTools?.has(entry.name),
+    );
   }
 
   async resolveSchemas({
@@ -88,16 +98,25 @@ export class ToolRegistryService {
     const nameSet = new Set(toolNames);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
+    const schemas = new Map<string, object>();
     const byCategory = new Map<string, ToolIndexEntry[]>();
 
     for (const entry of matchingEntries) {
+      const definedTool = this.definedToolRegistryService.findDefinedTool(
+        entry.name,
+      );
+
+      if (isDefined(definedTool)) {
+        schemas.set(entry.name, definedTool.inputJsonSchema);
+
+        continue;
+      }
+
       const existing = byCategory.get(entry.category) ?? [];
 
       existing.push(entry);
       byCategory.set(entry.category, existing);
     }
-
-    const schemas = new Map<string, object>();
 
     for (const [category, entries] of byCategory) {
       const provider = this.providers.find(
@@ -433,23 +452,32 @@ export class ToolRegistryService {
     const { categories, excludeTools } = options;
     const categorySet = categories ? new Set(categories) : undefined;
 
-    const results = await Promise.all(
-      this.providers
-        .filter(
-          (provider) => !categorySet || categorySet.has(provider.category),
-        )
-        .map(async (provider) => {
-          if (await provider.isAvailable(context)) {
-            return this.generateProviderDescriptors(provider, context, {
-              includeSchemas: true,
-            });
-          }
+    const [providerDescriptors, definedToolDescriptors] = await Promise.all([
+      Promise.all(
+        this.providers
+          .filter(
+            (provider) => !categorySet || categorySet.has(provider.category),
+          )
+          .map(async (provider) => {
+            if (await provider.isAvailable(context)) {
+              return this.generateProviderDescriptors(provider, context, {
+                includeSchemas: true,
+              });
+            }
 
-          return [];
-        }),
-    );
+            return [];
+          }),
+      ),
+      this.definedToolRegistryService.getAvailableDescriptors(context, {
+        categories,
+        includeSchemas: true,
+      }),
+    ]);
 
-    const descriptors = results.flat() as ToolDescriptor[];
+    const descriptors = [
+      ...providerDescriptors.flat(),
+      ...definedToolDescriptors,
+    ] as ToolDescriptor[];
 
     let filteredDescriptors = descriptors;
 
@@ -488,20 +516,12 @@ export class ToolRegistryService {
           options,
         );
 
-        const descriptors = [
-          ...providerDescriptors.filter(
-            (descriptor) =>
-              !isDefined(
-                this.definedToolRegistryService.findDefinedTool(
-                  descriptor.name,
-                ),
-              ),
-          ),
-          ...this.definedToolRegistryService.getDescriptors(
-            provider.category,
-            options,
-          ),
-        ];
+        const descriptors = providerDescriptors.filter(
+          (descriptor) =>
+            !isDefined(
+              this.definedToolRegistryService.findDefinedTool(descriptor.name),
+            ),
+        );
 
         span.setAttribute('tool.descriptor_count', descriptors.length);
 

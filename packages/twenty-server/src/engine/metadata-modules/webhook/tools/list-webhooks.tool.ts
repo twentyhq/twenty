@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -12,6 +13,7 @@ const listWebhooksInputSchema = z.object({});
 @DefineTool({
   name: 'list_webhooks',
   category: ToolCategory.WEBHOOK,
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
   description: `List every webhook registered in the workspace. Returns id, targetUrl, operations (e.g. ['person.created','company.updated']), description and timestamps.`,
 })
 export class ListWebhooksTool extends BaseTool<typeof listWebhooksInputSchema> {

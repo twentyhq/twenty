@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -30,6 +31,7 @@ const createWebhookInputSchema = z.object({
 @DefineTool({
   name: 'create_webhook',
   category: ToolCategory.WEBHOOK,
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
   description: `Register a new outgoing webhook for this workspace.
 
 Operations are structured entries discriminated by 'kind':
