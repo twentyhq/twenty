@@ -19,10 +19,12 @@ import { buildStreamAssistantMessageId } from 'src/engine/metadata-modules/ai/ai
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
-import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
 import { findTurnIdsActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
+import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { flatMapAsyncIterator } from 'src/engine/subscriptions/utils/flat-map-async-iterator';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
@@ -45,7 +47,6 @@ export class AgentRunEventService {
     private readonly agentRunService: AgentRunService,
     private readonly agentRunStatusService: AgentRunStatusService,
     private readonly conversationReaderService: AgentConversationReaderService,
-    private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly subscriptionService: SubscriptionService,
     @InjectAgentHistoryRepository('agentMessage')
@@ -133,7 +134,7 @@ export class AgentRunEventService {
     })) as AsyncIterator<AgentChatEventPayload>;
 
     let state = createAgentRunEventStreamState(threadId);
-    let isToolUseHidden = false;
+    let isToolUseHidden = true;
 
     const toPayloads = async (
       events: AgentRunEvent[],
@@ -142,11 +143,26 @@ export class AgentRunEventService {
 
       for (const event of events) {
         if (event.type === 'session.status_running') {
-          isToolUseHidden = await this.isLatestTurnActedByOthers({
-            workspaceId,
-            threadId,
-            actor,
-          });
+          const turnMessages = isDefined(state.turnId)
+            ? await this.loadUserMessages(workspaceId, {
+                threadId,
+                turnId: state.turnId,
+              })
+            : [];
+
+          // as in history, a turn nobody sent, such as a continued run's, keeps its tools to itself
+          isToolUseHidden =
+            !isDefined(state.turnId) ||
+            turnMessages.length === 0 ||
+            findTurnIdsActedByOthers({ messages: turnMessages, actor }).has(
+              state.turnId,
+            );
+
+          payloads.push(
+            ...this.toUserMessageEvents(turnMessages).map((userEvent) => ({
+              onAgentRunEvent: { threadId, event: userEvent },
+            })),
+          );
         }
 
         if (isToolUseHidden && TOOL_EVENT_TYPES.includes(event.type)) {
@@ -175,6 +191,17 @@ export class AgentRunEventService {
           return [{ onAgentRunEvent: { threadId, event: null } }];
         }
 
+        if (event.type === 'message-added') {
+          return this.toUserMessageEvents(
+            await this.loadUserMessages(workspaceId, {
+              threadId,
+              id: event.messageId,
+            }),
+          ).map((userEvent) => ({
+            onAgentRunEvent: { threadId, event: userEvent },
+          }));
+        }
+
         const mapped = mapAgentChatEventToAgentRunEvents({
           state,
           event,
@@ -194,35 +221,31 @@ export class AgentRunEventService {
     });
   }
 
-  // history keeps a turn's tool calls only for whoever sent it, and so does the live stream
-  private async isLatestTurnActedByOthers({
-    workspaceId,
-    threadId,
-    actor,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    actor: AgentConversationActor;
-  }): Promise<boolean> {
-    const latestTurn = await this.turnRecorderService.findLatestTurn({
-      workspaceId,
-      threadId,
-    });
-
-    if (!isDefined(latestTurn)) {
-      return false;
-    }
-
+  // a turn's messages are on record before it streams, so the live stream reads them at its start
+  private async loadUserMessages(
+    workspaceId: string,
+    where: { threadId: string; turnId?: string; id?: string },
+  ): Promise<AgentMessageWorkspaceEntity[]> {
     const messages = await this.messageRepository.find(workspaceId, {
-      where: { threadId, turnId: latestTurn.id },
-      select: [
-        'turnId',
-        'role',
-        'senderWorkspaceMemberId',
-        'senderApplicationId',
-      ],
+      where: { ...where, role: AgentMessageRole.USER },
+      order: { createdAt: 'ASC' },
+      relations: ['parts'],
     });
 
-    return findTurnIdsActedByOthers({ messages, actor }).has(latestTurn.id);
+    return messages.filter(
+      ({ status }) => status !== AgentMessageStatus.QUEUED,
+    );
+  }
+
+  private toUserMessageEvents(
+    messages: AgentMessageWorkspaceEntity[],
+  ): AgentRunEvent[] {
+    return mapAgentMessagesToAgentRunEvents(
+      messages.map(({ id, parts }) => ({
+        id,
+        role: 'user',
+        parts: mapDBPartsToUIMessageParts(parts ?? []),
+      })),
+    );
   }
 }
