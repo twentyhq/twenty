@@ -16,8 +16,9 @@
   padding-inline: var(--t-spacing-2) var(--t-spacing-1);
   user-select: none;
 
+  @include focus-ring;
+
   &:focus-visible {
-    outline: 2px solid var(--t-color-blue);
     outline-offset: -2px;
   }
 
