@@ -90,6 +90,7 @@ type AgentMessage {
   id: UUID!
   parts: [AgentMessagePart!]!
   processedAt: DateTime
+  reactions: [AgentMessageReactionSummary!]!
   role: String!
   senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
@@ -125,6 +126,11 @@ type AgentMessagePart {
   toolName: String
   toolOutput: JSON
   type: String!
+}
+
+type AgentMessageReactionSummary {
+  emoji: String!
+  workspaceMemberIds: [UUID!]!
 }
 
 type AgentRun {
@@ -2980,6 +2986,7 @@ enum ModelFamily {
 type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
+  addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
@@ -3127,6 +3134,7 @@ type Mutation {
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
+  removeAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!

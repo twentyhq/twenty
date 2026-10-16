@@ -40,7 +40,7 @@ export const useUploadAttachmentFile = () => {
     });
 
     if (!isDefined(uploadedFile)) {
-      throw new Error("Couldn't upload the attachment.");
+      throw new Error(t`Couldn't upload the attachment.`);
     }
 
     const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({

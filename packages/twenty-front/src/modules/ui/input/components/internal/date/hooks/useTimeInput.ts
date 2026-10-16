@@ -1,5 +1,6 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useCallback } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type TimeValue = {
   hour: number;
@@ -23,7 +24,7 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
       const mm = minute.toString().padStart(2, '0');
 
       if (isHour12) {
-        const amPm = hour >= 12 ? 'PM' : 'AM';
+        const amPm = doNotTranslate(hour >= 12 ? 'PM' : 'AM');
         return `${hh}:${mm} ${amPm}`;
       }
       return `${hh}:${mm}`;

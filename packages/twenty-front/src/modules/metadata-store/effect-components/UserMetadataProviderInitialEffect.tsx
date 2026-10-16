@@ -17,6 +17,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useQuery } from '@apollo/client/react';
 import {
   type WorkspaceMember,
@@ -132,8 +133,11 @@ export const UserMetadataProviderInitialEffect = () => {
     ) => {
       return {
         ...workspaceMember,
-        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
-        uiScale: (workspaceMember.uiScale as UiScale) ?? 'Default',
+        colorScheme:
+          (workspaceMember.colorScheme as ColorScheme) ??
+          doNotTranslate('System'),
+        uiScale:
+          (workspaceMember.uiScale as UiScale) ?? doNotTranslate('Default'),
         openRecordIn: toOpenRecordInPreference(workspaceMember.openRecordIn),
         locale:
           (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,

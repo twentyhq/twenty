@@ -1,7 +1,9 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
-const FOCUSABLE_ITEM_SELECTOR =
-  'button, a[href], input, select, textarea, [tabindex]';
+const FOCUSABLE_ITEM_SELECTOR = doNotTranslate(
+  'button, a[href], input, select, textarea, [tabindex]',
+);
 
 export const focusOverflowingListFallback = ({
   items,

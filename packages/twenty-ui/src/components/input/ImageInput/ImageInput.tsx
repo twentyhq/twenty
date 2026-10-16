@@ -11,6 +11,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './ImageInput.module.scss';
 import { ImageInputPreview } from './internal/ImageInputPreview';
 import { type ImageInputProps } from './types/ImageInputProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const DEFAULT_IMAGE_ACCEPT = 'image/*';
 
@@ -23,9 +24,9 @@ export const ImageInput = ({
   isUploading = false,
   helperText,
   errorMessage,
-  uploadLabel = 'Upload',
-  removeLabel = 'Remove',
-  abortLabel = 'Abort',
+  uploadLabel = doNotTranslate('Upload'),
+  removeLabel = doNotTranslate('Remove'),
+  abortLabel = doNotTranslate('Abort'),
   accept = DEFAULT_IMAGE_ACCEPT,
   inputRef,
   onChange,

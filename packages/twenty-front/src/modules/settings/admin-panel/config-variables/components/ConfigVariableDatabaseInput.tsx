@@ -9,6 +9,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -56,8 +57,8 @@ export const ConfigVariableDatabaseInput = ({
       : [];
 
   const booleanOptions = [
-    { value: 'true', label: 'true' },
-    { value: 'false', label: 'false' },
+    { value: 'true', label: doNotTranslate('true') },
+    { value: 'false', label: doNotTranslate('false') },
   ];
 
   const isValueSelected = (optionValue: string) => {
@@ -239,6 +240,9 @@ export const ConfigVariableDatabaseInput = ({
       );
 
     default:
-      throw new CustomError(`Unsupported type: ${type}`, 'UNSUPPORTED_TYPE');
+      throw new CustomError(
+        doNotTranslate(`Unsupported type: ${type}`),
+        'UNSUPPORTED_TYPE',
+      );
   }
 };

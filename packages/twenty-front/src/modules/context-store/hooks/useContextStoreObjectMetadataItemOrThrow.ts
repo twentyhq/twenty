@@ -2,6 +2,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useContextStoreObjectMetadataItemOrThrow = (
   contextStoreInstanceId?: string,
@@ -16,7 +17,9 @@ export const useContextStoreObjectMetadataItemOrThrow = (
   });
 
   if (!isDefined(objectMetadataItem)) {
-    throw new Error('Object metadata item is not set in context store');
+    throw new Error(
+      doNotTranslate('Object metadata item is not set in context store'),
+    );
   }
 
   return { objectMetadataItem };

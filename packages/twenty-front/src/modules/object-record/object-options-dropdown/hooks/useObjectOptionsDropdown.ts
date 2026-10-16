@@ -2,12 +2,15 @@ import { useDropdownContextStateManagement } from '@/dropdown-context-state-mana
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useObjectOptionsDropdown = () => {
   const context = useContext(ObjectOptionsDropdownContext);
 
   if (!isDefined(context)) {
-    throw new Error('useObjectOptionsDropdown must be used within a context');
+    throw new Error(
+      doNotTranslate('useObjectOptionsDropdown must be used within a context'),
+    );
   }
 
   const { closeDropdown } = useDropdownContextStateManagement({

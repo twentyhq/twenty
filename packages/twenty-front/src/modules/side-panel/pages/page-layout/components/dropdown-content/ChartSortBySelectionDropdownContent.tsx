@@ -24,6 +24,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   type BarChartConfiguration,
@@ -65,11 +66,11 @@ export const ChartSortBySelectionDropdownContent = () => {
   );
 
   if (!isBarChart && !isLineChart && !isPieChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   if (!isDefined(widgetInEditMode?.objectMetadataId)) {
-    throw new Error('No data source in chart');
+    throw new Error(doNotTranslate('No data source in chart'));
   }
 
   const { getXSortOptionLabel } = useGraphXSortOptionLabels({

@@ -138,36 +138,81 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    ApplicationTargetGuard,
+  )
   async updateSkill(
-    @Args('input') input: UpdateSkillInput,
+    @ApplicationTargetArg<UpdateSkillInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'skill',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
+    })
+    input: UpdateSkillInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO> {
     return this.skillService.update(input, workspace.id);
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    ApplicationTargetGuard,
+  )
   async deleteSkill(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @ApplicationTargetArg(
+      'id',
+      {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'skill',
+        requireApplicationRegistrationOwnership: false,
+      },
+      { type: () => UUIDScalarType },
+    )
+    id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO> {
     return this.skillService.delete(id, workspace.id);
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    ApplicationTargetGuard,
+  )
   async activateSkill(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @ApplicationTargetArg(
+      'id',
+      {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'skill',
+        requireApplicationRegistrationOwnership: false,
+      },
+      { type: () => UUIDScalarType },
+    )
+    id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO> {
     return this.skillService.activate(id, workspace.id);
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+    ApplicationTargetGuard,
+  )
   async deactivateSkill(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @ApplicationTargetArg(
+      'id',
+      {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'skill',
+        requireApplicationRegistrationOwnership: false,
+      },
+      { type: () => UUIDScalarType },
+    )
+    id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SkillDTO> {
     return this.skillService.deactivate(id, workspace.id);
