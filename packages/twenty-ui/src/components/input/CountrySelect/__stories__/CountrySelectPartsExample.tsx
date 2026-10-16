@@ -9,13 +9,14 @@ import { COUNTRY_CHOICES } from './COUNTRY_CHOICES';
 
 type CountrySelectPartsExampleProps = Pick<
   CountrySelectProps,
-  'onValueChange'
+  'onValueChange' | 'onOpenChange'
 > & {
   compound?: boolean;
   controlled?: boolean;
   cancelSelection?: boolean;
   closeOnSelect?: boolean;
   keepMounted?: boolean;
+  openOnHover?: boolean;
 };
 
 export const CountrySelectPartsExample = ({
@@ -24,7 +25,9 @@ export const CountrySelectPartsExample = ({
   cancelSelection = false,
   closeOnSelect,
   keepMounted,
+  openOnHover,
   onValueChange,
+  onOpenChange,
 }: CountrySelectPartsExampleProps) => {
   const [value, setValue] = useState<string | null>('FR');
   const [disabled, setDisabled] = useState(false);
@@ -62,8 +65,12 @@ export const CountrySelectPartsExample = ({
           // oxlint-disable-next-line react/jsx-props-no-spreading
           {...rootProps}
         >
-          <Dropdown.Root type="picker">
-            <CountrySelect.Trigger label="Country" />
+          <Dropdown.Root type="picker" onOpenChange={onOpenChange}>
+            <CountrySelect.Trigger
+              label="Country"
+              openOnHover={openOnHover}
+              delay={0}
+            />
             <Dropdown.Content keepMounted={keepMounted}>
               <CountrySelect.Options
                 searchLabel="Search countries"

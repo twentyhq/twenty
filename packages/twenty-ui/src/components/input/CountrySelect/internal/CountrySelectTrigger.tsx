@@ -33,6 +33,7 @@ export const CountrySelectTrigger = ({
   onPointerDown,
   onKeyDown,
   onKeyUp,
+  openOnHover,
   id,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
@@ -102,6 +103,7 @@ export const CountrySelectTrigger = ({
           isNonEmptyArray(describedByIds) ? describedByIds.join(' ') : undefined
         }
         aria-disabled={isDisabled || undefined}
+        openOnHover={isDisabled ? false : openOnHover}
         data-disabled={isDisabled ? '' : undefined}
         onClick={isDisabled ? skipTriggerActivation : onClick}
         onMouseDown={isDisabled ? skipTriggerActivation : onMouseDown}

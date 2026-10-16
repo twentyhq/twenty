@@ -228,3 +228,42 @@ export const CompoundKeptSearchReset: Story = {
   args: { compound: true, keepMounted: true },
   play: assertKeptSearchReset,
 };
+
+export const CompoundDisabledHover: Story = {
+  args: { compound: true, openOnHover: true, onOpenChange: fn() },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Country' });
+    const toggleDisabled = canvas.getByRole('button', {
+      name: 'Toggle disabled',
+    });
+
+    await userEvent.hover(trigger);
+    const popup = await body.findByRole('dialog');
+    await waitFor(() => expect(popup).toBeVisible());
+    expect(args.onOpenChange).toHaveBeenCalledTimes(1);
+    expect(args.onOpenChange).toHaveBeenLastCalledWith(true);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    expect(args.onOpenChange).toHaveBeenCalledTimes(2);
+    expect(args.onOpenChange).toHaveBeenLastCalledWith(false);
+    await userEvent.unhover(trigger);
+    await userEvent.click(toggleDisabled);
+    expect(trigger).toHaveAttribute('aria-disabled', 'true');
+    expect(trigger).not.toBeDisabled();
+    await userEvent.hover(trigger);
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(args.onOpenChange).toHaveBeenCalledTimes(2);
+    await userEvent.unhover(trigger);
+    await userEvent.click(toggleDisabled);
+    expect(trigger).not.toHaveAttribute('aria-disabled');
+    await userEvent.hover(trigger);
+    const reopenedPopup = await body.findByRole('dialog');
+    await waitFor(() => expect(reopenedPopup).toBeVisible());
+    expect(args.onOpenChange).toHaveBeenCalledTimes(3);
+    expect(args.onOpenChange).toHaveBeenLastCalledWith(true);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(reopenedPopup).not.toBeInTheDocument());
+  },
+};
