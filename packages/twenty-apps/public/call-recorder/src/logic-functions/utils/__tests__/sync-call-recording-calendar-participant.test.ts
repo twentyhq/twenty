@@ -158,4 +158,26 @@ describe('call recorder calendar participant', () => {
       .mockResolvedValueOnce({ updateCalendarEventParticipants: [] });
     await expect(sync()).rejects.toThrow('Cannot create participant');
   });
+  it('removes a participant if the recording is removed while creation is in flight', async () => {
+    setRecording(undefined);
+    client.query.mockResolvedValueOnce({
+      callRecordings: { edges: [{ node: recording }] },
+    });
+    await sync();
+    expect(client.mutation).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        destroyCalendarEventParticipants: expect.any(Object),
+      }),
+    );
+  });
+
+  it('recreates a participant if the recording is restored while removal is in flight', async () => {
+    client.query.mockResolvedValueOnce({ callRecordings: { edges: [] } });
+    await sync();
+    expect(client.mutation).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        createCalendarEventParticipants: expect.any(Object),
+      }),
+    );
+  });
 });
