@@ -276,7 +276,7 @@ msgstr "Testowy email"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr ""
+msgstr "Dziękujemy za rejestrację konta w Twenty! Zanim zaczniemy, musimy tylko potwierdzić, że to Ty. Kliknij poniżej, aby zweryfikować swój adres email."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -378,7 +378,7 @@ msgstr "Czym jest Twenty?"
 #: src/emails/send-invite-link.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
-msgstr ""
+msgstr "Logo miejsca pracy"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

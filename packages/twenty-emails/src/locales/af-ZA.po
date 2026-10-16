@@ -276,7 +276,7 @@ msgstr "Toets e-pos"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr ""
+msgstr "Dankie dat jy vir 'n rekening op Twenty geregistreer het! Voor ons begin, moet ons net bevestig dat dit jy is. Klik hieronder om jou e-posadres te verifieer."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -378,7 +378,7 @@ msgstr "Wat is Twenty?"
 #: src/emails/send-invite-link.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
-msgstr ""
+msgstr "Werkruimte logo"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

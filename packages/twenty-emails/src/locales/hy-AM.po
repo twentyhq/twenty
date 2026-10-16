@@ -378,7 +378,7 @@ msgstr "Ի՞նչ է Twenty-ը։"
 #: src/emails/send-invite-link.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
-msgstr ""
+msgstr "Workspace-ի լոգո"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

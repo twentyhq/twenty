@@ -378,7 +378,7 @@ msgstr "Twenty nima?"
 #: src/emails/send-invite-link.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
-msgstr ""
+msgstr "Ish maydoni logotipi"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

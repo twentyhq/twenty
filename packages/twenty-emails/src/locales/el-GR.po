@@ -276,7 +276,7 @@ msgstr "Δοκιμαστικό email"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr ""
+msgstr "Σας ευχαριστούμε που κάνατε εγγραφή για λογαριασμό στο Twenty! Πριν ξεκινήσουμε, πρέπει να επιβεβαιώσουμε ότι είστε εσείς. Κάντε κλικ παρακάτω για να επαληθεύσετε τη διεύθυνση email σας."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -378,7 +378,7 @@ msgstr "Τι είναι το Twenty;"
 #: src/emails/send-invite-link.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
-msgstr ""
+msgstr "Λογότυπο Workspace"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
