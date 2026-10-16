@@ -82,13 +82,13 @@ export class AgentChatThreadService {
     title,
     ...args
   }: AgentChatThreadAccessArgs & { title?: string }): Promise<void> {
-    await this.createThreadIfMissing({ ...args, title });
-
     const threadBefore = await this.threadRepository.findOne(args.workspaceId, {
       where: { id: args.threadId },
     });
 
     if (!isDefined(threadBefore)) {
+      await this.createThreadIfMissing({ ...args, title });
+
       return;
     }
 
@@ -105,11 +105,10 @@ export class AgentChatThreadService {
     }
 
     if (isDefined(threadBefore.deletedAt)) {
-      await this.restoreThread(args);
+      await this.restoreDeletedThread({ args, threadBefore });
     }
   }
 
-  // Access-checked writes return raw rows; record events carry ORM records
   async restoreThread(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadWorkspaceEntity> {
@@ -121,6 +120,17 @@ export class AgentChatThreadService {
       return threadBefore;
     }
 
+    return this.restoreDeletedThread({ args, threadBefore });
+  }
+
+  // Access-checked writes return raw rows; record events carry ORM records
+  private async restoreDeletedThread({
+    args,
+    threadBefore,
+  }: {
+    args: AgentChatThreadAccessArgs;
+    threadBefore: AgentChatThreadWorkspaceEntity | null;
+  }): Promise<AgentChatThreadWorkspaceEntity> {
     const thread = await this.sharingService.restoreThreadWithAccess(args);
 
     if (isDefined(threadBefore)) {
