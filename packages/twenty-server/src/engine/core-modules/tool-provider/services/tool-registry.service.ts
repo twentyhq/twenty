@@ -59,11 +59,11 @@ export class ToolRegistryService {
           }
 
           if (await provider.isAvailable(executionContext)) {
-            return this.generateProviderDescriptors(
+            return this.generateProviderDescriptors({
               provider,
-              executionContext,
-              { includeSchemas: false },
-            );
+              context: executionContext,
+              options: { includeSchemas: false },
+            });
           }
 
           return [];
@@ -129,11 +129,11 @@ export class ToolRegistryService {
 
       const entryNameSet = new Set(entries.map((entry) => entry.name));
 
-      const descriptors = await this.generateProviderDescriptors(
+      const descriptors = await this.generateProviderDescriptors({
         provider,
-        executionContext,
-        { includeSchemas: true, toolNames: entryNameSet },
-      );
+        context: executionContext,
+        options: { includeSchemas: true, toolNames: entryNameSet },
+      });
 
       for (const descriptor of descriptors) {
         if (
@@ -460,8 +460,10 @@ export class ToolRegistryService {
           )
           .map(async (provider) => {
             if (await provider.isAvailable(context)) {
-              return this.generateProviderDescriptors(provider, context, {
-                includeSchemas: true,
+              return this.generateProviderDescriptors({
+                provider,
+                context,
+                options: { includeSchemas: true },
               });
             }
 
@@ -492,11 +494,15 @@ export class ToolRegistryService {
     return filteredDescriptors;
   }
 
-  private generateProviderDescriptors(
-    provider: ToolProvider,
-    context: ToolProviderContext,
-    options: GenerateDescriptorOptions,
-  ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
+  private generateProviderDescriptors({
+    provider,
+    context,
+    options,
+  }: {
+    provider: ToolProvider;
+    context: ToolProviderContext;
+    options: GenerateDescriptorOptions;
+  }): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     return Sentry.startSpan(
       {
         name: `tool provider ${provider.category} descriptors`,
