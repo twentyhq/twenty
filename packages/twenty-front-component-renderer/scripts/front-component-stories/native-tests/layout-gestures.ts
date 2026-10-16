@@ -48,6 +48,29 @@ const startDrag = async ({ page, handle }: { page: Page; handle: Locator }) => {
   return origin;
 };
 
+const readPointerXForSliderValue = async ({
+  control,
+  thumb,
+  value,
+  min,
+  max,
+}: {
+  control: Locator;
+  thumb: Locator;
+  value: number;
+  min: number;
+  max: number;
+}) => {
+  const controlBounds = await readBounds(control);
+  const thumbInset = (await readBounds(thumb)).width / 2;
+
+  return (
+    controlBounds.x +
+    thumbInset +
+    ((value - min) / (max - min)) * (controlBounds.width - thumbInset * 2)
+  );
+};
+
 for (const runtime of ['react', 'preact']) {
   test.describe(runtime, () => {
     test('ResizeHandle captures moves beyond its widget and commits only on release', async ({
@@ -257,7 +280,16 @@ for (const runtime of ['react', 'preact']) {
       await expect(control).toHaveAttribute('data-dragging', '');
       const bounds = await readBounds(control);
 
-      await page.mouse.move(bounds.x + bounds.width * 0.7, origin.y);
+      await page.mouse.move(
+        await readPointerXForSliderValue({
+          control,
+          thumb: slider.locator('..'),
+          value: 70,
+          min: 10,
+          max: 90,
+        }),
+        origin.y,
+      );
       await expect(slider).toHaveValue('70');
       await control.evaluate((element) => element.releasePointerCapture(1));
       const ownedButtonBounds = await readBounds(
