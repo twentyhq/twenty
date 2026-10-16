@@ -28,6 +28,11 @@ type ElementPointer = {
   pointerId: number;
 };
 
+type RequestedElementPointer = {
+  element: Element;
+  pointerId: unknown;
+};
+
 const hasPointerId = ({
   event,
   pointerId,
@@ -91,7 +96,10 @@ export const installPointerCapturePolyfill = ({
     }
   };
 
-  const setPointerCapture = (element: Element, pointerId: unknown) => {
+  const setPointerCapture = ({
+    element,
+    pointerId,
+  }: RequestedElementPointer) => {
     if (
       !isInteger(pointerId) ||
       !isElementUnderRemoteRoot(element, documentTarget.body) ||
@@ -149,7 +157,10 @@ export const installPointerCapturePolyfill = ({
     );
   };
 
-  const releasePointerCapture = (element: Element, pointerId: unknown) => {
+  const releasePointerCapture = ({
+    element,
+    pointerId,
+  }: RequestedElementPointer) => {
     if (!isInteger(pointerId)) {
       return;
     }
@@ -175,12 +186,13 @@ export const installPointerCapturePolyfill = ({
   definePolyfillMethod<Element>({
     target: elementPrototype,
     methodName: 'setPointerCapture',
-    method: (element, pointerId) => setPointerCapture(element, pointerId),
+    method: (element, pointerId) => setPointerCapture({ element, pointerId }),
   });
   definePolyfillMethod<Element>({
     target: elementPrototype,
     methodName: 'releasePointerCapture',
-    method: (element, pointerId) => releasePointerCapture(element, pointerId),
+    method: (element, pointerId) =>
+      releasePointerCapture({ element, pointerId }),
   });
   definePolyfillMethod<Element>({
     target: elementPrototype,
