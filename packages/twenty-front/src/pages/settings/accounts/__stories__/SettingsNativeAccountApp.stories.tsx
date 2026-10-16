@@ -7,6 +7,8 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 
+import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsNativeAccountApp } from '~/pages/settings/accounts/SettingsNativeAccountApp';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
@@ -134,6 +136,24 @@ export const OutlookHasEmailsAndCalendarTabs: Story = {
 
     expect(await canvas.findByText('Event visibility')).toBeVisible();
     expect(canvas.getByText('tim@outlook.com')).toBeVisible();
+  },
+};
+
+export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
+  args: {
+    routeParams: { ':nativeAccountAppId': 'outlook' },
+  },
+  beforeEach: async () => {
+    await seedAccountGroupsStory();
+    jotaiStore.set(isMicrosoftCalendarEnabledState.atom, false);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByTestId('tab-emails', undefined, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(canvas.queryByTestId('tab-calendar')).not.toBeInTheDocument();
   },
 };
 

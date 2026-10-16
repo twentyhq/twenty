@@ -2,6 +2,7 @@ import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -22,24 +23,39 @@ type SettingsTableRowsSkeletonLoaderColumn = {
 
 type SettingsTableRowsSkeletonLoaderProps = {
   columns: SettingsTableRowsSkeletonLoaderColumn[];
-  gridTemplateColumns?: string;
-  gridAutoColumns?: string;
-  rowCount?: number;
+  gridTemplateColumns: string;
+};
+
+const renderSkeletonCellContent = (
+  column: SettingsTableRowsSkeletonLoaderColumn,
+  isFirstColumn: boolean,
+  labelWidth: number,
+): ReactNode => {
+  if (isFirstColumn) {
+    return (
+      <>
+        <SkeletonLine width={ICON_SIZE} height={ICON_SIZE} />
+        <SkeletonLine width={labelWidth} height={SKELETON_HEIGHT_SIZES.xs} />
+      </>
+    );
+  }
+
+  if (isDefined(column.width)) {
+    return (
+      <SkeletonLine width={column.width} height={SKELETON_HEIGHT_SIZES.xs} />
+    );
+  }
+
+  return null;
 };
 
 export const SettingsTableRowsSkeletonLoader = ({
   columns,
   gridTemplateColumns,
-  gridAutoColumns,
-  rowCount = SKELETON_ROW_LABEL_WIDTHS.length,
 }: SettingsTableRowsSkeletonLoaderProps) => (
   <StyledRows>
-    {Array.from({ length: rowCount }, (_, rowIndex) => (
-      <TableRow
-        key={rowIndex}
-        gridTemplateColumns={gridTemplateColumns}
-        gridAutoColumns={gridAutoColumns}
-      >
+    {SKELETON_ROW_LABEL_WIDTHS.map((labelWidth) => (
+      <TableRow key={labelWidth} gridTemplateColumns={gridTemplateColumns}>
         {columns.map((column, columnIndex) => (
           <TableCell
             key={columnIndex}
@@ -48,24 +64,7 @@ export const SettingsTableRowsSkeletonLoader = ({
             minWidth="0"
             overflow="hidden"
           >
-            {columnIndex === 0 ? (
-              <>
-                <SkeletonLine width={ICON_SIZE} height={ICON_SIZE} />
-                <SkeletonLine
-                  width={
-                    SKELETON_ROW_LABEL_WIDTHS[
-                      rowIndex % SKELETON_ROW_LABEL_WIDTHS.length
-                    ]
-                  }
-                  height={SKELETON_HEIGHT_SIZES.xs}
-                />
-              </>
-            ) : isDefined(column.width) ? (
-              <SkeletonLine
-                width={column.width}
-                height={SKELETON_HEIGHT_SIZES.xs}
-              />
-            ) : null}
+            {renderSkeletonCellContent(column, columnIndex === 0, labelWidth)}
           </TableCell>
         ))}
       </TableRow>

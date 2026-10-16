@@ -56,7 +56,6 @@ export const SettingsNativeAccountApp = () => {
       )
     : [];
 
-  // Tabs follow the app's capabilities, not the loaded accounts, so the bar never shifts
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconSettings },
     app?.hasEmails
