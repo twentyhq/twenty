@@ -273,11 +273,14 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const [thread] = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `UPDATE ${table('agentChatThread')}
-           SET "workspaceMemberId" = $2,
-               "lastActivityAt" = COALESCE("lastActivityAt", clock_timestamp())
-           WHERE id = $1 AND "workspaceMemberId" IS NULL
-           RETURNING *`,
+          `WITH claimed_thread AS (
+             UPDATE ${table('agentChatThread')}
+             SET "workspaceMemberId" = $2,
+                 "lastActivityAt" = COALESCE("lastActivityAt", clock_timestamp())
+             WHERE id = $1 AND "workspaceMemberId" IS NULL
+             RETURNING *
+           )
+           SELECT * FROM claimed_thread`,
           [args.threadId, authContext.workspaceMemberId],
         );
 
