@@ -1,5 +1,6 @@
 import { IconChevronDown, IconX } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { InputGroup } from '@ui/primitives/input/InputGroup/InputGroup';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
 import { Autocomplete } from '../Autocomplete';
@@ -33,7 +34,7 @@ export const AutocompleteGroupedExample = () => (
       itemToStringValue={(city) => city.name}
       autoHighlight="always"
     >
-      <Autocomplete.InputGroup style={{ gap: 4 }}>
+      <Autocomplete.InputGroup render={<InputGroup />}>
         <Autocomplete.Input id="grouped-city" placeholder="Search cities" />
         <Autocomplete.Clear
           aria-label="Clear city"

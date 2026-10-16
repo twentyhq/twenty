@@ -44,6 +44,7 @@ runComponentConformance({
   refInstanceOf: HTMLInputElement,
   wrapper: RootWrapper,
   ownClassName: inputStyles.input,
+  renderPropKeepsOwnClassName: false,
   renderPropTagName: 'input',
 });
 runComponentConformance({
