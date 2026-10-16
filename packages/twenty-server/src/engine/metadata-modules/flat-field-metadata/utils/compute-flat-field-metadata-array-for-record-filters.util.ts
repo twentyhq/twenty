@@ -2,18 +2,20 @@ import { isDefined, type RecordFilter } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
-export const computeFlatFieldMetadataArrayForRecordFilters = ({
+export const computeFlatFieldMetadataArrayForRecordFilters = <
+  TFlatFieldMetadata extends OrmFlatFieldMetadata,
+>({
   flatFieldMetadataMaps,
   recordFilters,
 }: {
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<TFlatFieldMetadata>;
   recordFilters: Pick<
     RecordFilter,
     'fieldMetadataId' | 'relationTargetFieldMetadataId'
   >[];
-}): FlatFieldMetadata[] => {
+}): TFlatFieldMetadata[] => {
   const recordFilterFieldMetadataIds = new Set(
     recordFilters
       .flatMap(({ fieldMetadataId, relationTargetFieldMetadataId }) => [

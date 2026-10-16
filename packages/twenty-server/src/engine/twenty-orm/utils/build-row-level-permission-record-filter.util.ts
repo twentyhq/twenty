@@ -20,6 +20,7 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { computeFieldMetadataItemsForRecordFilters } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-field-metadata-items-for-record-filters.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -37,6 +38,7 @@ type BuildRecordFilterForRoleArgs = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   objectMetadata: FlatObjectMetadata;
   roleId: string;
   workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
@@ -94,6 +96,7 @@ const buildRecordFilterForRole = ({
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
   objectMetadata,
   roleId,
   workspaceMember,
@@ -215,9 +218,11 @@ const buildRecordFilterForRole = ({
     return computeRecordGqlOperationFilter({
       recordFilters,
       recordFilterGroups,
-      fieldMetadataItems: Object.values(
-        flatFieldMetadataMaps.byUniversalIdentifier,
-      ).filter(isDefined),
+      fieldMetadataItems: computeFieldMetadataItemsForRecordFilters({
+        recordFilters,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      }),
       filterValueDependencies: {
         currentWorkspaceMemberId: workspaceMember?.id,
       },
@@ -283,9 +288,11 @@ const buildRecordFilterForRole = ({
     recordFilterGroups: recordFilterGroups.filter(
       (recordFilterGroup) => !isInUnsatisfiableGroup(recordFilterGroup.id),
     ),
-    fieldMetadataItems: Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    ).filter(isDefined),
+    fieldMetadataItems: computeFieldMetadataItemsForRecordFilters({
+      recordFilters,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    }),
     filterValueDependencies: {
       currentWorkspaceMemberId: workspaceMember?.id,
     },
