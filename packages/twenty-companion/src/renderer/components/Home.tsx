@@ -1,10 +1,10 @@
-import { Section } from '@ui/components/layout/Section/Section';
+import { Section } from 'twenty-ui/components/layout';
 import { useNow } from '../hooks/useNow';
 import { MeetingRow } from './MeetingRow';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
-import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { Card } from '@ui/primitives/surfaces/Card/Card';
+import { THEME_COMMON } from 'twenty-ui/theme';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { CalendarDayLabel } from './CalendarDayLabel';
 import { useState } from 'react';
 import {
@@ -13,7 +13,7 @@ import {
   IconChevronRight,
 } from 'twenty-ui/icon';
 import { getUpcomingMeetings } from '../../shared/utils/getUpcomingMeetings';
-import { Button } from '@ui/primitives/input/Button/Button';
+import { Button } from 'twenty-ui/primitives/input';
 import { type ActionProps } from '../types/ActionProps';
 import { RecordingList } from './RecordingList';
 
