@@ -58,9 +58,13 @@ export const StyledControlContainer = styled.div<{
       ? themeCssVariables.font.color.tertiary
       : textAccent === 'default'
         ? themeCssVariables.font.color.primary
-        : themeCssVariables.font.color.tertiary};
+        : themeCssVariables.font.color.light};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: grid;
+  font-weight: ${({ textAccent }) =>
+    textAccent === 'placeholder'
+      ? themeCssVariables.font.weight.medium
+      : 'inherit'};
 
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: ${({ hasIcon }) =>

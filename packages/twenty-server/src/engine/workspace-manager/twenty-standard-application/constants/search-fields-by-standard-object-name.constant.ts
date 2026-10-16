@@ -10,6 +10,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   agentTurn: [],
   agentMessage: [],
   agentMessagePart: [],
+  agentMessageReaction: [],
   attachment: [{ name: 'name', type: FieldMetadataType.TEXT }],
   blocklist: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   calendarChannelEventAssociation: [

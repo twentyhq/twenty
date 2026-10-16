@@ -11,6 +11,7 @@ type AuthPrincipalRequest = {
   user?: unknown;
   apiKey?: unknown;
   application?: Pick<FlatApplication, 'sourceType'> | null;
+  agentId?: string;
   tokenType?: JwtTokenTypeEnum;
   impersonationContext?: RawAuthContext['impersonationContext'];
 };
@@ -26,7 +27,8 @@ const carriesUserWithoutOtherPrincipal = (
 ): boolean =>
   isDefined(request.user) &&
   !isDefined(request.apiKey) &&
-  !isDefined(request.application);
+  !isDefined(request.application) &&
+  !isDefined(request.agentId);
 
 export const classifyAuthPrincipal = (
   request: AuthPrincipalRequest,
@@ -36,10 +38,11 @@ export const classifyAuthPrincipal = (
       return isDefined(request.apiKey) &&
         !isDefined(request.user) &&
         !isDefined(request.application) &&
+        !isDefined(request.agentId) &&
         !isDefined(request.impersonationContext)
         ? { kind: 'apiKey' }
         : undefined;
-    case JwtTokenTypeEnum.APPLICATION_ACCESS:
+    case JwtTokenTypeEnum.APPLICATION_ACCESS: {
       if (
         !isDefined(request.application) ||
         isDefined(request.apiKey) ||
@@ -48,12 +51,21 @@ export const classifyAuthPrincipal = (
         return undefined;
       }
 
-      return {
-        kind: isOAuthOnlyApplication(request.application)
-          ? 'oauthClient'
-          : 'application',
-        variant: isDefined(request.user) ? 'withUser' : 'withoutUser',
-      };
+      const variant = isDefined(request.user) ? 'withUser' : 'withoutUser';
+
+      if (!isOAuthOnlyApplication(request.application)) {
+        return {
+          kind: 'application',
+          variant,
+          withAgent: isDefined(request.agentId),
+        };
+      }
+
+      // Agent runs never act through an OAuth client, so its tokens carry no agent
+      return isDefined(request.agentId)
+        ? undefined
+        : { kind: 'oauthClient', variant };
+    }
     case JwtTokenTypeEnum.ACCESS:
       return carriesUserWithoutOtherPrincipal(request)
         ? {

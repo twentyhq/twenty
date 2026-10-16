@@ -6,6 +6,7 @@ import { SkillTag } from '@/skill-suggestion/extensions/SkillTag';
 
 export const AI_CHAT_EDITOR_PROFILE = {
   chrome: 'document',
+  variant: 'app',
   minHeight: 0,
   enableFullScreen: false,
   buildExtensions: () => [

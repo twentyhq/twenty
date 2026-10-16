@@ -50,9 +50,11 @@ export class NavigationMenuItemToolProvider implements ToolProvider {
   }
 
   private buildToolSet(context: ToolProviderContext): ToolSet {
-    return this.navigationMenuItemToolService.generateNavigationMenuItemTools(
-      context.workspaceId,
-      context.userWorkspaceId,
-    );
+    return this.navigationMenuItemToolService.generateNavigationMenuItemTools({
+      workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
+      applicationId: context.application?.id,
+      agentId: context.agentId,
+    });
   }
 }

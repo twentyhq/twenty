@@ -1,12 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
-import { useId } from 'react';
-import {
-  SegmentedControl,
-  type SegmentedControlOption,
-} from 'twenty-ui/components/input';
 import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
 
-import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 
 type EmailAlignmentInputProps = {
   label: string;
@@ -20,27 +17,32 @@ export const EmailAlignmentInput = ({
   onChange,
 }: EmailAlignmentInputProps) => {
   const { t } = useLingui();
-  const labelId = useId();
-
-  const alignmentOptions: SegmentedControlOption[] = [
-    { value: 'left', startIcon: <IconAlignLeft />, 'aria-label': t`Left` },
-    {
-      value: 'center',
-      startIcon: <IconAlignCenter />,
-      'aria-label': t`Center`,
-    },
-    { value: 'right', startIcon: <IconAlignRight />, 'aria-label': t`Right` },
-  ];
 
   return (
-    <div>
-      <StyledEmailFieldLabel id={labelId}>{label}</StyledEmailFieldLabel>
+    <FormFieldInputContainer>
+      <Field.Label>{label}</Field.Label>
       <SegmentedControl
-        aria-labelledby={labelId}
-        options={alignmentOptions}
+        aria-label={label}
         value={value}
         onValueChange={onChange}
+        options={[
+          {
+            value: 'left',
+            startIcon: <IconAlignLeft />,
+            'aria-label': t`Align left`,
+          },
+          {
+            value: 'center',
+            startIcon: <IconAlignCenter />,
+            'aria-label': t`Align center`,
+          },
+          {
+            value: 'right',
+            startIcon: <IconAlignRight />,
+            'aria-label': t`Align right`,
+          },
+        ]}
       />
-    </div>
+    </FormFieldInputContainer>
   );
 };

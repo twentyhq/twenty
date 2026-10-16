@@ -15,6 +15,7 @@ type FormAddressFieldInputProps = {
   onChange: (value: FieldAddressValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  subFieldPlaceholders?: Partial<Record<keyof FieldAddressDraftValue, string>>;
 };
 
 export const FormAddressFieldInput = ({
@@ -23,6 +24,7 @@ export const FormAddressFieldInput = ({
   onChange,
   readonly,
   VariablePicker,
+  subFieldPlaceholders,
 }: FormAddressFieldInputProps) => {
   const handleChange =
     (field: keyof FieldAddressDraftValue) => (updatedAddressPart: string) => {
@@ -50,7 +52,9 @@ export const FormAddressFieldInput = ({
           onChange={handleChange('addressStreet1')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder={t`Street address`}
+          placeholder={
+            subFieldPlaceholders?.addressStreet1 ?? t`Street address`
+          }
         />
         <FormTextFieldInput
           label={t`Address 2`}
@@ -58,7 +62,9 @@ export const FormAddressFieldInput = ({
           onChange={handleChange('addressStreet2')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder={t`Street address 2`}
+          placeholder={
+            subFieldPlaceholders?.addressStreet2 ?? t`Street address 2`
+          }
         />
         <FormTextFieldInput
           label={t`City`}
@@ -66,7 +72,7 @@ export const FormAddressFieldInput = ({
           onChange={handleChange('addressCity')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder={t`City`}
+          placeholder={subFieldPlaceholders?.addressCity ?? t`City`}
         />
         <FormTextFieldInput
           label={t`State`}
@@ -74,7 +80,7 @@ export const FormAddressFieldInput = ({
           onChange={handleChange('addressState')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder={t`State`}
+          placeholder={subFieldPlaceholders?.addressState ?? t`State`}
         />
         <FormTextFieldInput
           label={t`Post Code`}
@@ -82,7 +88,7 @@ export const FormAddressFieldInput = ({
           onChange={handleChange('addressPostcode')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder={t`Post Code`}
+          placeholder={subFieldPlaceholders?.addressPostcode ?? t`Post Code`}
         />
         <FormCountrySelectInput
           label={t`Country`}
