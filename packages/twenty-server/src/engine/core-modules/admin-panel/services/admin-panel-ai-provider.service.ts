@@ -2,10 +2,12 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AdminPanelExceptionCode } from 'src/engine/core-modules/admin-panel/admin-panel.exception';
+import {
+  AdminPanelException,
+  AdminPanelExceptionCode,
+} from 'src/engine/core-modules/admin-panel/admin-panel.exception';
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-organization-key.constant';
 import {
   EnterpriseException,
@@ -62,7 +64,6 @@ export class AdminPanelAiProviderService {
     const masked: Record<string, Record<string, unknown>> = {};
 
     for (const [key, config] of Object.entries(providers)) {
-      // A same-named AI_PROVIDERS entry replaces the catalog provider, so it is no longer built in
       const isCatalog =
         catalogNames.has(key) && !isDefined(customProviders[key]);
       const rawConfig = isCatalog ? rawCatalog[key] : undefined;
@@ -107,11 +108,10 @@ export class AdminPanelAiProviderService {
       this.aiModelRegistryService.getCatalogProviderNames().has(providerName)
     ) {
       throw new UserInputError(
-        `Provider "${providerName}" is built in and cannot be added as a custom provider`,
-        {
-          subCode: AdminPanelExceptionCode.BUILT_IN_AI_PROVIDER_NAME,
-          userFriendlyMessage: msg`A built-in provider already uses this name. Choose another label.`,
-        },
+        new AdminPanelException(
+          `Provider "${providerName}" is built in and cannot be added as a custom provider`,
+          AdminPanelExceptionCode.BUILT_IN_AI_PROVIDER_NAME,
+        ),
       );
     }
 
