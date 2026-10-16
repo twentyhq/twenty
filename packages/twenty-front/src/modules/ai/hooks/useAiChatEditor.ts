@@ -141,7 +141,8 @@ export const useAiChatEditor = () => {
           ...(aiModels.length > 0
             ? getAgentChatAssistantMentionSearchResults({
                 query,
-                objectLabel: t`Assistant`,
+                objectLabelSingular: t`Assistant`,
+                objectLabelPlural: t`Teammates`,
               })
             : []),
           ...searchWorkspaceMembers(query),

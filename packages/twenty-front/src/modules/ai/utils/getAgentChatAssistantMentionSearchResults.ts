@@ -5,18 +5,20 @@ import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 
 export const getAgentChatAssistantMentionSearchResults = ({
   query,
-  objectLabel,
+  objectLabelSingular,
+  objectLabelPlural,
 }: {
   query: string;
-  objectLabel: string;
+  objectLabelSingular: string;
+  objectLabelPlural: string;
 }): MentionSearchResult[] =>
   AGENT_CHAT_ASSISTANT_NAME.toLowerCase().includes(query.trim().toLowerCase())
     ? [
         {
           recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
           objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
-          objectLabelSingular: objectLabel,
-          objectLabelPlural: objectLabel,
+          objectLabelSingular,
+          objectLabelPlural,
           label: AGENT_CHAT_ASSISTANT_NAME,
           imageUrl: '',
         },
