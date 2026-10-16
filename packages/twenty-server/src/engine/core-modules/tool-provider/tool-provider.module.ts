@@ -37,7 +37,7 @@ import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-fie
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
+import { WebhookToolsModule } from 'src/engine/metadata-modules/webhook/tools/webhook-tools.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
@@ -67,7 +67,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     NavigationMenuItemModule,
-    WebhookModule,
+    WebhookToolsModule,
     RoleModule,
     UserRoleModule,
     ValidationRuleModule,
