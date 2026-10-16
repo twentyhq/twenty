@@ -110,6 +110,41 @@ describe('classifyAgentChatTurnOutcome', () => {
   });
 });
 
+describe('classifyAgentChatTurnOutcome for a background run', () => {
+  const runTurn = {
+    hasText: false,
+    isAborted: false,
+    isAwaitingUserAnswer: false,
+    isSilent: false,
+    isTextReplyRequired: false,
+  };
+
+  it('completes a run that ends on tool calls without writing a reply', () => {
+    expect(
+      classifyAgentChatTurnOutcome({ ...runTurn, stopReason: null }),
+    ).toEqual({ kind: 'completed', outcome: 'answered' });
+  });
+
+  it('still fails a run that ran out of credits before writing anything', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...runTurn,
+        stopReason: 'workspaceAllowance',
+      }),
+    ).toEqual({ kind: 'failed', failurePhase: 'credits_exhausted' });
+  });
+
+  it('fails a run that ran out of credits even after writing a reply', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...runTurn,
+        hasText: true,
+        stopReason: 'workspaceAllowance',
+      }),
+    ).toEqual({ kind: 'failed', failurePhase: 'credits_exhausted' });
+  });
+});
+
 describe('resolveSupersededTurnOutcome', () => {
   it('keeps a credits failure rather than filing it as a cancellation', () => {
     expect(

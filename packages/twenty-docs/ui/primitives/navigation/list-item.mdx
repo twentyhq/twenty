@@ -10,10 +10,21 @@ import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
 `ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default for passive content. Use [ListItemButton](/ui/components/navigation/list-item-button) for ordinary action rows. Compose `ListItem` with an anchor for navigation or with a custom semantic owner when needed. Use [Dropdown](/ui/components/navigation/dropdown) or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
 
 <StoryEmbed
-  storyId="ui-navigation-listitem--default"
+  storyId="ui-navigation-listitem--display"
   title="ListItem example"
-  height={240}
+  height={100}
 />
+
+## Usage
+
+```tsx
+import { IconBell } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const NotificationRow = () => (
+  <ListItem startIcon={<IconBell />}>Notifications</ListItem>
+);
+```
 
 ## Anatomy
 
@@ -71,7 +82,7 @@ A custom button owner can still compose `ListItem` through `render`. That owner 
 <StoryEmbed
   storyId="ui-navigation-listitem--button-owner"
   title="Custom button composition"
-  height={160}
+  height={100}
 />
 
 ## Navigation and explicit links
@@ -91,7 +102,7 @@ export const DocumentationLink = () => (
 <StoryEmbed
   storyId="ui-navigation-listitem--link-owner"
   title="Link row"
-  height={160}
+  height={100}
 />
 
 String labels stay text, including URL-shaped strings. ListItem does not create links. To link part of a non-interactive row, supply an anchor as caller-owned content. Keep that row as a `div` to avoid nested links or buttons. String labels retain their truncation and overflow tooltip; custom content can use [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) with an explicit rendered anchor.
@@ -122,9 +133,9 @@ export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
 ```
 
 <StoryEmbed
-  storyId="ui-components-dropdown--documentation"
+  storyId="ui-components-dropdown--display"
   title="Dropdown item owner"
-  height={260}
+  height={420}
 />
 
 ## Native event policy
@@ -192,7 +203,7 @@ Place an [Avatar](/ui/primitives/data-display/avatar) in `startIcon` to identify
 <StoryEmbed
   storyId="ui-navigation-listitem-picker--single-selection"
   title="Single selection rows"
-  height={260}
+  height={170}
 />
 
 ```tsx
@@ -230,7 +241,7 @@ Compose [Tag](/ui/primitives/data-display/tag) as the row content for tagged val
 <StoryEmbed
   storyId="ui-navigation-listitem-picker--multiple-selection"
   title="Multiple selection rows"
-  height={260}
+  height={170}
 />
 
 ```tsx

@@ -4,11 +4,8 @@ export const isConnectedAccountUsableByCaller = ({
   connectedAccount,
   userWorkspaceId,
 }: {
-  connectedAccount: Pick<
-    ConnectedAccountEntity,
-    'visibility' | 'userWorkspaceId'
-  >;
+  connectedAccount: Pick<ConnectedAccountEntity, 'scope' | 'userWorkspaceId'>;
   userWorkspaceId: string;
 }): boolean =>
-  connectedAccount.visibility === 'workspace' ||
+  connectedAccount.scope === 'WORKSPACE' ||
   connectedAccount.userWorkspaceId === userWorkspaceId;

@@ -10,11 +10,12 @@ import {
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
+  GroupedCatalog,
 } from '@ui/testing';
 import { Button } from '../Button';
 import { type ButtonProps } from '../types/ButtonProps';
-import { type ButtonVariant } from '../types/ButtonVariant';
 import { type ButtonColor } from '../types/ButtonColor';
+import { type ButtonVariant } from '../types/ButtonVariant';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Input/Button/Button',
@@ -24,9 +25,10 @@ const meta: Meta<typeof Button> = {
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-export const Default: Story = { decorators: [ComponentDecorator] };
+export const Display: Story = { decorators: [ComponentDecorator] };
+
 export const Keyboard: Story = {
-  ...Default,
+  ...Display,
   args: { onClick: fn(), onFocus: fn(), onBlur: fn() },
   play: async ({ canvasElement, args }) => {
     const button = within(canvasElement).getByRole('button');
@@ -39,7 +41,7 @@ export const Keyboard: Story = {
   },
 };
 export const Disabled: Story = {
-  ...Default,
+  ...Display,
   args: { disabled: true, onClick: fn() },
   play: async ({ canvasElement, args }) => {
     const button = within(canvasElement).getByRole('button');
@@ -88,7 +90,7 @@ const LoadingExample = () => {
   );
 };
 export const Loading: Story = {
-  ...Default,
+  ...Display,
   render: () => <LoadingExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -106,7 +108,7 @@ export const Loading: Story = {
   },
 };
 export const LoadingAtStart: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'Creating record',
     startIcon: <IconPlus />,
@@ -130,7 +132,7 @@ export const LoadingAtStartInteraction: Story = {
   },
 };
 export const LoadingAtEnd: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'Installing (42%)',
     startIcon: <IconDownload />,
@@ -152,7 +154,7 @@ export const LoadingAtEndInteraction: Story = {
   },
 };
 export const NativeForm: Story = {
-  ...Default,
+  ...Display,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { onClick: fn() },
   render: (args) => (
@@ -185,7 +187,7 @@ export const NativeForm: Story = {
   },
 };
 export const LinkButton: Story = {
-  ...Default,
+  ...Display,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     variant: 'link',
@@ -201,7 +203,7 @@ export const LinkButton: Story = {
   },
 };
 export const DisabledLink: Story = {
-  ...Default,
+  ...Display,
   args: {
     variant: 'link',
     href: '#disabled-destination',
@@ -225,7 +227,7 @@ export const CustomRender: Story = {
   },
 };
 export const Icons: Story = {
-  ...Default,
+  ...Display,
   args: {
     startIcon: <IconPlus />,
     endIcon: <IconArrowRight />,
@@ -233,7 +235,7 @@ export const Icons: Story = {
   },
 };
 export const Truncation: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'A long button label that must remain inside its container',
     startIcon: <IconPlus />,
@@ -246,48 +248,80 @@ export const Truncation: Story = {
   },
 };
 
-const CATALOG_STATES: Record<string, Partial<ButtonProps>> = {
-  default: {},
-  small: { size: 'sm' },
-  shortcut: { shortcut: ['H'] },
-  disabled: { disabled: true },
-  loading: { loading: true },
-};
-export const Catalog: CatalogStory<Story, typeof Button> = {
-  decorators: [CatalogDecorator],
-  args: { children: 'Button' },
+const BUTTON_CATALOG_GROUPS: {
+  label: string;
+  examples: { label: string; props: Partial<ButtonProps> }[];
+}[] = [
+  {
+    label: 'Variants',
+    examples: [
+      { label: 'Solid', props: { variant: 'solid' } },
+      { label: 'Outline', props: { variant: 'outline' } },
+      { label: 'Soft', props: { variant: 'soft' } },
+      { label: 'Ghost', props: { variant: 'ghost' } },
+      { label: 'Link', props: { variant: 'link' } },
+    ],
+  },
+  {
+    label: 'Colors',
+    examples: [
+      { label: 'Neutral', props: { color: 'neutral', variant: 'solid' } },
+      { label: 'Accent', props: { color: 'accent', variant: 'solid' } },
+      { label: 'Danger', props: { color: 'danger', variant: 'solid' } },
+      { label: 'Success', props: { color: 'success', variant: 'solid' } },
+    ],
+  },
+  {
+    label: 'Sizes',
+    examples: [
+      { label: 'Small', props: { size: 'sm' } },
+      { label: 'Medium', props: { size: 'md' } },
+    ],
+  },
+  {
+    label: 'States',
+    examples: [
+      { label: 'Ready', props: {} },
+      { label: 'Disabled', props: { disabled: true } },
+      { label: 'Loading', props: { loading: true } },
+    ],
+  },
+];
+
+export const Catalog: Story = {
+  decorators: [ComponentDecorator],
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
-    catalog: {
-      dimensions: [
-        {
-          name: 'state',
-          values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state] ?? {},
-        },
-        {
-          name: 'color',
-          values: ['neutral', 'accent', 'danger', 'success'],
-          props: (color: ButtonColor) => ({ color }),
-        },
-        {
-          name: 'variant',
-          values: ['solid', 'outline', 'soft', 'ghost', 'link'],
-          props: (variant: ButtonVariant) => ({ variant }),
-        },
-      ],
-      options: { elementContainer: { style: { width: 100 } } },
-    },
+    container: { width: 640 },
   },
+  render: () => (
+    <GroupedCatalog
+      groups={BUTTON_CATALOG_GROUPS}
+      renderExample={({ label, props }) => (
+        <>
+          <Text>{label}</Text>
+          <Button
+            variant={props.variant}
+            color={props.color}
+            size={props.size}
+            disabled={props.disabled}
+            loading={props.loading}
+          >
+            Save changes
+          </Button>
+        </>
+      )}
+    />
+  ),
 };
-export const CatalogDark: CatalogStory<Story, typeof Button> = {
+export const CatalogDark: Story = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
 
 export const NativeButtonWithHref: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'Open records',
     nativeButton: true,
@@ -319,7 +353,7 @@ export const NativeButtonWithHref: Story = {
 };
 
 export const CustomButton: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'Open records',
     nativeButton: false,
@@ -342,7 +376,7 @@ export const CustomButton: Story = {
 };
 
 export const NativeAnchorAttributes: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'Open records',
     href: '#records-download',
@@ -382,7 +416,7 @@ export const NativeAnchorAttributes: Story = {
 const renderedLinkClick = fn();
 
 export const ComposedNavigation: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'Open records',
     nativeButton: false,
@@ -412,7 +446,7 @@ export const ComposedNavigation: Story = {
 };
 
 export const RenderCallback: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'Open records',
     nativeButton: false,
@@ -461,4 +495,45 @@ export const CustomButtonKeyboardCancellation: Story = {
     await userEvent.click(button);
     await expect(args.onClick).toHaveBeenCalledOnce();
   },
+};
+
+const VISUAL_REGRESSION_STATES: Record<string, Partial<ButtonProps>> = {
+  default: {},
+  small: { size: 'sm' },
+  shortcut: { shortcut: ['H'] },
+  disabled: { disabled: true },
+  loading: { loading: true },
+};
+export const VisualRegression: CatalogStory<Story, typeof Button> = {
+  tags: ['!autodocs'],
+  decorators: [CatalogDecorator],
+  args: { children: 'Button' },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: Object.keys(VISUAL_REGRESSION_STATES),
+          props: (state: string) => VISUAL_REGRESSION_STATES[state] ?? {},
+        },
+        {
+          name: 'color',
+          values: ['neutral', 'accent', 'danger', 'success'],
+          props: (color: ButtonColor) => ({ color }),
+        },
+        {
+          name: 'variant',
+          values: ['solid', 'outline', 'soft', 'ghost', 'link'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+      options: { elementContainer: { style: { width: 100 } } },
+    },
+  },
+};
+export const VisualRegressionDark: CatalogStory<Story, typeof Button> = {
+  ...VisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
 };

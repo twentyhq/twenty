@@ -301,9 +301,10 @@ type AppConnection {
   id: ID!
   name: String!
   providerName: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]!
   userWorkspaceId: String!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
   workspaceMemberId: String
 }
 
@@ -403,10 +404,11 @@ type ApplicationConnectedAccountDTO {
   lastSignedInAt: DateTime
   name: String
   provider: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]
   updatedAt: DateTime!
   userWorkspaceId: UUID!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
 }
 
 type ApplicationConnectionProvider {
@@ -416,6 +418,7 @@ type ApplicationConnectionProvider {
   logoUrl: String
   name: String!
   oauth: ApplicationConnectionProviderOAuthConfig
+  scope: ConnectionProviderScope!
   type: String!
 }
 
@@ -1235,10 +1238,16 @@ type ConnectedAccountPublicDTO {
   lastSignedInAt: DateTime
   name: String
   provider: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]
   updatedAt: DateTime!
   userWorkspaceId: UUID!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
+}
+
+enum ConnectedAccountScope {
+  USER
+  WORKSPACE
 }
 
 type ConnectedImapSmtpCaldavAccount {
@@ -1258,6 +1267,11 @@ input ConnectionParametersInput {
   password: String
   port: Float!
   username: String
+}
+
+enum ConnectionProviderScope {
+  USER
+  WORKSPACE
 }
 
 input CreateAgentInput {
@@ -2587,8 +2601,9 @@ type LineChartSeries {
 
 input ListAppConnectionsInput {
   providerName: String
+  scope: ConnectedAccountScope
   userWorkspaceId: String
-  visibility: String
+  visibility: String @deprecated(reason: "Use scope instead.")
 }
 
 input ListAppMessageChannelsInput {
@@ -4182,6 +4197,7 @@ input RunAgentInput {
   responseFormat: JSON
   runAsWorkspaceMemberId: UUID
   thread: RunAgentThreadInput
+  waitForCompletion: Boolean
 }
 
 input RunAgentMessageAttachmentInput {

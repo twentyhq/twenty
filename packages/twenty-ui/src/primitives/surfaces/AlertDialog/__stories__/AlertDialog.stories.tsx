@@ -21,6 +21,11 @@ const meta: Meta<typeof AlertDialogExample> = {
 export default meta;
 type Story = StoryObj<typeof AlertDialogExample>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { defaultOpen: false },
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   args: { defaultOpen: true },
@@ -54,11 +59,6 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  args: { defaultOpen: false },
-};
-
 export const Small: Story = {
   ...Default,
   args: { defaultOpen: true, size: 'sm' },
@@ -76,7 +76,7 @@ export const Fullscreen: Story = {
   args: { defaultOpen: true, size: 'fullscreen' },
 };
 
-export const Catalog: Story = {
+export const WithRecordContext: Story = {
   ...Default,
   args: {
     defaultOpen: true,
@@ -84,8 +84,8 @@ export const Catalog: Story = {
   },
 };
 
-export const CatalogDark: Story = {
-  ...Catalog,
+export const WithRecordContextDark: Story = {
+  ...WithRecordContext,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };

@@ -4,16 +4,58 @@ description: Choose one or more values from a popup list of options.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import SelectReference from '/snippets/ui/generated/input/select.mdx';
 
 Use `Select` for a form value chosen from a list. [Dropdown](/ui/components/navigation/dropdown) remains the main higher-level API for menus, pickers, panels, and pages that combine those workflows.
 
 <StoryEmbed
-  storyId="ui-input-select--documentation"
+  storyId="ui-input-select--display"
   title="Select example"
-  height={400}
+  height={240}
 />
+
+## Usage
+
+### Uncontrolled state
+
+Use `defaultValue` to set the initial priority. The select owns subsequent selection changes.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => (
+  <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value placeholder="Choose a priority" />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          {PRIORITIES.map(({ value, label }) => (
+            <Select.Item key={value} value={value}>
+              <Select.ItemText>{label}</Select.ItemText>
+              <Select.ItemIndicator />
+            </Select.Item>
+          ))}
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+Supply `items` on `Root` so `Value` renders the selected item's label; without it, the trigger shows the raw value. The selected value can be `null` when nothing is selected.
 
 ## Anatomy
 
@@ -62,47 +104,6 @@ Select.Root
 | `Separator`                        | Separates groups visually.                                                    |
 
 `Portal`, `List`, `Backdrop`, arrows, and indicators are optional. Use `Positioner` around `Popup` for positioning, including when you render the popup inline without a portal.
-
-## Uncontrolled state
-
-Use `defaultValue` to set the initial priority. The select owns subsequent selection changes.
-
-```tsx
-import { Select } from 'twenty-ui/primitives/input';
-
-const PRIORITIES = [
-  { value: 'low', label: 'Low' },
-  { value: 'normal', label: 'Normal' },
-  { value: 'high', label: 'High' },
-];
-
-export const PrioritySelect = () => (
-  <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
-    <Select.Trigger aria-label="Priority">
-      <Select.Value placeholder="Choose a priority" />
-      <Select.Icon />
-    </Select.Trigger>
-    <Select.Portal>
-      <Select.Positioner
-        align="start"
-        sideOffset={8}
-        alignItemWithTrigger={false}
-      >
-        <Select.Popup>
-          {PRIORITIES.map(({ value, label }) => (
-            <Select.Item key={value} value={value}>
-              <Select.ItemText>{label}</Select.ItemText>
-              <Select.ItemIndicator />
-            </Select.Item>
-          ))}
-        </Select.Popup>
-      </Select.Positioner>
-    </Select.Portal>
-  </Select.Root>
-);
-```
-
-Supply `items` on `Root` so `Value` renders the selected item's label; without it, the trigger shows the raw value. The selected value can be `null` when nothing is selected.
 
 ## Controlled state
 
@@ -403,7 +404,7 @@ export const PositionedPrioritySelect = () => {
 <StoryEmbed
   storyId="ui-input-select-portals--positioning-documentation"
   title="Select with a custom anchor and scrollable list"
-  height={440}
+  height={480}
 />
 
 ## Native forms and callback details

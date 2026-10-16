@@ -108,6 +108,27 @@ export class WorkflowWaitingStepWorkspaceService
       : 'GONE';
   }
 
+  async onSuspended({
+    workspaceId,
+    caller,
+    threadId,
+    summary,
+  }: Parameters<
+    NonNullable<AgentRunCallerHandler['onSuspended']>
+  >[0]): Promise<void> {
+    const { workflowRunId, stepId } = workflowStepCallerRefSchema.parse(
+      caller.ref,
+    );
+
+    await this.workflowRunStepLogService.setAiAgentStepLog({
+      workflowRunId,
+      workspaceId,
+      stepId,
+      summary,
+      threadId,
+    });
+  }
+
   // The run job ends the step with the outcome through the executor's usual path, so a failure is
   // retried or continues on failure like any failed step
   async onOutcome({
