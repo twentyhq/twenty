@@ -9,6 +9,7 @@
 - **A per-meeting on/off switch**
 - **Customizable in-meeting recording notices**
 - **AI meeting summaries**
+- **Call participants on call recording pages**
 - **Built for AI & automation**
 
 ## 💳 Billing
@@ -35,6 +36,15 @@ sets it to On when it actually schedules the recorder for that meeting, which
 happens once the meeting is within the seven-day scheduling window. Set it to
 Off to skip a meeting. Past meetings the recorder never joined simply stay
 blank.
+
+## 👥 Call participants
+
+A **Call participants** widget is added to the Home tab of call recording
+pages. It reads the meeting the recording belongs to, so nothing is copied onto
+the recording, and shows the meeting's attendees. People in your CRM open their
+record when clicked; workspace members are shown by name. Attendees that match
+no one are hidden unless the `CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES` app
+variable is `true`.
 
 ## 🗓️ Pausing the recorder
 
