@@ -3285,6 +3285,18 @@ type Mutation {
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: String!): VerifyTwoFactorAuthenticationMethod!
 }
 
+input MyConnectedAccountsFilterInput {
+  """
+  Keeps only the app connections with this scope; accounts from other providers are not affected
+  """
+  appConnectionScope: ConnectedAccountScope
+
+  """
+  true keeps only the accounts the caller owns; false, null or omitted also keeps the workspace-shared accounts of other members
+  """
+  ownedByCaller: Boolean
+}
+
 type NativeModelCapabilities {
   twitterSearch: Boolean
   webSearch: Boolean
@@ -3909,7 +3921,7 @@ type Query {
   mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
   myApplicationPreferences: [ApplicationPreferences!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  myConnectedAccounts(filter: MyConnectedAccountsFilterInput): [ConnectedAccountPublicDTO!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myUserApplicationVariables: [WorkspaceMemberApplicationVariables!]!
