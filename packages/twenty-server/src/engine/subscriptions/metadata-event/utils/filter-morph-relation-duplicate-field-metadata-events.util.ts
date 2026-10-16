@@ -39,7 +39,6 @@ const buildMorphRelationHeadUpdatedEvent = (
   properties: { updatedFields: [], diff: {}, before: head, after: head },
 });
 
-// Targets are never exposed: a change on one is broadcast as an update of its head
 export const filterMorphRelationDuplicateFieldMetadataEvents = ({
   events,
   flatFieldMetadataMaps,

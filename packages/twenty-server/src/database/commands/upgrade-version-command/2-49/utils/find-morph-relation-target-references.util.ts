@@ -20,10 +20,16 @@ export const findMorphRelationTargetReferences = ({
   flatViewFilterMaps,
   flatFieldPermissionMaps,
 }: {
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
-  flatViewFilterMaps: FlatEntityMaps<FlatViewFilter>;
-  flatFieldPermissionMaps: FlatEntityMaps<FlatFieldPermission>;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
+  flatViewFieldMaps: Pick<FlatEntityMaps<FlatViewField>, 'byUniversalIdentifier'>;
+  flatViewFilterMaps: Pick<FlatEntityMaps<FlatViewFilter>, 'byUniversalIdentifier'>;
+  flatFieldPermissionMaps: Pick<
+    FlatEntityMaps<FlatFieldPermission>,
+    'byUniversalIdentifier'
+  >;
 }): MorphRelationTargetReferences => {
   const targetIdsWithHead = new Set(
     Object.values(flatFieldMetadataMaps.byUniversalIdentifier)

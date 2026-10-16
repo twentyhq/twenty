@@ -7,8 +7,6 @@ import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-// Targets are never displayed: the first target of a new morph relation
-// provisions the view field of its head instead of its own
 export const redirectMorphRelationTargetViewFieldToHead = ({
   sourceFlatFieldMetadata,
   flatViewFieldToCreate,

@@ -1,26 +1,18 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { findMorphRelationTargetReferences } from 'src/database/commands/upgrade-version-command/2-49/utils/find-morph-relation-target-references.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 
-const toMaps = <
-  TEntity extends
-    | FlatFieldMetadata
-    | FlatViewField
-    | FlatViewFilter
-    | FlatFieldPermission,
->(
+const toMaps = <TEntity extends { universalIdentifier: string }>(
   entities: TEntity[],
-) =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      entities.map((entity) => [entity.universalIdentifier, entity]),
-    ),
-  }) as unknown as FlatEntityMaps<TEntity>;
+) => ({
+  byUniversalIdentifier: Object.fromEntries(
+    entities.map((entity) => [entity.universalIdentifier, entity]),
+  ),
+});
 
 const morphField = ({
   id,
