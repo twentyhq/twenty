@@ -1,5 +1,6 @@
 'use client';
 
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 
 import { CheckMark } from '@/icons';
@@ -135,7 +136,9 @@ export function CategoryCardSelect<TValue extends string>({
             <Texts>
               <Title>{option.label}</Title>
               <Description>{option.description}</Description>
-              <Examples>ex. {option.examples}</Examples>
+              <Examples>
+                <Trans>ex. {option.examples}</Trans>
+              </Examples>
             </Texts>
           </Card>
         );

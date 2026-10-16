@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { i18n } from '@lingui/core';
 import { Onboarding } from '../Onboarding';
-import { ThemeProvider } from '@ui/theme/ThemeProvider';
+import { ThemeProvider } from 'twenty-ui/theme';
 import { createInitialState } from '../../../shared/utils/createInitialState';
 import { type CompanionState } from '../../../shared/types/CompanionState';
 import { messages } from '../../locales/en';

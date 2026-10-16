@@ -14,4 +14,12 @@ export const SETTINGS_BILLING_PLAN_PRICE_FALLBACKS = {
     [SubscriptionInterval.Month]: 25,
     [SubscriptionInterval.Year]: 19,
   },
+  [BillingPlanKey.PRO_V2]: {
+    [SubscriptionInterval.Month]: 12,
+    [SubscriptionInterval.Year]: 9,
+  },
+  [BillingPlanKey.ORGANIZATION_V2]: {
+    [SubscriptionInterval.Month]: 25,
+    [SubscriptionInterval.Year]: 19,
+  },
 } satisfies SettingsBillingPlanPrices;

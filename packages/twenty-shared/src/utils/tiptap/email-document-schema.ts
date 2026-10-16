@@ -84,6 +84,12 @@ const orderedListNodeSchema = z.looseObject({
   content: z.array(listItemNodeSchema).min(1),
 });
 
+const blockquoteNodeSchema = z.looseObject({
+  type: z.literal(TIPTAP_NODE_TYPES.BLOCKQUOTE),
+  attrs: z.looseObject({ style: styleAttributeSchema.nullable() }).optional(),
+  content: z.array(paragraphNodeSchema).min(1),
+});
+
 const imageNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.IMAGE),
   attrs: z.looseObject({
@@ -151,6 +157,7 @@ const blockNodeSchema = z.discriminatedUnion('type', [
   headingNodeSchema,
   bulletListNodeSchema,
   orderedListNodeSchema,
+  blockquoteNodeSchema,
   imageNodeSchema,
   sectionNodeSchema,
   columnsNodeSchema,

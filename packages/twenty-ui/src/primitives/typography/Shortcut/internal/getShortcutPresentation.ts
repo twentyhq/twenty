@@ -5,22 +5,25 @@ import { getUserDevice } from '@ui/utilities/device/getUserDevice';
 
 import { type ShortcutDefinition } from '../types/ShortcutDefinition';
 import { type ShortcutFormatOptions } from '../types/ShortcutFormatOptions';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
-const ACCESSIBLE_KEY_LABELS = new Map<string, string>([
-  ['⌘', 'Command'],
-  ['⌥', 'Option'],
-  ['⇧', 'Shift'],
-  ['⌃', 'Control'],
-  ['Ctrl', 'Control'],
-  ['⏎', 'Enter'],
-  ['↵', 'Enter'],
-  ['⌫', 'Backspace'],
-  ['↑', 'Arrow up'],
-  ['↓', 'Arrow down'],
-  ['←', 'Arrow left'],
-  ['→', 'Arrow right'],
-  ['esc', 'Escape'],
-]);
+const ACCESSIBLE_KEY_LABELS = new Map<string, string>(
+  doNotTranslate([
+    ['⌘', 'Command'],
+    ['⌥', 'Option'],
+    ['⇧', 'Shift'],
+    ['⌃', 'Control'],
+    ['Ctrl', 'Control'],
+    ['⏎', 'Enter'],
+    ['↵', 'Enter'],
+    ['⌫', 'Backspace'],
+    ['↑', 'Arrow up'],
+    ['↓', 'Arrow down'],
+    ['←', 'Arrow left'],
+    ['→', 'Arrow right'],
+    ['esc', 'Escape'],
+  ]),
+);
 
 const isShortcutCombination = (
   shortcut: ShortcutDefinition,
@@ -31,18 +34,19 @@ export const getShortcutPresentation = ({
   platform,
   sequenceJoinLabel = 'then',
   combinationSeparator,
+  accessibleKeyLabels,
 }: ShortcutFormatOptions) => {
   const device = getUserDevice();
   const isMac =
     platform === 'mac' ||
     (!isDefined(platform) && (device === 'mac' || device === 'ios'));
   const keySymbols = new Map<string, string>([
-    ['Mod', isMac ? '⌘' : 'Ctrl'],
-    ['CommandOrControl', isMac ? '⌘' : 'Ctrl'],
-    ['Command', '⌘'],
-    ['Control', 'Ctrl'],
-    ['Alt', isMac ? '⌥' : 'Alt'],
-    ['Enter', '⏎'],
+    [doNotTranslate('Mod'), isMac ? '⌘' : doNotTranslate('Ctrl')],
+    [doNotTranslate('CommandOrControl'), isMac ? '⌘' : doNotTranslate('Ctrl')],
+    [doNotTranslate('Command'), '⌘'],
+    doNotTranslate(['Control', 'Ctrl']),
+    [doNotTranslate('Alt'), isMac ? '⌥' : doNotTranslate('Alt')],
+    [doNotTranslate('Enter'), '⏎'],
   ]);
   const steps = isShortcutCombination(shortcut) ? [shortcut] : shortcut;
   const groups = steps
@@ -58,7 +62,14 @@ export const getShortcutPresentation = ({
     text: groups.map((keys) => keys.join(separator)).join(sequenceSeparator),
     accessibleLabel: groups
       .map((keys) =>
-        keys.map((key) => ACCESSIBLE_KEY_LABELS.get(key) ?? key).join(' + '),
+        keys
+          .map(
+            (key) =>
+              accessibleKeyLabels?.[key] ??
+              ACCESSIBLE_KEY_LABELS.get(key) ??
+              key,
+          )
+          .join(' + '),
       )
       .join(sequenceSeparator),
   };

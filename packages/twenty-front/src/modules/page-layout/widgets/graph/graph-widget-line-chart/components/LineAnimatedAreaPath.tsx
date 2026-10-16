@@ -4,6 +4,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAnimatedPath } from '@nivo/core';
 import { animated } from '@react-spring/web';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type LineAnimatedAreaPathProps = {
   id: string;
@@ -32,7 +33,9 @@ export const LineAnimatedAreaPath = ({
       fill={`url(#${fillId})`}
       strokeWidth={0}
       opacity={isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1}
-      style={{ transition: 'opacity 0.15s ease-in-out' }}
+      style={{
+        transition: doNotTranslate('opacity 0.15s ease-in-out'),
+      }}
     />
   );
 };

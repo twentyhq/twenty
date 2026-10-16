@@ -7,6 +7,7 @@ import {
   themeCssVariables,
 } from 'twenty-ui/theme';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledPreview = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -54,9 +55,11 @@ const StyledContent = styled.div`
     height 0.1s ease-in-out,
     font-size 0.1s ease-in-out;
 
-  [role='radio']:not([data-disabled]):hover & {
-    font-size: 22px;
-    height: 61px;
+  @media (hover: hover) {
+    [role='radio']:not([data-disabled]):hover > ${StyledPreview} & {
+      font-size: 22px;
+      height: 61px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -71,7 +74,9 @@ type SettingsAppearancePreviewProps = {
 export const SettingsAppearancePreview = ({
   colorScheme,
 }: SettingsAppearancePreviewProps) => {
-  const segments = colorScheme === 'System' ? ['Light', 'Dark'] : [colorScheme];
+  const segments = doNotTranslate(
+    colorScheme === 'System' ? ['Light', 'Dark'] : [colorScheme],
+  );
 
   return (
     <StyledPreview aria-hidden>

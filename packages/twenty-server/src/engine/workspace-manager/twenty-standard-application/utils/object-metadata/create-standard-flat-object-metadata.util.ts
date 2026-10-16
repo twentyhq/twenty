@@ -224,6 +224,51 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
+  agentMessageReaction: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentMessageReaction'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentMessageReaction',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentMessageReaction.universalIdentifier,
+        nameSingular: 'agentMessageReaction',
+        namePlural: 'agentMessageReactions',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Chat message reaction',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Chat message reactions',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Emoji reaction of a workspace member to a chat message',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconMoodSmile',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        // Read and written only through the chat resolvers, which check the
+        // member can read the message's thread
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
   agentChatThreadParticipant: (
     args: Omit<
       CreateStandardObjectArgs<'agentChatThreadParticipant'>,
@@ -864,6 +909,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         ),
         icon: 'IconUser',
         isSystem: true,
+        isUICreatable: false,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,

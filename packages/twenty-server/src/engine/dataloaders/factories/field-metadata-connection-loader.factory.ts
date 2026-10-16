@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
-import { isMorphRelationHead } from 'twenty-shared/utils';
 
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import {
@@ -11,19 +9,16 @@ import {
   type FieldFilterInput,
 } from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
+import { isMorphRelationTargetFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-relation-target-flat-field-metadata.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
 import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { applyMetadataFilterToItems } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-items.util';
 import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
-import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
 
 export type FieldMetadataConnectionLoaderPayload = {
@@ -39,7 +34,6 @@ export class FieldMetadataConnectionLoaderFactory {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   create(): DataLoader<
@@ -59,11 +53,6 @@ export class FieldMetadataConnectionLoaderFactory {
             flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
           },
         );
-      const isMorphRelationHeadEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
-          workspaceId,
-        );
 
       const connections = dataLoaderParams.map(
         ({ objectMetadata, paging, filter }) => {
@@ -77,10 +66,10 @@ export class FieldMetadataConnectionLoaderFactory {
               flatEntityMaps: flatFieldMetadataMaps,
             });
           const filteredFlatFieldMetadatas = applyMetadataFilterToItems({
-            items: filterMorphRelationDuplicateFields({
-              flatFieldMetadatas,
-              isMorphRelationHeadEnabled,
-            }),
+            items: flatFieldMetadatas.filter(
+              (flatFieldMetadata) =>
+                !isMorphRelationTargetFlatFieldMetadata(flatFieldMetadata),
+            ),
             filter,
             columnByFilterField: FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
           });
@@ -107,47 +96,16 @@ export class FieldMetadataConnectionLoaderFactory {
 
       return connections.map((connection) => ({
         ...connection,
-        edges: connection.edges.map((edge) => {
-          const flatFieldMetadata = edge.node;
-          const overriddenFlatFieldMetadata =
+        edges: connection.edges.map((edge) => ({
+          ...edge,
+          node: fromFlatFieldMetadataToFieldMetadataDto(
             resolveEffectiveTranslatedFlatEntity({
               metadataName: 'fieldMetadata',
-              flatEntity: flatFieldMetadata,
-              i18nContext: getI18nContext(flatFieldMetadata.applicationId),
-            });
-          let renamedFlatFieldMetadata = overriddenFlatFieldMetadata;
-
-          if (
-            isFlatFieldMetadataOfType(
-              overriddenFlatFieldMetadata,
-              FieldMetadataType.MORPH_RELATION,
-            ) &&
-            !isMorphRelationHead(overriddenFlatFieldMetadata)
-          ) {
-            const relationTargetObjectMetadata =
-              findFlatEntityByIdInFlatEntityMapsOrThrow({
-                flatEntityId:
-                  overriddenFlatFieldMetadata.relationTargetObjectMetadataId,
-                flatEntityMaps: flatObjectMetadataMaps,
-              });
-
-            renamedFlatFieldMetadata = {
-              ...overriddenFlatFieldMetadata,
-              name: getMorphNameFromMorphFieldMetadataName({
-                morphRelationFlatFieldMetadata: overriddenFlatFieldMetadata,
-                nameSingular: relationTargetObjectMetadata.nameSingular,
-                namePlural: relationTargetObjectMetadata.namePlural,
-              }),
-            };
-          }
-
-          return {
-            ...edge,
-            node: fromFlatFieldMetadataToFieldMetadataDto(
-              renamedFlatFieldMetadata,
-            ),
-          };
-        }),
+              flatEntity: edge.node,
+              i18nContext: getI18nContext(edge.node.applicationId),
+            }),
+          ),
+        })),
       }));
     });
   }

@@ -7,7 +7,10 @@ import {
   IMPORT_CONTACTS_PREVIEW_EMAILS,
 } from '@/onboarding/constants/ImportContactsPreviewEmails';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const EVENT_CARD_WIDTH = 160;
@@ -180,7 +183,9 @@ const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => (
       {email.sender}
     </StyledEmailSender>
     {isDefined(email.subject) && (
-      <StyledEmailSubject>{email.subject}</StyledEmailSubject>
+      <StyledEmailSubject>
+        {isString(email.subject) ? email.subject : t(email.subject)}
+      </StyledEmailSubject>
     )}
   </StyledEmailRow>
 );
@@ -200,7 +205,9 @@ const EventCard = ({
           top: position.top,
           left: position.left,
           '--event-card-transform': `rotate(${position.rotate}deg)`,
-          '--event-card-entry-transform': `translate(${position.entry.x}px, ${position.entry.y}px) rotate(${position.entry.rotate}deg) scale(${position.entry.scale})`,
+          '--event-card-entry-transform': doNotTranslate(
+            `translate(${position.entry.x}px, ${position.entry.y}px) rotate(${position.entry.rotate}deg) scale(${position.entry.scale})`,
+          ),
         } as React.CSSProperties
       }
     >

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { v4 } from 'uuid';
+import { t } from '@lingui/core/macro';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -204,7 +205,7 @@ export const useCreateOneRecord = <
     });
 
     if (!isDefined(createdRecord)) {
-      throw new CustomError('Failed to create record');
+      throw new CustomError(t`Failed to create record`);
     }
 
     return getRecordFromRecordNode({

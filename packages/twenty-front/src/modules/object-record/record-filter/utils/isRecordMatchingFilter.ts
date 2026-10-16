@@ -47,6 +47,7 @@ import {
   isMatchingTSVectorFilter,
   isMatchingUUIDFilter,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -82,7 +83,7 @@ const isMorphRelationJoinColumnKey = ({
       morphRelations: fieldMetadataItem.morphRelations,
       fieldName: fieldMetadataItem.name,
     },
-  }).map((name) => `${name}Id`);
+  }).map((name) => doNotTranslate(`${name}Id`));
 
   return possibleJoinColumnNames.includes(key);
 };
@@ -125,7 +126,8 @@ const getJoinColumnValue = ({
     return record[joinColumnName];
   }
 
-  const relationRecord = record[joinColumnName.slice(0, -'Id'.length)];
+  const relationRecord =
+    record[joinColumnName.slice(0, -doNotTranslate('Id').length)];
 
   return isObject(relationRecord)
     ? (relationRecord.id ?? null)
@@ -239,7 +241,8 @@ export const isRecordMatchingFilter = ({
 
     if (!Array.isArray(filterValue)) {
       throw new Error(
-        'Unexpected value for "and" filter : ' + JSON.stringify(filterValue),
+        doNotTranslate('Unexpected value for "and" filter : ') +
+          JSON.stringify(filterValue),
       );
     }
 
@@ -286,14 +289,18 @@ export const isRecordMatchingFilter = ({
       });
     }
 
-    throw new Error('Unexpected value for "or" filter : ' + filterValue);
+    throw new Error(
+      doNotTranslate('Unexpected value for "or" filter : ') + filterValue,
+    );
   }
 
   if (isNotFilter(filter)) {
     const filterValue = filter.not;
 
     if (!isDefined(filterValue)) {
-      throw new Error('Unexpected value for "not" filter : ' + filterValue);
+      throw new Error(
+        doNotTranslate('Unexpected value for "not" filter : ') + filterValue,
+      );
     }
 
     return (
@@ -317,7 +324,10 @@ export const isRecordMatchingFilter = ({
   return Object.entries(filter).every(([filterKey, filterValue]) => {
     if (!isDefined(filterValue)) {
       throw new Error(
-        'Unexpected value for filter key "' + filterKey + '" : ' + filterValue,
+        doNotTranslate('Unexpected value for filter key "') +
+          filterKey +
+          '" : ' +
+          filterValue,
       );
     }
 
@@ -343,9 +353,9 @@ export const isRecordMatchingFilter = ({
 
     if (!isDefined(objectMetadataField)) {
       throw new Error(
-        'Field metadata item "' +
+        doNotTranslate('Field metadata item "') +
           filterKey +
-          '" not found for object metadata item ' +
+          doNotTranslate('" not found for object metadata item ') +
           objectMetadataItem.nameSingular,
       );
     }
@@ -587,7 +597,9 @@ export const isRecordMatchingFilter = ({
       }
       default: {
         throw new Error(
-          `Not implemented yet for field type "${objectMetadataField.type}"`,
+          doNotTranslate(
+            `Not implemented yet for field type "${objectMetadataField.type}"`,
+          ),
         );
       }
     }

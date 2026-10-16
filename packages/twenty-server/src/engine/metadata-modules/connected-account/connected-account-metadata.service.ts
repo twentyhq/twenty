@@ -82,7 +82,7 @@ export class ConnectedAccountMetadataService {
         handleAliases: true,
         provider: true,
         name: true,
-        visibility: true,
+        scope: true,
         userWorkspaceId: true,
         connectionParameters: true,
       },
@@ -101,7 +101,7 @@ export class ConnectedAccountMetadataService {
               connectedAccount,
               userWorkspaceId,
             })
-          : connectedAccount.visibility === 'workspace',
+          : connectedAccount.scope === 'WORKSPACE',
       );
   }
 
@@ -172,7 +172,7 @@ export class ConnectedAccountMetadataService {
         applicationId: true,
         workspaceId: true,
         name: true,
-        visibility: true,
+        scope: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -231,33 +231,36 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId,
     workspaceId,
     applicationId,
+    agentId,
   }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'visibility' | 'userWorkspaceId' | 'provider'
+      'scope' | 'userWorkspaceId' | 'provider'
     >;
     userWorkspaceId: string;
     workspaceId: string;
     applicationId?: string;
+    agentId?: string;
   }): Promise<boolean> {
     if (connectedAccount.userWorkspaceId === userWorkspaceId) {
       return true;
     }
 
-    switch (connectedAccount.visibility) {
-      case 'workspace':
+    switch (connectedAccount.scope) {
+      case 'WORKSPACE':
         return this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
           applicationId,
+          agentId,
           setting: getConnectedAccountAdministrationPermissionFlag(
             connectedAccount.provider,
           ),
         });
-      case 'user':
+      case 'USER':
         return false;
       default:
-        return assertUnreachable(connectedAccount.visibility);
+        return assertUnreachable(connectedAccount.scope);
     }
   }
 
@@ -266,11 +269,13 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId,
     workspaceId,
     applicationId,
+    agentId,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
     applicationId?: string;
+    agentId?: string;
   }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
 
@@ -279,6 +284,7 @@ export class ConnectedAccountMetadataService {
       userWorkspaceId,
       workspaceId,
       applicationId,
+      agentId,
     });
 
     if (!isAdministrableByCaller) {
@@ -333,7 +339,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<string[]> {
     const accounts = await this.repository.find({
-      where: { workspaceId, visibility: 'workspace', archivedAt: IsNull() },
+      where: { workspaceId, scope: 'WORKSPACE', archivedAt: IsNull() },
       select: ['id'],
     });
 

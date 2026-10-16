@@ -39,6 +39,10 @@ export const GET_CHAT_MESSAGES = gql`
         providerMetadata
         createdAt
       }
+      reactions {
+        emoji
+        workspaceMemberIds
+      }
     }
     chatStreamCatchupChunks(threadId: $threadId) {
       chunks

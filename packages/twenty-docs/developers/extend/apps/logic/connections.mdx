@@ -12,7 +12,7 @@ Today only OAuth 2.0 is supported. Future credential types (personal access toke
 
 <Accordion title="defineConnectionProvider" description="Declare how your app's connections are obtained">
 
-A connection provider describes the OAuth handshake your app needs. The user clicks "Add connection" in your app's settings, completes the provider's consent screen, and a `ConnectedAccount` row is created in their workspace.
+A connection provider describes the OAuth handshake your app needs. For a `WORKSPACE` provider (the default), a member clicks "Add connection" in your app's settings, completes the provider's consent screen, and a `ConnectedAccount` row is created in their workspace. See "Workspace or personal connections" for `USER` providers.
 
 A working setup needs **two files** — the connection provider, and a matching `serverVariables` declaration on `defineApplication` that holds the OAuth client credentials.
 
@@ -28,6 +28,7 @@ export default defineConnectionProvider({
   // provider in the app's General tab.
   logo: 'public/linear-logomark.svg',
   type: 'oauth',
+  scope: 'WORKSPACE',
   oauth: {
     authorizationEndpoint: 'https://linear.app/oauth/authorize',
     tokenEndpoint: 'https://api.linear.app/oauth/token',
@@ -87,6 +88,7 @@ Key points:
 
 - `name` is the unique identifier string used in `listConnections({ providerName })` (kebab-case, must match `^[a-z][a-z0-9-]*$`).
 - `displayName` shows in the app's General tab and in the AI tool list.
+- `scope` decides who connects: `'WORKSPACE'` (the default) for connections shared with the whole workspace, `'USER'` for connections each member makes for themselves. See "Workspace or personal connections" below.
 - `logo` is a path to an asset bundled in your app's `public/` folder, served through the app's public assets. When omitted, the General tab falls back to a placeholder built from `displayName`.
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
@@ -152,7 +154,7 @@ type IdentifyAccountResult = {
 - Return `{ externalAccountId: null }` when the provider has no stable id to offer. Twenty then behaves as if no identify function were declared: no id is stored, a reconnect clears any id stored earlier, and reconnects are not checked. A bare `null` or a missing return is treated as an error, so a handler that forgets to return cannot silently disable the check.
 - If the function throws, times out, or returns anything else, the connection is **not** saved and the user lands back on the settings page with an error. Throw only when you genuinely cannot identify the account.
 
-**Reconnect refusal.** On a reconnect, Twenty compares the returned `externalAccountId` with the one stored on the connection. If they differ, the callback is refused before anything is written: the existing tokens, handle and visibility stay as they were, the on-connect hook does not run, and the user sees which account they authorized and which one the connection belongs to. Connections created before your app declared the function have no stored id yet; their next reconnect stores it.
+**Reconnect refusal.** On a reconnect, Twenty compares the returned `externalAccountId` with the one stored on the connection. If they differ, the callback is refused before anything is written: the existing tokens, handle and scope stay as they were, the on-connect hook does not run, and the user sees which account they authorized and which one the connection belongs to. Connections created before your app declared the function have no stored id yet; their next reconnect stores it.
 
 Twenty does not deduplicate on `externalAccountId`: connecting the same upstream account twice through **Add connection** creates two connections. The id is exposed on `listConnections` and `getConnection`, so an app that wants one connection per upstream account can detect duplicates itself (for instance in its on-connect hook).
 
@@ -283,10 +285,10 @@ export const createLinearIssueHandler = async (input: {
   const connections = await listConnections({ providerName: 'linear' });
 
   // Workspace-shared credentials win when present; fall back to the first
-  // user-visibility one. For HTTP-route triggers you typically pick the
+  // personal one. For HTTP-route triggers you typically pick the
   // request user's connection via event.userWorkspaceId instead.
   const connection =
-    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
+    connections.find((c) => c.scope === 'WORKSPACE') ?? connections[0];
 
   if (!connection) {
     return {
@@ -317,8 +319,9 @@ Each connection has:
 | Field               | Description                                                                                                                                                                                                                |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `id`                | Unique row id; pass to `getConnection(id)` to refetch a single one                                                                                                                                                         |
-| `visibility`        | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                                                                                                                                      |
-| `scopes`            | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)                                                                                                                      |
+| `scope`             | `'USER'` (private to one workspace member) or `'WORKSPACE'` (shared with all members)                                                                                                                                      |
+| `visibility`        | Deprecated: `scope` in lowercase (`'user'` or `'workspace'`). Use `scope` instead                                                                                                                                         |
+| `scopes`            | OAuth permissions granted by the upstream provider (distinct from `scope` — those are unrelated)                                                                                                                           |
 | `userWorkspaceId`   | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers                                                                                                                   |
 | `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                                                                                                                                             |
 | `accessToken`       | Fresh OAuth access token (refreshed automatically if expired)                                                                                                                                                              |
@@ -352,32 +355,43 @@ await reportConnectionAuthFailure({
 
 This sets `authFailedAt` and the optional reason on the connection. The settings row flips to **Reconnect needed** with a Reconnect button, the connection detail page shows the reason, and `getConnection` starts throwing `AppConnectionAuthFailedError` for that row. The flag and reason clear automatically when the user reconnects. A `reason` longer than 1000 characters is rejected, so truncate provider payloads before passing them.
 
-Only report failures that a reconnect would actually fix (an `invalid_auth`-class rejection from the provider), never transient network errors. An app can only report its own connections, and a request user can only report their own user-visibility credentials.
+Only report failures that a reconnect would actually fix (an `invalid_auth`-class rejection from the provider), never transient network errors. An app can only report its own connections, and a request user can only report their own personal credentials.
 
 The mutation behind this helper ships with Twenty 2.40.0, so calling it against an older server fails. If your app uses it, declare the dependency in your `package.json`: `"engines": { "twenty": ">=2.40.0" }`.
 
 </Accordion>
 
-<Accordion title="Per-user vs workspace-shared visibility" description="How users choose between private and shared credentials">
+<Accordion title="Workspace or personal connections" description="Choose who connects with the provider scope">
 
-When a user clicks "Add connection," they're prompted to pick a visibility:
+Each connection has one of two scopes:
 
-- **Just for me** — the credential is private to the connecting user. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
-- **Workspace shared** — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
+- **Workspace shared** (`'WORKSPACE'`) — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
+- **Just for me** (`'USER'`) — the credential is private to the connecting member. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
 
-Use the right one for each handler:
+The provider's `scope` decides which one its new connections get:
+
+- `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's settings creates a workspace-shared connection, and a member can turn a personal connection made earlier (before Twenty 2.49.0, or while the provider was `USER`) into a shared one with **Share with workspace**.
+- `scope: 'USER'` — each member connects their own account, creating personal connections. Members will connect from their **App preferences**, which is not available yet: until then a `USER` provider has no **Add connection** button, and the app's settings only list the connections a member can already see.
+
+A provider has exactly one scope. If your app needs both a shared credential and one per member for the same service (a bot token and each member's own account, say), declare two providers.
+
+Twenty refuses a new connection whose scope does not match the provider's, including when your app changes its scope while a member is on the provider's consent screen. Changing `scope` in a later version does not move or delete existing connections: they keep their scope and can still be disconnected or reconnected.
+
+Use the right connection for each handler:
 
 ```ts
 // HTTP-route trigger — prefer the request user's own connection.
 const conn =
   connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
-  connections.find((c) => c.visibility === 'workspace');
+  connections.find((c) => c.scope === 'WORKSPACE');
 
 // Cron trigger — no request user; only shared credentials are sensible.
-const conn = connections.find((c) => c.visibility === 'workspace');
+const conn = connections.find((c) => c.scope === 'WORKSPACE');
 ```
 
 Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.
+
+Provider scope ships with Twenty 2.49.0. If your app declares `scope`, declare `"engines": { "twenty": ">=2.49.0" }` in its `package.json`. In the same version a connection's `scope` replaces its `visibility`, which stays available as a deprecated lowercase alias. `listConnections` and `getConnection` from `twenty-sdk` 2.49.0 read `scope`, so apps built with it need a 2.49.0 server.
 
 </Accordion>
 
@@ -389,7 +403,7 @@ For each connection provider, the server admin needs to register an OAuth app at
 2. Set the **Redirect URI** to `<SERVER_URL>/auth/apps/callback`.
 3. Copy the generated **Client ID** and **Client Secret**.
 4. Open the installed app in Twenty as a server admin → set the values on the corresponding `serverVariables`.
-5. Workspace members can then add connections from the per-app **Connections** section.
+5. Workspace members can then add connections to `WORKSPACE` providers from the per-app **Connections** section.
 
 </Accordion>
 

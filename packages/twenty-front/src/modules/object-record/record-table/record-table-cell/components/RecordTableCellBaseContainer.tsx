@@ -35,15 +35,10 @@ const StyledBaseContainer = styled.div<{
         isReadOnly ? fontColorSecondary : 'unset'};
       outline: ${({ isReadOnly, fontColorMedium }) =>
         isReadOnly ? `1px solid ${fontColorMedium}` : 'unset'};
+    }
 
-      svg {
-        color: ${({ isReadOnly, fontColorSecondary }) =>
-          isReadOnly ? fontColorSecondary : 'unset'};
-      }
-
-      img {
-        opacity: ${({ isReadOnly }) => (isReadOnly ? '0.64' : 'unset')};
-      }
+    &[data-read-only]:hover img {
+      opacity: 0.64;
     }
   }
 `;
@@ -81,6 +76,7 @@ export const RecordTableCellBaseContainer = ({
       fontColorSecondary={theme.font.color.secondary}
       fontColorMedium={theme.border.color.medium}
       isReadOnly={isReadOnly ?? false}
+      data-read-only={isReadOnly || undefined}
       id={getRecordTableCellId(
         recordTableId,
         cellPosition.column,

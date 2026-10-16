@@ -37,7 +37,7 @@ describe('isAiChatUsageLimitReached', () => {
   it('ignores the plan allowance, which the credits banner owns', () => {
     expect(
       isAiChatUsageLimitReached(
-        buildUsage({ consumedValue: 1000, kind: 'allowance' }),
+        buildUsage({ consumedValue: 1000, kind: 'workspaceAllowance' }),
       ),
     ).toBe(false);
   });

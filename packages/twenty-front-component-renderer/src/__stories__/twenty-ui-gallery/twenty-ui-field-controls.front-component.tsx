@@ -19,6 +19,7 @@ const FieldControls = () => {
   const [controlValues, setControlValues] = useState('');
   const [email, setEmail] = useState('');
   const [notes, setNotes] = useState('');
+  const [notesWidth, setNotesWidth] = useState('100%');
   const [reportedValues, setReportedValues] = useState('');
 
   return (
@@ -74,6 +75,7 @@ const FieldControls = () => {
           onValueChange={setNotes}
           onChange={(event) => setNativeTarget(event.currentTarget.tagName)}
           rows={1}
+          style={{ width: notesWidth }}
           autoResize
           maxRows={6}
           render={(props, state) =>
@@ -101,6 +103,22 @@ const FieldControls = () => {
       </Button>
       <Button type="button" onClick={() => setNotes('')}>
         Clear notes
+      </Button>
+      <Button
+        type="button"
+        onClick={() =>
+          setNotes(
+            'Keep the team informed about the next meeting and share all follow up actions before the end of the week.',
+          )
+        }
+      >
+        Apply wrapping notes
+      </Button>
+      <Button type="button" onClick={() => setNotesWidth('140px')}>
+        Narrow notes
+      </Button>
+      <Button type="button" onClick={() => setNotesWidth('100%')}>
+        Widen notes
       </Button>
       <p data-testid="native-target">{nativeTarget}</p>
       <p data-testid="control-values">{controlValues}</p>

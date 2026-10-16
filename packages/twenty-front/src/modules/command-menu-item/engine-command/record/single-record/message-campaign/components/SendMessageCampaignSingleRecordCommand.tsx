@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -11,7 +12,9 @@ export const SendMessageCampaignSingleRecordCommand = () => {
   const { openSendCampaignInSidePanel } = useOpenSendCampaignInSidePanel();
 
   if (!isDefined(campaignId)) {
-    throw new Error('Record ID is required to send the campaign');
+    throw new Error(
+      doNotTranslate('Record ID is required to send the campaign'),
+    );
   }
 
   const handleExecute = () => openSendCampaignInSidePanel(campaignId);

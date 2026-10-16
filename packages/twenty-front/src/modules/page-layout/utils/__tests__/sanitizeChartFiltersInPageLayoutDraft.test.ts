@@ -2,16 +2,13 @@ import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { sanitizeChartFiltersInPageLayoutDraft } from '@/page-layout/utils/sanitizeChartFiltersInPageLayoutDraft';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import {
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import {
-  FieldMetadataType,
-  PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import {
   TEST_BAR_CHART_CONFIGURATION,
   TEST_FIELDS_CONFIGURATION,
@@ -25,18 +22,17 @@ const ACTIVE_FIELD_ID = TEST_FIELD_METADATA_ID_1;
 const DELETED_FIELD_ID = TEST_FIELD_METADATA_ID_2;
 
 const buildRecordFilter = (
-  overrides: Partial<RecordFilter> &
-    Pick<RecordFilter, 'id' | 'fieldMetadataId'>,
-): RecordFilter => ({
+  overrides: Partial<PersistedRecordFilter> &
+    Pick<PersistedRecordFilter, 'id' | 'fieldMetadataId'>,
+): PersistedRecordFilter => ({
   value: '',
-  displayValue: '',
-  type: FieldMetadataType.NUMBER,
   operand: ViewFilterOperand.IS,
-  label: 'Filter',
   ...overrides,
 });
 
-const buildChartFilters = (recordFilters: RecordFilter[]): ChartFilters => ({
+const buildChartFilters = (
+  recordFilters: PersistedRecordFilter[],
+): ChartFilters => ({
   recordFilters,
   recordFilterGroups: [],
 });
@@ -69,7 +65,9 @@ const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => {
 };
 
 const buildValidFieldsMap = (fieldIds: string[]) =>
-  new Map<string, Set<string>>([[TEST_OBJECT_METADATA_ID, new Set(fieldIds)]]);
+  new Map([
+    [TEST_OBJECT_METADATA_ID, fieldIds.map((id) => ({ id, isActive: true }))],
+  ]);
 
 describe('sanitizeChartFiltersInPageLayoutDraft', () => {
   it('should drop chart filter rules that reference deactivated or deleted fields on save', () => {
@@ -94,7 +92,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: buildValidFieldsMap([
+      fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
         ACTIVE_FIELD_ID,
       ]),
     });
@@ -122,7 +120,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: buildValidFieldsMap([
+      fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
         ACTIVE_FIELD_ID,
       ]),
     });
@@ -160,7 +158,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: buildValidFieldsMap([
+      fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
         ACTIVE_FIELD_ID,
       ]),
     });
@@ -181,7 +179,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: buildValidFieldsMap([
+      fieldMetadataItemsByObjectMetadataId: buildValidFieldsMap([
         ACTIVE_FIELD_ID,
       ]),
     });
@@ -207,7 +205,7 @@ describe('sanitizeChartFiltersInPageLayoutDraft', () => {
 
     const result = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft: buildDraft([widget]),
-      validFieldMetadataIdsByObjectMetadataId: new Map(),
+      fieldMetadataItemsByObjectMetadataId: new Map(),
     });
 
     const sanitizedConfiguration = result.tabs[0].widgets[0].configuration as {

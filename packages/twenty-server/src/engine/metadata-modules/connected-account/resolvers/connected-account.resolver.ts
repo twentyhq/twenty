@@ -120,6 +120,7 @@ export class ConnectedAccountResolver {
       userWorkspaceId,
       workspaceId: workspace.id,
       applicationId: application?.id,
+      agentId: undefined,
     });
 
     const deleted = await this.connectedAccountMetadataService.delete({
@@ -143,6 +144,7 @@ export class ConnectedAccountResolver {
       userWorkspaceId,
       workspaceId: workspace.id,
       applicationId: application?.id,
+      agentId: undefined,
     });
 
     const disconnected = await this.connectedAccountMetadataService.disconnect({

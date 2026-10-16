@@ -142,6 +142,7 @@ export type { RoutePayload } from '@/sdk/define/logic-functions/triggers/route-p
 export type { InputJsonSchema } from 'twenty-shared/logic-function';
 
 export { defineConnectionProvider } from '@/sdk/define/connection-providers/define-connection-provider';
+export type { ConnectionProviderScope } from 'twenty-shared/application';
 
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
@@ -193,6 +194,8 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
+export { defineWorkflow } from '@/sdk/define/workflows/define-workflow';
+export type { WorkflowManifest } from '@/sdk/define/common/types/loose-shared-types.type';
 export {
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
