@@ -1,4 +1,4 @@
-export const buildAllowanceCounterKey = ({
+export const buildWorkspaceAllowanceCounterKey = ({
   workspaceId,
   periodStart,
 }: {

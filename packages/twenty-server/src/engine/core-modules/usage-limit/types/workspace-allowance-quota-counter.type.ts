@@ -1,7 +1,7 @@
 import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
-export type AllowanceQuotaCounter = {
-  kind: 'allowance';
+export type WorkspaceAllowanceQuotaCounter = {
+  kind: 'workspaceAllowance';
   key: string;
   limitValue: number;
   unit: UsageUnit.CREDIT;

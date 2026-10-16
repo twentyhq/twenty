@@ -15,5 +15,5 @@ export class AiChatUsageDTO {
   periodEnd: Date | null;
 
   @Field(() => String)
-  kind: ExhaustedKind;
+  kind: Exclude<ExhaustedKind, 'userAllowance'>;
 }
