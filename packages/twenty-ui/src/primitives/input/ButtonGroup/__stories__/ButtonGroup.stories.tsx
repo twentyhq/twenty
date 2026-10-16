@@ -169,12 +169,12 @@ export const AppearanceOverrides: Story = {
   decorators: [ComponentDecorator],
   render: () => (
     <ButtonGroup
-      aria-label="Activity appearance"
+      aria-label="Activity actions"
       variant="solid"
       color="accent"
       size="sm"
     >
-      <Button variant="ghost" color="danger" size="md">
+      <Button variant="ghost" color="danger">
         Delete activity
       </Button>
       <Button color="neutral">Duplicate activity</Button>
@@ -197,7 +197,7 @@ export const AppearanceOverridesInteraction: Story = {
 
     await expect(deleteButton).toHaveAttribute('data-variant', 'ghost');
     await expect(deleteButton).toHaveAttribute('data-color', 'danger');
-    await expect(deleteButton).toHaveAttribute('data-size', 'md');
+    await expect(deleteButton).toHaveAttribute('data-size', 'sm');
     await expect(duplicateButton).toHaveAttribute('data-variant', 'solid');
     await expect(duplicateButton).toHaveAttribute('data-color', 'neutral');
     await expect(duplicateButton).toHaveAttribute('data-size', 'sm');

@@ -39,6 +39,8 @@ For a mutually exclusive choice, use [RadioGroup](/ui/primitives/input/radio-gro
 
 Each appearance prop resolves independently: the child's explicit prop, then the group default, then the component default. This applies to both Button and IconButton, including an explicit `IconButton size="xs"`. Defaults reach children through fragments, wrappers, and tooltip anchors.
 
+Keep attached buttons at the same size so their edges align. This example overrides variant and color while inheriting the group size.
+
 ```tsx
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 
@@ -49,11 +51,11 @@ export const ActivityActions = () => (
     color="accent"
     size="sm"
   >
-    <Button>New activity</Button>
-    <Button variant="ghost" color="danger" size="md">
+    <Button variant="ghost" color="danger">
       Delete activity
     </Button>
     <Button color="neutral">Duplicate activity</Button>
+    <Button>New activity</Button>
   </ButtonGroup>
 );
 ```
