@@ -70,6 +70,7 @@ const buildService = ({
   return {
     service,
     threadLifecycleService,
+    threadRepository,
     messagePartRepository,
     turnRecorderService,
     pendingWakeUpService,
@@ -96,6 +97,29 @@ describe('AgentRunSuspensionService', () => {
       expect(threadLifecycleService.closePendingQuestion).toHaveBeenCalledWith(
         CLOSED_QUESTION,
       );
+    });
+
+    it('closes the question of a run that still holds its conversation', async () => {
+      const { service, threadLifecycleService, threadRepository } =
+        buildService();
+
+      await service.closeAwaitedCalls({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        isAwaitingAnswer: true,
+        streamId: 'stream-id',
+      });
+
+      expect(threadRepository.findOne).toHaveBeenCalledWith(
+        'workspace-id',
+        expect.objectContaining({
+          where: expect.objectContaining({ activeStreamId: 'stream-id' }),
+        }),
+      );
+      expect(threadLifecycleService.closePendingQuestion).toHaveBeenCalledWith({
+        ...CLOSED_QUESTION,
+        activeStreamId: 'stream-id',
+      });
     });
 
     it('keeps open a question the run did not wait on', async () => {

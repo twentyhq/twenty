@@ -553,10 +553,13 @@ describe('AgentRunnerService', () => {
     });
     expect(conversationReaderService.loadMessages).toHaveBeenCalled();
     expect(agentRunSuspensionService.suspend).not.toHaveBeenCalled();
+    // the run still holds its conversation, so it closes its question as its holder
     expect(agentRunSuspensionService.closeAwaitedCalls).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       isAwaitingAnswer: true,
+      streamId: agentRunConversationService.claimThread.mock.calls[0][0]
+        .streamId,
     });
     expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -689,6 +692,7 @@ describe('AgentRunnerService', () => {
       service,
       callerHandler,
       turnStreamService,
+      agentRunConversationService,
       agentRunSuspensionService,
       pendingWakeUpService,
     } = buildService({ execution: buildExecution({ isPaused: true }) });
@@ -709,6 +713,8 @@ describe('AgentRunnerService', () => {
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       isAwaitingAnswer: true,
+      streamId: agentRunConversationService.claimThread.mock.calls[0][0]
+        .streamId,
     });
   });
 });

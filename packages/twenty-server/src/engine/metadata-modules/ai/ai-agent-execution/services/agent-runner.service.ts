@@ -346,6 +346,7 @@ export class AgentRunnerService {
           workspaceId,
           threadId,
           isAwaitingAnswer,
+          streamId: stream.claim.streamId,
         });
 
         return;
@@ -399,6 +400,7 @@ export class AgentRunnerService {
           error: error instanceof Error ? error.message : String(error),
         },
         isAwaitingAnswer,
+        streamId: stream.claim.streamId,
       });
 
       return;
@@ -411,6 +413,7 @@ export class AgentRunnerService {
         suspension,
         outcome: result.outcome,
         summary: result.summary,
+        streamId: stream.claim.streamId,
       });
     }
   }
@@ -547,6 +550,7 @@ export class AgentRunnerService {
             isAwaitingAnswer: finished?.isAwaitingAnswer === true,
             summary,
             suspension,
+            streamId: claim.streamId,
           }),
     };
   }
@@ -558,6 +562,7 @@ export class AgentRunnerService {
     isAwaitingAnswer,
     summary,
     suspension,
+    streamId,
   }: {
     input: AgentRunnerRunInput;
     execution: AgentExecutionResult;
@@ -565,6 +570,7 @@ export class AgentRunnerService {
     isAwaitingAnswer: boolean;
     summary: AgentRunSummary;
     suspension: AgentRunSuspension | null;
+    streamId: string;
   }): Promise<AgentRunnerOutcome> {
     if (!execution.hasNoMoreAvailableCredits && !execution.isPaused) {
       return { status: 'COMPLETED', result: execution.result };
@@ -634,6 +640,7 @@ export class AgentRunnerService {
       workspaceId,
       threadId,
       isAwaitingAnswer,
+      streamId,
     });
 
     if (execution.hasNoMoreAvailableCredits) {

@@ -136,6 +136,7 @@ export class AgentRunSuspensionService {
     outcome,
     summary = suspendedSummary,
     isAwaitingAnswer = false,
+    streamId,
   }: {
     workspaceId: string;
     threadId: string;
@@ -143,8 +144,14 @@ export class AgentRunSuspensionService {
     outcome: AgentRunCallerOutcome;
     summary?: AgentRunSummary | null;
     isAwaitingAnswer?: boolean;
+    streamId?: string;
   }): Promise<void> {
-    await this.closeAwaitedCalls({ workspaceId, threadId, isAwaitingAnswer });
+    await this.closeAwaitedCalls({
+      workspaceId,
+      threadId,
+      isAwaitingAnswer,
+      streamId,
+    });
 
     await this.deliverOutcome({
       workspaceId,
@@ -254,10 +261,13 @@ export class AgentRunSuspensionService {
     workspaceId,
     threadId,
     isAwaitingAnswer,
+    streamId,
   }: {
     workspaceId: string;
     threadId: string;
     isAwaitingAnswer: boolean;
+    // the stream of a run that closes its calls while it holds the conversation
+    streamId?: string;
   }): Promise<void> {
     await this.recordWaitOutcome({
       workspaceId,
@@ -266,7 +276,7 @@ export class AgentRunSuspensionService {
     });
 
     if (isAwaitingAnswer) {
-      await this.closePendingQuestion({ workspaceId, threadId });
+      await this.closePendingQuestion({ workspaceId, threadId, streamId });
     }
   }
 
@@ -343,16 +353,18 @@ export class AgentRunSuspensionService {
     workspaceId,
     threadId,
     toolCallId,
+    streamId,
   }: {
     workspaceId: string;
     threadId: string;
     toolCallId?: string;
+    streamId?: string;
   }): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: {
         id: threadId,
         pendingQuestionMessageId: Not(IsNull()),
-        activeStreamId: IsNull(),
+        activeStreamId: streamId ?? IsNull(),
       },
       select: ['id', 'pendingQuestionMessageId'],
     });
@@ -373,7 +385,7 @@ export class AgentRunSuspensionService {
       workspaceId,
       threadId,
       messageId,
-      activeStreamId: null,
+      activeStreamId: streamId ?? null,
       turnStatus: AgentTurnStatus.CANCELLED,
     });
   }
