@@ -28,6 +28,7 @@ import { v5 as uuidv5 } from 'uuid';
 import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -72,15 +73,7 @@ import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/g
 // assistantMessageId derives from streamId, so a retried job skips persistence while each resume persists its own message
 const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
-type StreamUsageTotals = {
-  inputTokens: number;
-  outputTokens: number;
-  inputCredits: number;
-  outputCredits: number;
-  cacheReadTokens: number;
-  cacheCreationTokens: number;
-  conversationSize: number;
-};
+type StreamUsageTotals = AgentTurnUsage & { conversationSize: number };
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
@@ -741,7 +734,12 @@ export class StreamAgentChatJob {
       });
     }
 
-    await this.recordTurnUsage({ workspaceId, threadId, turnId, usageTotals });
+    await this.turnRecorderService.recordUsage({
+      workspaceId,
+      threadId,
+      turnId,
+      usage: usageTotals,
+    });
 
     if (isDefined(streamError)) {
       return null;
@@ -756,13 +754,12 @@ export class StreamAgentChatJob {
     });
 
     if (responseMessage.parts.length === 0) {
-      await this.finishTurn({
+      await this.turnRecorderService.finish({
         workspaceId,
         turnId,
-        threadId,
-        streamId,
-        outcome,
-        turnModelId,
+        ...mapAgentChatTurnOutcomeToTurnStatus(outcome),
+        modelId: turnModelId,
+        streamClaim: { threadId, streamId },
       });
 
       return outcome;
@@ -825,13 +822,12 @@ export class StreamAgentChatJob {
 
     this.isAwaitingInput = isAwaitingAnswer;
 
-    await this.finishTurn({
+    await this.turnRecorderService.finish({
       workspaceId,
       turnId,
-      threadId,
-      streamId,
-      outcome,
-      turnModelId,
+      ...mapAgentChatTurnOutcomeToTurnStatus(outcome),
+      modelId: turnModelId,
+      streamClaim: { threadId, streamId },
     });
 
     await this.agentChatService.notifyThreadUsageUpdated({
@@ -841,63 +837,6 @@ export class StreamAgentChatJob {
     });
 
     return outcome;
-  }
-
-  // Usage is recorded on its own: a failure to count it must not fail a reply already saved
-  private async recordTurnUsage({
-    workspaceId,
-    threadId,
-    turnId,
-    usageTotals,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    turnId: string;
-    usageTotals: StreamUsageTotals;
-  }): Promise<void> {
-    await this.turnRecorderService
-      .recordUsage({
-        workspaceId,
-        threadId,
-        turnId,
-        usage: {
-          inputTokens: usageTotals.inputTokens,
-          outputTokens: usageTotals.outputTokens,
-          cacheReadTokens: usageTotals.cacheReadTokens,
-          cacheCreationTokens: usageTotals.cacheCreationTokens,
-          inputCredits: usageTotals.inputCredits,
-          outputCredits: usageTotals.outputCredits,
-        },
-      })
-      .catch((error: unknown) =>
-        this.logger.warn(
-          `Could not record the usage of turn ${turnId}: ${formatErrorWithCause(error)}`,
-        ),
-      );
-  }
-
-  private async finishTurn({
-    workspaceId,
-    turnId,
-    threadId,
-    streamId,
-    outcome,
-    turnModelId,
-  }: {
-    workspaceId: string;
-    turnId: string;
-    threadId: string;
-    streamId: string;
-    outcome: AgentChatTurnOutcome;
-    turnModelId: string;
-  }): Promise<void> {
-    await this.turnRecorderService.finish({
-      workspaceId,
-      turnId,
-      ...mapAgentChatTurnOutcomeToTurnStatus(outcome),
-      modelId: turnModelId,
-      streamClaim: { threadId, streamId },
-    });
   }
 
   private logAssistantTurnWithoutText({

@@ -1,3 +1,4 @@
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
@@ -108,6 +109,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       streamHeartbeatService as never,
       eventPublisherService as never,
       metricsService as never,
+      new AgentTurnRecorderService(threadRepository as never),
     );
 
     const service = new AgentChatStreamingService(

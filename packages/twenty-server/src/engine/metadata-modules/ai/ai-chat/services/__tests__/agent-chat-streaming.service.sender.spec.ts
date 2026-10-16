@@ -3,6 +3,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import {
   AuthException,
@@ -48,7 +49,9 @@ const build = () => {
     chat as never,
     {} as never,
     events as never,
-    {} as never,
+    {
+      signFileParts: async ({ parts }: { parts: unknown[] }) => parts,
+    } as never,
     heartbeat as never,
     metrics as never,
     new AgentChatStreamRecoveryService(
@@ -56,6 +59,7 @@ const build = () => {
       heartbeat as never,
       events as never,
       metrics as never,
+      new AgentTurnRecorderService(threads as never),
     ),
     actors as never,
     {} as never,

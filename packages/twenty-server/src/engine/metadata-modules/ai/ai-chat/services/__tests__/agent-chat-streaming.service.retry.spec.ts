@@ -1,3 +1,4 @@
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -90,7 +91,9 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       agentChatService as never,
       threadService as never,
       eventPublisherService as never,
-      { signFileByIdUrl: jest.fn() } as never,
+      {
+        signFileParts: async ({ parts }: { parts: unknown[] }) => parts,
+      } as never,
       streamHeartbeatService as never,
       metricsService as never,
       new AgentChatStreamRecoveryService(
@@ -98,6 +101,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
         streamHeartbeatService as never,
         eventPublisherService as never,
         metricsService as never,
+        new AgentTurnRecorderService(threadRepository as never),
       ),
       {
         authorizeRetry: jest

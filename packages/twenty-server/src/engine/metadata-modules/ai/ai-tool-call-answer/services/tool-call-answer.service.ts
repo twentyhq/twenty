@@ -159,13 +159,12 @@ export class ToolCallAnswerService {
 
     const streamId = generateId();
 
-    const hasClaimedStream =
-      await this.agentChatStreamingService.tryClaimStream({
-        threadId,
-        workspaceId,
-        streamId,
-        where: { pendingQuestionMessageId: toolPart.messageId },
-      });
+    const hasClaimedStream = await this.streamRecoveryService.tryClaimStream({
+      threadId,
+      workspaceId,
+      streamId,
+      where: { pendingQuestionMessageId: toolPart.messageId },
+    });
 
     if (!hasClaimedStream) {
       throw new AiException(

@@ -1,3 +1,4 @@
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -64,6 +65,7 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
         streamHeartbeatService as never,
         eventPublisherService as never,
         metricsService as never,
+        new AgentTurnRecorderService(threadRepository as never),
       ),
       {} as never,
       {} as never,

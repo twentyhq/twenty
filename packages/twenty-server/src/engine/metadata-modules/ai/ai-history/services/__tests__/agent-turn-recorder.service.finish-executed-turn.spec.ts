@@ -76,9 +76,10 @@ describe('AgentTurnRecorderService.finishExecutedTurn', () => {
   });
 
   it('still ends the turn when its usage cannot be written', async () => {
-    const { service, recordUsage, finish } = buildService();
-
-    recordUsage.mockRejectedValue(new Error('database down'));
+    const service = new AgentTurnRecorderService({
+      query: jest.fn().mockRejectedValue(new Error('database down')),
+    } as never);
+    const finish = jest.spyOn(service, 'finish').mockResolvedValue(true);
 
     await service.finishExecutedTurn({
       ...turn,

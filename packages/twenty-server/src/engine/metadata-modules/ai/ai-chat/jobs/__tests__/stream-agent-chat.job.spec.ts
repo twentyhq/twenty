@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -368,6 +369,7 @@ describe('StreamAgentChatJob', () => {
         streamHeartbeatService as never,
         eventPublisherService as never,
         metricsService as never,
+        new AgentTurnRecorderService(threadRepository as never),
       ),
       threadService as never,
       metricsService as never,
