@@ -23,6 +23,7 @@ import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
@@ -190,6 +191,7 @@ export class AgentRunTurnService {
       billing: {
         workspaceId,
         operationType: usageOperationType,
+        webSearchOperationType: UsageOperationType.AI_WORKFLOW_WEB_SEARCH,
         spenders,
       },
       telemetry: {
@@ -261,7 +263,7 @@ export class AgentRunTurnService {
     const agentSchema =
       responseFormat?.type === 'json' ? responseFormat.schema : undefined;
 
-    const hasNoMoreAvailableCredits = turn.hasNoMoreAvailableCredits();
+    const stopReason = turn.getStopReason();
     let result: object = { response: text };
     let usage = loopUsage;
     let steps = loopSteps;
@@ -330,9 +332,9 @@ export class AgentRunTurnService {
       usage,
       cacheCreationTokens: extractCacheCreationTokensFromSteps(steps),
       nativeWebSearchCallCount,
-      hasNoMoreAvailableCredits,
+      stopReason,
       // out of credits fails the execution even if it asked something, so it is never left waiting for an answer
-      isPaused: isPaused && !hasNoMoreAvailableCredits,
+      isPaused: isPaused && !isDefined(stopReason),
       steps,
       modelId: registeredModel.modelId,
       totalCostInDollars,

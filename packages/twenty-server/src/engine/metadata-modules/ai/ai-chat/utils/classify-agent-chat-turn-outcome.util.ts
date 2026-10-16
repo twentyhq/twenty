@@ -1,18 +1,26 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
+
+const CREDITS_FAILURE_PHASE = {
+  userAllowance: 'user_credits_exhausted',
+  workspaceAllowance: 'credits_exhausted',
+} as const satisfies Record<NonNullable<StepDebitResult['stopReason']>, string>;
 
 export const classifyAgentChatTurnOutcome = ({
   hasText,
   isAborted,
   isAwaitingUserAnswer,
   isSilent,
-  outOfCredits,
+  stopReason,
   isTextReplyRequired = true,
 }: {
   hasText: boolean;
   isAborted: boolean;
   isAwaitingUserAnswer: boolean;
   isSilent: boolean;
-  outOfCredits: boolean;
+  stopReason: StepDebitResult['stopReason'];
   isTextReplyRequired?: boolean;
 }): AgentChatTurnOutcome => {
   // stopWhen ends the stream on a question, so this is a completed turn, not an abandoned one
@@ -25,8 +33,8 @@ export const classifyAgentChatTurnOutcome = ({
   }
 
   // a background run that ran out of credits fails, whatever it wrote before
-  if (!isTextReplyRequired && outOfCredits) {
-    return { kind: 'failed', failurePhase: 'credits_exhausted' };
+  if (!isTextReplyRequired && isDefined(stopReason)) {
+    return { kind: 'failed', failurePhase: CREDITS_FAILURE_PHASE[stopReason] };
   }
 
   if (hasText) {
@@ -44,7 +52,9 @@ export const classifyAgentChatTurnOutcome = ({
 
   return {
     kind: 'failed',
-    failurePhase: outOfCredits ? 'credits_exhausted' : 'no_text',
+    failurePhase: isDefined(stopReason)
+      ? CREDITS_FAILURE_PHASE[stopReason]
+      : 'no_text',
   };
 };
 

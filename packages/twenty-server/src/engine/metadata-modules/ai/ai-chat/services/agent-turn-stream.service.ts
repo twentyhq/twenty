@@ -23,6 +23,7 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { type AgentTurn } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
 import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
@@ -363,7 +364,7 @@ export class AgentTurnStreamService {
     turnId,
     result,
     modelId,
-    isOutOfCredits,
+    stopReason,
     isWaiting = false,
     isBackgroundRun = false,
   }: {
@@ -371,7 +372,7 @@ export class AgentTurnStreamService {
     turnId: string;
     result: AgentTurnStreamResult;
     modelId: string;
-    isOutOfCredits: boolean;
+    stopReason: StepDebitResult['stopReason'];
     isWaiting?: boolean;
     // a background run's reply stays out of the inbox unless it asks something, and its result
     // stands in for a written reply
@@ -394,7 +395,7 @@ export class AgentTurnStreamService {
       isAborted: result.isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0 || isWaiting,
       isSilent,
-      outOfCredits: isOutOfCredits,
+      stopReason,
       isTextReplyRequired: !isBackgroundRun,
     });
     const finishTurn = () =>
@@ -493,18 +494,19 @@ export class AgentTurnStreamService {
   async publishTurnEnd({
     claim: { workspaceId, threadId },
     assistantMessageId,
-    isOutOfCredits,
+    stopReason,
   }: {
     claim: AgentChatStreamClaim;
     assistantMessageId: string;
-    isOutOfCredits: boolean;
+    stopReason: StepDebitResult['stopReason'];
   }): Promise<void> {
     await this.eventPublisherService.publish({
       threadId,
       workspaceId,
-      event: isOutOfCredits
-        ? { type: 'credits-exhausted' }
-        : { type: 'message-persisted', messageId: assistantMessageId },
+      event:
+        stopReason === 'workspaceAllowance'
+          ? { type: 'credits-exhausted' }
+          : { type: 'message-persisted', messageId: assistantMessageId },
     });
   }
 

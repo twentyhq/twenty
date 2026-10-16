@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -11,6 +12,7 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { type BillableStep } from 'src/engine/metadata-modules/ai/ai-billing/types/billable-step.type';
 import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
@@ -18,6 +20,10 @@ import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-bi
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+
+export type WebSearchOperationType =
+  | UsageOperationType.WEB_SEARCH
+  | UsageOperationType.AI_WORKFLOW_WEB_SEARCH;
 
 export type BillingUsageInput = {
   usage: BillingTokenUsage;
@@ -138,7 +144,7 @@ export class AiBillingService {
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
+  }): Promise<StepDebitResult> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -146,7 +152,7 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    const { exhaustedKind } =
+    return this.toStepDebitResult(
       await this.usageLimitQuotaService.debitAheadOfRecord({
         workspaceId,
         event: this.buildAiTokenUsageEvent({
@@ -156,22 +162,23 @@ export class AiBillingService {
           operationType,
           spenders,
         }),
-      });
-
-    return { hasNoMoreAvailableCredits: exhaustedKind === 'allowance' };
+      }),
+    );
   }
 
   private async billNativeWebSearchUsage({
     nativeWebSearchCallCount,
     workspaceId,
+    operationType,
     spenders,
   }: {
     nativeWebSearchCallCount: number;
     workspaceId: string;
+    operationType: WebSearchOperationType;
     spenders: UsageSpenders;
-  }): Promise<void> {
+  }): Promise<StepDebitResult | null> {
     if (nativeWebSearchCallCount <= 0) {
-      return;
+      return null;
     }
 
     const costInDollars =
@@ -182,59 +189,92 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    await this.usageLimitQuotaService.charge({
-      workspaceId,
-      events: [
-        {
-          resourceType: UsageResourceType.AI,
-          operationType: UsageOperationType.WEB_SEARCH,
-          creditsUsedMicro,
-          quantity: nativeWebSearchCallCount,
-          unit: UsageUnit.INVOCATION,
-          spenders,
-        },
-      ],
-    });
+    const event: RecordUsageInput = {
+      resourceType: UsageResourceType.AI,
+      operationType,
+      creditsUsedMicro,
+      quantity: nativeWebSearchCallCount,
+      unit: UsageUnit.INVOCATION,
+      spenders,
+    };
+
+    const webSearchDebit = await this.usageLimitQuotaService.debitAheadOfRecord(
+      {
+        workspaceId,
+        event,
+      },
+    );
+
+    await this.usageRecorderService.record(workspaceId, [
+      { ...event, userCreditsUsedMicro: webSearchDebit.userCreditsUsedMicro },
+    ]);
+
+    return this.toStepDebitResult(webSearchDebit);
   }
 
+  // returns the web search debit, so a caller can tell when it crossed the user's allowance
   async recordStepsUsage({
     modelId,
     steps,
     workspaceId,
     operationType,
+    webSearchOperationType,
     spenders,
+    userCreditsUsedMicro,
   }: {
     modelId: ModelId;
     steps: (BillableStep & { toolCalls: { toolName: string }[] })[];
     workspaceId: string;
     operationType: UsageOperationType;
+    webSearchOperationType: WebSearchOperationType;
     spenders: UsageSpenders;
-  }): Promise<void> {
+    userCreditsUsedMicro: number;
+  }): Promise<StepDebitResult | null> {
     const totalTokens = steps.reduce(
       (total, { usage }) =>
         total + (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0),
       0,
     );
+    const creditsUsedMicro = convertDollarsToCreditsMicro(
+      this.calculateStepsCost(modelId, steps),
+    );
 
     // a failed token record must not also skip charging for searches already made
-    await Promise.all([
+    const [, webSearchDebit] = await Promise.all([
       this.usageRecorderService.record(workspaceId, [
-        this.buildAiTokenUsageEvent({
-          creditsUsedMicro: convertDollarsToCreditsMicro(
-            this.calculateStepsCost(modelId, steps),
+        {
+          ...this.buildAiTokenUsageEvent({
+            creditsUsedMicro,
+            totalTokens,
+            modelId,
+            operationType,
+            spenders,
+          }),
+          userCreditsUsedMicro: Math.min(
+            userCreditsUsedMicro,
+            creditsUsedMicro,
           ),
-          totalTokens,
-          modelId,
-          operationType,
-          spenders,
-        }),
+        },
       ]),
       this.billNativeWebSearchUsage({
         nativeWebSearchCallCount: countNativeWebSearchCallsFromSteps(steps),
         workspaceId,
+        operationType: webSearchOperationType,
         spenders,
       }),
     ]);
+
+    return webSearchDebit;
+  }
+
+  private toStepDebitResult({
+    exhaustedKind,
+    ...userAllowanceDebit
+  }: QuotaDebitResult): StepDebitResult {
+    return {
+      stopReason: exhaustedKind === 'limit' ? null : exhaustedKind,
+      ...userAllowanceDebit,
+    };
   }
 
   private buildAiTokenUsageEvent({

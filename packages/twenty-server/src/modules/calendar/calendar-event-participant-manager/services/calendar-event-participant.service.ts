@@ -15,6 +15,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE } from 'src/modules/calendar/calendar-event-participant-manager/constants/calendar-event-participant-chunk-size';
 import { type CalendarEventParticipantSaveOperations } from 'src/modules/calendar/calendar-event-participant-manager/types/calendar-event-participant-save-operations.type';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
@@ -82,12 +83,14 @@ export class CalendarEventParticipantService {
 
   public async matchParticipantsAndEnqueueContactCreationJob({
     savedParticipantIds,
+    participantsOfLinkedEvents,
     calendarChannel,
     connectedAccount,
     workspaceId,
     calendarEventIds,
   }: {
     savedParticipantIds: string[];
+    participantsOfLinkedEvents: FetchedCalendarEventParticipant[];
     calendarChannel: CalendarChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
@@ -123,7 +126,10 @@ export class CalendarEventParticipantService {
             {
               workspaceId,
               connectedAccount,
-              contactsToCreate: savedParticipants.map((participant) => ({
+              contactsToCreate: [
+                ...savedParticipants,
+                ...participantsOfLinkedEvents,
+              ].map((participant) => ({
                 handle: participant.handle ?? '',
                 displayName:
                   participant.displayName ?? participant.handle ?? '',

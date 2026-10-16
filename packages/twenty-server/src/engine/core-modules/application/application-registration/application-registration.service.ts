@@ -1177,10 +1177,15 @@ export class ApplicationRegistrationService {
       version: string;
       count: number;
       suspendedCount: number;
+      autoUpdateEnabled: number;
     }[] = await this.applicationRepository
       .createQueryBuilder('application')
       .select("COALESCE(application.version, 'unknown')", 'version')
       .addSelect('COUNT(*)::int', 'count')
+      .addSelect(
+        'COUNT(*) FILTER (WHERE application.autoUpgrade)::int',
+        'autoUpdateEnabled',
+      )
       .addSelect(
         `COUNT(*) FILTER (WHERE workspace."activationStatus" = :suspendedStatus)::int`,
         'suspendedCount',
@@ -1211,6 +1216,10 @@ export class ApplicationRegistrationService {
 
     return {
       activeInstalls,
+      autoUpdateEnabled: rawVersionDistribution.reduce(
+        (sum, entry) => sum + entry.autoUpdateEnabled,
+        0,
+      ),
       suspendedInstalls,
       mostInstalledVersion,
       versionDistribution: rawVersionDistribution.map((entry) => ({

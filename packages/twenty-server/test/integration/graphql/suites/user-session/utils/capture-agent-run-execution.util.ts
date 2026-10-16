@@ -32,7 +32,7 @@ export const captureAgentRunExecution = async ({
     usage: EMPTY_USAGE,
     cacheCreationTokens: 0,
     nativeWebSearchCallCount: 0,
-    hasNoMoreAvailableCredits: false,
+    stopReason: null,
     isPaused: false,
     steps,
     modelId: 'stub-model',

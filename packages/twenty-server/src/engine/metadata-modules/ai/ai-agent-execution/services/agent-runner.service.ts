@@ -608,7 +608,7 @@ export class AgentRunnerService {
         ),
       },
       modelId: execution.modelId,
-      isOutOfCredits: execution.hasNoMoreAvailableCredits,
+      stopReason: execution.stopReason,
       isWaiting: isDefined(wait),
       isBackgroundRun: true,
     });
@@ -616,7 +616,7 @@ export class AgentRunnerService {
     await this.turnStreamService.publishTurnEnd({
       claim,
       assistantMessageId: streamed.assistantMessageId,
-      isOutOfCredits: execution.hasNoMoreAvailableCredits,
+      stopReason: execution.stopReason,
     });
 
     const summary = sumAgentRunSummaries({
@@ -662,7 +662,7 @@ export class AgentRunnerService {
     suspension: AgentRunSuspension | null;
     streamId: string;
   }): Promise<AgentRunnerOutcome> {
-    if (!execution.hasNoMoreAvailableCredits && !execution.isPaused) {
+    if (!isDefined(execution.stopReason) && !execution.isPaused) {
       return { status: 'COMPLETED', result: execution.result };
     }
 
@@ -678,7 +678,7 @@ export class AgentRunnerService {
 
     // A failure to suspend only fails the run, like a pause that could not be recorded
     const isSuspended =
-      !execution.hasNoMoreAvailableCredits &&
+      !isDefined(execution.stopReason) &&
       !hasPausedTooOften &&
       isDefined(condition) &&
       (await this.tryRecording(
@@ -724,7 +724,7 @@ export class AgentRunnerService {
       streamId,
     });
 
-    if (execution.hasNoMoreAvailableCredits) {
+    if (isDefined(execution.stopReason)) {
       return {
         status: 'FAILED',
         error: 'Agent stopped: no more available credits.',

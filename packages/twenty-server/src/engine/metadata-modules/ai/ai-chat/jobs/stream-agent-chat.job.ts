@@ -18,6 +18,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
@@ -236,6 +237,27 @@ export class StreamAgentChatJob {
           },
           abortSignal,
           conversationSizeTokens: data.conversationSizeTokens,
+          onUserCreditsExhausted: ({
+            renewsAt,
+            isFallingBackToWorkspaceCredits,
+          }) =>
+            this.eventPublisherService
+              .publish({
+                threadId: data.threadId,
+                workspaceId: data.workspaceId,
+                event: {
+                  type: 'user-credits-exhausted',
+                  workspaceMemberId:
+                    authorization.authContext.workspaceMemberId,
+                  isFallingBackToWorkspaceCredits,
+                  renewsAt: renewsAt.toISOString(),
+                },
+              })
+              .catch((error: unknown) =>
+                this.logger.warn(
+                  `Could not publish the user credits notice for stream ${data.streamId}: ${formatErrorWithCause(error)}`,
+                ),
+              ),
         });
 
         return {
@@ -253,16 +275,16 @@ export class StreamAgentChatJob {
               }
             }),
           },
-          hasNoMoreAvailableCredits: turn.hasNoMoreAvailableCredits,
+          getStopReason: turn.getStopReason,
         };
       },
     });
 
-    const isOutOfCredits = result.started.hasNoMoreAvailableCredits();
+    const stopReason = result.started.getStopReason();
 
     this.logTurnWithoutText({
       result,
-      isOutOfCredits,
+      stopReason,
       threadId: data.threadId,
       workspaceId: data.workspaceId,
       modelId: turnModelId,
@@ -273,7 +295,7 @@ export class StreamAgentChatJob {
       turnId,
       result,
       modelId: turnModelId,
-      isOutOfCredits,
+      stopReason,
     });
 
     if (isDefined(finish)) {
@@ -300,7 +322,7 @@ export class StreamAgentChatJob {
     await this.turnStreamService.publishTurnEnd({
       claim,
       assistantMessageId: result.assistantMessageId,
-      isOutOfCredits,
+      stopReason,
     });
   }
 
@@ -375,13 +397,13 @@ export class StreamAgentChatJob {
 
   private logTurnWithoutText({
     result: { replyParts, isAborted, streamError, usage },
-    isOutOfCredits,
+    stopReason,
     threadId,
     workspaceId,
     modelId,
   }: {
     result: AgentTurnStreamResult;
-    isOutOfCredits: boolean;
+    stopReason: StepDebitResult['stopReason'];
     threadId: string;
     workspaceId: string;
     modelId: string;
@@ -400,9 +422,11 @@ export class StreamAgentChatJob {
       ? 'user-cancelled'
       : streamError
         ? 'stream-error'
-        : isOutOfCredits
-          ? 'credits-exhausted'
-          : 'empty-completion';
+        : stopReason === 'userAllowance'
+          ? 'user-credits-exhausted'
+          : stopReason === 'workspaceAllowance'
+            ? 'credits-exhausted'
+            : 'empty-completion';
 
     const errorDetail = isDefined(streamError)
       ? formatErrorWithCause(streamError)
@@ -412,7 +436,7 @@ export class StreamAgentChatJob {
       `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
         `reason=${reason}, model=${modelId}, ` +
         `threadId=${threadId}, workspaceId=${workspaceId}, ` +
-        `isAborted=${isAborted}, outOfCredits=${isOutOfCredits}, hasText=${hasText}, ` +
+        `isAborted=${isAborted}, stopReason=${stopReason}, hasText=${hasText}, ` +
         `streamError=${errorDetail}, ` +
         `inputTokens=${usage.inputTokens},` +
         `responseMessage.parts=${JSON.stringify(replyParts)}`,

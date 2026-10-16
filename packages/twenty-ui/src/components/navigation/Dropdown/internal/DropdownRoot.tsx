@@ -14,6 +14,8 @@ import { getDropdownTabStopRowId } from './getDropdownTabStopRowId';
 import { getTrailingFocusGuard } from './getTrailingFocusGuard';
 import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { useRegisteredElementId } from './useRegisteredElementId';
+import { useDropdownSelections } from './useDropdownSelections';
+import { DropdownSelectionContext } from './DropdownSelectionContext';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -30,6 +32,9 @@ export const DropdownRoot = ({
   isSubmenu = false,
 }: DropdownRootProps & { isSubmenu?: boolean }) => {
   const parent = useContext(DropdownContext);
+  const selectionState = useDropdownSelections();
+  const { selections, initializeSelection, updateSelection } =
+    isSubmenu && isDefined(parent) ? parent : selectionState;
   const openNestedRootCountRef = useRef(0);
   const registerOpenNestedRoot = useCallback(() => {
     openNestedRootCountRef.current += 1;
@@ -233,6 +238,9 @@ export const DropdownRoot = ({
           rootType: type,
           open,
           multiple,
+          selections,
+          initializeSelection,
+          updateSelection,
           isSubmenu,
           parentType: parent?.type,
           rowFocus: {
@@ -271,7 +279,9 @@ export const DropdownRoot = ({
             isSubmenu ? undefined : parent?.registerOpenNestedRoot
           }
         />
-        {children}
+        <DropdownSelectionContext.Provider value={undefined}>
+          {children}
+        </DropdownSelectionContext.Provider>
       </DropdownContext.Provider>
     </Popover.Root>
   );

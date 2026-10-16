@@ -25,7 +25,7 @@ export const buildAgentExecutionResult = (
     usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
     cacheCreationTokens: 0,
     nativeWebSearchCallCount: 0,
-    hasNoMoreAvailableCredits: false,
+    stopReason: null,
     modelId: 'test-model',
     steps: [],
     ...overrides,

@@ -25,7 +25,7 @@ const baseExecution: AgentExecutionResult = {
   } as AgentExecutionResult['usage'],
   cacheCreationTokens: 5,
   nativeWebSearchCallCount: 2,
-  hasNoMoreAvailableCredits: false,
+  stopReason: null,
   isPaused: false,
   modelId: 'claude-sonnet-4',
   totalCostInDollars: 0.012,
