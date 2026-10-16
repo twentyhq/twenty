@@ -34,7 +34,9 @@ export const flatMapAsyncIterator = <TValue, TMappedValue>({
         pendingValues.push(...(await mapValue(result.value)));
       }
 
-      return { done: false, value: pendingValues.shift() as TMappedValue };
+      const [value] = pendingValues.splice(0, 1);
+
+      return { done: false, value };
     },
     return: async () => {
       pendingValues.length = 0;
