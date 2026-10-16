@@ -173,7 +173,6 @@ export const SettingsAiModelHoverCard = ({
   return (
     <StyledHoverCardWrapper>
       <SettingsTableCard
-        rounded
         items={items}
         gridAutoColumns={`${themeCssVariables.spacing[30]} 1fr`}
       />

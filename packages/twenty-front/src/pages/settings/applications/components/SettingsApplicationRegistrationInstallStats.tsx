@@ -142,7 +142,6 @@ export const SettingsApplicationRegistrationInstallStats = ({
     <StyledStats>
       <div role="group" aria-label={t`Install statistics`}>
         <SettingsTableCard
-          rounded
           items={statsItems}
           gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
         />
@@ -162,7 +161,6 @@ export const SettingsApplicationRegistrationInstallStats = ({
           }
         />
         <SettingsTableCard
-          rounded
           items={creditsUsedItems}
           gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
         />
