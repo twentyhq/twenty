@@ -3,8 +3,11 @@
   appearance: none;
   background: transparent;
   border: 0;
+  border-end-end-radius: 0;
+  border-end-start-radius: inherit;
   border-inline-end: 1px solid var(--t-border-color-medium);
-  border-radius: 0;
+  border-start-end-radius: 0;
+  border-start-start-radius: inherit;
   box-sizing: border-box;
   color: var(--t-font-color-tertiary);
   cursor: pointer;
