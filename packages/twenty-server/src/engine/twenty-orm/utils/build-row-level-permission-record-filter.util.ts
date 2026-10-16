@@ -9,7 +9,6 @@ import {
 } from 'twenty-shared/types';
 import {
   convertViewFilterValueToString,
-  getFilterTypeFromFieldType,
   isDefined,
   type RecordFilter,
   type RecordFilterGroup,
@@ -161,7 +160,6 @@ const buildRecordFilterForRole = ({
       id: predicate.id,
       fieldMetadataId: predicate.fieldMetadataId,
       value: convertViewFilterValueToString(predicateValue),
-      type: getFilterTypeFromFieldType(fieldMetadata.type),
       operand: predicate.operand as unknown as RecordFilter['operand'],
       recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,
       subFieldName: effectiveSubFieldName,

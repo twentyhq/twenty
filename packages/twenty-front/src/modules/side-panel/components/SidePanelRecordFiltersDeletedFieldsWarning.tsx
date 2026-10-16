@@ -1,21 +1,32 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { SidePanelInformationBanner } from '@/side-panel/components/SidePanelInformationBanner/SidePanelInformationBanner';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-type ChartFiltersDeletedFieldsWarningProps = {
-  validFieldMetadataIds: Set<string>;
+import { isDefined } from 'twenty-shared/utils';
+
+type SidePanelRecordFiltersDeletedFieldsWarningProps = {
+  validFieldMetadataIds?: Set<string>;
 };
 
-export const ChartFiltersDeletedFieldsWarning = ({
+export const SidePanelRecordFiltersDeletedFieldsWarning = ({
   validFieldMetadataIds,
-}: ChartFiltersDeletedFieldsWarningProps) => {
+}: SidePanelRecordFiltersDeletedFieldsWarningProps) => {
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const deletedFieldFiltersCount = currentRecordFilters.filter(
-    (recordFilter) => !validFieldMetadataIds.has(recordFilter.fieldMetadataId),
-  ).length;
+  const unresolvedRecordFilters = useAtomComponentStateValue(
+    unresolvedRecordFiltersComponentState,
+  );
+
+  const deletedFieldFiltersCount =
+    unresolvedRecordFilters.length +
+    currentRecordFilters.filter(
+      (recordFilter) =>
+        isDefined(validFieldMetadataIds) &&
+        !validFieldMetadataIds.has(recordFilter.fieldMetadataId),
+    ).length;
 
   if (deletedFieldFiltersCount === 0) {
     return null;
