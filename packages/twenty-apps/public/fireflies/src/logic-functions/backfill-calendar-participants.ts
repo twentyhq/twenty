@@ -7,14 +7,14 @@ import { FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT } from 'src/logic-functions/consta
 
 import {
   BACKFILL_CALENDAR_PARTICIPANTS_UNIVERSAL_IDENTIFIER,
-  SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  BACKFILL_CALENDAR_PARTICIPANTS_BATCH_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export const backfillCalendarParticipantsHandler = async (): Promise<void> => {
   try {
     await enqueueJobs({
       logicFunctionUniversalIdentifier:
-        SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        BACKFILL_CALENDAR_PARTICIPANTS_BATCH_UNIVERSAL_IDENTIFIER,
       payloads: [{}],
       retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
     });

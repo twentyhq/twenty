@@ -1,8 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { createFirefliesApplicationCoreApiClient } from 'src/__tests__/utils/create-fireflies-application-core-api-client.util';
 
 import { syncCallRecordingCalendarParticipant } from 'src/logic-functions/utils/sync-call-recording-calendar-participant.util';
 
@@ -14,42 +13,7 @@ describe('Fireflies calendar participants (integration)', () => {
   let callRecordingId: string;
 
   beforeAll(async () => {
-    const metadataClient = new MetadataApiClient();
-    const result = await metadataClient.query({
-      findApplicationRegistrationByUniversalIdentifier: {
-        __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-        id: true,
-        oAuthClientId: true,
-      },
-    });
-    const registration =
-      result.findApplicationRegistrationByUniversalIdentifier;
-    if (!registration) {
-      throw new Error('Application registration missing');
-    }
-    const rotation = await metadataClient.mutation({
-      rotateApplicationRegistrationClientSecret: {
-        __args: { id: registration.id },
-        clientSecret: true,
-      },
-    });
-    const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        grant_type: 'client_credentials',
-        client_id: registration.oAuthClientId,
-        client_secret:
-          rotation.rotateApplicationRegistrationClientSecret.clientSecret,
-      }),
-    });
-    const body = (await response.json()) as { access_token?: string };
-    if (!response.ok || !body.access_token) {
-      throw new Error('Application token exchange failed');
-    }
-    client = new CoreApiClient({
-      headers: { Authorization: `Bearer ${body.access_token}` },
-    });
+    client = await createFirefliesApplicationCoreApiClient();
   });
 
   beforeEach(async () => {
@@ -131,7 +95,11 @@ describe('Fireflies calendar participants (integration)', () => {
     await sync();
     expect(await findParticipants()).toEqual([
       {
-        node: { id: callRecordingId, applicationId, displayName: 'Fireflies' },
+        node: {
+          id: callRecordingId,
+          createdBy: { source: 'APPLICATION' },
+          displayName: 'Fireflies',
+        },
       },
     ]);
   });

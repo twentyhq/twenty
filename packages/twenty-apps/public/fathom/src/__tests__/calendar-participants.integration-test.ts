@@ -94,7 +94,13 @@ describe('Fathom calendar participants (integration)', () => {
     await Promise.all([sync(), sync()]);
     await sync();
     expect(await findParticipants()).toEqual([
-      { node: { id: callRecordingId, applicationId, displayName: 'Fathom' } },
+      {
+        node: {
+          id: callRecordingId,
+          createdBy: { source: 'APPLICATION' },
+          displayName: 'Fathom',
+        },
+      },
     ]);
   });
 

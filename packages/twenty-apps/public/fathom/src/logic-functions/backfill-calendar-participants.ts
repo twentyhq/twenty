@@ -4,14 +4,14 @@ import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fath
 
 import {
   BACKFILL_CALENDAR_PARTICIPANTS_UNIVERSAL_IDENTIFIER,
-  SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  BACKFILL_CALENDAR_PARTICIPANTS_BATCH_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export const backfillCalendarParticipantsHandler = async (): Promise<void> => {
   try {
     await enqueueFathomJobsOrThrow({
       logicFunctionUniversalIdentifier:
-        SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        BACKFILL_CALENDAR_PARTICIPANTS_BATCH_UNIVERSAL_IDENTIFIER,
       payloads: [{}],
     });
   } catch (error) {

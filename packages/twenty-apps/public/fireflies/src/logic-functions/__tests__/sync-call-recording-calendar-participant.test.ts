@@ -1,13 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { client, enqueue, sync } = vi.hoisted(() => ({
+const { client, enqueue, sync, clientOptions } = vi.hoisted(() => ({
+  clientOptions: vi.fn(),
   client: { query: vi.fn(), mutation: vi.fn() },
   enqueue: vi.fn(),
   sync: vi.fn(),
 }));
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
-    constructor() {
+    constructor(options: unknown) {
+      clientOptions(options);
       return client;
     }
   },
@@ -21,8 +23,13 @@ vi.mock(
   () => ({ syncCallRecordingCalendarParticipant: sync }),
 );
 
-import { SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  BACKFILL_CALENDAR_PARTICIPANTS_BATCH_UNIVERSAL_IDENTIFIER,
+  SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { syncCallRecordingCalendarParticipantHandler } from 'src/logic-functions/sync-call-recording-calendar-participant';
+
+import { backfillCalendarParticipantsBatchHandler } from 'src/logic-functions/backfill-calendar-participants-batch';
 
 const token = [
   'header',
@@ -45,6 +52,7 @@ describe('calendar participant synchronization trigger', () => {
         after: { externalBotId: 'old-bot', applicationId: 'app-id' },
       },
     });
+    expect(clientOptions).toHaveBeenCalledWith({ runAs: 'application' });
     expect(sync).toHaveBeenCalledWith({
       client,
       applicationId: 'app-id',
@@ -60,20 +68,27 @@ describe('calendar participant synchronization trigger', () => {
         pageInfo: { hasNextPage: true, endCursor: 'next-page' },
       },
     });
-    await syncCallRecordingCalendarParticipantHandler({});
+    await backfillCalendarParticipantsBatchHandler({});
     expect(enqueue).toHaveBeenCalledWith({
       logicFunctionUniversalIdentifier:
         SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: [{ recordId: 'recording-id' }, { after: 'next-page' }],
+      payloads: [{ recordId: 'recording-id' }],
       retryLimit: 2,
     });
+    expect(enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({
+        logicFunctionUniversalIdentifier:
+          BACKFILL_CALENDAR_PARTICIPANTS_BATCH_UNIVERSAL_IDENTIFIER,
+        payloads: [{ after: 'next-page' }],
+      }),
+    );
   });
 
   it('stops at the last page', async () => {
     client.query.mockResolvedValue({
       callRecordings: { edges: [], pageInfo: { hasNextPage: false } },
     });
-    await syncCallRecordingCalendarParticipantHandler({ after: 'last-page' });
+    await backfillCalendarParticipantsBatchHandler({ after: 'last-page' });
     expect(enqueue).not.toHaveBeenCalled();
   });
 
@@ -89,7 +104,7 @@ describe('calendar participant synchronization trigger', () => {
       },
     });
     await expect(
-      syncCallRecordingCalendarParticipantHandler({ after: 'same-page' }),
+      backfillCalendarParticipantsBatchHandler({ after: 'same-page' }),
     ).rejects.toThrow('invalid cursor');
   });
   it('ignores deletion events from another recording app', async () => {
