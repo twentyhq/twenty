@@ -619,6 +619,10 @@ export const PreviousProviderOperationsRemainInactive: Story = {
     const replacementSecond = within(
       body.getByRole('region', { name: 'Second lifecycle notifications' }),
     ).getByRole('status');
+    await waitFor(() => {
+      expect(replacementFirst).toBeVisible();
+      expect(replacementSecond).toBeVisible();
+    });
     const replacementId = replacementFirst.id;
     expect(replacementId).not.toBe(originalId);
     await user.click(
