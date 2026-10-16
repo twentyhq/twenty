@@ -137,7 +137,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   })
   scope: ConnectedAccountScope;
 
-  // Only previous-release servers use it, via the sync trigger; drop it next release
+  // TODO: drop with the sync trigger next release; only previous-release servers use it
   @Column({
     type: 'varchar',
     nullable: false,
