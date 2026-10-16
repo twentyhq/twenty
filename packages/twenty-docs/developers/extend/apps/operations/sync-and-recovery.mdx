@@ -6,6 +6,22 @@ icon: "compass"
 
 Local app development revolves around **syncing**: the CLI rebuilds your manifest and the server applies only the difference between it and the metadata already in your workspace. This page covers which command to reach for, how to read what a sync changed, and what to do — in order — when local state looks inconsistent.
 
+## Standalone CLI plans and translations
+
+With the standalone `twenty-cli` package, use `twenty app plan` to preview both metadata and translation changes:
+
+```bash filename="Terminal"
+twenty app plan
+```
+
+The command reports `Computing app plan (read-only, nothing will be applied)…`. It builds the app locally, then requests a plan without changing server metadata or stored translations.
+
+Translation actions appear separately from metadata actions, grouped by locale, with added, updated, and deleted messages. When source labels are available, the output includes them alongside message IDs. `twenty app apply` previews the same actions before syncing, and `twenty app dev` reports them after each sync. JSON output exposes them as `translationActions`, separate from metadata `actions` and their `summary`.
+
+`--no-delete` also preserves stored translations missing from your local catalog. A translation catalog belongs to the app registration, so applying a catalog change affects every workspace where that registration is installed.
+
+The remaining examples use the legacy CLI bundled with `twenty-sdk`, whose `yarn twenty plan` output only reports metadata changes.
+
 ## Which command, when
 
 <Note>
