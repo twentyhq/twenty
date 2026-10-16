@@ -5,6 +5,7 @@ import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccoun
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
@@ -52,9 +53,11 @@ export const SettingsAccountDetail = () => {
     return <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />;
   }
 
-  const ProviderIcon = isDefined(nativeAccount)
-    ? SettingsConnectedAccountIcon({ account: nativeAccount })
-    : undefined;
+  if (!isDefined(nativeAccount)) {
+    return <SettingsSkeletonLoader />;
+  }
+
+  const ProviderIcon = SettingsConnectedAccountIcon({ account: nativeAccount });
 
   const renderContent = () => {
     if (activeTabId === 'emails' && isDefined(messageChannel)) {
@@ -78,12 +81,8 @@ export const SettingsAccountDetail = () => {
 
   return (
     <SettingsPageLayout
-      title={nativeAccount?.handle}
-      icon={
-        isDefined(ProviderIcon) ? (
-          <ProviderIcon size={theme.icon.size.md} />
-        ) : undefined
-      }
+      title={nativeAccount.handle}
+      icon={<ProviderIcon size={theme.icon.size.md} />}
       links={[
         {
           children: t`User`,
@@ -93,7 +92,7 @@ export const SettingsAccountDetail = () => {
           children: t`App preferences`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
-        { children: nativeAccount?.handle },
+        { children: nativeAccount.handle },
       ]}
       secondaryBar={
         tabs.length > 0 ? (

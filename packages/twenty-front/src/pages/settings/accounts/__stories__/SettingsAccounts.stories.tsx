@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { HttpResponse, graphql } from 'msw';
+import { HttpResponse, delay, graphql } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -118,6 +118,37 @@ export const AccountsGroupedByEmail: Story = {
 
     expect(canvas.getByText('sales@apple.dev')).toBeVisible();
     expect(canvas.queryByText('support@apple.dev')).not.toBeInTheDocument();
+  },
+};
+
+export const AccountsHeaderStaysWhileLoading: Story = {
+  ...accountGroupsStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', async () => {
+          await delay('infinite');
+        }),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Shared accounts between apps', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(canvas.getByText('Accounts')).toBeVisible();
+    expect(
+      canvas.getByText(
+        'Choose your preferences for the apps installed on your workspace by the admin',
+      ),
+    ).toBeVisible();
+    expect(canvas.queryByText('Used by')).not.toBeInTheDocument();
+    expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
   },
 };
 
