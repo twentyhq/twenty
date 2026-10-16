@@ -10,7 +10,6 @@ import {
   type CancelWorkspaceRecallBotsResult,
 } from 'src/logic-functions/flows/cancel-workspace-recall-bots.util';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { getCurrentApplicationId } from 'src/logic-functions/utils/get-current-application-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 const UNINSTALL_TIMEOUT_SECONDS = 30;
@@ -109,7 +108,6 @@ export const cancelRecallBotsOnUninstallHandler =
           __args: {
             filter: {
               id: { in: canceledRecordingIds },
-              applicationId: { eq: getCurrentApplicationId() },
             },
           },
           id: true,

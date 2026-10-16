@@ -20,6 +20,17 @@ export const syncCallRecordingCalendarParticipantHandler = async (
   const after = getString(body?.after);
   const client = new CoreApiClient();
   const applicationId = getCurrentApplicationId();
+  const properties = asRecord(body?.properties);
+  if (properties) {
+    const before = asRecord(properties.before);
+    const after = asRecord(properties.after);
+    if (
+      before?.applicationId !== applicationId &&
+      after?.applicationId !== applicationId
+    ) {
+      return;
+    }
+  }
 
   try {
     if (isNonEmptyString(recordId)) {

@@ -6,6 +6,7 @@ const applicationId = 'app-id';
 const callRecordingId = 'recording-id';
 const client = { query: vi.fn(), mutation: vi.fn() };
 const recording = {
+  applicationId,
   calendarEventId: 'event-id',
   externalBotId: 'scheduled-bot',
   status: 'SCHEDULED',
@@ -37,7 +38,6 @@ describe('call recorder calendar participant', () => {
           __args: {
             filter: {
               id: { eq: callRecordingId },
-              applicationId: { eq: applicationId },
             },
             first: 1,
           },
@@ -52,7 +52,6 @@ describe('call recorder calendar participant', () => {
             {
               id: callRecordingId,
               calendarEventId: 'event-id',
-              applicationId,
               handle: 'Call Recorder',
               displayName: 'Call Recorder',
               isOrganizer: false,
@@ -82,7 +81,6 @@ describe('call recorder calendar participant', () => {
           __args: {
             filter: {
               id: { eq: callRecordingId },
-              applicationId: { eq: applicationId },
             },
           },
           id: true,
@@ -137,7 +135,6 @@ describe('call recorder calendar participant', () => {
         __args: {
           filter: {
             id: { eq: callRecordingId },
-            applicationId: { eq: applicationId },
           },
           data: {
             calendarEventId: 'event-id',
@@ -179,5 +176,10 @@ describe('call recorder calendar participant', () => {
         createCalendarEventParticipants: expect.any(Object),
       }),
     );
+  });
+  it('ignores a recording owned by another app', async () => {
+    setRecording({ ...recording, applicationId: 'other-app' });
+    await sync();
+    expect(client.mutation).not.toHaveBeenCalled();
   });
 });

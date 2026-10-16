@@ -13,10 +13,6 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
-vi.mock('src/logic-functions/utils/get-current-application-id.util', () => ({
-  getCurrentApplicationId: () => 'app-id',
-}));
-
 vi.mock(
   'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util',
   () => ({
@@ -98,7 +94,6 @@ describe('cancel-recall-bots-on-uninstall', () => {
         __args: {
           filter: {
             id: { in: ['call-recording-1', 'call-recording-3'] },
-            applicationId: { eq: 'app-id' },
           },
         },
         id: true,

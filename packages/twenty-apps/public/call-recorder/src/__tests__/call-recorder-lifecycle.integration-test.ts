@@ -3682,11 +3682,13 @@ describe('call recorder app lifecycle (integration)', () => {
           __args: {
             filter: {
               calendarEventId: { eq: calendarEventId },
-              applicationId: { eq: getCurrentApplicationId() },
+              id: { in: createdCallRecordingIds },
             },
             first: 50,
           },
-          edges: { node: { id: true, applicationId: true, displayName: true } },
+          edges: {
+            node: { id: true, createdBy: { source: true }, displayName: true },
+          },
         },
       });
       return (
@@ -3696,7 +3698,7 @@ describe('call recorder app lifecycle (integration)', () => {
           }: {
             node: {
               id: string;
-              applicationId?: string | null;
+              createdBy?: { source?: string };
               displayName?: string | null;
             };
           }) => node,
@@ -3730,7 +3732,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(await findParticipants(calendarEventId)).toEqual([
         {
           id: callRecordingId,
-          applicationId: getCurrentApplicationId(),
+          createdBy: { source: 'APPLICATION' },
           displayName: 'Call Recorder',
         },
       ]);
@@ -3743,7 +3745,12 @@ describe('call recorder app lifecycle (integration)', () => {
       });
       await syncCallRecordingCalendarParticipantHandler({
         ...event,
-        properties: { after: { externalBotId: 'scheduled-bot' } },
+        properties: {
+          after: {
+            externalBotId: 'scheduled-bot',
+            applicationId: getCurrentApplicationId(),
+          },
+        },
       });
       expect(await findParticipants(calendarEventId)).toEqual([]);
     });
