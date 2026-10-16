@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { PhoneCountryPickerContext } from './PhoneCountryPickerContext';
@@ -9,7 +10,9 @@ export const usePhoneCountryPickerContextOrThrow = () => {
 
   if (!isDefined(context)) {
     throw new Error(
-      'PhoneCountryPicker parts require PhoneCountryPicker.Root.',
+      doNotTranslate(
+        'PhoneCountryPicker parts require PhoneCountryPicker.Root.',
+      ),
     );
   }
 
