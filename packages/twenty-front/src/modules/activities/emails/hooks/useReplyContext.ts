@@ -58,9 +58,11 @@ export const useReplyContext = (
     });
 
     const rawSubject = lastSentMessage.subject ?? '';
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Re: is the standard email reply prefix used for threading.
     const subject = rawSubject.startsWith('Re: ')
       ? rawSubject
-      : `Re: ${rawSubject}`;
+      : // oxlint-disable-next-line lingui/no-unlocalized-strings -- Re: is the standard email reply prefix used for threading.
+        `Re: ${rawSubject}`;
 
     return {
       loading: false,

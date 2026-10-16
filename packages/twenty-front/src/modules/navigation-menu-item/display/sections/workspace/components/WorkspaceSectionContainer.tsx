@@ -52,6 +52,7 @@ export const WorkspaceSectionContainer = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { toggleNavigationSection, isNavigationSectionOpen } =
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is the persisted section identifier.
     useNavigationSection('Workspace');
   const views = useAtomStateValue(viewsSelector);
 

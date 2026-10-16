@@ -69,6 +69,8 @@ export const useApplyObjectFilterDropdownOperand = () => {
     } else if (isValuelessOperand) {
       if (!isDefined(fieldMetadataItemUsedInDropdown)) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           'FieldMetadataItemUsedInDropdown is not defined, cannot create empty record filter, this should not happen',
         );
       }
@@ -168,6 +170,8 @@ const convertDateTimeFilterValue = (
 
   if (targetOperand === RecordFilterOperand.IS) {
     try {
+      // Date and time syntax must stay stable across locales.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       const existingZoned = currentValue.includes('T')
         ? Temporal.Instant.from(currentValue).toZonedDateTimeISO(userTimezone)
         : Temporal.PlainDate.from(currentValue).toZonedDateTime(userTimezone);

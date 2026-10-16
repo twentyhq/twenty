@@ -18,6 +18,8 @@ export const computeNewEvenlySpacedPositions = ({
 
   if (positionGapSize < 0) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `Cannot compute positions because starting position (${startingPosition}) is after ending position (${endingPosition})`,
     );
   }

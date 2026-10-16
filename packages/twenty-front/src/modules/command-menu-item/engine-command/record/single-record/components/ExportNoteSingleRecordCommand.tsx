@@ -11,6 +11,7 @@ export const ExportNoteSingleRecordCommand = () => {
 
   if (!isDefined(recordId) || !isDefined(selectedRecord)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'Record ID and selected record are required to export note to PDF',
     );
   }

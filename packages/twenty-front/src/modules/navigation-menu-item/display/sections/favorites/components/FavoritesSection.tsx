@@ -50,9 +50,11 @@ export const FavoritesSection = () => {
   const { t } = useLingui();
 
   const { toggleNavigationSection, openNavigationSection } =
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is the persisted section identifier.
     useNavigationSection('Favorites');
   const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is the persisted section identifier.
     'Favorites',
   );
 

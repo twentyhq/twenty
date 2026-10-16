@@ -22,8 +22,10 @@ const NOTCH_MAX_WIDTH_PX = Math.round(
 );
 
 const LEFT_SLOPE_PATH =
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- SVG path commands are geometry, not copy.
   'M0 0 C4.197 0 8.369 0.66 12.361 1.958 L61.861 18.042 A40 40 0 0 0 74.222 20 L0 20 Z';
 const RIGHT_SLOPE_PATH =
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- SVG path commands are geometry, not copy.
   'M0 20 A40 40 0 0 1 12.63 17.953 L60.418 2.047 A40 40 0 0 1 73.048 0 L73.048 20 Z';
 
 const ShapeRow = styled.div`

@@ -64,6 +64,7 @@ export const SidePanelWorkflowRunViewStepContent = () => {
   );
   if (isNull(sidePanelPageComponentInstance)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       'SidePanelPageComponentInstanceContext is not defined. This component should be used within SidePanelPageComponentInstanceContext.',
     );
   }

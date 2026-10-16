@@ -12,6 +12,7 @@ import {
   IconWebhook,
 } from 'twenty-ui/icon';
 
+// Source names are stored in saved filters; label descriptors provide localized display text.
 export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
   id: string;
   name: string;
@@ -21,6 +22,7 @@ export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
 }> = [
   {
     id: 'MANUAL',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     name: 'User',
     label: msg`User`,
     AvatarIcon: IconUserCircle,
@@ -28,6 +30,7 @@ export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
   },
   {
     id: 'IMPORT',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     name: 'Import',
     label: msg`Import`,
     AvatarIcon: IconCsv,
@@ -35,6 +38,7 @@ export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
   },
   {
     id: 'API',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     name: 'Api',
     label: msg`API`,
     AvatarIcon: IconApi,
@@ -42,18 +46,21 @@ export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
   },
   {
     id: 'EMAIL',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     name: 'Email',
     label: msg`Email`,
     AvatarIcon: IconGmail,
   },
   {
     id: 'CALENDAR',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     name: 'Calendar',
     label: msg`Calendar`,
     AvatarIcon: IconGoogleCalendar,
   },
   {
     id: 'WORKFLOW',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     name: 'Workflow',
     label: msg`Workflow`,
     AvatarIcon: IconSettingsAutomation,
@@ -61,6 +68,7 @@ export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
   },
   {
     id: 'WEBHOOK',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     name: 'Webhook',
     label: msg`Webhook`,
     AvatarIcon: IconWebhook,
@@ -68,6 +76,7 @@ export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
   },
   {
     id: 'SYSTEM',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     name: 'System',
     label: msg`System`,
     AvatarIcon: IconRobot,

@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Keywords show validation expression syntax.
 import { msg } from '@lingui/core/macro';
 
 import { type ValidationRuleSyntaxDefinition } from '@/validation-rules/types/ValidationRuleSyntaxDefinition';

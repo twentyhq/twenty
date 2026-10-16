@@ -37,6 +37,8 @@ export const AdvancedFilterSidePanelRecordFilterOperandSelect = ({
     : [];
 
   const shouldUseUTCTimeZone = isWorkflowFindRecords === true;
+  // Date and time syntax must stay stable across locales.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   const timeZoneAbbreviation = shouldUseUTCTimeZone ? 'UTC' : undefined;
 
   if (isDisabled === true) {

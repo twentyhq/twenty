@@ -51,7 +51,8 @@ export const generateCsv: GenerateExport = ({
     fieldMetadataId: '',
     type: FieldMetadataType.UUID,
     iconName: '',
-    label: `Id`,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Preserve the CSV header expected by existing importers.
+    label: 'Id',
     metadata: {
       fieldName: 'id',
     },
@@ -62,8 +63,11 @@ export const generateCsv: GenerateExport = ({
   const columnsToExportWithIdColumn = [objectIdColumn, ...columnsToExport];
 
   const keys = columnsToExportWithIdColumn.flatMap((col) => {
-    const headerLabel = `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`;
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Preserve the relation CSV header expected by existing importers.
+    const headerLabel = col.type === 'RELATION' ? `${col.label} Id` : col.label;
     const column = {
+      // Metadata and protocol identifiers must stay stable across locales.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
       title: formatValueForCSV(sanitizeValueForCSVExport(headerLabel)),
     };

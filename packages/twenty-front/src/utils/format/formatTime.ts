@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
 
 type FormatTimeParams = {
   hour: string;
@@ -29,11 +30,12 @@ export const formatTime = ({
   if (use24HourFormat) {
     formattedTime = `${hourNum.toString().padStart(2, '0')}:${minuteNum.toString().padStart(2, '0')}`;
   } else {
-    const period = hourNum >= 12 ? 'PM' : 'AM';
+    const period = hourNum >= 12 ? t`PM` : t`AM`;
     const displayHour =
       hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
     formattedTime = `${displayHour}:${minuteNum.toString().padStart(2, '0')} ${period}`;
   }
 
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- UTC is a time-zone designator.
   return appendUTC ? `${formattedTime} UTC` : formattedTime;
 };

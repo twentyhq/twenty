@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- User-agent tokens are protocol values.
 import { isString } from '@sniptt/guards';
 
 export const getUserDevice = () => {

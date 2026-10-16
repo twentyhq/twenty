@@ -75,6 +75,8 @@ export const useApplyAdvancedFilterRelationTargetField = () => {
 
     if (!isDefined(firstOperand)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `No valid operand found for relation-traversal filter type: ${filterType}`,
       );
     }

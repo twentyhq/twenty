@@ -43,7 +43,7 @@ A flat array is a simultaneous combination: `['Mod', 'K']` means press Mod and K
 
 Use `sequenceJoinLabel` for localized join text. `combinationSeparator` can preserve a host convention such as `+`. The default text separator is empty on Apple devices and a space elsewhere. `variant` selects `keys`, `text`, or `button`. `visibility="desktop"` hides the hint at mobile viewport widths while `always` remains visible.
 
-Key symbols have readable accessible names. Supply `aria-label` or `aria-labelledby` for a localized name, or `aria-hidden` for a decorative hint. Buttons keep their action names and hide their decorative hints on mobile. Menu and list rows keep their hints visible.
+Key symbols have readable accessible names. Use `accessibleKeyLabels` to localize individual key names in screen reader output. Supply `aria-label` or `aria-labelledby` for a localized name for the whole shortcut, or `aria-hidden` for a decorative hint. Buttons keep their action names and hide their decorative hints on mobile. Menu and list rows keep their hints visible.
 
 ## Migration
 

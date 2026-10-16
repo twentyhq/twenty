@@ -58,6 +58,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       getDefaultFieldMetadataItemForFilter(objectMetadataItem);
 
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Missing default field metadata item for filter');
     }
 
@@ -91,10 +93,14 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       getDefaultFieldMetadataItemForFilter(objectMetadataItem);
 
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Missing default field metadata item for filter');
     }
 
     if (!isDefined(currentView)) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Missing view');
     }
 

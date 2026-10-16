@@ -82,6 +82,8 @@ const isMorphRelationJoinColumnKey = ({
       morphRelations: fieldMetadataItem.morphRelations,
       fieldName: fieldMetadataItem.name,
     },
+    // Metadata and protocol identifiers must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
   }).map((name) => `${name}Id`);
 
   return possibleJoinColumnNames.includes(key);
@@ -125,6 +127,8 @@ const getJoinColumnValue = ({
     return record[joinColumnName];
   }
 
+  // Metadata and protocol identifiers must stay stable across locales.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   const relationRecord = record[joinColumnName.slice(0, -'Id'.length)];
 
   return isObject(relationRecord)
@@ -239,6 +243,8 @@ export const isRecordMatchingFilter = ({
 
     if (!Array.isArray(filterValue)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         'Unexpected value for "and" filter : ' + JSON.stringify(filterValue),
       );
     }
@@ -286,6 +292,8 @@ export const isRecordMatchingFilter = ({
       });
     }
 
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('Unexpected value for "or" filter : ' + filterValue);
   }
 
@@ -293,6 +301,8 @@ export const isRecordMatchingFilter = ({
     const filterValue = filter.not;
 
     if (!isDefined(filterValue)) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Unexpected value for "not" filter : ' + filterValue);
     }
 
@@ -317,6 +327,8 @@ export const isRecordMatchingFilter = ({
   return Object.entries(filter).every(([filterKey, filterValue]) => {
     if (!isDefined(filterValue)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         'Unexpected value for filter key "' + filterKey + '" : ' + filterValue,
       );
     }
@@ -343,8 +355,12 @@ export const isRecordMatchingFilter = ({
 
     if (!isDefined(objectMetadataField)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         'Field metadata item "' +
           filterKey +
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           '" not found for object metadata item ' +
           objectMetadataItem.nameSingular,
       );
@@ -587,6 +603,8 @@ export const isRecordMatchingFilter = ({
       }
       default: {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `Not implemented yet for field type "${objectMetadataField.type}"`,
         );
       }

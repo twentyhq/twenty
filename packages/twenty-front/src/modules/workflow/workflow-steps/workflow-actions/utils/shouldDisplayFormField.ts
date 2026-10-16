@@ -78,6 +78,7 @@ export const shouldDisplayFormField = ({
       );
     default:
       throw new CustomError(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         `Action "${actionType}" is not supported`,
         'UNSUPPORTED_ACTION_TYPE',
       );

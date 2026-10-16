@@ -189,6 +189,7 @@ export const FormAdvancedTextFieldInput = ({
   const handleVariableTagInsert = (variableName: string) => {
     if (!isDefined(editor)) {
       throw new Error(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This invariant is an internal diagnostic.
         'Expected the editor to be defined when a variable is selected',
       );
     }

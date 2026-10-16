@@ -34,6 +34,8 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
 
     if (!isDefined(correspondingFieldMetadataItem)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `Cannot find field metadata item with id : ${fieldMetadataItemId}`,
       );
     }

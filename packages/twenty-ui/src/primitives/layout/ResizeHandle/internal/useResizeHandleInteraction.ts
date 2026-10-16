@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser APIs.
 import { useDirection } from '@base-ui/react/direction-provider';
 import { clamp } from '@base-ui/utils/clamp';
 import { type KeyboardEvent } from 'react';

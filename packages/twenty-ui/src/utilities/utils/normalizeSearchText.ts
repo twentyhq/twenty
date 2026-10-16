@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Unicode normalization forms are standard identifiers.
 import { isDefined } from './isDefined';
 
 const SPACING_DIACRITICS = /[·ʻʼ´¨ˆ˜΄ˇ˘˙˚˛˝¯¸^`]/g;

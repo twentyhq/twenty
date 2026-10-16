@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { t } from '@lingui/core/macro';
 
 export const getEmailIdentityDisplayName = ({
   personName,
@@ -13,4 +14,4 @@ export const getEmailIdentityDisplayName = ({
 }): string =>
   [workspaceMemberName, personName, displayName, handle].find(
     isNonEmptyString,
-  ) ?? 'Unknown';
+  ) ?? t`Unknown`;

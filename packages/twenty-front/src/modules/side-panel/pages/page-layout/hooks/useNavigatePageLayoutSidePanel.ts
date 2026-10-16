@@ -34,6 +34,7 @@ export const useNavigatePageLayoutSidePanel = () => {
     }: NavigatePageLayoutSidePanelProps) => {
       if (!isDefined(pageLayoutSidePanelTarget)) {
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
           'Cannot open a page layout side panel page outside of a page layout with a target record',
         );
       }

@@ -62,6 +62,7 @@ export const ButtonNode = Node.create({
       'div',
       {
         class: 'block-button-wrapper',
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This string is CSS syntax for serialized block content.
         style: `text-align: ${node.attrs.align ?? 'left'};`,
       },
       [

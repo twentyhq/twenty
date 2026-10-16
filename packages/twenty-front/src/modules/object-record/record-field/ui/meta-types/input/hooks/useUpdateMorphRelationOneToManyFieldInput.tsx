@@ -19,6 +19,8 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
   );
 
   if (!fieldDefinition.metadata.objectMetadataNameSingular) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('ObjectMetadataNameSingular is required');
   }
 
@@ -36,6 +38,8 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
       >,
     ) => {
       if (!fieldDefinition.metadata.objectMetadataNameSingular) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('ObjectMetadataNameSingular is required');
       }
 
@@ -45,6 +49,8 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
       );
 
       if (!isDefined(targetMorphRelation)) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('TargetMorphRelation is required');
       }
 

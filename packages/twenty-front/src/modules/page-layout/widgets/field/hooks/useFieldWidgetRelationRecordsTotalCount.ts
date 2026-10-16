@@ -71,6 +71,7 @@ export const useFieldWidgetRelationRecordsTotalCount = ({
 
   const filter = isToManyObjects
     ? ({
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This suffix forms a GraphQL field identifier.
         [`${gqlFieldName}Id`]: {
           in: [recordId],
         },

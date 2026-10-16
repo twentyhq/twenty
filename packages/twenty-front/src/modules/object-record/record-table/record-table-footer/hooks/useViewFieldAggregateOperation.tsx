@@ -50,6 +50,8 @@ export const useViewFieldAggregateOperation = () => {
     aggregateOperation: ExtendedAggregateOperations | null,
   ) => {
     if (!currentViewField) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('ViewField not found');
     }
 

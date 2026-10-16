@@ -7,6 +7,8 @@ export const getRelativeDateFilterTimeZoneAbbreviation = (
   relativeDate: RelativeDateFilter,
 ) => {
   const nowZonedDateTime = Temporal.Now.zonedDateTimeISO(
+    // Date and time syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     relativeDate.timezone ?? 'UTC',
   );
 

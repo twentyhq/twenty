@@ -20,6 +20,7 @@ export const findSellableBaseProductOrThrow = <
 
   if (sellableBaseProducts.length !== 1) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       `Expected a single sellable base product, found ${sellableBaseProducts.length}`,
     );
   }

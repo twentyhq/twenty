@@ -44,6 +44,8 @@ export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
 
         if (!isDefined(fieldMetadataItemUsedInDropdown)) {
           throw new Error(
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `Field metadata item used in dropdown is not defined when creating a record filter from object filter dropdown current states, this should not happen.`,
           );
         }
@@ -54,6 +56,8 @@ export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
 
         if (!isDefined(selectedOperandInDropdown)) {
           throw new Error(
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `Selected operand in dropdown is not defined when creating a record filter from object filter dropdown current states, this should not happen.`,
           );
         }

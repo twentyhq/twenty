@@ -79,6 +79,8 @@ export const mapFieldMetadataToGraphQLQuery = ({
       ) {
         if (!isDefined(morphRelation.targetObjectMetadata.id)) {
           throw new Error(
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
           );
         }
@@ -98,6 +100,8 @@ export const mapFieldMetadataToGraphQLQuery = ({
           continue;
         }
 
+        // Generated GraphQL syntax must stay stable across locales.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         gqlMorphField += `${relationFieldName}
 {
   edges {
@@ -158,6 +162,8 @@ ${mapObjectMetadataToGraphQLQuery({
     ) {
       if (!isDefined(fieldMetadata.relation?.targetObjectMetadata.id)) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
         );
       }
@@ -210,6 +216,8 @@ ${mapObjectMetadataToGraphQLQuery({
     ) {
       if (!isDefined(fieldMetadata.relation?.targetObjectMetadata.id)) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
         );
       }
@@ -224,6 +232,8 @@ ${mapObjectMetadataToGraphQLQuery({
       }
     }
 
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
 {
   edges {
@@ -240,6 +250,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.LINKS) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
 {
   primaryLinkUrl
@@ -252,6 +264,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.CURRENCY) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
 {
   amountMicros
@@ -261,6 +275,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.FULL_NAME) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
 {
   firstName
@@ -269,6 +285,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.ADDRESS) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
 {
   addressStreet1
@@ -283,6 +301,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.ACTOR) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
 {
     source
@@ -296,6 +316,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.EMAILS) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
 {
   primaryEmail
@@ -304,6 +326,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.PHONES) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
     {
       primaryPhoneNumber
@@ -318,6 +342,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.FILES) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
     {
       fileId
@@ -328,6 +354,8 @@ ${mapObjectMetadataToGraphQLQuery({
   }
 
   if (fieldType === FieldMetadataType.RICH_TEXT) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${gqlField}
 {
   blocknote
