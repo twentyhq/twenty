@@ -2106,7 +2106,6 @@ enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
-  IS_MORPH_RELATION_HEAD_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
@@ -3162,7 +3161,7 @@ type Mutation {
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
-  sendChatMessage(browsingContext: JSON, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, text: String!, threadId: UUID!): SendChatMessageResult!
+  sendChatMessage(browsingContext: JSON, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
