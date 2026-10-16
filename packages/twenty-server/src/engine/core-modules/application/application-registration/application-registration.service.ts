@@ -713,28 +713,16 @@ export class ApplicationRegistrationService {
             where: { id: applicationRegistrationId },
           });
 
-        const isSameOrNewerVersion =
-          isDefined(latestAvailableVersion) &&
-          shouldRefreshApplicationRegistrationOnInstall({
-            installedVersion: latestAvailableVersion,
-            latestAvailableVersion: existing.latestAvailableVersion,
+        const { isNewerVersion, shouldSkip } =
+          this.checkRegistrationVersionProgression({
+            registration: existing,
+            latestAvailableVersion,
+            preventVersionDowngrade,
           });
 
-        if (
-          preventVersionDowngrade &&
-          isDefined(latestAvailableVersion) &&
-          !isSameOrNewerVersion
-        ) {
-          this.logger.log(
-            `Skipping registration update for ${existing.universalIdentifier}: version ${latestAvailableVersion} is older than latest available version ${existing.latestAvailableVersion}`,
-          );
-
+        if (shouldSkip) {
           return null;
         }
-
-        const isNewerVersion =
-          isSameOrNewerVersion &&
-          latestAvailableVersion !== existing.latestAvailableVersion;
 
         const manifestUpdateFields = buildRegistrationManifestUpdateFields({
           manifestApplication: manifest.application,
@@ -1002,16 +990,12 @@ export class ApplicationRegistrationService {
 
     if (
       isDefined(existing) &&
-      isDefined(params.latestAvailableVersion) &&
-      !shouldRefreshApplicationRegistrationOnInstall({
-        installedVersion: params.latestAvailableVersion,
-        latestAvailableVersion: existing.latestAvailableVersion,
-      })
+      this.checkRegistrationVersionProgression({
+        registration: existing,
+        latestAvailableVersion: params.latestAvailableVersion,
+        preventVersionDowngrade: true,
+      }).shouldSkip
     ) {
-      this.logger.log(
-        `Skipping registration update for ${existing.universalIdentifier}: version ${params.latestAvailableVersion} is older than latest available version ${existing.latestAvailableVersion}`,
-      );
-
       return null;
     }
 
@@ -1035,6 +1019,40 @@ export class ApplicationRegistrationService {
       publishedVersion,
       isVetted: isDefined(officialSourcePackage),
     });
+  }
+
+  private checkRegistrationVersionProgression({
+    registration,
+    latestAvailableVersion,
+    preventVersionDowngrade,
+  }: {
+    registration: ApplicationRegistrationEntity;
+    latestAvailableVersion: string | null | undefined;
+    preventVersionDowngrade: boolean;
+  }): { isNewerVersion: boolean; shouldSkip: boolean } {
+    const isSameOrNewerVersion =
+      isDefined(latestAvailableVersion) &&
+      shouldRefreshApplicationRegistrationOnInstall({
+        installedVersion: latestAvailableVersion,
+        latestAvailableVersion: registration.latestAvailableVersion,
+      });
+    const shouldSkip =
+      preventVersionDowngrade &&
+      isDefined(latestAvailableVersion) &&
+      !isSameOrNewerVersion;
+
+    if (shouldSkip) {
+      this.logger.log(
+        `Skipping registration update for ${registration.universalIdentifier}: version ${latestAvailableVersion} is older than latest available version ${registration.latestAvailableVersion}`,
+      );
+    }
+
+    return {
+      isNewerVersion:
+        isSameOrNewerVersion &&
+        latestAvailableVersion !== registration.latestAvailableVersion,
+      shouldSkip,
+    };
   }
 
   private async updateFromCatalog({
