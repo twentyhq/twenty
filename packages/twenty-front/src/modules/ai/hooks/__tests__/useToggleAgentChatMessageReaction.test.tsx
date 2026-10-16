@@ -84,11 +84,13 @@ describe('useToggleAgentChatMessageReaction', () => {
       {
         emoji: '👍',
         workspaceMemberIds: [WORKSPACE_MEMBER_ID],
+        agentIds: [],
         hasAssistantReacted: false,
       },
       {
         emoji: '🎉',
         workspaceMemberIds: [WORKSPACE_MEMBER_ID],
+        agentIds: [],
         hasAssistantReacted: false,
       },
     ]);
@@ -102,6 +104,7 @@ describe('useToggleAgentChatMessageReaction', () => {
       {
         emoji: '🎉',
         workspaceMemberIds: [WORKSPACE_MEMBER_ID],
+        agentIds: [],
         hasAssistantReacted: false,
       },
     ]);
@@ -166,6 +169,7 @@ describe('useToggleAgentChatMessageReaction', () => {
       {
         emoji: '👍',
         workspaceMemberIds: [WORKSPACE_MEMBER_ID],
+        agentIds: [],
         hasAssistantReacted: false,
       },
     ];

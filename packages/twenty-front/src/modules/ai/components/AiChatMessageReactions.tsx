@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -71,7 +72,7 @@ export const AiChatMessageReactions = ({
   return (
     <StyledReactions>
       {agentChatMessageReactions.map(
-        ({ emoji, workspaceMemberIds, hasAssistantReacted }) => {
+        ({ emoji, workspaceMemberIds, agentIds, hasAssistantReacted }) => {
           const reactorNameList = [
             ...workspaceMemberIds.map((workspaceMemberId) =>
               getAgentChatSenderLabel({
@@ -82,13 +83,24 @@ export const AiChatMessageReactions = ({
                   workspaceMemberId === currentWorkspaceMember?.id,
               }),
             ),
+            ...(agentIds.length > 0
+              ? [
+                  plural(agentIds.length, {
+                    one: 'an agent',
+                    other: '# agents',
+                  }),
+                ]
+              : []),
             ...(hasAssistantReacted ? [AGENT_CHAT_ASSISTANT_NAME] : []),
           ];
           const reactorNames = reactorNameList.join(', ');
           const isSelected =
             isDefined(currentWorkspaceMember) &&
             workspaceMemberIds.includes(currentWorkspaceMember.id);
-          const reactionCount = reactorNameList.length;
+          const reactionCount =
+            workspaceMemberIds.length +
+            agentIds.length +
+            (hasAssistantReacted ? 1 : 0);
 
           return (
             <StyledReaction

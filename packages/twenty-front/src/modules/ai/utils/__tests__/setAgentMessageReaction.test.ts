@@ -2,6 +2,7 @@ import { setAgentMessageReaction } from '@/ai/utils/setAgentMessageReaction';
 
 const JULIA_ID = 'julia';
 const TOM_ID = 'tom';
+const AGENT_ID = 'agent';
 
 describe('setAgentMessageReaction', () => {
   it('adds a new emoji after the existing ones', () => {
@@ -11,6 +12,7 @@ describe('setAgentMessageReaction', () => {
           {
             emoji: '👍',
             workspaceMemberIds: [TOM_ID],
+            agentIds: [],
             hasAssistantReacted: false,
           },
         ],
@@ -19,10 +21,16 @@ describe('setAgentMessageReaction', () => {
         isReacted: true,
       }),
     ).toEqual([
-      { emoji: '👍', workspaceMemberIds: [TOM_ID], hasAssistantReacted: false },
+      {
+        emoji: '👍',
+        workspaceMemberIds: [TOM_ID],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
       {
         emoji: '🎉',
         workspaceMemberIds: [JULIA_ID],
+        agentIds: [],
         hasAssistantReacted: false,
       },
     ]);
@@ -35,6 +43,7 @@ describe('setAgentMessageReaction', () => {
           {
             emoji: '👍',
             workspaceMemberIds: [TOM_ID],
+            agentIds: [],
             hasAssistantReacted: false,
           },
         ],
@@ -46,6 +55,7 @@ describe('setAgentMessageReaction', () => {
       {
         emoji: '👍',
         workspaceMemberIds: [TOM_ID, JULIA_ID],
+        agentIds: [],
         hasAssistantReacted: false,
       },
     ]);
@@ -58,6 +68,7 @@ describe('setAgentMessageReaction', () => {
           {
             emoji: '👍',
             workspaceMemberIds: [TOM_ID, JULIA_ID],
+            agentIds: [],
             hasAssistantReacted: false,
           },
         ],
@@ -66,7 +77,12 @@ describe('setAgentMessageReaction', () => {
         isReacted: false,
       }),
     ).toEqual([
-      { emoji: '👍', workspaceMemberIds: [TOM_ID], hasAssistantReacted: false },
+      {
+        emoji: '👍',
+        workspaceMemberIds: [TOM_ID],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
     ]);
   });
 
@@ -77,11 +93,13 @@ describe('setAgentMessageReaction', () => {
           {
             emoji: '👍',
             workspaceMemberIds: [JULIA_ID],
+            agentIds: [],
             hasAssistantReacted: false,
           },
           {
             emoji: '🎉',
             workspaceMemberIds: [TOM_ID],
+            agentIds: [],
             hasAssistantReacted: false,
           },
         ],
@@ -90,7 +108,12 @@ describe('setAgentMessageReaction', () => {
         isReacted: false,
       }),
     ).toEqual([
-      { emoji: '🎉', workspaceMemberIds: [TOM_ID], hasAssistantReacted: false },
+      {
+        emoji: '🎉',
+        workspaceMemberIds: [TOM_ID],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
     ]);
   });
 
@@ -99,6 +122,7 @@ describe('setAgentMessageReaction', () => {
       {
         emoji: '👍',
         workspaceMemberIds: [JULIA_ID],
+        agentIds: [],
         hasAssistantReacted: false,
       },
     ];
@@ -128,6 +152,7 @@ describe('setAgentMessageReaction', () => {
           {
             emoji: '👍',
             workspaceMemberIds: [JULIA_ID],
+            agentIds: [],
             hasAssistantReacted: true,
           },
         ],
@@ -136,7 +161,37 @@ describe('setAgentMessageReaction', () => {
         isReacted: false,
       }),
     ).toEqual([
-      { emoji: '👍', workspaceMemberIds: [], hasAssistantReacted: true },
+      {
+        emoji: '👍',
+        workspaceMemberIds: [],
+        agentIds: [],
+        hasAssistantReacted: true,
+      },
+    ]);
+  });
+
+  it('keeps an emoji an agent also used', () => {
+    expect(
+      setAgentMessageReaction({
+        reactions: [
+          {
+            emoji: '👍',
+            workspaceMemberIds: [JULIA_ID],
+            agentIds: [AGENT_ID],
+            hasAssistantReacted: false,
+          },
+        ],
+        emoji: '👍',
+        workspaceMemberId: JULIA_ID,
+        isReacted: false,
+      }),
+    ).toEqual([
+      {
+        emoji: '👍',
+        workspaceMemberIds: [],
+        agentIds: [AGENT_ID],
+        hasAssistantReacted: false,
+      },
     ]);
   });
 });

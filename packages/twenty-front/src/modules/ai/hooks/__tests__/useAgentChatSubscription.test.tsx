@@ -316,9 +316,15 @@ describe('Message reactions', () => {
       {
         emoji: '👍',
         workspaceMemberIds: ['julia'],
+        agentIds: [],
         hasAssistantReacted: false,
       },
-      { emoji: '🎉', workspaceMemberIds: ['tom'], hasAssistantReacted: false },
+      {
+        emoji: '🎉',
+        workspaceMemberIds: ['tom'],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
     ];
 
     act(() => {
@@ -327,6 +333,7 @@ describe('Message reactions', () => {
         {
           emoji: '👍',
           workspaceMemberIds: ['julia'],
+          agentIds: [],
           hasAssistantReacted: false,
         },
       ]);

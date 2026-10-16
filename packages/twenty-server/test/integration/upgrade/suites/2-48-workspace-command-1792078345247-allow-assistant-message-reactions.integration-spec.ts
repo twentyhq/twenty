@@ -6,26 +6,50 @@ import { type AllowAssistantMessageReactionsCommand } from 'src/database/command
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const readWorkspaceMemberNullability = async () => {
-  const [column]: { isNullable: string }[] = await global.testDataSource.query(
-    `SELECT is_nullable AS "isNullable" FROM information_schema.columns
-     WHERE table_schema = $1 AND table_name = 'agentMessageReaction'
-       AND column_name = 'workspaceMemberId'`,
-    [getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)],
+const readReactionColumns = async () => {
+  const columns: { name: string; isNullable: string }[] =
+    await global.testDataSource.query(
+      `SELECT column_name AS name, is_nullable AS "isNullable"
+       FROM information_schema.columns
+       WHERE table_schema = $1 AND table_name = 'agentMessageReaction'
+         AND column_name IN ('workspaceMemberId', 'agentId')`,
+      [getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)],
+    );
+  const fields: { universalIdentifier: string; isNullable: boolean }[] =
+    await global.testDataSource.query(
+      `SELECT "universalIdentifier", "isNullable" FROM core."fieldMetadata"
+       WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+      [
+        SEED_APPLE_WORKSPACE_ID,
+        [
+          STANDARD_OBJECTS.agentMessageReaction.fields.workspaceMember
+            .universalIdentifier,
+          STANDARD_OBJECTS.agentMessageReaction.fields.agentId
+            .universalIdentifier,
+        ],
+      ],
+    );
+  const workspaceMemberColumn = columns.find(
+    ({ name }) => name === 'workspaceMemberId',
   );
-  const [field]: { isNullable: boolean }[] = await global.testDataSource.query(
-    `SELECT "isNullable" FROM core."fieldMetadata"
-     WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
-    [
-      SEED_APPLE_WORKSPACE_ID,
+  const workspaceMemberField = fields.find(
+    ({ universalIdentifier }) =>
+      universalIdentifier ===
       STANDARD_OBJECTS.agentMessageReaction.fields.workspaceMember
         .universalIdentifier,
-    ],
   );
 
   return {
-    isColumnNullable: column.isNullable === 'YES',
-    isFieldNullable: field.isNullable,
+    isWorkspaceMemberColumnNullable:
+      workspaceMemberColumn?.isNullable === 'YES',
+    isWorkspaceMemberFieldNullable: workspaceMemberField?.isNullable,
+    hasAgentIdColumn: columns.some(({ name }) => name === 'agentId'),
+    hasAgentIdField: fields.some(
+      ({ universalIdentifier }) =>
+        universalIdentifier ===
+        STANDARD_OBJECTS.agentMessageReaction.fields.agentId
+          .universalIdentifier,
+    ),
   };
 };
 
@@ -49,20 +73,24 @@ describe('2-48 workspace command - allow assistant message reactions (integratio
     await command.up(runOnWorkspaceArgs);
   });
 
-  it('makes the reaction member optional again after a rollback, and is idempotent', async () => {
+  it('makes the reaction member optional and adds the agent again after a rollback, and is idempotent', async () => {
     await command.down(runOnWorkspaceArgs);
 
-    expect(await readWorkspaceMemberNullability()).toEqual({
-      isColumnNullable: false,
-      isFieldNullable: false,
+    expect(await readReactionColumns()).toEqual({
+      isWorkspaceMemberColumnNullable: false,
+      isWorkspaceMemberFieldNullable: false,
+      hasAgentIdColumn: false,
+      hasAgentIdField: false,
     });
 
     await command.up(runOnWorkspaceArgs);
     await command.up(runOnWorkspaceArgs);
 
-    expect(await readWorkspaceMemberNullability()).toEqual({
-      isColumnNullable: true,
-      isFieldNullable: true,
+    expect(await readReactionColumns()).toEqual({
+      isWorkspaceMemberColumnNullable: true,
+      isWorkspaceMemberFieldNullable: true,
+      hasAgentIdColumn: true,
+      hasAgentIdField: true,
     });
   });
 });

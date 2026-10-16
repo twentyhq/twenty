@@ -42,6 +42,7 @@ export const GET_CHAT_MESSAGES = gql`
       reactions {
         emoji
         workspaceMemberIds
+        agentIds
         hasAssistantReacted
       }
     }

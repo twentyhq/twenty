@@ -29,6 +29,7 @@ const buildFetchedMessage = (id: string) => ({
       __typename: 'AgentMessageReactionSummary',
       emoji: '👍',
       workspaceMemberIds: ['julia'],
+      agentIds: [],
       hasAssistantReacted: false,
     },
   ],
@@ -57,9 +58,15 @@ describe('AgentChatMessagesFetchEffect', () => {
       {
         emoji: '👍',
         workspaceMemberIds: ['julia'],
+        agentIds: [],
         hasAssistantReacted: false,
       },
-      { emoji: '🎉', workspaceMemberIds: ['tom'], hasAssistantReacted: false },
+      {
+        emoji: '🎉',
+        workspaceMemberIds: ['tom'],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
     ];
 
     store.set(currentAiChatThreadState.atom, THREAD_ID);
@@ -111,6 +118,7 @@ describe('AgentChatMessagesFetchEffect', () => {
       expect.objectContaining({
         emoji: '👍',
         workspaceMemberIds: ['julia'],
+        agentIds: [],
         hasAssistantReacted: false,
       }),
     ]);

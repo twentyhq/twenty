@@ -208,6 +208,20 @@ describe('agent history workspace metadata', () => {
     });
   });
 
+  it('lets an agent react without a workspace member', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentMessageReaction.fields.agentId.universalIdentifier
+      ],
+    ).toMatchObject({
+      name: 'agentId',
+      type: FieldMetadataType.UUID,
+      isSystem: true,
+      isNullable: true,
+      writability: MetadataWritability.SYSTEM,
+    });
+  });
+
   it('retains exact precision for credits and cache token counts', () => {
     for (const name of [
       'totalInputCredits',

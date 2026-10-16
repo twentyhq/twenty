@@ -8,5 +8,6 @@ export class AgentMessageReactionWorkspaceEntity extends BaseWorkspaceEntity {
   messageId: string;
   workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   workspaceMemberId: string | null;
+  agentId: string | null;
   emoji: string;
 }

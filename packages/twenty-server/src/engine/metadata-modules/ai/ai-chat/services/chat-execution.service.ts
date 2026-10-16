@@ -364,6 +364,7 @@ export class ChatExecutionService {
                   messageId: latestUserMessage.id,
                   emoji,
                   workspaceId: workspace.id,
+                  agentId: null,
                 }),
             }),
           }

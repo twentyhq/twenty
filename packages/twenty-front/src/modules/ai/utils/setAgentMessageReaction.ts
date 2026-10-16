@@ -23,6 +23,7 @@ export const setAgentMessageReaction = ({
           {
             emoji,
             workspaceMemberIds: [workspaceMemberId],
+            agentIds: [],
             hasAssistantReacted: false,
           },
         ]
@@ -51,6 +52,8 @@ export const setAgentMessageReaction = ({
     )
     .filter(
       (reaction) =>
-        reaction.workspaceMemberIds.length > 0 || reaction.hasAssistantReacted,
+        reaction.workspaceMemberIds.length > 0 ||
+        reaction.agentIds.length > 0 ||
+        reaction.hasAssistantReacted,
     );
 };

@@ -434,6 +434,9 @@ export default {
             ]
         },
         "AgentMessageReactionSummary": {
+            "agentIds": [
+                494
+            ],
             "emoji": [
                 1
             ],

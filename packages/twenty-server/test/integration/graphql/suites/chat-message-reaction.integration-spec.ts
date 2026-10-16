@@ -32,8 +32,8 @@ const REMOVE_REACTION = parse(
   `mutation RemoveReaction($messageId: UUID!, $emoji: String!) { removeAgentChatMessageReaction(messageId: $messageId, emoji: $emoji) { ${REACTION_FIELDS} } }`,
 );
 
-const CHAT_MESSAGES_WITH_ASSISTANT = parse(
-  `query ChatMessages($threadId: UUID!) { chatMessages(threadId: $threadId) { id reactions { ${REACTION_FIELDS} hasAssistantReacted } } }`,
+const CHAT_MESSAGES_WITH_AGENTS = parse(
+  `query ChatMessages($threadId: UUID!) { chatMessages(threadId: $threadId) { id reactions { ${REACTION_FIELDS} agentIds hasAssistantReacted } } }`,
 );
 
 const CHAT_MESSAGES = parse(
@@ -62,9 +62,10 @@ const removeReaction = (messageId: string, emoji: string, token?: string) =>
 const findMessageReactions = async (
   threadId: string,
   messageId: string,
+  query: typeof CHAT_MESSAGES = CHAT_MESSAGES,
 ): Promise<Reaction[]> => {
   const response = await makeMetadataApiRequest(
-    { query: CHAT_MESSAGES, variables: { threadId } },
+    { query, variables: { threadId } },
     APPLE_JANE_ADMIN_ACCESS_TOKEN,
   );
 
@@ -74,6 +75,14 @@ const findMessageReactions = async (
     ({ id }: { id: string }) => id === messageId,
   ).reactions;
 };
+
+const findMessageReactionsWithAgents = (threadId: string, messageId: string) =>
+  findMessageReactions(threadId, messageId, CHAT_MESSAGES_WITH_AGENTS);
+
+const getReactionService = () =>
+  getAppProviderByClassName<AgentChatMessageReactionService>(
+    'AgentChatMessageReactionService',
+  );
 
 const insertMessage = async ({
   threadId,
@@ -193,6 +202,7 @@ describe('Chat message reactions through the authenticated API', () => {
             {
               emoji: '👍',
               workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+              agentIds: [],
               hasAssistantReacted: false,
             },
           ],
@@ -309,48 +319,83 @@ describe('Chat message reactions through the authenticated API', () => {
   });
 
   it('lets the assistant react once to a message, next to members', async () => {
-    const reactionService =
-      getAppProviderByClassName<AgentChatMessageReactionService>(
-        'AgentChatMessageReactionService',
-      );
-    const findReactionsWithAssistant = async () => {
-      const response = await makeMetadataApiRequest(
-        { query: CHAT_MESSAGES_WITH_ASSISTANT, variables: { threadId } },
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      );
-
-      expect(response.body.errors).toBeUndefined();
-
-      return response.body.data.chatMessages.find(
-        ({ id }: { id: string }) => id === messageId,
-      ).reactions;
-    };
+    const reactAsAssistant = () =>
+      getReactionService().addAssistantReaction({
+        messageId,
+        emoji: '👍',
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        agentId: null,
+      });
 
     await addReaction(messageId, '👍');
-    await reactionService.addAssistantReaction({
-      messageId,
-      emoji: '👍',
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
-    await reactionService.addAssistantReaction({
-      messageId,
-      emoji: '👍',
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
+    await reactAsAssistant();
+    await reactAsAssistant();
 
-    expect(await findReactionsWithAssistant()).toEqual([
+    expect(await findMessageReactionsWithAgents(threadId, messageId)).toEqual([
       {
         emoji: '👍',
         workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+        agentIds: [],
         hasAssistantReacted: true,
       },
     ]);
 
     await removeReaction(messageId, '👍');
 
-    expect(await findReactionsWithAssistant()).toEqual([
-      { emoji: '👍', workspaceMemberIds: [], hasAssistantReacted: true },
+    expect(await findMessageReactionsWithAgents(threadId, messageId)).toEqual([
+      {
+        emoji: '👍',
+        workspaceMemberIds: [],
+        agentIds: [],
+        hasAssistantReacted: true,
+      },
     ]);
+  });
+
+  it('lets an agent react once to a message, apart from the assistant', async () => {
+    const findPublishedReactions = spyOnPublishedReactions();
+    const agentId = randomUUID();
+    const reactAs = (reactorAgentId: string | null) =>
+      getReactionService().addAssistantReaction({
+        messageId,
+        emoji: '👍',
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        agentId: reactorAgentId,
+      });
+
+    const agentReactions = await reactAs(agentId);
+
+    expect(agentReactions).toEqual([
+      {
+        emoji: '👍',
+        workspaceMemberIds: [],
+        agentIds: [agentId],
+        hasAssistantReacted: false,
+      },
+    ]);
+    expect(await reactAs(agentId)).toEqual(agentReactions);
+    expect(findPublishedReactions()).toHaveLength(1);
+
+    await reactAs(null);
+
+    expect(findPublishedReactions()).toHaveLength(2);
+    expect(await findMessageReactionsWithAgents(threadId, messageId)).toEqual([
+      {
+        emoji: '👍',
+        workspaceMemberIds: [],
+        agentIds: [agentId],
+        hasAssistantReacted: true,
+      },
+    ]);
+
+    const [{ reactionCount }]: { reactionCount: number }[] =
+      await global.testDataSource.query(
+        `SELECT COUNT(*)::int AS "reactionCount" FROM ${SCHEMA}."agentMessageReaction"
+         WHERE "messageId" = $1 AND "deletedAt" IS NULL`,
+        [messageId],
+      );
+
+    expect(reactionCount).toBe(2);
   });
 
   it('refuses a message that does not exist or is never shown', async () => {
