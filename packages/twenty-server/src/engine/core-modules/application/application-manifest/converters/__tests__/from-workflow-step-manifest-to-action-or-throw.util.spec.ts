@@ -6,6 +6,7 @@ import {
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
+import { computeDefaultRecordFilterId } from 'src/modules/workflow/workflow-builder/utils/compute-default-record-filter-id.util';
 
 const STEP_ID = '11111111-1111-4111-8111-111111111111';
 const REFERENCE_ID = '22222222-2222-4222-8222-222222222222';
@@ -232,6 +233,44 @@ describe('application workflow actions', () => {
     expect(convert(WorkflowActionType.FORM).settings.input).toMatchObject([
       { settings: { objectName: 'company' } },
     ]);
+  });
+
+  it('gives a stable id to a record filter declared without one', () => {
+    const step = workflowStepManifestSchema.parse({
+      universalIdentifier: STEP_ID,
+      name: 'Find records',
+      type: WorkflowActionType.FIND_RECORDS,
+      input: {
+        objectUniversalIdentifier: REFERENCE_ID,
+        filter: {
+          recordFilters: [
+            {
+              fieldMetadataUniversalIdentifier: FIELD_ID,
+              operand: ViewFilterOperand.IS,
+              value: 'x',
+            },
+          ],
+        },
+      },
+      nextStepIds: [],
+    });
+
+    expect(
+      fromWorkflowStepManifestToActionOrThrow({ step, index: 0, references })
+        .settings.input,
+    ).toMatchObject({
+      filter: {
+        recordFilters: [
+          {
+            id: computeDefaultRecordFilterId({
+              stepId: STEP_ID,
+              recordFilterIndex: 0,
+            }),
+            fieldMetadataId: LOCAL_ID,
+          },
+        ],
+      },
+    });
   });
 
   it('rejects unavailable metadata and fields from another object', () => {

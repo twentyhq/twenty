@@ -11,6 +11,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { computeDefaultRecordFilterId } from 'src/modules/workflow/workflow-builder/utils/compute-default-record-filter-id.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const fromWorkflowStepManifestToActionOrThrow = ({
@@ -71,8 +72,19 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
                 ...filter,
                 ...(isDefined(filter.recordFilters)
                   ? {
-                      recordFilters: filter.recordFilters.map((reference) =>
-                        fieldReference(reference, objectUniversalIdentifier),
+                      recordFilters: filter.recordFilters.map(
+                        (reference, recordFilterIndex) => ({
+                          ...fieldReference(
+                            reference,
+                            objectUniversalIdentifier,
+                          ),
+                          id:
+                            reference.id ??
+                            computeDefaultRecordFilterId({
+                              stepId: step.universalIdentifier,
+                              recordFilterIndex,
+                            }),
+                        }),
                       ),
                     }
                   : {}),

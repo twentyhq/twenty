@@ -1,6 +1,7 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { v5 } from 'uuid';
+
+import { computeDefaultRecordFilterId } from 'src/modules/workflow/workflow-builder/utils/compute-default-record-filter-id.util';
 
 const PERSISTED_RECORD_FILTER_PROPERTIES = new Set([
   'id',
@@ -12,11 +13,6 @@ const PERSISTED_RECORD_FILTER_PROPERTIES = new Set([
   'subFieldName',
   'relationTargetFieldMetadataId',
 ]);
-
-// Fixed so the workspace and core copies of a step give the same id to a
-// filter persisted without one
-const MISSING_RECORD_FILTER_ID_NAMESPACE =
-  'ea9a0f4f-8d23-4716-8287-93371a60e360';
 
 const pickPersistedRecordFilterProperties = (
   recordFilter: Record<string, unknown>,
@@ -52,7 +48,12 @@ export const stripDerivedFindRecordsRecordFilterProperties = ({
     ...pickPersistedRecordFilterProperties(recordFilter),
     ...(isNonEmptyString(id)
       ? {}
-      : { id: v5(`${stepId}:${index}`, MISSING_RECORD_FILTER_ID_NAMESPACE) }),
+      : {
+          id: computeDefaultRecordFilterId({
+            stepId,
+            recordFilterIndex: index,
+          }),
+        }),
     ...(isString(value)
       ? {}
       : { value: isDefined(value) ? JSON.stringify(value) : '' }),

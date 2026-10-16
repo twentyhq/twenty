@@ -52,7 +52,10 @@ export const workflowStepFilterManifestSchema = stepFilterSchema
 
 const recordFilterManifestSchema = recordFilterSchema
   .omit({ fieldMetadataId: true, relationTargetFieldMetadataId: true })
-  .extend({ fieldMetadataUniversalIdentifier: z.uuid() })
+  .extend({
+    id: z.string().optional(),
+    fieldMetadataUniversalIdentifier: z.uuid(),
+  })
   .strict();
 
 const recordObjectShape = { objectUniversalIdentifier: z.uuid() };
