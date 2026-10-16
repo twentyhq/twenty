@@ -216,6 +216,73 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     );
   });
 
+  it.each([
+    'source type',
+    'package ownership',
+    'reserved variables',
+    'downgrade',
+    'missing version',
+  ])('should not resolve tarballs for entries rejected by %s', async (reason) => {
+    const existing = buildExistingRegistration({
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      sourcePackage: catalogParams.sourcePackage,
+      latestAvailableVersion: '1.0.0',
+    });
+    const resolveTarballUrl = jest.fn();
+    const params: Parameters<
+      ApplicationRegistrationService['upsertFromCatalog']
+    >[0] = {
+      ...catalogParams,
+      manifest: { ...catalogParams.manifest },
+      resolveTarballUrl,
+    };
+
+    if (reason === 'source type') {
+      existing.sourceType = ApplicationRegistrationSourceType.TARBALL;
+    } else if (reason === 'package ownership') {
+      existing.sourcePackage = '@other/app';
+    } else if (reason === 'reserved variables') {
+      params.manifest.application = {
+        ...params.manifest.application,
+        serverVariables: { TWENTY_API_URL: { isSecret: false } },
+      };
+    } else if (reason === 'downgrade') {
+      params.latestAvailableVersion = '0.1.0';
+    } else {
+      params.latestAvailableVersion = null;
+    }
+
+    applicationRegistrationRepository.findOne.mockResolvedValue(existing);
+
+    expect(await service.upsertFromCatalog(params)).toBeNull();
+    expect(resolveTarballUrl).not.toHaveBeenCalled();
+  });
+
+  it('should resolve a validated catalog entry before its transaction', async () => {
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+    const resolveTarballUrl = jest.fn().mockImplementation(async () => {
+      expect(
+        applicationRegistrationRepository.manager.transaction,
+      ).not.toHaveBeenCalled();
+
+      return catalogParams.tarballUrl;
+    });
+
+    await service.upsertFromCatalog({
+      ...catalogParams,
+      tarballUrl: undefined,
+      resolveTarballUrl,
+    });
+
+    expect(resolveTarballUrl).toHaveBeenCalledTimes(1);
+    expect(
+      applicationRegistrationVersionService.createApplicationRegistrationVersion,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ tarballUrl: catalogParams.tarballUrl }),
+      entityManager,
+    );
+  });
+
   it.each([true, false])(
     'should enqueue auto-upgrades only when the manifest update reports a newer version (%s)',
     async (isNewerVersion) => {

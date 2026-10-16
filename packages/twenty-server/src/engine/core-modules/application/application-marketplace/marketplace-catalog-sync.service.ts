@@ -69,10 +69,6 @@ export class MarketplaceCatalogSyncService {
             universalIdentifier,
           );
         const previousVersion = existingRegistration?.latestAvailableVersion;
-        const tarballUrl = await this.findCatalogTarballUrl({
-          registration: existingRegistration,
-          registryPackage: pkg,
-        });
 
         const registration =
           await this.applicationRegistrationService.upsertFromCatalog({
@@ -82,7 +78,11 @@ export class MarketplaceCatalogSyncService {
             sourcePackage: pkg.name,
             latestAvailableVersion: pkg.version ?? null,
             manifest: fetchedManifest,
-            tarballUrl,
+            resolveTarballUrl: () =>
+              this.findCatalogTarballUrl({
+                registration: existingRegistration,
+                registryPackage: pkg,
+              }),
           });
 
         if (!isDefined(registration)) {

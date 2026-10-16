@@ -593,18 +593,20 @@ export class ApplicationTarballService {
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
     return this.applicationRegistrationService.create({
-      universalIdentifier,
-      name: manifest.application?.displayName ?? 'Unknown App',
-      sourceType: ApplicationRegistrationSourceType.TARBALL,
-      manifest,
-      ...fromManifestApplicationToDisplayFields(manifest.application),
-      latestAvailableVersion: null,
-      isListed: false,
-      isVetted: false,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId,
+      fields: {
+        universalIdentifier,
+        name: manifest.application?.displayName ?? 'Unknown App',
+        sourceType: ApplicationRegistrationSourceType.TARBALL,
+        manifest,
+        ...fromManifestApplicationToDisplayFields(manifest.application),
+        latestAvailableVersion: null,
+        isListed: false,
+        isVetted: false,
+        oAuthClientId: v4(),
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId,
+      },
     });
   }
 

@@ -93,6 +93,11 @@ const APPLICATION_REGISTRATION_UPDATE_LOCK_OPTIONS = {
   maxRetries: 120,
 };
 
+type PublishedApplicationRegistrationVersionParams = Omit<
+  CreateApplicationRegistrationVersionParams,
+  'applicationRegistrationId'
+>;
+
 export type UpsertApplicationRegistrationFromCatalogParams = {
   universalIdentifier: string;
   name: string;
@@ -101,6 +106,7 @@ export type UpsertApplicationRegistrationFromCatalogParams = {
   latestAvailableVersion: string | null;
   manifest: Manifest;
   tarballUrl?: string | null;
+  resolveTarballUrl?: () => Promise<string | null>;
 };
 
 export type ApplicationRegistrationCatalogCard = {
@@ -510,28 +516,30 @@ export class ApplicationRegistrationService {
       await this.generateClientSecret();
 
     const applicationRegistration = await this.create({
-      universalIdentifier: input.universalIdentifier ?? v4(),
-      name: input.name,
-      oAuthClientId: v4(),
-      oAuthClientSecretHash: clientSecretHash,
-      oAuthRedirectUris: input.oAuthRedirectUris ?? [],
-      oAuthScopes: input.oAuthScopes ?? [],
-      createdByUserId,
-      ownerWorkspaceId,
+      fields: {
+        universalIdentifier: input.universalIdentifier ?? v4(),
+        name: input.name,
+        oAuthClientId: v4(),
+        oAuthClientSecretHash: clientSecretHash,
+        oAuthRedirectUris: input.oAuthRedirectUris ?? [],
+        oAuthScopes: input.oAuthScopes ?? [],
+        createdByUserId,
+        ownerWorkspaceId,
+      },
     });
 
     return { applicationRegistration, clientSecret };
   }
 
-  async create(
+  async create({
+    fields,
+    publishedVersion,
+  }: {
     fields: DeepPartial<ApplicationRegistrationEntity> & {
       universalIdentifier: string;
-    },
-    publishedVersion?: Omit<
-      CreateApplicationRegistrationVersionParams,
-      'applicationRegistrationId'
-    >,
-  ): Promise<ApplicationRegistrationEntity> {
+    };
+    publishedVersion?: PublishedApplicationRegistrationVersionParams;
+  }): Promise<ApplicationRegistrationEntity> {
     const existingByUid =
       await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
         fields.universalIdentifier,
@@ -675,10 +683,7 @@ export class ApplicationRegistrationService {
   }: {
     applicationRegistrationId: string;
     manifest: Manifest;
-    publishedVersion?: Omit<
-      CreateApplicationRegistrationVersionParams,
-      'applicationRegistrationId'
-    >;
+    publishedVersion?: PublishedApplicationRegistrationVersionParams;
     sourceType?: ApplicationRegistrationSourceType;
     // null clears the stored version; undefined leaves it untouched.
     latestAvailableVersion?: string | null;
@@ -982,6 +987,36 @@ export class ApplicationRegistrationService {
       return null;
     }
 
+    if (
+      !isDefined(params.latestAvailableVersion) &&
+      isDefined(existing?.latestAvailableVersion)
+    ) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: no version for universal identifier ${params.universalIdentifier} while ${existing.latestAvailableVersion} is already known`,
+      );
+
+      return null;
+    }
+
+    if (
+      isDefined(existing) &&
+      isDefined(params.latestAvailableVersion) &&
+      !shouldRefreshApplicationRegistrationOnInstall({
+        installedVersion: params.latestAvailableVersion,
+        latestAvailableVersion: existing.latestAvailableVersion,
+      })
+    ) {
+      this.logger.log(
+        `Skipping registration update for ${existing.universalIdentifier}: version ${params.latestAvailableVersion} is older than latest available version ${existing.latestAvailableVersion}`,
+      );
+
+      return null;
+    }
+
+    if (isDefined(params.resolveTarballUrl)) {
+      params.tarballUrl = await params.resolveTarballUrl();
+    }
+
     if (isDefined(existing)) {
       return this.updateFromCatalog(existing, params);
     }
@@ -991,21 +1026,28 @@ export class ApplicationRegistrationService {
     });
   }
 
+  private buildCatalogPublishedVersion(
+    params: UpsertApplicationRegistrationFromCatalogParams,
+  ): PublishedApplicationRegistrationVersionParams | undefined {
+    if (
+      !isDefined(params.latestAvailableVersion) ||
+      !isDefined(params.tarballUrl)
+    ) {
+      return undefined;
+    }
+
+    return {
+      version: params.latestAvailableVersion,
+      sourceType: params.sourceType,
+      sourcePackage: params.sourcePackage,
+      tarballUrl: params.tarballUrl,
+    };
+  }
+
   private async updateFromCatalog(
     existing: ApplicationRegistrationEntity,
     params: UpsertApplicationRegistrationFromCatalogParams,
   ): Promise<ApplicationRegistrationEntity | null> {
-    if (
-      !isDefined(params.latestAvailableVersion) &&
-      isDefined(existing.latestAvailableVersion)
-    ) {
-      this.logger.warn(
-        `Skipping catalog entry from package ${params.sourcePackage}: no version for universal identifier ${params.universalIdentifier} while ${existing.latestAvailableVersion} is already known`,
-      );
-
-      return null;
-    }
-
     const manifestUpdate = await this.updateFromManifest({
       applicationRegistrationId: existing.id,
       manifest: params.manifest,
@@ -1013,16 +1055,7 @@ export class ApplicationRegistrationService {
       latestAvailableVersion: params.latestAvailableVersion,
       preventVersionDowngrade: true,
       registrationBeforeUpdate: existing,
-      publishedVersion:
-        isDefined(params.latestAvailableVersion) &&
-        isDefined(params.tarballUrl)
-          ? {
-              version: params.latestAvailableVersion,
-              sourceType: params.sourceType,
-              sourcePackage: params.sourcePackage,
-              tarballUrl: params.tarballUrl,
-            }
-          : undefined,
+      publishedVersion: this.buildCatalogPublishedVersion(params),
       additionalFields: {
         name: params.name,
         sourcePackage: params.sourcePackage,
@@ -1052,8 +1085,8 @@ export class ApplicationRegistrationService {
     params: UpsertApplicationRegistrationFromCatalogParams,
     { isVetted }: { isVetted: boolean },
   ): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.create(
-      {
+    const registration = await this.create({
+      fields: {
         universalIdentifier: params.universalIdentifier,
         name: params.name,
         sourceType: params.sourceType,
@@ -1068,15 +1101,8 @@ export class ApplicationRegistrationService {
         oAuthScopes: [],
         ownerWorkspaceId: null,
       },
-      isDefined(params.latestAvailableVersion) && isDefined(params.tarballUrl)
-        ? {
-            version: params.latestAvailableVersion,
-            sourceType: params.sourceType,
-            sourcePackage: params.sourcePackage,
-            tarballUrl: params.tarballUrl,
-          }
-        : undefined,
-    );
+      publishedVersion: this.buildCatalogPublishedVersion(params),
+    });
 
     this.emitRegistrationPublishMetric({
       isNewRegistration: true,
