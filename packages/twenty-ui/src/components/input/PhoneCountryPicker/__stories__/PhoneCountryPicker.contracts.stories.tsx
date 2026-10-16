@@ -283,7 +283,7 @@ export const RightToLeftOverflowTooltip: Story = {
       'tooltip',
     );
 
-    await expect(tooltip).toBeVisible();
+    await waitFor(() => expect(tooltip).toBeVisible());
     await expect(getComputedStyle(tooltip).direction).toBe('rtl');
     await expect(tooltip).toHaveTextContent(
       `${OVERFLOWING_ARABIC_COUNTRY_LABEL} (\u2066+44\u2069)`,
