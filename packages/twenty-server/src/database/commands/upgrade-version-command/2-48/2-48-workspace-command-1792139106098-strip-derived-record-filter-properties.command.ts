@@ -37,6 +37,16 @@ type RecordFilterRewrite = {
 
 const REWRITE_BATCH_SIZE = 100;
 
+type RewriteRowsArgs = {
+  dataSource: DataSource;
+  isDryRun: boolean;
+  tableName: string;
+  columnName: string;
+  whereClause: string;
+  whereParameters: unknown[];
+  mapValue: (value: unknown) => { value: unknown; hasChanged: boolean };
+};
+
 const INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH =
   '$.flow.steps[*] ? (@.type == "FIND_RECORDS").settings.input.filter.recordFilters[*] ? (!(exists(@.id)) || @.id.type() != "string" || @.id == "" || !(exists(@.value)) || @.value.type() != "string")';
 
@@ -214,27 +224,20 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       : { value: state, hasChanged };
   }
 
-  private async rewriteRows({
-    dataSource,
-    isDryRun,
-    tableName,
-    columnName,
-    whereClause,
-    whereParameters,
-    mapValue,
-  }: {
-    dataSource: DataSource;
-    isDryRun: boolean;
-    tableName: string;
-    columnName: string;
-    whereClause: string;
-    whereParameters: unknown[];
-    mapValue: (value: unknown) => { value: unknown; hasChanged: boolean };
-  }): Promise<number> {
-    const fetchCandidateRows = (
-      afterRowId?: string,
-    ): Promise<{ id: string; value: unknown }[]> =>
-      dataSource.query(
+  private async rewriteRows(
+    {
+      dataSource,
+      isDryRun,
+      tableName,
+      columnName,
+      whereClause,
+      whereParameters,
+      mapValue,
+    }: RewriteRowsArgs,
+    afterRowId?: string,
+  ): Promise<number> {
+    const candidateRows: { id: string; value: unknown }[] =
+      await dataSource.query(
         `SELECT id, ${columnName} AS value FROM ${tableName} WHERE (${whereClause})${isDefined(afterRowId) ? ` AND id > $${whereParameters.length + 1}` : ''} ORDER BY id LIMIT ${REWRITE_BATCH_SIZE}`,
         isDefined(afterRowId)
           ? [...whereParameters, afterRowId]
@@ -242,38 +245,45 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       );
 
     const rewrittenRowIds: string[] = [];
-    let candidateRows = await fetchCandidateRows();
 
-    while (candidateRows.length > 0) {
-      for (const candidateRow of candidateRows) {
-        if (!mapValue(candidateRow.value).hasChanged) {
-          continue;
-        }
-
-        const hasRewritten =
-          isDryRun ||
-          (await this.rewriteRowUnderLock({
-            dataSource,
-            tableName,
-            columnName,
-            rowId: candidateRow.id,
-            mapValue,
-          }));
-
-        if (hasRewritten) {
-          rewrittenRowIds.push(candidateRow.id);
-        }
+    for (const candidateRow of candidateRows) {
+      if (!mapValue(candidateRow.value).hasChanged) {
+        continue;
       }
 
-      candidateRows =
-        candidateRows.length < REWRITE_BATCH_SIZE
-          ? []
-          : await fetchCandidateRows(
-              candidateRows[candidateRows.length - 1].id,
-            );
+      const hasRewritten =
+        isDryRun ||
+        (await this.rewriteRowUnderLock({
+          dataSource,
+          tableName,
+          columnName,
+          rowId: candidateRow.id,
+          mapValue,
+        }));
+
+      if (hasRewritten) {
+        rewrittenRowIds.push(candidateRow.id);
+      }
     }
 
-    return rewrittenRowIds.length;
+    if (candidateRows.length < REWRITE_BATCH_SIZE) {
+      return rewrittenRowIds.length;
+    }
+
+    const nextPageRewrittenCount = await this.rewriteRows(
+      {
+        dataSource,
+        isDryRun,
+        tableName,
+        columnName,
+        whereClause,
+        whereParameters,
+        mapValue,
+      },
+      candidateRows[candidateRows.length - 1].id,
+    );
+
+    return rewrittenRowIds.length + nextPageRewrittenCount;
   }
 
   private async rewriteRowUnderLock({
