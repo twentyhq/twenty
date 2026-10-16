@@ -158,11 +158,6 @@ export const scheduleRecallBotForCallRecording = async (
     data: { externalBotId: scheduleResult.externalBotId },
   });
 
-  await upsertCallRecorderCalendarParticipant(client, {
-    callRecordingId: callRecording.id,
-    calendarEventId: calendarEvent.id,
-  });
-
   if (!isJoinWithinCreditCheckLead) {
     await enqueuePreJoinCreditCheck({
       callRecordingId: callRecording.id,
@@ -170,6 +165,11 @@ export const scheduleRecallBotForCallRecording = async (
       joinAt,
     });
   }
+
+  await upsertCallRecorderCalendarParticipant(client, {
+    callRecordingId: callRecording.id,
+    calendarEventId: calendarEvent.id,
+  });
 
   return { status: 'scheduled' };
 };

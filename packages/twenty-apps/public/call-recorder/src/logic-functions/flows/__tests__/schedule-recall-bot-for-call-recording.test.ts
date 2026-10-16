@@ -50,6 +50,7 @@ class FakeCoreApiClient {
     externalBotId: null,
   };
   calendarEventParticipants: Record<string, unknown>[] = [];
+  participantWriteError: Error | undefined;
 
   async query(query: any): Promise<any> {
     if (query.callRecordings !== undefined) {
@@ -88,6 +89,10 @@ class FakeCoreApiClient {
     }
 
     if (mutation.createCalendarEventParticipants !== undefined) {
+      if (this.participantWriteError !== undefined) {
+        throw this.participantWriteError;
+      }
+
       const { data } = mutation.createCalendarEventParticipants.__args;
 
       this.calendarEventParticipants.push(...data);
@@ -245,5 +250,17 @@ describe('scheduleRecallBotForCallRecording', () => {
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('failed to enqueue the pre-join credit check'),
     );
+  });
+
+  it('enqueues the credit check before writing the participant', async () => {
+    const client = new FakeCoreApiClient();
+    client.participantWriteError = new Error('participant write failed');
+
+    await expect(
+      scheduleBot({ client, meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT }),
+    ).rejects.toThrow('participant write failed');
+
+    expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+    expect(enqueueJobsMock).toHaveBeenCalledOnce();
   });
 });
