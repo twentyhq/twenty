@@ -7,7 +7,7 @@ import { type CountrySelectProps } from '../types/CountrySelectProps';
 import { CountrySelectAvailabilityEffect } from './CountrySelectAvailabilityEffect';
 import { CountrySelectTrigger } from './CountrySelectTrigger';
 import { CountrySelectOptions } from './CountrySelectOptions';
-import { useCountrySelectContext } from './useCountrySelectContext';
+import { useCountrySelectContextOrThrow } from './useCountrySelectContextOrThrow';
 
 type CountrySelectDropdownProps = Omit<
   CountrySelectProps,
@@ -34,7 +34,7 @@ export const CountrySelectDropdown = ({
   closeOnSelect,
   ...triggerProps
 }: CountrySelectDropdownProps) => {
-  const { disabled } = useCountrySelectContext();
+  const { disabled } = useCountrySelectContextOrThrow();
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const requestedOpen = controlledOpen ?? uncontrolledOpen;
   const open = !disabled && requestedOpen;

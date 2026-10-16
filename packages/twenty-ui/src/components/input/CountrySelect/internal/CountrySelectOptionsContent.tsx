@@ -15,7 +15,7 @@ import styles from '../CountrySelect.module.scss';
 import { type CountrySelectOptionsProps } from '../types/CountrySelectOptionsProps';
 import { getCountrySelectionValue } from './getCountrySelectionValue';
 import { NO_COUNTRY_SELECTION_VALUE } from './NO_COUNTRY_SELECTION_VALUE';
-import { useCountrySelectContext } from './useCountrySelectContext';
+import { useCountrySelectContextOrThrow } from './useCountrySelectContextOrThrow';
 
 export const CountrySelectOptionsContent = ({
   searchLabel = doNotTranslate('Search'),
@@ -31,7 +31,7 @@ export const CountrySelectOptionsContent = ({
     disabled,
     noCountryLabel,
     selectionGroupId,
-  } = useCountrySelectContext();
+  } = useCountrySelectContextOrThrow();
   const [search, setSearch] = useState('');
   const normalizedSearch = normalizeSearchText(search.trim());
   const isSearching = isNonEmptyString(normalizedSearch);

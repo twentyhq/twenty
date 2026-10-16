@@ -15,7 +15,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../CountrySelect.module.scss';
 import { CountrySelectAvailabilityEffect } from './CountrySelectAvailabilityEffect';
 import { getCountrySelectLabelledBy } from './getCountrySelectLabelledBy';
-import { useCountrySelectContext } from './useCountrySelectContext';
+import { useCountrySelectContextOrThrow } from './useCountrySelectContextOrThrow';
 import { type CountrySelectTriggerProps } from '../types/CountrySelectTriggerProps';
 
 const skipTriggerActivation = (event: { preventBaseUIHandler?: () => void }) =>
@@ -43,7 +43,7 @@ export const CountrySelectTrigger = ({
     selectedCountry,
     disabled: isDisabled,
     noCountryLabel,
-  } = useCountrySelectContext();
+  } = useCountrySelectContextOrThrow();
   const { open, setOpen } = useDropdownContext();
   const generatedId = useId();
   const triggerId = id ?? generatedId;

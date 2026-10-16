@@ -5,7 +5,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { CountrySelectContext } from './CountrySelectContext';
 
-export const useCountrySelectContext = () => {
+export const useCountrySelectContextOrThrow = () => {
   const context = useContext(CountrySelectContext);
 
   if (!isDefined(context)) {
