@@ -1,7 +1,6 @@
 import { createProcessor } from '@mdx-js/mdx';
 import remarkFrontmatter from 'remark-frontmatter';
-import { isNonEmptyString } from '@sniptt/guards';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { visit } from 'unist-util-visit';
 
 export const checkStoryEmbeds = ({
