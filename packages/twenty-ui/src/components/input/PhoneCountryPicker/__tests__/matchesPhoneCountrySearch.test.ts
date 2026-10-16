@@ -21,36 +21,66 @@ const UNITED_STATES = {
 };
 
 describe('matchesPhoneCountrySearch', () => {
-  it.each(['reunion', ' RÉUNION ', 'rE', '262', '+262', '62', ''])(
-    'matches a normalized label, identifier or calling code for %s',
-    (search) => {
-      expect(matchesPhoneCountrySearch({ country: REUNION, search })).toBe(
-        true,
-      );
+  it.each(['reunion', 're', '262', '62', ''])(
+    'matches a prepared label, identifier or calling code for %s',
+    (normalizedSearch) => {
+      expect(
+        matchesPhoneCountrySearch({
+          country: REUNION,
+          normalizedSearch,
+          callingCodeSearch: normalizedSearch,
+        }),
+      ).toBe(true);
     },
   );
 
   it('keeps countries sharing a calling code independently searchable', () => {
-    expect(matchesPhoneCountrySearch({ country: CANADA, search: '+1' })).toBe(
-      true,
-    );
     expect(
-      matchesPhoneCountrySearch({ country: UNITED_STATES, search: '+1' }),
+      matchesPhoneCountrySearch({
+        country: CANADA,
+        normalizedSearch: '+1',
+        callingCodeSearch: '1',
+      }),
     ).toBe(true);
-    expect(matchesPhoneCountrySearch({ country: CANADA, search: 'us' })).toBe(
-      false,
-    );
     expect(
-      matchesPhoneCountrySearch({ country: UNITED_STATES, search: 'us' }),
+      matchesPhoneCountrySearch({
+        country: UNITED_STATES,
+        normalizedSearch: '+1',
+        callingCodeSearch: '1',
+      }),
+    ).toBe(true);
+    expect(
+      matchesPhoneCountrySearch({
+        country: CANADA,
+        normalizedSearch: 'us',
+        callingCodeSearch: 'us',
+      }),
+    ).toBe(false);
+    expect(
+      matchesPhoneCountrySearch({
+        country: UNITED_STATES,
+        normalizedSearch: 'us',
+        callingCodeSearch: 'us',
+      }),
     ).toBe(true);
   });
 
-  it.each(['+', '++262', '🇷🇪', 'France', 'RE +262'])(
-    'does not match unsupported combined fields or flag content for %s',
-    (search) => {
-      expect(matchesPhoneCountrySearch({ country: REUNION, search })).toBe(
-        false,
-      );
+  it.each([
+    { normalizedSearch: '+', callingCodeSearch: '' },
+    { normalizedSearch: '++262', callingCodeSearch: '+262' },
+    { normalizedSearch: '🇷🇪', callingCodeSearch: '🇷🇪' },
+    { normalizedSearch: 'france', callingCodeSearch: 'france' },
+    { normalizedSearch: 're +262', callingCodeSearch: 're +262' },
+  ])(
+    'does not match unsupported combined fields or flag content for $normalizedSearch',
+    ({ normalizedSearch, callingCodeSearch }) => {
+      expect(
+        matchesPhoneCountrySearch({
+          country: REUNION,
+          normalizedSearch,
+          callingCodeSearch,
+        }),
+      ).toBe(false);
     },
   );
 });

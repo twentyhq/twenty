@@ -1,24 +1,19 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { normalizeSearchText } from '@ui/utilities/utils/normalizeSearchText';
-
 import { type PreparedPhoneCountryOption } from './PreparedPhoneCountryOption';
 
 export const matchesPhoneCountrySearch = ({
   country,
-  search,
+  normalizedSearch,
+  callingCodeSearch,
 }: {
   country: Pick<
     PreparedPhoneCountryOption,
     'searchLabel' | 'searchValue' | 'callingCode'
   >;
-  search: string;
+  normalizedSearch: string;
+  callingCodeSearch: string;
 }) => {
-  const normalizedSearch = normalizeSearchText(search).trim();
-  const callingCodeSearch = normalizedSearch.startsWith('+')
-    ? normalizedSearch.slice(1)
-    : normalizedSearch;
-
   return (
     country.searchLabel.includes(normalizedSearch) ||
     country.searchValue.includes(normalizedSearch) ||

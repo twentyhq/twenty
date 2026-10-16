@@ -46,7 +46,18 @@ export const SearchableCountryFields: Story = {
   play: async ({ canvasElement, args }) => {
     const { dialog, search } = await openPhoneCountryPicker({ canvasElement });
 
-    for (const query of ['reunion', 'RÉUNION']) {
+    const initialOptions = within(dialog).getAllByRole('option');
+
+    await userEvent.type(search, '   ');
+    await expect(within(dialog).getAllByRole('option')).toHaveLength(
+      initialOptions.length,
+    );
+    await userEvent.clear(search);
+    await expect(within(dialog).getAllByRole('option')).toHaveLength(
+      initialOptions.length,
+    );
+
+    for (const query of ['reunion', ' RÉUNION ']) {
       await userEvent.clear(search);
       await userEvent.type(search, query);
       await expect(within(dialog).getAllByRole('option')).toHaveLength(1);
@@ -90,7 +101,7 @@ export const SearchableCountryFields: Story = {
       ).toBeVisible();
     }
 
-    for (const query of ['unknown', '+999']) {
+    for (const query of ['unknown', '+999', '+']) {
       await userEvent.clear(search);
       await userEvent.type(search, query);
       await expect(within(dialog).queryAllByRole('option')).toHaveLength(0);

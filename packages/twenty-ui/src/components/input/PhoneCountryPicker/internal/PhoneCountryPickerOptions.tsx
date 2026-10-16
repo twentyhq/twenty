@@ -7,6 +7,7 @@ import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 import { isDefined } from '@ui/utilities/utils/isDefined';
+import { normalizeSearchText } from '@ui/utilities/utils/normalizeSearchText';
 
 import styles from '../PhoneCountryPicker.module.scss';
 import { type PhoneCountryPickerOptionsProps } from '../types/PhoneCountryPickerOptionsProps';
@@ -35,8 +36,16 @@ export const PhoneCountryPickerOptions = ({
   const disabled = rootDisabled || optionsDisabled;
   const selectionId = useId();
   const [search, setSearch] = useState('');
+  const normalizedSearch = normalizeSearchText(search).trim();
+  const callingCodeSearch = normalizedSearch.startsWith('+')
+    ? normalizedSearch.slice(1)
+    : normalizedSearch;
   const matchingCountries = countries.filter((country) =>
-    matchesPhoneCountrySearch({ country, search }),
+    matchesPhoneCountrySearch({
+      country,
+      normalizedSearch,
+      callingCodeSearch,
+    }),
   );
   const selectedCountry = matchingCountries.find(
     (country) => country.value === value,
