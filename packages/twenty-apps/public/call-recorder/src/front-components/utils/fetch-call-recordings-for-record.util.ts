@@ -174,9 +174,13 @@ export const fetchCallRecordingsForRecord = async ({
       isCalendarEventLoaded,
     });
 
+  // Target creation order is not meeting order, so the fallback reads every page.
+  const hasEnoughCallRecordings = () =>
+    orderBy === BY_MEETING_DATE_ORDER_BY && callRecordings.length >= maxCount;
+
   while (
     hasNextPage &&
-    callRecordings.length < maxCount &&
+    !hasEnoughCallRecordings() &&
     fetchedPageCount < CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGET_PAGES
   ) {
     let targetPage: ConnectionPage<CalendarEventTargetNode>;

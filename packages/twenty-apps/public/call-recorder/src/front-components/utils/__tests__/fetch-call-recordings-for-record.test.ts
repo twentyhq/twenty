@@ -280,6 +280,35 @@ describe('fetchCallRecordingsForRecord', () => {
     expect(callRecordingQueries[0].edges.node.calendarEvent).toBeUndefined();
   });
 
+  it('reads every meeting page when targets are ordered by creation date', async () => {
+    const query = vi
+      .fn()
+      .mockRejectedValueOnce(buildPermissionDeniedError())
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(['old-meeting'], true),
+      )
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          { id: 'old-recording', startedAt: '2025-01-01T10:00:00.000Z' },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(['new-meeting']),
+      )
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          { id: 'new-recording', startedAt: '2026-01-01T10:00:00.000Z' },
+        ]),
+      );
+
+    const callRecordings = await fetchForPerson(query, 1);
+
+    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
+      'new-recording',
+    ]);
+    expect(query).toHaveBeenCalledTimes(5);
+  });
+
   it('lists recordings without their meeting when the join is denied', async () => {
     const query = vi
       .fn()
