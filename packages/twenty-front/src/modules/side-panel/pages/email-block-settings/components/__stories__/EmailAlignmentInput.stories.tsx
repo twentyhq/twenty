@@ -40,7 +40,8 @@ export const KeyboardSelection: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const group = await canvas.findByRole('radiogroup', { name: 'Alignment' });
-    const [left, center, right] = within(group).getAllByRole('radio');
+    const left = within(group).getByRole('radio', { name: 'Align left' });
+    const center = within(group).getByRole('radio', { name: 'Align center' });
 
     expect(left).toBeChecked();
 
@@ -52,7 +53,9 @@ export const KeyboardSelection: Story = {
     expect(center).toHaveFocus();
     expect(args.onChange).toHaveBeenLastCalledWith('center');
 
-    await userEvent.click(right);
+    await userEvent.click(
+      within(group).getByRole('radio', { name: 'Align right' }),
+    );
     expect(args.onChange).toHaveBeenLastCalledWith('right');
   },
 };
