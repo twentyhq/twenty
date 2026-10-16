@@ -3,9 +3,9 @@ import { t } from '@lingui/core/macro';
 const MAX_COUNTRY_NAMES_TO_DISPLAY = 5;
 
 export const getCountryFilterDisplayValue = (countryNames: string[]) => {
-  const countriesLabel = t`countries`;
+  const countryCount = countryNames.length;
 
-  return countryNames.length > MAX_COUNTRY_NAMES_TO_DISPLAY
-    ? `${countryNames.length} ${countriesLabel}`
+  return countryCount > MAX_COUNTRY_NAMES_TO_DISPLAY
+    ? t`${countryCount} countries`
     : countryNames.join(', ');
 };
