@@ -128,7 +128,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
   const unavailableCountry = page.getByRole('option', {
     name: 'Unavailable country',
   });
-  expect(unavailableCountry).toHaveAttribute('aria-disabled', 'true');
+  expect(unavailableCountry).toBeDisabled();
   await userEvent.click(unavailableCountry);
   await waitForSandboxRoundTrip();
   expect(savedCountries).toHaveTextContent('Billing: FR; Shipping: JP');

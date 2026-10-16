@@ -61,7 +61,8 @@ export const ClearAndReselectPreservesCountryNames: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
-    expect(onCountryChange).toHaveBeenCalledExactlyOnceWith('');
+    expect(onCountryChange).toHaveBeenCalledTimes(1);
+    expect(onCountryChange).toHaveBeenCalledWith('');
     expect(
       canvas.getByRole('status', { name: 'Stored country' }),
     ).toHaveTextContent('empty');
@@ -130,7 +131,8 @@ export const ExternalValuesPreserveLegacyCountries: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
-    expect(onCountryChange).toHaveBeenCalledExactlyOnceWith('');
+    expect(onCountryChange).toHaveBeenCalledTimes(1);
+    expect(onCountryChange).toHaveBeenCalledWith('');
 
     await userEvent.click(
       canvas.getByRole('button', { name: 'Set empty country' }),

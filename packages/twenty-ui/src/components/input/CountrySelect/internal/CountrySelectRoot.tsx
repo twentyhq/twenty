@@ -23,7 +23,7 @@ export const CountrySelectRoot = ({
   const [value, setValue] = useControlled({
     controlled: controlledValue,
     default: defaultValue,
-    name: 'CountrySelect',
+    name: doNotTranslate('CountrySelect'),
     state: 'value',
   });
   const preparedCountries = useMemo<PreparedCountryChoice[]>(
