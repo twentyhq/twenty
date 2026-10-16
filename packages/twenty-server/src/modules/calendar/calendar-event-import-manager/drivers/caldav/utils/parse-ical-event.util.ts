@@ -43,7 +43,9 @@ export const parseICalEvents = (
         endsAt: event.end.toISOString(),
         isFullDay: event.datetype === 'date',
         isCanceled: event.status === 'CANCELLED',
-        isPrivate: event.class === 'PRIVATE' || event.class === 'CONFIDENTIAL',
+        isPrivate:
+          icalDataExtractPropertyValue(event.class, 'PUBLIC').toUpperCase() !==
+          'PUBLIC',
         status: event.status || 'CONFIRMED',
         recurringEventExternalId: recurrenceIso,
         conferenceLinkLabel: '',

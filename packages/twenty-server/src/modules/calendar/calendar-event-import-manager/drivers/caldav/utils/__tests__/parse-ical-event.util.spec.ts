@@ -314,6 +314,8 @@ describe('parseICalEvents', () => {
     [['CLASS:PUBLIC'], false],
     [['CLASS:PRIVATE'], true],
     [['CLASS:CONFIDENTIAL'], true],
+    [['CLASS:private'], true],
+    [['CLASS:X-SECRET'], true],
   ])('maps %j to isPrivate %s', (classLines, isPrivate) => {
     const ics = buildVEvent([
       'UID:abc',
