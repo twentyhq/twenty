@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
+import { ConnectedAccountScope } from '~/generated-metadata/graphql';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
@@ -77,7 +78,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
           name: 'Main connection',
-          visibility: 'workspace',
+          scope: ConnectedAccountScope.WORKSPACE,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
@@ -111,7 +112,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('adds a workspace shared connection without asking for a visibility', async () => {
+  it('adds a workspace shared connection without asking for a scope', async () => {
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [
         {
@@ -155,7 +156,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',
       providerName: 'google-calendar',
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
     });
   });
 
@@ -232,7 +233,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
           name: 'My calendar',
-          visibility: 'user',
+          scope: ConnectedAccountScope.USER,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
