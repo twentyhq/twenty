@@ -91,7 +91,7 @@ export class AgentRunnerService {
   }
 
   async runStarted(jobData: RunAgentJobData): Promise<void> {
-    const { workspaceId, conversation, caller, spec, prompt } = jobData;
+    const { workspaceId, conversation, caller } = jobData;
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
     // a caller that stopped waiting while the run was queued, such as a stopped workflow, must not have it act

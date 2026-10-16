@@ -83,7 +83,7 @@ export class AgentRunSettlementService implements OnModuleDestroy {
       );
 
     const reconcile = setInterval(
-      readStoredSettlement,
+      () => void readStoredSettlement(),
       RUN_AGENT_SETTLED_RUN_RECONCILE_INTERVAL_MS,
     );
 
