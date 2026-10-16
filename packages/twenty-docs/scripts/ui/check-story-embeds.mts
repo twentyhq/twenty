@@ -39,12 +39,19 @@ export const checkStoryEmbeds = ({
       }
 
       for (const specifier of statement.specifiers) {
+        const isDefaultEmbed = specifier.type === 'ImportDefaultSpecifier';
         const isNamedEmbed =
           specifier.type === 'ImportSpecifier' &&
           specifier.imported.type === 'Identifier' &&
           specifier.imported.name === 'StoryEmbed';
 
-        if (specifier.type === 'ImportDefaultSpecifier' || isNamedEmbed) {
+        if (isDefaultEmbed) {
+          errors.push(
+            `Line ${node.position?.start.line}: StoryEmbed must use a named import.`,
+          );
+        }
+
+        if (isDefaultEmbed || isNamedEmbed) {
           embedNames.add(specifier.local.name);
         }
       }

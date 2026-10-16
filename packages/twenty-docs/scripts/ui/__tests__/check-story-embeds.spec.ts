@@ -124,6 +124,17 @@ describe('checkStoryEmbeds', () => {
     ).toEqual(['Line 3: Storybook story "removed-story" does not exist.']);
   });
 
+  it('rejects a default import that cannot render the named StoryEmbed export', () => {
+    expect(
+      checkStoryEmbeds({
+        content: `import StoryEmbed from '/snippets/ui/StoryEmbed.mdx';
+
+<StoryEmbed storyId="ui-input-input--default" title="Input example" />`,
+        storyIds,
+      }),
+    ).toEqual(['Line 1: StoryEmbed must use a named import.']);
+  });
+
   it('ignores examples and comments while parsing page metadata', () => {
     expect(
       checkStoryEmbeds({
