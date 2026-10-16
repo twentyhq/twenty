@@ -92,7 +92,7 @@ export const syncAppManifest = async ({
 
   return {
     actions: plan?.actions,
-    translationActions: plan ? plan.translationActions : null,
+    translationActions: plan?.translationActions ?? null,
     acknowledgedUniversalIdentifier:
       acknowledgement.applicationUniversalIdentifier,
   };

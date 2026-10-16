@@ -1,7 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import {
+  ALL_METADATA_NAME,
+  type ApplicationTranslationSyncAction,
+} from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
@@ -19,7 +22,6 @@ import { toApplicationCapabilities } from 'src/engine/core-modules/application/u
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
-import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -126,7 +128,7 @@ export class ApplicationSyncService {
       throw enrichApplicationManifestSyncError({ error, manifest });
     }
 
-    const translationActions = await this.computeTranslationActions({
+    const translationActions = await this.syncOrPreviewTranslations({
       applicationRegistrationId:
         ownerFlatApplication.applicationRegistrationId ??
         (dryRun ? applicationRegistrationId : undefined),
@@ -141,7 +143,7 @@ export class ApplicationSyncService {
     return { ...syncResult, translationActions };
   }
 
-  private async computeTranslationActions({
+  private async syncOrPreviewTranslations({
     applicationRegistrationId,
     translations,
     dryRun,
@@ -153,15 +155,15 @@ export class ApplicationSyncService {
     if (!isDefined(applicationRegistrationId)) {
       return isDefined(translations) ? null : [];
     }
-    const input = { applicationRegistrationId, translations };
+    const translationSyncInput = { applicationRegistrationId, translations };
     try {
       if (dryRun) {
         return await this.applicationTranslationSyncService.getSyncActions(
-          input,
+          translationSyncInput,
         );
       }
       return await this.applicationTranslationSyncService.syncFromManifest(
-        input,
+        translationSyncInput,
       );
     } catch (error) {
       this.logger.warn(
