@@ -13,7 +13,7 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { CallRecordingStatus } from '~/generated/graphql';
+import { CallRecordingStatus } from 'twenty-shared/types';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 

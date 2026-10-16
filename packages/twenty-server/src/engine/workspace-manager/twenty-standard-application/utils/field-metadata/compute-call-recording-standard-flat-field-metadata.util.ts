@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
+  CallRecordingStatus,
   DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
@@ -15,7 +16,6 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { CallRecordingRequestStatus } from 'src/modules/call-recording/common/enums/call-recording-request-status.enum';
-import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 
 export const buildCallRecordingStandardFlatFieldMetadatas = ({
   now,

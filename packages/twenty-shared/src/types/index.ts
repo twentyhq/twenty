@@ -22,6 +22,7 @@ export { CalendarChannelContactAutoCreationPolicy } from './CalendarChannelConta
 export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
 export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
 export { CalendarChannelVisibility } from './CalendarChannelVisibility';
+export { CallRecordingStatus } from './CallRecordingStatus';
 export type {
   CallRecordingTranscriptStatusMarker,
   CallRecordingParsedTranscriptWord,

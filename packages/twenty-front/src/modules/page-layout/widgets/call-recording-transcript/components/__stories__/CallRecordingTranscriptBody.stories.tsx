@@ -30,7 +30,7 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { CallRecordingStatus } from '~/generated/graphql';
+import { CallRecordingStatus } from 'twenty-shared/types';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { MOCK_CALL_RECORDING_AUDIO_DATA_URI } from './mockCallRecordingAudio';

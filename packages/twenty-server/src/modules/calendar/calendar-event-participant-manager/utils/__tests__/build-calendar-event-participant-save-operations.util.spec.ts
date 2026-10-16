@@ -1,3 +1,5 @@
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { type CalendarEventChannelRole } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-channel-role.type';
 import { buildCalendarEventParticipantSaveOperations } from 'src/modules/calendar/calendar-event-participant-manager/utils/build-calendar-event-participant-save-operations.util';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -187,4 +189,46 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
       ]);
     },
   );
+});
+
+describe('application participants', () => {
+  it('preserves an app participant missing from the provider calendar', () => {
+    const operations = buildOperations({
+      fetchedParticipants: [],
+      existingParticipants: [
+        buildExistingParticipant({
+          createdBy: {
+            source: FieldActorSource.APPLICATION,
+            name: 'Call Recorder',
+            workspaceMemberId: null,
+            context: {},
+          },
+        }),
+      ],
+    });
+
+    expect(operations.participantIdsToDelete).toEqual([]);
+  });
+
+  it('keeps provider participants separate when they share an app handle', () => {
+    const operations = buildOperations({
+      fetchedParticipants: [
+        buildFetchedParticipant({ displayName: 'Provider participant' }),
+      ],
+      existingParticipants: [
+        buildExistingParticipant({
+          createdBy: {
+            source: FieldActorSource.APPLICATION,
+            name: 'Call Recorder',
+            workspaceMemberId: null,
+            context: {},
+          },
+        }),
+      ],
+    });
+
+    expect(operations.participantsToInsert).toHaveLength(1);
+    expect(operations.participantsToUpdate).toEqual([]);
+    expect(operations.participantIdsToDelete).toEqual([]);
+  });
 });

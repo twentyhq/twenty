@@ -1,5 +1,5 @@
 import { getCallRecordingStatusDisplayConfiguration } from '@/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration';
-import { CallRecordingStatus } from '~/generated/graphql';
+import { CallRecordingStatus } from 'twenty-shared/types';
 
 describe('getCallRecordingStatusDisplayConfiguration', () => {
   it.each([

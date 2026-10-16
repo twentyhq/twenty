@@ -50,7 +50,6 @@ describe('EventCardCalendarEvent', () => {
         startsAt: '2026-08-22T10:00:00.000Z',
         endsAt: '2026-08-22T11:00:00.000Z',
         calendarEventParticipants: [],
-        callRecordings: [],
       },
       loading: false,
       error: undefined,

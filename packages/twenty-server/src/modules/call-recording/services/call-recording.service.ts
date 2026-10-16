@@ -10,7 +10,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
+import { CallRecordingStatus } from 'twenty-shared/types';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
 
 const NON_TERMINAL_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [

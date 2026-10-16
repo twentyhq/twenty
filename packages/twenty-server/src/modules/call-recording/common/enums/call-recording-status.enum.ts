@@ -1,9 +1,1 @@
-export enum CallRecordingStatus {
-  SCHEDULED = 'SCHEDULED',
-  JOINING = 'JOINING',
-  RECORDING = 'RECORDING',
-  PROCESSING = 'PROCESSING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  NOT_RECORDED = 'NOT_RECORDED',
-}
+export { CallRecordingStatus } from 'twenty-shared/types';

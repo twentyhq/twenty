@@ -1,3 +1,5 @@
+import { type ActorMetadata } from 'twenty-shared/types';
+
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -12,6 +14,7 @@ export enum CalendarEventParticipantResponseStatus {
 }
 
 export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity {
+  createdBy: ActorMetadata | null;
   handle: string | null;
   displayName: string | null;
   isOrganizer: boolean;

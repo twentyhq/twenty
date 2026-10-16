@@ -1,3 +1,4 @@
+import { FieldActorSource } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
@@ -40,12 +41,15 @@ export const buildCalendarEventParticipantSaveOperations = ({
   channelRoleByCalendarEventId: Map<string, CalendarEventChannelRole>;
   channelHandles: string[];
 }): CalendarEventParticipantSaveOperations => {
+  const providerParticipants = existingParticipants.filter(
+    ({ createdBy }) => createdBy?.source !== FieldActorSource.APPLICATION,
+  );
   const existingParticipantByKey = new Map<
     string,
     CalendarEventParticipantWorkspaceEntity
   >();
 
-  for (const existingParticipant of existingParticipants) {
+  for (const existingParticipant of providerParticipants) {
     const participantKey = buildParticipantKey(existingParticipant);
 
     if (existingParticipantByKey.has(participantKey)) {
@@ -112,7 +116,7 @@ export const buildCalendarEventParticipantSaveOperations = ({
     fetchedParticipants.map(buildParticipantKey),
   );
 
-  for (const existingParticipant of existingParticipants) {
+  for (const existingParticipant of providerParticipants) {
     if (fetchedParticipantKeys.has(buildParticipantKey(existingParticipant))) {
       continue;
     }

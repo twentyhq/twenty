@@ -2,7 +2,6 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TimelineCalendarEventCallRecordingDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-call-recording.dto';
 import { TimelineCalendarEventParticipantDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-participant.dto';
 
 @ObjectType('LinkMetadata')
@@ -60,9 +59,6 @@ export class TimelineCalendarEventDTO {
 
   @Field(() => [TimelineCalendarEventParticipantDTO])
   participants: TimelineCalendarEventParticipantDTO[];
-
-  @Field(() => [TimelineCalendarEventCallRecordingDTO])
-  callRecordings: TimelineCalendarEventCallRecordingDTO[];
 
   @Field(() => CalendarChannelVisibility)
   visibility: CalendarChannelVisibility;
