@@ -1,5 +1,6 @@
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -24,7 +25,9 @@ export const DuplicateMessageCampaignSingleRecordCommand = () => {
   });
 
   if (!isDefined(campaignId)) {
-    throw new Error('Record ID is required to duplicate the campaign');
+    throw new Error(
+      doNotTranslate('Record ID is required to duplicate the campaign'),
+    );
   }
 
   const handleExecute = async () => {

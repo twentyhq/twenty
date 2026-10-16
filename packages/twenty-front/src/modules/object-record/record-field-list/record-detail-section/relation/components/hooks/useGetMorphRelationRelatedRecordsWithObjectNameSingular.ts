@@ -2,6 +2,7 @@ import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMet
 import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
   recordId,
@@ -17,7 +18,9 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
 
   if (morphRelations.length < 1) {
     throw new CustomError(
-      'Cannot load relation records: no morph relations were provided to this component.',
+      doNotTranslate(
+        'Cannot load relation records: no morph relations were provided to this component.',
+      ),
       'MORPH_RELATIONS_REQUIRED',
     );
   }

@@ -6,6 +6,7 @@ import { useDuplicateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks
 import { type Difference } from 'microdiff';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useDuplicateStep = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +42,7 @@ export const useDuplicateStep = () => {
       const createdStepDiff = stepsDiff?.find((diff) => diff.type === 'CREATE');
 
       if (!isDefined(createdStepDiff)) {
-        throw new Error("Couldn't duplicate step");
+        throw new Error(doNotTranslate("Couldn't duplicate step"));
       }
 
       setWorkflowSelectedNode(createdStepDiff.value.id);

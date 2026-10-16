@@ -130,7 +130,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         items.push({
           Icon: IconBox,
           label: t`Package`,
-          value: 'NPM',
+          value: t`NPM`,
         });
         break;
       case ApplicationRegistrationSourceType.TARBALL:
@@ -165,7 +165,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         items.push({
           Icon: IconBox,
           label: t`Source`,
-          value: 'OAuth',
+          value: t`OAuth`,
         });
         break;
     }

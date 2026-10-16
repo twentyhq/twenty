@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
@@ -35,7 +36,9 @@ export const useSyncSelectableListItems = ({
   useEffect(() => {
     if (!selectableItemIdArray && !selectableItemIdMatrix) {
       throw new Error(
-        'Either selectableItemIdArray or selectableItemIdsMatrix must be provided',
+        doNotTranslate(
+          'Either selectableItemIdArray or selectableItemIdsMatrix must be provided',
+        ),
       );
     }
 

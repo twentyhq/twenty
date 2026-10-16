@@ -54,10 +54,10 @@ const StyledDangerButtonGroup = styled.div`
 
 export const SettingsAdminApplicationRegistrationDangerZone = ({
   registration,
-  fromAdmin = false,
+  isAdminView = false,
 }: {
   registration: ApplicationRegistration;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
@@ -118,7 +118,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         variables: { id: applicationRegistrationId },
       });
 
-      if (fromAdmin) {
+      if (isAdminView) {
         navigate(
           SettingsPath.AdminPanel,
           undefined,
@@ -238,7 +238,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           </Tooltip>
 
           {isUnclaimed
-            ? fromAdmin && (
+            ? isAdminView && (
                 <Button
                   startIcon={<IconUserPlus />}
                   onClick={() =>

@@ -9,6 +9,7 @@ import {
   capitalize,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLingui } from '@lingui/react/macro';
 import { beautifyExactDate } from '~/utils/date-utils';
@@ -44,7 +45,9 @@ export const useBillingWording = () => {
   const getBeautifiedRenewDate = () => {
     assertIsDefinedOrThrow(
       currentBillingSubscription.currentPeriodEnd,
-      new Error(`No renew date defined for current subscription.`),
+      new Error(
+        doNotTranslate(`No renew date defined for current subscription.`),
+      ),
     );
 
     return beautifyExactDate(

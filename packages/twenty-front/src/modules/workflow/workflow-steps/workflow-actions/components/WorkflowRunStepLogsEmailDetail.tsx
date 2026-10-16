@@ -193,7 +193,7 @@ export const WorkflowRunStepLogsEmailDetail = ({
             {(isDefined(details.bodyBytes) || details.bodyTruncated) && (
               <StyledBodyMeta>
                 {isDefined(details.bodyBytes) && formatBytes(details.bodyBytes)}
-                {details.bodyTruncated && ' · truncated'}
+                {details.bodyTruncated && t` · truncated`}
               </StyledBodyMeta>
             )}
           </>

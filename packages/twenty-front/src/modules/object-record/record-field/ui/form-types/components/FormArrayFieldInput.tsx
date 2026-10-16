@@ -26,6 +26,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type FocusEvent, type KeyboardEvent, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconPlus } from 'twenty-ui/icon';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -214,7 +215,9 @@ export const FormArrayFieldInput = ({
 
   const handleDeleteItem = (index: number) => {
     if (draftValue.type !== 'static') {
-      throw new Error('Cannot delete item when value is a variable.');
+      throw new Error(
+        doNotTranslate('Cannot delete item when value is a variable.'),
+      );
     }
 
     const updatedItems = toSpliced(draftValue.value, index, 1);
@@ -278,7 +281,9 @@ export const FormArrayFieldInput = ({
 
   const handleNewItemInputSubmit = () => {
     if (draftValue.type !== 'static') {
-      throw new Error('Cannot submit input when value is a variable.');
+      throw new Error(
+        doNotTranslate('Cannot submit input when value is a variable.'),
+      );
     }
 
     const sanitizedInput = inputValue.trim();

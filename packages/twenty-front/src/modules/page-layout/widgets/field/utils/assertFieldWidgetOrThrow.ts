@@ -1,6 +1,7 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 type AssertFieldWidgetOrThrow = (
@@ -14,14 +15,16 @@ export const assertFieldWidgetOrThrow: AssertFieldWidgetOrThrow = (
 ) => {
   assertIsDefinedOrThrow(
     widget.configuration,
-    new Error('Widget configuration is required'),
+    new Error(doNotTranslate('Widget configuration is required')),
   );
 
   if (
     widget.configuration.configurationType !== WidgetConfigurationType.FIELD
   ) {
     throw new Error(
-      `Expected FieldConfiguration but got ${widget.configuration.__typename}`,
+      doNotTranslate(
+        `Expected FieldConfiguration but got ${widget.configuration.__typename}`,
+      ),
     );
   }
 };

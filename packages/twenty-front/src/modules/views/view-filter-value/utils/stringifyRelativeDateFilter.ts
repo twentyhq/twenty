@@ -1,6 +1,7 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const stringifyRelativeDateFilter = (
   relativeDateFilter: RelativeDateFilter,
@@ -14,7 +15,9 @@ export const stringifyRelativeDateFilter = (
     relativeDateFilter.amount <= 0
   ) {
     throw new Error(
-      'Amount must be defined and greater than 0 for relative date filters',
+      doNotTranslate(
+        'Amount must be defined and greater than 0 for relative date filters',
+      ),
     );
   }
 

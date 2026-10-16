@@ -1,10 +1,24 @@
 ---
 title: CLI
-description: yarn twenty commands for executing functions, streaming logs, managing app installations, and switching remotes.
+description: Standalone app commands and legacy SDK commands for syncing, executing functions, managing installations, and switching remotes.
 icon: "terminal"
 ---
 
-The `yarn twenty` CLI is your interface to everything app-related. Full command list:
+## Standalone CLI (`twenty app`)
+
+The standalone `twenty-cli` package provides these app sync commands:
+
+| Command | What it does |
+|---------|--------------|
+| `twenty app plan` | Preview metadata and translation changes without applying them |
+| `twenty app apply` | Build, preview, upload, and apply metadata and translation changes |
+| `twenty app dev` | Watch source files, sync changes, and report metadata and translation actions |
+
+Translation changes appear in a separate section, grouped by locale, with added, updated, and deleted messages. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#standalone-cli-plans-and-translations).
+
+## Legacy SDK CLI (`yarn twenty`)
+
+The commands below belong to the CLI bundled with `twenty-sdk`. Its metadata-only plan output differs from the standalone CLI above.
 
 | Command | What it does | Documented in |
 |---------|--------------|---------------|

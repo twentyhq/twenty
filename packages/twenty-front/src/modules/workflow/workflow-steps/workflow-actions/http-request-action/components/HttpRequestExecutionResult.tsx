@@ -36,24 +36,18 @@ export const HttpRequestExecutionResult = ({
   const headersCount = Object.keys(
     httpRequestTestData.output.headers || {},
   ).length;
+  const durationSuffix = httpRequestTestData.output.duration
+    ? t` - ${httpRequestTestData.output.duration}ms`
+    : '';
+  const responseStatus = httpRequestTestData.output.status
+    ? `${httpRequestTestData.output.status} ${httpRequestTestData.output.statusText}${durationSuffix}`
+    : undefined;
 
   const status: ExecutionStatus = {
     isSuccess,
     isError,
-    successMessage: httpRequestTestData.output.status
-      ? `${httpRequestTestData.output.status} ${httpRequestTestData.output.statusText}${
-          httpRequestTestData.output.duration
-            ? ` - ${httpRequestTestData.output.duration}ms`
-            : ''
-        }`
-      : undefined,
-    errorMessage: httpRequestTestData.output.status
-      ? `${httpRequestTestData.output.status} ${httpRequestTestData.output.statusText}${
-          httpRequestTestData.output.duration
-            ? ` - ${httpRequestTestData.output.duration}ms`
-            : ''
-        }`
-      : t`Request Failed`,
+    successMessage: responseStatus,
+    errorMessage: responseStatus ?? t`Request Failed`,
     additionalInfo:
       isSuccess && headersCount > 0
         ? t`${headersCount} headers received`
