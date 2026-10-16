@@ -60,7 +60,20 @@ export class ApplicationResolver {
   ) {}
 
   @Query(() => GraphQLJSON)
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    ApplicationTargetGuard,
+  )
   async applicationTranslationCatalog(
     @ApplicationTargetArg(
       'applicationId',

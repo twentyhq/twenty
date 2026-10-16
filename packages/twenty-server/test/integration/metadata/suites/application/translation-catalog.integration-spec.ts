@@ -3,10 +3,14 @@ import gql from 'graphql-tag';
 import { type Repository } from 'typeorm';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
+import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -17,22 +21,30 @@ import { ApplicationTranslationSyncService } from 'src/engine/core-modules/appli
 import { type ApplicationTranslationEntity } from 'src/engine/core-modules/application/application-translation/application-translation.entity';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const CONSTRAINT_NAME = `translation_test_${TEST_APP_ID.replace(/-/g, '')}`;
-const queryCatalog = (applicationId: string, locale = 'fr-FR') =>
-  makeMetadataApiRequest({
-    query: gql`
-      query Catalog($applicationId: UUID!, $locale: String!) {
-        applicationTranslationCatalog(
-          applicationId: $applicationId
-          locale: $locale
-        )
-      }
-    `,
-    variables: { applicationId, locale },
-  });
+const queryCatalog = (
+  applicationId: string,
+  locale = 'fr-FR',
+  token?: string,
+) =>
+  makeMetadataApiRequest(
+    {
+      query: gql`
+        query Catalog($applicationId: UUID!, $locale: String!) {
+          applicationTranslationCatalog(
+            applicationId: $applicationId
+            locale: $locale
+          )
+        }
+      `,
+      variables: { applicationId, locale },
+    },
+    token,
+  );
 
 describe('Application translation catalog', () => {
   let application: ApplicationEntity;
@@ -92,6 +104,77 @@ describe('Application translation catalog', () => {
   });
 
   const input = () => ({ applicationRegistrationId, locale: 'fr-FR' as const });
+
+  it('serves translations to a workspace member session', async () => {
+    await sync.syncFromManifest({
+      ...input(),
+      translations: { 'fr-FR': { greeting: 'Bonjour' } },
+    });
+
+    const response = await queryCatalog(
+      application.id,
+      'fr-FR',
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.applicationTranslationCatalog).toEqual({
+      greeting: 'Bonjour',
+    });
+  });
+
+  it.each([
+    { name: 'an API key', token: () => API_KEY_ACCESS_TOKEN },
+    {
+      name: 'a user-bound application token',
+      token: async () =>
+        (
+          await generateAppleAdminApplicationTokenPair({
+            applicationId: application.id,
+          })
+        ).applicationAccessToken.token,
+    },
+    {
+      name: 'an unbound application token',
+      token: async () =>
+        (
+          await generateApplicationTokenPair({
+            applicationId: application.id,
+            workspaceId: application.workspaceId,
+          })
+        ).applicationAccessToken.token,
+    },
+  ])('refuses catalog reads with $name', async ({ token }) => {
+    const response = await queryCatalog(application.id, 'fr-FR', await token());
+
+    expect(response.body.data).toBeNull();
+    expect(response.body.errors).toEqual([
+      expect.objectContaining({
+        extensions: expect.objectContaining({ code: 'FORBIDDEN' }),
+      }),
+    ]);
+  });
+
+  it('refuses catalog reads with an OAuth-only client token', async () => {
+    const token = await loginAsTwentyCli();
+
+    try {
+      const response = await queryCatalog(application.id, 'fr-FR', token);
+
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors).toEqual([
+        expect.objectContaining({
+          extensions: expect.objectContaining({ code: 'FORBIDDEN' }),
+        }),
+      ]);
+    } finally {
+      await uninstallApplication({
+        universalIdentifier:
+          TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+        expectToFail: false,
+      });
+    }
+  });
 
   it('shares catalog reads across service instances and invalidates warm local caches after apply', async () => {
     await sync.syncFromManifest({

@@ -9858,10 +9858,10 @@ export default {
                 }
             ],
             "applicationTranslationCatalog": [
-                289,
+                290,
                 {
                     "applicationId": [
-                        493,
+                        494,
                         "UUID!"
                     ],
                     "locale": [
