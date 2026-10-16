@@ -452,6 +452,7 @@ export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' |
 
 export interface ApplicationRegistrationStats {
     activeInstalls: Scalars['Int']
+    autoUpdateEnabled: Scalars['Int']
     mostInstalledVersion?: Scalars['String']
     suspendedInstalls: Scalars['Int']
     versionDistribution: VersionDistributionEntry[]
@@ -4432,6 +4433,7 @@ export interface ApplicationRegistrationGenqlSelection{
 
 export interface ApplicationRegistrationStatsGenqlSelection{
     activeInstalls?: boolean | number
+    autoUpdateEnabled?: boolean | number
     mostInstalledVersion?: boolean | number
     suspendedInstalls?: boolean | number
     versionDistribution?: VersionDistributionEntryGenqlSelection

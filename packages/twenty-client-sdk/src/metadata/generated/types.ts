@@ -1209,6 +1209,9 @@ export default {
             "activeInstalls": [
                 8
             ],
+            "autoUpdateEnabled": [
+                8
+            ],
             "mostInstalledVersion": [
                 1
             ],

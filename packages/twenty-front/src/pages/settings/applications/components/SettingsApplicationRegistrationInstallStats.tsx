@@ -2,6 +2,7 @@ import {
   IconBrandDocker,
   IconChartBar,
   IconPlayerPause,
+  IconRefresh,
   IconVersions,
 } from 'twenty-ui/icon';
 import { useLingui } from '@lingui/react/macro';
@@ -55,6 +56,11 @@ export const SettingsApplicationRegistrationInstallStats = ({
       Icon: IconBrandDocker,
       label: t`Installs`,
       value: stats ? i18n.number(stats.activeInstalls) : '—',
+    },
+    {
+      Icon: IconRefresh,
+      label: t`Auto update enabled`,
+      value: stats ? i18n.number(stats.autoUpdateEnabled) : '—',
     },
     ...((stats?.suspendedInstalls ?? 0) > 0
       ? [
