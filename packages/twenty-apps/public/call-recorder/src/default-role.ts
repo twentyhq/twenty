@@ -34,9 +34,9 @@ export default defineApplicationRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant
           .universalIdentifier,
       canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
+      canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
+      canDestroyObjectRecords: true,
     },
     {
       objectUniversalIdentifier:

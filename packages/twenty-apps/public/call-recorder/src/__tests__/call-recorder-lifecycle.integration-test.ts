@@ -26,6 +26,8 @@ import {
   SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { syncCallRecordingCalendarParticipantHandler } from 'src/logic-functions/sync-call-recording-calendar-participant';
+import { getCurrentApplicationId } from 'src/logic-functions/utils/get-current-application-id.util';
 import { followUpCallRecordingRequestHandler } from 'src/logic-functions/follow-up-call-recording-request';
 import { processPendingCallRecordingRequestsHandler } from 'src/logic-functions/process-pending-call-recording-requests';
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
@@ -941,6 +943,13 @@ describe('call recorder app lifecycle (integration)', () => {
     ];
 
     for (const callRecordingId of callRecordingIds) {
+      await client.mutation({
+        destroyCalendarEventParticipants: {
+          __args: { filter: { id: { eq: callRecordingId } } },
+          id: true,
+        },
+      });
+
       await client
         .mutation({
           destroyCallRecording: { __args: { id: callRecordingId }, id: true },
@@ -3656,6 +3665,113 @@ describe('call recorder app lifecycle (integration)', () => {
           ),
         });
       });
+    });
+  });
+
+  describe('calendar participants', () => {
+    let applicationClient: CoreApiClient;
+
+    beforeEach(() => {
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+      applicationClient = new CoreApiClient();
+    });
+
+    const findParticipants = async (calendarEventId: string) => {
+      const result = await applicationClient.query({
+        calendarEventParticipants: {
+          __args: {
+            filter: {
+              calendarEventId: { eq: calendarEventId },
+              applicationId: { eq: getCurrentApplicationId() },
+            },
+            first: 50,
+          },
+          edges: { node: { id: true, applicationId: true, displayName: true } },
+        },
+      });
+      return (
+        result.calendarEventParticipants?.edges?.map(
+          ({
+            node,
+          }: {
+            node: {
+              id: string;
+              applicationId?: string | null;
+              displayName?: string | null;
+            };
+          }) => node,
+        ) ?? []
+      );
+    };
+
+    it('creates a participant after scheduling and removes it after bot cancellation, including delayed events', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        applicationId: getCurrentApplicationId(),
+      });
+      const event = { recordId: callRecordingId };
+      await syncCallRecordingCalendarParticipantHandler(event);
+      expect(await findParticipants(calendarEventId)).toEqual([]);
+
+      await applicationClient.mutation({
+        updateCallRecording: {
+          __args: {
+            id: callRecordingId,
+            data: { externalBotId: 'scheduled-bot' },
+          },
+          id: true,
+        },
+      });
+      await Promise.all([
+        syncCallRecordingCalendarParticipantHandler(event),
+        syncCallRecordingCalendarParticipantHandler(event),
+      ]);
+      expect(await findParticipants(calendarEventId)).toEqual([
+        {
+          id: callRecordingId,
+          applicationId: getCurrentApplicationId(),
+          displayName: 'Call Recorder',
+        },
+      ]);
+
+      await applicationClient.mutation({
+        updateCallRecording: {
+          __args: { id: callRecordingId, data: { externalBotId: null } },
+          id: true,
+        },
+      });
+      await syncCallRecordingCalendarParticipantHandler({
+        ...event,
+        properties: { after: { externalBotId: 'scheduled-bot' } },
+      });
+      expect(await findParticipants(calendarEventId)).toEqual([]);
+    });
+
+    it('keeps one participant per bot and removes a deleted recording participant', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingIds = await Promise.all(
+        [1, 2].map(() =>
+          createPendingCallRecording({
+            calendarEventId,
+            applicationId: getCurrentApplicationId(),
+            externalBotId: randomUUID(),
+          }),
+        ),
+      );
+      for (const recordId of callRecordingIds) {
+        await syncCallRecordingCalendarParticipantHandler({ recordId });
+      }
+      expect(await findParticipants(calendarEventId)).toHaveLength(2);
+      await client.mutation({
+        destroyCallRecording: { __args: { id: callRecordingIds[0] }, id: true },
+      });
+      await syncCallRecordingCalendarParticipantHandler({
+        recordId: callRecordingIds[0],
+      });
+      expect(await findParticipants(calendarEventId)).toEqual([
+        expect.objectContaining({ id: callRecordingIds[1] }),
+      ]);
     });
   });
 

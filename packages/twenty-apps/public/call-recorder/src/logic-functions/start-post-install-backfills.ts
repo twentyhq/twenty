@@ -6,6 +6,7 @@ import {
 
 import {
   PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -42,6 +43,13 @@ export const startPostInstallBackfillsHandler = async ({
   if (isUndefined(workspaceId)) {
     throw new Error('workspace id unavailable');
   }
+
+  await enqueueWorkspaceDistributedJob({
+    workspaceId,
+    logicFunctionUniversalIdentifier:
+      SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    stepLabel: 'post-upgrade calendar participant backfill kickoff',
+  });
 
   const { delayMs } = await enqueueWorkspaceDistributedJob({
     workspaceId,

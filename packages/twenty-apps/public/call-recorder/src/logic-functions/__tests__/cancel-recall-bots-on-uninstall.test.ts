@@ -1,13 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
+  mutation: vi.fn(),
   cancelOpenScheduledCallRecordingRequests: vi.fn(),
   cancelWorkspaceRecallBots: vi.fn(),
   findOpenScheduledCallRecordings: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: class CoreApiClient {},
+  CoreApiClient: class CoreApiClient {
+    mutation = mocks.mutation;
+  },
+}));
+
+vi.mock('src/logic-functions/utils/get-current-application-id.util', () => ({
+  getCurrentApplicationId: () => 'app-id',
 }));
 
 vi.mock(
@@ -86,6 +93,17 @@ describe('cancel-recall-bots-on-uninstall', () => {
       joinAtAfter: '2025-12-31T07:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
+    expect(mocks.mutation).toHaveBeenCalledWith({
+      destroyCalendarEventParticipants: {
+        __args: {
+          filter: {
+            id: { in: ['call-recording-1', 'call-recording-3'] },
+            applicationId: { eq: 'app-id' },
+          },
+        },
+        id: true,
+      },
+    });
     expect(uninstallCleanupResult).toEqual({
       canceledCallRecordingRequestCount: 3,
       scannedBotCount: 1,
@@ -153,5 +171,16 @@ describe('cancel-recall-bots-on-uninstall', () => {
       joinAtAfter: '2025-12-31T07:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
+  });
+  it('preserves participants for bots whose cancellation failed', async () => {
+    mocks.cancelWorkspaceRecallBots.mockResolvedValue({
+      scannedBotCount: 1,
+      canceledExternalBotIds: [],
+      failedExternalBotIds: ['known-bot'],
+      truncatedBotList: false,
+      cutoffReached: false,
+    });
+    await cancelRecallBotsOnUninstallHandler();
+    expect(mocks.mutation).not.toHaveBeenCalled();
   });
 });

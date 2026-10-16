@@ -9,6 +9,8 @@ import {
   cancelWorkspaceRecallBots,
   type CancelWorkspaceRecallBotsResult,
 } from 'src/logic-functions/flows/cancel-workspace-recall-bots.util';
+import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
+import { getCurrentApplicationId } from 'src/logic-functions/utils/get-current-application-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 const UNINSTALL_TIMEOUT_SECONDS = 30;
@@ -28,6 +30,7 @@ export const cancelRecallBotsOnUninstallHandler =
     const uninstallStartedAt = new Date();
     let canceledCallRecordingRequestCount = 0;
     let knownExternalBotIds: string[] = [];
+    let openCallRecordings: CallRecordingRecord[] = [];
     let recordCleanupError: Error | undefined;
     const recordCleanupRequestStartCutoffEpochMs =
       uninstallStartedAt.getTime() + RECORD_CLEANUP_REQUEST_START_BUDGET_MS;
@@ -35,7 +38,7 @@ export const cancelRecallBotsOnUninstallHandler =
       Date.now() < recordCleanupRequestStartCutoffEpochMs;
 
     try {
-      const openCallRecordings = await findOpenScheduledCallRecordings(
+      openCallRecordings = await findOpenScheduledCallRecordings(
         coreApiClient,
         shouldStartRecordCleanupRequest,
       );
@@ -89,6 +92,30 @@ export const cancelRecallBotsOnUninstallHandler =
           UNINSTALL_TIMEOUT_SECONDS * 1_000 -
           RECALL_CANCELLATION_START_HEADROOM_MS,
       });
+
+    const canceledBotIds = new Set(
+      workspaceRecallBotCancellationResult.canceledExternalBotIds,
+    );
+    const canceledRecordingIds = openCallRecordings
+      .filter(
+        ({ externalBotId }) =>
+          externalBotId !== undefined && canceledBotIds.has(externalBotId),
+      )
+      .map(({ id }) => id);
+
+    if (canceledRecordingIds.length > 0) {
+      await coreApiClient.mutation({
+        destroyCalendarEventParticipants: {
+          __args: {
+            filter: {
+              id: { in: canceledRecordingIds },
+              applicationId: { eq: getCurrentApplicationId() },
+            },
+          },
+          id: true,
+        },
+      });
+    }
 
     if (recordCleanupError !== undefined) {
       throw recordCleanupError;
