@@ -125,6 +125,19 @@ const findThread = async (threadId: string) => {
 const findThreadOwner = async (threadId: string) =>
   (await findThread(threadId)).workspaceMemberId;
 
+const countThreadOwnerGrants = async (
+  threadId: string,
+  workspaceMemberId: string,
+) => {
+  const [{ count }] = await globalThis.testDataSource.query(
+    `SELECT count(*)::int AS count FROM "${WORKSPACE_SCHEMA}"."recordShare"
+     WHERE "recordId" = $1 AND "principalId" = $2 AND "rowCause" = 'OWNER'`,
+    [threadId, workspaceMemberId],
+  );
+
+  return count;
+};
+
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
   (priorMessages ?? []).flatMap(({ parts }) => parts.map(({ type }) => type));
 
@@ -198,6 +211,10 @@ describe('Agent run conversation should be recorded for the caller', () => {
 
   afterAll(async () => {
     // the application's own threads have no member who could destroy them through the API
+    await globalThis.testDataSource.query(
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."recordShare" WHERE "recordId" = ANY($1)`,
+      [threadIds],
+    );
     await globalThis.testDataSource.query(
       `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
       [threadIds],
@@ -278,6 +295,12 @@ describe('Agent run conversation should be recorded for the caller', () => {
     expect(await findThreadOwner(threadId)).toBe(
       WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     );
+    expect(
+      await countThreadOwnerGrants(
+        threadId,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ),
+    ).toBe(1);
   });
 
   it('should bring back a thread its owner deleted when they run it again', async () => {

@@ -334,20 +334,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     title: string;
   }): Promise<void> {
     try {
-      await this.agentChatThreadService.createThreadIfMissing({
+      await this.agentChatThreadService.claimThread({
         threadId,
         workspaceId: authContext.workspace.id,
         workspaceMemberId: authContext.workspaceMemberId,
         title,
-      });
-      await this.agentChatThreadService.assignCreatedThreadsToCreator({
-        authContext,
-        threadIds: [threadId],
-      });
-      await this.agentChatThreadService.restoreThread({
-        threadId,
-        workspaceId: authContext.workspace.id,
-        workspaceMemberId: authContext.workspaceMemberId,
       });
     } catch (error) {
       this.logger.warn(

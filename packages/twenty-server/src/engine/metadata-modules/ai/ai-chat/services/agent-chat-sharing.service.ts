@@ -261,6 +261,63 @@ export class AgentChatSharingService {
     );
   }
 
+  // A thread the engine created for a keyed run has no owner and no grants; the member
+  // who runs it takes it the way a creator would, keeping whatever inbox state it has
+  async claimUnownedThread(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity | null> {
+    const authContext = await this.getAuthContext(args);
+    const participantObjectMetadataId =
+      await this.getParticipantObjectMetadataId(args.workspaceId);
+
+    return this.threadRepository.query(
+      args.workspaceId,
+      async ({ manager, table }) => {
+        const [thread] = await manager.query<AgentChatThreadWorkspaceEntity[]>(
+          `UPDATE ${table('agentChatThread')}
+           SET "workspaceMemberId" = $2,
+               "lastActivityAt" = COALESCE("lastActivityAt", clock_timestamp())
+           WHERE id = $1 AND "workspaceMemberId" IS NULL
+           RETURNING *`,
+          [args.threadId, authContext.workspaceMemberId],
+        );
+
+        if (!isDefined(thread)) {
+          return null;
+        }
+
+        await backfillWorkspaceChatThreadOwnerGrants({
+          manager,
+          workspaceId: args.workspaceId,
+          threadTableExpression: table('agentChatThread'),
+          recordIds: [thread.id],
+        });
+        await manager.query(
+          `WITH participant AS (
+             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
+             VALUES ($1, $2, clock_timestamp())
+             ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
+             RETURNING id, "workspaceMemberId"
+           ), owner_share AS (
+             ${buildAgentChatThreadParticipantOwnerShareInsert({
+               workspaceId: args.workspaceId,
+               participantSource: 'participant',
+               objectMetadataIdParameter: '$3',
+             })}
+           )
+           SELECT * FROM participant`,
+          [
+            thread.id,
+            authContext.workspaceMemberId,
+            participantObjectMetadataId,
+          ],
+        );
+
+        return thread;
+      },
+    );
+  }
+
   // A new thread sorts by its creation and starts read in its creator's
   // inbox. Threads already set up keep their state, so an upsert of an
   // existing thread through the record API cannot reset it.

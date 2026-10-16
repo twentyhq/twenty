@@ -78,6 +78,39 @@ export class AgentChatThreadService {
     }
   }
 
+  // A keyed run acting as a member gives them the thread: created for them, taken over
+  // when the engine made it without an owner, and brought back when they had deleted it
+  async claimThread({
+    title,
+    ...args
+  }: AgentChatThreadAccessArgs & { title?: string }): Promise<void> {
+    await this.createThreadIfMissing({ ...args, title });
+
+    const threadBefore = await this.threadRepository.findOne(args.workspaceId, {
+      where: { id: args.threadId },
+    });
+
+    if (!isDefined(threadBefore)) {
+      return;
+    }
+
+    if (!isDefined(threadBefore.workspaceMemberId)) {
+      const claimedThread = await this.sharingService.claimUnownedThread(args);
+
+      if (isDefined(claimedThread)) {
+        await this.participantService.emitParticipantCreated(args);
+        await this.threadRecordEventService.emitThreadUpdated({
+          workspaceId: args.workspaceId,
+          threadBefore,
+        });
+      }
+    }
+
+    if (isDefined(threadBefore.deletedAt)) {
+      await this.restoreThread(args);
+    }
+  }
+
   // Access-checked writes return raw rows; record events carry ORM records
   async restoreThread(
     args: AgentChatThreadAccessArgs,
