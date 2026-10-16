@@ -1,6 +1,13 @@
 import { expect, type Locator, type Page, test } from 'playwright/test';
 import { readBounds } from './readBounds';
 
+const BASE_UI_HIDDEN_EDGE_THUMB_ISSUE =
+  'Base UI 1.8 and 1.9 keep edge-aligned Slider thumbs hidden in React front components (mui/base-ui#5995)';
+
+const markReactSliderAsKnownBaseUiFailure = (runtime: string) => {
+  test.fail(runtime === 'react', BASE_UI_HIDDEN_EDGE_THUMB_ISSUE);
+};
+
 const openFixture = async ({ page, story }: { page: Page; story: string }) => {
   await page.goto(
     `/iframe.html?id=frontcomponent-twenty-ui-gallery--${story}`,
@@ -150,6 +157,7 @@ for (const runtime of ['react', 'preact']) {
     test('Slider displays its thumb and supports keyboard commits and disabled controls', async ({
       page,
     }) => {
+      markReactSliderAsKnownBaseUiFailure(runtime);
       const { slider } = await openVolumeSlider({ page, runtime });
 
       await expect(slider).toHaveAttribute('min', '10');
@@ -172,6 +180,7 @@ for (const runtime of ['react', 'preact']) {
     test('Slider commits a quick track press released before the worker answers', async ({
       page,
     }) => {
+      markReactSliderAsKnownBaseUiFailure(runtime);
       const { control } = await openVolumeSlider({ page, runtime });
       const bounds = await readBounds(control);
 
@@ -191,6 +200,7 @@ for (const runtime of ['react', 'preact']) {
     test('Slider follows native pointer moves beyond the widget and commits the bounded final value', async ({
       page,
     }) => {
+      markReactSliderAsKnownBaseUiFailure(runtime);
       const { slider, control } = await openVolumeSlider({ page, runtime });
 
       await page
@@ -223,6 +233,7 @@ for (const runtime of ['react', 'preact']) {
     test('Slider continues its native document drag and commits after unexpected capture loss', async ({
       page,
     }) => {
+      markReactSliderAsKnownBaseUiFailure(runtime);
       const { slider, control } = await openVolumeSlider({ page, runtime });
       const worker = page.workers()[0];
 
@@ -283,6 +294,7 @@ for (const runtime of ['react', 'preact']) {
     test('Slider preserves its public Escape behavior and measures scaled pointer movement', async ({
       page,
     }) => {
+      markReactSliderAsKnownBaseUiFailure(runtime);
       await openFixture({ page, story: `slider-gestures-${runtime}` });
       await page.getByRole('button', { name: 'Scale volume' }).click();
       const slider = page.getByRole('slider', { name: 'Volume', exact: true });
@@ -306,6 +318,7 @@ for (const runtime of ['react', 'preact']) {
       test(`Slider stops an active drag when ${action.toLowerCase()}`, async ({
         page,
       }) => {
+        markReactSliderAsKnownBaseUiFailure(runtime);
         const { slider, control } = await openVolumeSlider({ page, runtime });
         const origin = await startDrag({ page, handle: slider });
         await expect(control).toHaveAttribute('data-dragging', '');
@@ -325,6 +338,7 @@ for (const runtime of ['react', 'preact']) {
     test('Slider range changes and commits the active public thumb without moving its neighbor', async ({
       page,
     }) => {
+      markReactSliderAsKnownBaseUiFailure(runtime);
       await openFixture({ page, story: `slider-range-gestures-${runtime}` });
       const minimum = page.getByRole('slider', { name: 'Minimum price' });
       const maximum = page.getByRole('slider', { name: 'Maximum price' });

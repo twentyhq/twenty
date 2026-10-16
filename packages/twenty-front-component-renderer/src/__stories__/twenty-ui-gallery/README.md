@@ -346,7 +346,7 @@ For real mouse gestures, collision and anchor motion, and independent Overflowin
 npx playwright test --config playwright.layout.config.ts
 ```
 
-Set `STORYBOOK_URL` to use another Storybook URL. These Chromium tests operate the actual host controls and browser pointer capture; unit mocks do not replace them. Slider's upstream touch cancellation behavior remains a separate API acceptance issue: a native `pointercancel` currently leaves its dragging state active outside the renderer as well.
+Set `STORYBOOK_URL` to use another Storybook URL. These Chromium tests operate the actual host controls and browser pointer capture; unit mocks do not replace them. Slider's upstream touch cancellation behavior remains a separate API acceptance issue: a native `pointercancel` currently leaves its dragging state active outside the renderer as well. The React Slider gestures are marked as expected failures until Base UI fixes the hidden edge-aligned thumbs described in the Slider limitation above.
 
 The AvatarGroup, Autocomplete, CountrySelect and reading-directions fixtures
 live in their own story files, so run them separately:
