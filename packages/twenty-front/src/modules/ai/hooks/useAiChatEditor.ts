@@ -69,9 +69,6 @@ export const useAiChatEditor = () => {
 
           event.preventDefault();
           dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
-
-          const { state } = view;
-          view.dispatch(state.tr.delete(0, state.doc.content.size));
           return true;
         }
         return false;
@@ -164,10 +161,5 @@ export const useAiChatEditor = () => {
     onBrowserEvent: handleRestoreEditorContent,
   });
 
-  const handleSendAndClear = () => {
-    dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
-    editor?.commands.clearContent();
-  };
-
-  return { editor, handleSendAndClear };
+  return { editor };
 };

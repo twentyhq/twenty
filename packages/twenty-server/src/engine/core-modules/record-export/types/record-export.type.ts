@@ -1,9 +1,8 @@
-import { type RecordExportRequester } from 'src/engine/core-modules/record-export/types/record-export-requester.type';
+import { type RecordExportSession } from 'src/engine/core-modules/record-export/types/record-export-session.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 
-export type RecordExport = RecordExportRequester & {
+export type RecordExport = RecordExportSession & {
   id: string;
-  requestTokenHash: string;
   permissionsHash: string;
   parameters: RecordExportParameters;
   filename: string;

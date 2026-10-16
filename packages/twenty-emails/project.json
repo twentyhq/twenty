@@ -27,7 +27,19 @@
       }
     },
     "typecheck": {},
-    "lint": {},
+    "lint": {
+      "inputs": [
+        "default",
+        "{projectRoot}/.oxlintrc.i18n.json",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/.oxlintrc.i18n.json",
+        "{workspaceRoot}/yarn.lock"
+      ],
+      "options": {
+        "command": "npx oxlint -c .oxlintrc.json . && (npx oxfmt --check . || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint --configuration=fix' && false)) && node ../twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs . src"
+      }
+    },
     "fmt": {
       "options": {
         "files": "src"

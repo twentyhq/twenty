@@ -21,12 +21,10 @@ export class McpInstructionBuilderService {
 
   async buildInstructions({
     workspaceId,
-    roleId,
     rolePermissionConfig,
     isDirectMode,
   }: {
     workspaceId: string;
-    roleId: string;
     rolePermissionConfig: RolePermissionConfig;
     isDirectMode: boolean;
   }): Promise<string> {
@@ -37,7 +35,7 @@ export class McpInstructionBuilderService {
           flatMapsKeys: ['flatObjectMetadataMaps'],
         }),
         this.skillService.findAllFlatSkills(workspaceId),
-        this.toolRegistry.buildToolIndex(workspaceId, roleId, {
+        this.toolRegistry.buildToolIndex(workspaceId, {
           rolePermissionConfig,
           categories: [ToolCategory.ACTION],
         }),

@@ -10,6 +10,7 @@ import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
+import { getDropdownTabStopRowId } from './getDropdownTabStopRowId';
 import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { useRegisteredElementId } from './useRegisteredElementId';
 
@@ -46,7 +47,8 @@ export const DropdownRoot = ({
     id: string;
     type: DropdownType;
   }>();
-  const [activeItemId, setActiveItemId] = useState<string>();
+  const [rowIds, setRowIds] = useState<string[]>();
+  const [focusedRowId, setFocusedRowId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
   const [pageFocusRequest, setPageFocusRequest] =
     useState<DropdownPageFocusRequest>();
@@ -69,6 +71,7 @@ export const DropdownRoot = ({
     setPageHistory([{ id: defaultPage }]);
     setActivePage(undefined);
     setPageFocusRequest(undefined);
+    setFocusedRowId(undefined);
   }
 
   if (isClosing) {
@@ -85,11 +88,22 @@ export const DropdownRoot = ({
     onOpenChange?.(nextOpen);
   };
 
-  const closeTree = () => {
+  const closeTree = (tabOutEvent?: Event) => {
+    if (
+      isDefined(tabOutEvent) &&
+      isDropdownDismissPrevented({
+        onDismiss: onInteractOutside,
+        event: tabOutEvent,
+        target: null,
+      })
+    ) {
+      return;
+    }
+
     setOpen(false);
 
     if (isSubmenu) {
-      parent?.closeTree();
+      parent?.closeTree(tabOutEvent);
     }
   };
 
@@ -187,10 +201,13 @@ export const DropdownRoot = ({
           multiple,
           isSubmenu,
           parentType: parent?.type,
-          activeItemId,
-          parentActiveItemId: parent?.activeItemId,
-          setActiveItemId,
-          setParentActiveItemId: parent?.setActiveItemId,
+          rowFocus: {
+            rowIds,
+            tabStopRowId: getDropdownTabStopRowId({ rowIds, focusedRowId }),
+            focusRow: setFocusedRowId,
+          },
+          parentRowFocus: parent?.rowFocus,
+          setRowIds,
           pageId,
           pageFocusRequest,
           setPageFocusRequest,

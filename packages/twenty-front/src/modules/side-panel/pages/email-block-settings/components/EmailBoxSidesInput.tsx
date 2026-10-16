@@ -1,51 +1,28 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components/input';
 import { IconFrame, IconSquare } from 'twenty-ui/icon';
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-
-  & > :first-child {
-    flex: 1;
-  }
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSidesGrid = styled.div`
   display: grid;
+  flex: 1;
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: repeat(4, 1fr);
-  margin-top: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledUnitChip = styled.div`
-  align-items: center;
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
-  height: 32px;
-  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const SIDE_KEYS = ['top', 'right', 'bottom', 'left'] as const;
-
-const SIDE_PLACEHOLDERS: Record<(typeof SIDE_KEYS)[number], string> = {
-  top: 'T',
-  right: 'R',
-  bottom: 'B',
-  left: 'L',
-};
 
 const toDisplayAmount = (token: string): string =>
   token.endsWith('px') && !Number.isNaN(Number(token.slice(0, -2)))
@@ -87,6 +64,12 @@ export const EmailBoxSidesInput = ({
 }: EmailBoxSidesInputProps) => {
   const { t } = useLingui();
   const [isPerSide, setIsPerSide] = useState(!areAllSidesEqual(sides));
+  const sideLabels = {
+    top: t`Top`,
+    right: t`Right`,
+    bottom: t`Bottom`,
+    left: t`Left`,
+  };
 
   const commitAllSides = (input: string) => {
     const token = input.trim() === '' ? '' : toCssToken(input);
@@ -101,9 +84,19 @@ export const EmailBoxSidesInput = ({
     });
   };
 
+  const handleSidesModeChange = (sidesMode: string) => {
+    if (sidesMode === 'each') {
+      setIsPerSide(true);
+      return;
+    }
+
+    setIsPerSide(false);
+    commitAllSides(toDisplayAmount(sides.top));
+  };
+
   return (
-    <div>
-      <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
+    <FormFieldInputContainer>
+      <Field.Label>{label}</Field.Label>
       <StyledRow>
         {isPerSide ? (
           <StyledSidesGrid>
@@ -112,7 +105,8 @@ export const EmailBoxSidesInput = ({
                 key={side}
                 value={toDisplayAmount(sides[side])}
                 onChange={(input) => commitSide(side, input)}
-                placeholder={SIDE_PLACEHOLDERS[side]}
+                placeholder={sideLabels[side].charAt(0)}
+                aria-label={sideLabels[side]}
                 fullWidth
               />
             ))}
@@ -122,34 +116,29 @@ export const EmailBoxSidesInput = ({
             value={toDisplayAmount(sides.top)}
             onChange={commitAllSides}
             placeholder={placeholder ?? '0'}
+            rightAdornment="px"
             fullWidth
           />
         )}
-        <StyledUnitChip>px</StyledUnitChip>
-        <LightIconButton
-          size="sm"
-          emphasis={isPerSide ? 'subtle' : 'standard'}
-          title={t`Same value on every side`}
-          aria-pressed={!isPerSide}
-          onClick={() => {
-            setIsPerSide(false);
-            commitAllSides(toDisplayAmount(sides.top));
-          }}
-          aria-label={t`Same value on every side`}
-        >
-          <IconSquare />
-        </LightIconButton>
-        <LightIconButton
-          size="sm"
-          emphasis={isPerSide ? 'standard' : 'subtle'}
-          title={t`Edit each side`}
-          aria-pressed={isPerSide}
-          onClick={() => setIsPerSide(true)}
-          aria-label={t`Edit each side`}
-        >
-          <IconFrame />
-        </LightIconButton>
+        <SegmentedControl
+          aria-label={label}
+          itemWidth="content"
+          value={isPerSide ? 'each' : 'all'}
+          onValueChange={handleSidesModeChange}
+          options={[
+            {
+              value: 'all',
+              startIcon: <IconSquare />,
+              'aria-label': t`Same value on every side`,
+            },
+            {
+              value: 'each',
+              startIcon: <IconFrame />,
+              'aria-label': t`Edit each side`,
+            },
+          ]}
+        />
       </StyledRow>
-    </div>
+    </FormFieldInputContainer>
   );
 };

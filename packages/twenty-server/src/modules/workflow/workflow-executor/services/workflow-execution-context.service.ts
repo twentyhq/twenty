@@ -113,6 +113,7 @@ export class WorkflowExecutionContextService {
       authContext,
       userWorkspaceRoleMap,
       apiKeyRoleMap: {},
+      flatRoleTargetByAgentIdMaps: {},
     });
 
     if (!isDefined(rolePermissionConfig)) {

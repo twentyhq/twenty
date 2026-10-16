@@ -109,6 +109,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Accept IMAP and SMTP servers whose TLS certificate cannot be verified, e.g. self-signed. Prefer adding your CA with NODE_EXTRA_CA_CERTS, which keeps verification on.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IMAP_SMTP_ALLOW_SELF_SIGNED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Deprecated: set OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS to * instead. While this is false every private address is reachable and OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS is ignored.',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -2053,7 +2062,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
     description:
-      'AI provider configurations. Custom providers are deep-merged on top of the built-in catalog (ai-providers.json). Use for custom endpoints, extra regions, or credentials set via admin panel.',
+      'AI provider configurations. An entry with the same name as a built-in provider (ai-providers.json) replaces it and keeps only the models it lists. Use for custom endpoints, extra regions, or credentials set via admin panel.',
     type: ConfigVariableType.JSON,
   })
   @IsOptional()

@@ -16,6 +16,7 @@ type FormPhoneFieldInputProps = {
   onChange: (value: FieldPhonesValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  subFieldPlaceholders?: Partial<Record<keyof FieldPhonesValue, string>>;
 };
 
 export const FormPhoneFieldInput = ({
@@ -24,6 +25,7 @@ export const FormPhoneFieldInput = ({
   onChange,
   readonly,
   VariablePicker,
+  subFieldPlaceholders,
 }: FormPhoneFieldInputProps) => {
   const handleCallingCodeChange = (
     newValue: FormCallingCodeSelectInputUpdatedValue,
@@ -60,7 +62,9 @@ export const FormPhoneFieldInput = ({
           defaultValue={defaultValue?.primaryPhoneNumber ?? ''}
           onChange={handleNumberChange}
           VariablePicker={VariablePicker}
-          placeholder={t`Enter phone number`}
+          placeholder={
+            subFieldPlaceholders?.primaryPhoneNumber ?? t`Enter phone number`
+          }
           hint={t`Without calling code`}
           readonly={readonly}
         />

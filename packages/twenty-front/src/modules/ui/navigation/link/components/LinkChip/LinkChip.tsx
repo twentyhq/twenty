@@ -13,10 +13,6 @@ const styles = {
       min-width: 0;
       vertical-align: middle;
     }
-    & > a {
-      min-width: 0;
-      text-decoration: none;
-    }
   `,
 };
 

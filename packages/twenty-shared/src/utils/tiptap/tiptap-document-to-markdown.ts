@@ -154,6 +154,12 @@ const renderTipTapNodeToMarkdown = (node: TipTapNode): string => {
         .map((item, index) => renderListItem(item, `${start + index}. `))
         .join('')}\n`;
     }
+    case TIPTAP_NODE_TYPES.BLOCKQUOTE:
+      return `${renderChildren(node)
+        .trim()
+        .split('\n')
+        .map((line) => (line === '' ? '>' : `> ${line}`))
+        .join('\n')}\n\n`;
     case TIPTAP_NODE_TYPES.IMAGE: {
       const alt = typeof node.attrs?.alt === 'string' ? node.attrs.alt : '';
       const src = typeof node.attrs?.src === 'string' ? node.attrs.src : '';

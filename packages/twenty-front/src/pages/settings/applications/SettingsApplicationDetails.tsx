@@ -55,12 +55,12 @@ import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applicat
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
+import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle';
 import { getWorkspaceSettingsMenuItems } from '~/pages/settings/applications/utils/getWorkspaceSettingsMenuItems';
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
-import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
@@ -153,11 +153,11 @@ export const SettingsApplicationDetails = () => {
     detail?.latestAvailableVersion ??
     application?.applicationRegistration?.latestAvailableVersion;
 
-  const hasUpdate =
-    isUpgradableApplicationSourceType(sourceType) &&
-    isDefined(latestAvailableVersion) &&
-    isDefined(currentVersion) &&
-    isNewerSemver(latestAvailableVersion, currentVersion);
+  const hasUpdate = hasApplicationUpdate({
+    sourceType,
+    currentVersion,
+    latestAvailableVersion,
+  });
 
   const handleUpgrade = async () => {
     if (!isDefined(latestAvailableVersion)) {
@@ -222,7 +222,11 @@ export const SettingsApplicationDetails = () => {
       : []),
     ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
       id: settingsMenuItem.universalIdentifier,
-      title: settingsMenuItem.title,
+      title: getSettingsMenuItemDisplayTitle({
+        applicationUniversalIdentifier: application?.universalIdentifier ?? '',
+        frontComponents: application?.frontComponents ?? [],
+        settingsMenuItem,
+      }),
       Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
     })),
   ];

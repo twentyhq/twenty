@@ -11,10 +11,13 @@ import {
   type StepResult,
   type ToolSet,
 } from 'ai';
-import { type RunAgentMessage } from 'twenty-shared/application';
+import {
+  type RunAgentMessage,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 import {
   ASK_QUESTION_TOOL_NAME,
-  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  type AgentResponseFormat,
   type ExtendedUIMessage,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
@@ -27,6 +30,8 @@ import {
 } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -48,13 +53,13 @@ import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/g
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
 import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.const';
 import { PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/preloaded-agent-registry-tool-categories.const';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -107,11 +112,12 @@ type ProposableTools = {
 type RegistryToolContext = Pick<
   ToolContext,
   | 'workspaceId'
-  | 'roleId'
   | 'authContext'
+  | 'application'
   | 'actorContext'
   | 'userId'
   | 'userWorkspaceId'
+  | 'agentId'
 >;
 
 const EMPTY_USAGE: LanguageModelUsage = {
@@ -160,24 +166,60 @@ export class AgentAsyncExecutorService {
     return {};
   }
 
+  private resolveCallingApplication(
+    authContext?: WorkspaceAuthContext,
+  ): FlatApplication | undefined {
+    if (!isDefined(authContext)) {
+      return undefined;
+    }
+
+    const application = this.getAuthContextApplication(authContext);
+
+    if (
+      application?.id === authContext.workspace.workspaceCustomApplicationId ||
+      application?.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+    ) {
+      return undefined;
+    }
+
+    return application;
+  }
+
+  private getAuthContextApplication(
+    authContext: WorkspaceAuthContext,
+  ): FlatApplication | undefined {
+    if (isApplicationAuthContext(authContext)) {
+      return authContext.application;
+    }
+
+    if (isUserAuthContext(authContext)) {
+      return authContext.application ?? authContext.viaApplication;
+    }
+
+    return undefined;
+  }
+
   // preloading the few granted object schemas saves the model a learn_tools round trip
   private async buildPreloadedRegistryTools({
     toolContext,
+    agentRoleId,
     agentRunRoleIds,
     additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
+    agentRoleId: string;
     agentRunRoleIds?: AgentRunRoleIds;
     additionalExcludedToolNames?: readonly string[];
   }): Promise<{ tools: ToolSet; proposableTools: ProposableTools }> {
     const rolePermissionConfig = buildAgentRolePermissionConfig({
-      agentRoleId: toolContext.roleId,
+      agentRoleId,
       agentRunRoleIds,
     });
     const preloadedToolContext = { ...toolContext, rolePermissionConfig };
 
     const tools = await this.toolRegistry.getToolsByCategories(
-      { ...preloadedToolContext, requireExplicitObjectGrants: true },
+      { ...preloadedToolContext, explicitObjectGrantsRoleId: agentRoleId },
       {
         categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
         excludeTools: [
@@ -209,10 +251,12 @@ export class AgentAsyncExecutorService {
   // learn_tools / execute_tool instead, scoped by composed role permissions rather than explicit grants only
   private async buildLazyRegistryTools({
     toolContext: baseToolContext,
+    agentRoleId,
     agentRunRoleIds,
     additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
+    agentRoleId: string;
     agentRunRoleIds?: AgentRunRoleIds;
     additionalExcludedToolNames?: readonly string[];
   }): Promise<{
@@ -223,23 +267,24 @@ export class AgentAsyncExecutorService {
     const toolContext: ToolContext = {
       ...baseToolContext,
       rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId: baseToolContext.roleId,
+        agentRoleId,
         agentRunRoleIds,
       }),
     };
     const {
       workspaceId,
-      roleId,
       userId,
       userWorkspaceId,
       rolePermissionConfig,
+      application,
     } = toolContext;
 
-    const fullCatalog = await this.toolRegistry.buildToolIndex(
-      workspaceId,
-      roleId,
-      { userId, userWorkspaceId, rolePermissionConfig },
-    );
+    const fullCatalog = await this.toolRegistry.buildToolIndex(workspaceId, {
+      userId,
+      userWorkspaceId,
+      rolePermissionConfig,
+      application,
+    });
 
     const allowedCategories = new Set(
       OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES,
@@ -286,17 +331,11 @@ export class AgentAsyncExecutorService {
     };
   }
 
-  private buildProposeToolCallTool(
-    proposableTools: ProposableTools | undefined,
-  ) {
-    // an email runs only once approved, with the approver's own permissions
-    if (!isDefined(proposableTools)) {
-      return createProposeToolCallTool({
-        resolveProposal: async (input) => resolveEmailToolCallProposal(input),
-      });
-    }
-
-    const { isToolAllowed, findTool, toolContext } = proposableTools;
+  private buildProposeToolCallTool({
+    isToolAllowed,
+    findTool,
+    toolContext,
+  }: ProposableTools) {
     const executeTool: PausingToolCompletionContext['executeTool'] = ({
       toolName,
       args,
@@ -328,8 +367,10 @@ export class AgentAsyncExecutorService {
     priorMessages = [],
     pausingTools = {},
     canAskHumans = false,
+    responseFormat,
   }: {
-    agent: AgentEntity | null;
+    agent: AgentEntity;
+    responseFormat?: AgentResponseFormat;
     messages: RunAgentMessage[];
     // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorMessages?: ExtendedUIMessage[];
@@ -348,12 +389,18 @@ export class AgentAsyncExecutorService {
       );
     }
 
-    assertAgentResponseFormatHasOutputFieldsOrThrow(agent?.responseFormat);
+    assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
+
+    const usageSpenders: UsageSpenders = {
+      userWorkspaceId,
+      agentId: agent.id,
+      applicationId: agent.applicationId,
+    };
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
       operationType: usageOperationType,
-      spenders: { userWorkspaceId, agentId: agent?.id },
+      spenders: usageSpenders,
     });
 
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
@@ -367,9 +414,7 @@ export class AgentAsyncExecutorService {
         id: workspaceId,
       });
 
-      if (isDefined(agent)) {
-        this.aiModelRegistryService.validateModelAvailability(agent.modelId);
-      }
+      this.aiModelRegistryService.validateModelAvailability(agent.modelId);
 
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(
@@ -379,7 +424,6 @@ export class AgentAsyncExecutorService {
 
       resolvedModelId = registeredModel.modelId;
 
-      let tools: ToolSet = {};
       let toolCatalogSection = '';
       let proposableTools: ProposableTools | undefined;
       const providerOptions = getCallLevelProviderOptions({
@@ -388,62 +432,63 @@ export class AgentAsyncExecutorService {
           this.aiModelConfigService.getReasoningProviderOptions(
             registeredModel,
           ),
-        promptCacheKey: agent?.id,
+        promptCacheKey: agent.id,
       });
 
-      if (agent) {
-        const agentRoleId = await this.aiAgentRoleService.findAgentRoleId({
+      const agentRoleId = await this.aiAgentRoleService.findAgentRoleId({
+        workspaceId: agent.workspaceId,
+        agentId: agent.id,
+      });
+
+      const nativeModelToolOptions: NativeModelToolOptions = {
+        webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
+        twitterSearch:
+          agent.modelConfiguration?.twitterSearch?.enabled === true,
+      };
+
+      let registryTools: ToolSet = {};
+
+      if (isDefined(agentRoleId)) {
+        const toolContext: RegistryToolContext = {
           workspaceId: agent.workspaceId,
           agentId: agent.id,
-        });
-
-        const nativeModelToolOptions: NativeModelToolOptions = {
-          webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
-          twitterSearch:
-            agent.modelConfiguration?.twitterSearch?.enabled === true,
+          authContext,
+          application: this.resolveCallingApplication(authContext),
+          actorContext,
+          ...this.resolveUserIdentity(authContext),
         };
-
-        let registryTools: ToolSet = {};
-
-        if (isDefined(agentRoleId)) {
-          const toolContext: RegistryToolContext = {
-            workspaceId: agent.workspaceId,
-            roleId: agentRoleId,
-            authContext,
-            actorContext,
-            ...this.resolveUserIdentity(authContext),
-          };
-          const registryToolset =
-            toolLoadingStrategy === 'lazy'
-              ? await this.buildLazyRegistryTools({
+        const registryToolset =
+          toolLoadingStrategy === 'lazy'
+            ? await this.buildLazyRegistryTools({
+                toolContext,
+                agentRoleId,
+                agentRunRoleIds,
+                additionalExcludedToolNames,
+              })
+            : {
+                ...(await this.buildPreloadedRegistryTools({
                   toolContext,
+                  agentRoleId,
                   agentRunRoleIds,
                   additionalExcludedToolNames,
-                })
-              : {
-                  ...(await this.buildPreloadedRegistryTools({
-                    toolContext,
-                    agentRunRoleIds,
-                    additionalExcludedToolNames,
-                  })),
-                  catalogSection: '',
-                };
+                })),
+                catalogSection: '',
+              };
 
-          registryTools = registryToolset.tools;
-          toolCatalogSection = registryToolset.catalogSection;
-          proposableTools = registryToolset.proposableTools;
-        }
-
-        const nativeTools = this.aiModelConfigService.getNativeModelTools(
-          registeredModel,
-          nativeModelToolOptions,
-        );
-
-        tools = {
-          ...registryTools,
-          ...nativeTools,
-        };
+        registryTools = registryToolset.tools;
+        toolCatalogSection = registryToolset.catalogSection;
+        proposableTools = registryToolset.proposableTools;
       }
+
+      const nativeTools = this.aiModelConfigService.getNativeModelTools(
+        registeredModel,
+        nativeModelToolOptions,
+      );
+
+      const tools: ToolSet = {
+        ...registryTools,
+        ...nativeTools,
+      };
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
@@ -463,7 +508,7 @@ export class AgentAsyncExecutorService {
             },
             workspaceId,
             operationType: usageOperationType,
-            spenders: { userWorkspaceId, agentId: agent?.id },
+            spenders: usageSpenders,
           });
 
         if (stepHasNoMoreAvailableCredits) {
@@ -496,8 +541,7 @@ export class AgentAsyncExecutorService {
               [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
             }
           : {}),
-        // an agent proposes its own tools; a step without an agent has none, so it proposes only emails
-        ...(canAskHumans && (!isDefined(agent) || isDefined(proposableTools))
+        ...(canAskHumans && isDefined(proposableTools)
           ? {
               [PROPOSE_TOOL_CALL_TOOL_NAME]:
                 this.buildProposeToolCallTool(proposableTools),
@@ -507,7 +551,7 @@ export class AgentAsyncExecutorService {
       const offeredToolNames = Object.keys(offeredPausingTools);
 
       const textResponse = await generateText({
-        instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
+        instructions: `${baseSystemPrompt}\n\n${tipTapDocumentToMarkdown(agent.prompt)}${toolCatalogSection}`,
         tools: { ...tools, ...offeredPausingTools },
         model: registeredModel.model,
         messages: [...priorModelMessages, ...modelMessages],
@@ -523,7 +567,7 @@ export class AgentAsyncExecutorService {
           functionId: 'agent-execution',
           workspaceId,
           userWorkspaceId,
-          agentId: agent?.id,
+          agentId: agent.id,
         }),
         onToolExecutionEnd: (event) => {
           this.metricsService.recordHistogram({
@@ -589,8 +633,7 @@ export class AgentAsyncExecutorService {
               aiBillingService: this.aiBillingService,
               modelId: registeredModel.modelId,
               workspaceId,
-              userWorkspaceId: userWorkspaceId ?? null,
-              agentId: agent?.id ?? null,
+              spenders: usageSpenders,
               operationType: usageOperationType,
             },
           });
@@ -607,9 +650,7 @@ export class AgentAsyncExecutorService {
       executionSteps = textResponse.steps;
 
       const agentSchema =
-        agent?.responseFormat?.type === 'json'
-          ? agent.responseFormat.schema
-          : undefined;
+        responseFormat?.type === 'json' ? responseFormat.schema : undefined;
 
       let result: object = { response: textResponse.text };
 
@@ -633,13 +674,13 @@ export class AgentAsyncExecutorService {
           providerOptions: getCallLevelProviderOptions({
             sdkPackage: registeredModel.sdkPackage,
             providerOptions: undefined,
-            promptCacheKey: agent?.id,
+            promptCacheKey: agent.id,
           }),
           ...buildAiTelemetry({
             functionId: 'agent-structured-output',
             workspaceId,
             userWorkspaceId,
-            agentId: agent?.id,
+            agentId: agent.id,
           }),
           onStepEnd: decrementCreditsForStep,
         });
@@ -695,10 +736,7 @@ export class AgentAsyncExecutorService {
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     } finally {
-      const modelId =
-        resolvedModelId ??
-        agent?.modelId ??
-        AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
+      const modelId = resolvedModelId ?? agent.modelId;
       // pricing an unresolved model id would throw over the original error
       const costInDollars = isDefined(resolvedModelId)
         ? this.aiBillingService.calculateStepsCost(
@@ -711,21 +749,20 @@ export class AgentAsyncExecutorService {
         (accumulatedUsage.inputTokens ?? 0) +
         (accumulatedUsage.outputTokens ?? 0);
 
-      void this.aiBillingService.emitAiTokenUsageEvent(
+      void this.aiBillingService.emitAiTokenUsageEvent({
         workspaceId,
         creditsUsedMicro,
         totalTokens,
         modelId,
-        usageOperationType,
-        agent?.id ?? null,
-        userWorkspaceId,
-      );
+        operationType: usageOperationType,
+        spenders: usageSpenders,
+      });
 
-      void this.aiBillingService.billNativeWebSearchUsage(
+      void this.aiBillingService.billNativeWebSearchUsage({
         nativeWebSearchCallCount,
         workspaceId,
-        userWorkspaceId,
-      );
+        spenders: usageSpenders,
+      });
     }
   }
 }

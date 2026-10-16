@@ -3,6 +3,7 @@ import {
   RelationType,
   type RecordGqlFields,
 } from 'twenty-shared/types';
+import { t } from '@lingui/core/macro';
 import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/types/GenerateDepthRecordGqlFieldsFromFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
@@ -11,6 +12,7 @@ import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const generateDepthRecordGqlFieldsFromFields = ({
   objectMetadataItems,
@@ -37,7 +39,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
 
         if (!targetObjectMetadataItem) {
           throw new Error(
-            `Target object metadata item not found for ${fieldMetadata.name}`,
+            doNotTranslate(
+              `Target object metadata item not found for ${fieldMetadata.name}`,
+            ),
           );
         }
 
@@ -71,7 +75,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         );
 
         const manyToOneGqlFields = {
-          [`${fieldMetadata.name}Id`]: true,
+          [doNotTranslate(`${fieldMetadata.name}Id`)]: true,
         };
 
         return {
@@ -91,7 +95,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
       if (isMorphRelation) {
         if (!isDefined(fieldMetadata.morphRelations)) {
           throw new Error(
-            `Field ${fieldMetadata.name} is missing, please refresh the page. If the problem persists, please contact support.`,
+            t`Field ${fieldMetadata.name} is missing, please refresh the page. If the problem persists, please contact support.`,
           );
         }
 
@@ -104,7 +108,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
 
             if (!morphTargetObjectMetadataItem) {
               throw new Error(
-                `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
+                doNotTranslate(
+                  `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
+                ),
               );
             }
 
@@ -140,7 +146,8 @@ export const generateDepthRecordGqlFieldsFromFields = ({
                 ? { [`${morphGqlField.gqlField}`]: true }
                 : {}),
               ...(relationType === RelationType.MANY_TO_ONE
-                ? { [`${morphGqlField.gqlField}Id`]: true }
+                ? // Generated GraphQL syntax must stay stable across locales.
+                  { [doNotTranslate(`${morphGqlField.gqlField}Id`)]: true }
                 : {}),
             }),
             {},

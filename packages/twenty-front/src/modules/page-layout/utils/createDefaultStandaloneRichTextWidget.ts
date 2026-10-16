@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
+import { t } from '@lingui/core/macro';
 import {
   type PageLayoutWidgetGridPosition,
   type PageLayoutWidgetVerticalListPosition,
@@ -23,7 +24,7 @@ export const createDefaultStandaloneRichTextWidget = ({
   body,
   position,
   objectMetadataId,
-  title = 'Untitled Rich Text',
+  title = t`Untitled Rich Text`,
 }: CreateDefaultStandaloneRichTextWidgetParams): PageLayoutWidget =>
   buildDraftPageLayoutWidget({
     id,

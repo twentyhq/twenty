@@ -17,7 +17,7 @@ const StyledPreview = styled.div`
   outline-offset: 2px;
 
   &:hover {
-    outline-color: ${themeCssVariables.border.color.medium};
+    outline-color: ${themeCssVariables.border.color.strong};
   }
 `;
 

@@ -13,6 +13,7 @@ export const Shortcut = ({
   platform,
   sequenceJoinLabel,
   combinationSeparator,
+  accessibleKeyLabels,
   variant = 'keys',
   visibility = 'always',
   className,
@@ -25,6 +26,7 @@ export const Shortcut = ({
     platform,
     sequenceJoinLabel,
     combinationSeparator,
+    accessibleKeyLabels,
   });
 
   if (

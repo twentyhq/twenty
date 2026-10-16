@@ -128,7 +128,6 @@ export const SettingsCustomizeVideoModal = ({
           aria-label={activeTab.title}
           onKeyDown={onKeyDown}
           size="lg"
-          style={{ padding: 0 }}
         >
           <TabListRoot
             componentInstanceId={tabsInstanceId}

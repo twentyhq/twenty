@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type LineChartConfiguration } from '~/generated-metadata/graphql';
 
 type AssertLineChartWidgetOrThrow = (
@@ -14,12 +15,14 @@ export const assertLineChartWidgetOrThrow: AssertLineChartWidgetOrThrow = (
 ) => {
   assertIsDefinedOrThrow(
     widget.objectMetadataId,
-    new Error('Widget objectMetadataId is required'),
+    new Error(doNotTranslate('Widget objectMetadataId is required')),
   );
 
   if (widget.configuration?.__typename !== 'LineChartConfiguration') {
     throw new Error(
-      `Expected LineChartConfiguration but got ${widget.configuration?.__typename}`,
+      doNotTranslate(
+        `Expected LineChartConfiguration but got ${widget.configuration?.__typename}`,
+      ),
     );
   }
 };

@@ -21,8 +21,8 @@
   & > svg {
     flex-shrink: 0;
   }
-  &[data-truncate] {
-    overflow: hidden;
+  &[data-truncate] > .label {
+    min-inline-size: 0;
   }
   &[data-size='md'] {
     block-size: var(--t-spacing-4);

@@ -3,20 +3,18 @@ import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllow
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTogglePresentation';
-import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
+import { useSetIsLogConsoleEnabled } from '@/log-console/hooks/useSetIsLogConsoleEnabled';
 import { useToggleNavigationDrawer } from '@/ui/navigation/navigation-drawer/hooks/useToggleNavigationDrawer';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
 import { useColorScheme } from '@/workspace-member/hooks/useColorScheme';
 import { normalizeSearchText, useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconCode, IconCopy, IconTerminal } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { IconCopy, IconTerminal } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
@@ -33,11 +31,8 @@ export const useCommandMenuAppActions = () => {
   );
   const { copyToClipboard } = useCopyToClipboard();
   const { colorScheme, setColorScheme, colorSchemeList } = useColorScheme();
-  const isLogsSettingsSectionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
-  );
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
-  const { setAdvancedMode } = useSetAdvancedMode();
+  const isLogConsoleEnabled = useAtomStateValue(isLogConsoleEnabledState);
+  const { setIsLogConsoleEnabled } = useSetIsLogConsoleEnabled();
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const [logConsoleDisplayMode, setLogConsoleDisplayMode] = useAtomState(
     logConsoleDisplayModeState,
@@ -75,21 +70,22 @@ export const useCommandMenuAppActions = () => {
       isAvailable: theme.id !== colorScheme,
     })),
     {
-      id: 'turn-on-developer-mode',
+      id: 'show-logs',
       section: 'DEVELOPER',
-      label: t`Turn on developer mode`,
-      searchKeywords: t`logs`,
-      Icon: IconCode,
-      onClick: () => setAdvancedMode(true),
-      isAvailable: isLogsSettingsSectionEnabled && !isAdvancedModeEnabled,
+      label: t`Show logs`,
+      searchKeywords: t`developer`,
+      Icon: IconTerminal,
+      onClick: () => setIsLogConsoleEnabled(true),
+      isAvailable: isLogConsoleAllowed && !isLogConsoleEnabled,
     },
     {
-      id: 'turn-off-developer-mode',
+      id: 'hide-logs',
       section: 'DEVELOPER',
-      label: t`Turn off developer mode`,
-      Icon: IconCode,
-      onClick: () => setAdvancedMode(false),
-      isAvailable: isLogsSettingsSectionEnabled && isAdvancedModeEnabled,
+      label: t`Hide logs`,
+      searchKeywords: t`developer`,
+      Icon: IconTerminal,
+      onClick: () => setIsLogConsoleEnabled(false),
+      isAvailable: isLogConsoleAllowed && isLogConsoleEnabled,
     },
     {
       id: 'open-log-console',
@@ -100,7 +96,7 @@ export const useCommandMenuAppActions = () => {
       onClick: () => setLogConsoleDisplayMode('open'),
       isAvailable:
         isLogConsoleAllowed &&
-        isAdvancedModeEnabled &&
+        isLogConsoleEnabled &&
         logConsoleDisplayMode !== 'open',
     },
   ];

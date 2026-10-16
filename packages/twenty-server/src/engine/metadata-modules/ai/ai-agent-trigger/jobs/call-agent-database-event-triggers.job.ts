@@ -53,6 +53,7 @@ export class CallAgentDatabaseEventTriggersJob {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatAgentMaps',
       'flatRoleTargetByAgentIdMaps',
@@ -61,6 +62,7 @@ export class CallAgentDatabaseEventTriggersJob {
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
     ]);
 
     const matchingAgentTriggers = findAgentDatabaseEventTriggersMatchingEvent({
@@ -98,6 +100,7 @@ export class CallAgentDatabaseEventTriggersJob {
             flatRowLevelPermissionPredicateMaps,
             flatRowLevelPermissionPredicateGroupMaps,
             flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
           }),
         );
       const restrictedFields =

@@ -45,6 +45,7 @@ export type ResolvedPackage = {
   cleanupDir: string;
   manifest: Manifest;
   packageJson: PackageJson;
+  registryTarballUrl?: string;
 };
 
 const registryVersionMetadataSchema = z.object({
@@ -129,6 +130,36 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
+  async findRegistryTarballUrl({
+    packageName,
+    version,
+  }: {
+    packageName: string;
+    version: string;
+  }): Promise<string | null> {
+    try {
+      assertValidNpmPackageName(packageName);
+      assertValidNpmVersionSpec(version);
+
+      return await this.fetchRegistryTarballUrlOrThrow(
+        this.twentyConfigService.get('APP_REGISTRY_URL'),
+        packageName,
+        version,
+        this.twentyConfigService.get('APP_REGISTRY_TOKEN'),
+      );
+    } catch (error) {
+      if (!(error instanceof ApplicationException)) {
+        throw error;
+      }
+
+      this.logger.warn(
+        `No registry artifact for ${packageName}@${version}: ${error.message}`,
+      );
+
+      return null;
+    }
+  }
+
   async cleanupExtractedDir(extractedDir: string): Promise<void> {
     try {
       await fs.rm(extractedDir, { recursive: true, force: true });
@@ -155,7 +186,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
       assertValidNpmVersionSpec(versionSpec);
 
-      const tarballUrl = await this.fetchTarballUrl(
+      const tarballUrl = await this.fetchRegistryTarballUrlOrThrow(
         registryUrl,
         sourcePackage,
         versionSpec,
@@ -196,6 +227,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         cleanupDir: workDir,
         manifest,
         packageJson,
+        registryTarballUrl: tarballUrl,
       };
     } catch (error) {
       await this.cleanupExtractedDir(workDir);
@@ -289,7 +321,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
-  private async fetchTarballUrl(
+  private async fetchRegistryTarballUrlOrThrow(
     registryUrl: string,
     sourcePackage: string,
     versionSpec: string,

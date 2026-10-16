@@ -151,9 +151,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
 
     expect(result).toMatchObject({
       success: false,
-      error: expect.stringContaining(
-        'is not the connected account handle nor one of its verified aliases',
-      ),
+      error: 'You cannot send from this address.',
     });
     expect(
       await findRecordNodesByFilter<{ id: string }>(

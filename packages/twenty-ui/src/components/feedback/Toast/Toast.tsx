@@ -18,10 +18,12 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './Toast.module.scss';
 import { ToastCountdownEffect } from './internal/components/ToastCountdownEffect';
 import { ToastFocusEffect } from './internal/components/ToastFocusEffect';
+import { DEFAULT_TOAST_DURATION } from './internal/constants/DefaultToastDuration';
 import { ToastProgress } from './internal/components/ToastProgress';
 import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
 import { type ToastStatus } from './types/ToastStatus';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const TOAST_ICONS = {
   neutral: IconAlertTriangle,
@@ -38,11 +40,11 @@ export const Toast = ({
   iconLabel,
   action,
   progress,
-  duration = 6000,
+  duration = DEFAULT_TOAST_DURATION,
   onCancel,
   onClose,
-  cancelLabel = 'Cancel',
-  closeLabel = 'Close',
+  cancelLabel = doNotTranslate('Cancel'),
+  closeLabel = doNotTranslate('Close'),
   status = 'neutral',
   role = 'status',
   className,
@@ -60,7 +62,7 @@ export const Toast = ({
   const [toastElement, setToastElement] = useState<HTMLDivElement | null>(null);
 
   const isPaused = isHovered || isFocused;
-  const { countdown, clock } = useToastCountdown({
+  const { countdown, clock, setClock } = useToastCountdown({
     duration,
     isPaused,
   });
@@ -173,6 +175,7 @@ export const Toast = ({
       />
       <ToastCountdownEffect
         clock={clock}
+        onClockChange={setClock}
         duration={duration}
         progress={progress}
         isPaused={isPaused}
