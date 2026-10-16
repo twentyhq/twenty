@@ -33,6 +33,7 @@ const CITY_FIELD_ID = 'city-field-id';
 const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role-id';
 const LOGIC_FUNCTION_ID = 'logic-function-id';
+const TRIGGER_JOB_ID = 'trigger-job-id';
 
 const buildMaps = (
   entities: ({ id: string; universalIdentifier: string } & Record<
@@ -229,7 +230,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   it('should enqueue the events of an object the application role reads', async () => {
     const event = buildEvent('record-1', { name: 'New', salary: 10 });
 
-    await job.handle(buildBatch([event]));
+    await job.handle(buildBatch([event]), { jobId: TRIGGER_JOB_ID });
 
     expect(messageQueueService.bulkAdd).toHaveBeenCalledWith(
       LogicFunctionTriggerJob.name,
@@ -242,10 +243,31 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
             userWorkspaceId: 'user-workspace-id',
             payload: expect.objectContaining(event),
           }),
+          jobId: `${TRIGGER_JOB_ID}.${LOGIC_FUNCTION_ID}.0`,
         },
       ],
       expect.anything(),
     );
+  });
+
+  it('should enqueue the same job ids when the trigger job is retried', async () => {
+    const batch = buildBatch([
+      buildEvent('record-1', { name: 'New', salary: 10 }),
+    ]);
+
+    await job.handle(batch, { jobId: TRIGGER_JOB_ID });
+    await job.handle(batch, { jobId: TRIGGER_JOB_ID });
+
+    const [firstAttemptJobIds, retryJobIds] =
+      messageQueueService.bulkAdd.mock.calls.map(([, jobs]) =>
+        (jobs as { jobId: string }[]).map((enqueuedJob) => enqueuedJob.jobId),
+      );
+
+    expect(firstAttemptJobIds).toEqual([expect.any(String)]);
+    expect(retryJobIds).toEqual(firstAttemptJobIds);
+    expect(messageQueueService.bulkAdd.mock.calls[1][2]).toMatchObject({
+      doNotCheckDuplicatesBasedOnPrefix: true,
+    });
   });
 
   it('should not enqueue events of an object the application role cannot read', async () => {
@@ -255,6 +277,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
@@ -269,6 +292,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
@@ -279,6 +303,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
@@ -308,6 +333,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         buildEvent('record-paris', { name: 'A', salary: 1, city: 'Paris' }),
         buildEvent('record-berlin', { name: 'B', salary: 2, city: 'Berlin' }),
       ]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(enqueuedPayloads().map((payload) => payload.recordId)).toEqual([
@@ -324,6 +350,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(enqueuedPayloads()[0].properties).toEqual({
@@ -345,6 +372,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
       buildBatch([
         buildEvent('record-1', { name: 'Same', salary: 10 }, ['salary']),
       ]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
@@ -372,6 +400,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         ],
         MetadataReadability.PRIVATE,
       ),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(enqueuedPayloads().map((payload) => payload.recordId)).toEqual([
