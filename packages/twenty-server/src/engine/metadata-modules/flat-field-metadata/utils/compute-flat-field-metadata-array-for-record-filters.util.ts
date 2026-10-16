@@ -7,8 +7,10 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -21,49 +23,39 @@ const computeMorphRelationHeadTargetRelations = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): NonNullable<FieldShared['morphRelations']> => {
-  const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: morphRelationHead.objectMetadataId,
-    flatEntityMaps: flatObjectMetadataMaps,
-  });
+  if (
+    !isFlatFieldMetadataOfType(
+      morphRelationHead,
+      FieldMetadataType.MORPH_RELATION,
+    )
+  ) {
+    return [];
+  }
 
-  return (flatObjectMetadata?.fieldIds ?? []).flatMap((fieldId) => {
-    const morphRelationTarget = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldId,
-      flatEntityMaps: flatFieldMetadataMaps,
+  const morphRelationTargets =
+    findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
+      flatFieldMetadata: morphRelationHead,
+      flatFieldMetadataMaps,
+      flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: morphRelationHead.objectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      }),
     });
 
-    if (
-      !isDefined(morphRelationTarget) ||
-      morphRelationTarget.id === morphRelationHead.id ||
-      morphRelationTarget.morphId !== morphRelationHead.morphId ||
-      !isFlatFieldMetadataOfType(
-        morphRelationTarget,
-        FieldMetadataType.MORPH_RELATION,
-      ) ||
-      !isDefined(morphRelationTarget.relationTargetObjectMetadataId)
-    ) {
-      return [];
-    }
-
-    const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+  return morphRelationTargets.map((morphRelationTarget) => {
+    const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: morphRelationTarget.relationTargetObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    if (!isDefined(targetFlatObjectMetadata)) {
-      return [];
-    }
-
-    return [
-      {
-        type: morphRelationTarget.settings.relationType,
-        targetObjectMetadata: {
-          id: targetFlatObjectMetadata.id,
-          nameSingular: targetFlatObjectMetadata.nameSingular,
-          namePlural: targetFlatObjectMetadata.namePlural,
-        },
+    return {
+      type: morphRelationTarget.settings.relationType,
+      targetObjectMetadata: {
+        id: targetFlatObjectMetadata.id,
+        nameSingular: targetFlatObjectMetadata.nameSingular,
+        namePlural: targetFlatObjectMetadata.namePlural,
       },
-    ];
+    };
   });
 };
 
