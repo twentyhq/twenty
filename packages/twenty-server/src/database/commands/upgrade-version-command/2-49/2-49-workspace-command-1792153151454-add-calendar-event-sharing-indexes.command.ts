@@ -43,9 +43,9 @@ const CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS =
     ({ indexUniversalIdentifier }) => indexUniversalIdentifier,
   );
 
-@RegisteredWorkspaceCommand('2.48.0', 1792084073890)
+@RegisteredWorkspaceCommand('2.49.0', 1792153151454)
 @Command({
-  name: 'upgrade:2-48:add-calendar-event-sharing-indexes',
+  name: 'upgrade:2-49:add-calendar-event-sharing-indexes',
   description:
     'Index calendarChannelEventAssociation.eventExternalId and calendarEvent.iCalUid so calendar import can find another channel copy of an event',
 })
