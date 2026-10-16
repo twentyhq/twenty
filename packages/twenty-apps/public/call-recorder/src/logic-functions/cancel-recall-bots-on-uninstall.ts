@@ -34,6 +34,10 @@ export const cancelRecallBotsOnUninstallHandler =
     let recordCleanupError: Error | undefined;
     const recordCleanupRequestStartCutoffEpochMs =
       uninstallStartedAt.getTime() + RECORD_CLEANUP_REQUEST_START_BUDGET_MS;
+    const participantCleanupRequestStartCutoffEpochMs =
+      uninstallStartedAt.getTime() +
+      UNINSTALL_TIMEOUT_SECONDS * 1_000 -
+      UNINSTALL_RESPONSE_HEADROOM_MS;
     const shouldStartRecordCleanupRequest = () =>
       Date.now() < recordCleanupRequestStartCutoffEpochMs;
 
@@ -105,7 +109,7 @@ export const cancelRecallBotsOnUninstallHandler =
 
     if (canceledRecordingIds.length > 0) {
       try {
-        if (!shouldStartRecordCleanupRequest()) {
+        if (Date.now() >= participantCleanupRequestStartCutoffEpochMs) {
           throw new Error(
             'record cleanup request cutoff reached before participant cleanup',
           );

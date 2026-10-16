@@ -178,9 +178,9 @@ describe('cancel-recall-bots-on-uninstall', () => {
     await cancelRecallBotsOnUninstallHandler();
     expect(mocks.mutation).not.toHaveBeenCalled();
   });
-  it('does not start participant cleanup after the record request budget', async () => {
+  it('does not start participant cleanup inside the uninstall response headroom', async () => {
     mocks.cancelWorkspaceRecallBots.mockImplementationOnce(async () => {
-      vi.setSystemTime(RECORD_CLEANUP_REQUEST_START_CUTOFF);
+      vi.setSystemTime(new Date('2026-01-01T08:00:25.000Z'));
       return { canceledExternalBotIds: ['known-bot'] };
     });
     await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
@@ -208,6 +208,22 @@ describe('cancel-recall-bots-on-uninstall', () => {
     );
     await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
       'failed to remove canceled bot participants: Cannot remove participants',
+    );
+  });
+  it('removes canceled bot participants after the initial record budget expires', async () => {
+    mocks.cancelWorkspaceRecallBots.mockImplementationOnce(async () => {
+      vi.setSystemTime(new Date('2026-01-01T08:00:15.000Z'));
+      return { canceledExternalBotIds: ['known-bot'] };
+    });
+    await cancelRecallBotsOnUninstallHandler();
+    expect(mocks.mutation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        destroyCalendarEventParticipants: expect.objectContaining({
+          __args: {
+            filter: { id: { in: ['call-recording-1', 'call-recording-3'] } },
+          },
+        }),
+      }),
     );
   });
 });
