@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
-import { Any, In } from 'typeorm';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { Any, In, Not } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -74,40 +76,52 @@ export class CalendarSaveEventsService {
             { shouldBypassPermissionChecks: true },
           );
 
-        const fetchedEventExternalIds = fetchedCalendarEvents.map(
-          (event) => event.id,
-        );
-
-        const fetchedICalUids = fetchedCalendarEvents
-          .map(({ iCalUid }) => iCalUid)
-          .filter(isNonEmptyString);
-
-        // Google copies of a meeting share the event id, Outlook copies only the iCalUid
-        const associations =
+        const existingAssociations =
           await calendarChannelEventAssociationRepository.find({
-            where: [
-              {
-                eventExternalId: Any(fetchedEventExternalIds),
-              },
-              ...(connectedAccount.provider ===
-                ConnectedAccountProvider.MICROSOFT && fetchedICalUids.length > 0
-                ? [{ calendarEvent: { iCalUid: Any(fetchedICalUids) } }]
-                : []),
-            ],
+            where: {
+              eventExternalId: Any(
+                fetchedCalendarEvents.map((event) => event.id),
+              ),
+              calendarChannelId: calendarChannel.id,
+            },
           });
 
-        const fetchedEventExternalIdSet = new Set(fetchedEventExternalIds);
-
-        const existingAssociations = associations.filter(
-          (association) =>
-            association.calendarChannelId === calendarChannel.id &&
-            isNonEmptyString(association.eventExternalId) &&
-            fetchedEventExternalIdSet.has(association.eventExternalId),
+        const existingEventExternalIds = new Set(
+          existingAssociations
+            .map(({ eventExternalId }) => eventExternalId)
+            .filter(isNonEmptyString),
         );
 
-        const otherAssociations = associations.filter(
-          (association) => association.calendarChannelId !== calendarChannel.id,
-        );
+        // Not gated by the flag: events shared before it was turned off keep their roles
+        const otherAssociationsOfExistingEvents =
+          existingAssociations.length > 0
+            ? await calendarChannelEventAssociationRepository.find({
+                where: {
+                  calendarEventId: Any(
+                    existingAssociations.map(
+                      ({ calendarEventId }) => calendarEventId,
+                    ),
+                  ),
+                  calendarChannelId: Not(calendarChannel.id),
+                },
+              })
+            : [];
+
+        const linkCandidateAssociations = isCalendarEventSharingEnabled
+          ? await this.findLinkCandidateAssociations({
+              calendarChannelEventAssociationRepository,
+              provider: connectedAccount.provider,
+              calendarChannelId: calendarChannel.id,
+              fetchedCalendarEvents: fetchedCalendarEvents.filter(
+                ({ id }) => !existingEventExternalIds.has(id),
+              ),
+            })
+          : [];
+
+        const otherAssociations = [
+          ...otherAssociationsOfExistingEvents,
+          ...linkCandidateAssociations,
+        ];
 
         const otherCalendarChannels: CalendarEventSharingChannel[] =
           otherAssociations.length > 0
@@ -164,11 +178,7 @@ export class CalendarSaveEventsService {
         } = resolveCalendarEventSharing({
           provider: connectedAccount.provider,
           fetchedCalendarEvents,
-          existingEventExternalIds: new Set(
-            existingAssociations
-              .map(({ eventExternalId }) => eventExternalId)
-              .filter(isNonEmptyString),
-          ),
+          existingEventExternalIds,
           sharedAssociations,
           iCalUidByCalendarEventId: new Map(
             candidateCalendarEvents.map(({ id, iCalUid }) => [id, iCalUid]),
@@ -297,5 +307,53 @@ export class CalendarSaveEventsService {
     );
 
     return { calendarEventIds };
+  }
+
+  private async findLinkCandidateAssociations({
+    calendarChannelEventAssociationRepository,
+    provider,
+    calendarChannelId,
+    fetchedCalendarEvents,
+  }: {
+    calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>;
+    provider: ConnectedAccountProvider;
+    calendarChannelId: string;
+    fetchedCalendarEvents: FetchedCalendarEvent[];
+  }): Promise<CalendarChannelEventAssociationWorkspaceEntity[]> {
+    if (fetchedCalendarEvents.length === 0) {
+      return [];
+    }
+
+    switch (provider) {
+      case ConnectedAccountProvider.GOOGLE:
+        return calendarChannelEventAssociationRepository.find({
+          where: {
+            eventExternalId: Any(fetchedCalendarEvents.map(({ id }) => id)),
+            calendarChannelId: Not(calendarChannelId),
+          },
+        });
+      case ConnectedAccountProvider.MICROSOFT: {
+        const iCalUids = fetchedCalendarEvents
+          .map(({ iCalUid }) => iCalUid)
+          .filter(isNonEmptyString);
+
+        return iCalUids.length > 0
+          ? calendarChannelEventAssociationRepository.find({
+              where: {
+                calendarEvent: { iCalUid: Any(iCalUids) },
+                calendarChannelId: Not(calendarChannelId),
+              },
+            })
+          : [];
+      }
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
+      case ConnectedAccountProvider.EMAIL_GROUP:
+      case ConnectedAccountProvider.APP:
+        return [];
+      default:
+        return assertUnreachable(provider);
+    }
   }
 }
