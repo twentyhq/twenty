@@ -151,6 +151,8 @@ export const UncontrolledSingle: Story = {
 
     expect(ada).toHaveAttribute('aria-selected', 'false');
     expect(grace).toHaveAttribute('aria-selected', 'false');
+    expect(ada).not.toHaveAttribute('aria-checked');
+    expect(owner.querySelector('input')).toBeNull();
     await userEvent.keyboard('{ArrowDown}');
     expect(grace).toHaveFocus();
     expect(onOwnerChange).not.toHaveBeenCalled();
@@ -717,6 +719,8 @@ export const NearestOwnerAndMenuTab: Story = {
     });
 
     await waitFor(() => expect(ownerAda).toHaveFocus());
+    expect(ownerAda).not.toHaveAttribute('aria-selected');
+    expect(watchGrace).not.toHaveAttribute('aria-selected');
     await userEvent.keyboard('{ArrowDown}{Enter}');
     expect(watchGrace).toHaveAttribute('aria-checked', 'true');
     expect(ownerAda).toHaveAttribute('aria-checked', 'false');
