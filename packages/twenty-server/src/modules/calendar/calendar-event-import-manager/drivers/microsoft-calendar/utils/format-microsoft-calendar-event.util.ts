@@ -34,6 +34,8 @@ const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
   const calendarEvent: FetchedCalendarEvent = {
     title: event.subject ?? '',
     isCanceled: !!event.isCancelled,
+    isPrivate:
+      event.sensitivity === 'private' || event.sensitivity === 'confidential',
     isFullDay: !!event.isAllDay,
     startsAt: event.start?.dateTime ?? '',
     endsAt: event.end?.dateTime ?? '',
