@@ -130,12 +130,12 @@ describe('BullMQDriver deduplication', () => {
       expect(mockAddBulk).not.toHaveBeenCalled();
     });
 
-    it('skips the deduplication when duplicated prefixes are allowed', async () => {
+    it('skips the deduplication when told not to check duplicates based on prefix', async () => {
       await driver.bulkAdd(
         MessageQueue.workspaceQueue,
         'job',
         [{ data: {}, jobId: 'ws-1.exact-job-id' }],
-        { allowDuplicatedPrefixes: true },
+        { doNotCheckDuplicatesBasedOnPrefix: true },
       );
 
       expect(mockGetRanges).not.toHaveBeenCalled();
