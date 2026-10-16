@@ -9,6 +9,7 @@ export function usePricingState() {
 
   if (context === null) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Preserve the developer invariant for error grouping.
       'usePricingState must be used within a PricingStateProvider',
     );
   }

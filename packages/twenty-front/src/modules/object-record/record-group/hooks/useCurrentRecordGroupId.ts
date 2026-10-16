@@ -7,12 +7,16 @@ export const useCurrentRecordGroupId = (): string => {
 
   if (!isDefined(context)) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       'useCurrentRecordGroupId must be used within a RecordGroupContextProvider.',
     );
   }
 
   if (!context.recordGroupId) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       'RecordGroupContext is malformed. recordGroupId is missing.',
     );
   }

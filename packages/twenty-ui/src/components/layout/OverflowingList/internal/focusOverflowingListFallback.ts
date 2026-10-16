@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- The selector must remain valid CSS.
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 const FOCUSABLE_ITEM_SELECTOR =

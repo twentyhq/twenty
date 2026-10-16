@@ -153,6 +153,7 @@ const triggerUpdateRelationOptimisticEffect = ({
     });
   if (!targetFieldMetadataFullObject) {
     throw new CustomError(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a GraphQL protocol token or internal cache diagnostic.
       'Target field metadata full object not found',
       'TARGET_FIELD_METADATA_FULL_OBJECT_NOT_FOUND',
     );
@@ -309,6 +310,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
       });
     if (!targetFieldMetadataFullObject) {
       throw new CustomError(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a GraphQL protocol token or internal cache diagnostic.
         'Target field metadata full object not found',
         'TARGET_FIELD_METADATA_FULL_OBJECT_NOT_FOUND',
       );
@@ -427,6 +429,7 @@ const extractTargetRecordsFromRelation = (
     return [];
   }
   if (!isDefined(relation)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a GraphQL protocol token or internal cache diagnostic.
     throw new Error('Relation found is undefined');
   }
   if (relation.type === RelationType.ONE_TO_MANY) {

@@ -61,6 +61,7 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
   const configuration = widget.configuration;
 
   if (!isDefined(configuration) || !('url' in configuration)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error(`Invalid configuration for widget ${widget.id}`);
   }
 
@@ -105,7 +106,10 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
         title={title}
         onLoad={handleIframeLoad}
         onError={handleIframeError}
-        sandbox="allow-scripts allow-forms allow-popups allow-same-origin"
+        sandbox={
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Browser sandbox permissions must use these exact tokens.
+          'allow-scripts allow-forms allow-popups allow-same-origin'
+        }
         allow="encrypted-media"
         allowFullScreen
       />

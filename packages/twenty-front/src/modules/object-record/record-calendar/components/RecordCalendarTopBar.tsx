@@ -147,6 +147,8 @@ export const RecordCalendarTopBar = () => {
             turnPlainDateToShiftedDateInSystemTimeZone(
               recordCalendarSelectedDate,
             ),
+            // Date and time syntax must stay stable across locales.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             'MMMM yyyy',
             { locale: dateLocale.localeCatalog },
           );

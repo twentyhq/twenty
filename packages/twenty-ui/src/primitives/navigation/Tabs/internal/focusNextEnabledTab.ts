@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Keyboard and selector tokens must match browser APIs.
 import { type TextDirection } from '@base-ui/react/direction-provider';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';

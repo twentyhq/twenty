@@ -8,12 +8,16 @@ import '@fontsource/inter/latin-600.css';
 import { type Settings } from '../../shared/types/Settings';
 
 const subscribe = (listener: () => void) => {
+  // CSS media queries are browser syntax and cannot be translated.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   const query = window.matchMedia('(prefers-color-scheme: dark)');
   query.addEventListener('change', listener);
   return () => query.removeEventListener('change', listener);
 };
 
 const getSnapshot = () =>
+  // CSS media queries are browser syntax and cannot be translated.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 export const CompanionTheme = ({

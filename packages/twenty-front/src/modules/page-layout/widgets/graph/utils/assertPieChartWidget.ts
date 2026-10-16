@@ -15,6 +15,7 @@ export const assertPieChartWidgetOrThrow: AssertPieChartWidgetOrThrow = (
 ) => {
   assertIsDefinedOrThrow(
     widget.objectMetadataId,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     new Error('Widget objectMetadataId is required'),
   );
 
@@ -22,6 +23,7 @@ export const assertPieChartWidgetOrThrow: AssertPieChartWidgetOrThrow = (
     !isWidgetConfigurationOfType(widget.configuration, 'PieChartConfiguration')
   ) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       `Expected PieChartConfiguration but got ${widget.configuration?.__typename}`,
     );
   }

@@ -100,6 +100,10 @@ const overlayImageClassName = css`
   object-position: right center;
 `;
 
+const OVERLAY_IMAGE_SIZES =
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Next Image sizes are viewport geometry.
+  `(min-width: ${BREAKPOINT_PX.md}px) 308px, 50vw`;
+
 type EngagementBandProps = {
   heading: string;
   body: string;
@@ -122,7 +126,7 @@ export function EngagementBand({
               alt=""
               className={overlayImageClassName}
               fill
-              sizes={`(min-width: ${BREAKPOINT_PX.md}px) 308px, 50vw`}
+              sizes={OVERLAY_IMAGE_SIZES}
               src="/images/pricing/engagement-band/halftone-on-white.webp"
             />
           </OverlayImageFrame>

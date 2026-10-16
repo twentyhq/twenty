@@ -8,6 +8,8 @@ export const getCompositeSubFieldKey = (
 ) => {
   if (!isCompositeFieldType(fieldMetadataItem.type)) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `getCompositeSubFieldKey can only be called for composite field types. Received: ${fieldMetadataItem.type}`,
     );
   }

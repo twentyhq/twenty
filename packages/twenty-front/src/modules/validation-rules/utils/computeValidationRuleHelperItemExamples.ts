@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Examples are executable validation expressions.
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -76,6 +76,8 @@ export const useProcessBoardCardDrop = () => {
       );
 
       if (!isDefined(destinationRecordGroup)) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('Record group is not defined');
       }
 

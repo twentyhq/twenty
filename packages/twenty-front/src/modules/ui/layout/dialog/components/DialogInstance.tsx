@@ -31,7 +31,9 @@ const PROPAGATED_KEYS = new Set([
   'ArrowDown',
   'ArrowLeft',
   'ArrowRight',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
   'Home',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
   'End',
 ]);
 

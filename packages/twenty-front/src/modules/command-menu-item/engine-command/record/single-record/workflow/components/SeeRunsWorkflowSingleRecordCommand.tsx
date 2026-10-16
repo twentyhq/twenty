@@ -11,6 +11,7 @@ export const SeeRunsWorkflowSingleRecordCommand = () => {
   const workflowName = selectedRecords[0]?.name;
 
   if (!isDefined(recordId)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
     throw new Error('Record ID is required to see runs workflow');
   }
 

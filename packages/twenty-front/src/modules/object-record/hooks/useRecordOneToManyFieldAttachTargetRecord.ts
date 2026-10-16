@@ -40,6 +40,8 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
 
     if (!targetObjectMetadataItem) {
       throw new CustomError(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `Could not find related object metadata for ${targetObjectNameSingular}`,
         'RELATED_OBJECT_METADATA_NOT_FOUND',
       );
@@ -47,6 +49,8 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
 
     if (!sourceObjectMetadataItem) {
       throw new CustomError(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `Could not find source object metadata for ${sourceObjectNameSingular}`,
         'SOURCE_OBJECT_METADATA_NOT_FOUND',
       );
@@ -61,6 +65,8 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
     });
 
     if (!cachedTargetRecord) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Could not find cached related record');
     }
 
@@ -104,6 +110,8 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
       objectNameSingular: targetObjectNameSingular,
       idToUpdate: targetRecordId,
       updateOneRecordInput: {
+        // Metadata and protocol identifiers must stay stable across locales.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         [`${targetGQLFieldName}Id`]: sourceRecordId,
       },
     });

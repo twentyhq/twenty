@@ -25,11 +25,14 @@ export const SettingsAppearance = () => {
   const { t } = useLingui();
   const { colorScheme, setColorScheme } = useColorScheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  // ColorScheme values are persisted identifiers; the adjacent labels are translated.
+  // oxlint-disable lingui/no-unlocalized-strings
   const choices: { value: ColorScheme; label: string }[] = [
     { value: 'Light', label: t`Light` },
     { value: 'Dark', label: t`Dark` },
     { value: 'System', label: t`System settings` },
   ];
+  // oxlint-enable lingui/no-unlocalized-strings
 
   return (
     <Section.Root>

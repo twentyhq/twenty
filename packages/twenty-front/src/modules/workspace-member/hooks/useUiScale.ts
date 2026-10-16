@@ -18,6 +18,7 @@ export const useUiScale = () => {
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   const uiScaleStep =
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted UI-scale identifier.
     currentWorkspaceMember?.uiScale ?? persistedUiScaleStep ?? 'Default';
 
   const setUiScaleStep = useCallback(

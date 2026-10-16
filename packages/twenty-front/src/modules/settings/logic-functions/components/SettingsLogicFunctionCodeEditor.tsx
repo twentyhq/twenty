@@ -87,6 +87,8 @@ export const SettingsLogicFunctionCodeEditor = ({
           // oxlint-disable-next-line lingui/no-unlocalized-strings
           .map((key) => `${key}: string;`)
           .join('\n');
+        // This is TypeScript syntax injected into the editor, not prose.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         const applicationVariableDefinition = `
           declare namespace NodeJS {
             interface ProcessEnv {

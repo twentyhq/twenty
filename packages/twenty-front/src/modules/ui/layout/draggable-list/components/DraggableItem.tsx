@@ -56,6 +56,7 @@ export const DraggableItem = ({
   }, [draggableListGroupContext, draggableId, index]);
 
   if (!isDefined(draggableListGroupContext)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing component state is a developer invariant diagnostic.
     throw new Error('DraggableItem must be rendered inside a DraggableList');
   }
 

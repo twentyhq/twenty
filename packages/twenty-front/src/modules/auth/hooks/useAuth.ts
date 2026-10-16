@@ -198,6 +198,7 @@ export const useAuth = () => {
         }
 
         if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
           throw new Error('No login token');
         }
 
@@ -234,6 +235,7 @@ export const useAuth = () => {
       }
 
       if (!loginTokenResult.data?.verifyEmailAndGetLoginToken) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
         throw new Error('No login token');
       }
 
@@ -261,6 +263,7 @@ export const useAuth = () => {
       }
 
       if (!data?.verifyEmailAndGetWorkspaceAgnosticToken) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
         throw new Error('No workspace agnostic token in result');
       }
 
@@ -314,6 +317,7 @@ export const useAuth = () => {
         }
 
         if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
           throw new Error('No getAuthTokensFromLoginToken result');
         }
 
@@ -410,6 +414,7 @@ export const useAuth = () => {
       }
 
       if (!signUpResult.data?.signUp) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
         throw new Error('No signUp result');
       }
 
@@ -494,6 +499,7 @@ export const useAuth = () => {
       }
 
       if (!signUpInWorkspaceResult.data?.signUpInWorkspace) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
         throw new Error('No login token');
       }
 
@@ -622,6 +628,7 @@ export const useAuth = () => {
       }
 
       if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
         throw new Error('No getAuthTokensFromOTP result');
       }
 
@@ -656,6 +663,7 @@ export const useAuth = () => {
 
         if (!isDefined(redemption)) {
           throw new Error(
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
             'No getAuthTokensFromTwoFactorAuthenticationRecoveryCode result',
           );
         }

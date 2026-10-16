@@ -22,6 +22,8 @@ export const computeNewPositionsOfDraggedRecords = ({
   const targetItem = arrayOfRecordsWithPosition[indexOfTargetItem];
 
   if (!isDefined(targetItem)) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error(`Cannot find item to move for id : ${targetRecordId}`);
   }
 

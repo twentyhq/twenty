@@ -45,6 +45,7 @@ export const EventFieldDiff = ({
   diffArtificialRecordStoreId,
 }: EventFieldDiffProps) => {
   if (!fieldMetadataItem) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
     throw new Error('fieldMetadataItem is required');
   }
 

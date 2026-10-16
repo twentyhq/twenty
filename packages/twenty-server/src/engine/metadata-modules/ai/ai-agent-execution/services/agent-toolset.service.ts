@@ -190,6 +190,7 @@ export class AgentToolsetService {
             locale,
             excludeTools: new Set(excludedToolNames),
             rolePermissionConfig: toolContext.rolePermissionConfig,
+            application: toolContext.application,
           },
         );
         const isToolAllowed = (toolName: string) =>
@@ -227,6 +228,7 @@ export class AgentToolsetService {
             userId,
             userWorkspaceId,
             rolePermissionConfig: toolContext.rolePermissionConfig,
+            application: toolContext.application,
           })
         ).filter(
           (entry) =>

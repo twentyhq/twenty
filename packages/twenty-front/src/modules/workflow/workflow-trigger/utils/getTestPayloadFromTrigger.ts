@@ -18,6 +18,7 @@ export const getTestPayloadFromTrigger = (
     }
     case 'DATABASE_EVENT': {
       throw new Error(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         'Test workflow is not supported for database event triggers',
       );
     }

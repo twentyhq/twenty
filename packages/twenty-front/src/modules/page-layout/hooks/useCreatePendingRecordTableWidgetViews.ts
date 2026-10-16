@@ -114,6 +114,7 @@ export const useCreatePendingRecordTableWidgetViews = () => {
 
         if (result.status === 'failed') {
           throw new Error(
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
             `Failed to create view for RECORD_TABLE widget ${widget.id}`,
           );
         }

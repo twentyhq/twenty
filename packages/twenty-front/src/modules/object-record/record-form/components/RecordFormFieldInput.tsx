@@ -4,15 +4,26 @@ import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
-import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
+import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
+import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
+import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
+import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
+import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type JsonValue } from 'type-fest';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type RecordFormFieldInputProps = {
-  field: Pick<FieldDefinition<FieldMetadata>, 'label' | 'metadata' | 'type'>;
+  field: Pick<
+    FieldDefinition<FieldMetadata>,
+    'label' | 'metadata' | 'type' | 'defaultValue'
+  >;
   defaultValue: JsonValue;
   onChange: (value: JsonValue) => void;
   onClear?: () => void;
@@ -60,6 +71,44 @@ export const RecordFormFieldInput = ({
     );
   }
 
+  if (isFieldCurrency(field)) {
+    return (
+      <RecordFormCurrencyFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldCurrencyValue(defaultValue) ? defaultValue : undefined
+        }
+        defaultCurrencyCode={
+          getRecordFormCurrencyFieldDefaultValue(field)?.currencyCode
+        }
+        onChange={onChange}
+        readonly={readonly}
+        placeholder={subFieldPlaceholders?.amountMicros}
+      />
+    );
+  }
+
+  if (isFieldPhones(field)) {
+    const defaultCountryCode = field.defaultValue?.primaryPhoneCountryCode;
+
+    return (
+      <RecordFormPhoneFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldPhonesValue(defaultValue) ? defaultValue : undefined
+        }
+        defaultCountryCode={
+          isNonEmptyString(defaultCountryCode)
+            ? stripSimpleQuotesFromString(defaultCountryCode)
+            : undefined
+        }
+        onChange={onChange}
+        readonly={readonly}
+        placeholder={subFieldPlaceholders?.primaryPhoneNumber}
+      />
+    );
+  }
+
   return (
     <FormFieldInput
       field={field}
@@ -69,7 +118,6 @@ export const RecordFormFieldInput = ({
       readonly={readonly}
       placeholder={placeholder}
       subFieldPlaceholders={subFieldPlaceholders}
-      settings={getRecordFormFieldInputSettings(field.type)}
     />
   );
 };

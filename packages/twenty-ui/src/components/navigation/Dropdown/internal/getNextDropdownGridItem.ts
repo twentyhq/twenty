@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser APIs.
 import { isPositiveInteger } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';

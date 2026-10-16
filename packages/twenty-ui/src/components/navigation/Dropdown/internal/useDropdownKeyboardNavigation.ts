@@ -1,27 +1,23 @@
+// oxlint-disable lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser APIs.
 import { useDirection } from '@base-ui/react/direction-provider';
 import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type DropdownType } from '../types/DropdownType';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
+import { getDropdownRows } from './getDropdownRows';
+import { getDropdownSearch } from './getDropdownSearch';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { getDropdownTrigger } from './getDropdownTrigger';
 import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 import { getNextDropdownItem } from './getNextDropdownItem';
+import { useDropdownContext } from './useDropdownContext';
 
 const TYPEAHEAD_RESET_DELAY = 500;
 
-export const useDropdownKeyboardNavigation = ({
-  type,
-  isSubmenu,
-  setOpen,
-}: {
-  type: DropdownType;
-  isSubmenu: boolean;
-  setOpen: (open: boolean) => void;
-}) => {
+export const useDropdownKeyboardNavigation = () => {
+  const { type, isSubmenu, setOpen, closeTree } = useDropdownContext();
   const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
@@ -77,17 +73,19 @@ export const useDropdownKeyboardNavigation = ({
       return;
     }
 
-    const search = content.querySelector<HTMLInputElement>(
-      '[data-dropdown-search]:not(:disabled)',
-    );
+    if (type === 'menu' && event.key === 'Tab' && event.shiftKey) {
+      event.preventDefault();
+      closeTree(event.nativeEvent);
+      return;
+    }
+
+    const search = getDropdownSearch(content);
     const isSearch = target === search;
     if (isEditable && !isSearch) {
       return;
     }
 
-    const items = getDropdownItems(content).filter(
-      (item) => !isDefined(search) || !item.hasAttribute('data-dropdown-back'),
-    );
+    const items = getDropdownRows(content);
     const searchTarget =
       isSearch && event.key === 'Enter' && !event.nativeEvent.isComposing
         ? getDropdownSearchTarget(content)

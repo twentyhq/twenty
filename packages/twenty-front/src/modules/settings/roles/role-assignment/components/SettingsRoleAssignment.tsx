@@ -124,6 +124,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!member) {
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
             throw new Error('Workspace member not found');
           }
 
@@ -144,6 +145,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!agent) {
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
             throw new Error('Agent not found');
           }
 
@@ -158,6 +160,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!apiKeyData) {
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
             throw new Error('API key not found');
           }
 

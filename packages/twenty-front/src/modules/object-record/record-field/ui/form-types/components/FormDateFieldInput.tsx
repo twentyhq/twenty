@@ -125,6 +125,8 @@ export const FormDateFieldInput = ({
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
+    // Metadata and protocol identifiers must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     listenerId: `FormDateFieldInputBase-${instanceId}`,
     callback: (event) => {
       if (isDatePickerDropdownOpen(instanceId)) {
@@ -237,7 +239,9 @@ export const FormDateFieldInput = ({
     defaultValue === '' ||
     defaultValue === 'null'
       ? null
-      : defaultValue.includes('T')
+      : // Date and time syntax must stay stable across locales.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
+        defaultValue.includes('T')
         ? Temporal.Instant.from(defaultValue)
             .toZonedDateTimeISO(userTimezone)
             .toPlainDate()

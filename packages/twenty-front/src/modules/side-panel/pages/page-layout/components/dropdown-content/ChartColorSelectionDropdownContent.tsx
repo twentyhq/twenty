@@ -55,6 +55,7 @@ export const ChartColorSelectionDropdownContent = () => {
       'IframeConfiguration',
     )
   ) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('Invalid configuration type');
   }
 
@@ -77,7 +78,7 @@ export const ChartColorSelectionDropdownContent = () => {
   const colorOptions: ColorOption[] = [
     {
       id: 'auto',
-      name: 'Default palette',
+      name: t`Default palette`,
       colorName: 'auto',
     },
     ...MAIN_COLOR_NAMES.map((colorName) => ({

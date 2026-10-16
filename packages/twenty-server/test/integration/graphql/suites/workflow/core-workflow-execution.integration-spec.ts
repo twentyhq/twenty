@@ -1542,6 +1542,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     it('pauses the run on the question and lets the engine continue the agent, without running the step again', async () => {
       const runTurn = mockAgent();
       const { runId, agent, finalStep, threadId } = await startAskingRun();
+      const [{ activeStreamId }] = await global.testDataSource.query(
+        `SELECT "activeStreamId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+
+      // the step shows it waits only once its run let go of the conversation, so it can be answered
+      expect(activeStreamId).toBeNull();
 
       expect((await getRun(runId)).state.stepInfos[finalStep.id].status).toBe(
         'NOT_STARTED',

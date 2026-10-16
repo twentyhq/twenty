@@ -24,6 +24,8 @@ export const useRecordChipData = ({
 
   if (!isDefined(identifierChipGenerator)) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `No identifier chip generator found for object name singular: ${objectNameSingular}`,
     );
   }

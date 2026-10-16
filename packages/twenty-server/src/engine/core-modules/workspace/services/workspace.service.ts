@@ -712,6 +712,10 @@ export class WorkspaceService {
       return this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
     }
 
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.cancelSubscription(workspace.id);
+    }
+
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         workspaceId: id,
@@ -725,10 +729,6 @@ export class WorkspaceService {
     this.logger.log(`workspace ${id} user workspaces deleted`);
 
     this.logger.log(`workspace ${id} cache flushed`);
-
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.cancelSubscription(workspace.id);
-    }
 
     await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);

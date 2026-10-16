@@ -17,6 +17,8 @@ export const useObjectNamePluralFromSingular = ({
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `Object metadata item not found for ${objectNameSingular} object`,
     );
   }

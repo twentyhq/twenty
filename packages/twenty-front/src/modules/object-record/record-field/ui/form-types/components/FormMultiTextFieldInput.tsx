@@ -44,6 +44,8 @@ export const FormMultiTextFieldInput = ({
   const handleVariableTagInsert = (variableName: string) => {
     if (!isDefined(editor)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         'Expected the editor to be defined when a variable is selected',
       );
     }

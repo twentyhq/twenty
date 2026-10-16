@@ -49,6 +49,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   });
 
   if (stepDefinition?.type !== 'action') {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('The input tab must be rendered with an action step.');
   }
 
@@ -70,6 +71,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   });
 
   if (stepContext.length === 0) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('The input tab must be rendered with a non-empty context.');
   }
 

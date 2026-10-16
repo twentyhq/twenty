@@ -3,6 +3,7 @@ import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-a
 import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+// oxlint-disable lingui/no-unlocalized-strings -- These persisted defaults must match the canonical text keys translated by getFormFieldDisplayText.
 export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
   switch (type) {
     case FieldMetadataType.TEXT:

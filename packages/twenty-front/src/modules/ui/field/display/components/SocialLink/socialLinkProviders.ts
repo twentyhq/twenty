@@ -34,6 +34,7 @@ export const SOCIAL_LINK_PROVIDERS: SocialLinkProvider[] = [
       'intent',
     ],
     handlePrefix: '@',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Brand names are proper nouns that remain unchanged across locales.
     fallbackLabel: 'Twitter',
   },
   {
@@ -42,6 +43,7 @@ export const SOCIAL_LINK_PROVIDERS: SocialLinkProvider[] = [
     handlePattern: /(?:https?:\/\/)?(?:www\.)?facebook\.com\/([^/?#]+)/,
     reservedPaths: [],
     handlePrefix: '',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Brand names are proper nouns that remain unchanged across locales.
     fallbackLabel: 'Facebook',
   },
   {
@@ -59,6 +61,7 @@ export const SOCIAL_LINK_PROVIDERS: SocialLinkProvider[] = [
       'about',
     ],
     handlePrefix: '@',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Brand names are proper nouns that remain unchanged across locales.
     fallbackLabel: 'Instagram',
   },
   {
@@ -75,6 +78,7 @@ export const SOCIAL_LINK_PROVIDERS: SocialLinkProvider[] = [
     handlePattern: /(?:https?:\/\/)?(?:www\.)?bsky\.app\/profile\/([^/?#]+)/,
     reservedPaths: [],
     handlePrefix: '',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Brand names are proper nouns that remain unchanged across locales.
     fallbackLabel: 'Bluesky',
   },
 ];
