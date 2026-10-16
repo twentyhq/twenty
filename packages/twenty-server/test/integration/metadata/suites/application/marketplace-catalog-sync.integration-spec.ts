@@ -732,8 +732,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
       const findVersionRows = () =>
         ds.query(
           `SELECT version, "sourceType", "sourcePackage", "tarballUrl",
-                  checksum, "publishedByUserId", "publishedByWorkspaceId",
-                  "reviewState"
+                  checksum, "publishedByUserId", "publishedByWorkspaceId"
            FROM core."applicationRegistrationVersion"
            WHERE "applicationRegistrationId" = $1`,
           [registrationId],
@@ -772,7 +771,6 @@ describe('Marketplace Catalog Sync (integration)', () => {
           checksum: null,
           publishedByUserId: null,
           publishedByWorkspaceId: null,
-          reviewState: 'UNREVIEWED',
         },
       ]);
     });

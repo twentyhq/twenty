@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 
-import gql from 'graphql-tag';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { type ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
@@ -11,7 +10,6 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type DataSource } from 'typeorm';
 
 import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
@@ -106,7 +104,6 @@ describe('Application registration versions', () => {
         }),
         publishedByUserId: expect.any(String),
         publishedByWorkspaceId: SEED_APPLE_WORKSPACE_ID,
-        reviewState: 'UNREVIEWED',
       });
       expect(version.tarballFileId).toEqual(expect.any(String));
     }
@@ -215,27 +212,6 @@ describe('Application registration versions', () => {
 
     expect(application).toEqual({
       version: LATEST_PUBLISHED_VERSION,
-      applicationRegistrationVersionId: latestVersion?.id,
-    });
-
-    const response = await makeMetadataApiRequest({
-      query: gql`
-        query CurrentWorkspaceInstalledApplications {
-          currentWorkspace {
-            installedApplications {
-              universalIdentifier
-              applicationRegistrationVersionId
-            }
-          }
-        }
-      `,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(
-      response.body.data.currentWorkspace.installedApplications,
-    ).toContainEqual({
-      universalIdentifier,
       applicationRegistrationVersionId: latestVersion?.id,
     });
   });

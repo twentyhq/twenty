@@ -140,7 +140,7 @@ describe('Direct app tarball upload', () => {
   const findVersionRows = async (registrationId: string) =>
     ds.query(
       `SELECT version, "sourceType", "tarballFileId", checksum,
-              "publishedByUserId", "publishedByWorkspaceId", "reviewState"
+              "publishedByUserId", "publishedByWorkspaceId"
        FROM core."applicationRegistrationVersion"
        WHERE "applicationRegistrationId" = $1
        ORDER BY version`,
@@ -210,7 +210,6 @@ describe('Direct app tarball upload', () => {
         checksum: computeSriIntegrity({ source: tarball }),
         publishedByUserId: expect.any(String),
         publishedByWorkspaceId: SEED_APPLE_WORKSPACE_ID,
-        reviewState: 'UNREVIEWED',
       },
     ]);
   });

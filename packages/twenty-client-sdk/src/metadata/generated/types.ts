@@ -753,9 +753,6 @@ export default {
             "applicationRegistrationId": [
                 493
             ],
-            "applicationRegistrationVersionId": [
-                493
-            ],
             "applicationVariables": [
                 60
             ],

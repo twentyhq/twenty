@@ -259,7 +259,6 @@ export interface Application {
     agents: Agent[]
     applicationRegistration?: ApplicationRegistrationSummary
     applicationRegistrationId?: Scalars['UUID']
-    applicationRegistrationVersionId?: Scalars['UUID']
     applicationVariables: ApplicationVariable[]
     autoUpgrade: Scalars['Boolean']
     availablePackages: Scalars['JSON']
@@ -4217,7 +4216,6 @@ export interface ApplicationGenqlSelection{
     agents?: AgentGenqlSelection
     applicationRegistration?: ApplicationRegistrationSummaryGenqlSelection
     applicationRegistrationId?: boolean | number
-    applicationRegistrationVersionId?: boolean | number
     applicationVariables?: ApplicationVariableGenqlSelection
     autoUpgrade?: boolean | number
     availablePackages?: boolean | number
