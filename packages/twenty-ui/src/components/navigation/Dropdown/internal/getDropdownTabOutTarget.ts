@@ -35,13 +35,17 @@ export const getDropdownTabOutTarget = ({
     content.ownerDocument.querySelectorAll<HTMLElement>(
       FOCUSABLE_ELEMENT_SELECTOR,
     ),
-  ).find(
-    (element) =>
+  ).find((element) => {
+    const elementDropdownContent = element.closest('[data-dropdown-content]');
+
+    return (
       !rootTrigger.contains(element) &&
       (rootTrigger.compareDocumentPosition(element) &
         rootTrigger.DOCUMENT_POSITION_FOLLOWING) !==
         0 &&
-      element.closest('[data-dropdown-content]') === null &&
-      isTabbableElement(element),
-  );
+      (elementDropdownContent === null ||
+        elementDropdownContent.contains(rootTrigger)) &&
+      isTabbableElement(element)
+    );
+  });
 };

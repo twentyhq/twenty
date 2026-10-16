@@ -29,6 +29,27 @@ const NestedPicker = () => (
   </>
 );
 
+const NestedMenuWithSubmenu = () => (
+  <Dropdown.Root type="picker">
+    <Dropdown.Trigger>Sort</Dropdown.Trigger>
+    <Dropdown.Content aria-label="Sort fields">
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Field actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Field actions">
+          <Dropdown.Submenu>
+            <Dropdown.SubmenuTrigger delay={0}>Export</Dropdown.SubmenuTrigger>
+            <Dropdown.Content aria-label="Export formats">
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+            </Dropdown.Content>
+          </Dropdown.Submenu>
+        </Dropdown.Content>
+      </Dropdown.Root>
+      <Dropdown.Search aria-label="Search fields" />
+      <Dropdown.OptionItem selected={false}>Name</Dropdown.OptionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+
 const openSortDirection = async (canvasElement: HTMLElement) => {
   const body = within(canvasElement.ownerDocument.body);
 
@@ -131,4 +152,41 @@ export const DismissesOneLayerWithEscape: Story = {
 export const DismissesOneLayerWithOutsidePress: Story = {
   render: () => <NestedPicker />,
   play: playDismissesOneLayerAtATime('outside press'),
+};
+
+export const TabOutOfNestedSubmenuStaysInParent: Story = {
+  render: () => <NestedMenuWithSubmenu />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Sort' }),
+    );
+    const sortFields = await body.findByRole('dialog', { name: 'Sort fields' });
+
+    await userEvent.click(body.getByRole('button', { name: 'Field actions' }));
+    const exportTrigger = await body.findByRole('menuitem', { name: 'Export' });
+
+    await waitFor(() => expect(exportTrigger).toHaveFocus());
+    await userEvent.keyboard('{ArrowRight}');
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'CSV' })).toHaveFocus(),
+    );
+    await userEvent.tab();
+
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(sortFields).toBeVisible();
+    await waitFor(() =>
+      expect(
+        body.getByRole('searchbox', { name: 'Search fields' }),
+      ).toHaveFocus(),
+    );
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
 };
