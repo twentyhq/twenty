@@ -3,18 +3,20 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconPlus, IconSearch, IconTrash } from '@ui/icon';
 import { Text } from '@ui/primitives/typography';
-import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
 import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
+import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
+  GroupedCatalog,
 } from '@ui/testing';
 
 import { IconButton } from '../IconButton';
 import { type IconButtonProps } from '../types/IconButtonProps';
+import { IconButtonExample } from './IconButtonExample';
 
 const meta: Meta<typeof IconButton> = {
   id: 'ui-components-iconbutton',
@@ -26,46 +28,82 @@ const meta: Meta<typeof IconButton> = {
 export default meta;
 type Story = StoryObj<typeof IconButton>;
 
-export const Default: Story = { decorators: [ComponentDecorator] };
+export const Display: Story = { decorators: [ComponentDecorator] };
 
 export const Elevated: Story = {
-  ...Default,
-  args: { elevated: true, size: 'sm' },
+  ...Display,
+  args: {
+    elevated: true,
+    size: 'sm',
+    children: <IconPlus />,
+    'aria-label': 'Add widget',
+  },
 };
 
 export const ElevatedTooltip: Story = {
   ...Elevated,
-  args: { ...Elevated.args, tooltip: 'Search records', tooltipDelay: 0 },
+  args: { ...Elevated.args, tooltip: 'Add widget', tooltipDelay: 0 },
 };
 
+const ELEVATED_EXAMPLES: {
+  label: string;
+  props: Partial<IconButtonProps>;
+}[] = [
+  { label: 'Regular', props: { 'aria-label': 'Regular action' } },
+  {
+    label: 'Elevated',
+    props: { elevated: true, 'aria-label': 'Elevated action' },
+  },
+  {
+    label: 'Compact',
+    props: { elevated: true, size: 'sm', 'aria-label': 'Compact action' },
+  },
+  {
+    label: 'Link',
+    props: { href: '#search', 'aria-label': 'Link without elevation' },
+  },
+  { label: 'Solid', props: { variant: 'solid', 'aria-label': 'Solid action' } },
+  {
+    label: 'Elevated solid',
+    props: {
+      variant: 'solid',
+      elevated: true,
+      'aria-label': 'Elevated solid action',
+    },
+  },
+  {
+    label: 'Accent',
+    props: { color: 'accent', 'aria-label': 'Accent action' },
+  },
+  {
+    label: 'Elevated accent',
+    props: {
+      color: 'accent',
+      elevated: true,
+      'aria-label': 'Elevated accent action',
+    },
+  },
+];
+
 export const ElevatedAppearance: Story = {
-  ...Default,
+  ...Display,
   args: { onClick: fn() },
   render: (args) => (
-    <>
-      <IconButton {...args} aria-label="Regular action" />
-      <IconButton {...args} elevated aria-label="Elevated action" />
-      <IconButton {...args} elevated size="sm" aria-label="Compact action" />
-      <IconButton
-        {...args}
-        href="#search"
-        aria-label="Link without elevation"
-      />
-      <IconButton {...args} variant="solid" aria-label="Solid action" />
-      <IconButton
-        {...args}
-        variant="solid"
-        elevated
-        aria-label="Elevated solid action"
-      />
-      <IconButton {...args} color="accent" aria-label="Accent action" />
-      <IconButton
-        {...args}
-        color="accent"
-        elevated
-        aria-label="Elevated accent action"
-      />
-    </>
+    <Text
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+        gap: 24,
+        width: 560,
+        maxWidth: '100%',
+      }}
+    >
+      {ELEVATED_EXAMPLES.map(({ label, props }) => (
+        <IconButtonExample key={label} label={label}>
+          <IconButton {...args} {...props} />
+        </IconButtonExample>
+      ))}
+    </Text>
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -133,7 +171,7 @@ export const ElevatedAppearanceDark: Story = {
 };
 
 export const Keyboard: Story = {
-  ...Default,
+  ...Display,
   args: { onClick: fn() },
   play: async ({ canvasElement, args }) => {
     const button = within(canvasElement).getByRole('button', {
@@ -147,7 +185,7 @@ export const Keyboard: Story = {
 };
 
 export const Disabled: Story = {
-  ...Default,
+  ...Display,
   args: { disabled: true, onClick: fn() },
   play: async ({ canvasElement, args }) => {
     const button = within(canvasElement).getByRole('button', {
@@ -179,7 +217,7 @@ export const Loading: Story = {
 };
 
 export const Link: Story = {
-  ...Default,
+  ...Display,
   args: { href: '#search', onClick: fn((event) => event.preventDefault()) },
   play: async ({ canvasElement, args }) => {
     const link = within(canvasElement).getByRole('link', { name: 'Search' });
@@ -192,7 +230,7 @@ export const Link: Story = {
 };
 
 export const Tooltip: Story = {
-  ...Default,
+  ...Display,
   args: { tooltip: 'Search records', tooltipDelay: 0 },
   play: async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button', {
@@ -262,7 +300,7 @@ export const TooltipLink: Story = {
 };
 
 export const Grouped: Story = {
-  ...Default,
+  ...Display,
   render: () => (
     <ButtonGroup
       aria-label="Record actions"
@@ -300,8 +338,58 @@ const CATALOG_STATES: Record<string, Partial<IconButtonProps>> = {
   loading: { loading: true },
 };
 
-export const Catalog: CatalogStory<Story, typeof IconButton> = {
-  decorators: [CatalogDecorator],
+const ICON_BUTTON_CATALOG_GROUPS: {
+  label: string;
+  examples: { label: string; props: Partial<IconButtonProps> }[];
+}[] = [
+  {
+    label: 'Variants',
+    examples: (['solid', 'outline', 'soft', 'ghost'] as const).map(
+      (variant) => ({ label: variant, props: { variant } }),
+    ),
+  },
+  {
+    label: 'Colors',
+    examples: (['neutral', 'accent', 'danger', 'success'] as const).map(
+      (color) => ({ label: color, props: { color } }),
+    ),
+  },
+  {
+    label: 'Sizes',
+    examples: (['xs', 'sm', 'md'] as const).map((size) => ({
+      label: size,
+      props: { size },
+    })),
+  },
+  {
+    label: 'Shapes',
+    examples: (['square', 'round'] as const).map((shape) => ({
+      label: shape,
+      props: { shape },
+    })),
+  },
+  {
+    label: 'Elevation',
+    examples: [
+      { label: 'standard', props: {} },
+      { label: 'elevated', props: { elevated: true } },
+    ],
+  },
+  {
+    label: 'States',
+    examples: [
+      'default',
+      'hover',
+      'pressed',
+      'focused',
+      'disabled',
+      'loading',
+    ].map((label) => ({ label, props: CATALOG_STATES[label]! })),
+  },
+];
+
+export const Catalog: Story = {
+  decorators: [ComponentDecorator],
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: {
@@ -309,73 +397,62 @@ export const Catalog: CatalogStory<Story, typeof IconButton> = {
       active: ['.pressed'],
       focusVisible: ['.focused'],
     },
-    catalog: {
-      dimensions: [
-        {
-          name: 'state',
-          values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state] ?? {},
-        },
-        {
-          name: 'color',
-          values: ['neutral', 'accent', 'danger', 'success'],
-          props: (color: ButtonColor) => ({ color }),
-        },
-        {
-          name: 'variant',
-          values: ['solid', 'outline', 'soft', 'ghost'],
-          props: (variant: ButtonVariant) => ({ variant }),
-        },
-      ],
-    },
   },
+  render: (args) => (
+    <GroupedCatalog
+      groups={ICON_BUTTON_CATALOG_GROUPS}
+      renderExample={({ label, props }) => (
+        <IconButtonExample label={label}>
+          <IconButton {...args} {...props} />
+        </IconButtonExample>
+      )}
+    />
+  ),
 };
 
-export const CatalogDark: CatalogStory<Story, typeof IconButton> = {
+export const CatalogDark: Story = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
 
-export const Round: Story = {
-  ...Default,
+const ROUND_EXAMPLES = [
+  { label: '20px', name: 'Compact round', size: 'xs', disabled: false },
+  { label: '24px', name: 'Small round', size: 'sm', disabled: false },
+  { label: '32px', name: 'Medium round', size: 'md', disabled: false },
+  { label: 'Disabled', name: 'Disabled round', size: 'sm', disabled: true },
+] as const;
+
+export const RoundDocumentation: Story = {
+  ...Display,
   render: () => (
-    <>
-      <IconButton
-        aria-label="Compact round"
-        size="xs"
-        shape="round"
-        variant="solid"
-        color="accent"
-      >
-        <IconPlus />
-      </IconButton>
-      <IconButton
-        aria-label="Small round"
-        size="sm"
-        shape="round"
-        variant="solid"
-        color="accent"
-      >
-        <IconPlus />
-      </IconButton>
-      <IconButton
-        aria-label="Disabled round"
-        size="sm"
-        shape="round"
-        variant="solid"
-        color="accent"
-        disabled
-      >
-        <IconPlus />
-      </IconButton>
-    </>
+    <Text style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+      {ROUND_EXAMPLES.map(({ label, name, size, disabled }) => (
+        <IconButtonExample key={name} label={label}>
+          <IconButton
+            aria-label={name}
+            size={size}
+            shape="round"
+            variant="solid"
+            color="accent"
+            disabled={disabled}
+          >
+            <IconPlus />
+          </IconButton>
+        </IconButtonExample>
+      ))}
+    </Text>
   ),
+};
+
+export const Round: Story = {
+  ...RoundDocumentation,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     for (const [name, size] of [
       ['Compact round', 20],
       ['Small round', 24],
+      ['Medium round', 32],
       ['Disabled round', 24],
     ] as const) {
       const button = canvas.getByRole('button', { name });
@@ -392,7 +469,7 @@ export const Round: Story = {
 export const LabelledBy: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <>
+    <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <Text render={<span />} id="search-records-label">
         Search records
       </Text>
@@ -403,7 +480,7 @@ export const LabelledBy: Story = {
       >
         <IconSearch />
       </IconButton>
-    </>
+    </Text>
   ),
 };
 
@@ -436,7 +513,6 @@ export const GroupedOverrides: Story = {
       <IconButton
         variant="outline"
         color="neutral"
-        size="xs"
         aria-label="Search records"
         tooltip="Search records"
       >
@@ -458,11 +534,43 @@ export const GroupedOverridesInteraction: Story = {
 
     await expect(searchButton).toHaveAttribute('data-variant', 'outline');
     await expect(searchButton).toHaveAttribute('data-color', 'neutral');
+    await expect(searchButton).toHaveAttribute('data-icon-size', 'sm');
+    await expect(searchButton.getBoundingClientRect().width).toBe(24);
+    await expect(searchButton.getBoundingClientRect().height).toBe(24);
+    await expect(createButton).toHaveAttribute('data-variant', 'solid');
+    await expect(createButton).toHaveAttribute('data-color', 'accent');
+    await expect(createButton).toHaveAttribute('data-icon-size', 'sm');
+    await expect(createButton.getBoundingClientRect().width).toBe(24);
+    await expect(createButton.getBoundingClientRect().height).toBe(24);
+  },
+};
+
+export const GroupedSizeOverride: Story = {
+  decorators: [ComponentDecorator],
+  tags: ['!autodocs'],
+  render: () => (
+    <ButtonGroup
+      aria-label="Record actions"
+      size="sm"
+      attached={false}
+      style={{ alignItems: 'center' }}
+    >
+      <IconButton size="xs" aria-label="Search records">
+        <IconSearch />
+      </IconButton>
+      <IconButton aria-label="Create record">
+        <IconPlus />
+      </IconButton>
+    </ButtonGroup>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const searchButton = canvas.getByRole('button', { name: 'Search records' });
+    const createButton = canvas.getByRole('button', { name: 'Create record' });
+
     await expect(searchButton).toHaveAttribute('data-icon-size', 'xs');
     await expect(searchButton.getBoundingClientRect().width).toBe(20);
     await expect(searchButton.getBoundingClientRect().height).toBe(20);
-    await expect(createButton).toHaveAttribute('data-variant', 'solid');
-    await expect(createButton).toHaveAttribute('data-color', 'accent');
     await expect(createButton).toHaveAttribute('data-icon-size', 'sm');
     await expect(createButton.getBoundingClientRect().width).toBe(24);
     await expect(createButton.getBoundingClientRect().height).toBe(24);
@@ -481,4 +589,42 @@ export const FramedGroupDocumentation: Story = {
       </IconButton>
     </ButtonGroup>
   ),
+};
+
+export const VisualRegression: CatalogStory<Story, typeof IconButton> = {
+  tags: ['!autodocs'],
+  decorators: [CatalogDecorator],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    pseudo: {
+      hover: ['.hover'],
+      active: ['.pressed'],
+      focusVisible: ['.focused'],
+    },
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: Object.keys(CATALOG_STATES),
+          props: (state: string) => CATALOG_STATES[state] ?? {},
+        },
+        {
+          name: 'color',
+          values: ['neutral', 'accent', 'danger', 'success'],
+          props: (color: ButtonColor) => ({ color }),
+        },
+        {
+          name: 'variant',
+          values: ['solid', 'outline', 'soft', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+
+export const VisualRegressionDark: CatalogStory<Story, typeof IconButton> = {
+  ...VisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
 };

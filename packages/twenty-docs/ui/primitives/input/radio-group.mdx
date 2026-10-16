@@ -4,16 +4,38 @@ description: Manage a single selection across a set of radio options.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
 
 `RadioGroup` coordinates the value, keyboard navigation, and form submission of its [Radio](/ui/primitives/input/radio) children.
 
 <StoryEmbed
-  storyId="ui-input-radiogroup--default"
+  storyId="ui-input-radiogroup--display"
   title="RadioGroup example"
-  height={240}
+  height={110}
 />
+
+## Usage
+
+### Uncontrolled state
+
+Use `defaultValue` to set the initial billing frequency. The group owns subsequent changes.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => (
+  <RadioGroup
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+The group's `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
 
 ## Anatomy
 
@@ -37,41 +59,6 @@ fieldset
 | `fieldset`, `legend` | Optional grouping           | Groups related controls under a visible heading.           |
 
 Give the group its own accessible name using `aria-label` or `aria-labelledby`. In the examples below, `aria-labelledby` connects the group to the legend. Each radio also needs its own name. Put selection props on `RadioGroup` and option values on `Radio`.
-
-## Uncontrolled state
-
-Use `defaultValue` to set the initial billing frequency. The group owns subsequent changes.
-
-```tsx
-import { useId } from 'react';
-import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
-
-export const BillingFrequency = () => {
-  const labelId = useId();
-
-  return (
-    <fieldset>
-      <legend id={labelId}>Billing frequency</legend>
-      <RadioGroup
-        name="billingFrequency"
-        defaultValue="monthly"
-        aria-labelledby={labelId}
-      >
-        <label>
-          <Radio value="monthly" />
-          Monthly
-        </label>
-        <label>
-          <Radio value="yearly" />
-          Yearly
-        </label>
-      </RadioGroup>
-    </fieldset>
-  );
-};
-```
-
-The group's `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
 
 ## Controlled state
 

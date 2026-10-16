@@ -28,7 +28,7 @@ const meta: Meta<typeof InlineBanner> = {
 export default meta;
 type Story = StoryObj<typeof InlineBanner>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     status: 'error',
     children: NO_AI_MODELS_MESSAGE,
@@ -41,7 +41,7 @@ export const Default: Story = {
 };
 
 export const KeyboardAction: Story = {
-  args: Default.args,
+  args: Display.args,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = await canvas.findByRole('button', {
@@ -321,7 +321,7 @@ export const CompactAction: Story = {
 
 export const HiddenAction: Story = {
   args: {
-    ...Default.args,
+    ...Display.args,
     action: null,
   },
   play: async ({ canvasElement }) => {

@@ -25,6 +25,29 @@ type Story = StoryObj<typeof Skeleton>;
 const isMotionEnabled = () =>
   !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+export const Display: Story = {
+  parameters: {
+    controls: {
+      include: ['animated', 'borderRadius', 'baseColor', 'highlightColor'],
+    },
+  },
+  render: (args) => (
+    <Text
+      render={<div />}
+      style={{ display: 'flex', gap: 16, alignItems: 'center' }}
+    >
+      <Skeleton {...args} width={40} height={40} borderRadius="50%" />
+      <Text
+        render={<div />}
+        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+      >
+        <Skeleton {...args} width={180} height={16} />
+        <Skeleton {...args} width={120} height={13} />
+      </Text>
+    </Text>
+  ),
+};
+
 export const Default: Story = {
   play: async ({ canvas }) => {
     const placeholder = canvas.getByTestId('placeholder');
@@ -56,24 +79,6 @@ export const Default: Story = {
     await expect(highlight.animationTimingFunction).toBe('ease-in-out');
     await expect(highlight.animationIterationCount).toBe('infinite');
   },
-};
-
-export const Shapes: Story = {
-  render: (args) => (
-    <Text
-      render={<div />}
-      style={{ display: 'flex', gap: 16, alignItems: 'center' }}
-    >
-      <Skeleton {...args} width={40} height={40} borderRadius="50%" />
-      <Text
-        render={<div />}
-        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
-      >
-        <Skeleton {...args} width={180} height={16} />
-        <Skeleton {...args} width={120} height={13} />
-      </Text>
-    </Text>
-  ),
 };
 
 export const Static: Story = {
