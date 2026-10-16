@@ -872,11 +872,28 @@ export class UsageLimitQuotaService {
         !isDefined(consumedValue) && isDefined(splits[index]) ? [index] : [],
       );
 
+      if (!isNonEmptyArray(heldBackIndexes)) {
+        return {
+          consumedValues,
+          userCreditsUsedMicro: userShare ?? 0,
+          isDegraded: true,
+        };
+      }
+
+      const heldBackUserShare = Math.min(
+        ...heldBackIndexes.flatMap((index) =>
+          splits[index]?.kind === 'userCredits' ? [amounts[index]] : [],
+        ),
+      );
+
       const { consumedValues: heldBackValues } =
         await this.runWarmAndConsumeScript({
           counters: heldBackIndexes.map((index) => counters[index]),
           entries: heldBackIndexes.map((index) => ({
-            amount: splits[index]?.kind === 'userCredits' ? 0 : amounts[index],
+            amount:
+              splits[index]?.kind === 'userCredits'
+                ? heldBackUserShare
+                : Math.max(0, amounts[index] - heldBackUserShare),
             warm: null,
           })),
           userCreditsFallback,
@@ -888,7 +905,7 @@ export class UsageLimitQuotaService {
 
       return {
         consumedValues,
-        userCreditsUsedMicro: userShare ?? 0,
+        userCreditsUsedMicro: heldBackUserShare,
         isDegraded: true,
       };
     }

@@ -1200,7 +1200,7 @@ describe('Usage quota consumption', () => {
       );
 
       it(
-        'debits the warm workspace allowance in full when the user credits window cannot warm',
+        'records the charge as user credits and leaves the workspace allowance untouched when the user credits window cannot warm',
         async () => {
           const userWorkspaceId = generateUserWorkspaceId();
           const allowanceConsumed = await readWorkspaceAllowanceConsumed();
@@ -1225,11 +1225,11 @@ describe('Usage quota consumption', () => {
           }
 
           expect(await readWorkspaceAllowanceConsumed()).toBe(
-            allowanceConsumed + 600,
+            allowanceConsumed,
           );
 
           await waitForUserCreditsRows(userWorkspaceId, [
-            { creditsUsedMicro: 600, userCreditsUsedMicro: 0 },
+            { creditsUsedMicro: 600, userCreditsUsedMicro: 600 },
           ]);
         },
         EXECUTION_TIMEOUT_MS,
