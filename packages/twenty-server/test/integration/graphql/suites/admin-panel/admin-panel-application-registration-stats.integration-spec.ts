@@ -443,6 +443,61 @@ describe('Admin panel application registration stats and installed workspaces (i
         expect(await statsCache.get(getStatsCacheKey())).toBeUndefined();
       });
 
+      it('retries transient health cache failures after a short TTL', async () => {
+        const application = await insertApplication({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          version: '2.0.0',
+        });
+        const healthCheckLogicFunctionId = randomUUID();
+        const healthCache =
+          getAppProviderByClassName<ApplicationHealthCacheService>(
+            'ApplicationHealthCacheService',
+          );
+
+        try {
+          await applicationRepository.update(application.id, {
+            healthCheckLogicFunctionId,
+          });
+          await healthCache.record({
+            application: { ...application, healthCheckLogicFunctionId },
+            status: ApplicationHealthStatus.WARNING,
+          });
+          jest
+            .spyOn(statsCache, 'mget')
+            .mockRejectedValueOnce(new Error('Health cache unavailable'));
+
+          const response = await findStats();
+
+          expect(response.body.errors).toBeUndefined();
+          expect(
+            response.body.data.findAdminApplicationRegistrationStats,
+          ).toMatchObject({
+            healthCheckedWorkspaces: 0,
+            workspacesNeedingAttention: null,
+          });
+          const ttl = await redisCache.store.client.pTTL(statsRedisKey);
+
+          expect(ttl).toBeGreaterThan(20_000);
+          expect(ttl).toBeLessThanOrEqual(30_000);
+
+          await redisCache.store.client.pExpire(statsRedisKey, 0);
+          const recoveredResponse = await findStats();
+
+          expect(recoveredResponse.body.errors).toBeUndefined();
+          expect(
+            recoveredResponse.body.data.findAdminApplicationRegistrationStats,
+          ).toMatchObject({
+            healthCheckedWorkspaces: 1,
+            workspacesNeedingAttention: 1,
+          });
+          expect(
+            await redisCache.store.client.pTTL(statsRedisKey),
+          ).toBeGreaterThan(590_000);
+        } finally {
+          await applicationRepository.delete(application.id);
+        }
+      });
+
       it('isolates cached stats by registration', async () => {
         await findStats();
         const otherRegistrationId = randomUUID();

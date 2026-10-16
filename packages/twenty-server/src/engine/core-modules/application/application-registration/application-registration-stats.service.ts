@@ -52,9 +52,10 @@ export class ApplicationRegistrationStatsService {
       .andWhere('workspace.deletedAt IS NULL');
   }
 
-  async computeStats(
-    registration: ApplicationRegistrationStatsInput,
-  ): Promise<ApplicationRegistrationStatsDTO> {
+  async computeStats(registration: ApplicationRegistrationStatsInput): Promise<{
+    stats: ApplicationRegistrationStatsDTO;
+    healthReadFailed: boolean;
+  }> {
     const versions = await this.getInstallations(registration.id)
       .select("COALESCE(application.version, 'unknown')", 'version')
       .addSelect('COUNT(*)', 'count')
@@ -87,33 +88,49 @@ export class ApplicationRegistrationStatsService {
       this.getCreditBreakdown({ applicationRegistrationId: registration.id }),
     ]);
     const workspacesNeedingAttention =
-      needsReconnection + health.needingAttention;
+      needsReconnection + (health?.needingAttention ?? 0);
 
     return {
-      ...installStats,
-      workspacesNeedingAttention:
-        installStats.activeInstalls === 0 ||
-        health.known > 0 ||
-        workspacesNeedingAttention > 0
-          ? workspacesNeedingAttention
-          : null,
-      healthCheckedWorkspaces: health.checked,
-      totalCreditsConsumed: creditUsage?.totalCreditsConsumed ?? null,
-      creditBreakdown: creditUsage?.creditBreakdown ?? null,
+      stats: {
+        ...installStats,
+        workspacesNeedingAttention:
+          installStats.activeInstalls === 0 ||
+          (health?.known ?? 0) > 0 ||
+          workspacesNeedingAttention > 0
+            ? workspacesNeedingAttention
+            : null,
+        healthCheckedWorkspaces: health?.checked ?? 0,
+        totalCreditsConsumed: creditUsage?.totalCreditsConsumed ?? null,
+        creditBreakdown: creditUsage?.creditBreakdown ?? null,
+      },
+      healthReadFailed: health === null,
     };
   }
 
   private async getHealthSummary(applicationRegistrationId: string) {
     const summaries: ReturnType<typeof summarizeApplicationHealth>[] = [];
+    let healthReadFailed = false;
 
     await this.installationService.forEachBatch({
       applicationRegistrationId,
       mode: 'health',
       processBatch: async (applications) => {
-        const [statuses, reconnectionIdentities] = await Promise.all([
-          this.applicationHealthCacheService.getStatuses(applications),
-          this.installationService.getReconnectionIdentities(applications),
-        ]);
+        let statuses;
+
+        try {
+          statuses = await this.applicationHealthCacheService.getStatuses(
+            applications,
+            { throwOnError: true },
+          );
+        } catch {
+          healthReadFailed = true;
+          return;
+        }
+
+        const reconnectionIdentities =
+          await this.installationService.getReconnectionIdentities(
+            applications,
+          );
 
         summaries.push(
           summarizeApplicationHealth({
@@ -127,6 +144,10 @@ export class ApplicationRegistrationStatsService {
         );
       },
     });
+
+    if (healthReadFailed) {
+      return null;
+    }
 
     return summaries.reduce(
       (total, summary) => ({

@@ -12,7 +12,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
 const STATS_CACHE_TTL_MS = 10 * 60 * 1000;
-const UNAVAILABLE_CREDITS_CACHE_TTL_MS = 30 * 1000;
+const TRANSIENT_FAILURE_CACHE_TTL_MS = 30 * 1000;
 
 @Injectable()
 export class ApplicationRegistrationStatsCacheService {
@@ -56,14 +56,15 @@ export class ApplicationRegistrationStatsCacheService {
           }
 
           isComputing = true;
-          const stats =
+          const { stats, healthReadFailed } =
             await this.applicationRegistrationStatsService.computeStats(
               registration,
             );
           const ttl =
-            stats.totalCreditsConsumed === null &&
-            isDefined(this.clickHouseService.getMainClient())
-              ? UNAVAILABLE_CREDITS_CACHE_TTL_MS
+            healthReadFailed ||
+            (stats.totalCreditsConsumed === null &&
+              isDefined(this.clickHouseService.getMainClient()))
+              ? TRANSIENT_FAILURE_CACHE_TTL_MS
               : STATS_CACHE_TTL_MS;
 
           try {
@@ -90,9 +91,11 @@ export class ApplicationRegistrationStatsCacheService {
         error,
       );
 
-      return this.applicationRegistrationStatsService.computeStats(
-        registration,
-      );
+      return (
+        await this.applicationRegistrationStatsService.computeStats(
+          registration,
+        )
+      ).stats;
     }
   }
 }

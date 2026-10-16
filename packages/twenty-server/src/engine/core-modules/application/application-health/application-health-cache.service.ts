@@ -46,6 +46,7 @@ export class ApplicationHealthCacheService {
 
   async getStatuses(
     applications: ApplicationHealthIdentity[],
+    { throwOnError = false }: { throwOnError?: boolean } = {},
   ): Promise<(ApplicationHealthStatus | undefined)[]> {
     if (applications.length === 0) {
       return [];
@@ -57,6 +58,10 @@ export class ApplicationHealthCacheService {
       );
     } catch (error) {
       this.logger.warn('Failed to read application health checks', error);
+
+      if (throwOnError) {
+        throw error;
+      }
 
       return applications.map(() => undefined);
     }
