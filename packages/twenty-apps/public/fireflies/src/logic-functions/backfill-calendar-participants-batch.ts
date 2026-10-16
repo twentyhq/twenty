@@ -5,7 +5,6 @@ import {
   enqueueJobs,
   RetryableLogicFunctionError,
 } from 'twenty-sdk/logic-function';
-import { isDefined } from 'twenty-sdk/utils';
 import { z } from 'zod';
 
 import { FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT } from 'src/logic-functions/constants/fireflies-backfill-batch-retry-limit.constant';
@@ -14,6 +13,16 @@ import {
   SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { getCurrentApplicationId } from 'src/logic-functions/utils/get-current-application-id.util';
+
+const connectionSchema = z.object({
+  edges: z.array(z.object({ node: z.object({ id: z.string() }) })).optional(),
+  pageInfo: z
+    .object({
+      hasNextPage: z.boolean().optional(),
+      endCursor: z.string().nullish(),
+    })
+    .optional(),
+});
 
 const batchSchema = z.object({ after: z.string().optional() });
 
@@ -40,10 +49,7 @@ export const backfillCalendarParticipantsBatchHandler = async (
         edges: { node: { id: true } },
       },
     });
-    const page = result.callRecordings;
-    if (!isDefined(page)) {
-      throw new Error('Calendar participant backfill returned no connection');
-    }
+    const page = connectionSchema.parse(result.callRecordings);
     const nextCursor = page.pageInfo?.endCursor;
     if (
       page.pageInfo?.hasNextPage &&
