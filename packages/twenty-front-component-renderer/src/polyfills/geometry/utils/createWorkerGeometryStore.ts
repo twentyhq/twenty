@@ -30,7 +30,7 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   const pendingObservationIds = new Set<string>();
   const geometryUpdateListeners = new Set<() => void>();
 
-  let rootElement: object | null = null;
+  let rootElement: NodeLike | null = null;
   let transport: GeometryObservationTransport | null = null;
   let viewportSnapshot: ViewportGeometrySnapshot | null = null;
   let hasScheduledObservationFlush = false;
@@ -138,8 +138,7 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
 
   const isDocumentScopedElement = (element: object): boolean =>
     isDefined(rootElement) &&
-    (element === rootElement ||
-      element === (rootElement as NodeLike).parentNode);
+    (element === rootElement || element === rootElement.parentNode);
 
   const readDocumentScopedSnapshot = (
     element: object,

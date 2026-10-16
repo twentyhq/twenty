@@ -1,7 +1,7 @@
 import { remoteId } from '@remote-dom/core/elements';
-import { isObject } from '@sniptt/guards';
 
 import { type NodeLike } from '@/polyfills/dom/types/NodeLike';
+import { isElementNode } from '@/polyfills/dom/utils/isElementNode';
 
 export const findAncestorByRemoteId = ({
   node,
@@ -9,15 +9,15 @@ export const findAncestorByRemoteId = ({
 }: {
   node: NodeLike;
   remoteElementId: string;
-}): object | null => {
-  let ancestor = node.parentNode;
+}): Element | null => {
+  let ancestor: unknown = node.parentNode;
 
-  while (isObject(ancestor)) {
-    if (remoteId(ancestor as Node) === remoteElementId) {
+  while (isElementNode(ancestor)) {
+    if (remoteId(ancestor) === remoteElementId) {
       return ancestor;
     }
 
-    ancestor = (ancestor as NodeLike).parentNode;
+    ancestor = ancestor.parentNode;
   }
 
   return null;

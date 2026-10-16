@@ -1,11 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type TextareaIntrinsicSizeElement } from '@/polyfills/geometry/types/TextareaIntrinsicSizeElement';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { resolveHtmlTagNameOfElement } from '@/polyfills/selectors/utils/resolveHtmlTagNameOfElement';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 type ReadTextareaIntrinsicSizeInput = {
-  element: object;
+  element: TextareaIntrinsicSizeElement;
   snapshot: ElementGeometrySnapshot | null;
 };
 
@@ -30,13 +31,13 @@ export const createTextareaIntrinsicSizeReader = (
   geometryStore: WorkerGeometryStore,
 ) => {
   const pendingMeasurements = new Map<
-    HTMLElement,
+    TextareaIntrinsicSizeElement,
     TextareaPendingMeasurement
   >();
 
   geometryStore.subscribeToGeometryUpdates(() => {
     for (const [textarea, measurement] of pendingMeasurements) {
-      if (textarea.style.blockSize !== measurement.blockSize) {
+      if (textarea.style?.blockSize !== measurement.blockSize) {
         pendingMeasurements.delete(textarea);
         continue;
       }
@@ -64,7 +65,7 @@ export const createTextareaIntrinsicSizeReader = (
         scrollHeight: snapshot.textareaIntrinsicScrollHeight,
         snapshot,
       });
-      if (measurement.blockSize !== blockSize) {
+      if (measurement.blockSize !== blockSize && isDefined(textarea.style)) {
         textarea.style.blockSize = blockSize;
       }
 
@@ -76,17 +77,16 @@ export const createTextareaIntrinsicSizeReader = (
   });
 
   return ({ element, snapshot }: ReadTextareaIntrinsicSizeInput): number => {
-    const textarea = element as HTMLElement;
     const isMeasuringTextareaContent =
       resolveHtmlTagNameOfElement(element) === 'textarea' &&
-      textarea.style.blockSize === 'auto';
+      element.style?.blockSize === 'auto';
 
     if (!isMeasuringTextareaContent) {
       return snapshot?.scrollHeight ?? 0;
     }
 
     if (!isDefined(snapshot)) {
-      pendingMeasurements.set(textarea, {
+      pendingMeasurements.set(element, {
         blockSize: 'auto',
         hasReceivedSnapshot: false,
       });
@@ -96,7 +96,7 @@ export const createTextareaIntrinsicSizeReader = (
 
     const scrollHeight =
       snapshot.textareaIntrinsicScrollHeight ?? snapshot.scrollHeight;
-    pendingMeasurements.set(textarea, {
+    pendingMeasurements.set(element, {
       blockSize: formatTextareaBlockSize({ scrollHeight, snapshot }),
       hasReceivedSnapshot: true,
     });

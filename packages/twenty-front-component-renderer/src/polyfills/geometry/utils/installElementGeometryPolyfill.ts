@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { findAncestorByRemoteId } from '@/polyfills/dom/utils/findAncestorByRemoteId';
+import { type TextareaIntrinsicSizeElement } from '@/polyfills/geometry/types/TextareaIntrinsicSizeElement';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { createDomRectFromSnapshot } from '@/polyfills/geometry/utils/createDomRectFromSnapshot';
 import { createTextareaIntrinsicSizeReader } from '@/polyfills/geometry/utils/createTextareaIntrinsicSizeReader';
@@ -71,7 +72,7 @@ export const installElementGeometryPolyfill = ({
   }
 
   Object.defineProperty(elementPrototype, 'scrollHeight', {
-    get(this: object) {
+    get(this: TextareaIntrinsicSizeElement) {
       return readTextareaIntrinsicSize({
         element: this,
         snapshot: resolveSnapshot(this),

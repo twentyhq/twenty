@@ -8,10 +8,10 @@ export const hasMeasuredChildElement = ({
   element,
   geometryStore,
 }: {
-  element: object;
+  element: ElementLike;
   geometryStore: WorkerGeometryStore;
 }): boolean => {
-  const childNodes = (element as ElementLike).childNodes;
+  const childNodes = element.childNodes;
 
   if (!isDefined(childNodes)) {
     return false;
