@@ -1601,6 +1601,33 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    it('goes on with the agent when the recipient writes instead of answering, which skips the question', async () => {
+      const runTurn = mockAgent();
+      const { runId, agent, threadId } = await startAskingRun();
+
+      const response = await sendAsRecipient({
+        threadId,
+        text: 'Hold it until Monday',
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.sendChatMessage.queued).toBe(true);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(JSON.stringify(runTurn.mock.calls[1][0].priorMessages)).toContain(
+        'Hold it until Monday',
+      );
+      expect(await getToolCalls(threadId)).toEqual({
+        isWaiting: false,
+        calls: [{ toolCallId: 'ask-1', status: 'skipped' }],
+      });
+    });
+
     it('refuses a second answer to the same question', async () => {
       mockAgent();
       const { runId, threadId } = await startAskingRun();
@@ -1618,50 +1645,72 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    const waitingResult = ({
+      toolName,
+      wait,
+    }: {
+      toolName: string;
+      wait: Record<string, unknown>;
+    }) => {
+      const output = {
+        success: true,
+        message: 'Waiting.',
+        result: { status: 'pending', wait },
+      };
+
+      return agentResult({
+        isPaused: true,
+        steps: [
+          {
+            content: [
+              { type: 'tool-call', toolCallId: 'wait-1', toolName, input: {} },
+              {
+                type: 'tool-result',
+                toolCallId: 'wait-1',
+                toolName,
+                input: {},
+                output,
+              },
+            ],
+            toolResults: [{ toolCallId: 'wait-1', toolName, output }],
+          },
+        ] as unknown as AgentExecutionResult['steps'],
+      });
+    };
+
+    const sendAsRecipient = ({
+      threadId,
+      text,
+    }: {
+      threadId: string;
+      text: string;
+    }) => {
+      jest
+        .spyOn(
+          getAppProviderByClassName<AiModelRegistryService>(
+            'AiModelRegistryService',
+          ),
+          'getAvailableModels',
+        )
+        .mockReturnValue([{ modelId: TEST_AI_MODEL_ID }] as never);
+
+      return request(`http://localhost:${APP_PORT}`)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `mutation SendChatMessage($threadId: UUID!, $text: String!, $messageId: UUID!) {
+            sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued }
+          }`,
+          variables: { threadId, text, messageId: randomUUID() },
+        });
+    };
+
     it('continues an agent that paused on a wait once its wake-up resolves, without running the step again', async () => {
       const resumeAt = new Date(Date.now() + 3_000).toISOString();
       const runTurn = mockAgentRunTurns(
-        agentResult({
-          isPaused: true,
-          steps: [
-            {
-              content: [
-                {
-                  type: 'tool-call',
-                  toolCallId: 'wait-1',
-                  toolName: 'wait_for_duration',
-                  input: { durationInMinutes: 1 },
-                },
-                {
-                  type: 'tool-result',
-                  toolCallId: 'wait-1',
-                  toolName: 'wait_for_duration',
-                  input: { durationInMinutes: 1 },
-                  output: {
-                    success: true,
-                    message: `Waiting until ${resumeAt}.`,
-                    result: {
-                      status: 'pending',
-                      wait: { type: 'TIME', resumeAt },
-                    },
-                  },
-                },
-              ],
-              toolResults: [
-                {
-                  toolCallId: 'wait-1',
-                  toolName: 'wait_for_duration',
-                  output: {
-                    success: true,
-                    result: {
-                      status: 'pending',
-                      wait: { type: 'TIME', resumeAt },
-                    },
-                  },
-                },
-              ],
-            },
-          ] as unknown as AgentExecutionResult['steps'],
+        waitingResult({
+          toolName: 'wait_for_duration',
+          wait: { type: 'TIME', resumeAt },
         }),
         replyingResult,
       );
@@ -1693,6 +1742,55 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(JSON.stringify(runTurn.mock.calls[1][0].priorMessages)).toContain(
         'The wait is over.',
       );
+      expect(
+        await global.testDataSource.query(
+          `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
+          [threadId],
+        ),
+      ).toEqual([]);
+    });
+
+    it('goes on with an agent waiting on an event as soon as the recipient writes to it', async () => {
+      // an event that never happens, so only the message wakes the run up
+      const runTurn = mockAgentRunTurns(
+        waitingResult({
+          toolName: 'wait_for_event',
+          wait: {
+            type: 'EVENT',
+            eventName: 'opportunity.deleted',
+            recordId: randomUUID(),
+          },
+        }),
+        replyingResult,
+      );
+      const finalStep = emptyStep();
+      const agent = agentStep([finalStep.id]);
+      const fixture = await createFixture({ steps: [agent, finalStep] });
+      const runId = await runFixture(fixture);
+      const pausedRun = await waitForPausedAgentStep(runId, agent.id);
+      const threadId: string = pausedRun.stepLogs[agent.id].details.threadId;
+
+      const response = await sendAsRecipient({
+        threadId,
+        text: 'No need to wait, send it now',
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.sendChatMessage.queued).toBe(true);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+
+      const resumedWith = JSON.stringify(
+        runTurn.mock.calls[1][0].priorMessages,
+      );
+
+      expect(resumedWith).toContain('a member wrote in the conversation');
+      expect(resumedWith).toContain('No need to wait, send it now');
       expect(
         await global.testDataSource.query(
           `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,

@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -60,7 +61,8 @@ export class AgentRunConversationService {
     });
   }
 
-  // The turn is written before the agent runs, so a run in progress or one that fails is on record
+  // The turn is written before the agent runs, so a run in progress or one that fails is on record.
+  // Messages members sent while the conversation was busy, or while the run waited, are its input too
   async openTurn({
     workspaceId,
     threadId,
@@ -77,7 +79,11 @@ export class AgentRunConversationService {
     senderApplicationId: string | null;
     createdBy: ActorMetadata;
     messages: RunAgentMessage[];
-  }): Promise<string> {
+  }): Promise<{
+    turnId: string;
+    promptMessageIds: string[];
+    hasTakenQueuedMessages: boolean;
+  }> {
     return this.conversationWriterService.runInTransaction(
       workspaceId,
       async (scope) => {
@@ -90,29 +96,47 @@ export class AgentRunConversationService {
           scope,
         });
 
+        const takenMessageCount = await scope.update(
+          'agentMessage',
+          { threadId, status: AgentMessageStatus.QUEUED },
+          {
+            status: AgentMessageStatus.SENT,
+            turnId,
+            processedAt: new Date().toISOString(),
+          },
+        );
+
+        const promptMessageIds: string[] = [];
+
         for (const message of messages) {
           const isAssistantMessage = message.role === 'assistant';
 
-          await this.conversationWriterService.insertMessage({
-            workspaceId,
-            threadId,
-            turnId,
-            role: isAssistantMessage
-              ? AgentMessageRole.ASSISTANT
-              : AgentMessageRole.USER,
-            agentId: null,
-            senderUserWorkspaceId: isAssistantMessage
-              ? null
-              : senderUserWorkspaceId,
-            senderApplicationId: isAssistantMessage
-              ? null
-              : senderApplicationId,
-            parts: this.buildMessageParts(message),
-            scope,
-          });
+          promptMessageIds.push(
+            await this.conversationWriterService.insertMessage({
+              workspaceId,
+              threadId,
+              turnId,
+              role: isAssistantMessage
+                ? AgentMessageRole.ASSISTANT
+                : AgentMessageRole.USER,
+              agentId: null,
+              senderUserWorkspaceId: isAssistantMessage
+                ? null
+                : senderUserWorkspaceId,
+              senderApplicationId: isAssistantMessage
+                ? null
+                : senderApplicationId,
+              parts: this.buildMessageParts(message),
+              scope,
+            }),
+          );
         }
 
-        return turnId;
+        return {
+          turnId,
+          promptMessageIds,
+          hasTakenQueuedMessages: takenMessageCount > 0,
+        };
       },
     );
   }

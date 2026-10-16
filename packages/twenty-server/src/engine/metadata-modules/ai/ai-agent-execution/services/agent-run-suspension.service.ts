@@ -39,6 +39,11 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 // one key for every run, so the owner's unique key leaves a conversation one suspended run
 const SUSPENDED_RUN_WAKE_UP_KEY = 'RUN';
 
+const buildAnswerInThreadCondition = (threadId: string) =>
+  Raw((alias) => `${alias} @> :condition::jsonb`, {
+    condition: JSON.stringify({ type: 'ANSWER', threadId }),
+  });
+
 // A suspended run is the AGENT_RUN wake-up its conversation owns: what wakes it up, and in its
 // payload what continues it and who gets its outcome
 @Injectable()
@@ -83,8 +88,8 @@ export class AgentRunSuspensionService {
     });
   }
 
-  // a run waiting in the conversation would read a new message on continuing, and a caller waiting
-  // on a call it posted there would see the message close it
+  // a run waiting in the conversation would read another run's prompt on continuing, and a caller
+  // waiting on a call it posted there would see the run close it
   async isConversationWaiting({
     workspaceId,
     threadId,
@@ -95,11 +100,7 @@ export class AgentRunSuspensionService {
     return this.wakeUpRepository.exists(workspaceId, {
       where: [
         { ownerType: 'AGENT_RUN', ownerId: threadId },
-        {
-          condition: Raw((alias) => `${alias} @> :condition::jsonb`, {
-            condition: JSON.stringify({ type: 'ANSWER', threadId }),
-          }),
-        },
+        { condition: buildAnswerInThreadCondition(threadId) },
       ],
     });
   }
@@ -117,6 +118,79 @@ export class AgentRunSuspensionService {
         AiExceptionCode.THREAD_AWAITING_ANSWER,
       );
     }
+  }
+
+  // a caller, such as a workflow step, waits on the answer to a call it posted, which a message
+  // would leave unanswered
+  async assertNoPostedCallAwaited({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    const isAwaited = await this.wakeUpRepository.exists(workspaceId, {
+      where: {
+        ownerType: Not('AGENT_RUN'),
+        condition: buildAnswerInThreadCondition(threadId),
+      },
+    });
+
+    if (isAwaited) {
+      throw new AiException(
+        'The conversation is waiting on an answer; answer it before sending a message',
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
+      );
+    }
+  }
+
+  async findSuspendedRun({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<Pick<PendingWakeUpEntity, 'id'> | null> {
+    return this.wakeUpRepository.findOne(workspaceId, {
+      where: { ownerType: 'AGENT_RUN', ownerId: threadId },
+      select: ['id'],
+    });
+  }
+
+  // a member who writes instead of answering moves on from the question, which ends the turn that asked it
+  async skipPendingQuestion({
+    workspaceId,
+    threadId,
+    streamId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    streamId: string;
+  }): Promise<void> {
+    await this.closePendingQuestion({
+      workspaceId,
+      threadId,
+      streamId,
+      turnStatus: AgentTurnStatus.COMPLETED,
+    });
+  }
+
+  // the run reads the member's message as it goes on, whatever it waited on
+  async resumeWithMessage({
+    workspaceId,
+    threadId,
+    wakeUpId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    wakeUpId: string;
+  }): Promise<void> {
+    await this.scheduleContinuation({
+      workspaceId,
+      threadId,
+      wakeUpId,
+      outcome: { type: 'MESSAGE_RECEIVED' },
+    });
   }
 
   // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it
@@ -354,11 +428,13 @@ export class AgentRunSuspensionService {
     threadId,
     toolCallId,
     streamId,
+    turnStatus = AgentTurnStatus.CANCELLED,
   }: {
     workspaceId: string;
     threadId: string;
     toolCallId?: string;
     streamId?: string;
+    turnStatus?: AgentTurnStatus.COMPLETED | AgentTurnStatus.CANCELLED;
   }): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: {
@@ -386,7 +462,7 @@ export class AgentRunSuspensionService {
       threadId,
       messageId,
       activeStreamId: streamId ?? null,
-      turnStatus: AgentTurnStatus.CANCELLED,
+      turnStatus,
     });
   }
 }

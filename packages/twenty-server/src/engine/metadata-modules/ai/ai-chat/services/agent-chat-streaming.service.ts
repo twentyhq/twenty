@@ -112,15 +112,20 @@ export class AgentChatStreamingService {
     const threadId = thread.id;
     const workspaceId = workspace.id;
 
-    const [, hasQueuedBacklog] = await Promise.all([
+    const [, hasQueuedBacklog, suspendedRun] = await Promise.all([
       this.settlePendingToolCallsBeforeSending({ thread, workspaceId }),
       this.agentChatService.hasQueuedMessages({ threadId, workspaceId }),
+      this.agentRunSuspensionService.findSuspendedRun({
+        workspaceId,
+        threadId,
+      }),
     ]);
 
     const streamId = generateId();
 
     const claimed =
       !hasQueuedBacklog &&
+      !isDefined(suspendedRun) &&
       (await this.streamRecoveryService.tryClaimStream({
         threadId,
         workspaceId,
@@ -138,7 +143,7 @@ export class AgentChatStreamingService {
         workspaceMemberId,
       });
 
-      if (hasQueuedBacklog) {
+      if (hasQueuedBacklog || isDefined(suspendedRun)) {
         await this.flushNextQueuedMessage({ threadId, workspaceId });
       }
 
@@ -442,23 +447,33 @@ export class AgentChatStreamingService {
       select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
-    // queued messages wait behind a pending tool call or a run that waits: they follow it rather than replace it
-    if (
-      !threadStatus ||
-      threadStatus.deletedAt ||
-      isDefined(threadStatus.pendingQuestionMessageId) ||
-      (await this.agentRunSuspensionService.isConversationWaiting({
-        workspaceId,
-        threadId,
-      }))
-    ) {
+    if (!threadStatus || threadStatus.deletedAt) {
       return;
     }
 
-    const queuedMessages = await this.agentChatService.getQueuedMessages({
-      threadId,
-      workspaceId,
-    });
+    const [queuedMessages, suspendedRun] = await Promise.all([
+      this.agentChatService.getQueuedMessages({ threadId, workspaceId }),
+      this.agentRunSuspensionService.findSuspendedRun({
+        workspaceId,
+        threadId,
+      }),
+    ]);
+
+    // a run that went on to ask something reads what was sent meanwhile, as a message sent now would skip its question
+    if (queuedMessages.length > 0 && isDefined(suspendedRun)) {
+      await this.agentRunSuspensionService.resumeWithMessage({
+        workspaceId,
+        threadId,
+        wakeUpId: suspendedRun.id,
+      });
+
+      return;
+    }
+
+    // queued messages wait behind a pending tool call: they follow the answer rather than replace it
+    if (isDefined(threadStatus.pendingQuestionMessageId)) {
+      return;
+    }
 
     let nextQueued: (typeof queuedMessages)[number] | undefined;
     let userWorkspaceId: string | undefined;
@@ -597,8 +612,8 @@ export class AgentChatStreamingService {
     );
   }
 
-  // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why.
-  // An answer holding the stream keeps them, and a chat message never closes calls a run or a caller waits on
+  // a message sent while an agent waits on a person closes its pending calls as skipped, so the model sees why.
+  // A call a caller such as a workflow step posted waits on its own answer, so it refuses the message
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
@@ -611,7 +626,7 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const messageId = thread.pendingQuestionMessageId;
 
-    await this.agentRunSuspensionService.assertConversationNotSuspended({
+    await this.agentRunSuspensionService.assertNoPostedCallAwaited({
       workspaceId,
       threadId: thread.id,
     });

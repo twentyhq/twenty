@@ -38,6 +38,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
 import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
 import { type AgentChatStreamClaim } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
@@ -76,6 +77,7 @@ export class AgentRunnerService {
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly turnStreamService: AgentTurnStreamService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
@@ -409,6 +411,14 @@ export class AgentRunnerService {
         outcome: outcome.type === 'ANSWERED' ? { type: 'CANCELLED' } : outcome,
       });
 
+      if (outcome.type === 'MESSAGE_RECEIVED' && isAwaitingAnswer) {
+        await this.agentRunSuspensionService.skipPendingQuestion({
+          workspaceId,
+          threadId,
+          streamId: stream.claim.streamId,
+        });
+      }
+
       const agent = await this.findAgentOrThrow({
         workspaceId,
         agentId: runSpec.agentId,
@@ -494,23 +504,36 @@ export class AgentRunnerService {
       });
     }
 
-    const priorMessages = isCreated
-      ? []
-      : await this.conversationReaderService.loadMessages({
-          workspaceId,
-          threadId,
-          actor: executionContext.conversationActor,
-        });
+    const { turnId, promptMessageIds, hasTakenQueuedMessages } =
+      await this.agentRunConversationService.openTurn({
+        workspaceId,
+        threadId,
+        agentId: agent.id,
+        senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
+        senderApplicationId: prompt?.senderApplicationId ?? null,
+        createdBy: executionContext.turnCreatedBy,
+        messages: prompt?.messages ?? [],
+      });
 
-    const turnId = await this.agentRunConversationService.openTurn({
-      workspaceId,
-      threadId,
-      agentId: agent.id,
-      senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
-      senderApplicationId: prompt?.senderApplicationId ?? null,
-      createdBy: executionContext.turnCreatedBy,
-      messages: prompt?.messages ?? [],
-    });
+    if (hasTakenQueuedMessages) {
+      await this.eventPublisherService.publish({
+        workspaceId,
+        threadId,
+        event: { type: 'queue-updated' },
+      });
+    }
+
+    // read once the turn is open, so it holds the messages the turn took; a new conversation has none unless a member wrote first
+    const priorMessages =
+      isCreated && !hasTakenQueuedMessages
+        ? []
+        : (
+            await this.conversationReaderService.loadMessages({
+              workspaceId,
+              threadId,
+              actor: executionContext.conversationActor,
+            })
+          ).filter(({ id }) => !promptMessageIds.includes(id));
 
     const startedAtMs = Date.now();
     const turnInput = {
