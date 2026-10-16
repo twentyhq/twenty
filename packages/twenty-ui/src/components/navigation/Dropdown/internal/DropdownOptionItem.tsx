@@ -1,5 +1,5 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
-import { useId } from 'react';
+import { useContext, useId } from 'react';
 import { clsx } from 'clsx';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
@@ -7,15 +7,22 @@ import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
-import { DropdownItemOwner } from './DropdownItemOwner';
+import { DropdownOptionItemOwner } from './DropdownOptionItemOwner';
+import { DropdownSelectionContext } from './DropdownSelectionContext';
+import { createDropdownSelectionEventDetails } from './createDropdownSelectionEventDetails';
+import { getDropdownOptionItemRole } from './getDropdownOptionItemRole';
+import { isDropdownOptionItemSelected } from './isDropdownOptionItemSelected';
+import { dropdownItemActivation } from './dropdownItemActivation';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
+import { getDropdownItemExplicitId } from './getDropdownItemExplicitId';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
 
 export const DropdownOptionItem = ({
-  selected,
+  value,
+  selected: standaloneSelected,
   indicator,
   onSelect,
   closeOnSelect,
@@ -34,26 +41,44 @@ export const DropdownOptionItem = ({
   disabled = false,
   nativeButton = !isDefined(render),
   onClick,
-  onFocus,
   id,
   ...props
 }: DropdownOptionItemProps) => {
-  const { type, multiple, closeTree, searchTargetId } = useDropdownContext();
+  const {
+    type,
+    multiple: standaloneMultiple,
+    closeTree,
+    searchTargetId,
+  } = useDropdownContext();
+  const selection = useContext(DropdownSelectionContext);
+  const hasSelectionOwner = isDefined(selection) && isDefined(value);
+  const multiple = hasSelectionOwner ? selection.multiple : standaloneMultiple;
+  const selected = isDropdownOptionItemSelected({
+    selection,
+    value,
+    standaloneSelected,
+  });
   const isMenu = type === 'menu';
+  const isPickerOption = type === 'picker' && hasSelectionOwner;
   const hasSelectionState = isDefined(selected);
   const isPressableOption =
-    !isMenu && (nativeButton || props.role === 'button');
+    !isMenu && !isPickerOption && (nativeButton || props.role === 'button');
   const isCurrentOption =
-    !isMenu && !isPressableOption && hasSelectionState && selected;
-  const selectableMenuOptionRole = multiple
-    ? 'menuitemcheckbox'
-    : 'menuitemradio';
-  const menuOptionRole = hasSelectionState
-    ? selectableMenuOptionRole
-    : 'menuitem';
+    !isMenu &&
+    !isPickerOption &&
+    !isPressableOption &&
+    hasSelectionState &&
+    selected;
+  const role = getDropdownOptionItemRole({
+    type,
+    hasSelectionState,
+    hasSelectionOwner,
+    multiple,
+    role: props.role,
+  });
   const selectionIndicator = multiple ? 'checkbox' : 'check';
   const generatedId = useId();
-  const itemId = id ?? generatedId;
+  const itemId = getDropdownItemExplicitId({ id, render }) ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
   const hasActions = isRenderableSlot(actions);
@@ -65,21 +90,19 @@ export const DropdownOptionItem = ({
 
   const item = (
     <ButtonPrimitive
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...props}
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={isMenu ? menuOptionRole : props.role}
+      role={role}
       aria-checked={isMenu && hasSelectionState ? selected : undefined}
+      aria-selected={isPickerOption ? selected : undefined}
       aria-pressed={
         isPressableOption && hasSelectionState ? selected : undefined
       }
       aria-current={isCurrentOption ? 'true' : undefined}
       tabIndex={itemFocus.tabIndex}
-      onFocus={(event) => {
-        itemFocus.activate();
-        onFocus?.(event);
-      }}
       data-dropdown-item=""
       data-dropdown-option-item=""
       onClick={(event) => {
@@ -89,9 +112,32 @@ export const DropdownOptionItem = ({
           return;
         }
 
-        onSelect?.();
+        const eventDetails = createDropdownSelectionEventDetails({
+          event: dropdownItemActivation.getEvent({
+            item: event.currentTarget,
+            event: event.nativeEvent,
+          }),
+          trigger: event.currentTarget,
+        });
 
-        if (closeOnSelect ?? !multiple) {
+        onSelect?.(eventDetails);
+
+        if (eventDetails.isCanceled || event.defaultPrevented) {
+          return;
+        }
+
+        if (hasSelectionOwner) {
+          selection.select({ value, eventDetails });
+        }
+
+        if (eventDetails.isCanceled || event.defaultPrevented) {
+          return;
+        }
+
+        if (
+          closeOnSelect ??
+          (hasSelectionOwner ? selection.closeOnSelect : !multiple)
+        ) {
           closeTree();
         }
       }}
@@ -103,9 +149,14 @@ export const DropdownOptionItem = ({
 
         return (
           <ListItem
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...renderProps}
             render={
-              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+              <DropdownOptionItemOwner
+                render={render}
+                disabled={nativeDisabled}
+                state={{ selected: selected ?? false, multiple, disabled }}
+              />
             }
             className={clsx(
               renderProps.className,

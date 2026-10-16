@@ -11,7 +11,9 @@ import {
   IconUserCircle,
   IconWebhook,
 } from 'twenty-ui/icon';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
+// Source names are stored in saved filters; label descriptors provide localized display text.
 export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
   id: string;
   name: string;
@@ -21,54 +23,54 @@ export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
 }> = [
   {
     id: 'MANUAL',
-    name: 'User',
+    name: doNotTranslate('User'),
     label: msg`User`,
     AvatarIcon: IconUserCircle,
     isIconInverted: true,
   },
   {
     id: 'IMPORT',
-    name: 'Import',
+    name: doNotTranslate('Import'),
     label: msg`Import`,
     AvatarIcon: IconCsv,
     isIconInverted: true,
   },
   {
     id: 'API',
-    name: 'Api',
+    name: doNotTranslate('Api'),
     label: msg`API`,
     AvatarIcon: IconApi,
     isIconInverted: true,
   },
   {
     id: 'EMAIL',
-    name: 'Email',
+    name: doNotTranslate('Email'),
     label: msg`Email`,
     AvatarIcon: IconGmail,
   },
   {
     id: 'CALENDAR',
-    name: 'Calendar',
+    name: doNotTranslate('Calendar'),
     label: msg`Calendar`,
     AvatarIcon: IconGoogleCalendar,
   },
   {
     id: 'WORKFLOW',
-    name: 'Workflow',
+    name: doNotTranslate('Workflow'),
     label: msg`Workflow`,
     AvatarIcon: IconSettingsAutomation,
     isIconInverted: true,
   },
   {
     id: 'WEBHOOK',
-    name: 'Webhook',
+    name: doNotTranslate('Webhook'),
     label: msg`Webhook`,
     AvatarIcon: IconWebhook,
     isIconInverted: true,
   },
   {
     id: 'SYSTEM',
-    name: 'System',
+    name: doNotTranslate('System'),
     label: msg`System`,
     AvatarIcon: IconRobot,
     isIconInverted: true,

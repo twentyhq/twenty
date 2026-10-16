@@ -54,11 +54,17 @@
     "lint": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["twenty-oxlint-rules:build", "twenty-shared:build"],
+      "dependsOn": [
+        "twenty-oxlint-rules:build",
+        "twenty-shared:build",
+        "lint:unlocalized-strings"
+      ],
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
         "{projectRoot}/tsconfig*.json",
         "{workspaceRoot}/tsconfig.base.json",
+        "{projectRoot}/package.json",
+        "{workspaceRoot}/yarn.lock",
         "{projectRoot}/.oxlintrc.json",
         "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
       ],
@@ -70,6 +76,22 @@
         "fix": {
           "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ && npx oxfmt src/"
         }
+      }
+    },
+    "lint:unlocalized-strings": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/.oxlintrc.i18n.json",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs",
+        "{projectRoot}/package.json",
+        "{workspaceRoot}/yarn.lock"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node ../twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs . src"
       }
     },
     "lint:i18n": {
@@ -87,7 +109,7 @@
     },
     "lint:diff-with-main": {
       "executor": "nx:run-commands",
-      "dependsOn": ["twenty-oxlint-rules:build"],
+      "dependsOn": ["twenty-oxlint-rules:build", "lint:unlocalized-strings"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-front --configuration=fix' && false)))"

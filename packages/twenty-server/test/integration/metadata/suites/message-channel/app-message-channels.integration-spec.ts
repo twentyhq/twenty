@@ -197,25 +197,25 @@ describe('app message channels API (e2e)', () => {
     id,
     applicationId,
     connectionProviderId,
-    visibility,
+    scope,
     userWorkspaceId,
   }: {
     id: string;
     applicationId: string;
     connectionProviderId: string;
-    visibility: 'user' | 'workspace';
+    scope: 'USER' | 'WORKSPACE';
     userWorkspaceId: string;
   }): Promise<void> => {
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
-         (id, handle, provider, visibility, "workspaceId", "userWorkspaceId",
+         (id, handle, provider, scope, "workspaceId", "userWorkspaceId",
           "applicationId", "connectionProviderId")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         id,
         CHANNEL_HANDLE,
         ConnectedAccountProvider.APP,
-        visibility,
+        scope,
         SEED_APPLE_WORKSPACE_ID,
         userWorkspaceId,
         applicationId,
@@ -371,7 +371,7 @@ describe('app message channels API (e2e)', () => {
       id: ownConnectionId,
       applicationId: owningApplicationDbId,
       connectionProviderId: owningProviderDbId,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       userWorkspaceId: adminUserWorkspaceId,
     });
 
@@ -379,7 +379,7 @@ describe('app message channels API (e2e)', () => {
       id: otherAppConnectionId,
       applicationId: otherApplicationDbId,
       connectionProviderId: otherProviderDbId,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       userWorkspaceId: adminUserWorkspaceId,
     });
 
@@ -387,7 +387,7 @@ describe('app message channels API (e2e)', () => {
       id: foreignMemberConnectionId,
       applicationId: owningApplicationDbId,
       connectionProviderId: owningProviderDbId,
-      visibility: 'user',
+      scope: 'USER',
       userWorkspaceId: uuidv4(),
     });
   }, 180000);

@@ -17,9 +17,7 @@ export type ApplicationWithVariable = {
   variableKey: string;
 };
 
-// Application settings components need APPLICATIONS by default, and saving a
-// member's own value of a user variable needs CONNECTED_ACCOUNTS; tests can
-// override the permissions to exercise narrower access.
+// USER-scoped fixture apps also get CONNECTED_ACCOUNTS so their tokens can save member values
 export const setupApplicationWithVariable = async ({
   name,
   variableKey,

@@ -1,30 +1,25 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
 import { fromMorphOrRelationFlatFieldMetadataToRelationDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-or-relation-flat-field-metadata-to-relation-dto.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { pickMorphRelationRepresentative } from 'src/engine/metadata-modules/flat-field-metadata/utils/pick-morph-relation-representative.util';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
 type ResolveRelationFromFlatFieldMetadataArgs = {
   sourceFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  isMorphRelationHeadEnabled: boolean;
 };
 
 export const resolveRelationFromFlatFieldMetadata = ({
   sourceFlatFieldMetadata,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
-  isMorphRelationHeadEnabled,
 }: ResolveRelationFromFlatFieldMetadataArgs): RelationDTO | null => {
   const sourceFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityId: sourceFlatFieldMetadata.objectMetadataId,
@@ -46,53 +41,38 @@ export const resolveRelationFromFlatFieldMetadata = ({
   });
 
   if (
-    isFlatFieldMetadataOfType(
+    !isFlatFieldMetadataOfType(
       targetFlatFieldMetadata,
       FieldMetadataType.MORPH_RELATION,
     )
   ) {
-    const morphNameFromMorphFieldMetadataName =
-      getMorphNameFromMorphFieldMetadataName({
-        morphRelationFlatFieldMetadata: targetFlatFieldMetadata,
-        nameSingular: sourceFlatObjectMetadata.nameSingular,
-        namePlural: sourceFlatObjectMetadata.namePlural,
-      });
-
-    const allMorphFlatFieldMetadatas = [
-      targetFlatFieldMetadata,
-      ...findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
-        flatFieldMetadata: targetFlatFieldMetadata,
-        flatFieldMetadataMaps,
-        flatObjectMetadata: targetFlatObjectMetadata,
-      }),
-    ];
-
-    const representativeMorphField = pickMorphRelationRepresentative({
-      morphFlatFieldMetadatas: allMorphFlatFieldMetadatas,
-      isMorphRelationHeadEnabled,
-    });
-
-    if (!isDefined(representativeMorphField)) {
-      return null;
-    }
-
     return fromMorphOrRelationFlatFieldMetadataToRelationDto({
       sourceFlatFieldMetadata,
-      sourceFlatObjectMetadata,
-      targetFlatFieldMetadata: isMorphRelationHead(representativeMorphField)
-        ? representativeMorphField
-        : {
-            ...representativeMorphField,
-            name: morphNameFromMorphFieldMetadataName,
-          },
+      targetFlatFieldMetadata,
       targetFlatObjectMetadata,
+      sourceFlatObjectMetadata,
     });
+  }
+
+  const morphRelationHead =
+    flatFieldMetadataMaps.byUniversalIdentifier[
+      targetFlatFieldMetadata.morphId
+    ];
+
+  if (
+    !isDefined(morphRelationHead) ||
+    !isFlatFieldMetadataOfType(
+      morphRelationHead,
+      FieldMetadataType.MORPH_RELATION,
+    )
+  ) {
+    return null;
   }
 
   return fromMorphOrRelationFlatFieldMetadataToRelationDto({
     sourceFlatFieldMetadata,
-    targetFlatFieldMetadata,
-    targetFlatObjectMetadata,
     sourceFlatObjectMetadata,
+    targetFlatFieldMetadata: morphRelationHead,
+    targetFlatObjectMetadata,
   });
 };

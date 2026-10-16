@@ -259,6 +259,33 @@ describe('AgentRunService', () => {
     });
   });
 
+  it('keeps the output format the call asks for with the run', async () => {
+    const { service, agentRunnerService } = buildService();
+    const responseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    await run(service, { input: userInput('Summarize'), responseFormat });
+
+    expect(runInput(agentRunnerService).spec).toMatchObject({ responseFormat });
+  });
+
+  it('refuses an output format that is not one', async () => {
+    const { service, agentRunnerService } = buildService();
+
+    await expect(
+      run(service, {
+        input: userInput('Summarize'),
+        responseFormat: { type: 'json', schema: { properties: 'nope' } },
+      }),
+    ).rejects.toThrow('Invalid response format');
+    expect(agentRunnerService.run).not.toHaveBeenCalled();
+  });
+
   it('records the member who called without an application as the sender', async () => {
     const { service, agentRunnerService } = buildService();
 

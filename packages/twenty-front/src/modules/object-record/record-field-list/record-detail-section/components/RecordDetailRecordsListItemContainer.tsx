@@ -5,7 +5,6 @@ import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled.div<{
   noHorizontalPadding?: boolean;
-  isDropdownOpen?: boolean;
 }>`
   align-items: center;
   display: flex;
@@ -18,30 +17,34 @@ const StyledListItem = styled.div<{
     noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
 
   .displayOnHover {
-    opacity: ${({ isDropdownOpen }) => (isDropdownOpen ? 1 : 0)};
-    pointer-events: ${({ isDropdownOpen }) =>
-      isDropdownOpen ? 'auto' : 'none'};
+    opacity: 0;
+    pointer-events: none;
     transition: opacity
       calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
   }
 
   &:hover .displayOnHover,
-  &:focus-within .displayOnHover {
+  &:focus-within .displayOnHover,
+  &:has([data-popup-open]) .displayOnHover {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .displayOnHover {
+      transition: none;
+    }
   }
 `;
 
 type RecordDetailRecordsListItemContainerProps = {
   children: React.ReactNode;
   className?: string;
-  isDropdownOpen?: boolean;
 };
 
 export const RecordDetailRecordsListItemContainer = ({
   children,
   className,
-  isDropdownOpen,
 }: RecordDetailRecordsListItemContainerProps) => {
   const layoutRenderingContext = useLayoutRenderingContext();
 
@@ -52,7 +55,6 @@ export const RecordDetailRecordsListItemContainer = ({
     <StyledListItem
       className={className}
       noHorizontalPadding={isInRecordPageLayout}
-      isDropdownOpen={isDropdownOpen}
     >
       {children}
     </StyledListItem>

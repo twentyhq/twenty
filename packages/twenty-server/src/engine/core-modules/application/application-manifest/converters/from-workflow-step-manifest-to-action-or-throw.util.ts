@@ -43,15 +43,11 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
       const { agentUniversalIdentifier, ...rest } = step.input;
       input = {
         ...rest,
-        ...(isDefined(agentUniversalIdentifier)
-          ? {
-              agentId: resolve(
-                references.agentIdByUniversalIdentifier,
-                agentUniversalIdentifier,
-                'application agent',
-              ),
-            }
-          : {}),
+        agentId: resolve(
+          references.agentIdByUniversalIdentifier,
+          agentUniversalIdentifier,
+          'application agent',
+        ),
       };
       break;
     }

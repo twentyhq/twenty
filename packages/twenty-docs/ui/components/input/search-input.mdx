@@ -8,31 +8,32 @@ import SearchInputReference from '/snippets/ui/generated/components/input/search
 
 `SearchInput` supplies a search icon and text input. `onValueChange` receives the new string; `onChange` receives the native React change event. Filtering, fetching, and debouncing belong to your application.
 
+<StoryEmbed
+  storyId="ui-input-searchinput--display"
+  title="SearchInput example"
+  height={110}
+/>
+
+## Usage
+
 ```tsx
 import { useState } from 'react';
 import { SearchInput } from 'twenty-ui/components/input';
 
-export const PeopleSearch = () => {
-  const [search, setSearch] = useState('');
+export const RecordSearch = () => {
+  const [value, setValue] = useState('');
 
   return (
     <SearchInput
-      aria-label="Search people"
-      placeholder="Name or email"
-      value={search}
-      onValueChange={setSearch}
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search..."
     />
   );
 };
 ```
 
 Use `aria-label` or `aria-labelledby` for an accessible name.
-
-<StoryEmbed
-  storyId="ui-input-searchinput--default"
-  title="SearchInput example"
-  height={280}
-/>
 
 Native input props, `className`, `style`, and `ref` apply to the input itself. The shared `InputGroup` owns the search adornment and focus treatment. The wrapper that lays out the field and its actions takes no props; place `SearchInput` in your own container to size or position it. Use `size="sm"` for a compact search field.
 

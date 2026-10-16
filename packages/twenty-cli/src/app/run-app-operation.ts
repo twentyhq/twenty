@@ -69,9 +69,9 @@ const runAppOperation = async <TData>({
     warn: output.warn,
   });
 
-  output.progress(
-    `${PROGRESS_VERBS[operation]} ${project.name} with twenty ${CLI_VERSION}…`,
-  );
+  output.progress({
+    message: `${PROGRESS_VERBS[operation]} ${project.name} with twenty ${CLI_VERSION}…`,
+  });
 
   const startedAt = performance.now();
   const readBuildResult = ({
@@ -89,7 +89,7 @@ const runAppOperation = async <TData>({
 
     if (outputMode === 'human') {
       for (const diagnostic of diagnostics) {
-        output.progress(formatToolingDiagnostic(diagnostic));
+        output.progress({ message: formatToolingDiagnostic(diagnostic) });
       }
     }
 

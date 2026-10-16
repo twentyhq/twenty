@@ -9,7 +9,11 @@ export const TextBlockStyle = Extension.create({
   addGlobalAttributes() {
     return [
       {
-        types: [TIPTAP_NODE_TYPES.PARAGRAPH, TIPTAP_NODE_TYPES.HEADING],
+        types: [
+          TIPTAP_NODE_TYPES.PARAGRAPH,
+          TIPTAP_NODE_TYPES.HEADING,
+          TIPTAP_NODE_TYPES.BLOCKQUOTE,
+        ],
         attributes: {
           style: {
             default: null,

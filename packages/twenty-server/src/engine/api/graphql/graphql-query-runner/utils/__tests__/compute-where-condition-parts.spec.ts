@@ -126,4 +126,50 @@ describe('computeWhereConditionParts', () => {
       },
     );
   });
+
+  describe('DATE_TIME precision', () => {
+    it.each([
+      '2020-01-01 00:00:00.1239+00',
+      '2020-01-01T00:00:00.123900Z',
+      '2020-01-01T00:00:00.123Z',
+    ])('uses exact cursor comparisons for %s', (value) => {
+      const condition = {
+        objectNameSingular: 'person',
+        key: 'createdAt',
+        value,
+        fieldMetadataType: FieldMetadataType.DATE_TIME,
+      };
+
+      expect(
+        computeWhereConditionParts({
+          ...condition,
+          operator: 'gtStrict',
+        }),
+      ).toEqual({
+        sql: `"person"."createdAt" > :createdAt0000000000`,
+        params: { createdAt0000000000: value },
+      });
+      expect(
+        computeWhereConditionParts({
+          ...condition,
+          operator: 'eqStrict',
+        }),
+      ).toEqual({
+        sql: `"person"."createdAt" = :createdAt0000000000`,
+        params: { createdAt0000000000: value },
+      });
+      expect(
+        computeWhereConditionParts({ ...condition, operator: 'gt' }),
+      ).toEqual({
+        sql: `"person"."createdAt" >= :createdAt0000000000::timestamptz + interval '1 millisecond'`,
+        params: { createdAt0000000000: value },
+      });
+      expect(
+        computeWhereConditionParts({ ...condition, operator: 'eq' }),
+      ).toEqual({
+        sql: `("person"."createdAt" >= :createdAt0000000000 AND "person"."createdAt" < :createdAt0000000000::timestamptz + interval '1 millisecond')`,
+        params: { createdAt0000000000: value },
+      });
+    });
+  });
 });

@@ -43,7 +43,7 @@ export const useMergeRecordsActions = ({
       });
 
       if (!mergedRecord) {
-        throw new Error('Failed to merge records');
+        throw new Error(t`Failed to merge records`);
       }
 
       const recordCount = selectedRecords.length;

@@ -237,6 +237,66 @@ export class AgentChatStreamingService {
     );
   }
 
+  saveMessageWithoutReply({
+    thread,
+    userWorkspaceId,
+    workspaceMemberId,
+    workspace,
+    text,
+    messageId,
+    fileAttachments,
+  }: Pick<
+    StreamAgentChatOptions,
+    | 'thread'
+    | 'userWorkspaceId'
+    | 'workspaceMemberId'
+    | 'workspace'
+    | 'text'
+    | 'messageId'
+    | 'fileAttachments'
+  >): Promise<{ messageId: string }> {
+    const threadId = thread.id;
+    const workspaceId = workspace.id;
+
+    return this.agentRunConversationService.withThreadLockForMessage({
+      workspaceId,
+      threadId,
+      work: async () => {
+        const fileParts = await this.buildFilePartsFromAttachments(
+          fileAttachments,
+          workspaceId,
+        );
+
+        const savedMessage = await this.agentChatService.addMessage({
+          threadId,
+          userWorkspaceId,
+          id: messageId,
+          uiMessage: {
+            role: AgentMessageRole.USER,
+            parts: [{ type: 'text' as const, text }, ...fileParts],
+          },
+          turnStatus: AgentTurnStatus.COMPLETED,
+          workspaceId,
+        });
+
+        await this.eventPublisherService.publish({
+          workspaceId,
+          threadId,
+          event: { type: 'message-added', messageId: savedMessage.id },
+        });
+
+        await this.threadService.notifyThreadActivityUpdated({
+          threadId,
+          workspaceMemberId,
+          workspaceId,
+          text,
+        });
+
+        return { messageId: savedMessage.id };
+      },
+    });
+  }
+
   // the agent speaks first, from a context in place of a user message
   async startOpeningTurn({
     thread,

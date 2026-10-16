@@ -1,9 +1,11 @@
 import { forwardRef } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { MenuItemSuggestion } from 'twenty-ui/components/navigation';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';
 import { groupMentionSearchResultsBySection } from '@/mention/utils/groupMentionSearchResultsBySection';
+import { isTeammateMentionSearchResult } from '@/mention/utils/isTeammateMentionSearchResult';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -12,7 +14,9 @@ const getItemKey = (item: MentionSearchResult) =>
   `${item.objectNameSingular}-${item.recordId}`;
 
 const getItemSection = (item: MentionSearchResult) => ({
-  key: item.objectNameSingular,
+  key: isTeammateMentionSearchResult(item)
+    ? CoreObjectNameSingular.WorkspaceMember
+    : item.objectNameSingular,
   label: item.objectLabelPlural,
 });
 

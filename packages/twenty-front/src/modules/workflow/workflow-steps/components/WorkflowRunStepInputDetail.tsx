@@ -9,6 +9,7 @@ import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWo
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type GetJsonNodeHighlighting,
   JsonTree,
@@ -49,7 +50,9 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   });
 
   if (stepDefinition?.type !== 'action') {
-    throw new Error('The input tab must be rendered with an action step.');
+    throw new Error(
+      doNotTranslate('The input tab must be rendered with an action step.'),
+    );
   }
 
   const variablesUsedInStep = getWorkflowVariablesUsedInStep({
@@ -70,7 +73,11 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   });
 
   if (stepContext.length === 0) {
-    throw new Error('The input tab must be rendered with a non-empty context.');
+    throw new Error(
+      doNotTranslate(
+        'The input tab must be rendered with a non-empty context.',
+      ),
+    );
   }
 
   const previousStepId = stepContext[stepContext.length - 1].id;

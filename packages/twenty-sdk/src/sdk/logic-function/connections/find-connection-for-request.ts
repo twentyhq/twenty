@@ -7,7 +7,7 @@ export const findConnectionForRequest = (
   if (event.userWorkspaceId !== null) {
     const personal = connections.find(
       (connection) =>
-        connection.visibility === 'user' &&
+        connection.scope === 'USER' &&
         connection.userWorkspaceId === event.userWorkspaceId,
     );
 
@@ -17,7 +17,7 @@ export const findConnectionForRequest = (
   }
 
   const workspaceShared = connections.find(
-    (connection) => connection.visibility === 'workspace',
+    (connection) => connection.scope === 'WORKSPACE',
   );
 
   return workspaceShared ?? null;

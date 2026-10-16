@@ -42,6 +42,10 @@ describe('getLogoUrlFromDomainName', () => {
     expect(getLogoUrlFromDomainName('apple.com')).toBe(
       'https://twenty-icons.com/apple.com',
     );
+
+    expect(getLogoUrlFromDomainName('https://www.snowww.io')).toBe(
+      'https://twenty-icons.com/snowww.io',
+    );
   });
 
   test('should handle undefined input', () => {

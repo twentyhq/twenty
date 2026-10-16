@@ -29,6 +29,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -54,7 +55,9 @@ export const WorkspaceSection = () => {
     setSelectedNavigationMenuItemIdInEditMode,
   ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
   const navigate = useNavigate();
-  const { openNavigationSection } = useNavigationSection('Workspace');
+  const { openNavigationSection } = useNavigationSection(
+    doNotTranslate('Workspace'),
+  );
 
   const { t } = useLingui();
 

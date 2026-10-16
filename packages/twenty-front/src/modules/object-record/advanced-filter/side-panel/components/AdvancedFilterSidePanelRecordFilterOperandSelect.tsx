@@ -8,6 +8,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type AdvancedFilterSidePanelRecordFilterOperandSelectProps = {
   recordFilterId: string;
@@ -37,7 +38,9 @@ export const AdvancedFilterSidePanelRecordFilterOperandSelect = ({
     : [];
 
   const shouldUseUTCTimeZone = isWorkflowFindRecords === true;
-  const timeZoneAbbreviation = shouldUseUTCTimeZone ? 'UTC' : undefined;
+  const timeZoneAbbreviation = shouldUseUTCTimeZone
+    ? doNotTranslate('UTC')
+    : undefined;
 
   if (isDisabled === true) {
     return (

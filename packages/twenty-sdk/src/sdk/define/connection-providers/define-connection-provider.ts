@@ -1,7 +1,10 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
-import { type ConnectionProviderManifest } from 'twenty-shared/application';
+import {
+  CONNECTION_PROVIDER_SCOPES,
+  type ConnectionProviderManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
@@ -61,6 +64,15 @@ export const defineConnectionProvider: DefineEntity<
   } else if (!(SUPPORTED_TYPES as readonly string[]).includes(config.type)) {
     errors.push(
       `Connection provider type "${config.type}" is not supported. Supported types: ${SUPPORTED_TYPES.join(', ')}.`,
+    );
+  }
+
+  if (
+    isDefined(config.scope) &&
+    !CONNECTION_PROVIDER_SCOPES.includes(config.scope)
+  ) {
+    errors.push(
+      `Connection provider scope must be one of ${CONNECTION_PROVIDER_SCOPES.join(', ')}`,
     );
   }
 

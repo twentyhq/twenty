@@ -23,6 +23,13 @@ const meta: Meta<typeof SelectExample> = {
 export default meta;
 type Story = StoryObj<typeof SelectExample>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 320 } },
+  args: { defaultValue: 'normal' },
+  render: (args) => <SelectDisplayExample {...args} />,
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240, height: 200 } },
@@ -46,11 +53,45 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  parameters: Default.parameters,
-  args: Default.args,
-};
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+const SelectDisplayExample = ({
+  size,
+  container,
+  side,
+  sideOffset = 8,
+  align = 'start',
+  alignItemWithTrigger = false,
+  ...props
+}: SelectExampleProps) => (
+  <Select.Root name="priority" {...props} items={PRIORITIES}>
+    <Select.Trigger size={size} aria-label="Priority">
+      <Select.Value placeholder="Choose a priority" />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal container={container}>
+      <Select.Positioner
+        side={side}
+        align={align}
+        sideOffset={sideOffset}
+        alignItemWithTrigger={alignItemWithTrigger}
+      >
+        <Select.Popup>
+          {PRIORITIES.map(({ value, label }) => (
+            <Select.Item key={value} value={value}>
+              <Select.ItemText>{label}</Select.ItemText>
+              <Select.ItemIndicator />
+            </Select.Item>
+          ))}
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
 
 export const Placeholder: Story = {
   ...Default,

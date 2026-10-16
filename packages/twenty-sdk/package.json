@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.48.0",
+  "version": "2.49.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -115,7 +115,7 @@
   "engines": {
     "node": "^24.5.0",
     "yarn": "^4.0.2",
-    "twenty": ">=2.48.0"
+    "twenty": ">=2.49.0"
   },
   "typesVersions": {
     "*": {

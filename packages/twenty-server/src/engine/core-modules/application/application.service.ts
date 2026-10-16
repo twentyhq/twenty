@@ -104,7 +104,7 @@ export class ApplicationService {
         workspace?: never;
       }
     | {
-        workspace: WorkspaceEntity;
+        workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
         workspaceId?: never;
       }) {
     const workspace = isDefined(workspaceInput)

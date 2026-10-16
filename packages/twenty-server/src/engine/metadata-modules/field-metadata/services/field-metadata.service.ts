@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -40,7 +39,6 @@ export class FieldMetadataService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async findManyWithinWorkspace({
@@ -467,12 +465,6 @@ export class FieldMetadataService {
         },
       );
 
-    const isMorphRelationHeadEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
-        workspaceId,
-      );
-
     return findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
       {
         universalIdentifiers: allTranspiledTranspilationInputs.map(
@@ -481,7 +473,6 @@ export class FieldMetadataService {
               flatFieldMetadatas: [firstCreatedFlatFieldMetadata],
             },
           }) =>
-            isMorphRelationHeadEnabled &&
             firstCreatedFlatFieldMetadata.type ===
               FieldMetadataType.MORPH_RELATION &&
             isDefined(firstCreatedFlatFieldMetadata.morphId)

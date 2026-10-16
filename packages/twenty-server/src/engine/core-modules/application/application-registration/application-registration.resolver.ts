@@ -243,7 +243,7 @@ export class ApplicationRegistrationResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ): Promise<CreateApplicationRegistrationDTO> {
-    return this.applicationRegistrationService.create({
+    return this.applicationRegistrationService.createWithClientSecret({
       input,
       ownerWorkspaceId: workspaceId,
       createdByUserId: user?.id ?? null,
@@ -320,8 +320,10 @@ export class ApplicationRegistrationResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-    SettingsPermissionGuard(PermissionFlagType.ROLES),
+    SettingsPermissionGuard([
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      PermissionFlagType.ROLES,
+    ]),
     ApplicationTargetGuard,
   )
   @Mutation(() => RotateClientSecretDTO)
