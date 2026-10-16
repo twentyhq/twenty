@@ -50,6 +50,22 @@ const findSuspensions = (callerType: string, agentId: string) =>
     [callerType, agentId],
   );
 
+// a run saves its wake-up just after its turn stops running
+const findSuspensionEventually = async (
+  callerType: string,
+  agentId: string,
+) => {
+  let suspensions: Awaited<ReturnType<typeof findSuspensions>> = [];
+
+  await expectEventually(async () => {
+    suspensions = await findSuspensions(callerType, agentId);
+
+    expect(suspensions).toHaveLength(1);
+  });
+
+  return suspensions[0];
+};
+
 const findWaitCallStatus = async (threadId: string) => {
   const [part] = await global.testDataSource.query(
     `SELECT part."toolOutput"->'result'->>'status' AS status FROM "${schema}"."agentMessagePart" part
@@ -154,7 +170,7 @@ describe('agent runs that wait (integration)', () => {
 
     await runTrigger();
 
-    const [suspension] = await findSuspensions('AGENT_TRIGGER', agentId);
+    const suspension = await findSuspensionEventually('AGENT_TRIGGER', agentId);
 
     expect(suspension).toMatchObject({
       ownerType: 'AGENT_RUN',
@@ -201,7 +217,7 @@ describe('agent runs that wait (integration)', () => {
 
     await runTrigger();
 
-    const [{ id: wakeUpId, threadId }] = await findSuspensions(
+    const { id: wakeUpId, threadId } = await findSuspensionEventually(
       'AGENT_TRIGGER',
       agentId,
     );
