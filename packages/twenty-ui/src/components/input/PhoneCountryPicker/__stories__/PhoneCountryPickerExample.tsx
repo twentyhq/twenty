@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { themeCssVariables } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { PhoneCountryPicker } from '../PhoneCountryPicker';
@@ -31,7 +32,14 @@ export const PhoneCountryPickerExample = ({
   const country = countries.find((choice) => choice.value === value);
 
   return (
-    <Text style={{ display: 'grid', gap: 8, justifyItems: 'start' }}>
+    <Text
+      style={{
+        display: 'grid',
+        alignContent: 'start',
+        gap: 8,
+        justifyItems: 'start',
+      }}
+    >
       <Text>{label}</Text>
       <Dropdown.Root type="picker">
         <PhoneCountryPicker.Trigger
@@ -52,7 +60,11 @@ export const PhoneCountryPickerExample = ({
           />
         </Dropdown.Content>
       </Dropdown.Root>
-      <Text role="status" aria-label={`${label} selection`}>
+      <Text
+        role="status"
+        aria-label={`${label} selection`}
+        style={{ color: themeCssVariables.font.color.secondary, fontSize: 12 }}
+      >
         {isDefined(country)
           ? `${country.label} (+${country.callingCode})`
           : 'International'}

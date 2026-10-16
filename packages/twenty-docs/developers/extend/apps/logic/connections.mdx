@@ -12,7 +12,7 @@ Today only OAuth 2.0 is supported. Future credential types (personal access toke
 
 <Accordion title="defineConnectionProvider" description="Declare how your app's connections are obtained">
 
-A connection provider describes the OAuth handshake your app needs. The user clicks "Add connection" in your app's settings, completes the provider's consent screen, and a `ConnectedAccount` row is created in their workspace.
+A connection provider describes the OAuth handshake your app needs. For a `WORKSPACE` provider (the default), a member clicks "Add connection" in your app's settings, completes the provider's consent screen, and a `ConnectedAccount` row is created in their workspace. See "Workspace or personal connections" for `USER` providers.
 
 A working setup needs **two files** — the connection provider, and a matching `serverVariables` declaration on `defineApplication` that holds the OAuth client credentials.
 
@@ -28,6 +28,7 @@ export default defineConnectionProvider({
   // provider in the app's General tab.
   logo: 'public/linear-logomark.svg',
   type: 'oauth',
+  scope: 'WORKSPACE',
   oauth: {
     authorizationEndpoint: 'https://linear.app/oauth/authorize',
     tokenEndpoint: 'https://api.linear.app/oauth/token',
@@ -87,6 +88,7 @@ Key points:
 
 - `name` is the unique identifier string used in `listConnections({ providerName })` (kebab-case, must match `^[a-z][a-z0-9-]*$`).
 - `displayName` shows in the app's General tab and in the AI tool list.
+- `scope` decides who connects: `'WORKSPACE'` (the default) for connections shared with the whole workspace, `'USER'` for connections each member makes for themselves. See "Workspace or personal connections" below.
 - `logo` is a path to an asset bundled in your app's `public/` folder, served through the app's public assets. When omitted, the General tab falls back to a placeholder built from `displayName`.
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
@@ -358,14 +360,23 @@ The mutation behind this helper ships with Twenty 2.40.0, so calling it against 
 
 </Accordion>
 
-<Accordion title="Per-user vs workspace-shared visibility" description="How users choose between private and shared credentials">
+<Accordion title="Workspace or personal connections" description="Choose who connects with the provider scope">
 
-When a user clicks "Add connection," they're prompted to pick a visibility:
+Each connection has one of two visibilities:
 
-- **Just for me** — the credential is private to the connecting user. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
-- **Workspace shared** — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
+- **Workspace shared** (`'workspace'`) — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
+- **Just for me** (`'user'`) — the credential is private to the connecting member. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
 
-Use the right one for each handler:
+The provider's `scope` decides which one its connections get:
+
+- `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's settings creates a workspace-shared connection, and a member can turn a personal connection made earlier (before Twenty 2.49.0, or while the provider was `USER`) into a shared one with **Share with workspace**.
+- `scope: 'USER'` — each member connects their own account, creating personal connections. Members will connect from their **App preferences**, which is not available yet: until then a `USER` provider has no **Add connection** button, and the app's settings only list the connections a member can already see.
+
+A provider has exactly one scope. If your app needs both a shared credential and one per member for the same service (a bot token and each member's own account, say), declare two providers.
+
+Twenty refuses a new connection whose visibility does not match the scope, including when your app changes its scope while a member is on the provider's consent screen. Changing `scope` in a later version does not move or delete existing connections: they keep their visibility and can still be disconnected or reconnected.
+
+Use the right connection for each handler:
 
 ```ts
 // HTTP-route trigger — prefer the request user's own connection.
@@ -379,6 +390,8 @@ const conn = connections.find((c) => c.visibility === 'workspace');
 
 Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.
 
+Provider scope ships with Twenty 2.49.0. If your app declares `scope`, declare `"engines": { "twenty": ">=2.49.0" }` in its `package.json`.
+
 </Accordion>
 
 <Accordion title="One-time provider setup" description="Register your OAuth app with the third-party service">
@@ -389,7 +402,7 @@ For each connection provider, the server admin needs to register an OAuth app at
 2. Set the **Redirect URI** to `<SERVER_URL>/auth/apps/callback`.
 3. Copy the generated **Client ID** and **Client Secret**.
 4. Open the installed app in Twenty as a server admin → set the values on the corresponding `serverVariables`.
-5. Workspace members can then add connections from the per-app **Connections** section.
+5. Workspace members can then add connections to `WORKSPACE` providers from the per-app **Connections** section.
 
 </Accordion>
 

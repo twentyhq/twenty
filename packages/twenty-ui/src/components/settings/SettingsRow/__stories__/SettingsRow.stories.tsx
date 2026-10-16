@@ -23,18 +23,18 @@ const meta: Meta<typeof SettingsRow> = {
 export default meta;
 type Story = StoryObj<typeof SettingsRow>;
 
-export const Default: Story = { decorators: [ComponentDecorator] };
-export const Checked: Story = { ...Default, args: { defaultChecked: true } };
+export const Display: Story = { decorators: [ComponentDecorator] };
+export const Checked: Story = { ...Display, args: { defaultChecked: true } };
 export const Disabled: Story = {
-  ...Default,
+  ...Display,
   args: { disabled: true, defaultChecked: true },
 };
 export const ReadOnly: Story = {
-  ...Default,
+  ...Display,
   args: { readOnly: true, defaultChecked: true },
 };
 export const WithDescription: Story = {
-  ...Default,
+  ...Display,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { description: 'Updates by email' },
 };

@@ -40,6 +40,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       displayName: 'Linear',
       logo: null,
       type: 'oauth',
+      scope: 'WORKSPACE',
       oauthConfig: {
         authorizationEndpoint: 'https://linear.app/oauth/authorize',
         tokenEndpoint: 'https://api.linear.app/oauth/token',
@@ -57,6 +58,17 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       createdAt: NOW,
       updatedAt: NOW,
     });
+  });
+
+  it('passes through a declared USER scope', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({ scope: 'USER' }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.scope).toBe('USER');
   });
 
   it('passes through the logo path when provided', () => {

@@ -244,6 +244,8 @@ import { AddWidgetAvailabilityToFrontComponentFastInstanceCommand } from 'src/da
 import { AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1791975194413-add-identify-account-logic-function-and-external-account-id';
 import { AddApplicationRegistrationVersionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1792077317736-add-application-registration-versions';
 import { BackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-slow-1792077361238-backfill-application-registration-versions';
+import { AddUserCreditsFallbackToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792154197828-add-user-credits-fallback-to-billing-customer';
+import { AddConnectionProviderScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792162723868-add-connection-provider-scope';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -490,4 +492,6 @@ export const INSTANCE_COMMANDS = [
   AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand,
   AddApplicationRegistrationVersionsFastInstanceCommand,
   BackfillApplicationRegistrationVersionsSlowInstanceCommand,
+  AddUserCreditsFallbackToBillingCustomerFastInstanceCommand,
+  AddConnectionProviderScopeFastInstanceCommand,
 ];

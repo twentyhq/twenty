@@ -336,13 +336,14 @@ export const SettingsApplicationConnectionDetail = () => {
                     color="accent"
                   >{t`Reconnect`}</Button>
                 )}
-                {connection.visibility !== 'workspace' && (
-                  <Button
-                    startIcon={<IconUsers />}
-                    onClick={() => openDialog(shareWithWorkspaceModalId)}
-                    variant="outline"
-                  >{t`Share with workspace`}</Button>
-                )}
+                {connection.visibility !== 'workspace' &&
+                  provider.scope === 'WORKSPACE' && (
+                    <Button
+                      startIcon={<IconUsers />}
+                      onClick={() => openDialog(shareWithWorkspaceModalId)}
+                      variant="outline"
+                    >{t`Share with workspace`}</Button>
+                  )}
                 <Button
                   startIcon={<IconTrash />}
                   onClick={() => openDialog(deleteModalId)}

@@ -6,6 +6,7 @@ import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
+import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_PART_PROP_DESCRIPTIONS } from './progressPartPropDescriptions';
@@ -38,6 +39,7 @@ import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescription
 import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
 import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
+import { GROUPED_CATALOG_PROP_DESCRIPTIONS } from './groupedCatalogPropDescriptions';
 import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { AVATAR_PART_PROP_DESCRIPTIONS } from './avatarPartPropDescriptions';
@@ -106,8 +108,22 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/currency-picker',
-    parts: ['Trigger', 'Options'],
+    propDescriptions: CURRENCY_PICKER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      defaultValue: 'null',
+      disabled: 'false',
+      selectedFirst: 'false',
+      getOptionLabel: 'Name (CODE)',
+      getSearchText: 'Name (CODE) and symbol',
+    },
+    parts: ['Root', 'Trigger', 'Options'],
     partPropDescriptions: CURRENCY_PICKER_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Root: {
+        getOptionLabel: 'Name (CODE)',
+        getSearchText: 'Name (CODE) and symbol',
+      },
+    },
   },
   {
     name: 'ProgressRing',
@@ -1043,5 +1059,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/testing',
     slug: 'testing/component-storybook-layout',
     propDescriptions: COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'GroupedCatalog',
+    source: 'testing/GroupedCatalog.tsx',
+    entryPoint: 'twenty-ui/testing',
+    slug: 'testing/grouped-catalog',
+    propDescriptions: GROUPED_CATALOG_PROP_DESCRIPTIONS,
   },
 ] as const;

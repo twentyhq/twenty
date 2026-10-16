@@ -1,5 +1,5 @@
 import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const setAgentMessageReaction = ({
   reactions,
@@ -52,8 +52,8 @@ export const setAgentMessageReaction = ({
     )
     .filter(
       (reaction) =>
-        reaction.workspaceMemberIds.length > 0 ||
-        reaction.agentIds.length > 0 ||
+        isNonEmptyArray(reaction.workspaceMemberIds) ||
+        isNonEmptyArray(reaction.agentIds) ||
         reaction.hasAssistantReacted,
     );
 };

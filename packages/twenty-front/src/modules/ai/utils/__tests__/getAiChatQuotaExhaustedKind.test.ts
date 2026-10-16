@@ -12,9 +12,12 @@ describe('getAiChatQuotaExhaustedKind', () => {
   it('tells a spent allowance apart from a configured limit', () => {
     expect(
       getAiChatQuotaExhaustedKind(
-        buildError({ code: 'QUOTA_EXHAUSTED', exhaustedKind: 'allowance' }),
+        buildError({
+          code: 'QUOTA_EXHAUSTED',
+          exhaustedKind: 'workspaceAllowance',
+        }),
       ),
-    ).toBe('allowance');
+    ).toBe('workspaceAllowance');
 
     expect(
       getAiChatQuotaExhaustedKind(

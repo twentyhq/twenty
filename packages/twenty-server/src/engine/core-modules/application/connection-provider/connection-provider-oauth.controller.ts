@@ -128,8 +128,7 @@ export class ConnectionProviderOAuthController {
           workspaceId,
           userId,
           userWorkspaceId: userWorkspace.id,
-          visibility:
-            (visibility as 'user' | 'workspace' | undefined) ?? 'user',
+          visibility: (visibility as 'user' | 'workspace' | undefined) ?? null,
           reconnectingConnectedAccountId:
             reconnectingConnectedAccountId ?? null,
           redirectLocation: redirectLocation ?? null,

@@ -20,7 +20,16 @@ const meta: Meta<typeof CountrySelectExample> = {
 export default meta;
 type Story = StoryObj<typeof CountrySelectExample>;
 
-export const Default: Story = {};
+export const Display: Story = {
+  args: {
+    label: 'Shipping country',
+    countries: [
+      { value: 'France', label: 'France', flag: '🇫🇷' },
+      { value: 'Germany', label: 'Germany', flag: '🇩🇪' },
+      { value: 'Japan', label: 'Japan', flag: '🇯🇵' },
+    ],
+  },
+};
 
 export const Disabled: Story = {
   args: { disabled: true },

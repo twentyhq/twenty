@@ -16,7 +16,10 @@ export const SettingsApplicationRegistrationGeneralTab = ({
 }) => {
   return (
     <>
-      <SettingsApplicationRegistrationGeneralInfo registration={registration} />
+      <SettingsApplicationRegistrationGeneralInfo
+        registration={registration}
+        isAdminView={isAdminView}
+      />
       {isAdminView && (
         <SettingsAdminApplicationRegistrationGeneralSwitches
           registration={registration}

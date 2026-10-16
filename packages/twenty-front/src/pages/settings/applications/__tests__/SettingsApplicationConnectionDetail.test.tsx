@@ -125,6 +125,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           type: 'oauth',
           name: 'google-calendar',
           displayName: 'Google Calendar',
+          scope: 'WORKSPACE',
           logoUrl: null,
           oauth: {
             scopes: ['calendar.readonly'],
@@ -183,6 +184,38 @@ describe('SettingsApplicationConnectionDetail', () => {
       reconnectingConnectedAccountId: 'account-1',
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });
+  });
+
+  it('does not offer to share a connection of a provider scoped to each member', () => {
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      connectionProviders: [
+        {
+          id: 'provider-1',
+          applicationId: 'app-1',
+          type: 'oauth',
+          name: 'google-calendar',
+          displayName: 'Google Calendar',
+          scope: 'USER',
+          logoUrl: null,
+          oauth: {
+            scopes: ['calendar.readonly'],
+            isClientCredentialsConfigured: true,
+          },
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    renderDetailPage();
+
+    expect(screen.getByText('Just for me')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: /Share with workspace/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getAllByRole('button', { name: 'Disconnect' }).length,
+    ).toBeGreaterThan(0);
   });
 
   it('offers reconnect and disconnect on a failed workspace shared connection', () => {
