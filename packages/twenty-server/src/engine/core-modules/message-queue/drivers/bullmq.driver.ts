@@ -496,7 +496,7 @@ export class BullMQDriver
       );
     }
 
-    if (options?.id && !options?.allowDuplicatedPrefixes) {
+    if (options?.id && !options?.doNotCheckDuplicatesBasedOnPrefix) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 
       if (
@@ -550,7 +550,7 @@ export class BullMQDriver
       );
     }
 
-    const jobsToAdd = options?.allowDuplicatedPrefixes
+    const jobsToAdd = options?.doNotCheckDuplicatesBasedOnPrefix
       ? jobs
       : await this.filterOutAlreadyWaitingJobs(queueName, jobs);
 
