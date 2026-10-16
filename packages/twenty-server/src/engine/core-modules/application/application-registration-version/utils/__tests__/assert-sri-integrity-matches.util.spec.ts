@@ -12,17 +12,20 @@ describe('assertSriIntegrityMatches', () => {
     ).not.toThrow();
   });
 
-  it('rejects different bytes', () => {
-    expect(() =>
-      assertSriIntegrityMatches({
-        expected: 'sha512-first',
-        actual: 'sha512-second',
-        subject: 'Tarball',
-      }),
-    ).toThrow(
-      expect.objectContaining({
-        code: ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH,
-      }),
-    );
-  });
+  it.each(['sha512-first', null])(
+    'rejects different or missing checksums: %s',
+    (expected) => {
+      expect(() =>
+        assertSriIntegrityMatches({
+          expected,
+          actual: 'sha512-second',
+          subject: 'Tarball',
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH,
+        }),
+      );
+    },
+  );
 });

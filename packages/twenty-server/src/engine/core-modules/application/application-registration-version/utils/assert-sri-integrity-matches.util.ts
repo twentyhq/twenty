@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -8,11 +10,11 @@ export const assertSriIntegrityMatches = ({
   actual,
   subject,
 }: {
-  expected: string;
+  expected: string | null;
   actual: string;
   subject: string;
 }): void => {
-  if (!expected.split(/\s+/).includes(actual)) {
+  if (!isDefined(expected) || !expected.split(/\s+/).includes(actual)) {
     throw new ApplicationException(
       `${subject} does not match its expected sha512 fingerprint`,
       ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH,

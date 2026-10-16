@@ -84,7 +84,16 @@ export class MarketplaceCatalogSyncService {
           continue;
         }
 
-        await this.recordCatalogVersion({ registration, registryPackage: pkg });
+        try {
+          await this.recordCatalogVersion({
+            registration,
+            registryPackage: pkg,
+          });
+        } catch (error) {
+          this.logger.error(
+            `Failed to record version ${pkg.version} of registry app "${pkg.name}": ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
 
         // Rehost the logo and gallery images from the registry CDN so display
         // urls are served from fileIds like every other source. Skipped when

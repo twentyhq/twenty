@@ -384,7 +384,7 @@ export class ApplicationInstallService {
       }
 
       const applicationRegistrationVersionId =
-        await this.applicationRegistrationVersionService.resolveInstalledVersionId(
+        await this.applicationRegistrationVersionService.resolveInstalledVersionIdOrThrow(
           {
             appRegistration,
             resolvedPackage,

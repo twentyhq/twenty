@@ -6,7 +6,6 @@ import { tmpdir } from 'os';
 import { isAbsolute, join, relative, resolve } from 'path';
 import { pipeline } from 'stream/promises';
 
-import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Like, Repository } from 'typeorm';
@@ -518,14 +517,18 @@ export class ApplicationTarballService {
       );
     }
 
-    if (
-      isDefined(packageJson?.version) &&
-      !isDefined(semver.valid(packageJson.version))
-    ) {
-      throw new ApplicationRegistrationException(
-        `Invalid version "${packageJson.version}" in package.json. Must be a valid semver version.`,
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      );
+    if (isDefined(packageJson?.version)) {
+      const validation =
+        this.applicationVersionValidationService.validatePackageVersion(
+          packageJson.version,
+        );
+
+      if (!validation.allowed) {
+        throw new ApplicationRegistrationException(
+          validation.message,
+          ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        );
+      }
     }
 
     const versionValidation =

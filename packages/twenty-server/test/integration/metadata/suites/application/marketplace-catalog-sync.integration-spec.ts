@@ -19,6 +19,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { type DataSource } from 'typeorm';
 
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import {
   type ApplicationPackageFetcherService,
@@ -983,6 +984,59 @@ describe('Marketplace Catalog Sync (integration)', () => {
           universalIdentifier,
         }),
       ).toMatchObject({ logoFileId: null });
+    });
+
+    it('stores assets and retries the version when version recording fails', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+      });
+      const recordVersion = jest
+        .spyOn(
+          getAppProviderByClassName<ApplicationRegistrationVersionService>(
+            'ApplicationRegistrationVersionService',
+          ),
+          'recordPublishedVersion',
+        )
+        .mockRejectedValueOnce(new Error('version insert failed'));
+      const sync = () =>
+        syncMarketplaceCatalogFromRegistryPackage({
+          packageName: '@test/pinned-app',
+          version: '2.0.0',
+          manifest: buildManifestWithLogo(universalIdentifier),
+          asset: LOGO_PNG,
+          dist: {
+            tarballUrl: 'https://registry.example.com/pinned-app-2.0.0.tgz',
+            integrity: null,
+          },
+        });
+
+      try {
+        await sync();
+        expect(
+          await findApplicationRegistrationByUniversalIdentifier({
+            universalIdentifier,
+          }),
+        ).toMatchObject({ logoFileId: expect.any(String) });
+        expect(
+          await ds.query(
+            'SELECT id FROM core."applicationRegistrationVersion" WHERE "applicationRegistrationId" = $1',
+            [registrationId],
+          ),
+        ).toHaveLength(0);
+
+        await sync();
+        expect(
+          await ds.query(
+            'SELECT version FROM core."applicationRegistrationVersion" WHERE "applicationRegistrationId" = $1',
+            [registrationId],
+          ),
+        ).toEqual([{ version: '2.0.0' }]);
+      } finally {
+        recordVersion.mockRestore();
+      }
     });
 
     it('stores assets from the package the registration is bound to', async () => {

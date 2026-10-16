@@ -349,7 +349,7 @@ describe('npm application install package identity (integration)', () => {
         expect(application).toBeDefined();
 
         const [installedVersion] = await globalThis.testDataSource.query(
-          `SELECT id, version, "sourceType", "sourcePackage", "tarballUrl", checksum
+          `SELECT id, version, "sourceType", "sourcePackage", "tarballUrl", "tarballFileId", checksum
            FROM core."applicationRegistrationVersion"
            WHERE id = $1`,
           [application?.applicationRegistrationVersionId],
@@ -361,6 +361,7 @@ describe('npm application install package identity (integration)', () => {
           sourceType: 'npm',
           sourcePackage: PACKAGE_NAME,
           tarballUrl: registryPackage.tarballUrl,
+          tarballFileId: null,
           checksum: null,
         });
       } finally {

@@ -76,7 +76,7 @@ describe('ApplicationInstallService', () => {
       validateVersionProgression: jest.fn().mockReturnValue({ allowed: true }),
     } as unknown as ApplicationVersionValidationService,
     {
-      resolveInstalledVersionId: jest.fn().mockResolvedValue(null),
+      resolveInstalledVersionIdOrThrow: jest.fn().mockResolvedValue(null),
     } as unknown as ApplicationRegistrationVersionService,
     {} as ApplicationSyncService,
     {

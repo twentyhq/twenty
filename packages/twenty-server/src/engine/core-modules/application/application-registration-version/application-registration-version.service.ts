@@ -77,16 +77,19 @@ export class ApplicationRegistrationVersionService {
     });
   }
 
-  async resolveInstalledVersionId({
+  async resolveInstalledVersionIdOrThrow({
     appRegistration,
     resolvedPackage,
     version,
   }: {
-    appRegistration: ApplicationRegistrationEntity;
-    resolvedPackage: ResolvedPackage;
+    appRegistration: Pick<
+      ApplicationRegistrationEntity,
+      'id' | 'sourceType' | 'sourcePackage' | 'universalIdentifier'
+    >;
+    resolvedPackage: Pick<ResolvedPackage, 'integrity' | 'registryTarballUrl'>;
     version: string;
   }): Promise<string | null> {
-    let recordedVersion =
+    const recordedVersion =
       await this.findOneByApplicationRegistrationIdAndVersion({
         applicationRegistrationId: appRegistration.id,
         version,
@@ -100,30 +103,40 @@ export class ApplicationRegistrationVersionService {
         return null;
       }
 
-      recordedVersion = await this.recordPublishedVersion({
+      const npmVersion = await this.recordPublishedVersion({
         applicationRegistrationId: appRegistration.id,
         version,
         sourceType: ApplicationRegistrationSourceType.NPM,
         sourcePackage: appRegistration.sourcePackage,
         tarballUrl: resolvedPackage.registryTarballUrl,
       });
+
+      return npmVersion.id;
     }
 
     if (
       recordedVersion.sourceType === ApplicationRegistrationSourceType.TARBALL
     ) {
-      if (isDefined(recordedVersion.checksum)) {
-        assertSriIntegrityMatches({
-          expected: recordedVersion.checksum,
-          actual: resolvedPackage.integrity,
-          subject: `Package resolved for ${appRegistration.universalIdentifier}@${version}`,
-        });
-      } else {
+      if (!isDefined(recordedVersion.checksum)) {
         await this.applicationRegistrationVersionRepository.update(
           { id: recordedVersion.id, checksum: IsNull() },
           { checksum: resolvedPackage.integrity },
         );
       }
+
+      const checksum =
+        recordedVersion.checksum ??
+        (
+          await this.applicationRegistrationVersionRepository.findOneOrFail({
+            where: { id: recordedVersion.id },
+          })
+        ).checksum;
+
+      assertSriIntegrityMatches({
+        expected: checksum,
+        actual: resolvedPackage.integrity,
+        subject: `Package resolved for ${appRegistration.universalIdentifier}@${version}`,
+      });
     } else if (
       !isDefined(recordedVersion.tarballUrl) &&
       isDefined(resolvedPackage.registryTarballUrl)
@@ -150,16 +163,6 @@ export class ApplicationRegistrationVersionService {
     );
   }
 
-  async findManyByApplicationRegistrationId(
-    applicationRegistrationId: string,
-  ): Promise<ApplicationRegistrationVersionEntity[]> {
-    return this.applicationRegistrationVersionRepository.find({
-      where: { applicationRegistrationId },
-      relations: { tarballFile: true },
-      order: { publishedAt: 'DESC', createdAt: 'DESC' },
-    });
-  }
-
   async findOneByApplicationRegistrationIdAndVersion({
     applicationRegistrationId,
     version,
@@ -181,9 +184,10 @@ export class ApplicationRegistrationVersionService {
   async deleteTarballFilesOfRegistration(
     applicationRegistrationId: string,
   ): Promise<void> {
-    const versions = await this.findManyByApplicationRegistrationId(
-      applicationRegistrationId,
-    );
+    const versions = await this.applicationRegistrationVersionRepository.find({
+      where: { applicationRegistrationId },
+      relations: { tarballFile: true },
+    });
     const registration =
       await this.applicationRegistrationRepository.findOneOrFail({
         where: { id: applicationRegistrationId },
