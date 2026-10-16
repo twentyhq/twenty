@@ -29,14 +29,6 @@
         "command": "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.define.ts && npx vite build -c vite.config.billing.ts && npx vite build -c vite.config.front-component.ts && npx vite build -c vite.config.logic-function.ts && npx vite build -c vite.config.utils.ts && npx vite build -c vite.config.browser.ts && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist && npx rimraf dist/sdk && npx rollup -c rollup.config.sdk-dts.mjs && npx vite build -c vite.config.node.ts --watch & npx vite build -c vite.config.define.ts --watch & npx vite build -c vite.config.billing.ts --watch & npx vite build -c vite.config.front-component.ts --watch & npx vite build -c vite.config.logic-function.ts --watch & npx vite build -c vite.config.utils.ts --watch & npx vite build -c vite.config.browser.ts --watch"
       }
     },
-    "start": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "options": {
-        "cwd": "packages/twenty-sdk",
-        "command": "node dist/cli.cjs"
-      }
-    },
     "set-local-version": {},
     "typecheck": {},
     "lint": {},
@@ -60,43 +52,22 @@
         "command": "npx vitest run --config vitest.unit.config.ts"
       }
     },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-sdk",
-        "command": "npx vitest run --config vitest.integration.config.ts"
-      }
-    },
-    "test:e2e": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-sdk",
-        "command": "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts"
-      },
-      "parallel": false,
-      "dependsOn": [
-        "build",
-        {
-          "target": "database:reset",
-          "projects": "twenty-server"
-        },
-        {
-          "target": "start:ci-if-needed",
-          "projects": "twenty-server"
-        }
-      ]
-    },
     "build:sdk": {
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["{projectRoot}/src/sdk/**/*", "^production"],
+      "inputs": [
+        "{projectRoot}/src/sdk/**/*",
+        "{projectRoot}/src/front-component-renderer/index.ts",
+        "^production"
+      ],
       "outputs": [
         "{projectRoot}/dist/billing",
         "{projectRoot}/dist/define",
         "{projectRoot}/dist/front-component",
         "{projectRoot}/dist/logic-function",
-        "{projectRoot}/dist/utils"
+        "{projectRoot}/dist/utils",
+        "{projectRoot}/dist/front-component-renderer/index.d.ts"
       ],
       "options": {
         "cwd": "{projectRoot}",

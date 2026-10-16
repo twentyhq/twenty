@@ -22,7 +22,7 @@ cd <app-name>
 yarn install
 ```
 
-`app init` only writes files. It does not install dependencies, initialize Git, start Docker, authenticate, or perform an initial sync. `create-twenty-app` is deprecated; use the standalone CLI for new apps.
+`app init` only writes files. It does not install dependencies, initialize Git, start Docker, authenticate, or perform an initial sync. `create-twenty-app` is retired.
 
 Use `--path <directory>` for a different destination and `--display-name` or `--description` for metadata. The positional name is the package name.
 
