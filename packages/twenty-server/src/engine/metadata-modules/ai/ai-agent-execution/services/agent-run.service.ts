@@ -57,6 +57,7 @@ import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import {
   AiException,
   AiExceptionCode,
@@ -103,6 +104,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
   constructor(
     private readonly agentActorContextService: AgentActorContextService,
     private readonly agentRunnerService: AgentRunnerService,
+    private readonly agentChatThreadService: AgentChatThreadService,
     private readonly agentRunSettlementService: AgentRunSettlementService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
@@ -261,6 +263,17 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       responseFormat ?? agent.responseFormat,
     );
 
+    const title = isNonEmptyString(thread?.title) ? thread.title : agent.label;
+
+    if (isContinuingConversation && isDefined(runAsContext)) {
+      await this.createThreadForRunAsMember({
+        threadId,
+        workspaceId: workspace.id,
+        workspaceMemberId: runAsContext.authContext.workspaceMemberId,
+        title,
+      });
+    }
+
     const runId = randomUUID();
 
     await this.agentRunnerService.start({
@@ -272,7 +285,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       },
       spec: {
         agentId: agent.id,
-        title: isNonEmptyString(thread?.title) ? thread.title : agent.label,
+        title,
         baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
         // kept with the run rather than in its messages, so a run that waits still has them when it goes on
         instructions: input.additionalInstructions ?? null,
@@ -303,6 +316,32 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       threadId,
       ...(settledRun ?? { status: 'RUNNING' }),
     });
+  }
+
+  // the answer matters more than the owner's chat list, so a thread that cannot be created for the member is left to the run
+  private async createThreadForRunAsMember({
+    threadId,
+    workspaceId,
+    workspaceMemberId,
+    title,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    workspaceMemberId: string;
+    title: string;
+  }): Promise<void> {
+    try {
+      await this.agentChatThreadService.createThreadIfMissing({
+        threadId,
+        workspaceId,
+        workspaceMemberId,
+        title,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not create thread ${threadId} for member ${workspaceMemberId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   // a call that waits on the run gets how it settled; a run that goes on later lands in its conversation

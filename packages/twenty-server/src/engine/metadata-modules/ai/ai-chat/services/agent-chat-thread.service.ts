@@ -59,8 +59,9 @@ export class AgentChatThreadService {
   // An existing thread is left for the caller to check access to.
   async createThreadIfMissing({
     threadId,
+    title,
     ...args
-  }: AgentChatThreadAccessArgs): Promise<void> {
+  }: AgentChatThreadAccessArgs & { title?: string }): Promise<void> {
     if (
       await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
     ) {
@@ -68,7 +69,7 @@ export class AgentChatThreadService {
     }
 
     try {
-      await this.createThread({ ...args, id: threadId });
+      await this.createThread({ ...args, id: threadId, title });
     } catch (error) {
       if (!isUniqueViolationError(error)) {
         throw error;

@@ -111,6 +111,16 @@ const findRecordedTurn = async (threadId: string) => {
   return { ...message, ...turn };
 };
 
+const findThreadOwner = async (threadId: string) => {
+  const [thread] = await globalThis.testDataSource.query(
+    `SELECT "workspaceMemberId" FROM "${WORKSPACE_SCHEMA}"."agentChatThread"
+     WHERE id = $1`,
+    [threadId],
+  );
+
+  return thread.workspaceMemberId;
+};
+
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
   (priorMessages ?? []).flatMap(({ parts }) => parts.map(({ type }) => type));
 
@@ -180,7 +190,7 @@ describe('Agent run conversation should be recorded for the caller', () => {
   }, 120000);
 
   afterAll(async () => {
-    // no member is granted the threads runAgent creates, so the API cannot destroy them
+    // the application's own threads have no member who could destroy them through the API
     await globalThis.testDataSource.query(
       `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
       [threadIds],
@@ -227,6 +237,18 @@ describe('Agent run conversation should be recorded for the caller', () => {
     });
 
     expect(findPriorMessagePartTypes(execution)).toContain('tool-probe');
+    expect(await findThreadOwner(execution.threadId)).toBe(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    );
+  });
+
+  it('should leave a thread the application continues as itself without an owner', async () => {
+    const { threadId } = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+    });
+
+    expect(await findThreadOwner(threadId)).toBeNull();
   });
 
   it('should show a member only the text of a turn another member sent in the same thread', async () => {
