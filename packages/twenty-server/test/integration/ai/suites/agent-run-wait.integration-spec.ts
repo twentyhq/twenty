@@ -245,44 +245,6 @@ describe('agent runs that wait (integration)', () => {
     );
   });
 
-  it('queues a chat message sent while a run goes on in its conversation, behind the run', async () => {
-    let chatAttempt: Promise<unknown> | undefined;
-
-    mockAgentRunTurns(replyingResult);
-    jest
-      .spyOn(
-        getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-        'completeTurn',
-      )
-      .mockReset()
-      .mockImplementationOnce(async () => {
-        const [{ threadId }] = await global.testDataSource.query(
-          `SELECT "threadId" FROM "${schema}"."agentTurn" WHERE "agentId" = $1 AND status = 'running'
-           ORDER BY "createdAt" DESC LIMIT 1`,
-          [agentId],
-        );
-
-        // the run is not suspended yet, so only its hold on the conversation keeps the message waiting
-        chatAttempt = getAppProviderByClassName<AgentChatStreamingService>(
-          'AgentChatStreamingService',
-        )
-          .streamAgentChat({
-            thread: { id: threadId, pendingQuestionMessageId: null },
-            workspace: { id: workspaceId },
-            text: 'Any news?',
-          } as Parameters<AgentChatStreamingService['streamAgentChat']>[0])
-          .catch((error: unknown) => error);
-
-        await chatAttempt;
-
-        return replyingResult;
-      });
-
-    await runTrigger();
-
-    expect(await chatAttempt).toMatchObject({ queued: true });
-  });
-
   it('drops a waiting triggered run once its trigger is turned off', async () => {
     // an event that never happens, so only the explicit resolution below wakes the run up
     const runTurn = mockAgent(

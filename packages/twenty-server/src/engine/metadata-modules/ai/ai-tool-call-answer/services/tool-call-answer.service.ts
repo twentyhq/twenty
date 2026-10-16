@@ -80,8 +80,8 @@ export class ToolCallAnswerService {
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
-  // a run holds its conversation's stream until it has suspended, so an answer to the question it just
-  // asked finds the run waiting on it rather than starting a chat
+  // a run holds its conversation's stream until it has suspended, so an answer that comes sooner is
+  // turned away as busy rather than starting a chat turn
   async answer(args: AnswerToolCallArgs): Promise<AnswerToolCallOutcome> {
     const { threadId, toolCallId, userWorkspaceId, workspace } = args;
     const workspaceId = workspace.id;

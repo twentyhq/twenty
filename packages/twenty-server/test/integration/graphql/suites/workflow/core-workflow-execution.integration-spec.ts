@@ -43,6 +43,7 @@ import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/s
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { mockAgentRunTurns } from 'test/utils/mock-agent-run-turns.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -55,6 +56,9 @@ import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-t
 
 import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { type ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -1187,6 +1191,77 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       return getInboxState(threadId);
     };
 
+    it('queues a message the recipient sends while the agent works, and sends it once the run ends', async () => {
+      let sentWhileWorking: Promise<request.Response> | undefined;
+      let threadId: string | undefined;
+
+      mockAgentRunTurns(replyingResult);
+      jest
+        .spyOn(
+          getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
+          'completeTurn',
+        )
+        .mockReset()
+        .mockImplementationOnce(async () => {
+          [{ threadId }] = await global.testDataSource.query(
+            `SELECT "threadId" FROM "${schema}"."agentTurn" WHERE "agentId" = $1 AND status = 'running'
+             ORDER BY "createdAt" DESC LIMIT 1`,
+            [agentId],
+          );
+
+          sentWhileWorking = request(`http://localhost:${APP_PORT}`)
+            .post('/metadata')
+            .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+            .send({
+              query: `mutation SendChatMessage($threadId: UUID!, $text: String!, $messageId: UUID!) {
+                sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued }
+              }`,
+              variables: { threadId, text: 'Any news?', messageId: randomUUID() },
+            });
+
+          await sentWhileWorking;
+
+          return replyingResult;
+        });
+      jest
+        .spyOn(
+          getAppProviderByClassName<AiModelRegistryService>(
+            'AiModelRegistryService',
+          ),
+          'getAvailableModels',
+        )
+        .mockReturnValue([{ modelId: TEST_AI_MODEL_ID }] as never);
+      // the reply to the queued message is not under test
+      jest
+        .spyOn(
+          getAppProviderByClassName<ChatExecutionService>('ChatExecutionService'),
+          'streamChat',
+        )
+        .mockRejectedValue(new Error('No reply in this test'));
+
+      const finalStep = emptyStep();
+      const fixture = await createFixture({
+        steps: [agentStep([finalStep.id]), finalStep],
+      });
+
+      await waitForRun(await runFixture(fixture), 'COMPLETED');
+
+      expect((await sentWhileWorking)?.body.data.sendChatMessage).toEqual({
+        queued: true,
+      });
+
+      await expectEventually(async () => {
+        const [message] = await global.testDataSource.query(
+          `SELECT message.status FROM "${schema}"."agentMessage" message
+           JOIN "${schema}"."agentMessagePart" part ON part."messageId" = message.id
+           WHERE message."threadId" = $1 AND part."textContent" = 'Any news?'`,
+          [threadId],
+        );
+
+        expect(message?.status).toBe('sent');
+      });
+    });
+
     it('records the conversation of an agent that answers without asking, filed under done', async () => {
       mockAgentRunTurns(replyingResult);
       const finalStep = emptyStep();
@@ -1319,7 +1394,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       expect(await waitForWaitingInboxState(threadId)).toMatchObject({
         workspaceMemberId: creator.workspaceMemberId,
-        lastMessageText: agent.name,
+        lastMessageText: QUESTION.question,
         isArchived: true,
         isBackInInbox: true,
       });
