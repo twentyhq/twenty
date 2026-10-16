@@ -129,6 +129,14 @@ Native form submission, reset, `required`, `readOnly`, and Field integration for
 
 React and Preact front component fixtures verify pointer opening, filtering, and selection through the shorthand and compound APIs, including controlled and uncontrolled values, null clearing and reselection, canceled changes, external controlled updates, disabled interaction, translated labels, and decorative flags. They also verify native trigger and search input props and refs, plus trigger and option-group render targets and refs. Search keyboard activation and IME handling, page-session lifetime, and full renderer portal, geometry, scrolling, outside dismissal, and focus restoration acceptance remain open.
 
+## Migration
+
+Replace the previous empty-string no-country sentinel with `null` in controlled values and selection state. An empty string (`''`) is now a valid choice identifier, so `value=""` no longer means no country. Keep each `CountryChoice.value` stable; existing string identifiers can remain unchanged and display labels can be translated independently.
+
+Update `onValueChange` handlers to accept `string | null`. The callback now also receives `eventDetails` as its second argument, including `cancel()` to reject a selection. Handlers that do not need event details can continue using only the first argument.
+
+If your storage uses `''` for no country, convert it to `null` before passing it to the picker and convert reported `null` back to `''` when persisting. Keep that compatibility conversion in the application adapter, and omit it when `''` is an intentional choice identifier.
+
 ## Props
 
 <CountrySelectReference />
