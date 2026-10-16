@@ -36,7 +36,7 @@ find public -maxdepth 2 -type f | sort
 Prefer the app CLI for new entities when interactive prompts are acceptable:
 
 ```bash
-yarn twenty dev:add
+twenty app add
 ```
 
 Check first for the standalone `twenty` CLI (`command -v twenty`): `twenty app add ... --no-input` works without a terminal, and for objects the `--create-view --create-navigation-menu-item --create-page-layout` flags add the UI definitions. Rule 3 of the operating rules gives the full order of options.
@@ -64,12 +64,16 @@ Every helper, type, and client file exports exactly one thing. The rule counts e
 ```ts
 // ❌ Bad — src/utils/parse-company.util.ts exports a type and a util
 export type ParsedCompany = { id: string; name: string };
-export const parseCompany = (raw: RawCompany): ParsedCompany => { /* ... */ };
+export const parseCompany = (raw: RawCompany): ParsedCompany => {
+  /* ... */
+};
 
 // ✅ Good — src/utils/parse-company.util.ts (one export; the type is local)
 type ParsedCompany = { id: string; name: string };
 
-export const parseCompany = (raw: RawCompany): ParsedCompany => { /* ... */ };
+export const parseCompany = (raw: RawCompany): ParsedCompany => {
+  /* ... */
+};
 
 // ✅ Good — when the type is shared, split it
 // src/types/parsed-company.ts (one PascalCase type)
@@ -78,7 +82,9 @@ export type ParsedCompany = { id: string; name: string };
 // src/utils/parse-company.util.ts (one util)
 import { type ParsedCompany } from 'src/types/parsed-company';
 
-export const parseCompany = (raw: RawCompany): ParsedCompany => { /* ... */ };
+export const parseCompany = (raw: RawCompany): ParsedCompany => {
+  /* ... */
+};
 ```
 
 Entity files are consistent with this rule: front components, logic functions, and post-install hooks use a single `export default define...()`, which is one export.
@@ -100,12 +106,12 @@ Read secrets through the application-config helper, not raw `process.env`.
 Once all edits for the change are complete, run lint and typecheck once at the end (not after each individual edit), then sync the app to verify the definitions are valid:
 
 ```bash
-yarn twenty dev:typecheck
+twenty app typecheck
 yarn lint
-yarn twenty apply
+twenty app apply
 ```
 
-`yarn twenty dev:typecheck` checks generated app types and `yarn lint` checks local lint rules. `yarn twenty apply` then builds the app and pushes entity definitions to the active remote; if any definition is invalid, the sync reports the error. Run all three a single time once every edit is done, not repeatedly after each step.
+`twenty app typecheck` checks generated app types and `yarn lint` checks local lint rules. `twenty app apply` then builds the app and pushes entity definitions to the active remote; if any definition is invalid, the sync reports the error. Run all three a single time once every edit is done, not repeatedly after each step.
 
 When the user explicitly asks to run tests, follow `tests.md`: unit tests may use the package's unit-test script, and the full suite must run with `TWENTY_API_URL=http://localhost:2021` against the isolated test instance.
 

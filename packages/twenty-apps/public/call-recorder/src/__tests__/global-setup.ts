@@ -1,12 +1,6 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
-
-import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
-
-const APP_PATH = process.cwd();
-const CONFIG_DIR = path.join(os.homedir(), '.twenty');
-const CONFIG_PATH = path.join(CONFIG_DIR, 'config.test.json');
+import { buildResultSchema } from './build-result-schema';
+import { disableAutomaticTriggers } from './disable-automatic-triggers';
+import { runTwenty } from './run-twenty';
 
 function validateEnv(): { apiUrl: string; apiKey: string } {
   const apiUrl = process.env.TWENTY_API_URL;
@@ -15,7 +9,6 @@ function validateEnv(): { apiUrl: string; apiKey: string } {
   if (!apiUrl || !apiKey) {
     throw new Error(
       'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
-        'Start a local server: yarn twenty docker:start\n' +
         'Or set them in vitest env config.',
     );
   }
@@ -40,62 +33,34 @@ async function checkServer(apiUrl: string) {
   }
 }
 
-function writeConfig(apiUrl: string, apiKey: string) {
-  const payload = JSON.stringify(
-    {
-      version: 1,
-      remotes: {
-        local: { apiUrl, apiKey, twentyCLIAccessToken: apiKey },
-      },
-      defaultRemote: 'local',
-    },
-    null,
-    2,
-  );
-
-  fs.mkdirSync(CONFIG_DIR, { recursive: true });
-  fs.writeFileSync(CONFIG_PATH, payload);
-}
-
-function removeConfig() {
-  fs.rmSync(CONFIG_PATH, { force: true });
-}
-
 export async function setup() {
-  const { apiUrl, apiKey } = validateEnv();
+  const { apiUrl } = validateEnv();
 
   await checkServer(apiUrl);
+  await runTwenty(['app', 'uninstall', '--yes']);
 
-  writeConfig(apiUrl, apiKey);
+  const build = await runTwenty(['app', 'build']);
 
-  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+  if (!build.ok) {
+    throw new Error('Could not build the call-recorder manifest');
+  }
 
-  const result = await appDevOnce({
-    appPath: APP_PATH,
-    onProgress: (message: string) => console.log(`[dev] ${message}`),
-  });
+  const { manifest } = buildResultSchema.parse(build.data);
+  const result = await runTwenty(['app', 'apply', '--create']);
 
-  if (!result.success) {
+  if (!result.ok) {
     throw new Error(
-      `Dev sync failed: ${result.error?.message ?? 'Unknown error'}`,
+      `App apply failed: ${result.error.code} ${result.error.message}`,
     );
   }
+
+  await disableAutomaticTriggers(manifest);
 }
 
 export async function teardown() {
-  try {
-    const uninstallResult = await appUninstall({ appPath: APP_PATH });
+  const result = await runTwenty(['app', 'uninstall', '--yes']);
 
-    if (!uninstallResult.success) {
-      console.warn(
-        `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
-      );
-    }
-  } catch (error) {
-    console.warn(
-      `App uninstall failed: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  } finally {
-    removeConfig();
+  if (!result.ok) {
+    console.warn(`App uninstall failed: ${result.error.message}`);
   }
 }

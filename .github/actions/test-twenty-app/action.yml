@@ -40,6 +40,15 @@ runs:
             ;;
         esac
 
+    - name: Install monorepo dependencies
+      uses: ./.github/actions/yarn-install
+
+    - name: Build Twenty CLI from checkout
+      shell: bash
+      run: |
+        npx nx build twenty-cli
+        echo "TWENTY_CLI=$GITHUB_WORKSPACE/packages/twenty-cli/dist/cli.cjs" >> "$GITHUB_ENV"
+
     - name: Enable Corepack
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
       shell: bash

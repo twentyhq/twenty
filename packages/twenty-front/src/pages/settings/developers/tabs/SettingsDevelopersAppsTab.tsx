@@ -68,8 +68,10 @@ export const SettingsDevelopersAppsTab = () => {
     data?.findManyApplicationRegistrations ?? [];
 
   const createCommands = doNotTranslate([
-    'npx create-twenty-app@latest my-twenty-app',
+    'npm install -g twenty',
+    'twenty app init my-twenty-app',
     'cd my-twenty-app',
+    'yarn install',
   ]);
 
   const createCopyButton = (

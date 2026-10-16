@@ -21,6 +21,7 @@ jobs:
       files: |
         packages/twenty-apps/examples/hello-world/**
         packages/twenty-sdk/**
+        packages/twenty-cli/**
         packages/twenty-client-sdk/**
         packages/twenty-shared/**
         !packages/twenty-sdk/package.json
@@ -50,6 +51,7 @@ jobs:
         ports:
           - 6379:6379
     env:
+      TWENTY_CLI: ${{ github.workspace }}/packages/twenty-cli/dist/cli.cjs
       TWENTY_API_URL: http://localhost:3000
       TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
     steps:
@@ -61,6 +63,9 @@ jobs:
 
       - name: Build SDK packages
         run: npx nx build twenty-sdk
+
+      - name: Build CLI
+        run: npx nx build twenty-cli
 
       - name: Setup server environment
         run: npx nx reset:env:e2e-testing-server twenty-server
@@ -78,6 +83,10 @@ jobs:
 
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
+
+      - name: Start worker
+        working-directory: packages/twenty-server
+        run: nohup yarn worker:prod > /tmp/twenty-worker.log 2>&1 &
 
       - name: Run integration tests
         working-directory: packages/twenty-apps/examples/hello-world

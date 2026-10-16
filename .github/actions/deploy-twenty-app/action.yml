@@ -8,6 +8,10 @@ inputs:
   api-key:
     description: API key or access token for the target instance
     required: true
+  cli-version:
+    description: Exact Twenty CLI version, ignored when TWENTY_CLI points to a local build
+    required: false
+    default: '2.49.0'
   app-path:
     description: Path to the app directory (relative to repo root). Defaults to repo root.
     required: false
@@ -32,22 +36,27 @@ runs:
       working-directory: ${{ inputs.app-path }}
       run: yarn install --immutable
 
-    - name: Configure remote
+    - name: Install Twenty CLI
+      if: env.TWENTY_CLI == ''
       shell: bash
-      run: |
-        mkdir -p ~/.twenty
-        node -e "
-          const fs = require('fs'), path = require('path'), os = require('os');
-          fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
-            version: 1,
-            remotes: { target: { apiUrl: process.env.API_URL, apiKey: process.env.API_KEY, twentyCLIAccessToken: process.env.API_KEY } }
-          }, null, 2));
-        "
       env:
-        API_URL: ${{ inputs.api-url }}
-        API_KEY: ${{ inputs.api-key }}
+        TWENTY_CLI_VERSION: ${{ inputs.cli-version }}
+      run: |
+        if [ -z "$TWENTY_CLI_VERSION" ]; then
+          echo "::error::Set cli-version to an exact released Twenty CLI version, or set TWENTY_CLI to a local build."
+          exit 1
+        fi
+        npm install -g "twenty@$TWENTY_CLI_VERSION"
 
     - name: Deploy
       shell: bash
       working-directory: ${{ inputs.app-path }}
-      run: yarn twenty app:publish --private --remote target
+      env:
+        TWENTY_API_URL: ${{ inputs.api-url }}
+        TWENTY_API_KEY: ${{ inputs.api-key }}
+      run: |
+        if [ -n "${TWENTY_CLI:-}" ]; then
+          node "$TWENTY_CLI" app publish --private
+        else
+          twenty app publish --private
+        fi

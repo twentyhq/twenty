@@ -5,7 +5,7 @@ description: Use when the user wants to prepare or verify a Twenty app for npm o
 
 # When To Use
 
-Pick this skill when the user wants to make an existing Twenty app *presentable* — listing copy, branding, public assets, and publication. Representative triggers:
+Pick this skill when the user wants to make an existing Twenty app _presentable_ — listing copy, branding, public assets, and publication. Representative triggers:
 
 - "prepare my Twenty app for the marketplace"
 - "write the README for my Twenty app"
@@ -30,7 +30,7 @@ Keep the skill workflow concise:
 - In `defineApplication()`, verify marketplace-facing fields such as `displayName`, `description`, `author`, `category`, `logo`, `galleryImages`, `aboutDescription`, `websiteUrl`, `termsUrl`, `emailSupport`, and `issueReportUrl`.
 - Keep `logo` and `galleryImages` pointed at files in `public/`. Public assets must not contain secrets, private data, customer records, real tokens, or unreleased confidential material.
 - Remember that if `aboutDescription` is omitted, the marketplace uses the package `README.md` from npm for the About content. The About tab renders markdown text only: images and raw HTML are not rendered.
-- Validate with `yarn twenty dev:build`; publish with `yarn twenty app:publish` or `yarn twenty app:publish --tag <tag>`.
+- Validate with `twenty app build`; publish with `twenty app publish` or `twenty app publish --tag <tag>`.
 
 # Boundaries
 

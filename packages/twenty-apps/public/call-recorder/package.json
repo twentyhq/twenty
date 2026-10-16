@@ -41,6 +41,7 @@
     "typescript": "^5.9.3",
     "use-debounce": "^10.0.0",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.9",
+    "zod": "^4.1.11"
   }
 }

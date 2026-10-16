@@ -5,7 +5,7 @@ type ExistingCallRecording = {
   id: string;
   status: string | null;
   createdAt: string;
-  deletedAt: string | null;
+  deletedAt?: string | null;
 };
 
 const getCallRecordingIds = (callRecordings: ExistingCallRecording[]) =>

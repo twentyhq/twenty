@@ -1,8 +1,6 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { functionExecute } from 'twenty-sdk/cli';
+import { executeDeployedFunction } from './execute-deployed-function';
+import { readManifestLogicFunctionNames } from './read-manifest-logic-function-names';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { buildSlackAppMentionEventBody } from 'src/__tests__/utils/build-slack-app-mention-event-body.util';
@@ -14,38 +12,6 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identi
 // These scenarios run the functions the way the server runs them - deployed,
 // in the app runtime, with the app's own access token and server variables -
 // which nothing running in the test process can prove on its own.
-const APP_PATH = process.cwd();
-
-const executeDeployedFunction = async (
-  functionName: string,
-  payload: Record<string, unknown>,
-) => {
-  const result = await functionExecute({
-    appPath: APP_PATH,
-    functionName,
-    payload,
-  });
-
-  if (!result.success) {
-    throw new Error(
-      `Could not execute ${functionName}: ${result.error.message}`,
-    );
-  }
-
-  return result.data;
-};
-
-const readManifestLogicFunctionNames = (): string[] => {
-  const manifest = JSON.parse(
-    fs.readFileSync(
-      path.join(APP_PATH, '.twenty', 'output', 'manifest.json'),
-      'utf8',
-    ),
-  ) as { logicFunctions: { name: string }[] };
-
-  return manifest.logicFunctions.map((logicFunction) => logicFunction.name);
-};
-
 describe('Slack app deployed functions', () => {
   const metadataClient = new MetadataApiClient();
 
@@ -159,7 +125,7 @@ describe('Slack app deployed functions', () => {
         (logicFunction: { name: string }) => logicFunction.name,
       );
 
-    for (const manifestFunctionName of readManifestLogicFunctionNames()) {
+    for (const manifestFunctionName of await readManifestLogicFunctionNames()) {
       expect(deployedFunctionNames).toContain(manifestFunctionName);
     }
   });

@@ -8,7 +8,7 @@ Objects and fields define the records users will create, view, search, and autom
 
 When adding or modifying data model entities:
 
-- Prefer generated app entity patterns from `yarn twenty dev:add`.
+- Prefer generated app entity patterns from `twenty app add`.
 - Use clear object and field names that map to user-facing language.
 - Add relations only when users need to navigate or report across records.
 - Avoid duplicating data that already exists on core Twenty objects.
@@ -95,7 +95,7 @@ For select fields, default values must be quoted string expressions like `"'PLAN
 
 ### Relations
 
-A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`, one on each object. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName` (the convention is `<fieldName>Id`); the build rejects a `MANY_TO_ONE` relation without one. `yarn twenty dev:add field` emits it, but the reverse `ONE_TO_MANY` field still has to be written by hand, including on a standard object such as Company:
+A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`, one on each object. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName` (the convention is `<fieldName>Id`); the build rejects a `MANY_TO_ONE` relation without one. `twenty app add field` emits it, but the reverse `ONE_TO_MANY` field still has to be written by hand, including on a standard object such as Company:
 
 ```ts
 // src/fields/company-on-contract.ts

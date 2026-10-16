@@ -1,47 +1,27 @@
 # Setup
 
-Follow these steps to get your app running locally.
+Use Node.js from `.nvmrc` and Yarn 4. Install the standalone CLI globally:
 
-## Prerequisites
+```bash
+npm install -g twenty
+yarn install
+```
 
-- Node.js (version specified in `.nvmrc`)
-- Yarn 4
-- Docker (to run the local Twenty server)
+Connect to your existing Twenty workspace, or start a server using the [local-server guide](https://docs.twenty.com/developers/extend/apps/getting-started/local-server):
 
-## Steps
+```bash
+twenty auth login --url https://your-workspace.twenty.com --name dev
+twenty app apply --create
+twenty app dev
+```
 
-1. Install dependencies:
+The first apply registers and installs your app. Dev watches and syncs later source changes. `twenty app init` does not authenticate, start containers, or install the app.
 
-   ```bash
-   yarn install
-   ```
+## Validation
 
-   The committed `yarn.lock` pins exact, integrity-checked versions, so this
-   resolves nothing from the registry.
+- `yarn lint`, lint the project.
+- `yarn typecheck`, check source and test types.
+- `yarn test:unit`, run unit tests.
+- `yarn test`, run integration tests against a disposable workspace configured with `TWENTY_API_URL` and `TWENTY_API_KEY`.
 
-2. Start the local Twenty server:
-
-   ```bash
-   yarn twenty docker:start
-   ```
-
-   Check the server status at any time with `yarn twenty docker:status`.
-
-3. Start the development server and sync your app:
-
-   ```bash
-   yarn twenty dev
-   ```
-
-4. Open [http://localhost:2020](http://localhost:2020) and log in with the default development credentials: `tim@apple.dev` / `tim@apple.dev`.
-
-## Verifying your setup
-
-- `yarn lint` - Lint the project with oxlint
-- `yarn typecheck` - Type-check the project
-- `yarn test:unit` - Run unit tests
-- `yarn test` - Run integration tests
-
-## Troubleshooting
-
-See the [troubleshooting guide](https://docs.twenty.com/developers/extend/apps/getting-started/troubleshooting) or ask on [Discord](https://discord.gg/cx5n4Jzs57).
+Integration tests install and uninstall the app. Install the CLI globally or set `TWENTY_CLI` to a local executable path.

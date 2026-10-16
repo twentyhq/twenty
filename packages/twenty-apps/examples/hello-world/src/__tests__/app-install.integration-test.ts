@@ -1,51 +1,25 @@
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
-import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { runTwenty } from './run-twenty';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-const APP_PATH = process.cwd();
-
 describe('App installation', () => {
   beforeAll(async () => {
-    const buildResult = await appBuild({
-      appPath: APP_PATH,
-      tarball: true,
-      onProgress: (message: string) => console.log(`[build] ${message}`),
-    });
-
-    if (!buildResult.success) {
-      throw new Error(
-        `Build failed: ${buildResult.error?.message ?? 'Unknown error'}`,
-      );
-    }
-
-    const deployResult = await appDeploy({
-      tarballPath: buildResult.data.tarballPath!,
-      onProgress: (message: string) => console.log(`[deploy] ${message}`),
-    });
-
-    if (!deployResult.success) {
-      throw new Error(
-        `Deploy failed: ${deployResult.error?.message ?? 'Unknown error'}`,
-      );
-    }
-
-    const installResult = await appInstall({ appPath: APP_PATH });
-
-    if (!installResult.success) {
-      throw new Error(
-        `Install failed: ${installResult.error?.message ?? 'Unknown error'}`,
-      );
+    for (const args of [
+      ['app', 'publish', '--private'],
+      ['app', 'install'],
+    ]) {
+      const result = await runTwenty(args);
+      if (!result.ok) {
+        throw new Error(`${args.join(' ')} failed: ${result.error.message}`);
+      }
     }
   });
 
   afterAll(async () => {
-    const uninstallResult = await appUninstall({ appPath: APP_PATH });
-
-    if (!uninstallResult.success) {
-      console.warn(
-        `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
-      );
+    const result = await runTwenty(['app', 'uninstall', '--yes']);
+    if (!result.ok) {
+      console.warn(`App uninstall failed: ${result.error.message}`);
     }
   });
 
@@ -62,8 +36,7 @@ describe('App installation', () => {
 
     const installedApp = result.findManyApplications.find(
       (application: { universalIdentifier: string }) =>
-        application.universalIdentifier ===
-        APPLICATION_UNIVERSAL_IDENTIFIER,
+        application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
     );
 
     expect(installedApp).toBeDefined();

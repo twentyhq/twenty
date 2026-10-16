@@ -41,7 +41,7 @@ Seeders need workflow settings permissions on the app role. Grant via `defineRol
 ## Invoking Locally
 
 ```bash
-yarn twenty dev:function:exec
+twenty app exec
 ```
 
-`yarn twenty apply` skips install hooks. Run it again after rebuilding to verify idempotency.
+`twenty app apply` skips install hooks. Run it again after rebuilding to verify idempotency.

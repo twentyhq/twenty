@@ -41,6 +41,9 @@ jobs:
         # Trusted publishing requires npm 11.5.1 or later.
         run: npm install -g npm@latest
 
+      - name: Install Twenty CLI
+        run: npm install -g twenty@CLI-VERSION-TO-BE-GENERATED
+
       - name: Install dependencies
         run: yarn install --immutable
 
@@ -49,4 +52,4 @@ jobs:
         # OIDC provenance for private repos
         # env:
         #   TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
-        run: yarn twenty app:publish
+        run: twenty app publish
