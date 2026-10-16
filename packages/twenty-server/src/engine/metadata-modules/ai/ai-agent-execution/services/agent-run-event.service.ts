@@ -144,7 +144,8 @@ export class AgentRunEventService {
       for (const event of events) {
         if (event.type === 'session.status_running') {
           const turnMessages = isDefined(state.turnId)
-            ? await this.loadUserMessages(workspaceId, {
+            ? await this.loadUserMessages({
+                workspaceId,
                 threadId,
                 turnId: state.turnId,
               })
@@ -193,7 +194,8 @@ export class AgentRunEventService {
 
         if (event.type === 'message-added') {
           return this.toUserMessageEvents(
-            await this.loadUserMessages(workspaceId, {
+            await this.loadUserMessages({
+              workspaceId,
               threadId,
               id: event.messageId,
             }),
@@ -222,10 +224,15 @@ export class AgentRunEventService {
   }
 
   // a turn's messages are on record before it streams, so the live stream reads them at its start
-  private async loadUserMessages(
-    workspaceId: string,
-    where: { threadId: string; turnId?: string; id?: string },
-  ): Promise<AgentMessageWorkspaceEntity[]> {
+  private async loadUserMessages({
+    workspaceId,
+    ...where
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId?: string;
+    id?: string;
+  }): Promise<AgentMessageWorkspaceEntity[]> {
     const messages = await this.messageRepository.find(workspaceId, {
       where: { ...where, role: AgentMessageRole.USER },
       order: { createdAt: 'ASC' },

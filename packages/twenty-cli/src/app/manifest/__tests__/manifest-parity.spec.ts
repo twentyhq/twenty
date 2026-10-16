@@ -176,6 +176,7 @@ describe('CLI manifest parity with the repository SDK', () => {
       'react',
       'react-dom',
       '@sniptt/guards',
+      'graphql-sse',
       'uuid',
       'esbuild',
       'typescript',
