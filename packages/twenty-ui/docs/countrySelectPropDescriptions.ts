@@ -31,7 +31,7 @@ export const COUNTRY_SELECT_PROP_DESCRIPTIONS = {
     'Called before outside interaction or Tab dismisses the popup. Call event.preventDefault() to keep it open.',
   defaultPage: 'Dropdown page shown when the popup opens. Defaults to root.',
   popupProps:
-    'Dropdown.Content props, including native popup attributes, ref, render, positioning, portal destination, and keepMounted. Children are owned by the picker.',
+    'Dropdown.Content props, including native popup attributes, ref, render, positioning, portal destination, and keepMounted. Explicit popup accessible names override the trigger name. Children are owned by the picker.',
   wrapperProps:
     'Native props and ref for the div around the trigger and its visible label. Children are owned by the picker.',
   id: 'ID of the trigger. Generated when omitted.',

@@ -163,7 +163,7 @@
         "type": "Omit<DropdownContentProps, \"children\">",
         "required": false,
         "defaultValue": null,
-        "description": "Dropdown.Content props, including native popup attributes, ref, render, positioning, portal destination, and keepMounted. Children are owned by the picker."
+        "description": "Dropdown.Content props, including native popup attributes, ref, render, positioning, portal destination, and keepMounted. Explicit popup accessible names override the trigger name. Children are owned by the picker."
       },
       {
         "name": "ref",

@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type CountrySelectProps } from '../types/CountrySelectProps';
 import { CountrySelectAvailabilityEffect } from './CountrySelectAvailabilityEffect';
@@ -50,6 +51,9 @@ export const CountrySelectDropdown = ({
   const popupLabel = [triggerProps['aria-label'], triggerProps.label].find(
     isNonEmptyString,
   );
+  const hasPopupAccessibleName =
+    isDefined(popupProps?.['aria-label']) ||
+    isDefined(popupProps?.['aria-labelledby']);
 
   return (
     <>
@@ -71,8 +75,10 @@ export const CountrySelectDropdown = ({
           {...triggerProps}
         />
         <Dropdown.Content
-          aria-label={popupLabel}
-          aria-labelledby={triggerProps['aria-labelledby']}
+          aria-label={hasPopupAccessibleName ? undefined : popupLabel}
+          aria-labelledby={
+            hasPopupAccessibleName ? undefined : triggerProps['aria-labelledby']
+          }
           // oxlint-disable-next-line react/jsx-props-no-spreading
           {...popupProps}
         >
