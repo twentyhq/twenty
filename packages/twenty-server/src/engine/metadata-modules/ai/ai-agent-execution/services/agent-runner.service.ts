@@ -10,7 +10,6 @@ import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storag
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { AGENT_RUN_BUSY_MAX_ATTEMPTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-busy-max-attempts.const';
 import { AGENT_RUN_BUSY_RETRY_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-busy-retry-delay-ms.const';
@@ -161,7 +160,7 @@ export class AgentRunnerService {
     }
 
     if (result === CONVERSATION_BUSY) {
-      if (await this.retryWhenFree(RUN_AGENT_JOB_NAME, jobData)) {
+      if (await this.retryWhenFree({ jobName: RUN_AGENT_JOB_NAME, jobData })) {
         return;
       }
 
@@ -213,7 +212,8 @@ export class AgentRunnerService {
         await this.continueSuspendedRun({
           workspaceId,
           threadId,
-          wakeUp,
+          suspension,
+          isAwaitingAnswer: wakeUp.condition.type === 'ANSWER',
           outcome,
           stream,
         });
@@ -224,7 +224,10 @@ export class AgentRunnerService {
 
     if (
       continued === CONVERSATION_BUSY &&
-      !(await this.retryWhenFree(CONTINUE_AGENT_RUN_JOB_NAME, jobData))
+      !(await this.retryWhenFree({
+        jobName: CONTINUE_AGENT_RUN_JOB_NAME,
+        jobData,
+      }))
     ) {
       await this.agentRunSuspensionService.settle({
         workspaceId,
@@ -283,10 +286,13 @@ export class AgentRunnerService {
     }
   }
 
-  private async retryWhenFree<TJobData extends { busyAttempt?: number }>(
-    jobName: string,
-    jobData: TJobData,
-  ): Promise<boolean> {
+  private async retryWhenFree<TJobData extends { busyAttempt?: number }>({
+    jobName,
+    jobData,
+  }: {
+    jobName: string;
+    jobData: TJobData;
+  }): Promise<boolean> {
     const busyAttempt = (jobData.busyAttempt ?? 0) + 1;
 
     if (busyAttempt >= AGENT_RUN_BUSY_MAX_ATTEMPTS) {
@@ -325,15 +331,15 @@ export class AgentRunnerService {
   private async continueSuspendedRun({
     workspaceId,
     threadId,
-    wakeUp,
+    suspension,
+    isAwaitingAnswer,
     outcome,
     stream,
   }: Omit<ContinueAgentRunJobData, 'wakeUpId'> & {
-    wakeUp: Pick<PendingWakeUpEntity, 'payload' | 'condition'>;
+    suspension: AgentRunSuspension;
+    isAwaitingAnswer: boolean;
     stream: AgentRunStream;
   }): Promise<void> {
-    const suspension = wakeUp.payload as AgentRunSuspension;
-    const isAwaitingAnswer = wakeUp.condition.type === 'ANSWER';
     const { caller, runSpec } = suspension;
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
@@ -402,6 +408,8 @@ export class AgentRunnerService {
         isAwaitingAnswer,
         streamId: stream.claim.streamId,
       });
+      // handled here instead of thrown, so the interrupted turn is failed here as a thrown error would be
+      await this.turnStreamService.failStream({ claim: stream.claim, error });
 
       return;
     }
@@ -500,12 +508,19 @@ export class AgentRunnerService {
     );
 
     if (!isDefined(startedTurn) || isDefined(streamed.streamError)) {
-      throw streamed.streamError ?? new Error('The agent turn did not start');
+      throw (
+        streamed.streamError ??
+        new AiException(
+          'The agent turn did not start',
+          AiExceptionCode.AGENT_EXECUTION_FAILED,
+        )
+      );
     }
 
     const execution = await this.agentRunTurnService.completeTurn({
       ...turnInput,
       started: startedTurn,
+      turnUsage: streamed.usage,
     });
 
     const wait = execution.isPaused
@@ -522,6 +537,7 @@ export class AgentRunnerService {
       isOutOfCredits: execution.hasNoMoreAvailableCredits,
       isWaiting: isDefined(wait),
       shouldRecordReplyActivity: false,
+      isTextReplyRequired: false,
     });
 
     await this.turnStreamService.publishTurnEnd({
@@ -541,17 +557,19 @@ export class AgentRunnerService {
     return {
       threadId,
       summary,
-      outcome: streamed.isAborted
-        ? { status: 'FAILED', error: 'The run was stopped' }
-        : await this.settleTurn({
-            input,
-            execution,
-            wait,
-            isAwaitingAnswer: finished?.isAwaitingAnswer === true,
-            summary,
-            suspension,
-            streamId: claim.streamId,
-          }),
+      // a stop can also land while the structured output is asked for, after the stream ended
+      outcome:
+        streamed.isAborted || abortSignal.aborted
+          ? { status: 'FAILED', error: 'The run was stopped' }
+          : await this.settleTurn({
+              input,
+              execution,
+              wait,
+              isAwaitingAnswer: finished?.isAwaitingAnswer === true,
+              summary,
+              suspension,
+              streamId: claim.streamId,
+            }),
     };
   }
 

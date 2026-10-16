@@ -6,12 +6,14 @@ export const classifyAgentChatTurnOutcome = ({
   isAwaitingUserAnswer,
   isSilent,
   outOfCredits,
+  isTextReplyRequired = true,
 }: {
   hasText: boolean;
   isAborted: boolean;
   isAwaitingUserAnswer: boolean;
   isSilent: boolean;
   outOfCredits: boolean;
+  isTextReplyRequired?: boolean;
 }): AgentChatTurnOutcome => {
   // stopWhen ends the stream on a question, so this is a completed turn, not an abandoned one
   if (isAwaitingUserAnswer) {
@@ -28,6 +30,11 @@ export const classifyAgentChatTurnOutcome = ({
 
   if (isSilent) {
     return { kind: 'completed', outcome: 'silent' };
+  }
+
+  // a background run's outcome is its result, so it may end on tool calls without a written reply
+  if (!isTextReplyRequired && !outOfCredits) {
+    return { kind: 'completed', outcome: 'answered' };
   }
 
   return {

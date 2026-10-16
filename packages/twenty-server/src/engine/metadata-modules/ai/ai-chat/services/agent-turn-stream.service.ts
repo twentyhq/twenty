@@ -139,7 +139,7 @@ export class AgentTurnStreamService {
     try {
       return await work(abortController.signal);
     } catch (error) {
-      await this.streamRecoveryService.failStream({ ...claim, error });
+      await this.failStream({ claim, error });
 
       throw error;
     } finally {
@@ -147,6 +147,17 @@ export class AgentTurnStreamService {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.streamRecoveryService.releaseStreamClaim(claim);
     }
+  }
+
+  // ends the turn the claim runs as failed, and tells the conversation's subscribers
+  async failStream({
+    claim,
+    error,
+  }: {
+    claim: AgentChatStreamClaim;
+    error: unknown;
+  }): Promise<void> {
+    await this.streamRecoveryService.failStream({ ...claim, error });
   }
 
   async stream({
@@ -310,6 +321,7 @@ export class AgentTurnStreamService {
     isOutOfCredits,
     isWaiting = false,
     shouldRecordReplyActivity = true,
+    isTextReplyRequired = true,
   }: {
     claim: AgentChatStreamClaim;
     turnId: string;
@@ -319,6 +331,7 @@ export class AgentTurnStreamService {
     isWaiting?: boolean;
     // a reply nobody waits on can stay out of the inbox; a question always brings the thread back
     shouldRecordReplyActivity?: boolean;
+    isTextReplyRequired?: boolean;
   }): Promise<AgentTurnFinish | null> {
     const { workspaceId, threadId, streamId } = claim;
     const { replyParts, assistantMessageId } = result;
@@ -340,6 +353,7 @@ export class AgentTurnStreamService {
       isAwaitingUserAnswer: awaitingParts.length > 0 || isWaiting,
       isSilent,
       outOfCredits: isOutOfCredits,
+      isTextReplyRequired,
     });
     const finishTurn = () =>
       this.turnRecorderService.finish({
