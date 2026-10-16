@@ -1,6 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
-import { SettingsAppPreferencesCompleteSetupCards } from '@/settings/app-preferences/components/SettingsAppPreferencesCompleteSetupCards';
+import { SettingsAppPreferencesCompleteSetupSection } from '@/settings/app-preferences/components/SettingsAppPreferencesCompleteSetupSection';
 import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
@@ -119,14 +119,18 @@ export const SettingsNativeAccountApp = () => {
     />
   );
 
-  const renderMissingAccount = (accountsPendingSetup: ConnectedAccount[]) =>
-    accountsPendingSetup.length > 0 ? (
-      <SettingsAppPreferencesCompleteSetupCards
-        accounts={accountsPendingSetup}
-      />
-    ) : (
-      <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-    );
+  const withAccountsPendingSetup = (
+    readyAccounts: ConnectedAccount[],
+    accountsPendingSetup: ConnectedAccount[],
+  ) => [
+    ...readyAccounts,
+    ...accountsPendingSetup.filter(
+      (pendingAccount) =>
+        !readyAccounts.some(
+          (readyAccount) => readyAccount.id === pendingAccount.id,
+        ),
+    ),
+  ];
 
   const renderContent = () => {
     if (activeTabId === 'emails') {
@@ -134,10 +138,16 @@ export const SettingsNativeAccountApp = () => {
         return <SettingsSectionSkeletonLoader />;
       }
 
-      const selectedAccount = getSelectedAccount(emailAccounts);
+      const selectableAccounts = withAccountsPendingSetup(
+        emailAccounts,
+        emailAccountsPendingSetup,
+      );
+      const selectedAccount = getSelectedAccount(selectableAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return renderMissingAccount(emailAccountsPendingSetup);
+        return (
+          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
+        );
       }
 
       const { messageChannel } =
@@ -145,10 +155,15 @@ export const SettingsNativeAccountApp = () => {
 
       return (
         <>
-          {renderAccountSelect(emailAccounts, selectedAccount)}
-          {isDefined(messageChannel) && (
+          {renderAccountSelect(selectableAccounts, selectedAccount)}
+          {isDefined(messageChannel) ? (
             <SettingsAppPreferencesSelectedMessageChannelDetails
               messageChannel={messageChannel}
+            />
+          ) : (
+            <SettingsAppPreferencesCompleteSetupSection
+              connectedAccountId={selectedAccount.id}
+              description={t`Finish setting up this account to manage its email settings.`}
             />
           )}
         </>
@@ -160,10 +175,16 @@ export const SettingsNativeAccountApp = () => {
         return <SettingsSectionSkeletonLoader />;
       }
 
-      const selectedAccount = getSelectedAccount(calendarAccounts);
+      const selectableAccounts = withAccountsPendingSetup(
+        calendarAccounts,
+        calendarAccountsPendingSetup,
+      );
+      const selectedAccount = getSelectedAccount(selectableAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return renderMissingAccount(calendarAccountsPendingSetup);
+        return (
+          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
+        );
       }
 
       const { calendarChannel } =
@@ -171,10 +192,15 @@ export const SettingsNativeAccountApp = () => {
 
       return (
         <>
-          {renderAccountSelect(calendarAccounts, selectedAccount)}
-          {isDefined(calendarChannel) && (
+          {renderAccountSelect(selectableAccounts, selectedAccount)}
+          {isDefined(calendarChannel) ? (
             <SettingsAccountsCalendarChannelDetails
               calendarChannel={calendarChannel}
+            />
+          ) : (
+            <SettingsAppPreferencesCompleteSetupSection
+              connectedAccountId={selectedAccount.id}
+              description={t`Finish setting up this account to manage its calendar settings.`}
             />
           )}
         </>

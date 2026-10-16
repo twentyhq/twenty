@@ -189,11 +189,12 @@ export const CalendarPendingSetupOffersCompleteSetup: Story = {
 
     expect(
       await canvas.findByText(
-        "Complete setup to manage this account's settings",
+        'Finish setting up this account to manage its calendar settings.',
       ),
     ).toBeVisible();
+    expect(canvas.getByText('tim@outlook.com')).toBeVisible();
     expect(
-      canvas.getByRole('link', { name: /tim@outlook.com/ }),
+      canvas.getByRole('link', { name: 'Complete setup' }),
     ).toHaveAttribute(
       'href',
       `/settings/accounts/configuration/${MICROSOFT_ACCOUNT_ID}`,
