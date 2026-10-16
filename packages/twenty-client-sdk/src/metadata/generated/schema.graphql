@@ -536,6 +536,7 @@ enum ApplicationRegistrationSourceType {
 
 type ApplicationRegistrationStats {
   activeInstalls: Int!
+  autoUpdateEnabled: Int!
   mostInstalledVersion: String
   suspendedInstalls: Int!
   versionDistribution: [VersionDistributionEntry!]!
