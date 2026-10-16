@@ -14460,5 +14460,26 @@
         "description": "Container width in pixels. When omitted, the container has a 300px minimum width."
       }
     ]
+  },
+  {
+    "name": "GroupedCatalog",
+    "entryPoint": "twenty-ui/testing",
+    "slug": "testing/grouped-catalog",
+    "props": [
+      {
+        "name": "groups",
+        "type": "{ label: string; examples: CatalogExample[]; }[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Labeled groups of examples. Each example has a unique label within its group and can include additional data for the renderer."
+      },
+      {
+        "name": "renderExample",
+        "type": "(example: CatalogExample) => ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Renders one example, including its visible label or accessible name. The layout supplies the surrounding cell and spacing."
+      }
+    ]
   }
 ]
