@@ -5,7 +5,11 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import { type AiModelTier, type AiSdkPackage } from 'twenty-shared/ai';
+import {
+  type AiDataResidencyPolicy,
+  type AiModelTier,
+  type AiSdkPackage,
+} from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -79,6 +83,9 @@ export class ClientAiModelConfig {
   @Field(() => String, { nullable: true })
   dataResidency?: string;
 
+  @Field(() => Boolean, { nullable: true })
+  zeroDataRetention?: boolean;
+
   @Field(() => Number, { nullable: true })
   intelligenceIndex?: number;
 
@@ -139,6 +146,7 @@ export class ClientAiEvaluationModelConfig {
   isDeprecated?: boolean;
 }
 
+// one entry per tier and data policy, so the client shows the default its workspace policy resolves to
 @ObjectType()
 export class ClientAiModelTierConfig {
   @Field(() => AiModelTierEnum)
@@ -146,6 +154,12 @@ export class ClientAiModelTierConfig {
 
   @Field(() => String)
   modelId: ModelId;
+
+  @Field(() => String, { nullable: true })
+  aiDataResidency: AiDataResidencyPolicy | null;
+
+  @Field(() => Boolean)
+  isAiZeroDataRetentionRequired: boolean;
 }
 
 @ObjectType()

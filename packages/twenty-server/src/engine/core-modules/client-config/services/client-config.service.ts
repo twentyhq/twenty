@@ -21,6 +21,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AI_MODEL_TIERS, parseAiModelVariantId } from 'twenty-shared/ai';
 import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
+import { AI_DATA_POLICIES } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-data-policies.const';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
@@ -120,6 +121,7 @@ export class ClientConfigService {
           maxOutputTokens: modelConfig?.maxOutputTokens,
           isDeprecated: modelConfig?.isDeprecated,
           dataResidency: modelConfig?.dataResidency,
+          zeroDataRetention: modelConfig?.zeroDataRetention,
           intelligenceIndex: benchmark?.intelligenceIndex,
           outputTokensPerSecond: benchmark?.outputTokensPerSecond,
           costPerTask: benchmark?.costPerTask,
@@ -156,11 +158,18 @@ export class ClientConfigService {
           isDeprecated: modelConfig.isDeprecated,
         }));
 
-    const aiModelTiers = AI_MODEL_TIERS.flatMap((tier) => {
-      const model = this.aiModelRegistryService.findDefaultModelForTier(tier);
+    const aiModelTiers = AI_DATA_POLICIES.flatMap((aiDataPolicy) =>
+      AI_MODEL_TIERS.flatMap((tier) => {
+        const model = this.aiModelRegistryService.findDefaultModelForTier(
+          tier,
+          aiDataPolicy,
+        );
 
-      return isDefined(model) ? [{ tier, modelId: model.modelId }] : [];
-    });
+        return isDefined(model)
+          ? [{ tier, modelId: model.modelId, ...aiDataPolicy }]
+          : [];
+      }),
+    );
 
     const clientConfig: ClientConfig = {
       appVersion: this.twentyConfigService.get('APP_VERSION'),

@@ -245,7 +245,10 @@ export class ChatExecutionService {
       workspace,
     });
 
-    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
+    this.aiModelRegistryService.validateModelAvailability(
+      resolvedModelId,
+      workspace,
+    );
 
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent(
@@ -262,6 +265,7 @@ export class ChatExecutionService {
     );
     const nativeTools = this.aiModelConfigService.getNativeModelTools(
       registeredModel,
+      workspace,
       {
         webSearch: nativeCapabilities?.webSearch === true,
         twitterSearch: nativeCapabilities?.twitterSearch === true,
@@ -578,6 +582,7 @@ export class ChatExecutionService {
         functionId: isWorkspaceSetupThread
           ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
           : AI_CHAT_STREAM_FUNCTION_ID,
+        aiDataPolicy: workspace,
         workspaceId: workspace.id,
         userWorkspaceId,
         threadId,
@@ -726,6 +731,7 @@ export class ChatExecutionService {
           model: registeredModel.model,
           billingContext: {
             aiBillingService: this.aiBillingService,
+            aiDataPolicy: workspace,
             modelId: registeredModel.modelId,
             workspaceId: workspace.id,
             spenders: { userWorkspaceId },

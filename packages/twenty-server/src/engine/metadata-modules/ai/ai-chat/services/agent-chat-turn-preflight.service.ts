@@ -41,6 +41,7 @@ export class AgentChatTurnPreflightService {
 
     this.aiModelRegistryService.validateModelAvailability(
       getChatModelId({ requestedModelId: modelId, workspace }),
+      workspace,
     );
 
     const thread = await this.threadService.getWritableThread({

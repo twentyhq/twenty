@@ -1116,9 +1116,12 @@ type ClientAiModelConfig {
   providerLabel: String
   providerName: String
   sdkPackage: String
+  zeroDataRetention: Boolean
 }
 
 type ClientAiModelTierConfig {
+  aiDataResidency: String
+  isAiZeroDataRetentionRequired: Boolean!
   modelId: String!
   tier: AiModelTier!
 }
@@ -5104,6 +5107,7 @@ input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
   aiChatModelTier: AiModelTier
+  aiDataResidency: String
   aiEvaluationModelId: String
   aiModelIdByTier: JSON
   allowImpersonation: Boolean
@@ -5113,6 +5117,7 @@ input UpdateWorkspaceInput {
   editableProfileFields: [String!]
   eventLogRetentionDays: Float
   inviteHash: String
+  isAiZeroDataRetentionRequired: Boolean
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
   isCampaignOpenTrackingEnabled: Boolean
@@ -5833,6 +5838,7 @@ type Workspace {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
   aiChatModelTier: AiModelTier!
+  aiDataResidency: String
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!
@@ -5855,6 +5861,7 @@ type Workspace {
   id: UUID!
   installedApplications: [Application!]!
   inviteHash: String
+  isAiZeroDataRetentionRequired: Boolean!
   isAutoModelSelectionEnabled: Boolean!
   isCampaignClickTrackingEnabled: Boolean!
   isCampaignOpenTrackingEnabled: Boolean!

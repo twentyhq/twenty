@@ -8,6 +8,8 @@
  */
 
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
+export type { AiDataResidencyPolicy } from './constants/ai-data-residency-policy.const';
+export { AI_DATA_RESIDENCY_POLICIES } from './constants/ai-data-residency-policy.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
 export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
@@ -25,6 +27,7 @@ export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
+export { DATA_RESIDENCIES_BY_AI_DATA_RESIDENCY_POLICY } from './constants/data-residencies-by-ai-data-residency-policy.const';
 export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
@@ -56,6 +59,7 @@ export type {
 } from './types/AgentResponseSchema';
 export type { AgentRunSummary } from './types/AgentRunSummary';
 export type { AgentRunToolCallLog } from './types/AgentRunToolCallLog';
+export type { AiDataPolicy } from './types/AiDataPolicy';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
@@ -108,7 +112,10 @@ export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
+export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';
+export { isAiDataResidencyPolicy } from './utils/is-ai-data-residency-policy.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
+export { isAiModelCompliantWithDataPolicy } from './utils/is-ai-model-compliant-with-data-policy.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';
 export { isAiModelTier } from './utils/is-ai-model-tier.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';

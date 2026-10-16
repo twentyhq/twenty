@@ -92,10 +92,8 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
           uptime: false,
         },
       }),
-      Sentry.vercelAIIntegration({
-        recordInputs: true,
-        recordOutputs: true,
-      }),
+      // per-call telemetry decides, so a workspace's AI data policy can keep prompts out of traces
+      Sentry.vercelAIIntegration(),
       nodeProfilingIntegration(),
     ],
     tracesSampleRate,

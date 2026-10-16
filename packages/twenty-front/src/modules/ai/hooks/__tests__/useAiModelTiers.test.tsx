@@ -67,12 +67,17 @@ const models = [
   }),
 ];
 
+const WORLDWIDE = {
+  aiDataResidency: null,
+  isAiZeroDataRetentionRequired: false,
+};
+
 const instanceTiers = [
-  { tier: AiModelTier.extraFast, modelId: 'openai/luna' },
-  { tier: AiModelTier.fast, modelId: 'openai/luna' },
-  { tier: AiModelTier.balanced, modelId: 'openai/terra' },
-  { tier: AiModelTier.smart, modelId: 'openai/sol' },
-  { tier: AiModelTier.extraSmart, modelId: 'openai/missing' },
+  { tier: AiModelTier.extraFast, modelId: 'openai/luna', ...WORLDWIDE },
+  { tier: AiModelTier.fast, modelId: 'openai/luna', ...WORLDWIDE },
+  { tier: AiModelTier.balanced, modelId: 'openai/terra', ...WORLDWIDE },
+  { tier: AiModelTier.smart, modelId: 'openai/sol', ...WORLDWIDE },
+  { tier: AiModelTier.extraSmart, modelId: 'openai/missing', ...WORLDWIDE },
 ];
 
 const renderHooks = () =>
@@ -153,5 +158,45 @@ describe('useAiModelTiers', () => {
       result.current.tiers.find((tier) => tier.tier === 'smart')?.model
         ?.modelId,
     ).toBe('openai/sol');
+  });
+
+  it('follows the defaults of the workspace data policy and drops pins outside it', () => {
+    const { result } = renderHooks();
+    const euModel = {
+      ...buildModel({
+        modelId: 'azure-foundry/sol',
+        outputTokensPerSecond: 60,
+        intelligenceIndex: 48,
+        inputCostPerMillionTokens: 4,
+      }),
+      dataResidency: 'eu',
+    };
+
+    act(() => {
+      result.current.setAiModels([...models, euModel]);
+      result.current.setAiModelTiers([
+        ...instanceTiers,
+        {
+          tier: AiModelTier.smart,
+          modelId: 'azure-foundry/sol',
+          aiDataResidency: 'eu',
+          isAiZeroDataRetentionRequired: false,
+        },
+      ]);
+      result.current.setCurrentWorkspace({
+        ...mockCurrentWorkspace,
+        aiDataResidency: 'eu',
+        isAutoModelSelectionEnabled: false,
+        aiModelIdByTier: { fast: 'openai/luna' },
+      });
+    });
+
+    expect(
+      result.current.tiers.find((tier) => tier.tier === 'smart')?.model
+        ?.modelId,
+    ).toBe('azure-foundry/sol');
+    expect(
+      result.current.tiers.find((tier) => tier.tier === 'fast')?.model,
+    ).toBeUndefined();
   });
 });

@@ -414,12 +414,22 @@ export class AgentAsyncExecutorService {
         id: workspaceId,
       });
 
-      this.aiModelRegistryService.validateModelAvailability(agent.modelId);
+      if (!isDefined(workspace)) {
+        throw new AiException(
+          `Workspace ${workspaceId} not found`,
+          AiExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      this.aiModelRegistryService.validateModelAvailability(
+        agent.modelId,
+        workspace,
+      );
 
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(
           agent,
-          workspace ?? undefined,
+          workspace,
         );
 
       resolvedModelId = registeredModel.modelId;
@@ -482,6 +492,7 @@ export class AgentAsyncExecutorService {
 
       const nativeTools = this.aiModelConfigService.getNativeModelTools(
         registeredModel,
+        workspace,
         nativeModelToolOptions,
       );
 
@@ -565,6 +576,7 @@ export class AgentAsyncExecutorService {
         providerOptions,
         ...buildAiTelemetry({
           functionId: 'agent-execution',
+          aiDataPolicy: workspace,
           workspaceId,
           userWorkspaceId,
           agentId: agent.id,
@@ -631,6 +643,7 @@ export class AgentAsyncExecutorService {
             model: registeredModel.model,
             billingContext: {
               aiBillingService: this.aiBillingService,
+              aiDataPolicy: workspace,
               modelId: registeredModel.modelId,
               workspaceId,
               spenders: usageSpenders,
@@ -678,6 +691,7 @@ export class AgentAsyncExecutorService {
           }),
           ...buildAiTelemetry({
             functionId: 'agent-structured-output',
+            aiDataPolicy: workspace,
             workspaceId,
             userWorkspaceId,
             agentId: agent.id,

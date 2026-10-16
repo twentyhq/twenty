@@ -40,6 +40,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
           503, // the AI service is not configured
         );
       case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
+      case AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

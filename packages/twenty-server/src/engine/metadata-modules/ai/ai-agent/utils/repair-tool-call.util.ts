@@ -9,6 +9,7 @@ import {
   type ToolSet,
   generateText,
 } from 'ai';
+import { type AiDataPolicy } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
@@ -29,6 +30,7 @@ type ToolCall = {
 
 type RepairToolCallBillingContext = {
   aiBillingService: AiBillingService;
+  aiDataPolicy: AiDataPolicy;
   modelId: string;
   workspaceId: string;
   spenders: UsageSpenders;
@@ -90,6 +92,7 @@ export const repairToolCall = async ({
       ].join('\n'),
       ...buildAiTelemetry({
         functionId: 'repair-tool-call',
+        aiDataPolicy: billingContext.aiDataPolicy,
         workspaceId: billingContext.workspaceId,
         userWorkspaceId: billingContext.spenders.userWorkspaceId,
       }),

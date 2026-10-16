@@ -43,6 +43,8 @@ export type CurrentWorkspace = Pick<
   | 'isAutoModelSelectionEnabled'
   | 'aiModelIdByTier'
   | 'aiAdditionalInstructions'
+  | 'aiDataResidency'
+  | 'isAiZeroDataRetentionRequired'
   | 'editableProfileFields'
   | 'isInternalMessagesImportEnabled'
 > & {
