@@ -44,7 +44,7 @@ export const SelectedValueDescription: Story = {
       canvasElement,
       name: 'Shipping country',
     });
-    const noCountry = within(popup).getByRole('button', { name: 'No country' });
+    const noCountry = within(popup).getByRole('option', { name: 'No country' });
 
     expect(noCountry.querySelector('svg')?.parentElement).toHaveAttribute(
       'aria-hidden',
@@ -102,6 +102,69 @@ export const ExternalLabelledBy: Story = {
   },
 };
 
+export const PopupAriaLabelOverridesTriggerName: Story = {
+  args: { label: '', popupProps: { 'aria-label': 'Country choices' } },
+  render: (args) => (
+    <>
+      <span id="country-name">Destination country</span>
+      <CountrySelectExample
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...args}
+        aria-labelledby="country-name"
+      />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Destination country',
+    });
+
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Country choices',
+    });
+
+    expect(popup).toHaveAttribute('aria-label', 'Country choices');
+    expect(popup).not.toHaveAttribute('aria-labelledby');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
+export const PopupLabelledByOverridesTriggerName: Story = {
+  args: {
+    label: '',
+    'aria-label': 'Destination country',
+    popupProps: { 'aria-labelledby': 'country-popup-name' },
+  },
+  render: (args) => (
+    <>
+      <span id="country-popup-name">Country choices</span>
+      <CountrySelectExample
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...args}
+      />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Destination country',
+    });
+
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Country choices',
+    });
+
+    expect(popup).toHaveAttribute('aria-labelledby', 'country-popup-name');
+    expect(popup).not.toHaveAttribute('aria-label');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
 export const AriaLabelOverVisibleLabel: Story = {
   args: { label: 'Country', 'aria-label': 'Shipping country' },
   play: async ({ canvasElement }) => {
@@ -143,7 +206,7 @@ export const NonButtonTriggerLabel: Story = {
 
 export const TruncatedCountryDisclosure: Story = {
   args: {
-    countries: [{ value: 'France', label: LONG_COUNTRY_LABEL, flag: '🇫🇷' }],
+    countries: [{ value: 'FR', label: LONG_COUNTRY_LABEL, flag: '🇫🇷' }],
   },
   play: async ({ canvasElement }) => {
     const trigger = within(canvasElement).getByRole('button', {
