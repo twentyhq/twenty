@@ -383,6 +383,7 @@ export interface ApplicationConnectionProvider {
     logoUrl?: Scalars['String']
     name: Scalars['String']
     oauth?: ApplicationConnectionProviderOAuthConfig
+    scope: ConnectionProviderScope
     type: Scalars['String']
     __typename: 'ApplicationConnectionProvider'
 }
@@ -698,6 +699,7 @@ export interface Billing {
 export interface BillingCustomer {
     hasPaymentMethod?: Scalars['Boolean']
     id: Scalars['UUID']
+    userCreditsFallback: UserCreditsFallback
     __typename: 'BillingCustomer'
 }
 
@@ -810,14 +812,15 @@ export interface BillingProductMetadata {
 }
 
 export interface BillingResourceCreditUsage {
-    grantedCredits: Scalars['Float']
     periodEnd: Scalars['DateTime']
     periodStart: Scalars['DateTime']
     productKey: BillingProductKey
-    rolloverCredits: Scalars['Float']
-    totalGrantedCredits: Scalars['Float']
     unitPriceCents: Scalars['Float']
-    usedCredits: Scalars['Float']
+    userCreditsUsed: Scalars['Float']
+    workspaceCreditsExtraGranted: Scalars['Float']
+    workspaceCreditsGranted: Scalars['Float']
+    workspaceCreditsTotalGranted: Scalars['Float']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
 }
 
@@ -1169,6 +1172,8 @@ export interface ConnectedImapSmtpCaldavAccount {
     userWorkspaceId: Scalars['UUID']
     __typename: 'ConnectedImapSmtpCaldavAccount'
 }
+
+export type ConnectionProviderScope = 'USER' | 'WORKSPACE'
 
 export interface CreateApplicationFileUploadsResult {
     errors: ApplicationFileUploadError[]
@@ -2317,6 +2322,7 @@ export interface Mutation {
     updateTimelineActivityType: TimelineActivityType
     updateUnsubscribeTopic: UnsubscribeTopic
     updateUsageLimit: UsageLimit
+    updateUserCreditsFallback: BillingCustomer
     updateUserEmail: Scalars['Boolean']
     updateValidationRule: ValidationRule
     updateView: View
@@ -3444,6 +3450,8 @@ export interface UsageBreakdownItem {
     creditsUsed: Scalars['Float']
     key: Scalars['String']
     label?: Scalars['String']
+    userCreditsUsed: Scalars['Float']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'UsageBreakdownItem'
 }
 
@@ -3470,7 +3478,7 @@ export interface UsageLimitOperationDefinition {
     __typename: 'UsageLimitOperationDefinition'
 }
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
 
 export interface UsageQuotaDefinition {
     allowedOperations: UsageLimitOperationDefinition[]
@@ -3526,10 +3534,11 @@ export type UsageResourceType = 'AI' | 'ALL' | 'API' | 'APP' | 'EMAIL' | 'LOGIC_
 export interface UsageTimeSeries {
     creditsUsed: Scalars['Float']
     date: Scalars['String']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'UsageTimeSeries'
 }
 
-export type UsageUnit = 'BYTE' | 'COMPLEXITY' | 'CREDIT' | 'FILE' | 'INVOCATION' | 'MILLISECOND' | 'MINUTE' | 'RECORD' | 'REQUEST' | 'SEAT' | 'TOKEN'
+export type UsageUnit = 'BYTE' | 'COMPLEXITY' | 'CREDIT' | 'FILE' | 'INVOCATION' | 'MILLISECOND' | 'MINUTE' | 'RECORD' | 'REQUEST' | 'SEAT' | 'TOKEN' | 'USER_CREDIT'
 
 export interface UsageUserDaily {
     dailyUsage: UsageTimeSeries[]
@@ -3579,6 +3588,8 @@ export interface UserApplicationVariableValue {
     value: Scalars['String']
     __typename: 'UserApplicationVariableValue'
 }
+
+export type UserCreditsFallback = 'STOP' | 'WORKSPACE_CREDITS'
 
 export interface UserSession {
     authProvider: Scalars['String']
@@ -4407,6 +4418,7 @@ export interface ApplicationConnectionProviderGenqlSelection{
     logoUrl?: boolean | number
     name?: boolean | number
     oauth?: ApplicationConnectionProviderOAuthConfigGenqlSelection
+    scope?: boolean | number
     type?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -4738,6 +4750,7 @@ export interface BillingGenqlSelection{
 export interface BillingCustomerGenqlSelection{
     hasPaymentMethod?: boolean | number
     id?: boolean | number
+    userCreditsFallback?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4861,14 +4874,15 @@ export interface BillingProductMetadataGenqlSelection{
 }
 
 export interface BillingResourceCreditUsageGenqlSelection{
-    grantedCredits?: boolean | number
     periodEnd?: boolean | number
     periodStart?: boolean | number
     productKey?: boolean | number
-    rolloverCredits?: boolean | number
-    totalGrantedCredits?: boolean | number
     unitPriceCents?: boolean | number
-    usedCredits?: boolean | number
+    userCreditsUsed?: boolean | number
+    workspaceCreditsExtraGranted?: boolean | number
+    workspaceCreditsGranted?: boolean | number
+    workspaceCreditsTotalGranted?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6599,6 +6613,7 @@ export interface MutationGenqlSelection{
     updateTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {input: UpdateTimelineActivityTypeInput} })
     updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
     updateUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpdateUsageLimitInput} })
+    updateUserCreditsFallback?: (BillingCustomerGenqlSelection & { __args: {userCreditsFallback: UserCreditsFallback} })
     updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
     updateValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: UpdateValidationRuleInput} })
     updateView?: (ViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
@@ -8077,6 +8092,8 @@ export interface UsageBreakdownItemGenqlSelection{
     creditsUsed?: boolean | number
     key?: boolean | number
     label?: boolean | number
+    userCreditsUsed?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8165,6 +8182,7 @@ export interface UsageQuotaWithConsumptionGenqlSelection{
 export interface UsageTimeSeriesGenqlSelection{
     creditsUsed?: boolean | number
     date?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -11591,6 +11609,11 @@ export const enumCommandMenuItemAvailabilityType = {
    RECORD_SELECTION: 'RECORD_SELECTION' as const
 }
 
+export const enumConnectionProviderScope = {
+   USER: 'USER' as const,
+   WORKSPACE: 'WORKSPACE' as const
+}
+
 export const enumDatabaseEventAction = {
    CREATED: 'CREATED' as const,
    DELETED: 'DELETED' as const,
@@ -12147,6 +12170,7 @@ export const enumUnsubscribeTopicVisibility = {
 export const enumUsageOperationType = {
    AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
    AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
+   AI_WORKFLOW_WEB_SEARCH: 'AI_WORKFLOW_WEB_SEARCH' as const,
    ALL: 'ALL' as const,
    API_REQUEST: 'API_REQUEST' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
@@ -12185,7 +12209,13 @@ export const enumUsageUnit = {
    RECORD: 'RECORD' as const,
    REQUEST: 'REQUEST' as const,
    SEAT: 'SEAT' as const,
-   TOKEN: 'TOKEN' as const
+   TOKEN: 'TOKEN' as const,
+   USER_CREDIT: 'USER_CREDIT' as const
+}
+
+export const enumUserCreditsFallback = {
+   STOP: 'STOP' as const,
+   WORKSPACE_CREDITS: 'WORKSPACE_CREDITS' as const
 }
 
 export const enumViewCalendarLayout = {

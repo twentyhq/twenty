@@ -56,10 +56,15 @@ export const SettingsApplicationConnectionsSection = ({
         const isOAuth = provider.type === 'oauth';
         const isClientCredentialsConfigured =
           provider.oauth?.isClientCredentialsConfigured ?? false;
+        const canAddConnection = provider.scope === 'WORKSPACE';
 
         const providerConnections = connectedAccounts.filter(
           (account) => account.connectionProviderId === provider.id,
         );
+
+        if (!canAddConnection && providerConnections.length === 0) {
+          return null;
+        }
 
         return (
           <Section.Root key={provider.id}>
@@ -77,7 +82,7 @@ export const SettingsApplicationConnectionsSection = ({
                 ) : undefined
               }
             />
-            {isOAuth && !isClientCredentialsConfigured && (
+            {canAddConnection && isOAuth && !isClientCredentialsConfigured && (
               <InlineBanner
                 layout="compact"
                 status="error"
@@ -156,7 +161,7 @@ export const SettingsApplicationConnectionsSection = ({
                 </StyledTableRowsContainer>
               </Table>
             )}
-            {isClientCredentialsConfigured && (
+            {canAddConnection && isClientCredentialsConfigured && (
               <StyledFooter>
                 <Button
                   startIcon={<IconPlus />}

@@ -22,6 +22,12 @@ type Story = StoryObj<typeof Text>;
 const LONG_TEXT =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore';
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { truncate: true, children: 'Alexandra Montgomery' },
+  parameters: { container: { width: 160 } },
+};
+
 export const Truncate: Story = {
   decorators: [ComponentDecorator],
   args: {
@@ -41,12 +47,6 @@ export const Truncate: Story = {
     await expect(textOverflow).toBe('ellipsis');
     await expect(text.scrollWidth).toBeGreaterThan(text.clientWidth);
   },
-};
-
-export const Documentation: Story = {
-  decorators: Truncate.decorators,
-  args: Truncate.args,
-  parameters: Truncate.parameters,
 };
 
 export const LineClamp: Story = {

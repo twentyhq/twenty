@@ -13,11 +13,13 @@ import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { CONNECTION_VISIBILITY_BY_PROVIDER_SCOPE } from 'src/engine/core-modules/application/connection-provider/constants/connection-visibility-by-provider-scope.constant';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import {
   assertOAuthProvider,
   type OAuthConnectionProvider,
 } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
+import { assertConnectionVisibilityWithinProviderScopeOrThrow } from 'src/engine/core-modules/application/connection-provider/utils/assert-connection-visibility-within-provider-scope-or-throw.util';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { computePkceChallenge } from 'src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
@@ -29,7 +31,10 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  ConnectedAccountEntity,
+  type ConnectedAccountVisibility,
+} from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 
@@ -40,7 +45,7 @@ type AuthorizeArgs = {
   workspaceId: string;
   userId: string;
   userWorkspaceId: string;
-  visibility: 'user' | 'workspace';
+  visibility: ConnectedAccountVisibility | null;
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
 };
@@ -82,31 +87,27 @@ export class ConnectionProviderOAuthFlowService {
 
     assertOAuthProvider(connectionProvider);
 
-    let reconnectTarget: ConnectedAccountEntity | null = null;
+    const reconnectTarget = await this.findReconnectTargetOrThrow({
+      connectionProviderId: connectionProvider.id,
+      workspaceId,
+      userWorkspaceId,
+      reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
+    });
 
-    if (isDefined(args.reconnectingConnectedAccountId)) {
-      reconnectTarget = await this.connectedAccountRepository.findOne({
-        where: buildConnectedAccountUsableByCallerWhere({
-          baseWhere: {
-            id: args.reconnectingConnectedAccountId,
-            workspaceId,
-            connectionProviderId: connectionProvider.id,
-          },
-          userWorkspaceId,
-        }),
-      });
+    const visibility =
+      args.visibility ??
+      reconnectTarget?.visibility ??
+      CONNECTION_VISIBILITY_BY_PROVIDER_SCOPE[connectionProvider.scope];
 
-      if (!isDefined(reconnectTarget)) {
-        throw new ConnectionProviderException(
-          `Cannot reconnect connectedAccount ${args.reconnectingConnectedAccountId}: not found in this workspace for the requested provider, or not usable by this member.`,
-          ConnectionProviderExceptionCode.FORBIDDEN,
-        );
-      }
-    }
+    assertConnectionVisibilityWithinProviderScopeOrThrow({
+      connectionProvider,
+      visibility,
+      reconnectTarget,
+    });
 
     await this.appConnectionAccessService.validateCallerCanManageConnection({
       isWorkspaceShared:
-        args.visibility === 'workspace' ||
+        visibility === 'workspace' ||
         reconnectTarget?.visibility === 'workspace',
       workspaceId,
       userWorkspaceId,
@@ -127,7 +128,7 @@ export class ConnectionProviderOAuthFlowService {
       workspaceId,
       userId,
       userWorkspaceId,
-      visibility: args.visibility,
+      visibility,
       reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
       redirectLocation: args.redirectLocation,
       codeVerifier,
@@ -167,6 +168,21 @@ export class ConnectionProviderOAuthFlowService {
     });
 
     assertOAuthProvider(provider);
+
+    const reconnectTarget = await this.findReconnectTargetOrThrow({
+      connectionProviderId: provider.id,
+      workspaceId: statePayload.workspaceId,
+      userWorkspaceId: statePayload.userWorkspaceId,
+      reconnectingConnectedAccountId:
+        statePayload.reconnectingConnectedAccountId,
+    });
+
+    // The app may have changed its scope while the member was on the consent screen.
+    assertConnectionVisibilityWithinProviderScopeOrThrow({
+      connectionProvider: provider,
+      visibility: statePayload.visibility,
+      reconnectTarget,
+    });
 
     const { clientId, clientSecret } =
       await this.oauthProviderService.getClientCredentials(provider);
@@ -228,6 +244,42 @@ export class ConnectionProviderOAuthFlowService {
       applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
+  }
+
+  private async findReconnectTargetOrThrow({
+    connectionProviderId,
+    workspaceId,
+    userWorkspaceId,
+    reconnectingConnectedAccountId,
+  }: {
+    connectionProviderId: string;
+    workspaceId: string;
+    userWorkspaceId: string;
+    reconnectingConnectedAccountId: string | null;
+  }): Promise<ConnectedAccountEntity | null> {
+    if (!isDefined(reconnectingConnectedAccountId)) {
+      return null;
+    }
+
+    const reconnectTarget = await this.connectedAccountRepository.findOne({
+      where: buildConnectedAccountUsableByCallerWhere({
+        baseWhere: {
+          id: reconnectingConnectedAccountId,
+          workspaceId,
+          connectionProviderId,
+        },
+        userWorkspaceId,
+      }),
+    });
+
+    if (!isDefined(reconnectTarget)) {
+      throw new ConnectionProviderException(
+        `Cannot reconnect connectedAccount ${reconnectingConnectedAccountId}: not found in this workspace for the requested provider, or not usable by this member.`,
+        ConnectionProviderExceptionCode.FORBIDDEN,
+      );
+    }
+
+    return reconnectTarget;
   }
 
   private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {

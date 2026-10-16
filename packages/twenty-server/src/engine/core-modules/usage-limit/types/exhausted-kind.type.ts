@@ -1,1 +1,1 @@
-export type ExhaustedKind = 'limit' | 'allowance';
+export type ExhaustedKind = 'limit' | 'workspaceAllowance' | 'userAllowance';

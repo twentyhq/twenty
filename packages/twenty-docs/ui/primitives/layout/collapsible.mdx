@@ -8,18 +8,10 @@ import CollapsibleReference from '/snippets/ui/generated/layout/collapsible.mdx'
 
 `Collapsible` exposes Base UI's Root, Trigger, and Panel contracts. Root owns expansion state, Trigger supplies keyboard activation and the panel relationship, and Panel owns animation and content lifetime.
 
-## Anatomy
-
-```text
-Collapsible.Root
-├── Collapsible.Trigger
-└── Collapsible.Panel
-    └── Content
-```
-
 <StoryEmbed
-  storyId="ui-layout-collapsible--documentation"
+  storyId="ui-layout-collapsible--display"
   title="Collapsible example"
+  height={160}
 />
 
 ## Usage
@@ -30,12 +22,20 @@ import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const ImportDetails = () => (
-  <Collapsible.Root defaultOpen>
+  <Collapsible.Root defaultOpen style={{ width: 360, maxWidth: '100%' }}>
     <Collapsible.Trigger render={<Button />}>
       Import details
     </Collapsible.Trigger>
     <Collapsible.Panel>
-      <Text>Match each CSV column to a record field before importing.</Text>
+      <Text
+        style={{
+          paddingTop: 12,
+          color: 'var(--t-font-color-secondary)',
+          lineHeight: 1.5,
+        }}
+      >
+        Match each CSV column to a record field before importing.
+      </Text>
     </Collapsible.Panel>
   </Collapsible.Root>
 );
@@ -44,6 +44,15 @@ export const ImportDetails = () => (
 Use `defaultOpen` for uncontrolled expansion. Use `open` and `onOpenChange` when the application owns the state. The callback receives the requested boolean and Base UI event details, including `reason`, `event`, and `cancel()`. Canceling a change preserves the current state. An externally controlled panel can omit Trigger when its state comes from another control or application condition.
 
 Triggers inherit Root's `disabled` state and can override it with their own `disabled` prop. The native trigger supports Enter and Space and supplies `aria-expanded` and `aria-controls` automatically. Give each trigger a meaningful accessible name.
+
+## Anatomy
+
+```text
+Collapsible.Root
+├── Collapsible.Trigger
+└── Collapsible.Panel
+    └── Content
+```
 
 ## Native customization
 

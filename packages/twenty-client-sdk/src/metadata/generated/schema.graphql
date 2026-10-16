@@ -460,6 +460,7 @@ type ApplicationConnectionProvider {
   logoUrl: String
   name: String!
   oauth: ApplicationConnectionProviderOAuthConfig
+  scope: ConnectionProviderScope!
   type: String!
 }
 
@@ -789,6 +790,7 @@ type Billing {
 type BillingCustomer {
   hasPaymentMethod: Boolean
   id: UUID!
+  userCreditsFallback: UserCreditsFallback!
 }
 
 type BillingEndTrialPeriod {
@@ -914,14 +916,15 @@ type BillingProductMetadata {
 }
 
 type BillingResourceCreditUsage {
-  grantedCredits: Float!
   periodEnd: DateTime!
   periodStart: DateTime!
   productKey: BillingProductKey!
-  rolloverCredits: Float!
-  totalGrantedCredits: Float!
   unitPriceCents: Float!
-  usedCredits: Float!
+  userCreditsUsed: Float!
+  workspaceCreditsExtraGranted: Float!
+  workspaceCreditsGranted: Float!
+  workspaceCreditsTotalGranted: Float!
+  workspaceCreditsUsed: Float!
 }
 
 type BillingSession {
@@ -1300,6 +1303,11 @@ input ConnectionParametersInput {
   password: String
   port: Float!
   username: String
+}
+
+enum ConnectionProviderScope {
+  USER
+  WORKSPACE
 }
 
 input CreateAgentChatChannelInput {
@@ -3287,6 +3295,7 @@ type Mutation {
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
+  updateUserCreditsFallback(userCreditsFallback: UserCreditsFallback!): BillingCustomer!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
   updateValidationRule(input: UpdateValidationRuleInput!): ValidationRule!
   updateView(id: String!, input: UpdateViewInput!): View!
@@ -5382,6 +5391,8 @@ type UsageBreakdownItem {
   creditsUsed: Float!
   key: String!
   label: String
+  userCreditsUsed: Float!
+  workspaceCreditsUsed: Float!
 }
 
 type UsageLimit {
@@ -5408,6 +5419,7 @@ type UsageLimitOperationDefinition {
 enum UsageOperationType {
   AI_CHAT_TOKEN
   AI_WORKFLOW_TOKEN
+  AI_WORKFLOW_WEB_SEARCH
   ALL
   API_REQUEST
   CALL_RECORDING
@@ -5491,6 +5503,7 @@ enum UsageResourceType {
 type UsageTimeSeries {
   creditsUsed: Float!
   date: String!
+  workspaceCreditsUsed: Float!
 }
 
 enum UsageUnit {
@@ -5505,6 +5518,7 @@ enum UsageUnit {
   REQUEST
   SEAT
   TOKEN
+  USER_CREDIT
 }
 
 type UsageUserDaily {
@@ -5551,6 +5565,11 @@ type UserApplicationVariableValue {
   options: JSON
   type: String!
   value: String!
+}
+
+enum UserCreditsFallback {
+  STOP
+  WORKSPACE_CREDITS
 }
 
 type UserSession {

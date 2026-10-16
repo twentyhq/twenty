@@ -20,6 +20,17 @@ export default meta;
 
 type Story = StoryObj<typeof Section.Header>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { description: 'Manage your workspace name and preferences.' },
+  render: (args) => (
+    <Section.Root>
+      <Section.Header {...args} />
+      <Text>Workspace preferences appear here.</Text>
+    </Section.Root>
+  ),
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
 };
@@ -35,17 +46,6 @@ export const WithDescription: Story = {
       'Manage your workspace name and preferences.',
     );
   },
-};
-
-export const Documentation: Story = {
-  decorators: WithDescription.decorators,
-  args: WithDescription.args,
-  render: (args) => (
-    <Section.Root>
-      <Section.Header {...args} />
-      <Text>Workspace preferences appear here.</Text>
-    </Section.Root>
-  ),
 };
 
 export const Centered: Story = {

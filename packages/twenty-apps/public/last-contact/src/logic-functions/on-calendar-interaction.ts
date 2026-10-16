@@ -23,6 +23,10 @@ const handler = async (
     ObjectRecordUpdateEvent<CalendarEventParticipantUpdate>
   >,
 ): Promise<void> => {
+  console.log('on-calendar-interaction started', {
+    eventCount: batch.events.length,
+  });
+
   const linkByKey = new Map<string, CalendarEventParticipantLink>();
 
   for (const event of batch.events) {

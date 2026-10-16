@@ -11,6 +11,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateConnectionProviderScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util';
 
 @Injectable()
 export class FlatConnectionProviderValidatorService {
@@ -46,6 +47,10 @@ export class FlatConnectionProviderValidatorService {
         userFriendlyMessage: msg`Connection provider display name is required`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateConnectionProviderScope(flatConnectionProvider.scope),
+    );
 
     if (flatConnectionProvider.type === 'oauth') {
       const oauthConfig = flatConnectionProvider.oauthConfig;
@@ -139,6 +144,7 @@ export class FlatConnectionProviderValidatorService {
 
   public validateFlatConnectionProviderUpdate({
     universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatConnectionProviderMaps: optimisticFlatConnectionProviderMaps,
     },
@@ -167,6 +173,12 @@ export class FlatConnectionProviderValidatorService {
 
       return validationResult;
     }
+
+    validationResult.errors.push(
+      ...validateConnectionProviderScope(
+        flatEntityUpdate.scope ?? fromFlatConnectionProvider.scope,
+      ),
+    );
 
     return validationResult;
   }
