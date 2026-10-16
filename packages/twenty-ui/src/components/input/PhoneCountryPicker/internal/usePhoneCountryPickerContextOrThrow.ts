@@ -4,7 +4,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { PhoneCountryPickerContext } from './PhoneCountryPickerContext';
 
-export const usePhoneCountryPickerContext = () => {
+export const usePhoneCountryPickerContextOrThrow = () => {
   const context = useContext(PhoneCountryPickerContext);
 
   if (!isDefined(context)) {

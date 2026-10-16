@@ -13,7 +13,7 @@ import { type PhoneCountryPickerOptionsProps } from '../types/PhoneCountryPicker
 import { getPhoneCountryOptionLabel } from './getPhoneCountryOptionLabel';
 import { getPhoneCountryOptionTooltipLabel } from './getPhoneCountryOptionTooltipLabel';
 import { matchesPhoneCountrySearch } from './matchesPhoneCountrySearch';
-import { usePhoneCountryPickerContext } from './usePhoneCountryPickerContext';
+import { usePhoneCountryPickerContextOrThrow } from './usePhoneCountryPickerContextOrThrow';
 
 export const PhoneCountryPickerOptions = ({
   searchLabel = doNotTranslate('Search'),
@@ -30,7 +30,7 @@ export const PhoneCountryPickerOptions = ({
     onValueChange,
     disabled: rootDisabled,
     closeOnSelect,
-  } = usePhoneCountryPickerContext();
+  } = usePhoneCountryPickerContextOrThrow();
   const disabled = rootDisabled || optionsDisabled;
   const selectionId = useId();
   const [search, setSearch] = useState('');

@@ -8,7 +8,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../PhoneCountryPicker.module.scss';
 import { type PhoneCountryPickerTriggerProps } from '../types/PhoneCountryPickerTriggerProps';
-import { usePhoneCountryPickerContext } from './usePhoneCountryPickerContext';
+import { usePhoneCountryPickerContextOrThrow } from './usePhoneCountryPickerContextOrThrow';
 
 export const PhoneCountryPickerTrigger = ({
   children,
@@ -17,7 +17,7 @@ export const PhoneCountryPickerTrigger = ({
   'aria-describedby': ariaDescribedBy,
   ...props
 }: PhoneCountryPickerTriggerProps) => {
-  const { countries, value, disabled } = usePhoneCountryPickerContext();
+  const { countries, value, disabled } = usePhoneCountryPickerContextOrThrow();
   const country = countries.find((choice) => choice.value === value);
   const selectedCountryLabelId = useId();
   const describedBy =
