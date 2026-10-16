@@ -70,3 +70,13 @@
   position: absolute;
   white-space: nowrap;
 }
+
+.options {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+.emptyStatus:empty {
+  display: none;
+}
