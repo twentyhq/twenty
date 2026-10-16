@@ -68,6 +68,7 @@ import { radioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/radioGroup
 import { segmentedControlTest } from '@/__stories__/twenty-ui-gallery/utils/segmentedControlTest';
 import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRangeTest';
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
+import { sliderHiddenEdgeThumbTest } from '@/__stories__/twenty-ui-gallery/utils/sliderHiddenEdgeThumbTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
 import { avatarControlsTest } from '@/__stories__/twenty-ui-gallery/utils/avatarControlsTest';
@@ -515,7 +516,7 @@ export const CheckboxPreact: Story = createGalleryStory({
 export const SliderReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-slider',
   runtime: 'react',
-  play: sliderTest,
+  play: sliderHiddenEdgeThumbTest,
 });
 export const SliderPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-slider',
