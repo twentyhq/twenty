@@ -558,8 +558,8 @@ describe('AgentRunnerService', () => {
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       isAwaitingAnswer: true,
-      streamId: agentRunConversationService.claimThread.mock.calls[0][0]
-        .streamId,
+      streamId:
+        agentRunConversationService.claimThread.mock.calls[0][0].streamId,
     });
     expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -713,8 +713,8 @@ describe('AgentRunnerService', () => {
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       isAwaitingAnswer: true,
-      streamId: agentRunConversationService.claimThread.mock.calls[0][0]
-        .streamId,
+      streamId:
+        agentRunConversationService.claimThread.mock.calls[0][0].streamId,
     });
   });
 });

@@ -1216,7 +1216,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
               query: `mutation SendChatMessage($threadId: UUID!, $text: String!, $messageId: UUID!) {
                 sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued }
               }`,
-              variables: { threadId, text: 'Any news?', messageId: randomUUID() },
+              variables: {
+                threadId,
+                text: 'Any news?',
+                messageId: randomUUID(),
+              },
             });
 
           await sentWhileWorking;
@@ -1234,7 +1238,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       // the reply to the queued message is not under test
       jest
         .spyOn(
-          getAppProviderByClassName<ChatExecutionService>('ChatExecutionService'),
+          getAppProviderByClassName<ChatExecutionService>(
+            'ChatExecutionService',
+          ),
           'streamChat',
         )
         .mockRejectedValue(new Error('No reply in this test'));
