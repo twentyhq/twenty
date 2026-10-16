@@ -734,7 +734,7 @@ const buildDirectFieldGqlOperationFilter = ({
           return combineRelationJoinColumnFilters({
             joinColumnFilters: relationFilterJoinColumnNames.map(
               (joinColumnName) => ({
-                [joinColumnName]: { in: recordIds } as RelationFilter,
+                [joinColumnName]: { in: recordIds } satisfies RelationFilter,
               }),
             ),
             logicalOperator: 'or',
@@ -746,11 +746,13 @@ const buildDirectFieldGqlOperationFilter = ({
                 or: [
                   {
                     not: {
-                      [joinColumnName]: { in: recordIds } as RelationFilter,
+                      [joinColumnName]: {
+                        in: recordIds,
+                      } satisfies RelationFilter,
                     },
                   },
                   {
-                    [joinColumnName]: { is: 'NULL' } as RelationFilter,
+                    [joinColumnName]: { is: 'NULL' } satisfies RelationFilter,
                   },
                 ],
               }),
