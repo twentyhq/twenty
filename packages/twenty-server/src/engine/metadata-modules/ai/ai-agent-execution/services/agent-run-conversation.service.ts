@@ -52,7 +52,10 @@ export class AgentRunConversationService {
       });
 
       // a live stream keeps the conversation, so a claim could only fail
-      if (isDefined(thread.activeStreamId) && !isDefined(interruptedError)) {
+      if (
+        isNonEmptyString(thread.activeStreamId) &&
+        !isDefined(interruptedError)
+      ) {
         return false;
       }
     } else {
