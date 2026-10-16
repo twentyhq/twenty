@@ -10,10 +10,21 @@ import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
 `ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default for passive content. Use [ListItemButton](/ui/components/navigation/list-item-button) for ordinary action rows. Compose `ListItem` with an anchor for navigation or with a custom semantic owner when needed. Use [Dropdown](/ui/components/navigation/dropdown) or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
 
 <StoryEmbed
-  storyId="ui-navigation-listitem--default"
+  storyId="ui-navigation-listitem--display"
   title="ListItem example"
   height={240}
 />
+
+## Usage
+
+```tsx
+import { IconBell } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const NotificationRow = () => (
+  <ListItem startIcon={<IconBell />}>Notifications</ListItem>
+);
+```
 
 ## Anatomy
 
@@ -122,7 +133,7 @@ export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
 ```
 
 <StoryEmbed
-  storyId="ui-components-dropdown--documentation"
+  storyId="ui-components-dropdown--display"
   title="Dropdown item owner"
   height={260}
 />

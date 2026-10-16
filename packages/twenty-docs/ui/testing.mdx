@@ -7,6 +7,14 @@ import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/co
 
 `twenty-ui/testing` exposes Storybook decorators and preview layout helpers. Configure styles and a [ThemeProvider](/ui/theming) in your Storybook preview before rendering themed components.
 
+## Story roles
+
+Start each component guide with a `Display` story showing one representative, usable example. Follow it with Usage code that reproduces the preview using public imports. Compound components demonstrate their parts together. Providers and accessibility helpers demonstrate their effect in context.
+
+Add a `Catalog` when a labeled comparison helps readers choose between visual options. Group variants, sizes, colors, and states separately; use a matrix only when comparing two dimensions together is useful. A simple component can use one alternative example. Dialogs, menus, and other interactive components usually need focused examples for each workflow.
+
+Name other stories after what they demonstrate, such as `Controlled`, `WithValidation`, or `MultipleSelection`. Keep interaction checks in separate stories with `play` functions. The display and other documentation previews remain usable by the reader without automated actions.
+
 ## ComponentDecorator
 
 `ComponentDecorator` wraps a story in `ComponentStorybookLayout`. Set `parameters.container.width` and `parameters.container.height` in pixels. It also reads the story's `inverted` and `accent` args to choose an optional background.
@@ -23,7 +31,7 @@ const meta = {
 
 export default meta;
 
-export const Default = { args: { children: 'Save changes' } };
+export const Display = { args: { children: 'Save changes' } };
 ```
 
 ## CatalogDecorator
@@ -37,7 +45,7 @@ import { CatalogDecorator } from 'twenty-ui/testing';
 const meta = { component: Button };
 export default meta;
 
-export const Variants = {
+export const Catalog = {
   args: { children: 'Save changes' },
   decorators: [CatalogDecorator],
   parameters: {
@@ -74,3 +82,7 @@ export const ButtonPreview = () => (
 ## Documentation previews
 
 Stories embedded in the documentation must be presentational and have no `play` function. Keep interaction tests in separate stories. Share explicit `args`, `render`, `decorators`, and `parameters` when needed, rather than spreading an interaction story into a preview. The documentation embed check rejects stories marked with Storybook's `play-fn` tag, including inherited play functions.
+
+Each component guide's first embed must reference a story exported as `Display`. Give every embed a descriptive title for its iframe and enough height to show the example. The shared preview supplies light and dark tabs and a link to Storybook, where readers can use controls to explore props.
+
+Run `npx nx check:ui-stories twenty-docs` to check the required display, preview titles, references, and presentation rules. Run `npx nx check:ui twenty-docs` to validate the generated API references and typecheck copyable examples.

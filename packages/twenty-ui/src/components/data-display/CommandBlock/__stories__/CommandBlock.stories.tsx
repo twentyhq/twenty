@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -18,6 +19,34 @@ export default meta;
 
 type Story = StoryObj<typeof CommandBlock>;
 
+export const Display: Story = {
+  args: { commands: ['yarn add twenty-ui'] },
+  argTypes: { actions: { control: false } },
+  render: function Render(args) {
+    const [copyLabel, setCopyLabel] = useState('Copy command');
+
+    return (
+      <CommandBlock
+        {...args}
+        actions={
+          <Button
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(args.commands.join('\n'));
+                setCopyLabel('Copied');
+              } catch {
+                setCopyLabel('Select and copy the command');
+              }
+            }}
+          >
+            {copyLabel}
+          </Button>
+        }
+      />
+    );
+  },
+};
+
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -25,17 +54,6 @@ export const Default: Story = {
       '> yarn add twenty-ui\n> yarn start',
     );
     await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
-  },
-};
-
-export const Documentation: Story = {
-  args: {
-    actions: (
-      <>
-        <Text>Ready to install</Text>
-        <Button>Copy commands</Button>
-      </>
-    ),
   },
 };
 

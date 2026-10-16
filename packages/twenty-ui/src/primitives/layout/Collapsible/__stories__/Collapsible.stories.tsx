@@ -116,8 +116,27 @@ const verifyExpansion: NonNullable<Story['play']> = async ({
   await waitFor(() => expect(canvas.getByText(content)).toBeVisible());
 };
 
+export const Display: Story = {
+  args: { defaultOpen: true },
+  argTypes: { hasFixedHeight: { control: false, table: { disable: true } } },
+  render: ({ defaultOpen, dimension, duration, style }) => (
+    <Collapsible.Root defaultOpen={defaultOpen}>
+      <Collapsible.Trigger render={<Button />}>
+        Import details
+      </Collapsible.Trigger>
+      <Collapsible.Panel
+        dimension={dimension}
+        duration={duration}
+        style={style}
+      >
+        <Text>Match each CSV column to a record field before importing.</Text>
+      </Collapsible.Panel>
+    </Collapsible.Root>
+  ),
+};
+
 export const Default: Story = { play: verifyExpansion };
-export const Documentation: Story = {};
+
 export const FitContent: Story = {
   args: { hasFixedHeight: false, defaultOpen: true },
   play: verifyExpansion,

@@ -9,30 +9,35 @@ import IconButtonReference from '/snippets/ui/generated/components/input/icon-bu
 
 `IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface. Pass the icon as children and provide an accessible name with `aria-label` or `aria-labelledby`. Icon content is decorative and hidden from assistive technology.
 
+<StoryEmbed
+  storyId="ui-components-iconbutton--display"
+  title="Icon button with an accessible name"
+  height={180}
+/>
+
 ## Usage
 
 ```tsx
 import { IconButton } from 'twenty-ui/components/input';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconSearch } from 'twenty-ui/icon';
 
-export const CreateRecordButton = () => (
-  <IconButton
-    aria-label="Create record"
-    variant="solid"
-    color="accent"
-    size="sm"
-  >
-    <IconPlus />
+export const SearchButton = () => (
+  <IconButton aria-label="Search">
+    <IconSearch />
   </IconButton>
 );
 ```
 
 Sizes are `xs` (20px), `sm` (24px), and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button. Use `shape="round"` for a circular button; the default shape is `square`.
 
+## Visual options
+
+Compare one visual choice at a time. Use the named tooltip, elevated, and grouped examples for composition.
+
 <StoryEmbed
-  title="Icon button example"
   storyId="ui-components-iconbutton--catalog"
-  height={620}
+  title="Icon button variants, colors, sizes, and states"
+  height={650}
 />
 
 ## Accessible names
@@ -157,10 +162,10 @@ Without a custom `render`, `href` renders an anchor unless `nativeButton` is exp
 
 Native button and anchor attributes, event handlers, event details, refs, and render composition pass through to Button. The ref receives the actual root element. Tooltip composition preserves that root and its accessible name. The default is `type="button"`; set `type="submit"` explicitly for form submission.
 
-## Props
-
-<IconButtonReference />
-
 ## Compact and round controls
 
 Use `size="xs"` for a 20px control and `shape="round"` for circular corners. Existing `RoundedIconButton` controls become `IconButton` with `shape="round"`, `variant="solid"`, and `color="accent"`. Map their old `small` size to `xs` and `medium` size to `sm`. Supply icon children and an accessible name.
+
+## Props
+
+<IconButtonReference />

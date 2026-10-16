@@ -11,16 +11,17 @@ import NumberFieldReference from '/snippets/ui/generated/input/number-field.mdx'
 For the compact preset with fixed formatting and modifier-step defaults, use [NumberStepper](/ui/components/input/number-stepper) from `twenty-ui/components/input`.
 
 <StoryEmbed
-  storyId="ui-input-numberfield--default"
+  storyId="ui-input-numberfield--display"
   title="NumberField example"
   height={200}
 />
 
-## Compose a field
+## Usage
 
 `Root` owns numeric state. `Input` is the visible text input. Use `Group` to arrange optional decrement and increment controls around it. Supply content and accessible names for the controls; the primitive does not inject icons or labels.
 
 ```tsx
+import { IconMinus, IconPlus } from 'twenty-ui/icon';
 import { Field, NumberField } from 'twenty-ui/primitives/input';
 
 export const QuantityInput = () => (
@@ -29,11 +30,11 @@ export const QuantityInput = () => (
     <NumberField.Root name="quantity" defaultValue={3} min={0} max={10}>
       <NumberField.Group>
         <NumberField.Decrement aria-label="Decrease quantity">
-          −
+          <IconMinus size={16} />
         </NumberField.Decrement>
         <NumberField.Input />
         <NumberField.Increment aria-label="Increase quantity">
-          +
+          <IconPlus size={16} />
         </NumberField.Increment>
       </NumberField.Group>
     </NumberField.Root>

@@ -9,10 +9,31 @@ import ListItemButtonReference from '/snippets/ui/generated/components/navigatio
 Use `ListItemButton` for action rows and standalone selection buttons. It combines [ListItem](/ui/primitives/navigation/list-item) layout with a native button, including Enter and Space activation, focus, and disabled behavior. It defaults to `type="button"`.
 
 <StoryEmbed
-  storyId="ui-components-listitembutton--default"
+  storyId="ui-components-listitembutton--display"
   title="ListItemButton example"
   height={180}
 />
+
+## Usage
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const DuplicateAction = ({
+  onDuplicate,
+}: {
+  onDuplicate: () => void;
+}) => (
+  <ListItemButton
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
 
 ## Actions and disabled state
 

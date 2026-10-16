@@ -9,27 +9,35 @@ import ImageInputReference from '/snippets/ui/generated/components/input/image-i
 `ImageInput` combines an image preview, a native file picker, and upload, remove, or abort actions. `onFileSelect` fires when a file is selected. Your application validates and uploads the file, owns upload progress and cancellation, and supplies the preview URL through `src`.
 
 <StoryEmbed
-  storyId="ui-input-imageinput--with-helper-text"
-  title="Image input with an existing image"
+  storyId="ui-input-imageinput--display"
+  title="Choose, preview, and remove an image"
   height={180}
 />
 
-```tsx
-import { ImageInput, type ImageInputProps } from 'twenty-ui/components/input';
+## Usage
 
-export const WorkspaceImage = ({
-  src,
-  onFileSelect,
-  onRemove,
-}: Pick<ImageInputProps, 'src' | 'onFileSelect' | 'onRemove'>) => (
-  <ImageInput
-    src={src}
-    onFileSelect={onFileSelect}
-    onRemove={onRemove}
-    accept="image/png, image/jpeg"
-    helperText="Choose a square image for your workspace."
-  />
-);
+```tsx
+import { useState } from 'react';
+import { ImageInput } from 'twenty-ui/components/input';
+
+export const WorkspaceImage = () => {
+  const [src, setSrc] = useState<string>();
+
+  return (
+    <ImageInput
+      helperText="Choose a square image for your workspace."
+      src={src}
+      onFileSelect={(file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setSrc(reader.result?.toString());
+        };
+        reader.readAsDataURL(file);
+      }}
+      onRemove={() => setSrc(undefined)}
+    />
+  );
+};
 ```
 
 ## Selection and preview
@@ -87,12 +95,7 @@ export const WorkspaceImageSelector = ({
   uploadImage,
 }: {
   uploadImage: (file: File) => void;
-}) => (
-  <ImageInput
-    onFileSelect={uploadImage}
-    accept="image/png, image/jpeg"
-  />
-);
+}) => <ImageInput onFileSelect={uploadImage} accept="image/png, image/jpeg" />;
 ```
 
 ## Props

@@ -16,6 +16,16 @@ export default meta;
 
 type Story = StoryObj<typeof Loader>;
 
+export const Display: Story = {
+  args: { color: 'blue', 'aria-hidden': true, render: <span /> },
+  render: (args) => (
+    <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
+      <Loader {...args} data-testid="decorative-loader" />
+      <Text>Saving changes</Text>
+    </Text>
+  ),
+};
+
 export const WithColor: Story = {
   args: {
     color: 'red',
@@ -29,22 +39,8 @@ export const WithColor: Story = {
   },
 };
 
-export const WithColorDocumentation: Story = {
-  render: () => (
-    <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
-      <Loader
-        color="blue"
-        aria-hidden="true"
-        render={<span />}
-        data-testid="decorative-loader"
-      />
-      <Text>Saving changes</Text>
-    </Text>
-  ),
-};
-
 export const WithStatusText: Story = {
-  ...WithColorDocumentation,
+  ...Display,
   play: async ({ canvas }) => {
     const status = canvas.getByRole('status');
     const label = canvas.getByText('Saving changes');

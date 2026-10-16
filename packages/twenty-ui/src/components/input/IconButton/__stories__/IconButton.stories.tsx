@@ -4,14 +4,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconPlus, IconSearch, IconTrash } from '@ui/icon';
 import { Text } from '@ui/primitives/typography';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
-import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
-import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
-import {
-  A11Y_DEFER_COLOR_CONTRAST,
-  CatalogDecorator,
-  type CatalogStory,
-  ComponentDecorator,
-} from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { IconButton } from '../IconButton';
 import { type IconButtonProps } from '../types/IconButtonProps';
@@ -26,10 +19,10 @@ const meta: Meta<typeof IconButton> = {
 export default meta;
 type Story = StoryObj<typeof IconButton>;
 
-export const Default: Story = { decorators: [ComponentDecorator] };
+export const Display: Story = { decorators: [ComponentDecorator] };
 
 export const Elevated: Story = {
-  ...Default,
+  ...Display,
   args: { elevated: true, size: 'sm' },
 };
 
@@ -39,7 +32,7 @@ export const ElevatedTooltip: Story = {
 };
 
 export const ElevatedAppearance: Story = {
-  ...Default,
+  ...Display,
   args: { onClick: fn() },
   render: (args) => (
     <>
@@ -133,7 +126,7 @@ export const ElevatedAppearanceDark: Story = {
 };
 
 export const Keyboard: Story = {
-  ...Default,
+  ...Display,
   args: { onClick: fn() },
   play: async ({ canvasElement, args }) => {
     const button = within(canvasElement).getByRole('button', {
@@ -147,7 +140,7 @@ export const Keyboard: Story = {
 };
 
 export const Disabled: Story = {
-  ...Default,
+  ...Display,
   args: { disabled: true, onClick: fn() },
   play: async ({ canvasElement, args }) => {
     const button = within(canvasElement).getByRole('button', {
@@ -179,7 +172,7 @@ export const Loading: Story = {
 };
 
 export const Link: Story = {
-  ...Default,
+  ...Display,
   args: { href: '#search', onClick: fn((event) => event.preventDefault()) },
   play: async ({ canvasElement, args }) => {
     const link = within(canvasElement).getByRole('link', { name: 'Search' });
@@ -192,7 +185,7 @@ export const Link: Story = {
 };
 
 export const Tooltip: Story = {
-  ...Default,
+  ...Display,
   args: { tooltip: 'Search records', tooltipDelay: 0 },
   play: async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button', {
@@ -262,7 +255,7 @@ export const TooltipLink: Story = {
 };
 
 export const Grouped: Story = {
-  ...Default,
+  ...Display,
   render: () => (
     <ButtonGroup
       aria-label="Record actions"
@@ -300,8 +293,8 @@ const CATALOG_STATES: Record<string, Partial<IconButtonProps>> = {
   loading: { loading: true },
 };
 
-export const Catalog: CatalogStory<Story, typeof IconButton> = {
-  decorators: [CatalogDecorator],
+export const Catalog: Story = {
+  decorators: [ComponentDecorator],
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     pseudo: {
@@ -309,36 +302,69 @@ export const Catalog: CatalogStory<Story, typeof IconButton> = {
       active: ['.pressed'],
       focusVisible: ['.focused'],
     },
-    catalog: {
-      dimensions: [
-        {
-          name: 'state',
-          values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state] ?? {},
-        },
-        {
-          name: 'color',
-          values: ['neutral', 'accent', 'danger', 'success'],
-          props: (color: ButtonColor) => ({ color }),
-        },
-        {
-          name: 'variant',
-          values: ['solid', 'outline', 'soft', 'ghost'],
-          props: (variant: ButtonVariant) => ({ variant }),
-        },
-      ],
-    },
   },
+  render: (args) => (
+    <div style={{ display: 'grid', gap: 24, width: '100%' }}>
+      <Text>Variants</Text>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+        {(['solid', 'outline', 'soft', 'ghost'] as const).map((variant) => (
+          <div
+            key={variant}
+            style={{ display: 'grid', justifyItems: 'center', gap: 8 }}
+          >
+            <Text>{variant}</Text>
+            <IconButton {...args} variant={variant} />
+          </div>
+        ))}
+      </div>
+      <Text>Colors</Text>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+        {(['neutral', 'accent', 'danger', 'success'] as const).map((color) => (
+          <div
+            key={color}
+            style={{ display: 'grid', justifyItems: 'center', gap: 8 }}
+          >
+            <Text>{color}</Text>
+            <IconButton {...args} color={color} />
+          </div>
+        ))}
+      </div>
+      <Text>Sizes</Text>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+        {(['xs', 'sm', 'md'] as const).map((size) => (
+          <div
+            key={size}
+            style={{ display: 'grid', justifyItems: 'center', gap: 8 }}
+          >
+            <Text>{size}</Text>
+            <IconButton {...args} size={size} />
+          </div>
+        ))}
+      </div>
+      <Text>States</Text>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+        {Object.entries(CATALOG_STATES).map(([state, stateProps]) => (
+          <div
+            key={state}
+            style={{ display: 'grid', justifyItems: 'center', gap: 8 }}
+          >
+            <Text>{state}</Text>
+            <IconButton {...args} {...stateProps} />
+          </div>
+        ))}
+      </div>
+    </div>
+  ),
 };
 
-export const CatalogDark: CatalogStory<Story, typeof IconButton> = {
+export const CatalogDark: Story = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
 
 export const Round: Story = {
-  ...Default,
+  ...Display,
   render: () => (
     <>
       <IconButton

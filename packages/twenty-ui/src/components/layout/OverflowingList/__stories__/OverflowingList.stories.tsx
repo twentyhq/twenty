@@ -27,17 +27,18 @@ const meta: Meta<typeof OverflowingList> = {
 export default meta;
 type Story = StoryObj<typeof OverflowingList>;
 
-export const Default: Story = {};
-
-export const Documentation: Story = {
+export const Display: Story = {
+  args: { overflowLabel: 'Show all company tags' },
   render: (args) => (
     <Section.Root>
       <Section.Header title="Company tags" />
       <Text>Open the count to see all tags.</Text>
-      <OverflowingList {...args} overflowLabel="Show all company tags" />
+      <OverflowingList {...args} />
     </Section.Root>
   ),
 };
+
+export const Default: Story = {};
 
 export const Controlled: Story = {
   render: () => <OverflowingListControlledExample />,

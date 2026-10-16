@@ -56,21 +56,31 @@ const meta: Meta<
 export default meta;
 type Story = StoryObj<typeof AvatarGroup>;
 
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
-};
-
-export const WithDerivedOverflow: Story = {
-  decorators: [ComponentDecorator],
-  render: () => (
+  args: { maxVisible: 3 },
+  argTypes: { avatars: { control: false } },
+  render: (args) => (
     <AvatarGroup
-      avatars={getAvatars({ shape: 'circle' })}
-      maxVisible={3}
-      overflowShape="circle"
-      overlap="left"
-      overlapOffset="4px"
+      {...args}
+      avatars={[
+        'Ada',
+        'Grace',
+        'Margaret',
+        'Annie',
+        'Mary',
+        'Dorothy',
+        'Katherine',
+        'Joan',
+      ].map((name) => (
+        <Avatar key={name} name={name} imageProps={{ alt: name }} />
+      ))}
     />
   ),
+};
+
+export const Default: Story = {
+  decorators: [ComponentDecorator],
 };
 
 export const PartiallyLoaded: Story = {
@@ -122,7 +132,7 @@ export const Catalog: Story = {
       dimensions: [
         {
           name: 'number of avatars',
-          values: [1, 2, 3, 4, 5],
+          values: [3],
           props: (numberOfAvatars: number) => ({ numberOfAvatars }),
         },
         {

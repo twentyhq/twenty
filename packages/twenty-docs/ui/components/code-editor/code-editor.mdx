@@ -10,10 +10,32 @@ import CodeEditorHeaderReference from '/snippets/ui/generated/components/code-ed
 `CodeEditor` renders a [Monaco](https://microsoft.github.io/monaco-editor/) editor that follows the Twenty theme in light and dark mode. `CodeEditorHeader` adds a bar above it for a title, tabs, or actions. Both come from `twenty-ui/components/code-editor`, a separate entry point, so the rest of Twenty UI works without Monaco.
 
 <StoryEmbed
-  storyId="ui-components-codeeditor--documentation"
+  storyId="ui-components-codeeditor--display"
   title="Code editor example"
   height={280}
 />
+
+## Usage
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+
+export const WorkspaceEditor = () => (
+  <>
+    <CodeEditorHeader title="workspace.json" />
+    <CodeEditor
+      variant="with-header"
+      language="json"
+      defaultValue={JSON.stringify(
+        { name: 'Acme', plan: 'Pro', seats: 12 },
+        null,
+        2,
+      )}
+      height={160}
+    />
+  </>
+);
+```
 
 ## Setup
 
@@ -27,7 +49,7 @@ The editor loads your installed `monaco-editor` package rather than a copy from 
 
 The code editor does not run inside [front components](/developers/extend/apps/layout/front-components) yet.
 
-## Usage
+## Controlled content
 
 ```tsx
 import { useState } from 'react';

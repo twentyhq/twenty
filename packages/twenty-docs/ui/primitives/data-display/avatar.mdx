@@ -9,17 +9,15 @@ import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
 
 `Avatar` shows an image with a first-letter fallback. Use it beside a record name or inside a [Chip](/ui/primitives/data-display/chip). Its default root is a presentational `span`.
 
-<StoryEmbed storyId="ui-data-display-avatar--app" title="Avatar example" />
+<StoryEmbed storyId="ui-data-display-avatar--display" title="Avatar example" />
 
-## Image and fallback
+## Usage
 
 ```tsx
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
-type PersonAvatarProps = { name: string; imageUrl?: string | null };
-
-export const PersonAvatar = ({ name, imageUrl }: PersonAvatarProps) => (
-  <Avatar src={imageUrl} name={name} shape="circle" size="lg" />
+export const PersonAvatar = () => (
+  <Avatar name="Jane Doe" shape="circle" size="lg" />
 );
 ```
 
@@ -93,6 +91,12 @@ The front component renderer currently supports the default preload path with `s
 The public `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `AvatarRootState`, `AvatarImageState`, `AvatarFallbackState`, and `AvatarImageLoadingStatus` types are exported from `twenty-ui/primitives/data-display`. Refs target the rendered DOM element: `span`, `img`, and `span` by default, or the element supplied through `render`.
 
 ## Shape and appearance
+
+<StoryEmbed
+  storyId="ui-data-display-avatar--catalog"
+  title="Avatar sizes and shapes"
+  height={420}
+/>
 
 `shape` accepts `square`, `rounded-square`, or `circle`. Sizes run from `xs` (12px) to `xl` (40px); `md` is 16px. `variant="outline"` adds a border to the fallback. The `color`, `backgroundColor`, and `borderColor` overrides customize the fallback, while a loaded image keeps its original appearance.
 

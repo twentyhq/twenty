@@ -18,7 +18,7 @@ const meta: Meta<typeof NumberStepper> = {
 export default meta;
 type Story = StoryObj<typeof NumberStepper>;
 
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
 };
 

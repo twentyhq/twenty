@@ -25,6 +25,12 @@ const meta: Meta<typeof Toast> = {
 export default meta;
 type Story = StoryObj<typeof Toast>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { status: 'success' },
+  render: (args) => <DismissibleToast {...args} />,
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   args: { status: 'success', onClose: fn() },
@@ -34,12 +40,6 @@ export const Default: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Close' }));
     expect(args.onClose).toHaveBeenCalledOnce();
   },
-};
-
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  args: Default.args,
-  render: (args) => <DismissibleToast {...args} />,
 };
 
 export const WithDescriptionAndAction: Story = {

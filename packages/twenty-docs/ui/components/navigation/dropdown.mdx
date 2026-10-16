@@ -9,12 +9,57 @@ import DropdownReference from '/snippets/ui/generated/components/navigation/drop
 `Dropdown` combines a positioned popup, visual rows, keyboard navigation, focus, and dismissal. Your application owns data, filtering, fetching, pagination, and selected values. Import it from `twenty-ui/components`.
 
 <StoryEmbed
-  storyId="ui-components-dropdown--documentation"
+  storyId="ui-components-dropdown--display"
   title="Dropdown actions"
   height={380}
 />
 
 Dropdown.Content accepts numeric offsets or functions for `sideOffset` and `alignOffset`. Offset functions receive the anchor and popup dimensions, side, and alignment. Use them to preserve an anchored field picker’s overlap when the cell is scaled.
+
+## Usage
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconArchive, IconCopy, IconDownload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content aria-label="Record actions" width={240}>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />}>
+          Duplicate
+        </Dropdown.ActionItem>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger startIcon={<IconDownload />}>
+            Export
+          </Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Export formats">
+            <Dropdown.Section>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+              <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconArchive />}>
+          Archive
+        </Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          render={
+            <a href="#dropdown-documentation" aria-label="Documentation" />
+          }
+        >
+          Documentation
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
 
 ## Choose an interaction type
 

@@ -8,6 +8,14 @@ import AvatarGroupReference from '/snippets/ui/generated/components/data-display
 
 `AvatarGroup` receives rendered avatars and derives the hidden count. `maxVisible` counts actual avatars; the overflow indicator is additional. Eight supplied avatars with `maxVisible={3}` show three avatars and `+5`.
 
+<StoryEmbed
+  storyId="ui-data-display-avatargroup--display"
+  title="Eight avatars with three visible"
+  height={280}
+/>
+
+## Usage
+
 ```tsx
 import { AvatarGroup } from 'twenty-ui/components/data-display';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -33,10 +41,14 @@ export const TeamAvatars = () => (
 
 Supply stable keys to keep surviving avatars mounted when the limit, total, or display order changes. Avatars are decorative by default. When the group is the only representation of its members, supply each member's name through `imageProps.alt` to label the image and default fallback. Keep avatars decorative when visible text or an owner label already supplies that identity.
 
+## Visual options
+
+Compare circle and square avatars at each size. The group keeps three visible members in this comparison.
+
 <StoryEmbed
-  storyId="ui-data-display-avatargroup--with-derived-overflow"
-  title="Eight avatars with three visible"
-  height={280}
+  storyId="ui-data-display-avatargroup--catalog"
+  title="Compare avatar shapes and sizes"
+  height={500}
 />
 
 ## Partially loaded collections

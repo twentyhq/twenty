@@ -10,15 +10,14 @@ import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.m
 `ResizeHandle` manages a numeric size and exposes a focusable separator. The application applies that size to the panel; the handle does not resize another element automatically.
 
 <StoryEmbed
-  storyId="ui-layout-resizehandle--resizable-documentation"
+  storyId="ui-layout-resizehandle--display"
   title="ResizeHandle example"
+  height={580}
 />
 
 ## Usage
 
 Use `edge` for a panel boundary, or `axis="y"` for inline height resizing and `axis="x"` for inline width resizing. Give the handle a specific accessible name and use `aria-controls` to identify the panel.
-
-## Uncontrolled state
 
 ```tsx
 import { useId, useState } from 'react';
@@ -30,7 +29,7 @@ export const ResizableNotes = () => {
   const [height, setHeight] = useState(150);
 
   return (
-    <>
+    <Text style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
       <Text id={panelId} style={{ height, overflow: 'auto' }}>
         Record notes
       </Text>
@@ -43,7 +42,7 @@ export const ResizableNotes = () => {
         aria-label="Resize notes height"
         aria-controls={panelId}
       />
-    </>
+    </Text>
   );
 };
 ```

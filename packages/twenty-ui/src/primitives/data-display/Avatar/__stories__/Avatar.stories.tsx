@@ -43,6 +43,16 @@ type LinkInteractionStory = StoryObj<
   AvatarProps & { onNavigate?: MouseEventHandler<HTMLAnchorElement> }
 >;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    shape: 'circle',
+    size: 'lg',
+    src: undefined,
+    name: 'Jane Doe',
+  },
+};
+
 export const Rounded: Story = { decorators: [ComponentDecorator] };
 
 export const Squared: Story = {
@@ -86,17 +96,6 @@ export const NoAvatarPictureSquared: Story = {
   args: {
     ...NoAvatarPictureRounded.args,
     ...Squared.args,
-  },
-};
-
-export const App: Story = {
-  decorators: [ComponentDecorator],
-  args: {
-    shape: 'square',
-    variant: 'outline',
-    src: '',
-    name: 'Acme',
-    colorSeed: 'acme-app',
   },
 };
 
@@ -425,11 +424,6 @@ export const Catalog: CatalogStory<Story, typeof Avatar> = {
           name: 'shape',
           values: ['square', 'rounded-square', 'circle'],
           props: (shape: AvatarShape) => ({ shape }),
-        },
-        {
-          name: 'variant',
-          values: ['soft', 'outline'],
-          props: (variant: 'soft' | 'outline') => ({ variant }),
         },
       ],
       options: { elementContainer: { style: { width: 48 } } },

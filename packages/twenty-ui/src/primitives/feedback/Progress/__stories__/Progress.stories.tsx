@@ -33,7 +33,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Display: Story = {};
 
 export const LabelAndValue: Story = {
   play: async ({ canvasElement }) => {

@@ -12,7 +12,7 @@ const meta: Meta<typeof ButtonGroup> = {
 export default meta;
 type Story = StoryObj<typeof ButtonGroup>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     'aria-label': 'Create activity',
     size: 'sm',
@@ -29,6 +29,10 @@ export const Default: Story = {
     ],
   },
   decorators: [ComponentDecorator],
+};
+
+export const Default: Story = {
+  ...Display,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button');
@@ -36,11 +40,6 @@ export const Default: Story = {
     await userEvent.tab();
     await expect(buttons[1]).toHaveFocus();
   },
-};
-
-export const Documentation: Story = {
-  args: Default.args,
-  decorators: Default.decorators,
 };
 
 export const Dark: Story = { ...Default, globals: { colorScheme: 'dark' } };

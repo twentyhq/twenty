@@ -11,13 +11,46 @@ import ToasterReference from '/snippets/ui/generated/components/feedback/toaster
 
 `Toast` renders one notification. Your application controls when it appears, its position, and when it is removed.
 
-For application notifications, wrap the application in `ToastProvider`, mount a `Toaster` inside it, and use `useToast()` from descendants. Each provider owns an independent notification store, countdowns, and dismissal lifecycle. Multiple Toasters can mirror the same provider.
-
 <StoryEmbed
-  storyId="ui-feedback-toast--documentation"
+  storyId="ui-feedback-toast--display"
   title="Toast example"
   height={240}
 />
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SavedNotification = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Show notification</Button>
+      {isOpen && (
+        <Toast status="success" progress={100} onClose={() => setIsOpen(false)}>
+          Changes saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+## Visual options
+
+Compare neutral, success, error, information, and warning feedback with the same message and progress.
+
+<StoryEmbed
+  storyId="ui-feedback-toast--catalog"
+  title="Toast feedback statuses"
+  height={580}
+/>
+
+For application notifications, wrap the application in `ToastProvider`, mount a `Toaster` inside it, and use `useToast()` from descendants. Each provider owns an independent notification store, countdowns, and dismissal lifecycle. Multiple Toasters can mirror the same provider.
 
 ## Application notifications
 

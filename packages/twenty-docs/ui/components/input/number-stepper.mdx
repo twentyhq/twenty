@@ -9,9 +9,29 @@ import NumberStepperReference from '/snippets/ui/generated/components/input/numb
 `NumberStepper` is the compact convenience preset built from [NumberField](/ui/primitives/input/number-field). It combines a numeric text input with optional decrement and increment buttons. Import it from `twenty-ui/components/input`. Use `NumberField` when you need locale or formatting options, different modifier steps, scrubbing, or independent part composition.
 
 <StoryEmbed
-  storyId="ui-input-numberstepper--default"
+  storyId="ui-input-numberstepper--display"
   title="NumberStepper example"
   height={180}
+/>
+
+## Usage
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+
+export const QuantityInput = () => (
+  <NumberStepper aria-label="Quantity" defaultValue={3} min={0} max={10} />
+);
+```
+
+## Visual options
+
+Compare default, bound, disabled, read-only, and invalid states with or without step buttons.
+
+<StoryEmbed
+  storyId="ui-input-numberstepper--catalog"
+  title="Number stepper bounds and states"
+  height={400}
 />
 
 ## Uncontrolled value

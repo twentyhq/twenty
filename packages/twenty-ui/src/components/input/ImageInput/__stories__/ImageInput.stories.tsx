@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
@@ -18,17 +19,37 @@ const meta: Meta<typeof ImageInput> = {
 export default meta;
 type Story = StoryObj<typeof ImageInput>;
 
+export const Display: Story = {
+  args: { helperText: 'Choose a square image for your workspace.' },
+  argTypes: {
+    src: { control: false },
+    onFileSelect: { control: false },
+    onRemove: { control: false },
+  },
+  render: function Render(args) {
+    const [src, setSrc] = useState<string>();
+
+    return (
+      <ImageInput
+        {...args}
+        src={src}
+        onFileSelect={(file) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            setSrc(reader.result?.toString());
+          };
+          reader.readAsDataURL(file);
+        }}
+        onRemove={() => setSrc(undefined)}
+      />
+    );
+  },
+};
+
 export const Default: Story = {};
 
 export const WithPicture: Story = {
   args: { src: IMAGE_INPUT_PREVIEW_URL },
-};
-
-export const WithHelperText: Story = {
-  args: {
-    src: IMAGE_INPUT_PREVIEW_URL,
-    helperText: 'Choose a square image for your workspace.',
-  },
 };
 
 export const Disabled: Story = {
@@ -47,7 +68,10 @@ export const WithError: Story = {
 };
 
 export const Dark: Story = {
-  ...WithHelperText,
+  args: {
+    src: IMAGE_INPUT_PREVIEW_URL,
+    helperText: 'Choose a square image for your workspace.',
+  },
   globals: { colorScheme: 'dark' },
 };
 

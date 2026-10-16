@@ -1,3 +1,5 @@
+import { type ComponentProps } from 'react';
+import { Input } from '@ui/primitives/input';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
@@ -20,16 +22,23 @@ export default meta;
 
 type Story = StoryObj<typeof Field.Root>;
 
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
-  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  render: () => (
-    <Field.Root>
-      <Field.Label>Label</Field.Label>
-      <Field.Description>This is a hint</Field.Description>
-    </Field.Root>
-  ),
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST, container: { width: 320 } },
+  render: (args) => <FieldDisplayExample {...args} />,
 };
+
+const FieldDisplayExample = (props: ComponentProps<typeof Field.Root>) => (
+  <Field.Root name="email" validationMode="onBlur" {...props}>
+    <Field.Label>Work email</Field.Label>
+    <Input type="email" required placeholder="you@example.com" />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
+    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
 
 export const WithError: Story = {
   decorators: [ComponentDecorator],

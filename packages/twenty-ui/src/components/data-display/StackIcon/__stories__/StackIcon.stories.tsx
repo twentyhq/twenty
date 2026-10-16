@@ -25,13 +25,17 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Display: Story = {
   render: (args) => (
     <>
       <StackIcon {...args} />
       <Text>Companies</Text>
     </>
   ),
+};
+
+export const Geometry: Story = {
+  ...Display,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const icon = canvasElement.querySelector('svg')!;

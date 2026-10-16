@@ -4,18 +4,17 @@ description: Render one option in a mutually exclusive radio group.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import RadioReference from '/snippets/ui/generated/input/radio.mdx';
 
 `Radio` represents one option inside [RadioGroup](/ui/primitives/input/radio-group). Give each option a distinct `value` and a visible label. The group owns the selected value.
 
 <StoryEmbed
-  storyId="ui-input-radio--documentation"
+  storyId="ui-input-radio--display"
   title="Radio example"
   height={240}
 />
 
-## Labeled options
+## Usage
 
 ```tsx
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
@@ -26,23 +25,26 @@ export const ContactMethod = () => (
     defaultValue="email"
     aria-label="Preferred contact method"
   >
-    <label>
-      <Radio value="email" />
-      Email
-    </label>
-    <label>
-      <Radio value="phone" />
-      Phone
-    </label>
-    <label>
-      <Radio value="post" disabled />
+    <Radio value="email">Email</Radio>
+    <Radio value="phone">Phone</Radio>
+    <Radio value="post" disabled>
       Postal mail (unavailable)
-    </label>
+    </Radio>
   </RadioGroup>
 );
 ```
 
 The `size` prop accepts `sm` or `md` and defaults to `sm`. Use the same size for options in a group.
+
+## Visual choices
+
+Compare selected and disabled states, sizes, and the default and card appearances. Use a labeled group of options for an actual choice.
+
+<StoryEmbed
+  storyId="ui-input-radio--catalog"
+  title="Visual choices for radio"
+  height={540}
+/>
 
 ## Complete parts
 

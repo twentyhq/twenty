@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useRef, useState } from 'react';
+import { type ComponentProps, useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconInfoCircle } from '@ui/icon';
@@ -39,6 +39,16 @@ const meta: Meta<typeof Tooltip> = {
 export default meta;
 type Story = StoryObj<typeof Tooltip>;
 
+export const Display: Story = {
+  args: {
+    content: 'Download the visible records as a CSV file',
+    side: 'top',
+    delay: 600,
+  },
+  parameters: { container: { width: 320 } },
+  render: (args) => <TooltipDisplayExample {...args} />,
+};
+
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.hover(within(canvasElement).getByRole('button'));
@@ -47,7 +57,13 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {};
+const TooltipDisplayExample = (props: ComponentProps<typeof Tooltip>) => (
+  <Tooltip {...props}>
+    <Text render={<span />}>
+      <Button>Export records</Button>
+    </Text>
+  </Tooltip>
+);
 
 export const WithArrow: Story = {
   ...Default,

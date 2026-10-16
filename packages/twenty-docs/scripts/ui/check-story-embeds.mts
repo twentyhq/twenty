@@ -7,11 +7,15 @@ export const checkStoryEmbeds = ({
   content,
   storyIds,
   storiesWithPlayFunctions = new Set<string>(),
+  displayStoryIds = new Set<string>(),
+  requireDisplay = false,
   getPresentationErrors = () => [],
 }: {
   content: string;
   storyIds: Set<string>;
   storiesWithPlayFunctions?: Set<string>;
+  displayStoryIds?: Set<string>;
+  requireDisplay?: boolean;
   getPresentationErrors?: (storyId: string) => string[];
 }): string[] => {
   const errors: string[] = [];
@@ -19,6 +23,7 @@ export const checkStoryEmbeds = ({
     remarkPlugins: [remarkFrontmatter],
   }).parse(content);
   const embedNames = new Set(['StoryEmbed']);
+  let hasPreview = false;
 
   visit(tree, 'mdxjsEsm', (node) => {
     for (const statement of node.data?.estree?.body ?? []) {
@@ -58,6 +63,9 @@ export const checkStoryEmbeds = ({
     const value =
       storyId?.type === 'mdxJsxAttribute' ? storyId.value : undefined;
     const line = node.position?.start.line;
+    const isFirstPreview = !hasPreview;
+
+    hasPreview = true;
 
     const hasSpreadAttributes = node.attributes.some(
       (attribute) => attribute.type === 'mdxJsxExpressionAttribute',
@@ -73,6 +81,25 @@ export const checkStoryEmbeds = ({
       return;
     }
 
+    if (requireDisplay && isFirstPreview && !displayStoryIds.has(value)) {
+      errors.push(
+        `Line ${line}: The first component preview must use a story exported as Display.`,
+      );
+    }
+
+    const title = node.attributes.find(
+      (attribute) =>
+        attribute.type === 'mdxJsxAttribute' && attribute.name === 'title',
+    );
+    const titleValue =
+      title?.type === 'mdxJsxAttribute' ? title.value : undefined;
+
+    if (!isNonEmptyString(titleValue) || !isNonEmptyString(titleValue.trim())) {
+      errors.push(
+        `Line ${line}: StoryEmbed needs a descriptive literal title.`,
+      );
+    }
+
     if (storiesWithPlayFunctions.has(value)) {
       errors.push(
         `Line ${line}: Storybook story "${value}" has a play function. Documentation stories must be presentational.`,
@@ -84,6 +111,10 @@ export const checkStoryEmbeds = ({
       errors.push(`Line ${line}: Storybook story "${value}": ${error}`);
     }
   });
+
+  if (requireDisplay && !hasPreview) {
+    errors.push('Component guides must include a Display story preview.');
+  }
 
   return errors;
 };

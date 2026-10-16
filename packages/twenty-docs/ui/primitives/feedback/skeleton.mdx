@@ -9,7 +9,7 @@ import SkeletonReference from '/snippets/ui/generated/feedback/skeleton.mdx';
 
 `Skeleton` provides a placeholder shape with theme colors and a moving highlight. Compose shapes in the layout of the content being loaded. The application owns loading state and feature-specific layouts.
 
-<StoryEmbed storyId="ui-feedback-skeleton--shapes" title="Skeleton shapes" />
+<StoryEmbed storyId="ui-feedback-skeleton--display" title="Skeleton shapes" />
 
 ## Usage
 
@@ -20,9 +20,16 @@ import { Text } from 'twenty-ui/primitives/typography';
 export const LoadingProfile = () => (
   <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
     <Skeleton width={40} height={40} borderRadius="50%" />
-    <Text render={<div />} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <Text
+      render={<div />}
+      style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+    >
       <Skeleton borderRadius={4} width={180} height={SKELETON_HEIGHT_SIZES.s} />
-      <Skeleton borderRadius={4} width={120} height={SKELETON_HEIGHT_SIZES.xs} />
+      <Skeleton
+        borderRadius={4}
+        width={120}
+        height={SKELETON_HEIGHT_SIZES.xs}
+      />
     </Text>
   </Text>
 );

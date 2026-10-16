@@ -27,6 +27,11 @@ const meta: Meta<typeof Badge> = {
 export default meta;
 type Story = StoryObj<typeof Badge>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { children: 'Preview' },
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   play: async ({ canvasElement }) => {
@@ -51,6 +56,23 @@ export const Catalog: CatalogStory<Story, typeof Badge> = {
           props: (size: BadgeSize) => ({ size }),
         },
         {
+          name: 'shape',
+          values: ['pill', 'circle'] satisfies BadgeShape[],
+          props: (shape: BadgeShape) => ({ shape }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const Colors: CatalogStory<Story, typeof Badge> = {
+  args: { children: 'Preview' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
           name: 'color',
           values: [
             'tertiary',
@@ -60,18 +82,16 @@ export const Catalog: CatalogStory<Story, typeof Badge> = {
           ] satisfies BadgeColor[],
           props: (color: BadgeColor) => ({ color }),
         },
-        {
-          name: 'shape',
-          values: ['pill', 'circle'] satisfies BadgeShape[],
-          props: (shape: BadgeShape) => ({ shape }),
-        },
       ],
     },
   },
-  decorators: [CatalogDecorator],
+};
+
+export const CatalogAppearance: Story = {
+  ...Catalog,
   play: async ({ canvasElement }) => {
     const badges = within(canvasElement).getAllByText('3');
-    await expect(badges).toHaveLength(24);
+    await expect(badges).toHaveLength(6);
 
     for (const badge of badges) {
       await expect(badge).toBeVisible();
@@ -89,7 +109,7 @@ export const Catalog: CatalogStory<Story, typeof Badge> = {
   },
 };
 
-export const Documentation: Story = {
+export const WithTabs: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },
   render: () => (

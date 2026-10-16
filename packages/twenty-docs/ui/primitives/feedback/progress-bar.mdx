@@ -9,7 +9,7 @@ import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.m
 `ProgressBar` supplies a horizontal appearance for [Progress](/ui/primitives/feedback/progress). It preserves the complete root contract, including native attributes, refs, render composition, formatting, custom ranges, and indeterminate progress. Give it an `aria-label` that identifies the operation.
 
 <StoryEmbed
-  storyId="ui-feedback-progressbar-progressbar--default"
+  storyId="ui-feedback-progressbar-progressbar--display"
   title="ProgressBar example"
 />
 
@@ -22,7 +22,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 type ImportProgressProps = { importedRecords: number | null };
 
 export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
-  <>
+  <Text style={{ display: 'grid', gap: 8, width: 300 }}>
     <Text>Importing records: {importedRecords ?? 'preparing'}</Text>
     <ProgressBar
       value={importedRecords}
@@ -30,7 +30,7 @@ export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
       aria-label="Importing records"
       withBorderRadius
     />
-  </>
+  </Text>
 );
 ```
 

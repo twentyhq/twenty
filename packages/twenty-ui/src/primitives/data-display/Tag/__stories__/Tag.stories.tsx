@@ -9,7 +9,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { type ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
+import { MAIN_COLOR_NAMES } from '@ui/theme';
 
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 
@@ -24,16 +24,11 @@ const meta: Meta<typeof Tag> = {
 export default meta;
 type Story = StoryObj<typeof Tag>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     color: 'red',
   },
   decorators: [ComponentDecorator],
-};
-
-export const Documentation: Story = {
-  args: Default.args,
-  decorators: Default.decorators,
 };
 
 export const WithLongText: Story = {
@@ -76,9 +71,9 @@ export const WithoutTruncation: Story = {
 };
 
 export const WithoutPadding: Story = {
-  ...Default,
+  ...Display,
   args: {
-    ...Default.args,
+    ...Display.args,
     style: { padding: 0 },
     title: 'Unpadded category',
   },
@@ -129,6 +124,7 @@ export const FullLabel: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Tag> = {
+  args: { color: 'blue', children: 'Customer' },
   argTypes: {
     color: { control: false },
   },
@@ -144,15 +140,24 @@ export const Catalog: CatalogStory<Story, typeof Tag> = {
             variant,
           }),
         },
-        {
-          name: 'colors',
-          values: MAIN_COLOR_NAMES,
-          props: (color: ThemeColor) => ({ color }),
-        },
       ],
     },
   },
   decorators: [CatalogDecorator],
+};
+
+export const Colors: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 600 }, a11y: A11Y_DEFER_COLOR_CONTRAST },
+  render: () => (
+    <Text style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+      {MAIN_COLOR_NAMES.map((color) => (
+        <Tag key={color} color={color}>
+          {color}
+        </Tag>
+      ))}
+    </Text>
+  ),
 };
 
 export const EmptyTag: Story = {
@@ -240,9 +245,9 @@ export const RenderCallback: Story = {
 };
 
 export const DefaultSemantics: Story = {
-  ...Default,
+  ...Display,
   args: {
-    ...Default.args,
+    ...Display.args,
     title: 'Category label',
     onClick: fn(),
     ref: fn(),
@@ -300,9 +305,9 @@ export const Navigation: Story = {
 };
 
 export const NodeContent: Story = {
-  ...Default,
+  ...Display,
   args: {
-    ...Default.args,
+    ...Display.args,
     children: (
       <>
         Category:{' '}
