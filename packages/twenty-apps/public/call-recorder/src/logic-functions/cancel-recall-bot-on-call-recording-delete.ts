@@ -45,11 +45,10 @@ export const cancelRecallBotOnCallRecordingDeleteHandler = async (
   const normalizedExternalBotId = externalBotId.trim();
   const canceled = await cancelOrEjectRecallBot(normalizedExternalBotId);
 
-  if (canceled) {
-    await destroyCallRecorderCalendarParticipants(new CoreApiClient(), [
-      event.recordId,
-    ]);
-  }
+  await destroyCallRecorderCalendarParticipants(
+    new CoreApiClient({ runAs: 'application' }),
+    [event.recordId],
+  );
 
   return {
     callRecordingId: event.recordId,

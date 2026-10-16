@@ -1,10 +1,11 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 export const destroyCallRecorderCalendarParticipants = async (
   client: CoreApiClient,
   callRecordingIds: string[],
 ): Promise<void> => {
-  if (callRecordingIds.length === 0) {
+  if (!isNonEmptyArray(callRecordingIds)) {
     return;
   }
 

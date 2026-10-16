@@ -124,7 +124,12 @@ describe('cancelRecallBotOnCallRecordingDeleteHandler', () => {
       externalBotId: 'recall-bot-1',
       canceled: false,
     });
-    expect(mutationMock).not.toHaveBeenCalled();
+    expect(mutationMock).toHaveBeenCalledExactlyOnceWith({
+      destroyCalendarEventParticipants: {
+        __args: { filter: { id: { in: ['call-recording-1'] } } },
+        id: true,
+      },
+    });
   });
 
   it.each([null, '   '])(
