@@ -1,3 +1,4 @@
+import { studioDate } from 'src/logic-functions/utils/studio-date';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { calculateLedgerBalance, type LedgerEntry } from 'src/logic-functions/utils/past-attendance';
@@ -54,7 +55,7 @@ const createMembership = async (client: CoreApiClient, input: ConfirmSplitPaymen
   const dates = getPackageDates(paidAt, product);
   const result = (await client.mutation({
     createStudioMembership: { __args: { data: {
-      name: `Сплит-блок · ${paidAt.toISOString().slice(0, 10)}`,
+      name: `Сплит-блок · ${studioDate(paidAt)}`,
       status: 'ACTIVE', soldAt: paidAt.toISOString(), activatedAt: paidAt.toISOString(),
       activationDeadline: dates.activationDeadline, expiresOn: dates.expiresOn,
       visitsGranted: 0, visitsReserved: 0, visitsConsumed: 0, visitsAvailable: 0,

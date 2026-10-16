@@ -1,3 +1,5 @@
+import { studioDate } from 'src/logic-functions/utils/studio-date';
+
 export type PaymentMethod = 'CASH' | 'SBP' | 'CARD';
 
 export type CurrencyValue = {
@@ -45,8 +47,6 @@ export type PackagePaymentValidationResult =
       code: PackagePaymentValidationErrorCode;
       message: string;
     };
-
-const dateOnly = (date: Date): string => date.toISOString().slice(0, 10);
 
 export const addDays = (date: Date, days: number): Date => {
   const result = new Date(date);
@@ -102,7 +102,7 @@ export const validatePackagePayment = (
     };
   }
 
-  const paymentDate = dateOnly(paidAt);
+  const paymentDate = studioDate(paidAt);
   if (
     product.validFrom > paymentDate ||
     (product.validTo !== null &&
@@ -146,9 +146,9 @@ export const getPackageDates = (
     product.activationLimitDays === null ||
     product.activationLimitDays === undefined
       ? null
-      : dateOnly(addDays(paidAt, product.activationLimitDays)),
+      : studioDate(addDays(paidAt, product.activationLimitDays)),
   expiresOn:
     product.validityDays === null || product.validityDays === undefined
       ? null
-      : dateOnly(addDays(paidAt, Math.max(product.validityDays - 1, 0))),
+      : studioDate(addDays(paidAt, Math.max(product.validityDays - 1, 0))),
 });

@@ -1,3 +1,4 @@
+import { studioDate } from 'src/logic-functions/utils/studio-date';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import {
@@ -225,7 +226,7 @@ const createMembership = async (
     createStudioMembership: {
       __args: {
         data: {
-          name: `${product.name} · ${paidAt.toISOString().slice(0, 10)}`,
+          name: `${product.name} · ${studioDate(paidAt)}`,
           status: 'ACTIVE',
           soldAt: paidAt.toISOString(),
           activatedAt: paidAt.toISOString(),

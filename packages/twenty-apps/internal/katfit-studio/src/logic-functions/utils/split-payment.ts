@@ -1,3 +1,5 @@
+import { studioDate } from 'src/logic-functions/utils/studio-date';
+
 type CurrencyValue = {
   amountMicros: number;
   currencyCode: string;
@@ -35,8 +37,6 @@ export type ConfirmSplitPaymentInput = {
 export type SplitPaymentValidationResult =
   | { success: true; paidAt: Date }
   | { success: false; code: string; message: string };
-
-const dateOnly = (date: Date): string => date.toISOString().slice(0, 10);
 
 export const validateSplitPayment = (
   input: ConfirmSplitPaymentInput,
@@ -83,7 +83,7 @@ export const validateSplitPayment = (
     };
   }
 
-  const paymentDate = dateOnly(paidAt);
+  const paymentDate = studioDate(paidAt);
   if (
     product.validFrom > paymentDate ||
     (product.validTo !== null &&

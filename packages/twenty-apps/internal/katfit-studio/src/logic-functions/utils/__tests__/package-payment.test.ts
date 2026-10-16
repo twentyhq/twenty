@@ -95,3 +95,14 @@ test('derives activation and inclusive expiration dates', () => {
     expiresOn: '2026-02-06',
   });
 });
+
+test('uses the Moscow payment day at midnight for validity and package deadlines', () => {
+  const paidAt = '2026-01-08T00:00:00+03:00';
+  assert.equal(validatePackagePayment({ ...input, paidAt }, {
+    ...product, validFrom: '2026-01-08', validTo: '2026-01-08',
+  }).success, true);
+  assert.deepEqual(getPackageDates(new Date(paidAt), product), {
+    activationDeadline: '2026-01-15',
+    expiresOn: '2026-02-06',
+  });
+});
