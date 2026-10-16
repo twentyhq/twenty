@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useEffect, useState } from 'react';
 
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
@@ -8,7 +7,6 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import {
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -34,31 +32,28 @@ const filterOnDeletedField: PersistedRecordFilter = {
   positionInRecordFilterGroup: 0,
 };
 
-const BaseWrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
-
-const Seed = ({ children }: { children: React.ReactNode }) => {
-  const setCurrentRecordFilterGroups = useSetAtomComponentState(
-    currentRecordFilterGroupsComponentState,
-  );
-  const setUnresolvedRecordFilters = useSetAtomComponentState(
-    unresolvedRecordFiltersComponentState,
-  );
-
-  const [isSeeded, setIsSeeded] = useState(false);
-
-  useEffect(() => {
-    setCurrentRecordFilterGroups([
-      {
-        id: ROOT_GROUP_ID,
-        logicalOperator: RecordFilterGroupLogicalOperator.AND,
-      },
-    ]);
-    setUnresolvedRecordFilters([filterOnDeletedField]);
-    setIsSeeded(true);
-  }, [setCurrentRecordFilterGroups, setUnresolvedRecordFilters]);
-
-  return isSeeded ? <>{children}</> : null;
-};
+const BaseWrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+  onInitializeJotaiStore: (store) => {
+    store.set(
+      currentRecordFilterGroupsComponentState.atomFamily({
+        instanceId: INSTANCE_ID,
+      }),
+      [
+        {
+          id: ROOT_GROUP_ID,
+          logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        },
+      ],
+    );
+    store.set(
+      unresolvedRecordFiltersComponentState.atomFamily({
+        instanceId: INSTANCE_ID,
+      }),
+      [filterOnDeletedField],
+    );
+  },
+});
 
 const renderContainer = ({
   onUpdate,
@@ -75,13 +70,11 @@ const renderContainer = ({
         <RecordFiltersComponentInstanceContext.Provider
           value={{ instanceId: INSTANCE_ID }}
         >
-          <Seed>
-            <AdvancedFilterSidePanelContainer
-              objectMetadataItem={company}
-              onUpdate={onUpdate}
-              readonly={readonly}
-            />
-          </Seed>
+          <AdvancedFilterSidePanelContainer
+            objectMetadataItem={company}
+            onUpdate={onUpdate}
+            readonly={readonly}
+          />
         </RecordFiltersComponentInstanceContext.Provider>
       </RecordFilterGroupsComponentInstanceContext.Provider>
     </BaseWrapper>,
@@ -107,7 +100,9 @@ describe('AdvancedFilterSidePanelContainer', () => {
         screen.queryByText('Field no longer exists'),
       ).not.toBeInTheDocument();
     });
-    expect(onUpdate).toHaveBeenCalled();
+    expect(onUpdate).toHaveBeenCalledTimes(2);
+    expect(onUpdate).toHaveBeenNthCalledWith(1);
+    expect(onUpdate).toHaveBeenNthCalledWith(2);
   });
 
   it('does not offer to remove a filter on a deleted field when read only', async () => {
