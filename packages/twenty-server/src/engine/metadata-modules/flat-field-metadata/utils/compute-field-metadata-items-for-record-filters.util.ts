@@ -1,15 +1,11 @@
 import { FieldMetadataType, type RelationType } from 'twenty-shared/types';
-import {
-  isDefined,
-  isMorphRelationHead,
-  type RecordFilter,
-} from 'twenty-shared/utils';
+import { isMorphRelationHead, type RecordFilter } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { computeFlatFieldMetadataArrayForRecordFilters } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-array-for-record-filters.util';
+import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -56,23 +52,15 @@ export const computeFieldMetadataItemsForRecordFilters = <
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    const morphRelationTargetFlatFieldMetadatas =
-      sourceFlatObjectMetadata.fieldIds
-        .map((fieldId) =>
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: fieldId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          }),
-        )
-        .filter(isDefined)
-        .filter(isMorphOrRelationFlatFieldMetadata)
-        .filter(
-          (morphRelationTargetFlatFieldMetadata) =>
-            morphRelationTargetFlatFieldMetadata.type ===
-              FieldMetadataType.MORPH_RELATION &&
-            morphRelationTargetFlatFieldMetadata.morphId ===
-              flatFieldMetadata.morphId,
-        );
+    // The head shares the morphId but has no target, so only targets are kept
+    const morphRelationTargetFlatFieldMetadatas = [
+      flatFieldMetadata,
+      ...findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
+        flatFieldMetadataMaps,
+        flatFieldMetadata,
+        flatObjectMetadata: sourceFlatObjectMetadata,
+      }),
+    ].filter(isMorphOrRelationFlatFieldMetadata);
 
     const morphRelations = morphRelationTargetFlatFieldMetadatas.map(
       (morphRelationTargetFlatFieldMetadata) => {
