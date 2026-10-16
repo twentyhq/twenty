@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { SITE_URLS } from '@/platform/site-urls';
 import {
   color,
   FONT_WEIGHT,
@@ -295,7 +294,7 @@ export function CompareReceipt({
           <PerUserLine>{i18n._(receipt.twentyPerUser)}</PerUserLine>
           <CtaRow>
             <Button
-              href={SITE_URLS.appWelcome}
+              href="https://app.twenty.com/welcome"
               label={i18n._(msg`Start for free`)}
               variant="filled"
             />
