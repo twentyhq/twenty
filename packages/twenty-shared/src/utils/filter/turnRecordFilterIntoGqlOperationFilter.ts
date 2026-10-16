@@ -46,6 +46,7 @@ import {
   getNextPeriodStart,
   getPeriodStart,
   isDefined,
+  isNonEmptyArray,
   isRecordFilterValueValid,
   resolveDateFilter,
   resolveDateTimeFilter,
@@ -219,7 +220,8 @@ const getRelationFilterJoinColumnNames = ({
 }: {
   fieldMetadataItem: Pick<FieldShared, 'type' | 'name' | 'morphRelations'>;
 }): string[] =>
-  fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+  fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION &&
+  isNonEmptyArray(fieldMetadataItem.morphRelations)
     ? computeMorphRelationJoinColumnNames({ fieldMetadataItem })
     : [computeRelationGqlFieldJoinColumnName({ name: fieldMetadataItem.name })];
 

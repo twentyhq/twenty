@@ -749,7 +749,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
     });
 
-    it('should omit programmatic current-record morph filters when morph relation metadata is missing', () => {
+    it('should use its own join column for a morph relation target without morph relations', () => {
       const fieldMetadataItemByIdWithoutMorphRelations = new Map(
         fieldMetadataItemById,
       );
@@ -781,7 +781,9 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById: fieldMetadataItemByIdWithoutMorphRelations,
       });
 
-      expect(result).toBeUndefined();
+      expect(result).toEqual({
+        targetId: { in: ['11111111-1111-4111-8111-111111111111'] },
+      });
     });
   });
 
