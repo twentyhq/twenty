@@ -1,6 +1,10 @@
 import { randomUUID } from 'crypto';
 
 import { gql } from 'graphql-tag';
+import { ApplicationHealthStatus } from 'twenty-shared/application';
+
+import { type ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
 import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
@@ -262,6 +266,114 @@ describe('Admin panel application registration stats and installed workspaces (i
           (entry: { version: string }) => entry.version,
         ),
       ).not.toContain(DELETED_WORKSPACE_ONLY_VERSION);
+    });
+
+    it('keeps known warnings after failed checks and counts unknown attempts across health batches', async () => {
+      const cache = getAppProviderByClassName<ApplicationHealthCacheService>(
+        'ApplicationHealthCacheService',
+      );
+      const applications = await Promise.all(
+        Array.from({ length: 51 }, () =>
+          insertApplication({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            version: '2.0.0',
+            autoUpgrade: true,
+          }),
+        ),
+      );
+      const healthCheckLogicFunctionId = randomUUID();
+
+      try {
+        await dataSource.query(
+          `UPDATE core."application" SET "healthCheckLogicFunctionId" = $1 WHERE id = ANY($2)`,
+          [healthCheckLogicFunctionId, applications.map(({ id }) => id)],
+        );
+        const identities = applications.map((application) => ({
+          ...application,
+          healthCheckLogicFunctionId,
+        }));
+
+        await Promise.all(
+          identities.map((application) =>
+            cache.record(application, ApplicationHealthStatus.UNKNOWN),
+          ),
+        );
+        await cache.record(identities[0], ApplicationHealthStatus.WARNING);
+        await cache.record(identities[0], ApplicationHealthStatus.UNKNOWN);
+        expect((await cache.getStatuses(identities))[0]).toBe(
+          ApplicationHealthStatus.WARNING,
+        );
+
+        const response = await makeAdminPanelApiRequest({
+          query: FIND_STATS,
+          variables: { id: applicationRegistrationId },
+        });
+
+        expect(response.body.errors).toBeUndefined();
+        expect(
+          response.body.data.findAdminApplicationRegistrationStats,
+        ).toMatchObject({
+          activeInstalls: 54,
+          autoUpdateEnabled: 52,
+          healthCheckedWorkspaces: 51,
+          workspacesNeedingAttention: 1,
+        });
+      } finally {
+        await dataSource.query(
+          `DELETE FROM core."application" WHERE id = ANY($1)`,
+          [applications.map(({ id }) => id)],
+        );
+      }
+    });
+
+    it('counts multiple failed connections once and ignores archived connections and removed installations', async () => {
+      const applications = await Promise.all(
+        Array.from({ length: 3 }, () =>
+          insertApplication({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            version: '1.0.0',
+          }),
+        ),
+      );
+      const connectionIds = Array.from({ length: 4 }, () => randomUUID());
+
+      try {
+        for (const [index, id] of connectionIds.entries()) {
+          await dataSource.query(
+            `INSERT INTO core."connectedAccount" (id, handle, provider, "userWorkspaceId", "workspaceId", "applicationId", "authFailedAt", "archivedAt") VALUES ($1, $2, 'google', $3, $4, $5, now(), $6)`,
+            [
+              id,
+              id,
+              randomUUID(),
+              SEED_APPLE_WORKSPACE_ID,
+              applications[index < 2 ? 0 : index - 1].id,
+              index === 2 ? new Date() : null,
+            ],
+          );
+        }
+        await dataSource.query(
+          `UPDATE core."application" SET "deletedAt" = now() WHERE id = $1`,
+          [applications[2].id],
+        );
+        const response = await makeAdminPanelApiRequest({
+          query: FIND_STATS,
+          variables: { id: applicationRegistrationId },
+        });
+
+        expect(response.body.errors).toBeUndefined();
+        expect(
+          response.body.data.findAdminApplicationRegistrationStats,
+        ).toMatchObject({ activeInstalls: 5, workspacesNeedingAttention: 1 });
+      } finally {
+        await dataSource.query(
+          `DELETE FROM core."connectedAccount" WHERE id = ANY($1)`,
+          [connectionIds],
+        );
+        await dataSource.query(
+          `DELETE FROM core."application" WHERE id = ANY($1)`,
+          [applications.map(({ id }) => id)],
+        );
+      }
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {

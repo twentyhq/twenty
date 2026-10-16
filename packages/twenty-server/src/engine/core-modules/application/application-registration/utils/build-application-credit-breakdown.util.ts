@@ -93,8 +93,6 @@ export const buildApplicationCreditBreakdown = ({
     }
   }
 
-  let totalCreditsMicro = 0;
-
   for (const row of usageRows) {
     const appOperationKey = getAppOperationKey(
       row.operationType,
@@ -121,9 +119,12 @@ export const buildApplicationCreditBreakdown = ({
       key,
       (creditsByOperation.get(key) ?? 0) + creditsMicro,
     );
-    totalCreditsMicro += creditsMicro;
   }
 
+  const totalCreditsMicro = [...creditsByOperation.values()].reduce(
+    (total, creditsMicro) => total + creditsMicro,
+    0,
+  );
   const creditBreakdown = [...creditsByOperation]
     .filter(([, creditsMicro]) => creditsMicro !== 0)
     .map(([key, creditsMicro]) => ({

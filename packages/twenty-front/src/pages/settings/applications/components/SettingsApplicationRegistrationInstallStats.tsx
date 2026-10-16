@@ -6,6 +6,7 @@ import {
 } from '@/settings/components/SettingsTableCard';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
+import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -26,11 +27,17 @@ import {
   FindApplicationRegistrationStatsDocument,
 } from '~/generated-metadata/graphql';
 
+const OPERATION_LABELS: Partial<Record<string, MessageDescriptor>> =
+  USAGE_OPERATION_TYPE_LABELS;
+
 const StyledStatsLayout = styled.div`
   align-items: start;
   display: grid;
   gap: ${themeCssVariables.spacing[4]};
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, calc(${themeCssVariables.spacing[10]} * 7)), 1fr)
+  );
 `;
 
 const StyledStatsColumn = styled.div`
@@ -43,7 +50,7 @@ const StyledEmptyMessage = styled.p`
 `;
 
 type SettingsApplicationRegistrationInstallStatsProps = {
-  registration: ApplicationRegistration;
+  registration: Pick<ApplicationRegistration, 'id'>;
   isAdminView?: boolean;
 };
 
@@ -139,16 +146,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
     );
   }
 
-  const consumedOperations = (stats?.creditBreakdown ?? [])
-    .filter(
-      ({ creditsConsumed }) =>
-        isDefined(creditsConsumed) && creditsConsumed !== 0,
-    )
-    .sort(
-      (left, right) =>
-        right.creditsConsumed - left.creditsConsumed ||
-        left.key.localeCompare(right.key),
-    );
+  const consumedOperations = stats?.creditBreakdown ?? [];
 
   const creditItems: TableItem[] = [
     {
@@ -156,16 +154,19 @@ export const SettingsApplicationRegistrationInstallStats = ({
       label: t`Total credits consumed`,
       value: (
         <Tooltip
-          content={t`App-attributed credits across available usage history in non-deleted workspaces, including previous installations.`}
+          content={t`App-attributed credits across available usage history for current installations in non-deleted workspaces.`}
         >
           <span tabIndex={0}>{formatCredits(stats?.totalCreditsConsumed)}</span>
         </Tooltip>
       ),
     },
     ...consumedOperations.map((operation) => {
-      const standardLabel = Object.entries(USAGE_OPERATION_TYPE_LABELS).find(
-        ([operationType]) => operationType === operation.operationType,
-      )?.[1];
+      const standardLabel = Object.hasOwn(
+        OPERATION_LABELS,
+        operation.operationType,
+      )
+        ? OPERATION_LABELS[operation.operationType]
+        : undefined;
 
       return {
         label:
@@ -183,7 +184,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
         <SettingsTableCard
           rounded
           items={statsItems}
-          gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
+          gridAutoColumns={`minmax(0, calc(${themeCssVariables.spacing[10]} * 5)) minmax(0, 1fr)`}
         />
         {stats?.activeInstalls === 0 && (
           <StyledEmptyMessage>{t`No installations yet.`}</StyledEmptyMessage>
@@ -194,7 +195,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
           <SettingsTableCard
             rounded
             items={creditItems}
-            gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
+            gridAutoColumns={`minmax(0, calc(${themeCssVariables.spacing[10]} * 5)) minmax(0, 1fr)`}
           />
         </StyledStatsColumn>
       )}

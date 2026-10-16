@@ -27,6 +27,15 @@ export class ApplicationHealthCacheService {
     status: ApplicationHealthStatus,
   ): Promise<void> {
     try {
+      if (status === ApplicationHealthStatus.UNKNOWN) {
+        await this.cacheStorageService.setIfAbsent(
+          this.getKey(application),
+          status,
+          HEALTH_CHECK_RETENTION_MS,
+        );
+        return;
+      }
+
       await this.cacheStorageService.set(
         this.getKey(application),
         status,

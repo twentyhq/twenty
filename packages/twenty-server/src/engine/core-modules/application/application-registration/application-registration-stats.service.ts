@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import semver from 'semver';
-import {
-  type ApplicationBilling,
-  ApplicationHealthStatus,
-} from 'twenty-shared/application';
+import { type ApplicationBilling } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository } from 'typeorm';
@@ -13,27 +9,29 @@ import { type Repository } from 'typeorm';
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import {
-  type ApplicationRegistrationCreditBreakdownDTO,
-  type ApplicationRegistrationStatsDTO,
-} from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { buildApplicationCreditBreakdown } from 'src/engine/core-modules/application/application-registration/utils/build-application-credit-breakdown.util';
+import {
+  buildApplicationInstallStats,
+  summarizeApplicationHealth,
+  type ApplicationVersionStats,
+} from 'src/engine/core-modules/application/application-registration/utils/build-application-install-stats.util';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-type ApplicationStatsRow = Pick<
+const LOOKUP_BATCH_SIZE = 50;
+
+type HealthApplication = Pick<
   ApplicationEntity,
-  | 'id'
-  | 'workspaceId'
-  | 'version'
-  | 'autoUpgrade'
-  | 'healthCheckLogicFunctionId'
-  | 'deletedAt'
-  | 'billing'
-> & {
-  activationStatus: WorkspaceActivationStatus;
-  needsReconnection: boolean;
-};
+  'id' | 'workspaceId' | 'version' | 'healthCheckLogicFunctionId'
+> & { needsReconnection: boolean };
+type CreditApplication = Pick<
+  ApplicationEntity,
+  'id' | 'workspaceId' | 'billing'
+>;
+type CreditUsageRow = Parameters<
+  typeof buildApplicationCreditBreakdown
+>[0]['usageRows'][number];
 
 @Injectable()
 export class ApplicationRegistrationStatsService {
@@ -42,7 +40,6 @@ export class ApplicationRegistrationStatsService {
   );
 
   constructor(
-    // Authorized registration statistics aggregate across workspaces.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
@@ -52,147 +49,187 @@ export class ApplicationRegistrationStatsService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
   ) {}
 
+  private getInstallations(applicationRegistrationId: string) {
+    return this.applicationRepository
+      .createQueryBuilder('application')
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application.applicationRegistrationId = :applicationRegistrationId',
+        { applicationRegistrationId },
+      )
+      .andWhere('workspace.deletedAt IS NULL');
+  }
+
+  private getInstallationsWithConnections(applicationRegistrationId: string) {
+    return this.getInstallations(applicationRegistrationId).leftJoin(
+      (query) =>
+        query
+          .select('connection.applicationId', 'applicationId')
+          .addSelect('connection.workspaceId', 'workspaceId')
+          .distinct(true)
+          .from(ConnectedAccountEntity, 'connection')
+          .where('connection.archivedAt IS NULL')
+          .andWhere('connection.authFailedAt IS NOT NULL'),
+      'failedConnection',
+      '"failedConnection"."applicationId" = application.id AND "failedConnection"."workspaceId" = application.workspaceId',
+    );
+  }
+
   async computeStats(
     registration: Pick<
       ApplicationRegistrationEntity,
       'id' | 'latestAvailableVersion'
     >,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    const applications = await this.applicationRepository
-      .createQueryBuilder('application')
-      .withDeleted()
-      .innerJoin('application.workspace', 'workspace')
-      .select('application.id', 'id')
-      .addSelect('application.workspaceId', 'workspaceId')
-      .addSelect('application.version', 'version')
-      .addSelect('application.autoUpgrade', 'autoUpgrade')
+    const versions = await this.getInstallationsWithConnections(registration.id)
+      .select("COALESCE(application.version, 'unknown')", 'version')
+      .addSelect('COUNT(*)', 'count')
       .addSelect(
-        'application.healthCheckLogicFunctionId',
-        'healthCheckLogicFunctionId',
+        'COUNT(*) FILTER (WHERE workspace.activationStatus = :suspended)',
+        'suspendedInstalls',
       )
-      .addSelect('application.deletedAt', 'deletedAt')
-      .addSelect('application.billing', 'billing')
-      .addSelect('workspace.activationStatus', 'activationStatus')
       .addSelect(
-        (query) =>
-          query
-            .select('COUNT(*) > 0')
-            .from(ConnectedAccountEntity, 'connection')
-            .where('connection.applicationId = application.id')
-            .andWhere('connection.workspaceId = application.workspaceId')
-            .andWhere('connection.archivedAt IS NULL')
-            .andWhere('connection.authFailedAt IS NOT NULL'),
+        'COUNT(*) FILTER (WHERE application.autoUpgrade)',
+        'autoUpdateEnabled',
+      )
+      .addSelect(
+        'COUNT(*) FILTER (WHERE "failedConnection"."applicationId" IS NOT NULL)',
         'needsReconnection',
       )
-      .where(
-        'application.applicationRegistrationId = :applicationRegistrationId',
-        {
-          applicationRegistrationId: registration.id,
-        },
-      )
-      .andWhere('workspace.deletedAt IS NULL')
-      .getRawMany<ApplicationStatsRow>();
-
-    const installedApplications = applications.filter(
-      (application) => !isDefined(application.deletedAt),
+      .setParameter('suspended', WorkspaceActivationStatus.SUSPENDED)
+      .groupBy("COALESCE(application.version, 'unknown')")
+      .getRawMany<ApplicationVersionStats>();
+    const { needsReconnection, ...installStats } = buildApplicationInstallStats(
+      { versions, latestAvailableVersion: registration.latestAvailableVersion },
     );
-    const [healthStatuses, creditUsage] = await Promise.all([
-      this.applicationHealthCacheService.getStatuses(installedApplications),
-      this.getCreditBreakdown(applications, registration.id),
+    const [health, creditUsage] = await Promise.all([
+      this.getHealthSummary(registration.id),
+      this.getCreditBreakdown({ applicationRegistrationId: registration.id }),
     ]);
-    const versionCounts = new Map<string, number>();
-
-    for (const application of installedApplications) {
-      const version = application.version ?? 'unknown';
-
-      versionCounts.set(version, (versionCounts.get(version) ?? 0) + 1);
-    }
-
-    const versionDistribution = [...versionCounts]
-      .map(([version, count]) => ({
-        version,
-        count,
-      }))
-      .sort(
-        (left, right) =>
-          right.count - left.count || left.version.localeCompare(right.version),
-      );
-    const latestVersion = isDefined(registration.latestAvailableVersion)
-      ? semver.valid(registration.latestAvailableVersion)
-      : null;
-    const knownHealthStatuses = healthStatuses.filter(
-      (status) =>
-        isDefined(status) && status !== ApplicationHealthStatus.UNKNOWN,
-    );
-    const workspacesNeedingAttention = installedApplications.filter(
-      (application, index) =>
-        application.needsReconnection ||
-        healthStatuses[index] === ApplicationHealthStatus.WARNING ||
-        healthStatuses[index] === ApplicationHealthStatus.ERROR,
-    ).length;
+    const workspacesNeedingAttention =
+      needsReconnection + health.needingAttention;
 
     return {
-      activeInstalls: installedApplications.length,
-      suspendedInstalls: installedApplications.filter(
-        ({ activationStatus }) =>
-          activationStatus === WorkspaceActivationStatus.SUSPENDED,
-      ).length,
-      mostInstalledVersion: versionDistribution[0]?.version ?? null,
-      versionDistribution,
-      onLatestVersion: isDefined(latestVersion)
-        ? installedApplications.filter(
-            ({ version }) =>
-              isDefined(version) &&
-              isDefined(semver.valid(version)) &&
-              semver.eq(version, latestVersion),
-          ).length
-        : null,
-      updatesAvailable: isDefined(latestVersion)
-        ? installedApplications.filter(
-            ({ version }) =>
-              isDefined(version) &&
-              isDefined(semver.valid(version)) &&
-              semver.lt(version, latestVersion),
-          ).length
-        : null,
-      autoUpdateEnabled: installedApplications.filter(
-        ({ autoUpgrade }) => autoUpgrade,
-      ).length,
+      ...installStats,
       workspacesNeedingAttention:
-        installedApplications.length === 0 ||
-        knownHealthStatuses.length > 0 ||
+        installStats.activeInstalls === 0 ||
+        health.known > 0 ||
         workspacesNeedingAttention > 0
           ? workspacesNeedingAttention
           : null,
-      healthCheckedWorkspaces: knownHealthStatuses.length,
+      healthCheckedWorkspaces: health.checked,
       totalCreditsConsumed: creditUsage?.totalCreditsConsumed ?? null,
       creditBreakdown: creditUsage?.creditBreakdown ?? null,
     };
   }
 
-  private async getCreditBreakdown(
-    applications: Pick<ApplicationStatsRow, 'id' | 'workspaceId' | 'billing'>[],
-    applicationRegistrationId: string,
-  ): Promise<{
-    totalCreditsConsumed: number;
-    creditBreakdown: ApplicationRegistrationCreditBreakdownDTO[];
-  } | null> {
+  private async getHealthSummary(applicationRegistrationId: string) {
+    const summaries: ReturnType<typeof summarizeApplicationHealth>[] = [];
+    const cursor = { id: '' };
+
+    while (true) {
+      const query = this.getInstallationsWithConnections(
+        applicationRegistrationId,
+      )
+        .select('application.id', 'id')
+        .addSelect('application.workspaceId', 'workspaceId')
+        .addSelect('application.version', 'version')
+        .addSelect(
+          'application.healthCheckLogicFunctionId',
+          'healthCheckLogicFunctionId',
+        )
+        .addSelect(
+          '"failedConnection"."applicationId" IS NOT NULL',
+          'needsReconnection',
+        )
+        .andWhere('application.healthCheckLogicFunctionId IS NOT NULL')
+        .orderBy('application.id')
+        .limit(LOOKUP_BATCH_SIZE);
+
+      if (cursor.id) {
+        query.andWhere('application.id > :cursor', { cursor: cursor.id });
+      }
+
+      const applications = await query.getRawMany<HealthApplication>();
+      const statuses =
+        await this.applicationHealthCacheService.getStatuses(applications);
+
+      summaries.push(summarizeApplicationHealth({ statuses, applications }));
+      if (applications.length < LOOKUP_BATCH_SIZE) {
+        break;
+      }
+      cursor.id = applications[applications.length - 1].id;
+    }
+
+    return summaries.reduce(
+      (total, summary) => ({
+        checked: total.checked + summary.checked,
+        known: total.known + summary.known,
+        needingAttention: total.needingAttention + summary.needingAttention,
+      }),
+      { checked: 0, known: 0, needingAttention: 0 },
+    );
+  }
+
+  private async getCreditBreakdown({
+    applicationRegistrationId,
+  }: {
+    applicationRegistrationId: string;
+  }) {
     if (!isDefined(this.clickHouseService.getMainClient())) {
       return null;
     }
 
-    if (applications.length === 0) {
-      return { totalCreditsConsumed: 0, creditBreakdown: [] };
-    }
-
     try {
-      const [rows, registration] = await Promise.all([
-        this.clickHouseService.selectOrThrow<{
-          resourceType: string;
-          operationType: string;
-          resourceContext: string;
-          creditsUsedMicro: string;
-        }>(
+      const registration = await this.applicationRegistrationRepository
+        .createQueryBuilder('registration')
+        .select(
+          "registration.manifest -> 'application' -> 'billing'",
+          'billing',
+        )
+        .where('registration.id = :applicationRegistrationId', {
+          applicationRegistrationId,
+        })
+        .getRawOne<{ billing: ApplicationBilling | null }>();
+      const billingDefinitions = new Map<string, ApplicationBilling>();
+      const usageRows = new Map<string, CreditUsageRow>();
+      const cursor = { id: '' };
+
+      if (isDefined(registration?.billing)) {
+        billingDefinitions.set(
+          JSON.stringify(registration.billing),
+          registration.billing,
+        );
+      }
+
+      while (true) {
+        const query = this.getInstallations(applicationRegistrationId)
+          .select('application.id', 'id')
+          .addSelect('application.workspaceId', 'workspaceId')
+          .addSelect('application.billing', 'billing')
+          .orderBy('application.id')
+          .limit(LOOKUP_BATCH_SIZE);
+
+        if (cursor.id) {
+          query.andWhere('application.id > :cursor', { cursor: cursor.id });
+        }
+
+        const applications = await query.getRawMany<CreditApplication>();
+
+        if (applications.length === 0) {
+          break;
+        }
+
+        for (const { billing } of applications) {
+          if (isDefined(billing)) {
+            const key = JSON.stringify(billing);
+            if (!billingDefinitions.has(key)) {
+              billingDefinitions.set(key, billing);
+            }
+          }
+        }
+
+        const rows = await this.clickHouseService.selectOrThrow<CreditUsageRow>(
           `SELECT resourceType, operationType, resourceContext, sum(creditsUsedMicro) AS creditsUsedMicro
            FROM usageEvent
            WHERE workspaceId IN ({workspaceIds:Array(String)})
@@ -204,29 +241,36 @@ export class ApplicationRegistrationStatsService {
             ],
             applicationIds: applications.map(({ id }) => id),
           },
-        ),
-        this.applicationRegistrationRepository
-          .createQueryBuilder('registration')
-          .select(
-            "registration.manifest -> 'application' -> 'billing'",
-            'billing',
-          )
-          .where('registration.id = :applicationRegistrationId', {
-            applicationRegistrationId,
-          })
-          .getRawOne<{ billing: ApplicationBilling | null }>(),
-      ]);
+        );
+
+        for (const row of rows) {
+          const key = JSON.stringify([
+            row.resourceType,
+            row.operationType,
+            row.resourceContext,
+          ]);
+          const previous = usageRows.get(key);
+          usageRows.set(key, {
+            ...row,
+            creditsUsedMicro: String(
+              Number(previous?.creditsUsedMicro ?? 0) +
+                Number(row.creditsUsedMicro),
+            ),
+          });
+        }
+
+        if (applications.length < LOOKUP_BATCH_SIZE) {
+          break;
+        }
+        cursor.id = applications[applications.length - 1].id;
+      }
 
       return buildApplicationCreditBreakdown({
-        billingDefinitions: [
-          registration?.billing,
-          ...applications.map(({ billing }) => billing),
-        ],
-        usageRows: rows,
+        billingDefinitions: [...billingDefinitions.values()],
+        usageRows: [...usageRows.values()],
       });
     } catch (error) {
       this.logger.warn('Failed to load application credit usage', error);
-
       return null;
     }
   }
