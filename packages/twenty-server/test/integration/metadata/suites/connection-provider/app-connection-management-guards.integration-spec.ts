@@ -305,6 +305,17 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).toContain('does not have permission');
   });
 
+  it('refuses a member without the Applications permission to turn a workspace-shared connection into a private one', async () => {
+    const errorMessage = await startAuthorizeAndGetErrorMessage({
+      reconnectingConnectedAccountId: SHARED_ON_PERSONAL_PROVIDER_ID,
+      scope: 'USER',
+      as: 'member',
+      providerName: 'slack-personal',
+    });
+
+    expect(errorMessage).toContain('does not have permission');
+  });
+
   describe('with the Applications permission and without the Connected accounts permission', () => {
     let memberRoleId: string;
     let applicationsOnlyRoleId: string;
