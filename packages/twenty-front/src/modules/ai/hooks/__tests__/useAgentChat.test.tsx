@@ -12,14 +12,20 @@ import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThr
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { SendChatMessageDocument } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  SendChatMessageDocument,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const attachChatThreadToRecord = jest.fn();
+const sentShouldAssistantReply = jest.fn();
 
 jest.mock('@/ai/hooks/useAttachChatThreadToRecord', () => ({
   useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
@@ -46,7 +52,14 @@ const DRAFT_MENTIONING_COMPANY =
 const buildSendChatMessageMock = (
   outcome: 'sent' | 'failed',
 ): MockedResponse => ({
-  request: { query: SendChatMessageDocument, variables: () => true },
+  request: {
+    query: SendChatMessageDocument,
+    variables: (variables) => {
+      sentShouldAssistantReply(variables.shouldAssistantReply);
+
+      return true;
+    },
+  },
   ...(outcome === 'sent'
     ? {
         result: {
@@ -68,15 +81,31 @@ const readPersistedDrafts = () =>
 const renderAgentChat = ({
   persistedDrafts,
   sendChatMessageOutcomes,
+  hasAiModels = true,
+  isAiChatInboxEnabled = false,
 }: {
   persistedDrafts: Record<string, string>;
   sendChatMessageOutcomes: ('sent' | 'failed')[];
+  hasAiModels?: boolean;
+  isAiChatInboxEnabled?: boolean;
 }) => {
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: sendChatMessageOutcomes.map(buildSendChatMessageMock),
     onInitializeJotaiStore: (store) => {
-      store.set(aiModelsState.atom, [{ modelId: 'model', label: 'Model' }]);
+      store.set(
+        aiModelsState.atom,
+        hasAiModels ? [{ modelId: 'model', label: 'Model' }] : [],
+      );
       store.set(newAiChatThreadIdState.atom, THREAD_ID);
+      store.set(currentWorkspaceState.atom, {
+        ...mockCurrentWorkspace,
+        featureFlags: [
+          {
+            key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+            value: isAiChatInboxEnabled,
+          },
+        ],
+      });
     },
   });
 
@@ -236,5 +265,36 @@ describe('useAgentChat', () => {
     await send(result);
 
     expect(attachChatThreadToRecord).not.toHaveBeenCalled();
+  });
+
+  it('sends without asking for a reply in the inbox when no AI is configured', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      hasAiModels: false,
+      isAiChatInboxEnabled: true,
+    });
+
+    await send(result);
+
+    expect(sentShouldAssistantReply).toHaveBeenCalledTimes(1);
+    expect(sentShouldAssistantReply).toHaveBeenCalledWith(false);
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
+  });
+
+  it('does not send without AI outside the inbox', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      hasAiModels: false,
+    });
+
+    await send(result);
+
+    expect(sentShouldAssistantReply).not.toHaveBeenCalled();
   });
 });
