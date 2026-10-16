@@ -56,6 +56,8 @@ The picker adds the plus sign and isolates calling codes left to right in option
 
 ## Compound composition
 
+This is a breaking API change for existing compound callers. Add `PhoneCountryPicker.Root` around `Dropdown.Root`, move `countries`, `value` and `onValueChange` from `Options` to `Root`, and remove `Trigger.country`. Both parts now require `Root` and derive the selected country from it.
+
 `Root` owns countries and the controlled or uncontrolled selection. Put the shared `Dropdown.Root` inside it and compose the trigger, content and options. `Trigger` derives its selected flag and accessible description from `Root`; `Options` reads the same data and selection. Do not supply another country or selected value to those parts.
 
 ```tsx
