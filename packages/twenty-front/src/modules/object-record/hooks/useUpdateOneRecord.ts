@@ -23,6 +23,7 @@ import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 type UpdateOneRecordArgs<UpdatedObjectRecord> = {
@@ -58,7 +59,9 @@ export const useUpdateOneRecord = () => {
 
     if (!objectMetadataItem) {
       throw new Error(
-        `Object metadata item not found for ${objectNameSingular}`,
+        doNotTranslate(
+          `Object metadata item not found for ${objectNameSingular}`,
+        ),
       );
     }
 

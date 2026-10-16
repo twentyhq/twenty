@@ -32,9 +32,8 @@ export type GetToolCatalogResult = {
 export const createGetToolCatalogTool = (
   toolRegistry: ToolRegistryService,
   workspaceId: string,
-  roleId: string,
-  options?: {
-    rolePermissionConfig?: RolePermissionConfig;
+  options: {
+    rolePermissionConfig: RolePermissionConfig;
     userId?: string;
     userWorkspaceId?: string;
     excludeTools?: Set<string>;
@@ -47,17 +46,13 @@ export const createGetToolCatalogTool = (
   execute: async (
     parameters: GetToolCatalogInput,
   ): Promise<GetToolCatalogResult> => {
-    const entries = await toolRegistry.buildToolIndex(
-      workspaceId,
-      roleId,
-      options,
-    );
+    const entries = await toolRegistry.buildToolIndex(workspaceId, options);
 
     const categoryFilter = parameters.categories
       ? new Set(parameters.categories)
       : undefined;
 
-    const excludeSet = options?.excludeTools;
+    const excludeSet = options.excludeTools;
 
     const catalog: Record<
       string,

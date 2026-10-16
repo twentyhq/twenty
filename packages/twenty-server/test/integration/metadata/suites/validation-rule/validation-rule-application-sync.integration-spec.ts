@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -79,7 +81,7 @@ describe('Validation rules across application syncs', () => {
 
   beforeAll(async () => {
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+      featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
       value: true,
       expectToFail: false,
     });

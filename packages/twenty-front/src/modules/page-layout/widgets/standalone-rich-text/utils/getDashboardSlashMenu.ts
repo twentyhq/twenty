@@ -1,4 +1,5 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
+import { t } from '@lingui/core/macro';
 
 import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
@@ -16,9 +17,10 @@ import {
   IconListCheck,
   IconListNumbers,
   IconMoodSmile,
-  IconPilcrow,
   IconTable,
+  IconTextSize,
 } from 'twenty-ui/icon';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,
@@ -35,12 +37,17 @@ const Icons: Record<string, IconComponent> = {
   'Bullet List': IconList,
   'Check List': IconListCheck,
   'Code Block': IconCode,
-  Paragraph: IconPilcrow,
+  Paragraph: IconTextSize,
   Table: IconTable,
   Emoji: IconMoodSmile,
 };
 
-const EXCLUDED_BLOCK_TYPES = ['Image', 'Video', 'Audio', 'File'];
+const EXCLUDED_BLOCK_TYPES = doNotTranslate([
+  'Image',
+  'Video',
+  'Audio',
+  'File',
+]);
 
 export const getDashboardSlashMenu = (
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor,
@@ -49,6 +56,7 @@ export const getDashboardSlashMenu = (
     .filter((item) => !EXCLUDED_BLOCK_TYPES.includes(item.title))
     .map((item) => ({
       ...item,
+      title: item.title === 'Paragraph' ? t`Text` : item.title,
       Icon: Icons[item.title],
     }));
 

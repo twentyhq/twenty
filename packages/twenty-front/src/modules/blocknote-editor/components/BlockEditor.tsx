@@ -3,11 +3,16 @@ import {
   SuggestionMenu,
 } from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
-import { SuggestionMenuController } from '@blocknote/react';
+import {
+  FormattingToolbar,
+  FormattingToolbarController,
+  SuggestionMenuController,
+} from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { type ClipboardEvent } from 'react';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { getBlockTypeSelectItems } from '@/blocknote-editor/utils/getBlockTypeSelectItems';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
 import { CustomSideMenu } from '@/blocknote-editor/components/CustomSideMenu';
@@ -225,10 +230,18 @@ export const BlockEditor = ({
         onChange={handleChange}
         editor={editor}
         theme={blockNoteTheme}
+        formattingToolbar={false}
         slashMenu={false}
         sideMenu={false}
         editable={!readonly}
       >
+        <FormattingToolbarController
+          formattingToolbar={() => (
+            <FormattingToolbar
+              blockTypeSelectItems={getBlockTypeSelectItems(editor.dictionary)}
+            />
+          )}
+        />
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController
           triggerCharacter="/"

@@ -183,6 +183,7 @@ export class MessageChannelResolver {
         userWorkspaceId,
         workspaceId: workspace.id,
         applicationId: application?.id,
+        agentId: undefined,
       });
 
     // app channel settings belong to the creating app and go through updateAppMessageChannel

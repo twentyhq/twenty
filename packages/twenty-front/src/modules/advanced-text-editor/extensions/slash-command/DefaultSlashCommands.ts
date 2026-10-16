@@ -2,12 +2,13 @@ import { ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS } from '@/advanced-text-edito
 import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
 import { msg } from '@lingui/core/macro';
 import {
+  IconBlockquote,
   IconH1,
   IconH2,
   IconH3,
   IconList,
   IconListNumbers,
-  IconPilcrow,
+  IconTextSize,
 } from 'twenty-ui/icon';
 
 const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
@@ -15,7 +16,7 @@ const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
     id: 'paragraph',
     title: msg`Text`,
     description: msg`Plain text paragraph`,
-    icon: IconPilcrow,
+    icon: IconTextSize,
     keywords: [msg`paragraph`, msg`text`, msg`p`],
     getIsActive: (editor) => editor.isActive('paragraph'),
     getIsVisible: (editor) => editor.can().setParagraph?.() ?? false,
@@ -54,6 +55,17 @@ const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
     getIsVisible: (editor) => editor.can().setHeading?.({ level: 3 }) ?? false,
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
+  },
+  {
+    id: 'blockquote',
+    title: msg`Quote`,
+    description: msg`Highlighted quotation`,
+    icon: IconBlockquote,
+    keywords: [msg`quote`, msg`blockquote`, msg`citation`],
+    getIsActive: (editor) => editor.isActive('blockquote'),
+    getIsVisible: (editor) => editor.can().toggleBlockquote?.() ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).toggleBlockquote().run(),
   },
 ];
 

@@ -92,12 +92,12 @@ export const MemberPermissionsTab = ({
         refetchQueries: ['GetRoles'],
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Role updated successfully`,
       });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error ? error.message : t`Failed to update role`,
       });

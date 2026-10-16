@@ -64,6 +64,7 @@ export const MenuItemWithOptionDropdown = ({
   dropdownContent,
   dropdownId,
   LeftIcon,
+  LeftComponent,
   RightIcon,
   onClick,
   onMouseEnter,
@@ -104,7 +105,8 @@ export const MenuItemWithOptionDropdown = ({
         color={accent === 'danger' ? 'danger' : 'neutral'}
         focused={selected}
         startIcon={
-          isDefined(LeftIcon) && <LeftIcon size={theme.icon.size.md} />
+          LeftComponent ??
+          (isDefined(LeftIcon) && <LeftIcon size={theme.icon.size.md} />)
         }
         hasSubmenu={hasSubMenu}
       >

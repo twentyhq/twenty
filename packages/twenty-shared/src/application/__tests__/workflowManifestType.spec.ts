@@ -195,11 +195,261 @@ describe('workflow manifest manual trigger', () => {
 
   it('names the supported trigger types when the type is unknown', () => {
     const result = workflowManifestSchema.safeParse(
-      withTrigger({ type: 'WEBHOOK' }),
+      withTrigger({ type: 'UNKNOWN' }),
     );
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
-      'Unsupported trigger type. Application workflows support: MANUAL',
+      'Unsupported trigger type. Application workflows support: MANUAL, CRON, DATABASE_EVENT, WEBHOOK',
     );
+  });
+});
+
+describe('workflow manifest cron trigger', () => {
+  const withCron = (settings: Record<string, unknown>) => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      trigger: {
+        universalIdentifier: workflow.version.trigger.universalIdentifier,
+        type: 'CRON',
+        nextStepIds: workflow.version.trigger.nextStepIds,
+        settings,
+      },
+    },
+  });
+
+  it('accepts every schedule type', () => {
+    for (const settings of [
+      { type: 'DAYS', schedule: { day: 1, hour: 9, minute: 0 } },
+      { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
+      { type: 'MINUTES', schedule: { minute: 15 } },
+      { type: 'CUSTOM', pattern: '0 9 * * 1-5' },
+    ]) {
+      expect(workflowManifestSchema.safeParse(withCron(settings)).success).toBe(
+        true,
+      );
+    }
+  });
+
+  it('rejects a schedule outside the clock', () => {
+    const result = workflowManifestSchema.safeParse(
+      withCron({ type: 'DAYS', schedule: { day: 1, hour: 24, minute: 0 } }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'schedule',
+      'hour',
+    ]);
+  });
+
+  it('rejects a schedule key the schedule type does not use', () => {
+    const result = workflowManifestSchema.safeParse(
+      withCron({ type: 'MINUTES', schedule: { minute: 15, hour: 2 } }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'schedule',
+    ]);
+  });
+});
+
+describe('workflow manifest webhook trigger', () => {
+  const withWebhook = (settings: Record<string, unknown>) => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      trigger: {
+        universalIdentifier: workflow.version.trigger.universalIdentifier,
+        type: 'WEBHOOK',
+        nextStepIds: workflow.version.trigger.nextStepIds,
+        settings,
+      },
+    },
+  });
+
+  it('accepts a GET webhook and a POST webhook with its expected body', () => {
+    for (const settings of [
+      { httpMethod: 'GET' },
+      {
+        httpMethod: 'POST',
+        expectedBody: { email: 'jane@example.com', score: 3 },
+      },
+    ]) {
+      expect(
+        workflowManifestSchema.safeParse(withWebhook(settings)).success,
+      ).toBe(true);
+    }
+  });
+
+  it('requires the expected body of a POST webhook', () => {
+    const result = workflowManifestSchema.safeParse(
+      withWebhook({ httpMethod: 'POST' }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'expectedBody',
+    ]);
+  });
+
+  it('refuses an authentication setting, which webhook triggers do not enforce', () => {
+    const result = workflowManifestSchema.safeParse(
+      withWebhook({ httpMethod: 'GET', authentication: 'API_KEY' }),
+    );
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('workflow manifest database event trigger', () => {
+  const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+  const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+
+  const withDatabaseEvent = (settings: Record<string, unknown>) => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      trigger: {
+        universalIdentifier: workflow.version.trigger.universalIdentifier,
+        type: 'DATABASE_EVENT',
+        nextStepIds: workflow.version.trigger.nextStepIds,
+        settings,
+      },
+    },
+  });
+
+  it('accepts the watched object, fields and a record filter', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'updated',
+        fieldUniversalIdentifiers: [FIELD_ID],
+        filter: {
+          stepFilterGroups: [{ id: 'group', logicalOperator: 'AND' }],
+          stepFilters: [
+            {
+              id: 'filter',
+              type: 'TEXT',
+              stepOutputKey: '{{trigger.properties.after.status}}',
+              operand: 'IS',
+              value: 'open',
+              stepFilterGroupId: 'group',
+              fieldMetadataUniversalIdentifier: FIELD_ID,
+            },
+          ],
+        },
+      }),
+    );
+    expect(result.success).toBe(true);
+  });
+
+  it('only watches fields on update events', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'created',
+        fieldUniversalIdentifiers: [FIELD_ID],
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toBe(
+      'Watched fields only apply to updated and upserted events',
+    );
+  });
+
+  it('refuses a record filter that points to an undeclared filter group', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'updated',
+        filter: {
+          stepFilterGroups: [
+            { id: 'group', logicalOperator: 'AND' },
+            {
+              id: 'nested',
+              logicalOperator: 'OR',
+              parentStepFilterGroupId: 'missing-parent',
+            },
+          ],
+          stepFilters: [
+            {
+              id: 'filter',
+              type: 'TEXT',
+              stepOutputKey: '{{trigger.properties.after.status}}',
+              operand: 'IS',
+              value: 'open',
+              stepFilterGroupId: 'missing-group',
+              fieldMetadataUniversalIdentifier: FIELD_ID,
+            },
+          ],
+        },
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.map((issue) => issue.message)).toEqual([
+      'Filter group missing-parent is not declared in stepFilterGroups',
+      'Filter group missing-group is not declared in stepFilterGroups',
+    ]);
+  });
+
+  it('refuses a filter group id declared twice, since only the first one is evaluated', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'updated',
+        filter: {
+          stepFilterGroups: [
+            { id: 'root', logicalOperator: 'OR' },
+            { id: 'root', logicalOperator: 'AND' },
+          ],
+          stepFilters: [],
+        },
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.map((issue) => issue.message)).toEqual([
+      'Filter group root is declared more than once',
+    ]);
+  });
+
+  it('refuses a filter group that is its own parent, since only groups under a root are evaluated', () => {
+    const result = workflowManifestSchema.safeParse(
+      withDatabaseEvent({
+        objectUniversalIdentifier: OBJECT_ID,
+        action: 'updated',
+        filter: {
+          stepFilterGroups: [
+            { id: 'root', logicalOperator: 'AND' },
+            {
+              id: 'looping',
+              logicalOperator: 'AND',
+              parentStepFilterGroupId: 'looping',
+            },
+          ],
+          stepFilters: [
+            {
+              id: 'filter',
+              type: 'TEXT',
+              stepOutputKey: '{{trigger.properties.after.status}}',
+              operand: 'IS',
+              value: 'open',
+              stepFilterGroupId: 'looping',
+              fieldMetadataUniversalIdentifier: FIELD_ID,
+            },
+          ],
+        },
+      }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.map((issue) => issue.message)).toEqual([
+      'Filter group looping is not reachable from a root group',
+    ]);
   });
 });

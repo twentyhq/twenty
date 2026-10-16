@@ -10,6 +10,7 @@ import {
 
 import { LOG_CONSOLE_ACTOR_FILTER_FIELD } from '@/log-console/constants/LogConsoleActorFilterField';
 import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const LOG_CONSOLE_SECURITY_FILTER_FIELDS: LogConsoleFilterField[] = [
   {
@@ -25,17 +26,20 @@ export const LOG_CONSOLE_SECURITY_FILTER_FIELDS: LogConsoleFilterField[] = [
       },
       {
         label: t`Impersonation`,
-        values: ['Impersonation'],
+        values: [doNotTranslate('Impersonation')],
         startIcon: <IconSpy />,
       },
       {
         label: t`Signed up`,
-        values: ['User Signup'],
+        values: [doNotTranslate('User Signup')],
         startIcon: <IconUserPlus />,
       },
       {
         label: t`Custom domain`,
-        values: ['Custom Domain Activated', 'Custom Domain Deactivated'],
+        values: doNotTranslate([
+          'Custom Domain Activated',
+          'Custom Domain Deactivated',
+        ]),
         startIcon: <IconWorld />,
       },
       {

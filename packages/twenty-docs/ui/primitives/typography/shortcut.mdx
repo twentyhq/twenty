@@ -43,16 +43,16 @@ A flat array is a simultaneous combination: `['Mod', 'K']` means press Mod and K
 
 Use `sequenceJoinLabel` for localized join text. `combinationSeparator` can preserve a host convention such as `+`. The default text separator is empty on Apple devices and a space elsewhere. `variant` selects `keys`, `text`, or `button`. `visibility="desktop"` hides the hint at mobile viewport widths while `always` remains visible.
 
-Key symbols have readable accessible names. Supply `aria-label` or `aria-labelledby` for a localized name, or `aria-hidden` for a decorative hint. Buttons keep their action names and hide their decorative hints on mobile. Menu and list rows keep their hints visible.
+Key symbols have readable accessible names. Use `accessibleKeyLabels` to localize individual key names in screen reader output. Supply `aria-label` or `aria-labelledby` for a localized name for the whole shortcut, or `aria-hidden` for a decorative hint. Buttons keep their action names and hide their decorative hints on mobile. Menu and list rows keep their hints visible.
 
 ## Migration
 
-| Previous prop                                         | Replacement                                                                |
-| ----------------------------------------------------- | -------------------------------------------------------------------------- |
-| Button `hotkeys={['⌘', 'K']}`                         | `shortcut={['Mod', 'K']}`                                                  |
-| ListItem or MenuItem sequential `hotkeys` / `hotKeys` | `shortcut={[['G'], ['P']]}`                                                |
-| `hotkeysJoinLabel` / `hotKeysJoinLabel`               | `shortcutJoinLabel` on Button, ListItem, MenuItem, Menu and Dropdown parts |
-| Manual tooltip key concatenation                      | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`                           |
+| Previous prop                                         | Replacement                                                          |
+| ----------------------------------------------------- | -------------------------------------------------------------------- |
+| Button `hotkeys={['⌘', 'K']}`                         | `shortcut={['Mod', 'K']}`                                            |
+| ListItem or MenuItem sequential `hotkeys` / `hotKeys` | `shortcut={[['G'], ['P']]}`                                          |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`               | `shortcutJoinLabel` on Button, ListItem, MenuItem and Dropdown parts |
+| Manual tooltip key concatenation                      | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`                     |
 
 Flat stored arrays that represent successive key presses need nesting before being passed to `shortcut`: `hotKeys.map((key) => [key])`. Arrays that represent simultaneous keys can be passed directly. Key strings remain literal tokens, so `['Mod', '+']` contains a plus key and `['Space']` contains the Space key; no shortcut-string parsing is required.
 

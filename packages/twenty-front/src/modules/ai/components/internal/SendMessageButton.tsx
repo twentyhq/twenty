@@ -1,3 +1,4 @@
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
@@ -12,12 +13,10 @@ import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 type SendMessageButtonProps = {
-  onSend: () => void;
   isDisabled?: boolean;
 };
 
 export const SendMessageButton = ({
-  onSend,
   isDisabled = false,
 }: SendMessageButtonProps) => {
   const agentChatInputIsEmpty = useAtomStateValue(
@@ -35,6 +34,10 @@ export const SendMessageButton = ({
     agentChatIsAwaitingFirstChunkFamilyState,
     { threadId: currentAiChatThread },
   );
+
+  const handleSendClick = () => {
+    dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
+  };
 
   const handleStopClick = () => {
     dispatchBrowserEvent(AGENT_CHAT_STOP_EVENT_NAME);
@@ -62,7 +65,7 @@ export const SendMessageButton = ({
       shape="round"
       aria-label={t`Send message`}
       size="sm"
-      onClick={onSend}
+      onClick={handleSendClick}
       disabled={isDisabled || agentChatInputIsEmpty || agentChatIsLoading}
     >
       <IconArrowUp />

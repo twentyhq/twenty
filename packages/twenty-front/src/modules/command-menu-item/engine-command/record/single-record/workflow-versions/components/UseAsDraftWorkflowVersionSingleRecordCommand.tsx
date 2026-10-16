@@ -1,4 +1,3 @@
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -6,8 +5,9 @@ import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDra
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { useLingui } from '@lingui/react/macro';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
@@ -17,7 +17,6 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
   workflowId: string;
   workflowVersionId: string;
 }) => {
-  const isCore = useIsWorkflowCoreEnabled();
   const { t } = useLingui();
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { createDraftFromWorkflowVersion } =
@@ -33,14 +32,7 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
       workflowVersionIdToCopy: workflowVersionId,
     });
 
-    if (isCore) {
-      navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflowId });
-      return;
-    }
-    navigate(AppPath.RecordShowPage, {
-      objectNameSingular: CoreObjectNameSingular.Workflow,
-      objectRecordId: workflowId,
-    });
+    navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflowId });
   };
 
   if (!isDefined(workflow)) {
@@ -58,14 +50,9 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
       confirmButtonText={t`Override Draft`}
       linkButton={{
         title: t`Go to Draft`,
-        to: isCore
-          ? getAppPath(AppPath.WorkflowCoreShowPage, {
-              coreWorkflowId: workflowId,
-            })
-          : getAppPath(AppPath.RecordShowPage, {
-              objectNameSingular: CoreObjectNameSingular.Workflow,
-              objectRecordId: workflowId,
-            }),
+        to: getAppPath(AppPath.WorkflowCoreShowPage, {
+          coreWorkflowId: workflowId,
+        }),
       }}
       execute={handleExecute}
     />
@@ -73,35 +60,28 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
-  const isCore = useIsWorkflowCoreEnabled();
   const { selectedRecords } = useHeadlessCommandContextApi();
 
-  const selectedRecord = selectedRecords[0];
   const { coreWorkflowVersion, loading } = useCoreWorkflowVersion(
-    isCore ? selectedRecord?.coreWorkflowVersionId : undefined,
+    selectedRecords[0]?.coreWorkflowVersionId,
   );
 
-  if (isCore && (loading || !isDefined(coreWorkflowVersion))) {
+  if (loading || !isDefined(coreWorkflowVersion)) {
     return null;
   }
 
-  const workflowId = isCore
-    ? coreWorkflowVersion?.coreWorkflowId
-    : selectedRecord?.workflowId;
-  const workflowVersionId = isCore
-    ? coreWorkflowVersion?.id
-    : selectedRecord?.id;
-
-  if (!isDefined(workflowId) || !isDefined(workflowVersionId)) {
+  if (!isDefined(coreWorkflowVersion.coreWorkflowId)) {
     throw new Error(
-      'Record ID and workflow ID are required to use as draft workflow version',
+      doNotTranslate(
+        'Record ID and workflow ID are required to use as draft workflow version',
+      ),
     );
   }
 
   return (
     <UseAsDraftWorkflowVersionSingleRecordCommandContent
-      workflowId={workflowId}
-      workflowVersionId={workflowVersionId}
+      workflowId={coreWorkflowVersion.coreWorkflowId}
+      workflowVersionId={coreWorkflowVersion.id}
     />
   );
 };

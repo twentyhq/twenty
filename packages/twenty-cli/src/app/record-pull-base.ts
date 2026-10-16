@@ -18,7 +18,7 @@ export const recordPullBase = async ({
   sourceFingerprints?: Record<string, string>;
   context: TargetCommandContext;
 }): Promise<PullBaseRecording> => {
-  output.progress('Recording the pull base…');
+  output.progress({ message: 'Recording the pull base…' });
 
   try {
     const workspaceId = await fetchWorkspaceId({ target, signal });

@@ -44,6 +44,7 @@ import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import {
   EmailingDomainWorkspaceCleanupJob,
   type EmailingDomainWorkspaceCleanupJobData,
@@ -150,6 +151,7 @@ export class WorkspaceService {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
+    isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
@@ -192,6 +194,7 @@ export class WorkspaceService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    private readonly eventLogRetentionService: EventLogRetentionService,
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
@@ -325,11 +328,13 @@ export class WorkspaceService {
     userWorkspaceId,
     apiKey,
     application,
+    agentId,
   }: {
     payload: UpdateWorkspaceInput & { id: string };
     userWorkspaceId?: string;
     apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
+    agentId?: string;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -343,6 +348,7 @@ export class WorkspaceService {
       workspaceId: workspace.id,
       apiKey,
       application,
+      agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -352,6 +358,15 @@ export class WorkspaceService {
     ) {
       await this.subdomainManagerService.validateSubdomainOrThrow(
         payload.subdomain,
+      );
+    }
+
+    if (
+      isDefined(payload.eventLogRetentionDays) &&
+      workspace.eventLogRetentionDays !== payload.eventLogRetentionDays
+    ) {
+      await this.eventLogRetentionService.validateRetentionUpdateOrThrow(
+        workspace.id,
       );
     }
 
@@ -697,6 +712,10 @@ export class WorkspaceService {
       return this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
     }
 
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.cancelSubscription(workspace.id);
+    }
+
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         workspaceId: id,
@@ -710,10 +729,6 @@ export class WorkspaceService {
     this.logger.log(`workspace ${id} user workspaces deleted`);
 
     this.logger.log(`workspace ${id} cache flushed`);
-
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.cancelSubscription(workspace.id);
-    }
 
     await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
@@ -1035,6 +1050,7 @@ export class WorkspaceService {
     workspaceId,
     apiKey,
     application,
+    agentId,
     workspaceActivationStatus,
   }: {
     payload: Partial<WorkspaceEntity>;
@@ -1042,6 +1058,7 @@ export class WorkspaceService {
     workspaceId: string;
     apiKey: ApiKeyEntity | undefined;
     application?: FlatApplication;
+    agentId?: string;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
@@ -1127,6 +1144,7 @@ export class WorkspaceService {
           setting: permission,
           apiKeyId: apiKey?.id,
           applicationId: application?.id,
+          agentId,
         });
 
       if (!hasPermission) {
@@ -1188,7 +1206,6 @@ export class WorkspaceService {
       await prefillWorkflows(
         queryRunner.manager,
         workspaceId,
-        schemaName,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );

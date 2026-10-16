@@ -1,5 +1,3 @@
-import type { ActorMetadata } from 'twenty-shared/types';
-
 import type { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import type { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import type { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
@@ -30,6 +28,5 @@ export type WorkflowToolDependencies = {
 export type WorkflowToolContext = {
   workspaceId: string;
   rolePermissionConfig: RolePermissionConfig;
-  actorContext?: ActorMetadata;
   userWorkspaceId?: string;
 };

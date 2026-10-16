@@ -1,3 +1,7 @@
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID } from '@/settings/admin-panel/apps/constants/ClaimApplicationRegistrationOwnershipModalId';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
@@ -22,17 +26,16 @@ import {
   DeleteApplicationRegistrationDocument,
   FindApplicationRegistrationStatsDocument,
   FindManyApplicationRegistrationsDocument,
+  PermissionFlagType,
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
+import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
 const TRANSFER_OWNERSHIP_MODAL_ID =
   'transfer-application-registration-ownership-modal';
-
-const CLAIM_OWNERSHIP_MODAL_ID =
-  'claim-application-registration-ownership-modal';
 
 const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
 
@@ -51,15 +54,16 @@ const StyledDangerButtonGroup = styled.div`
 
 export const SettingsAdminApplicationRegistrationDangerZone = ({
   registration,
-  fromAdmin = false,
+  isAdminView = false,
 }: {
   registration: ApplicationRegistration;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
   const { openDialog, closeDialog } = useDialog();
+  const apolloAdminClient = useApolloAdminClient();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isTransferring, setIsTransferring] = useState(false);
@@ -69,6 +73,9 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   const applicationRegistrationId = registration.id;
 
   const isUnclaimed = !isDefined(registration.ownerWorkspaceId);
+  const hasApplicationsPermission = useHasPermissionFlag(
+    PermissionFlagType.APPLICATIONS,
+  );
 
   const { data: statsData } = useQuery(
     FindApplicationRegistrationStatsDocument,
@@ -111,7 +118,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         variables: { id: applicationRegistrationId },
       });
 
-      if (fromAdmin) {
+      if (isAdminView) {
         navigate(
           SettingsPath.AdminPanel,
           undefined,
@@ -121,20 +128,20 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         );
       } else {
         navigate(
-          SettingsPath.Applications,
+          SettingsPath.Developers,
           undefined,
           undefined,
           undefined,
-          '#developer',
+          `#${SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS}`,
         );
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`App deleted successfully`,
       });
     } catch {
-      enqueueToast({ variant: 'error', children: t`Error deleting app` });
+      enqueueToast({ status: 'error', children: t`Error deleting app` });
     } finally {
       setIsLoading(false);
     }
@@ -156,14 +163,14 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Ownership transferred successfully`,
       });
       setTransferSubdomain('');
       navigate(SettingsPath.Applications);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to transfer ownership. Check that the subdomain is correct.`,
       });
     } finally {
@@ -177,19 +184,26 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       await claimOwnership({
         variables: { applicationRegistrationId },
       });
-      enqueueToast({
-        variant: 'success',
-        children: t`Ownership claimed successfully`,
-      });
-      closeDialog(CLAIM_OWNERSHIP_MODAL_ID);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to claim ownership.`,
       });
+
+      return;
     } finally {
       setIsClaiming(false);
     }
+
+    enqueueToast({
+      status: 'success',
+      children: t`Ownership claimed successfully`,
+    });
+    closeDialog(CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID);
+
+    await apolloAdminClient.refetchQueries({
+      include: [FindOneAdminApplicationRegistrationDocument],
+    });
   };
 
   const confirmationValue = t`yes`;
@@ -224,14 +238,18 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           </Tooltip>
 
           {isUnclaimed
-            ? fromAdmin && (
+            ? isAdminView && (
                 <Button
                   startIcon={<IconUserPlus />}
-                  onClick={() => openDialog(CLAIM_OWNERSHIP_MODAL_ID)}
+                  onClick={() =>
+                    openDialog(
+                      CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID,
+                    )
+                  }
                   variant="outline"
                 >{t`Claim ownership`}</Button>
               )
-            : !isUnclaimed && (
+            : hasApplicationsPermission && (
                 <Button
                   startIcon={<IconShare />}
                   onClick={() => openDialog(TRANSFER_OWNERSHIP_MODAL_ID)}
@@ -259,7 +277,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       />
 
       <ConfirmationDialog
-        dialogId={CLAIM_OWNERSHIP_MODAL_ID}
+        dialogId={CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID}
         title={t`Claim ownership`}
         subtitle={
           <Trans>

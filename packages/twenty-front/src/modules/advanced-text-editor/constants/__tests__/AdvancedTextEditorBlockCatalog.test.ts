@@ -30,6 +30,16 @@ describe('ADVANCED_TEXT_EDITOR_BLOCK_CATALOG', () => {
     }
   });
 
+  it('escapes the translated HTML block instruction', () => {
+    const htmlRecipe = ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.find(
+      ({ id }) => id === 'html',
+    );
+
+    expect(
+      htmlRecipe?.createContent(() => 'Edit <script> & links').attrs?.html,
+    ).toBe('<p style="margin: 0px;">Edit &lt;script&gt; &amp; links</p>');
+  });
+
   it('uses the same recipes for insert controls and slash commands', () => {
     const recipeIds = ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.map(
       ({ id }) => id,
@@ -47,6 +57,7 @@ describe('ADVANCED_TEXT_EDITOR_BLOCK_CATALOG', () => {
       'h1',
       'h2',
       'h3',
+      'blockquote',
       ...ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.map(({ id }) => id),
       'bulletList',
       'orderedList',

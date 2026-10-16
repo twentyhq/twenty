@@ -3,7 +3,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -26,6 +25,7 @@ import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/Set
 import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -41,10 +41,7 @@ export const SettingsAgentSkillsTab = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
-  const [showSystemSkills, setShowSystemSkills] = useState(true);
-
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
-  const shouldShowSystemSkills = isAdvancedModeEnabled && showSystemSkills;
+  const [showSystemSkills, setShowSystemSkills] = useState(false);
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const installedApplications = currentWorkspace?.installedApplications;
@@ -87,32 +84,32 @@ export const SettingsAgentSkillsTab = () => {
           return false;
         }
 
-        if (skill.isSystem && !shouldShowSystemSkills) {
+        if (skill.isSystem && !showSystemSkills) {
           return false;
         }
 
         return true;
       }),
-    [sortedSkills, searchTerm, showDeactivated, shouldShowSystemSkills],
+    [sortedSkills, searchTerm, showDeactivated, showSystemSkills],
   );
 
   const handleActivate = async (skillId: string) => {
     try {
       await activateSkill({ variables: { id: skillId } });
-      enqueueToast({ variant: 'success', children: t`Skill activated` });
+      enqueueToast({ status: 'success', children: t`Skill activated` });
       refetch();
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to activate skill` });
+      enqueueToast({ status: 'error', children: t`Failed to activate skill` });
     }
   };
 
   const handleDelete = async (skillId: string) => {
     try {
       await deleteSkill({ variables: { id: skillId } });
-      enqueueToast({ variant: 'success', children: t`Skill deleted` });
+      enqueueToast({ status: 'success', children: t`Skill deleted` });
       refetch();
     } catch {
-      enqueueToast({ variant: 'error', children: t`Failed to delete skill` });
+      enqueueToast({ status: 'error', children: t`Failed to delete skill` });
     }
   };
 
@@ -128,12 +125,12 @@ export const SettingsAgentSkillsTab = () => {
           placeholder={t`Search a skill...`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot
               dropdownId="settings-skills-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -146,17 +143,15 @@ export const SettingsAgentSkillsTab = () => {
                     onCheckedChange={setShowDeactivated}
                     checked={showDeactivated}
                   >{t`Deactivated`}</SettingsRow>
-                  {isAdvancedModeEnabled && (
-                    <SettingsRow
-                      startElement={<IconSettings />}
-                      onCheckedChange={setShowSystemSkills}
-                      checked={showSystemSkills}
-                    >{t`System skills`}</SettingsRow>
-                  )}
+                  <SettingsRow
+                    startElement={<IconSettings />}
+                    onCheckedChange={setShowSystemSkills}
+                    checked={showSystemSkills}
+                  >{t`System skills`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchContainer>
       <SettingsAgentSkillsTable

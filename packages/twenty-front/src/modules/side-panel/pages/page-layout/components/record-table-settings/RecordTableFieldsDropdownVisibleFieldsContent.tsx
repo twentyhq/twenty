@@ -1,3 +1,4 @@
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -99,7 +100,12 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
       <DropdownMenuItemsContainer>
         {isDefined(fieldMetadataItemLabelIdentifier) && (
           <MenuItemDraggable
-            LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+            LeftComponent={
+              <ApplicationStackIcon
+                Icon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+                applicationId={fieldMetadataItemLabelIdentifier.applicationId}
+              />
+            }
             text={fieldMetadataItemLabelIdentifier.label}
             accent="placeholder"
             gripMode="always"
@@ -123,7 +129,12 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                       index={index}
                       itemComponent={
                         <MenuItemDraggable
-                          LeftIcon={getIcon(fieldMetadataItem.icon)}
+                          LeftComponent={
+                            <ApplicationStackIcon
+                              Icon={getIcon(fieldMetadataItem.icon)}
+                              applicationId={fieldMetadataItem.applicationId}
+                            />
+                          }
                           iconButtons={
                             <LightIconButton
                               aria-label={t`Hide field`}

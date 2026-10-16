@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
@@ -150,7 +151,7 @@ export const BackgroundMockTableRow = ({
         <PersonChip fullName={company.accountOwner} />
       </StyledCell>
       <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS['Creation date']}>
-        <StyledMutedText>{company.creationDate}</StyledMutedText>
+        <StyledMutedText>{t`about 13 hours ago`}</StyledMutedText>
       </StyledCell>
       <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Employees}>
         <StyledTruncated>{formatNumber(company.employees)}</StyledTruncated>

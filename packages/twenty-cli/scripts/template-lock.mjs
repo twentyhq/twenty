@@ -17,32 +17,23 @@ const fail = (message) => {
 
 const readJson = async (path) => JSON.parse(await readFile(path, 'utf8'));
 
-export const buildTemplateManifest = ({ templateManifest, version }) => {
-  const firstPartyPackages = Object.entries(
-    templateManifest.devDependencies ?? {},
-  )
-    .filter(([, pin]) => pin === PIN_PLACEHOLDER)
+export const buildTemplateManifest = ({ templateManifest, pins }) => {
+  const devDependencies = {
+    ...templateManifest.devDependencies,
+    ...Object.fromEntries(pins.map(({ name, version }) => [name, version])),
+  };
+  const unpinnedPackages = Object.entries(devDependencies)
+    .filter(([, version]) => version === PIN_PLACEHOLDER)
     .map(([name]) => name);
 
-  if (firstPartyPackages.length === 0) {
-    fail('The app template does not pin any first-party package.');
+  if (unpinnedPackages.length > 0) {
+    fail(`app init did not pin ${unpinnedPackages.join(', ')}.`);
   }
 
-  return {
-    manifest: {
-      ...templateManifest,
-      devDependencies: {
-        ...templateManifest.devDependencies,
-        ...Object.fromEntries(
-          firstPartyPackages.map((name) => [name, version]),
-        ),
-      },
-    },
-    firstPartyPackages,
-  };
+  return { ...templateManifest, devDependencies };
 };
 
-export const buildYarnrc = ({ registry, version, firstPartyPackages }) => {
+export const buildYarnrc = ({ registry, pins }) => {
   const { protocol, hostname } = new URL(registry);
 
   return [
@@ -55,7 +46,7 @@ export const buildYarnrc = ({ registry, version, firstPartyPackages }) => {
       : []),
     `npmMinimalAgeGate: ${RELEASE_MINIMAL_AGE_GATE}`,
     'npmPreapprovedPackages:',
-    ...firstPartyPackages.map((name) => `  - "${name}@${version}"`),
+    ...pins.map(({ name, version }) => `  - "${name}@${version}"`),
     '',
   ].join('\n');
 };
@@ -133,6 +124,7 @@ const installWithYarn = async ({ yarnBinary, workingDirectory }) => {
 
 export const generateTemplateLock = async ({
   packageDirectory,
+  pins,
   registry = PUBLIC_REGISTRY,
   install = installWithYarn,
 }) => {
@@ -146,15 +138,9 @@ export const generateTemplateLock = async ({
   }
 
   const templateManifest = await readJson(
-    join(packageDirectory, 'app-template/package.json'),
+    join(outputDirectory, 'package.json'),
   );
-  const { version } = await readJson(
-    join(packageDirectory, '../twenty-sdk/package.json'),
-  );
-  const { manifest, firstPartyPackages } = buildTemplateManifest({
-    templateManifest,
-    version,
-  });
+  const manifest = buildTemplateManifest({ templateManifest, pins });
   const yarnBinary = await resolveYarnBinary({
     repositoryDirectory: join(packageDirectory, '../..'),
     packageManager: templateManifest.packageManager,
@@ -170,14 +156,14 @@ export const generateTemplateLock = async ({
     );
     await writeFile(
       join(workingDirectory, '.yarnrc.yml'),
-      buildYarnrc({ registry, version, firstPartyPackages }),
+      buildYarnrc({ registry, pins }),
     );
 
     try {
       await install({ yarnBinary, workingDirectory });
     } catch {
       fail(
-        `Yarn could not resolve the app template with ${firstPartyPackages.join(', ')} at ${version}. See the Yarn output above.`,
+        `Yarn could not resolve the app template with ${pins.map(({ name, version }) => `${name}@${version}`).join(', ')}. See the Yarn output above.`,
       );
     }
 
@@ -186,8 +172,8 @@ export const generateTemplateLock = async ({
       'utf8',
     );
 
-    for (const packageName of firstPartyPackages) {
-      assertResolvedWithIntegrity({ lockfile, packageName, version });
+    for (const { name, version } of pins) {
+      assertResolvedWithIntegrity({ lockfile, packageName: name, version });
     }
 
     if (registry === PUBLIC_REGISTRY) {
@@ -197,8 +183,6 @@ export const generateTemplateLock = async ({
     await writeFile(join(outputDirectory, 'yarn.lock'), lockfile);
 
     return {
-      version,
-      firstPartyPackages,
       resolutionCount: lockfile.match(/^ {2}resolution:/gm)?.length ?? 0,
     };
   } finally {

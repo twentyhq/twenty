@@ -39,6 +39,10 @@ type LifecycleJobTarget = {
   workspaceId: string;
 };
 
+type LifecycleJobStatusTarget = LifecycleJobTarget & {
+  jobId?: string;
+};
+
 const CONFLICTING_OPERATIONS: Record<
   ApplicationLifecycleOperation,
   ApplicationLifecycleOperation[]
@@ -153,19 +157,19 @@ export class ApplicationLifecycleJobService {
   }
 
   findInstallApplicationJobStatus(
-    target: LifecycleJobTarget,
+    target: LifecycleJobStatusTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'install', ...target });
   }
 
   findUninstallApplicationJobStatus(
-    target: LifecycleJobTarget,
+    target: LifecycleJobStatusTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'uninstall', ...target });
   }
 
   findUpgradeApplicationJobStatus(
-    target: LifecycleJobTarget,
+    target: LifecycleJobStatusTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'upgrade', ...target });
   }
@@ -268,16 +272,24 @@ export class ApplicationLifecycleJobService {
     operation,
     universalIdentifier,
     workspaceId,
-  }: LifecycleJobTarget & {
+    jobId: requestedJobId,
+  }: LifecycleJobStatusTarget & {
     operation: ApplicationLifecycleOperation;
   }): Promise<JobStatusDTO | null> {
-    const jobId = await this.findInFlightJobId(
-      buildApplicationLifecycleJobId({
-        operation,
-        workspaceId,
-        universalIdentifier,
-      }),
-    );
+    const jobIdPrefix = buildApplicationLifecycleJobId({
+      operation,
+      workspaceId,
+      universalIdentifier,
+    });
+
+    if (
+      isDefined(requestedJobId) &&
+      getQueueJobIdPrefix(requestedJobId) !== jobIdPrefix
+    ) {
+      return null;
+    }
+
+    const jobId = requestedJobId ?? (await this.findInFlightJobId(jobIdPrefix));
 
     if (!isDefined(jobId)) {
       return null;

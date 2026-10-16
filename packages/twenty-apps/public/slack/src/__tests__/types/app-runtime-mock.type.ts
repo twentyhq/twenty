@@ -7,12 +7,20 @@ import {
 
 import { type AppKeyValueScope } from 'src/__tests__/types/app-key-value-scope.type';
 
+export type AppRuntimeAgentResult = Pick<
+  RunAgentResult,
+  'success' | 'result' | 'error'
+> &
+  Partial<Pick<RunAgentResult, 'threadId'>>;
+
 export type AppRuntimeMock = {
   handlers: RequestHandler[];
   workspaceId: string;
   setConnections: (connections: AppConnection[]) => void;
   setAgentResult: (
-    implementation: RunAgentResult | ((input: RunAgentInput) => RunAgentResult),
+    implementation:
+      | AppRuntimeAgentResult
+      | ((input: RunAgentInput) => AppRuntimeAgentResult),
   ) => void;
   readonly agentRuns: RunAgentInput[];
   readonly lastAgentMessages: NonNullable<RunAgentInput['messages']>;

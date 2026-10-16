@@ -1,7 +1,8 @@
 import { msg, t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
+import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { isCredentialRequestHeaderName } from 'src/engine/metadata-modules/logic-function/utils/is-credential-request-header-name.util';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
@@ -21,12 +22,15 @@ export const validateLogicFunctionForwardedRequestHeaders = ({
   httpRouteTriggerSettings,
   serverRouteTriggerSettings,
 }: ValidateLogicFunctionForwardedRequestHeadersArgs): FlatEntityValidationError<LogicFunctionExceptionCode>[] => {
-  const forwardedRequestHeaderLists: unknown[] = [
-    httpRouteTriggerSettings?.forwardedRequestHeaders,
-    serverRouteTriggerSettings?.forwardedRequestHeaders,
-  ].filter(isDefined);
+  const httpRouteForwardedRequestHeaders: unknown =
+    httpRouteTriggerSettings?.forwardedRequestHeaders ?? [];
+  const serverRouteForwardedRequestHeaders: unknown =
+    serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
 
-  if (!forwardedRequestHeaderLists.every(isArrayOfStrings)) {
+  if (
+    !isArrayOfStrings(httpRouteForwardedRequestHeaders) ||
+    !isArrayOfStrings(serverRouteForwardedRequestHeaders)
+  ) {
     return [
       {
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
@@ -36,9 +40,15 @@ export const validateLogicFunctionForwardedRequestHeaders = ({
     ];
   }
 
-  const forwardedCredentialHeaderNames = forwardedRequestHeaderLists
-    .flat()
-    .filter(isCredentialRequestHeaderName);
+  const forwardedCredentialHeaderNames = [
+    ...httpRouteForwardedRequestHeaders.filter(isCredentialRequestHeaderName),
+    ...serverRouteForwardedRequestHeaders.filter(
+      (headerName) =>
+        isCredentialRequestHeaderName(headerName) &&
+        headerName.toLowerCase() !==
+          SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
+    ),
+  ];
 
   if (!isNonEmptyArray(forwardedCredentialHeaderNames)) {
     return [];

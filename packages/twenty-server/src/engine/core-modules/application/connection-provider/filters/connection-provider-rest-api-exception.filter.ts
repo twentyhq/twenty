@@ -22,6 +22,7 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND:
     case ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND:
     case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND:
+    case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND:
       return 404;
     case ConnectionProviderExceptionCode.FORBIDDEN:
       return 403;
@@ -29,11 +30,13 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.INVALID_STATE:
     case ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT:
     case ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS:
+    case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
       return 400;
     case ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED:
     case ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED:
     case ConnectionProviderExceptionCode.REFRESH_FAILED:
     case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_FAILED:
+    case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED:
       return 500;
     default:
       return assertUnreachable(code);

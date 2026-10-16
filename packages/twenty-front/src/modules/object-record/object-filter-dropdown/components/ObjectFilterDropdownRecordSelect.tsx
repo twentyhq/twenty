@@ -18,11 +18,13 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
+import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconUserCircle } from 'twenty-ui/icon';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -128,7 +130,7 @@ const ObjectFilterDropdownRecordSelectContent = ({
 
   const currentWorkspaceMemberSelectableItem: SelectableItem = {
     id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
-    name: 'Me',
+    name: t`Me`,
     isSelected: isCurrentWorkspaceMemberSelected ?? false,
     AvatarIcon: IconUserCircle,
   };
@@ -255,7 +257,9 @@ export const ObjectFilterDropdownRecordSelect = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
-    throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
+    throw new Error(
+      doNotTranslate('fieldMetadataItemUsedInFilterDropdown is not defined'),
+    );
   }
 
   // Nested relation filters pick records from the leaf relation's target object

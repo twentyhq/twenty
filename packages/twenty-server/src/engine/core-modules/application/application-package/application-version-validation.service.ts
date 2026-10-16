@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import semver from 'semver';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,26 +40,41 @@ export class ApplicationVersionValidationService {
   async validateServerCompatibility(
     requiredServerVersion: string | undefined,
   ): Promise<VersionValidationResult> {
-    if (!isDefined(requiredServerVersion)) {
-      return { compatible: true };
-    }
+    const [validation] = await this.validateManyServerCompatibilities([
+      requiredServerVersion,
+    ]);
 
-    if (!isDefined(semver.validRange(requiredServerVersion))) {
-      return {
-        compatible: false,
-        reason: 'INVALID_REQUIRED_VERSION',
-        message: `App manifest declares invalid engines.twenty value "${requiredServerVersion}". Must be a valid semver range.`,
-      };
-    }
+    return validation;
+  }
 
-    const instanceCompletedVersion =
-      await this.upgradeStatusService.getInstanceCompletedVersion();
+  async validateManyServerCompatibilities(
+    requiredServerVersions: (string | undefined)[],
+  ): Promise<VersionValidationResult[]> {
+    const instanceCompletedVersion = requiredServerVersions.some(isDefined)
+      ? await this.upgradeStatusService.getInstanceCompletedVersion()
+      : null;
 
-    return this.validateVersionAgainstRange({
-      version: instanceCompletedVersion,
-      requiredVersionRange: requiredServerVersion,
-      scope: 'instance',
-    });
+    return requiredServerVersions.map(
+      (requiredServerVersion): VersionValidationResult => {
+        if (!isDefined(requiredServerVersion)) {
+          return { compatible: true };
+        }
+
+        if (!this.isValidRequiredServerVersionRange(requiredServerVersion)) {
+          return {
+            compatible: false,
+            reason: 'INVALID_REQUIRED_VERSION',
+            message: `App manifest declares invalid engines.twenty value "${requiredServerVersion}". Must be a valid semver range.`,
+          };
+        }
+
+        return this.validateVersionAgainstRange({
+          version: instanceCompletedVersion,
+          requiredVersionRange: requiredServerVersion,
+          scope: 'instance',
+        });
+      },
+    );
   }
 
   async validateWorkspaceCompatibility({
@@ -72,7 +88,7 @@ export class ApplicationVersionValidationService {
       return { compatible: true };
     }
 
-    if (!isDefined(semver.validRange(requiredServerVersion))) {
+    if (!this.isValidRequiredServerVersionRange(requiredServerVersion)) {
       return {
         compatible: false,
         reason: 'INVALID_REQUIRED_VERSION',
@@ -98,6 +114,18 @@ export class ApplicationVersionValidationService {
     });
   }
 
+  validatePackageVersion(incomingVersion: string): VersionProgressionResult {
+    if (!isDefined(semver.valid(incomingVersion))) {
+      return {
+        allowed: false,
+        reason: 'INVALID_INCOMING_VERSION',
+        message: `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
+      };
+    }
+
+    return { allowed: true };
+  }
+
   // A current version that is not valid semver never blocks: there is
   // nothing reliable to compare against.
   validateVersionProgression({
@@ -111,12 +139,10 @@ export class ApplicationVersionValidationService {
     universalIdentifier: string;
     action: 'install' | 'deploy';
   }): VersionProgressionResult {
-    if (!isDefined(semver.valid(incomingVersion))) {
-      return {
-        allowed: false,
-        reason: 'INVALID_INCOMING_VERSION',
-        message: `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
-      };
+    const validation = this.validatePackageVersion(incomingVersion);
+
+    if (!validation.allowed) {
+      return validation;
     }
 
     if (!isDefined(semver.valid(currentVersion))) {
@@ -150,6 +176,16 @@ export class ApplicationVersionValidationService {
     }
 
     return { allowed: true };
+  }
+
+  private isValidRequiredServerVersionRange(
+    requiredServerVersion: string,
+  ): boolean {
+    return (
+      isString(requiredServerVersion) &&
+      isNonEmptyString(requiredServerVersion.trim()) &&
+      isDefined(semver.validRange(requiredServerVersion))
+    );
   }
 
   private validateVersionAgainstRange({

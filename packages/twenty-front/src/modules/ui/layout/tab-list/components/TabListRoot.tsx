@@ -7,10 +7,7 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledRoot = styled(Tabs.Root)`
-  // Preserve the parent's sizing context regardless of the primitive's CSS load order.
-  && {
-    display: contents;
-  }
+  display: contents;
 `;
 
 type TabListRootProps = {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -12,7 +13,12 @@ const DropdownExample = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selection, setSelection] = useState('Unassigned');
-  const matchingAssignees = ASSIGNEES.filter((assignee) =>
+  const [actionCount, setActionCount] = useState(0);
+  const [isLastAssigneeFirst, setIsLastAssigneeFirst] = useState(false);
+  const rankedAssignees = isLastAssigneeFirst
+    ? [...ASSIGNEES].reverse()
+    : ASSIGNEES;
+  const matchingAssignees = rankedAssignees.filter((assignee) =>
     assignee.toLowerCase().includes(query.toLowerCase()),
   );
 
@@ -29,6 +35,24 @@ const DropdownExample = () => {
                 shortcutJoinLabel="followed by"
               >
                 Assign person
+              </Dropdown.ActionItem>
+              <Dropdown.ActionItem
+                disabled
+                onClick={() => setSelection('Archived')}
+              >
+                Archive assignee
+              </Dropdown.ActionItem>
+              <Dropdown.ActionItem
+                nativeButton
+                render={<Button />}
+                ref={(element: HTMLElement | null) => {
+                  if (isDefined(element)) {
+                    element.dataset.refTag = element.tagName;
+                  }
+                }}
+                onClick={() => setActionCount((count) => count + 1)}
+              >
+                Duplicate assignment
               </Dropdown.ActionItem>
               <Dropdown.ActionItem onClick={() => setSelection('Unassigned')}>
                 Remove assignee
@@ -58,11 +82,22 @@ const DropdownExample = () => {
               <Dropdown.ActionItem onClick={() => setSelection('New person')}>
                 Create person
               </Dropdown.ActionItem>
+              <Dropdown.ActionItem
+                closeOnClick={false}
+                onClick={() => setIsLastAssigneeFirst(true)}
+              >
+                Rank last first
+              </Dropdown.ActionItem>
             </Dropdown.Section>
           </Dropdown.Page>
         </Dropdown.Content>
       </Dropdown.Root>
-      <Text role="status">Assignee: {selection}</Text>
+      <Text role="status" aria-label="Assignee">
+        Assignee: {selection}
+      </Text>
+      <Text role="status" aria-label="Assignment actions">
+        Actions: {actionCount}
+      </Text>
     </TwentyUiGalleryCard>
   );
 };

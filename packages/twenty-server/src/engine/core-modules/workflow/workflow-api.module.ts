@@ -6,12 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
+import { CoreWorkflowRunResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-run.resolver';
 import { CoreWorkflowVersionMutationResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver';
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
 import { WorkflowTriggerResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-trigger.resolver';
-import { WorkflowVersionEdgeResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-edge.resolver';
 import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver';
-import { WorkflowVersionResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version.resolver';
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CoreWorkflowServicesModule } from 'src/engine/core-modules/workflow/core-workflow-services.module';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
@@ -23,7 +22,6 @@ import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/conn
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
-import { WorkflowVersionModule } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/workflow-trigger.module';
@@ -36,7 +34,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowTriggerModule,
     WorkflowBuilderModule,
     WorkflowCommonModule,
-    WorkflowVersionModule,
     WorkflowRunModule,
     WorkflowRunnerModule,
     PermissionsModule,
@@ -51,10 +48,9 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowTriggerResolver,
     WorkflowBuilderResolver,
     WorkflowVersionStepResolver,
-    WorkflowVersionEdgeResolver,
-    WorkflowVersionResolver,
     CoreWorkflowResolver,
     CoreWorkflowVersionMutationResolver,
+    CoreWorkflowRunResolver,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
 })

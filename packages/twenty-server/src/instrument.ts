@@ -100,7 +100,9 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     ],
     tracesSampleRate,
     tracesSampler: ({ name, inheritOrSampleWith }) =>
-      name.startsWith('ai.') ? 1 : inheritOrSampleWith(tracesSampleRate),
+      name.startsWith('invoke_agent')
+        ? 1
+        : inheritOrSampleWith(tracesSampleRate),
     profilesSampleRate: parseSampleRate({
       value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
       fallback: 0.01,

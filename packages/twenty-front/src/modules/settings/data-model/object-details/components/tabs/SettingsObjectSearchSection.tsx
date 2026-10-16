@@ -173,7 +173,7 @@ export const SettingsObjectSearchSection = ({
 
     if (result.status === 'successful') {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: value
           ? t`Field added to search`
           : t`Field removed from search`,
@@ -190,7 +190,6 @@ export const SettingsObjectSearchSection = ({
             title={t`Global search`}
             description={t`Show this object's records in the command menu (${formatShortcut({ shortcut: ['Mod', 'K'] })}).`}
             checked={isSearchable}
-            advancedMode
             onChange={handleToggleSearchable}
           />
         </Card.Root>

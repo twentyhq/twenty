@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
@@ -69,7 +70,9 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: '<p>Microsoft workflow draft body</p>',
+        body: JSON.stringify(
+          buildEmailDocument('Microsoft workflow draft body'),
+        ),
       },
       payload: { ...RECIPIENTS, subject },
     });
@@ -117,7 +120,9 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
         fromHandle: ALIAS,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Microsoft workflow alias draft body</p>',
+        body: JSON.stringify(
+          buildEmailDocument('Microsoft workflow alias draft body'),
+        ),
       },
     });
 
@@ -147,7 +152,9 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
         connectedAccountId: channel.connectedAccountId,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Microsoft workflow draft body</p>',
+        body: JSON.stringify(
+          buildEmailDocument('Microsoft workflow draft body'),
+        ),
         files: [file],
       },
     });
@@ -182,7 +189,9 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
         connectedAccountId: channel.connectedAccountId,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Microsoft workflow reply draft body</p>',
+        body: JSON.stringify(
+          buildEmailDocument('Microsoft workflow reply draft body'),
+        ),
         files: [file],
         inReplyTo: PARENT_INTERNET_MESSAGE_ID,
       },

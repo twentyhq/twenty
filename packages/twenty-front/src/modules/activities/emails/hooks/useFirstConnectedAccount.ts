@@ -1,37 +1,19 @@
-import { EmailOperation } from 'twenty-shared/types';
-import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
-import { canConnectedAccountPerformEmailOperation } from 'twenty-shared/utils';
+import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
+import { findFirstConnectedAccountAbleToSendEmail } from '@/accounts/utils/findFirstConnectedAccountAbleToSendEmail';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type UseFirstConnectedAccountOptions = {
-  skip?: boolean;
-};
+export const useFirstConnectedAccount = () => {
+  const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
 
-export const useFirstConnectedAccount = (
-  options?: UseFirstConnectedAccountOptions,
-) => {
-  const { data, loading } = useQuery<{
-    myConnectedAccounts: Pick<
-      ConnectedAccount,
-      'id' | 'handle' | 'provider' | 'connectionParameters'
-    >[];
-  }>(GET_MY_CONNECTED_ACCOUNTS, {
-    skip: options?.skip,
-  });
-
-  const firstAccount =
-    data?.myConnectedAccounts?.find((connectedAccount) =>
-      canConnectedAccountPerformEmailOperation({
-        connectedAccount,
-        operation: EmailOperation.SEND,
-      }),
-    ) ?? null;
+  const firstAccount = findFirstConnectedAccountAbleToSendEmail(
+    myConnectedAccounts ?? [],
+  );
 
   return {
     connectedAccountId: firstAccount?.id ?? null,
     connectedAccountHandle: firstAccount?.handle ?? null,
-    loading,
+    loading: !isDefined(myConnectedAccounts),
   };
 };

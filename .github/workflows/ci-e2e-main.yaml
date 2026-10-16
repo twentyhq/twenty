@@ -289,7 +289,7 @@ jobs:
           PGPASSWORD: postgres
         run: |
           set -euo pipefail
-          npm install -g @anthropic-ai/claude-code@2.1.247
+          npm install -g @anthropic-ai/claude-code@2.1.296
           # stream-json teed into the artifact tree, ahead of the scrub,
           # keeps per-turn detail and permission denials so allowlist tuning
           # reads real data. stderr and the exit code are kept too: a run that

@@ -1515,10 +1515,10 @@ msgctxt "fieldMetadata.description"
 msgid "Audio-only recording"
 msgstr "Audio-only recording"
 
-#. js-lingui-id: aepsXP
+#. js-lingui-id: 5bRlXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
-msgid "Audit logs require an Enterprise subscription."
-msgstr "Audit logs require an Enterprise subscription."
+msgid "Audit logs require an Organization subscription."
+msgstr "Audit logs require an Organization subscription."
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -2467,6 +2467,11 @@ msgstr "Cannot update standard skill properties (only activation/deactivation al
 msgctxt "fieldMetadata.label"
 msgid "Cc"
 msgstr "Cc"
+
+#. js-lingui-id: abq5Mk
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Changing log retention requires an Organization subscription."
+msgstr "Changing log retention requires an Organization subscription."
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -12512,6 +12517,11 @@ msgstr "The workflow record picker must reference an object."
 #: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow references metadata that is not available to this application."
 msgstr "The workflow references metadata that is not available to this application."
+
+#. js-lingui-id: W+A2pa
+#: src/engine/core-modules/application/application-manifest/converters/from-workflow-trigger-manifest-to-trigger-or-throw.util.ts
+msgid "The workflow schedule is invalid."
+msgstr "The workflow schedule is invalid."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts

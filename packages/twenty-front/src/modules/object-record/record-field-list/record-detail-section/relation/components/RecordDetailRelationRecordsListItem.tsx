@@ -33,6 +33,7 @@ import {
   CustomError,
   computeMorphRelationGqlFieldName,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
@@ -96,7 +97,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   if (!objectMetadataItem) {
     throw new CustomError(
-      'Object metadata item not found',
+      doNotTranslate('Object metadata item not found'),
       'OBJECT_METADATA_ITEM_NOT_FOUND',
     );
   }
@@ -266,10 +267,6 @@ export const RecordDetailRelationRecordsListItem = ({
             instanceId={`${scopeInstanceId}-relation-${relationRecord.id}`}
             objectNameSingular={relationObjectMetadataNameSingular}
             objectRecordId={relationRecord.id}
-            showDuplicatesSection={false}
-            showRelationSections={false}
-            excludeCreatedAtAndUpdatedAt={true}
-            excludeFieldMetadataIds={[relationFieldMetadataId]}
           />
         </Collapsible.Panel>
       </Collapsible.Root>

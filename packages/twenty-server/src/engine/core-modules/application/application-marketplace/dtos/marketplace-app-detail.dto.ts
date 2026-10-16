@@ -13,6 +13,7 @@ import {
   type Manifest,
 } from 'twenty-shared/application';
 
+import { MarketplaceAppObjectDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-object.dto';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
@@ -125,8 +126,15 @@ export class MarketplaceAppDetailDTO {
   @Field(() => [MarketplaceAppRoleDTO], { nullable: true })
   roles?: MarketplaceAppRoleDTO[];
 
+  @IsOptional()
+  @Field(() => [MarketplaceAppObjectDTO], { nullable: true })
+  objects?: MarketplaceAppObjectDTO[];
+
   @Field(() => [String])
   requestedCapabilities: ApplicationCapability[];
+
+  @Field(() => Boolean)
+  billsCredits: boolean;
 
   @Field(() => GraphQLJSON, {
     nullable: true,

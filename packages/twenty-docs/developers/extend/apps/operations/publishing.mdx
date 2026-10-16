@@ -69,7 +69,7 @@ yarn twenty app:publish --private
 
 Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
 
-1. Go to **Settings > Applications > Registrations** and open your app
+1. Go to **Settings > Developers > Apps** and open your app under **My apps**
 2. In the **Distribution** tab, click **Copy share link**
 3. Share this link with users on other workspaces — it takes them directly to the app's install page
 
@@ -117,7 +117,8 @@ The value is a standard [semver range](https://github.com/npm/node-semver#ranges
 **What happens at deploy and install time:**
 
 - If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-- If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
+- If `engines.twenty` is **not set**, no version check runs and the app is accepted on any server version (backward-compatible with existing apps). A blank value is rejected as an invalid range.
+- The marketplace does not list an app whose latest version declares an `engines.twenty` range the server does not satisfy, or an invalid one. The app stays registered and visible in the admin panel.
 - If the server has no `APP_VERSION` configured, the check is skipped.
 
 <Note>
@@ -295,7 +296,7 @@ After the package has synced into the catalog, continue with [Claiming your app]
 
 ## Claiming your app
 
-Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Applications** and **MCP & APIs** permissions to claim through the **Developer** tab.
+Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Applications** and **Developers** permissions to claim through the **Apps** tab of **Settings > Developers**.
 
 Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the app on a separate self-hosted server. Other workspaces on the same instance install your app without claiming it themselves.
 
@@ -308,7 +309,7 @@ Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the ap
 
 ### Claim with GitHub
 
-1. In your intended owner workspace, go to **Settings > Applications > Developer** (`/settings/applications#developer`).
+1. In your intended owner workspace, go to **Settings > Developers > Apps** (`/settings/developers#apps`).
 2. In **Claim an application**, enter the exact npm package name, including its scope (for example, `@your-org/twenty-app`), or the app's `universalIdentifier`.
 3. Click **Look up** and check that the result is your app. If it is not found, click **Sync catalog** if available, wait for the sync to finish, then look it up again.
 4. Click **Claim with GitHub** and authorize Twenty. For an organization-owned repository, grant access to that organization in GitHub's **Organization access** section. Personal repositories do not need an organization grant.

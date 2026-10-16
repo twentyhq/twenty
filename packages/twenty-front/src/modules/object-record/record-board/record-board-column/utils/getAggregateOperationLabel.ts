@@ -3,6 +3,7 @@ import { DateAggregateOperations } from '@/object-record/record-table/constants/
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { t } from '@lingui/core/macro';
 import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getAggregateOperationLabel = (
   operation: ExtendedAggregateOperations,
@@ -38,7 +39,7 @@ export const getAggregateOperationLabel = (
       return t`Count false`;
     default:
       throw new CustomError(
-        `Unknown aggregate operation: ${operation}`,
+        doNotTranslate(`Unknown aggregate operation: ${operation}`),
         'UNKNOWN_AGGREGATE_OPERATION',
       );
   }

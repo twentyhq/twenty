@@ -1,4 +1,3 @@
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -21,6 +20,7 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 import { useStore } from 'jotai';
 import { useCallback, useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { useIcons } from 'twenty-ui/icon';
 
@@ -30,22 +30,18 @@ export const WorkflowRunVisualizerEffect = ({
   workflowRunId: string;
 }) => {
   const { getIcon } = useIcons();
-  const isCore = useIsWorkflowCoreEnabled();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
   const setWorkflowVisualizerWorkflowRunId = useSetAtomComponentState(
     workflowVisualizerWorkflowRunIdComponentState,
   );
 
-  const workflowVersionId = isCore
-    ? (workflowRun?.coreWorkflowVersionId ??
-      workflowRun?.workflowVersionId ??
-      undefined)
-    : (workflowRun?.workflowVersionId ?? undefined);
+  const workflowVersionId =
+    workflowRun?.coreWorkflowVersionId ??
+    workflowRun?.workflowVersionId ??
+    undefined;
   const workflowVersion = useWorkflowVersion(
-    isCore
-      ? (workflowRun?.coreWorkflowVersionId ?? undefined)
-      : workflowVersionId,
+    workflowRun?.coreWorkflowVersionId ?? undefined,
   );
   const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
@@ -94,11 +90,9 @@ export const WorkflowRunVisualizerEffect = ({
     }
 
     setWorkflowVisualizerWorkflowId(
-      isCore
-        ? (workflowRun.coreWorkflowId ?? workflowRun.workflowId ?? undefined)
-        : (workflowRun.workflowId ?? undefined),
+      workflowRun.coreWorkflowId ?? workflowRun.workflowId ?? undefined,
     );
-  }, [isCore, setWorkflowVisualizerWorkflowId, workflowRun]);
+  }, [setWorkflowVisualizerWorkflowId, workflowRun]);
 
   useEffect(() => {
     if (!isDefined(workflowVersionId)) {
@@ -194,7 +188,9 @@ export const WorkflowRunVisualizerEffect = ({
       );
       if (!isDefined(currentWorkflowVisualizerWorkflowId)) {
         throw new Error(
-          'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
+          doNotTranslate(
+            'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
+          ),
         );
       }
 

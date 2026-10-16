@@ -57,4 +57,30 @@ describe('Publish application is gated by the instance server version', () => {
       normalizeMessage: scrubSemverVersions,
     });
   });
+
+  it('rejects publishing when the app declares a blank engines.twenty', async () => {
+    const universalIdentifier = uuidv4();
+    const roleId = uuidv4();
+
+    const tarball = await createAppTarball({
+      'manifest.json': JSON.stringify(
+        buildBaseManifest({ appId: universalIdentifier, roleId }),
+      ),
+      'package.json': JSON.stringify({
+        name: `test-blank-server-version-${universalIdentifier}`,
+        version: '1.0.0',
+        engines: { twenty: '  ' },
+      }),
+    });
+
+    createdApplicationUniversalIdentifiers.push(universalIdentifier);
+
+    const { errors } = await uploadAppTarball({
+      tarballBuffer: tarball,
+      universalIdentifier,
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
 });

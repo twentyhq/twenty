@@ -24,7 +24,7 @@ export const SettingsEmailingDomainVerifyButton = ({
     try {
       await verifyEmailingDomain({ variables: { id: emailingDomainId } });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Started verification process`,
       });
     } catch (error) {

@@ -8,11 +8,37 @@
 
   [data-dropdown-item]:focus-visible {
     background: var(--t-background-transparent-light);
+    outline: none;
   }
 }
 
 .page {
   display: contents;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-between-siblings-gap);
+}
+
+.groupLabel {
+  background: var(--t-background-transparent-lighter);
+  color: var(--t-font-color-tertiary);
+  font-size: var(--t-font-size-xxs);
+  padding-inline: var(--t-spacing-2);
+  margin-inline: calc(-1 * var(--t-spacing-1));
+  min-block-size: 20px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.separator {
+  block-size: 1px;
+  flex: none;
+  background: var(--t-border-color-light);
+  margin-inline: calc(-1 * var(--t-spacing-1));
 }
 
 .section {

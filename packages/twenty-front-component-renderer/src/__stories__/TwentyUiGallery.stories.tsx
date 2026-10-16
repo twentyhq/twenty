@@ -1,9 +1,11 @@
+import { badgeTest } from '@/__stories__/twenty-ui-gallery/utils/badgeTest';
 import { currencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerTest';
 import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
 import { phoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTest';
 import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
+import { overflowingListApiTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListApiTest';
 import { overflowingListEventIsolationTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListEventIsolationTest';
 import { overflowingListGeometryTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListGeometryTest';
 import { overflowingListPopupTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListPopupTest';
@@ -16,6 +18,7 @@ import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
 import { numberStepperSelectionTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSelectionTest';
+import { numberFieldTest } from '@/__stories__/twenty-ui-gallery/utils/numberFieldTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { layoutTest } from '@/__stories__/twenty-ui-gallery/utils/layoutTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
@@ -47,7 +50,6 @@ import {
   displayHelpersTest,
   galleryRenderTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import { menuTest } from '@/__stories__/twenty-ui-gallery/utils/menuTest';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
 import { switchTest } from '@/__stories__/twenty-ui-gallery/utils/switchTest';
@@ -58,6 +60,7 @@ import { radioCardTest } from '@/__stories__/twenty-ui-gallery/utils/radioCardTe
 import { checkboxTest } from '@/__stories__/twenty-ui-gallery/utils/checkboxTest';
 import { fieldControlsTest } from '@/__stories__/twenty-ui-gallery/utils/fieldControlsTest';
 import { radioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/radioGroupTest';
+import { segmentedControlTest } from '@/__stories__/twenty-ui-gallery/utils/segmentedControlTest';
 import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRangeTest';
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
@@ -89,6 +92,18 @@ export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
   play: commandBlockTest,
+});
+
+export const BadgeReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-badge',
+  runtime: 'react',
+  play: badgeTest,
+});
+
+export const BadgePreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-badge',
+  runtime: 'preact',
+  play: badgeTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
@@ -158,6 +173,18 @@ export const NumberStepperSelectionPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'preact',
   play: numberStepperSelectionTest,
+});
+
+export const NumberFieldReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-field',
+  runtime: 'react',
+  play: numberFieldTest,
+});
+
+export const NumberFieldPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-field',
+  runtime: 'preact',
+  play: numberFieldTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({
@@ -374,17 +401,6 @@ export const TooltipPreact: Story = createGalleryStory({
   play: tooltipEscapeDismissalTest,
 });
 
-export const MenuReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
-  runtime: 'react',
-  play: menuTest,
-});
-export const MenuPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-menu',
-  runtime: 'preact',
-  play: menuTest,
-});
-
 export const PortalBoundsReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-portals',
   runtime: 'react',
@@ -535,6 +551,17 @@ export const RadioCardPreact: Story = createGalleryStory({
   play: radioCardTest,
 });
 
+export const SegmentedControlReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'react',
+  play: segmentedControlTest,
+});
+export const SegmentedControlPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'preact',
+  play: segmentedControlTest,
+});
+
 export const StatusControlsReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-status-controls',
   runtime: 'react',
@@ -666,6 +693,18 @@ export const InlineBannerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-inline-banner',
   runtime: 'preact',
   play: inlineBannerTest,
+});
+
+export const OverflowingListApiReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-overflowing-list-api',
+  runtime: 'react',
+  play: overflowingListApiTest,
+});
+
+export const OverflowingListApiPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-overflowing-list-api',
+  runtime: 'preact',
+  play: overflowingListApiTest,
 });
 
 export const OverflowingListPopupReact: Story = createGalleryStory({

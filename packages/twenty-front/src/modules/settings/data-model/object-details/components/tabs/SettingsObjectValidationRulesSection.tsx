@@ -1,20 +1,24 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
 import { IconChevronRight, IconPlus, useIcons } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { VALIDATION_RULE_DEFAULT_ICON } from '@/validation-rules/constants/ValidationRuleDefaultIcon';
+import { useValidationRuleMutations } from '@/validation-rules/hooks/useValidationRuleMutations';
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
+import { getValidationRuleSaveErrorMessage } from '@/validation-rules/utils/getValidationRuleSaveErrorMessage';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 1fr 28px';
 
@@ -76,6 +80,42 @@ export const SettingsObjectValidationRulesSection = ({
   });
 
   const objectNamePlural = objectMetadataItem.namePlural;
+  const navigateSettings = useNavigateSettings();
+  const { enqueueToast } = useToast();
+  const { createValidationRule, isSaving } = useValidationRuleMutations({
+    objectMetadataId: objectMetadataItem.id,
+  });
+
+  const handleAddRule = async () => {
+    try {
+      const { data } = await createValidationRule({
+        variables: {
+          input: {
+            objectMetadataId: objectMetadataItem.id,
+            name: t`New rule`,
+            expression: '',
+            message: '',
+            isActive: false,
+          },
+        },
+      });
+      const validationRuleId = data?.createValidationRule.id;
+
+      if (isDefined(validationRuleId)) {
+        navigateSettings(SettingsPath.ObjectValidationRuleEdit, {
+          objectNamePlural,
+          validationRuleId,
+        });
+      }
+    } catch (error) {
+      enqueueToast({
+        status: 'error',
+        children:
+          getValidationRuleSaveErrorMessage(error) ??
+          t`Failed to create the rule.`,
+      });
+    }
+  };
 
   return (
     <StyledContent>
@@ -145,14 +185,13 @@ export const SettingsObjectValidationRulesSection = ({
       </StyledTableContainer>
       {!isReadOnly && (
         <StyledButtonContainer>
-          <NavigationButton
-            to={getSettingsPath(SettingsPath.ObjectNewValidationRule, {
-              objectNamePlural,
-            })}
+          <Button
             startIcon={<IconPlus />}
             size="sm"
             variant="outline"
-          >{t`Add rule`}</NavigationButton>
+            disabled={isSaving}
+            onClick={handleAddRule}
+          >{t`Add rule`}</Button>
         </StyledButtonContainer>
       )}
     </StyledContent>
