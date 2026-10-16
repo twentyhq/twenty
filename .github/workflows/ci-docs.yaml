@@ -7,8 +7,6 @@ on:
 
   pull_request:
 
-  merge_group:
-
 permissions:
   contents: read
 
@@ -18,7 +16,6 @@ concurrency:
 
 jobs:
   changed-files-check:
-    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
@@ -54,13 +51,3 @@ jobs:
 
       - name: Docs / Storybook embeds
         run: npx nx check:ui-stories twenty-docs
-
-  ci-docs-status-check:
-    if: always() && !cancelled()
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    needs: [changed-files-check, docs-lint]
-    steps:
-      - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
-        run: exit 1
