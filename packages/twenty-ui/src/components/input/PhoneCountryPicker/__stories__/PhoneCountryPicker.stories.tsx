@@ -18,7 +18,7 @@ const meta: Meta<typeof PhoneCountryPickerExample> = {
   ),
   decorators: [ComponentDecorator],
   parameters: {
-    container: { width: 320, height: 360 },
+    container: { width: 320 },
     a11y: PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS,
   },
 };
