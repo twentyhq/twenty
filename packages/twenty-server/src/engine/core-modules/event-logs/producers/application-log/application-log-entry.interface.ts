@@ -1,4 +1,5 @@
 export type ApplicationLogEntry = {
+  properties?: Record<string, unknown>;
   timestamp: Date;
   workspaceId: string;
   applicationId: string;

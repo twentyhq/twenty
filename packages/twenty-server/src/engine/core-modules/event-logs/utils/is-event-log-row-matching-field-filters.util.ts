@@ -11,7 +11,13 @@ export const isEventLogRowMatchingFieldFilters = ({
   fieldFilters: EventLogFieldFilterInput[];
 }): boolean =>
   fieldFilters.every(({ field, operand, values }) => {
-    const isValueIncluded = values.includes(String(row[field] ?? ''));
+    const isValueIncluded = values.includes(
+      String(
+        field === 'functionOrEvent'
+          ? row.logicFunctionId || `event:${row.logicFunctionName}`
+          : (row[field] ?? ''),
+      ),
+    );
 
     return operand === EventLogFilterOperand.IS
       ? isValueIncluded

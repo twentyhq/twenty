@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { EventLogTable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -11,22 +10,23 @@ import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
-import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-import {
-  EventLogsException,
-  EventLogsExceptionCode,
-} from './event-logs.exception';
-
+import { ApplicationLogScopeService } from './application-monitoring/application-log-scope.service';
 import { EventLogFiltersInput } from './dtos/event-log-filters.input';
 import { EventLogQueryInput } from './dtos/event-log-query.input';
 import { EventLogQueryResult } from './dtos/event-log-result.dto';
 import {
+  EventLogsException,
+  EventLogsExceptionCode,
+} from './event-logs.exception';
+import {
   EVENT_LOG_TYPES,
   getClickHouseTableName,
 } from './registry/event-log-registry';
+import { buildApplicationLogActivityBuckets } from './utils/build-application-log-activity-buckets.util';
 import { buildEventLogFieldFilterCondition } from './utils/build-event-log-field-filter-condition.util';
 import { normalizeEventLogRecords } from './utils/normalize-event-log-records';
 
@@ -39,15 +39,18 @@ export class EventLogsService {
     private readonly clickHouseService: ClickHouseService,
     private readonly billingService: BillingService,
     private readonly enterprisePlanService: EnterprisePlanService,
-    private readonly eventLogRetentionService: EventLogRetentionService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly applicationLogScopeService: ApplicationLogScopeService,
   ) {}
 
   async queryEventLogs(
     workspace: Pick<WorkspaceEntity, 'id' | 'eventLogRetentionDays'>,
     input: EventLogQueryInput,
-    { callingApplicationId }: { callingApplicationId?: string } = {},
+    {
+      callingApplicationId,
+      user,
+    }: { callingApplicationId?: string; user?: UserEntity } = {},
   ): Promise<EventLogQueryResult> {
     const workspaceId = workspace.id;
 
@@ -57,19 +60,32 @@ export class EventLogsService {
     const tableName = getClickHouseTableName(input.table);
     const eventFieldName = EVENT_LOG_TYPES[input.table].eventFieldName;
 
-    const retentionStartDate =
-      await this.eventLogRetentionService.getRetentionStartDate({
-        workspaceId,
-        workspaceRetentionInDays: workspace.eventLogRetentionDays,
-      });
-
+    const scope = await this.applicationLogScopeService.resolve({
+      workspace,
+      input,
+      user,
+      callingApplicationId,
+    });
     const whereClauses: string[] = [
-      '"workspaceId" = {workspaceId:String}',
-      '"timestamp" >= {retentionStartDate:DateTime64(3)}',
+      '"workspaceId" IN {scopeWorkspaceIds:Array(String)}',
+      '"timestamp" >= {earliestRetention:DateTime64(3)}',
+      'arrayExists((workspace, retention) -> "workspaceId" = workspace AND "timestamp" >= parseDateTime64BestEffort(retention, 3), {scopeWorkspaceIds:Array(String)}, {scopeRetentions:Array(String)})',
     ];
     const params: Record<string, unknown> = {
-      workspaceId,
-      retentionStartDate: formatDateTimeForClickHouse(retentionStartDate),
+      earliestRetention: formatDateTimeForClickHouse(
+        new Date(
+          Math.min(
+            ...scope.workspaces.map(({ retentionStartDate }) =>
+              retentionStartDate.getTime(),
+            ),
+            Date.now(),
+          ),
+        ),
+      ),
+      scopeWorkspaceIds: scope.workspaces.map(({ id }) => id),
+      scopeRetentions: scope.workspaces.map(({ retentionStartDate }) =>
+        formatDateTimeForClickHouse(retentionStartDate),
+      ),
     };
 
     if (
@@ -83,9 +99,10 @@ export class EventLogsService {
     await this.applyFilters(
       whereClauses,
       params,
-      input.filters,
+      scope.filters,
       eventFieldName,
       input.table,
+      false,
     );
 
     const paginationClauses = [...whereClauses];
@@ -125,9 +142,19 @@ export class EventLogsService {
 
     params.limit = limit + 1;
 
-    const [records, countResult] = await Promise.all([
+    const [records, countResult, activity] = await Promise.all([
       this.clickHouseService.select<Record<string, unknown>>(query, params),
       this.clickHouseService.select<{ totalCount: number }>(countQuery, params),
+      input.includeActivity && input.table === EventLogTable.APPLICATION_LOG
+        ? this.queryApplicationLogActivity(
+            filterWhereClause,
+            params,
+            input,
+            scope.workspaces.map(
+              ({ retentionStartDate }) => retentionStartDate,
+            ),
+          )
+        : undefined,
     ]);
 
     const totalCount = countResult[0]?.totalCount ?? 0;
@@ -163,6 +190,20 @@ export class EventLogsService {
       pageRecords,
       input.table,
     );
+    if (input.instanceLevel) {
+      const names = new Map(
+        scope.workspaces.map(({ id, displayName }) => [id, displayName]),
+      );
+      normalizedRecords.forEach((record) => {
+        if (
+          record.properties &&
+          typeof record.properties.workspaceId === 'string'
+        )
+          record.properties.workspaceName = names.get(
+            record.properties.workspaceId,
+          );
+      });
+    }
     const lastRecord = normalizedRecords[normalizedRecords.length - 1];
     const endCursor =
       hasNextPage && lastRecord
@@ -170,6 +211,8 @@ export class EventLogsService {
         : undefined;
 
     return {
+      canQueryInstanceLevel: scope.canQueryInstanceLevel,
+      activity,
       records: normalizedRecords,
       totalCount,
       pageInfo: {
@@ -177,6 +220,50 @@ export class EventLogsService {
         hasNextPage,
       },
     };
+  }
+
+  private async queryApplicationLogActivity(
+    where: string,
+    params: Record<string, unknown>,
+    input: EventLogQueryInput,
+    retentionStarts: Date[],
+  ) {
+    const end = input.filters?.dateRange?.end ?? new Date();
+    const start =
+      input.filters?.dateRange?.start ??
+      new Date(
+        Math.min(
+          ...retentionStarts.map((date) => date.getTime()),
+          end.getTime(),
+        ),
+      );
+    const duration = Math.max(
+      1,
+      Math.ceil((end.getTime() - start.getTime()) / 48),
+    );
+    const rows = await this.clickHouseService.select<{
+      bucket: number;
+      info: number;
+      warning: number;
+      error: number;
+    }>(
+      `
+      SELECT intDiv(toUnixTimestamp64Milli("timestamp") - {activityStart:Int64}, {bucketDuration:Int64}) AS bucket,
+        countIf(upper("level") NOT IN ('WARN', 'WARNING', 'ERROR', 'FATAL')) AS info,
+        countIf(upper("level") IN ('WARN', 'WARNING')) AS warning,
+        countIf(upper("level") IN ('ERROR', 'FATAL')) AS error
+      FROM applicationLog
+      WHERE ${where} AND "timestamp" >= fromUnixTimestamp64Milli({activityStart:Int64})
+        AND "timestamp" < fromUnixTimestamp64Milli({activityEnd:Int64})
+      GROUP BY bucket ORDER BY bucket`,
+      {
+        ...params,
+        activityStart: start.getTime(),
+        activityEnd: end.getTime(),
+        bucketDuration: duration,
+      },
+    );
+    return buildApplicationLogActivityBuckets({ start, end, duration, rows });
   }
 
   async validateAccess(
@@ -224,6 +311,7 @@ export class EventLogsService {
     filters: EventLogFiltersInput | undefined,
     eventFieldName: string,
     table: EventLogTable,
+    validateValuesCount = true,
   ): Promise<void> {
     if (!isDefined(filters)) {
       return;
@@ -286,6 +374,7 @@ export class EventLogsService {
           fieldFilter,
           parameterName,
           table,
+          validateValuesCount,
         }),
       );
       params[parameterName] = fieldFilter.values;

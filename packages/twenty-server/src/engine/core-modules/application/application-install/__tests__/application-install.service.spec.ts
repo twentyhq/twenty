@@ -1,12 +1,12 @@
 import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-
 import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { type ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
@@ -16,9 +16,9 @@ import {
 import { type ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { type EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -59,6 +59,10 @@ describe('ApplicationInstallService', () => {
     writeFile: jest.fn(),
   };
 
+  const eventLogEmitterService = {
+    emitApplicationEvent: jest.fn().mockResolvedValue({ success: true }),
+  };
+
   const service = new ApplicationInstallService(
     {
       findOne: jest.fn().mockResolvedValue({
@@ -90,6 +94,7 @@ describe('ApplicationInstallService', () => {
     {} as MessageQueueService,
     {} as WorkspaceCacheService,
     { incrementCounterBy: jest.fn() } as unknown as MetricsService,
+    eventLogEmitterService as unknown as EventLogEmitterService,
   );
 
   const install = () =>
@@ -173,6 +178,13 @@ describe('ApplicationInstallService', () => {
       workspaceId: WORKSPACE_ID,
     });
     expect(isLogoFileStoredWhenLogoIsSet).toEqual([true]);
+    expect(eventLogEmitterService.emitApplicationEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'application.install.succeeded',
+        workspaceId: WORKSPACE_ID,
+        applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+      }),
+    );
   });
 
   it('does not update an upgraded application whose logo is unchanged', async () => {
@@ -185,10 +197,34 @@ describe('ApplicationInstallService', () => {
 
     await install();
 
+    expect(eventLogEmitterService.emitApplicationEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'application.upgrade.succeeded',
+        applicationId: APPLICATION_ID,
+      }),
+    );
     expect(applicationService.create).not.toHaveBeenCalled();
     expect(applicationService.update).not.toHaveBeenCalledWith(
       APPLICATION_ID,
       expect.objectContaining({ logo: LOGO_PATH }),
     );
+  });
+  it('records package resolution failures before an installation exists', async () => {
+    applicationLookupService.findByUniversalIdentifier.mockResolvedValue(null);
+    applicationPackageFetcherService.resolvePackage.mockRejectedValue(
+      new Error('private package detail'),
+    );
+    await expect(install()).rejects.toThrow('private package detail');
+    expect(eventLogEmitterService.emitApplicationEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'application.install.failed',
+        applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+        message: 'Application installation failed.',
+        properties: { version: undefined, errorCode: 'UNKNOWN' },
+      }),
+    );
+    expect(
+      JSON.stringify(eventLogEmitterService.emitApplicationEvent.mock.calls),
+    ).not.toContain('private package detail');
   });
 });

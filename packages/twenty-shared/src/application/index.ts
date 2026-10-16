@@ -305,3 +305,8 @@ export {
   APPLICATION_WORKFLOW_TRIGGER_TYPES,
   workflowTriggerManifestSchema,
 } from './workflowTriggerManifestType';
+
+export {
+  APPLICATION_MONITORING_EVENTS,
+  type ApplicationMonitoringEvent,
+} from './constants/ApplicationMonitoringEvents';

@@ -28,6 +28,7 @@ import {
 } from 'twenty-ui/icon';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
+import { formatNumber } from '@/localization/utils/formatNumber';
 import { LogConsoleCredits } from '@/log-console/components/LogConsoleCredits';
 import { LogConsoleMemberChip } from '@/log-console/components/LogConsoleMemberChip';
 import { LogConsoleRecordChangeDetail } from '@/log-console/components/LogConsoleRecordChangeDetail';
@@ -47,6 +48,7 @@ import { LOG_CONSOLE_USAGE_EVENT_COLUMNS } from '@/log-console/constants/LogCons
 import { LOG_CONSOLE_WEBHOOK_COLUMNS } from '@/log-console/constants/LogConsoleWebhookColumns';
 import { type LogConsoleDetailField } from '@/log-console/types/LogConsoleDetailField';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { getLogConsoleApplicationEvent } from '@/log-console/utils/getLogConsoleApplicationEvent';
 import { getLogConsoleRecordLabel } from '@/log-console/utils/getLogConsoleRecordLabel';
 import { getLogConsoleSecurityEvent } from '@/log-console/utils/getLogConsoleSecurityEvent';
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
@@ -55,7 +57,6 @@ import {
   EventLogFilterOperand,
   EventLogTable,
 } from '~/generated-metadata/graphql';
-import { formatNumber } from '@/localization/utils/formatNumber';
 
 const TIME_DETAIL_FIELD: LogConsoleDetailField = {
   label: msg`Time`,
@@ -189,6 +190,16 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         },
       },
       TIME_DETAIL_FIELD,
+      {
+        label: msg`Workspace`,
+        Icon: IconUsers,
+        renderValue: (entry) => entry.properties?.workspaceName,
+      },
+      {
+        label: msg`Error code`,
+        Icon: IconAlertTriangle,
+        renderValue: (entry) => entry.properties?.errorCode,
+      },
     ],
     idFields: [
       {
@@ -199,7 +210,10 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     ],
     getSeverity: (entry) =>
       LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
-    getDetailTitle: (entry) => entry.event,
+    getDetailTitle: (entry) => {
+      const event = getLogConsoleApplicationEvent(entry);
+      return event ? t(event.label) : entry.event;
+    },
   },
   {
     id: 'webhooks',

@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-
 import GraphQLJSON from 'graphql-type-json';
 
 @ObjectType()
@@ -36,7 +35,31 @@ export class EventLogPageInfo {
 }
 
 @ObjectType()
+export class ApplicationLogActivityBucket {
+  @Field(() => Date)
+  start: Date;
+
+  @Field(() => Date)
+  end: Date;
+
+  @Field(() => Int)
+  info: number;
+
+  @Field(() => Int)
+  warning: number;
+
+  @Field(() => Int)
+  error: number;
+}
+
+@ObjectType()
 export class EventLogQueryResult {
+  @Field(() => Boolean)
+  canQueryInstanceLevel: boolean;
+
+  @Field(() => [ApplicationLogActivityBucket], { nullable: true })
+  activity?: ApplicationLogActivityBucket[];
+
   @Field(() => [EventLogRecord])
   records: EventLogRecord[];
 

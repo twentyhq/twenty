@@ -19,10 +19,12 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { LogConsoleFieldsCard } from '@/log-console/components/LogConsoleFieldsCard';
 import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
+import { getLogConsoleApplicationEvent } from '@/log-console/utils/getLogConsoleApplicationEvent';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
@@ -34,7 +36,6 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const COLLAPSED_MESSAGE_STACK_LINE_COUNT = 1;
@@ -146,7 +147,12 @@ export const LogConsoleDetailPanel = () => {
         })
       : undefined;
 
-  const DetailIcon = source.DetailIcon ?? source.Icon;
+  const DetailIcon =
+    (source.id === 'app-logs'
+      ? getLogConsoleApplicationEvent(entry)?.Icon
+      : undefined) ??
+    source.DetailIcon ??
+    source.Icon;
 
   const title = isDefined(recordIdentifier)
     ? recordIdentifier.name

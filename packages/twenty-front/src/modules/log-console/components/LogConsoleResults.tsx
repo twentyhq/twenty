@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +10,13 @@ import {
   IconPlayerPlay,
   IconRefresh,
 } from 'twenty-ui/icon';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
+import {
+  LogConsoleActivity,
+  type LogConsoleActivitySelection,
+} from '@/log-console/components/LogConsoleActivity';
 import { LogConsoleTable } from '@/log-console/components/LogConsoleTable';
 import { LogConsoleTimeRangeDropdown } from '@/log-console/components/LogConsoleTimeRangeDropdown';
 import { LogConsoleToolbar } from '@/log-console/components/LogConsoleToolbar';
@@ -26,6 +33,7 @@ import { getLogConsoleFieldFilters } from '@/log-console/utils/getLogConsoleFiel
 import { getLogConsoleTimeRangeBounds } from '@/log-console/utils/getLogConsoleTimeRangeBounds';
 import { getLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/getLogConsoleTimeRangeWithinRetention';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
 import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogsLiveStream';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -43,6 +51,16 @@ const StyledResults = styled.div`
   flex: 1;
   flex-direction: column;
   min-height: 0;
+`;
+
+const StyledInstanceControl = styled.label`
+  align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  padding-inline: ${themeCssVariables.spacing[2]};
+  white-space: nowrap;
 `;
 
 type LogConsoleResultsProps = {
@@ -63,6 +81,39 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const [logConsoleFilters, setLogConsoleFilters] = useAtomState(
     logConsoleFiltersState,
   );
+  const filterContextKey = JSON.stringify({
+    source: source.id,
+    filters: logConsoleFilters,
+  });
+  const [instanceLevelContext, setInstanceLevelContext] = useState<string>();
+  const [selectedBucket, setSelectedBucket] =
+    useState<LogConsoleActivitySelection>();
+  const [instanceClearedAt, setInstanceClearedAt] = useState<string>();
+  const isInstanceLevel =
+    source.id === 'app-logs' && instanceLevelContext === filterContextKey;
+  const displayedSource = isInstanceLevel
+    ? {
+        ...source,
+        columns: [
+          ...source.columns.slice(0, 1),
+          {
+            id: 'workspace',
+            label: msg`Workspace`,
+            gridTrack: '160px',
+            renderCell: (entry: EventLogRecord) => (
+              <SettingsTableTextCell
+                text={
+                  entry.properties?.workspaceName ??
+                  entry.properties?.workspaceId ??
+                  ''
+                }
+              />
+            ),
+          },
+          ...source.columns.slice(1),
+        ],
+      }
+    : source;
   const [refreshedAt, setRefreshedAt] = useState(() =>
     new Date().toISOString(),
   );
@@ -87,7 +138,22 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const getEventLogsInput = (now: string) => ({
     table: source.table,
     first: RECORDS_PER_PAGE,
-    filters: { dateRange: getDateRange(now), fieldFilters },
+    instanceLevel: isInstanceLevel,
+    filters: {
+      dateRange:
+        (selectedBucket
+          ? {
+              ...selectedBucket,
+              end: new Date(
+                new Date(selectedBucket.end).getTime() - 1,
+              ).toISOString(),
+            }
+          : undefined) ??
+        (isInstanceLevel && instanceClearedAt
+          ? { ...getDateRange(now), start: instanceClearedAt }
+          : getDateRange(now)),
+      fieldFilters,
+    },
   });
 
   const dateRange = getDateRange(refreshedAt);
@@ -95,13 +161,23 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const isLive = !isDefined(dateRange.end);
   const isPaused = isDefined(pausedLiveRecords);
 
-  const { records, hasNextPage, loading, error, loadMore, refetch } =
-    useEventLogs(getEventLogsInput(refreshedAt));
+  const {
+    records,
+    hasNextPage,
+    loading,
+    error,
+    loadMore,
+    refetch,
+    canQueryInstanceLevel,
+  } = useEventLogs(getEventLogsInput(refreshedAt), {
+    pollInterval:
+      isInstanceLevel && isLive && !isPaused && !selectedBucket ? 15000 : 0,
+  });
 
   const { liveRecords, clearLiveRecords } = useEventLogsLiveStream({
     table: source.table,
     fieldFilters,
-    enabled: isLive,
+    enabled: isLive && !isInstanceLevel && !selectedBucket,
   });
 
   const displayedLiveRecords = pausedLiveRecords ?? liveRecords;
@@ -130,6 +206,8 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const restartLogs = (now: string) => {
     scrollToTop();
     setRefreshedAt(now);
+    setLogConsoleSelectedLog(null);
+    setInstanceClearedAt(undefined);
     clearLiveRecords();
     setPausedLiveRecords(isPaused ? [] : undefined);
     setClearedLiveRecordCount(undefined);
@@ -146,27 +224,35 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     scrollToTop();
     setPausedLiveRecords(undefined);
     setClearedLiveRecordCount(liveRecords.length);
+    if (isInstanceLevel) setInstanceClearedAt(new Date().toISOString());
   };
 
   const togglePause = () => {
     setPausedLiveRecords(isPaused ? undefined : liveRecords);
+    if (isInstanceLevel && isPaused) {
+      refreshLogs();
+      setPausedLiveRecords(undefined);
+    }
   };
 
   const changeTimeRange = (selectedTimeRange: LogConsoleTimeRange) => {
     restartLogs(new Date().toISOString());
+    setSelectedBucket(undefined);
     setLogConsoleTimeRange(selectedTimeRange);
   };
 
   const changeFilters = (filters: LogConsoleFilter[]) => {
     restartLogs(new Date().toISOString());
+    setInstanceLevelContext(undefined);
+    setSelectedBucket(undefined);
     setLogConsoleFilters(filters);
   };
 
   const openLog = (entry: EventLogRecord) => {
-    setLogConsoleSelectedLog({ source, entry });
+    setLogConsoleSelectedLog({ source: displayedSource, entry });
   };
 
-  const isStreaming = isLive && !isDefined(error);
+  const isStreaming = isLive && !selectedBucket && !isDefined(error);
 
   const logsAction = isStreaming
     ? { label: t`Clear`, Icon: IconEraser, onClick: clearLogs }
@@ -191,11 +277,15 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
     return (
       <LogConsoleTable
-        source={source}
-        entries={isCleared ? liveEntries : [...liveEntries, ...records]}
+        source={displayedSource}
+        entries={
+          isCleared && !isInstanceLevel
+            ? liveEntries
+            : [...liveEntries, ...records]
+        }
         liveEntryCount={liveEntries.length}
-        loading={loading && !isCleared}
-        hasNextPage={hasNextPage && !isCleared}
+        loading={loading && (!isCleared || isInstanceLevel)}
+        hasNextPage={hasNextPage && (!isCleared || isInstanceLevel)}
         selectedEntry={logConsoleSelectedLog?.entry}
         onLoadMore={loadMore}
         onEntryClick={openLog}
@@ -211,6 +301,22 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         onFiltersChange={changeFilters}
         logsAction={logsAction}
       >
+        {source.id === 'app-logs' &&
+          (canQueryInstanceLevel || isInstanceLevel) && (
+            <StyledInstanceControl>
+              <Checkbox
+                checked={isInstanceLevel}
+                onCheckedChange={(checked) => {
+                  restartLogs(new Date().toISOString());
+                  setSelectedBucket(undefined);
+                  setInstanceLevelContext(
+                    checked === true ? filterContextKey : undefined,
+                  );
+                }}
+              />
+              {t`Instance level`}
+            </StyledInstanceControl>
+          )}
         {isStreaming && (
           <IconButton
             tooltip={pauseLabel}
@@ -225,6 +331,22 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
           onTimeRangeChange={changeTimeRange}
         />
       </LogConsoleToolbar>
+      {source.id === 'app-logs' && (
+        <LogConsoleActivity
+          input={{
+            table: source.table,
+            instanceLevel: isInstanceLevel,
+            filters: { dateRange, fieldFilters },
+          }}
+          isPaused={isPaused}
+          isLive={isLive}
+          selection={selectedBucket}
+          onSelectionChange={(selection) => {
+            restartLogs(new Date().toISOString());
+            setSelectedBucket(selection);
+          }}
+        />
+      )}
       {renderLogs()}
     </StyledResults>
   );

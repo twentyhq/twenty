@@ -1,12 +1,12 @@
-import { isDefined } from 'twenty-shared/utils';
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 
+import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 import {
   type EventLogQueryInput,
   type EventLogQueryResult,
   type EventLogRecord,
 } from '~/generated-metadata/graphql';
-import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 
 type EventLogsData = {
   eventLogs: EventLogQueryResult;
@@ -18,7 +18,7 @@ type EventLogsVariables = {
 
 export const useEventLogs = (
   input: EventLogQueryInput,
-  options?: { skip?: boolean },
+  options?: { skip?: boolean; pollInterval?: number },
 ) => {
   const { data, loading, error, fetchMore, refetch } = useQuery<
     EventLogsData,
@@ -27,6 +27,7 @@ export const useEventLogs = (
     variables: { input },
     fetchPolicy: 'network-only',
     skip: options?.skip,
+    pollInterval: options?.pollInterval ?? 0,
   });
 
   const records = data?.eventLogs.records ?? ([] as EventLogRecord[]);
@@ -66,6 +67,7 @@ export const useEventLogs = (
 
   return {
     records,
+    canQueryInstanceLevel: data?.eventLogs.canQueryInstanceLevel ?? false,
     totalCount,
     hasNextPage,
     loading,

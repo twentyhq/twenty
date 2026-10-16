@@ -11,6 +11,7 @@ export const GET_EVENT_LOGS = gql`
         recordId
         objectMetadataId
       }
+      canQueryInstanceLevel
       totalCount
       pageInfo {
         endCursor

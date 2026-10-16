@@ -33,6 +33,22 @@ describe('buildEventLogFieldFilterCondition', () => {
     ).toBe('"event" NOT IN {fieldFilter1:Array(String)}');
   });
 
+  it('filters platform events and functions through the same field', () => {
+    expect(
+      buildEventLogFieldFilterCondition({
+        table: EventLogTable.APPLICATION_LOG,
+        parameterName: 'selection',
+        fieldFilter: {
+          field: 'functionOrEvent',
+          operand: EventLogFilterOperand.IS,
+          values: ['event:application.install.failed', 'function-id'],
+        },
+      }),
+    ).toBe(
+      `if(empty("logicFunctionId"), concat('event:', "logicFunctionName"), "logicFunctionId") IN {selection:Array(String)}`,
+    );
+  });
+
   it.each([
     {
       reason: 'a field the table does not expose',

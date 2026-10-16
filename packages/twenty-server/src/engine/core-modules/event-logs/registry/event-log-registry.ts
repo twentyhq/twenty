@@ -96,6 +96,7 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     filterableFields: [
       'level',
       'logicFunctionId',
+      'functionOrEvent',
       'applicationId',
       'executionId',
     ],
@@ -105,6 +106,8 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
       return {
         event: record.logicFunctionName ?? '',
         properties: {
+          ...record.properties,
+          workspaceId: record.workspaceId,
           level: record.level,
           message: record.message,
           executionId: record.executionId,

@@ -15,9 +15,11 @@ const MAX_FIELD_FILTER_VALUES = 100;
 export const validateEventLogFieldFilterOrThrow = ({
   fieldFilter,
   table,
+  validateValuesCount = true,
 }: {
   fieldFilter: EventLogFieldFilterInput;
   table: EventLogTable;
+  validateValuesCount?: boolean;
 }): void => {
   const { filterableFields } = EVENT_LOG_TYPES[table];
 
@@ -30,7 +32,7 @@ export const validateEventLogFieldFilterOrThrow = ({
 
   if (
     !isNonEmptyArray(fieldFilter.values) ||
-    fieldFilter.values.length > MAX_FIELD_FILTER_VALUES
+    (validateValuesCount && fieldFilter.values.length > MAX_FIELD_FILTER_VALUES)
   ) {
     throw new EventLogsException(
       `Filter on "${fieldFilter.field}" needs between 1 and ${MAX_FIELD_FILTER_VALUES} values`,

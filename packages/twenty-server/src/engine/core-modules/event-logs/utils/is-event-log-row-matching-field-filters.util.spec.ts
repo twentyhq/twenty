@@ -74,3 +74,33 @@ describe('isEventLogRowMatchingFieldFilters', () => {
     ).toBe(expected);
   });
 });
+
+it('matches a platform event with the same filter used for historical queries', () => {
+  expect(
+    isEventLogRowMatchingFieldFilters({
+      row: {
+        logicFunctionId: '',
+        logicFunctionName: 'application.api.rate_limited',
+      },
+      fieldFilters: [
+        {
+          field: 'functionOrEvent',
+          operand: EventLogFilterOperand.IS,
+          values: ['event:application.api.rate_limited'],
+        },
+      ],
+    }),
+  ).toBe(true);
+  expect(
+    isEventLogRowMatchingFieldFilters({
+      row: { logicFunctionId: 'function-id', logicFunctionName: 'sync' },
+      fieldFilters: [
+        {
+          field: 'functionOrEvent',
+          operand: EventLogFilterOperand.IS,
+          values: ['function-id'],
+        },
+      ],
+    }),
+  ).toBe(true);
+});

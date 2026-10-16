@@ -41,6 +41,7 @@ export type UsageEventRow = {
 };
 
 export type ApplicationLogRow = {
+  properties?: Record<string, unknown>;
   timestamp: string;
   workspaceId: string;
   applicationId: string;

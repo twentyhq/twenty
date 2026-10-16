@@ -10,15 +10,25 @@ export const buildEventLogFieldFilterCondition = ({
   fieldFilter,
   parameterName,
   table,
+  validateValuesCount = true,
 }: {
   fieldFilter: EventLogFieldFilterInput;
   parameterName: string;
   table: EventLogTable;
+  validateValuesCount?: boolean;
 }): string => {
-  validateEventLogFieldFilterOrThrow({ fieldFilter, table });
+  validateEventLogFieldFilterOrThrow({
+    fieldFilter,
+    table,
+    validateValuesCount,
+  });
 
   const operator =
     fieldFilter.operand === EventLogFilterOperand.IS ? 'IN' : 'NOT IN';
 
-  return `"${fieldFilter.field}" ${operator} {${parameterName}:Array(String)}`;
+  const expression =
+    fieldFilter.field === 'functionOrEvent'
+      ? `if(empty("logicFunctionId"), concat('event:', "logicFunctionName"), "logicFunctionId")`
+      : `"${fieldFilter.field}"`;
+  return `${expression} ${operator} {${parameterName}:Array(String)}`;
 };

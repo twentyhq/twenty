@@ -1,29 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
-
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   buildRouteTriggerResponse,
   type RouteTriggerResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { DEFAULT_SERVER_ROUTE_HTTP_METHODS } from 'src/engine/core-modules/server-route-trigger/constants/default-server-route-http-methods.constant';
 import { SERVER_ROUTE_DISPATCH_JOB_PRIORITY } from 'src/engine/core-modules/server-route-trigger/constants/server-route-dispatch-job-priority.constant';
 import {
@@ -64,6 +64,7 @@ export class ServerRouteTriggerService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly serverRouteAuthorizationHeaderService: ServerRouteAuthorizationHeaderService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async handle({
@@ -212,6 +213,7 @@ export class ServerRouteTriggerService {
       legacyCandidates.length === 1 ? legacyCandidates[0] : undefined;
 
     if (!isDefined(legacyResolver)) {
+      void this.reportUnreachableResolver(identifier);
       throw new ServerRouteTriggerException(
         `Server resolver function ${identifier} not found`,
         ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
@@ -260,6 +262,41 @@ export class ServerRouteTriggerService {
     );
 
     return { statusCode: 200, headers: {}, body: { queued: true } };
+  }
+
+  private async reportUnreachableResolver(identifier: string): Promise<void> {
+    try {
+      const registrations = await this.logicFunctionRepository
+        .createQueryBuilder('logicFunction')
+        .innerJoin('logicFunction.application', 'application')
+        .innerJoin('application.applicationRegistration', 'registration')
+        .select('registration.id', 'id')
+        .addSelect('registration.ownerWorkspaceId', 'ownerWorkspaceId')
+        .where('logicFunction.serverRouteTriggerSettings IS NOT NULL')
+        .andWhere(
+          '(logicFunction.id = :identifier OR logicFunction.universalIdentifier = :identifier)',
+          { identifier },
+        )
+        .distinct(true)
+        .limit(2)
+        .getRawMany<{ id: string; ownerWorkspaceId: string | null }>();
+      const ownerWorkspaceId = registrations[0]?.ownerWorkspaceId;
+      if (registrations.length !== 1 || !ownerWorkspaceId) return;
+      const registration = registrations[0];
+      await this.eventLogEmitterService.emitApplicationEvent({
+        event: 'application.server_route.unreachable',
+        workspaceId: ownerWorkspaceId,
+        applicationRegistrationId: registration.id,
+        message:
+          'Server route is unavailable in the application owner workspace.',
+        properties: {
+          errorCode: 'SERVER_ROUTE_UNREACHABLE',
+          resolverIdentifier: identifier,
+        },
+      });
+    } catch (error) {
+      this.logger.warn('Failed to record an unreachable server route', error);
+    }
   }
 
   private async findLogicFunctionOrFail({

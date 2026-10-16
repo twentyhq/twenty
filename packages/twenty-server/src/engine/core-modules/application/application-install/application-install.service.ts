@@ -1,9 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { promises as fs } from 'fs';
 import { isAbsolute, relative, resolve } from 'path';
-
 import {
   type ApplicationCapability,
   Manifest,
@@ -12,8 +10,16 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import {
+  APPLICATION_INSTALL_STEPS,
+  type ApplicationInstallStep,
+} from 'src/engine/core-modules/application/application-install/constants/application-install-steps.constant';
+import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
+import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
-import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
+import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
+import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
@@ -33,30 +39,23 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import {
-  APPLICATION_INSTALL_STEPS,
-  type ApplicationInstallStep,
-} from 'src/engine/core-modules/application/application-install/constants/application-install-steps.constant';
-import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
-import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
-import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
-import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
+import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
-import {
-  ApplicationLifecycleHookJob,
-  type ApplicationLifecycleHookJobData,
-} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/application-lifecycle-hook.job';
 import {
   WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
   WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
   type WarmUpApplicationLogicFunctionsJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job-constants';
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import {
+  ApplicationLifecycleHookJob,
+  type ApplicationLifecycleHookJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/application-lifecycle-hook.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -87,6 +86,7 @@ export class ApplicationInstallService {
     private readonly workspaceQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async installApplication(params: {
@@ -178,36 +178,64 @@ export class ApplicationInstallService {
       );
     }
 
-    const resolvedPackage =
-      await this.applicationPackageFetcherService.resolvePackage(
-        appRegistration,
-        { targetVersion: params.version },
-      );
-
-    if (!resolvedPackage) {
-      return true;
-    }
-
-    await progressReporter.reportStepCompleted('RESOLVE_PACKAGE');
-
+    let existingApplication: ApplicationEntity | null = null;
+    let resolvedPackage: ResolvedPackage | null | undefined;
     try {
-      const existingApplication =
+      existingApplication =
         await this.applicationLookupService.findByUniversalIdentifier({
           universalIdentifier: appRegistration.universalIdentifier,
           workspaceId: params.workspaceId,
         });
-
-      return await this.runInstallWithMetrics({
+      resolvedPackage =
+        await this.applicationPackageFetcherService.resolvePackage(
+          appRegistration,
+          { targetVersion: params.version },
+        );
+      if (!resolvedPackage) return true;
+      await progressReporter.reportStepCompleted('RESOLVE_PACKAGE');
+      const result = await this.runInstallWithMetrics({
         appRegistration,
         params,
         resolvedPackage,
         existingApplication,
         progressReporter,
       });
+      void this.eventLogEmitterService.emitApplicationEvent({
+        event: existingApplication
+          ? 'application.upgrade.succeeded'
+          : 'application.install.succeeded',
+        workspaceId: params.workspaceId,
+        applicationId: existingApplication?.id,
+        applicationRegistrationId: appRegistration.id,
+        message: existingApplication
+          ? 'Application upgraded successfully.'
+          : 'Application installed successfully.',
+        properties: { version: resolvedPackage.packageJson.version },
+      });
+      return result;
+    } catch (error) {
+      void this.eventLogEmitterService.emitApplicationEvent({
+        event: existingApplication
+          ? 'application.upgrade.failed'
+          : 'application.install.failed',
+        workspaceId: params.workspaceId,
+        applicationId: existingApplication?.id,
+        applicationRegistrationId: appRegistration.id,
+        message: existingApplication
+          ? 'Application upgrade failed.'
+          : 'Application installation failed.',
+        properties: {
+          version: resolvedPackage?.packageJson.version ?? params.version,
+          errorCode:
+            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+        },
+      });
+      throw error;
     } finally {
-      await this.applicationPackageFetcherService.cleanupExtractedDir(
-        resolvedPackage.cleanupDir,
-      );
+      if (resolvedPackage)
+        await this.applicationPackageFetcherService.cleanupExtractedDir(
+          resolvedPackage.cleanupDir,
+        );
     }
   }
 

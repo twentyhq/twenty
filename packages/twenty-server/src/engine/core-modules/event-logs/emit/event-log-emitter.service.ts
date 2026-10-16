@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { type ApplicationMonitoringEvent } from 'twenty-shared/application';
 
 import {
   buildObjectEventEnvelope,
@@ -6,12 +7,13 @@ import {
   buildWorkspaceEventEnvelope,
   computeEventContextFields,
 } from 'src/engine/core-modules/event-logs/emit/build-event-envelope';
-import { type PageviewProperties } from 'src/engine/core-modules/event-logs/emit/events/pageview/pageview';
 import {
   type TrackEventName,
   type TrackEventProperties,
 } from 'src/engine/core-modules/event-logs/emit/events.type';
+import { type PageviewProperties } from 'src/engine/core-modules/event-logs/emit/events/pageview/pageview';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
+import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import {
   type EventContextFields,
   type WorkspaceEventEnvelope,
@@ -35,6 +37,49 @@ export class EventLogEmitterService {
     }
 
     await this.workspaceEventSinkService.ingest(events);
+  }
+
+  async emitApplicationEvent({
+    event,
+    workspaceId,
+    applicationId,
+    applicationRegistrationId,
+    message,
+    properties = {},
+  }: {
+    event: ApplicationMonitoringEvent;
+    workspaceId: string;
+    applicationId?: string;
+    applicationRegistrationId?: string | null;
+    message: string;
+    properties?: Record<string, unknown>;
+  }): Promise<{ success: boolean }> {
+    return this.emit(
+      () =>
+        buildApplicationLogEnvelopes([
+          {
+            timestamp: new Date(),
+            workspaceId,
+            // Failed first installs have no installation ID yet.
+            applicationId: applicationId ?? applicationRegistrationId ?? '',
+            logicFunctionId: '',
+            logicFunctionName: event,
+            executionId: '',
+            level:
+              event.endsWith('.failed') || event.endsWith('.unreachable')
+                ? 'ERROR'
+                : event.endsWith('.rate_limited')
+                  ? 'WARN'
+                  : 'INFO',
+            message,
+            properties: {
+              ...properties,
+              eventType: event,
+              applicationRegistrationId,
+            },
+          },
+        ])[0],
+    );
   }
 
   createContext(context?: EventContextFields) {

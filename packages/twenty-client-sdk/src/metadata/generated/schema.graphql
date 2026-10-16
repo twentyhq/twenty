@@ -506,6 +506,14 @@ enum ApplicationHealthStatus {
   WARNING
 }
 
+type ApplicationLogActivityBucket {
+  end: DateTime!
+  error: Int!
+  info: Int!
+  start: DateTime!
+  warning: Int!
+}
+
 type ApplicationRegistration {
   createdAt: DateTime!
   galleryImagesUrls: [String!]!
@@ -2060,10 +2068,14 @@ input EventLogQueryInput {
   after: String
   filters: EventLogFiltersInput
   first: Int = 100
+  includeActivity: Boolean
+  instanceLevel: Boolean
   table: EventLogTable!
 }
 
 type EventLogQueryResult {
+  activity: [ApplicationLogActivityBucket!]
+  canQueryInstanceLevel: Boolean!
   pageInfo: EventLogPageInfo!
   records: [EventLogRecord!]!
   totalCount: Int!

@@ -1,6 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-
-import { IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { EventLogTable } from 'twenty-shared/types';
 
 import { EventLogFiltersInput } from './event-log-filters.input';
@@ -22,6 +21,16 @@ export class EventLogQueryInput {
   @Max(10000)
   @IsOptional()
   first?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  instanceLevel?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  includeActivity?: boolean;
 
   @Field(() => String, { nullable: true })
   after?: string;

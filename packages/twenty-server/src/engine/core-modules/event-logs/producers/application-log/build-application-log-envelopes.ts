@@ -16,5 +16,6 @@ export const buildApplicationLogEnvelopes = (
       executionId: entry.executionId,
       level: entry.level,
       message: entry.message,
+      ...(entry.properties ? { properties: entry.properties } : {}),
     },
   }));

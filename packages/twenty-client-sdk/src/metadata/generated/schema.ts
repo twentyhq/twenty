@@ -426,6 +426,15 @@ export interface ApplicationHealthCheckResult {
 
 export type ApplicationHealthStatus = 'ERROR' | 'INFO' | 'NEUTRAL' | 'OK' | 'SUCCESS' | 'UNKNOWN' | 'WARNING'
 
+export interface ApplicationLogActivityBucket {
+    end: Scalars['DateTime']
+    error: Scalars['Int']
+    info: Scalars['Int']
+    start: Scalars['DateTime']
+    warning: Scalars['Int']
+    __typename: 'ApplicationLogActivityBucket'
+}
+
 export interface ApplicationRegistration {
     createdAt: Scalars['DateTime']
     galleryImagesUrls: Scalars['String'][]
@@ -1330,6 +1339,8 @@ export interface EventLogPageInfo {
 }
 
 export interface EventLogQueryResult {
+    activity?: ApplicationLogActivityBucket[]
+    canQueryInstanceLevel: Scalars['Boolean']
     pageInfo: EventLogPageInfo
     records: EventLogRecord[]
     totalCount: Scalars['Int']
@@ -4422,6 +4433,16 @@ export interface ApplicationHealthCheckResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationLogActivityBucketGenqlSelection{
+    end?: boolean | number
+    error?: boolean | number
+    info?: boolean | number
+    start?: boolean | number
+    warning?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationRegistrationGenqlSelection{
     createdAt?: boolean | number
     galleryImagesUrls?: boolean | number
@@ -5538,9 +5559,11 @@ export interface EventLogPageInfoGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface EventLogQueryInput {after?: (Scalars['String'] | null),filters?: (EventLogFiltersInput | null),first?: (Scalars['Int'] | null),table: EventLogTable}
+export interface EventLogQueryInput {after?: (Scalars['String'] | null),filters?: (EventLogFiltersInput | null),first?: (Scalars['Int'] | null),includeActivity?: (Scalars['Boolean'] | null),instanceLevel?: (Scalars['Boolean'] | null),table: EventLogTable}
 
 export interface EventLogQueryResultGenqlSelection{
+    activity?: ApplicationLogActivityBucketGenqlSelection
+    canQueryInstanceLevel?: boolean | number
     pageInfo?: EventLogPageInfoGenqlSelection
     records?: EventLogRecordGenqlSelection
     totalCount?: boolean | number
@@ -8882,6 +8905,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       return ApplicationHealthCheckResult_possibleTypes.includes(obj.__typename)
     }
     
+
+
+    const ApplicationLogActivityBucket_possibleTypes: string[] = ['ApplicationLogActivityBucket']
+    export const isApplicationLogActivityBucket = (obj?: { __typename?: any } | null): obj is ApplicationLogActivityBucket => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationLogActivityBucket"')
+      return ApplicationLogActivityBucket_possibleTypes.includes(obj.__typename)
+    }
+
 
 
     const ApplicationRegistration_possibleTypes: string[] = ['ApplicationRegistration']
@@ -12248,4 +12279,23 @@ export const enumWorkspaceSetupChatOutcome = {
    ALREADY_STARTED: 'ALREADY_STARTED' as const,
    STARTED: 'STARTED' as const,
    UNAVAILABLE: 'UNAVAILABLE' as const
+}
+
+export interface ApplicationLogActivityBucket {
+    end: Scalars['DateTime']
+    error: Scalars['Int']
+    info: Scalars['Int']
+    start: Scalars['DateTime']
+    warning: Scalars['Int']
+    __typename: 'ApplicationLogActivityBucket'
+}
+
+export interface ApplicationLogActivityBucketGenqlSelection{
+    end?: boolean | number
+    error?: boolean | number
+    info?: boolean | number
+    start?: boolean | number
+    warning?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
 }
