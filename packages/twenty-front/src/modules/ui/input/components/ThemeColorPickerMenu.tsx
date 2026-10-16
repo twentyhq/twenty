@@ -1,7 +1,7 @@
 import { useColorLabels } from '@/ui/input/hooks/useColorLabels';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
@@ -17,7 +17,6 @@ export const ThemeColorPickerMenu = ({
   onSelectColor,
 }: ThemeColorPickerMenuProps) => {
   const colorLabels = useColorLabels();
-  const selectionGroupId = useId();
   const [searchValue, setSearchValue] = useState('');
   const query = searchValue.trim().toLowerCase();
   const filteredColorNames = isNonEmptyString(query)
@@ -38,7 +37,6 @@ export const ThemeColorPickerMenu = ({
       />
       <Dropdown.Separator />
       <Dropdown.SelectionGroup
-        id={selectionGroupId}
         aria-label={t`Colors`}
         value={selectedColor}
         onValueChange={(selectedColorName) => {

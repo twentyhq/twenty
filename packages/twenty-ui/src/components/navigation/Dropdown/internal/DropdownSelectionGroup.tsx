@@ -1,6 +1,7 @@
 import { useRender } from '@base-ui/react/use-render';
 import { isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
+import { useId } from 'react';
 
 import { type DropdownSelectionGroupProps } from '../types/DropdownSelectionGroupProps';
 import { type DropdownSelectionGroupChangeEventDetails } from '../types/DropdownSelectionGroupChangeEventDetails';
@@ -26,9 +27,11 @@ export const DropdownSelectionGroup = (props: DropdownSelectionGroupProps) => {
   } = props;
   const { type, selections, initializeSelection, updateSelection } =
     useDropdownContext();
+  const generatedId = useId();
+  const selectionGroupId = id ?? generatedId;
   const state = getDropdownSelectionGroupState({
     props,
-    storedState: selections.get(id),
+    storedState: selections.get(selectionGroupId),
   });
 
   const select = ({
@@ -50,7 +53,10 @@ export const DropdownSelectionGroup = (props: DropdownSelectionGroupProps) => {
       props.onValueChange?.(nextValue, eventDetails);
 
       if (!eventDetails.isCanceled && isUndefined(controlledValue)) {
-        updateSelection({ id, state: { multiple: true, value: nextValue } });
+        updateSelection({
+          id: selectionGroupId,
+          state: { multiple: true, value: nextValue },
+        });
       }
 
       return;
@@ -60,7 +66,10 @@ export const DropdownSelectionGroup = (props: DropdownSelectionGroupProps) => {
       props.onValueChange?.(value, eventDetails);
 
       if (!eventDetails.isCanceled && isUndefined(controlledValue)) {
-        updateSelection({ id, state: { multiple: false, value } });
+        updateSelection({
+          id: selectionGroupId,
+          state: { multiple: false, value },
+        });
       }
     }
   };
@@ -71,7 +80,7 @@ export const DropdownSelectionGroup = (props: DropdownSelectionGroupProps) => {
     state,
     props: {
       ...elementProps,
-      id,
+      id: selectionGroupId,
       className: clsx(styles.selectionGroup, className),
       role: type === 'picker' ? 'listbox' : 'group',
       'aria-multiselectable': type === 'picker' ? multiple : undefined,
@@ -85,7 +94,7 @@ export const DropdownSelectionGroup = (props: DropdownSelectionGroupProps) => {
     >
       {isUndefined(controlledValue) && (
         <DropdownSelectionGroupEffect
-          id={id}
+          id={selectionGroupId}
           initialState={state}
           initializeSelection={initializeSelection}
         />

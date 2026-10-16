@@ -214,7 +214,6 @@ export const SettingsMorphRelationMultiSelect = ({
             )}
             {isNonEmptyArray(matchingOptions) && (
               <Dropdown.SelectionGroup
-                id={`${dropdownId}-selection`}
                 aria-label={isNonEmptyString(label) ? label : t`Objects`}
                 multiple
                 value={localSelectedObjectMetadataIds}

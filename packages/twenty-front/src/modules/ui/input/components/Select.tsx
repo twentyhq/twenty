@@ -210,7 +210,6 @@ export const Select = <TValue extends SelectValue>({
               <Dropdown.Separator />
             )}
             <Dropdown.SelectionGroup
-              id={`${dropdownId}-selection`}
               aria-label={isNonEmptyString(label) ? label : t`Options`}
               value={
                 isControlOptionSelected

@@ -3,29 +3,20 @@ import { type useRender } from '@base-ui/react/use-render';
 import { type DropdownSelectionGroupChangeEventDetails } from './DropdownSelectionGroupChangeEventDetails';
 import { type DropdownSelectionGroupState } from './DropdownSelectionGroupState';
 
+type DropdownSelectionGroupValueProps<TValue> = {
+  defaultValue?: TValue;
+  onValueChange?: (
+    value: TValue,
+    eventDetails: DropdownSelectionGroupChangeEventDetails,
+  ) => void;
+} & ({ id?: string; value: TValue } | { id: string; value?: TValue });
+
 export type DropdownSelectionGroupProps = Omit<
   useRender.ComponentProps<'div', DropdownSelectionGroupState>,
   'id' | 'defaultValue' | 'onChange'
 > & {
-  id: string;
   closeOnSelect?: boolean;
 } & (
-    | {
-        multiple?: false;
-        value?: string | null;
-        defaultValue?: string | null;
-        onValueChange?: (
-          value: string | null,
-          eventDetails: DropdownSelectionGroupChangeEventDetails,
-        ) => void;
-      }
-    | {
-        multiple: true;
-        value?: string[];
-        defaultValue?: string[];
-        onValueChange?: (
-          value: string[],
-          eventDetails: DropdownSelectionGroupChangeEventDetails,
-        ) => void;
-      }
+    | ({ multiple?: false } & DropdownSelectionGroupValueProps<string | null>)
+    | ({ multiple: true } & DropdownSelectionGroupValueProps<string[]>)
   );

@@ -80,7 +80,6 @@ export const DropdownMenuInnerSelect = ({
         aria-label={ariaLabel}
       >
         <Dropdown.SelectionGroup
-          id={`${dropdownId}-selection`}
           aria-label={ariaLabel}
           value={selectedOption.value}
           onValueChange={(selectedValue) => {

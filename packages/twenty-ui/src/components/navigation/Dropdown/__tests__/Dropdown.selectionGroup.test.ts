@@ -31,4 +31,21 @@ describe('Dropdown selection contracts', () => {
       Parameters<OptionRender>[1]
     >().toEqualTypeOf<DropdownOptionItemState>();
   });
+
+  it('requires an id only for uncontrolled groups', () => {
+    expectTypeOf<{
+      value: string | null;
+    }>().toExtend<DropdownSelectionGroupProps>();
+    expectTypeOf<{
+      multiple: true;
+      value: string[];
+    }>().toExtend<DropdownSelectionGroupProps>();
+    expectTypeOf<{
+      defaultValue: string | null;
+    }>().not.toExtend<DropdownSelectionGroupProps>();
+    expectTypeOf<{
+      id: string;
+      defaultValue: string | null;
+    }>().toExtend<DropdownSelectionGroupProps>();
+  });
 });

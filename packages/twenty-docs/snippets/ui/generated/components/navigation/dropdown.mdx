@@ -340,8 +340,8 @@
   Initial uncontrolled selection. Defaults to null for single selection and an empty array for multiple selection.
 </ParamField>
 
-<ParamField body="SelectionGroup.id" type="string" required>
-  Stable identifier unique within the dropdown root. Uncontrolled values persist under it across popup close and page navigation.
+<ParamField body="SelectionGroup.id" type="string">
+  Stable identifier unique within the dropdown root. Required for uncontrolled groups, whose values persist under it across popup close and page navigation. Optional for controlled groups.
 </ParamField>
 
 <ParamField body="SelectionGroup.multiple" type="boolean">

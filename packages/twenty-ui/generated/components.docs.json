@@ -11475,9 +11475,9 @@
           {
             "name": "id",
             "type": "string",
-            "required": true,
+            "required": false,
             "defaultValue": null,
-            "description": "Stable identifier unique within the dropdown root. Uncontrolled values persist under it across popup close and page navigation."
+            "description": "Stable identifier unique within the dropdown root. Required for uncontrolled groups, whose values persist under it across popup close and page navigation. Optional for controlled groups."
           },
           {
             "name": "multiple",

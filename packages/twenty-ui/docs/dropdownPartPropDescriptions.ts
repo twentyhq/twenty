@@ -76,7 +76,7 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
       'Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`, and to `none` when `selected` is omitted.',
   } satisfies Partial<Record<keyof DropdownOptionItemProps, string>>,
   SelectionGroup: {
-    id: 'Stable identifier unique within the dropdown root. Uncontrolled values persist under it across popup close and page navigation.',
+    id: 'Stable identifier unique within the dropdown root. Required for uncontrolled groups, whose values persist under it across popup close and page navigation. Optional for controlled groups.',
     multiple:
       'Uses an array of selected identifiers when true. Otherwise the value is one identifier or null.',
     value:

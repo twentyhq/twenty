@@ -219,7 +219,6 @@ export const IconPicker = ({
             </StyledSearchRow>
             <Dropdown.Separator />
             <Dropdown.SelectionGroup
-              id={`${dropdownId}-selection`}
               aria-label={t`Icons`}
               value={selectedIconKey ?? null}
               onValueChange={(iconKey) => {
