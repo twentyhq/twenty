@@ -16,18 +16,18 @@ import { destroyCallRecorderCalendarParticipants } from 'src/logic-functions/dat
 export const rescheduleCallRecordingBot = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
-): Promise<boolean> => {
+): Promise<void> => {
   const externalBotId = callRecording.externalBotId;
 
   if (isUndefined(externalBotId)) {
-    return false;
+    return;
   }
 
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const meetingStartsAt = calendarEvent.startsAt;
 
   if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
-    return false;
+    return;
   }
 
   const joinAt = computeRecallBotJoinAt(meetingStartsAt);
@@ -39,7 +39,7 @@ export const rescheduleCallRecordingBot = async (
       `[call-recorder] cannot reschedule Recall bot for callRecording ${callRecording.id}: workspace id unavailable`,
     );
 
-    return false;
+    return;
   }
 
   const rescheduleResult = await rescheduleRecallBot({
@@ -61,7 +61,7 @@ export const rescheduleCallRecordingBot = async (
       joinAt,
     });
 
-    return true;
+    return;
   }
 
   // The bot vanished externally; drop the id so recovery re-creates it as the
@@ -77,7 +77,7 @@ export const rescheduleCallRecordingBot = async (
       isUndefined(currentCallRecording) ||
       currentCallRecording.externalBotId !== externalBotId
     ) {
-      return false;
+      return;
     }
 
     await enqueueCallRecordingRequestFollowUps({
@@ -93,12 +93,10 @@ export const rescheduleCallRecordingBot = async (
     });
     await destroyCallRecorderCalendarParticipants(client, [callRecording.id]);
 
-    return false;
+    return;
   }
 
   console.warn(
     `[call-recorder] failed to update Recall bot for callRecording ${callRecording.id}: ${rescheduleResult.errorMessage}`,
   );
-
-  return false;
 };

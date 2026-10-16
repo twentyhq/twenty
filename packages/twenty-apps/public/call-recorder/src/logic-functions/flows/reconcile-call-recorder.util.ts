@@ -567,13 +567,8 @@ const updatePolicyManagedCallRecording = async ({
     return buildSkippedResult(realMeetingKey);
   }
 
-  const isRescheduled = await rescheduleCallRecordingBot(client, {
-    callRecording,
-    calendarEvent: representativeCalendarEvent,
-  });
-
   if (
-    isRescheduled &&
+    !isUndefined(callRecording.externalBotId) &&
     existingCallRecording.calendarEventId !== representativeCalendarEvent.id
   ) {
     await upsertCallRecorderCalendarParticipant(client, {
@@ -581,6 +576,11 @@ const updatePolicyManagedCallRecording = async ({
       calendarEventId: representativeCalendarEvent.id,
     });
   }
+
+  await rescheduleCallRecordingBot(client, {
+    callRecording,
+    calendarEvent: representativeCalendarEvent,
+  });
 
   return {
     action: 'UPDATED',

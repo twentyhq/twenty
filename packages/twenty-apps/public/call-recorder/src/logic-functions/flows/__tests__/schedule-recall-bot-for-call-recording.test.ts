@@ -252,15 +252,20 @@ describe('scheduleRecallBotForCallRecording', () => {
     );
   });
 
-  it('enqueues the credit check before writing the participant', async () => {
+  it('still schedules the bot when the participant cannot be written', async () => {
     const client = new FakeCoreApiClient();
     client.participantWriteError = new Error('participant write failed');
 
-    await expect(
-      scheduleBot({ client, meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT }),
-    ).rejects.toThrow('participant write failed');
+    const scheduleResult = await scheduleBot({
+      client,
+      meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT,
+    });
 
+    expect(scheduleResult).toEqual({ status: 'scheduled' });
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
     expect(enqueueJobsMock).toHaveBeenCalledOnce();
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('participant write failed'),
+    );
   });
 });

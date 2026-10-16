@@ -12,22 +12,30 @@ export const upsertCallRecorderCalendarParticipant = async (
     calendarEventId: string;
   },
 ): Promise<void> => {
-  await client.mutation({
-    createCalendarEventParticipants: {
-      __args: {
-        data: [
-          {
-            id: callRecordingId,
-            calendarEventId,
-            handle: APP_DISPLAY_NAME,
-            displayName: APP_DISPLAY_NAME,
-            isOrganizer: false,
-            responseStatus: 'ACCEPTED',
-          },
-        ],
-        upsert: true,
+  try {
+    await client.mutation({
+      createCalendarEventParticipants: {
+        __args: {
+          data: [
+            {
+              id: callRecordingId,
+              calendarEventId,
+              handle: APP_DISPLAY_NAME,
+              displayName: APP_DISPLAY_NAME,
+              isOrganizer: false,
+              responseStatus: 'ACCEPTED',
+            },
+          ],
+          upsert: true,
+        },
+        id: true,
       },
-      id: true,
-    },
-  });
+    });
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to write the calendar participant of callRecording ${callRecordingId}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
 };
