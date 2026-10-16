@@ -4,14 +4,6 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { isDefined } from 'src/utils/is-defined';
 
-const toCallRecordingInput = (fields: CallRecordingSyncFields) => ({
-  ...fields,
-  // The client types JSON as an object, but transcript is a valid JSON array.
-  transcript: fields.transcript as unknown as
-    | Record<string, unknown>
-    | undefined,
-});
-
 export const upsertCallRecording = async ({
   coreApiClient,
   callRecordingId,
@@ -32,7 +24,7 @@ export const upsertCallRecording = async ({
           __args: {
             data: {
               id: callRecordingId,
-              ...toCallRecordingInput(createFields),
+              ...createFields,
             },
           },
           id: true,
@@ -63,7 +55,7 @@ export const upsertCallRecording = async ({
           id: { eq: callRecordingId },
           updatedAt: { eq: expectedUpdatedAt },
         },
-        data: toCallRecordingInput(updateFields),
+        data: updateFields,
       },
       id: true,
     },

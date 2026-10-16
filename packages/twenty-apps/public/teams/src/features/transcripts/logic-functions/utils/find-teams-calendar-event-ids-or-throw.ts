@@ -22,10 +22,10 @@ const listAllNodesInBatchesOrThrow = async <TNode>({
   fetchPage,
 }: {
   values: string[];
-  fetchPage: (
-    batch: string[],
-    after?: string,
-  ) => Promise<RecordConnection<TNode> | undefined>;
+  fetchPage: (options: {
+    batch: string[];
+    after?: string;
+  }) => Promise<RecordConnection<TNode> | undefined>;
 }): Promise<TNode[]> => {
   const nodes: TNode[] = [];
 
@@ -33,7 +33,7 @@ const listAllNodesInBatchesOrThrow = async <TNode>({
     let after: string | undefined;
 
     do {
-      const connection = await fetchPage(batch, after);
+      const connection = await fetchPage({ batch, after });
 
       nodes.push(...(connection?.edges.map((edge) => edge.node) ?? []));
       after =
@@ -56,7 +56,7 @@ const listCalendarChannelEventAssociationsOrThrow = ({
 }): Promise<CalendarChannelEventAssociation[]> =>
   listAllNodesInBatchesOrThrow<CalendarChannelEventAssociation>({
     values: eventExternalIds,
-    fetchPage: async (batch, after) => {
+    fetchPage: async ({ batch, after }) => {
       const result = await coreApiClient.query({
         calendarChannelEventAssociations: {
           __args: {
@@ -109,7 +109,7 @@ const listCalendarEventsByICalUidOrThrow = ({
 }): Promise<CalendarEvent[]> =>
   listAllNodesInBatchesOrThrow<CalendarEvent>({
     values: iCalUIds,
-    fetchPage: async (batch, after) => {
+    fetchPage: async ({ batch, after }) => {
       const result = await coreApiClient.query({
         calendarEvents: {
           __args: {
