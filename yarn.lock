@@ -51056,6 +51056,7 @@ __metadata:
     lodash.startcase: "npm:^4.4.0"
     npm-pick-manifest: "npm:^11.0.1"
     semver: "npm:7.6.3"
+    string-width: "npm:^8.2.0"
     tinyglobby: "npm:^0.2.15"
     twenty-client-sdk: "workspace:*"
     twenty-shared: "workspace:*"

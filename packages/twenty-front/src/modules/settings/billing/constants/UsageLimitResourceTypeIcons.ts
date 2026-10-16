@@ -2,6 +2,7 @@ import {
   IconAddressBook,
   IconApi,
   IconApps,
+  IconCoins,
   IconFiles,
   type IconComponent,
   IconMail,
@@ -16,6 +17,7 @@ export const USAGE_LIMIT_RESOURCE_TYPE_ICONS: Record<
   UsageResourceType,
   IconComponent
 > = {
+  [UsageResourceType.ALL]: IconCoins,
   [UsageResourceType.AI]: IconSparkles,
   [UsageResourceType.API]: IconApi,
   [UsageResourceType.APP]: IconApps,

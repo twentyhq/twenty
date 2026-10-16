@@ -140,15 +140,15 @@ export const applyAppBuild = async ({
       hint: 'Run twenty app apply --create to register it and install it in this workspace.',
     });
 
-    output.progress('Registering the app…');
+    output.progress({ message: 'Registering the app…' });
     await runPhase('registration', () =>
       registerApp({ application, target, signal }),
     );
-    output.progress('Installing the development app…');
+    output.progress({ message: 'Installing the development app…' });
     await runPhase('installation', () =>
       installDevelopmentApp({ application, target, signal }),
     );
-    output.progress('Computing metadata plan…');
+    output.progress({ message: 'Computing metadata plan…' });
 
     return {
       actions: await runPhase('preview', preview),
@@ -161,20 +161,20 @@ export const applyAppBuild = async ({
     appPath,
   });
 
-  output.progress(`Computing metadata plan on ${target.apiUrl}…`);
+  output.progress({ message: `Computing metadata plan on ${target.apiUrl}…` });
 
   const { actions, isRegistrationCreated } = await previewOrBootstrap();
   const summary = getAppPlanSummary(actions);
 
   if (outputMode === 'human') {
-    output.progress(
-      formatAppPlanActions({
+    output.progress({
+      message: formatAppPlanActions({
         actions,
         summary,
         inferDeletionFromMissingEntities,
         stream: process.stderr,
       }),
-    );
+    });
   }
 
   if (summary.destructive > 0) {
@@ -198,9 +198,9 @@ export const applyAppBuild = async ({
     );
   }
 
-  output.progress(
-    `Uploading ${build.files.length} ${build.files.length === 1 ? 'file' : 'files'}…`,
-  );
+  output.progress({
+    message: `Uploading ${build.files.length} ${build.files.length === 1 ? 'file' : 'files'}…`,
+  });
   await runPhase('upload', () =>
     uploadAppFiles({
       build,
@@ -210,7 +210,7 @@ export const applyAppBuild = async ({
       progress: upload,
     }),
   );
-  output.progress('Synchronizing the app…');
+  output.progress({ message: 'Synchronizing the app…' });
 
   const { actions: appliedActions, acknowledgedUniversalIdentifier } =
     await runPhase('sync', () =>
