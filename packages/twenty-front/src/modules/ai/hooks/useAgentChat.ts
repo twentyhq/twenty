@@ -101,6 +101,11 @@ export const useAgentChat = () => {
     const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
 
     if (agentChatSelectedFiles.length > 0) {
+      enqueueToast({
+        status: 'error',
+        children: t`Wait for the attachments to finish uploading.`,
+      });
+
       return;
     }
 
@@ -113,6 +118,10 @@ export const useAgentChat = () => {
       ...prev,
       [threadId]: '',
     }));
+
+    dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+      content: '',
+    });
 
     const browsingContext = getBrowsingContext();
     const lastSentBrowsingContextAtom =

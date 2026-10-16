@@ -11,12 +11,15 @@ import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
+import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
+import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
 import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
@@ -214,7 +217,10 @@ export const AiChatMessage = ({
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
-  if (!isDefined(agentChatMessage)) {
+  if (
+    !isDefined(agentChatMessage) ||
+    (isSilentAgentChatMessage(agentChatMessage) && !isDefined(error))
+  ) {
     return null;
   }
 
@@ -297,6 +303,9 @@ export const AiChatMessage = ({
             </StyledFilesContainer>
           )}
           {shouldShowError && <AiChatErrorRenderer error={error} />}
+          {isAiChatInboxEnabled && (
+            <AiChatMessageReactions messageId={messageId} />
+          )}
         </StyledMessageContainer>
         {agentChatMessage.parts.length > 0 && (
           <StyledMessageFooter
@@ -314,6 +323,9 @@ export const AiChatMessage = ({
                   ?.text ?? ''
               }
             />
+            {isAiChatInboxEnabled && !isLastMessageStreaming && (
+              <AiChatMessageReactionPicker messageId={messageId} />
+            )}
           </StyledMessageFooter>
         )}
       </StyledMessageBubble>

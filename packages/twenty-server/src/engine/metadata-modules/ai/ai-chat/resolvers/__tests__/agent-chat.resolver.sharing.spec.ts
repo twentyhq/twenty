@@ -108,6 +108,9 @@ const buildResolver = () => {
     {} as never,
     {} as never,
   );
+  const messageReactions = {
+    findReactionsByMessageId: jest.fn().mockResolvedValue(new Map()),
+  };
   const resolver = new AgentChatResolver(
     chatService,
     threadService,
@@ -134,6 +137,7 @@ const buildResolver = () => {
         },
       }),
     } as never,
+    messageReactions as never,
   );
   return {
     resolver,
@@ -474,11 +478,13 @@ describe('Shared conversation API boundaries', () => {
         id: 'from-member',
         senderWorkspaceMemberId: 'sender-member',
         senderUserWorkspaceId: 'sender-user-workspace',
+        reactions: [],
       },
       {
         id: 'from-agent',
         senderWorkspaceMemberId: null,
         senderUserWorkspaceId: null,
+        reactions: [],
       },
     ]);
   });

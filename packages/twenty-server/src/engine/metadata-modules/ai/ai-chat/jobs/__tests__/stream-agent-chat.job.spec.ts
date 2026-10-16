@@ -1,5 +1,5 @@
 import { type LanguageModelUsage, type TextStreamPart, type ToolSet } from 'ai';
-import { ASK_QUESTION_TOOL_NAME } from 'twenty-shared/ai';
+import { ASK_QUESTION_TOOL_NAME, NO_REPLY_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -103,6 +103,24 @@ const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
     toolName: ASK_QUESTION_TOOL_NAME,
     input: QUESTIONS[0],
     output: { result: { question: QUESTIONS[0], status: 'pending' } },
+  },
+  ...FINISH_PARTS,
+];
+
+const NO_REPLY_PARTS: ModelStreamPart[] = [
+  ...START_PARTS,
+  {
+    type: 'tool-call',
+    toolCallId: 'tool-call-id',
+    toolName: NO_REPLY_TOOL_NAME,
+    input: {},
+  },
+  {
+    type: 'tool-result',
+    toolCallId: 'tool-call-id',
+    toolName: NO_REPLY_TOOL_NAME,
+    input: {},
+    output: { success: true },
   },
   ...FINISH_PARTS,
 ];
@@ -1101,6 +1119,35 @@ describe('StreamAgentChatJob', () => {
       }),
     ]);
     expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+  });
+
+  it('counts a turn that chose not to reply as completed, without marking the chat as active', async () => {
+    const { job, turnCounts, threadUsageQuery } = buildJob({
+      chatStream: createFakeChatStream({ parts: NO_REPLY_PARTS }),
+    });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', outcome: 'silent' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+
+    const [usageSql] = threadUsageQuery.mock.calls[0] as unknown as [string];
+
+    expect(usageSql).not.toContain('lastActivityAt');
+  });
+
+  it('marks the chat as active when the turn replied', async () => {
+    const { job, threadUsageQuery } = buildJob();
+
+    await job.handle(jobData);
+
+    const [usageSql] = threadUsageQuery.mock.calls[0] as unknown as [string];
+
+    expect(usageSql).toContain('lastActivityAt');
   });
 
   it('counts an empty reply as a no_text failure exactly once', async () => {

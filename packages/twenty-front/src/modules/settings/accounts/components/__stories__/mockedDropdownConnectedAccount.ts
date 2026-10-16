@@ -12,6 +12,7 @@ export const mockedDropdownConnectedAccount: ConnectedAccount = {
   handle: 'account@example.com',
   provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
   authFailedAt: null,
+  authFailedReason: null,
   archivedAt: null,
   scopes: null,
   handleAliases: null,

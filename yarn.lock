@@ -30179,6 +30179,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emojibase-data@npm:^17.0.0":
+  version: 17.0.0
+  resolution: "emojibase-data@npm:17.0.0"
+  peerDependencies:
+    emojibase: "*"
+  checksum: 10c0/c1373438ac52e943a7953ce2315c0da4e29a6552a0ee9ae18a22dbf824a6b428d25655c55e2e48c69900358052408496807cdf7af12a43a0a1b39fb369cbf4a0
+  languageName: node
+  linkType: hard
+
 "emojilib@npm:^2.4.0":
   version: 2.4.0
   resolution: "emojilib@npm:2.4.0"
@@ -32385,6 +32394,19 @@ __metadata:
   version: 0.5.2
   resolution: "fresh@npm:0.5.2"
   checksum: 10c0/c6d27f3ed86cc5b601404822f31c900dd165ba63fff8152a3ef714e2012e7535027063bc67ded4cb5b3a49fa596495d46cacd9f47d6328459cf570f08b7d9e5a
+  languageName: node
+  linkType: hard
+
+"frimousse@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "frimousse@npm:0.4.0"
+  peerDependencies:
+    react: ^18 || ^19
+    typescript: ">=5.1.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/5793a3098f8b1ff17d16f59109c9da7486837e999d5b52305890d4eef6f787f9452746175c33717aab2b6b4e3f178d6e9f0f6ca6d3aa213b46edddfce09cff21
   languageName: node
   linkType: hard
 
@@ -50469,9 +50491,11 @@ __metadata:
     date-fns-tz: "npm:^3.2.0"
     deep-equal: "npm:^2.2.2"
     dotenv-cli: "npm:^7.4.4"
+    emojibase-data: "npm:^17.0.0"
     esbuild: "npm:^0.28.1"
     file-saver: "npm:^2.0.5"
     framer-motion: "npm:^11.18.0"
+    frimousse: "npm:^0.4.0"
     fuse.js: "npm:^7.1.0"
     graphiql: "npm:^5.2.3"
     graphql: "npm:16.8.1"
