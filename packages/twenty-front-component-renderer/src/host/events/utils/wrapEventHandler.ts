@@ -51,13 +51,13 @@ export const wrapEventHandler =
         nativeHostEventsWithForwardedFormControlState.add(nativeHostEvent);
       }
 
-      if (serializedEvent.bubbles === true) {
+      if (serializedEvent.bubbles) {
         forwardedBubblingHostEvents.add(hostEvent);
       }
     };
 
     if (
-      serializedEvent.bubbles === true &&
+      serializedEvent.bubbles &&
       CAPTURED_POINTER_EVENT_TYPES.some(
         (capturedEventType) => capturedEventType === serializedEvent.type,
       ) &&
