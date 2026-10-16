@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "2.48.0",
+  "version": "2.49.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -75,8 +75,8 @@
     "vitest": "^4.1.0"
   },
   "dependencies": {
-    "@base-ui/react": "^1.8.0",
-    "@base-ui/utils": "0.4.0",
+    "@base-ui/react": "^1.9.0",
+    "@base-ui/utils": "0.5.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",

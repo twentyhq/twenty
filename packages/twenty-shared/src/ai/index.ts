@@ -8,6 +8,7 @@
  */
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
+export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
 export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
@@ -43,6 +44,7 @@ export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
@@ -117,5 +119,6 @@ export { isNoReplyToolPart } from './utils/is-no-reply-tool-part.util';
 export { isPausingToolPart } from './utils/is-pausing-tool-part.util';
 export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-message-parts.util';
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
+export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';

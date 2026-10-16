@@ -1,5 +1,12 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -71,6 +78,17 @@ export class MessageChannelResolver {
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
+
+  @ResolveField('importProgress', () => Int, { nullable: true })
+  async importProgress(
+    @Parent() messageChannel: MessageChannelDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<number | null> {
+    return this.messageChannelMetadataService.getImportProgress({
+      messageChannelId: messageChannel.id,
+      workspaceId: workspace.id,
+    });
+  }
 
   @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {
     nullable: true,

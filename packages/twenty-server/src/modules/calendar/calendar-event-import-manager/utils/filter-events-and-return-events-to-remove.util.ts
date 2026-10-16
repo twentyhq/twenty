@@ -1,13 +1,13 @@
 import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
-export const filterEventsAndReturnCancelledEvents = (
+export const filterEventsAndReturnEventsToRemove = (
   calendarChannelHandles: string[],
   events: FetchedCalendarEvent[],
   blocklist: string[],
 ): {
   filteredEvents: FetchedCalendarEvent[];
-  cancelledEvents: FetchedCalendarEvent[];
+  eventsToRemove: FetchedCalendarEvent[];
 } => {
   const filteredEvents = filterOutBlocklistedEvents(
     calendarChannelHandles,
@@ -19,12 +19,12 @@ export const filterEventsAndReturnCancelledEvents = (
     (
       acc: {
         filteredEvents: FetchedCalendarEvent[];
-        cancelledEvents: FetchedCalendarEvent[];
+        eventsToRemove: FetchedCalendarEvent[];
       },
       event,
     ) => {
-      if (event.isCanceled) {
-        acc.cancelledEvents.push(event);
+      if (event.isCanceled || event.isPrivate) {
+        acc.eventsToRemove.push(event);
       } else {
         acc.filteredEvents.push(event);
       }
@@ -33,7 +33,7 @@ export const filterEventsAndReturnCancelledEvents = (
     },
     {
       filteredEvents: [],
-      cancelledEvents: [],
+      eventsToRemove: [],
     },
   );
 };

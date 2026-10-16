@@ -16,6 +16,7 @@ import {
   isDefined,
   pascalCase,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
@@ -198,8 +199,8 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
                   morphRelations: field.morphRelations ?? [],
                   fieldName: field.name,
                 },
-              }).map(
-                (possibleMorphRelationName) => `${possibleMorphRelationName}Id`,
+              }).map((possibleMorphRelationName) =>
+                doNotTranslate(`${possibleMorphRelationName}Id`),
               );
 
             const isJoinColumn =

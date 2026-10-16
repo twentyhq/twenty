@@ -1,6 +1,7 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { isLastStepOfLoop } from '@/workflow/workflow-diagram/utils/isLastStepOfLoop';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const isParentStep = ({
   currentStep,
@@ -50,7 +51,9 @@ export const getIsDescendantOfIterator = ({
 
     const currentStep = steps.find((step) => step.id === currentStepId);
     if (!currentStep) {
-      throw new Error(`Step with ID ${currentStepId} not found`);
+      throw new Error(
+        doNotTranslate(`Step with ID ${currentStepId} not found`),
+      );
     }
 
     const parentSteps = steps

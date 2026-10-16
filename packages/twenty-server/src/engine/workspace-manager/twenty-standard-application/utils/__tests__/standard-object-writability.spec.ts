@@ -13,6 +13,7 @@ const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
   'agentChatThreadParticipant',
   'agentMessage',
   'agentMessagePart',
+  'agentMessageReaction',
   'agentTurn',
 
   'calendarChannelEventAssociation',

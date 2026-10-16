@@ -2,6 +2,7 @@ import { type ViewFilter } from '@/views/types/ViewFilter';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const duplicateViewFiltersAndViewFilterGroups = ({
   viewFilterGroupsToDuplicate,
@@ -34,7 +35,9 @@ export const duplicateViewFiltersAndViewFilterGroups = ({
         !isDefined(newViewFilterGroupId)
       ) {
         throw new Error(
-          `Failed to find view filter group to copy for id ${viewFilterGroupToCopy.id} this shouldn't happen`,
+          doNotTranslate(
+            `Failed to find view filter group to copy for id ${viewFilterGroupToCopy.id} this shouldn't happen`,
+          ),
         );
       }
 

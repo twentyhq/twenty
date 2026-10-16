@@ -32,6 +32,14 @@ jest.mock('@/ai/components/AiChatAssistantMessageRenderer', () => ({
   ),
 }));
 
+jest.mock('@/ai/components/AiChatMessageReactionPicker', () => ({
+  AiChatMessageReactionPicker: () => null,
+}));
+
+jest.mock('@/ai/components/AiChatMessageReactions', () => ({
+  AiChatMessageReactions: () => null,
+}));
+
 jest.mock('@/ai/components/AiChatErrorRenderer', () => ({
   AiChatErrorRenderer: ({ error }: { error: Error }) => <>{error.message}</>,
 }));

@@ -170,7 +170,7 @@ export const SettingsClaimApplicationSection = () => {
       const authorizationUrl = result.data?.githubClaimAuthorizationUrl;
 
       if (!isDefined(authorizationUrl)) {
-        throw new Error(result.error?.message ?? 'Missing authorization URL');
+        throw new Error(result.error?.message ?? t`Missing authorization URL`);
       }
 
       window.location.href = authorizationUrl;

@@ -58,11 +58,11 @@ const StyledSearchRow = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing[2]};
   width: 100%;
+`;
 
-  > :first-child {
-    flex: 1;
-    min-width: 0;
-  }
+const StyledSearchContainer = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 const StyledPopupContent = styled.div`
@@ -187,12 +187,14 @@ export const IconPicker = ({
         >
           <StyledPopupContent data-click-outside-id={dropdownId}>
             <StyledSearchRow>
-              <Dropdown.Search
-                aria-label={t`Search icon`}
-                placeholder={t`Search icon`}
-                value={searchString}
-                onValueChange={setSearchString}
-              />
+              <StyledSearchContainer>
+                <Dropdown.Search
+                  aria-label={t`Search icon`}
+                  placeholder={t`Search icon`}
+                  value={searchString}
+                  onValueChange={setSearchString}
+                />
+              </StyledSearchContainer>
               {isDefined(iconColorPicker) && (
                 <DropdownRoot dropdownId={colorDropdownId} type="picker">
                   <Dropdown.Trigger

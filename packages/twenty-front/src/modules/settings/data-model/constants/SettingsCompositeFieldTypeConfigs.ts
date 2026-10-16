@@ -29,6 +29,7 @@ import {
   IllustrationIconUser,
 } from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 //TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097
 
@@ -78,7 +79,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         amountMicros: 2000000000,
         currencyCode: CurrencyCode.USD,
@@ -91,7 +92,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         amountMicros: 100000000,
         currencyCode: CurrencyCode.AED,
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldCurrencyValue>,
   [FieldMetadataType.EMAILS]: {
@@ -121,7 +122,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         primaryEmail: 'tim@twenty.com',
         additionalEmails: [
@@ -138,7 +139,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         primaryEmail: 'john@twenty.com',
         additionalEmails: ['john.doe@twenty.com'],
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldEmailsValue>,
   [FieldMetadataType.LINKS]: {
@@ -179,7 +180,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         primaryLinkUrl: 'twenty.com',
         primaryLinkLabel: '',
@@ -195,7 +196,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         primaryLinkLabel: '',
         secondaryLinks: [],
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
   [FieldMetadataType.PHONES]: {
@@ -247,7 +248,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         primaryPhoneCallingCode: '+33',
         primaryPhoneCountryCode: 'FR',
@@ -271,7 +272,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         primaryPhoneNumber: '123456789',
         additionalPhones: [],
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
   [FieldMetadataType.FULL_NAME]: {
@@ -301,11 +302,11 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       { firstName: 'John', lastName: 'Doe' },
       { firstName: 'Jane', lastName: 'Doe' },
       { firstName: 'John', lastName: 'Smith' },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
   [FieldMetadataType.ADDRESS]: {
@@ -401,7 +402,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         addressStreet1: '456 Oak Street',
         addressStreet2: '',
@@ -432,7 +433,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         addressLat: 40.7128,
         addressLng: -74.006,
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldAddressValue>,
   [FieldMetadataType.ACTOR]: {
@@ -483,7 +484,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         source: 'IMPORT',
         name: 'name',
@@ -502,7 +503,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         workspaceMemberId: 'id',
         context: {},
       },
-    ],
+    ]),
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
   [FieldMetadataType.RICH_TEXT]: {
     label: msg({ message: `Rich Text`, context: 'Field type' }),
@@ -532,7 +533,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         blocknote: '[{"type":"heading","content":"Hello"}]',
         markdown: '# Hello',
@@ -545,6 +546,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         blocknote: '[{"type":"heading","content":"Hello Again"}]',
         markdown: '# Hello Again',
       },
-    ],
+    ]),
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextValue>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;

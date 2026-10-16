@@ -6,7 +6,6 @@ import {
   type ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
-  computeRecordGqlOperationFilter,
   isDefined,
   type RecordFilter,
   type RecordFilterGroup,
@@ -17,10 +16,13 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 
 type ConvertChartFilterToGqlOperationFilterParams = {
   filter: ChartFilter | undefined;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   userTimezone: string;
   currentWorkspaceMemberId?: string;
 };
@@ -28,6 +30,7 @@ type ConvertChartFilterToGqlOperationFilterParams = {
 export const convertChartFilterToGqlOperationFilter = ({
   filter,
   flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
   userTimezone,
   currentWorkspaceMemberId,
 }: ConvertChartFilterToGqlOperationFilterParams): ObjectRecordFilter => {
@@ -75,10 +78,9 @@ export const convertChartFilterToGqlOperationFilter = ({
         recordFilterGroup.logicalOperator as RecordFilterGroupLogicalOperator,
     }));
 
-  return computeRecordGqlOperationFilter({
-    fieldMetadataItems: Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    ).filter(isDefined),
+  return computeRecordGqlOperationFilterFromFlatMaps({
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
     recordFilters: convertedRecordFilters,
     recordFilterGroups: convertedRecordFilterGroups,
     filterValueDependencies: {

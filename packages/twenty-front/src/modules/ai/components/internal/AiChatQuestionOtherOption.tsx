@@ -28,9 +28,15 @@ const StyledContainer = styled.div<{ isHighlighted: boolean }>`
 
 const StyledLabelRow = styled.div`
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   height: 32px;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
 `;
 
 const StyledLabel = styled.span`
