@@ -35,6 +35,8 @@ type RecordFilterRewrite = {
   shouldRewriteInvalidWorkflowRuns: boolean;
 };
 
+const REWRITE_BATCH_SIZE = 100;
+
 const INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH =
   '$.flow.steps[*] ? (@.type == "FIND_RECORDS").settings.input.filter.recordFilters[*] ? (!(exists(@.id)) || @.id.type() != "string" || @.id == "" || !(exists(@.value)) || @.value.type() != "string")';
 
@@ -229,51 +231,86 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
     whereParameters: unknown[];
     mapValue: (value: unknown) => { value: unknown; hasChanged: boolean };
   }): Promise<number> {
-    const rows: { id: string; value: unknown }[] = await dataSource.query(
-      `SELECT id, ${columnName} AS value FROM ${tableName} WHERE ${whereClause}`,
-      whereParameters,
-    );
-
-    const rowIdsToRewrite = rows
-      .filter((row) => mapValue(row.value).hasChanged)
-      .map((row) => row.id);
-
-    if (isDryRun) {
-      return rowIdsToRewrite.length;
-    }
+    const fetchCandidateRows = (
+      afterRowId?: string,
+    ): Promise<{ id: string; value: unknown }[]> =>
+      dataSource.query(
+        `SELECT id, ${columnName} AS value FROM ${tableName} WHERE (${whereClause})${isDefined(afterRowId) ? ` AND id > $${whereParameters.length + 1}` : ''} ORDER BY id LIMIT ${REWRITE_BATCH_SIZE}`,
+        isDefined(afterRowId)
+          ? [...whereParameters, afterRowId]
+          : whereParameters,
+      );
 
     const rewrittenRowIds: string[] = [];
+    let candidateRows = await fetchCandidateRows();
 
-    for (const rowId of rowIdsToRewrite) {
-      const hasRewritten = await dataSource.transaction(async (manager) => {
-        const [lockedRow]: { value: unknown }[] = await manager.query(
-          `SELECT ${columnName} AS value FROM ${tableName} WHERE id = $1 FOR UPDATE`,
-          [rowId],
-        );
-
-        if (!isDefined(lockedRow)) {
-          return false;
+    while (candidateRows.length > 0) {
+      for (const candidateRow of candidateRows) {
+        if (!mapValue(candidateRow.value).hasChanged) {
+          continue;
         }
 
-        const { value, hasChanged } = mapValue(lockedRow.value);
+        const hasRewritten =
+          isDryRun ||
+          (await this.rewriteRowUnderLock({
+            dataSource,
+            tableName,
+            columnName,
+            rowId: candidateRow.id,
+            mapValue,
+          }));
 
-        if (!hasChanged) {
-          return false;
+        if (hasRewritten) {
+          rewrittenRowIds.push(candidateRow.id);
         }
-
-        await manager.query(
-          `UPDATE ${tableName} SET ${columnName} = $1::jsonb WHERE id = $2`,
-          [JSON.stringify(value), rowId],
-        );
-
-        return true;
-      });
-
-      if (hasRewritten) {
-        rewrittenRowIds.push(rowId);
       }
+
+      candidateRows =
+        candidateRows.length < REWRITE_BATCH_SIZE
+          ? []
+          : await fetchCandidateRows(
+              candidateRows[candidateRows.length - 1].id,
+            );
     }
 
     return rewrittenRowIds.length;
+  }
+
+  private async rewriteRowUnderLock({
+    dataSource,
+    tableName,
+    columnName,
+    rowId,
+    mapValue,
+  }: {
+    dataSource: DataSource;
+    tableName: string;
+    columnName: string;
+    rowId: string;
+    mapValue: (value: unknown) => { value: unknown; hasChanged: boolean };
+  }): Promise<boolean> {
+    return dataSource.transaction(async (manager) => {
+      const [lockedRow]: { value: unknown }[] = await manager.query(
+        `SELECT ${columnName} AS value FROM ${tableName} WHERE id = $1 FOR UPDATE`,
+        [rowId],
+      );
+
+      if (!isDefined(lockedRow)) {
+        return false;
+      }
+
+      const { value, hasChanged } = mapValue(lockedRow.value);
+
+      if (!hasChanged) {
+        return false;
+      }
+
+      await manager.query(
+        `UPDATE ${tableName} SET ${columnName} = $1::jsonb WHERE id = $2`,
+        [JSON.stringify(value), rowId],
+      );
+
+      return true;
+    });
   }
 }
