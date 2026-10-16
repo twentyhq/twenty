@@ -79,6 +79,13 @@ When adding AI behavior:
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
 - A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
 
+To show what an agent does while it works, start it with `runAgent({ ..., thread: { key }, waitForCompletion: false })` and follow its conversation with `twenty-sdk/logic-function`:
+
+- `listAgentRunEvents({ agentUniversalIdentifier, threadKey })` returns the conversation so far, ending with its status.
+- `streamAgentRun({ agentUniversalIdentifier, threadKey, signal })` yields events live and completes once the agent goes idle or fails. Always pass a `signal`: a run that ended before streaming started is not replayed.
+- Events are `user.message`, `agent.message`, `agent.tool_use`, `agent.tool_result`, `session.status_running`, `session.status_idle` (`stopReason` is `end_turn`, or `requires_action` when the agent waits) and `session.error`. An event keeps its `id` between the list and the stream, so dedupe by `id`.
+- Only the app's own agents can be read, with the app access token.
+
 ## Inbox Messages
 
 `sendInboxMessage` from `twenty-sdk/logic-function` posts a message from the app in the chats of one or more workspace members.
