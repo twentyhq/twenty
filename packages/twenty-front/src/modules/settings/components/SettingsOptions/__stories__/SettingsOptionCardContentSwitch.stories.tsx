@@ -2,7 +2,7 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { IconBell, IconLock, IconRobot, IconUsers } from 'twenty-ui/icon';
+import { IconBell, IconLock, IconUsers } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const StyledContainer = styled.div`
@@ -24,7 +24,6 @@ const SettingsOptionCardContentSwitchWrapper = (
         description={args.description}
         divider={args.divider}
         disabled={args.disabled}
-        advancedMode={args.advancedMode}
       />
     </StyledContainer>
   );
@@ -62,16 +61,6 @@ export const Disabled: Story = {
     description: 'This setting is currently unavailable',
     checked: false,
     disabled: true,
-  },
-};
-
-export const AdvancedMode: Story = {
-  args: {
-    Icon: IconRobot,
-    title: 'Advanced Features',
-    description: 'Enable experimental features',
-    checked: true,
-    advancedMode: true,
   },
 };
 

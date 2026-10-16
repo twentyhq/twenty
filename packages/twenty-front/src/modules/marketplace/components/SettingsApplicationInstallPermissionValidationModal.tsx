@@ -130,11 +130,6 @@ const StyledObjectList = styled.ul`
   padding-left: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledNoPermissionText = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-`;
-
 export const SettingsApplicationInstallPermissionValidationModal = ({
   modalInstanceId,
   appDisplayName,
@@ -214,7 +209,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
           aria-label={t`Install ${appDisplayName} on your workspace`}
           onKeyDown={onKeyDown}
           size="fullscreen"
-          style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >
           <StyledFullscreenContainer>
             <StyledLightButton
@@ -244,52 +238,46 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                 </StyledNotVettedBannerContainer>
               )}
 
-              <StyledPermissionsCard>
-                {permissionItems.length > 0 ? (
-                  <>
-                    <StyledPermissionsTitle>
-                      {t`${appDisplayName} would like to:`}
-                    </StyledPermissionsTitle>
-                    {permissionItems.map((item) => (
-                      <StyledPermissionRow key={item.label}>
-                        <StyledPermissionIcon>
-                          <item.Icon size={16} aria-hidden />
-                        </StyledPermissionIcon>
-                        {isDefined(item.details) ? (
-                          <Tooltip
-                            content={
-                              <>
-                                <StyledObjectListTitle>
-                                  {item.details.title}
-                                </StyledObjectListTitle>
-                                <StyledObjectList>
-                                  {item.details.items.map((detailItem) => (
-                                    <li key={detailItem}>{detailItem}</li>
-                                  ))}
-                                </StyledObjectList>
-                              </>
-                            }
-                            arrow
-                            side="top"
-                            delay={TooltipDelay.shortDelay}
-                            positionMethod="fixed"
-                          >
-                            <StyledPermissionLabel tabIndex={0}>
-                              {item.label}
-                            </StyledPermissionLabel>
-                          </Tooltip>
-                        ) : (
-                          item.label
-                        )}
-                      </StyledPermissionRow>
-                    ))}
-                  </>
-                ) : (
-                  <StyledNoPermissionText>
-                    {t`${appDisplayName} does not request any permission on your workspace.`}
-                  </StyledNoPermissionText>
-                )}
-              </StyledPermissionsCard>
+              {permissionItems.length > 0 && (
+                <StyledPermissionsCard>
+                  <StyledPermissionsTitle>
+                    {t`${appDisplayName} would like to:`}
+                  </StyledPermissionsTitle>
+                  {permissionItems.map((item) => (
+                    <StyledPermissionRow key={item.label}>
+                      <StyledPermissionIcon>
+                        <item.Icon size={16} aria-hidden />
+                      </StyledPermissionIcon>
+                      {isDefined(item.details) ? (
+                        <Tooltip
+                          content={
+                            <>
+                              <StyledObjectListTitle>
+                                {item.details.title}
+                              </StyledObjectListTitle>
+                              <StyledObjectList>
+                                {item.details.items.map((detailItem) => (
+                                  <li key={detailItem}>{detailItem}</li>
+                                ))}
+                              </StyledObjectList>
+                            </>
+                          }
+                          arrow
+                          side="top"
+                          delay={TooltipDelay.shortDelay}
+                          positionMethod="fixed"
+                        >
+                          <StyledPermissionLabel tabIndex={0}>
+                            {item.label}
+                          </StyledPermissionLabel>
+                        </Tooltip>
+                      ) : (
+                        item.label
+                      )}
+                    </StyledPermissionRow>
+                  ))}
+                </StyledPermissionsCard>
+              )}
 
               <AuthorizeActionButtons
                 onCancel={handleClose}

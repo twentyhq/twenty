@@ -31,6 +31,7 @@ export type {
   WorkflowLayoutOptions,
 } from './layout/utils/compute-workflow-layout.util';
 export { computeWorkflowLayout } from './layout/utils/compute-workflow-layout.util';
+export { agentResponseFormatSchema } from './schemas/agent-response-format-schema';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';

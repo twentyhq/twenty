@@ -8,9 +8,10 @@ describe('buildImapTlsOptions', () => {
     });
   });
 
-  it('upgrades opportunistically via STARTTLS when the server offers it', () => {
+  it('requires the STARTTLS upgrade so a stripped capability cannot downgrade to plaintext', () => {
     expect(buildImapTlsOptions(EmailConnectionSecurity.STARTTLS)).toEqual({
       secure: false,
+      doSTARTTLS: true,
     });
   });
 

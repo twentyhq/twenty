@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { MorphRelationHeadModule } from 'src/engine/metadata-modules/morph-relation-head/morph-relation-head.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 import { ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
@@ -17,12 +17,12 @@ import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-perm
 
 @Module({
   imports: [
-    FeatureFlagModule,
     TypeOrmModule.forFeature([ViewEntity]),
     ApplicationModule,
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
+    MorphRelationHeadModule,
   ],
   providers: [
     ViewService,

@@ -10,7 +10,11 @@ export const computeWorkflowManifestOutputSchema = ({
   references,
 }: {
   step: WorkflowStepManifest;
-  references: WorkflowManifestReferences;
+  references: Pick<
+    WorkflowManifestReferences,
+    | 'logicFunctionOutputSchemaByUniversalIdentifier'
+    | 'agentOutputSchemaByUniversalIdentifier'
+  >;
 }): Record<string, unknown> => {
   if (
     isDefined(step.outputSchema) &&
@@ -34,6 +38,10 @@ export const computeWorkflowManifestOutputSchema = ({
   }
 
   if (step.type === 'AI_AGENT') {
+    if (isDefined(step.input.responseFormat)) {
+      return computeAiAgentOutputSchema(step.input.responseFormat);
+    }
+
     return isDefined(step.input.agentUniversalIdentifier)
       ? (references.agentOutputSchemaByUniversalIdentifier?.get(
           step.input.agentUniversalIdentifier,

@@ -1741,6 +1741,12 @@ export default {
             "baseProducts": [
                 86
             ],
+            "downgradePlanKeys": [
+                90
+            ],
+            "isSellable": [
+                4
+            ],
             "meteredProducts": [
                 87
             ],
@@ -1749,6 +1755,9 @@ export default {
             ],
             "resourceCreditProducts": [
                 86
+            ],
+            "upgradePlanKeys": [
+                90
             ],
             "__typename": [
                 1
@@ -7890,7 +7899,12 @@ export default {
                 463
             ],
             "switchBillingPlan": [
-                106
+                106,
+                {
+                    "plan": [
+                        90
+                    ]
+                }
             ],
             "switchSubscriptionInterval": [
                 106
@@ -10022,6 +10036,9 @@ export default {
             "findInstallApplicationJobStatus": [
                 292,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"
@@ -10102,6 +10119,9 @@ export default {
             "findUninstallApplicationJobStatus": [
                 292,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"
@@ -10111,6 +10131,9 @@ export default {
             "findUpgradeApplicationJobStatus": [
                 292,
                 {
+                    "jobId": [
+                        1
+                    ],
                     "universalIdentifier": [
                         1,
                         "String!"
@@ -10994,6 +11017,9 @@ export default {
             "apiKeys": [
                 29
             ],
+            "applicationId": [
+                493
+            ],
             "canAccessAllTools": [
                 4
             ],
@@ -11213,6 +11239,9 @@ export default {
             ],
             "prompt": [
                 1
+            ],
+            "responseFormat": [
+                289
             ],
             "runAsWorkspaceMemberId": [
                 493

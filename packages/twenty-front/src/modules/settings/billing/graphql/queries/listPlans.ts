@@ -6,6 +6,9 @@ export const LIST_PLANS = gql`
   query listPlans {
     listPlans {
       planKey
+      isSellable
+      upgradePlanKeys
+      downgradePlanKeys
       baseProducts {
         name
         description

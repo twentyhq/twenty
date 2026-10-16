@@ -11,7 +11,7 @@ import { SettingsDataModelFieldPhonesSettingsFormCard } from '@/settings/data-mo
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { SettingsDataModelFieldLinksVariantForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm';
 import { SettingsDataModelFieldOnClickActionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm';
 import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
@@ -191,7 +191,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
                 fieldType={fieldType}
                 disabled={disabled}
               />
-              <Separator />
+              <SettingsCardSeparator />
             </>
           )}
           {fieldType === FieldMetadataType.LINKS && (
@@ -200,7 +200,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
                 existingFieldMetadataId={existingFieldMetadataId}
                 disabled={disabled}
               />
-              <Separator />
+              <SettingsCardSeparator />
             </>
           )}
           {[FieldMetadataType.EMAILS, FieldMetadataType.LINKS].includes(
@@ -216,7 +216,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
                 }
                 disabled={disabled}
               />
-              <Separator />
+              <SettingsCardSeparator />
             </>
           )}
           <SettingsDataModelFieldIsUniqueForm

@@ -11,6 +11,10 @@ export const updateToastInStore = ({
   id,
   ...changes
 }: ToastUpdate & { store: ReturnType<typeof createToastStore> }) => {
+  if (!store.lifecycle.isActive()) {
+    return;
+  }
+
   const toastToUpdate = store.state.toasts.find(
     (toast) => toast.notification.id === id && isToastVisible(toast),
   );

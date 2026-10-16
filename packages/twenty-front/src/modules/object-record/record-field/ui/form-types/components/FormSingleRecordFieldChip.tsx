@@ -6,6 +6,7 @@ import {
 } from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -13,20 +14,29 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledRecordChipContainer = styled.div`
-  margin: ${themeCssVariables.spacing[2]};
+const getInset = ({ $variant }: { $variant?: FormFieldInputVariant }) =>
+  $variant === 'transparent' ? '0' : themeCssVariables.spacing[2];
+
+const StyledRecordChipContainer = styled.div<{
+  $variant?: FormFieldInputVariant;
+}>`
+  margin: ${getInset};
 `;
 
-const StyledPlaceholderContainer = styled.div`
-  margin: ${themeCssVariables.spacing[2]};
+const StyledPlaceholderContainer = styled.div<{
+  $variant?: FormFieldInputVariant;
+}>`
+  margin: ${getInset};
 `;
 
-const StyledNoRecordContainer = styled.div`
+const StyledNoRecordContainer = styled.div<{
+  $variant?: FormFieldInputVariant;
+}>`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  margin: ${themeCssVariables.spacing[2]};
+  margin: ${getInset};
 `;
 
 type FormSingleRecordFieldChipProps = {
@@ -47,6 +57,7 @@ type FormSingleRecordFieldChipProps = {
   objectNameSingular: string;
   onRemove: (event?: React.MouseEvent<HTMLDivElement>) => void;
   disabled?: boolean;
+  variant?: FormFieldInputVariant;
 };
 
 export const FormSingleRecordFieldChip = ({
@@ -55,6 +66,7 @@ export const FormSingleRecordFieldChip = ({
   objectNameSingular,
   onRemove,
   disabled,
+  variant,
 }: FormSingleRecordFieldChipProps) => {
   if (
     draftValue.type === 'variable' &&
@@ -71,7 +83,7 @@ export const FormSingleRecordFieldChip = ({
 
   if (draftValue.type === 'no-record') {
     return (
-      <StyledNoRecordContainer>
+      <StyledNoRecordContainer $variant={variant}>
         <IconForbid size={12} />
         {t`No record`}
       </StyledNoRecordContainer>
@@ -80,7 +92,7 @@ export const FormSingleRecordFieldChip = ({
 
   if (draftValue.type === 'static' && isDefined(selectedRecord)) {
     return (
-      <StyledRecordChipContainer>
+      <StyledRecordChipContainer $variant={variant}>
         <RecordChip
           record={selectedRecord}
           objectNameSingular={objectNameSingular}
@@ -90,7 +102,7 @@ export const FormSingleRecordFieldChip = ({
   }
 
   return (
-    <StyledPlaceholderContainer>
+    <StyledPlaceholderContainer $variant={variant}>
       <FormFieldPlaceholder>{t`Select`}</FormFieldPlaceholder>
     </StyledPlaceholderContainer>
   );
