@@ -15,7 +15,9 @@ import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matchi
 import { formatFathomSummary } from 'src/logic-functions/utils/format-fathom-summary.util';
 import { mapFathomTranscriptToEntries } from 'src/logic-functions/utils/map-fathom-transcript-to-entries.util';
 import { upsertCallRecording } from 'src/logic-functions/utils/upsert-call-recording.util';
+import { upsertCallRecordingCalendarParticipant } from 'src/logic-functions/utils/upsert-call-recording-calendar-participant.util';
 import { upsertFathomRecordingImport } from 'src/logic-functions/utils/upsert-fathom-recording-import.util';
+import { isDefined } from 'src/utils/is-defined';
 
 export const syncFathomMeetingToCallRecording = async ({
   coreApiClient,
@@ -85,6 +87,14 @@ export const syncFathomMeetingToCallRecording = async ({
     updateFields: updateCallRecordingFields,
     expectedUpdatedAt: existingCallRecording?.updatedAt,
   });
+
+  if (isDefined(calendarEventId)) {
+    await upsertCallRecordingCalendarParticipant({
+      coreApiClient,
+      callRecordingId,
+      calendarEventId,
+    });
+  }
 
   await upsertFathomRecordingImport({
     coreApiClient,

@@ -16,6 +16,7 @@ import { fetchFirefliesTranscript } from 'src/logic-functions/utils/fetch-firefl
 import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matching-calendar-event';
 import { formatSummaryAsMarkdown } from 'src/logic-functions/utils/format-summary-as-markdown';
 import { mapFirefliesSentencesToTranscriptEntries } from 'src/logic-functions/utils/map-fireflies-sentences-to-transcript-entries.util';
+import { upsertCallRecordingCalendarParticipant } from 'src/logic-functions/utils/upsert-call-recording-calendar-participant.util';
 import { upsertCallRecordingOrThrow } from 'src/logic-functions/utils/upsert-call-recording-or-throw.util';
 
 const MINUTES_TO_MILLISECONDS = 60_000;
@@ -153,6 +154,14 @@ export const syncFirefliesCallToCallRecording = async ({
       },
       updateFields: sharedFields,
     });
+
+    if (isDefined(calendarEventId)) {
+      await upsertCallRecordingCalendarParticipant({
+        coreApiClient,
+        callRecordingId: upsertResult.callRecordingId,
+        calendarEventId,
+      });
+    }
 
     await completeCallRecordingIfBothFirefliesFieldsAreFilled({
       coreApiClient,

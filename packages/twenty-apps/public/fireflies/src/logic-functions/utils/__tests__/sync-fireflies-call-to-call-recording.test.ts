@@ -10,6 +10,11 @@ import { syncFirefliesCallToCallRecording } from 'src/logic-functions/utils/sync
 
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
+const findMatchingCalendarEventMock = vi.hoisted(() => vi.fn());
+
+vi.mock('src/logic-functions/utils/find-matching-calendar-event', () => ({
+  findMatchingCalendarEvent: findMatchingCalendarEventMock,
+}));
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
@@ -23,6 +28,10 @@ describe('syncFirefliesCallToCallRecording', () => {
     vi.clearAllMocks();
     mutationMock.mockResolvedValue({
       updateCallRecording: { id: 'updated' },
+    });
+    findMatchingCalendarEventMock.mockResolvedValue({
+      matched: false,
+      reason: 'no match',
     });
   });
 
@@ -141,6 +150,75 @@ describe('syncFirefliesCallToCallRecording', () => {
         __args: {
           id: callRecordingId,
           data: { status: CALL_RECORDING_STATUS.COMPLETED },
+        },
+        id: true,
+      },
+    });
+    expect(mutationMock).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        createCalendarEventParticipants: expect.anything(),
+      }),
+    );
+  });
+
+  it('adds a Fireflies participant to the matched calendar event', async () => {
+    const transcriptId = 'matched-call';
+    const callRecordingId =
+      computeCallRecordingIdForFirefliesMeeting(transcriptId);
+
+    findMatchingCalendarEventMock.mockResolvedValue({
+      matched: true,
+      calendarEventId: 'calendar-event-1',
+      matchedBy: 'iCalUid',
+    });
+    answerTwentyQueries({ queryMock });
+    mutationMock.mockImplementation(async (mutation) =>
+      mutation.createCallRecording !== undefined
+        ? { createCallRecording: { id: callRecordingId } }
+        : {},
+    );
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        buildGraphqlResponse({
+          transcript: {
+            id: transcriptId,
+            title: 'Matched call',
+            summary: { overview: 'Matched summary' },
+          },
+        }),
+      ),
+    );
+
+    const { CoreApiClient } = await import('twenty-client-sdk/core');
+    const result = await syncFirefliesCallToCallRecording({
+      apiKey: 'fireflies-api-key',
+      coreApiClient: new CoreApiClient(),
+      transcriptId,
+      field: 'summary',
+      callRecordingFieldState: undefined,
+    });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        status: 'updated',
+        calendarEventId: 'calendar-event-1',
+      }),
+    );
+    expect(mutationMock).toHaveBeenCalledWith({
+      createCalendarEventParticipants: {
+        __args: {
+          data: [
+            {
+              id: callRecordingId,
+              calendarEventId: 'calendar-event-1',
+              handle: 'Fireflies',
+              displayName: 'Fireflies',
+              isOrganizer: false,
+              responseStatus: 'ACCEPTED',
+            },
+          ],
+          upsert: true,
         },
         id: true,
       },
