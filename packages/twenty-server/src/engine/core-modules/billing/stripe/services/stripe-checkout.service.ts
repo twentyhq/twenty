@@ -6,7 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BILLING_SELLABLE_PLAN_KEYS } from 'src/engine/core-modules/billing/constants/billing-sellable-plan-keys.constant';
+import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -38,7 +39,7 @@ export class StripeCheckoutService {
     successUrl,
     cancelUrl,
     stripeCustomerId,
-    plan = BillingPlanKey.PRO,
+    plan = BILLING_SELLABLE_PLAN_KEYS[0],
     requirePaymentMethod = true,
     withTrialPeriod,
   }: {
@@ -88,7 +89,7 @@ export class StripeCheckoutService {
     workspace,
     stripeSubscriptionLineItems,
     stripeCustomerId,
-    plan = BillingPlanKey.PRO,
+    plan = BILLING_SELLABLE_PLAN_KEYS[0],
     requirePaymentMethod = false,
     withTrialPeriod,
     idempotencyKey,
@@ -138,7 +139,7 @@ export class StripeCheckoutService {
     workspace,
     stripeSubscriptionLineItems,
     stripeCustomerId,
-    plan = BillingPlanKey.PRO,
+    plan = BILLING_SELLABLE_PLAN_KEYS[0],
     withTrialPeriod,
     idempotencyKey,
   }: {

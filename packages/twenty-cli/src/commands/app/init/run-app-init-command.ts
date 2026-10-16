@@ -52,7 +52,7 @@ export const runAppInitCommand: CommandRun = async ({
   });
   const location = displayPath === '.' ? 'the current directory' : displayPath;
 
-  output.progress(`Creating ${appName} in ${location}…`);
+  output.progress({ message: `Creating ${appName} in ${location}…` });
 
   await createAppProject({
     appDirectory,

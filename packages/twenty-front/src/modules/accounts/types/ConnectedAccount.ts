@@ -8,6 +8,7 @@ export type ConnectedAccount = {
   handle: string;
   provider: ConnectedAccountProvider;
   authFailedAt: string | null;
+  authFailedReason: string | null;
   // Set when the account is disconnected or frozen: synced data is kept but
   // cannot be updated until the account is reconnected.
   archivedAt: string | null;

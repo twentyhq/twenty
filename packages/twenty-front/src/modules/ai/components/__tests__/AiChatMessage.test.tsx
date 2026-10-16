@@ -32,6 +32,10 @@ jest.mock('@/ai/components/AiChatAssistantMessageRenderer', () => ({
   ),
 }));
 
+jest.mock('@/ai/components/AiChatErrorRenderer', () => ({
+  AiChatErrorRenderer: ({ error }: { error: Error }) => <>{error.message}</>,
+}));
+
 jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
   LightCopyIconButton: () => null,
 }));
@@ -56,6 +60,21 @@ const ASSISTANT_MESSAGE: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T08:00:05.000Z' },
 };
 
+const SILENT_MESSAGE: ExtendedUIMessage = {
+  id: 'silent-message',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-no_reply',
+      toolCallId: 'call-1',
+      state: 'output-available',
+      input: {},
+      output: { success: true },
+    },
+  ],
+  metadata: { createdAt: '2026-10-15T08:00:10.000Z' },
+};
+
 const MESSAGE_WITHOUT_SENDER: ExtendedUIMessage = {
   id: 'message-without-sender',
   role: 'user',
@@ -66,9 +85,11 @@ const MESSAGE_WITHOUT_SENDER: ExtendedUIMessage = {
 const renderMessage = ({
   messageId,
   isAiChatInboxEnabled,
+  error,
 }: {
   messageId: string;
   isAiChatInboxEnabled: boolean;
+  error?: Error;
 }) => {
   jotaiStore.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
@@ -93,13 +114,13 @@ const renderMessage = ({
   jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
   jotaiStore.set(
     agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
-    [USER_MESSAGE, ASSISTANT_MESSAGE, MESSAGE_WITHOUT_SENDER],
+    [USER_MESSAGE, ASSISTANT_MESSAGE, SILENT_MESSAGE, MESSAGE_WITHOUT_SENDER],
   );
 
-  render(
+  return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <AiChatMessage messageId={messageId} />
+        <AiChatMessage messageId={messageId} error={error} />
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -151,5 +172,26 @@ describe('AiChatMessage', () => {
       screen.getByText('Draft the October newsletter'),
     ).toBeInTheDocument();
     expect(screen.getByText(/ago$/)).toBeInTheDocument();
+  });
+
+  it('hides a reply Ada chose not to send', () => {
+    const { container } = renderMessage({
+      messageId: SILENT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('still shows an error raised after Ada chose not to reply', () => {
+    renderMessage({
+      messageId: SILENT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      error: new Error('The connection to the assistant was lost'),
+    });
+
+    expect(
+      screen.getByText('The connection to the assistant was lost'),
+    ).toBeInTheDocument();
   });
 });
