@@ -4,7 +4,6 @@ import { type CallRecordingNode } from 'src/front-components/types/call-recordin
 import { getCallRecordingDisplayDate } from 'src/front-components/utils/get-call-recording-display-date.util';
 import { getTimestamp } from 'src/front-components/utils/get-timestamp.util';
 
-// Sorted by the date the widget shows, so the list never looks out of order.
 const compareCallRecordingsByDisplayDate = (
   firstCallRecording: CallRecordingNode,
   secondCallRecording: CallRecordingNode,

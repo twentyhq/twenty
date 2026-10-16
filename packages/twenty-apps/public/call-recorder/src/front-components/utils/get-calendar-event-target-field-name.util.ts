@@ -1,6 +1,5 @@
 import { type CalendarEventTargetFieldName } from 'src/front-components/types/calendar-event-target-field-name.type';
 
-// Objects whose meetings core links through calendarEventTarget.
 export const getCalendarEventTargetFieldName = (
   objectNameSingular: string | undefined,
 ): CalendarEventTargetFieldName | undefined => {

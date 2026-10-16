@@ -15,10 +15,13 @@ const OTHER_YEAR_DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
 
 const dateTimeFormatByKey = new Map<string, Intl.DateTimeFormat>();
 
-const createDateTimeFormat = (
-  locale: string | undefined,
-  formatOptions: Intl.DateTimeFormatOptions,
-) => {
+const createDateTimeFormat = ({
+  locale,
+  formatOptions,
+}: {
+  locale: string | undefined;
+  formatOptions: Intl.DateTimeFormatOptions;
+}) => {
   try {
     return new Intl.DateTimeFormat(locale, formatOptions);
   } catch {
@@ -41,12 +44,12 @@ const getDateTimeFormat = ({
     return cachedDateTimeFormat;
   }
 
-  const dateTimeFormat = createDateTimeFormat(
+  const dateTimeFormat = createDateTimeFormat({
     locale,
-    isCurrentYear
+    formatOptions: isCurrentYear
       ? CURRENT_YEAR_DATE_FORMAT_OPTIONS
       : OTHER_YEAR_DATE_FORMAT_OPTIONS,
-  );
+  });
 
   dateTimeFormatByKey.set(formatKey, dateTimeFormat);
 
