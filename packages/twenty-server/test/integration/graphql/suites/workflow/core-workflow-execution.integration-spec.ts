@@ -43,7 +43,13 @@ import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/s
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  buildAgentExecutionResult,
+  buildWaitingAgentExecutionResult,
+  mockAgentRunTurns,
+} from 'test/utils/mock-agent-run-turns.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -53,9 +59,10 @@ import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/wo
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 
 import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
-import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
+import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { type ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -1046,21 +1053,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         },
       }) as WorkflowAiAgentAction;
 
-    const agentResult = (
-      overrides: Partial<AgentExecutionResult>,
-    ): AgentExecutionResult =>
-      ({
-        result: { response: '' },
-        usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
-        cacheCreationTokens: 0,
-        nativeWebSearchCallCount: 0,
-        hasNoMoreAvailableCredits: false,
-        modelId: 'test-model',
-        ...overrides,
-        replyParts: mapAiStepsToUIMessageParts(overrides.steps ?? []),
-      }) as AgentExecutionResult;
-
-    const askingResult = agentResult({
+    const askingResult = buildAgentExecutionResult({
       isPaused: true,
       steps: [
         {
@@ -1088,21 +1081,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ] as AgentExecutionResult['steps'],
     });
 
-    const replyingResult = agentResult({
+    const replyingResult = buildAgentExecutionResult({
       result: { response: 'Quote sent' },
       steps: [
         { content: [{ type: 'text', text: 'Quote sent' }] },
       ] as AgentExecutionResult['steps'],
     });
 
-    const mockAgent = () =>
-      jest
-        .spyOn(
-          getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-          'runTurn',
-        )
-        .mockResolvedValueOnce(askingResult)
-        .mockResolvedValueOnce(replyingResult);
+    const mockAgent = () => mockAgentRunTurns(askingResult, replyingResult);
 
     const getToolCalls = async (threadId: string) => {
       const [thread] = await global.testDataSource.query(
@@ -1195,13 +1181,85 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       return getInboxState(threadId);
     };
 
-    it('records the conversation of an agent that answers without asking, filed under done', async () => {
+    it('queues a message the recipient sends while the agent works, and sends it once the run ends', async () => {
+      let sentWhileWorking: Promise<request.Response> | undefined;
+      let threadId: string | undefined;
+
+      mockAgentRunTurns(replyingResult);
       jest
         .spyOn(
           getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-          'runTurn',
+          'completeTurn',
         )
-        .mockResolvedValueOnce(replyingResult);
+        .mockReset()
+        .mockImplementationOnce(async () => {
+          [{ threadId }] = await global.testDataSource.query(
+            `SELECT "threadId" FROM "${schema}"."agentTurn" WHERE "agentId" = $1 AND status = 'running'
+             ORDER BY "createdAt" DESC LIMIT 1`,
+            [agentId],
+          );
+
+          sentWhileWorking = request(`http://localhost:${APP_PORT}`)
+            .post('/metadata')
+            .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+            .send({
+              query: `mutation SendChatMessage($threadId: UUID!, $text: String!, $messageId: UUID!) {
+                sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued }
+              }`,
+              variables: {
+                threadId,
+                text: 'Any news?',
+                messageId: randomUUID(),
+              },
+            });
+
+          await sentWhileWorking;
+
+          return { ...replyingResult, structuredOutputSteps: [] };
+        });
+      jest
+        .spyOn(
+          getAppProviderByClassName<AiModelRegistryService>(
+            'AiModelRegistryService',
+          ),
+          'getAvailableModels',
+        )
+        .mockReturnValue([{ modelId: TEST_AI_MODEL_ID }] as never);
+      // the reply to the queued message is not under test
+      jest
+        .spyOn(
+          getAppProviderByClassName<ChatExecutionService>(
+            'ChatExecutionService',
+          ),
+          'streamChat',
+        )
+        .mockRejectedValue(new Error('No reply in this test'));
+
+      const finalStep = emptyStep();
+      const fixture = await createFixture({
+        steps: [agentStep([finalStep.id]), finalStep],
+      });
+
+      await waitForRun(await runFixture(fixture), 'COMPLETED');
+
+      expect((await sentWhileWorking)?.body.data.sendChatMessage).toEqual({
+        queued: true,
+      });
+
+      await expectEventually(async () => {
+        const [message] = await global.testDataSource.query(
+          `SELECT message.status FROM "${schema}"."agentMessage" message
+           JOIN "${schema}"."agentMessagePart" part ON part."messageId" = message.id
+           WHERE message."threadId" = $1 AND part."textContent" = 'Any news?'`,
+          [threadId],
+        );
+
+        expect(message?.status).toBe('sent');
+      });
+    });
+
+    it('records the conversation of an agent that answers without asking, filed under done', async () => {
+      mockAgentRunTurns(replyingResult);
       const finalStep = emptyStep();
       const agent = agentStep([finalStep.id]);
       const fixture = await createFixture({ steps: [agent, finalStep] });
@@ -1230,35 +1288,30 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const largeOutput = 'x'.repeat(64_000);
       const toolCallIds = ['find-1', 'find-2', 'find-3', 'find-4', 'find-5'];
 
-      jest
-        .spyOn(
-          getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-          'runTurn',
-        )
-        .mockResolvedValueOnce(
-          agentResult({
-            result: { response: 'Quote sent' },
-            steps: [
-              {
-                content: toolCallIds.flatMap((toolCallId) => [
-                  {
-                    type: 'tool-call',
-                    toolCallId,
-                    toolName: 'find_companies',
-                    input: {},
-                  },
-                  {
-                    type: 'tool-result',
-                    toolCallId,
-                    toolName: 'find_companies',
-                    input: {},
-                    output: { success: true, result: largeOutput },
-                  },
-                ]),
-              },
-            ] as AgentExecutionResult['steps'],
-          }),
-        );
+      mockAgentRunTurns(
+        buildAgentExecutionResult({
+          result: { response: 'Quote sent' },
+          steps: [
+            {
+              content: toolCallIds.flatMap((toolCallId) => [
+                {
+                  type: 'tool-call',
+                  toolCallId,
+                  toolName: 'find_companies',
+                  input: {},
+                },
+                {
+                  type: 'tool-result',
+                  toolCallId,
+                  toolName: 'find_companies',
+                  input: {},
+                  output: { success: true, result: largeOutput },
+                },
+              ]),
+            },
+          ] as AgentExecutionResult['steps'],
+        }),
+      );
       const finalStep = emptyStep();
       const agent = agentStep([finalStep.id]);
       const fixture = await createFixture({ steps: [agent, finalStep] });
@@ -1278,13 +1331,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     it('continues the conversation its key names across runs', async () => {
-      const runTurn = jest
-        .spyOn(
-          getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-          'runTurn',
-        )
-        .mockResolvedValueOnce(replyingResult)
-        .mockResolvedValueOnce(replyingResult);
+      const runTurn = mockAgentRunTurns(replyingResult, replyingResult);
       const agent = {
         ...agentStep([]),
         settings: {
@@ -1343,7 +1390,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       expect(await waitForWaitingInboxState(threadId)).toMatchObject({
         workspaceMemberId: creator.workspaceMemberId,
-        lastMessageText: agent.name,
+        lastMessageText: QUESTION.question,
         isArchived: true,
         isBackInInbox: true,
       });
@@ -1417,14 +1464,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     it('retries a step whose agent failed after its answer in the same conversation, which holds the answer', async () => {
-      const runTurn = jest
-        .spyOn(
-          getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-          'runTurn',
-        )
-        .mockResolvedValueOnce(askingResult)
-        .mockRejectedValueOnce(new Error('The model is overloaded'))
-        .mockResolvedValueOnce(replyingResult);
+      const runTurn = mockAgentRunTurns(
+        askingResult,
+        new Error('The model is overloaded'),
+        replyingResult,
+      );
       const agent = {
         ...agentStep([]),
         settings: {
@@ -1488,6 +1532,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     it('pauses the run on the question and lets the engine continue the agent, without running the step again', async () => {
       const runTurn = mockAgent();
       const { runId, agent, finalStep, threadId } = await startAskingRun();
+      const [{ activeStreamId }] = await global.testDataSource.query(
+        `SELECT "activeStreamId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+
+      // the step shows it waits only once its run let go of the conversation, so it can be answered
+      expect(activeStreamId).toBeNull();
 
       expect((await getRun(runId)).state.stepInfos[finalStep.id].status).toBe(
         'NOT_STARTED',
@@ -1540,6 +1591,33 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    it('goes on with the agent when the recipient writes instead of answering, which skips the question', async () => {
+      const runTurn = mockAgent();
+      const { runId, agent, threadId } = await startAskingRun();
+
+      const response = await sendAsRecipient({
+        threadId,
+        text: 'Hold it until Monday',
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.sendChatMessage.queued).toBe(true);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(JSON.stringify(runTurn.mock.calls[1][0].priorMessages)).toContain(
+        'Hold it until Monday',
+      );
+      expect(await getToolCalls(threadId)).toEqual({
+        isWaiting: false,
+        calls: [{ toolCallId: 'ask-1', status: 'skipped' }],
+      });
+    });
+
     it('refuses a second answer to the same question', async () => {
       mockAgent();
       const { runId, threadId } = await startAskingRun();
@@ -1557,58 +1635,42 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    const sendAsRecipient = ({
+      threadId,
+      text,
+    }: {
+      threadId: string;
+      text: string;
+    }) => {
+      jest
+        .spyOn(
+          getAppProviderByClassName<AiModelRegistryService>(
+            'AiModelRegistryService',
+          ),
+          'getAvailableModels',
+        )
+        .mockReturnValue([{ modelId: TEST_AI_MODEL_ID }] as never);
+
+      return request(`http://localhost:${APP_PORT}`)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `mutation SendChatMessage($threadId: UUID!, $text: String!, $messageId: UUID!) {
+            sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued }
+          }`,
+          variables: { threadId, text, messageId: randomUUID() },
+        });
+    };
+
     it('continues an agent that paused on a wait once its wake-up resolves, without running the step again', async () => {
       const resumeAt = new Date(Date.now() + 3_000).toISOString();
-      const runTurn = jest
-        .spyOn(
-          getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-          'runTurn',
-        )
-        .mockResolvedValueOnce(
-          agentResult({
-            isPaused: true,
-            steps: [
-              {
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolCallId: 'wait-1',
-                    toolName: 'wait_for_duration',
-                    input: { durationInMinutes: 1 },
-                  },
-                  {
-                    type: 'tool-result',
-                    toolCallId: 'wait-1',
-                    toolName: 'wait_for_duration',
-                    input: { durationInMinutes: 1 },
-                    output: {
-                      success: true,
-                      message: `Waiting until ${resumeAt}.`,
-                      result: {
-                        status: 'pending',
-                        wait: { type: 'TIME', resumeAt },
-                      },
-                    },
-                  },
-                ],
-                toolResults: [
-                  {
-                    toolCallId: 'wait-1',
-                    toolName: 'wait_for_duration',
-                    output: {
-                      success: true,
-                      result: {
-                        status: 'pending',
-                        wait: { type: 'TIME', resumeAt },
-                      },
-                    },
-                  },
-                ],
-              },
-            ] as unknown as AgentExecutionResult['steps'],
-          }),
-        )
-        .mockResolvedValueOnce(replyingResult);
+      const runTurn = mockAgentRunTurns(
+        buildWaitingAgentExecutionResult({
+          toolName: 'wait_for_duration',
+          wait: { type: 'TIME', resumeAt },
+        }),
+        replyingResult,
+      );
       const finalStep = emptyStep();
       const agent = agentStep([finalStep.id]);
       const fixture = await createFixture({ steps: [agent, finalStep] });
@@ -1637,6 +1699,55 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(JSON.stringify(runTurn.mock.calls[1][0].priorMessages)).toContain(
         'The wait is over.',
       );
+      expect(
+        await global.testDataSource.query(
+          `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
+          [threadId],
+        ),
+      ).toEqual([]);
+    });
+
+    it('goes on with an agent waiting on an event as soon as the recipient writes to it', async () => {
+      // an event that never happens, so only the message wakes the run up
+      const runTurn = mockAgentRunTurns(
+        buildWaitingAgentExecutionResult({
+          toolName: 'wait_for_event',
+          wait: {
+            type: 'EVENT',
+            eventName: 'opportunity.deleted',
+            recordId: randomUUID(),
+          },
+        }),
+        replyingResult,
+      );
+      const finalStep = emptyStep();
+      const agent = agentStep([finalStep.id]);
+      const fixture = await createFixture({ steps: [agent, finalStep] });
+      const runId = await runFixture(fixture);
+      const pausedRun = await waitForPausedAgentStep(runId, agent.id);
+      const threadId: string = pausedRun.stepLogs[agent.id].details.threadId;
+
+      const response = await sendAsRecipient({
+        threadId,
+        text: 'No need to wait, send it now',
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.sendChatMessage.queued).toBe(true);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+
+      const resumedWith = JSON.stringify(
+        runTurn.mock.calls[1][0].priorMessages,
+      );
+
+      expect(resumedWith).toContain('a member wrote in the conversation');
+      expect(resumedWith).toContain('No need to wait, send it now');
       expect(
         await global.testDataSource.query(
           `SELECT id FROM core."pendingWakeUp" WHERE "ownerId" = $1`,
@@ -1696,20 +1807,15 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           },
         },
       ];
-      const runTurn = jest
-        .spyOn(
-          getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-          'runTurn',
-        )
-        .mockResolvedValueOnce(
-          agentResult({
-            isPaused: true,
-            steps: [
-              { content: [...askCall('ask-1'), ...askCall('ask-2')] },
-            ] as AgentExecutionResult['steps'],
-          }),
-        )
-        .mockResolvedValueOnce(replyingResult);
+      const runTurn = mockAgentRunTurns(
+        buildAgentExecutionResult({
+          isPaused: true,
+          steps: [
+            { content: [...askCall('ask-1'), ...askCall('ask-2')] },
+          ] as AgentExecutionResult['steps'],
+        }),
+        replyingResult,
+      );
       const { runId, agent, threadId } = await startAskingRun();
 
       expect(await getToolCalls(threadId)).toEqual({

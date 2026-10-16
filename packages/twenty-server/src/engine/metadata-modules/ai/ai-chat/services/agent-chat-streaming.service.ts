@@ -17,7 +17,7 @@ import {
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -29,7 +29,6 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
-import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -92,21 +91,11 @@ export class AgentChatStreamingService {
     private readonly actorService: AgentChatActorService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
-    private readonly agentRunConversationService: AgentRunConversationService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
-  // a message that lands while a run goes on in the conversation would be read by that run once it
-  // goes on after a wait, so it is let in only between runs
-  streamAgentChat(options: StreamAgentChatOptions) {
-    return this.agentRunConversationService.withThreadLockForMessage({
-      workspaceId: options.workspace.id,
-      threadId: options.thread.id,
-      work: () => this.startOrQueueMessage(options),
-    });
-  }
-
-  private async startOrQueueMessage({
+  // a message sent while a reply or a run streams in the conversation waits in its queue
+  async streamAgentChat({
     thread,
     userWorkspaceId,
     workspaceMemberId,
@@ -123,15 +112,20 @@ export class AgentChatStreamingService {
     const threadId = thread.id;
     const workspaceId = workspace.id;
 
-    const [, hasQueuedBacklog] = await Promise.all([
+    const [, hasQueuedBacklog, suspendedRun] = await Promise.all([
       this.settlePendingToolCallsBeforeSending({ thread, workspaceId }),
       this.agentChatService.hasQueuedMessages({ threadId, workspaceId }),
+      this.agentRunSuspensionService.findSuspendedRun({
+        workspaceId,
+        threadId,
+      }),
     ]);
 
     const streamId = generateId();
 
     const claimed =
       !hasQueuedBacklog &&
+      !isDefined(suspendedRun) &&
       (await this.streamRecoveryService.tryClaimStream({
         threadId,
         workspaceId,
@@ -149,7 +143,14 @@ export class AgentChatStreamingService {
         workspaceMemberId,
       });
 
-      if (hasQueuedBacklog) {
+      if (isDefined(suspendedRun)) {
+        await this.agentRunSuspensionService.scheduleContinuation({
+          workspaceId,
+          threadId,
+          wakeUpId: suspendedRun.id,
+          outcome: { type: 'MESSAGE_RECEIVED' },
+        });
+      } else if (hasQueuedBacklog) {
         await this.flushNextQueuedMessage({ threadId, workspaceId });
       }
 
@@ -453,19 +454,34 @@ export class AgentChatStreamingService {
       select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
-    // queued messages wait behind a pending tool call: they follow the answer rather than replace it
-    if (
-      !threadStatus ||
-      threadStatus.deletedAt ||
-      isDefined(threadStatus.pendingQuestionMessageId)
-    ) {
+    if (!threadStatus || threadStatus.deletedAt) {
       return;
     }
 
-    const queuedMessages = await this.agentChatService.getQueuedMessages({
-      threadId,
-      workspaceId,
-    });
+    const [queuedMessages, suspendedRun] = await Promise.all([
+      this.agentChatService.getQueuedMessages({ threadId, workspaceId }),
+      this.agentRunSuspensionService.findSuspendedRun({
+        workspaceId,
+        threadId,
+      }),
+    ]);
+
+    // a run that went on to ask something reads what was sent meanwhile, as a message sent now would skip its question
+    if (isNonEmptyArray(queuedMessages) && isDefined(suspendedRun)) {
+      await this.agentRunSuspensionService.scheduleContinuation({
+        workspaceId,
+        threadId,
+        wakeUpId: suspendedRun.id,
+        outcome: { type: 'MESSAGE_RECEIVED' },
+      });
+
+      return;
+    }
+
+    // queued messages wait behind a pending tool call: they follow the answer rather than replace it
+    if (isDefined(threadStatus.pendingQuestionMessageId)) {
+      return;
+    }
 
     let nextQueued: (typeof queuedMessages)[number] | undefined;
     let userWorkspaceId: string | undefined;
@@ -604,8 +620,8 @@ export class AgentChatStreamingService {
     );
   }
 
-  // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why.
-  // An answer holding the stream keeps them, and a chat message never closes calls a run or a caller waits on
+  // a message sent while an agent waits on a person closes its pending calls as skipped, so the model sees why.
+  // A call a caller such as a workflow step posted waits on its own answer, so it refuses the message
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
@@ -618,7 +634,7 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const messageId = thread.pendingQuestionMessageId;
 
-    await this.agentRunSuspensionService.assertConversationNotSuspended({
+    await this.agentRunSuspensionService.assertNoPostedCallAwaited({
       workspaceId,
       threadId: thread.id,
     });

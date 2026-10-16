@@ -9,17 +9,19 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import {
+  buildAgentExecutionResult,
+  buildWaitingAgentExecutionResult,
+  mockAgentRunTurns,
+} from 'test/utils/mock-agent-run-turns.util';
 import { type AgentTrigger } from 'twenty-shared/application';
 
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
-import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -30,62 +32,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
 
-const agentResult = (
-  overrides: Partial<AgentExecutionResult>,
-): AgentExecutionResult =>
-  ({
-    result: { response: '' },
-    usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
-    cacheCreationTokens: 0,
-    nativeWebSearchCallCount: 0,
-    hasNoMoreAvailableCredits: false,
-    modelId: 'test-model',
-    ...overrides,
-    replyParts: mapAiStepsToUIMessageParts(overrides.steps ?? []),
-  }) as AgentExecutionResult;
-
-const waitingResult = ({
-  toolName = 'wait_for_duration',
-  wait = {
-    type: 'TIME',
-    resumeAt: new Date(Date.now() + 3_000).toISOString(),
-  },
-}: {
-  toolName?: string;
-  wait?: Record<string, unknown>;
-} = {}) => {
-  const output = {
-    success: true,
-    message: 'Waiting.',
-    result: { status: 'pending', wait },
-  };
-
-  return agentResult({
-    isPaused: true,
-    steps: [
-      {
-        content: [
-          {
-            type: 'tool-call',
-            toolCallId: 'wait-1',
-            toolName,
-            input: {},
-          },
-          {
-            type: 'tool-result',
-            toolCallId: 'wait-1',
-            toolName,
-            input: {},
-            output,
-          },
-        ],
-        toolResults: [{ toolCallId: 'wait-1', toolName, output }],
-      },
-    ] as unknown as AgentExecutionResult['steps'],
-  });
-};
-
-const replyingResult = agentResult({
+const replyingResult = buildAgentExecutionResult({
   result: { response: 'Followed up' },
   steps: [
     { content: [{ type: 'text', text: 'Followed up' }] },
@@ -93,13 +40,7 @@ const replyingResult = agentResult({
 });
 
 const mockAgent = (...results: AgentExecutionResult[]) =>
-  results.reduce(
-    (spy, result) => spy.mockResolvedValueOnce(result),
-    jest.spyOn(
-      getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-      'runTurn',
-    ),
-  );
+  mockAgentRunTurns(...results);
 
 const findSuspensions = (callerType: string, agentId: string) =>
   global.testDataSource.query(
@@ -206,7 +147,10 @@ describe('agent runs that wait (integration)', () => {
   };
 
   it('lets a triggered agent wait for a duration and go on once the wake-up resolves', async () => {
-    const runTurn = mockAgent(waitingResult(), replyingResult);
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult(),
+      replyingResult,
+    );
 
     await runTrigger();
 
@@ -217,16 +161,6 @@ describe('agent runs that wait (integration)', () => {
       condition: { type: 'TIME' },
     });
 
-    // the run reads its conversation when it goes on, so a chat message cannot slip in while it waits
-    await expect(
-      getAppProviderByClassName<AgentChatStreamingService>(
-        'AgentChatStreamingService',
-      ).streamAgentChat({
-        thread: { id: suspension.threadId, pendingQuestionMessageId: null },
-        workspace: { id: workspaceId },
-        text: 'Any news?',
-      } as Parameters<AgentChatStreamingService['streamAgentChat']>[0]),
-    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_AWAITING_ANSWER });
     expect(runTurn.mock.calls[0][0].baseSystemPrompt).toContain(
       'wait_for_duration',
     );
@@ -251,48 +185,10 @@ describe('agent runs that wait (integration)', () => {
     );
   });
 
-  it('refuses a chat message while a run goes on in its conversation', async () => {
-    let chatAttempt: Promise<unknown> | undefined;
-
-    jest
-      .spyOn(
-        getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-        'runTurn',
-      )
-      .mockImplementationOnce(async () => {
-        const [{ threadId }] = await global.testDataSource.query(
-          `SELECT "threadId" FROM "${schema}"."agentTurn" WHERE "agentId" = $1 AND status = 'running'
-           ORDER BY "createdAt" DESC LIMIT 1`,
-          [agentId],
-        );
-
-        // the run is not suspended yet, so only its lock on the conversation keeps the message out
-        chatAttempt = getAppProviderByClassName<AgentChatStreamingService>(
-          'AgentChatStreamingService',
-        )
-          .streamAgentChat({
-            thread: { id: threadId, pendingQuestionMessageId: null },
-            workspace: { id: workspaceId },
-            text: 'Any news?',
-          } as Parameters<AgentChatStreamingService['streamAgentChat']>[0])
-          .catch((error: unknown) => error);
-
-        await chatAttempt;
-
-        return replyingResult;
-      });
-
-    await runTrigger();
-
-    expect(await chatAttempt).toMatchObject({
-      code: AiExceptionCode.THREAD_AWAITING_ANSWER,
-    });
-  });
-
   it('drops a waiting triggered run once its trigger is turned off', async () => {
     // an event that never happens, so only the explicit resolution below wakes the run up
     const runTurn = mockAgent(
-      waitingResult({
+      buildWaitingAgentExecutionResult({
         toolName: 'wait_for_event',
         wait: {
           type: 'EVENT',
@@ -380,7 +276,10 @@ describe('agent runs that wait (integration)', () => {
   });
 
   it('answers a runAgent call whose agent waits as waiting, with its thread', async () => {
-    const runTurn = mockAgent(waitingResult(), replyingResult);
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult(),
+      replyingResult,
+    );
 
     const response = await makeMetadataApiRequest({
       query: gql`
@@ -445,7 +344,10 @@ describe('agent runs that wait (integration)', () => {
   ])(
     'goes on with a waiting runAgent call as $title',
     async ({ token, authContext, roleTargetId, callerRoleSource }) => {
-      const runTurn = mockAgent(waitingResult(), replyingResult);
+      const runTurn = mockAgent(
+        buildWaitingAgentExecutionResult(),
+        replyingResult,
+      );
 
       const response = await makeMetadataApiRequest(
         {
@@ -501,7 +403,11 @@ describe('agent runs that wait (integration)', () => {
   );
 
   it('refuses a message to a thread whose run waits, and takes it once the run finished', async () => {
-    const runTurn = mockAgent(waitingResult(), replyingResult, replyingResult);
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult(),
+      replyingResult,
+      replyingResult,
+    );
     const agentRunService =
       getAppProviderByClassName<AgentRunService>('AgentRunService');
     const workspace = fromWorkspaceEntityToFlat(

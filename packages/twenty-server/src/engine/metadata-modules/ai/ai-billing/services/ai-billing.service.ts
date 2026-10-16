@@ -11,7 +11,6 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { type BillableStep } from 'src/engine/metadata-modules/ai/ai-billing/types/billable-step.type';
 import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
-import { computeAgentTurnUsageFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
 import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
@@ -19,7 +18,6 @@ import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-bi
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
-import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 
 export type BillingUsageInput = {
   usage: BillingTokenUsage;
@@ -76,13 +74,6 @@ export class AiBillingService {
         }).totalCostInDollars,
       0,
     );
-  }
-
-  calculateStepsTurnUsage(
-    modelId: ModelId,
-    steps: BillableStep[],
-  ): AgentTurnUsage {
-    return computeAgentTurnUsageFromSteps(this.getCostConfig(modelId), steps);
   }
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {

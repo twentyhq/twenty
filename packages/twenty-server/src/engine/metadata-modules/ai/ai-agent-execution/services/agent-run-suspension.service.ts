@@ -40,6 +40,11 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 // one key for every run, so the owner's unique key leaves a conversation one suspended run
 const SUSPENDED_RUN_WAKE_UP_KEY = 'RUN';
 
+const buildAnswerInThreadCondition = (threadId: string) =>
+  Raw((alias) => `${alias} @> :condition::jsonb`, {
+    condition: JSON.stringify({ type: 'ANSWER', threadId }),
+  });
+
 // A suspended run is the AGENT_RUN wake-up its conversation owns: what wakes it up, and in its
 // payload what continues it and who gets its outcome
 @Injectable()
@@ -84,8 +89,8 @@ export class AgentRunSuspensionService {
     });
   }
 
-  // a run waiting in the conversation would read a new message on continuing, and a caller waiting
-  // on a call it posted there would see the message close it
+  // a run waiting in the conversation would read another run's prompt on continuing, and a caller
+  // waiting on a call it posted there would see the run close it
   async isConversationWaiting({
     workspaceId,
     threadId,
@@ -96,11 +101,7 @@ export class AgentRunSuspensionService {
     return this.wakeUpRepository.exists(workspaceId, {
       where: [
         { ownerType: 'AGENT_RUN', ownerId: threadId },
-        {
-          condition: Raw((alias) => `${alias} @> :condition::jsonb`, {
-            condition: JSON.stringify({ type: 'ANSWER', threadId }),
-          }),
-        },
+        { condition: buildAnswerInThreadCondition(threadId) },
       ],
     });
   }
@@ -120,6 +121,43 @@ export class AgentRunSuspensionService {
     }
   }
 
+  // a caller, such as a workflow step, waits on the answer to a call it posted, which a message
+  // would leave unanswered
+  async assertNoPostedCallAwaited({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    const isAwaited = await this.wakeUpRepository.exists(workspaceId, {
+      where: {
+        ownerType: Not('AGENT_RUN'),
+        condition: buildAnswerInThreadCondition(threadId),
+      },
+    });
+
+    if (isAwaited) {
+      throw new AiException(
+        'The conversation is waiting on an answer; answer it before sending a message',
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
+      );
+    }
+  }
+
+  async findSuspendedRun({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<Pick<PendingWakeUpEntity, 'id'> | null> {
+    return this.wakeUpRepository.findOne(workspaceId, {
+      where: { ownerType: 'AGENT_RUN', ownerId: threadId },
+      select: ['id'],
+    });
+  }
+
   // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it
   async scheduleContinuation(jobData: ContinueAgentRunJobData): Promise<void> {
     await this.messageQueueService.add<ContinueAgentRunJobData>(
@@ -137,6 +175,7 @@ export class AgentRunSuspensionService {
     outcome,
     summary = suspendedSummary,
     isAwaitingAnswer = false,
+    streamId,
   }: {
     workspaceId: string;
     threadId: string;
@@ -144,8 +183,14 @@ export class AgentRunSuspensionService {
     outcome: AgentRunCallerOutcome;
     summary?: AgentRunSummary | null;
     isAwaitingAnswer?: boolean;
+    streamId?: string;
   }): Promise<void> {
-    await this.closeAwaitedCalls({ workspaceId, threadId, isAwaitingAnswer });
+    await this.closeAwaitedCalls({
+      workspaceId,
+      threadId,
+      isAwaitingAnswer,
+      streamId,
+    });
 
     await this.deliverOutcome({
       workspaceId,
@@ -255,10 +300,13 @@ export class AgentRunSuspensionService {
     workspaceId,
     threadId,
     isAwaitingAnswer,
+    streamId,
   }: {
     workspaceId: string;
     threadId: string;
     isAwaitingAnswer: boolean;
+    // the stream of a run that closes its calls while it holds the conversation
+    streamId?: string;
   }): Promise<void> {
     await this.recordWaitOutcome({
       workspaceId,
@@ -267,7 +315,7 @@ export class AgentRunSuspensionService {
     });
 
     if (isAwaitingAnswer) {
-      await this.closePendingQuestion({ workspaceId, threadId });
+      await this.closePendingQuestion({ workspaceId, threadId, streamId });
     }
   }
 
@@ -340,20 +388,24 @@ export class AgentRunSuspensionService {
   }
 
   // without a call to look for, the pending question is the one waited on
-  private async closePendingQuestion({
+  async closePendingQuestion({
     workspaceId,
     threadId,
     toolCallId,
+    streamId,
+    turnStatus = AgentTurnStatus.CANCELLED,
   }: {
     workspaceId: string;
     threadId: string;
     toolCallId?: string;
+    streamId?: string;
+    turnStatus?: AgentTurnStatus.COMPLETED | AgentTurnStatus.CANCELLED;
   }): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: {
         id: threadId,
         pendingQuestionMessageId: Not(IsNull()),
-        activeStreamId: IsNull(),
+        activeStreamId: streamId ?? IsNull(),
       },
       select: ['id', 'pendingQuestionMessageId'],
     });
@@ -374,8 +426,8 @@ export class AgentRunSuspensionService {
       workspaceId,
       threadId,
       messageId,
-      activeStreamId: null,
-      turnStatus: AgentTurnStatus.CANCELLED,
+      activeStreamId: streamId ?? null,
+      turnStatus,
     });
   }
 }
