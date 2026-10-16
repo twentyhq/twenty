@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const mcpToolCallParamsSchema = z.object({
   name: z.string().min(1),
-  arguments: z.record(z.string(), z.unknown()).optional(),
+  arguments: z.record(z.string(), z.unknown()).nullish(),
   // A malformed progress token only disables progress notifications, it does not fail the call
   _meta: z
     .object({
@@ -23,7 +23,7 @@ export const parseMcpToolCallParams = (
 
   return {
     toolName: parsed.data.name,
-    toolArguments: parsed.data.arguments,
+    toolArguments: parsed.data.arguments ?? undefined,
     progressToken: parsed.data._meta?.progressToken,
   };
 };

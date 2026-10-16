@@ -14,8 +14,11 @@ describe('parseMcpToolCallParams', () => {
     });
   });
 
-  it('should accept a call without arguments', () => {
-    expect(parseMcpToolCallParams({ name: 'list_skills' })).toEqual({
+  it.each([
+    ['omitted arguments', { name: 'list_skills' }],
+    ['null arguments', { name: 'list_skills', arguments: null }],
+  ])('should accept a call with %s as no arguments', (_, params) => {
+    expect(parseMcpToolCallParams(params)).toEqual({
       toolName: 'list_skills',
       toolArguments: undefined,
       progressToken: undefined,
