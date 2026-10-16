@@ -9,7 +9,11 @@ import BadgeReference from '/snippets/ui/generated/data-display/badge.mdx';
 
 `Badge` displays compact inline information, including short labels and counts. Use [Tag](/ui/primitives/data-display/tag) for categories, [Chip](/ui/primitives/data-display/chip) for compact controls, or [Status](/ui/primitives/data-display/status) for a named state with an indicator.
 
-<StoryEmbed storyId="ui-data-display-badge--display" title="Badge example" />
+<StoryEmbed
+  storyId="ui-data-display-badge--display"
+  title="Badge example"
+  height={90}
+/>
 
 ## Usage
 
@@ -42,7 +46,7 @@ Icons are ordinary child nodes. Give decorative icons `aria-hidden` and keep a v
 <StoryEmbed
   storyId="ui-data-display-badge--catalog"
   title="Badge sizes and shapes"
-  height={280}
+  height={200}
 />
 
 ```tsx
@@ -72,7 +76,7 @@ export const BadgeAppearances = () => (
 <StoryEmbed
   storyId="ui-data-display-badge--colors"
   title="Badge text colors"
-  height={220}
+  height={140}
 />
 
 ## Counts and visibility

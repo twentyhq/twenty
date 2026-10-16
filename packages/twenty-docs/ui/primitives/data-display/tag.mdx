@@ -9,7 +9,11 @@ import TagReference from '/snippets/ui/generated/data-display/tag.mdx';
 
 Use `Tag` for categories, priorities, or other short attributes. Keep a text label so the meaning does not depend on color. Use [Status](/ui/primitives/data-display/status) when you need a state indicator and loading feedback.
 
-<StoryEmbed storyId="ui-data-display-tag--display" title="Tag example" />
+<StoryEmbed
+  storyId="ui-data-display-tag--display"
+  title="Tag example"
+  height={90}
+/>
 
 ## Usage
 
@@ -26,7 +30,7 @@ export const PriorityTag = () => <Tag color="red">Urgent</Tag>;
 <StoryEmbed
   storyId="ui-data-display-tag--catalog"
   title="Tag variants"
-  height={180}
+  height={140}
 />
 
 ```tsx
@@ -57,7 +61,7 @@ export const CategoryTags = () => (
 <StoryEmbed
   storyId="ui-data-display-tag--colors"
   title="Tag theme colors"
-  height={260}
+  height={240}
 />
 
 Keep the label meaningful without relying on its color. The catalog compares the default soft treatment; the same palette is available to the other variants.

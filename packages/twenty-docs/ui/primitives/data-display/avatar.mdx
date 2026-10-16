@@ -9,7 +9,11 @@ import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
 
 `Avatar` shows an image with a first-letter fallback. Use it beside a record name or inside a [Chip](/ui/primitives/data-display/chip). Its default root is a presentational `span`.
 
-<StoryEmbed storyId="ui-data-display-avatar--display" title="Avatar example" />
+<StoryEmbed
+  storyId="ui-data-display-avatar--display"
+  title="Avatar example"
+  height={90}
+/>
 
 ## Usage
 
@@ -84,7 +88,11 @@ export const ContactAvatar = ({
 );
 ```
 
-<StoryEmbed storyId="ui-data-display-avatar--parts" title="Avatar parts" />
+<StoryEmbed
+  storyId="ui-data-display-avatar--parts"
+  title="Avatar parts"
+  height={110}
+/>
 
 The parts share Base UI's image loading state. Image renders an `img` after a successful load by default, and Fallback renders a `span` while the image is absent, loading, or has failed. `delay` postpones the initial fallback display in milliseconds and defaults to `0`. A changed source is loaded again and can replace either the current image or fallback.
 
@@ -101,7 +109,7 @@ The public `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `Avatar
 <StoryEmbed
   storyId="ui-data-display-avatar--catalog"
   title="Avatar sizes and shapes"
-  height={420}
+  height={320}
 />
 
 `shape` accepts `square`, `rounded-square`, or `circle`. Sizes run from `xs` (12px) to `xl` (40px); `md` is 16px. `variant="outline"` adds a border to the fallback. The `color`, `backgroundColor`, and `borderColor` overrides customize the fallback, while a loaded image keeps its original appearance.
@@ -156,6 +164,7 @@ export const ProfileAvatar = ({
 <StoryEmbed
   storyId="ui-data-display-avatar--button-composition"
   title="Avatar composed as a button"
+  height={110}
 />
 
 Compose a native button for actions. It owns focus, Enter and Space activation, and disabled behavior. Supply an action-specific accessible name. Put `onClick` and `disabled` on the rendered button; shorthand Avatar has no `onClick`, `disabled`, or `nativeButton` prop.
