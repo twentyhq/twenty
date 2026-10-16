@@ -12,7 +12,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const computeMorphRelations = ({
+const computeMorphRelationHeadTargetRelations = ({
   morphRelationHead,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
@@ -100,7 +100,7 @@ export const computeFlatFieldMetadataArrayForRecordFilters = ({
       isMorphRelationHead<FlatFieldMetadata>(flatFieldMetadata)
         ? {
             ...flatFieldMetadata,
-            morphRelations: computeMorphRelations({
+            morphRelations: computeMorphRelationHeadTargetRelations({
               morphRelationHead: flatFieldMetadata,
               flatFieldMetadataMaps,
               flatObjectMetadataMaps,
