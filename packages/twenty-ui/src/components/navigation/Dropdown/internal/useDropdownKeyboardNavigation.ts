@@ -83,12 +83,12 @@ export const useDropdownKeyboardNavigation = () => {
       (event.shiftKey || isSubmenu)
     ) {
       event.preventDefault();
-      closeTree(
-        event.nativeEvent,
-        event.shiftKey
+      closeTree({
+        tabOutEvent: event.nativeEvent,
+        tabOutFocusTarget: event.shiftKey
           ? undefined
           : getDropdownTabOutTarget({ content, rootTriggerId }),
-      );
+      });
       return;
     }
 

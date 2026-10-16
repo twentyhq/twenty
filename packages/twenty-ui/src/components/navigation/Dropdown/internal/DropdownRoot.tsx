@@ -88,7 +88,13 @@ export const DropdownRoot = ({
     onOpenChange?.(nextOpen);
   };
 
-  const closeTree = (tabOutEvent?: Event, tabOutFocusTarget?: HTMLElement) => {
+  const closeTree = ({
+    tabOutEvent,
+    tabOutFocusTarget,
+  }: {
+    tabOutEvent?: Event;
+    tabOutFocusTarget?: HTMLElement;
+  } = {}) => {
     if (
       isDefined(tabOutEvent) &&
       isDropdownDismissPrevented({
@@ -103,7 +109,7 @@ export const DropdownRoot = ({
     setOpen(false);
 
     if (isSubmenu) {
-      parent?.closeTree(tabOutEvent, tabOutFocusTarget);
+      parent?.closeTree({ tabOutEvent, tabOutFocusTarget });
       return;
     }
 
