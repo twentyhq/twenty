@@ -1,14 +1,19 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { createRef } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
+import { CurrencyPicker } from '../CurrencyPicker';
 import { type CurrencyPickerChangeEventDetails } from '../types/CurrencyPickerChangeEventDetails';
 import { CurrencyPickerChangingDefaultExample } from './CurrencyPickerChangingDefaultExample';
 import { CurrencyPickerControlledExample } from './CurrencyPickerControlledExample';
 import { CurrencyPickerControlledSearchExample } from './CurrencyPickerControlledSearchExample';
 import { CurrencyPickerExample } from './CurrencyPickerExample';
+import { CurrencyPickerListLabelExample } from './CurrencyPickerListLabelExample';
+import { CurrencyPickerRootStateExample } from './CurrencyPickerRootStateExample';
+import { CURRENCY_PICKER_STORY_OPTIONS } from './currencyPickerStoryOptions';
 import { openCurrencyPicker } from './openCurrencyPicker';
 
 const meta: Meta<typeof CurrencyPickerExample> = {
@@ -33,6 +38,8 @@ const meta: Meta<typeof CurrencyPickerExample> = {
 export default meta;
 type Story = StoryObj<typeof CurrencyPickerExample>;
 
+const nativeSearchRef = createRef<HTMLInputElement>();
+
 export const ControlledExternalUpdates: Story = {
   render: (args) => (
     <CurrencyPickerControlledExample
@@ -44,9 +51,14 @@ export const ControlledExternalUpdates: Story = {
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole('button', { name: 'Currency' });
 
+    await expect(trigger.textContent).toBe('USD');
     await userEvent.click(canvas.getByRole('button', { name: 'Set Euro' }));
     await expect(trigger).toHaveTextContent('EUR');
     const selectedPicker = await openCurrencyPicker({ canvasElement });
+
+    await expect(
+      within(selectedPicker.dialog).getByRole('listbox', { name: 'Currency' }),
+    ).toHaveAttribute('aria-labelledby', trigger.id);
 
     await expect(
       within(selectedPicker.dialog).getByRole('option', { name: 'Euro (EUR)' }),
@@ -54,12 +66,13 @@ export const ControlledExternalUpdates: Story = {
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(selectedPicker.dialog).not.toBeInTheDocument());
 
-    for (const buttonLabel of [
-      'Clear currency',
-      'Set unknown currency',
-      'Set empty identifier',
+    for (const { buttonLabel, expectedLabel } of [
+      { buttonLabel: 'Clear currency', expectedLabel: '' },
+      { buttonLabel: 'Set unknown currency', expectedLabel: 'ZZZ' },
+      { buttonLabel: 'Set empty identifier', expectedLabel: '' },
     ]) {
       await userEvent.click(canvas.getByRole('button', { name: buttonLabel }));
+      await expect(trigger.textContent).toBe(expectedLabel);
       const picker = await openCurrencyPicker({ canvasElement });
 
       await expect(
@@ -455,4 +468,123 @@ export const DefaultChangesBeforeOpening: Story = {
 export const CompoundDefaultChangesBeforeOpening: Story = {
   ...DefaultChangesBeforeOpening,
   args: { composition: 'compound' },
+};
+
+export const PreparedRootState: Story = {
+  render: () => <CurrencyPickerRootStateExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const host = canvas.getByTestId('root-host');
+    const rootState = canvas.getByTestId('root-state');
+
+    await expect(rootState).toHaveTextContent('USD:US Dollar:true');
+    await expect(host.children).toHaveLength(1);
+    await expect(host.firstElementChild).toBe(rootState);
+    await userEvent.click(canvas.getByRole('button', { name: 'Use Euro' }));
+    await expect(rootState).toHaveTextContent('EUR:Euro:false');
+    await expect(host.firstElementChild).toBe(rootState);
+  },
+};
+
+export const NativeTargets: Story = {
+  render: () => (
+    <CurrencyPicker
+      currencies={CURRENCY_PICKER_STORY_OPTIONS}
+      defaultValue={null}
+      placeholder="Choose currency"
+      title="Top level trigger title"
+      triggerProps={{ title: 'Trigger title', 'aria-label': 'Currency' }}
+      optionsProps={{
+        title: 'Options title',
+        'aria-label': 'Options wrapper',
+        listLabel: 'Supported currencies',
+        render: <section data-options-render="native" />,
+        searchProps: {
+          ref: nativeSearchRef,
+          title: 'Search title',
+          'aria-label': 'Find a currency',
+          render: <input data-search-render="native" />,
+        },
+      }}
+      contentProps={{
+        'aria-label': 'Available currencies',
+        title: 'Popup title',
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'Currency' });
+
+    await expect(trigger.textContent).toBe('Choose currency');
+    await expect(trigger).toHaveAttribute('title', 'Trigger title');
+    await userEvent.click(trigger);
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+      'dialog',
+      { name: 'Available currencies' },
+    );
+    const options = within(dialog).getByTitle('Options title');
+    const search = within(dialog).getByRole('searchbox', {
+      name: 'Find a currency',
+    });
+
+    await expect(dialog).toHaveAttribute('title', 'Popup title');
+    await expect(options.tagName).toBe('SECTION');
+    await expect(options).toHaveAttribute('aria-label', 'Options wrapper');
+    const listbox = within(dialog).getByRole('listbox', {
+      name: 'Supported currencies',
+    });
+
+    await expect(listbox).toHaveAttribute('aria-label', 'Supported currencies');
+    await expect(listbox).not.toHaveAttribute('aria-labelledby');
+    await expect(options).toHaveAttribute('data-options-render', 'native');
+    await expect(search).toHaveAttribute('title', 'Search title');
+    await expect(search).toHaveAttribute('data-search-render', 'native');
+    await expect(nativeSearchRef.current).toBe(search);
+    await waitFor(() => expect(search).toHaveFocus());
+    await userEvent.type(search, 'EUR');
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(trigger).toHaveTextContent('EUR');
+    await expect(nativeSearchRef.current).toBeNull();
+  },
+};
+
+export const ListLabelUsesTitleThenTrigger: Story = {
+  render: () => <CurrencyPickerListLabelExample />,
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Billing currency',
+    });
+
+    await userEvent.click(trigger);
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+      'dialog',
+      { name: 'Currency options' },
+    );
+    const listbox = within(dialog).getByRole('listbox', {
+      name: 'Billing currencies',
+    });
+    const title = within(dialog).getByText('Billing currencies');
+    const options = within(dialog).getByLabelText('Currency options wrapper');
+
+    await expect(listbox).toHaveAttribute('aria-labelledby', title.id);
+    await expect(listbox).not.toHaveAttribute('aria-label');
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Hide title' }),
+    );
+    await waitFor(() =>
+      expect(listbox).toHaveAccessibleName('Billing currency'),
+    );
+    await expect(listbox).toHaveAttribute('aria-labelledby', trigger.id);
+    await expect(options).toHaveAttribute(
+      'aria-label',
+      'Currency options wrapper',
+    );
+    await userEvent.click(
+      within(listbox).getByRole('option', { name: 'Euro (EUR)' }),
+    );
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(trigger).toHaveTextContent('EUR');
+  },
 };
