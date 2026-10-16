@@ -1,5 +1,4 @@
 import { AdvancedFilterSidePanelRecordFilterColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterColumn';
-import { AdvancedFilterSidePanelUnresolvedRecordFilterColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelUnresolvedRecordFilterColumn';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
@@ -32,13 +31,10 @@ export const AdvancedFilterSidePanelRecordFilterGroupChildren = ({
   recordFilterGroupId,
 }: AdvancedFilterSidePanelRecordFilterGroupChildrenProps) => {
   const { readonly } = useContext(AdvancedFilterContext);
-  const {
-    currentRecordFilterGroup,
-    childRecordFilters,
-    childUnresolvedRecordFilters,
-  } = useChildRecordFiltersAndRecordFilterGroups({
-    recordFilterGroupId,
-  });
+  const { currentRecordFilterGroup, childRecordFilters } =
+    useChildRecordFiltersAndRecordFilterGroups({
+      recordFilterGroupId,
+    });
 
   if (!currentRecordFilterGroup) {
     return null;
@@ -58,18 +54,6 @@ export const AdvancedFilterSidePanelRecordFilterGroupChildren = ({
           recordFilterGroup={currentRecordFilterGroup}
         />
       ))}
-      {childUnresolvedRecordFilters.map(
-        (unresolvedRecordFilter, unresolvedRecordFilterIndex) => (
-          <AdvancedFilterSidePanelUnresolvedRecordFilterColumn
-            key={unresolvedRecordFilter.id}
-            recordFilterGroup={currentRecordFilterGroup}
-            unresolvedRecordFilter={unresolvedRecordFilter}
-            recordFilterIndex={
-              childRecordFilters.length + unresolvedRecordFilterIndex
-            }
-          />
-        ),
-      )}
       {!readonly && (
         <AdvancedFilterAddFilterRuleSelect
           recordFilterGroup={currentRecordFilterGroup}

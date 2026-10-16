@@ -1,8 +1,6 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
-import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,10 +18,6 @@ export const useChildRecordFiltersAndRecordFilterGroups = ({
     currentRecordFilterGroupsComponentState,
   );
 
-  const unresolvedRecordFilters = useAtomComponentStateValue(
-    unresolvedRecordFiltersComponentState,
-  );
-
   const currentRecordFilterGroup = currentRecordFilterGroups.find(
     (recordFilterGroup) => recordFilterGroup.id === recordFilterGroupId,
   );
@@ -36,7 +30,6 @@ export const useChildRecordFiltersAndRecordFilterGroups = ({
       >,
       childRecordFilters: [] as RecordFilter[],
       childRecordFilterGroups: [] as RecordFilterGroup[],
-      childUnresolvedRecordFilters: [] as PersistedRecordFilter[],
       lastChildPosition: 0,
     };
   }
@@ -61,26 +54,16 @@ export const useChildRecordFiltersAndRecordFilterGroups = ({
     return positionA - positionB;
   });
 
-  const childUnresolvedRecordFilters = unresolvedRecordFilters.filter(
-    (unresolvedRecordFilter) =>
-      unresolvedRecordFilter.recordFilterGroupId ===
-      currentRecordFilterGroup.id,
-  );
-
-  const lastChildPosition = Math.max(
-    0,
-    ...[
-      ...childRecordFiltersAndRecordFilterGroups,
-      ...childUnresolvedRecordFilters,
-    ].map((child) => child.positionInRecordFilterGroup ?? 0),
-  );
+  const lastChildPosition =
+    childRecordFiltersAndRecordFilterGroups[
+      childRecordFiltersAndRecordFilterGroups.length - 1
+    ]?.positionInRecordFilterGroup ?? 0;
 
   return {
     currentRecordFilterGroup,
     childRecordFiltersAndRecordFilterGroups,
     childRecordFilters,
     childRecordFilterGroups,
-    childUnresolvedRecordFilters,
     lastChildPosition,
   };
 };

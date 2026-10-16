@@ -1,10 +1,12 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { attachUngroupedRecordFiltersToRootRecordFilterGroup } from '@/object-record/record-filter-group/utils/attachUngroupedRecordFiltersToRootRecordFilterGroup';
+import { removeEmptyRecordFilterGroups } from '@/object-record/record-filter-group/utils/removeEmptyRecordFilterGroups';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-filter/utils/hydrateRecordFiltersFromFieldMetadata';
+import { pointChartRecordFiltersAtMorphRelationFields } from '@/side-panel/pages/page-layout/utils/pointChartRecordFiltersAtMorphRelationFields';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -57,7 +59,10 @@ export const WorkflowFindRecordsFiltersEffect = ({
 
     const { recordFilters: persistedRecordFilters, recordFilterGroups } =
       attachUngroupedRecordFiltersToRootRecordFilterGroup({
-        recordFilters: defaultValue.recordFilters ?? [],
+        recordFilters: pointChartRecordFiltersAtMorphRelationFields({
+          recordFilters: defaultValue.recordFilters ?? [],
+          fieldMetadataItems: flattenedFieldMetadataItems,
+        }),
         recordFilterGroups: defaultValue.recordFilterGroups ?? [],
       });
 
@@ -69,7 +74,9 @@ export const WorkflowFindRecordsFiltersEffect = ({
 
     setCurrentRecordFilters(recordFilters);
     setUnresolvedRecordFilters(unresolvedRecordFilters);
-    setCurrentRecordFilterGroups(recordFilterGroups);
+    setCurrentRecordFilterGroups(
+      removeEmptyRecordFilterGroups({ recordFilters, recordFilterGroups }),
+    );
     setShouldSetAdvancedFilterDropdownStates(true);
     setHasInitializedCurrentRecordFilters(true);
   }, [

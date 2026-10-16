@@ -3,10 +3,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { dehydrateRecordFilters } from '@/object-record/record-filter/utils/dehydrateRecordFilters';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
+import { WorkflowFindRecordsDeletedFieldsWarning } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsDeletedFieldsWarning';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 
@@ -30,10 +30,6 @@ export const WorkflowFindRecordsFilters = ({
     currentRecordFiltersComponentState,
   );
 
-  const unresolvedRecordFilters = useAtomComponentStateCallbackState(
-    unresolvedRecordFiltersComponentState,
-  );
-
   const store = useStore();
 
   const onUpdate = useCallback(() => {
@@ -43,28 +39,22 @@ export const WorkflowFindRecordsFilters = ({
 
     const newFilter = {
       recordFilterGroups: existingRecordFilterGroups,
-      recordFilters: [
-        ...dehydrateRecordFilters(existingRecordFilters),
-        ...store.get(unresolvedRecordFilters),
-      ],
+      recordFilters: dehydrateRecordFilters(existingRecordFilters),
     } satisfies FindRecordsActionFilter;
 
     onChange(newFilter);
-  }, [
-    currentRecordFilterGroups,
-    currentRecordFilters,
-    unresolvedRecordFilters,
-    onChange,
-    store,
-  ]);
+  }, [currentRecordFilterGroups, currentRecordFilters, onChange, store]);
 
   return (
-    <AdvancedFilterSidePanelContainer
-      objectMetadataItem={objectMetadataItem}
-      onUpdate={readonly ? undefined : onUpdate}
-      VariablePicker={WorkflowVariablePicker}
-      readonly={readonly}
-      isWorkflowFindRecords={true}
-    />
+    <>
+      {!readonly && <WorkflowFindRecordsDeletedFieldsWarning />}
+      <AdvancedFilterSidePanelContainer
+        objectMetadataItem={objectMetadataItem}
+        onUpdate={readonly ? undefined : onUpdate}
+        VariablePicker={WorkflowVariablePicker}
+        readonly={readonly}
+        isWorkflowFindRecords={true}
+      />
+    </>
   );
 };
