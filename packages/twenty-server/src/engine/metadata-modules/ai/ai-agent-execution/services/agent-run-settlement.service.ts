@@ -1,34 +1,24 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleDestroy } from '@nestjs/common';
 
+import type { Redis } from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { RUN_AGENT_SETTLED_RUN_POLL_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-settled-run-poll-interval-ms.const';
 import { RUN_AGENT_SETTLED_RUN_TTL_SECONDS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-settled-run-ttl-seconds.const';
 import { type SettledAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/settled-agent-run.type';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 
 const getSettledRunKey = (runId: string) => `agent-run-settled:${runId}`;
 
-const waitAtMost = <TValue>({
-  promise,
-  timeoutMs,
-}: {
-  promise: Promise<TValue>;
-  timeoutMs: number;
-}): Promise<TValue | null> => {
-  let timeout: NodeJS.Timeout | undefined;
-
-  return Promise.race([
-    promise,
-    new Promise<null>((resolve) => {
-      timeout = setTimeout(() => resolve(null), timeoutMs);
-    }),
-  ]).finally(() => clearTimeout(timeout));
-};
-
+// One subscriber connection per process carries every waiting call's channel
 @Injectable()
-export class AgentRunSettlementService {
+export class AgentRunSettlementService implements OnModuleDestroy {
   private readonly logger = new Logger(AgentRunSettlementService.name);
+  private subscriber: Redis | null = null;
+  private readonly waiters = new Map<
+    string,
+    (settledRun: SettledAgentRun) => void
+  >();
 
   constructor(private readonly redisClientService: RedisClientService) {}
 
@@ -39,16 +29,18 @@ export class AgentRunSettlementService {
     runId: string;
     settledRun: SettledAgentRun;
   }): Promise<void> {
+    const key = getSettledRunKey(runId);
+    const payload = JSON.stringify(settledRun);
+
     await this.redisClientService
       .getClient()
-      .set(
-        getSettledRunKey(runId),
-        JSON.stringify(settledRun),
-        'EX',
-        RUN_AGENT_SETTLED_RUN_TTL_SECONDS,
-      );
+      .multi()
+      .set(key, payload, 'EX', RUN_AGENT_SETTLED_RUN_TTL_SECONDS)
+      .publish(key, payload)
+      .exec();
   }
 
+  // Redis queues commands while it is down, so only the timer decides when the call stops waiting
   async waitFor({
     runId,
     timeoutMs,
@@ -56,48 +48,51 @@ export class AgentRunSettlementService {
     runId: string;
     timeoutMs: number;
   }): Promise<SettledAgentRun | null> {
-    const deadline = Date.now() + timeoutMs;
+    const key = getSettledRunKey(runId);
+    let timeout: NodeJS.Timeout | undefined;
 
-    while (Date.now() < deadline) {
-      // Redis queues commands while it is down, so a read cannot hold the call past its deadline
-      const settledRun = await waitAtMost({
-        promise: this.read(runId),
-        timeoutMs: deadline - Date.now(),
-      });
+    const settledRun = new Promise<SettledAgentRun | null>((resolve) => {
+      this.waiters.set(key, resolve);
+      timeout = setTimeout(() => resolve(null), timeoutMs);
+    });
 
-      if (isDefined(settledRun)) {
-        return settledRun;
-      }
-
-      await new Promise((resolve) =>
-        setTimeout(
-          resolve,
-          Math.min(
-            RUN_AGENT_SETTLED_RUN_POLL_INTERVAL_MS,
-            deadline - Date.now(),
-          ),
+    // a run that settled before the subscription took is read from its key
+    this.ensureSubscriber()
+      .subscribe(key)
+      .then(() => this.redisClientService.getClient().get(key))
+      .then((payload) => {
+        if (isDefined(payload)) {
+          this.waiters.get(key)?.(JSON.parse(payload) as SettledAgentRun);
+        }
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not wait for run ${runId} to settle: ${formatErrorWithCause(error)}`,
         ),
       );
-    }
 
-    return null;
+    try {
+      return await settledRun;
+    } finally {
+      clearTimeout(timeout);
+      this.waiters.delete(key);
+      this.subscriber?.unsubscribe(key).catch(() => {});
+    }
   }
 
-  private async read(runId: string): Promise<SettledAgentRun | null> {
-    try {
-      const payload = await this.redisClientService
-        .getClient()
-        .get(getSettledRunKey(runId));
+  async onModuleDestroy(): Promise<void> {
+    await this.subscriber?.quit().catch(() => {});
+    this.subscriber = null;
+  }
 
-      return isDefined(payload)
-        ? (JSON.parse(payload) as SettledAgentRun)
-        : null;
-    } catch (error) {
-      this.logger.warn(
-        `Could not read how run ${runId} settled: ${error instanceof Error ? error.message : String(error)}`,
+  private ensureSubscriber(): Redis {
+    if (!isDefined(this.subscriber)) {
+      this.subscriber = this.redisClientService.getClient().duplicate();
+      this.subscriber.on('message', (channel: string, payload: string) =>
+        this.waiters.get(channel)?.(JSON.parse(payload) as SettledAgentRun),
       );
-
-      return null;
     }
+
+    return this.subscriber;
   }
 }

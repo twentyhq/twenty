@@ -221,19 +221,16 @@ export class AgentToolsetService {
         };
       }
       case 'catalog': {
-        const allowedCategories = new Set(registryAccess.categories);
-        const excludedToolNames = new Set(registryAccess.excludedToolNames);
-        const toolCatalog = (
-          await this.toolRegistry.buildToolIndex(workspaceId, {
+        const toolCatalog = await this.toolRegistry.buildToolIndex(
+          workspaceId,
+          {
             userId,
             userWorkspaceId,
             rolePermissionConfig: toolContext.rolePermissionConfig,
             application: toolContext.application,
-          })
-        ).filter(
-          (entry) =>
-            allowedCategories.has(entry.category) &&
-            !excludedToolNames.has(entry.name),
+            categories: [...registryAccess.categories],
+            excludeTools: new Set(registryAccess.excludedToolNames),
+          },
         );
         const catalogToolNames = new Set(
           toolCatalog.map((entry) => entry.name),

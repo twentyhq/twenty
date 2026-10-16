@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type AgentStepLoop,
@@ -23,12 +21,12 @@ import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/typ
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 
-export type AgentTurnContext = Pick<
+type AgentTurnContext = Pick<
   AgentStepLoopInput,
   'systemPrompt' | 'contextMessages' | 'messages'
 >;
 
-export type AgentTurnInput = Omit<
+type AgentTurnInput = Omit<
   AgentStepLoopInput,
   | 'registeredModel'
   | 'modelConfig'
@@ -40,7 +38,7 @@ export type AgentTurnInput = Omit<
   | 'providerOptions'
 > & {
   workspace?: WorkspaceEntity;
-  modelId?: string;
+  modelId: string;
   // the model's own native tools when nativeToolOptions is absent
   toolset: Omit<AgentToolsetInput, 'registeredModel' | 'nativeToolOptions'> & {
     nativeToolOptions?: NativeModelToolOptions;
@@ -50,7 +48,7 @@ export type AgentTurnInput = Omit<
     modelConfig: AiModelConfig;
     toolset: AgentToolset;
   }) => Promise<AgentTurnContext>;
-  promptCacheKey?: string;
+  promptCacheKey: string;
   shouldIncludeReasoningSummary?: boolean;
 };
 
@@ -80,12 +78,10 @@ export class AgentTurnService {
     shouldIncludeReasoningSummary = false,
     ...loopInput
   }: AgentTurnInput): Promise<AgentTurn> {
-    if (isDefined(modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(modelId);
-    }
+    this.aiModelRegistryService.validateModelAvailability(modelId);
 
     const registeredModel = this.aiModelRegistryService.resolveModelForAgent(
-      isDefined(modelId) ? { modelId } : null,
+      { modelId },
       workspace,
     );
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(

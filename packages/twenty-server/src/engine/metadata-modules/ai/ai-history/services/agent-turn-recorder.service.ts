@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AGENT_TURN_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-credits-exhausted-error.constant';
 import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -238,7 +239,7 @@ export class AgentTurnRecorderService {
       })
       .catch((error: unknown) =>
         this.logger.warn(
-          `Could not record the usage of turn ${turnId}: ${error instanceof Error ? error.message : String(error)}`,
+          `Could not record the usage of turn ${turnId}: ${formatErrorWithCause(error)}`,
         ),
       );
   }
