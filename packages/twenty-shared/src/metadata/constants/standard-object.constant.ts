@@ -152,6 +152,9 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIdIndex: {
         universalIdentifier: '898aa202-428f-4a7a-a3b3-8f0a17a6658e',
       },
+      callRecordingIdUniqueIndex: {
+        universalIdentifier: '539f2d15-5b82-4c0a-a011-9a460037aacd',
+      },
     },
     views: {
       allCalendarEventParticipants: buildStandardObjectIndexView({

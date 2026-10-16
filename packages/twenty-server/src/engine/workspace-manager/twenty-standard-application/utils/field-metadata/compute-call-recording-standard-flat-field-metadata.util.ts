@@ -602,6 +602,37 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  calendarEventParticipants: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'calendarEventParticipants',
+      label: i18nLabel(
+        msg({
+          message: `Calendar event participants`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Calendar participants representing the recording bot`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconCalendar',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'calendarEventParticipant',
+      targetFieldName: 'callRecording',
+      settings: { relationType: RelationType.ONE_TO_MANY },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   position: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

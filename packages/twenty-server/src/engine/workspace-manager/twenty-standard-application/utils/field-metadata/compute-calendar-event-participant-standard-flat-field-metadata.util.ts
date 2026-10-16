@@ -235,6 +235,62 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  applicationId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'applicationId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(
+        msg({ message: `Application ID`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Installed app participating in the calendar event`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconApps',
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  callRecording: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'callRecording',
+      label: i18nLabel(
+        msg({ message: `Call recording`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Call recording managed by this participant`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconVideo',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'callRecording',
+      targetFieldName: 'calendarEventParticipants',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'callRecordingId',
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   handle: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

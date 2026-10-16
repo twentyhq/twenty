@@ -572,6 +572,12 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant,
     ),
+    applicationId: {
+      universalIdentifier: 'a5528f94-685d-4dc1-8ada-c2d83c9c66a1',
+    },
+    callRecording: {
+      universalIdentifier: '9eee5a85-d254-4d95-99ba-97ec33a89fbd',
+    },
     calendarEvent: {
       universalIdentifier: '20202020-fe3a-401c-b889-af4f4657a861',
     },
@@ -730,6 +736,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     calendarEvent: {
       universalIdentifier: '49e64b28-bd98-4775-80ea-4781bdd45e35',
+    },
+    calendarEventParticipants: {
+      universalIdentifier: 'fc69a6a4-4c94-4224-926f-f4435d20fe42',
     },
   },
   company: {

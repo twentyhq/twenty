@@ -109,15 +109,12 @@ export const EventCardCalendarEvent = ({
       startsAt: true,
       endsAt: true,
       calendarEventParticipants: {
+        id: true,
+        applicationId: true,
         person: true,
         workspaceMember: true,
         handle: true,
         displayName: true,
-      },
-      callRecordings: {
-        id: true,
-        status: true,
-        applicationId: true,
       },
     },
   });
@@ -192,11 +189,9 @@ export const EventCardCalendarEvent = ({
           <StyledCalendarEventTitle>
             {calendarEvent.title}
           </StyledCalendarEventTitle>
-          {(isNonEmptyArray(calendarEvent.calendarEventParticipants) ||
-            isNonEmptyArray(calendarEvent.callRecordings)) && (
+          {isNonEmptyArray(calendarEvent.calendarEventParticipants) && (
             <CalendarEventParticipantsAvatarGroup
               participants={calendarEvent.calendarEventParticipants ?? []}
-              callRecordings={calendarEvent.callRecordings ?? []}
             />
           )}
         </StyledCalendarEventTop>

@@ -4,6 +4,12 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 @ObjectType('TimelineCalendarEventParticipant')
 export class TimelineCalendarEventParticipantDTO {
+  @Field(() => UUIDScalarType)
+  id: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId: string | null;
+
   @Field(() => UUIDScalarType, { nullable: true })
   personId: string | null;
 

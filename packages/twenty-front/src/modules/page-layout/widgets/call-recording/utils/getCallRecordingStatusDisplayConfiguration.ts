@@ -5,7 +5,7 @@ import {
   isCallRecordingTranscriptStatusMarker,
   isDefined,
 } from 'twenty-shared/utils';
-import { CallRecordingStatus } from '~/generated/graphql';
+import { CallRecordingStatus } from 'twenty-shared/types';
 
 export type CallRecordingArtifactType = 'summary' | 'transcript';
 

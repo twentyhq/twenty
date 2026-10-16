@@ -1,5 +1,4 @@
-import { CalendarEventCallRecorderAvatar } from '@/activities/calendar/components/CalendarEventCallRecorderAvatar';
-import { type CalendarEventCallRecording } from '@/activities/calendar/types/CalendarEventCallRecording';
+import { AppChip } from '@/applications/components/AppChip';
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { isTimelineCalendarEventParticipant } from '@/activities/calendar/types/guards/IsTimelineCalendarEventParticipant';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -11,12 +10,10 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type CalendarEventParticipantsAvatarGroupProps = {
   participants: CalendarEventParticipant[] | TimelineCalendarEventParticipant[];
-  callRecordings?: CalendarEventCallRecording[];
 };
 
 export const CalendarEventParticipantsAvatarGroup = ({
   participants,
-  callRecordings = [],
 }: CalendarEventParticipantsAvatarGroupProps) => {
   const timelineParticipants: TimelineCalendarEventParticipant[] =
     participants.map((participant) => {
@@ -24,6 +21,8 @@ export const CalendarEventParticipantsAvatarGroup = ({
         return participant;
       } else {
         return {
+          id: participant.id,
+          applicationId: participant.applicationId ?? null,
           personId: participant.person?.id ?? null,
           workspaceMemberId: participant.workspaceMember?.id ?? null,
           firstName:
@@ -53,15 +52,26 @@ export const CalendarEventParticipantsAvatarGroup = ({
 
   return (
     <AvatarGroup
-      avatars={[
-        ...callRecordings.map((callRecording) => (
-          <CalendarEventCallRecorderAvatar
-            key={callRecording.id}
-            applicationId={callRecording.applicationId}
-            status={callRecording.status}
-          />
-        )),
-        ...timelineParticipants.map((participant) => {
+      avatars={timelineParticipants
+        .toSorted(
+          (firstParticipant, secondParticipant) =>
+            Number(isDefined(secondParticipant.applicationId)) -
+            Number(isDefined(firstParticipant.applicationId)),
+        )
+        .map((participant) => {
+          if (isDefined(participant.applicationId)) {
+            return (
+              <AppChip
+                key={participant.id}
+                applicationId={participant.applicationId}
+                fallbackApplicationData={{ name: participant.displayName }}
+                size="md"
+                rounded
+                chipOnly
+              />
+            );
+          }
+
           const participantName =
             isNonEmptyString(participant.firstName) &&
             isNonEmptyString(participant.lastName)
@@ -70,9 +80,7 @@ export const CalendarEventParticipantsAvatarGroup = ({
 
           return (
             <Avatar
-              key={[participant.workspaceMemberId, participant.displayName]
-                .filter(isDefined)
-                .join('-')}
+              key={participant.id}
               src={getAbsoluteImageUrl(participant.avatarUrl)}
               name={participantName}
               imageProps={{ alt: participantName }}
@@ -82,8 +90,7 @@ export const CalendarEventParticipantsAvatarGroup = ({
               shape="circle"
             />
           );
-        }),
-      ]}
+        })}
     />
   );
 };

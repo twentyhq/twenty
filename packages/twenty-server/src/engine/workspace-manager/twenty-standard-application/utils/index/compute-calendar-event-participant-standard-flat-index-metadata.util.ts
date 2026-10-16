@@ -19,6 +19,19 @@ export const buildCalendarEventParticipantStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'calendarEventParticipant'>,
   FlatIndexMetadata
 > => ({
+  callRecordingIdUniqueIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'callRecordingIdUniqueIndex',
+      relatedFieldNames: ['callRecording'],
+      isUnique: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   calendarEventIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

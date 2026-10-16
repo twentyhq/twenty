@@ -3,6 +3,7 @@ import { type WorkspaceMember } from '~/generated-metadata/graphql';
 
 export type CalendarEventParticipant = {
   id: string;
+  applicationId?: string | null;
   handle: string;
   isOrganizer: boolean;
   displayName: string;

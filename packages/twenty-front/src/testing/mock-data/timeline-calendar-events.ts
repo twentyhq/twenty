@@ -1,6 +1,5 @@
 import {
   CalendarChannelVisibility,
-  CallRecordingStatus,
   type TimelineCalendarEvent,
 } from '~/generated/graphql';
 
@@ -24,6 +23,8 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     participants: [
       {
         __typename: 'TimelineCalendarEventParticipant',
+        id: '09cbaecc-c365-4cc6-8b51-5def13a82a79',
+        applicationId: null,
         personId: null,
         workspaceMemberId: '20202020-78c5-4cbb-87a8-f9cd3ad4d8af',
         firstName: 'Tim',
@@ -34,6 +35,8 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
       },
       {
         __typename: 'TimelineCalendarEventParticipant',
+        id: '86a69764-b2df-4a22-9ccc-6c5c1d78ca04',
+        applicationId: null,
         personId: null,
         workspaceMemberId: '20202020-3cf7-453e-a5f4-28f8412e70f0',
         firstName: 'Jane',
@@ -42,13 +45,17 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
         avatarUrl: '',
         handle: 'jane@apple.dev',
       },
-    ],
-    callRecordings: [
       {
-        __typename: 'TimelineCalendarEventCallRecording',
+        __typename: 'TimelineCalendarEventParticipant',
         id: '20202020-9f2c-4a1a-9c5d-2f6a1b3c4d5e',
-        status: CallRecordingStatus.COMPLETED,
-        applicationId: null,
+        applicationId: '20202020-0000-4000-8000-000000000001',
+        personId: null,
+        workspaceMemberId: null,
+        firstName: '',
+        lastName: '',
+        displayName: 'Call recorder',
+        avatarUrl: '',
+        handle: 'Call recorder',
       },
     ],
   },
@@ -71,6 +78,8 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     participants: [
       {
         __typename: 'TimelineCalendarEventParticipant',
+        id: '36406053-6083-4eaf-96df-27ac317e99bd',
+        applicationId: null,
         personId: null,
         workspaceMemberId: '20202020-78c5-4cbb-87a8-f9cd3ad4d8af',
         firstName: 'Tim',
@@ -80,7 +89,6 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
         handle: 'tim@apple.dev',
       },
     ],
-    callRecordings: [],
   },
   {
     __typename: 'TimelineCalendarEvent',
@@ -101,6 +109,8 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     participants: [
       {
         __typename: 'TimelineCalendarEventParticipant',
+        id: '12ab5c1c-95d1-44ae-9d1d-1d883b306906',
+        applicationId: null,
         personId: null,
         workspaceMemberId: '20202020-78c5-4cbb-87a8-f9cd3ad4d8af',
         firstName: 'Tim',
@@ -109,13 +119,17 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
         avatarUrl: '',
         handle: 'tim@apple.dev',
       },
-    ],
-    callRecordings: [
       {
-        __typename: 'TimelineCalendarEventCallRecording',
+        __typename: 'TimelineCalendarEventParticipant',
         id: '20202020-7b1e-4d3a-8f2c-1a9b8c7d6e5f',
-        status: CallRecordingStatus.SCHEDULED,
-        applicationId: null,
+        applicationId: '20202020-0000-4000-8000-000000000001',
+        personId: null,
+        workspaceMemberId: null,
+        firstName: '',
+        lastName: '',
+        displayName: 'Call recorder',
+        avatarUrl: '',
+        handle: 'Call recorder',
       },
     ],
   },

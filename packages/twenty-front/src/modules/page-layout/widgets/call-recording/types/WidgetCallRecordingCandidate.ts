@@ -1,5 +1,5 @@
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type CallRecordingStatus } from '~/generated/graphql';
+import { type CallRecordingStatus } from 'twenty-shared/types';
 
 export type WidgetCallRecordingCandidate = {
   __typename: 'CallRecording';

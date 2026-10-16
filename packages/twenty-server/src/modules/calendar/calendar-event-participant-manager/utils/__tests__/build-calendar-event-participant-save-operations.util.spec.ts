@@ -112,4 +112,36 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
       'existing-participant-id',
     ]);
   });
+  it('preserves application participants missing from the calendar provider', () => {
+    const operations = buildCalendarEventParticipantSaveOperations({
+      fetchedParticipants: [],
+      existingParticipants: [
+        buildExistingParticipant({ applicationId: 'application-id' }),
+      ],
+      shouldSkipUnchangedParticipants: true,
+    });
+
+    expect(operations).toEqual({
+      participantsToInsert: [],
+      participantsToUpdate: [],
+      participantIdsToDelete: [],
+    });
+  });
+
+  it('keeps application and provider participants distinct when their handles match', () => {
+    const fetchedParticipant = buildFetchedParticipant();
+    const operations = buildCalendarEventParticipantSaveOperations({
+      fetchedParticipants: [fetchedParticipant],
+      existingParticipants: [
+        buildExistingParticipant({ applicationId: 'application-id' }),
+      ],
+      shouldSkipUnchangedParticipants: false,
+    });
+
+    expect(operations.participantsToInsert).toEqual([
+      { ...fetchedParticipant, id: expect.any(String) },
+    ]);
+    expect(operations.participantsToUpdate).toEqual([]);
+    expect(operations.participantIdsToDelete).toEqual([]);
+  });
 });
