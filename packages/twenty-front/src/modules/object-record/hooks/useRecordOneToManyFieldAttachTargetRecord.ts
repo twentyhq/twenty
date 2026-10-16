@@ -7,6 +7,7 @@ import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRecordOneToManyFieldAttachTargetRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -40,18 +41,18 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
 
     if (!targetObjectMetadataItem) {
       throw new CustomError(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        `Could not find related object metadata for ${targetObjectNameSingular}`,
+        doNotTranslate(
+          `Could not find related object metadata for ${targetObjectNameSingular}`,
+        ),
         'RELATED_OBJECT_METADATA_NOT_FOUND',
       );
     }
 
     if (!sourceObjectMetadataItem) {
       throw new CustomError(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        `Could not find source object metadata for ${sourceObjectNameSingular}`,
+        doNotTranslate(
+          `Could not find source object metadata for ${sourceObjectNameSingular}`,
+        ),
         'SOURCE_OBJECT_METADATA_NOT_FOUND',
       );
     }
@@ -65,9 +66,7 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
     });
 
     if (!cachedTargetRecord) {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('Could not find cached related record');
+      throw new Error(doNotTranslate('Could not find cached related record'));
     }
 
     const previousRecordId = cachedTargetRecord?.[`${targetGQLFieldName}Id`];
@@ -110,9 +109,7 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
       objectNameSingular: targetObjectNameSingular,
       idToUpdate: targetRecordId,
       updateOneRecordInput: {
-        // Metadata and protocol identifiers must stay stable across locales.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        [`${targetGQLFieldName}Id`]: sourceRecordId,
+        [doNotTranslate(`${targetGQLFieldName}Id`)]: sourceRecordId,
       },
     });
   };

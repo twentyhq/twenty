@@ -1,4 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const mapSoftDeleteFieldsToGraphQLQuery = (
   objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'readableFields'>,
@@ -12,10 +13,8 @@ export const mapSoftDeleteFieldsToGraphQLQuery = (
         softDeleteFields.indexOf(a.name) - softDeleteFields.indexOf(b.name),
     );
 
-  // Generated GraphQL syntax must stay stable across locales.
-  // oxlint-disable-next-line lingui/no-unlocalized-strings
-  return `{
+  return doNotTranslate(`{
       __typename
       ${fieldsThatShouldBeQueried.map((field) => field.name).join('\n')}
-    }`;
+    }`);
 };

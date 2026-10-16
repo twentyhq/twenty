@@ -14,6 +14,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useDuplicatePageLayoutWidget = (
@@ -61,8 +62,7 @@ export const useDuplicatePageLayoutWidget = (
         .find((widget) => widget.id === widgetId);
 
       if (!isDefined(sourceWidget)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error(`Widget with id ${widgetId} not found`);
+        throw new Error(doNotTranslate(`Widget with id ${widgetId} not found`));
       }
 
       const sourceTab = pageLayoutDraft.tabs.find(
@@ -71,8 +71,9 @@ export const useDuplicatePageLayoutWidget = (
 
       if (!isDefined(sourceTab)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          `Tab with id ${sourceWidget.pageLayoutTabId} not found`,
+          doNotTranslate(
+            `Tab with id ${sourceWidget.pageLayoutTabId} not found`,
+          ),
         );
       }
 
@@ -105,8 +106,9 @@ export const useDuplicatePageLayoutWidget = (
       );
 
       if (!isDefined(sourceLayout)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error(`Layout for widget ${widgetId} not found`);
+        throw new Error(
+          doNotTranslate(`Layout for widget ${widgetId} not found`),
+        );
       }
 
       const maxY = currentTabDesktopLayouts.reduce(

@@ -9,6 +9,7 @@ import {
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const useListenToEventsForQuery = ({
@@ -45,10 +46,14 @@ export const useListenToEventsForQuery = ({
 
     const captureResyncError = (error: unknown) => {
       captureException(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a stable event-stream diagnostic reported to Sentry.
-        new Error(`Failed to resync "${queryId}" after SSE reconnection`, {
-          cause: error,
-        }),
+        new Error(
+          doNotTranslate(
+            `Failed to resync "${queryId}" after SSE reconnection`,
+          ),
+          {
+            cause: error,
+          },
+        ),
       );
     };
 

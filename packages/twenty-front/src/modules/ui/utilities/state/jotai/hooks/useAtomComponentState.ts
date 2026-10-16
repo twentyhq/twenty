@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useAtomComponentState = <StateType>(
   componentState: ComponentState<StateType>,
@@ -17,8 +18,9 @@ export const useAtomComponentState = <StateType>(
 
   if (!componentInstanceContext) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing component state is a developer invariant diagnostic.
-      `Instance context for key "${componentState.key}" is not defined`,
+      doNotTranslate(
+        `Instance context for key "${componentState.key}" is not defined`,
+      ),
     );
   }
 

@@ -6,10 +6,10 @@ import styles from '../Dropdown.module.scss';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
 import { DropdownActionItem } from './DropdownActionItem';
 import { useDropdownContext } from './useDropdownContext';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const DropdownBack = ({
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass translated children; this preserves the public UI fallback.
-  children = 'Back',
+  children = doNotTranslate('Back'),
   className,
   onClick,
   ...props

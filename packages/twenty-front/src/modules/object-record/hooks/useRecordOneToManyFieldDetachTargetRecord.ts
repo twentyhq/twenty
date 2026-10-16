@@ -6,6 +6,7 @@ import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRecordOneToManyFieldDetachTargetRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -37,18 +38,18 @@ export const useRecordOneToManyFieldDetachTargetRecord = () => {
 
     if (!targetObjectMetadataItem) {
       throw new CustomError(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        `Could not find related object metadata for ${targetObjectNameSingular}`,
+        doNotTranslate(
+          `Could not find related object metadata for ${targetObjectNameSingular}`,
+        ),
         'RELATED_OBJECT_METADATA_NOT_FOUND',
       );
     }
 
     if (!sourceObjectMetadataItem) {
       throw new CustomError(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        `Could not find source object metadata for ${sourceObjectNameSingular}`,
+        doNotTranslate(
+          `Could not find source object metadata for ${sourceObjectNameSingular}`,
+        ),
         'SOURCE_OBJECT_METADATA_NOT_FOUND',
       );
     }
@@ -87,9 +88,7 @@ export const useRecordOneToManyFieldDetachTargetRecord = () => {
       objectNameSingular: targetObjectNameSingular,
       idToUpdate: targetRecordId,
       updateOneRecordInput: {
-        // Metadata and protocol identifiers must stay stable across locales.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        [`${targetGQLFieldName}Id`]: null,
+        [doNotTranslate(`${targetGQLFieldName}Id`)]: null,
       },
     });
   };

@@ -1,5 +1,6 @@
 import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getStepItemIcon = ({
   itemType,
@@ -15,8 +16,7 @@ export const getStepItemIcon = ({
     itemType === FieldMetadataType.NUMERIC ||
     itemType === FieldMetadataType.NUMBER
   ) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This value names an icon in the icon dictionary.
-    return 'Icon123';
+    return doNotTranslate('Icon123');
   }
 
   if (itemType === 'boolean' || itemType === FieldMetadataType.BOOLEAN) {

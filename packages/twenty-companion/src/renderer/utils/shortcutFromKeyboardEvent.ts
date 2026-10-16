@@ -1,3 +1,5 @@
+import { doNotTranslate } from '../../shared/utils/doNotTranslate';
+
 type ShortcutKeyboardEvent = Pick<
   KeyboardEvent,
   'key' | 'code' | 'repeat' | 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'
@@ -16,14 +18,10 @@ export const shortcutFromKeyboardEvent = (
   else return null;
   // Electron accelerator modifiers are fixed parser tokens.
   return [
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    event.metaKey && 'Command',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    event.ctrlKey && 'Control',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    event.altKey && 'Alt',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    event.shiftKey && 'Shift',
+    event.metaKey && doNotTranslate('Command'),
+    event.ctrlKey && doNotTranslate('Control'),
+    event.altKey && doNotTranslate('Alt'),
+    event.shiftKey && doNotTranslate('Shift'),
     key,
   ]
     .filter(Boolean)

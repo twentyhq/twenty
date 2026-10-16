@@ -19,6 +19,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useDuplicatePageLayoutTab = ({
@@ -79,8 +80,7 @@ export const useDuplicatePageLayoutTab = ({
       );
 
       if (!isDefined(sourceTab)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error(`Tab with id ${tabId} not found`);
+        throw new Error(doNotTranslate(`Tab with id ${tabId} not found`));
       }
 
       const newTabId = uuidv4();

@@ -12,6 +12,7 @@ import { RESIZE_HANDLE_EDGES } from './internal/ResizeHandleEdges.constant';
 import { useResizeHandleInteraction } from './internal/useResizeHandleInteraction';
 import styles from './ResizeHandle.module.scss';
 import { type ResizeHandleProps } from './types/ResizeHandleProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const ResizeHandle = ({
   axis: requestedAxis = 'y',
@@ -48,8 +49,7 @@ export const ResizeHandle = ({
   const [value, setValue] = useControlled({
     controlled: controlledValue,
     default: defaultValue,
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Base UI uses this component name only in developer warnings.
-    name: 'ResizeHandle',
+    name: doNotTranslate('ResizeHandle'),
   });
   const boundedValue = clamp(value, min, max);
   const handleValueChange = (nextValue: number) => {
@@ -88,8 +88,7 @@ export const ResizeHandle = ({
     props: mergeProps<'div'>(interactionProps, props, {
       role: 'separator',
       tabIndex: disabled ? -1 : (props.tabIndex ?? 0),
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated aria-label; this preserves the public UI fallback.
-      'aria-label': props['aria-label'] ?? 'Resize',
+      'aria-label': props['aria-label'] ?? doNotTranslate('Resize'),
       'aria-orientation': axis === 'y' ? 'horizontal' : 'vertical',
       'aria-valuemin': min,
       'aria-valuemax': max,

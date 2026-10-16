@@ -24,6 +24,7 @@ import {
   isDefined,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconUserCircle } from 'twenty-ui/icon';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -256,9 +257,9 @@ export const ObjectFilterDropdownRecordSelect = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
+    throw new Error(
+      doNotTranslate('fieldMetadataItemUsedInFilterDropdown is not defined'),
+    );
   }
 
   // Nested relation filters pick records from the leaf relation's target object

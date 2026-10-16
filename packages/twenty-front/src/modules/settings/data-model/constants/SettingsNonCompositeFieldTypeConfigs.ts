@@ -35,6 +35,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
 
@@ -51,60 +52,58 @@ type SettingsNonCompositeFieldTypeConfigArray = Record<
 >;
 
 // TODO: can we derive this from backend definitions ?
-// Example records are fixed samples; visible field labels are MessageDescriptors.
-// oxlint-disable lingui/no-unlocalized-strings
 export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFieldTypeConfigArray =
   {
     [FieldMetadataType.UUID]: {
       label: msg({ message: `Unique ID`, context: 'Field type' }),
       Icon: IllustrationIconUid,
-      exampleValues: [
+      exampleValues: doNotTranslate([
         '00000000-0000-4000-8000-000000000000',
         '00000000-0000-4000-8000-000000000001',
         '00000000-0000-4000-8000-000000000003',
-      ],
+      ]),
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldUUidValue>,
     [FieldMetadataType.TEXT]: {
       label: msg({ message: `Text`, context: 'Field type' }),
       Icon: IllustrationIconText,
-      exampleValues: [
+      exampleValues: doNotTranslate([
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
         'Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
         'Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
-      ],
+      ]),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldTextValue>,
     [FieldMetadataType.NUMBER]: {
       label: msg({ message: `Number`, context: 'Field type' }),
       Icon: IllustrationIconNumbers,
-      exampleValues: [2000, 3000, 4000],
+      exampleValues: doNotTranslate([2000, 3000, 4000]),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
     [FieldMetadataType.BOOLEAN]: {
       label: msg({ message: `True/False`, context: 'Field type' }),
       Icon: IllustrationIconToggle,
-      exampleValues: [true, false, true],
+      exampleValues: doNotTranslate([true, false, true]),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldBooleanValue>,
     [FieldMetadataType.DATE_TIME]: {
       label: msg({ message: `Date and Time`, context: 'Field type' }),
       Icon: IllustrationIconCalendarTime,
-      exampleValues: [
+      exampleValues: doNotTranslate([
         DEFAULT_DATE_VALUE.toISOString(),
         '2025-06-10T12:01:00.000Z',
         '2018-07-14T12:02:00.000Z',
-      ],
+      ]),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldDateTimeValue>,
     [FieldMetadataType.DATE]: {
       label: msg({ message: `Date`, context: 'Field type' }),
       Icon: IllustrationIconCalendarEvent,
-      exampleValues: [
+      exampleValues: doNotTranslate([
         DEFAULT_DATE_VALUE.toISOString(),
         '2025-06-10T00:00:00.000Z',
         '2018-07-14T00:00:00.000Z',
-      ],
+      ]),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldDateValue>,
     [FieldMetadataType.SELECT]: {
@@ -130,26 +129,30 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
     [FieldMetadataType.RATING]: {
       label: msg({ message: `Rating`, context: 'Field type' }),
       Icon: IllustrationIconStar,
-      exampleValues: ['RATING_3', 'RATING_4', 'RATING_5'],
+      exampleValues: doNotTranslate(['RATING_3', 'RATING_4', 'RATING_5']),
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldRatingValue>,
     [FieldMetadataType.RAW_JSON]: {
       label: msg({ message: `JSON`, context: 'Field type' }),
       Icon: IllustrationIconJson,
-      exampleValues: [{ key: 'value1' }, { key: 'value2', key2: 'value2' }, {}],
+      exampleValues: doNotTranslate([
+        { key: 'value1' },
+        { key: 'value2', key2: 'value2' },
+        {},
+      ]),
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
     [FieldMetadataType.ARRAY]: {
       label: msg({ message: `Array`, context: 'Field type' }),
       Icon: IllustrationIconArray,
       category: 'Advanced',
-      exampleValues: [['value1', 'value2'], ['value3'], []],
+      exampleValues: doNotTranslate([['value1', 'value2'], ['value3'], []]),
     } as const satisfies SettingsFieldTypeConfig<FieldArrayValue>,
     [FieldMetadataType.FILES]: {
       label: msg({ message: `Files`, context: 'Field type' }),
       Icon: IllustrationIconFile,
       category: 'Basic',
-      exampleValues: [
+      exampleValues: doNotTranslate([
         [
           {
             fileId: 'file-1',
@@ -170,7 +173,6 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
           },
         ],
         [],
-      ],
+      ]),
     } as const satisfies SettingsFieldTypeConfig<FieldFilesValue[]>,
   };
-// oxlint-enable lingui/no-unlocalized-strings

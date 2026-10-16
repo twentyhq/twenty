@@ -29,6 +29,7 @@ import {
   type FieldTextMetadata,
   type FieldUuidMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type AssertFieldMetadataFunction = <
   E extends FieldMetadataType,
@@ -100,9 +101,9 @@ export const assertFieldMetadata: AssertFieldMetadataFunction = (
 
   if (!fieldTypeGuard(fieldDefinition) || fieldDefinitionType !== fieldType) {
     throw new Error(
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      `Trying to use a "${fieldDefinitionType}" field as a "${fieldType}" field. Verify that the field is defined as a type "${fieldDefinitionType}" field in assertFieldMetadata.ts.`,
+      doNotTranslate(
+        `Trying to use a "${fieldDefinitionType}" field as a "${fieldType}" field. Verify that the field is defined as a type "${fieldDefinitionType}" field in assertFieldMetadata.ts.`,
+      ),
     );
   } else {
     return;

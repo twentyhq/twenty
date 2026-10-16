@@ -14,6 +14,7 @@ import { getIsLastOnboardingStep } from '@/onboarding/utils/getIsLastOnboardingS
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
 import { useMediaQuery } from 'twenty-ui/utilities';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledCanvas = styled.canvas`
   animation: onboardingConstructionSiteIn 0.8s ease-out both;
@@ -54,8 +55,7 @@ export const OnboardingConstructionSite = () => {
   );
   const colorScheme = useThemeColorScheme();
   const prefersReducedMotion = useMediaQuery(
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a CSS value or browser media query, not UI copy.
-    '(prefers-reduced-motion: reduce)',
+    doNotTranslate('(prefers-reduced-motion: reduce)'),
   );
 
   if (!isClientConfigLoaded || !isCurrentUserLoaded) {

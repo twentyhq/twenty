@@ -6,6 +6,7 @@ import { type Credentials } from '../types/Credentials';
 import { validateServerUrl } from './validateServerUrl';
 import { requestJson } from './requestJson';
 import { i18n } from '../../shared/i18n';
+import { doNotTranslate } from '../../shared/utils/doNotTranslate';
 
 export const connectOAuth = async (
   serverUrlInput: string,
@@ -103,9 +104,7 @@ export const connectOAuth = async (
       client_id: clientId,
       response_type: 'code',
       redirect_uri: redirectUri,
-      // OAuth scopes are protocol identifiers shared with Twenty.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      scope: 'api profile',
+      scope: doNotTranslate('api profile'),
       state,
       code_challenge: challenge,
       code_challenge_method: 'S256',

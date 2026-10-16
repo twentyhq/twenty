@@ -29,6 +29,7 @@ import {
   isDefined,
   turnPlainDateToShiftedDateInSystemTimeZone,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -147,9 +148,7 @@ export const RecordCalendarTopBar = () => {
             turnPlainDateToShiftedDateInSystemTimeZone(
               recordCalendarSelectedDate,
             ),
-            // Date and time syntax must stay stable across locales.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            'MMMM yyyy',
+            doNotTranslate('MMMM yyyy'),
             { locale: dateLocale.localeCatalog },
           );
 

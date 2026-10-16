@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCopy } from 'twenty-ui/icon';
@@ -32,9 +33,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
     availableApplicationId: registration.universalIdentifier,
   });
 
-  // The command must remain executable when copied into a terminal.
-  // oxlint-disable-next-line lingui/no-unlocalized-strings
-  const publishCommands = ['yarn twenty app:publish'];
+  const publishCommands = [doNotTranslate('yarn twenty app:publish')];
 
   return (
     <>

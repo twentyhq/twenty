@@ -3,6 +3,7 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SeeActiveVersionWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -15,8 +16,9 @@ export const SeeActiveVersionWorkflowSingleRecordCommand = () => {
     });
 
   if (!isDefined(recordId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Record ID is required to see active version workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to see active version workflow'),
+    );
   }
 
   if (loading || !isDefined(workflowVersion)) {

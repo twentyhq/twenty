@@ -1,14 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { getLegacySettingsMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type FrontComponent,
   type SettingsMenuItem,
 } from '~/generated-metadata/graphql';
 
-// This string identifies persisted menu items created before custom titles were supported.
-// oxlint-disable-next-line lingui/no-unlocalized-strings
-const LEGACY_SETTINGS_MENU_ITEM_TITLE = 'Settings';
+const LEGACY_SETTINGS_MENU_ITEM_TITLE = doNotTranslate('Settings');
 
 export const getSettingsMenuItemDisplayTitle = ({
   applicationUniversalIdentifier,

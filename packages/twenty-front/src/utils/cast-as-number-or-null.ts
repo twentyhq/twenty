@@ -1,6 +1,7 @@
 import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { logError } from './logError';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const DEBUG_MODE = false;
 
@@ -53,8 +54,7 @@ export const castAsNumberOrNull = (
   probableNumberOrNull: string | undefined | number | null,
 ): number | null => {
   if (canBeCastAsNumberOrNull(probableNumberOrNull) === false) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only type invariant diagnostic.
-    throw new Error('Cannot cast to number or null');
+    throw new Error(doNotTranslate('Cannot cast to number or null'));
   }
 
   if (isNull(probableNumberOrNull)) {

@@ -11,6 +11,7 @@ import {
   IconUserCircle,
   IconWebhook,
 } from 'twenty-ui/icon';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // Source names are stored in saved filters; label descriptors provide localized display text.
 export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
@@ -22,62 +23,54 @@ export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{
 }> = [
   {
     id: 'MANUAL',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    name: 'User',
+    name: doNotTranslate('User'),
     label: msg`User`,
     AvatarIcon: IconUserCircle,
     isIconInverted: true,
   },
   {
     id: 'IMPORT',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    name: 'Import',
+    name: doNotTranslate('Import'),
     label: msg`Import`,
     AvatarIcon: IconCsv,
     isIconInverted: true,
   },
   {
     id: 'API',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    name: 'Api',
+    name: doNotTranslate('Api'),
     label: msg`API`,
     AvatarIcon: IconApi,
     isIconInverted: true,
   },
   {
     id: 'EMAIL',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    name: 'Email',
+    name: doNotTranslate('Email'),
     label: msg`Email`,
     AvatarIcon: IconGmail,
   },
   {
     id: 'CALENDAR',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    name: 'Calendar',
+    name: doNotTranslate('Calendar'),
     label: msg`Calendar`,
     AvatarIcon: IconGoogleCalendar,
   },
   {
     id: 'WORKFLOW',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    name: 'Workflow',
+    name: doNotTranslate('Workflow'),
     label: msg`Workflow`,
     AvatarIcon: IconSettingsAutomation,
     isIconInverted: true,
   },
   {
     id: 'WEBHOOK',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    name: 'Webhook',
+    name: doNotTranslate('Webhook'),
     label: msg`Webhook`,
     AvatarIcon: IconWebhook,
     isIconInverted: true,
   },
   {
     id: 'SYSTEM',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    name: 'System',
+    name: doNotTranslate('System'),
     label: msg`System`,
     AvatarIcon: IconRobot,
     isIconInverted: true,

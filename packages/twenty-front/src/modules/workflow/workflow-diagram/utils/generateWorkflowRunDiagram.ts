@@ -12,6 +12,7 @@ import {
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 const shouldOpenStep = ({
@@ -107,8 +108,9 @@ export const generateWorkflowRunDiagram = ({
     );
 
     if (!isDefined(parentNode)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      throw new Error('Expected the edge to have a parent node');
+      throw new Error(
+        doNotTranslate('Expected the edge to have a parent node'),
+      );
     }
 
     const stepInfo = stepInfos?.[parentNode.id];
