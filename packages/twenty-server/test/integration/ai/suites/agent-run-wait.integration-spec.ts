@@ -18,7 +18,6 @@ import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/uti
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -210,16 +209,6 @@ describe('agent runs that wait (integration)', () => {
       condition: { type: 'TIME' },
     });
 
-    // the run reads its conversation when it goes on, so a chat message cannot slip in while it waits
-    await expect(
-      getAppProviderByClassName<AgentChatStreamingService>(
-        'AgentChatStreamingService',
-      ).streamAgentChat({
-        thread: { id: suspension.threadId, pendingQuestionMessageId: null },
-        workspace: { id: workspaceId },
-        text: 'Any news?',
-      } as Parameters<AgentChatStreamingService['streamAgentChat']>[0]),
-    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_AWAITING_ANSWER });
     expect(runTurn.mock.calls[0][0].baseSystemPrompt).toContain(
       'wait_for_duration',
     );

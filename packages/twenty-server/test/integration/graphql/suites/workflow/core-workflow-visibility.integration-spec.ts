@@ -792,7 +792,7 @@ describe('core workflow visibility (e2e)', () => {
           'AgentRunConversationService',
         );
 
-      const turnId = await runConversationService.openTurn({
+      const { turnId } = await runConversationService.openTurn({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
         agentId: null,

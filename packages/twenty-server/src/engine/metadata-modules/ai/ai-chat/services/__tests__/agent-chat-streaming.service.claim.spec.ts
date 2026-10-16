@@ -32,11 +32,13 @@ describe('AgentChatStreamingService claim & reap', () => {
     queuedMessages = [] as unknown[],
     heartbeatAlive = true,
     isConversationAwaited = false,
+    suspendedRun = null,
   }: {
     thread?: typeof idleThread & {
       pendingQuestionMessageId?: string;
     };
     isConversationAwaited?: boolean;
+    suspendedRun?: { id: string } | null;
     claimAffected?: number;
     queuedMessages?: unknown[];
     heartbeatAlive?: boolean;
@@ -103,6 +105,20 @@ describe('AgentChatStreamingService claim & reap', () => {
       clear: jest.fn().mockResolvedValue(undefined),
     };
 
+    const agentRunSuspensionService = {
+      findSuspendedRun: jest.fn().mockResolvedValue(suspendedRun),
+      resumeWithMessage: jest.fn().mockResolvedValue(undefined),
+      assertNoPostedCallAwaited: isConversationAwaited
+        ? jest
+            .fn()
+            .mockRejectedValue(
+              new AiException(
+                'awaited',
+                AiExceptionCode.THREAD_AWAITING_ANSWER,
+              ),
+            )
+        : jest.fn().mockResolvedValue(undefined),
+    };
     const metricsService = { incrementCounterBy: jest.fn() };
     const streamRecoveryService = new AgentChatStreamRecoveryService(
       threadRepository as never,
@@ -141,19 +157,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         findLatestTurn: jest.fn().mockResolvedValue(null),
         markRunning: jest.fn().mockResolvedValue(true),
       } as never,
-      {
-        isConversationWaiting: jest.fn().mockResolvedValue(false),
-        assertConversationNotSuspended: isConversationAwaited
-          ? jest
-              .fn()
-              .mockRejectedValue(
-                new AiException(
-                  'awaited',
-                  AiExceptionCode.THREAD_AWAITING_ANSWER,
-                ),
-              )
-          : jest.fn().mockResolvedValue(undefined),
-      } as never,
+      agentRunSuspensionService as never,
       threadLifecycleService as never,
     );
 
@@ -173,6 +177,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       threadLifecycleService,
       eventPublisherService,
       streamHeartbeatService,
+      agentRunSuspensionService,
       publishedEvents,
     };
   };
@@ -307,6 +312,31 @@ describe('AgentChatStreamingService claim & reap', () => {
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
+    it('hands the message to the run waiting in the conversation, which picks it up from the queue', async () => {
+      const {
+        send,
+        agentChatService,
+        agentRunSuspensionService,
+        messageQueueService,
+      } = buildService({ suspendedRun: { id: 'wake-up-id' } });
+
+      agentChatService.getQueuedMessages.mockResolvedValue([
+        { id: 'queued-message-id', parts: [] },
+      ]);
+
+      const result = await send();
+
+      expect(result.queued).toBe(true);
+      expect(agentChatService.queueMessage).toHaveBeenCalled();
+      expect(agentRunSuspensionService.resumeWithMessage).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        wakeUpId: 'wake-up-id',
+      });
+      expect(agentChatService.addMessage).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
     it('releases the claim when enqueueing the job fails', async () => {
       const {
         send,
@@ -352,6 +382,28 @@ describe('AgentChatStreamingService claim & reap', () => {
         workspaceId: 'workspace-id',
       });
 
+      expect(agentChatService.promoteQueuedMessage).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('hands queued messages to the run waiting in the conversation rather than starting a reply', async () => {
+      const {
+        service,
+        agentChatService,
+        agentRunSuspensionService,
+        messageQueueService,
+      } = buildService({ queuedMessages, suspendedRun: { id: 'wake-up-id' } });
+
+      await service.flushNextQueuedMessage({
+        threadId: 'thread-id',
+        workspaceId: 'workspace-id',
+      });
+
+      expect(agentRunSuspensionService.resumeWithMessage).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        wakeUpId: 'wake-up-id',
+      });
       expect(agentChatService.promoteQueuedMessage).not.toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });

@@ -285,7 +285,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          const turnId = await this.agentRunConversationService.openTurn({
+          const { turnId } = await this.agentRunConversationService.openTurn({
             workspaceId,
             threadId,
             agentId: agent.id,

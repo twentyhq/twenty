@@ -131,7 +131,11 @@ const buildService = ({
   };
   const agentRunConversationService = {
     claimThread: jest.fn().mockResolvedValue(true),
-    openTurn: jest.fn().mockResolvedValue('turn-id'),
+    openTurn: jest.fn().mockResolvedValue({
+      turnId: 'turn-id',
+      promptMessageIds: ['prompt-message-id'],
+      hasTakenQueuedMessages: false,
+    }),
   };
   const turnStreamService = {
     runClaimed: jest.fn(({ work }) => work(new AbortController().signal)),
@@ -144,7 +148,15 @@ const buildService = ({
     publishTurnEnd: jest.fn().mockResolvedValue(undefined),
   };
   const conversationReaderService = {
-    loadMessages: jest.fn().mockResolvedValue(PRIOR_MESSAGES),
+    loadMessages: jest
+      .fn()
+      .mockResolvedValue([
+        ...PRIOR_MESSAGES,
+        { id: 'prompt-message-id', role: 'user', parts: [] },
+      ]),
+  };
+  const eventPublisherService = {
+    publish: jest.fn().mockResolvedValue(undefined),
   };
 
   const agentRunSuspensionService = {
@@ -186,6 +198,7 @@ const buildService = ({
     { getHandlerOrThrow: () => callerHandler } as never,
     pendingWakeUpService as never,
     turnStreamService as never,
+    eventPublisherService as never,
     messageQueueService as never,
     chatMessageQueueService as never,
     { findOne: jest.fn().mockResolvedValue(agent) } as never,
@@ -199,6 +212,7 @@ const buildService = ({
     agentRunConversationService,
     turnStreamService,
     conversationReaderService,
+    eventPublisherService,
     agentRunSuspensionService,
     callerHandler,
     pendingWakeUpService,
@@ -291,6 +305,53 @@ describe('AgentRunnerService', () => {
     expect(chatMessageQueueService.add).toHaveBeenCalledWith(
       'FlushQueuedAgentChatMessagesJob',
       { workspaceId: 'workspace-id', threadId: 'thread-id' },
+    );
+  });
+
+  it('reads its conversation once its turn is open, and lets the messages members sent while it waited show as read', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      conversationReaderService,
+      eventPublisherService,
+    } = buildService();
+
+    agentRunConversationService.openTurn.mockResolvedValue({
+      turnId: 'turn-id',
+      promptMessageIds: [],
+      hasTakenQueuedMessages: true,
+    });
+
+    await service.runStarted(JOB_DATA);
+
+    expect(
+      agentRunConversationService.openTurn.mock.invocationCallOrder[0],
+    ).toBeLessThan(
+      conversationReaderService.loadMessages.mock.invocationCallOrder[0],
+    );
+    expect(eventPublisherService.publish).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      event: { type: 'queue-updated' },
+    });
+  });
+
+  it('goes on with a run a member wrote to, ending its wait for that message', async () => {
+    const { service, agentRunSuspensionService, agentRunTurnService } =
+      buildService();
+
+    await service.continue({
+      ...CONTINUATION,
+      outcome: { type: 'MESSAGE_RECEIVED' },
+    });
+
+    expect(agentRunSuspensionService.recordWaitOutcome).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      outcome: { type: 'MESSAGE_RECEIVED' },
+    });
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ messages: [], priorMessages: PRIOR_MESSAGES }),
     );
   });
 

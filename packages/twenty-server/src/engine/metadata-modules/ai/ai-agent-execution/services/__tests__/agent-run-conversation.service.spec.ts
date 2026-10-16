@@ -1,7 +1,10 @@
+import { randomUUID } from 'node:crypto';
+
 import { FieldActorSource } from 'twenty-shared/types';
 
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 
 const CLAIM = {
   workspaceId: 'workspace-id',
@@ -13,17 +16,24 @@ const CLAIM = {
 const buildService = ({
   thread = null,
   isClaimed = true,
+  queuedMessageCount = 0,
 }: {
   thread?: { id: string; activeStreamId: string | null } | null;
   isClaimed?: boolean;
+  queuedMessageCount?: number;
 } = {}) => {
-  const scope = { insert: jest.fn().mockResolvedValue(undefined) };
+  const scope = {
+    insert: jest.fn().mockResolvedValue(undefined),
+    update: jest.fn().mockResolvedValue(queuedMessageCount),
+  };
   const conversationWriterService = {
     runInTransaction: jest
       .fn()
       .mockImplementation(async (_workspaceId, work) => work(scope)),
     insertTurn: jest.fn().mockResolvedValue('turn-id'),
-    insertMessage: jest.fn().mockResolvedValue(undefined),
+    insertMessage: jest
+      .fn()
+      .mockImplementation(async () => `message-${randomUUID()}`),
   };
   const streamRecoveryService = {
     reapDeadStream: jest.fn().mockResolvedValue(null),
@@ -126,5 +136,33 @@ describe('AgentRunConversationService', () => {
         text: 'And the second one?',
       },
     ]);
+  });
+
+  it('takes the messages members queued in the conversation as the input of the turn', async () => {
+    const { service, scope } = buildService({ queuedMessageCount: 2 });
+
+    const { turnId, promptMessageIds, hasTakenQueuedMessages } =
+      await service.openTurn({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        agentId: 'agent-id',
+        senderUserWorkspaceId: null,
+        senderApplicationId: null,
+        createdBy: {
+          source: FieldActorSource.WORKFLOW,
+          name: 'New deals',
+          workspaceMemberId: null,
+          context: {},
+        },
+        messages: [],
+      });
+
+    expect(scope.update).toHaveBeenCalledWith(
+      'agentMessage',
+      { threadId: 'thread-id', status: AgentMessageStatus.QUEUED },
+      expect.objectContaining({ status: AgentMessageStatus.SENT, turnId }),
+    );
+    expect(promptMessageIds).toEqual([]);
+    expect(hasTakenQueuedMessages).toBe(true);
   });
 });

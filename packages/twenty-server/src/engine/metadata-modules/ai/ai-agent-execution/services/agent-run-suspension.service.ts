@@ -83,8 +83,8 @@ export class AgentRunSuspensionService {
     });
   }
 
-  // a run waiting in the conversation would read a new message on continuing, and a caller waiting
-  // on a call it posted there would see the message close it
+  // a run waiting in the conversation would read another run's prompt on continuing, and a caller
+  // waiting on a call it posted there would see the run close it
   async isConversationWaiting({
     workspaceId,
     threadId,
@@ -117,6 +117,63 @@ export class AgentRunSuspensionService {
         AiExceptionCode.THREAD_AWAITING_ANSWER,
       );
     }
+  }
+
+  // a caller, such as a workflow step, waits on the answer to a call it posted, which a message
+  // would leave unanswered
+  async assertNoPostedCallAwaited({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    const isAwaited = await this.wakeUpRepository.exists(workspaceId, {
+      where: {
+        ownerType: Not('AGENT_RUN'),
+        condition: Raw((alias) => `${alias} @> :condition::jsonb`, {
+          condition: JSON.stringify({ type: 'ANSWER', threadId }),
+        }),
+      },
+    });
+
+    if (isAwaited) {
+      throw new AiException(
+        'The conversation is waiting on an answer; answer it before sending a message',
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
+      );
+    }
+  }
+
+  async findSuspendedRun({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<Pick<PendingWakeUpEntity, 'id'> | null> {
+    return this.wakeUpRepository.findOne(workspaceId, {
+      where: { ownerType: 'AGENT_RUN', ownerId: threadId },
+      select: ['id'],
+    });
+  }
+
+  // the run reads the member's message as it goes on, whatever it waited on
+  async resumeWithMessage({
+    workspaceId,
+    threadId,
+    wakeUpId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    wakeUpId: string;
+  }): Promise<void> {
+    await this.scheduleContinuation({
+      workspaceId,
+      threadId,
+      wakeUpId,
+      outcome: { type: 'MESSAGE_RECEIVED' },
+    });
   }
 
   // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it

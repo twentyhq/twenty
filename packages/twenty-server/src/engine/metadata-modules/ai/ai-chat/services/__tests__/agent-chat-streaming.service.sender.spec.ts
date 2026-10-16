@@ -63,7 +63,7 @@ const build = () => {
     ),
     actors as never,
     {} as never,
-    { isConversationWaiting: jest.fn().mockResolvedValue(false) } as never,
+    { findSuspendedRun: jest.fn().mockResolvedValue(null) } as never,
     {} as never,
   );
   return { service, threads, queue, chat, actors, heartbeat };

@@ -1594,6 +1594,51 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    it('goes on with the agent when the recipient writes instead of answering, which skips the question', async () => {
+      const runTurn = mockAgent();
+      const { runId, agent, threadId } = await startAskingRun();
+
+      jest
+        .spyOn(
+          getAppProviderByClassName<AiModelRegistryService>(
+            'AiModelRegistryService',
+          ),
+          'getAvailableModels',
+        )
+        .mockReturnValue([{ modelId: TEST_AI_MODEL_ID }] as never);
+
+      const response = await request(`http://localhost:${APP_PORT}`)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `mutation SendChatMessage($threadId: UUID!, $text: String!, $messageId: UUID!) {
+            sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued }
+          }`,
+          variables: {
+            threadId,
+            text: 'Hold it until Monday',
+            messageId: randomUUID(),
+          },
+        });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.sendChatMessage.queued).toBe(true);
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(JSON.stringify(runTurn.mock.calls[1][0].priorMessages)).toContain(
+        'Hold it until Monday',
+      );
+      expect(await getToolCalls(threadId)).toEqual({
+        isWaiting: false,
+        calls: [{ toolCallId: 'ask-1', status: 'skipped' }],
+      });
+    });
+
     it('refuses a second answer to the same question', async () => {
       mockAgent();
       const { runId, threadId } = await startAskingRun();
