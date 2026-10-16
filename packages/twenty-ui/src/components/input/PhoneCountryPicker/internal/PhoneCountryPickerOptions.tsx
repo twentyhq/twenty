@@ -17,6 +17,7 @@ import { usePhoneCountryPickerContextOrThrow } from './usePhoneCountryPickerCont
 
 export const PhoneCountryPickerOptions = ({
   searchLabel = doNotTranslate('Search'),
+  listLabel = doNotTranslate('Countries'),
   emptyLabel = doNotTranslate('No results'),
   disabled: optionsDisabled = false,
   className,
@@ -66,7 +67,7 @@ export const PhoneCountryPickerOptions = ({
           <Dropdown.Section scrollable>
             <Dropdown.SelectionGroup
               id={selectionId}
-              aria-label={searchLabel}
+              aria-label={listLabel}
               value={value}
               onValueChange={onValueChange}
               closeOnSelect={closeOnSelect}

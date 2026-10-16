@@ -67,6 +67,7 @@ const PhoneCountryPickerExample = () => {
           dir: 'rtl',
           render: <section data-phone-options="primary" />,
           searchLabel: 'Search primary phone country',
+          listLabel: 'Primary phone countries',
           emptyLabel: 'No countries found',
         }}
       />
@@ -95,6 +96,7 @@ const PhoneCountryPickerExample = () => {
           >
             <PhoneCountryPicker.Options
               searchLabel="Search secondary phone country"
+              listLabel="Secondary phone countries"
               emptyLabel="No countries found"
             />
           </Dropdown.Content>

@@ -271,6 +271,7 @@ export const CustomLabelsAndEmptyChoices: Story = {
   args: {
     countries: [],
     searchLabel: 'Find a country',
+    listLabel: 'Available countries',
     emptyLabel: 'No countries available',
     onValueChange: fn(),
   },
@@ -278,6 +279,9 @@ export const CustomLabelsAndEmptyChoices: Story = {
     const { dialog, search } = await openPhoneCountryPicker({ canvasElement });
 
     await expect(search).toHaveAccessibleName('Find a country');
+    await expect(
+      within(dialog).getByRole('listbox', { name: 'Available countries' }),
+    ).toBeVisible();
     await expect(within(dialog).getByRole('status')).toHaveTextContent(
       'No countries available',
     );

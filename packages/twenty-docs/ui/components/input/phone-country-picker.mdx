@@ -43,6 +43,7 @@ export const PhoneCountryExample = () => {
       contentProps={{ width: 280 }}
       optionsProps={{
         searchLabel: 'Search countries',
+        listLabel: 'Phone countries',
         emptyLabel: 'No countries found',
       }}
     />
@@ -82,6 +83,7 @@ const COUNTRIES: PhoneCountryOption[] = [
     <Dropdown.Content width={320}>
       <PhoneCountryPicker.Options
         searchLabel="Search countries"
+        listLabel="Phone countries"
         emptyLabel="No countries found"
       />
     </Dropdown.Content>
@@ -101,9 +103,9 @@ Set `disabled` on the complete picker or `Root` to disable its trigger, search a
 
 ## Native targets and labels
 
-The complete picker's native attributes, event handlers, `className`, `style`, `ref`, `render` and optional `children` target its trigger. `children` replaces the default flag or world icon and chevron. `contentProps` targets `Dropdown.Content`; `optionsProps` targets the options root div and supplies `searchLabel` and `emptyLabel`. In compound usage, native props, refs and render composition target the corresponding `Trigger` button or `Options` div. `Root` renders no DOM node.
+The complete picker's native attributes, event handlers, `className`, `style`, `ref`, `render` and optional `children` target its trigger. `children` replaces the default flag or world icon and chevron. `contentProps` targets `Dropdown.Content`; `optionsProps` targets the options root div and supplies `searchLabel`, `listLabel` and `emptyLabel`. In compound usage, native props, refs and render composition target the corresponding `Trigger` button or `Options` div. `Root` renders no DOM node.
 
-Supply localized country labels and the required trigger `aria-label`. The selected country label describes the trigger, while its flag and chevron are decorative. An empty selection shows a world icon. The popup takes the trigger name unless a `Dropdown.Title` or an explicit content label names it. `searchLabel` defaults to `Search` and names both the search field and its placeholder. `emptyLabel` defaults to `No results`.
+Supply localized country labels and the required trigger `aria-label`. The selected country label describes the trigger, while its flag and chevron are decorative. An empty selection shows a world icon. The popup takes the trigger name unless a `Dropdown.Title` or an explicit content label names it. `searchLabel` defaults to `Search` and names both the search field and its placeholder. `listLabel` defaults to `Countries` and names the listbox independently. `emptyLabel` defaults to `No results`.
 
 ## Phone input integration
 

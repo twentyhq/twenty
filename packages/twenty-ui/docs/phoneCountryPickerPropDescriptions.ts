@@ -25,7 +25,7 @@ export const PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS = {
   contentProps:
     'Props for the internally assembled Dropdown.Content, including its accessible name, placement, width and popup ref.',
   optionsProps:
-    'Props for the options root div, including native attributes, ref, render, searchLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed.',
+    'Props for the options root div, including native attributes, ref, render, searchLabel, listLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed.',
 } satisfies Partial<
   Record<keyof ComponentProps<typeof PhoneCountryPicker>, string>
 >;

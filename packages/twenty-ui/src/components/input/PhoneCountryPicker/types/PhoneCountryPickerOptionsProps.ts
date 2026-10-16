@@ -6,5 +6,6 @@ export type PhoneCountryPickerOptionsProps = Omit<
 > & {
   disabled?: boolean;
   searchLabel?: string;
+  listLabel?: string;
   emptyLabel?: string;
 };

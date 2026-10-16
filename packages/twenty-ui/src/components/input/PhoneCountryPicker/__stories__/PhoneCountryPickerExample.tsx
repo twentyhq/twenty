@@ -17,6 +17,7 @@ type PhoneCountryPickerExampleProps = {
   label?: string;
   countries?: readonly PhoneCountryOption[];
   searchLabel?: string;
+  listLabel?: string;
   emptyLabel?: string;
   onValueChange?: (
     value: string | null,
@@ -32,6 +33,7 @@ export const PhoneCountryPickerExample = ({
   label = 'Phone country',
   countries = PHONE_COUNTRY_OPTIONS,
   searchLabel,
+  listLabel,
   emptyLabel,
   onValueChange,
 }: PhoneCountryPickerExampleProps) => {
@@ -67,7 +69,7 @@ export const PhoneCountryPickerExample = ({
           }
           disabled={disabled}
           contentProps={{ 'aria-label': `${label} choices`, width: 280 }}
-          optionsProps={{ searchLabel, emptyLabel }}
+          optionsProps={{ searchLabel, listLabel, emptyLabel }}
         />
       ) : (
         <PhoneCountryPicker.Root
@@ -84,6 +86,7 @@ export const PhoneCountryPickerExample = ({
             <Dropdown.Content aria-label={`${label} choices`} width={280}>
               <PhoneCountryPicker.Options
                 searchLabel={searchLabel}
+                listLabel={listLabel}
                 emptyLabel={emptyLabel}
               />
             </Dropdown.Content>

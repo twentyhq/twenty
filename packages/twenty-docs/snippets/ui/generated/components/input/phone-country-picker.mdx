@@ -81,7 +81,7 @@
 </ParamField>
 
 <ParamField body="optionsProps" type="PhoneCountryPickerOptionsProps">
-  Props for the options root div, including native attributes, ref, render, searchLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed.
+  Props for the options root div, including native attributes, ref, render, searchLabel, listLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed.
 </ParamField>
 
 <ParamField body="ref" type="Ref&lt;HTMLButtonElement&gt;">
@@ -199,6 +199,10 @@
 
 <ParamField body="Options.emptyLabel" type="string" default="No results">
   Status message shown when no country label, identifier or calling code matches. Defaults to No results.
+</ParamField>
+
+<ParamField body="Options.listLabel" type="string" default="Countries">
+  Accessible name of the country listbox, separate from the search field. Defaults to Countries.
 </ParamField>
 
 <ParamField body="Options.ref" type="Ref&lt;HTMLDivElement&gt;">

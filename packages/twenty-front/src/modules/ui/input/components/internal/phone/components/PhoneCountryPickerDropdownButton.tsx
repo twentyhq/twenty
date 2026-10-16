@@ -64,6 +64,7 @@ export const PhoneCountryPickerDropdownButton = ({
         >
           <PhoneCountryPicker.Options
             searchLabel={t`Search`}
+            listLabel={t`Countries`}
             emptyLabel={t`No results`}
           />
         </DropdownContent>

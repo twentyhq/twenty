@@ -39,6 +39,9 @@ export const phoneCountryPickerTest: TwentyUiGalleryPlayFunction = async ({
   expect(primaryStatus).toHaveTextContent('Country: US; Changes: 0');
   expect(primary).toHaveAttribute('aria-expanded', 'true');
 
+  expect(
+    page.getByRole('listbox', { name: 'Primary phone countries' }),
+  ).toBeVisible();
   const primarySearch = page.getByRole('searchbox', {
     name: 'Search primary phone country',
   });
@@ -93,6 +96,7 @@ export const phoneCountryPickerTest: TwentyUiGalleryPlayFunction = async ({
   });
 
   await userEvent.click(secondary);
+  await page.findByRole('listbox', { name: 'Secondary phone countries' });
   const secondarySearch = await page.findByRole('searchbox', {
     name: 'Search secondary phone country',
   });

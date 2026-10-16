@@ -33,6 +33,8 @@ export const PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS = {
     Record<keyof ComponentProps<typeof PhoneCountryPicker.Trigger>, string>
   >,
   Options: {
+    listLabel:
+      'Accessible name of the country listbox, separate from the search field. Defaults to Countries.',
     searchLabel:
       'Accessible name and placeholder of the country search field. Defaults to Search. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed.',
     emptyLabel:

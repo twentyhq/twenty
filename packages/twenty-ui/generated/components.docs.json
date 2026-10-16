@@ -10954,7 +10954,7 @@
         "type": "PhoneCountryPickerOptionsProps",
         "required": false,
         "defaultValue": null,
-        "description": "Props for the options root div, including native attributes, ref, render, searchLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed."
+        "description": "Props for the options root div, including native attributes, ref, render, searchLabel, listLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed."
       },
       {
         "name": "ref",
@@ -11145,6 +11145,13 @@
             "required": false,
             "defaultValue": "No results",
             "description": "Status message shown when no country label, identifier or calling code matches. Defaults to No results."
+          },
+          {
+            "name": "listLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "Countries",
+            "description": "Accessible name of the country listbox, separate from the search field. Defaults to Countries."
           },
           {
             "name": "ref",
