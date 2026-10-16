@@ -18,7 +18,6 @@ import {
 } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
-import { ApplicationReachRefusedException } from 'src/engine/core-modules/authorization/application-reach/exceptions/application-reach-refused.exception';
 import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
@@ -116,12 +115,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             // The step goes either way: a function this caller may not delete stays
             if (
               (error instanceof LogicFunctionException &&
-                (error.code ===
-                  LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND ||
-                  error.code ===
-                    LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN)) ||
-              error instanceof AuthPrincipalRefusedException ||
-              error instanceof ApplicationReachRefusedException
+                error.code ===
+                  LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND) ||
+              error instanceof AuthPrincipalRefusedException
             ) {
               return;
             }

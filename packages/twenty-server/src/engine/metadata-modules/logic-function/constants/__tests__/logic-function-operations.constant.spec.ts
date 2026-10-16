@@ -59,7 +59,6 @@ describe('logic function operation policies', () => {
   it('should map the tool generated for each logic function to executeAsTool', () => {
     const logicFunctionToolProvider = new LogicFunctionToolProvider(
       {} as never,
-      {} as never,
     );
 
     expect(logicFunctionToolProvider.getToolPolicy('app_any_function')).toBe(

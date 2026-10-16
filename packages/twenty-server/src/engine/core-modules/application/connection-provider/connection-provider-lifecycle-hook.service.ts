@@ -6,7 +6,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
@@ -187,19 +186,12 @@ export class ConnectionProviderLifecycleHookService {
         return;
       }
 
-      const executionResult = await withSystemAuthorizationScope(
-        {
-          workspaceId,
-          reason: 'connection provider lifecycle hook',
-        },
-        () =>
-          this.logicFunctionExecutorService.execute({
-            logicFunctionId,
-            workspaceId,
-            payload: this.buildPayload({ provider, connectedAccountId }),
-            shouldEnforceUsageLimits: false,
-          }),
-      );
+      const executionResult = await this.logicFunctionExecutorService.execute({
+        logicFunctionId,
+        workspaceId,
+        payload: this.buildPayload({ provider, connectedAccountId }),
+        shouldEnforceUsageLimits: false,
+      });
 
       if (isDefined(executionResult.error)) {
         throw new ConnectionProviderException(
@@ -222,19 +214,12 @@ export class ConnectionProviderLifecycleHookService {
     payload: IdentifyAccountPayload;
   }): Promise<LogicFunctionExecuteResult> {
     try {
-      return await withSystemAuthorizationScope(
-        {
-          workspaceId,
-          reason: 'connection provider lifecycle hook',
-        },
-        () =>
-          this.logicFunctionExecutorService.execute({
-            logicFunctionId,
-            workspaceId,
-            payload,
-            shouldEnforceUsageLimits: true,
-          }),
-      );
+      return await this.logicFunctionExecutorService.execute({
+        logicFunctionId,
+        workspaceId,
+        payload,
+        shouldEnforceUsageLimits: true,
+      });
     } catch (error) {
       if (error instanceof CustomException) {
         throw error;

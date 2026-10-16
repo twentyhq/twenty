@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 
-import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import {
   LogicFunctionExecutionException,
@@ -53,21 +52,15 @@ export class LogicFunctionJobRunnerService {
         LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT,
         retryLimit,
       );
-      const logicFunctionExecutionResult = await withSystemAuthorizationScope(
-        {
+      const logicFunctionExecutionResult =
+        await this.logicFunctionExecutorService.execute({
+          logicFunctionId: logicFunctionPayload.logicFunctionId,
           workspaceId: logicFunctionPayload.workspaceId,
-          reason: 'logic function job (cron or database event)',
-        },
-        () =>
-          this.logicFunctionExecutorService.execute({
-            logicFunctionId: logicFunctionPayload.logicFunctionId,
-            workspaceId: logicFunctionPayload.workspaceId,
-            payload: logicFunctionPayload.payload ?? {},
-            userId: logicFunctionPayload.userId,
-            userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-            retry: { retryCount, maxRetries },
-          }),
-      );
+          payload: logicFunctionPayload.payload ?? {},
+          userId: logicFunctionPayload.userId,
+          userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+          retry: { retryCount, maxRetries },
+        });
 
       if (
         !isRetryableLogicFunctionExecutionError(

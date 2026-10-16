@@ -63,8 +63,6 @@ type GlobalTestContext = {
 
 type TokenTestContext = {
   token: (globalContext: GlobalTestContext) => string;
-  // Running a function needs a token bound to a user, checked before the function is looked up
-  executeErrorCode: 'NOT_FOUND' | 'FORBIDDEN';
 };
 
 type EndpointTestContext = {
@@ -82,17 +80,11 @@ type ListEndpointTestContext = {
 const tokenTestCases: EachTestingContext<TokenTestContext>[] = [
   {
     title: 'with a user-bound application token',
-    context: {
-      token: (globalContext) => globalContext.userBoundToken,
-      executeErrorCode: 'NOT_FOUND',
-    },
+    context: { token: (globalContext) => globalContext.userBoundToken },
   },
   {
     title: 'with an application token without user binding',
-    context: {
-      token: (globalContext) => globalContext.unboundToken,
-      executeErrorCode: 'FORBIDDEN',
-    },
+    context: { token: (globalContext) => globalContext.unboundToken },
   },
 ];
 
@@ -162,6 +154,44 @@ const singleTargetEndpointTestCases: EachTestingContext<EndpointTestContext>[] =
         requestOtherApplication: ({ otherApplication, token }) =>
           exportApplication({
             universalIdentifier: otherApplication.universalIdentifier,
+            token,
+            expectToFail: true,
+          }),
+      },
+    },
+    {
+      title: 'findOneLogicFunction',
+      context: {
+        requestOtherApplication: ({ otherApplication, token }) =>
+          findOneLogicFunction({
+            input: { id: otherApplication.logicFunctionId },
+            token,
+            expectToFail: true,
+          }),
+      },
+    },
+    {
+      title: 'getLogicFunctionSourceCode',
+      context: {
+        requestOtherApplication: ({ otherApplication, token }) =>
+          getLogicFunctionSourceCode({
+            input: { id: otherApplication.logicFunctionId },
+            token,
+            expectToFail: true,
+          }),
+      },
+    },
+    {
+      title: 'updateOneLogicFunction',
+      context: {
+        requestOtherApplication: ({ otherApplication, token }) =>
+          updateLogicFunctionSource({
+            input: {
+              id: otherApplication.logicFunctionId,
+              update: {
+                sourceHandlerCode: 'export const handler = () => "pwned";',
+              },
+            },
             token,
             expectToFail: true,
           }),
@@ -419,49 +449,6 @@ const singleTargetEndpointTestCases: EachTestingContext<EndpointTestContext>[] =
     },
   ];
 
-// Another application's logic functions are out of reach, so they read as missing
-const logicFunctionEndpointTestCases: EachTestingContext<EndpointTestContext>[] =
-  [
-    {
-      title: 'findOneLogicFunction',
-      context: {
-        requestOtherApplication: ({ otherApplication, token }) =>
-          findOneLogicFunction({
-            input: { id: otherApplication.logicFunctionId },
-            token,
-            expectToFail: true,
-          }),
-      },
-    },
-    {
-      title: 'getLogicFunctionSourceCode',
-      context: {
-        requestOtherApplication: ({ otherApplication, token }) =>
-          getLogicFunctionSourceCode({
-            input: { id: otherApplication.logicFunctionId },
-            token,
-            expectToFail: true,
-          }),
-      },
-    },
-    {
-      title: 'updateOneLogicFunction',
-      context: {
-        requestOtherApplication: ({ otherApplication, token }) =>
-          updateLogicFunctionSource({
-            input: {
-              id: otherApplication.logicFunctionId,
-              update: {
-                sourceHandlerCode: 'export const handler = () => "pwned";',
-              },
-            },
-            token,
-            expectToFail: true,
-          }),
-      },
-    },
-  ];
-
 const listEndpointTestCases: EachTestingContext<ListEndpointTestContext>[] = [
   {
     title: 'findManyApplicationRegistrations',
@@ -631,19 +618,6 @@ describe('Application token access to another application should fail', () => {
         },
       );
 
-      it.each(eachTestingContextFilter(logicFunctionEndpointTestCases))(
-        'should not find $title on another application',
-        async ({ context }) => {
-          const { errors } = await context.requestOtherApplication({
-            otherApplication: globalTestContext.otherApplication,
-            token: tokenContext.token(globalTestContext),
-          });
-
-          expect(errors).toHaveLength(1);
-          expect(errors[0].extensions.code).toBe('NOT_FOUND');
-        },
-      );
-
       it('should refuse to run a workflow action of another application', async () => {
         const { errors } = await executeLogicFunction({
           input: {
@@ -655,8 +629,7 @@ describe('Application token access to another application should fail', () => {
           expectToFail: true,
         });
 
-        expect(errors).toHaveLength(1);
-        expect(errors[0].extensions.code).toBe(tokenContext.executeErrorCode);
+        expectOneNotInternalServerErrorSnapshot({ errors });
         expect(executeSpy).not.toHaveBeenCalled();
       });
 

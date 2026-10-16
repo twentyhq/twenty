@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, type Repository } from 'typeorm';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { withSystemAuthorizationScope } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -207,9 +206,7 @@ export class ApplicationUninstallService {
     payload: UninstallHookPayload;
     workspaceDeletionRequestTimestamp?: string;
   }): Promise<void> {
-    const { uninstallLogicFunctionId } = application;
-
-    if (!isDefined(uninstallLogicFunctionId)) {
+    if (!isDefined(application.uninstallLogicFunctionId)) {
       return;
     }
 
@@ -217,19 +214,16 @@ export class ApplicationUninstallService {
       `Executing uninstall hook for application ${application.universalIdentifier}`,
     );
 
-    const logicFunctionExecutionResult = await withSystemAuthorizationScope(
-      { workspaceId, reason: 'uninstall hook' },
-      () =>
-        this.logicFunctionExecutorService.execute({
-          logicFunctionId: uninstallLogicFunctionId,
-          workspaceId,
-          payload,
-          shouldEnforceUsageLimits: false,
-          ...(isDefined(workspaceDeletionRequestTimestamp)
-            ? { workspaceDeletionRequestTimestamp }
-            : {}),
-        }),
-    );
+    const logicFunctionExecutionResult =
+      await this.logicFunctionExecutorService.execute({
+        logicFunctionId: application.uninstallLogicFunctionId,
+        workspaceId,
+        payload,
+        shouldEnforceUsageLimits: false,
+        ...(isDefined(workspaceDeletionRequestTimestamp)
+          ? { workspaceDeletionRequestTimestamp }
+          : {}),
+      });
 
     if (isDefined(logicFunctionExecutionResult.error)) {
       throw new ApplicationException(

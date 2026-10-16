@@ -16,17 +16,8 @@ const POLICY: OperationPolicy = {
   permissionFlags: [PermissionFlagType.WORKFLOWS],
 };
 
-const createOutOfReachException = () => new Error('not found');
-
 class GuardedService extends OperationGuardedService {
-  @Operation(POLICY, {
-    target: {
-      metadataName: 'logicFunction',
-      access: 'manage',
-      createOutOfReachException,
-      getId: ({ id }: { id: string }) => id,
-    },
-  })
+  @Operation(POLICY)
   async update({ id }: { id: string; source: string }): Promise<string> {
     return `updated ${id}`;
   }
@@ -47,7 +38,7 @@ const buildOperationAuthorizationService = () =>
   }) as unknown as OperationAuthorizationService;
 
 describe('@Operation', () => {
-  it('should check the policy and the target before the method runs', async () => {
+  it('should check the policy before the method runs', async () => {
     const operationAuthorizationService = buildOperationAuthorizationService();
     const service = new GuardedService(operationAuthorizationService);
 
@@ -56,12 +47,6 @@ describe('@Operation', () => {
     ).resolves.toBe('updated function-id');
     expect(operationAuthorizationService.ensureAuthorized).toHaveBeenCalledWith(
       POLICY,
-      {
-        metadataName: 'logicFunction',
-        access: 'manage',
-        createOutOfReachException,
-        id: 'function-id',
-      },
     );
   });
 

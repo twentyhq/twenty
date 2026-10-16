@@ -26,43 +26,36 @@ export const LOGIC_FUNCTION_OPERATIONS = {
     name: 'logicFunction.list',
     authPrincipal: ALL_WORKSPACE_CALLERS,
     permissionFlags: [],
-    targets: [{ metadataName: 'logicFunction', access: 'read' }],
   },
   findOne: {
     name: 'logicFunction.findOne',
     authPrincipal: ALL_WORKSPACE_CALLERS,
     permissionFlags: [],
-    targets: [{ metadataName: 'logicFunction', access: 'read' }],
   },
   canRunOnDemand: {
     name: 'logicFunction.canRunOnDemand',
     authPrincipal: ALL_WORKSPACE_CALLERS,
     permissionFlags: [],
-    targets: [{ metadataName: 'logicFunction', access: 'read' }],
   },
   execute: {
     name: 'logicFunction.execute',
     authPrincipal: ALL_WORKSPACE_CALLERS,
     permissionFlags: [PermissionFlagType.WORKFLOWS],
-    targets: [{ metadataName: 'logicFunction', access: 'trigger' }],
   },
   executeAsTool: {
     name: 'logicFunction.executeAsTool',
     authPrincipal: ALL_WORKSPACE_CALLERS,
     permissionFlags: [],
-    targets: [{ metadataName: 'logicFunction', access: 'trigger' }],
   },
   readSource: {
     name: 'logicFunction.readSource',
     authPrincipal: ALL_WORKSPACE_CALLERS,
     permissionFlags: [PermissionFlagType.WORKFLOWS],
-    targets: [{ metadataName: 'logicFunction', access: 'manage' }],
   },
   updateSource: {
     name: 'logicFunction.updateSource',
     authPrincipal: ALL_WORKSPACE_CALLERS,
     permissionFlags: [PermissionFlagType.WORKFLOWS],
-    targets: [{ metadataName: 'logicFunction', access: 'manage' }],
   },
   create: {
     name: 'logicFunction.create',
@@ -73,7 +66,6 @@ export const LOGIC_FUNCTION_OPERATIONS = {
     name: 'logicFunction.delete',
     authPrincipal: ALL_WORKSPACE_CALLERS_EXCEPT_APPLICATIONS,
     permissionFlags: [PermissionFlagType.WORKFLOWS],
-    targets: [{ metadataName: 'logicFunction', access: 'manage' }],
   },
   getAvailablePackages: {
     name: 'logicFunction.getAvailablePackages',

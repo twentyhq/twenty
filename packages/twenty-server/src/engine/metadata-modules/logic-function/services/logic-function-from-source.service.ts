@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
 import { Operation } from 'src/engine/core-modules/authorization/decorators/operation.decorator';
 import { OperationAuthorizationService } from 'src/engine/core-modules/authorization/services/operation-authorization.service';
 import { OperationGuardedService } from 'src/engine/core-modules/authorization/services/operation-guarded.service';
@@ -29,13 +28,12 @@ import { type UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-mod
 import { buildUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-universal-flat-logic-function-to-create.util';
 import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { buildLogicFunctionOperationTarget } from 'src/engine/metadata-modules/logic-function/utils/build-logic-function-operation-target.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-from-source-input-to-flat-logic-function-to-update.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// The logic function module's operations: every method declares its policy and target
+// The logic function module's operations: every method declares its policy
 @Injectable()
 export class LogicFunctionFromSourceService extends OperationGuardedService {
   constructor(
@@ -45,18 +43,12 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
     private readonly helperService: LogicFunctionFromSourceHelperService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly applicationReachService: ApplicationReachService,
     operationAuthorizationService: OperationAuthorizationService,
   ) {
     super(operationAuthorizationService);
   }
 
-  @Operation(LOGIC_FUNCTION_OPERATIONS.findOne, {
-    target: buildLogicFunctionOperationTarget({
-      access: 'read',
-      getId: ({ id }: { id: string }) => id,
-    }),
-  })
+  @Operation(LOGIC_FUNCTION_OPERATIONS.findOne)
   async findOneLogicFunction({
     id,
     workspaceId,
@@ -73,12 +65,10 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
   }: {
     workspaceId: string;
   }): Promise<FlatLogicFunction[]> {
-    const flatLogicFunctionMaps =
-      await this.applicationReachService.getReachableFlatEntityMaps({
-        workspaceId,
-        metadataName: 'logicFunction',
-        access: 'read',
-      });
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatLogicFunctionMaps'] },
+      );
 
     return Object.values(flatLogicFunctionMaps.byUniversalIdentifier).filter(
       (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
@@ -86,12 +76,7 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
     );
   }
 
-  @Operation(LOGIC_FUNCTION_OPERATIONS.canRunOnDemand, {
-    target: buildLogicFunctionOperationTarget({
-      access: 'read',
-      getId: ({ id }: { id: string }) => id,
-    }),
-  })
+  @Operation(LOGIC_FUNCTION_OPERATIONS.canRunOnDemand)
   async isLogicFunctionRunnableOnDemand({
     id,
     workspaceId,
@@ -148,12 +133,6 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
-
-    await this.applicationReachService.assertCanCreateOrThrow({
-      workspaceId,
-      metadataName: 'logicFunction',
-      ownerApplicationId: ownerFlatApplication.id,
-    });
 
     const logicFunctionId = input.id ?? v4();
 
@@ -231,16 +210,7 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
     });
   }
 
-  @Operation(LOGIC_FUNCTION_OPERATIONS.create, {
-    target: buildLogicFunctionOperationTarget({
-      access: 'manage',
-      getId: ({
-        existingLogicFunctionId,
-      }: {
-        existingLogicFunctionId: string;
-      }) => existingLogicFunctionId,
-    }),
-  })
+  @Operation(LOGIC_FUNCTION_OPERATIONS.create)
   async duplicateOneWithSource({
     existingLogicFunctionId,
     workspaceId,
@@ -253,12 +223,6 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
         id: existingLogicFunctionId,
         workspaceId,
       });
-
-    await this.applicationReachService.assertCanCreateOrThrow({
-      workspaceId,
-      metadataName: 'logicFunction',
-      ownerApplicationId: ownerFlatApplication.id,
-    });
 
     const newId = v4();
 
@@ -321,16 +285,7 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
     return { id: created.id };
   }
 
-  @Operation(LOGIC_FUNCTION_OPERATIONS.updateSource, {
-    target: buildLogicFunctionOperationTarget({
-      access: 'manage',
-      getId: ({
-        updateLogicFunctionFromSourceInput,
-      }: {
-        updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput;
-      }) => updateLogicFunctionFromSourceInput.id,
-    }),
-  })
+  @Operation(LOGIC_FUNCTION_OPERATIONS.updateSource)
   async updateOneFromSource({
     updateLogicFunctionFromSourceInput,
     workspaceId,
@@ -370,12 +325,7 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
     });
   }
 
-  @Operation(LOGIC_FUNCTION_OPERATIONS.delete, {
-    target: buildLogicFunctionOperationTarget({
-      access: 'manage',
-      getId: ({ id }: { id: string }) => id,
-    }),
-  })
+  @Operation(LOGIC_FUNCTION_OPERATIONS.delete)
   async deleteOneWithSource({
     id,
     workspaceId,
@@ -389,8 +339,8 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
   }): Promise<LogicFunctionDTO> {
     const {
       flatLogicFunction: existingFlatLogicFunction,
-      ownerFlatApplication: workspaceCustomFlatApplication,
-    } = await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
+      workspaceCustomFlatApplication,
+    } = await this.helperService.findLogicFunctionAndApplicationOrThrow({
       id,
       workspaceId,
     });
@@ -427,12 +377,7 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
     });
   }
 
-  @Operation(LOGIC_FUNCTION_OPERATIONS.updateSource, {
-    target: buildLogicFunctionOperationTarget({
-      access: 'manage',
-      getId: ({ id }: { id: string }) => id,
-    }),
-  })
+  @Operation(LOGIC_FUNCTION_OPERATIONS.updateSource)
   async buildOneFromSource({
     id,
     workspaceId,
@@ -486,12 +431,7 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
     });
   }
 
-  @Operation(LOGIC_FUNCTION_OPERATIONS.execute, {
-    target: buildLogicFunctionOperationTarget({
-      access: 'trigger',
-      getId: ({ id }: { id: string }) => id,
-    }),
-  })
+  @Operation(LOGIC_FUNCTION_OPERATIONS.execute)
   async executeOneFromSource({
     id,
     payload,
@@ -541,12 +481,7 @@ export class LogicFunctionFromSourceService extends OperationGuardedService {
     };
   }
 
-  @Operation(LOGIC_FUNCTION_OPERATIONS.readSource, {
-    target: buildLogicFunctionOperationTarget({
-      access: 'manage',
-      getId: ({ id }: { id: string }) => id,
-    }),
-  })
+  @Operation(LOGIC_FUNCTION_OPERATIONS.readSource)
   async getSourceCode({
     id,
     workspaceId,

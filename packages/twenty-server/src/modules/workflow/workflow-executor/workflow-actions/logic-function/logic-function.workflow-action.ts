@@ -52,45 +52,50 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
 
     const { workspaceId } = runInfo;
 
-    const result =
-      await this.workflowExecutionContextService.runInExecutionContext(
-        runInfo,
-        async ({ authContext }) => {
-          const { flatLogicFunctionMaps } =
-            await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-              {
-                workspaceId,
-                flatMapsKeys: ['flatLogicFunctionMaps'],
-              },
-            );
-
-          const logicFunction = findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: workflowActionInput.logicFunctionId,
-            flatEntityMaps: flatLogicFunctionMaps,
-          });
-
-          if (!logicFunction) {
-            throw new WorkflowStepExecutorException(
-              `Logic function with id ${workflowActionInput.logicFunctionId} not found`,
-              WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
-            );
-          }
-
-          if (!isDefined(logicFunction.workflowActionTriggerSettings)) {
-            throw new WorkflowStepExecutorException(
-              `Logic function ${logicFunction.name} is not exposed as a workflow action`,
-              WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
-            );
-          }
-
-          return this.logicFunctionExecutorService.execute({
-            logicFunctionId: workflowActionInput.logicFunctionId,
-            workspaceId,
-            payload: workflowActionInput.logicFunctionInput,
-            ...getUserFromAuthContext(authContext),
-          });
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
         },
       );
+
+    const logicFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: workflowActionInput.logicFunctionId,
+      flatEntityMaps: flatLogicFunctionMaps,
+    });
+
+    if (!logicFunction) {
+      throw new WorkflowStepExecutorException(
+        `Logic function with id ${workflowActionInput.logicFunctionId} not found`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
+    if (!isDefined(logicFunction.workflowActionTriggerSettings)) {
+      throw new WorkflowStepExecutorException(
+        `Logic function ${logicFunction.name} is not exposed as a workflow action`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
+    const { authContext, application } =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
+    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+      {
+        application,
+        targetApplicationId: logicFunction.applicationId,
+        targetLabel: `Logic function "${logicFunction.name}"`,
+      },
+    );
+
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: workflowActionInput.logicFunctionId,
+      workspaceId,
+      payload: workflowActionInput.logicFunctionInput,
+      ...getUserFromAuthContext(authContext),
+    });
 
     if (result.error) {
       return { error: result.error.errorMessage };

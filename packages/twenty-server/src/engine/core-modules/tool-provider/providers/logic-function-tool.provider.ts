@@ -6,7 +6,7 @@ import {
   DEFAULT_TOOL_INPUT_SCHEMA,
 } from 'twenty-shared/logic-function';
 
-import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type OperationPolicy } from 'src/engine/core-modules/authorization/types/operation-policy.type';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -27,13 +27,10 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly applicationReachService: ApplicationReachService,
   ) {}
 
-  async isAvailable(context: ToolProviderContext): Promise<boolean> {
-    return isDefined(
-      await this.applicationReachService.findCurrentReach(context.workspaceId),
-    );
+  async isAvailable(_context: ToolProviderContext): Promise<boolean> {
+    return true;
   }
 
   getToolPolicy(_toolName: string): OperationPolicy {
@@ -57,20 +54,21 @@ export class LogicFunctionToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
 
-    const [
-      { flatObjectMetadataMaps, flatFrontComponentMaps },
+    const {
       flatLogicFunctionMaps,
-    ] = await Promise.all([
-      this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
-        workspaceId: context.workspaceId,
-        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFrontComponentMaps'],
-      }),
-      this.applicationReachService.getReachableFlatEntityMaps({
-        workspaceId: context.workspaceId,
-        metadataName: 'logicFunction',
-        access: 'trigger',
-      }),
-    ]);
+      flatObjectMetadataMaps,
+      flatFrontComponentMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: context.workspaceId,
+          flatMapsKeys: [
+            'flatLogicFunctionMaps',
+            'flatObjectMetadataMaps',
+            'flatFrontComponentMaps',
+          ],
+        },
+      );
 
     const resolveWidgetFrontComponentId = (
       frontComponentUniversalIdentifier: string | undefined,
@@ -91,7 +89,11 @@ export class LogicFunctionToolProvider implements ToolProvider {
       (fn): fn is FlatLogicFunction =>
         isDefined(fn) &&
         isDefined(fn.toolTriggerSettings) &&
-        fn.deletedAt === null,
+        fn.deletedAt === null &&
+        canCallerReachApplication({
+          callingApplication: context.application,
+          applicationId: fn.applicationId,
+        }),
     );
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];

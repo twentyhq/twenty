@@ -32,7 +32,6 @@ import { ApplicationVariableEntityService } from 'src/engine/core-modules/applic
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -117,7 +116,6 @@ export class LogicFunctionExecutorService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
-    private readonly applicationReachService: ApplicationReachService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
@@ -326,17 +324,9 @@ export class LogicFunctionExecutorService {
       flatEntityMaps: flatLogicFunctionMaps,
     });
 
-    // Every path that runs code ends here, so the caller's reach is checked even when no
-    // operation declared this function as its target
     if (
       !isDefined(flatLogicFunction) ||
-      isDefined(flatLogicFunction.deletedAt) ||
-      !(await this.applicationReachService.canReachApplication({
-        workspaceId,
-        metadataName: 'logicFunction',
-        applicationId: flatLogicFunction.applicationId,
-        access: 'trigger',
-      }))
+      isDefined(flatLogicFunction.deletedAt)
     ) {
       throw new LogicFunctionExecutionException(
         `Logic function with id ${logicFunctionId} not found`,
