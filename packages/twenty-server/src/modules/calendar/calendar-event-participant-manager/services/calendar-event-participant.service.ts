@@ -33,13 +33,11 @@ export class CalendarEventParticipantService {
 
   public async findCalendarEventParticipantsByCalendarEventIds({
     calendarEventIds,
-    transactionScope,
   }: {
     calendarEventIds: string[];
-    transactionScope: WorkspaceTransactionScope;
   }): Promise<CalendarEventParticipantWorkspaceEntity[]> {
     const calendarEventParticipantRepository =
-      transactionScope.getRepository<CalendarEventParticipantWorkspaceEntity>(
+      this.workspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
         'calendarEventParticipant',
         { shouldBypassPermissionChecks: true },
       );

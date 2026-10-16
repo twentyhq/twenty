@@ -30,7 +30,6 @@ import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-import-events.service';
-import { CalendarEventSharingService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-sharing.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
@@ -61,7 +60,6 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     CalendarEventImportErrorHandlerService,
     CalendarGetCalendarEventsService,
     CalendarImportEventsService,
-    CalendarEventSharingService,
     CalendarSaveEventsService,
     CalendarEventListFetchCronJob,
     CalendarEventListFetchCronCommand,
