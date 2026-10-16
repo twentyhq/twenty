@@ -111,15 +111,19 @@ const findRecordedTurn = async (threadId: string) => {
   return { ...message, ...turn };
 };
 
-const findThreadOwner = async (threadId: string) => {
+const findThread = async (threadId: string) => {
   const [thread] = await globalThis.testDataSource.query(
-    `SELECT "workspaceMemberId" FROM "${WORKSPACE_SCHEMA}"."agentChatThread"
+    `SELECT "workspaceMemberId", "deletedAt"
+     FROM "${WORKSPACE_SCHEMA}"."agentChatThread"
      WHERE id = $1`,
     [threadId],
   );
 
-  return thread.workspaceMemberId;
+  return thread;
 };
+
+const findThreadOwner = async (threadId: string) =>
+  (await findThread(threadId)).workspaceMemberId;
 
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
   (priorMessages ?? []).flatMap(({ parts }) => parts.map(({ type }) => type));
@@ -274,6 +278,29 @@ describe('Agent run conversation should be recorded for the caller', () => {
     expect(await findThreadOwner(threadId)).toBe(
       WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     );
+  });
+
+  it('should bring back a thread its owner deleted when they run it again', async () => {
+    const threadKey = randomUUID();
+    const runAsJony = () =>
+      runAgent({
+        token: globalTestContext.applicationToken,
+        threadKey,
+        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+    const { threadId } = await runAsJony();
+
+    await globalThis.testDataSource.query(
+      `UPDATE "${WORKSPACE_SCHEMA}"."agentChatThread" SET "deletedAt" = NOW() WHERE id = $1`,
+      [threadId],
+    );
+
+    await runAsJony();
+
+    expect(await findThread(threadId)).toEqual({
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      deletedAt: null,
+    });
   });
 
   it('should leave a thread the application continues as itself without an owner', async () => {

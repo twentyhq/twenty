@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull } from 'typeorm';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
@@ -75,6 +76,31 @@ export class AgentChatThreadService {
         throw error;
       }
     }
+  }
+
+  // Access-checked writes return raw rows; record events carry ORM records
+  async restoreThread(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity> {
+    const threadBefore = await this.threadRepository.findOne(args.workspaceId, {
+      where: { id: args.threadId },
+    });
+
+    if (isDefined(threadBefore) && !isDefined(threadBefore.deletedAt)) {
+      return threadBefore;
+    }
+
+    const thread = await this.sharingService.restoreThreadWithAccess(args);
+
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId: args.workspaceId,
+        threadBefore,
+        action: DatabaseEventAction.RESTORED,
+      });
+    }
+
+    return thread;
   }
 
   // owned threads are skipped so an upsert cannot reassign them

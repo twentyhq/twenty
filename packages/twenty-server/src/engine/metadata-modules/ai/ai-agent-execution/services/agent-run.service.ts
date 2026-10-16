@@ -344,6 +344,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         authContext,
         threadIds: [threadId],
       });
+      await this.agentChatThreadService.restoreThread({
+        threadId,
+        workspaceId: authContext.workspace.id,
+        workspaceMemberId: authContext.workspaceMemberId,
+      });
     } catch (error) {
       this.logger.warn(
         `Could not claim thread ${threadId} of workspace ${authContext.workspace.id} for member ${authContext.workspaceMemberId}`,
