@@ -118,16 +118,13 @@ export const SettingsAdminNewAiProvider = () => {
     selectedModelsDevId !== null && isOpenAiCompatible;
 
   const providerName = slugify(form.watch('label'), { separator: '-' });
-  const existingProvider = providersData?.getAiProviders[providerName];
-  const catalogApiKeyConfigVariable =
-    existingProvider?.source === AI_PROVIDER_SOURCE.CATALOG
-      ? existingProvider.apiKeyConfigVariable
+  const builtInProviderPath =
+    providersData?.getAiProviders[providerName]?.source ===
+    AI_PROVIDER_SOURCE.CATALOG
+      ? getSettingsPath(SettingsPath.AdminPanelAiProviderDetail, {
+          providerName,
+        })
       : undefined;
-  const catalogApiKeyConfigPath = isDefined(catalogApiKeyConfigVariable)
-    ? getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
-        variableName: catalogApiKeyConfigVariable,
-      })
-    : undefined;
 
   const handleProviderSelected = (providerId: string) => {
     setSelectedModelsDevId(providerId);
@@ -356,19 +353,19 @@ export const SettingsAdminNewAiProvider = () => {
             />
           </Section.Root>
 
-          {isDefined(catalogApiKeyConfigPath) && (
+          {isDefined(builtInProviderPath) && (
             <InlineBanner
               layout="compact"
               status="info"
               action={
                 <InlineBanner.Action
-                  href={catalogApiKeyConfigPath}
+                  href={builtInProviderPath}
                   nativeButton={false}
                   role="link"
-                  render={<Link to={catalogApiKeyConfigPath} />}
-                >{t`Configure`}</InlineBanner.Action>
+                  render={<Link to={builtInProviderPath} />}
+                >{t`Open`}</InlineBanner.Action>
               }
-            >{t`To use the built-in provider, set its API key in ${catalogApiKeyConfigVariable}.`}</InlineBanner>
+            >{t`This provider is built in. Set its API key from its page.`}</InlineBanner>
           )}
 
           {isModelsDevWithoutNativeSdk && (
