@@ -1,5 +1,4 @@
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type KeyboardEvent, useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { CurrencyPicker } from 'twenty-ui/components/input';
@@ -9,7 +8,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 type CurrencyPickerDropdownButtonProps = {
-  selectedCurrencyCode?: string;
+  selectedCurrencyCode: string;
   onChange: (currencyCode: string) => void;
   disabled?: boolean;
 };
@@ -34,20 +33,14 @@ export const CurrencyPickerDropdownButton = ({
   const selectedCurrency = currencyPickerCurrencies.find(
     ({ code }) => code === selectedCurrencyCode,
   );
-  const currencyCode = isNonEmptyString(selectedCurrencyCode)
-    ? (selectedCurrency?.code ?? CurrencyCode.USD)
-    : undefined;
+  const currencyCode = selectedCurrency?.code ?? CurrencyCode.USD;
 
   return (
     <DropdownRoot dropdownId={dropdownId} type="picker">
       <CurrencyPicker.Trigger
-        value={currencyCode ?? t`Currency`}
+        value={currencyCode}
         disabled={disabled}
-        aria-label={
-          isNonEmptyString(currencyCode)
-            ? t`Currency: ${currencyCode}`
-            : t`Currency`
-        }
+        aria-label={t`Currency: ${currencyCode}`}
         onKeyDown={keepEnterAwayFromFieldHotkeys}
       />
       <DropdownContent

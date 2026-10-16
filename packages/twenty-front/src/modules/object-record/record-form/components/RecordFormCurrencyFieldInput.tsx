@@ -7,7 +7,7 @@ import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/cur
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { type CurrencyCode } from 'twenty-shared/constants';
+import { CurrencyCode } from 'twenty-shared/constants';
 import {
   convertCurrencyAmountToCurrencyMicros,
   convertCurrencyMicrosToCurrencyAmount,
@@ -37,10 +37,10 @@ export const RecordFormCurrencyFieldInput = ({
 }: RecordFormCurrencyFieldInputProps) => {
   const amountMicros = defaultValue?.amountMicros ?? null;
 
-  const [currencyCode, setCurrencyCode] = useState<CurrencyCode | undefined>(
+  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>(
     isNonEmptyString(defaultValue?.currencyCode)
       ? defaultValue.currencyCode
-      : defaultCurrencyCode,
+      : (defaultCurrencyCode ?? CurrencyCode.USD),
   );
   const [amountText, setAmountText] = useState(
     isDefined(amountMicros)
@@ -52,15 +52,12 @@ export const RecordFormCurrencyFieldInput = ({
   );
 
   const emitCurrencyValue = (
-    newCurrencyCode: CurrencyCode | undefined,
+    newCurrencyCode: CurrencyCode,
     newAmountMicros: number | null,
   ) =>
     onChange(
       isDefined(newAmountMicros)
-        ? {
-            currencyCode: newCurrencyCode ?? null,
-            amountMicros: newAmountMicros,
-          }
+        ? { currencyCode: newCurrencyCode, amountMicros: newAmountMicros }
         : { currencyCode: null, amountMicros: null },
     );
 
