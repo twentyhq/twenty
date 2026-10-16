@@ -56,10 +56,10 @@ export class MessageChannelMetadataService {
     messageChannelId: string;
     workspaceId: string;
   }): Promise<number | null> {
-    return this.messageChannelSyncStatusService.getImportProgress(
-      workspaceId,
+    return this.messageChannelSyncStatusService.getImportProgress({
       messageChannelId,
-    );
+      workspaceId,
+    });
   }
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {

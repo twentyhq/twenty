@@ -341,10 +341,13 @@ export class MessageChannelSyncStatusService {
     );
   }
 
-  public async getImportProgress(
-    workspaceId: string,
-    messageChannelId: string,
-  ): Promise<number | null> {
+  public async getImportProgress({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<number | null> {
     const [totalMessagesToImportCount, importedMessagesCount] =
       await this.cacheStorage.mget<number>([
         `messages-to-import-total:${workspaceId}:${messageChannelId}`,
@@ -417,7 +420,10 @@ export class MessageChannelSyncStatusService {
                 id,
                 syncStatus,
                 syncStage,
-                importProgress: await this.getImportProgress(workspaceId, id),
+                importProgress: await this.getImportProgress({
+                  messageChannelId: id,
+                  workspaceId,
+                }),
               },
             },
             recipientUserWorkspaceIds: [userWorkspaceId],
