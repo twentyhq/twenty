@@ -20,6 +20,16 @@ describe('AgentRunSettlementService', () => {
     await expect(settledRun).resolves.toMatchObject({ status: 'COMPLETED' });
   });
 
+  it('leaves no timer behind once the run settled', async () => {
+    const service = buildService(async () =>
+      JSON.stringify({ status: 'COMPLETED', result: {}, error: null }),
+    );
+
+    await service.waitFor({ runId: 'run-id', timeoutMs: 60_000 });
+
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
   // Redis queues commands while it is down, so they neither resolve nor fail
   it('stops waiting at the deadline while Redis is down', async () => {
     const service = buildService(() => new Promise<never>(() => {}));
