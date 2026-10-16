@@ -10,15 +10,17 @@ describe('App installation', () => {
       ['app', 'install'],
     ]) {
       const result = await runTwenty(args);
-      if (!result.ok)
+      if (!result.ok) {
         throw new Error(`${args.join(' ')} failed: ${result.error.message}`);
+      }
     }
   });
 
   afterAll(async () => {
     const result = await runTwenty(['app', 'uninstall', '--yes']);
-    if (!result.ok)
+    if (!result.ok) {
       console.warn(`App uninstall failed: ${result.error.message}`);
+    }
   });
 
   it('should find the installed app in the applications list', async () => {

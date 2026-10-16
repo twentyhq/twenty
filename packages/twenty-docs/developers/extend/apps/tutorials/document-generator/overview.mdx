@@ -34,13 +34,15 @@ Each chapter adds one capability. By the end you'll have touched most of the SDK
 ## Prerequisites
 
 You should have finished the [Quick Start](/developers/extend/apps/getting-started/quick-start):
-a local Twenty server running on port `2020` and the CLI authenticated to it.
+a Twenty workspace (cloud or local) and the CLI authenticated to it.
 
-If not, scaffold and start one now:
+If the server or authentication is not ready, complete the [Quick Start](/developers/extend/apps/getting-started/quick-start) first. Then create and install the tutorial app:
 
 ```bash filename="Terminal"
 twenty app init document-generator
 cd document-generator
+yarn install
+twenty app apply --create
 twenty app dev
 ```
 

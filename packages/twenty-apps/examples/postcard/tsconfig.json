@@ -28,6 +28,7 @@
     }
   },
   "exclude": [
+    "**/__tests__/**",
     "node_modules",
     "dist",
     "e2e",
@@ -35,10 +36,5 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/*.integration-test.ts"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.spec.json"
-    }
   ]
 }
