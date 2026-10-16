@@ -103,7 +103,9 @@ export const ObjectFilterDropdownDateTimeInput = () => {
 
   const internalZonedDateTime =
     !isRelativeDateFilter && isNonEmptyString(stringFilterValue)
-      ? stringFilterValue.includes('T')
+      ? // Date and time syntax must stay stable across locales.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
+        stringFilterValue.includes('T')
         ? Temporal.Instant.from(stringFilterValue).toZonedDateTimeISO(
             timeZone ?? userTimezone,
           )

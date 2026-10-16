@@ -11,6 +11,7 @@ const AI_AGENT_DEFAULT_OUTPUT_SCHEMA: BaseOutputSchemaV2 = {
   response: {
     isLeaf: true,
     type: 'string',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- The persisted key is translated when the schema is read.
     label: 'Response',
     value: null,
   },

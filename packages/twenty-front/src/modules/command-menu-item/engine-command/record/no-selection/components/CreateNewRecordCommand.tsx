@@ -24,6 +24,7 @@ export const CreateNewRecordCommand = () => {
   const { createCoreWorkflow } = useCreateCoreWorkflow();
 
   if (!isDefined(objectMetadataItem)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
     throw new Error('Object metadata item is required to create a record');
   }
 

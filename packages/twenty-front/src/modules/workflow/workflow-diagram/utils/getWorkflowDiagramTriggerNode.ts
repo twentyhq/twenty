@@ -18,18 +18,21 @@ export const getWorkflowDiagramTriggerNode = ({
 
   switch (trigger.type) {
     case 'MANUAL': {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- The canonical name is translated by getWorkflowStepDisplayName below.
       triggerDefaultLabel = 'Manual trigger';
       triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
     case 'CRON': {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- The canonical name is translated by getWorkflowStepDisplayName below.
       triggerDefaultLabel = 'On a schedule';
       triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
     case 'WEBHOOK': {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- The canonical name is translated by getWorkflowStepDisplayName below.
       triggerDefaultLabel = 'Webhook';
       triggerIcon = getTriggerIcon(trigger);
 

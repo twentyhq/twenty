@@ -14,6 +14,7 @@ export const sortByProperty =
       return (a[propertyName] as number) - (b[propertyName] as number);
     } else {
       throw new Error(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only sort invariant diagnostic.
         'Property type not supported in sortByProperty, only string and number are supported',
       );
     }

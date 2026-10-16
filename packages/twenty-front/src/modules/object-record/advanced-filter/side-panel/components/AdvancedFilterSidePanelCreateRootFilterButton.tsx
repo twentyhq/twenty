@@ -67,6 +67,8 @@ export const AdvancedFilterSidePanelCreateRootFilterButton = ({
       upsertRecordFilterGroup(newRecordFilterGroup);
 
       if (!isDefined(defaultFieldMetadataItem)) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('Missing default filter definition');
       }
 

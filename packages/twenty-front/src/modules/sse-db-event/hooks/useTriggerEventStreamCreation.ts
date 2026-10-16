@@ -118,6 +118,7 @@ export const useTriggerEventStreamCreation = () => {
             ) {
               captureException(
                 new Error(
+                  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a stable event-stream diagnostic reported to Sentry.
                   `SSE subscription error: ${value.errors[0]?.message}`,
                 ),
               );
@@ -157,6 +158,7 @@ export const useTriggerEventStreamCreation = () => {
             );
           } catch (error) {
             const errorProcessingSSEMessage = new Error(
+              // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a stable event-stream diagnostic reported to Sentry.
               'Error while processing SSE message',
               { cause: error instanceof Error ? error : undefined },
             );

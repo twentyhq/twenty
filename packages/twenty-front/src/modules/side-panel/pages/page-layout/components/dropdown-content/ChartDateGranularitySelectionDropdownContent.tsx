@@ -80,6 +80,7 @@ export const ChartDateGranularitySelectionDropdownContent = ({
   const configuration = widgetInEditMode?.configuration;
 
   if (!isChartConfiguration(configuration)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('Invalid configuration type');
   }
 
@@ -92,10 +93,12 @@ export const ChartDateGranularitySelectionDropdownContent = ({
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
   if (!isDefined(axis) && !isPieChart) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('Invalid configuration type');
   }
 
   if (isDefined(axis) && !isBarOrLineChart) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('Invalid configuration type');
   }
 

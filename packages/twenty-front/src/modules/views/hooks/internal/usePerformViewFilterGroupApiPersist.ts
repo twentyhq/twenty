@@ -46,6 +46,7 @@ export const usePerformViewFilterGroupApiPersist = () => {
       });
 
       if (!isDefined(result.data)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error('Failed to create view filter group');
       }
 

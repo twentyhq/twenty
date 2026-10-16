@@ -33,6 +33,7 @@ export const Toaster = ({
     props: {
       role: 'region',
       dir: direction,
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated aria-label; this preserves the public UI fallback.
       'aria-label': 'Notifications',
       ...props,
       className: clsx(styles.root, className),

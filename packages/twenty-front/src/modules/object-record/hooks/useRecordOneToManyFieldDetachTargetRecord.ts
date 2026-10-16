@@ -37,6 +37,8 @@ export const useRecordOneToManyFieldDetachTargetRecord = () => {
 
     if (!targetObjectMetadataItem) {
       throw new CustomError(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `Could not find related object metadata for ${targetObjectNameSingular}`,
         'RELATED_OBJECT_METADATA_NOT_FOUND',
       );
@@ -44,6 +46,8 @@ export const useRecordOneToManyFieldDetachTargetRecord = () => {
 
     if (!sourceObjectMetadataItem) {
       throw new CustomError(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `Could not find source object metadata for ${sourceObjectNameSingular}`,
         'SOURCE_OBJECT_METADATA_NOT_FOUND',
       );
@@ -83,6 +87,8 @@ export const useRecordOneToManyFieldDetachTargetRecord = () => {
       objectNameSingular: targetObjectNameSingular,
       idToUpdate: targetRecordId,
       updateOneRecordInput: {
+        // Metadata and protocol identifiers must stay stable across locales.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         [`${targetGQLFieldName}Id`]: null,
       },
     });

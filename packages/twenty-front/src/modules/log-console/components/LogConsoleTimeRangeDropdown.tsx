@@ -56,10 +56,12 @@ export const LogConsoleTimeRangeDropdown = ({
 
   const timeZoneOptions = [
     { value: 'member', label: memberTimeZone },
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
     { value: 'utc', label: 'UTC' },
   ] as const;
 
   const selectedTimeZoneLabel =
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
     logConsoleTimeZone === 'utc' ? 'UTC' : memberTimeZone;
 
   const getTimeRangeLabel = (labeledTimeRange: LogConsoleTimeRange) => {

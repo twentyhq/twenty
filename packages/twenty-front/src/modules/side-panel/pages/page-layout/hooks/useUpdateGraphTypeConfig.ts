@@ -54,6 +54,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
       const currentlyEditingWidgetId = store.get(currentlyEditingWidgetIdState);
 
       if (!isDefined(currentlyEditingWidgetId)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error('No widget is currently being edited');
       }
 
@@ -67,12 +68,14 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
         !isDefined(widgetInDraft) ||
         !isDefined(widgetInDraft.configuration)
       ) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error('Widget configuration not found in draft state');
       }
 
       const currentConfiguration = widgetInDraft.configuration;
 
       if (!isWidgetConfigurationOfTypeGraph(currentConfiguration)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error('Widget configuration is not a chart configuration');
       }
 

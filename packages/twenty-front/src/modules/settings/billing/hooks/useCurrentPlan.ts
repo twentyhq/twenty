@@ -18,6 +18,7 @@ export const useCurrentPlan = () => {
   const currentPlan = findOrThrow(
     listPlans(),
     (plan) => plan.planKey === currentPlanKey,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
     new Error('Current plan not found'),
   );
 

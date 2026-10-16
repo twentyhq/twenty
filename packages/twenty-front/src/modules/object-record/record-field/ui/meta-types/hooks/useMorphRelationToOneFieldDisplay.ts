@@ -23,6 +23,8 @@ export const useMorphRelationToOneFieldDisplay = () => {
   );
 
   if (!isDefined(chipGeneratorPerObjectPerField)) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('Chip generator per object per field is not defined');
   }
 
@@ -63,6 +65,8 @@ export const useMorphRelationToOneFieldDisplay = () => {
     !isDefined(fieldDefinition.metadata.objectMetadataNameSingular) ||
     !isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)
   ) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('Object metadata name singular is not a non-empty string');
   }
 

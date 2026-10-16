@@ -1,5 +1,5 @@
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
-import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
+import { getDataResidencyOptions } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -15,6 +15,7 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { plural } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -76,15 +77,14 @@ export const SettingsAdminNewAiProvider = () => {
     [modelsDevProviders],
   );
 
-  const providerOptions = useMemo(
-    () =>
-      modelsDevProviders.map((provider) => ({
-        value: provider.id,
-        label: `${capitalize(provider.id)} (${provider.modelCount} models)`,
-        Icon: getProviderIcon(provider.id),
-      })),
-    [modelsDevProviders],
-  );
+  const providerOptions = modelsDevProviders.map((provider) => ({
+    value: provider.id,
+    label: `${capitalize(provider.id)} (${plural(provider.modelCount, {
+      one: '# model',
+      other: '# models',
+    })})`,
+    Icon: getProviderIcon(provider.id),
+  }));
 
   const form = useForm<FormValues>({
     mode: 'onSubmit',
@@ -430,7 +430,7 @@ export const SettingsAdminNewAiProvider = () => {
                       onChange={onChange}
                       options={[
                         { value: '', label: t`None` },
-                        ...DATA_RESIDENCY_OPTIONS,
+                        ...getDataResidencyOptions(t),
                       ]}
                       fullWidth
                     />

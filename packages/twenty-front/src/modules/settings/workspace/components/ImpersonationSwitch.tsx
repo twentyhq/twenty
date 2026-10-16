@@ -23,6 +23,7 @@ export const ImpersonationSwitch = () => {
   const handleChange = async (value: boolean) => {
     try {
       if (!currentWorkspace?.id) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
         throw new Error('User is not logged in');
       }
       await updateWorkspace({

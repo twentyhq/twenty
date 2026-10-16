@@ -63,6 +63,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
   const { unsubscribeTopics } = useUnsubscribeTopics();
 
   const [deliveryTiming, setDeliveryTiming] = useState<CampaignDeliveryTiming>(
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Delivery timing values are API enum tokens.
     isAlreadyScheduled ? 'LATER' : 'NOW',
   );
   const [scheduledAt, setScheduledAt] = useState<string | null>(
@@ -197,6 +198,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
             value={deliveryTiming}
             onValueChange={handleDeliveryTimingChange}
             options={[
+              // oxlint-disable-next-line lingui/no-unlocalized-strings -- Delivery timing values are API enum tokens.
               { value: 'NOW', label: t`Send now` },
               { value: 'LATER', label: t`Send later` },
             ]}

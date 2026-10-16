@@ -98,6 +98,8 @@ export const useBillingSubscriptionChangeWording = () => {
       return 'AFTER_TRIAL';
     }
 
+    // ChargeTiming is a stable internal discriminant, not display text.
+    // oxlint-disable lingui/no-unlocalized-strings
     return isBillingSubscriptionChangeImmediate({
       change,
       currentPlan,
@@ -105,6 +107,7 @@ export const useBillingSubscriptionChangeWording = () => {
     })
       ? 'NOW'
       : 'SCHEDULED';
+    // oxlint-enable lingui/no-unlocalized-strings
   };
 
   const getSwitchPlanLeadSentence = (

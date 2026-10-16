@@ -42,6 +42,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
   );
 
   if (!sourceObjectMetadataItem) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
     throw new Error('Object not found.');
   }
 

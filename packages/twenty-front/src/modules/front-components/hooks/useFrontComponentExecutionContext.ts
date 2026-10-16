@@ -223,6 +223,7 @@ export const useFrontComponentExecutionContext = ({
       if ('to' in params) {
         if (params.to.includes(':') && !isDefined(params.params)) {
           throw new CustomError(
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This SDK route failure is a developer diagnostic.
             `Missing params for side-panel route: ${params.to}`,
             'FRONT_COMPONENT_SIDE_PANEL_ROUTE_PARAMS_REQUIRED',
           );
@@ -245,6 +246,7 @@ export const useFrontComponentExecutionContext = ({
 
         if (!isDefined(pageId)) {
           throw new CustomError(
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This SDK route failure is a developer diagnostic.
             `Unsupported side-panel route: ${pathWithHash}`,
             'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
           );
@@ -262,6 +264,7 @@ export const useFrontComponentExecutionContext = ({
 
         if (!isDefined(pageId)) {
           throw new CustomError(
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This SDK route failure is a developer diagnostic.
             `Unsupported side-panel route: ${params.path}`,
             'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
           );
@@ -272,6 +275,7 @@ export const useFrontComponentExecutionContext = ({
 
       if (params.page === SidePanelPages.ViewRecords) {
         throw new CustomError(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This SDK migration failure is a developer diagnostic.
           'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
           'FRONT_COMPONENT_VIEW_RECORDS_UNSUPPORTED',
         );
@@ -399,6 +403,7 @@ export const useFrontComponentExecutionContext = ({
 
       if (isPageLayoutSidePanelPage(params.page)) {
         throw new CustomError(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This SDK route failure is a developer diagnostic.
           `${params.page} edits the page layout it was opened from and cannot be opened by a front component`,
           'FRONT_COMPONENT_PAGE_LAYOUT_SIDE_PANEL_PAGE_UNSUPPORTED',
         );
@@ -575,6 +580,7 @@ export const useFrontComponentExecutionContext = ({
   const requireStorageNamespace = (): string => {
     if (!isDefined(storageNamespace)) {
       throw new CustomError(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This SDK permission failure is a developer diagnostic.
         'Device storage requires a signed-in user',
         'FRONT_COMPONENT_STORAGE_REQUIRES_SIGNED_IN_USER',
       );

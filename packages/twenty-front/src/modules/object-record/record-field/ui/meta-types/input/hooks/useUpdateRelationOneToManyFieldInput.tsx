@@ -29,6 +29,8 @@ export const useUpdateRelationOneToManyFieldInput = () => {
     });
 
   if (!isDefined(fieldDefinition.metadata.objectMetadataNameSingular)) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('ObjectMetadataNameSingular is required');
   }
 
@@ -38,10 +40,14 @@ export const useUpdateRelationOneToManyFieldInput = () => {
     });
 
   if (!fieldDefinition.metadata.objectMetadataNameSingular) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('ObjectMetadataNameSingular is required');
   }
 
   if (!isDefined(targetObjectMetadataItem)) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('TargetObjectMetadataItem is required');
   }
 
@@ -57,10 +63,14 @@ export const useUpdateRelationOneToManyFieldInput = () => {
         !fieldDefinition.metadata?.relationObjectMetadataNameSingular ||
         !fieldDefinition.metadata?.targetFieldMetadataName
       ) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('RelationObjectMetadataNameSingular is required');
       }
 
       if (!fieldDefinition.metadata?.objectMetadataNameSingular) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('RelationFieldMetadata is required');
       }
 
@@ -70,6 +80,8 @@ export const useUpdateRelationOneToManyFieldInput = () => {
       );
 
       if (!isDefined(targetFieldMetadata)) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('TargetFieldMetadata is required');
       }
 

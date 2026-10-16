@@ -5,6 +5,8 @@ export class ObjectMetadataItemNotFoundError extends Error {
     objectName: string,
     objectMetadataItems: EnrichedObjectMetadataItem[],
   ) {
+    // Diagnostic text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     const message = `Object metadata item "${objectName}" cannot be found in an array of ${
       objectMetadataItems?.length ?? 0
     } elements`;

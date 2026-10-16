@@ -9,11 +9,17 @@ import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilter
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 
 const LOGGED_RECORD_CHANGE_EVENTS = [
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
   'Object Record Created',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
   'Object Record Updated',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
   'Object Record Upserted',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
   'Object Record Deleted',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
   'Object Record Restored',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
   'Object Record Destroyed',
 ];
 

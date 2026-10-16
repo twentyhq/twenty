@@ -46,6 +46,7 @@ export const filterOutInvalidTimelineActivities = <
   );
 
   if (!isDefined(mainObjectMetadataItem)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
     throw new Error('Object metadata item not found');
   }
 

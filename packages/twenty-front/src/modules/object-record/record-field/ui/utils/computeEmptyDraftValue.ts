@@ -67,6 +67,8 @@ export const computeEmptyDraftValue = <FieldValue>({
   }
 
   throw new CustomError(
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     `Record field type not supported : ${fieldDefinition.type}}`,
     'RECORD_FIELD_TYPE_NOT_SUPPORTED',
   );

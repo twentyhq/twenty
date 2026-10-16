@@ -17,6 +17,7 @@ export const resolveWidgetTypeSelectTargetTabId = ({
 
     if (!isDefined(editingWidgetTab)) {
       throw new Error(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         `Cannot find tab containing editing widget ${pageLayoutEditingWidgetId}`,
       );
     }
@@ -26,6 +27,7 @@ export const resolveWidgetTypeSelectTargetTabId = ({
 
   if (!isDefined(widgetCreationTargetTabId)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       'widgetCreationTargetTabId must be set when navigating to widget type select without an editing widget',
     );
   }

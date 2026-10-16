@@ -4,6 +4,10 @@
   "type": "module",
   "devDependencies": {
     "@oxlint/plugins": "^1.51.0",
-    "twenty-shared": "workspace:*"
+    "eslint": "^9.39.4",
+    "eslint-plugin-lingui": "^0.16.0",
+    "oxlint": "^1.51.0",
+    "twenty-shared": "workspace:*",
+    "typescript": "^5.9.3"
   }
 }

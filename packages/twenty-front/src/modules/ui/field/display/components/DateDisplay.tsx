@@ -16,6 +16,7 @@ export const DateDisplay = ({ value, dateFieldSettings }: DateDisplayProps) => {
 
   const formattedDate = formatDateString({
     value,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- UTC is the fixed storage timezone identifier.
     timeZone: 'UTC', // Needed because we have db-stored date (yyyy-mm-dd) is converted to UTC dateTime by TypeORM
     dateFormat,
     dateFieldSettings,

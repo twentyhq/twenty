@@ -35,6 +35,7 @@ export const useSyncSelectableListItems = ({
   useEffect(() => {
     if (!selectableItemIdArray && !selectableItemIdMatrix) {
       throw new Error(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing component state is a developer invariant diagnostic.
         'Either selectableItemIdArray or selectableItemIdsMatrix must be provided',
       );
     }

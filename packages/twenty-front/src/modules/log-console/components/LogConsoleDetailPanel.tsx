@@ -153,6 +153,7 @@ export const LogConsoleDetailPanel = () => {
     : source.getDetailTitle(entry, { objectMetadataItem });
 
   const timeWithMillisecondsFormat =
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
     timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS';
 
   const formattedTimestamp = formatInTimeZone(

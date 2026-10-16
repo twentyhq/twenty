@@ -124,6 +124,7 @@ export const useOpenRecordInSidePanel = () => {
 
       if (!objectMetadataItem) {
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
           `No object metadata item found for object name ${objectNameSingular}`,
         );
       }

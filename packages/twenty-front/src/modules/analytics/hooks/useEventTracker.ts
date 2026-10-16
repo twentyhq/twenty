@@ -19,7 +19,9 @@ export const getSessionId = (): string => {
 
 export const setSessionId = (domain?: string): void => {
   const sessionId = getSessionId() || v4();
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser cookie attribute string.
   const baseCookie = `${ANALYTICS_COOKIE_NAME}=${sessionId}; Max-Age=1800; path=/; secure`;
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser cookie attribute string.
   const cookie = domain ? baseCookie + `; domain=${domain}` : baseCookie;
 
   document.cookie = cookie;

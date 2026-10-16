@@ -5,6 +5,7 @@ import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record
 import { filterFieldsForRecordTableViewCreation } from '@/page-layout/widgets/record-table/utils/filterFieldsForRecordTableViewCreation';
 import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { sortFieldsByRelevanceForRecordTableWidget } from '@/page-layout/widgets/record-table/utils/sortFieldsByRelevanceForRecordTableWidget';
+import { t } from '@lingui/core/macro';
 import { v4 } from 'uuid';
 import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
 
@@ -18,7 +19,7 @@ export const buildRecordTableWidgetViewSnapshot = (
 
   const flatView: FlatView = {
     id: newViewId,
-    name: `${objectMetadataItem.labelPlural} Table`,
+    name: t`${objectMetadataItem.labelPlural} Table`,
     icon: objectMetadataItem.icon ?? 'IconTable',
     objectMetadataId: objectMetadataItem.id,
     type: ViewType.TABLE_WIDGET,
