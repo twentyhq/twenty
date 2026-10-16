@@ -44,6 +44,7 @@ import { findBlockingCounters } from 'src/engine/core-modules/usage-limit/utils/
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findLimitsForResource } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-resource.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
+import { findUnmeteredUserCreditsShare } from 'src/engine/core-modules/usage-limit/utils/find-unmetered-user-credits-share.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
 import { splitUserCreditsAcrossEvents } from 'src/engine/core-modules/usage-limit/utils/split-user-credits-across-events.util';
@@ -384,6 +385,8 @@ export class UsageLimitQuotaService {
     workspaceId: string;
     events: RecordUsageInput[];
   }): Promise<QuotaDebitResult> {
+    let debits: QuotaDebit[] = [];
+
     try {
       const [
         quotaCounters,
@@ -397,7 +400,7 @@ export class UsageLimitQuotaService {
         this.buildWorkspaceAllowanceCounterAdmittingOnFailure(workspaceId),
       ]);
 
-      const debits = buildQuotaDebits({
+      debits = buildQuotaDebits({
         counters: [
           ...quotaCounters,
           ...(isDefined(workspaceAllowanceCounter)
@@ -467,7 +470,7 @@ export class UsageLimitQuotaService {
 
       return {
         exhaustedKind: null,
-        userCreditsUsedMicro: 0,
+        userCreditsUsedMicro: findUnmeteredUserCreditsShare(debits),
         userAllowanceExhaustedUntil: null,
       };
     }
@@ -873,10 +876,11 @@ export class UsageLimitQuotaService {
         };
       }
 
-      const heldBackUserShare = Math.min(
-        ...heldBackIndexes.flatMap((index) =>
-          splits[index]?.kind === 'userCredits' ? [amounts[index]] : [],
-        ),
+      const heldBackUserShare = findUnmeteredUserCreditsShare(
+        heldBackIndexes.map((index) => ({
+          amount: amounts[index],
+          split: splits[index],
+        })),
       );
 
       const { consumedValues: heldBackValues } =
