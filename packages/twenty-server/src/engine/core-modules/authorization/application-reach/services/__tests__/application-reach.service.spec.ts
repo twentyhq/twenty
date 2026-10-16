@@ -102,7 +102,24 @@ const buildService = () => {
 
 describe('ApplicationReachService', () => {
   describe('on an enforced metadata name', () => {
-    it("should answer NOT_FOUND for another application's entity", async () => {
+    it("should refuse to reach another application's entity, not its own", async () => {
+      const { service } = buildService();
+
+      const canReach = (applicationId: string) =>
+        asInstalledApplication(() =>
+          service.canReachApplication({
+            workspaceId: WORKSPACE_ID,
+            metadataName: 'logicFunction',
+            applicationId,
+            access: 'trigger',
+          }),
+        );
+
+      await expect(canReach(INSTALLED_APPLICATION_ID)).resolves.toBe(true);
+      await expect(canReach(OTHER_APPLICATION_ID)).resolves.toBe(false);
+    });
+
+    it("should leave another application's entities out of a listing", async () => {
       const { service } = buildService();
 
       const reachableMaps = await asInstalledApplication(() =>
@@ -187,6 +204,22 @@ describe('ApplicationReachService', () => {
   });
 
   describe('on a report-only metadata name', () => {
+    it("should reach another application's entity with a warning", async () => {
+      const { service, warn } = buildService();
+
+      await expect(
+        asInstalledApplication(() =>
+          service.canReachApplication({
+            workspaceId: WORKSPACE_ID,
+            metadataName: 'agent',
+            applicationId: OTHER_APPLICATION_ID,
+            access: 'manage',
+          }),
+        ),
+      ).resolves.toBe(true);
+      expect(warn).toHaveBeenCalledTimes(1);
+    });
+
     it('should return every entity and warn on reading one out of reach', async () => {
       const { service, warn } = buildService();
 

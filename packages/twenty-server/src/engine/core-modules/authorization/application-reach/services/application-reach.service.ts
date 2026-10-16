@@ -14,18 +14,18 @@ import { type ApplicationReach } from 'src/engine/core-modules/authorization/app
 import { type ApplicationTargetAccess } from 'src/engine/core-modules/authorization/application-reach/types/application-target-access.type';
 import { getReachableApplicationId } from 'src/engine/core-modules/authorization/application-reach/utils/get-reachable-application-id.util';
 import { resolveApplicationReach } from 'src/engine/core-modules/authorization/application-reach/utils/resolve-application-reach.util';
-import { restrictFlatEntityMapsToApplication } from 'src/engine/core-modules/authorization/application-reach/utils/restrict-flat-entity-maps-to-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
-// The one module deciding which applications' entities a caller reaches.
-// Services read entities through it, so every transport gets the same answer.
+// The one module deciding which applications' entities a caller reaches. Operations check their
+// target through it, and listings read through it, so every transport gets the same answer.
 @Injectable()
 export class ApplicationReachService {
   private readonly logger = new Logger(ApplicationReachService.name);
@@ -50,6 +50,43 @@ export class ApplicationReachService {
     return this.resolveEntryReach({ entry, workspaceId });
   }
 
+  // Whether the current flow may act on an entity owned by this application
+  async canReachApplication({
+    workspaceId,
+    metadataName,
+    applicationId,
+    access,
+  }: {
+    workspaceId: string;
+    metadataName: ApplicationReachMetadataName;
+    applicationId: string;
+    access: ApplicationTargetAccess;
+  }): Promise<boolean> {
+    const reach = await this.findCurrentReach(workspaceId);
+    const reachableApplicationId = isDefined(reach)
+      ? getReachableApplicationId({ reach, access })
+      : undefined;
+
+    if (
+      isDefined(reach) &&
+      (!isDefined(reachableApplicationId) ||
+        reachableApplicationId === applicationId)
+    ) {
+      return true;
+    }
+
+    if (APPLICATION_REACH_ENFORCED_METADATA_NAMES.has(metadataName)) {
+      return false;
+    }
+
+    this.logger.warn(
+      `[application-reach] ${access} of ${metadataName} owned by ${applicationId} would be refused`,
+    );
+
+    return true;
+  }
+
+  // For listings only: operations on one entity check it with canReachApplication
   async getReachableFlatEntityMaps<
     TMetadataName extends ApplicationReachMetadataName,
   >({
@@ -97,10 +134,11 @@ export class ApplicationReachService {
       return flatEntityMaps as unknown as MetadataFlatEntityMaps<TMetadataName>;
     }
 
-    const restrictedFlatEntityMaps = restrictFlatEntityMapsToApplication({
-      flatEntityMaps,
-      applicationId: reachableApplicationId,
-    });
+    const restrictedFlatEntityMaps =
+      getSubFlatEntityMapsByApplicationIdsOrThrow({
+        flatEntityMaps,
+        applicationIds: [reachableApplicationId],
+      });
 
     if (isEnforced) {
       return restrictedFlatEntityMaps as unknown as MetadataFlatEntityMaps<TMetadataName>;

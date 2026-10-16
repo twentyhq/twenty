@@ -8,11 +8,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
+import { Operation } from 'src/engine/core-modules/authorization/decorators/operation.decorator';
 import { OperationAuthorizationService } from 'src/engine/core-modules/authorization/services/operation-authorization.service';
+import { OperationGuardedService } from 'src/engine/core-modules/authorization/services/operation-guarded.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LOGIC_FUNCTION_OPERATIONS } from 'src/engine/metadata-modules/logic-function/constants/logic-function-operations.constant';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -26,13 +28,16 @@ import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-module
 import { type UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 import { buildUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-universal-flat-logic-function-to-create.util';
 import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { buildLogicFunctionOperationTarget } from 'src/engine/metadata-modules/logic-function/utils/build-logic-function-operation-target.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-from-source-input-to-flat-logic-function-to-update.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+// The logic function module's operations: every method declares its policy and target
 @Injectable()
-export class LogicFunctionFromSourceService {
+export class LogicFunctionFromSourceService extends OperationGuardedService {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
@@ -40,10 +45,98 @@ export class LogicFunctionFromSourceService {
     private readonly helperService: LogicFunctionFromSourceHelperService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly operationAuthorizationService: OperationAuthorizationService,
     private readonly applicationReachService: ApplicationReachService,
-  ) {}
+    operationAuthorizationService: OperationAuthorizationService,
+  ) {
+    super(operationAuthorizationService);
+  }
 
+  @Operation(LOGIC_FUNCTION_OPERATIONS.findOne, {
+    target: buildLogicFunctionOperationTarget({
+      access: 'read',
+      getId: ({ id }: { id: string }) => id,
+    }),
+  })
+  async findOneLogicFunction({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<LogicFunctionDTO> {
+    return this.helperService.findLogicFunctionDtoOrThrow({ id, workspaceId });
+  }
+
+  @Operation(LOGIC_FUNCTION_OPERATIONS.list)
+  async findManyLogicFunctions({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<FlatLogicFunction[]> {
+    const flatLogicFunctionMaps =
+      await this.applicationReachService.getReachableFlatEntityMaps({
+        workspaceId,
+        metadataName: 'logicFunction',
+        access: 'read',
+      });
+
+    return Object.values(flatLogicFunctionMaps.byUniversalIdentifier).filter(
+      (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
+        isDefined(flatLogicFunction) && !isDefined(flatLogicFunction.deletedAt),
+    );
+  }
+
+  @Operation(LOGIC_FUNCTION_OPERATIONS.canRunOnDemand, {
+    target: buildLogicFunctionOperationTarget({
+      access: 'read',
+      getId: ({ id }: { id: string }) => id,
+    }),
+  })
+  async isLogicFunctionRunnableOnDemand({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    return this.helperService.isLogicFunctionRunnableOnDemand({
+      id,
+      workspaceId,
+    });
+  }
+
+  @Operation(LOGIC_FUNCTION_OPERATIONS.getAvailablePackages)
+  async getAvailablePackages({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<object> {
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        },
+      );
+
+    const logicFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatLogicFunctionMaps,
+    });
+
+    if (!isDefined(logicFunction)) {
+      return {};
+    }
+
+    return (
+      flatApplicationMaps.byId[logicFunction.applicationId]
+        ?.availablePackages ?? {}
+    );
+  }
+
+  @Operation(LOGIC_FUNCTION_OPERATIONS.create)
   async createOneFromSource({
     input,
     workspaceId,
@@ -51,10 +144,6 @@ export class LogicFunctionFromSourceService {
     input: CreateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<LogicFunctionDTO> {
-    await this.operationAuthorizationService.ensureAuthorized(
-      LOGIC_FUNCTION_OPERATIONS.create,
-    );
-
     const { workspaceCustomFlatApplication: ownerFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -102,7 +191,7 @@ export class LogicFunctionFromSourceService {
         workspaceId,
       });
 
-      return this.findFlatLogicFunctionByIdAndConvertToDto({
+      return this.helperService.findLogicFunctionDtoOrThrow({
         id: universalFlatLogicFunctionToCreate.id,
         workspaceId,
       });
@@ -136,12 +225,22 @@ export class LogicFunctionFromSourceService {
       workspaceId,
     });
 
-    return this.findFlatLogicFunctionByIdAndConvertToDto({
+    return this.helperService.findLogicFunctionDtoOrThrow({
       id: universalFlatLogicFunctionToCreate.id,
       workspaceId,
     });
   }
 
+  @Operation(LOGIC_FUNCTION_OPERATIONS.create, {
+    target: buildLogicFunctionOperationTarget({
+      access: 'manage',
+      getId: ({
+        existingLogicFunctionId,
+      }: {
+        existingLogicFunctionId: string;
+      }) => existingLogicFunctionId,
+    }),
+  })
   async duplicateOneWithSource({
     existingLogicFunctionId,
     workspaceId,
@@ -149,10 +248,6 @@ export class LogicFunctionFromSourceService {
     existingLogicFunctionId: string;
     workspaceId: string;
   }): Promise<{ id: string }> {
-    await this.operationAuthorizationService.ensureAuthorized(
-      LOGIC_FUNCTION_OPERATIONS.create,
-    );
-
     const { flatLogicFunction: existingLogicFunction, ownerFlatApplication } =
       await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
         id: existingLogicFunctionId,
@@ -226,6 +321,16 @@ export class LogicFunctionFromSourceService {
     return { id: created.id };
   }
 
+  @Operation(LOGIC_FUNCTION_OPERATIONS.updateSource, {
+    target: buildLogicFunctionOperationTarget({
+      access: 'manage',
+      getId: ({
+        updateLogicFunctionFromSourceInput,
+      }: {
+        updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput;
+      }) => updateLogicFunctionFromSourceInput.id,
+    }),
+  })
   async updateOneFromSource({
     updateLogicFunctionFromSourceInput,
     workspaceId,
@@ -233,10 +338,6 @@ export class LogicFunctionFromSourceService {
     updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<void> {
-    await this.operationAuthorizationService.ensureAuthorized(
-      LOGIC_FUNCTION_OPERATIONS.updateSource,
-    );
-
     const { flatLogicFunction, ownerFlatApplication } =
       await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
         id: updateLogicFunctionFromSourceInput.id,
@@ -269,6 +370,12 @@ export class LogicFunctionFromSourceService {
     });
   }
 
+  @Operation(LOGIC_FUNCTION_OPERATIONS.delete, {
+    target: buildLogicFunctionOperationTarget({
+      access: 'manage',
+      getId: ({ id }: { id: string }) => id,
+    }),
+  })
   async deleteOneWithSource({
     id,
     workspaceId,
@@ -280,10 +387,6 @@ export class LogicFunctionFromSourceService {
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
   }): Promise<LogicFunctionDTO> {
-    await this.operationAuthorizationService.ensureAuthorized(
-      LOGIC_FUNCTION_OPERATIONS.delete,
-    );
-
     const {
       flatLogicFunction: existingFlatLogicFunction,
       ownerFlatApplication: workspaceCustomFlatApplication,
@@ -324,6 +427,12 @@ export class LogicFunctionFromSourceService {
     });
   }
 
+  @Operation(LOGIC_FUNCTION_OPERATIONS.updateSource, {
+    target: buildLogicFunctionOperationTarget({
+      access: 'manage',
+      getId: ({ id }: { id: string }) => id,
+    }),
+  })
   async buildOneFromSource({
     id,
     workspaceId,
@@ -331,10 +440,6 @@ export class LogicFunctionFromSourceService {
     id: string;
     workspaceId: string;
   }): Promise<void> {
-    await this.operationAuthorizationService.ensureAuthorized(
-      LOGIC_FUNCTION_OPERATIONS.updateSource,
-    );
-
     const { flatLogicFunction, ownerFlatApplication } =
       await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
         id,
@@ -381,6 +486,12 @@ export class LogicFunctionFromSourceService {
     });
   }
 
+  @Operation(LOGIC_FUNCTION_OPERATIONS.execute, {
+    target: buildLogicFunctionOperationTarget({
+      access: 'trigger',
+      getId: ({ id }: { id: string }) => id,
+    }),
+  })
   async executeOneFromSource({
     id,
     payload,
@@ -394,10 +505,6 @@ export class LogicFunctionFromSourceService {
     userId?: string;
     userWorkspaceId?: string;
   }): Promise<LogicFunctionExecutionResultDTO> {
-    await this.operationAuthorizationService.ensureAuthorized(
-      LOGIC_FUNCTION_OPERATIONS.execute,
-    );
-
     const { flatLogicFunction } =
       await this.helperService.findLogicFunctionRunnableOnDemandOrThrow({
         id,
@@ -434,6 +541,12 @@ export class LogicFunctionFromSourceService {
     };
   }
 
+  @Operation(LOGIC_FUNCTION_OPERATIONS.readSource, {
+    target: buildLogicFunctionOperationTarget({
+      access: 'manage',
+      getId: ({ id }: { id: string }) => id,
+    }),
+  })
   async getSourceCode({
     id,
     workspaceId,
@@ -441,10 +554,6 @@ export class LogicFunctionFromSourceService {
     id: string;
     workspaceId: string;
   }): Promise<string | null> {
-    await this.operationAuthorizationService.ensureAuthorized(
-      LOGIC_FUNCTION_OPERATIONS.readSource,
-    );
-
     const { flatLogicFunction, ownerFlatApplication } =
       await this.helperService.findWorkspaceCustomLogicFunctionOrThrow({
         id,
@@ -455,29 +564,6 @@ export class LogicFunctionFromSourceService {
       workspaceId,
       applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
       sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-    });
-  }
-
-  private async findFlatLogicFunctionByIdAndConvertToDto({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<LogicFunctionDTO> {
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    return fromFlatLogicFunctionToLogicFunctionDto({
-      flatLogicFunction: findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: id,
-        flatEntityMaps: flatLogicFunctionMaps,
-      }),
     });
   }
 }

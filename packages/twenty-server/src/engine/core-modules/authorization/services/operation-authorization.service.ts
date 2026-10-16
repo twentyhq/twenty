@@ -5,9 +5,16 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { findWorkspaceAuthContextEntry } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContextEntry } from 'src/engine/core-modules/auth/types/workspace-auth-context-entry.type';
+import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
 import { type OperationPolicy } from 'src/engine/core-modules/authorization/types/operation-policy.type';
+import { type OperationTarget } from 'src/engine/core-modules/authorization/types/operation-target.type';
 import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
@@ -29,6 +36,8 @@ export class OperationAuthorizationService {
   constructor(
     private readonly permissionsService: PermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationReachService: ApplicationReachService,
   ) {}
 
   async isAllowed({
@@ -101,14 +110,75 @@ export class OperationAuthorizationService {
     entry.authorizedOperationNames.add(policy.name);
   }
 
-  async ensureAuthorized(policy: OperationPolicy): Promise<void> {
-    const entry = findWorkspaceAuthContextEntry();
+  // A receipt names the operation, and the target it was checked on when there is one
+  async ensureAuthorized(
+    policy: OperationPolicy,
+    target?: OperationTarget,
+  ): Promise<void> {
+    if (
+      findWorkspaceAuthContextEntry()?.authorizedOperationNames.has(
+        policy.name,
+      ) !== true
+    ) {
+      await this.authorizeOrThrow(policy);
+    }
 
-    if (entry?.authorizedOperationNames.has(policy.name) === true) {
+    if (!isDefined(target)) {
       return;
     }
 
-    await this.authorizeOrThrow(policy);
+    const entry = findWorkspaceAuthContextEntry();
+    const targetReceipt = `${policy.name}:${target.metadataName}:${target.id}`;
+
+    if (
+      !isDefined(entry) ||
+      entry.authorizedOperationNames.has(targetReceipt)
+    ) {
+      return;
+    }
+
+    await this.authorizeTargetOrThrow({
+      target,
+      workspaceId: entry.authContext.workspace.id,
+    });
+
+    entry.authorizedOperationNames.add(targetReceipt);
+  }
+
+  private async authorizeTargetOrThrow({
+    target,
+    workspaceId,
+  }: {
+    target: OperationTarget;
+    workspaceId: string;
+  }): Promise<void> {
+    const flatMapsKey = getMetadataFlatEntityMapsKey(target.metadataName);
+    const flatEntityMapsByKey =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: [flatMapsKey] },
+      );
+    const flatEntity = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: target.id,
+      flatEntityMaps: flatEntityMapsByKey[
+        flatMapsKey
+      ] as unknown as FlatEntityMaps<SyncableFlatEntity>,
+    });
+
+    // An unknown id is left to the operation, which answers it as missing
+    if (!isDefined(flatEntity)) {
+      return;
+    }
+
+    const isReachable = await this.applicationReachService.canReachApplication({
+      workspaceId,
+      metadataName: target.metadataName,
+      applicationId: flatEntity.applicationId,
+      access: target.access,
+    });
+
+    if (!isReachable) {
+      throw target.createOutOfReachException(target.id);
+    }
   }
 
   // The entry's own narrowing, or the roles the ORM would derive from its auth context

@@ -13,7 +13,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationReachService } from 'src/engine/core-modules/authorization/application-reach/services/application-reach.service';
 import { AuthorizeOperation } from 'src/engine/core-modules/authorization/decorators/authorize-operation.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -32,7 +31,6 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LOGIC_FUNCTION_OPERATIONS } from 'src/engine/metadata-modules/logic-function/constants/logic-function-operations.constant';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
@@ -42,9 +40,7 @@ import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function
 import { LogicFunctionLogsInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.input';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
-import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
-import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { logicFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/logic-function/utils/logic-function-graphql-api-exception-handler.utils';
 import { APPLICATION_KEEPALIVE_INTERVAL_MS } from 'src/engine/subscriptions/constants/application-keepalive-interval-ms.constant';
@@ -78,9 +74,6 @@ import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/eve
 export class LogicFunctionResolver {
   constructor(
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
-    private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly applicationReachService: ApplicationReachService,
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
   ) {}
@@ -92,19 +85,10 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      const flatLogicFunctionMaps =
-        await this.applicationReachService.getReachableFlatEntityMaps({
-          workspaceId,
-          metadataName: 'logicFunction',
-          access: 'read',
-        });
-
-      const flatLogicFunction = findFlatLogicFunctionOrThrow({
+      return await this.logicFunctionFromSourceService.findOneLogicFunction({
         id,
-        flatLogicFunctionMaps,
+        workspaceId,
       });
-
-      return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }
@@ -118,7 +102,7 @@ export class LogicFunctionResolver {
   ): Promise<LogicFunctionDTO[]> {
     try {
       const flatLogicFunctions =
-        await this.logicFunctionFromSourceHelperService.findManyLogicFunctions({
+        await this.logicFunctionFromSourceService.findManyLogicFunctions({
           workspaceId,
         });
 
@@ -137,7 +121,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     try {
-      return await this.logicFunctionFromSourceHelperService.isLogicFunctionRunnableOnDemand(
+      return await this.logicFunctionFromSourceService.isLogicFunctionRunnableOnDemand(
         { id, workspaceId },
       );
     } catch (error) {
@@ -152,33 +136,10 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
-      const { flatLogicFunctionMaps, flatApplicationMaps } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-          },
-        );
-
-      const logicFunctionUniversalIdentifier =
-        flatLogicFunctionMaps.universalIdentifierById[id];
-
-      if (!logicFunctionUniversalIdentifier) {
-        return {};
-      }
-
-      const logicFunction =
-        flatLogicFunctionMaps.byUniversalIdentifier[
-          logicFunctionUniversalIdentifier
-        ];
-
-      if (!logicFunction) {
-        return {};
-      }
-
-      const application = flatApplicationMaps.byId[logicFunction.applicationId];
-
-      return application?.availablePackages ?? {};
+      return await this.logicFunctionFromSourceService.getAvailablePackages({
+        id,
+        workspaceId,
+      });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }

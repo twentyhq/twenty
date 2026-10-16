@@ -311,19 +311,14 @@ export class LogicFunctionExecutorService {
     workspaceId: string;
     logicFunctionId: string;
   }) {
-    const [
+    const {
       flatLogicFunctionMaps,
-      { flatApplicationMaps, flatApplicationVariableMaps },
-    ] = await Promise.all([
-      this.applicationReachService.getReachableFlatEntityMaps({
-        workspaceId,
-        metadataName: 'logicFunction',
-        access: 'trigger',
-      }),
-      this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-        'flatApplicationVariableMaps',
-      ]),
+      flatApplicationMaps,
+      flatApplicationVariableMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatLogicFunctionMaps',
+      'flatApplicationMaps',
+      'flatApplicationVariableMaps',
     ]);
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
@@ -331,9 +326,17 @@ export class LogicFunctionExecutorService {
       flatEntityMaps: flatLogicFunctionMaps,
     });
 
+    // Every path that runs code ends here, so the caller's reach is checked even when no
+    // operation declared this function as its target
     if (
       !isDefined(flatLogicFunction) ||
-      isDefined(flatLogicFunction.deletedAt)
+      isDefined(flatLogicFunction.deletedAt) ||
+      !(await this.applicationReachService.canReachApplication({
+        workspaceId,
+        metadataName: 'logicFunction',
+        applicationId: flatLogicFunction.applicationId,
+        access: 'trigger',
+      }))
     ) {
       throw new LogicFunctionExecutionException(
         `Logic function with id ${logicFunctionId} not found`,

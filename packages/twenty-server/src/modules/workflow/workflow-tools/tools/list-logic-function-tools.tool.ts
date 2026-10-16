@@ -9,7 +9,7 @@ import {
 const listLogicFunctionToolsSchema = z.object({});
 
 export const createListLogicFunctionToolsTool = (
-  deps: Pick<WorkflowToolDependencies, 'logicFunctionFromSourceHelperService'>,
+  deps: Pick<WorkflowToolDependencies, 'logicFunctionFromSourceService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'list_logic_function_tools' as const,
@@ -18,7 +18,7 @@ export const createListLogicFunctionToolsTool = (
   inputSchema: listLogicFunctionToolsSchema,
   execute: async () => {
     const logicFunctions =
-      await deps.logicFunctionFromSourceHelperService.findManyLogicFunctions({
+      await deps.logicFunctionFromSourceService.findManyLogicFunctions({
         workspaceId: context.workspaceId,
       });
 
