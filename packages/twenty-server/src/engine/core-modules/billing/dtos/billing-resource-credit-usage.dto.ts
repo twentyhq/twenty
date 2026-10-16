@@ -20,6 +20,9 @@ export class BillingResourceCreditUsageDTO {
   grantedCredits: number;
 
   @Field(() => Float)
+  workspaceCreditsGrantedForSeats: number;
+
+  @Field(() => Float)
   rolloverCredits: number;
 
   @Field(() => Float)

@@ -3,6 +3,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BillingSeatChangeEntity } from 'src/engine/core-modules/billing/entities/billing-seat-change.entity';
+import { BillingSeatChangeService } from 'src/engine/core-modules/billing/services/billing-seat-change.service';
+import { BillingPlanAllowanceService } from 'src/engine/core-modules/billing/services/billing-plan-allowance.service';
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
@@ -66,6 +69,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       BillingPriceEntity,
       BillingMeterEntity,
       BillingCreditGrantEntity,
+      BillingSeatChangeEntity,
       WorkspaceEntity,
       UserWorkspaceEntity,
     ]),
@@ -94,12 +98,15 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingPriceService,
     BillingCreditRolloverService,
     BillingCreditGrantService,
+    BillingSeatChangeService,
+    BillingPlanAllowanceService,
     BillingCreditService,
     BillingCreditOneTimeTopUpService,
     ResourceCreditService,
     BillingGaugeService,
     WorkspaceCurrentBillingSubscriptionCacheService,
     provideWorkspaceScopedRepository(BillingCreditGrantEntity),
+    provideWorkspaceScopedRepository(BillingSeatChangeEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),
     provideWorkspaceScopedRepository(BillingSubscriptionEntity),
   ],
@@ -111,6 +118,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingUsageService,
     BillingCreditRolloverService,
     BillingCreditGrantService,
+    BillingSeatChangeService,
+    BillingPlanAllowanceService,
     BillingCreditService,
     BillingCreditOneTimeTopUpService,
     ResourceCreditService,

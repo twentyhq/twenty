@@ -504,6 +504,9 @@ export class BillingResolver {
       ...item,
       usedCredits: toDisplayCredits(item.usedCredits),
       grantedCredits: toDisplayCredits(item.grantedCredits),
+      workspaceCreditsGrantedForSeats: toDisplayCredits(
+        item.workspaceCreditsGrantedForSeats,
+      ),
       rolloverCredits: toDisplayCredits(item.rolloverCredits),
       totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,

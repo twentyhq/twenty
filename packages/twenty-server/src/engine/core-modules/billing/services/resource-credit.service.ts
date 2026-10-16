@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { BillingPlanAllowanceService } from 'src/engine/core-modules/billing/services/billing-plan-allowance.service';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -18,6 +19,7 @@ export class ResourceCreditService {
   protected readonly logger = new Logger(ResourceCreditService.name);
 
   constructor(
+    private readonly billingPlanAllowanceService: BillingPlanAllowanceService,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
   ) {}
@@ -59,7 +61,19 @@ export class ResourceCreditService {
   async getResourceCreditRolloverParameters(
     workspaceId: string,
     subscriptionId: string,
-  ): Promise<{ tierQuantity: number } | null> {
+    {
+      closingPeriodStart,
+      closingPeriodEnd,
+      nextPeriodStart,
+    }: {
+      closingPeriodStart: Date;
+      closingPeriodEnd: Date;
+      nextPeriodStart: Date;
+    },
+  ): Promise<{
+    closingAllowanceMicro: number;
+    nextAllowanceMicro: number;
+  } | null> {
     const subscription = await this.billingSubscriptionRepository.findOne(
       workspaceId,
       {
@@ -76,12 +90,21 @@ export class ResourceCreditService {
       return null;
     }
 
-    const pricingInfo = this.extractResourceCreditPricingInfo(subscription);
+    const closingAllowance =
+      await this.billingPlanAllowanceService.computeAllowance(subscription, {
+        periodStart: closingPeriodStart,
+        periodEnd: closingPeriodEnd,
+      });
+    const nextAllowance =
+      await this.billingPlanAllowanceService.computeAllowance(subscription, {
+        periodStart: nextPeriodStart,
+        atPeriodStart: true,
+      });
+    const closingAllowanceMicro = closingAllowance.planAllowanceMicro ?? 0;
+    const nextAllowanceMicro = nextAllowance.planAllowanceMicro ?? 0;
 
-    if (!isDefined(pricingInfo)) {
-      return null;
-    }
-
-    return { tierQuantity: pricingInfo.tierCap };
+    return closingAllowanceMicro > 0 || nextAllowanceMicro > 0
+      ? { closingAllowanceMicro, nextAllowanceMicro }
+      : null;
   }
 }

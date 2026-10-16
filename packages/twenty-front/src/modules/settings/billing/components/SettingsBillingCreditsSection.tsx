@@ -34,6 +34,7 @@ import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
+  BillingProductKey,
   PermissionFlagType,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
@@ -94,6 +95,11 @@ const StyledRolloverText = styled.div`
   flex: 1 1 280px;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+`;
+
+const StyledSeatCreditsText = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledUsageMetrics = styled.div`
@@ -160,13 +166,31 @@ export const SettingsBillingCreditsSection = ({
 
   const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
-  const { usedCredits, grantedCredits, totalGrantedCredits, rolloverCredits } =
-    getResourceCreditUsage();
+  const {
+    usedCredits,
+    grantedCredits,
+    totalGrantedCredits,
+    rolloverCredits,
+    workspaceCreditsGrantedForSeats,
+  } = getResourceCreditUsage();
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
   const packageCredits = currentResourceCreditBillingPrice?.creditAmount;
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount;
-  const displayedGrantedCredits = packageCredits ?? grantedCredits;
+  const hasSeatCredits = workspaceCreditsGrantedForSeats > 0;
+  const displayedGrantedCredits = hasSeatCredits
+    ? grantedCredits
+    : (packageCredits ?? grantedCredits);
+  const seatCreditsDisplay = formatNumber(workspaceCreditsGrantedForSeats, {
+    decimals: 2,
+  });
+  const seats =
+    currentBillingSubscription.billingSubscriptionItems?.find(
+      (item) =>
+        item.billingProduct.metadata.productKey ===
+        BillingProductKey.BASE_PRODUCT,
+    )?.quantity ?? 0;
+  const seatsDisplay = formatNumber(seats, { decimals: 0 });
   const canCancelCreditPackSwitch =
     !isCancellationScheduled &&
     !shouldUpdatePayment &&
@@ -252,6 +276,11 @@ export const SettingsBillingCreditsSection = ({
           />
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>
+          {hasSeatCredits && (
+            <StyledSeatCreditsText>
+              {t`Includes ${seatCreditsDisplay} credits for ${seatsDisplay} seats`}
+            </StyledSeatCreditsText>
+          )}
           <ProgressBar
             value={clampedRemainingCreditsPercentage}
             aria-label={t`Remaining credits`}

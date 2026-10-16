@@ -5,13 +5,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { BillingPlanAllowanceService } from 'src/engine/core-modules/billing/services/billing-plan-allowance.service';
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -37,6 +34,7 @@ export class BillingUsageService {
   protected readonly logger = new Logger(BillingUsageService.name);
   constructor(
     private readonly billingCreditGrantService: BillingCreditGrantService,
+    private readonly billingPlanAllowanceService: BillingPlanAllowanceService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
@@ -88,13 +86,6 @@ export class BillingUsageService {
         subscription,
       );
 
-    if (!isDefined(resourceCreditItemDetail)) {
-      throw new BillingException(
-        `Resource credit item not found for workspace ${workspace.id}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
-      );
-    }
-
     const { periodStart, periodEnd } =
       getBillingSubscriptionPeriod(subscription);
 
@@ -112,11 +103,9 @@ export class BillingUsageService {
   private async buildResourceCreditUsage(
     workspaceId: string,
     subscription: BillingSubscriptionEntity,
-    item: NonNullable<
-      Awaited<
-        ReturnType<
-          typeof this.billingSubscriptionItemService.getResourceCreditSubscriptionItemDetails
-        >
+    item: Awaited<
+      ReturnType<
+        typeof this.billingSubscriptionItemService.getResourceCreditSubscriptionItemDetails
       >
     >,
     periodStart: Date,
@@ -137,20 +126,25 @@ export class BillingUsageService {
       this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     ]);
 
-    const grantedCredits =
-      subscription.status === SubscriptionStatus.Trialing
-        ? item.freeTrialQuantity
-        : item.creditAmount;
+    const isTrialing = subscription.status === SubscriptionStatus.Trialing;
+    const allowance = isTrialing
+      ? null
+      : await this.billingPlanAllowanceService.computeAllowance(subscription);
+    const grantedCredits = isTrialing
+      ? this.getTrialResourceUsageCap(subscription)
+      : (allowance?.planAllowanceMicro ?? 0);
 
     return {
-      productKey: item.productKey,
+      productKey: BillingProductKey.RESOURCE_CREDIT,
       periodStart,
       periodEnd,
       usedCredits,
       grantedCredits,
+      workspaceCreditsGrantedForSeats:
+        allowance?.workspaceCreditsGrantedForSeats ?? 0,
       rolloverCredits,
       totalGrantedCredits: grantedCredits + rolloverCredits,
-      unitPriceCents: item.unitPriceCents,
+      unitPriceCents: item?.unitPriceCents ?? 0,
     };
   }
 
@@ -160,29 +154,16 @@ export class BillingUsageService {
     );
   }
 
-  findResourceUsageCap(subscription: BillingSubscriptionEntity): number | null {
-    const isInFreeTrial = subscription.status === SubscriptionStatus.Trialing;
-
-    if (isInFreeTrial) {
+  async findResourceUsageCap(
+    subscription: BillingSubscriptionEntity,
+  ): Promise<number | null> {
+    if (subscription.status === SubscriptionStatus.Trialing) {
       return this.getTrialResourceUsageCap(subscription);
     }
 
-    const resourceCreditItem = subscription.billingSubscriptionItems.find(
-      (item) =>
-        item.billingProduct.metadata?.productKey ===
-        BillingProductKey.RESOURCE_CREDIT,
-    );
-
-    const resourceCreditPrice =
-      resourceCreditItem?.billingProduct.billingPrices.find(
-        (price) => price.stripePriceId === resourceCreditItem.stripePriceId,
-      );
-
-    if (!isDefined(resourceCreditPrice)) {
-      return null;
-    }
-
-    return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
+    return (
+      await this.billingPlanAllowanceService.computeAllowance(subscription)
+    ).planAllowanceMicro;
   }
 
   // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period

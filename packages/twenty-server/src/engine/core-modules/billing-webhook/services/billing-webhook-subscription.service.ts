@@ -10,6 +10,10 @@ import { In, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
+import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { BillingSeatChangeService } from 'src/engine/core-modules/billing/services/billing-seat-change.service';
+import { getBaseSeatChangeFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing-webhook/utils/get-base-seat-change-from-stripe-subscription-event.util';
 import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing-webhook/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
@@ -71,6 +75,9 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly billingSeatChangeService: BillingSeatChangeService,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
   ) {}
 
   async processStripeEvent(
@@ -199,9 +206,45 @@ export class BillingWebhookSubscriptionService {
 
     await this.updateBillingSubscriptionItems(
       updatedBillingSubscription.id,
-      event,
+      { ...event, data: { ...event.data, object: subscriptionWithSchedule } },
       workspaceId,
     );
+
+    if (
+      event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED &&
+      isDefined(event.data.previous_attributes?.items)
+    ) {
+      const stripeProductIds = [
+        ...event.data.object.items.data,
+        ...(event.data.previous_attributes.items.data ?? []),
+      ].map((item) =>
+        typeof item.price.product === 'string'
+          ? item.price.product
+          : item.price.product.id,
+      );
+      const products = await this.billingProductRepository.find({
+        where: { stripeProductId: In(stripeProductIds) },
+      });
+      const seatChange = getBaseSeatChangeFromStripeSubscriptionEvent(
+        event,
+        products
+          .filter(
+            (product) =>
+              product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
+          )
+          .map((product) => product.stripeProductId),
+      );
+
+      if (isDefined(seatChange)) {
+        await this.billingSeatChangeService.recordSeatChange({
+          ...seatChange,
+          workspaceId,
+          billingSubscriptionId: updatedBillingSubscription.id,
+          changedAt: new Date(event.created * 1000),
+          stripeEventId: event.id,
+        });
+      }
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',

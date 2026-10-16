@@ -877,6 +877,7 @@ type BillingResourceCreditUsage {
   totalGrantedCredits: Float!
   unitPriceCents: Float!
   usedCredits: Float!
+  workspaceCreditsGrantedForSeats: Float!
 }
 
 type BillingSession {

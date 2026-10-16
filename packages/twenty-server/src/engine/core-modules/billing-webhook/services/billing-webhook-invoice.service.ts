@@ -15,6 +15,9 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
+import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
@@ -50,6 +53,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingUsageService: BillingUsageService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
+    private readonly cacheLockService: CacheLockService,
     private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
@@ -91,20 +95,27 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        stripeCustomerId,
-      });
+    // Quantity and seat deltas must describe the same subscription state when rollover is settled.
+    await this.cacheLockService.withLock(
+      async () => {
+        const subscription =
+          await this.billingSubscriptionService.getCurrentBillingSubscription({
+            stripeCustomerId,
+          });
 
-    if (!isDefined(subscription)) {
-      return;
-    }
+        if (!isDefined(subscription)) {
+          return;
+        }
 
-    await this.processRollover({
-      subscription,
-      // Stripe's own clock, comparable to subscription boundaries without skew
-      invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
-    });
+        await this.processRollover({
+          subscription,
+          // Stripe's own clock, comparable to subscription boundaries without skew
+          invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
+        });
+      },
+      buildBillingSubscriptionStateLockKey(stripeCustomerId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
   }
 
   private async processRollover({
@@ -120,21 +131,6 @@ export class BillingWebhookInvoiceService {
     });
 
     if (!workspaceExists) {
-      return;
-    }
-
-    const params =
-      await this.resourceCreditService.getResourceCreditRolloverParameters(
-        subscription.workspaceId,
-        subscription.id,
-      );
-
-    // Skipping the transition forfeits the unspent part of every grant of this workspace
-    if (!isDefined(params)) {
-      this.logger.error(
-        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} carries no priced resource credit item`,
-      );
-
       return;
     }
 
@@ -166,10 +162,25 @@ export class BillingWebhookInvoiceService {
       ledgerPeriodStart,
     });
 
+    const params =
+      await this.resourceCreditService.getResourceCreditRolloverParameters(
+        subscription.workspaceId,
+        subscription.id,
+        { closingPeriodStart, closingPeriodEnd, nextPeriodStart },
+      );
+
+    if (!isDefined(params)) {
+      this.logger.error(
+        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} carries no credit allowance`,
+      );
+
+      return;
+    }
+
     // Trial credits carry into the first paid period; the trial allowance comes from config, not the price
     const closingAllowanceMicro = isFirstPeriodAfterTrial
       ? this.billingUsageService.getTrialResourceUsageCap(subscription)
-      : params.tierQuantity;
+      : params.closingAllowanceMicro;
 
     await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
       workspaceId: subscription.workspaceId,
@@ -177,7 +188,7 @@ export class BillingWebhookInvoiceService {
       closingPeriodEnd,
       closingAllowanceMicro,
       nextPeriodStart,
-      nextAllowanceMicro: params.tierQuantity,
+      nextAllowanceMicro: params.nextAllowanceMicro,
     });
   }
 

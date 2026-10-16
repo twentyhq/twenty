@@ -59,7 +59,7 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       trialEnd: subscription.trialEnd,
       collectionMethod: subscription.collectionMethod,
       planAllowanceMicro:
-        this.billingUsageService.findResourceUsageCap(subscription),
+        await this.billingUsageService.findResourceUsageCap(subscription),
       planKey:
         subscription.billingSubscriptionItems.find(
           isBaseProductSubscriptionItem,
