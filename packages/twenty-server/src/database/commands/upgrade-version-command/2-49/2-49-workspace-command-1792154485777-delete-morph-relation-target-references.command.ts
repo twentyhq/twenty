@@ -14,7 +14,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-49:delete-morph-relation-target-references',
   description:
-    'Delete the view fields, filters and field permissions still pointing at a morph relation target now that reads only serve its head',
+    'Delete the view fields and filters of morph relation targets, and the field permissions the 2.48 copy duplicated onto their head',
 })
 export class DeleteMorphRelationTargetReferencesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

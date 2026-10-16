@@ -18,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
+import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
 import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
 import { type RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -82,12 +83,8 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       fieldMetadata: morphRelationFieldMetadatas,
     } = rows;
 
-    const {
-      isMorphRelationHeadFieldId,
-      resolveMorphRelationPermissionFieldIds,
-    } = buildResolveMorphRelationPermissionFieldIds({
-      morphRelationFieldMetadatas,
-    });
+    const resolveMorphRelationPermissionFieldIds =
+      buildResolveMorphRelationPermissionFieldIds(morphRelationFieldMetadatas);
 
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
@@ -196,16 +193,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             );
           }
 
-          const fieldPermissionsForObject = roleFieldPermissions
-            .filter(
-              (fieldPermission) =>
-                fieldPermission.objectMetadataId === objectMetadataId,
-            )
-            .sort(
-              (first, second) =>
-                Number(isMorphRelationHeadFieldId(second.fieldMetadataId)) -
-                Number(isMorphRelationHeadFieldId(first.fieldMetadataId)),
-            );
+          const fieldPermissionsForObject = roleFieldPermissions.filter(
+            (fieldPermission) =>
+              fieldPermission.objectMetadataId === objectMetadataId,
+          );
 
           for (const fieldPermission of fieldPermissionsForObject) {
             const isFieldLabelIdentifier =
@@ -226,7 +217,11 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
               for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
                 fieldPermission.fieldMetadataId,
               )) {
-                restrictedFields[restrictedFieldId] = fieldRestriction;
+                restrictedFields[restrictedFieldId] =
+                  mergeRestrictedFieldPermissions(
+                    restrictedFields[restrictedFieldId],
+                    fieldRestriction,
+                  );
               }
             }
           }

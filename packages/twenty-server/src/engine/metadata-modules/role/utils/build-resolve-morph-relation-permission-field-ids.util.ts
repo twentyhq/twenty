@@ -7,15 +7,10 @@ type MorphRelationFieldMetadata = Pick<
   'id' | 'type' | 'universalIdentifier' | 'morphId'
 >;
 
-// A permission on a head restricts every target column, as the head has none of its own
-export const buildResolveMorphRelationPermissionFieldIds = ({
-  morphRelationFieldMetadatas,
-}: {
-  morphRelationFieldMetadatas: MorphRelationFieldMetadata[];
-}): {
-  isMorphRelationHeadFieldId: (fieldMetadataId: string) => boolean;
-  resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
-} => {
+// A head has no column of its own: its permission restricts every target column
+export const buildResolveMorphRelationPermissionFieldIds = (
+  morphRelationFieldMetadatas: MorphRelationFieldMetadata[],
+): ((fieldMetadataId: string) => string[]) => {
   const morphIdByHeadId = new Map<string, string>();
   const targetIdsByMorphId = new Map<string, string[]>();
 
@@ -37,15 +32,11 @@ export const buildResolveMorphRelationPermissionFieldIds = ({
     ]);
   }
 
-  return {
-    isMorphRelationHeadFieldId: (fieldMetadataId) =>
-      morphIdByHeadId.has(fieldMetadataId),
-    resolveMorphRelationPermissionFieldIds: (fieldMetadataId) => {
-      const headMorphId = morphIdByHeadId.get(fieldMetadataId);
+  return (fieldMetadataId) => {
+    const headMorphId = morphIdByHeadId.get(fieldMetadataId);
 
-      return isDefined(headMorphId)
-        ? [fieldMetadataId, ...(targetIdsByMorphId.get(headMorphId) ?? [])]
-        : [fieldMetadataId];
-    },
+    return isDefined(headMorphId)
+      ? [fieldMetadataId, ...(targetIdsByMorphId.get(headMorphId) ?? [])]
+      : [fieldMetadataId];
   };
 };

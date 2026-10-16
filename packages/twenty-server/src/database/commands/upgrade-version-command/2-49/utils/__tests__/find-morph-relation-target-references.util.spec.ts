@@ -28,6 +28,8 @@ const morphField = ({
     universalIdentifier,
     morphId,
     type: FieldMetadataType.MORPH_RELATION,
+    isActive: true,
+    isSystem: false,
   }) as FlatFieldMetadata;
 
 const head = morphField({
@@ -35,9 +37,15 @@ const head = morphField({
   universalIdentifier: 'morph',
   morphId: 'morph',
 });
-const target = morphField({
-  id: 'target',
-  universalIdentifier: 'target-uid',
+// Same score as target-b: the lower id is the representative the 2.48 copy used
+const representativeTarget = morphField({
+  id: 'target-a',
+  universalIdentifier: 'target-a-uid',
+  morphId: 'morph',
+});
+const otherTarget = morphField({
+  id: 'target-b',
+  universalIdentifier: 'target-b-uid',
   morphId: 'morph',
 });
 const headlessTarget = morphField({
@@ -68,41 +76,53 @@ const fieldPermission = (
   fieldMetadataId: string,
 ) => ({ universalIdentifier, fieldMetadataId }) as FlatFieldPermission;
 
-describe('findMorphRelationTargetReferences', () => {
-  it('returns the references pointing at a target whose morph relation has a head', () => {
-    const references = findMorphRelationTargetReferences({
-      flatFieldMetadataMaps: toMaps([head, target, headlessTarget, textField]),
-      flatViewFieldMaps: toMaps([
-        viewField('vf-head', 'head'),
-        viewField('vf-target', 'target'),
-        viewField('vf-headless', 'headless-target'),
-        viewField('vf-text', 'text'),
-      ]),
-      flatViewFilterMaps: toMaps([
-        viewFilter('vfi-head', 'head'),
-        viewFilter('vfi-target', 'target'),
-        viewFilter('vfi-relation-target', 'text', 'target'),
-        viewFilter('vfi-headless', 'headless-target'),
-      ]),
-      flatFieldPermissionMaps: toMaps([
-        fieldPermission('fp-head', 'head'),
-        fieldPermission('fp-target', 'target'),
-        fieldPermission('fp-headless', 'headless-target'),
-      ]),
-    });
+const universalIdentifiersOf = (entities: { universalIdentifier: string }[]) =>
+  entities.map(({ universalIdentifier }) => universalIdentifier);
 
-    expect(
-      references.viewFields.map(({ universalIdentifier }) => universalIdentifier),
-    ).toEqual(['vf-target']);
-    expect(
-      references.viewFilters.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
-    ).toEqual(['vfi-target', 'vfi-relation-target']);
-    expect(
-      references.fieldPermissions.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
-    ).toEqual(['fp-target']);
+describe('findMorphRelationTargetReferences', () => {
+  const references = findMorphRelationTargetReferences({
+    flatFieldMetadataMaps: toMaps([
+      head,
+      representativeTarget,
+      otherTarget,
+      headlessTarget,
+      textField,
+    ]),
+    flatViewFieldMaps: toMaps([
+      viewField('vf-head', 'head'),
+      viewField('vf-target-a', 'target-a'),
+      viewField('vf-target-b', 'target-b'),
+      viewField('vf-headless', 'headless-target'),
+      viewField('vf-text', 'text'),
+    ]),
+    flatViewFilterMaps: toMaps([
+      viewFilter('vfi-head', 'head'),
+      viewFilter('vfi-target-a', 'target-a'),
+      viewFilter('vfi-relation-target-b', 'text', 'target-b'),
+      viewFilter('vfi-headless', 'headless-target'),
+    ]),
+    flatFieldPermissionMaps: toMaps([
+      fieldPermission('fp-head', 'head'),
+      fieldPermission('fp-target-a', 'target-a'),
+      fieldPermission('fp-target-b', 'target-b'),
+      fieldPermission('fp-headless', 'headless-target'),
+    ]),
+  });
+
+  it('selects the view fields and filters of every target that has a head', () => {
+    expect(universalIdentifiersOf(references.viewFields)).toEqual([
+      'vf-target-a',
+      'vf-target-b',
+    ]);
+    expect(universalIdentifiersOf(references.viewFilters)).toEqual([
+      'vfi-target-a',
+      'vfi-relation-target-b',
+    ]);
+  });
+
+  it('selects the field permissions of the representative target only', () => {
+    expect(universalIdentifiersOf(references.fieldPermissions)).toEqual([
+      'fp-target-a',
+    ]);
   });
 });
