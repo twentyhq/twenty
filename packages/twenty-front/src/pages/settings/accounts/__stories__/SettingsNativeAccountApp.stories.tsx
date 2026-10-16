@@ -12,6 +12,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsNativeAccountApp } from '~/pages/settings/accounts/SettingsNativeAccountApp';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+  CALENDAR_CHANNELS,
   CONNECTED_ACCOUNTS,
   MICROSOFT_ACCOUNT_ID,
   seedAccountGroupsStory,
@@ -154,6 +155,52 @@ export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
       await canvas.findByTestId('tab-emails', undefined, { timeout: 3000 }),
     ).toBeVisible();
     expect(canvas.queryByTestId('tab-calendar')).not.toBeInTheDocument();
+  },
+};
+
+export const CalendarPendingSetupOffersCompleteSetup: Story = {
+  args: {
+    routeParams: { ':nativeAccountAppId': 'outlook' },
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyCalendarChannels', () =>
+          HttpResponse.json({
+            data: {
+              myCalendarChannels: CALENDAR_CHANNELS.map((channel) =>
+                channel.connectedAccountId === MICROSOFT_ACCOUNT_ID
+                  ? { ...channel, syncStage: 'PENDING_CONFIGURATION' }
+                  : channel,
+              ),
+            },
+          }),
+        ),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByTestId('tab-calendar', undefined, { timeout: 3000 }),
+    );
+
+    expect(
+      await canvas.findByText(
+        "Complete setup to manage this account's settings",
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('link', { name: /tim@outlook.com/ }),
+    ).toHaveAttribute(
+      'href',
+      `/settings/accounts/configuration/${MICROSOFT_ACCOUNT_ID}`,
+    );
+    expect(
+      canvas.queryByText('Connect with Microsoft'),
+    ).not.toBeInTheDocument();
   },
 };
 

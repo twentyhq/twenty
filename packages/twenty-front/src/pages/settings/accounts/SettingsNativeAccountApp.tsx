@@ -1,5 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
+import { SettingsAppPreferencesCompleteSetupCards } from '@/settings/app-preferences/components/SettingsAppPreferencesCompleteSetupCards';
 import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
@@ -19,7 +20,12 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
+import {
+  CalendarChannelSyncStage,
+  MessageChannelSyncStage,
+  MessageChannelType,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
@@ -55,6 +61,19 @@ export const SettingsNativeAccountApp = () => {
         isDefined(getConnectedAccountSettingsChannels(account).calendarChannel),
       )
     : [];
+  const emailAccountsPendingSetup = providerAccounts.filter((account) =>
+    account.messageChannels.some(
+      (channel) =>
+        channel.type === MessageChannelType.EMAIL &&
+        channel.syncStage === MessageChannelSyncStage.PENDING_CONFIGURATION,
+    ),
+  );
+  const calendarAccountsPendingSetup = providerAccounts.filter((account) =>
+    account.calendarChannels.some(
+      (channel) =>
+        channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
+    ),
+  );
 
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconSettings },
@@ -100,6 +119,15 @@ export const SettingsNativeAccountApp = () => {
     />
   );
 
+  const renderMissingAccount = (accountsPendingSetup: ConnectedAccount[]) =>
+    accountsPendingSetup.length > 0 ? (
+      <SettingsAppPreferencesCompleteSetupCards
+        accounts={accountsPendingSetup}
+      />
+    ) : (
+      <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
+    );
+
   const renderContent = () => {
     if (activeTabId === 'emails') {
       if (loading) {
@@ -109,9 +137,7 @@ export const SettingsNativeAccountApp = () => {
       const selectedAccount = getSelectedAccount(emailAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
+        return renderMissingAccount(emailAccountsPendingSetup);
       }
 
       const { messageChannel } =
@@ -137,9 +163,7 @@ export const SettingsNativeAccountApp = () => {
       const selectedAccount = getSelectedAccount(calendarAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
+        return renderMissingAccount(calendarAccountsPendingSetup);
       }
 
       const { calendarChannel } =
