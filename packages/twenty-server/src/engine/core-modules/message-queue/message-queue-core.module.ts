@@ -59,6 +59,7 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
       exports: [
         ...(dynamicModule.exports ?? []),
         ApplicationJobEnqueueThrottlerService,
+        QUEUE_DRIVER,
         ...Object.values(MessageQueue).map((queueName) =>
           getQueueToken(queueName),
         ),
@@ -101,6 +102,7 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
       exports: [
         ...(dynamicModule.exports ?? []),
         ApplicationJobEnqueueThrottlerService,
+        QUEUE_DRIVER,
         ...Object.values(MessageQueue).map((queueName) =>
           getQueueToken(queueName),
         ),
