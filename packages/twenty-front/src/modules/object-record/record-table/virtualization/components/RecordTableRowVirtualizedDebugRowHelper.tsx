@@ -12,6 +12,7 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDebugRow = styled.div`
@@ -83,30 +84,37 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
 
   const position = recordStore?.position;
 
-  // The row overlay exposes internal virtualization state to developers.
-  // oxlint-disable lingui/no-unlocalized-strings
   return (
     <StyledDebugRow>
-      <StyledDebugColumn width={70}>virtual :{virtualIndex}</StyledDebugColumn>
       <StyledDebugColumn width={70}>
-        real :{realIndexByVirtualIndex}
+        {doNotTranslate('virtual :')}
+        {virtualIndex}
       </StyledDebugColumn>
-      <StyledDebugColumn width={100}>pos :{position}</StyledDebugColumn>
+      <StyledDebugColumn width={70}>
+        {doNotTranslate('real :')}
+        {realIndexByVirtualIndex}
+      </StyledDebugColumn>
+      <StyledDebugColumn width={100}>
+        {doNotTranslate('pos :')}
+        {position}
+      </StyledDebugColumn>
       <StyledDebugColumn width={80}>
-        px:
+        {doNotTranslate('px:')}
         {pixelsFromTop}
       </StyledDebugColumn>
       <StyledDebugColumn width={150}>
         <b>{labelIdentifier}</b>
       </StyledDebugColumn>
       <StyledDebugColumn width={300}>
-        id:
+        {doNotTranslate('id:')}
         {recordId}
       </StyledDebugColumn>
       <StyledDebugColumn width={100}>
-        status :{isDefined(dataLoadingStatus) ? dataLoadingStatus : 'undefined'}
+        {doNotTranslate('status :')}
+        {isDefined(dataLoadingStatus)
+          ? dataLoadingStatus
+          : doNotTranslate('undefined')}
       </StyledDebugColumn>
     </StyledDebugRow>
   );
-  // oxlint-enable lingui/no-unlocalized-strings
 };

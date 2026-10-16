@@ -3,6 +3,7 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ActivateWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -14,8 +15,9 @@ export const ActivateWorkflowSingleRecordCommand = () => {
   );
 
   if (!isDefined(recordId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Record ID is required to activate workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to activate workflow'),
+    );
   }
 
   const handleExecute = () => {

@@ -134,17 +134,7 @@ const StyledToolJsonContent = styled.div`
 `;
 
 const StyledJsonTreeContainer = styled.div`
-  font-size: ${themeCssVariables.font.size.md};
   overflow-x: auto;
-
-  li,
-  span {
-    line-height: 1;
-  }
-
-  ul {
-    min-width: 0;
-  }
 `;
 
 const StyledToolErrorText = styled.p`

@@ -6,6 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -20,8 +21,9 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
   const { t } = useLingui();
 
   if (!isDefined(recordId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Record ID is required to duplicate workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to duplicate workflow'),
+    );
   }
 
   const handleExecute = async () => {

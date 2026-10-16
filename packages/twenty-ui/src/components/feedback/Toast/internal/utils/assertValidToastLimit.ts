@@ -1,8 +1,8 @@
 import { isPositiveInteger } from '@sniptt/guards';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const assertValidToastLimit = (limit: number) => {
   if (!isPositiveInteger(limit)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This validates a developer-supplied provider option.
-    throw new Error('Toast limit must be a positive integer.');
+    throw new Error(doNotTranslate('Toast limit must be a positive integer.'));
   }
 };

@@ -2,13 +2,13 @@ import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-a
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-// oxlint-disable lingui/no-unlocalized-strings -- Stored form field text is matched to translated descriptors when rendered.
 export const FORM_FIELD_DEFAULT_TEXTS: Array<{
   type: WorkflowFormFieldType;
   text: string;
   message: MessageDescriptor;
-}> = [
+}> = doNotTranslate([
   { type: FieldMetadataType.TEXT, text: 'Text', message: msg`Text` },
   {
     type: FieldMetadataType.TEXT,
@@ -39,4 +39,4 @@ export const FORM_FIELD_DEFAULT_TEXTS: Array<{
     text: 'Choose values',
     message: msg`Choose values`,
   },
-];
+]);

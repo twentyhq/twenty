@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 const StyledColorIcon = styled.div<{
   textColorValue: string;
   backgroundColorValue: string;
@@ -72,10 +73,7 @@ export const DashboardColorIcon = ({
           : 'transparent'
       }
     >
-      {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- The color swatch uses A as a sample glyph.
-        'A'
-      }
+      {doNotTranslate('A')}
     </StyledColorIcon>
   );
 };

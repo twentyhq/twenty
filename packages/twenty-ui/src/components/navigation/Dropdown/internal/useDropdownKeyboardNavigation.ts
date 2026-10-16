@@ -1,4 +1,3 @@
-// oxlint-disable lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser APIs.
 import { useDirection } from '@base-ui/react/direction-provider';
 import { useState, type KeyboardEvent } from 'react';
 
@@ -13,6 +12,7 @@ import { getDropdownTrigger } from './getDropdownTrigger';
 import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 import { getNextDropdownItem } from './getNextDropdownItem';
 import { useDropdownContext } from './useDropdownContext';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const TYPEAHEAD_RESET_DELAY = 500;
 
@@ -40,7 +40,9 @@ export const useDropdownKeyboardNavigation = () => {
       'input,textarea,select,[contenteditable="true"]',
     );
     const isRightToLeft = direction === 'rtl';
-    const backwardKey = isRightToLeft ? 'ArrowRight' : 'ArrowLeft';
+    const backwardKey = doNotTranslate(
+      isRightToLeft ? 'ArrowRight' : 'ArrowLeft',
+    );
     const isSubmenuBackwardKey =
       isSubmenu && !isEditable && event.key === backwardKey;
     const backwardGridItem =

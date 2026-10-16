@@ -18,6 +18,7 @@ import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
@@ -159,8 +160,7 @@ export const DateTimePickerHeader = ({
             <Input
               type="text"
               ref={timeInputRef}
-              // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a time or date input mask token, not natural-language text.
-              placeholder={isHour12 ? 'HH:mm AA' : 'HH:mm'}
+              placeholder={doNotTranslate(isHour12 ? 'HH:mm AA' : 'HH:mm')}
               aria-label={t`Time`}
             />
           </InputGroup>

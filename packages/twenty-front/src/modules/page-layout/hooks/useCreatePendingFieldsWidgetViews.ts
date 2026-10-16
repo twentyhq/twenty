@@ -7,6 +7,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { ViewType, WidgetType } from '~/generated-metadata/graphql';
 
 export const useCreatePendingFieldsWidgetViews = () => {
@@ -82,8 +83,9 @@ export const useCreatePendingFieldsWidgetViews = () => {
 
         if (result.status === 'failed') {
           throw new Error(
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-            `Failed to create view for FIELDS widget ${widget.id}`,
+            doNotTranslate(
+              `Failed to create view for FIELDS widget ${widget.id}`,
+            ),
           );
         }
       }

@@ -8,6 +8,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Chip.module.scss';
 import { type ChipProps } from './types/ChipProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const MEDIUM_LABEL_STYLE: CSSProperties = { height: 'var(--t-spacing-4)' };
 
@@ -53,8 +54,9 @@ export const Chip = ({
       style: {
         ...(isDefined(maxWidth)
           ? {
-              // oxlint-disable-next-line lingui/no-unlocalized-strings -- CSS consumes this calculation as a style value.
-              '--tw-chip-max-width': `calc(${maxWidth}px - 2 * var(--tw-chip-padding))`,
+              '--tw-chip-max-width': doNotTranslate(
+                `calc(${maxWidth}px - 2 * var(--tw-chip-padding))`,
+              ),
             }
           : {}),
         ...style,

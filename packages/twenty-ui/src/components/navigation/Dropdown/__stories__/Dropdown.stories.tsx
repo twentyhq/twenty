@@ -273,9 +273,11 @@ export const Nested: Story = {
         body.queryByRole('dialog', { name: 'Sort direction' }),
       ).not.toBeInTheDocument(),
     );
-    await expect(body.getByRole('dialog', { name: 'Sort' })).toBeVisible();
+    await waitFor(() =>
+      expect(body.getByRole('dialog', { name: 'Sort' })).toBeVisible(),
+    );
     const direction = body.getByRole('button', { name: 'Descending' });
-    await expect(direction).toHaveFocus();
+    await waitFor(() => expect(direction).toHaveFocus());
     await userEvent.click(direction);
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(direction).toHaveFocus());

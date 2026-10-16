@@ -28,6 +28,7 @@ import {
   useRef,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 
@@ -188,10 +189,7 @@ export const GraphWidgetPieChart = ({
       <GraphWidgetChartContainer
         ref={containerRef}
         $isClickable={!hasNoData && isDefined(onSliceClick)}
-        $cursorSelector={
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This value is a CSS selector for pie segments.
-          'svg g path'
-        }
+        $cursorSelector={doNotTranslate('svg g path')}
         onMouseLeave={handleSliceLeave}
       >
         <StyledPieChartWrapper preventHover={hasNoData}>

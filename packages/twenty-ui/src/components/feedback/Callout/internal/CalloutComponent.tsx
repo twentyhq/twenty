@@ -10,6 +10,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Callout.module.scss';
 import { type CalloutProps } from '../types/CalloutProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const CalloutComponent = ({
   status = 'info',
@@ -20,8 +21,7 @@ export const CalloutComponent = ({
   fullWidth = false,
   icon = <IconHelp size={themeCssVariables.icon.size.md} aria-hidden="true" />,
   action,
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated closeLabel; this preserves the public UI fallback.
-  closeLabel = 'Close',
+  closeLabel = doNotTranslate('Close'),
   onDismiss,
   className,
   render,

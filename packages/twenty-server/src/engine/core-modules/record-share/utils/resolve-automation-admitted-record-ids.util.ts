@@ -26,6 +26,7 @@ export const resolveAutomationAdmittedRecordIds = async ({
     flatRowLevelPermissionPredicateMaps,
     flatRowLevelPermissionPredicateGroupMaps,
     flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
   } = await workspaceCacheService.getOrRecompute(payload.workspaceId, [
     'flatApplicationMaps',
     'flatRoleMaps',
@@ -34,6 +35,7 @@ export const resolveAutomationAdmittedRecordIds = async ({
     'flatRowLevelPermissionPredicateMaps',
     'flatRowLevelPermissionPredicateGroupMaps',
     'flatFieldMetadataMaps',
+    'flatObjectMetadataMaps',
   ]);
 
   const standardApplication = findActiveFlatApplicationByUniversalIdentifier(
@@ -57,6 +59,7 @@ export const resolveAutomationAdmittedRecordIds = async ({
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
       }),
     );
 };

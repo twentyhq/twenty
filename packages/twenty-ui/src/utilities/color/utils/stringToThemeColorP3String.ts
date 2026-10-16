@@ -4,6 +4,7 @@ import {
   type ThemeColor,
   MAIN_COLOR_NAMES,
 } from '@ui/theme';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const stringToThemeColor = (string: string): ThemeColor => {
   let hash = 0;
@@ -25,8 +26,7 @@ export const stringToThemeColorP3String = ({
   theme: ThemeType;
 }): string => {
   if (variant < 1 || variant > 12) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This validates an internal color token parameter.
-    throw new Error('Variant must be between 1 and 12');
+    throw new Error(doNotTranslate('Variant must be between 1 and 12'));
   }
 
   const colorName = stringToThemeColor(string);

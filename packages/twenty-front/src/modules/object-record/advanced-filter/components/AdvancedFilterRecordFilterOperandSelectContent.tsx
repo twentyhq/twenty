@@ -15,6 +15,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type ViewFilterOperand } from 'twenty-shared/types';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
@@ -54,8 +55,7 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
   const timeZoneAbbreviation =
     isWorkflowFindRecords === true
       ? // Date and time syntax must stay stable across locales.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        'UTC'
+        doNotTranslate('UTC')
       : !isSystemTimezone
         ? userTimeZoneAbbreviation
         : null;

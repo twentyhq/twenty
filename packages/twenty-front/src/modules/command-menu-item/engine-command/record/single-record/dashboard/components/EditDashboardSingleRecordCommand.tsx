@@ -3,14 +3,16 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useResetLocationHash } from '@/ui/navigation/hooks/useResetLocationHash';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const EditDashboardSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Selected record is required to edit dashboard');
+    throw new Error(
+      doNotTranslate('Selected record is required to edit dashboard'),
+    );
   }
 
   const pageLayoutId = selectedRecord.pageLayoutId;

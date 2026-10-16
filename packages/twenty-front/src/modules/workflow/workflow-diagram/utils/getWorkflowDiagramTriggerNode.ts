@@ -6,6 +6,7 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { type Node } from '@xyflow/react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const getWorkflowDiagramTriggerNode = ({
@@ -18,22 +19,19 @@ export const getWorkflowDiagramTriggerNode = ({
 
   switch (trigger.type) {
     case 'MANUAL': {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- The canonical name is translated by getWorkflowStepDisplayName below.
-      triggerDefaultLabel = 'Manual trigger';
+      triggerDefaultLabel = doNotTranslate('Manual trigger');
       triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
     case 'CRON': {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- The canonical name is translated by getWorkflowStepDisplayName below.
-      triggerDefaultLabel = 'On a schedule';
+      triggerDefaultLabel = doNotTranslate('On a schedule');
       triggerIcon = getTriggerIcon(trigger);
 
       break;
     }
     case 'WEBHOOK': {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- The canonical name is translated by getWorkflowStepDisplayName below.
-      triggerDefaultLabel = 'Webhook';
+      triggerDefaultLabel = doNotTranslate('Webhook');
       triggerIcon = getTriggerIcon(trigger);
 
       break;

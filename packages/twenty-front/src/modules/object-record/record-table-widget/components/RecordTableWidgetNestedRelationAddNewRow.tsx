@@ -20,11 +20,7 @@ export const RecordTableWidgetNestedRelationAddNewRow = ({
   onRelationRecordSelected,
 }: RecordTableWidgetNestedRelationAddNewRowProps) => (
   <DropdownRoot dropdownId={dropdownId} type="picker">
-    <Dropdown.Trigger
-      render={<div />}
-      nativeButton={false}
-      style={{ width: '100%' }}
-    >
+    <Dropdown.Trigger render={<div />} nativeButton={false}>
       <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
     </Dropdown.Trigger>
     <DropdownContent align="start" width={GenericDropdownContentWidth.Medium}>

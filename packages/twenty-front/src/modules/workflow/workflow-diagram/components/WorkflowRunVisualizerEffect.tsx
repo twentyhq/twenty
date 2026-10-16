@@ -20,6 +20,7 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 import { useStore } from 'jotai';
 import { useCallback, useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { useIcons } from 'twenty-ui/icon';
 
@@ -187,8 +188,9 @@ export const WorkflowRunVisualizerEffect = ({
       );
       if (!isDefined(currentWorkflowVisualizerWorkflowId)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
+          doNotTranslate(
+            'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
+          ),
         );
       }
 

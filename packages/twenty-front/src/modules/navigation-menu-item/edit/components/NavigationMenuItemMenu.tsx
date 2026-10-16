@@ -2,6 +2,7 @@ import { NavigationMenuItemMenuModeEffect } from '@/navigation-menu-item/edit/ef
 import { type ComponentProps, type ReactElement, type ReactNode } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dropdown, type DropdownType } from 'twenty-ui/components/navigation';
 import { useTheme } from 'twenty-ui/theme';
 
@@ -107,8 +108,9 @@ export const NavigationMenuItemMenu = ({
       onInteractOutside={(event) => {
         const isOnRowActions = isDefined(
           event.target?.closest(
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This must remain a CSS selector.
-            `[data-navigation-menu-item-id="${dropdownId}"] [data-navigation-actions]`,
+            doNotTranslate(
+              `[data-navigation-menu-item-id="${dropdownId}"] [data-navigation-actions]`,
+            ),
           ),
         );
 
@@ -127,7 +129,6 @@ export const NavigationMenuItemMenu = ({
         );
         const isInsideRow = isDefined(
           event.target?.closest(
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This must remain a CSS selector.
             `[data-navigation-menu-item-id="${dropdownId}"]`,
           ),
         );

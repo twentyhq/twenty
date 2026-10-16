@@ -15,14 +15,16 @@ import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/consta
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const DeleteWorkspaceRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Object metadata is required to delete records');
+    throw new Error(
+      doNotTranslate('Object metadata is required to delete records'),
+    );
   }
 
   const recordId = selectedRecords[0]?.id;

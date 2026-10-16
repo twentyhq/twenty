@@ -1,3 +1,5 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 const {
   HTTP_METHODS,
   METHODS_WITH_BODY,
@@ -13,9 +15,9 @@ const {
     { label: 'DELETE', value: 'DELETE' },
   ] as const,
   METHODS_WITH_BODY: ['POST', 'PUT', 'PATCH'] as const,
-  DEFAULT_JSON_BODY_PLACEHOLDER:
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This JSON snippet is a code example with stable keys and placeholders.
+  DEFAULT_JSON_BODY_PLACEHOLDER: doNotTranslate(
     '{\n  "key": "value"\n "another_key": "{{workflow.variable}}" \n}',
+  ),
   DEFAULT_HTTP_REQUEST_OUTPUT_VALUE: {
     data: undefined,
     status: undefined,
