@@ -16,6 +16,7 @@ import {
 
 import { IconButton } from '../IconButton';
 import { type IconButtonProps } from '../types/IconButtonProps';
+import { IconButtonExample } from './IconButtonExample';
 
 const meta: Meta<typeof IconButton> = {
   id: 'ui-components-iconbutton',
@@ -31,42 +32,78 @@ export const Display: Story = { decorators: [ComponentDecorator] };
 
 export const Elevated: Story = {
   ...Display,
-  args: { elevated: true, size: 'sm' },
+  args: {
+    elevated: true,
+    size: 'sm',
+    children: <IconPlus />,
+    'aria-label': 'Add widget',
+  },
 };
 
 export const ElevatedTooltip: Story = {
   ...Elevated,
-  args: { ...Elevated.args, tooltip: 'Search records', tooltipDelay: 0 },
+  args: { ...Elevated.args, tooltip: 'Add widget', tooltipDelay: 0 },
 };
+
+const ELEVATED_EXAMPLES: {
+  label: string;
+  props: Partial<IconButtonProps>;
+}[] = [
+  { label: 'Regular', props: { 'aria-label': 'Regular action' } },
+  {
+    label: 'Elevated',
+    props: { elevated: true, 'aria-label': 'Elevated action' },
+  },
+  {
+    label: 'Compact',
+    props: { elevated: true, size: 'sm', 'aria-label': 'Compact action' },
+  },
+  {
+    label: 'Link',
+    props: { href: '#search', 'aria-label': 'Link without elevation' },
+  },
+  { label: 'Solid', props: { variant: 'solid', 'aria-label': 'Solid action' } },
+  {
+    label: 'Elevated solid',
+    props: {
+      variant: 'solid',
+      elevated: true,
+      'aria-label': 'Elevated solid action',
+    },
+  },
+  {
+    label: 'Accent',
+    props: { color: 'accent', 'aria-label': 'Accent action' },
+  },
+  {
+    label: 'Elevated accent',
+    props: {
+      color: 'accent',
+      elevated: true,
+      'aria-label': 'Elevated accent action',
+    },
+  },
+];
 
 export const ElevatedAppearance: Story = {
   ...Display,
   args: { onClick: fn() },
   render: (args) => (
-    <>
-      <IconButton {...args} aria-label="Regular action" />
-      <IconButton {...args} elevated aria-label="Elevated action" />
-      <IconButton {...args} elevated size="sm" aria-label="Compact action" />
-      <IconButton
-        {...args}
-        href="#search"
-        aria-label="Link without elevation"
-      />
-      <IconButton {...args} variant="solid" aria-label="Solid action" />
-      <IconButton
-        {...args}
-        variant="solid"
-        elevated
-        aria-label="Elevated solid action"
-      />
-      <IconButton {...args} color="accent" aria-label="Accent action" />
-      <IconButton
-        {...args}
-        color="accent"
-        elevated
-        aria-label="Elevated accent action"
-      />
-    </>
+    <Text
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+        gap: 24,
+        width: 560,
+        maxWidth: '100%',
+      }}
+    >
+      {ELEVATED_EXAMPLES.map(({ label, props }) => (
+        <IconButtonExample key={label} label={label}>
+          <IconButton {...args} {...props} />
+        </IconButtonExample>
+      ))}
+    </Text>
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -210,7 +247,7 @@ export const Tooltip: Story = {
 
 export const TooltipDocumentation: Story = {
   decorators: Tooltip.decorators,
-  args: Tooltip.args,
+  args: { ...Tooltip.args, variant: 'ghost' },
 };
 
 export const TooltipDisabled: Story = {
@@ -325,11 +362,29 @@ const ICON_BUTTON_CATALOG_GROUPS: {
     })),
   },
   {
-    label: 'States',
-    examples: Object.entries(CATALOG_STATES).map(([label, props]) => ({
-      label,
-      props,
+    label: 'Shapes',
+    examples: (['square', 'round'] as const).map((shape) => ({
+      label: shape,
+      props: { shape },
     })),
+  },
+  {
+    label: 'Elevation',
+    examples: [
+      { label: 'standard', props: {} },
+      { label: 'elevated', props: { elevated: true } },
+    ],
+  },
+  {
+    label: 'States',
+    examples: [
+      'default',
+      'hover',
+      'pressed',
+      'focused',
+      'disabled',
+      'loading',
+    ].map((label) => ({ label, props: CATALOG_STATES[label]! })),
   },
 ];
 
@@ -347,10 +402,9 @@ export const Catalog: Story = {
     <GroupedCatalog
       groups={ICON_BUTTON_CATALOG_GROUPS}
       renderExample={({ label, props }) => (
-        <>
-          <Text>{label}</Text>
+        <IconButtonExample label={label}>
           <IconButton {...args} {...props} />
-        </>
+        </IconButtonExample>
       )}
     />
   ),
@@ -362,45 +416,43 @@ export const CatalogDark: Story = {
   globals: { colorScheme: 'dark' },
 };
 
-export const Round: Story = {
+const ROUND_EXAMPLES = [
+  { label: '20px', name: 'Compact round', size: 'xs', disabled: false },
+  { label: '24px', name: 'Small round', size: 'sm', disabled: false },
+  { label: '32px', name: 'Medium round', size: 'md', disabled: false },
+  { label: 'Disabled', name: 'Disabled round', size: 'sm', disabled: true },
+] as const;
+
+export const RoundDocumentation: Story = {
   ...Display,
   render: () => (
-    <>
-      <IconButton
-        aria-label="Compact round"
-        size="xs"
-        shape="round"
-        variant="solid"
-        color="accent"
-      >
-        <IconPlus />
-      </IconButton>
-      <IconButton
-        aria-label="Small round"
-        size="sm"
-        shape="round"
-        variant="solid"
-        color="accent"
-      >
-        <IconPlus />
-      </IconButton>
-      <IconButton
-        aria-label="Disabled round"
-        size="sm"
-        shape="round"
-        variant="solid"
-        color="accent"
-        disabled
-      >
-        <IconPlus />
-      </IconButton>
-    </>
+    <Text style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+      {ROUND_EXAMPLES.map(({ label, name, size, disabled }) => (
+        <IconButtonExample key={name} label={label}>
+          <IconButton
+            aria-label={name}
+            size={size}
+            shape="round"
+            variant="solid"
+            color="accent"
+            disabled={disabled}
+          >
+            <IconPlus />
+          </IconButton>
+        </IconButtonExample>
+      ))}
+    </Text>
   ),
+};
+
+export const Round: Story = {
+  ...RoundDocumentation,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     for (const [name, size] of [
       ['Compact round', 20],
       ['Small round', 24],
+      ['Medium round', 32],
       ['Disabled round', 24],
     ] as const) {
       const button = canvas.getByRole('button', { name });
@@ -417,7 +469,7 @@ export const Round: Story = {
 export const LabelledBy: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <>
+    <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <Text render={<span />} id="search-records-label">
         Search records
       </Text>
@@ -428,7 +480,7 @@ export const LabelledBy: Story = {
       >
         <IconSearch />
       </IconButton>
-    </>
+    </Text>
   ),
 };
 
@@ -461,7 +513,6 @@ export const GroupedOverrides: Story = {
       <IconButton
         variant="outline"
         color="neutral"
-        size="xs"
         aria-label="Search records"
         tooltip="Search records"
       >
@@ -483,11 +534,43 @@ export const GroupedOverridesInteraction: Story = {
 
     await expect(searchButton).toHaveAttribute('data-variant', 'outline');
     await expect(searchButton).toHaveAttribute('data-color', 'neutral');
+    await expect(searchButton).toHaveAttribute('data-icon-size', 'sm');
+    await expect(searchButton.getBoundingClientRect().width).toBe(24);
+    await expect(searchButton.getBoundingClientRect().height).toBe(24);
+    await expect(createButton).toHaveAttribute('data-variant', 'solid');
+    await expect(createButton).toHaveAttribute('data-color', 'accent');
+    await expect(createButton).toHaveAttribute('data-icon-size', 'sm');
+    await expect(createButton.getBoundingClientRect().width).toBe(24);
+    await expect(createButton.getBoundingClientRect().height).toBe(24);
+  },
+};
+
+export const GroupedSizeOverride: Story = {
+  decorators: [ComponentDecorator],
+  tags: ['!autodocs'],
+  render: () => (
+    <ButtonGroup
+      aria-label="Record actions"
+      size="sm"
+      attached={false}
+      style={{ alignItems: 'center' }}
+    >
+      <IconButton size="xs" aria-label="Search records">
+        <IconSearch />
+      </IconButton>
+      <IconButton aria-label="Create record">
+        <IconPlus />
+      </IconButton>
+    </ButtonGroup>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const searchButton = canvas.getByRole('button', { name: 'Search records' });
+    const createButton = canvas.getByRole('button', { name: 'Create record' });
+
     await expect(searchButton).toHaveAttribute('data-icon-size', 'xs');
     await expect(searchButton.getBoundingClientRect().width).toBe(20);
     await expect(searchButton.getBoundingClientRect().height).toBe(20);
-    await expect(createButton).toHaveAttribute('data-variant', 'solid');
-    await expect(createButton).toHaveAttribute('data-color', 'accent');
     await expect(createButton).toHaveAttribute('data-icon-size', 'sm');
     await expect(createButton.getBoundingClientRect().width).toBe(24);
     await expect(createButton.getBoundingClientRect().height).toBe(24);

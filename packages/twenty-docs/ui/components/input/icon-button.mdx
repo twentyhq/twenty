@@ -36,8 +36,8 @@ Compare one visual choice at a time. Use the named tooltip, elevated, and groupe
 
 <StoryEmbed
   storyId="ui-components-iconbutton--catalog"
-  title="Icon button variants, colors, sizes, and states"
-  height={650}
+  title="Icon button variants, colors, sizes, shapes, elevation, and states"
+  height={850}
 />
 
 ## Accessible names
@@ -50,14 +50,14 @@ import { IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const LabelledSearchButton = () => (
-  <>
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
     <Text render={<span />} id="records-search-label">
       Search records
     </Text>
     <IconButton aria-labelledby="records-search-label" tooltip="Find a record">
       <IconSearch />
     </IconButton>
-  </>
+  </Text>
 );
 ```
 
@@ -137,11 +137,21 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconPlus, IconSearch } from 'twenty-ui/icon';
 
 export const RecordActions = () => (
-  <ButtonGroup aria-label="Record actions" size="sm" variant="outline">
-    <IconButton aria-label="Search records">
+  <ButtonGroup
+    aria-label="Record actions"
+    size="sm"
+    variant="solid"
+    color="accent"
+  >
+    <IconButton
+      aria-label="Search records"
+      tooltip="Search records"
+      variant="outline"
+      color="neutral"
+    >
       <IconSearch />
     </IconButton>
-    <IconButton aria-label="Create record">
+    <IconButton aria-label="Create record" tooltip="Create record">
       <IconPlus />
     </IconButton>
   </ButtonGroup>
@@ -149,6 +159,8 @@ export const RecordActions = () => (
 ```
 
 [ButtonGroup](/ui/primitives/input/button-group) supplies defaults for size, variant, and color, plus adjoining corners. Explicit child props take precedence independently, including `size="xs"`. Individual buttons do not need a position prop.
+
+Keep attached buttons the same size so their edges align. Set the size on the group and let each button inherit it.
 
 <StoryEmbed
   storyId="ui-components-iconbutton--grouped-overrides"
@@ -165,6 +177,12 @@ Native button and anchor attributes, event handlers, event details, refs, and re
 ## Compact and round controls
 
 Use `size="xs"` for a 20px control and `shape="round"` for circular corners. Existing `RoundedIconButton` controls become `IconButton` with `shape="round"`, `variant="solid"`, and `color="accent"`. Map their old `small` size to `xs` and `medium` size to `sm`. Supply icon children and an accessible name.
+
+<StoryEmbed
+  storyId="ui-components-iconbutton--round-documentation"
+  title="Round icon buttons in compact and regular sizes"
+  height={180}
+/>
 
 ## Props
 
