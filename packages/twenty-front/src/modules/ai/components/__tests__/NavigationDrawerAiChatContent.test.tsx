@@ -132,6 +132,32 @@ describe('NavigationDrawerAiChatContent', () => {
     expect(queryByRole('region', { name: 'Recent' })).toBeInTheDocument();
   });
 
+  it('caps Recent at 5 chats with the inbox feature flag on', () => {
+    mockThreads = Array.from({ length: 7 }, (_, index) =>
+      buildThread(`chat-${index}`, `Chat ${index}`),
+    );
+
+    const { getByRole } = renderContent();
+
+    const recents = getByRole('region', { name: 'Recent' });
+
+    expect(within(recents).getAllByText(/^Chat \d$/)).toHaveLength(5);
+    expect(within(recents).queryByText('Chat 5')).toBeNull();
+  });
+
+  it('does not cap Recent while the inbox feature flag is off', () => {
+    mockIsAiChatInboxEnabled = false;
+    mockThreads = Array.from({ length: 7 }, (_, index) =>
+      buildThread(`chat-${index}`, `Chat ${index}`),
+    );
+
+    const { getByRole } = renderContent();
+
+    const recents = getByRole('region', { name: 'Recent' });
+
+    expect(within(recents).getAllByText(/^Chat \d$/)).toHaveLength(7);
+  });
+
   it('shows no Favorites section without favorite chats', () => {
     jotaiStore.set(mockFavoriteThreadsAtom, []);
 
