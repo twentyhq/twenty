@@ -23,6 +23,7 @@ import {
   useIcons,
 } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ObjectOptionsDropdownDefaultView = () => {
   const { t } = useLingui();
@@ -38,11 +39,11 @@ export const ObjectOptionsDropdownDefaultView = () => {
 
   const visibleFieldsCount = visibleRecordFields.length;
 
-  const selectableItemIdArray = [
+  const selectableItemIdArray = doNotTranslate([
     'Fields',
     'Copy link to view',
     'Create custom view',
-  ];
+  ]);
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,

@@ -7,6 +7,7 @@ import {
   themeCssVariables,
 } from 'twenty-ui/theme';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledPreview = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -71,7 +72,9 @@ type SettingsAppearancePreviewProps = {
 export const SettingsAppearancePreview = ({
   colorScheme,
 }: SettingsAppearancePreviewProps) => {
-  const segments = colorScheme === 'System' ? ['Light', 'Dark'] : [colorScheme];
+  const segments = doNotTranslate(
+    colorScheme === 'System' ? ['Light', 'Dark'] : [colorScheme],
+  );
 
   return (
     <StyledPreview aria-hidden>

@@ -15,6 +15,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconForbid } from 'twenty-ui/icon';
 
 export const MorphRelationManyToOneFieldInput = () => {
@@ -51,7 +52,7 @@ export const MorphRelationManyToOneFieldInput = () => {
     );
 
     if (!isDefined(targetObjectMetadataItem)) {
-      throw new Error('TargetObjectMetadataItem is required');
+      throw new Error(doNotTranslate('TargetObjectMetadataItem is required'));
     }
 
     await persistMorphManyToOne({

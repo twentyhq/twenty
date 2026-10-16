@@ -1,4 +1,5 @@
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type GraphLabelStyles = {
   x: number;
@@ -21,7 +22,7 @@ export const calculateGraphLabelStyles = (
       ? -1
       : 1;
 
-  const axis = isVerticalLayout ? 'Y' : 'X';
+  const axis = doNotTranslate(isVerticalLayout ? 'Y' : 'X');
   const transformOffset = `translate${axis}(${offsetSign * offset}px)`;
 
   const textAnchor = isVerticalLayout

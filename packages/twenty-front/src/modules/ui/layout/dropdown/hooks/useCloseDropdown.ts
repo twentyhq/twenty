@@ -9,6 +9,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useCloseDropdown = () => {
   const { removeFocusItemFromFocusStackById } =
@@ -26,7 +27,9 @@ export const useCloseDropdown = () => {
         dropdownComponentInstanceIdFromContext;
 
       if (!isDefined(dropdownComponentInstanceId)) {
-        throw new Error('Dropdown component instance ID is not defined');
+        throw new Error(
+          doNotTranslate('Dropdown component instance ID is not defined'),
+        );
       }
 
       const isDropdownOpen = store.get(

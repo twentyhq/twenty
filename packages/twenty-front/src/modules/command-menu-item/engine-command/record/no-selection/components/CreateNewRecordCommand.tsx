@@ -7,6 +7,7 @@ import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCo
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const CreateNewRecordCommand = () => {
   const {
@@ -24,7 +25,9 @@ export const CreateNewRecordCommand = () => {
   const { createCoreWorkflow } = useCreateCoreWorkflow();
 
   if (!isDefined(objectMetadataItem)) {
-    throw new Error('Object metadata item is required to create a record');
+    throw new Error(
+      doNotTranslate('Object metadata item is required to create a record'),
+    );
   }
 
   const commandType = getRecordCreationCommandType({

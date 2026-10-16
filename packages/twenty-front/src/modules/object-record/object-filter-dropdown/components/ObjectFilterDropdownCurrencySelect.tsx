@@ -6,7 +6,6 @@ import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-
 import { getCurrencyFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getCurrencyFilterDisplayValue';
 import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -19,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -76,13 +76,15 @@ export const ObjectFilterDropdownCurrencySelect = () => {
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
-        'Field metadata item used in filter dropdown should be defined',
+        doNotTranslate(
+          'Field metadata item used in filter dropdown should be defined',
+        ),
       );
     }
 
-    const selectedItemNames = CURRENCIES.filter((currency) =>
-      newSelectedItemIds.includes(currency.value),
-    ).map((currency) => currency.label);
+    const selectedItemNames = currencies
+      .filter((currency) => newSelectedItemIds.includes(currency.value))
+      .map((currency) => currency.label);
 
     const filterDisplayValue = getCurrencyFilterDisplayValue(selectedItemNames);
 

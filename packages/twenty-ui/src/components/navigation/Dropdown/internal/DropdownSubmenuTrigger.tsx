@@ -14,6 +14,7 @@ import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
 import { useRegisterDropdownLabelElement } from './useRegisterDropdownLabelElement';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const DropdownSubmenuTrigger = ({
   color,
@@ -76,7 +77,9 @@ export const DropdownSubmenuTrigger = ({
         }
 
         const isRightToLeft = direction === 'rtl';
-        const forwardKey = isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
+        const forwardKey = doNotTranslate(
+          isRightToLeft ? 'ArrowLeft' : 'ArrowRight',
+        );
 
         if (event.key === forwardKey) {
           event.preventDefault();

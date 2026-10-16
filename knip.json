@@ -79,6 +79,10 @@
         "rollup-plugin-node-polyfills"
       ]
     },
+    "packages/twenty-oxlint-rules": {
+      "entry": ["scripts/**/*.mjs"],
+      "ignoreDependencies": ["eslint", "eslint-plugin-lingui", "oxlint"]
+    },
     "packages/twenty-ui": {
       "entry": ["scripts/**/*.ts", "docs/**/*.ts"],
       "ignore": ["src/styles/abstracts/**"],

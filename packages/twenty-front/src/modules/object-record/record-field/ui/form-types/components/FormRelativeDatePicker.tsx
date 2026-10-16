@@ -13,6 +13,7 @@ import {
   type RelativeDateFilter,
   resolveRelativeDateFilterStringified,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -64,7 +65,7 @@ export const FormRelativeDatePicker = ({
         instanceId={instanceId}
         onChange={handleValueChange}
         direction={valueParsed?.direction ?? 'THIS'}
-        unit={valueParsed?.unit ?? 'DAY'}
+        unit={valueParsed?.unit ?? doNotTranslate('DAY')}
         amount={valueParsed?.amount ?? undefined}
         isFormField={true}
         readonly={readonly}

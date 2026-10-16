@@ -4,7 +4,7 @@ import {
   type RelationFilter,
 } from '@/types';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
-import { computeMorphRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
+import { computeMorphRelationJoinColumnNames } from '@/utils/filter/computeMorphRelationJoinColumnNames';
 import { type FieldShared } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 
 export const computeEmptyGqlOperationFilterForMorphRelation = ({
@@ -20,15 +20,10 @@ export const computeEmptyGqlOperationFilterForMorphRelation = ({
   }
 
   return {
-    and: morphRelations.map((morphRelation) => ({
-      [computeMorphRelationGqlFieldJoinColumnName({
-        fieldName: name,
-        relationType: morphRelation.type,
-        targetObjectMetadataNameSingular:
-          morphRelation.targetObjectMetadata.nameSingular,
-        targetObjectMetadataNamePlural:
-          morphRelation.targetObjectMetadata.namePlural,
-      })]: { is: 'NULL' } satisfies RelationFilter,
+    and: computeMorphRelationJoinColumnNames({
+      fieldMetadataItem: correspondingFieldMetadataItem,
+    }).map((joinColumnName) => ({
+      [joinColumnName]: { is: 'NULL' } satisfies RelationFilter,
     })),
   };
 };

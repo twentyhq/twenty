@@ -1,2 +1,4 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export const getForeignKeyNameFromRelationFieldName = (nameSingular: string) =>
-  `${nameSingular}Id`;
+  doNotTranslate(`${nameSingular}Id`);

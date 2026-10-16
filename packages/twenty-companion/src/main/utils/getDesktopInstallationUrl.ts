@@ -1,6 +1,7 @@
 import { type OAuthDiscovery } from '../types/OAuthDiscovery';
 import { validateServerUrl } from './validateServerUrl';
 import { requestJson } from './requestJson';
+import { i18n } from '../../shared/i18n';
 
 export const getDesktopInstallationUrl = async (
   serverUrlInput: string,
@@ -10,7 +11,7 @@ export const getDesktopInstallationUrl = async (
     `${serverUrl}/.well-known/oauth-authorization-server`,
   );
   if (discovery.issuer !== serverUrl)
-    throw new Error('Twenty returned a different OAuth issuer.');
+    throw new Error(i18n._('Twenty returned a different OAuth issuer.'));
   const frontendUrl = validateServerUrl(
     new URL(discovery.authorization_endpoint).origin,
   );
