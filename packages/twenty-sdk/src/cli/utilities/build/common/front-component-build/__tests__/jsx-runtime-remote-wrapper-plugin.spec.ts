@@ -5,22 +5,26 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 
-type ClonedButton = {
+type RenderedElement = {
   type: string;
   ref?: (element: EventTarget | null) => unknown;
   props: { ref?: (element: EventTarget | null) => unknown };
 };
 
 type FrontComponentBundleExports = {
+  renderInput: (handlers: { onChange: (event: Event) => void }) => RenderedElement;
   renderClonedButton: (handlers: {
     onElementClick: () => void;
     onCloneClick: () => void;
-  }) => ClonedButton;
+  }) => RenderedElement;
 };
 
 const FRONT_COMPONENT_SOURCE = `
 import { cloneElement } from 'react';
 import { jsx } from 'react/jsx-runtime';
+
+export const renderInput = ({ onChange }) =>
+  jsx('input', { type: 'search', onChange });
 
 export const renderClonedButton = ({ onElementClick, onCloneClick }) =>
   cloneElement(jsx('button', { onClick: onElementClick }), {
@@ -57,6 +61,36 @@ const buildFrontComponentBundle = async (
 };
 
 describe('jsx runtime remote wrapper plugin', () => {
+  it.each([
+    { runtimeName: 'React', usePreact: false, eventType: 'change' },
+    { runtimeName: 'Preact', usePreact: true, eventType: 'input' },
+  ])(
+    'uses its native text input change event in $runtimeName bundles',
+    async ({ usePreact, eventType }) => {
+      vi.stubGlobal('__HTML_TAG_TO_CUSTOM_ELEMENT_TAG__', {
+        input: 'html-input',
+      });
+      const { renderInput } = await buildFrontComponentBundle(usePreact);
+      const element = Object.assign(new EventTarget(), {
+        localName: 'html-input',
+        type: 'search',
+        value: '$',
+      });
+      const handleChange = vi.fn();
+      const input = renderInput({ onChange: handleChange });
+      const inputRef = usePreact ? input.ref : input.props.ref;
+
+      inputRef?.(element);
+      element.dispatchEvent(new Event('input'));
+      element.dispatchEvent(new Event('change'));
+
+      expect(input.type).toBe('html-input');
+      expect(handleChange).toHaveBeenCalledTimes(1);
+      expect(handleChange.mock.calls[0][0].type).toBe(eventType);
+    },
+    30000,
+  );
+
   afterEach(() => {
     vi.unstubAllGlobals();
   });
@@ -65,12 +99,12 @@ describe('jsx runtime remote wrapper plugin', () => {
     {
       runtimeName: 'React',
       usePreact: false,
-      getElementRef: (clonedButton: ClonedButton) => clonedButton.props.ref,
+      getElementRef: (clonedButton: RenderedElement) => clonedButton.props.ref,
     },
     {
       runtimeName: 'Preact',
       usePreact: true,
-      getElementRef: (clonedButton: ClonedButton) => clonedButton.ref,
+      getElementRef: (clonedButton: RenderedElement) => clonedButton.ref,
     },
   ])(
     'should run the element handler then the clone handler through one listener in $runtimeName bundles',

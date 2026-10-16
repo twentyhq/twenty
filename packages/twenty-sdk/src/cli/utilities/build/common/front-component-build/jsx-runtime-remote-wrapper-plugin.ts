@@ -47,6 +47,19 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
         }),
       );
 
+      build.onResolve({ filter: /^__text_input_change_event_type__$/ }, () => ({
+        path: '__text_input_change_event_type__',
+        namespace: 'text-input-change-event-type',
+      }));
+
+      build.onLoad(
+        { filter: /.*/, namespace: 'text-input-change-event-type' },
+        () => ({
+          contents: `export const TEXT_INPUT_CHANGE_EVENT_TYPE = ${JSON.stringify(usePreact ? 'input' : 'change')};`,
+          loader: 'js' as const,
+        }),
+      );
+
       build.onResolve({ filter: /^react\/jsx-runtime$/ }, async (args) => {
         if (args.pluginData?.skipJsxWrapper) {
           return undefined;

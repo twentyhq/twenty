@@ -11,17 +11,25 @@ import { type SyntheticLikeEvent } from '@/cli/utilities/build/common/front-comp
 
 type SharedHelpers = typeof JsxSharedHelpers;
 
-const loadSharedHelpers = (): SharedHelpers => {
+const loadSharedHelpers = (textInputChangeEventType = 'change'): SharedHelpers => {
   const { code } = esbuild.transformSync(jsxSharedHelpersSource, {
     format: 'cjs',
     loader: 'js',
   });
   const helpersModule = { exports: {} };
 
-  new Function('module', 'exports', 'globalThis', code)(
+  new Function('module', 'exports', 'globalThis', 'require', code)(
     helpersModule,
     helpersModule.exports,
-    { __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: { button: 'html-button' } },
+    {
+      __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: {
+        button: 'html-button',
+        input: 'html-input',
+        textarea: 'html-textarea',
+        select: 'html-select',
+      },
+    },
+    () => ({ TEXT_INPUT_CHANGE_EVENT_TYPE: textInputChangeEventType }),
   );
 
   return helpersModule.exports as SharedHelpers;
@@ -51,6 +59,141 @@ const dispatchSyntheticLikeEvents = (
 };
 
 describe('jsx runtime shared helpers', () => {
+  it.each(['change', 'input'])(
+    'uses the %s event for text control changes in its runtime',
+    (textInputChangeEventType) => {
+      const { makeEventRef } = loadSharedHelpers(textInputChangeEventType);
+      const element = Object.assign(new EventTarget(), {
+        localName: 'html-input',
+        type: 'search',
+        value: '$',
+      });
+      const handleChange = vi.fn();
+
+      makeEventRef({ onChange: handleChange }, null, 'jsx')(element);
+      dispatchSyntheticLikeEvents(element, ['input', 'change']);
+
+      expect(handleChange).toHaveBeenCalledTimes(1);
+      expect(handleChange.mock.calls[0][0].type).toBe(textInputChangeEventType);
+    },
+  );
+
+  it.each([true, false])(
+    'keeps both Preact input and change handlers with input first %s',
+    (hasInputFirst) => {
+      const { makeEventRef } = loadSharedHelpers('input');
+      const element = Object.assign(new EventTarget(), {
+        localName: 'html-input',
+        type: 'text',
+        value: 'ab',
+      });
+      const values: string[] = [];
+      const onInput = () => {
+        element.value = element.value.toUpperCase();
+        values.push(`input:${element.value}`);
+      };
+      const onChange = () => values.push(`change:${element.value}`);
+      const handlers = hasInputFirst
+        ? { onInput, onChange }
+        : { onChange, onInput };
+
+      makeEventRef(handlers, null, 'jsx')(element);
+      dispatchSyntheticLikeEvents(element, ['input', 'change']);
+
+      expect(values).toEqual(
+        hasInputFirst ? ['input:AB', 'change:AB'] : ['change:ab', 'input:AB'],
+      );
+    },
+  );
+
+  it('remaps Preact changes when an input changes its native type', () => {
+    const { makeEventRef } = loadSharedHelpers('input');
+    const element = Object.assign(new EventTarget(), {
+      localName: 'html-input',
+      type: 'search',
+    });
+    const handleChange = vi.fn();
+    const handlers = { onChange: handleChange };
+
+    makeEventRef(handlers, null, 'jsx')(element);
+    element.dispatchEvent(createSyntheticLikeEvent('input'));
+    element.type = 'checkbox';
+    makeEventRef(handlers, null, 'jsx')(element);
+    element.dispatchEvent(createSyntheticLikeEvent('input'));
+    element.dispatchEvent(createSyntheticLikeEvent('change'));
+
+    expect(handleChange.mock.calls.map(([event]) => event.type)).toEqual([
+      'input',
+      'change',
+    ]);
+  });
+
+  it.each([
+    { localName: 'html-input', type: 'checkbox' },
+    { localName: 'html-input', type: 'radio' },
+    { localName: 'html-input', type: 'file' },
+    { localName: 'html-select', type: 'select-one' },
+  ])('keeps native change on $localName $type in Preact', (properties) => {
+    const { makeEventRef } = loadSharedHelpers('input');
+    const element = Object.assign(new EventTarget(), properties);
+    const handleChange = vi.fn();
+
+    makeEventRef({ onChange: handleChange }, null, 'jsx')(element);
+    dispatchSyntheticLikeEvents(element, ['input', 'change']);
+
+    expect(handleChange).toHaveBeenCalledTimes(1);
+    expect(handleChange.mock.calls[0][0].type).toBe('change');
+  });
+
+  it('keeps Preact textarea capture and bubble change handlers distinct', () => {
+    const { makeEventRef } = loadSharedHelpers('input');
+    const element = Object.assign(new EventTarget(), {
+      localName: 'html-textarea',
+    });
+    const addEventListener = vi.spyOn(element, 'addEventListener');
+    const handleCapture = vi.fn();
+    const handleBubble = vi.fn();
+
+    makeEventRef(
+      { onChangeCapture: handleCapture, onChange: handleBubble },
+      null,
+      'jsx',
+    )(element);
+    element.dispatchEvent(createSyntheticLikeEvent('input'));
+
+    expect(handleCapture).toHaveBeenCalledTimes(1);
+    expect(handleBubble).toHaveBeenCalledTimes(1);
+    expect(
+      addEventListener.mock.calls.map(([type, , capture]) => [type, capture]),
+    ).toEqual([
+      ['input', true],
+      ['input', false],
+    ]);
+  });
+
+  it('keeps element and clone change ordering on Preact text inputs', () => {
+    const { makeEventRef, withCloneEventRef } = loadSharedHelpers('input');
+    const element = Object.assign(new EventTarget(), {
+      localName: 'html-input',
+      type: 'search',
+    });
+    const calls: string[] = [];
+
+    withCloneEventRef(
+      {
+        type: 'html-input',
+        props: {
+          ref: makeEventRef({ onChange: () => calls.push('jsx') }, null, 'jsx'),
+        },
+      },
+      { onChange: () => calls.push('clone') },
+      false,
+    ).ref(element);
+    element.dispatchEvent(createSyntheticLikeEvent('input'));
+
+    expect(calls).toEqual(['jsx', 'clone']);
+  });
+
   it('should recognize only the custom element tags of the sandbox', () => {
     const { isCustomElementTag } = loadSharedHelpers();
 
