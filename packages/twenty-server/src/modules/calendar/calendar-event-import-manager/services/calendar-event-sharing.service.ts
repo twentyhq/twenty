@@ -9,6 +9,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type CalendarEventSharingChannel } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-channel.type';
 import { computeCalendarEventSharingKey } from 'src/modules/calendar/calendar-event-import-manager/utils/compute-calendar-event-sharing-key.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -54,7 +55,7 @@ export class CalendarEventSharingService {
   }: {
     transactionScope: WorkspaceTransactionScope;
     provider: ConnectedAccountProvider;
-    otherCalendarChannels: CalendarChannelEntity[];
+    otherCalendarChannels: CalendarEventSharingChannel[];
     fetchedCalendarEvents: FetchedCalendarEvent[];
   }): Promise<Map<string, string>> {
     if (
@@ -64,51 +65,12 @@ export class CalendarEventSharingService {
       return new Map();
     }
 
-    const associationRepository =
-      transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-        'calendarChannelEventAssociation',
-        { shouldBypassPermissionChecks: true },
-      );
-    const otherCalendarChannelIds = otherCalendarChannels.map(({ id }) => id);
-
-    let otherChannelAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
-
-    switch (provider) {
-      case ConnectedAccountProvider.GOOGLE:
-        otherChannelAssociations = await associationRepository.find({
-          where: {
-            calendarChannelId: Any(otherCalendarChannelIds),
-            eventExternalId: Any(fetchedCalendarEvents.map(({ id }) => id)),
-          },
-          select: { calendarEventId: true, eventExternalId: true },
-          order: { calendarEventId: 'ASC' },
-        });
-        break;
-      case ConnectedAccountProvider.MICROSOFT:
-        otherChannelAssociations = await associationRepository.find({
-          where: {
-            calendarChannelId: Any(otherCalendarChannelIds),
-            calendarEvent: {
-              iCalUid: Any(
-                fetchedCalendarEvents
-                  .map(({ iCalUid }) => iCalUid)
-                  .filter(isNonEmptyString),
-              ),
-            },
-          },
-          select: { calendarEventId: true, eventExternalId: true },
-          order: { calendarEventId: 'ASC' },
-        });
-        break;
-      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-      case ConnectedAccountProvider.OIDC:
-      case ConnectedAccountProvider.SAML:
-      case ConnectedAccountProvider.EMAIL_GROUP:
-      case ConnectedAccountProvider.APP:
-        return new Map();
-      default:
-        return assertUnreachable(provider);
-    }
+    const otherChannelAssociations = await this.findOtherChannelAssociations({
+      transactionScope,
+      provider,
+      otherCalendarChannelIds: otherCalendarChannels.map(({ id }) => id),
+      fetchedCalendarEvents,
+    });
 
     if (otherChannelAssociations.length === 0) {
       return new Map();
@@ -217,5 +179,58 @@ export class CalendarEventSharingService {
     }
 
     return otherChannelIdsByCalendarEventId;
+  }
+
+  private async findOtherChannelAssociations({
+    transactionScope,
+    provider,
+    otherCalendarChannelIds,
+    fetchedCalendarEvents,
+  }: {
+    transactionScope: WorkspaceTransactionScope;
+    provider: ConnectedAccountProvider;
+    otherCalendarChannelIds: string[];
+    fetchedCalendarEvents: FetchedCalendarEvent[];
+  }): Promise<CalendarChannelEventAssociationWorkspaceEntity[]> {
+    const associationRepository =
+      transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    switch (provider) {
+      case ConnectedAccountProvider.GOOGLE:
+        return associationRepository.find({
+          where: {
+            calendarChannelId: Any(otherCalendarChannelIds),
+            eventExternalId: Any(fetchedCalendarEvents.map(({ id }) => id)),
+          },
+          select: { calendarEventId: true, eventExternalId: true },
+          order: { calendarEventId: 'ASC' },
+        });
+      case ConnectedAccountProvider.MICROSOFT:
+        return associationRepository.find({
+          where: {
+            calendarChannelId: Any(otherCalendarChannelIds),
+            calendarEvent: {
+              iCalUid: Any(
+                fetchedCalendarEvents
+                  .map(({ iCalUid }) => iCalUid)
+                  .filter(isNonEmptyString),
+              ),
+            },
+          },
+          select: { calendarEventId: true, eventExternalId: true },
+          order: { calendarEventId: 'ASC' },
+        });
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
+      case ConnectedAccountProvider.EMAIL_GROUP:
+      case ConnectedAccountProvider.APP:
+        return [];
+      default:
+        return assertUnreachable(provider);
+    }
   }
 }

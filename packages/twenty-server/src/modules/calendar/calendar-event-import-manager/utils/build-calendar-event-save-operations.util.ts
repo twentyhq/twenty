@@ -1,10 +1,10 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
-import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type CalendarEventChannelRole } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-channel-role.type';
 import { type CalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-save-operations.type';
 import { type CalendarEventSavePlan } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-save-plan.type';
+import { type CalendarEventSharingChannel } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-channel.type';
 import { computeCalendarEventChannelRole } from 'src/modules/calendar/calendar-event-import-manager/utils/compute-calendar-event-channel-role.util';
 import {
   type ComparableCalendarEvent,
@@ -31,7 +31,7 @@ export const buildCalendarEventSaveOperations = ({
   channelHandles: string[];
   calendarEventIdToLinkByEventExternalId: Map<string, string>;
   otherChannelIdsByCalendarEventId: Map<string, string[]>;
-  otherCalendarChannels: CalendarChannelEntity[];
+  otherCalendarChannels: CalendarEventSharingChannel[];
 }): CalendarEventSavePlan => {
   const existingAssociationByEventExternalId = new Map(
     existingAssociations.map((association) => [

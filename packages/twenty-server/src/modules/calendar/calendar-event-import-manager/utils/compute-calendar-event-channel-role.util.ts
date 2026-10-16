@@ -1,8 +1,8 @@
 import { CalendarChannelSyncStatus } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type CalendarEventChannelRole } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-channel-role.type';
+import { type CalendarEventSharingChannel } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-channel.type';
 import { getCalendarChannelHandles } from 'src/modules/calendar/calendar-event-import-manager/utils/get-calendar-channel-handles.util';
 
 export const computeCalendarEventChannelRole = ({
@@ -14,7 +14,7 @@ export const computeCalendarEventChannelRole = ({
   organizerHandle: string;
   channelHandles: string[];
   otherChannelIds: string[];
-  calendarChannelById: Map<string, CalendarChannelEntity>;
+  calendarChannelById: Map<string, CalendarEventSharingChannel>;
 }): CalendarEventChannelRole => {
   if (otherChannelIds.length === 0) {
     return 'ONLY_CHANNEL';
@@ -30,10 +30,10 @@ export const computeCalendarEventChannelRole = ({
     if (
       !isDefined(otherChannel) ||
       !otherChannel.isSyncEnabled ||
-      !getCalendarChannelHandles(
-        otherChannel,
-        otherChannel.connectedAccount,
-      ).includes(organizerHandle)
+      !getCalendarChannelHandles({
+        calendarChannel: otherChannel,
+        connectedAccount: otherChannel.connectedAccount,
+      }).includes(organizerHandle)
     ) {
       return false;
     }

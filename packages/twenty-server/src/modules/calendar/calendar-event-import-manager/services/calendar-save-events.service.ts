@@ -53,10 +53,10 @@ export class CalendarSaveEventsService {
         provider: connectedAccount.provider,
       });
 
-    const channelHandles = getCalendarChannelHandles(
+    const channelHandles = getCalendarChannelHandles({
       calendarChannel,
       connectedAccount,
-    );
+    });
 
     const {
       savedParticipantIds,
