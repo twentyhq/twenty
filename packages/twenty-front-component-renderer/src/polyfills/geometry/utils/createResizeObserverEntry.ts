@@ -1,6 +1,6 @@
 import { createDomRectFromSnapshot } from '@/polyfills/geometry/utils/createDomRectFromSnapshot';
 import { resolveResizeObserverBoxSize } from '@/polyfills/geometry/utils/resolveResizeObserverBoxSize';
-import { resolveSnapshotContentBox } from '@/polyfills/geometry/utils/resolveSnapshotContentBox';
+import { resolveSnapshotBoxDimensions } from '@/polyfills/geometry/utils/resolveSnapshotBoxDimensions';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 type CreateResizeObserverEntryInput = {
@@ -21,7 +21,9 @@ export const createResizeObserverEntry = ({
 
   return {
     target,
-    contentRect: createDomRectFromSnapshot(resolveSnapshotContentBox(snapshot)),
+    contentRect: createDomRectFromSnapshot(
+      resolveSnapshotBoxDimensions(snapshot).contentBox,
+    ),
     contentBoxSize: createBoxSizes('content-box'),
     borderBoxSize: createBoxSizes('border-box'),
     devicePixelContentBoxSize: createBoxSizes('device-pixel-content-box'),

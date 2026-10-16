@@ -16,6 +16,8 @@ export type ElementGeometrySnapshot = {
   scrollWidth: number;
   scrollHeight: number;
   textareaIntrinsicScrollHeight?: number;
+  svgBoundingBoxWidth?: number;
+  svgBoundingBoxHeight?: number;
   scrollTop: number;
   scrollLeft: number;
 };

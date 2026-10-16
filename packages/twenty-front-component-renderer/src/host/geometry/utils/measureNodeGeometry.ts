@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { measureComputedLayoutStyle } from '@/host/geometry/utils/measureComputedLayoutStyle';
+import { measureSvgBoundingBox } from '@/host/geometry/utils/measureSvgBoundingBox';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 type MeasureNodeGeometryInput = {
@@ -28,6 +29,7 @@ export const measureNodeGeometry = ({
       ? (resolveRemoteElementId?.(offsetParent) ?? null)
       : null;
   const hasOwnedOffsetParent = isDefined(offsetParentRemoteElementId);
+  const svgBoundingBox = measureSvgBoundingBox(node);
 
   return {
     offsetParentRemoteElementId,
@@ -53,5 +55,7 @@ export const measureNodeGeometry = ({
     scrollLeft: node.scrollLeft,
     computedStyle: measureComputedLayoutStyle(node),
     textareaIntrinsicScrollHeight: measureTextareaIntrinsicScrollHeight?.(node),
+    svgBoundingBoxWidth: svgBoundingBox?.width,
+    svgBoundingBoxHeight: svgBoundingBox?.height,
   };
 };

@@ -1,4 +1,4 @@
-import { resolveSnapshotContentBox } from '@/polyfills/geometry/utils/resolveSnapshotContentBox';
+import { resolveSnapshotBoxDimensions } from '@/polyfills/geometry/utils/resolveSnapshotBoxDimensions';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 
 const DEFAULT_WRITING_MODE = 'horizontal-tb';
@@ -14,11 +14,11 @@ const resolveBoxDimensions = ({
   box,
   devicePixelRatio,
 }: ResolveResizeObserverBoxSizeInput): { width: number; height: number } => {
-  if (box === 'border-box') {
-    return { width: snapshot.offsetWidth, height: snapshot.offsetHeight };
-  }
+  const { contentBox, borderBox } = resolveSnapshotBoxDimensions(snapshot);
 
-  const contentBox = resolveSnapshotContentBox(snapshot);
+  if (box === 'border-box') {
+    return borderBox;
+  }
 
   if (box === 'device-pixel-content-box') {
     return {

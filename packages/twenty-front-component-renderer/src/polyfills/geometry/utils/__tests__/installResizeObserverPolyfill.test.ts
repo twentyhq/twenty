@@ -216,6 +216,106 @@ describe('installResizeObserverPolyfill', () => {
     expect(borderCallback).toHaveBeenCalledTimes(2);
   });
 
+  it('reports subpixel resizes from the host computed width and height', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+    const applyComputedWidth = (width: string) =>
+      applySnapshot({
+        offsetWidth: 100,
+        offsetHeight: 40,
+        clientWidth: 100,
+        clientHeight: 40,
+        computedStyle: { width, height: '40px' },
+      });
+
+    applyComputedWidth('100.1px');
+    await flushMicrotasks();
+    applyComputedWidth('100.4px');
+    await flushMicrotasks();
+
+    expect(callback).toHaveBeenCalledTimes(2);
+    expect(callback.mock.calls[0][0][0].contentBoxSize).toEqual([
+      { inlineSize: 100.1, blockSize: 40 },
+    ]);
+    const [[entry]] = callback.mock.calls[1];
+    expect(entry.contentRect.width).toBe(100.4);
+    expect(entry.contentBoxSize).toEqual([
+      { inlineSize: 100.4, blockSize: 40 },
+    ]);
+    expect(entry.borderBoxSize).toEqual([{ inlineSize: 100.4, blockSize: 40 }]);
+  });
+
+  it('removes border-box edges and scrollbars from the host computed size', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+
+    applySnapshot({
+      offsetWidth: 200,
+      offsetHeight: 100,
+      clientWidth: 175,
+      clientHeight: 90,
+      computedStyle: {
+        width: '200px',
+        height: '100px',
+        'box-sizing': 'border-box',
+        'padding-left': '10px',
+        'padding-right': '10px',
+        'border-left-width': '5px',
+        'border-right-width': '5px',
+        'border-top-width': '5px',
+        'border-bottom-width': '5px',
+        'overflow-y': 'scroll',
+      },
+    });
+    await flushMicrotasks();
+
+    const [[entry]] = callback.mock.calls[0];
+    expect(entry.contentRect).toMatchObject({
+      x: 10,
+      y: 0,
+      width: 155,
+      height: 90,
+    });
+    expect(entry.contentBoxSize).toEqual([{ inlineSize: 155, blockSize: 90 }]);
+    expect(entry.borderBoxSize).toEqual([{ inlineSize: 200, blockSize: 100 }]);
+  });
+
+  it('reports SVG graphics sizes from their host bounding box', async () => {
+    const { ResizeObserver, target, applySnapshot } = createSandbox();
+    const callback = jest.fn();
+    new ResizeObserver(callback).observe(target);
+    const applySvgBoundingBoxWidth = (svgBoundingBoxWidth: number) =>
+      applySnapshot({
+        offsetWidth: 0,
+        offsetHeight: 0,
+        clientWidth: 0,
+        clientHeight: 0,
+        svgBoundingBoxWidth,
+        svgBoundingBoxHeight: 40,
+      });
+
+    applySvgBoundingBoxWidth(80);
+    await flushMicrotasks();
+    applySvgBoundingBoxWidth(120);
+    await flushMicrotasks();
+
+    expect(callback).toHaveBeenCalledTimes(2);
+    expect(callback.mock.calls[0][0][0].contentRect).toMatchObject({
+      x: 0,
+      y: 0,
+      width: 80,
+      height: 40,
+    });
+    expect(callback.mock.calls[1][0][0].contentBoxSize).toEqual([
+      { inlineSize: 120, blockSize: 40 },
+    ]);
+    expect(callback.mock.calls[1][0][0].borderBoxSize).toEqual([
+      { inlineSize: 120, blockSize: 40 },
+    ]);
+  });
+
   it('unobserves one target while keeping other measured targets delivered', async () => {
     const {
       ResizeObserver,

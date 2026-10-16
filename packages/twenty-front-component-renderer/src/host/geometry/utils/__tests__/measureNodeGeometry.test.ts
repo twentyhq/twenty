@@ -1,6 +1,7 @@
 import { measureNodeGeometry } from '../measureNodeGeometry';
 
 const ROOT_ORIGIN = { x: 0, y: 0 };
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 const stubBoundingClientRect = (node: Element) => {
   node.getBoundingClientRect = () =>
@@ -137,5 +138,45 @@ describe('measureNodeGeometry', () => {
     });
     stylesheet.remove();
     node.remove();
+  });
+
+  it('measures the bounding box of SVG graphics inside an svg element', () => {
+    const outerSvg = document.createElementNS(SVG_NAMESPACE, 'svg');
+    const measuredGraphics = document.createElementNS(SVG_NAMESPACE, 'svg');
+    const unmeasurableGraphics = document.createElementNS(SVG_NAMESPACE, 'svg');
+    outerSvg.append(measuredGraphics, unmeasurableGraphics);
+    Object.defineProperty(measuredGraphics, 'getBBox', {
+      value: () => ({ x: 4, y: 6, width: 80, height: 40 }),
+    });
+    Object.defineProperty(unmeasurableGraphics, 'getBBox', {
+      value: () => {
+        throw new Error('The element is not rendered');
+      },
+    });
+
+    const measureSvgBoundingBoxSize = (node: Element) => {
+      stubBoundingClientRect(node);
+      const { svgBoundingBoxWidth, svgBoundingBoxHeight } = measureNodeGeometry(
+        {
+          node,
+          rootContainerOrigin: ROOT_ORIGIN,
+        },
+      );
+
+      return { svgBoundingBoxWidth, svgBoundingBoxHeight };
+    };
+
+    expect(measureSvgBoundingBoxSize(measuredGraphics)).toEqual({
+      svgBoundingBoxWidth: 80,
+      svgBoundingBoxHeight: 40,
+    });
+    expect(measureSvgBoundingBoxSize(outerSvg)).toEqual({
+      svgBoundingBoxWidth: undefined,
+      svgBoundingBoxHeight: undefined,
+    });
+    expect(measureSvgBoundingBoxSize(unmeasurableGraphics)).toEqual({
+      svgBoundingBoxWidth: undefined,
+      svgBoundingBoxHeight: undefined,
+    });
   });
 });
