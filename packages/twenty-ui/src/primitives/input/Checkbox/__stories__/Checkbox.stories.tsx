@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useId, useState } from 'react';
-import { Heading, Text } from '@ui/primitives/typography';
+import { Text } from '@ui/primitives/typography';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Checkbox } from '@ui/primitives/input/Checkbox/Checkbox';
@@ -13,6 +13,7 @@ import {
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
+  GroupedCatalog,
 } from '@ui/testing';
 
 const meta: Meta<typeof Checkbox> = {
@@ -157,39 +158,23 @@ export const Catalog: Story = {
     container: { width: 640 },
   },
   render: () => (
-    <div style={{ display: 'grid', gap: 24, width: '100%' }}>
-      {CHECKBOX_CATALOG_GROUPS.map(({ label, examples }) => (
-        <section key={label} aria-label={label}>
-          <Heading level={3}>{label}</Heading>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 24,
-              marginTop: 12,
-            }}
-          >
-            {examples.map(({ label: exampleLabel, props }) => (
-              <label
-                key={exampleLabel}
-                style={{ display: 'flex', alignItems: 'center', gap: 8 }}
-              >
-                <Checkbox
-                  defaultChecked={props.defaultChecked}
-                  indeterminate={props.indeterminate}
-                  disabled={props.disabled}
-                  color={props.color}
-                  size={props.size}
-                  shape={props.shape}
-                  variant={props.variant}
-                />
-                <Text>{exampleLabel}</Text>
-              </label>
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+    <GroupedCatalog
+      groups={CHECKBOX_CATALOG_GROUPS}
+      renderExample={({ label, props }) => (
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Checkbox
+            defaultChecked={props.defaultChecked}
+            indeterminate={props.indeterminate}
+            disabled={props.disabled}
+            color={props.color}
+            size={props.size}
+            shape={props.shape}
+            variant={props.variant}
+          />
+          <Text>{label}</Text>
+        </label>
+      )}
+    />
   ),
 };
 export const CatalogDark: Story = {

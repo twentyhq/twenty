@@ -4,12 +4,13 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconArrowRight, IconDownload, IconPlus } from '@ui/icon';
 import { Badge } from '@ui/primitives/data-display';
-import { Heading, Text } from '@ui/primitives/typography';
+import { Text } from '@ui/primitives/typography';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
+  GroupedCatalog,
 } from '@ui/testing';
 import { Button } from '../Button';
 import { type ButtonProps } from '../types/ButtonProps';
@@ -294,39 +295,23 @@ export const Catalog: Story = {
     container: { width: 640 },
   },
   render: () => (
-    <div style={{ display: 'grid', gap: 24, width: '100%' }}>
-      {BUTTON_CATALOG_GROUPS.map(({ label, examples }) => (
-        <section key={label} aria-label={label}>
-          <Heading level={3}>{label}</Heading>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 24,
-              marginTop: 12,
-            }}
+    <GroupedCatalog
+      groups={BUTTON_CATALOG_GROUPS}
+      renderExample={({ label, props }) => (
+        <>
+          <Text>{label}</Text>
+          <Button
+            variant={props.variant}
+            color={props.color}
+            size={props.size}
+            disabled={props.disabled}
+            loading={props.loading}
           >
-            {examples.map(({ label: exampleLabel, props }) => (
-              <div
-                key={exampleLabel}
-                style={{ display: 'grid', gap: 8, justifyItems: 'start' }}
-              >
-                <Text>{exampleLabel}</Text>
-                <Button
-                  variant={props.variant}
-                  color={props.color}
-                  size={props.size}
-                  disabled={props.disabled}
-                  loading={props.loading}
-                >
-                  Save changes
-                </Button>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+            Save changes
+          </Button>
+        </>
+      )}
+    />
   ),
 };
 export const CatalogDark: Story = {

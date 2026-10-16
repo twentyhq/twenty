@@ -11,6 +11,7 @@ import {
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
+  GroupedCatalog,
 } from '@ui/testing';
 
 import { IconButton } from '../IconButton';
@@ -300,6 +301,38 @@ const CATALOG_STATES: Record<string, Partial<IconButtonProps>> = {
   loading: { loading: true },
 };
 
+const ICON_BUTTON_CATALOG_GROUPS: {
+  label: string;
+  examples: { label: string; props: Partial<IconButtonProps> }[];
+}[] = [
+  {
+    label: 'Variants',
+    examples: (['solid', 'outline', 'soft', 'ghost'] as const).map(
+      (variant) => ({ label: variant, props: { variant } }),
+    ),
+  },
+  {
+    label: 'Colors',
+    examples: (['neutral', 'accent', 'danger', 'success'] as const).map(
+      (color) => ({ label: color, props: { color } }),
+    ),
+  },
+  {
+    label: 'Sizes',
+    examples: (['xs', 'sm', 'md'] as const).map((size) => ({
+      label: size,
+      props: { size },
+    })),
+  },
+  {
+    label: 'States',
+    examples: Object.entries(CATALOG_STATES).map(([label, props]) => ({
+      label,
+      props,
+    })),
+  },
+];
+
 export const Catalog: Story = {
   decorators: [ComponentDecorator],
   parameters: {
@@ -311,56 +344,15 @@ export const Catalog: Story = {
     },
   },
   render: (args) => (
-    <div style={{ display: 'grid', gap: 24, width: '100%' }}>
-      <Text>Variants</Text>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
-        {(['solid', 'outline', 'soft', 'ghost'] as const).map((variant) => (
-          <div
-            key={variant}
-            style={{ display: 'grid', justifyItems: 'center', gap: 8 }}
-          >
-            <Text>{variant}</Text>
-            <IconButton {...args} variant={variant} />
-          </div>
-        ))}
-      </div>
-      <Text>Colors</Text>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
-        {(['neutral', 'accent', 'danger', 'success'] as const).map((color) => (
-          <div
-            key={color}
-            style={{ display: 'grid', justifyItems: 'center', gap: 8 }}
-          >
-            <Text>{color}</Text>
-            <IconButton {...args} color={color} />
-          </div>
-        ))}
-      </div>
-      <Text>Sizes</Text>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
-        {(['xs', 'sm', 'md'] as const).map((size) => (
-          <div
-            key={size}
-            style={{ display: 'grid', justifyItems: 'center', gap: 8 }}
-          >
-            <Text>{size}</Text>
-            <IconButton {...args} size={size} />
-          </div>
-        ))}
-      </div>
-      <Text>States</Text>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
-        {Object.entries(CATALOG_STATES).map(([state, stateProps]) => (
-          <div
-            key={state}
-            style={{ display: 'grid', justifyItems: 'center', gap: 8 }}
-          >
-            <Text>{state}</Text>
-            <IconButton {...args} {...stateProps} />
-          </div>
-        ))}
-      </div>
-    </div>
+    <GroupedCatalog
+      groups={ICON_BUTTON_CATALOG_GROUPS}
+      renderExample={({ label, props }) => (
+        <>
+          <Text>{label}</Text>
+          <IconButton {...args} {...props} />
+        </>
+      )}
+    />
   ),
 };
 

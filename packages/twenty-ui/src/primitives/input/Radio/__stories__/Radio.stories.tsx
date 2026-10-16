@@ -1,5 +1,4 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { Heading } from '@ui/primitives/typography';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
@@ -8,6 +7,7 @@ import {
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
+  GroupedCatalog,
 } from '@ui/testing';
 
 import { Radio } from '../Radio';
@@ -115,39 +115,22 @@ export const Catalog: Story = {
     container: { width: 640 },
   },
   render: () => (
-    <div style={{ display: 'grid', gap: 24, width: '100%' }}>
-      {RADIO_CATALOG_GROUPS.map(({ label, examples }) => (
-        <section key={label} aria-label={label}>
-          <Heading level={3}>{label}</Heading>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 24,
-              marginTop: 12,
-            }}
+    <GroupedCatalog
+      groups={RADIO_CATALOG_GROUPS}
+      renderExample={({ label, selected, props }) => (
+        <RadioGroup aria-label={label} defaultValue={selected ? 'option' : ''}>
+          <Radio
+            value="option"
+            disabled={props.disabled}
+            readOnly={props.readOnly}
+            size={props.size}
+            variant={props.variant}
           >
-            {examples.map(({ label: exampleLabel, selected, props }) => (
-              <RadioGroup
-                key={exampleLabel}
-                aria-label={`${label}: ${exampleLabel}`}
-                defaultValue={selected ? 'option' : ''}
-              >
-                <Radio
-                  value="option"
-                  disabled={props.disabled}
-                  readOnly={props.readOnly}
-                  size={props.size}
-                  variant={props.variant}
-                >
-                  {exampleLabel}
-                </Radio>
-              </RadioGroup>
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+            {label}
+          </Radio>
+        </RadioGroup>
+      )}
+    />
   ),
 };
 export const CatalogDark: typeof Catalog = {

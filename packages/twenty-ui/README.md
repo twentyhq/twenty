@@ -148,7 +148,9 @@ Use these story roles consistently:
 
 After Usage, document visual options, anatomy where relevant, behavior and composition, accessibility, and the generated API reference. Omit sections that add no useful information. Put migration guidance before the API reference.
 
-Catalogs should group variants, sizes, colors, and states separately. Use a matrix only when two dimensions need to be compared together. Avoid multiplying every prop combination. Simple components can use a focused alternative example; interactive components usually need working workflow examples. Use the preview's light and dark tabs for theme comparison.
+Catalogs should group variants, sizes, colors, and states separately. Use a matrix only when two dimensions need to be compared together. Avoid multiplying every prop combination. Use `GroupedCatalog` from `twenty-ui/testing` for a consistent grouped layout. Simple components can use a focused alternative example; interactive components usually need working workflow examples. Use the preview's light and dark tabs for theme comparison.
+
+Keep comprehensive visual checks in separate `VisualRegression` stories using `CatalogDecorator`, including the existing dark-theme and variant matrices. Tag them with `!autodocs` and do not embed them in the guides. Simplifying a documentation catalog must preserve its existing visual regression coverage.
 
 Embed stories with a descriptive `title` and enough height to show their content. Embedded stories can respond to the reader, but must not define or inherit a `play` function. Share a presentational example with its interaction story instead of copying automated interactions into the documentation.
 

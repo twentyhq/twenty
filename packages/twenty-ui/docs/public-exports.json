@@ -1186,6 +1186,7 @@
       "CatalogDecorator": "testing/decorators/CatalogDecorator",
       "ComponentDecorator": "testing/decorators/ComponentDecorator",
       "ComponentStorybookLayout": "testing/ComponentStorybookLayout",
+      "GroupedCatalog": "testing/GroupedCatalog",
       "overrideMediaQueryMatches": "testing/utils/overrideMediaQueryMatches"
     },
     "types": {
