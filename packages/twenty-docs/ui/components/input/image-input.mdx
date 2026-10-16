@@ -21,24 +21,36 @@ import { useState } from 'react';
 import { ImageInput } from 'twenty-ui/components/input';
 
 export const WorkspaceImage = () => {
-  const [src, setSrc] = useState<string>();
+  const [preview, setPreview] = useState<{
+    src?: string;
+    reader?: FileReader;
+  }>({});
 
   return (
     <ImageInput
       helperText="Choose a square image for your workspace."
-      src={src}
+      src={preview.src}
       onFileSelect={(file) => {
         const reader = new FileReader();
+        setPreview((current) => ({ src: current.src, reader }));
         reader.onload = () => {
-          setSrc(reader.result?.toString());
+          setPreview((current) => {
+            if (current.reader !== reader) {
+              return current;
+            }
+
+            return { src: reader.result?.toString() };
+          });
         };
         reader.readAsDataURL(file);
       }}
-      onRemove={() => setSrc(undefined)}
+      onRemove={() => setPreview({})}
     />
   );
 };
 ```
+
+The example keeps the current preview while reading a replacement and ignores reads from removed or superseded selections.
 
 ## Selection and preview
 
