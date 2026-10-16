@@ -19,7 +19,6 @@ export type ConnectedAccount = {
   connectionProviderId: string | null;
   applicationId: string | null;
   name: string | null;
-  // Who can use the connection, unrelated to the OAuth `scopes` above
   scope: 'USER' | 'WORKSPACE';
   lastCredentialsRefreshedAt: string | null;
   connectionParameters: ImapSmtpCaldavAccountInput | null;

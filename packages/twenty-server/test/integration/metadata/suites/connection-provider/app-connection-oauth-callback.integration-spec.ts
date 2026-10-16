@@ -417,7 +417,6 @@ export const handler = ({ connectedAccountId }) => {
       redirectLocation: null,
       codeVerifier: null,
     };
-    // The server no longer signs this shape, so JwtPayload does not list it.
     const legacyState = await getAppProviderByClassName<JwtWrapperService>(
       'JwtWrapperService',
     ).signAsyncOrThrow(legacyStatePayload as unknown as JwtPayload, {

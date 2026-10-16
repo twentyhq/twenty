@@ -20,14 +20,10 @@ export type AppConnection = {
   handle: string;
   // Upstream account id from identifyAccountLogicFunction; not unique, apps dedupe on it themselves.
   externalAccountId: string | null;
-  // 'USER' = visible only to the user who created it.
-  // 'WORKSPACE' = visible to every user in the workspace.
   scope: 'USER' | 'WORKSPACE';
   /** @deprecated Use `scope` instead. */
   visibility: 'user' | 'workspace';
-  // The userWorkspace that originally created the credential (also the owner
-  // for `scope: 'USER'` credentials). Match against `event.userWorkspaceId`
-  // to resolve the request user's connection.
+  // Match against `event.userWorkspaceId` to find the request user's connection
   userWorkspaceId: string;
   // The workspace member who created the credential. null when the creating
   // user is no longer a member of the workspace.

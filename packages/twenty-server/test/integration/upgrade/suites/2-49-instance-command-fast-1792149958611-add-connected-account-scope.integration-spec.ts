@@ -50,7 +50,6 @@ describe('2-49 instance command 1792149958611 - add connected account scope (int
     return row;
   };
 
-  // The rollback also restores the post-upgrade schema for the suites after this one.
   beforeEach(async () => {
     queryRunner = globalThis.testDataSource.createQueryRunner();
     await queryRunner.connect();

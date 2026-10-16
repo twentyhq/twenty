@@ -8,8 +8,6 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   connectionProviderId: string;
   userId: string;
   userWorkspaceId: string;
-  // 'USER' scopes the credential to userWorkspaceId; 'WORKSPACE' makes it
-  // visible to anyone in the workspace.
   scope: ConnectedAccountScope;
   // Read by previous-release servers that complete the callback mid rollout
   visibility: 'user' | 'workspace';
@@ -20,7 +18,6 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   codeVerifier: string | null;
 };
 
-// States signed by previous-release servers carry no scope
 export type LegacyAppOAuthStateJwtPayload = Omit<
   AppOAuthStateJwtPayload,
   'scope'

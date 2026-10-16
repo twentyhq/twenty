@@ -3,17 +3,13 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-// Previous-release servers keep reading and writing visibility during the
-// rollout, and only they write it, so the trigger trusts a written visibility
-// and otherwise derives it from scope.
 @RegisteredInstanceCommand('2.49.0', 1792149958611)
 export class AddConnectedAccountScopeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."connectedAccount" ADD "scope" character varying',
     );
-    // Servers read scope as soon as this command completes, so existing rows are
-    // filled here. A same-type ALTER ... USING rewrites them without an UPDATE.
+    // Servers read scope once this completes; same-type USING fills it without an UPDATE
     await queryRunner.query(
       'ALTER TABLE "core"."connectedAccount" ALTER COLUMN "scope" TYPE character varying USING upper("visibility")',
     );
@@ -23,6 +19,7 @@ export class AddConnectedAccountScopeFastInstanceCommand implements FastInstance
     await queryRunner.query(
       'ALTER TABLE "core"."connectedAccount" ALTER COLUMN "visibility" DROP DEFAULT',
     );
+    // Only previous-release servers write visibility, so the trigger trusts it when set
     await queryRunner.query(`
       CREATE OR REPLACE FUNCTION "core"."syncConnectedAccountScopeAndVisibility"()
       RETURNS trigger LANGUAGE plpgsql AS $function$

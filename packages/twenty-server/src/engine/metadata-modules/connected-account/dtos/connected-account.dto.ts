@@ -101,8 +101,6 @@ export class ConnectedAccountDTO {
   @Field(() => String, { nullable: true })
   name: string | null;
 
-  // 'USER' = private to the connecting user.
-  // 'WORKSPACE' = shared with all members.
   @IsEnum(ConnectedAccountScopeEnum)
   @Field(() => ConnectedAccountScopeEnum)
   scope: ConnectedAccountScope;

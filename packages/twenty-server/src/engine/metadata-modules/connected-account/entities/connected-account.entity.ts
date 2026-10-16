@@ -137,8 +137,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   })
   scope: ConnectedAccountScope;
 
-  // Superseded by scope and never read or written here: a database trigger keeps
-  // it in sync for previous-release servers until it is dropped.
+  // Only previous-release servers use it, via the sync trigger; drop it next release
   @Column({
     type: 'varchar',
     nullable: false,
