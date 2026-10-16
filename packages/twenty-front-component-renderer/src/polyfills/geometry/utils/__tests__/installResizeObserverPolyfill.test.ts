@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
 import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
+import { isElementNode } from '@/polyfills/dom/utils/isElementNode';
 import { createWorkerGeometryStore } from '@/polyfills/geometry/utils/createWorkerGeometryStore';
 import { installResizeObserverPolyfill } from '@/polyfills/geometry/utils/installResizeObserverPolyfill';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
@@ -31,15 +32,26 @@ const flushMicrotasks = async () => {
   await Promise.resolve();
 };
 
+const toElement = <TNode>(node: TNode): TNode & Element => {
+  if (!isElementNode(node)) {
+    throw new Error('Expected the remote-dom polyfill to create an element.');
+  }
+
+  return node;
+};
+
 const createSandbox = () => {
   const polyfillWindow = new Window();
-  const document = polyfillWindow.document as unknown as Document;
-  const root = document.createElement('div');
-  const target = document.createElement('div');
-  document.body.appendChild(root);
+  const { document } = polyfillWindow;
+  const createElement = (tagName: string) =>
+    toElement(document.createElement(tagName));
+  const body = toElement(document.body);
+  const root = createElement('div');
+  const target = createElement('div');
+  body.appendChild(root);
   root.appendChild(target);
   const geometryStore = createWorkerGeometryStore();
-  geometryStore.setRootElement(document.body);
+  geometryStore.setRootElement(body);
   const observeElementGeometry = jest.fn().mockResolvedValue(undefined);
   const unobserveElementGeometry = jest.fn().mockResolvedValue(undefined);
   geometryStore.connectTransport({
@@ -77,7 +89,8 @@ const createSandbox = () => {
   return {
     polyfillWindow,
     globalScope,
-    document,
+    body,
+    createElement,
     root,
     target,
     geometryStore,
@@ -98,9 +111,7 @@ describe('installResizeObserverPolyfill', () => {
     const { globalScope, polyfillWindow, ResizeObserver } = createSandbox();
 
     expect(globalScope.ResizeObserver).toBe(ResizeObserver);
-    expect(
-      (polyfillWindow as unknown as { ResizeObserver: unknown }).ResizeObserver,
-    ).toBe(ResizeObserver);
+    expect(Reflect.get(polyfillWindow, 'ResizeObserver')).toBe(ResizeObserver);
   });
 
   it('waits for initial host geometry and delivers the owned target and box shapes', async () => {
@@ -209,12 +220,12 @@ describe('installResizeObserverPolyfill', () => {
     const {
       ResizeObserver,
       target,
-      document,
+      createElement,
       root,
       geometryStore,
       applySnapshot,
     } = createSandbox();
-    const secondTarget = document.createElement('div');
+    const secondTarget = createElement('div');
     root.appendChild(secondTarget);
     const callback = jest.fn();
     const observer = new ResizeObserver(callback);
@@ -269,7 +280,7 @@ describe('installResizeObserverPolyfill', () => {
   it('releases host capacity while observing and unobserving connected targets', async () => {
     const {
       ResizeObserver,
-      document,
+      createElement,
       root,
       observeElementGeometry,
       unobserveElementGeometry,
@@ -278,7 +289,7 @@ describe('installResizeObserverPolyfill', () => {
     const observer = new ResizeObserver(jest.fn());
 
     for (let index = 0; index < 501; index += 1) {
-      const target = document.createElement('div');
+      const target = createElement('div');
       root.appendChild(target);
       observer.observe(target);
       await flushMicrotasks();
@@ -293,20 +304,25 @@ describe('installResizeObserverPolyfill', () => {
   });
 
   it('retries a capacity-blocked target when another connected observation releases its slot', async () => {
-    const { ResizeObserver, document, root, target, observeElementGeometry } =
-      createSandbox();
+    const {
+      ResizeObserver,
+      createElement,
+      root,
+      target,
+      observeElementGeometry,
+    } = createSandbox();
     jest.spyOn(console, 'warn').mockImplementation(() => {});
     const observer = new ResizeObserver(jest.fn());
     observer.observe(target);
 
     for (let index = 1; index < 500; index += 1) {
-      const observedTarget = document.createElement('div');
+      const observedTarget = createElement('div');
       root.appendChild(observedTarget);
       observer.observe(observedTarget);
     }
 
     await flushMicrotasks();
-    const pendingTarget = document.createElement('div');
+    const pendingTarget = createElement('div');
     root.appendChild(pendingTarget);
     const pendingObserver = new ResizeObserver(jest.fn());
     pendingObserver.observe(pendingTarget);
@@ -397,9 +413,14 @@ describe('installResizeObserverPolyfill', () => {
   });
 
   it('releases all connected targets on disconnect', async () => {
-    const { ResizeObserver, target, document, root, unobserveElementGeometry } =
-      createSandbox();
-    const secondTarget = document.createElement('div');
+    const {
+      ResizeObserver,
+      target,
+      createElement,
+      root,
+      unobserveElementGeometry,
+    } = createSandbox();
+    const secondTarget = createElement('div');
     root.appendChild(secondTarget);
     const observer = new ResizeObserver(jest.fn());
     observer.observe(target);
@@ -520,7 +541,7 @@ describe('installResizeObserverPolyfill', () => {
       ResizeObserver,
       target,
       root,
-      document,
+      body,
       applySnapshot,
       observeElementGeometry,
       unobserveElementGeometry,
@@ -533,7 +554,7 @@ describe('installResizeObserverPolyfill', () => {
     callback.mockClear();
 
     applySnapshot({ clientWidth: 120 });
-    document.body.removeChild(root);
+    body.removeChild(root);
     await flushMicrotasks();
 
     expect(callback).toHaveBeenCalledTimes(1);
@@ -545,7 +566,7 @@ describe('installResizeObserverPolyfill', () => {
       remoteElementIds.get(target),
     ]);
 
-    document.body.appendChild(root);
+    body.appendChild(root);
     await flushMicrotasks();
     expect(observeElementGeometry).toHaveBeenCalledTimes(2);
 
@@ -559,16 +580,17 @@ describe('installResizeObserverPolyfill', () => {
   it('should observe the document body through the renderer root size without enrolling host-less elements', async () => {
     const {
       ResizeObserver,
-      document,
+      createElement,
+      body,
       root,
       geometryStore,
       observeElementGeometry,
     } = createSandbox();
-    const renderContainer = document.createElement('remote-fragment');
+    const renderContainer = createElement('remote-fragment');
     root.appendChild(renderContainer);
     const bodyCallback = jest.fn();
     const renderContainerCallback = jest.fn();
-    new ResizeObserver(bodyCallback).observe(document.body);
+    new ResizeObserver(bodyCallback).observe(body);
     new ResizeObserver(renderContainerCallback).observe(renderContainer);
 
     geometryStore.applyGeometryBatch({
@@ -582,7 +604,7 @@ describe('installResizeObserverPolyfill', () => {
     await flushMicrotasks();
 
     expect(bodyCallback).toHaveBeenCalledTimes(1);
-    expect(bodyCallback.mock.calls[0][0][0].target).toBe(document.body);
+    expect(bodyCallback.mock.calls[0][0][0].target).toBe(body);
     expect(bodyCallback.mock.calls[0][0][0].contentBoxSize).toEqual([
       { inlineSize: 300, blockSize: 180 },
     ]);
@@ -591,11 +613,11 @@ describe('installResizeObserverPolyfill', () => {
   });
 
   it('keeps observation when a target moves between connected parents in one update', async () => {
-    const { ResizeObserver, target, root, document, applySnapshot } =
+    const { ResizeObserver, target, root, createElement, applySnapshot } =
       createSandbox();
     const callback = jest.fn();
     new ResizeObserver(callback).observe(target);
-    const nextParent = document.createElement('div');
+    const nextParent = createElement('div');
     root.appendChild(nextParent);
     root.removeChild(target);
     nextParent.appendChild(target);
@@ -634,7 +656,7 @@ describe('installResizeObserverPolyfill', () => {
     expect(firstCallback).toHaveBeenCalledTimes(1);
     expect(secondCallback).not.toHaveBeenCalled();
 
-    first.document.body.removeChild(first.root);
+    first.body.removeChild(first.root);
     second.applySnapshot();
     await flushMicrotasks();
     expect(firstCallback).toHaveBeenCalledTimes(2);
@@ -645,10 +667,10 @@ describe('installResizeObserverPolyfill', () => {
 
   it('rejects invalid callbacks and targets', () => {
     const { ResizeObserver } = createSandbox();
-    expect(
-      () => new ResizeObserver(null as unknown as ResizeObserverCallback),
-    ).toThrow(TypeError);
-    expect(() => new ResizeObserver(jest.fn()).observe({} as Element)).toThrow(
+    const observer = new ResizeObserver(jest.fn());
+
+    expect(() => Reflect.construct(ResizeObserver, [null])).toThrow(TypeError);
+    expect(() => Reflect.apply(observer.observe, observer, [{}])).toThrow(
       TypeError,
     );
   });
