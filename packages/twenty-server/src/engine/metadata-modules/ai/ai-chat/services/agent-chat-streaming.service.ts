@@ -17,7 +17,7 @@ import {
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -143,7 +143,14 @@ export class AgentChatStreamingService {
         workspaceMemberId,
       });
 
-      if (hasQueuedBacklog || isDefined(suspendedRun)) {
+      if (isDefined(suspendedRun)) {
+        await this.agentRunSuspensionService.scheduleContinuation({
+          workspaceId,
+          threadId,
+          wakeUpId: suspendedRun.id,
+          outcome: { type: 'MESSAGE_RECEIVED' },
+        });
+      } else if (hasQueuedBacklog) {
         await this.flushNextQueuedMessage({ threadId, workspaceId });
       }
 
@@ -460,11 +467,12 @@ export class AgentChatStreamingService {
     ]);
 
     // a run that went on to ask something reads what was sent meanwhile, as a message sent now would skip its question
-    if (queuedMessages.length > 0 && isDefined(suspendedRun)) {
-      await this.agentRunSuspensionService.resumeWithMessage({
+    if (isNonEmptyArray(queuedMessages) && isDefined(suspendedRun)) {
+      await this.agentRunSuspensionService.scheduleContinuation({
         workspaceId,
         threadId,
         wakeUpId: suspendedRun.id,
+        outcome: { type: 'MESSAGE_RECEIVED' },
       });
 
       return;

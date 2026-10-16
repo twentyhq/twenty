@@ -158,42 +158,6 @@ export class AgentRunSuspensionService {
     });
   }
 
-  // a member who writes instead of answering moves on from the question, which ends the turn that asked it
-  async skipPendingQuestion({
-    workspaceId,
-    threadId,
-    streamId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    streamId: string;
-  }): Promise<void> {
-    await this.closePendingQuestion({
-      workspaceId,
-      threadId,
-      streamId,
-      turnStatus: AgentTurnStatus.COMPLETED,
-    });
-  }
-
-  // the run reads the member's message as it goes on, whatever it waited on
-  async resumeWithMessage({
-    workspaceId,
-    threadId,
-    wakeUpId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    wakeUpId: string;
-  }): Promise<void> {
-    await this.scheduleContinuation({
-      workspaceId,
-      threadId,
-      wakeUpId,
-      outcome: { type: 'MESSAGE_RECEIVED' },
-    });
-  }
-
   // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it
   async scheduleContinuation(jobData: ContinueAgentRunJobData): Promise<void> {
     await this.messageQueueService.add<ContinueAgentRunJobData>(
@@ -424,7 +388,7 @@ export class AgentRunSuspensionService {
   }
 
   // without a call to look for, the pending question is the one waited on
-  private async closePendingQuestion({
+  async closePendingQuestion({
     workspaceId,
     threadId,
     toolCallId,

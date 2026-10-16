@@ -22,6 +22,7 @@ import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-module
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -387,10 +388,12 @@ export class AgentRunnerService {
       });
 
       if (outcome.type === 'MESSAGE_RECEIVED' && isAwaitingAnswer) {
-        await this.agentRunSuspensionService.skipPendingQuestion({
+        // a member who writes instead of answering moves on from the question, as in chat
+        await this.agentRunSuspensionService.closePendingQuestion({
           workspaceId,
           threadId,
           streamId: stream.claim.streamId,
+          turnStatus: AgentTurnStatus.COMPLETED,
         });
       }
 
@@ -493,17 +496,16 @@ export class AgentRunnerService {
       });
     }
 
-    // read once the turn is open, so it holds the messages the turn took; a new conversation has none unless a member wrote first
-    const priorMessages =
-      isCreated && !hasTakenQueuedMessages
-        ? []
-        : (
-            await this.conversationReaderService.loadMessages({
-              workspaceId,
-              threadId,
-              actor: executionContext.conversationActor,
-            })
-          ).filter(({ id }) => !promptMessageIds.includes(id));
+    // read once the turn is open, so it holds the messages the turn took, while its prompt goes to the model as is
+    const conversationMessages =
+      await this.conversationReaderService.loadMessages({
+        workspaceId,
+        threadId,
+        actor: executionContext.conversationActor,
+      });
+    const priorMessages = conversationMessages.filter(
+      ({ id }) => !promptMessageIds.includes(id),
+    );
 
     const startedAtMs = Date.now();
     const turnInput = {
