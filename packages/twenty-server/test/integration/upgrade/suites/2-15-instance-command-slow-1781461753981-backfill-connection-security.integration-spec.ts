@@ -25,8 +25,8 @@ describe('BackfillConnectionSecuritySlowInstanceCommand (integration)', () => {
   ): Promise<string> => {
     const [row] = await dataSource.query(
       `INSERT INTO "core"."connectedAccount"
-         ("handle", "provider", "userWorkspaceId", "workspaceId", "visibility", "connectionParameters")
-       VALUES ($1, 'imap_smtp_caldav', $2, $3, 'user', $4)
+         ("handle", "provider", "userWorkspaceId", "workspaceId", "scope", "connectionParameters")
+       VALUES ($1, 'imap_smtp_caldav', $2, $3, 'USER', $4)
        RETURNING id`,
       [
         `${TEST_ROW_HANDLE_PREFIX}${seededRowIds.length}`,

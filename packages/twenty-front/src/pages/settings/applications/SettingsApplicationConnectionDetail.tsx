@@ -155,7 +155,7 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      visibility: connection.visibility === 'workspace' ? 'workspace' : 'user',
+      scope: connection.scope === 'WORKSPACE' ? 'WORKSPACE' : 'USER',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -169,7 +169,7 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -214,13 +214,11 @@ export const SettingsApplicationConnectionDetail = () => {
         value: <StyledMonoText>{connection.handle}</StyledMonoText>,
       },
       {
-        key: 'visibility',
+        key: 'scope',
         label: t`Visibility`,
         value: (
-          <Status
-            color={connection.visibility === 'workspace' ? 'blue' : 'gray'}
-          >
-            {connection.visibility === 'workspace'
+          <Status color={connection.scope === 'WORKSPACE' ? 'blue' : 'gray'}>
+            {connection.scope === 'WORKSPACE'
               ? t`Workspace shared`
               : t`Just for me`}
           </Status>
@@ -336,7 +334,7 @@ export const SettingsApplicationConnectionDetail = () => {
                     color="accent"
                   >{t`Reconnect`}</Button>
                 )}
-                {connection.visibility !== 'workspace' &&
+                {connection.scope !== 'WORKSPACE' &&
                   provider.scope === 'WORKSPACE' && (
                     <Button
                       startIcon={<IconUsers />}
