@@ -27,13 +27,11 @@ const buildOwnerFieldMetadata = ({
   id,
   name,
   universalIdentifier,
-  relationTargetFieldMetadataId = null,
   relationTargetObjectMetadataId = null,
 }: {
   id: string;
   name: string;
   universalIdentifier: string;
-  relationTargetFieldMetadataId?: string | null;
   relationTargetObjectMetadataId?: string | null;
 }) =>
   ({
@@ -43,10 +41,8 @@ const buildOwnerFieldMetadata = ({
     type: FieldMetadataType.MORPH_RELATION,
     morphId: OWNER_MORPH_ID,
     objectMetadataId: 'pet-object-id',
-    relationTargetFieldMetadataId,
     relationTargetObjectMetadataId,
     settings: { relationType: RelationType.MANY_TO_ONE },
-    universalSettings: { relationType: RelationType.MANY_TO_ONE },
   }) as unknown as FlatFieldMetadata;
 
 const ownerHeadFieldMetadata = buildOwnerFieldMetadata({
@@ -59,7 +55,6 @@ const ownerCompanyFieldMetadata = buildOwnerFieldMetadata({
   id: 'owner-company-field-id',
   name: 'ownerCompany',
   universalIdentifier: 'owner-company-universal-id',
-  relationTargetFieldMetadataId: 'company-pets-field-id',
   relationTargetObjectMetadataId: 'company-object-id',
 });
 
@@ -67,26 +62,8 @@ const ownerPersonFieldMetadata = buildOwnerFieldMetadata({
   id: 'owner-person-field-id',
   name: 'ownerPerson',
   universalIdentifier: 'owner-person-universal-id',
-  relationTargetFieldMetadataId: 'person-pets-field-id',
   relationTargetObjectMetadataId: 'person-object-id',
 });
-
-const buildPetsFieldMetadata = ({
-  id,
-  objectMetadataId,
-}: {
-  id: string;
-  objectMetadataId: string;
-}) =>
-  ({
-    id,
-    name: 'pets',
-    universalIdentifier: `${id}-universal-id`,
-    type: FieldMetadataType.RELATION,
-    objectMetadataId,
-    relationTargetObjectMetadataId: 'pet-object-id',
-    settings: { relationType: RelationType.ONE_TO_MANY },
-  }) as unknown as FlatFieldMetadata;
 
 const toFlatEntityMaps = <
   TFlatEntity extends { id: string; universalIdentifier: string },
@@ -113,14 +90,6 @@ const flatFieldMetadataMaps = toFlatEntityMaps([
   ownerHeadFieldMetadata,
   ownerCompanyFieldMetadata,
   ownerPersonFieldMetadata,
-  buildPetsFieldMetadata({
-    id: 'company-pets-field-id',
-    objectMetadataId: 'company-object-id',
-  }),
-  buildPetsFieldMetadata({
-    id: 'person-pets-field-id',
-    objectMetadataId: 'person-object-id',
-  }),
 ]) as unknown as FlatEntityMaps<FlatFieldMetadata>;
 
 const objectMetadatas = [
@@ -140,14 +109,12 @@ const objectMetadatas = [
     universalIdentifier: 'company-universal-id',
     nameSingular: 'company',
     namePlural: 'companies',
-    fieldIds: ['company-pets-field-id'],
   },
   {
     id: 'person-object-id',
     universalIdentifier: 'person-universal-id',
     nameSingular: 'person',
     namePlural: 'people',
-    fieldIds: ['person-pets-field-id'],
   },
 ];
 

@@ -20,7 +20,7 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findRecordFilterFlatFieldMetadatasWithMorphRelations } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-record-filter-flat-field-metadatas-with-morph-relations.util';
+import { computeFlatFieldMetadataArrayForRecordFilters } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-array-for-record-filters.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { DEFAULT_TIMEZONE } from 'src/engine/metadata-modules/view/constants/default-timezone.constant';
 import {
@@ -131,7 +131,7 @@ export class ViewQueryParamsService {
     }));
 
     const filter = computeRecordGqlOperationFilter({
-      fieldMetadataItems: findRecordFilterFlatFieldMetadatasWithMorphRelations({
+      fieldMetadataItems: computeFlatFieldMetadataArrayForRecordFilters({
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
         recordFilters,
