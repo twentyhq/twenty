@@ -106,7 +106,7 @@ jobs:
         run: node --test packages/twenty-cli/scripts/test-app-lifecycle.mjs
       - name: Dump server and worker logs on failure
         if: failure()
-        run: tail -150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
+        run: tail -n 150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
   ci-cli-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
