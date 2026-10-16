@@ -2,7 +2,7 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
-import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';

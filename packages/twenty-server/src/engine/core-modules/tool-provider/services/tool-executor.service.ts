@@ -340,13 +340,13 @@ export class ToolExecutorService {
       };
     }
 
-    if (
-      this.definedToolRegistryService.isDefinedTool(
-        descriptor.executionRef.toolId,
-      )
-    ) {
+    const definedTool = this.definedToolRegistryService.findDefinedTool(
+      descriptor.executionRef.toolId,
+    );
+
+    if (isDefined(definedTool)) {
       return this.definedToolRegistryService.execute(
-        descriptor.executionRef.toolId,
+        definedTool,
         args,
         context,
       );

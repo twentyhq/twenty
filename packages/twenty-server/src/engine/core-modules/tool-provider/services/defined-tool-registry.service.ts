@@ -4,27 +4,21 @@ import { DiscoveryService } from '@nestjs/core';
 import { type ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
-import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type DefineToolOptions } from 'src/engine/core-modules/tool-provider/types/define-tool-options.type';
+import { type DefinedTool } from 'src/engine/core-modules/tool-provider/types/defined-tool.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildInvalidToolArgumentsOutput } from 'src/engine/core-modules/tool-provider/utils/build-invalid-tool-arguments-output.util';
+import { buildToolInputJsonSchemaOrThrow } from 'src/engine/core-modules/tool-provider/utils/build-tool-input-json-schema-or-throw.util';
+import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-
-const TOOL_NAME_PATTERN = /^[a-z][a-z0-9_]*$/;
-
-type DefinedTool = {
-  options: DefineToolOptions;
-  tool: BaseTool;
-  inputJsonSchema: object;
-};
 
 @Injectable()
 export class DefinedToolRegistryService implements OnModuleInit {
@@ -53,8 +47,8 @@ export class DefinedToolRegistryService implements OnModuleInit {
     }
   }
 
-  isDefinedTool(toolName: string): boolean {
-    return this.definedToolsByName.has(toolName);
+  findDefinedTool(toolName: string): DefinedTool | undefined {
+    return this.definedToolsByName.get(toolName);
   }
 
   getDescriptors(
@@ -86,26 +80,20 @@ export class DefinedToolRegistryService implements OnModuleInit {
   }
 
   async execute(
-    toolName: string,
+    { options, tool }: DefinedTool,
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const definedTool = this.definedToolsByName.get(toolName);
-
-    if (!isDefined(definedTool)) {
-      throw new Error(`No @DefineTool tool is registered as "${toolName}"`);
-    }
-
-    const parsedInput = await definedTool.tool.inputSchema.safeParseAsync(args);
+    const parsedInput = await tool.inputSchema.safeParseAsync(args);
 
     if (!parsedInput.success) {
       return buildInvalidToolArgumentsOutput({
-        toolName,
+        toolName: options.name,
         error: parsedInput.error,
       });
     }
 
-    return definedTool.tool.execute(parsedInput.data, context);
+    return tool.execute(parsedInput.data, context);
   }
 
   private register(options: DefineToolOptions, instance: unknown): void {
@@ -117,7 +105,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
       );
     }
 
-    if (!TOOL_NAME_PATTERN.test(name)) {
+    if (!isSnakeCaseToolName(name)) {
       throw new Error(
         `@DefineTool "${name}" must be snake_case, for example "delete_webhook"`,
       );
@@ -133,15 +121,10 @@ export class DefinedToolRegistryService implements OnModuleInit {
       );
     }
 
-    let inputJsonSchema: object;
-
-    try {
-      inputJsonSchema = toToolJsonSchema(instance.inputSchema);
-    } catch (error) {
-      throw new Error(
-        `@DefineTool "${name}" has an inputSchema that cannot be converted to JSON schema: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    const inputJsonSchema = buildToolInputJsonSchemaOrThrow({
+      toolName: name,
+      inputSchema: instance.inputSchema,
+    });
 
     this.definedToolsByName.set(name, {
       options,

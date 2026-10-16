@@ -488,10 +488,15 @@ export class ToolRegistryService {
           options,
         );
 
-        this.assertNoToolIsAlsoDefined(providerDescriptors, provider.category);
-
         const descriptors = [
-          ...providerDescriptors,
+          ...providerDescriptors.filter(
+            (descriptor) =>
+              !isDefined(
+                this.definedToolRegistryService.findDefinedTool(
+                  descriptor.name,
+                ),
+              ),
+          ),
           ...this.definedToolRegistryService.getDescriptors(
             provider.category,
             options,
@@ -503,22 +508,6 @@ export class ToolRegistryService {
         return descriptors;
       },
     );
-  }
-
-  // A half-migrated tool would be listed twice and silently run the @DefineTool class
-  private assertNoToolIsAlsoDefined(
-    providerDescriptors: (ToolIndexEntry | ToolDescriptor)[],
-    category: ToolCategory,
-  ): void {
-    const duplicatedDescriptor = providerDescriptors.find((descriptor) =>
-      this.definedToolRegistryService.isDefinedTool(descriptor.name),
-    );
-
-    if (isDefined(duplicatedDescriptor)) {
-      throw new Error(
-        `Tool "${duplicatedDescriptor.name}" is declared with @DefineTool and still returned by the ${category} provider; remove it from the provider`,
-      );
-    }
   }
 
   private buildContextFromToolContext(

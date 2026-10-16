@@ -1,7 +1,7 @@
 import { applyDecorators, Injectable, SetMetadata } from '@nestjs/common';
 
 import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
-import { type BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool';
+import { type BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type DefineToolOptions } from 'src/engine/core-modules/tool-provider/types/define-tool-options.type';
 
 export const DefineTool =
