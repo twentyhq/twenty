@@ -1,17 +1,13 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type CreditUsedItemDTO } from 'src/engine/core-modules/usage/dtos/credit-used-item.dto';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -99,99 +95,69 @@ const BREAKDOWN_QUERY_LIMIT = 50;
 // Scopes a declared operation to its application; both sides of the comparison use it so they cannot spell the pair differently.
 const DECLARED_OPERATION_KEY_SEPARATOR = ':';
 
+const USAGE_OPERATION_TYPES = new Set<string>(
+  Object.values(UsageOperationType),
+);
+
+const USAGE_RESOURCE_TYPES = new Set<string>(Object.values(UsageResourceType));
+
 @Injectable()
 export class UsageAnalyticsService {
-  private readonly logger = new Logger(UsageAnalyticsService.name);
+  constructor(private readonly clickHouseService: ClickHouseService) {}
 
-  constructor(
-    private readonly clickHouseService: ClickHouseService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
-  ) {}
-
-  async getCreditsUsedBreakdownForRegistration(
-    applicationRegistrationId: string,
-    periodStart?: Date,
-    periodEnd?: Date,
-  ): Promise<CreditUsedItemDTO[] | null> {
-    if (
-      !isDefined(periodStart) ||
-      !isDefined(periodEnd) ||
-      periodStart >= periodEnd
-    ) {
-      throw new UserInputError(
-        'Credits used requires a valid start and end date.',
-      );
+  async getCreditsUsedBreakdownForInstallations({
+    installations,
+    periodStart,
+    periodEnd,
+  }: {
+    installations: { applicationId: string; workspaceId: string }[];
+    periodStart: Date;
+    periodEnd: Date;
+  }): Promise<CreditUsedItemDTO[]> {
+    if (!isNonEmptyArray(installations)) {
+      return [];
     }
 
-    try {
-      const applications = await this.coreDataSource
-        .createQueryBuilder(ApplicationEntity, 'application')
-        .select('application.id', 'id')
-        .addSelect('application.workspaceId', 'workspaceId')
-        .innerJoin('application.workspace', 'workspace')
-        .where(
-          'application.applicationRegistrationId = :applicationRegistrationId',
-          { applicationRegistrationId },
-        )
-        .andWhere('workspace.deletedAt IS NULL')
-        .orderBy('application.workspaceId')
-        .addOrderBy('application.id')
-        .getRawMany<{ id: string; workspaceId: string }>();
+    const rows = await this.clickHouseService.selectOrThrow<{
+      resourceType: string;
+      operationType: string;
+      creditsUsedMicro: string | number;
+    }>(
+      `SELECT resourceType, operationType, sum(creditsUsedMicro) AS creditsUsedMicro
+       FROM usageEvent
+       WHERE workspaceId IN {workspaceIds:Array(String)}
+         AND applicationId IN {applicationIds:Array(String)}
+         AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
+         AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
+       GROUP BY resourceType, operationType
+       HAVING creditsUsedMicro != 0
+       ORDER BY creditsUsedMicro DESC
+       SETTINGS max_execution_time = 10, use_query_cache = true,
+                query_cache_ttl = 600, query_cache_min_query_duration = 0`,
+      {
+        workspaceIds: [
+          ...new Set(installations.map(({ workspaceId }) => workspaceId)),
+        ],
+        applicationIds: installations.map(({ applicationId }) => applicationId),
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
+      },
+    );
 
-      if (!isNonEmptyArray(applications)) {
-        return [];
-      }
+    return rows.map(({ resourceType, operationType, creditsUsedMicro }) => {
+      const isKnownOperation = USAGE_OPERATION_TYPES.has(operationType);
 
-      const rows = await this.clickHouseService.selectOrThrow<{
-        resourceType: string;
-        operationType: string;
-        creditsUsedMicro: string | number;
-      }>(
-        `SELECT resourceType, operationType, sum(creditsUsedMicro) AS creditsUsedMicro
-         FROM usageEvent
-         WHERE workspaceId IN {workspaceIds:Array(String)}
-           AND applicationId IN {applicationIds:Array(String)}
-           AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
-           AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
-         GROUP BY resourceType, operationType
-         HAVING creditsUsedMicro != 0
-         ORDER BY creditsUsedMicro DESC
-         SETTINGS max_execution_time = 10, use_query_cache = true,
-                  query_cache_ttl = 600, query_cache_min_query_duration = 0`,
-        {
-          workspaceIds: [
-            ...new Set(applications.map(({ workspaceId }) => workspaceId)),
-          ],
-          applicationIds: applications.map(({ id }) => id),
-          periodStart: formatDateTimeForClickHouse(periodStart),
-          periodEnd: formatDateTimeForClickHouse(periodEnd),
-        },
-      );
-
-      return rows.map(({ resourceType, operationType, creditsUsedMicro }) => {
-        const operation =
-          Object.values(UsageOperationType).find(
-            (operation) => operation === operationType,
-          ) ?? null;
-
-        return {
-          resource:
-            Object.values(UsageResourceType).find(
-              (resource) => resource === resourceType,
-            ) ?? null,
-          operation,
-          label: operation === null ? operationType : undefined,
-          creditsUsed: toDisplayCredits(Number(creditsUsedMicro)),
-        };
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to load credits used for registration ${applicationRegistrationId}`,
-        error,
-      );
-      return null;
-    }
+      return {
+        resource: USAGE_RESOURCE_TYPES.has(resourceType)
+          ? (resourceType as UsageResourceType)
+          : null,
+        operation: isKnownOperation
+          ? (operationType as UsageOperationType)
+          : null,
+        label: isKnownOperation ? undefined : operationType,
+        creditsUsed: toDisplayCredits(Number(creditsUsedMicro)),
+      };
+    });
   }
 
   async getConsumptionRowsForAllScopes({

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
@@ -79,6 +80,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type CreditUsedItemDTO } from 'src/engine/core-modules/usage/dtos/credit-used-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -1166,37 +1168,62 @@ export class ApplicationRegistrationService {
       ownerWorkspaceId,
     });
 
-    return this.computeStats(
+    return this.computeStats({
       applicationRegistrationId,
       includeCreditsUsed,
       periodStart,
       periodEnd,
-    );
+    });
   }
 
   // Admin panel views apps across all workspaces, so ownership is not enforced.
-  async getStatsGlobal(
-    applicationRegistrationId: string,
+  async getStatsGlobal({
+    applicationRegistrationId,
     includeCreditsUsed = false,
-    periodStart?: Date,
-    periodEnd?: Date,
-  ): Promise<ApplicationRegistrationStatsDTO> {
+    periodStart,
+    periodEnd,
+  }: {
+    applicationRegistrationId: string;
+    includeCreditsUsed?: boolean;
+    periodStart?: Date;
+    periodEnd?: Date;
+  }): Promise<ApplicationRegistrationStatsDTO> {
     await this.findOneByIdGlobal(applicationRegistrationId);
 
-    return this.computeStats(
+    return this.computeStats({
       applicationRegistrationId,
       includeCreditsUsed,
       periodStart,
       periodEnd,
-    );
+    });
   }
 
-  private async computeStats(
-    applicationRegistrationId: string,
-    includeCreditsUsed: boolean,
-    periodStart?: Date,
-    periodEnd?: Date,
-  ): Promise<ApplicationRegistrationStatsDTO> {
+  private async computeStats({
+    applicationRegistrationId,
+    includeCreditsUsed,
+    periodStart,
+    periodEnd,
+  }: {
+    applicationRegistrationId: string;
+    includeCreditsUsed: boolean;
+    periodStart?: Date;
+    periodEnd?: Date;
+  }): Promise<ApplicationRegistrationStatsDTO> {
+    if (
+      includeCreditsUsed &&
+      (!isDefined(periodStart) ||
+        !isDefined(periodEnd) ||
+        periodStart >= periodEnd)
+    ) {
+      throw new ApplicationRegistrationException(
+        'Credits used requires a valid start and end date',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Credits used requires a valid start and end date.`,
+        },
+      );
+    }
+
     const rawVersionDistribution: {
       version: string;
       count: number;
@@ -1237,13 +1264,14 @@ export class ApplicationRegistrationService {
     );
 
     const mostInstalledVersion = rawVersionDistribution[0]?.version ?? null;
-    const creditsUsedBreakdown = includeCreditsUsed
-      ? await this.usageAnalyticsService.getCreditsUsedBreakdownForRegistration(
-          applicationRegistrationId,
-          periodStart,
-          periodEnd,
-        )
-      : null;
+    const creditsUsedBreakdown =
+      includeCreditsUsed && isDefined(periodStart) && isDefined(periodEnd)
+        ? await this.getCreditsUsedBreakdown({
+            applicationRegistrationId,
+            periodStart,
+            periodEnd,
+          })
+        : null;
 
     return {
       activeInstalls,
@@ -1264,6 +1292,44 @@ export class ApplicationRegistrationService {
         count: entry.count,
       })),
     };
+  }
+
+  private async getCreditsUsedBreakdown({
+    applicationRegistrationId,
+    periodStart,
+    periodEnd,
+  }: {
+    applicationRegistrationId: string;
+    periodStart: Date;
+    periodEnd: Date;
+  }): Promise<CreditUsedItemDTO[] | null> {
+    try {
+      // Ordered so identical installation lists hit the ClickHouse query cache
+      const installations = await this.applicationRepository
+        .createQueryBuilder('application')
+        .select('application.id', 'applicationId')
+        .addSelect('application.workspaceId', 'workspaceId')
+        .innerJoin('application.workspace', 'workspace')
+        .where(
+          'application.applicationRegistrationId = :applicationRegistrationId',
+          { applicationRegistrationId },
+        )
+        .andWhere('workspace.deletedAt IS NULL')
+        .orderBy('application.workspaceId')
+        .addOrderBy('application.id')
+        .getRawMany<{ applicationId: string; workspaceId: string }>();
+
+      return await this.usageAnalyticsService.getCreditsUsedBreakdownForInstallations(
+        { installations, periodStart, periodEnd },
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to load credits used for registration ${applicationRegistrationId}`,
+        error,
+      );
+
+      return null;
+    }
   }
 
   // Admin panel only, which views apps across all workspaces, so ownership is not enforced

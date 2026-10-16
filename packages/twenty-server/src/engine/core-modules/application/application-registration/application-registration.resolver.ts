@@ -10,7 +10,6 @@ import {
 } from '@nestjs/graphql';
 
 import { type GraphQLResolveInfo } from 'graphql';
-import graphqlFields from 'graphql-fields';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
@@ -29,6 +28,7 @@ import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { isCreditsUsedRequested } from 'src/engine/core-modules/application/application-registration/utils/is-credits-used-requested.util';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
@@ -225,16 +225,12 @@ export class ApplicationRegistrationResolver {
     @Args('periodEnd', { type: () => Date, nullable: true })
     periodEnd?: Date,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    const fields = graphqlFields(info);
-
     return this.applicationRegistrationService.getStats({
       applicationRegistrationId,
       ownerWorkspaceId: workspaceId,
       periodStart,
       periodEnd,
-      includeCreditsUsed:
-        isDefined(fields.creditsUsedBreakdown) ||
-        isDefined(fields.totalCreditsUsed),
+      includeCreditsUsed: isCreditsUsedRequested(info),
     });
   }
 
