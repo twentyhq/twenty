@@ -5,6 +5,7 @@ import {
   type TableItem,
 } from '@/settings/components/SettingsTableCard';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -54,8 +55,10 @@ const StyledGeneralContainer = styled.div`
 
 export const SettingsApplicationRegistrationGeneralInfo = ({
   registration,
+  isAdminView = false,
 }: {
   registration: ApplicationRegistration;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -107,7 +110,25 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     items.push({
       Icon: IconTag,
       label: t`Owner`,
-      value: isDefined(ownerWorkspace?.displayName) ? (
+      value: !isDefined(ownerWorkspace?.displayName) ? (
+        <Tag color="orange">{t`Unclaimed`}</Tag>
+      ) : isAdminView && isDefined(registration.ownerWorkspaceId) ? (
+        <LinkChip
+          size="md"
+          variant="soft"
+          to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+            workspaceId: registration.ownerWorkspaceId,
+          })}
+          startElement={
+            <AvatarOrIcon
+              shape="circle"
+              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+            />
+          }
+        >
+          {getChipLabel(ownerWorkspace.displayName).content}
+        </LinkChip>
+      ) : (
         <Chip
           size="md"
           variant="soft"
@@ -120,8 +141,6 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         >
           {getChipLabel(ownerWorkspace.displayName).content}
         </Chip>
-      ) : (
-        <Tag color="orange">{t`Unclaimed`}</Tag>
       ),
     });
 
