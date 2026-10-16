@@ -13,6 +13,10 @@ inputs:
   api-key:
     description: API key or access token for the target workspace
     required: true
+  cli-version:
+    description: Standalone Twenty CLI version
+    required: false
+    default: 'latest'
   app-path:
     description: Path to the app directory (relative to repo root)
     required: true
@@ -59,6 +63,13 @@ runs:
       working-directory: ${{ inputs.app-path }}
       run: yarn install --immutable
 
+    - name: Install Twenty CLI
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      shell: bash
+      env:
+        TWENTY_CLI_VERSION: ${{ inputs.cli-version }}
+      run: npm install -g "twenty@$TWENTY_CLI_VERSION"
+
     - name: Integration tests
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
       shell: bash
@@ -72,6 +83,7 @@ runs:
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'installation-only'
       uses: ./.github/actions/deploy-twenty-app
       with:
+        cli-version: ${{ inputs.cli-version }}
         api-url: ${{ inputs.api-url }}
         api-key: ${{ inputs.api-key }}
         app-path: ${{ inputs.app-path }}
@@ -80,6 +92,7 @@ runs:
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'installation-only'
       uses: ./.github/actions/install-twenty-app
       with:
+        cli-version: ${{ inputs.cli-version }}
         api-url: ${{ inputs.api-url }}
         api-key: ${{ inputs.api-key }}
         app-path: ${{ inputs.app-path }}

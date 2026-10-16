@@ -17,17 +17,21 @@ Remove this app and the rest of Twenty has nothing to hang off.
 
 #### Build your own app
 
-Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:
+Extend Twenty with your own objects, fields, logic functions, or AI skills. Create an app with the Twenty CLI:
 
 \`\`\`bash
-npx create-twenty-app@latest my-twenty-app
+npm install -g twenty
+twenty app init my-twenty-app
 \`\`\`
 
 Then inside the folder:
 
 \`\`\`bash
 cd my-twenty-app
-yarn twenty dev
+yarn install
+twenty auth login --url https://your-workspace.twenty.com
+twenty app apply --create
+twenty app dev
 \`\`\`
 
 See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the \`defineApplication\` / \`defineEntity\` APIs.`;

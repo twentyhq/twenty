@@ -33,13 +33,20 @@ export const renderAppTemplate = async ({
 
   await cp(join(appDirectory, 'AGENTS.md'), join(appDirectory, 'CLAUDE.md'));
 
-  const workflowPath = join(appDirectory, '.github', 'workflows', 'ci.yml');
-  const workflow = (await readFile(workflowPath, 'utf8')).replace(
-    'CLI-VERSION-TO-BE-GENERATED',
-    CLI_VERSION,
-  );
+  for (const workflowName of ['ci.yml', 'cd.yml', 'publish.yml']) {
+    const workflowPath = join(
+      appDirectory,
+      '.github',
+      'workflows',
+      workflowName,
+    );
+    const workflow = (await readFile(workflowPath, 'utf8')).replaceAll(
+      'CLI-VERSION-TO-BE-GENERATED',
+      CLI_VERSION,
+    );
 
-  await writeFile(workflowPath, workflow);
+    await writeFile(workflowPath, workflow);
+  }
 
   const identifiersPath = join(
     appDirectory,

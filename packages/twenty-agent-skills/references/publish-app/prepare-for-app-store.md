@@ -155,7 +155,7 @@ Logo guidance:
 
 Screenshot guidance:
 
-- Capture real app surfaces after `yarn twenty apply` or watch-mode sync.
+- Capture real app surfaces after `twenty app apply` or watch-mode sync.
 - Prefer the most useful user paths: app listing/about page, object index view, record page layout, front component surface, connection settings, or AI skill/agent behavior.
 - Use seeded or synthetic data only.
 - Hide browser chrome unless it helps explain setup.
@@ -195,8 +195,8 @@ If the app requires a specific Twenty server version, set `engines.twenty` in `p
 Before considering README and visuals done:
 
 ```bash
-yarn twenty apply
-yarn twenty dev:build
+twenty app apply
+twenty app build
 ```
 
 Then check:

@@ -1,16 +1,10 @@
-import { mkdtemp, rm, symlink } from 'node:fs/promises';
-import { createRequire } from 'node:module';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import { build } from 'esbuild';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { getFieldBaseFile } from '@/app/add/entity-field-template';
 import { getFrontComponentBaseFile } from '@/app/add/entity-front-component-template';
@@ -19,9 +13,6 @@ import { getRecordPageLayoutBaseFile } from '@/app/add/entity-record-page-layout
 import { getObjectBaseFile } from '@/app/add/entity-object-template';
 import { kebabCase } from '@/app/pull/kebab-case';
 
-const REPOSITORY_ROOT = fileURLToPath(
-  new URL('../../../../../../', import.meta.url),
-);
 const UUID_PATTERN =
   /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/g;
 const normalizeIdentifiers = (content: string) => {
@@ -35,60 +26,7 @@ const normalizeIdentifiers = (content: string) => {
   });
 };
 
-type SdkReference = {
-  getFieldBaseFile: typeof getFieldBaseFile;
-  getFrontComponentBaseFile: typeof getFrontComponentBaseFile;
-  getLogicFunctionBaseFile: typeof getLogicFunctionBaseFile;
-  getObjectBaseFile: typeof getObjectBaseFile;
-  getRecordPageLayoutBaseFile: typeof getRecordPageLayoutBaseFile;
-  kebabCase: typeof kebabCase;
-};
-
-describe('app add template parity with the repository SDK', () => {
-  let root: string;
-  let sdk: SdkReference;
-
-  beforeAll(async () => {
-    root = await mkdtemp(join(tmpdir(), 'twenty-add-parity-'));
-    await symlink(
-      join(REPOSITORY_ROOT, 'node_modules'),
-      join(root, 'node_modules'),
-    );
-    const sdkSource = join(REPOSITORY_ROOT, 'packages/twenty-sdk/src');
-    const oraclePath = join(root, 'sdk.cjs');
-
-    await build({
-      stdin: {
-        contents: [
-          ...[
-            'object',
-            'field',
-            'logic-function',
-            'front-component',
-            'record-page-layout',
-          ].map(
-            (entity) =>
-              `export * from './cli/utilities/entity/entity-${entity}-template';`,
-          ),
-          "export * from './cli/utilities/string/kebab-case';",
-        ].join('\n'),
-        resolveDir: sdkSource,
-      },
-      outfile: oraclePath,
-      alias: { '@': sdkSource },
-      bundle: true,
-      packages: 'external',
-      platform: 'node',
-      format: 'cjs',
-      target: 'node24',
-    });
-    sdk = createRequire(import.meta.url)(oraclePath) as SdkReference;
-  });
-
-  afterAll(async () => {
-    await rm(root, { recursive: true, force: true });
-  });
-
+describe('app add templates', () => {
   it('preserves the object template and its shared name-field identifier', () => {
     const input = {
       name: 'invoice',
@@ -100,21 +38,19 @@ describe('app add template parity with the repository SDK', () => {
       },
     };
 
-    expect(normalizeIdentifiers(getObjectBaseFile(input))).toBe(
-      normalizeIdentifiers(sdk.getObjectBaseFile(input)),
-    );
+    expect(normalizeIdentifiers(getObjectBaseFile(input))).toMatchSnapshot();
   });
 
-  it('preserves the SDK record page layout and its fields view reference', () => {
+  it('preserves the record page layout and its fields view reference', () => {
     const input = {
       objectLabelSingular: 'Invoice',
       objectUniversalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
       fieldsWidgetViewUniversalIdentifier:
         'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
     };
-    expect(normalizeIdentifiers(getRecordPageLayoutBaseFile(input))).toBe(
-      normalizeIdentifiers(sdk.getRecordPageLayoutBaseFile(input)),
-    );
+    expect(
+      normalizeIdentifiers(getRecordPageLayoutBaseFile(input)),
+    ).toMatchSnapshot();
   });
 
   it.each(Object.values(FieldMetadataType))(
@@ -137,22 +73,20 @@ describe('app add template parity with the repository SDK', () => {
         },
       };
 
-      expect(normalizeIdentifiers(getFieldBaseFile(input))).toBe(
-        normalizeIdentifiers(sdk.getFieldBaseFile(input)),
-      );
+      expect(normalizeIdentifiers(getFieldBaseFile(input))).toMatchSnapshot();
     },
   );
 
   it.each(['SendInvoice', 'hello world', 'HTTPClient2'])(
-    'preserves runtime templates and SDK filename normalization for %s',
+    'preserves runtime templates and filename normalization for %s',
     (name) => {
-      expect(kebabCase(name)).toBe(sdk.kebabCase(name));
-      expect(normalizeIdentifiers(getLogicFunctionBaseFile({ name }))).toBe(
-        normalizeIdentifiers(sdk.getLogicFunctionBaseFile({ name })),
-      );
-      expect(normalizeIdentifiers(getFrontComponentBaseFile({ name }))).toBe(
-        normalizeIdentifiers(sdk.getFrontComponentBaseFile({ name })),
-      );
+      expect(kebabCase(name)).toMatchSnapshot();
+      expect(
+        normalizeIdentifiers(getLogicFunctionBaseFile({ name })),
+      ).toMatchSnapshot();
+      expect(
+        normalizeIdentifiers(getFrontComponentBaseFile({ name })),
+      ).toMatchSnapshot();
     },
   );
 

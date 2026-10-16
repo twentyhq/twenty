@@ -1,36 +1,17 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { functionExecute } from 'twenty-sdk/cli';
+import { executeDeployedFunction as executeFunction } from './execute-deployed-function';
+import { readManifestLogicFunctionNames } from './read-manifest-logic-function-names';
 import { describe, expect, it } from 'vitest';
-import { z } from 'zod';
 
 import { GRANOLA_BACKFILL_ROUTE_PATH } from 'src/constants/granola-backfill-route-path';
 
-const APP_PATH = process.cwd();
-const MANIFEST_SCHEMA = z.object({
-  logicFunctions: z.array(z.object({ name: z.string() })),
-});
-
-const executeDeployedFunction = async ({
+const executeDeployedFunction = ({
   functionName,
   payload,
 }: {
   functionName: string;
   payload: Record<string, unknown>;
-}) => {
-  const result = await functionExecute({
-    appPath: APP_PATH,
-    functionName,
-    payload,
-  });
-  if (!result.success) {
-    throw new Error(
-      `Could not execute ${functionName}: ${result.error.message}`,
-    );
-  }
-  return result.data;
-};
+}) => executeFunction(functionName, payload);
 
 const buildBackfillRoutePayload = (body: Record<string, unknown>) => ({
   headers: {},
@@ -45,21 +26,13 @@ const buildBackfillRoutePayload = (body: Record<string, unknown>) => ({
 
 describe('Granola deployed functions', () => {
   it('deploys every function declared by the built application', async () => {
-    const manifest = MANIFEST_SCHEMA.parse(
-      JSON.parse(
-        readFileSync(
-          join(APP_PATH, '.twenty', 'output', 'manifest.json'),
-          'utf8',
-        ),
-      ),
-    );
     const result = await new MetadataApiClient().query({
       findManyLogicFunctions: { name: true },
     });
     const deployedNames = result.findManyLogicFunctions.map(
       (logicFunction) => logicFunction.name,
     );
-    for (const { name } of manifest.logicFunctions) {
+    for (const name of await readManifestLogicFunctionNames()) {
       expect(deployedNames).toContain(name);
     }
   });

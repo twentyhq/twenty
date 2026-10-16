@@ -187,6 +187,22 @@ describe('app init', () => {
     );
   });
 
+  it('pins the generating CLI version in deployment and publishing workflows', async () => {
+    const result = await run(['my-app']);
+
+    expect(result.exitCode, result.stderr).toBe(0);
+
+    for (const workflowName of ['cd.yml', 'publish.yml']) {
+      const workflow = await readFile(
+        join(workDirectory, 'my-app', '.github', 'workflows', workflowName),
+        'utf8',
+      );
+
+      expect(workflow).toContain(CLI_VERSION);
+      expect(workflow).not.toContain('TO-BE-GENERATED');
+    }
+  });
+
   it('returns the app, its pins and the next steps as JSON, without a login step when a workspace is set', async () => {
     vi.stubEnv('TWENTY_API_URL', 'https://crm.example.com');
     vi.stubEnv('TWENTY_API_KEY', 'test-key');

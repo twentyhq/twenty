@@ -17,10 +17,11 @@ If you are shaping one workspace for one business, keep it here. If you are buil
 
 #### Build your own app
 
-Scaffold a new app in one command:
+Create an app with the Twenty CLI:
 
 \`\`\`bash
-npx create-twenty-app@latest my-twenty-app
+npm install -g twenty
+twenty app init my-twenty-app
 \`\`\`
 
 See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the \`defineApplication\` / \`defineEntity\` APIs.`;
