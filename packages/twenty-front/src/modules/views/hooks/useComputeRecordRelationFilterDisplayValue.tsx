@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -12,12 +13,14 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeRelationFilterDisplayValue } from '@/views/utils/computeRelationFilterDisplayValue';
 
 import { t } from '@lingui/core/macro';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
   isNonEmptyArray,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
+import { logError } from '~/utils/logError';
 
 type UseComputeRecordRelationFilterDisplayValueParams = {
   recordFilter: RecordFilter;
@@ -31,6 +34,7 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { performCombinedFindManyRecords } =
     usePerformCombinedFindManyRecords();
+  const { enqueueToast } = useToast();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
     throw new Error('recordFilter.fieldMetadataId is not defined');
@@ -54,7 +58,7 @@ export const useComputeRecordRelationFilterDisplayValue = ({
         getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
-        ).canReadObjectRecords === true,
+        ).canReadObjectRecords,
     );
   }, [
     fieldMetadataItem,
@@ -111,9 +115,10 @@ export const useComputeRecordRelationFilterDisplayValue = ({
           setSelectedRecordsByObjectNamePlural(result);
         }
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (!isStale) {
-          setSelectedRecordsByObjectNamePlural({});
+          logError(error);
+          enqueueToast(getToastOptionsFromError({ error }));
         }
       })
       .finally(() => {
@@ -126,6 +131,7 @@ export const useComputeRecordRelationFilterDisplayValue = ({
       isStale = true;
     };
   }, [
+    enqueueToast,
     performCombinedFindManyRecords,
     readableTargetObjectMetadataItems,
     selectedRecordIds,
