@@ -7,10 +7,7 @@ import {
 } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import {
-  CoreWorkflowCreationRollbackError,
-  type CreatedCoreWorkflow,
-} from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
+import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -63,7 +60,6 @@ type CreateCompleteWorkflowFailure = {
   success: false;
   message: string;
   error: string;
-  result?: { coreWorkflowId: string };
 };
 
 export const createCreateCompleteWorkflowTool = (
@@ -216,17 +212,6 @@ const createWorkflowOrBuildFailure = async ({
         }),
     };
   } catch (error) {
-    if (error instanceof CoreWorkflowCreationRollbackError) {
-      return {
-        failure: {
-          success: false,
-          message: `Failed to create workflow "${name}" and a partial workflow remains (coreWorkflowId ${error.coreWorkflow.id}). Delete it with delete_workflow before creating the workflow again.`,
-          error: error.message,
-          result: { coreWorkflowId: error.coreWorkflow.id },
-        },
-      };
-    }
-
     return {
       failure: {
         success: false,

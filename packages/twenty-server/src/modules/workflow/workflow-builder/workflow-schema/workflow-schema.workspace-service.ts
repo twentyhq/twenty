@@ -654,11 +654,7 @@ export class WorkflowSchemaWorkspaceService {
           workspaceId,
           workflowVersionContent,
         });
-      } catch (error) {
-        this.logger.warn(
-          `Falling back to the default iterator item schema for '${items}' in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-
+      } catch {
         return DEFAULT_ITERATOR_CURRENT_ITEM;
       }
     }
