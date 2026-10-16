@@ -121,17 +121,26 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
     );
     queryMock.mockReset();
     mutationMock.mockReset();
-    mutationMock.mockImplementation(async (mutation: any) =>
-      mutation.updateCallRecordings !== undefined
-        ? {
-            updateCallRecordings: [
-              { id: mutation.updateCallRecordings.__args.filter.id.eq },
-            ],
-          }
-        : {
-            updateCallRecording: { id: mutation.updateCallRecording.__args.id },
-          },
-    );
+    mutationMock.mockImplementation(async (mutation: any) => {
+      if (mutation.updateCallRecordings !== undefined) {
+        return {
+          updateCallRecordings: [
+            { id: mutation.updateCallRecordings.__args.filter.id.eq },
+          ],
+        };
+      }
+
+      if (mutation.createCalendarEventParticipants !== undefined) {
+        return {
+          createCalendarEventParticipants:
+            mutation.createCalendarEventParticipants.__args.data,
+        };
+      }
+
+      return {
+        updateCallRecording: { id: mutation.updateCallRecording.__args.id },
+      };
+    });
     fetchMock.mockReset();
     fetchMock.mockImplementation(async (requestUrl: string) => {
       if (requestUrl === RECALL_CREATE_BOT_URL) {
@@ -181,6 +190,20 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       RECALL_CREATE_BOT_URL,
       expect.objectContaining({ method: 'POST' }),
     );
+    expect(mutationMock).toHaveBeenCalledWith({
+      createCalendarEventParticipants: {
+        __args: {
+          data: [
+            expect.objectContaining({
+              id: 'call-recording-1',
+              calendarEventId: 'calendar-event-1',
+            }),
+          ],
+          upsert: true,
+        },
+        id: true,
+      },
+    });
   });
 
   it('schedules a bot when the platform serializes the missing bot id as an empty string', async () => {

@@ -1,3 +1,4 @@
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
@@ -5,6 +6,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { CANCEL_RECALL_BOT_ON_CALL_RECORDING_DELETE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { destroyCallRecorderCalendarParticipants } from 'src/logic-functions/data/destroy-call-recorder-calendar-participants.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
@@ -42,6 +44,12 @@ export const cancelRecallBotOnCallRecordingDeleteHandler = async (
 
   const normalizedExternalBotId = externalBotId.trim();
   const canceled = await cancelOrEjectRecallBot(normalizedExternalBotId);
+
+  if (canceled) {
+    await destroyCallRecorderCalendarParticipants(new CoreApiClient(), [
+      event.recordId,
+    ]);
+  }
 
   return {
     callRecordingId: event.recordId,

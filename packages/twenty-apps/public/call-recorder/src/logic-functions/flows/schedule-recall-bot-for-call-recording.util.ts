@@ -21,6 +21,7 @@ import {
   scheduleRecallBot,
 } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { upsertCallRecorderCalendarParticipant } from 'src/logic-functions/data/upsert-call-recorder-calendar-participant.util';
 
 export type ScheduleRecallBotForCallRecordingResult =
   | { status: 'scheduled' }
@@ -155,6 +156,11 @@ export const scheduleRecallBotForCallRecording = async (
   await updateCallRecording(client, {
     id: callRecording.id,
     data: { externalBotId: scheduleResult.externalBotId },
+  });
+
+  await upsertCallRecorderCalendarParticipant(client, {
+    callRecordingId: callRecording.id,
+    calendarEventId: calendarEvent.id,
   });
 
   if (!isJoinWithinCreditCheckLead) {

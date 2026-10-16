@@ -6,6 +6,7 @@ import { type CallRecordingRecord } from 'src/logic-functions/types/call-recordi
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { clearCanceledRecallBot } from 'src/logic-functions/data/clear-canceled-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { destroyCallRecorderCalendarParticipants } from 'src/logic-functions/data/destroy-call-recorder-calendar-participants.util';
 
 export const cancelCallRecordingRequest = async ({
   client,
@@ -41,4 +42,5 @@ export const cancelCallRecordingRequest = async ({
     callRecordingId: callRecording.id,
     externalBotId: callRecording.externalBotId,
   });
+  await destroyCallRecorderCalendarParticipants(client, [callRecording.id]);
 };

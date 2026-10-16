@@ -111,6 +111,7 @@ class FakeCoreApiClient {
   calendarEvents: CalendarEventNode[];
   callRecordings: CallRecordingNode[];
   mutations: Array<{ name: string; args: unknown }> = [];
+  calendarEventParticipantsById = new Map<string, Record<string, unknown>>();
 
   constructor({
     calendarEvents,
@@ -155,6 +156,29 @@ class FakeCoreApiClient {
   }
 
   async mutation(mutation: any): Promise<any> {
+    if (mutation.createCalendarEventParticipants !== undefined) {
+      const { data } = mutation.createCalendarEventParticipants.__args;
+
+      for (const participant of data) {
+        this.calendarEventParticipantsById.set(participant.id, participant);
+      }
+
+      return { createCalendarEventParticipants: data };
+    }
+
+    if (mutation.destroyCalendarEventParticipants !== undefined) {
+      const destroyedIds: string[] =
+        mutation.destroyCalendarEventParticipants.__args.filter.id.in;
+
+      for (const id of destroyedIds) {
+        this.calendarEventParticipantsById.delete(id);
+      }
+
+      return {
+        destroyCalendarEventParticipants: destroyedIds.map((id) => ({ id })),
+      };
+    }
+
     if (mutation.createCallRecording !== undefined) {
       const data = mutation.createCallRecording.__args.data;
 
@@ -363,6 +387,13 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         botScheduleIdempotencyKey: expect.any(String),
       },
     ]);
+    expect([...client.calendarEventParticipantsById.values()]).toEqual([
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(),
+        calendarEventId: 'calendar-event-1',
+        displayName: 'Call Recorder',
+      }),
+    ]);
     expect(recallBotCreateCalls()).toHaveLength(1);
     const [createBotUrl, createBotInit] = recallBotCreateCalls()[0];
     expect(createBotUrl).toBe(`${RECALL_API_BASE_URL}/bot/`);
@@ -544,6 +575,12 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         externalBotId: 'recall-bot-1',
       }),
     ]);
+    expect([...client.calendarEventParticipantsById.values()]).toEqual([
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(),
+        calendarEventId: 'calendar-event-1',
+      }),
+    ]);
     expect(recallBotUpdateCalls()).toHaveLength(1);
     const [updateBotUrl, updateBotInit] = recallBotUpdateCalls()[0];
     expect(updateBotUrl).toBe(`${RECALL_API_BASE_URL}/bot/recall-bot-1/`);
@@ -668,6 +705,9 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       ],
     });
+    client.calendarEventParticipantsById.set('call-recording-1', {
+      id: 'call-recording-1',
+    });
 
     const result = await reconcileCallRecorderForCalendarEventIds({
       client: client as unknown as CoreApiClient,
@@ -688,6 +728,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         externalBotId: null,
       }),
     ]);
+    expect(client.calendarEventParticipantsById.size).toBe(0);
     expect(recallBotDeleteCalls().map(([requestUrl]) => requestUrl)).toEqual([
       `${RECALL_API_BASE_URL}/bot/recall-bot-1/`,
     ]);
@@ -720,6 +761,9 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       ],
     });
+    client.calendarEventParticipantsById.set('call-recording-1', {
+      id: 'call-recording-1',
+    });
 
     const resultPromise = reconcileCallRecorderForCalendarEventIds({
       client: client as unknown as CoreApiClient,
@@ -744,6 +788,9 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         externalBotId: 'recall-bot-1',
       }),
     ]);
+    expect(client.calendarEventParticipantsById.has('call-recording-1')).toBe(
+      true,
+    );
   });
 
   it('does not reset the status of a recording whose bot is already live', async () => {
@@ -1143,6 +1190,10 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       ],
     });
+    client.calendarEventParticipantsById.set(
+      buildCustomerSyncCallRecordingId(),
+      { id: buildCustomerSyncCallRecordingId() },
+    );
 
     const result = await reconcileCallRecorderForCalendarEventIds({
       client: client as unknown as CoreApiClient,
@@ -1167,6 +1218,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         externalBotId: null,
       }),
     ]);
+    expect(client.calendarEventParticipantsById.size).toBe(0);
   });
 
   it('adopts the concurrently created recording when it loses the deterministic-id insert race', async () => {

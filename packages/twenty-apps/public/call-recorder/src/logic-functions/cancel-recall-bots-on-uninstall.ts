@@ -1,9 +1,10 @@
-import { isDefined } from 'twenty-sdk/utils';
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineUninstallLogicFunction } from 'twenty-sdk/define';
 
 import { CANCEL_RECALL_BOTS_ON_UNINSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from 'src/logic-functions/constants/recall-api-max-in-process-retry-wait-ms';
+import { destroyCallRecorderCalendarParticipants } from 'src/logic-functions/data/destroy-call-recorder-calendar-participants.util';
 import { cancelOpenScheduledCallRecordingRequests } from 'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import {
@@ -34,10 +35,6 @@ export const cancelRecallBotsOnUninstallHandler =
     let recordCleanupError: Error | undefined;
     const recordCleanupRequestStartCutoffEpochMs =
       uninstallStartedAt.getTime() + RECORD_CLEANUP_REQUEST_START_BUDGET_MS;
-    const participantCleanupRequestStartCutoffEpochMs =
-      uninstallStartedAt.getTime() +
-      UNINSTALL_TIMEOUT_SECONDS * 1_000 -
-      UNINSTALL_RESPONSE_HEADROOM_MS;
     const shouldStartRecordCleanupRequest = () =>
       Date.now() < recordCleanupRequestStartCutoffEpochMs;
 
@@ -97,37 +94,26 @@ export const cancelRecallBotsOnUninstallHandler =
           RECALL_CANCELLATION_START_HEADROOM_MS,
       });
 
-    const canceledBotIds = new Set(
+    const canceledExternalBotIds = new Set(
       workspaceRecallBotCancellationResult.canceledExternalBotIds,
     );
-    const canceledRecordingIds = openCallRecordings
-      .filter(
-        ({ externalBotId }) =>
-          isDefined(externalBotId) && canceledBotIds.has(externalBotId),
-      )
-      .map(({ id }) => id);
 
-    if (canceledRecordingIds.length > 0) {
-      try {
-        if (Date.now() >= participantCleanupRequestStartCutoffEpochMs) {
-          throw new Error(
-            'record cleanup request cutoff reached before participant cleanup',
-          );
-        }
-        await coreApiClient.mutation({
-          destroyCalendarEventParticipants: {
-            __args: {
-              filter: { id: { in: canceledRecordingIds } },
-            },
-            id: true,
-          },
-        });
-      } catch (error) {
-        recordCleanupError ??= buildRecordCleanupError(
-          'failed to remove canceled bot participants',
-          error,
-        );
-      }
+    try {
+      await destroyCallRecorderCalendarParticipants(
+        coreApiClient,
+        openCallRecordings
+          .filter(
+            ({ externalBotId }) =>
+              !isUndefined(externalBotId) &&
+              canceledExternalBotIds.has(externalBotId),
+          )
+          .map(({ id }) => id),
+      );
+    } catch (error) {
+      recordCleanupError ??= buildRecordCleanupError(
+        'failed to remove canceled bot calendar participants',
+        error,
+      );
     }
 
     if (recordCleanupError !== undefined) {

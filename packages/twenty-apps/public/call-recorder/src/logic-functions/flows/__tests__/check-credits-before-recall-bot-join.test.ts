@@ -35,6 +35,7 @@ const buildConnection = <TNode>(nodes: TNode[]) => ({
 class FakeCoreApiClient {
   callRecording: CallRecordingNode;
   meetingStartsAt: string | null;
+  destroyedCalendarEventParticipantIds: string[] = [];
 
   constructor({
     callRecording = {},
@@ -102,6 +103,17 @@ class FakeCoreApiClient {
       );
 
       return { updateCallRecording: { id: this.callRecording.id } };
+    }
+
+    if (mutation.destroyCalendarEventParticipants !== undefined) {
+      const destroyedIds: string[] =
+        mutation.destroyCalendarEventParticipants.__args.filter.id.in;
+
+      this.destroyedCalendarEventParticipantIds.push(...destroyedIds);
+
+      return {
+        destroyCalendarEventParticipants: destroyedIds.map((id) => ({ id })),
+      };
     }
 
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
@@ -178,6 +190,9 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
       botScheduleAttemptedAt: null,
       botScheduleIdempotencyKey: null,
     });
+    expect(client.destroyedCalendarEventParticipantIds).toEqual([
+      'call-recording-1',
+    ]);
   });
 
   it.each([
@@ -274,6 +289,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
 
     expect(client.callRecording.status).toBe('SCHEDULED');
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+    expect(client.destroyedCalendarEventParticipantIds).toEqual([]);
   });
 
   it('leaves a bot that has already joined alone instead of ejecting it', async () => {

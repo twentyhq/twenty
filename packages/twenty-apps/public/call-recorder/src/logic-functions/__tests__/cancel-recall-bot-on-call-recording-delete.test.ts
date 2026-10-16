@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const mutationMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: class {
+    mutation = mutationMock;
+  },
+}));
+
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 import cancelRecallBotOnCallRecordingDeleteLogicFunction, {
@@ -31,6 +39,8 @@ const RECALL_BOT_URL = 'https://us-west-2.recall.ai/api/v1/bot/recall-bot-1/';
 describe('cancelRecallBotOnCallRecordingDeleteHandler', () => {
   beforeEach(() => {
     fetchMock.mockReset();
+    mutationMock.mockReset();
+    mutationMock.mockResolvedValue({ destroyCalendarEventParticipants: [] });
     fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
     vi.stubGlobal('fetch', fetchMock);
     vi.stubEnv(RECALL_API_KEY_ENV_VAR_NAME, 'recall-api-key');
@@ -72,6 +82,12 @@ describe('cancelRecallBotOnCallRecordingDeleteHandler', () => {
       externalBotId: 'recall-bot-1',
       canceled: true,
     });
+    expect(mutationMock).toHaveBeenCalledExactlyOnceWith({
+      destroyCalendarEventParticipants: {
+        __args: { filter: { id: { in: ['call-recording-1'] } } },
+        id: true,
+      },
+    });
   });
 
   it('reports when Recall does not remove the bot', async () => {
@@ -108,6 +124,7 @@ describe('cancelRecallBotOnCallRecordingDeleteHandler', () => {
       externalBotId: 'recall-bot-1',
       canceled: false,
     });
+    expect(mutationMock).not.toHaveBeenCalled();
   });
 
   it.each([null, '   '])(

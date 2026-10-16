@@ -49,6 +49,7 @@ class FakeCoreApiClient {
     calendarEventId: 'calendar-event-1',
     externalBotId: null,
   };
+  calendarEventParticipants: Record<string, unknown>[] = [];
 
   async query(query: any): Promise<any> {
     if (query.callRecordings !== undefined) {
@@ -84,6 +85,14 @@ class FakeCoreApiClient {
       );
 
       return { updateCallRecording: { id: this.callRecording.id } };
+    }
+
+    if (mutation.createCalendarEventParticipants !== undefined) {
+      const { data } = mutation.createCalendarEventParticipants.__args;
+
+      this.calendarEventParticipants.push(...data);
+
+      return { createCalendarEventParticipants: data };
     }
 
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
@@ -156,6 +165,16 @@ describe('scheduleRecallBotForCallRecording', () => {
 
     expect(scheduleResult).toEqual({ status: 'scheduled' });
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+    expect(client.calendarEventParticipants).toEqual([
+      {
+        id: 'call-recording-1',
+        calendarEventId: 'calendar-event-1',
+        handle: 'Call Recorder',
+        displayName: 'Call Recorder',
+        isOrganizer: false,
+        responseStatus: 'ACCEPTED',
+      },
+    ]);
     expect(getCreditAvailabilityMock).not.toHaveBeenCalled();
     expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
       logicFunctionUniversalIdentifier:
@@ -188,6 +207,7 @@ describe('scheduleRecallBotForCallRecording', () => {
       failureReason: 'workspace_out_of_credits',
     });
     expect(createBotCalls()).toHaveLength(0);
+    expect(client.calendarEventParticipants).toEqual([]);
     expect(enqueueJobsMock).not.toHaveBeenCalled();
     expect(client.callRecording).toMatchObject({
       status: 'NOT_RECORDED',

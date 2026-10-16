@@ -1,16 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
-  mutation: vi.fn(),
   cancelOpenScheduledCallRecordingRequests: vi.fn(),
   cancelWorkspaceRecallBots: vi.fn(),
+  destroyCallRecorderCalendarParticipants: vi.fn(),
   findOpenScheduledCallRecordings: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: class CoreApiClient {
-    mutation = mocks.mutation;
-  },
+  CoreApiClient: class CoreApiClient {},
 }));
 
 vi.mock(
@@ -18,6 +16,14 @@ vi.mock(
   () => ({
     cancelOpenScheduledCallRecordingRequests:
       mocks.cancelOpenScheduledCallRecordingRequests,
+  }),
+);
+
+vi.mock(
+  'src/logic-functions/data/destroy-call-recorder-calendar-participants.util',
+  () => ({
+    destroyCallRecorderCalendarParticipants:
+      mocks.destroyCallRecorderCalendarParticipants,
   }),
 );
 
@@ -43,7 +49,7 @@ const RECORD_CLEANUP_REQUEST_START_CUTOFF = new Date(
 
 describe('cancel-recall-bots-on-uninstall', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
     vi.useFakeTimers();
     vi.setSystemTime(UNINSTALL_EXECUTION_TIME);
     mocks.findOpenScheduledCallRecordings.mockResolvedValue([
@@ -52,6 +58,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
       { id: 'call-recording-3', externalBotId: 'known-bot' },
     ]);
     mocks.cancelOpenScheduledCallRecordingRequests.mockResolvedValue(3);
+    mocks.destroyCallRecorderCalendarParticipants.mockResolvedValue(undefined);
     mocks.cancelWorkspaceRecallBots.mockResolvedValue({
       scannedBotCount: 1,
       canceledExternalBotIds: ['known-bot'],
@@ -89,16 +96,6 @@ describe('cancel-recall-bots-on-uninstall', () => {
       joinAtAfter: '2025-12-31T07:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
-    expect(mocks.mutation).toHaveBeenCalledWith({
-      destroyCalendarEventParticipants: {
-        __args: {
-          filter: {
-            id: { in: ['call-recording-1', 'call-recording-3'] },
-          },
-        },
-        id: true,
-      },
-    });
     expect(uninstallCleanupResult).toEqual({
       canceledCallRecordingRequestCount: 3,
       scannedBotCount: 1,
@@ -107,6 +104,30 @@ describe('cancel-recall-bots-on-uninstall', () => {
       truncatedBotList: false,
       cutoffReached: false,
     });
+  });
+
+  it('removes the calendar participants of recordings whose bot was canceled', async () => {
+    mocks.findOpenScheduledCallRecordings.mockResolvedValue([
+      { id: 'call-recording-1', externalBotId: 'known-bot' },
+      { id: 'call-recording-2', externalBotId: 'failed-bot' },
+      { id: 'call-recording-3' },
+    ]);
+
+    await cancelRecallBotsOnUninstallHandler();
+
+    expect(
+      mocks.destroyCallRecorderCalendarParticipants,
+    ).toHaveBeenCalledExactlyOnceWith(expect.anything(), ['call-recording-1']);
+  });
+
+  it('fails loudly when canceled bot participants cannot be removed', async () => {
+    mocks.destroyCallRecorderCalendarParticipants.mockRejectedValue(
+      new Error('Cannot destroy records'),
+    );
+
+    await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
+      'failed to remove canceled bot calendar participants: Cannot destroy records',
+    );
   });
 
   it('reserves the remaining cancellation window when record reads consume their budget', async () => {
@@ -166,64 +187,5 @@ describe('cancel-recall-bots-on-uninstall', () => {
       joinAtAfter: '2025-12-31T07:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
-  });
-  it('preserves participants for bots whose cancellation failed', async () => {
-    mocks.cancelWorkspaceRecallBots.mockResolvedValue({
-      scannedBotCount: 1,
-      canceledExternalBotIds: [],
-      failedExternalBotIds: ['known-bot'],
-      truncatedBotList: false,
-      cutoffReached: false,
-    });
-    await cancelRecallBotsOnUninstallHandler();
-    expect(mocks.mutation).not.toHaveBeenCalled();
-  });
-  it('does not start participant cleanup inside the uninstall response headroom', async () => {
-    mocks.cancelWorkspaceRecallBots.mockImplementationOnce(async () => {
-      vi.setSystemTime(new Date('2026-01-01T08:00:25.000Z'));
-      return { canceledExternalBotIds: ['known-bot'] };
-    });
-    await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
-      'cutoff reached before participant cleanup',
-    );
-    expect(mocks.mutation).not.toHaveBeenCalled();
-  });
-
-  it('keeps the original record cleanup error when participant removal also fails', async () => {
-    mocks.cancelOpenScheduledCallRecordingRequests.mockRejectedValueOnce(
-      new Error('Cannot update records'),
-    );
-    mocks.mutation.mockRejectedValueOnce(
-      new Error('Cannot remove participants'),
-    );
-    await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
-      'failed to cancel open call recording requests: Cannot update records',
-    );
-    expect(mocks.mutation).toHaveBeenCalledOnce();
-  });
-
-  it('reports participant cleanup failures after successful bot cancellation', async () => {
-    mocks.mutation.mockRejectedValueOnce(
-      new Error('Cannot remove participants'),
-    );
-    await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
-      'failed to remove canceled bot participants: Cannot remove participants',
-    );
-  });
-  it('removes canceled bot participants after the initial record budget expires', async () => {
-    mocks.cancelWorkspaceRecallBots.mockImplementationOnce(async () => {
-      vi.setSystemTime(new Date('2026-01-01T08:00:15.000Z'));
-      return { canceledExternalBotIds: ['known-bot'] };
-    });
-    await cancelRecallBotsOnUninstallHandler();
-    expect(mocks.mutation).toHaveBeenCalledWith(
-      expect.objectContaining({
-        destroyCalendarEventParticipants: expect.objectContaining({
-          __args: {
-            filter: { id: { in: ['call-recording-1', 'call-recording-3'] } },
-          },
-        }),
-      }),
-    );
   });
 });

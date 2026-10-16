@@ -4,6 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { RECALL_BOT_ALREADY_JOINED_STATUS } from 'src/logic-functions/constants/recall-bot-already-joined-status';
+import { destroyCallRecorderCalendarParticipants } from 'src/logic-functions/data/destroy-call-recorder-calendar-participants.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
@@ -85,6 +86,8 @@ export const checkCreditsBeforeRecallBotJoin = async ({
       `Recall bot ${callRecording.externalBotId} could not be canceled: ${cancelResult.errorMessage}`,
     );
   }
+
+  await destroyCallRecorderCalendarParticipants(client, [callRecordingId]);
 
   const didMarkNotRecorded = await markCallRecordingNotRecorded(client, {
     callRecordingId,
