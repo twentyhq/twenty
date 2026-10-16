@@ -10,7 +10,7 @@ import { RemoveWorkflowRunIndexWorkflowVersionColumnCommand } from 'src/database
 import { SyncCampaignComposerStandardMetadataCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792064982496-sync-campaign-composer-standard-metadata.command';
 import { FlushWorkflowAutomatedTriggerMapsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792068879353-flush-workflow-automated-trigger-maps.command';
 import { CopyMorphRelationReferencesToHeadsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792070263989-copy-morph-relation-references-to-heads.command';
-import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791986817506-strip-derived-record-filter-properties.command';
+import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792139106098-strip-derived-record-filter-properties.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';

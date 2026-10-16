@@ -3,7 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type DataSource } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1791986817506-strip-derived-record-filter-properties.command';
+import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792139106098-strip-derived-record-filter-properties.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
