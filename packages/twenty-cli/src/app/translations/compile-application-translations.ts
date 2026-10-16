@@ -2,7 +2,8 @@ import { readdir } from 'node:fs/promises';
 import path from 'path';
 
 import { compileCatalogToMessageIds } from '@/app/translations/compile-catalog-to-message-ids';
-import { pathExists, readJson } from '@/app/fs-utils';
+import { pathExists } from '@/app/fs-utils';
+import { readLocaleCatalogFile } from '@/app/translations/read-locale-catalog-file';
 import {
   COMPILED_LOCALES_DIR,
   LOCALES_DIR,
@@ -10,41 +11,6 @@ import {
 import { isSupportedLocale } from '@/app/translations/is-supported-locale';
 import { type TranslationsManifest } from 'twenty-shared/application';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
-
-const readLocaleCatalogFile = async ({
-  filePath,
-  onWarning,
-}: {
-  filePath: string;
-  onWarning: (message: string) => void;
-}): Promise<Record<string, unknown> | null> => {
-  let parsed: unknown;
-
-  try {
-    parsed = await readJson<unknown>(filePath);
-  } catch {
-    onWarning(
-      `Skipping translation file "${path.basename(filePath)}": it is not valid JSON.`,
-    );
-
-    return null;
-  }
-
-  if (
-    !isDefined(parsed) ||
-    typeof parsed !== 'object' ||
-    Array.isArray(parsed)
-  ) {
-    onWarning(
-      `Skipping translation file "${path.basename(filePath)}": expected a JSON object.`,
-    );
-
-    return null;
-  }
-
-  return parsed as Record<string, unknown>;
-};
 
 const readCompiledCatalogs = async ({
   appPath,

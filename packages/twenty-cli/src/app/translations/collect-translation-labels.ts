@@ -1,22 +1,24 @@
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { pathExists, readJson } from '@/app/fs-utils';
+import { pathExists } from '@/app/fs-utils';
 import { LOCALES_DIR } from '@/app/translations/constants';
 import { type Manifest } from 'twenty-shared/application';
 import { generateMessageId } from 'twenty-shared/i18n';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { collectTranslatableStrings } from '@/app/translations/collect-translatable-strings';
 import { flattenLocaleCatalog } from '@/app/translations/locale-catalog-format';
-import { CliError } from '@/output/cli-error';
+import { readLocaleCatalogFile } from '@/app/translations/read-locale-catalog-file';
 
 export const collectTranslationLabels = async ({
   manifest,
   appPath,
+  onWarning = (message) => console.warn(message),
 }: {
   manifest: Manifest;
   appPath: string;
+  onWarning?: (message: string) => void;
 }): Promise<Record<string, string>> => {
   const descriptors = collectTranslatableStrings(manifest);
 
@@ -28,20 +30,14 @@ export const collectTranslationLabels = async ({
     : [];
 
   for (const localePath of localePaths) {
-    try {
-      const catalog: unknown = await readJson(localePath);
-      if (!isPlainObject(catalog)) {
-        throw new Error('Expected a JSON object');
-      }
-      descriptors.push(...flattenLocaleCatalog(catalog));
-    } catch (error) {
-      throw new CliError({
-        code: 'INVALID_INPUT',
-        message: `Could not read translation labels from ${localePath}: ${error instanceof Error ? error.message : String(error)}`,
-        details: { localePath },
-        cause: error,
-      });
+    const catalog = await readLocaleCatalogFile({
+      filePath: localePath,
+      onWarning,
+    });
+    if (!isDefined(catalog)) {
+      continue;
     }
+    descriptors.push(...flattenLocaleCatalog(catalog));
   }
 
   return Object.fromEntries(
