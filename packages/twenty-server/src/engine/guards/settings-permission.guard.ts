@@ -56,7 +56,7 @@ export const SettingsPermissionGuard = (
             agentId: ctx.getContext().req.agentId,
           });
 
-        if (hasPermission !== true) {
+        if (!hasPermission) {
           throw new PermissionsException(
             PermissionsExceptionMessage.PERMISSION_DENIED,
             PermissionsExceptionCode.PERMISSION_DENIED,
