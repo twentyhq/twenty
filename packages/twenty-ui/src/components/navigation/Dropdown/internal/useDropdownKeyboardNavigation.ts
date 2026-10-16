@@ -17,7 +17,8 @@ import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 const TYPEAHEAD_RESET_DELAY = 500;
 
 export const useDropdownKeyboardNavigation = () => {
-  const { type, isSubmenu, setOpen, closeTree } = useDropdownContext();
+  const { type, isSubmenu, setOpen, closeTree, tabForwardOutOfTree } =
+    useDropdownContext();
   const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
@@ -78,6 +79,15 @@ export const useDropdownKeyboardNavigation = () => {
     if (type === 'menu' && event.key === 'Tab' && event.shiftKey) {
       event.preventDefault();
       closeTree(event.nativeEvent);
+      return;
+    }
+
+    if (type === 'menu' && event.key === 'Tab' && isSubmenu) {
+      event.preventDefault();
+      tabForwardOutOfTree({
+        ownerDocument: content.ownerDocument,
+        tabOutEvent: event.nativeEvent,
+      });
       return;
     }
 
