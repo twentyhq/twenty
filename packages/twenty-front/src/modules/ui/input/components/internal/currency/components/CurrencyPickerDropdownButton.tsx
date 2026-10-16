@@ -10,6 +10,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 type CurrencyPickerDropdownButtonProps = {
   selectedCurrencyCode: string;
   onChange: (currencyCode: string) => void;
+  disabled?: boolean;
 };
 
 const keepEnterAwayFromFieldHotkeys = (
@@ -25,6 +26,7 @@ const keepEnterAwayFromFieldHotkeys = (
 export const CurrencyPickerDropdownButton = ({
   selectedCurrencyCode,
   onChange,
+  disabled,
 }: CurrencyPickerDropdownButtonProps) => {
   const dropdownId = useId();
   const currencyPickerCurrencies = useCurrencyPickerCurrencies();
@@ -37,6 +39,7 @@ export const CurrencyPickerDropdownButton = ({
     <DropdownRoot dropdownId={dropdownId} type="picker">
       <CurrencyPicker.Trigger
         value={currencyCode}
+        disabled={disabled}
         aria-label={t`Currency: ${currencyCode}`}
         onKeyDown={keepEnterAwayFromFieldHotkeys}
       />
