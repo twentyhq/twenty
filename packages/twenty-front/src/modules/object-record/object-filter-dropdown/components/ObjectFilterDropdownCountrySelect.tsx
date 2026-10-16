@@ -18,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -74,7 +75,9 @@ export const ObjectFilterDropdownCountrySelect = () => {
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
-        'Field metadata item used in filter dropdown should be defined',
+        doNotTranslate(
+          'Field metadata item used in filter dropdown should be defined',
+        ),
       );
     }
 

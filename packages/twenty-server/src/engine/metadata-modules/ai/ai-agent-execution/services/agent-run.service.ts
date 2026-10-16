@@ -13,8 +13,10 @@ import {
   type RunAgentResult,
   type RunAgentThread,
 } from 'twenty-shared/application';
+import { type AgentResponseFormat } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { agentResponseFormatSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
@@ -62,6 +64,7 @@ type RunAgentServiceInput = {
   prompt?: string | null;
   messages?: RunAgentMessage[] | null;
   additionalInstructions?: string | null;
+  responseFormat?: unknown;
   thread?: RunAgentThread | null;
   runAsWorkspaceMemberId?: string;
 };
@@ -149,6 +152,10 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         AiExceptionCode.INVALID_AGENT_INPUT,
       );
     }
+
+    const responseFormat = this.parseResponseFormatOrThrow(
+      input.responseFormat,
+    );
 
     const agent = await this.agentRepository.findOne(workspace.id, {
       where: {
@@ -245,6 +252,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
           // kept with the run rather than in its messages, so a run that waits still has them when it goes on
           instructions: input.additionalInstructions ?? null,
+          ...(isDefined(responseFormat) ? { responseFormat } : {}),
           // the call returns before anyone could answer, so the run can wait but not ask
           capabilities: {
             canAskHumans: false,
@@ -574,5 +582,28 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       workspaceId,
       viaApplication: application,
     });
+  }
+
+  // the resolver runs no validation pipe, so the format is checked here before it reaches the model
+  private parseResponseFormatOrThrow(
+    responseFormat: unknown,
+  ): AgentResponseFormat | undefined {
+    if (!isDefined(responseFormat)) {
+      return undefined;
+    }
+
+    const parsedResponseFormat =
+      agentResponseFormatSchema.safeParse(responseFormat);
+
+    if (!parsedResponseFormat.success) {
+      throw new AiException(
+        `Invalid response format: ${parsedResponseFormat.error.issues
+          .map((issue) => issue.message)
+          .join(', ')}`,
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    return parsedResponseFormat.data;
   }
 }

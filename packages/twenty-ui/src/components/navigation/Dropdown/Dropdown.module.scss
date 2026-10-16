@@ -8,10 +8,15 @@
 
   [data-dropdown-item]:focus-visible {
     background: var(--t-background-transparent-light);
+    outline: none;
   }
 }
 
 .page {
+  display: contents;
+}
+
+.selectionGroup {
   display: contents;
 }
 
@@ -54,6 +59,10 @@
     > [data-dropdown-item] {
       max-inline-size: 100%;
       min-inline-size: 0;
+    }
+
+    [data-dropdown-option-item][data-selected] {
+      background: var(--t-background-transparent-medium);
     }
   }
 

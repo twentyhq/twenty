@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { useContext } from 'react';
 
 import { ApolloAdminClientContext } from '@/settings/admin-panel/apollo/contexts/ApolloAdminClientContext';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useApolloAdminClient = () => {
   const apolloAdminClient = useContext(ApolloAdminClientContext);
@@ -12,7 +13,7 @@ export const useApolloAdminClient = () => {
   }
 
   if (!apolloAdminClient) {
-    throw new Error('ApolloAdminClient not found');
+    throw new Error(doNotTranslate('ApolloAdminClient not found'));
   }
 
   return apolloAdminClient;

@@ -344,6 +344,44 @@ describe('AuthPrincipalGuard', () => {
     },
   );
 
+  it.each(['application.withUser', 'application.withoutUser'] as const)(
+    'should refuse an %s token bound to an agent unless the endpoint accepts agent tokens',
+    (principalVariantName) => {
+      const agentTokenRequest = {
+        ...REQUEST_BY_PRINCIPAL_VARIANT[principalVariantName],
+        agentId: 'agent-id',
+      };
+
+      expect(
+        canActivateOverHttp(ACCEPT_EVERY_PRINCIPAL, agentTokenRequest),
+      ).toBe(false);
+      expect(
+        canActivateOverHttp(
+          {
+            ...ACCEPT_EVERY_PRINCIPAL,
+            application: { withUser: true, withoutUser: true, withAgent: true },
+          },
+          agentTokenRequest,
+        ),
+      ).toBe(true);
+    },
+  );
+
+  it('should refuse a token bound to an agent when its user variant is refused', () => {
+    expect(
+      canActivateOverHttp(
+        {
+          ...REFUSE_EVERY_PRINCIPAL,
+          application: { withUser: false, withoutUser: true, withAgent: true },
+        },
+        {
+          ...REQUEST_BY_PRINCIPAL_VARIANT['application.withUser'],
+          agentId: 'agent-id',
+        },
+      ),
+    ).toBe(false);
+  });
+
   it.each([
     {
       name: 'a token type that is not a session',
@@ -375,6 +413,15 @@ describe('AuthPrincipalGuard', () => {
       },
     },
     {
+      name: 'an API key token that also carries an agent',
+      request: {
+        apiKey,
+        agentId: 'agent-id',
+        workspace,
+        tokenType: JwtTokenTypeEnum.API_KEY,
+      },
+    },
+    {
       name: 'an API key token without an API key',
       request: { workspace, tokenType: JwtTokenTypeEnum.API_KEY },
     },
@@ -395,6 +442,16 @@ describe('AuthPrincipalGuard', () => {
       request: {
         application: installedApplication,
         apiKey,
+        workspace,
+        tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      },
+    },
+    {
+      name: 'an OAuth client token that also carries an agent',
+      request: {
+        application: oauthClient,
+        user,
+        agentId: 'agent-id',
         workspace,
         tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
       },
@@ -429,6 +486,15 @@ describe('AuthPrincipalGuard', () => {
     {
       name: 'a session token that also carries an API key',
       request: { user, apiKey, workspace, tokenType: JwtTokenTypeEnum.ACCESS },
+    },
+    {
+      name: 'a session token that also carries an agent',
+      request: {
+        user,
+        agentId: 'agent-id',
+        workspace,
+        tokenType: JwtTokenTypeEnum.ACCESS,
+      },
     },
     {
       name: 'a session token without a user',

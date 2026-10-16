@@ -2,6 +2,7 @@ import { type ObjectOptionsDropdownContextValue } from '@/object-record/object-o
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type Context, useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useDropdownContextStateManagement = <
   TDropdownContext extends ObjectOptionsDropdownContextValue,
@@ -14,7 +15,9 @@ export const useDropdownContextStateManagement = <
 
   if (!isDefined(dropdownContext)) {
     throw new Error(
-      `useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
+      doNotTranslate(
+        `useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
+      ),
     );
   }
   const dropdownId = dropdownContext.dropdownId;

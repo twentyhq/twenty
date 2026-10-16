@@ -16,6 +16,7 @@ import { type Settings } from '../../shared/types/Settings';
 import { credentialsSchema } from '../validation-schemas/credentialsSchema';
 import { type Credentials } from '../types/Credentials';
 import { SettingsRecoveryError } from '../errors/SettingsRecoveryError';
+import { i18n } from '../../shared/i18n';
 
 export class SecureStore {
   private handledWrite: Promise<void> = Promise.resolve();
@@ -34,7 +35,7 @@ export class SecureStore {
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
       throw new Error(
-        'Could not unlock your Twenty connection. Reconnect to Twenty.',
+        i18n._('Could not unlock your Twenty connection. Reconnect to Twenty.'),
       );
     }
   }
@@ -42,7 +43,9 @@ export class SecureStore {
   async writeCredentials(credentials: Credentials): Promise<void> {
     if (!safeStorage.isEncryptionAvailable())
       throw new Error(
-        'macOS Keychain is unavailable. Your connection could not be saved.',
+        i18n._(
+          'macOS Keychain is unavailable. Your connection could not be saved.',
+        ),
       );
     await this.writeAtomic(
       'credentials',
@@ -68,7 +71,9 @@ export class SecureStore {
         return { ...DEFAULT_SETTINGS };
       throw new SettingsRecoveryError(
         { ...DEFAULT_SETTINGS, autoJoin: false, autoRecord: false },
-        'Could not read your settings. Automatic joining and recording are off. Check Settings before continuing.',
+        i18n._(
+          'Could not read your settings. Automatic joining and recording are off. Check Settings before continuing.',
+        ),
       );
     }
     let saved: unknown;
@@ -99,7 +104,9 @@ export class SecureStore {
     await copyFile(path, `${path}.damaged-${randomUUID()}`);
     throw new SettingsRecoveryError(
       recovered,
-      'Some settings could not be restored. A backup was saved and valid preferences were kept. Review Settings before continuing.',
+      i18n._(
+        'Some settings could not be restored. A backup was saved and valid preferences were kept. Review Settings before continuing.',
+      ),
     );
   }
 
@@ -125,7 +132,9 @@ export class SecureStore {
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
       throw new Error(
-        'Could not restore skipped meetings. Automatic joining is off. Review Settings before continuing.',
+        i18n._(
+          'Could not restore skipped meetings. Automatic joining is off. Review Settings before continuing.',
+        ),
         { cause: error },
       );
     }

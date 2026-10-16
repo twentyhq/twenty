@@ -7,6 +7,7 @@ import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPicker
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const CreateNewViewNoSelectionRecordCommand = () => {
   const { currentViewId, recordIndexId } = useHeadlessCommandContextApi();
@@ -16,7 +17,9 @@ export const CreateNewViewNoSelectionRecordCommand = () => {
 
   if (!isDefined(currentViewId) || !isDefined(recordIndexId)) {
     throw new Error(
-      'Current view ID and record index ID are required to create new view',
+      doNotTranslate(
+        'Current view ID and record index ID are required to create new view',
+      ),
     );
   }
 

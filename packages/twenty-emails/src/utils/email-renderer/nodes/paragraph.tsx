@@ -1,22 +1,29 @@
 import { Text } from 'react-email';
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
+import { EMAIL_TYPOGRAPHY } from 'twenty-shared/utils';
 import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
+import {
+  blockSpacing,
+  type EmailNodeRenderContext,
+} from 'src/utils/email-renderer/utils/block-spacing';
 import { blockStyle } from 'src/utils/email-renderer/utils/block-style';
 import { type InheritedTypography } from 'src/utils/email-renderer/utils/inherited-typography';
 
 export const paragraph = (
   node: JSONContent,
-  inherited: InheritedTypography = {},
+  inherited: InheritedTypography,
+  context: EmailNodeRenderContext,
 ): ReactNode => {
   const content = mappedNodeContent(node, inherited);
 
   return (
     <Text
       style={{
-        lineHeight: '1.5',
-        margin: '0',
+        fontSize: EMAIL_TYPOGRAPHY.fontSize,
+        lineHeight: EMAIL_TYPOGRAPHY.lineHeight,
         padding: '0',
+        ...blockSpacing(context),
         ...inherited,
         ...blockStyle(node.attrs?.style),
       }}

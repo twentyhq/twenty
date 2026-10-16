@@ -71,7 +71,7 @@ describe('app connection connected accounts permission', () => {
         providerName: provider.name,
         transientToken:
           transient.data.generateTransientToken.transientToken.token,
-        visibility: 'user',
+        scope: 'USER',
       });
 
     expect(response.status).toBe(302);
@@ -110,6 +110,7 @@ describe('app connection connected accounts permission', () => {
               name: 'connected-accounts-permission-provider',
               displayName: 'Connected accounts permission provider',
               type: 'oauth',
+              scope: 'USER',
               oauth: {
                 authorizationEndpoint: AUTHORIZATION_ENDPOINT,
                 tokenEndpoint: TOKEN_ENDPOINT,
@@ -192,7 +193,7 @@ describe('app connection connected accounts permission', () => {
     expect(tokenExchanges).toEqual(['jony-code']);
     expect(connections).toHaveLength(1);
     expect(connections[0]).toMatchObject({
-      visibility: 'user',
+      scope: 'USER',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
     });
   });
@@ -208,6 +209,7 @@ describe('app connection connected accounts permission', () => {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userId: USER_DATA_SEED_IDS.PHIL,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+      scope: 'USER',
       visibility: 'user',
       reconnectingConnectedAccountId: null,
       redirectLocation: null,

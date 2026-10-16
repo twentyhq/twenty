@@ -27,7 +27,7 @@ const meta: Meta<typeof ListItemButton> = {
 export default meta;
 type Story = StoryObj<typeof ListItemButton>;
 
-export const Default: Story = {};
+export const Display: Story = {};
 
 export const Disabled: Story = {
   args: { disabled: true },

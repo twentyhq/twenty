@@ -6,7 +6,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 
-const getMorphRelationFieldFromEvent = (event: MetadataEvent) => {
+const getMorphRelationTargetFromEvent = (event: MetadataEvent) => {
   const record =
     event.type === 'deleted' ? event.properties.before : event.properties.after;
 
@@ -19,27 +19,15 @@ const getMorphRelationFieldFromEvent = (event: MetadataEvent) => {
     return undefined;
   }
 
-  return {
+  const morphRelationField = {
     type: record.type,
     universalIdentifier: record.universalIdentifier,
     morphId: record.morphId,
   };
-};
 
-const isMorphRelationHeadFieldEvent = (event: MetadataEvent) => {
-  const morphRelationField = getMorphRelationFieldFromEvent(event);
-
-  return (
-    isDefined(morphRelationField) && isMorphRelationHead(morphRelationField)
-  );
-};
-
-const isMorphRelationTargetFieldEvent = (event: MetadataEvent) => {
-  const morphRelationField = getMorphRelationFieldFromEvent(event);
-
-  return (
-    isDefined(morphRelationField) && !isMorphRelationHead(morphRelationField)
-  );
+  return isMorphRelationHead(morphRelationField)
+    ? undefined
+    : morphRelationField;
 };
 
 const buildMorphRelationHeadUpdatedEvent = (
@@ -53,19 +41,13 @@ const buildMorphRelationHeadUpdatedEvent = (
 
 export const filterMorphRelationDuplicateFieldMetadataEvents = ({
   events,
-  isMorphRelationHeadEnabled,
   flatFieldMetadataMaps,
 }: {
   events: MetadataEvent[];
-  isMorphRelationHeadEnabled: boolean;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): MetadataEvent[] => {
-  if (!isMorphRelationHeadEnabled) {
-    return events.filter((event) => !isMorphRelationHeadFieldEvent(event));
-  }
-
   const eventsWithoutTargetFields = events.filter(
-    (event) => !isMorphRelationTargetFieldEvent(event),
+    (event) => !isDefined(getMorphRelationTargetFromEvent(event)),
   );
   const recordIdsWithEvent = new Set(
     eventsWithoutTargetFields.map((event) => event.recordId),
@@ -73,17 +55,14 @@ export const filterMorphRelationDuplicateFieldMetadataEvents = ({
   const headsWithChangedTargets = new Map<string, FlatFieldMetadata>();
 
   for (const event of events) {
-    const morphRelationField = getMorphRelationFieldFromEvent(event);
+    const morphRelationTarget = getMorphRelationTargetFromEvent(event);
 
-    if (
-      !isDefined(morphRelationField) ||
-      isMorphRelationHead(morphRelationField)
-    ) {
+    if (!isDefined(morphRelationTarget)) {
       continue;
     }
 
     const head =
-      flatFieldMetadataMaps.byUniversalIdentifier[morphRelationField.morphId];
+      flatFieldMetadataMaps.byUniversalIdentifier[morphRelationTarget.morphId];
 
     if (isDefined(head) && !recordIdsWithEvent.has(head.id)) {
       headsWithChangedTargets.set(head.id, head);

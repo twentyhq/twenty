@@ -9,28 +9,30 @@ import HeadingReference from '/snippets/ui/generated/typography/heading.mdx';
 `Heading` renders an `h2` by default. Use `children` for its content, `level` for document structure, and `size` for appearance.
 
 <StoryEmbed
-  storyId="ui-typography-heading--documentation"
+  storyId="ui-typography-heading--display"
   title="Heading example"
-  height={180}
+  height={90}
 />
 
-## Choose a heading level and size
+## Usage
 
 Choose levels in document order. A smaller visual size does not change the level announced by assistive technology.
 
 ```tsx
 import { Heading } from 'twenty-ui/primitives/typography';
 
-export const WorkspaceTitle = () => (
-  <Heading level={1} size="lg">
-    Workspace settings
-  </Heading>
-);
+export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
 ```
 
 Sizes `xs`, `sm`, `md`, and `lg` use the matching font tokens. Headings have no outer margin; their surrounding layout owns spacing.
 
 ## Color and composition
+
+<StoryEmbed
+  storyId="ui-typography-heading--catalog"
+  title="Heading sizes and colors"
+  height={320}
+/>
 
 Use `color="secondary"` for less prominent headings. `tertiary` is also available, but its contrast depends on the font size, theme, and background. Check readability when using it.
 

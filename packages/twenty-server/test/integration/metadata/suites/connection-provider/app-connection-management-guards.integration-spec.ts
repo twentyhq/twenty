@@ -18,7 +18,7 @@ import { getDataOrThrow } from 'test/integration/utils/query-messaging.util';
 import gql from 'graphql-tag';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -28,39 +28,44 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const APP_ID = uuidv4();
 const APP_ROLE_ID = uuidv4();
 const APP_PROVIDER_ID = uuidv4();
+const APP_PERSONAL_PROVIDER_ID = uuidv4();
 
 const SHARED_BY_TIM_ID = uuidv4();
 const PRIVATE_OF_TIM_ID = uuidv4();
 const PRIVATE_OF_JONY_ID = uuidv4();
 const PRIVATE_OF_PHIL_ID = uuidv4();
+const SHARED_ON_PERSONAL_PROVIDER_ID = uuidv4();
 
 describe('app connection management guards (e2e)', () => {
   let applicationDbId: string;
   let providerDbId: string;
+  let personalProviderDbId: string;
 
   const insertAppConnection = async ({
     id,
-    visibility,
+    scope,
     userWorkspaceId,
+    connectionProviderId = providerDbId,
   }: {
     id: string;
-    visibility: 'user' | 'workspace';
+    scope: 'USER' | 'WORKSPACE';
     userWorkspaceId: string;
+    connectionProviderId?: string;
   }): Promise<void> => {
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
-         (id, handle, provider, visibility, "workspaceId", "userWorkspaceId",
+         (id, handle, provider, scope, "workspaceId", "userWorkspaceId",
           "applicationId", "connectionProviderId")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         id,
         'slack-bot@apple.dev',
         ConnectedAccountProvider.APP,
-        visibility,
+        scope,
         SEED_APPLE_WORKSPACE_ID,
         userWorkspaceId,
         applicationDbId,
-        providerDbId,
+        connectionProviderId,
       ],
     );
   };
@@ -103,23 +108,25 @@ describe('app connection management guards (e2e)', () => {
 
   const startAuthorizeAndGetErrorMessage = async ({
     reconnectingConnectedAccountId,
-    visibility,
+    scope,
     as = 'admin',
+    providerName = 'slack',
   }: {
     reconnectingConnectedAccountId?: string;
-    visibility?: 'user' | 'workspace';
+    scope?: 'USER' | 'WORKSPACE';
     as?: keyof typeof transientTokenGenerators;
+    providerName?: string;
   }): Promise<string> => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
       .query({
         applicationId: applicationDbId,
-        providerName: 'slack',
+        providerName,
         transientToken: await transientTokenGenerators[as](),
         ...(isDefined(reconnectingConnectedAccountId)
           ? { reconnectingConnectedAccountId }
           : {}),
-        ...(isDefined(visibility) ? { visibility } : {}),
+        ...(isDefined(scope) ? { scope } : {}),
       });
 
     expect(response.status).toBe(302);
@@ -156,6 +163,20 @@ describe('app connection management guards (e2e)', () => {
                 clientSecretVariable: 'SLACK_CLIENT_SECRET',
               },
             },
+            {
+              universalIdentifier: APP_PERSONAL_PROVIDER_ID,
+              name: 'slack-personal',
+              displayName: 'Slack (personal)',
+              type: 'oauth',
+              scope: 'USER',
+              oauth: {
+                authorizationEndpoint: 'https://slack.com/oauth/v2/authorize',
+                tokenEndpoint: 'https://slack.com/api/oauth.v2.access',
+                scopes: ['chat:write'],
+                clientIdVariable: 'SLACK_CLIENT_ID',
+                clientSecretVariable: 'SLACK_CLIENT_SECRET',
+              },
+            },
           ],
         },
       }),
@@ -164,30 +185,45 @@ describe('app connection management guards (e2e)', () => {
 
     jest.useRealTimers();
 
-    const [provider] = await findConnectionProvidersByApplication(APP_ID);
+    const providers = await findConnectionProvidersByApplication(APP_ID);
+    const provider = providers.find(({ name }) => name === 'slack');
+    const personalProvider = providers.find(
+      ({ name }) => name === 'slack-personal',
+    );
+
+    assertIsDefinedOrThrow(provider);
+    assertIsDefinedOrThrow(personalProvider);
 
     applicationDbId = provider.applicationId;
     providerDbId = provider.id;
+    personalProviderDbId = personalProvider.id;
 
     await insertAppConnection({
       id: SHARED_BY_TIM_ID,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     });
     await insertAppConnection({
       id: PRIVATE_OF_TIM_ID,
-      visibility: 'user',
+      scope: 'USER',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     });
     await insertAppConnection({
       id: PRIVATE_OF_JONY_ID,
-      visibility: 'user',
+      scope: 'USER',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
     });
     await insertAppConnection({
       id: PRIVATE_OF_PHIL_ID,
-      visibility: 'user',
+      scope: 'USER',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+    });
+    // A WORKSPACE connection on a USER provider is the only one a reconnect may turn personal.
+    await insertAppConnection({
+      id: SHARED_ON_PERSONAL_PROVIDER_ID,
+      scope: 'WORKSPACE',
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+      connectionProviderId: personalProviderDbId,
     });
   }, 180000);
 
@@ -233,7 +269,7 @@ describe('app connection management guards (e2e)', () => {
 
   it('refuses a member without the Applications permission to create a workspace-shared connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       as: 'member',
     });
 
@@ -243,7 +279,7 @@ describe('app connection management guards (e2e)', () => {
   it('refuses a member without the Applications permission to share their own private connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       as: 'member',
     });
 
@@ -326,7 +362,7 @@ describe('app connection management guards (e2e)', () => {
     it('lets the member reconnect a workspace-shared connection as shared', async () => {
       const errorMessage = await startAuthorizeAndGetErrorMessage({
         reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
-        visibility: 'workspace',
+        scope: 'WORKSPACE',
         as: 'member',
       });
 
@@ -336,8 +372,10 @@ describe('app connection management guards (e2e)', () => {
 
     it('refuses the member to turn a workspace-shared connection into a private one', async () => {
       const errorMessage = await startAuthorizeAndGetErrorMessage({
-        reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
+        reconnectingConnectedAccountId: SHARED_ON_PERSONAL_PROVIDER_ID,
+        scope: 'USER',
         as: 'member',
+        providerName: 'slack-personal',
       });
 
       expect(errorMessage).toContain('does not have permission');

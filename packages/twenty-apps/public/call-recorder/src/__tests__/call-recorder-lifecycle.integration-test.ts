@@ -1117,7 +1117,9 @@ describe('call recorder app lifecycle (integration)', () => {
   // Mocked database-event trigger: runs the reconciliation the
   // calendarEvent.* trigger dispatches, then returns the recording it wrote
   // to the DB together with its live Recall bot.
-  const scheduleRecordingThroughCalendarReconciliation = async (): Promise<{
+  const scheduleRecordingThroughCalendarReconciliation = async (
+    reconciliationClient: CoreApiClient = client,
+  ): Promise<{
     calendarEventId: string;
     callRecordingId: string;
     botId: string;
@@ -1126,7 +1128,7 @@ describe('call recorder app lifecycle (integration)', () => {
     const calendarEventId = await createCalendarEvent();
 
     const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
-      client,
+      client: reconciliationClient,
       calendarEventIds: [calendarEventId],
     });
 
@@ -3658,13 +3660,20 @@ describe('call recorder app lifecycle (integration)', () => {
   });
 
   describe('Recording Bot preference', () => {
+    let applicationClient: CoreApiClient;
+
+    beforeEach(() => {
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+      applicationClient = new CoreApiClient();
+    });
+
     it('marks a blank preference On when it schedules a bot', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: null,
       });
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [calendarEventId],
       });
 
@@ -3686,7 +3695,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [calendarEventId],
       });
 
@@ -3704,7 +3713,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [calendarEventId],
       });
 
@@ -3753,7 +3762,7 @@ describe('call recorder app lifecycle (integration)', () => {
       }
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [calendarEventIds[0]],
       });
 
@@ -3771,7 +3780,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
     it('marks a blank preference On again when it updates an existing scheduled recording', async () => {
       const { calendarEventId } =
-        await scheduleRecordingThroughCalendarReconciliation();
+        await scheduleRecordingThroughCalendarReconciliation(applicationClient);
 
       await client.mutation({
         updateCalendarEvent: {
@@ -3783,7 +3792,7 @@ describe('call recorder app lifecycle (integration)', () => {
         },
       });
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [calendarEventId],
       });
 
@@ -3803,7 +3812,7 @@ describe('call recorder app lifecycle (integration)', () => {
       recall.failCalendarEventUpdates = true;
 
       const results = await reconcileCallRecorderForCalendarEventIds({
-        client: new CoreApiClient(),
+        client: applicationClient,
         calendarEventIds: [calendarEventId],
       });
 
@@ -3824,7 +3833,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [calendarEventId],
       });
 
@@ -3847,7 +3856,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [echoedCalendarEventId],
       });
 
@@ -3896,7 +3905,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ];
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds,
       });
 
@@ -4049,7 +4058,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
     it('clears an On the meeting no longer earns', async () => {
       const { calendarEventId, callRecordingId } =
-        await scheduleRecordingThroughCalendarReconciliation();
+        await scheduleRecordingThroughCalendarReconciliation(applicationClient);
 
       expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
 
@@ -4061,7 +4070,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [calendarEventId],
       });
 
@@ -4083,7 +4092,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       await reconcileCallRecorderForCalendarEventIds({
-        client,
+        client: applicationClient,
         calendarEventIds: [calendarEventId],
       });
 

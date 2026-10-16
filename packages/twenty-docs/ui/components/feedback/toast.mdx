@@ -11,13 +11,46 @@ import ToasterReference from '/snippets/ui/generated/components/feedback/toaster
 
 `Toast` renders one notification. Your application controls when it appears, its position, and when it is removed.
 
-For application notifications, wrap the application in `ToastProvider`, mount a `Toaster` inside it, and use `useToast()` from descendants. Each provider owns an independent notification store, countdowns, and dismissal lifecycle. Multiple Toasters can mirror the same provider.
+<StoryEmbed
+  storyId="ui-feedback-toast--display"
+  title="Toast example"
+  height={120}
+/>
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SavedNotification = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Show notification</Button>
+      {isOpen && (
+        <Toast status="success" progress={100} onClose={() => setIsOpen(false)}>
+          Changes saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+## Visual options
+
+Compare neutral, success, error, information, and warning feedback with the same message and progress.
 
 <StoryEmbed
-  storyId="ui-feedback-toast--documentation"
-  title="Toast example"
-  height={240}
+  storyId="ui-feedback-toast--catalog"
+  title="Toast feedback statuses"
+  height={530}
 />
+
+For application notifications, wrap the application in `ToastProvider`, mount a `Toaster` inside it, and use `useToast()` from descendants. Each provider owns an independent notification store, countdowns, and dismissal lifecycle. Multiple Toasters can mirror the same provider.
 
 ## Application notifications
 
@@ -71,7 +104,7 @@ The provider defaults to three visible notifications. `limit` must be a positive
 <StoryEmbed
   storyId="ui-feedback-toaster-lifecycle--documentation"
   title="Shared notification lifecycle"
-  height={450}
+  height={430}
 />
 
 Multiple Toasters inside a provider render the same notifications. Updates and dismissal apply to every mirror, and each notification has one shared countdown. Hover or focus inside any mirror pauses it; it resumes after all mirrors release both. Mounting another Toaster does not restart the countdown or create another callback lifecycle. Use separate providers for independent queues.
@@ -87,7 +120,7 @@ Dismissed notifications are inert during exit animations. Their entries are remo
 <StoryEmbed
   storyId="ui-feedback-toaster-lifecycle--portal-documentation"
   title="Scoped notification portal"
-  height={350}
+  height={430}
 />
 
 ## Update a live notification
@@ -151,7 +184,7 @@ The countdown defaults to 6,000 milliseconds. It pauses while the pointer is ove
 <StoryEmbed
   storyId="ui-feedback-toaster-timing--documentation"
   title="Toast timing controls"
-  height={400}
+  height={480}
 />
 
 | Operation                                     | Countdown behavior                                                                                                         |

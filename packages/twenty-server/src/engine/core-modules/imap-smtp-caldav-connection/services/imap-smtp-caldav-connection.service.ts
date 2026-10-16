@@ -16,7 +16,9 @@ import {
   type PlaintextImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { buildImapTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-imap-tls-options.util';
+import { buildMailServerCertificateOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-mail-server-certificate-options.util';
 import { buildSmtpTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-smtp-tls-options.util';
+import { isMailServerCertificateError } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/is-mail-server-certificate-error.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
@@ -51,9 +53,12 @@ export class ImapSmtpCaldavService {
       },
       logger: false,
       disableIMAP4rev2: true,
-      tls: {
-        rejectUnauthorized: false,
-      },
+      tls: buildMailServerCertificateOptions({
+        host: params.host,
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
+          'IMAP_SMTP_ALLOW_SELF_SIGNED',
+        ),
+      }),
     });
 
     // ImapFlow is EventEmitter — missing 'error' listener crashes process on socket timeout.
@@ -85,6 +90,24 @@ export class ImapSmtpCaldavService {
           'IMAP authentication failed. Please check your credentials.',
           {
             userFriendlyMessage: msg`We couldn't log in to your email account. Please check your email address and password, then try again.`,
+          },
+        );
+      }
+
+      if (isMailServerCertificateError(error)) {
+        throw new UserInputError(
+          `IMAP server certificate could not be verified: ${error.message}`,
+          {
+            userFriendlyMessage: msg`Your email server's security certificate is invalid (expired, self-signed or issued for another hostname). Ask your email provider to fix it, then try again.`,
+          },
+        );
+      }
+
+      if (error.tlsFailed === true) {
+        throw new UserInputError(
+          `IMAP STARTTLS upgrade failed: ${error.message}`,
+          {
+            userFriendlyMessage: msg`We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead.`,
           },
         );
       }
@@ -123,9 +146,12 @@ export class ImapSmtpCaldavService {
         user: params.username ?? handle,
         pass: params.password,
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
+      tls: buildMailServerCertificateOptions({
+        host: params.host,
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
+          'IMAP_SMTP_ALLOW_SELF_SIGNED',
+        ),
+      }),
     });
 
     try {

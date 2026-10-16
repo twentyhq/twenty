@@ -2,6 +2,7 @@ name: CI UI
 
 on:
   pull_request:
+  merge_group:
   push:
     branches: [main]
 
@@ -22,6 +23,9 @@ jobs:
         yarn.lock
         packages/twenty-ui/**
         packages/twenty-shared/**
+        packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs
+        packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs
+        packages/twenty-oxlint-rules/.oxlintrc.i18n.json
   ui-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
