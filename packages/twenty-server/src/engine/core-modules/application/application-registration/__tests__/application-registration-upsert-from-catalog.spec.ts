@@ -31,6 +31,11 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     findOne: jest.Mock;
     save: jest.Mock;
     create: jest.Mock;
+    manager: { transaction: jest.Mock };
+  };
+  let entityManager: { getRepository: jest.Mock };
+  let applicationRegistrationVersionService: {
+    createApplicationRegistrationVersion: jest.Mock;
   };
 
   const catalogParams = {
@@ -39,6 +44,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     sourceType: ApplicationRegistrationSourceType.NPM,
     sourcePackage: 'twenty-app-my-app',
     latestAvailableVersion: '0.2.0',
+    tarballUrl: 'https://registry.example.com/my-app-0.2.0.tgz',
     manifest: {
       application: {
         universalIdentifier: '97141c95-2870-5662-8992-44fb6536be9a',
@@ -62,6 +68,15 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
       findOne: jest.fn(),
       save: jest.fn(async (entity) => entity),
       create: jest.fn((entity) => entity),
+      manager: {
+        transaction: jest.fn((run) => run(entityManager)),
+      },
+    };
+    entityManager = {
+      getRepository: jest.fn(() => applicationRegistrationRepository),
+    };
+    applicationRegistrationVersionService = {
+      createApplicationRegistrationVersion: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -70,6 +85,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         {
           provide: ApplicationRegistrationVersionService,
           useValue: {
+            ...applicationRegistrationVersionService,
             findTarballFilesOfRegistration: jest.fn().mockResolvedValue([]),
           },
         },
@@ -186,6 +202,12 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     expect(updateFromManifestSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         preventVersionDowngrade: true,
+        publishedVersion: {
+          version: catalogParams.latestAvailableVersion,
+          sourceType: catalogParams.sourceType,
+          sourcePackage: catalogParams.sourcePackage,
+          tarballUrl: catalogParams.tarballUrl,
+        },
         additionalFields: {
           name: catalogParams.name,
           sourcePackage: catalogParams.sourcePackage,
@@ -262,6 +284,15 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
 
     expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({ isListed: true }),
+    );
+    expect(
+      applicationRegistrationVersionService.createApplicationRegistrationVersion,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        version: catalogParams.latestAvailableVersion,
+        tarballUrl: catalogParams.tarballUrl,
+      }),
+      entityManager,
     );
   });
 

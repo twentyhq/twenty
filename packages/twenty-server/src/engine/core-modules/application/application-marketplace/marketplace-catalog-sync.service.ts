@@ -64,11 +64,15 @@ export class MarketplaceCatalogSyncService {
           continue;
         }
 
-        const previousVersion = (
+        const existingRegistration =
           await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
             universalIdentifier,
-          )
-        )?.latestAvailableVersion;
+          );
+        const previousVersion = existingRegistration?.latestAvailableVersion;
+        const tarballUrl = await this.findCatalogTarballUrl({
+          registration: existingRegistration,
+          registryPackage: pkg,
+        });
 
         const registration =
           await this.applicationRegistrationService.upsertFromCatalog({
@@ -78,21 +82,11 @@ export class MarketplaceCatalogSyncService {
             sourcePackage: pkg.name,
             latestAvailableVersion: pkg.version ?? null,
             manifest: fetchedManifest,
+            tarballUrl,
           });
 
         if (!isDefined(registration)) {
           continue;
-        }
-
-        try {
-          await this.recordCatalogVersion({
-            registration,
-            registryPackage: pkg,
-          });
-        } catch (error) {
-          this.logger.error(
-            `Failed to record version ${pkg.version} of registry app "${pkg.name}": ${error instanceof Error ? error.message : String(error)}`,
-          );
         }
 
         // Rehost the logo and gallery images from the registry CDN so display
@@ -129,27 +123,28 @@ export class MarketplaceCatalogSyncService {
     }
   }
 
-  private async recordCatalogVersion({
+  private async findCatalogTarballUrl({
     registration,
     registryPackage,
   }: {
-    registration: Pick<ApplicationRegistrationEntity, 'id'>;
+    registration: Pick<ApplicationRegistrationEntity, 'id'> | null;
     registryPackage: RegistryPackageInfo;
-  }): Promise<void> {
+  }): Promise<string | null> {
     if (!isNonEmptyString(registryPackage.version)) {
-      return;
+      return null;
     }
 
-    const recordedVersion =
-      await this.applicationRegistrationVersionService.findOneByApplicationRegistrationIdAndVersion(
-        {
-          applicationRegistrationId: registration.id,
-          version: registryPackage.version,
-        },
-      );
+    const recordedVersion = isDefined(registration)
+      ? await this.applicationRegistrationVersionService.findOneByApplicationRegistrationIdAndVersion(
+          {
+            applicationRegistrationId: registration.id,
+            version: registryPackage.version,
+          },
+        )
+      : null;
 
     if (isDefined(recordedVersion?.tarballUrl)) {
-      return;
+      return recordedVersion.tarballUrl;
     }
 
     const tarballUrl =
@@ -162,15 +157,8 @@ export class MarketplaceCatalogSyncService {
       this.logger.warn(
         `Version ${registryPackage.version} of ${registryPackage.name} left incomplete: registry gave no artifact details, retrying on the next sync`,
       );
-
-      return;
     }
 
-    await this.applicationRegistrationVersionService.ensureNpmVersion({
-      applicationRegistrationId: registration.id,
-      version: registryPackage.version,
-      sourcePackage: registryPackage.name,
-      tarballUrl,
-    });
+    return tarballUrl;
   }
 }

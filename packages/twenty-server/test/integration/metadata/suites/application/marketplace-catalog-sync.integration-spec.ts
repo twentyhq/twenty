@@ -964,12 +964,13 @@ describe('Marketplace Catalog Sync (integration)', () => {
       ).toMatchObject({ logoFileId: null });
     });
 
-    it('stores assets and retries the version when version recording fails', async () => {
+    it('rolls back registration updates and retries when version recording fails', async () => {
       const universalIdentifier = crypto.randomUUID();
       const registrationId = await insertCatalogRegistration({
         universalIdentifier,
         name: 'Pinned App',
         sourcePackage: '@test/pinned-app',
+        latestAvailableVersion: '1.0.0',
       });
       const recordVersion = jest
         .spyOn(
@@ -994,7 +995,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
           await findApplicationRegistrationByUniversalIdentifier({
             universalIdentifier,
           }),
-        ).toMatchObject({ logoFileId: expect.any(String) });
+        ).toMatchObject({ latestAvailableVersion: '1.0.0', logoFileId: null });
         expect(
           await ds.query(
             'SELECT id FROM core."applicationRegistrationVersion" WHERE "applicationRegistrationId" = $1',
@@ -1004,11 +1005,50 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
         await sync();
         expect(
+          await findApplicationRegistrationByUniversalIdentifier({
+            universalIdentifier,
+          }),
+        ).toMatchObject({
+          latestAvailableVersion: '2.0.0',
+          logoFileId: expect.any(String),
+        });
+        expect(
           await ds.query(
             'SELECT version FROM core."applicationRegistrationVersion" WHERE "applicationRegistrationId" = $1',
             [registrationId],
           ),
         ).toEqual([{ version: '2.0.0' }]);
+      } finally {
+        recordVersion.mockRestore();
+      }
+    });
+
+    it('rolls back a new catalog registration when version recording fails', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const recordVersion = jest
+        .spyOn(
+          getAppProviderByClassName<ApplicationRegistrationVersionService>(
+            'ApplicationRegistrationVersionService',
+          ),
+          'createApplicationRegistrationVersion',
+        )
+        .mockRejectedValueOnce(new Error('version insert failed'));
+
+      try {
+        await syncMarketplaceCatalogFromRegistryPackage({
+          packageName: '@test/new-app',
+          version: '1.0.0',
+          manifest: buildManifestWithLogo(universalIdentifier),
+          tarballUrl: 'https://registry.example.com/new-app-1.0.0.tgz',
+        });
+
+        expect(recordVersion).toHaveBeenCalledTimes(1);
+        expect(
+          await ds.query(
+            'SELECT id FROM core."applicationRegistration" WHERE "universalIdentifier" = $1',
+            [universalIdentifier],
+          ),
+        ).toEqual([]);
       } finally {
         recordVersion.mockRestore();
       }

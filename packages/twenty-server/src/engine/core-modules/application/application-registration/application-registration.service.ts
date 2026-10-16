@@ -100,6 +100,7 @@ export type UpsertApplicationRegistrationFromCatalogParams = {
   sourcePackage: string;
   latestAvailableVersion: string | null;
   manifest: Manifest;
+  tarballUrl?: string | null;
 };
 
 export type ApplicationRegistrationCatalogCard = {
@@ -526,6 +527,10 @@ export class ApplicationRegistrationService {
     fields: DeepPartial<ApplicationRegistrationEntity> & {
       universalIdentifier: string;
     },
+    publishedVersion?: Omit<
+      CreateApplicationRegistrationVersionParams,
+      'applicationRegistrationId'
+    >,
   ): Promise<ApplicationRegistrationEntity> {
     const existingByUid =
       await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
@@ -543,9 +548,24 @@ export class ApplicationRegistrationService {
       );
     }
 
-    const saved = await this.applicationRegistrationRepository.save(
-      this.applicationRegistrationRepository.create(fields),
-    );
+    const saved =
+      await this.applicationRegistrationRepository.manager.transaction(
+        async (entityManager) => {
+          const repository = entityManager.getRepository(
+            ApplicationRegistrationEntity,
+          );
+          const registration = await repository.save(repository.create(fields));
+
+          if (isDefined(publishedVersion)) {
+            await this.applicationRegistrationVersionService.createApplicationRegistrationVersion(
+              { ...publishedVersion, applicationRegistrationId: registration.id },
+              entityManager,
+            );
+          }
+
+          return registration;
+        },
+      );
 
     await this.invalidateMarketplaceAppsCache();
 
@@ -993,6 +1013,16 @@ export class ApplicationRegistrationService {
       latestAvailableVersion: params.latestAvailableVersion,
       preventVersionDowngrade: true,
       registrationBeforeUpdate: existing,
+      publishedVersion:
+        isDefined(params.latestAvailableVersion) &&
+        isDefined(params.tarballUrl)
+          ? {
+              version: params.latestAvailableVersion,
+              sourceType: params.sourceType,
+              sourcePackage: params.sourcePackage,
+              tarballUrl: params.tarballUrl,
+            }
+          : undefined,
       additionalFields: {
         name: params.name,
         sourcePackage: params.sourcePackage,
@@ -1022,21 +1052,31 @@ export class ApplicationRegistrationService {
     params: UpsertApplicationRegistrationFromCatalogParams,
     { isVetted }: { isVetted: boolean },
   ): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      sourceType: params.sourceType,
-      sourcePackage: params.sourcePackage,
-      latestAvailableVersion: params.latestAvailableVersion,
-      isListed: true,
-      isVetted,
-      manifest: params.manifest,
-      ...fromManifestApplicationToDisplayFields(params.manifest.application),
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: null,
-    });
+    const registration = await this.create(
+      {
+        universalIdentifier: params.universalIdentifier,
+        name: params.name,
+        sourceType: params.sourceType,
+        sourcePackage: params.sourcePackage,
+        latestAvailableVersion: params.latestAvailableVersion,
+        isListed: true,
+        isVetted,
+        manifest: params.manifest,
+        ...fromManifestApplicationToDisplayFields(params.manifest.application),
+        oAuthClientId: v4(),
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId: null,
+      },
+      isDefined(params.latestAvailableVersion) && isDefined(params.tarballUrl)
+        ? {
+            version: params.latestAvailableVersion,
+            sourceType: params.sourceType,
+            sourcePackage: params.sourcePackage,
+            tarballUrl: params.tarballUrl,
+          }
+        : undefined,
+    );
 
     this.emitRegistrationPublishMetric({
       isNewRegistration: true,

@@ -56,6 +56,17 @@ export class ApplicationRegistrationVersionService {
       );
     }
 
+    if (insertResult.raw.length === 0 && isDefined(params.tarballUrl)) {
+      await repository.update(
+        {
+          applicationRegistrationId: params.applicationRegistrationId,
+          version: params.version,
+          tarballUrl: IsNull(),
+        },
+        { tarballUrl: params.tarballUrl },
+      );
+    }
+
     return repository.findOneOrFail({
       where: {
         applicationRegistrationId: params.applicationRegistrationId,
@@ -75,20 +86,13 @@ export class ApplicationRegistrationVersionService {
     sourcePackage: string | null;
     tarballUrl: string;
   }): Promise<void> {
-    const publishedVersion = await this.createApplicationRegistrationVersion({
+    await this.createApplicationRegistrationVersion({
       applicationRegistrationId,
       version,
       sourceType: ApplicationRegistrationSourceType.NPM,
       sourcePackage,
       tarballUrl,
     });
-
-    if (!isDefined(publishedVersion.tarballUrl)) {
-      await this.applicationRegistrationVersionRepository.update(
-        { id: publishedVersion.id, tarballUrl: IsNull() },
-        { tarballUrl },
-      );
-    }
   }
 
   async findOneByApplicationRegistrationIdAndVersion({
