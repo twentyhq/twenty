@@ -626,7 +626,9 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toHaveProperty('companyId.in');
+      expect(result).toEqual({
+        companyId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+      });
     });
 
     it('should handle IS_NOT operand', () => {
@@ -640,10 +642,83 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toHaveProperty('or');
+      expect(result).toEqual({
+        or: [
+          {
+            not: {
+              companyId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+            },
+          },
+          { companyId: { is: 'NULL' } },
+        ],
+      });
     });
 
-    it('should resolve programmatic current-record morph relation-table filters to the matching join column', () => {
+    it('should match any morph target join column for IS operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-morph-relation',
+          RecordFilterOperand.IS,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { targetPersonId: { in: ['550e8400-e29b-41d4-a716-446655440000'] } },
+          {
+            targetCompanyId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+          },
+        ],
+      });
+    });
+
+    it('should exclude the selected records from every morph target join column for IS_NOT operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-morph-relation',
+          RecordFilterOperand.IS_NOT,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        and: [
+          {
+            or: [
+              {
+                not: {
+                  targetPersonId: {
+                    in: ['550e8400-e29b-41d4-a716-446655440000'],
+                  },
+                },
+              },
+              { targetPersonId: { is: 'NULL' } },
+            ],
+          },
+          {
+            or: [
+              {
+                not: {
+                  targetCompanyId: {
+                    in: ['550e8400-e29b-41d4-a716-446655440000'],
+                  },
+                },
+              },
+              { targetCompanyId: { is: 'NULL' } },
+            ],
+          },
+        ],
+      });
+    });
+
+    it('should resolve programmatic current-record morph relation-table filters to every target join column', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies: {
           ...filterValueDependencies,
@@ -665,7 +740,12 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toEqual({
-        targetPersonId: { in: ['11111111-1111-4111-8111-111111111111'] },
+        or: [
+          { targetPersonId: { in: ['11111111-1111-4111-8111-111111111111'] } },
+          {
+            targetCompanyId: { in: ['11111111-1111-4111-8111-111111111111'] },
+          },
+        ],
       });
     });
 

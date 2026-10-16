@@ -216,37 +216,41 @@ type BuildDirectFieldGqlOperationFilterParams = {
   fieldMetadataItem: FieldShared;
 };
 
-const getRelationFilterJoinColumnName = ({
+const getRelationFilterJoinColumnNames = ({
   fieldMetadataItem,
-  filterValueDependencies,
 }: {
   fieldMetadataItem: FieldShared;
-  filterValueDependencies: RecordFilterValueDependencies;
-}): string | undefined => {
+}): string[] => {
   if (fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION) {
-    return computeRelationGqlFieldJoinColumnName({
-      name: fieldMetadataItem.name,
-    });
+    return [
+      computeRelationGqlFieldJoinColumnName({ name: fieldMetadataItem.name }),
+    ];
   }
 
-  const matchingMorphRelation = fieldMetadataItem.morphRelations?.find(
-    (morphRelation) =>
-      morphRelation.targetObjectMetadata.nameSingular ===
-      filterValueDependencies.currentRecord?.objectMetadataNameSingular,
+  return (fieldMetadataItem.morphRelations ?? []).map((morphRelation) =>
+    computeMorphRelationGqlFieldJoinColumnName({
+      fieldName: fieldMetadataItem.name,
+      relationType: morphRelation.type,
+      targetObjectMetadataNameSingular:
+        morphRelation.targetObjectMetadata.nameSingular,
+      targetObjectMetadataNamePlural:
+        morphRelation.targetObjectMetadata.namePlural,
+    }),
   );
+};
 
-  if (!isDefined(matchingMorphRelation)) {
-    return;
-  }
+const combineRelationJoinColumnFilters = ({
+  joinColumnFilters,
+  logicalOperator,
+}: {
+  joinColumnFilters: RecordGqlOperationFilter[];
+  logicalOperator: 'and' | 'or';
+}): RecordGqlOperationFilter => {
+  const [firstJoinColumnFilter] = joinColumnFilters;
 
-  return computeMorphRelationGqlFieldJoinColumnName({
-    fieldName: fieldMetadataItem.name,
-    relationType: matchingMorphRelation.type,
-    targetObjectMetadataNameSingular:
-      matchingMorphRelation.targetObjectMetadata.nameSingular,
-    targetObjectMetadataNamePlural:
-      matchingMorphRelation.targetObjectMetadata.namePlural,
-  });
+  return joinColumnFilters.length === 1 && isDefined(firstJoinColumnFilter)
+    ? firstJoinColumnFilter
+    : { [logicalOperator]: joinColumnFilters };
 };
 
 const buildDirectFieldGqlOperationFilter = ({
@@ -733,41 +737,42 @@ const buildDirectFieldGqlOperationFilter = ({
 
       if (recordIds.length === 0) return;
 
-      const relationFilterJoinColumnName = getRelationFilterJoinColumnName({
+      const relationFilterJoinColumnNames = getRelationFilterJoinColumnNames({
         fieldMetadataItem,
-        filterValueDependencies,
       });
 
-      if (!isDefined(relationFilterJoinColumnName)) {
+      if (relationFilterJoinColumnNames.length === 0) {
         return;
       }
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
-          return {
-            [relationFilterJoinColumnName]: {
-              in: recordIds,
-            } as RelationFilter,
-          };
-        case RecordFilterOperand.IS_NOT: {
-          if (!isDefined(recordIds) || recordIds.length === 0) return;
-          return {
-            or: [
-              {
-                not: {
-                  [relationFilterJoinColumnName]: {
-                    in: recordIds,
-                  } as RelationFilter,
-                },
-              },
-              {
-                [relationFilterJoinColumnName]: {
-                  is: 'NULL',
-                } as RelationFilter,
-              },
-            ],
-          };
-        }
+          return combineRelationJoinColumnFilters({
+            joinColumnFilters: relationFilterJoinColumnNames.map(
+              (joinColumnName) => ({
+                [joinColumnName]: { in: recordIds } as RelationFilter,
+              }),
+            ),
+            logicalOperator: 'or',
+          });
+        case RecordFilterOperand.IS_NOT:
+          return combineRelationJoinColumnFilters({
+            joinColumnFilters: relationFilterJoinColumnNames.map(
+              (joinColumnName) => ({
+                or: [
+                  {
+                    not: {
+                      [joinColumnName]: { in: recordIds } as RelationFilter,
+                    },
+                  },
+                  {
+                    [joinColumnName]: { is: 'NULL' } as RelationFilter,
+                  },
+                ],
+              }),
+            ),
+            logicalOperator: 'and',
+          });
         default:
           throw new Error(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
