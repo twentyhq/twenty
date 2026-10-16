@@ -7,6 +7,7 @@ import { RecordTitleFullNameFieldDisplay } from '@/object-record/record-title-ce
 import { RecordTitleCellUuidFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellUuidFieldDisplay';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useContext } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RecordTitleCellFieldDisplay = ({
   containerType,
@@ -20,9 +21,11 @@ export const RecordTitleCellFieldDisplay = ({
     !isFieldFullName(fieldDefinition) &&
     !isFieldUuid(fieldDefinition)
   ) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('Field definition is not a text, full name, or UUID field');
+    throw new Error(
+      doNotTranslate(
+        'Field definition is not a text, full name, or UUID field',
+      ),
+    );
   }
 
   return (

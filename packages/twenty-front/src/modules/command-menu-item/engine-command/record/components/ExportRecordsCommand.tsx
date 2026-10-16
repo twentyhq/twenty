@@ -14,6 +14,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const ExportIndexRecordsContent = ({
   objectMetadataItem,
@@ -103,8 +104,9 @@ export const ExportRecordsCommand = () => {
   );
 
   if (!isDefined(objectMetadataItem)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Object metadata item is required to export records');
+    throw new Error(
+      doNotTranslate('Object metadata item is required to export records'),
+    );
   }
 
   const recordId = selectedRecords[0]?.id;
@@ -121,8 +123,9 @@ export const ExportRecordsCommand = () => {
 
   if (!isDefined(recordIndexId)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'Record index ID is required to export records from index page',
+      doNotTranslate(
+        'Record index ID is required to export records from index page',
+      ),
     );
   }
 

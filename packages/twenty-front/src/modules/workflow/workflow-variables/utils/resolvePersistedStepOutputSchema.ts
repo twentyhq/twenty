@@ -2,6 +2,7 @@ import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOut
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { isEmptyObject, isPlainObject } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type BaseOutputSchemaV2,
   isBaseOutputSchemaV2,
@@ -11,8 +12,7 @@ const AI_AGENT_DEFAULT_OUTPUT_SCHEMA: BaseOutputSchemaV2 = {
   response: {
     isLeaf: true,
     type: 'string',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- The persisted key is translated when the schema is read.
-    label: 'Response',
+    label: doNotTranslate('Response'),
     value: null,
   },
 };

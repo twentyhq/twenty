@@ -11,6 +11,7 @@ import {
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type BaseFieldMetadata = {
   description?: string | null;
@@ -307,9 +308,7 @@ export type FieldRichTextValue = {
 };
 
 const FieldActorSourceSchema = z.union([
-  // Metadata and protocol identifiers must stay stable across locales.
-  // oxlint-disable-next-line lingui/no-unlocalized-strings
-  z.literal('API'),
+  z.literal(doNotTranslate('API')),
   z.literal('IMPORT'),
   z.literal('EMAIL'),
   z.literal('CALENDAR'),

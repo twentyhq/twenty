@@ -76,11 +76,6 @@ const StyledCustomPhoneInputWrapper = styled.div`
       outline: none;
     }
   }
-
-  & svg {
-    border-radius: ${themeCssVariables.border.radius.xs};
-    height: 12px;
-  }
 `;
 
 export const PhonesFieldInput = () => {

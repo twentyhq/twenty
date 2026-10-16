@@ -6,6 +6,7 @@ import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalend
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type CalendarDayCardContentProps = {
   calendarEvents: TimelineCalendarEvent[];
@@ -62,8 +63,7 @@ export const CalendarDayCardContent = ({
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
-  const weekDayLabel = format(endOfDayDate, 'EE');
+  const weekDayLabel = format(endOfDayDate, doNotTranslate('EE'));
   const monthDayLabel = format(endOfDayDate, 'dd');
 
   return (

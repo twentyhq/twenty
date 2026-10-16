@@ -121,4 +121,21 @@ describe('formatMicrosoftCalendarEvents', () => {
     expect(result[0].iCalUid).toBe('eventStrange@microsoft.com');
     expect(result[1].iCalUid).toBe('>\u0015-;_�^�W&�p\u001f�');
   });
+
+  it.each([
+    [undefined, false],
+    ['normal', false],
+    ['personal', false],
+    ['private', true],
+    ['confidential', true],
+  ] as const)(
+    'should map sensitivity %s to isPrivate %s',
+    (sensitivity, isPrivate) => {
+      const [formattedEvent] = formatMicrosoftCalendarEvents([
+        { ...mockMicrosoftEvent, sensitivity },
+      ]);
+
+      expect(formattedEvent.isPrivate).toBe(isPrivate);
+    },
+  );
 });

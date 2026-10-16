@@ -14,6 +14,7 @@ import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
@@ -44,9 +45,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       const existingViews = store.get(viewsSelector.atom);
 
       if (!isDefined(currentViewId)) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('No view id found');
+        throw new Error(doNotTranslate('No view id found'));
       }
 
       const currentView = existingViews.find(
@@ -54,9 +53,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       );
 
       if (!isDefined(currentView)) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('No current view found');
+        throw new Error(doNotTranslate('No current view found'));
       }
 
       const updateCurrentViewParams: Partial<GraphQLView> = {};
@@ -65,9 +62,9 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       switch (viewType) {
         case ViewType.KANBAN: {
           if (availableFieldsForGrouping.length === 0) {
-            // Error text is used for locale-independent issue grouping.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            throw new Error('No fields for kanban - should not happen');
+            throw new Error(
+              doNotTranslate('No fields for kanban - should not happen'),
+            );
           }
 
           const mainGroupByFieldMetadataId = availableFieldsForGrouping[0].id;
@@ -94,9 +91,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }
         case ViewType.CALENDAR: {
           if (availableFieldsForCalendar.length === 0) {
-            // Error text is used for locale-independent issue grouping.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            throw new Error('No date fields for calendar');
+            throw new Error(doNotTranslate('No date fields for calendar'));
           }
 
           const calendarFieldMetadataId = availableFieldsForCalendar[0].id;

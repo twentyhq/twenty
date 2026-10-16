@@ -1,5 +1,6 @@
 import { type CompanionState } from '../../shared/types/CompanionState';
 import { i18n } from '../../shared/i18n';
+import { doNotTranslate } from '../../shared/utils/doNotTranslate';
 
 export const previewState = (initial: CompanionState): CompanionState => {
   const now = Date.now();
@@ -9,9 +10,7 @@ export const previewState = (initial: CompanionState): CompanionState => {
   const state: CompanionState = {
     ...initial,
     connection: 'connected',
-    // Sample identities are proper names, not UI copy.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    workspace: { id: 'preview', name: 'Acme' },
+    workspace: { id: 'preview', name: doNotTranslate('Acme') },
     calendarConnected: true,
     settings: {
       ...initial.settings,
@@ -86,13 +85,12 @@ export const previewState = (initial: CompanionState): CompanionState => {
         startedAt: at(-90),
         endedAt: at(-60),
         participants: [
-          // Sample identities are proper names, not UI copy.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          { id: 'email:alex@example.com', name: 'Alex Martin' },
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          { id: 'email:sam@example.com', name: 'Sam Lee' },
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          { id: 'email:jules@example.com', name: 'Jules Garcia' },
+          { id: 'email:alex@example.com', name: doNotTranslate('Alex Martin') },
+          { id: 'email:sam@example.com', name: doNotTranslate('Sam Lee') },
+          {
+            id: 'email:jules@example.com',
+            name: doNotTranslate('Jules Garcia'),
+          },
         ],
       },
       {
@@ -101,9 +99,12 @@ export const previewState = (initial: CompanionState): CompanionState => {
         status: 'PROCESSING',
         startedAt: at(-45),
         endedAt: at(-10),
-        // Sample identities are proper names, not UI copy.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        participants: [{ id: 'email:morgan@example.com', name: 'Morgan Chen' }],
+        participants: [
+          {
+            id: 'email:morgan@example.com',
+            name: doNotTranslate('Morgan Chen'),
+          },
+        ],
       },
       {
         id: '00000000-0000-4000-8000-000000000009',

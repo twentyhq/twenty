@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import React, { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -52,8 +53,7 @@ export const WorkspaceSectionContainer = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { toggleNavigationSection, isNavigationSectionOpen } =
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is the persisted section identifier.
-    useNavigationSection('Workspace');
+    useNavigationSection(doNotTranslate('Workspace'));
   const views = useAtomStateValue(viewsSelector);
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);

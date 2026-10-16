@@ -12,6 +12,7 @@ import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const generateDepthRecordGqlFieldsFromFields = ({
   objectMetadataItems,
@@ -38,9 +39,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
 
         if (!targetObjectMetadataItem) {
           throw new Error(
-            // Error text is used for locale-independent issue grouping.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            `Target object metadata item not found for ${fieldMetadata.name}`,
+            doNotTranslate(
+              `Target object metadata item not found for ${fieldMetadata.name}`,
+            ),
           );
         }
 
@@ -74,9 +75,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         );
 
         const manyToOneGqlFields = {
-          // Generated GraphQL syntax must stay stable across locales.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          [`${fieldMetadata.name}Id`]: true,
+          [doNotTranslate(`${fieldMetadata.name}Id`)]: true,
         };
 
         return {
@@ -109,9 +108,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
 
             if (!morphTargetObjectMetadataItem) {
               throw new Error(
-                // Error text is used for locale-independent issue grouping.
-                // oxlint-disable-next-line lingui/no-unlocalized-strings
-                `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
+                doNotTranslate(
+                  `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
+                ),
               );
             }
 
@@ -148,8 +147,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
                 : {}),
               ...(relationType === RelationType.MANY_TO_ONE
                 ? // Generated GraphQL syntax must stay stable across locales.
-                  // oxlint-disable-next-line lingui/no-unlocalized-strings
-                  { [`${morphGqlField.gqlField}Id`]: true }
+                  { [doNotTranslate(`${morphGqlField.gqlField}Id`)]: true }
                 : {}),
             }),
             {},

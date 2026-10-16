@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { typedObjectEntries } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconCalendarEvent,
   IconChevronDown,
@@ -56,13 +57,11 @@ export const LogConsoleTimeRangeDropdown = ({
 
   const timeZoneOptions = [
     { value: 'member', label: memberTimeZone },
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
-    { value: 'utc', label: 'UTC' },
+    { value: 'utc', label: doNotTranslate('UTC') },
   ] as const;
 
   const selectedTimeZoneLabel =
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
-    logConsoleTimeZone === 'utc' ? 'UTC' : memberTimeZone;
+    logConsoleTimeZone === 'utc' ? doNotTranslate('UTC') : memberTimeZone;
 
   const getTimeRangeLabel = (labeledTimeRange: LogConsoleTimeRange) => {
     if (labeledTimeRange === 'today') {

@@ -7,6 +7,7 @@ import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/u
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
@@ -71,8 +72,9 @@ export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
 
   if (!isDefined(coreWorkflowVersion.coreWorkflowId)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'Record ID and workflow ID are required to use as draft workflow version',
+      doNotTranslate(
+        'Record ID and workflow ID are required to use as draft workflow version',
+      ),
     );
   }
 

@@ -6,6 +6,7 @@ import {
   CoreObjectNameSingular,
 } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
@@ -118,8 +119,7 @@ export const useRecordLevelPermissionFilterActions = ({
     const defaultFieldMetadataItemForRLS = getDefaultFieldMetadataItemForRLS();
 
     if (!isDefined(defaultFieldMetadataItemForRLS)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      throw new Error('Missing default filter definition');
+      throw new Error(doNotTranslate('Missing default filter definition'));
     }
 
     const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
@@ -136,8 +136,9 @@ export const useRecordLevelPermissionFilterActions = ({
     const defaultFieldMetadataItemForRLS = getDefaultFieldMetadataItemForRLS();
 
     if (!isDefined(defaultFieldMetadataItemForRLS)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      throw new Error('Missing default field metadata item for filter');
+      throw new Error(
+        doNotTranslate('Missing default field metadata item for filter'),
+      );
     }
 
     const filterType = getFilterTypeFromFieldType(

@@ -10,6 +10,7 @@ import {
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const sanitizeRecordInput = ({
@@ -48,9 +49,10 @@ export const sanitizeRecordInput = ({
                 targetObjectMetadataNamePlural:
                   morphRelation.targetObjectMetadata.namePlural,
               });
-              // Metadata and protocol identifiers must stay stable across locales.
-              // oxlint-disable-next-line lingui/no-unlocalized-strings
-              return computedFieldName === fieldName.replace('Id', '');
+              return (
+                computedFieldName ===
+                fieldName.replace(doNotTranslate('Id'), '')
+              );
             });
           });
 

@@ -11,6 +11,7 @@ import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUpdateRelationOneToManyFieldInput = () => {
@@ -29,9 +30,7 @@ export const useUpdateRelationOneToManyFieldInput = () => {
     });
 
   if (!isDefined(fieldDefinition.metadata.objectMetadataNameSingular)) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('ObjectMetadataNameSingular is required');
+    throw new Error(doNotTranslate('ObjectMetadataNameSingular is required'));
   }
 
   const { objectMetadataItem: sourceObjectMetadataItem } =
@@ -40,15 +39,11 @@ export const useUpdateRelationOneToManyFieldInput = () => {
     });
 
   if (!fieldDefinition.metadata.objectMetadataNameSingular) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('ObjectMetadataNameSingular is required');
+    throw new Error(doNotTranslate('ObjectMetadataNameSingular is required'));
   }
 
   if (!isDefined(targetObjectMetadataItem)) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('TargetObjectMetadataItem is required');
+    throw new Error(doNotTranslate('TargetObjectMetadataItem is required'));
   }
 
   const { recordOneToManyFieldDetachTargetRecord } =
@@ -63,15 +58,13 @@ export const useUpdateRelationOneToManyFieldInput = () => {
         !fieldDefinition.metadata?.relationObjectMetadataNameSingular ||
         !fieldDefinition.metadata?.targetFieldMetadataName
       ) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('RelationObjectMetadataNameSingular is required');
+        throw new Error(
+          doNotTranslate('RelationObjectMetadataNameSingular is required'),
+        );
       }
 
       if (!fieldDefinition.metadata?.objectMetadataNameSingular) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('RelationFieldMetadata is required');
+        throw new Error(doNotTranslate('RelationFieldMetadata is required'));
       }
 
       const targetFieldMetadata = targetObjectMetadataItem.fields.find(
@@ -80,9 +73,7 @@ export const useUpdateRelationOneToManyFieldInput = () => {
       );
 
       if (!isDefined(targetFieldMetadata)) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('TargetFieldMetadata is required');
+        throw new Error(doNotTranslate('TargetFieldMetadata is required'));
       }
 
       let targetGQLFieldName: string;

@@ -23,6 +23,7 @@ import { ToastProgress } from './internal/components/ToastProgress';
 import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
 import { type ToastStatus } from './types/ToastStatus';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const TOAST_ICONS = {
   neutral: IconAlertTriangle,
@@ -42,10 +43,8 @@ export const Toast = ({
   duration = DEFAULT_TOAST_DURATION,
   onCancel,
   onClose,
-  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
-  cancelLabel = 'Cancel',
-  closeLabel = 'Close',
-  // oxlint-enable lingui/no-unlocalized-strings
+  cancelLabel = doNotTranslate('Cancel'),
+  closeLabel = doNotTranslate('Close'),
   status = 'neutral',
   role = 'status',
   className,

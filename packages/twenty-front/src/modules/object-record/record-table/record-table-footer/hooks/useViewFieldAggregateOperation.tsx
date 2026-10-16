@@ -13,6 +13,7 @@ import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerform
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useViewFieldAggregateOperation = () => {
   const { fieldMetadataId } = useContext(
@@ -50,9 +51,7 @@ export const useViewFieldAggregateOperation = () => {
     aggregateOperation: ExtendedAggregateOperations | null,
   ) => {
     if (!currentViewField) {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('ViewField not found');
+      throw new Error(doNotTranslate('ViewField not found'));
     }
 
     const aggregateOperationForPersistence =

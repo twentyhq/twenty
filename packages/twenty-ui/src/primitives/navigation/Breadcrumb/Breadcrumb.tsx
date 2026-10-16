@@ -5,14 +5,14 @@ import { BreadcrumbItemContent } from './internal/BreadcrumbItemContent';
 import { type BreadcrumbProps } from './types/BreadcrumbProps';
 
 import styles from './Breadcrumb.module.scss';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const Breadcrumb = ({
   links,
   className,
   render,
   ref,
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated aria-label; this preserves the public UI fallback.
-  'aria-label': ariaLabel = 'Breadcrumb',
+  'aria-label': ariaLabel = doNotTranslate('Breadcrumb'),
   ...props
 }: BreadcrumbProps) => {
   return useRender({

@@ -6,6 +6,7 @@ import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
@@ -41,8 +42,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   }, [isPageLayoutInEditMode, tab, widgetVisibilityContext]);
 
   if (!isDefined(tabWithVisibleWidgets)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    throw new Error('Tab not found');
+    throw new Error(doNotTranslate('Tab not found'));
   }
 
   return tabWithVisibleWidgets;

@@ -10,6 +10,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 
@@ -21,9 +22,9 @@ export const useMorphRelationFromManyFieldDisplay = () => {
   );
 
   if (!isDefined(chipGeneratorPerObjectPerField)) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('Chip generator per object per field is not defined');
+    throw new Error(
+      doNotTranslate('Chip generator per object per field is not defined'),
+    );
   }
 
   assertFieldMetadata(
@@ -50,9 +51,9 @@ export const useMorphRelationFromManyFieldDisplay = () => {
     !isDefined(fieldDefinition.metadata.objectMetadataNameSingular) ||
     !isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)
   ) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('Object metadata name singular is not a non-empty string');
+    throw new Error(
+      doNotTranslate('Object metadata name singular is not a non-empty string'),
+    );
   }
 
   return {

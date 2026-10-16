@@ -15,6 +15,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo } from 'react';
 import { compareArraysOfObjectsByProperty } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   type AddQuerySubscriptionInput,
@@ -52,10 +53,11 @@ export const SSEQuerySubscribeEffect = () => {
       ) {
         captureException(
           new Error(
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a stable event-stream diagnostic reported to Sentry.
-            `Unhandled error for event stream: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
+            doNotTranslate(
+              `Unhandled error for event stream: ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            ),
             { cause: error },
           ),
         );
