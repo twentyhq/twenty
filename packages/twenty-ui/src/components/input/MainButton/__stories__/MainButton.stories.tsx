@@ -27,10 +27,10 @@ const meta: Meta<MainButtonStoryProps> = {
 export default meta;
 type Story = StoryObj<MainButtonStoryProps>;
 
-export const Default: Story = { decorators: [ComponentDecorator] };
+export const Display: Story = { decorators: [ComponentDecorator] };
 
 export const FormControls: Story = {
-  ...Default,
+  ...Display,
   args: {
     onClick: fn(),
     onFormSubmit: fn<FormEventHandler<HTMLFormElement>>((event) =>
@@ -68,7 +68,7 @@ export const FormControls: Story = {
 };
 
 export const Loading: Story = {
-  ...Default,
+  ...Display,
   args: {
     loading: true,
     className: ({ disabled }) => (disabled ? 'unavailable-action' : undefined),
@@ -86,7 +86,7 @@ export const Loading: Story = {
 };
 
 export const DisabledOutline: Story = {
-  ...Default,
+  ...Display,
   args: { variant: 'outline', elevated: false, disabled: true, onClick: fn() },
   play: async ({ canvasElement, args }) => {
     const button = within(canvasElement).getByRole('button');

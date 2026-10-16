@@ -159,7 +159,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
         `Refusing to record ${creditsUsedMicro} creditsUsedMicro on a ${input.operationType} usage event; recording 0 instead`,
       );
 
-      return { ...input, creditsUsedMicro: 0 };
+      return { ...input, creditsUsedMicro: 0, userCreditsUsedMicro: 0 };
     }
 
     return { ...input, creditsUsedMicro };

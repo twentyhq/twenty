@@ -27,7 +27,7 @@ const meta: Meta<typeof PhoneCountryPickerExample> = {
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: {
-    container: { width: 360, height: 360 },
+    container: { width: 360 },
     a11y: PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS,
   },
 };

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 import { type DropdownSelectionGroupChangeEventDetails } from '@ui/components/navigation/Dropdown/types/DropdownSelectionGroupChangeEventDetails';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { themeCssVariables } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { PhoneCountryPicker } from '../PhoneCountryPicker';
@@ -56,7 +57,14 @@ export const PhoneCountryPickerExample = ({
   };
 
   return (
-    <Text style={{ display: 'grid', gap: 8, justifyItems: 'start' }}>
+    <Text
+      style={{
+        display: 'grid',
+        alignContent: 'start',
+        gap: 8,
+        justifyItems: 'start',
+      }}
+    >
       <Text>{label}</Text>
       {composition === 'shorthand' ? (
         <PhoneCountryPicker
@@ -93,7 +101,11 @@ export const PhoneCountryPickerExample = ({
           </Dropdown.Root>
         </PhoneCountryPicker.Root>
       )}
-      <Text role="status" aria-label={`${label} selection`}>
+      <Text
+        role="status"
+        aria-label={`${label} selection`}
+        style={{ color: themeCssVariables.font.color.secondary, fontSize: 12 }}
+      >
         {isDefined(country)
           ? `${country.label} (+${country.callingCode})`
           : 'International'}

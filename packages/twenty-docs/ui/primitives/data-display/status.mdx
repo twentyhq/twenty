@@ -10,21 +10,32 @@ import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
 `Status` combines a colored dot, a text label, and an optional loader. Use it for workflow or record states. Use [Tag](/ui/primitives/data-display/tag) for a category without the status indicator.
 
 <StoryEmbed
-  storyId="ui-data-display-status--documentation"
+  storyId="ui-data-display-status--display"
   title="Status example"
+  height={90}
 />
 
-## Record state
+## Usage
 
 ```tsx
 import { Status } from 'twenty-ui/primitives/data-display';
 
-export const RecordStatus = () => <Status color="green">Active</Status>;
+export const RecordStatus = () => (
+  <Status color="red" weight="medium">
+    Urgent
+  </Status>
+);
 ```
 
 `color` is required and uses the theme palette. The label communicates the meaning independently of the color. The default element is always a `span`, including when a native click handler is supplied; `weight="medium"` emphasizes its text.
 
 ## Loading and announcements
+
+<StoryEmbed
+  storyId="ui-data-display-status--loading"
+  title="Status while saving"
+  height={90}
+/>
 
 ```tsx
 import { Status } from 'twenty-ui/primitives/data-display';

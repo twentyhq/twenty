@@ -22,7 +22,17 @@ const meta: Meta<typeof CurrencyPickerExample> = {
 export default meta;
 type Story = StoryObj<typeof CurrencyPickerExample>;
 
-export const Documentation: Story = {};
+export const Display: Story = {
+  args: {
+    triggerLabel: 'Invoice currency',
+    currencies: [
+      { code: 'EUR', name: 'Euro' },
+      { code: 'USD', name: 'US Dollar' },
+    ],
+    searchLabel: 'Search currencies',
+    emptyLabel: 'No currencies found',
+  },
+};
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

@@ -1,3 +1,5 @@
+import { type ComponentProps, useId } from 'react';
+import { Heading, Text } from '@ui/primitives/typography';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
 
@@ -23,7 +25,30 @@ const meta: Meta<typeof Card.Root> = {
 export default meta;
 type Story = StoryObj<typeof Card.Root>;
 
-export const Default: Story = {};
+export const Display: Story = {
+  parameters: { container: { width: 320 } },
+  render: (args) => <CardDisplayExample {...args} />,
+};
+
+const CardDisplayExample = (props: ComponentProps<typeof Card.Root>) => {
+  const titleId = useId();
+
+  return (
+    <Card.Root fullWidth role="region" aria-labelledby={titleId} {...props}>
+      <Card.Header>
+        <Heading id={titleId} level={2}>
+          Import summary
+        </Heading>
+      </Card.Header>
+      <Card.Content>
+        <Text>24 records are ready to import.</Text>
+      </Card.Content>
+      <Card.Footer>
+        <Button>Review records</Button>
+      </Card.Footer>
+    </Card.Root>
+  );
+};
 
 export const NativeParts: Story = {
   render: (args) => (

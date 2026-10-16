@@ -17,7 +17,7 @@ const meta: Meta<typeof SearchInputExample> = {
 export default meta;
 type Story = StoryObj<typeof SearchInputExample>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     placeholder: 'Search...',
   },
