@@ -14,7 +14,11 @@
    consent where required by your organization.
 5. In Teams admin center > Meetings > Meeting settings > Transcript API access,
    enable **Microsoft Graph access**. Without it, Graph answers transcript
-   requests with `GraphAccessToTranscriptsDisabled`.
+   requests with `GraphAccessToTranscriptsDisabled`. Then select **Configure**
+   and turn on **Include speaker attribution**, which is off by default.
+   Without it, Microsoft serves transcripts without speaker names. In Teams
+   PowerShell, both settings are
+   `Set-CsTeamsMeetingConfiguration -Identity Global -EnableGraphTranscriptAccess $true -EnableAttributedTranscripts $true`.
 
 | Permission                         | Purpose                                                        |
 | ---------------------------------- | -------------------------------------------------------------- |
@@ -207,9 +211,11 @@ workspace. Public apps use the monorepo CI workflows.
   connection and the workspace has no shared one.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access
   in Teams meeting settings.
-- Call Recording without speaker names: the tenant disallows speaker
-  attribution in Teams meeting settings, so Microsoft only serves the transcript
-  without speakers.
+- Call Recording without speaker names: speaker attribution is off for the
+  tenant, so Microsoft serves transcripts without speakers and the automatic
+  import logs a warning starting with `[teams] imported transcript`. Turn it on as in step 5;
+  the change can take a while to apply. Run **Sync Teams Transcript** on a
+  transcript imported before then to add its speaker names.
 - Empty result: verify that transcription was started during the scheduled
   meeting time, give or take 15 minutes, Microsoft has finished processing it,
   and the connected account organized the meeting.

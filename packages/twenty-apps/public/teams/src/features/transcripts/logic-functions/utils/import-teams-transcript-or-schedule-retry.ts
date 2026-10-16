@@ -43,12 +43,20 @@ const attemptTeamsTranscriptSync = async ({
       return { outcome: 'skipped-deleted' };
     }
 
-    return syncResult.status === 'COMPLETED'
-      ? { outcome: 'imported' }
-      : {
-          outcome: 'retry-needed',
-          retryReason: 'Microsoft is still processing the transcript',
-        };
+    if (syncResult.status !== 'COMPLETED') {
+      return {
+        outcome: 'retry-needed',
+        retryReason: 'Microsoft is still processing the transcript',
+      };
+    }
+
+    if (!syncResult.isSpeakerAttributed) {
+      console.warn(
+        `[teams] imported transcript ${transcriptId} of meeting ${meetingId} for connected account ${connectedAccountId} without speaker names: turn on Teams admin center > Meetings > Meeting settings > Transcript API access > Configure > Include speaker attribution, then run Sync Teams Transcript to add them.`,
+      );
+    }
+
+    return { outcome: 'imported' };
   } catch (error) {
     if (error instanceof GraphRequestError && error.status === 404) {
       return {

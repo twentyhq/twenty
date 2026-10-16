@@ -1,6 +1,6 @@
 import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof CallRecordingTranscriptEntryList> = {
@@ -68,6 +68,8 @@ export const WithoutSpeakerAndTimestamps: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Inaudible segment without speaker attribution.');
+
+    expect(canvas.queryByText('Unknown speaker')).not.toBeInTheDocument();
   },
 };
 

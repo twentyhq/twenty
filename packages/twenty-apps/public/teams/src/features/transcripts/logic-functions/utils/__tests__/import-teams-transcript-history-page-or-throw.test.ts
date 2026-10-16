@@ -161,7 +161,10 @@ const toPageCounts = (
 describe('importTeamsTranscriptHistoryPageOrThrow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    downloadMeetingTranscriptContentMock.mockResolvedValue(TRANSCRIPT_CONTENT);
+    downloadMeetingTranscriptContentMock.mockResolvedValue({
+      content: TRANSCRIPT_CONTENT,
+      isSpeakerAttributed: true,
+    });
   });
 
   it('should write new and unfinished transcripts and leave completed and deleted recordings alone', async () => {
@@ -204,7 +207,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
         }),
       );
 
-      return TRANSCRIPT_CONTENT;
+      return { content: TRANSCRIPT_CONTENT, isSpeakerAttributed: true };
     });
 
     await expect(
@@ -248,7 +251,7 @@ describe('importTeamsTranscriptHistoryPageOrThrow', () => {
     const coreApiClient = buildCoreApiClient([]);
 
     downloadMeetingTranscriptContentMock
-      .mockResolvedValueOnce('WEBVTT\n')
+      .mockResolvedValueOnce({ content: 'WEBVTT\n', isSpeakerAttributed: true })
       .mockRejectedValueOnce(
         new GraphRequestError({
           message: 'Microsoft Graph request failed (404)',
