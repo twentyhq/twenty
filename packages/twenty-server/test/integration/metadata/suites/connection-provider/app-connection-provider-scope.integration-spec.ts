@@ -22,7 +22,7 @@ import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
   type ConnectedAccountEntity,
-  type ConnectedAccountVisibility,
+  type ConnectedAccountScope,
 } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -114,23 +114,23 @@ describe('app connections outside the provider scope', () => {
 
   const insertConnection = async ({
     providerName,
-    visibility,
+    scope,
   }: {
     providerName: string;
-    visibility: ConnectedAccountVisibility;
+    scope: ConnectedAccountScope;
   }): Promise<string> => {
     const id = v4();
 
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
-         (id, handle, provider, visibility, "workspaceId", "userWorkspaceId",
+         (id, handle, provider, scope, "workspaceId", "userWorkspaceId",
           "applicationId", "connectionProviderId")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         id,
         `${providerName}@example.com`,
         ConnectedAccountProvider.APP,
-        visibility,
+        scope,
         SEED_APPLE_WORKSPACE_ID,
         USER_WORKSPACE_DATA_SEED_IDS.JANE,
         applicationId,
@@ -143,11 +143,13 @@ describe('app connections outside the provider scope', () => {
 
   const authorize = async ({
     providerName,
-    visibility,
+    scope,
+    legacyVisibility,
     reconnectingConnectedAccountId,
   }: {
     providerName: string;
-    visibility?: ConnectedAccountVisibility;
+    scope?: ConnectedAccountScope;
+    legacyVisibility?: 'user' | 'workspace';
     reconnectingConnectedAccountId?: string;
   }): Promise<{ state: string | null; errorMessage: string | null }> => {
     const response = await request(`http://localhost:${APP_PORT}`)
@@ -156,7 +158,10 @@ describe('app connections outside the provider scope', () => {
         applicationId,
         providerName,
         transientToken: await generateTransientToken(),
-        ...(isDefined(visibility) ? { visibility } : {}),
+        ...(isDefined(scope) ? { scope } : {}),
+        ...(isDefined(legacyVisibility)
+          ? { visibility: legacyVisibility }
+          : {}),
         ...(isDefined(reconnectingConnectedAccountId)
           ? { reconnectingConnectedAccountId }
           : {}),
@@ -252,32 +257,32 @@ describe('app connections outside the provider scope', () => {
   it('refuses a new personal connection on a WORKSPACE provider', async () => {
     const { errorMessage } = await authorize({
       providerName: 'workspace-provider',
-      visibility: 'user',
+      scope: 'USER',
     });
 
-    expect(errorMessage).toContain('does not accept user connections');
+    expect(errorMessage).toContain('does not accept USER connections');
   });
 
-  it('creates a workspace connection on a WORKSPACE provider when no visibility is given', async () => {
+  it('creates a workspace connection on a WORKSPACE provider when no scope is given', async () => {
     const errorMessage = await callback(
       await authorizeOrThrow({ providerName: 'workspace-provider' }),
       'workspace-code',
     );
 
     expect(errorMessage).toBeNull();
-    expect(await readAccounts()).toMatchObject([{ visibility: 'workspace' }]);
+    expect(await readAccounts()).toMatchObject([{ scope: 'WORKSPACE' }]);
   });
 
   it('refuses a new workspace connection on a USER provider', async () => {
     const { errorMessage } = await authorize({
       providerName: 'user-provider',
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
     });
 
-    expect(errorMessage).toContain('does not accept workspace connections');
+    expect(errorMessage).toContain('does not accept WORKSPACE connections');
   });
 
-  it('creates a personal connection on a USER provider when no visibility is given', async () => {
+  it('creates a personal connection on a USER provider when no scope is given', async () => {
     const errorMessage = await callback(
       await authorizeOrThrow({ providerName: 'user-provider' }),
       'user-code',
@@ -286,16 +291,16 @@ describe('app connections outside the provider scope', () => {
     expect(errorMessage).toBeNull();
     expect(await readAccounts()).toMatchObject([
       {
-        visibility: 'user',
+        scope: 'USER',
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       },
     ]);
   });
 
-  it('reconnects an existing connection whose visibility no longer matches the scope', async () => {
+  it('reconnects an existing connection whose scope no longer matches the provider scope', async () => {
     const connectedAccountId = await insertConnection({
       providerName: 'user-provider',
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
     });
 
     const errorMessage = await callback(
@@ -308,7 +313,7 @@ describe('app connections outside the provider scope', () => {
 
     expect(errorMessage).toBeNull();
     expect(await readAccounts()).toMatchObject([
-      { id: connectedAccountId, visibility: 'workspace' },
+      { id: connectedAccountId, scope: 'WORKSPACE' },
     ]);
     expect(tokenExchanges).toEqual(['reconnect-code']);
   });
@@ -316,7 +321,7 @@ describe('app connections outside the provider scope', () => {
   it('reconnects an existing personal connection on a WORKSPACE provider', async () => {
     const connectedAccountId = await insertConnection({
       providerName: 'workspace-provider',
-      visibility: 'user',
+      scope: 'USER',
     });
 
     const errorMessage = await callback(
@@ -329,7 +334,7 @@ describe('app connections outside the provider scope', () => {
 
     expect(errorMessage).toBeNull();
     expect(await readAccounts()).toMatchObject([
-      { id: connectedAccountId, visibility: 'user' },
+      { id: connectedAccountId, scope: 'USER' },
     ]);
     expect(tokenExchanges).toEqual(['personal-reconnect-code']);
   });
@@ -337,19 +342,55 @@ describe('app connections outside the provider scope', () => {
   it('refuses to share a personal connection of a USER provider with the workspace', async () => {
     const connectedAccountId = await insertConnection({
       providerName: 'user-provider',
-      visibility: 'user',
+      scope: 'USER',
     });
 
     const { errorMessage } = await authorize({
       providerName: 'user-provider',
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       reconnectingConnectedAccountId: connectedAccountId,
     });
 
-    expect(errorMessage).toContain('does not accept workspace connections');
+    expect(errorMessage).toContain('does not accept WORKSPACE connections');
     expect(await readAccounts()).toMatchObject([
-      { id: connectedAccountId, visibility: 'user' },
+      { id: connectedAccountId, scope: 'USER' },
     ]);
+  });
+
+  it.each([
+    {
+      providerName: 'workspace-provider',
+      legacyVisibility: 'user',
+      scope: 'USER',
+    },
+    {
+      providerName: 'user-provider',
+      legacyVisibility: 'workspace',
+      scope: 'WORKSPACE',
+    },
+  ] as const)(
+    'maps the legacy visibility=$legacyVisibility param to the $scope scope',
+    async ({ providerName, legacyVisibility, scope }) => {
+      const { errorMessage } = await authorize({
+        providerName,
+        legacyVisibility,
+      });
+
+      expect(errorMessage).toContain(`does not accept ${scope} connections`);
+    },
+  );
+
+  it('creates a connection from the legacy visibility param', async () => {
+    const errorMessage = await callback(
+      await authorizeOrThrow({
+        providerName: 'workspace-provider',
+        legacyVisibility: 'workspace',
+      }),
+      'legacy-code',
+    );
+
+    expect(errorMessage).toBeNull();
+    expect(await readAccounts()).toMatchObject([{ scope: 'WORKSPACE' }]);
   });
 
   it('refuses at the callback when the app changed the provider scope after authorize', async () => {
@@ -362,7 +403,7 @@ describe('app connections outside the provider scope', () => {
     try {
       const errorMessage = await callback(state, 'late-code');
 
-      expect(errorMessage).toContain('does not accept workspace connections');
+      expect(errorMessage).toContain('does not accept WORKSPACE connections');
       expect(tokenExchanges).toEqual([]);
       expect(await readAccounts()).toEqual([]);
     } finally {

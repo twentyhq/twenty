@@ -35,29 +35,26 @@ const getFirstWorkspaceConnectedAccountId = async (): Promise<string> => {
 
 const readConnectedAccountState = async (
   connectedAccountId: string,
-): Promise<{ visibility: string; archivedAt: string | null }> => {
+): Promise<{ scope: string; archivedAt: string | null }> => {
   const [state] = await global.testDataSource.query(
-    `SELECT visibility, "archivedAt" FROM core."connectedAccount" WHERE id = $1`,
+    `SELECT scope, "archivedAt" FROM core."connectedAccount" WHERE id = $1`,
     [connectedAccountId],
   );
 
   return state;
 };
 
-const setVisibility = async (
-  connectedAccountId: string,
-  visibility: string,
-) => {
+const setScope = async (connectedAccountId: string, scope: string) => {
   await global.testDataSource.query(
-    `UPDATE core."connectedAccount" SET visibility = $1 WHERE id = $2`,
-    [visibility, connectedAccountId],
+    `UPDATE core."connectedAccount" SET scope = $1 WHERE id = $2`,
+    [scope, connectedAccountId],
   );
 };
 
 const getWorkspaceSharedConnectedAccountIds = async (): Promise<string[]> => {
   const rows = await global.testDataSource.query(
     `SELECT id FROM core."connectedAccount"
-     WHERE "workspaceId" = $1 AND visibility = 'workspace'`,
+     WHERE "workspaceId" = $1 AND scope = 'WORKSPACE'`,
     [WORKSPACE_ID],
   );
 
@@ -68,16 +65,16 @@ const insertConnectedAccount = async ({
   id,
   provider,
   userWorkspaceId,
-  visibility = 'user',
+  scope = 'USER',
 }: {
   id: string;
   provider: 'app' | 'oidc' | 'saml' | 'email_group';
   userWorkspaceId: string;
-  visibility?: 'user' | 'workspace';
+  scope?: 'USER' | 'WORKSPACE';
 }) => {
   await global.testDataSource.query(
     `INSERT INTO core."connectedAccount"
-       (id, handle, provider, "userWorkspaceId", "workspaceId", visibility, "createdAt", "updatedAt")
+       (id, handle, provider, "userWorkspaceId", "workspaceId", scope, "createdAt", "updatedAt")
      VALUES ($1, $2, $3, $4, $5, $6, '1970-01-01T00:00:00Z', now())`,
     [
       id,
@@ -85,7 +82,7 @@ const insertConnectedAccount = async ({
       provider,
       userWorkspaceId,
       WORKSPACE_ID,
-      visibility,
+      scope,
     ],
   );
 };
@@ -264,7 +261,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
         id: emailGroupConnectedAccountId,
         provider: 'email_group',
         userWorkspaceId: PHIL_USER_WORKSPACE_ID,
-        visibility: 'workspace',
+        scope: 'WORKSPACE',
       });
 
       try {
@@ -361,11 +358,11 @@ describe('EmailComposerService connected account resolution (integration)', () =
     });
 
     it('falls back to an account shared with the whole workspace', async () => {
-      const { visibility } = await readConnectedAccountState(
+      const { scope } = await readConnectedAccountState(
         JONY_CONNECTED_ACCOUNT_ID,
       );
 
-      await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'workspace');
+      await setScope(JONY_CONNECTED_ACCOUNT_ID, 'WORKSPACE');
 
       try {
         const result = await service.composeEmail({
@@ -382,7 +379,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
           JONY_CONNECTED_ACCOUNT_ID,
         );
       } finally {
-        await setVisibility(JONY_CONNECTED_ACCOUNT_ID, visibility);
+        await setScope(JONY_CONNECTED_ACCOUNT_ID, scope);
       }
     });
 
@@ -391,7 +388,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
         await getWorkspaceSharedConnectedAccountIds();
 
       for (const connectedAccountId of sharedConnectedAccountIds) {
-        await setVisibility(connectedAccountId, 'user');
+        await setScope(connectedAccountId, 'USER');
       }
 
       try {
@@ -407,7 +404,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
         ).rejects.toThrow('available for user workspace');
       } finally {
         for (const connectedAccountId of sharedConnectedAccountIds) {
-          await setVisibility(connectedAccountId, 'workspace');
+          await setScope(connectedAccountId, 'WORKSPACE');
         }
       }
     });
