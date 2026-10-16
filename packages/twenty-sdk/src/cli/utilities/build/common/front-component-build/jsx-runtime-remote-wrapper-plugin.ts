@@ -34,34 +34,15 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
         loader: 'js' as const,
       }));
 
-      build.onResolve({ filter: /^__reads_element_ref_from_vnode__$/ }, () => ({
-        path: '__reads_element_ref_from_vnode__',
-        namespace: 'reads-element-ref-from-vnode',
+      build.onResolve({ filter: /^__uses_preact__$/ }, () => ({
+        path: '__uses_preact__',
+        namespace: 'uses-preact',
       }));
 
-      build.onLoad(
-        { filter: /.*/, namespace: 'reads-element-ref-from-vnode' },
-        () => ({
-          contents: `export const READS_ELEMENT_REF_FROM_VNODE = ${usePreact};`,
-          loader: 'js' as const,
-        }),
-      );
-
-      build.onResolve(
-        { filter: /^__runs_text_entry_change_on_input__$/ },
-        () => ({
-          path: '__runs_text_entry_change_on_input__',
-          namespace: 'runs-text-entry-change-on-input',
-        }),
-      );
-
-      build.onLoad(
-        { filter: /.*/, namespace: 'runs-text-entry-change-on-input' },
-        () => ({
-          contents: `export const RUNS_TEXT_ENTRY_CHANGE_ON_INPUT = ${usePreact};`,
-          loader: 'js' as const,
-        }),
-      );
+      build.onLoad({ filter: /.*/, namespace: 'uses-preact' }, () => ({
+        contents: `export const USES_PREACT = ${usePreact};`,
+        loader: 'js' as const,
+      }));
 
       build.onResolve({ filter: /^react\/jsx-runtime$/ }, async (args) => {
         if (args.pluginData?.skipJsxWrapper) {

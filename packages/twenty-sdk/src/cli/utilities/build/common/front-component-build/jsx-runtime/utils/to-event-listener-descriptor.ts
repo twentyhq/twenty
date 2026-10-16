@@ -1,4 +1,4 @@
-import { RUNS_TEXT_ENTRY_CHANGE_ON_INPUT } from '__runs_text_entry_change_on_input__';
+import { USES_PREACT } from '__uses_preact__';
 
 import { CAPTURE_PHASE_PROP_NAME_SUFFIX } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/constants/capture-phase-prop-name-suffix';
 import { type EventListenerDescriptor } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/types/event-listener-descriptor.type';
@@ -31,9 +31,7 @@ export const toEventListenerDescriptor = ({
     ] || lowerCaseEventPropName;
   const eventType = domEventPropName.slice(EVENT_PROP_NAME_PREFIX.length);
   const isTextEntryChange =
-    RUNS_TEXT_ENTRY_CHANGE_ON_INPUT &&
-    eventType === 'change' &&
-    isTextEntryElement(element);
+    USES_PREACT && eventType === 'change' && isTextEntryElement(element);
   const listenerType = isTextEntryChange ? 'input' : eventType;
   const listenerKey = isTextEntryChange ? 'change:input' : eventType;
 

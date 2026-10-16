@@ -12,17 +12,15 @@ import { type SyntheticLikeEvent } from '@/cli/utilities/build/common/front-comp
 type SharedHelpers = typeof JsxSharedHelpers;
 
 const loadSharedHelpers = ({
-  runsTextEntryChangeOnInput = false,
-}: { runsTextEntryChangeOnInput?: boolean } = {}): SharedHelpers => {
+  usesPreact = false,
+}: { usesPreact?: boolean } = {}): SharedHelpers => {
   const { code } = esbuild.transformSync(jsxSharedHelpersSource, {
     format: 'cjs',
     loader: 'js',
   });
   const helpersModule = { exports: {} };
   const virtualModules: Record<string, unknown> = {
-    __runs_text_entry_change_on_input__: {
-      RUNS_TEXT_ENTRY_CHANGE_ON_INPUT: runsTextEntryChangeOnInput,
-    },
+    __uses_preact__: { USES_PREACT: usesPreact },
   };
 
   new Function('module', 'exports', 'require', 'globalThis', code)(
@@ -154,9 +152,7 @@ describe('jsx runtime shared helpers', () => {
   });
 
   it('should run onChange of text entry controls on input in Preact builds, as preact/compat does', () => {
-    const { makeEventRef } = loadSharedHelpers({
-      runsTextEntryChangeOnInput: true,
-    });
+    const { makeEventRef } = loadSharedHelpers({ usesPreact: true });
     const searchInput = Object.assign(new EventTarget(), {
       tagName: 'HTML-INPUT',
       type: 'search',
@@ -200,9 +196,7 @@ describe('jsx runtime shared helpers', () => {
   });
 
   it('should keep onChange on change for checkbox, radio and file inputs in Preact builds', () => {
-    const { makeEventRef } = loadSharedHelpers({
-      runsTextEntryChangeOnInput: true,
-    });
+    const { makeEventRef } = loadSharedHelpers({ usesPreact: true });
 
     for (const type of ['checkbox', 'radio', 'file']) {
       const input = Object.assign(new EventTarget(), {
@@ -220,9 +214,7 @@ describe('jsx runtime shared helpers', () => {
   });
 
   it('should move onChange back to change when a text input becomes a checkbox in Preact builds', () => {
-    const { makeEventRef } = loadSharedHelpers({
-      runsTextEntryChangeOnInput: true,
-    });
+    const { makeEventRef } = loadSharedHelpers({ usesPreact: true });
     const input = Object.assign(new EventTarget(), {
       tagName: 'HTML-INPUT',
       type: 'text',
