@@ -438,3 +438,37 @@ export const CatalogDark: typeof Catalog = {
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
+
+export const VisualRegression: CatalogStory<Story, typeof Avatar> = {
+  tags: ['!autodocs'],
+  args: { src: undefined, name: 'Jane' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'size',
+          values: ['xs', 'sm', 'md', 'lg', 'xl'],
+          props: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => ({ size }),
+        },
+        {
+          name: 'shape',
+          values: ['square', 'rounded-square', 'circle'],
+          props: (shape: AvatarShape) => ({ shape }),
+        },
+        {
+          name: 'variant',
+          values: ['soft', 'outline'],
+          props: (variant: 'soft' | 'outline') => ({ variant }),
+        },
+      ],
+      options: { elementContainer: { style: { width: 48 } } },
+    },
+  },
+};
+
+export const VisualRegressionDark: typeof VisualRegression = {
+  ...VisualRegression,
+  globals: { colorScheme: 'dark' },
+};

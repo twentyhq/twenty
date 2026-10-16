@@ -9,7 +9,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MAIN_COLOR_NAMES } from '@ui/theme';
+import { type ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
 
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 
@@ -332,4 +332,37 @@ export const NodeContent: Story = {
     await expect(link).toHaveAttribute('href', '#enterprise-customers');
     await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
   },
+};
+
+export const VisualRegression: CatalogStory<Story, typeof Tag> = {
+  tags: ['!autodocs'],
+  argTypes: {
+    color: { control: false },
+  },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      options: { elementContainer: { style: { width: 80 } } },
+      dimensions: [
+        {
+          name: 'variants',
+          values: ['soft', 'solid', 'outline', 'ghost'],
+          props: (variant: 'soft' | 'solid' | 'outline' | 'ghost') => ({
+            variant,
+          }),
+        },
+        {
+          name: 'colors',
+          values: MAIN_COLOR_NAMES,
+          props: (color: ThemeColor) => ({ color }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const VisualRegressionDark: typeof VisualRegression = {
+  ...VisualRegression,
+  globals: { colorScheme: 'dark' },
 };

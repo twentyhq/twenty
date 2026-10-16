@@ -87,11 +87,39 @@ export const Colors: CatalogStory<Story, typeof Badge> = {
   },
 };
 
-export const CatalogAppearance: Story = {
-  ...Catalog,
+export const VisualRegression: CatalogStory<Story, typeof Badge> = {
+  tags: ['!autodocs'],
+  args: { children: 3 },
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'size',
+          values: ['xs', 'sm', 'md'] satisfies BadgeSize[],
+          props: (size: BadgeSize) => ({ size }),
+        },
+        {
+          name: 'color',
+          values: [
+            'tertiary',
+            'inherit',
+            'primary',
+            'secondary',
+          ] satisfies BadgeColor[],
+          props: (color: BadgeColor) => ({ color }),
+        },
+        {
+          name: 'shape',
+          values: ['pill', 'circle'] satisfies BadgeShape[],
+          props: (shape: BadgeShape) => ({ shape }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
   play: async ({ canvasElement }) => {
     const badges = within(canvasElement).getAllByText('3');
-    await expect(badges).toHaveLength(6);
+    await expect(badges).toHaveLength(24);
 
     for (const badge of badges) {
       await expect(badge).toBeVisible();
