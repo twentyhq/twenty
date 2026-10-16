@@ -357,6 +357,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "agentMessageReaction": {
     "fields": {
+      "agentId": {
+        "universalIdentifier": "08851641-cb7e-442c-a698-145ade9dd611",
+      },
       "createdAt": {
         "universalIdentifier": "f7d1a78c-7a05-5f20-9d7f-c53adcb5a8d3",
       },
