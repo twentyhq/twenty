@@ -1,7 +1,8 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { type SetOptional } from 'type-fest';
 
 export type UrlFilter = {
   field: string;
@@ -14,7 +15,7 @@ export const mapRecordFilterToUrlFilter = ({
   recordFilter,
   objectMetadataItem,
 }: {
-  recordFilter: RecordFilter;
+  recordFilter: SetOptional<PersistedRecordFilter, 'id'>;
   objectMetadataItem: EnrichedObjectMetadataItem;
 }): UrlFilter | null => {
   const fieldMetadataItem = objectMetadataItem.fields.find(
