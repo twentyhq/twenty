@@ -1,5 +1,5 @@
 import { RestApiClient } from 'twenty-client-sdk/rest';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 
 import { TEAMS_GENERATE_CALL_SUMMARIES_ROUTE_PATH } from 'src/features/transcripts/constants/teams-generate-call-summaries-route-path';
 import { getTeamsCallSummariesSnackbar } from 'src/features/transcripts/front-components/utils/get-teams-call-summaries-snackbar';
@@ -18,7 +18,7 @@ export const requestTeamsCallSummaries = async (
     await enqueueSnackbar(getTeamsCallSummariesSnackbar(result));
   } catch {
     await enqueueSnackbar({
-      message: 'Summary generation failed.',
+      message: t('Summary generation failed.'),
       variant: 'error',
     });
   }

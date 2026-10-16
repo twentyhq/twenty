@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type TeamsCallRecordingSummaryOutcome } from 'src/features/transcripts/logic-functions/types/teams-call-recording-summary-outcome.type';
+import { type TeamsGenerateCallSummariesResult } from 'src/features/transcripts/logic-functions/types/teams-generate-call-summaries-result.type';
 import { summarizeTeamsCallRecordingOrThrow } from 'src/features/transcripts/logic-functions/utils/summarize-teams-call-recording-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
@@ -32,12 +33,12 @@ export const regenerateTeamsCallSummaries = async ({
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingIds: string[];
-}): Promise<{
-  summarizedCallRecordingIds: string[];
-  unavailableCallRecordingIds: string[];
-  failedCallRecordingIds: string[];
-  skippedCallRecordingIds: string[];
-}> => {
+}): Promise<
+  Omit<
+    Extract<TeamsGenerateCallSummariesResult, { outcome: 'processed' }>,
+    'outcome'
+  >
+> => {
   const summarizedCallRecordingIds: string[] = [];
   const unavailableCallRecordingIds: string[] = [];
   const failedCallRecordingIds: string[] = [];
@@ -48,10 +49,6 @@ export const regenerateTeamsCallSummaries = async ({
       coreApiClient,
       callRecordingId,
     });
-
-    if (outcome === 'disabled') {
-      break;
-    }
 
     if (outcome === 'summarized') {
       summarizedCallRecordingIds.push(callRecordingId);

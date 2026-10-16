@@ -7,11 +7,9 @@ import { chunkIntoBatches } from 'src/features/transcripts/logic-functions/utils
 export const findTeamsCallRecordingIdsOrThrow = async ({
   coreApiClient,
   callRecordingIds,
-  calendarEventIds,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query'>;
   callRecordingIds: string[];
-  calendarEventIds: string[];
 }): Promise<string[]> => {
   const applicationId = process.env.APPLICATION_ID;
 
@@ -19,25 +17,20 @@ export const findTeamsCallRecordingIdsOrThrow = async ({
     return [];
   }
 
-  const selectionFilters =
-    callRecordingIds.length > 0
-      ? chunkIntoBatches(callRecordingIds, TWENTY_QUERY_MAX_RECORDS).map(
-          (batch) => ({ id: { in: batch } }),
-        )
-      : chunkIntoBatches(calendarEventIds, TWENTY_QUERY_MAX_RECORDS).map(
-          (batch) => ({ calendarEventId: { in: batch } }),
-        );
-
   const teamsCallRecordingIds: string[] = [];
 
-  for (const selectionFilter of selectionFilters) {
+  for (const batch of chunkIntoBatches(
+    callRecordingIds,
+    TWENTY_QUERY_MAX_RECORDS,
+  )) {
     const queryResult: {
       callRecordings?: { edges?: { node: { id: string } }[] };
     } = await coreApiClient.query({
       callRecordings: {
         __args: {
           filter: {
-            and: [selectionFilter, { applicationId: { eq: applicationId } }],
+            id: { in: batch },
+            applicationId: { eq: applicationId },
           },
           first: TWENTY_QUERY_MAX_RECORDS,
         },
@@ -50,5 +43,5 @@ export const findTeamsCallRecordingIdsOrThrow = async ({
     );
   }
 
-  return [...new Set(teamsCallRecordingIds)];
+  return teamsCallRecordingIds;
 };
