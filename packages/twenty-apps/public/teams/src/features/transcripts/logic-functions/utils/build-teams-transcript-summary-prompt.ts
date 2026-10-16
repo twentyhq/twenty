@@ -5,11 +5,6 @@ const UNKNOWN_SPEAKER = 'Unknown speaker';
 const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_HOUR = 3_600;
 
-const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  isObject(value) && !isArray(value)
-    ? (value as Record<string, unknown>)
-    : undefined;
-
 const formatClockTimestamp = (totalSeconds: number): string => {
   const wholeSeconds = Math.max(0, Math.floor(totalSeconds));
   const hours = Math.floor(wholeSeconds / SECONDS_PER_HOUR);
@@ -23,23 +18,39 @@ const formatClockTimestamp = (totalSeconds: number): string => {
     : `${minutes}:${seconds}`;
 };
 
+const getWordText = (word: unknown): unknown =>
+  isObject(word) && 'text' in word ? word.text : undefined;
+
+const getWordStartSeconds = (word: unknown): unknown =>
+  isObject(word) &&
+  'start_timestamp' in word &&
+  isObject(word.start_timestamp) &&
+  'relative' in word.start_timestamp
+    ? word.start_timestamp.relative
+    : undefined;
+
+const getParticipantName = (entry: object): unknown =>
+  'participant' in entry &&
+  isObject(entry.participant) &&
+  'name' in entry.participant
+    ? entry.participant.name
+    : undefined;
+
 const findEntryStartSeconds = (words: unknown[]): number | undefined =>
   words
-    .map((word) => asRecord(asRecord(word)?.start_timestamp)?.relative)
+    .map(getWordStartSeconds)
     .find(
       (relative): relative is number =>
         isNumber(relative) && Number.isFinite(relative),
     );
 
 const buildTranscriptLine = (entry: unknown): string | undefined => {
-  const record = asRecord(entry);
-
-  if (!isDefined(record) || !isArray(record.words)) {
+  if (!isObject(entry) || !('words' in entry) || !isArray(entry.words)) {
     return undefined;
   }
 
-  const text = record.words
-    .map((word) => asRecord(word)?.text)
+  const text = entry.words
+    .map(getWordText)
     .filter(isNonEmptyString)
     .map((word) => word.trim())
     .join(' ')
@@ -49,11 +60,11 @@ const buildTranscriptLine = (entry: unknown): string | undefined => {
     return undefined;
   }
 
-  const participantName = asRecord(record.participant)?.name;
+  const participantName = getParticipantName(entry);
   const speakerName = isNonEmptyString(participantName)
     ? participantName.trim()
     : UNKNOWN_SPEAKER;
-  const startSeconds = findEntryStartSeconds(record.words);
+  const startSeconds = findEntryStartSeconds(entry.words);
   const timestamp = isDefined(startSeconds)
     ? `[${formatClockTimestamp(startSeconds)}] `
     : '';
