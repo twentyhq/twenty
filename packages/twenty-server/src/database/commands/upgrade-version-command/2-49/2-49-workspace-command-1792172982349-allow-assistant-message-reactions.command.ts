@@ -22,7 +22,7 @@ const WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER =
 const AGENT_ID_FIELD_UNIVERSAL_IDENTIFIER =
   REACTION.fields.agentId.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.49.0', 1792170152518)
+@RegisteredWorkspaceCommand('2.49.0', 1792172982349)
 @Command({
   name: 'upgrade:2-49:allow-assistant-message-reactions',
   description:
