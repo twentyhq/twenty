@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
-import { IconCalendar, IconVideo } from 'twenty-ui/icon';
-import { ICON } from 'twenty-ui/theme';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+import { IconCalendar } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CallRecordingRowMetadata } from 'src/front-components/components/CallRecordingRowMetadata';
@@ -33,15 +33,11 @@ const StyledRowButton = styled(
   }
 `;
 
-const StyledVideoTile = styled.span`
-  align-items: center;
-  background: ${() => themeCssVariables.color.purple};
+const StyledAppIconTile = styled.img`
   border-radius: ${() => themeCssVariables.border.radius.sm};
-  color: ${() => themeCssVariables.grayScale.gray1};
-  display: flex;
+  display: block;
   flex-shrink: 0;
   height: ${() => themeCssVariables.spacing[6]};
-  justify-content: center;
   width: ${() => themeCssVariables.spacing[6]};
 `;
 
@@ -86,9 +82,7 @@ export const CallRecordingRow = ({
 
   return (
     <StyledRowButton type="button" onClick={handleClick}>
-      <StyledVideoTile>
-        <IconVideo size={ICON.size.sm} stroke={ICON.stroke.sm} />
-      </StyledVideoTile>
+      <StyledAppIconTile src={getPublicAssetUrl('logo.svg')} alt="" aria-hidden />
       <StyledTitle title={title}>{title}</StyledTitle>
       <StyledRightContent>
         <CallRecordingRowStatus
