@@ -27,5 +27,6 @@ export const buildFetchedCalendarEvent = (
     },
   ],
   status: 'confirmed',
+  organizerHandle: '',
   ...overrides,
 });

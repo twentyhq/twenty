@@ -1,0 +1,5 @@
+export type CalendarEventChannelRole =
+  | 'ONLY_CHANNEL'
+  | 'ORGANIZER_CHANNEL'
+  | 'ATTENDEE_CHANNEL'
+  | 'ATTENDEE_CHANNEL_WITH_ORGANIZER_SYNCING';
