@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-sdk/utils';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineUninstallLogicFunction } from 'twenty-sdk/define';
 
@@ -98,7 +99,7 @@ export const cancelRecallBotsOnUninstallHandler =
     const canceledRecordingIds = openCallRecordings
       .filter(
         ({ externalBotId }) =>
-          externalBotId !== undefined && canceledBotIds.has(externalBotId),
+          isDefined(externalBotId) && canceledBotIds.has(externalBotId),
       )
       .map(({ id }) => id);
 

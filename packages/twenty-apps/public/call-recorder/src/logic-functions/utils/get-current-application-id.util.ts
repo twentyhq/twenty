@@ -1,23 +1,14 @@
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { getAppAccessTokenPayload } from 'src/logic-functions/utils/get-app-access-token-payload.util';
+import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const getCurrentApplicationId = (): string => {
-  const encodedPayload = process.env.TWENTY_APP_ACCESS_TOKEN?.split('.')[1];
+  const applicationId = getString(getAppAccessTokenPayload()?.applicationId);
 
-  if (!isNonEmptyString(encodedPayload)) {
-    throw new Error('Application access token unavailable');
-  }
-
-  const payload: unknown = JSON.parse(
-    Buffer.from(encodedPayload, 'base64url').toString('utf8'),
-  );
-
-  if (
-    !isObject(payload) ||
-    !('applicationId' in payload) ||
-    !isNonEmptyString(payload.applicationId)
-  ) {
+  if (!isNonEmptyString(applicationId)) {
     throw new Error('Application ID unavailable');
   }
 
-  return payload.applicationId;
+  return applicationId;
 };

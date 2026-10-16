@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-sdk/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -5,7 +6,6 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
-import { type ConnectionPage } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { getCurrentApplicationId } from 'src/logic-functions/utils/get-current-application-id.util';
@@ -17,16 +17,16 @@ export const syncCallRecordingCalendarParticipantHandler = async (
 ): Promise<void> => {
   const body = asRecord(payload);
   const recordId = getString(body?.recordId);
-  const after = getString(body?.after);
-  const client = new CoreApiClient();
+  const afterCursor = getString(body?.after);
+  const client = new CoreApiClient({ runAs: 'application' });
   const applicationId = getCurrentApplicationId();
   const properties = asRecord(body?.properties);
-  if (properties) {
-    const before = asRecord(properties.before);
-    const after = asRecord(properties.after);
+  if (isDefined(properties)) {
+    const beforeSnapshot = asRecord(properties.before);
+    const afterSnapshot = asRecord(properties.after);
     if (
-      before?.applicationId !== applicationId &&
-      after?.applicationId !== applicationId
+      beforeSnapshot?.applicationId !== applicationId &&
+      afterSnapshot?.applicationId !== applicationId
     ) {
       return;
     }
@@ -51,22 +51,20 @@ export const syncCallRecordingCalendarParticipantHandler = async (
           },
           first: TWENTY_PAGE_SIZE,
           orderBy: [{ id: 'AscNullsLast' }],
-          ...(isNonEmptyString(after) ? { after } : {}),
+          ...(isNonEmptyString(afterCursor) ? { after: afterCursor } : {}),
         },
         pageInfo: { hasNextPage: true, endCursor: true },
         edges: { node: { id: true } },
       },
     });
-    const page = result.callRecordings as
-      | ConnectionPage<{ id: string }>
-      | undefined;
-    if (!page) {
+    const page = result.callRecordings;
+    if (!isDefined(page)) {
       throw new Error('Calendar participant backfill returned no connection');
     }
     const nextCursor = page.pageInfo?.endCursor;
     if (
       page.pageInfo?.hasNextPage &&
-      (!isNonEmptyString(nextCursor) || nextCursor === after)
+      (!isNonEmptyString(nextCursor) || nextCursor === afterCursor)
     ) {
       throw new Error(
         'Calendar participant backfill returned an invalid cursor',

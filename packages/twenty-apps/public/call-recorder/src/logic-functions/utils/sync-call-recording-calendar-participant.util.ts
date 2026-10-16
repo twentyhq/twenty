@@ -1,7 +1,13 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+
+type ParticipantAction =
+  | { action: 'skip' | 'remove' }
+  | { action: 'upsert'; calendarEventId: string };
 
 export const syncCallRecordingCalendarParticipant = async ({
   client,
@@ -12,7 +18,7 @@ export const syncCallRecordingCalendarParticipant = async ({
   applicationId: string;
   callRecordingId: string;
 }): Promise<void> => {
-  const readCalendarEventId = async (): Promise<string | null | undefined> => {
+  const readParticipantAction = async (): Promise<ParticipantAction> => {
     const result = await client.query({
       callRecordings: {
         __args: {
@@ -31,33 +37,31 @@ export const syncCallRecordingCalendarParticipant = async ({
         },
       },
     });
-    const recording = result.callRecordings?.edges?.[0]?.node as
-      | {
-          applicationId?: string | null;
-          calendarEventId?: string | null;
-          externalBotId?: string | null;
-          status?: string | null;
-        }
-      | undefined;
+    const recording = result.callRecordings?.edges?.[0]?.node;
 
-    if (recording && recording.applicationId !== applicationId) {
-      return null;
+    if (isDefined(recording) && recording.applicationId !== applicationId) {
+      return { action: 'skip' };
     }
 
-    return !recording?.calendarEventId ||
+    if (
+      !isDefined(recording) ||
+      !isNonEmptyString(recording.calendarEventId) ||
       recording.status === CallRecordingStatus.NOT_RECORDED ||
-      !recording.externalBotId?.trim()
-      ? undefined
-      : recording.calendarEventId;
+      !isNonEmptyString(recording.externalBotId?.trim())
+    ) {
+      return { action: 'remove' };
+    }
+
+    return { action: 'upsert', calendarEventId: recording.calendarEventId };
   };
 
-  let calendarEventId = await readCalendarEventId();
-  if (calendarEventId === null) {
+  let participantAction = await readParticipantAction();
+  if (participantAction.action === 'skip') {
     return;
   }
 
   for (let attempt = 0; attempt < 3; attempt++) {
-    if (!calendarEventId) {
+    if (participantAction.action === 'remove') {
       await client.mutation({
         destroyCalendarEventParticipants: {
           __args: {
@@ -68,9 +72,9 @@ export const syncCallRecordingCalendarParticipant = async ({
           id: true,
         },
       });
-    } else {
+    } else if (participantAction.action === 'upsert') {
       const data = {
-        calendarEventId,
+        calendarEventId: participantAction.calendarEventId,
         handle: APP_DISPLAY_NAME,
         displayName: APP_DISPLAY_NAME,
         isOrganizer: false,
@@ -99,20 +103,24 @@ export const syncCallRecordingCalendarParticipant = async ({
             id: true,
           },
         });
-        if ((result.updateCalendarEventParticipants ?? []).length === 0) {
+        if (!isDefined(result.updateCalendarEventParticipants?.[0])) {
           throw error;
         }
       }
     }
 
-    const currentCalendarEventId = await readCalendarEventId();
+    const currentAction = await readParticipantAction();
     if (
-      currentCalendarEventId === null ||
-      currentCalendarEventId === calendarEventId
+      currentAction.action === 'skip' ||
+      (currentAction.action === 'remove' &&
+        participantAction.action === 'remove') ||
+      (currentAction.action === 'upsert' &&
+        participantAction.action === 'upsert' &&
+        currentAction.calendarEventId === participantAction.calendarEventId)
     ) {
       return;
     }
-    calendarEventId = currentCalendarEventId;
+    participantAction = currentAction;
   }
 
   throw new Error(

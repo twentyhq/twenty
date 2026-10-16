@@ -1,13 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { client, enqueue, sync } = vi.hoisted(() => ({
+const { client, enqueue, sync, clientOptions } = vi.hoisted(() => ({
+  clientOptions: vi.fn(),
   client: { query: vi.fn(), mutation: vi.fn() },
   enqueue: vi.fn(),
   sync: vi.fn(),
 }));
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
-    constructor() {
+    constructor(options: unknown) {
+      clientOptions(options);
       return client;
     }
   },
@@ -44,6 +46,7 @@ describe('calendar participant synchronization trigger', () => {
         after: { externalBotId: 'old-bot', applicationId: 'app-id' },
       },
     });
+    expect(clientOptions).toHaveBeenCalledWith({ runAs: 'application' });
     expect(sync).toHaveBeenCalledWith({
       client,
       applicationId: 'app-id',
