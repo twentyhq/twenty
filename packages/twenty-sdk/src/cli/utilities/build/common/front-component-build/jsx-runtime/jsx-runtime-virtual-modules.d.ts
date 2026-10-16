@@ -24,3 +24,7 @@ declare module '__jsx_shared_helpers__' {
 declare module '__reads_element_ref_from_vnode__' {
   export const READS_ELEMENT_REF_FROM_VNODE: boolean;
 }
+
+declare module '__runs_text_entry_change_on_input__' {
+  export const RUNS_TEXT_ENTRY_CHANGE_ON_INPUT: boolean;
+}
