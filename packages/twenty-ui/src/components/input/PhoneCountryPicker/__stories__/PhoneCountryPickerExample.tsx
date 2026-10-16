@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
+import { type DropdownSelectionGroupChangeEventDetails } from '@ui/components/navigation/Dropdown/types/DropdownSelectionGroupChangeEventDetails';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { themeCssVariables } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -10,26 +11,50 @@ import { type PhoneCountryOption } from '../types/PhoneCountryOption';
 import { PHONE_COUNTRY_OPTIONS } from './phoneCountryOptions';
 
 type PhoneCountryPickerExampleProps = {
-  initialValue?: string;
+  initialValue?: string | null;
+  composition?: 'shorthand' | 'compound';
+  controlled?: boolean;
   disabled?: boolean;
   label?: string;
   countries?: readonly PhoneCountryOption[];
   searchLabel?: string;
+  listLabel?: string;
   emptyLabel?: string;
-  onValueChange?: (value: string) => void;
+  onValueChange?: (
+    value: string | null,
+    eventDetails: DropdownSelectionGroupChangeEventDetails,
+  ) => void;
 };
 
 export const PhoneCountryPickerExample = ({
   initialValue = 'FR',
+  composition = 'shorthand',
+  controlled = false,
   disabled = false,
   label = 'Phone country',
   countries = PHONE_COUNTRY_OPTIONS,
   searchLabel,
+  listLabel,
   emptyLabel,
   onValueChange,
 }: PhoneCountryPickerExampleProps) => {
   const [value, setValue] = useState(initialValue);
   const country = countries.find((choice) => choice.value === value);
+  const handleValueChange = ({
+    nextValue,
+    eventDetails,
+  }: {
+    nextValue: string | null;
+    eventDetails: DropdownSelectionGroupChangeEventDetails;
+  }) => {
+    onValueChange?.(nextValue, eventDetails);
+
+    if (eventDetails.isCanceled) {
+      return;
+    }
+
+    setValue(nextValue);
+  };
 
   return (
     <Text
@@ -41,25 +66,41 @@ export const PhoneCountryPickerExample = ({
       }}
     >
       <Text>{label}</Text>
-      <Dropdown.Root type="picker">
-        <PhoneCountryPicker.Trigger
+      {composition === 'shorthand' ? (
+        <PhoneCountryPicker
           aria-label={label}
-          country={country}
+          countries={countries}
+          value={controlled ? value : undefined}
+          defaultValue={initialValue}
+          onValueChange={(nextValue, eventDetails) =>
+            handleValueChange({ nextValue, eventDetails })
+          }
           disabled={disabled}
+          contentProps={{ 'aria-label': `${label} choices`, width: 280 }}
+          optionsProps={{ searchLabel, listLabel, emptyLabel }}
         />
-        <Dropdown.Content aria-label={`${label} choices`} width={280}>
-          <PhoneCountryPicker.Options
-            countries={countries}
-            value={value}
-            onValueChange={(nextValue) => {
-              setValue(nextValue);
-              onValueChange?.(nextValue);
-            }}
-            searchLabel={searchLabel}
-            emptyLabel={emptyLabel}
-          />
-        </Dropdown.Content>
-      </Dropdown.Root>
+      ) : (
+        <PhoneCountryPicker.Root
+          countries={countries}
+          value={controlled ? value : undefined}
+          defaultValue={initialValue}
+          onValueChange={(nextValue, eventDetails) =>
+            handleValueChange({ nextValue, eventDetails })
+          }
+          disabled={disabled}
+        >
+          <Dropdown.Root type="picker">
+            <PhoneCountryPicker.Trigger aria-label={label} />
+            <Dropdown.Content aria-label={`${label} choices`} width={280}>
+              <PhoneCountryPicker.Options
+                searchLabel={searchLabel}
+                listLabel={listLabel}
+                emptyLabel={emptyLabel}
+              />
+            </Dropdown.Content>
+          </Dropdown.Root>
+        </PhoneCountryPicker.Root>
+      )}
       <Text
         role="status"
         aria-label={`${label} selection`}

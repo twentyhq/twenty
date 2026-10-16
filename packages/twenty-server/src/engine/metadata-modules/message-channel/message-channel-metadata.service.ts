@@ -331,7 +331,7 @@ export class MessageChannelMetadataService {
       userWorkspaceId,
       accessToken: null,
       refreshToken: null,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
     });
 
     const trimmedDisplayName = displayName?.trim();
