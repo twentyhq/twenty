@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { IconSettingsAutomation } from 'twenty-ui/icon';
@@ -26,14 +27,16 @@ import {
   useCoreWorkflows,
 } from '@/object-core/workflows/hooks/useCoreWorkflows';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
   getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
-export const WorkflowCoreIndexPage = () => {
+const WorkflowCoreIndexContent = () => {
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
     CORE_WORKFLOWS_TABLE_ID,
   );
@@ -145,4 +148,16 @@ export const WorkflowCoreIndexPage = () => {
       )}
     </CoreObjectIndexPageLayout>
   );
+};
+
+export const WorkflowCoreIndexPage = () => {
+  const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
+
+  if (!canManageWorkflows) {
+    return (
+      <WorkspaceRouteUnavailable>{t`You do not have permission to access workflows.`}</WorkspaceRouteUnavailable>
+    );
+  }
+
+  return <WorkflowCoreIndexContent />;
 };
