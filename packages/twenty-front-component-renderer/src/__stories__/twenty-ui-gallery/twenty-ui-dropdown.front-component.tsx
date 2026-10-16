@@ -14,7 +14,11 @@ const DropdownExample = () => {
   const [query, setQuery] = useState('');
   const [selection, setSelection] = useState('Unassigned');
   const [actionCount, setActionCount] = useState(0);
-  const matchingAssignees = ASSIGNEES.filter((assignee) =>
+  const [isLastAssigneeFirst, setIsLastAssigneeFirst] = useState(false);
+  const rankedAssignees = isLastAssigneeFirst
+    ? [...ASSIGNEES].reverse()
+    : ASSIGNEES;
+  const matchingAssignees = rankedAssignees.filter((assignee) =>
     assignee.toLowerCase().includes(query.toLowerCase()),
   );
 
@@ -77,6 +81,12 @@ const DropdownExample = () => {
               ))}
               <Dropdown.ActionItem onClick={() => setSelection('New person')}>
                 Create person
+              </Dropdown.ActionItem>
+              <Dropdown.ActionItem
+                closeOnClick={false}
+                onClick={() => setIsLastAssigneeFirst(true)}
+              >
+                Rank last first
               </Dropdown.ActionItem>
             </Dropdown.Section>
           </Dropdown.Page>

@@ -73,6 +73,7 @@
       "ignoreDependencies": [
         "@babel/preset-typescript",
         "buffer",
+        "emojibase-data",
         "esbuild",
         "playwright",
         "rollup-plugin-node-polyfills"

@@ -6,13 +6,16 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SendChatMessageDocument } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -185,6 +188,41 @@ describe('useAgentChat', () => {
     await send(result);
 
     expect(attachChatThreadToRecord).not.toHaveBeenCalled();
+  });
+
+  it('keeps the composer while attachments upload and clears it on send', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+    });
+    const restoreEditorContent = jest.fn();
+
+    window.addEventListener(
+      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      restoreEditorContent,
+    );
+    jotaiStore.set(agentChatSelectedFilesState.atom, [
+      new File(['brief'], 'brief.pdf'),
+    ]);
+
+    await send(result);
+
+    expect(restoreEditorContent).not.toHaveBeenCalled();
+
+    jotaiStore.set(agentChatSelectedFilesState.atom, []);
+
+    await send(result);
+
+    expect(restoreEditorContent).toHaveBeenCalledWith(
+      expect.objectContaining({ detail: { content: '' } }),
+    );
+
+    window.removeEventListener(
+      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      restoreEditorContent,
+    );
   });
 
   it('does not file a chat that mentions no record', async () => {

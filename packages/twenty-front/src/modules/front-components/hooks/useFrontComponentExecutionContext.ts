@@ -47,6 +47,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { openRecordInPreferenceState } from '@/workspace-member/states/openRecordInPreferenceState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -298,7 +299,7 @@ export const useFrontComponentExecutionContext = ({
         const resolvedOpenRecordIn = resolveOpenRecordIn({
           objectOpenRecordIn:
             objectMetadataItem?.openRecordIn ?? ObjectOpenRecordIn.USER_CHOICE,
-          openRecordInPreference: OpenRecordIn.SIDE_PANEL,
+          openRecordInPreference: store.get(openRecordInPreferenceState.atom),
           canDisplaySidePanel: !isMobile,
         });
 

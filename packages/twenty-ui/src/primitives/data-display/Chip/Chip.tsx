@@ -66,6 +66,7 @@ export const Chip = ({
             <OverflowingTextWithTooltip
               {...textProps}
               render={<span />}
+              className={styles.label}
               style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
               truncate={truncate}
               tooltipDelay={tooltipDelay}
