@@ -17,14 +17,18 @@ export const DropdownPickerExample = ({
 }) => {
   const [search, setSearch] = useState('');
   const [people, setPeople] = useState(PEOPLE);
-  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
   const results = people.filter((person) =>
     person.toLowerCase().includes(search.toLowerCase()),
   );
   const hasSearch = isNonEmptyString(search.trim());
+  const options = results.map((person) => (
+    <Dropdown.OptionItem key={person} value={person}>
+      {person}
+    </Dropdown.OptionItem>
+  ));
 
   return (
-    <Dropdown.Root type="picker" multiple={multiple}>
+    <Dropdown.Root type="picker">
       <Dropdown.Trigger render={<Button>Choose people</Button>} />
       <Dropdown.Content aria-label="Choose people" width={280}>
         <Dropdown.Search
@@ -47,28 +51,14 @@ export const DropdownPickerExample = ({
           </Dropdown.ActionItem>
           {loading ? (
             <Dropdown.Loading>Loading people</Dropdown.Loading>
+          ) : multiple ? (
+            <Dropdown.SelectionGroup id="people" aria-label="People" multiple>
+              {options}
+            </Dropdown.SelectionGroup>
           ) : (
-            results.map((person) => (
-              <Dropdown.OptionItem
-                key={person}
-                selected={selectedPeople.includes(person)}
-                onSelect={() =>
-                  setSelectedPeople((current) => {
-                    if (!multiple) {
-                      return [person];
-                    }
-
-                    return current.includes(person)
-                      ? current.filter(
-                          (selectedPerson) => selectedPerson !== person,
-                        )
-                      : [...current, person];
-                  })
-                }
-              >
-                {person}
-              </Dropdown.OptionItem>
-            ))
+            <Dropdown.SelectionGroup id="people" aria-label="People">
+              {options}
+            </Dropdown.SelectionGroup>
           )}
           {!loading && !isNonEmptyArray(results) && (
             <Dropdown.Empty>No people found</Dropdown.Empty>

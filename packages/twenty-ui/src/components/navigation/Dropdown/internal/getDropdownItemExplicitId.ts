@@ -1,11 +1,13 @@
-import { isValidElement, type ReactElement } from 'react';
+import { isValidElement } from 'react';
+
+import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
 
 export const getDropdownItemExplicitId = ({
   id,
   render,
 }: {
   id?: string;
-  render?: ReactElement;
+  render?: DropdownOptionItemProps['render'];
 }) => {
   if (!isValidElement<{ id?: string }>(render)) {
     return id;
