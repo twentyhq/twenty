@@ -1,6 +1,5 @@
 import { type ApolloClient, gql } from '@apollo/client';
 import { isUndefined } from '@sniptt/guards';
-import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -22,54 +21,53 @@ export const usePerformCombinedFindManyRecords = () => {
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const generateCombinedFindManyRecordsQuery = useCallback(
-    (
-      operationSignatures: RecordGqlOperationSignature[],
-      objectMetadataItemsValue: EnrichedObjectMetadataItem[],
-    ) => {
-      const filterPerMetadataItemArray = operationSignatures
-        .map(
-          ({ objectNameSingular }) =>
-            `$filter${capitalize(objectNameSingular)}: ${capitalize(
-              objectNameSingular,
-            )}FilterInput`,
-        )
-        .join(', ');
+  const generateCombinedFindManyRecordsQuery = (
+    operationSignatures: RecordGqlOperationSignature[],
+    objectMetadataItemsValue: EnrichedObjectMetadataItem[],
+  ) => {
+    const filterPerMetadataItemArray = operationSignatures
+      .map(
+        ({ objectNameSingular }) =>
+          `$filter${capitalize(objectNameSingular)}: ${capitalize(
+            objectNameSingular,
+          )}FilterInput`,
+      )
+      .join(', ');
 
-      const orderByPerMetadataItemArray = operationSignatures
-        .map(
-          ({ objectNameSingular }) =>
-            `$orderBy${capitalize(objectNameSingular)}: [${capitalize(
-              objectNameSingular,
-            )}OrderByInput]`,
-        )
-        .join(', ');
+    const orderByPerMetadataItemArray = operationSignatures
+      .map(
+        ({ objectNameSingular }) =>
+          `$orderBy${capitalize(objectNameSingular)}: [${capitalize(
+            objectNameSingular,
+          )}OrderByInput]`,
+      )
+      .join(', ');
 
-      const cursorFilteringPerMetadataItemArray = operationSignatures
-        .map(
-          ({ objectNameSingular }) =>
-            `$after${capitalize(objectNameSingular)}: String, $before${capitalize(objectNameSingular)}: String, $first${capitalize(objectNameSingular)}: Int, $last${capitalize(objectNameSingular)}: Int`,
-        )
-        .join(', ');
+    const cursorFilteringPerMetadataItemArray = operationSignatures
+      .map(
+        ({ objectNameSingular }) =>
+          `$after${capitalize(objectNameSingular)}: String, $before${capitalize(objectNameSingular)}: String, $first${capitalize(objectNameSingular)}: Int, $last${capitalize(objectNameSingular)}: Int`,
+      )
+      .join(', ');
 
-      const queryOperationSignatureWithObjectMetadataItemArray =
-        operationSignatures.map((operationSignature) => {
-          const objectMetadataItem = objectMetadataItemsValue.find(
-            (objectMetadataItem) =>
-              objectMetadataItem.nameSingular ===
-              operationSignature.objectNameSingular,
+    const queryOperationSignatureWithObjectMetadataItemArray =
+      operationSignatures.map((operationSignature) => {
+        const objectMetadataItem = objectMetadataItemsValue.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.nameSingular ===
+            operationSignature.objectNameSingular,
+        );
+
+        if (isUndefined(objectMetadataItem)) {
+          throw new Error(
+            `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
           );
+        }
 
-          if (isUndefined(objectMetadataItem)) {
-            throw new Error(
-              `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
-            );
-          }
+        return { operationSignature, objectMetadataItem };
+      });
 
-          return { operationSignature, objectMetadataItem };
-        });
-
-      return gql`
+    return gql`
     query CombinedFindManyRecords(
       ${filterPerMetadataItemArray}, 
       ${orderByPerMetadataItemArray}, 
@@ -108,56 +106,45 @@ export const usePerformCombinedFindManyRecords = () => {
         .join('\n')}
     }
   `;
-    },
-    [objectMetadataItems, objectPermissionsByObjectMetadataId],
-  );
+  };
 
-  const performCombinedFindManyRecords = useCallback(
-    async ({
+  const performCombinedFindManyRecords = async ({
+    operationSignatures,
+    client: customClient,
+  }: {
+    operationSignatures: RecordGqlOperationSignature[];
+    client?: ApolloClient;
+  }) => {
+    const apolloClient = customClient || apolloCoreClient;
+
+    const findManyQuery = generateCombinedFindManyRecordsQuery(
       operationSignatures,
-      client: customClient,
-    }: {
-      operationSignatures: RecordGqlOperationSignature[];
-      client?: ApolloClient;
-    }) => {
-      const apolloClient = customClient || apolloCoreClient;
+      objectMetadataItems,
+    );
 
-      const findManyQuery = generateCombinedFindManyRecordsQuery(
-        operationSignatures,
-        objectMetadataItems,
-      );
+    const queryVariables = generateCombinedFindManyRecordsQueryVariables({
+      operationSignatures,
+    });
 
-      const queryVariables = generateCombinedFindManyRecordsQueryVariables({
-        operationSignatures,
+    const { data } =
+      await apolloClient.query<CombinedFindManyRecordsQueryResult>({
+        query: findManyQuery ?? EMPTY_QUERY,
+        variables: queryVariables,
       });
 
-      const { data } =
-        await apolloClient.query<CombinedFindManyRecordsQueryResult>({
-          query: findManyQuery ?? EMPTY_QUERY,
-          variables: queryVariables,
-        });
+    const resultWithoutConnection = Object.fromEntries(
+      Object.entries(data ?? {}).map(([namePlural, objectRecordConnection]) => [
+        namePlural,
+        getRecordsFromRecordConnection({
+          recordConnection: objectRecordConnection,
+        }),
+      ]),
+    );
 
-      const resultWithoutConnection = Object.fromEntries(
-        Object.entries(data ?? {}).map(
-          ([namePlural, objectRecordConnection]) => [
-            namePlural,
-            getRecordsFromRecordConnection({
-              recordConnection: objectRecordConnection,
-            }),
-          ],
-        ),
-      );
-
-      return {
-        result: resultWithoutConnection,
-      };
-    },
-    [
-      apolloCoreClient,
-      generateCombinedFindManyRecordsQuery,
-      objectMetadataItems,
-    ],
-  );
+    return {
+      result: resultWithoutConnection,
+    };
+  };
 
   return { performCombinedFindManyRecords };
 };

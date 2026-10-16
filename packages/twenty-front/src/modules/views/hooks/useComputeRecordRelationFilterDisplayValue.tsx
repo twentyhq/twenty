@@ -1,26 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
-import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
+import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeRelationFilterDisplayValue } from '@/views/utils/computeRelationFilterDisplayValue';
 
 import { t } from '@lingui/core/macro';
-import { useToast } from 'twenty-ui/components/feedback';
+import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
   isNonEmptyArray,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
-import { logError } from '~/utils/logError';
 
 type UseComputeRecordRelationFilterDisplayValueParams = {
   recordFilter: RecordFilter;
@@ -31,10 +26,6 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   recordFilter,
 }: UseComputeRecordRelationFilterDisplayValueParams) => {
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { performCombinedFindManyRecords } =
-    usePerformCombinedFindManyRecords();
-  const { enqueueToast } = useToast();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
     throw new Error('recordFilter.fieldMetadataId is not defined');
@@ -48,23 +39,14 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     objectMetadataItems,
   });
 
-  const readableTargetObjectMetadataItems = useMemo(() => {
+  const targetObjectMetadataItems = useMemo(() => {
     const targetObjectMetadataIds =
       getTargetObjectMetadataIdsFromField(fieldMetadataItem);
 
-    return objectMetadataItems.filter(
-      (objectMetadataItem) =>
-        targetObjectMetadataIds.includes(objectMetadataItem.id) &&
-        getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          objectMetadataItem.id,
-        ).canReadObjectRecords,
+    return objectMetadataItems.filter((objectMetadataItem) =>
+      targetObjectMetadataIds.includes(objectMetadataItem.id),
     );
-  }, [
-    fieldMetadataItem,
-    objectMetadataItems,
-    objectPermissionsByObjectMetadataId,
-  ]);
+  }, [fieldMetadataItem, objectMetadataItems]);
 
   const { isCurrentWorkspaceMemberSelected, selectedRecordIds } = useMemo(
     () =>
@@ -79,72 +61,32 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     [recordFilter.value],
   );
 
-  const shouldFetchSelectedRecords =
-    isNonEmptyArray(selectedRecordIds) &&
-    isNonEmptyArray(readableTargetObjectMetadataItems);
+  const operationSignatures = useMemo(
+    () =>
+      isNonEmptyArray(selectedRecordIds)
+        ? targetObjectMetadataItems.map(
+            (targetObjectMetadataItem): RecordGqlOperationSignature => ({
+              objectNameSingular: targetObjectMetadataItem.nameSingular,
+              variables: { filter: { id: { in: selectedRecordIds } } },
+              fields: buildIdentifierGqlFields(targetObjectMetadataItem),
+            }),
+          )
+        : [],
+    [selectedRecordIds, targetObjectMetadataItems],
+  );
 
-  const [
-    selectedRecordsByObjectNamePlural,
-    setSelectedRecordsByObjectNamePlural,
-  ] = useState<Record<string, ObjectRecord[]>>({});
-  const [loading, setLoading] = useState(shouldFetchSelectedRecords);
-
-  // A filter chip has no user event to fetch from, so load whenever the selected ids or targets change.
-  useEffect(() => {
-    if (!shouldFetchSelectedRecords) {
-      setSelectedRecordsByObjectNamePlural({});
-      setLoading(false);
-      return;
-    }
-
-    let isStale = false;
-
-    setLoading(true);
-
-    performCombinedFindManyRecords({
-      operationSignatures: readableTargetObjectMetadataItems.map(
-        (targetObjectMetadataItem) => ({
-          objectNameSingular: targetObjectMetadataItem.nameSingular,
-          variables: { filter: { id: { in: selectedRecordIds } } },
-          fields: buildIdentifierGqlFields(targetObjectMetadataItem),
-        }),
-      ),
-    })
-      .then(({ result }) => {
-        if (!isStale) {
-          setSelectedRecordsByObjectNamePlural(result);
-        }
-      })
-      .catch((error: unknown) => {
-        if (!isStale) {
-          logError(error);
-          enqueueToast(getToastOptionsFromError({ error }));
-        }
-      })
-      .finally(() => {
-        if (!isStale) {
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      isStale = true;
-    };
-  }, [
-    enqueueToast,
-    performCombinedFindManyRecords,
-    readableTargetObjectMetadataItems,
-    selectedRecordIds,
-    shouldFetchSelectedRecords,
-  ]);
+  const { result, loading } = useCombinedFindManyRecords({
+    operationSignatures,
+    skip: !isNonEmptyArray(operationSignatures),
+  });
 
   if (loading) {
     return { displayValue: t`Loading...`, loading };
   }
 
   const displayValue = computeRelationFilterDisplayValue({
-    targetObjectMetadataItems: readableTargetObjectMetadataItems,
-    selectedRecordsByObjectNamePlural,
+    targetObjectMetadataItems,
+    selectedRecordsByObjectNamePlural: result,
     isCurrentWorkspaceMemberSelected: isCurrentWorkspaceMemberSelected ?? false,
   });
 
