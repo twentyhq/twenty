@@ -102,7 +102,11 @@
     },
     "types": {
       "CountryChoice": "components/input/CountrySelect/types/CountryChoice",
+      "CountrySelectOptionsProps": "components/input/CountrySelect/types/CountrySelectOptionsProps",
+      "CountrySelectOptionsState": "components/input/CountrySelect/types/CountrySelectOptionsState",
       "CountrySelectProps": "components/input/CountrySelect/types/CountrySelectProps",
+      "CountrySelectRootProps": "components/input/CountrySelect/types/CountrySelectRootProps",
+      "CountrySelectTriggerProps": "components/input/CountrySelect/types/CountrySelectTriggerProps",
       "CurrencyPickerOption": "components/input/CurrencyPicker/types/CurrencyPickerOption",
       "CurrencyPickerOptionsProps": "components/input/CurrencyPicker/types/CurrencyPickerOptionsProps",
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",

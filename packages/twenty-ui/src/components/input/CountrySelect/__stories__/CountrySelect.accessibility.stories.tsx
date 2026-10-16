@@ -44,7 +44,7 @@ export const SelectedValueDescription: Story = {
       canvasElement,
       name: 'Shipping country',
     });
-    const noCountry = within(popup).getByRole('button', { name: 'No country' });
+    const noCountry = within(popup).getByRole('option', { name: 'No country' });
 
     expect(noCountry.querySelector('svg')?.parentElement).toHaveAttribute(
       'aria-hidden',
@@ -143,7 +143,7 @@ export const NonButtonTriggerLabel: Story = {
 
 export const TruncatedCountryDisclosure: Story = {
   args: {
-    countries: [{ value: 'France', label: LONG_COUNTRY_LABEL, flag: '🇫🇷' }],
+    countries: [{ value: 'FR', label: LONG_COUNTRY_LABEL, flag: '🇫🇷' }],
   },
   play: async ({ canvasElement }) => {
     const trigger = within(canvasElement).getByRole('button', {

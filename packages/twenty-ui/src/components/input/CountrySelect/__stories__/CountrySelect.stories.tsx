@@ -27,11 +27,11 @@ export const Disabled: Story = {
 };
 
 export const Empty: Story = {
-  args: { value: '' },
+  args: { value: null },
 };
 
 export const ScopedTheme: Story = {
-  args: { value: 'Japan', label: 'Scoped country' },
+  args: { value: 'JP', label: 'Scoped country' },
   render: (args) => (
     <ThemeProvider colorScheme="dark" applyToRoot={false}>
       <div style={{ background: 'var(--t-background-primary)', padding: 16 }}>

@@ -9,7 +9,11 @@
 
 export { CountrySelect } from './CountrySelect/CountrySelect';
 export type { CountryChoice } from './CountrySelect/types/CountryChoice';
+export type { CountrySelectOptionsProps } from './CountrySelect/types/CountrySelectOptionsProps';
+export type { CountrySelectOptionsState } from './CountrySelect/types/CountrySelectOptionsState';
 export type { CountrySelectProps } from './CountrySelect/types/CountrySelectProps';
+export type { CountrySelectRootProps } from './CountrySelect/types/CountrySelectRootProps';
+export type { CountrySelectTriggerProps } from './CountrySelect/types/CountrySelectTriggerProps';
 export { CurrencyPicker } from './CurrencyPicker/CurrencyPicker';
 export type { CurrencyPickerOption } from './CurrencyPicker/types/CurrencyPickerOption';
 export type { CurrencyPickerOptionsProps } from './CurrencyPicker/types/CurrencyPickerOptionsProps';
