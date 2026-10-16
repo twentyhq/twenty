@@ -72,7 +72,10 @@ export const DashboardColorIcon = ({
           : 'transparent'
       }
     >
-      A
+      {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- The color swatch uses A as a sample glyph.
+        'A'
+      }
     </StyledColorIcon>
   );
 };

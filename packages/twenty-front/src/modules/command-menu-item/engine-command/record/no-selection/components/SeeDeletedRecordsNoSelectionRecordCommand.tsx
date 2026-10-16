@@ -9,6 +9,7 @@ export const SeeDeletedRecordsNoSelectionRecordCommand = () => {
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'Object metadata item and record index ID are required to see deleted records',
     );
   }

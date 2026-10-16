@@ -208,6 +208,7 @@ export const DateTimePicker = ({
     onClose?.(zonedDateTime);
   };
 
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a relative-date enum value stored in filters.
   const relativeUnit = relativeDate?.unit ?? 'DAY';
   const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
   const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;

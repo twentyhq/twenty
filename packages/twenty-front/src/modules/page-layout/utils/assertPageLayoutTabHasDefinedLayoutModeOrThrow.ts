@@ -10,6 +10,7 @@ type AssertPageLayoutTabHasDefinedLayoutModeOrThrow = (
 export const assertPageLayoutTabHasDefinedLayoutModeOrThrow: AssertPageLayoutTabHasDefinedLayoutModeOrThrow =
   (tab) => {
     if (!isNonEmptyString(tab?.layoutMode)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       throw new Error('Tab layout mode is not defined');
     }
   };

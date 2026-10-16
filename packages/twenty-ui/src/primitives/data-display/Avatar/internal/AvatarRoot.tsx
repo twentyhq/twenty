@@ -71,7 +71,8 @@ export const AvatarRoot = ({
             variant === 'outline' &&
             state.imageLoadingStatus !== 'loaded' &&
             fallbackBorder
-              ? `1px solid ${fallbackBorder}`
+              ? // oxlint-disable-next-line lingui/no-unlocalized-strings -- CSS consumes this border style value.
+                `1px solid ${fallbackBorder}`
               : 'none',
           ...(isFunction(style) ? style(state) : style),
         }) as CSSProperties

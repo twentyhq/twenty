@@ -53,7 +53,9 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
 
   const timeZoneAbbreviation =
     isWorkflowFindRecords === true
-      ? 'UTC'
+      ? // Date and time syntax must stay stable across locales.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
+        'UTC'
       : !isSystemTimezone
         ? userTimeZoneAbbreviation
         : null;

@@ -3,6 +3,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { usePerformViewApiPersist } from '@/views/hooks/internal/usePerformViewApiPersist';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,8 +64,8 @@ export const useCreatePendingFieldsWidgetViews = () => {
         );
 
         const viewName = isDefined(objectMetadataItem)
-          ? `${objectMetadataItem.labelSingular} Fields`
-          : 'Fields';
+          ? t`${objectMetadataItem.labelSingular} Fields`
+          : t`Fields`;
 
         const result = await performViewApiCreate(
           {
@@ -81,6 +82,7 @@ export const useCreatePendingFieldsWidgetViews = () => {
 
         if (result.status === 'failed') {
           throw new Error(
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
             `Failed to create view for FIELDS widget ${widget.id}`,
           );
         }

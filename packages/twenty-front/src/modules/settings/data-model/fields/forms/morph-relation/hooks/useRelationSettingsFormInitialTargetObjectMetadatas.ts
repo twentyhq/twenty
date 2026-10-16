@@ -60,6 +60,7 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   const firstInitialObjectCandidate = availableItems[0];
   if (!isDefined(firstInitialObjectCandidate)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
     );
   }

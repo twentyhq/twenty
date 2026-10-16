@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Fixture meeting titles contain proper names.
 export type ImportContactsPreviewCalendarEvent = {
   id: string;
   title: string;

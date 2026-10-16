@@ -21,6 +21,7 @@ export const useUploadEmailImage = () => {
     ) {
       enqueueToast({ status: 'error', children: t`Unsupported image format` });
 
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- A translated toast has already explained this upload failure.
       throw new Error(`Unsupported email image MIME type: ${file.type}`);
     }
 
@@ -33,6 +34,7 @@ export const useUploadEmailImage = () => {
         children: t`Image "${fileName}" exceeds ${maxUploadSize}`,
       });
 
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- A translated toast has already explained this upload failure.
       throw new Error('Email image exceeds the maximum upload size');
     }
 

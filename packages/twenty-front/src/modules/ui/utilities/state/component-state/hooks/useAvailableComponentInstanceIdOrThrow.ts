@@ -23,6 +23,7 @@ export const useAvailableComponentInstanceIdOrThrow = <
   }
 
   throw new Error(
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing component state is a developer invariant diagnostic.
     'Instance id is not provided and cannot be found in context.',
   );
 };

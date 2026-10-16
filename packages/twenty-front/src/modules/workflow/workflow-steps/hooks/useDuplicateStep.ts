@@ -41,6 +41,7 @@ export const useDuplicateStep = () => {
       const createdStepDiff = stepsDiff?.find((diff) => diff.type === 'CREATE');
 
       if (!isDefined(createdStepDiff)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error("Couldn't duplicate step");
       }
 

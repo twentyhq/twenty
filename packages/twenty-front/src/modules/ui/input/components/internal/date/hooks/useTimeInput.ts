@@ -23,6 +23,7 @@ export const useTimeInput = (timeFormat: TimeFormat): UseTimeInputReturn => {
       const mm = minute.toString().padStart(2, '0');
 
       if (isHour12) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a time or date input mask token, not natural-language text.
         const amPm = hour >= 12 ? 'PM' : 'AM';
         return `${hh}:${mm} ${amPm}`;
       }

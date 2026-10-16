@@ -5,6 +5,7 @@ export const getDateMask = (dateFormat: DateFormat): string => {
     case DateFormat.DAY_FIRST:
       return 'd`/m`/Y`';
     case DateFormat.YEAR_FIRST:
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a time or date input mask token, not natural-language text.
       return 'Y`-m`-d`';
     case DateFormat.MONTH_FIRST:
     default:

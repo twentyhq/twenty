@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+// Browser and operating system names are vendor names extracted from user agents.
+// oxlint-disable lingui/no-unlocalized-strings
+
 type UserAgentMatcher = {
   label: string;
   pattern: RegExp;
@@ -39,3 +42,4 @@ export const parseUserAgentDescription = (
     )?.label,
   };
 };
+// oxlint-enable lingui/no-unlocalized-strings

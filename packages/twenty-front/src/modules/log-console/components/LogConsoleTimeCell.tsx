@@ -35,6 +35,7 @@ export const LogConsoleTimeCell = ({ timestamp }: LogConsoleTimeCellProps) => {
   const dayAndMonthFormat =
     DATE_FORMAT_WITHOUT_YEAR[getWorkspaceDateFormatFromDateFormat(dateFormat)];
   const timeWithMillisecondsFormat =
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
     timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS';
 
   const formatTimestamp = (format: string) =>

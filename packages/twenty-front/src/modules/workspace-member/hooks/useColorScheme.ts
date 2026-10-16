@@ -24,6 +24,7 @@ export const useColorScheme = () => {
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
   const { enqueueToast } = useToast();
 
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted color-scheme identifier.
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
   const setColorScheme = useCallback(

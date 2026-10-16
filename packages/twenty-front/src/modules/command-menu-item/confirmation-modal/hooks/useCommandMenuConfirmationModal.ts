@@ -33,6 +33,7 @@ export const useCommandMenuConfirmationModal = () => {
         isCommandMenuItemConfirmationModalOpened
       ) {
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an invariant for competing modal callers.
           'Command menu item confirmation modal is already active for another caller',
         );
       }

@@ -71,6 +71,8 @@ type SettingsAppearancePreviewProps = {
 export const SettingsAppearancePreview = ({
   colorScheme,
 }: SettingsAppearancePreviewProps) => {
+  // ColorScheme values select theme colors and are hidden from assistive technology.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   const segments = colorScheme === 'System' ? ['Light', 'Dark'] : [colorScheme];
 
   return (

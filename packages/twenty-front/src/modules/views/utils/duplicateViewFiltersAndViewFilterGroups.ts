@@ -34,6 +34,7 @@ export const duplicateViewFiltersAndViewFilterGroups = ({
         !isDefined(newViewFilterGroupId)
       ) {
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
           `Failed to find view filter group to copy for id ${viewFilterGroupToCopy.id} this shouldn't happen`,
         );
       }

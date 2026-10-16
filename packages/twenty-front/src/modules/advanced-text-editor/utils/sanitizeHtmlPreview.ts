@@ -1,4 +1,5 @@
 const BLOCKED_ELEMENT_SELECTOR =
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This sanitizer blocklist must remain CSS selector syntax.
   'script, iframe, frame, object, embed, link, meta, base, style, svg, math, template';
 
 const URL_ATTRIBUTE_NAMES = ['href', 'src', 'xlink:href', 'action'];

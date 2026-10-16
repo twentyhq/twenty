@@ -30,6 +30,8 @@ export const useUpdateRecordField = (
 
       if (!isDefined(foundRecordFieldInCurrentRecordFields)) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
         );
       }

@@ -17,6 +17,7 @@ export const useHeadlessCommandContextApi = () => {
 
   if (!isDefined(headlessCommandContextApi)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'Headless command context API not found. Make sure the command was mounted via the command mount flow.',
     );
   }

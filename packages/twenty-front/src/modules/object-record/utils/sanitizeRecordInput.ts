@@ -48,6 +48,8 @@ export const sanitizeRecordInput = ({
                 targetObjectMetadataNamePlural:
                   morphRelation.targetObjectMetadata.namePlural,
               });
+              // Metadata and protocol identifiers must stay stable across locales.
+              // oxlint-disable-next-line lingui/no-unlocalized-strings
               return computedFieldName === fieldName.replace('Id', '');
             });
           });

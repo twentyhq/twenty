@@ -16,8 +16,10 @@ export const CurrencyPickerOptions = ({
   value,
   onValueChange,
   disabled = false,
+  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
   searchLabel = 'Search',
   emptyLabel = 'No results',
+  // oxlint-enable lingui/no-unlocalized-strings
   className,
   render,
   ref,

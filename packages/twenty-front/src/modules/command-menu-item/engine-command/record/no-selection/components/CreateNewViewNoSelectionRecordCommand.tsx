@@ -16,6 +16,7 @@ export const CreateNewViewNoSelectionRecordCommand = () => {
 
   if (!isDefined(currentViewId) || !isDefined(recordIndexId)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'Current view ID and record index ID are required to create new view',
     );
   }

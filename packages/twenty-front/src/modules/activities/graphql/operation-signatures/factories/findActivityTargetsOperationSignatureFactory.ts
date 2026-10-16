@@ -22,6 +22,7 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
   );
 
   if (!isDefined(activityObjectMetadataItem)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
     throw new Error('Cannot resolve activity junction metadata');
   }
 
@@ -31,6 +32,7 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
   });
 
   if (!isDefined(junctionConfig)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
     throw new Error('Cannot resolve activity relation on junction object');
   }
 

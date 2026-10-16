@@ -14,6 +14,7 @@ export const ReactSpreadsheetImportContextProvider = ({
   values,
 }: ReactSpreadsheetImportContextProviderProps) => {
   if (!isDefined(values.spreadsheetImportFields)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing configuration is a developer diagnostic.
     throw new Error('Fields must be provided to spreadsheet-import');
   }
 

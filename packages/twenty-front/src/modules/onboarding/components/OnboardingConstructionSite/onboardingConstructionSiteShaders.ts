@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Shader source is executable GLSL.
 const SCENE_VERTEX_SHADER = `#version 300 es
   in vec3 position;
   in vec3 normal;

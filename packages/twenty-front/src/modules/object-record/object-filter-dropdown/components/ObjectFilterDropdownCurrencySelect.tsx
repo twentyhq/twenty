@@ -6,7 +6,6 @@ import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-
 import { getCurrencyFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getCurrencyFilterDisplayValue';
 import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -76,13 +75,15 @@ export const ObjectFilterDropdownCurrencySelect = () => {
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         'Field metadata item used in filter dropdown should be defined',
       );
     }
 
-    const selectedItemNames = CURRENCIES.filter((currency) =>
-      newSelectedItemIds.includes(currency.value),
-    ).map((currency) => currency.label);
+    const selectedItemNames = currencies
+      .filter((currency) => newSelectedItemIds.includes(currency.value))
+      .map((currency) => currency.label);
 
     const filterDisplayValue = getCurrencyFilterDisplayValue(selectedItemNames);
 

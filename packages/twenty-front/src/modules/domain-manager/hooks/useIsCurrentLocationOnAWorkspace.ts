@@ -17,6 +17,7 @@ export const useIsCurrentLocationOnAWorkspace = () => {
     (!isDefined(domainConfiguration.frontDomain) ||
       !isDefined(domainConfiguration.defaultSubdomain))
   ) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only configuration or context invariant diagnostic.
     throw new Error('frontDomain and defaultSubdomain are required');
   }
 

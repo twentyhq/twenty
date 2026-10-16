@@ -11,6 +11,7 @@ export const getAttachmentPath = (attachmentFullPath: string) => {
   const rawPath = attachmentFullPath?.split('/files/')[1]?.split('?')[0];
 
   if (!rawPath) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
     throw new Error(`Invalid attachment path: ${attachmentFullPath}`);
   }
 
@@ -21,6 +22,7 @@ export const getAttachmentPath = (attachmentFullPath: string) => {
   const pathParts = rawPath.split('/');
   if (pathParts.length < 2) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
       `Invalid attachment path structure: ${rawPath}. Path must have at least two segments.`,
     );
   }

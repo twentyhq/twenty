@@ -27,7 +27,7 @@ import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/Settin
 import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsDevelopersApiKeysNew = () => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
   const navigateSettings = useNavigateSettings();
   const { data: rolesData, loading: rolesLoading } = useQuery(
@@ -214,7 +214,10 @@ export const SettingsDevelopersApiKeysNew = () => {
           />
           <Select
             dropdownId="object-field-type-select"
-            options={EXPIRATION_DATES}
+            options={EXPIRATION_DATES.map(({ label, value }) => ({
+              label: i18n._(label),
+              value,
+            }))}
             value={formValues.expirationDate}
             onChange={(value) => {
               setFormValues((prevState) => ({

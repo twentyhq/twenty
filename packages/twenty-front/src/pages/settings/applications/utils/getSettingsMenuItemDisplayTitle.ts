@@ -6,6 +6,8 @@ import {
   type SettingsMenuItem,
 } from '~/generated-metadata/graphql';
 
+// This string identifies persisted menu items created before custom titles were supported.
+// oxlint-disable-next-line lingui/no-unlocalized-strings
 const LEGACY_SETTINGS_MENU_ITEM_TITLE = 'Settings';
 
 export const getSettingsMenuItemDisplayTitle = ({

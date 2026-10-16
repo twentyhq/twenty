@@ -42,8 +42,10 @@ export const Toast = ({
   duration = DEFAULT_TOAST_DURATION,
   onCancel,
   onClose,
+  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
   cancelLabel = 'Cancel',
   closeLabel = 'Close',
+  // oxlint-enable lingui/no-unlocalized-strings
   status = 'neutral',
   role = 'status',
   className,

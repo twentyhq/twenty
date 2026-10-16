@@ -240,7 +240,19 @@ export const ADVANCED_TEXT_EDITOR_BLOCK_CATALOG = {
         title: msg`HTML`,
         description: msg`Raw HTML embedded in the document`,
         keywords: [msg`html`, msg`embed`, msg`code`, msg`custom`],
-        createContent: () => ({ type: TIPTAP_NODE_TYPES.HTML }),
+        createContent: (translate) => {
+          // oxlint-disable-next-line twenty/max-consts-per-file -- DOM serialization escapes the translated text before HTML insertion.
+          const paragraph = document.createElement('p');
+          paragraph.style.margin = '0';
+          paragraph.textContent = translate(
+            msg`Edit this HTML in the block settings panel.`,
+          );
+
+          return {
+            type: TIPTAP_NODE_TYPES.HTML,
+            attrs: { html: paragraph.outerHTML },
+          };
+        },
       },
     ],
     settingsFields: [

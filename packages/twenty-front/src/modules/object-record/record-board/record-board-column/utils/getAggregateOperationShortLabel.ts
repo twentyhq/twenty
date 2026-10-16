@@ -36,6 +36,8 @@ export const getAggregateOperationShortLabel = (
       return msg`False`;
     default:
       throw new CustomError(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `Unknown aggregate operation: ${operation}`,
         'UNKNOWN_AGGREGATE_OPERATION',
       );

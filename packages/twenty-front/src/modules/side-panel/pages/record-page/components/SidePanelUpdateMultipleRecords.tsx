@@ -15,6 +15,7 @@ export const SidePanelUpdateMultipleRecords = () => {
   )?.instanceId;
 
   if (!sidePanelPageInstanceId) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('Command menu page instance id is not defined');
   }
 

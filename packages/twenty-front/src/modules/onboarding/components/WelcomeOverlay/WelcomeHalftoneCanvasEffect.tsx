@@ -28,6 +28,7 @@ export const WelcomeHalftoneCanvasEffect = ({
     }
 
     const prefersReducedMotion =
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a CSS value or browser media query, not UI copy.
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     const canvasStyles = getComputedStyle(canvas);
     const dotColor = canvasStyles

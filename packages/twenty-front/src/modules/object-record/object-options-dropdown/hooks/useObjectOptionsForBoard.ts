@@ -187,6 +187,8 @@ export const useObjectOptionsForBoard = ({
           (draftRecordIndexFieldDefinitions) => {
             if (!isDefined(correspondingAvailableColumnDefinition)) {
               throw new Error(
+                // Error text is used for locale-independent issue grouping.
+                // oxlint-disable-next-line lingui/no-unlocalized-strings
                 `correspondingAvailableColumnDefinition is not defined this should not happen.`,
               );
             }

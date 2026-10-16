@@ -5,6 +5,7 @@ export const WEBHOOK_TRIGGER: {
   type: WorkflowTriggerType;
   icon: string;
 } = {
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Persisted trigger names are translated by getWorkflowStepDisplayName.
   defaultLabel: 'Webhook',
   type: 'WEBHOOK',
   icon: 'IconWebhook',

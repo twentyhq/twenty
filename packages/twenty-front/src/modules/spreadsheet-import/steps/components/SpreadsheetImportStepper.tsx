@@ -98,6 +98,7 @@ export const SpreadsheetImportStepper = ({
       );
     case SpreadsheetImportStepType.validateData:
       if (!uploadedFile) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This unreachable step state is an internal diagnostic.
         throw new Error('File not found');
       }
       return (

@@ -8,6 +8,7 @@ import { COMPOSER_LABEL_MIN_WIDTH } from '@/activities/constants/ComposerLabelMi
 const ROW_MIN_HEIGHT = '40px';
 
 const NESTED_CONTROL_SELECTOR =
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a CSS selector for focusable elements.
   'input, textarea, button, a[href], [role="button"]';
 
 const StyledContent = styled.div`

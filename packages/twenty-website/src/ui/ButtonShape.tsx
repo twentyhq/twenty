@@ -48,18 +48,22 @@ const Middle = styled.span`
 `;
 
 const leftFillPath = (height: number): string =>
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- SVG path commands are geometry, not copy.
   `M4 0 A4 4 0 0 0 0 4 V${height - 4} A4 4 0 0 0 4 ${height} Z`;
 
 const leftStrokePath = (height: number): string =>
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- SVG path commands are geometry, not copy.
   `M4 0.5 A3.5 3.5 0 0 0 0.5 4 V${height - 4} A3.5 3.5 0 0 0 4 ${height - 0.5}`;
 
 const rightFillPath = (height: number): string => {
   const straight = Math.max(height - TAPER_TOP_OFFSET - TAPER_HEIGHT, 0);
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- SVG path commands are geometry, not copy.
   return `M0 0 h11 a4 4 0 0 1 4 4 v${straight} a6 6 0 0 1 -1.544 4.019 l-8.548 9.477 A6 6 0 0 1 0.453 ${height} H0 Z`;
 };
 
 const rightStrokePath = (height: number): string => {
   const straight = Math.max(height - TAPER_TOP_OFFSET - TAPER_HEIGHT, 0);
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- SVG path commands are geometry, not copy.
   return `M0 0.5 h11 a3.5 3.5 0 0 1 3.5 3.5 v${straight} a5.5 5.5 0 0 1 -1.416 3.684 l-8.547 9.477 a5.5 5.5 0 0 1 -4.084 1.816 H0`;
 };
 

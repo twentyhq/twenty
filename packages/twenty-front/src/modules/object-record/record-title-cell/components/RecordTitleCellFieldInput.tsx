@@ -18,6 +18,8 @@ export const RecordTitleCellFieldInput = ({
   const { fieldDefinition } = useContext(FieldContext);
 
   if (!isFieldText(fieldDefinition) && !isFieldFullName(fieldDefinition)) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('Field definition is not a text or full name field');
   }
 

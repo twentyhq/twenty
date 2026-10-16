@@ -111,6 +111,8 @@ export const useUpdateDroppedRecordOnBoard = () => {
 
       if (indexOfDroppedRecordInInitialRecordGroup === -1) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `Cannot find record id in initial record group ids on drop, this should not happen, recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
         );
       }
