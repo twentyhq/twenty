@@ -10,7 +10,6 @@ const mergePermissionValue = ({
 }) =>
   existing === false || incoming === false ? false : (incoming ?? existing);
 
-// A target column is restricted by its own row and by its head's: the stricter value wins
 export const mergeRestrictedFieldPermissions = ({
   existing,
   incoming,
