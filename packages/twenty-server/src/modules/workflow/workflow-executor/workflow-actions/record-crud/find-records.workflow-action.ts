@@ -91,8 +91,6 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       flatFieldMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
-    // A filter on a missing field is dropped when compiled, and inside a group
-    // that still yields a non-empty filter, so it is rejected up front
     const recordFilterWithMissingField = findRecordFilterWithMissingField({
       recordFilters: recordFilters ?? [],
       existingFieldMetadataIds: new Set(

@@ -4,11 +4,8 @@ import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 
-const SEARCH_VECTOR_FIELD_NAME = 'searchVector';
-
-// Rebuilds the type, label and display value that record filters carried
-// before 2.48, so the previous release can still read them after a rollback
 export const restoreDerivedRecordFilterProperties = ({
   recordFilter,
   flatFieldMetadataMaps,
@@ -40,7 +37,7 @@ export const restoreDerivedRecordFilterProperties = ({
     : undefined;
 
   const label =
-    sourceFieldMetadata.name === SEARCH_VECTOR_FIELD_NAME
+    sourceFieldMetadata.name === SEARCH_VECTOR_FIELD.name
       ? 'Search'
       : isDefined(relationTargetFieldMetadata)
         ? `${sourceFieldMetadata.label} → ${relationTargetFieldMetadata.label}`

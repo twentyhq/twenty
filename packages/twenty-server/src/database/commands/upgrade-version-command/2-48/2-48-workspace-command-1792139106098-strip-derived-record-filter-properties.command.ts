@@ -35,13 +35,9 @@ type RecordFilterRewrite = {
   shouldRewriteInvalidWorkflowRuns: boolean;
 };
 
-// Runs are history and keep their properties, except the ones the stricter
-// Find Records schema would reject, which would hide the run state in the UI
 const INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH =
   '$.flow.steps[*] ? (@.type == "FIND_RECORDS").settings.input.filter.recordFilters[*] ? (!(exists(@.id)) || @.id.type() != "string" || @.id == "" || !(exists(@.value)) || @.value.type() != "string")';
 
-// Type, label and display value are derived from field metadata when the
-// filters are loaded, and stale copies of them broke the filter editors
 @RegisteredWorkspaceCommand('2.48.0', 1792139106098)
 @Command({
   name: 'upgrade:2-48:strip-derived-record-filter-properties',
@@ -91,9 +87,6 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
     });
   }
 
-  // Raw SQL because dropping properties nothing reads changes no metadata the
-  // migration runner could diff, and it must not be blocked by widgets that
-  // fail unrelated validation (e.g. a filter on a deleted field)
   private async rewriteStoredRecordFilters(
     { workspaceId, options, dataSource }: RunOnWorkspaceArgs,
     rewrite: RecordFilterRewrite,
@@ -252,8 +245,6 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
     let rewrittenCount = 0;
 
     for (const rowId of rowIdsToRewrite) {
-      // Workers and servers keep writing while workspaces upgrade, so the row
-      // is mapped again under a lock to never overwrite a newer value
       const hasRewritten = await dataSource.transaction(async (manager) => {
         const [lockedRow]: { value: unknown }[] = await manager.query(
           `SELECT ${columnName} AS value FROM ${tableName} WHERE id = $1 FOR UPDATE`,

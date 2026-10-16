@@ -43,8 +43,6 @@ export const WorkflowFindRecordsFilters = ({
 
     const newFilter = {
       recordFilterGroups: existingRecordFilterGroups,
-      // Filters on deleted fields are kept so the step keeps failing instead
-      // of silently running without them
       recordFilters: [
         ...dehydrateRecordFilters(existingRecordFilters),
         ...store.get(unresolvedRecordFilters),

@@ -9,10 +9,6 @@ type GroupableRecordFilter = Pick<
   'recordFilterGroupId' | 'positionInRecordFilterGroup'
 >;
 
-// The advanced filter editor only renders the root group's descendants, while
-// filters without a group are ANDed with the root group when records are
-// queried, so they are moved under an AND root to stay visible with the same
-// meaning
 export const attachUngroupedRecordFiltersToRootRecordFilterGroup = <
   TRecordFilter extends GroupableRecordFilter,
 >({
@@ -51,8 +47,6 @@ export const attachUngroupedRecordFiltersToRootRecordFilterGroup = <
         rootRecordFilterGroup.id,
     );
 
-  // Nesting an OR root that has child groups would add a third level, which
-  // the editor cannot render
   if (
     !canAttachToRootRecordFilterGroup &&
     rootRecordFilterGroupHasChildGroups
