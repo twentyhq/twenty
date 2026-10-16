@@ -5,12 +5,15 @@ import { isDefined } from 'twenty-shared/utils';
 type StoredBillingPeriod = {
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
+  currentPeriodPeakSeats: number | null;
 };
 
 type BillingPeriodBoundaryUpdate = {
   previousPeriodStart?: Date;
   currentPeriodStart?: Date;
   currentPeriodEnd?: Date;
+  previousPeriodPeakSeats?: number | null;
+  currentPeriodPeakSeats?: number | null;
 };
 
 // Stripe only reports the current window, so the boundary a period moves off must be captured here or is lost;
@@ -26,10 +29,16 @@ export const resolveBillingPeriodBoundaryUpdate = ({
     return {};
   }
 
-  const { currentPeriodStart, currentPeriodEnd } = storedSubscription;
+  const { currentPeriodStart, currentPeriodEnd, currentPeriodPeakSeats } =
+    storedSubscription;
 
+  // The new period's peak starts empty and is raised to the live seats right after the write
   if (incomingPeriodStart.getTime() > currentPeriodStart.getTime()) {
-    return { previousPeriodStart: currentPeriodStart };
+    return {
+      previousPeriodStart: currentPeriodStart,
+      previousPeriodPeakSeats: currentPeriodPeakSeats,
+      currentPeriodPeakSeats: null,
+    };
   }
 
   // Stripe never moves a period backwards, so an older window is a late event and must not rewind the boundary.

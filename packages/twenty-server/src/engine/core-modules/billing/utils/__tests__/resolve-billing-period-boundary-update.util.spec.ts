@@ -14,9 +14,14 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
         storedSubscription: {
           currentPeriodStart: JANUARY,
           currentPeriodEnd: FEBRUARY,
+          currentPeriodPeakSeats: 8,
         },
       }),
-    ).toEqual({ previousPeriodStart: JANUARY });
+    ).toEqual({
+      previousPeriodStart: JANUARY,
+      previousPeriodPeakSeats: 8,
+      currentPeriodPeakSeats: null,
+    });
   });
 
   it('leaves the boundary alone when the period has not moved', () => {
@@ -26,6 +31,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
         storedSubscription: {
           currentPeriodStart: FEBRUARY,
           currentPeriodEnd: MARCH,
+          currentPeriodPeakSeats: 8,
         },
       }),
     ).toEqual({});
@@ -39,9 +45,27 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
         storedSubscription: {
           currentPeriodStart: FEBRUARY,
           currentPeriodEnd: MARCH,
+          currentPeriodPeakSeats: 8,
         },
       }),
     ).toEqual({ currentPeriodStart: FEBRUARY, currentPeriodEnd: MARCH });
+  });
+
+  it('carries an unknown peak over as unknown', () => {
+    expect(
+      resolveBillingPeriodBoundaryUpdate({
+        incomingPeriodStart: FEBRUARY,
+        storedSubscription: {
+          currentPeriodStart: JANUARY,
+          currentPeriodEnd: FEBRUARY,
+          currentPeriodPeakSeats: null,
+        },
+      }),
+    ).toEqual({
+      previousPeriodStart: JANUARY,
+      previousPeriodPeakSeats: null,
+      currentPeriodPeakSeats: null,
+    });
   });
 
   it('has nothing to record for a subscription seen for the first time', () => {
@@ -60,6 +84,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
         storedSubscription: {
           currentPeriodStart: JANUARY,
           currentPeriodEnd: FEBRUARY,
+          currentPeriodPeakSeats: 8,
         },
       }),
     ).toEqual({});

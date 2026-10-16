@@ -26,6 +26,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -71,6 +72,7 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
   async processStripeEvent(
@@ -167,6 +169,7 @@ export class BillingWebhookSubscriptionService {
           id: true,
           currentPeriodStart: true,
           currentPeriodEnd: true,
+          currentPeriodPeakSeats: true,
         },
       },
     );
@@ -201,6 +204,10 @@ export class BillingWebhookSubscriptionService {
       updatedBillingSubscription.id,
       event,
       workspaceId,
+    );
+
+    await this.billingSubscriptionService.raiseCurrentPeriodPeakSeats(
+      updatedBillingSubscription.id,
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [

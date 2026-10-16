@@ -5,13 +5,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import {
+  computePlanWorkspaceCreditsMicro,
+  type PlanWorkspaceCreditsMicro,
+} from 'src/engine/core-modules/billing/utils/compute-plan-workspace-credits-micro.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-export type ResourceCreditPricingInfo = {
-  tierCap: number;
-  unitPriceCents: number;
-};
 
 @Injectable()
 export class ResourceCreditService {
@@ -22,44 +21,15 @@ export class ResourceCreditService {
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
   ) {}
 
-  extractResourceCreditPricingInfo(
-    subscription: BillingSubscriptionEntity,
-  ): ResourceCreditPricingInfo | null {
-    const resourceCreditItem = subscription.billingSubscriptionItems?.find(
-      (item) =>
-        item.billingProduct?.metadata?.productKey ===
-        BillingProductKey.RESOURCE_CREDIT,
-    );
-
-    if (!isDefined(resourceCreditItem)) {
-      return null;
-    }
-
-    const matchingPrice =
-      resourceCreditItem.billingProduct?.billingPrices?.find(
-        (price) => price.stripePriceId === resourceCreditItem.stripePriceId,
-      );
-
-    if (!isDefined(matchingPrice)) {
-      return null;
-    }
-
-    const tierCap = Number(matchingPrice.metadata?.credit_amount ?? 0);
-
-    if (!Number.isFinite(tierCap) || tierCap <= 0) {
-      return null;
-    }
-
-    return {
-      tierCap,
-      unitPriceCents: matchingPrice.unitAmount ?? 0,
-    };
-  }
-
-  async getResourceCreditRolloverParameters(
-    workspaceId: string,
-    subscriptionId: string,
-  ): Promise<{ tierQuantity: number } | null> {
+  async getResourceCreditRolloverParameters({
+    workspaceId,
+    subscriptionId,
+    boundary,
+  }: {
+    workspaceId: string;
+    subscriptionId: string;
+    boundary: Date;
+  }): Promise<PlanWorkspaceCreditsMicro | null> {
     const subscription = await this.billingSubscriptionRepository.findOne(
       workspaceId,
       {
@@ -76,12 +46,27 @@ export class ResourceCreditService {
       return null;
     }
 
-    const pricingInfo = this.extractResourceCreditPricingInfo(subscription);
+    // Same rule as the closing period start: a subscription already moved to the boundary keeps the closing peak as previous
+    const closingPeriodPeakSeats =
+      subscription.currentPeriodStart.getTime() === boundary.getTime()
+        ? subscription.previousPeriodPeakSeats
+        : subscription.currentPeriodPeakSeats;
 
-    if (!isDefined(pricingInfo)) {
+    const planWorkspaceCredits = computePlanWorkspaceCreditsMicro({
+      billingSubscriptionItems: subscription.billingSubscriptionItems,
+      interval: subscription.interval,
+      peakSeats: closingPeriodPeakSeats,
+    });
+
+    if (
+      !isDefined(planWorkspaceCredits) ||
+      planWorkspaceCredits.workspaceCreditsForPackMicro +
+        planWorkspaceCredits.workspaceCreditsForSeatsMicro <=
+        0
+    ) {
       return null;
     }
 
-    return { tierQuantity: pricingInfo.tierCap };
+    return planWorkspaceCredits;
   }
 }

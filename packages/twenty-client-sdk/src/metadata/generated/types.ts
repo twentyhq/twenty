@@ -1915,6 +1915,12 @@ export default {
             "usedCredits": [
                 11
             ],
+            "workspaceCreditsGrantedForSeats": [
+                11
+            ],
+            "workspaceCreditsSeats": [
+                8
+            ],
             "__typename": [
                 1
             ]

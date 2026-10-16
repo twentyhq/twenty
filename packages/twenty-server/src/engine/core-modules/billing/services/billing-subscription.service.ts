@@ -32,6 +32,7 @@ import { BillingPriceService } from 'src/engine/core-modules/billing/services/bi
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { isBaseProductSubscriptionItem } from 'src/engine/core-modules/billing/utils/is-base-product-subscription-item.util';
 import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
 import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
@@ -327,6 +328,36 @@ export class BillingSubscriptionService {
     };
   }
 
+  // Atomic so that concurrent writers (webhook and in-app updates) can never lower the peak
+  async raiseCurrentPeriodPeakSeats(
+    billingSubscriptionId: string,
+  ): Promise<void> {
+    const billingSubscriptionItems =
+      await this.billingSubscriptionItemRepository.find({
+        where: { billingSubscriptionId },
+        relations: ['billingProduct'],
+      });
+
+    const seats = billingSubscriptionItems.find(
+      isBaseProductSubscriptionItem,
+    )?.quantity;
+
+    if (!isDefined(seats)) {
+      return;
+    }
+
+    await this.billingSubscriptionRepositoryUnscoped
+      .createQueryBuilder()
+      .update()
+      .set({
+        currentPeriodPeakSeats: () =>
+          'GREATEST(COALESCE("currentPeriodPeakSeats", 0), :seats)',
+      })
+      .where('id = :billingSubscriptionId', { billingSubscriptionId })
+      .setParameter('seats', seats)
+      .execute();
+  }
+
   async syncSubscriptionToDatabase(
     workspaceId: string,
     stripeSubscriptionId: string,
@@ -363,6 +394,7 @@ export class BillingSubscriptionService {
           id: true,
           currentPeriodStart: true,
           currentPeriodEnd: true,
+          currentPeriodPeakSeats: true,
         },
       },
     );
@@ -437,6 +469,8 @@ export class BillingSubscriptionService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    await this.raiseCurrentPeriodPeakSeats(currentBillingSubscription.id);
 
     this.logger.log(
       `Subscription synced to database: ${subscription.id} for workspace: ${workspaceId}`,

@@ -139,6 +139,13 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   previousPeriodStart: Date | null;
 
+  // Seat credits follow the most seats held in a period, so a seat removed mid-period keeps its credits until renewal
+  @Column({ nullable: true, type: 'integer' })
+  currentPeriodPeakSeats: number | null;
+
+  @Column({ nullable: true, type: 'integer' })
+  previousPeriodPeakSeats: number | null;
+
   @Field(() => graphqlTypeJson)
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;

@@ -96,6 +96,11 @@ const StyledRolloverText = styled.div`
   min-width: 0;
 `;
 
+const StyledSeatCreditsText = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 const StyledUsageMetrics = styled.div`
   align-items: center;
   display: flex;
@@ -160,13 +165,23 @@ export const SettingsBillingCreditsSection = ({
 
   const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
-  const { usedCredits, grantedCredits, totalGrantedCredits, rolloverCredits } =
-    getResourceCreditUsage();
+  const {
+    usedCredits,
+    grantedCredits,
+    totalGrantedCredits,
+    rolloverCredits,
+    workspaceCreditsGrantedForSeats,
+    workspaceCreditsSeats,
+  } = getResourceCreditUsage();
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
   const packageCredits = currentResourceCreditBillingPrice?.creditAmount;
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount;
-  const displayedGrantedCredits = packageCredits ?? grantedCredits;
+  const hasSeatCredits = workspaceCreditsGrantedForSeats > 0;
+  const displayedPackageCredits =
+    packageCredits ?? grantedCredits - workspaceCreditsGrantedForSeats;
+  const displayedGrantedCredits =
+    displayedPackageCredits + workspaceCreditsGrantedForSeats;
   const canCancelCreditPackSwitch =
     !isCancellationScheduled &&
     !shouldUpdatePayment &&
@@ -196,9 +211,13 @@ export const SettingsBillingCreditsSection = ({
   const extraCreditsDisplay = formatNumber(extraCredits, {
     decimals: 2,
   });
-  const rolloverCapDisplay = formatNumber(displayedGrantedCredits * 2, {
+  const rolloverCapDisplay = formatNumber(displayedPackageCredits * 2, {
     decimals: 2,
   });
+  const seatCreditsDisplay = formatNumber(workspaceCreditsGrantedForSeats, {
+    decimals: 2,
+  });
+  const seatsDisplay = formatNumber(workspaceCreditsSeats, { decimals: 0 });
   const remainingCreditsPercentageDisplay = formatNumber(
     clampedRemainingCreditsPercentage,
     { decimals: 0 },
@@ -252,6 +271,11 @@ export const SettingsBillingCreditsSection = ({
           />
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>
+          {hasSeatCredits && (
+            <StyledSeatCreditsText>
+              {t`Includes ${seatCreditsDisplay} credits for ${seatsDisplay} seats, reset each period`}
+            </StyledSeatCreditsText>
+          )}
           <ProgressBar
             value={clampedRemainingCreditsPercentage}
             aria-label={t`Remaining credits`}
@@ -277,7 +301,9 @@ export const SettingsBillingCreditsSection = ({
             ) : (
               <StyledRolloverText>
                 <IconInfoCircle size={theme.icon.size.sm} />
-                {t`Unused credits roll over, up to 2× your plan's credits (max ${rolloverCapDisplay}).`}
+                {hasSeatCredits
+                  ? t`Unused credits from your credit pack roll over, up to 2× the pack (max ${rolloverCapDisplay}).`
+                  : t`Unused credits roll over, up to 2× your plan's credits (max ${rolloverCapDisplay}).`}
               </StyledRolloverText>
             )}
             <StyledUsageMetrics>

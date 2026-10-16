@@ -554,6 +554,8 @@ export const graphqlMocks = {
               productKey: 'RESOURCE_CREDIT',
               usedCredits: 1000,
               grantedCredits: 500000,
+              workspaceCreditsGrantedForSeats: 0,
+              workspaceCreditsSeats: 0,
               rolloverCredits: 0,
               totalGrantedCredits: 500000,
               unitPriceCents: 1,
